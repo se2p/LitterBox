@@ -1,0 +1,183 @@
+{
+  "objName": "Stage",
+  "sounds": [{
+    "soundName": "pop",
+    "soundID": -1,
+    "md5": "83a9787d4cb6f3b7632b4ddfebf74367.wav",
+    "sampleCount": 258,
+    "rate": 11025,
+    "format": ""
+  }],
+  "costumes": [{
+    "costumeName": "backdrop1",
+    "baseLayerID": -1,
+    "baseLayerMD5": "510da64cf172d53750dffd23fbf73563.png",
+    "bitmapResolution": 1,
+    "rotationCenterX": 240,
+    "rotationCenterY": 180
+  },
+    {
+      "costumeName": "backdrop2",
+      "baseLayerID": -1,
+      "baseLayerMD5": "46909e8a746097d617f4eeb6549d6bb3.png",
+      "bitmapResolution": 2,
+      "rotationCenterX": 480,
+      "rotationCenterY": 360
+    }],
+  "currentCostumeIndex": 1,
+  "penLayerMD5": "5c81a336fab8be57adc039a8a2b33ca9.png",
+  "penLayerID": -1,
+  "tempoBPM": 60,
+  "videoAlpha": 0.5,
+  "children": [{
+    "objName": "Neigh Pony",
+    "sounds": [{
+      "soundName": "horse",
+      "soundID": -1,
+      "md5": "45ffcf97ee2edca0199ff5aa71a5b72e.wav",
+      "sampleCount": 14464,
+      "rate": 11025,
+      "format": ""
+    }],
+    "costumes": [{
+      "costumeName": "neigh pony",
+      "baseLayerID": -1,
+      "baseLayerMD5": "176c4fb4df80df899ca28a48bd1f0edf.svg",
+      "bitmapResolution": 1,
+      "rotationCenterX": 74,
+      "rotationCenterY": 78
+    }],
+    "currentCostumeIndex": 0,
+    "scratchX": -3,
+    "scratchY": 59,
+    "scale": 0.5000000000000001,
+    "direction": 90,
+    "rotationStyle": "normal",
+    "isDraggable": false,
+    "indexInLibrary": 2,
+    "visible": true,
+    "spriteInfo": {
+    }
+  },
+    {
+      "objName": "Sprite3",
+      "scripts": [[68, 60, [["whenIReceive", "POWNE!!!!"], ["say:duration:elapsed:from:", "its a magic powne flying through the sky on a magic program :D", 10], ["broadcast:", "SKY HIE!"]]]],
+      "sounds": [{
+        "soundName": "meow",
+        "soundID": -1,
+        "md5": "83c36d806dc92327b9e7049a565c6bff.wav",
+        "sampleCount": 18688,
+        "rate": 22050,
+        "format": ""
+      }],
+      "costumes": [{
+        "costumeName": "costume1",
+        "baseLayerID": -1,
+        "baseLayerMD5": "c4e8229e59b6891bdcb8f472bafa7ce6.png",
+        "bitmapResolution": 2,
+        "rotationCenterX": 71,
+        "rotationCenterY": -1
+      }],
+      "currentCostumeIndex": 0,
+      "scratchX": 77,
+      "scratchY": 30,
+      "scale": 1,
+      "direction": 90,
+      "rotationStyle": "normal",
+      "isDraggable": false,
+      "indexInLibrary": 3,
+      "visible": true,
+      "spriteInfo": {
+      }
+    },
+    {
+      "objName": "Sprite4",
+      "scripts": [[108,
+        143,
+        [["whenIReceive", "SKY HIE!"], ["say:duration:elapsed:from:", "Shoot it down!", 5], ["wait:elapsed:from:", 1], ["nextCostume"]]]],
+      "sounds": [{
+        "soundName": "meow",
+        "soundID": -1,
+        "md5": "83c36d806dc92327b9e7049a565c6bff.wav",
+        "sampleCount": 18688,
+        "rate": 22050,
+        "format": ""
+      }],
+      "costumes": [{
+        "costumeName": "costume1",
+        "baseLayerID": -1,
+        "baseLayerMD5": "5556100c7ada6a94f7068581f48c0ae6.png",
+        "bitmapResolution": 2,
+        "rotationCenterX": 92,
+        "rotationCenterY": 77
+      },
+        {
+          "costumeName": "costume2",
+          "baseLayerID": -1,
+          "baseLayerMD5": "f1906dac7eb352cec06ea5bfe427432c.png",
+          "bitmapResolution": 2,
+          "rotationCenterX": 137,
+          "rotationCenterY": 204
+        }],
+      "currentCostumeIndex": 1,
+      "scratchX": 11,
+      "scratchY": -157,
+      "scale": 1,
+      "direction": 90,
+      "rotationStyle": "normal",
+      "isDraggable": false,
+      "indexInLibrary": 4,
+      "visible": true,
+      "spriteInfo": {
+      }
+    },
+    {
+      "objName": "Sprite1",
+      "scripts": [[129, 121, [["whenGreenFlag"], ["broadcast:", "POWNE!!!!"]]]],
+      "sounds": [{
+        "soundName": "meow",
+        "soundID": -1,
+        "md5": "83c36d806dc92327b9e7049a565c6bff.wav",
+        "sampleCount": 18688,
+        "rate": 22050,
+        "format": ""
+      }],
+      "costumes": [{
+        "costumeName": "costume1",
+        "baseLayerID": -1,
+        "baseLayerMD5": "f9a1c175dbe2e5dee472858dd30d16bb.svg",
+        "bitmapResolution": 1,
+        "rotationCenterX": 47,
+        "rotationCenterY": 55
+      },
+        {
+          "costumeName": "costume2",
+          "baseLayerID": -1,
+          "baseLayerMD5": "6e8bd9ae68fdb02b7e1e3df656a75635.svg",
+          "bitmapResolution": 1,
+          "rotationCenterX": 47,
+          "rotationCenterY": 55
+        }],
+      "currentCostumeIndex": 0,
+      "scratchX": -6,
+      "scratchY": 88,
+      "scale": 0.40000000000000013,
+      "direction": 90,
+      "rotationStyle": "normal",
+      "isDraggable": false,
+      "indexInLibrary": 1,
+      "visible": true,
+      "spriteInfo": {
+      }
+    }],
+  "info": {
+    "swfVersion": "v443",
+    "videoOn": false,
+    "userAgent": "Mozilla\/5.0 (Macintosh; Intel Mac OS X 10_8_5) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/32.0.1700.102 Safari\/537.36",
+    "projectID": "10519701",
+    "flashVersion": "MAC 12,0,0,41",
+    "hasCloudData": false,
+    "scriptCount": 3,
+    "spriteCount": 4
+  }
+}
