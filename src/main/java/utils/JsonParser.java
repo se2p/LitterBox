@@ -10,6 +10,7 @@ import utils.deserializer.scratch2.StageDeserializer;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -32,6 +33,7 @@ public class JsonParser {
             project.setFilenameExtension(".sb2");
             project.setPath(path);
             JsonNode rootNode = mapper.readTree(ZipReader.getJson(path));
+            Iterator<JsonNode> script = rootNode.path("scripts").elements();
             project.setStage(StageDeserializer.deserialize(rootNode));
             project.setSprites(SpriteDeserializer.deserialize(rootNode));
             return project;

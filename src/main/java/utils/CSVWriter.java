@@ -1,6 +1,6 @@
 package utils;
 
-import analytics.Issue;
+//import analytics.Issue;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 import scratch2.structure.Project;
@@ -25,7 +25,7 @@ public class CSVWriter {
      * @param issues     all the issues found in the project
      * @throws IOException corrupt file path
      */
-    public static void addData(CSVPrinter csvPrinter, Project project, List<Issue> issues, String name) throws IOException {
+  /*  public static void addData(CSVPrinter csvPrinter, Project project, List<Issue> issues, String name) throws IOException {
         if (issues.size() == 26) {
             if (csvPrinter == null) {
                 BufferedWriter writer = Files.newBufferedWriter(Paths.get(name));
@@ -44,7 +44,7 @@ public class CSVWriter {
             }
             csvPrinter.printRecord(data);
         }
-    }
+    }*/
 
     /**
      * Creates a new CSVPrinter with the correct head of all implemented issue names
