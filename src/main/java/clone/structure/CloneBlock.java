@@ -38,4 +38,23 @@ public class CloneBlock {
 		}
 		return false;
 	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if(!(o instanceof CloneBlock)) {
+			return false;
+		}
+		CloneBlock toCompare = (CloneBlock) o;
+		for(ClonePairLine pair: block) {
+			if(!toCompare.contains(pair)) {
+				return false;
+			}
+		}
+		for(ClonePairLine pair : toCompare.getBlock()) {
+			if(!this.contains(pair)) {
+				return false;
+			}
+		}
+		return true;
+	}
 }

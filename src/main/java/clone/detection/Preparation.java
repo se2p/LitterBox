@@ -26,10 +26,14 @@ public class Preparation {
 	
 	private List<Script> joinScriptLists(Project project) {
 		List<Script> script = project.getStage().getScripts();
+		
+		// Added null to see the end of the sprite.
+		script.add(null);
 		List<Sprite> sprites = project.getSprites();
 		for(Sprite sp : sprites) {
         	List<Script> spriteScript = sp.getScripts();
             script.addAll(spriteScript);
+            script.add(null);
         }
 		return script;
 	}
@@ -37,12 +41,18 @@ public class Preparation {
 	private List<String> getContentFromScript(List<Script> script) {
 		List<String> scripts = new ArrayList<String>();
 		int scriptNr = 0;
+		int spriteNr = 0;
 		for(Script sc : script) {
-			scriptNr++;
-			for(ScBlock bl : sc.getBlocks()) {
-				getContentFromBlock(bl, scripts);
+			if(sc != null) {
+			    scriptNr++;
+			    for(ScBlock bl : sc.getBlocks()) {
+				    getContentFromBlock(bl, scripts);
+			    }
+			    scripts.add("~endBlock~" + scriptNr);
+			} else {
+				spriteNr++;
+				scripts.add("~endSprite~" + spriteNr);
 			}
-			scripts.add("~endBlock~" + scriptNr);
 		}
 		return scripts;
 	}

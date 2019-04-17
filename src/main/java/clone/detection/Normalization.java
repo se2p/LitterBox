@@ -68,7 +68,8 @@ public class Normalization {
 			int firstNumber = -1;
 			for(int i = 0; i < listBlock.size(); i++) {
 				if((Character.isDigit(listBlock.get(i)) || (listBlock.get(i) 
-					== '-' && Character.isDigit(listBlock.get(i + 1)))) && listBlock.get(i -1) != '~') {
+					== '-' && Character.isDigit(listBlock.get(i + 1)))) 
+					&& !list.get(k).contains("~end")) {
 					if(firstNumber == -1) {
 					    firstNumber = i;
 					}

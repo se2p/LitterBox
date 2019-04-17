@@ -44,34 +44,82 @@ public class CloneDetection {
                     
                     // This is the code who is normalized.
                     List<String> normalizedCode = norm.codeNormalization(preparatedCode);
-                    ComparisonAlgorithm compare = new ComparisonAlgorithm(normalizedCode);
+                    ComparisonAlgorithm compare = new ComparisonAlgorithm();
                     
                     // These are the blocks who are cloned saved as int tuples.
-                    List<CloneBlock> blocks = compare.findClones();
+                    List<List<CloneBlock>> blocks = compare.findAllClones(normalizedCode);
                     Formatting formatting = new Formatting();
                     
                     // These are the blocks who are cloned saved as String tuples.
-                    List<ClonePairCode> formattedCode = formatting.formatting(blocks, preparatedCode);
-                    int numberOfClones = formattedCode.size();
+                    List<List<ClonePairCode>> formattedCode = formatting.formatting(blocks, preparatedCode);
+                    int numberOfSprites = formattedCode.size() - 2;
                     StringBuilder sb = new StringBuilder();
-                    for(ClonePairCode pair : formattedCode) {
-                    	sb.append("The code:");
-                    	sb.append(System.getProperty("line.separator"));
-                    	for(String s : pair.getBlockOne()) {
-                    		sb.append(s);
-                    		sb.append(System.getProperty("line.separator"));
-                    	}
-                    	sb.append(System.getProperty("line.separator"));
-                    	sb.append("is a clone of: ");
-                    	sb.append(System.getProperty("line.separator"));
-                    	for(String s : pair.getBlockTwo()) {
-                    		sb.append(s);
-                    		sb.append(System.getProperty("line.separator"));
-                    	}
-                    	sb.append("------------");
-                    	sb.append(System.getProperty("line.separator"));
+                    for(ClonePairCode pair : formattedCode.get(0)) {
+                        sb.append("Clones in Stagecode:");
+                        sb.append(System.getProperty("line.separator"));
+                	    sb.append("The code:");
+                	    sb.append(System.getProperty("line.separator"));
+                	    for(String s : pair.getBlockOne()) {
+                		    sb.append(s);
+                		    sb.append(System.getProperty("line.separator"));
+                	    }
+                	    sb.append(System.getProperty("line.separator"));
+                	    sb.append("is a clone of: ");
+                	    sb.append(System.getProperty("line.separator"));
+                	    for(String s : pair.getBlockTwo()) {
+                		    sb.append(s);
+                		    sb.append(System.getProperty("line.separator"));
+                	    }
+                	    sb.append("------------");
+                	    sb.append(System.getProperty("line.separator"));
+                    }
+                    for(int i = 1; i <= numberOfSprites; i++) {
+                    	sb.append("Clones in Sprite " + i);
+                        for(ClonePairCode pair : formattedCode.get(i)) {
+                            sb.append(System.getProperty("line.separator"));
+                    	    sb.append("The code:");
+                    	    sb.append(System.getProperty("line.separator"));
+                    	    for(String s : pair.getBlockOne()) {
+                    		    sb.append(s);
+                    		    sb.append(System.getProperty("line.separator"));
+                    	    }
+                    	    sb.append(System.getProperty("line.separator"));
+                    	    sb.append("is a clone of: ");
+                    	    sb.append(System.getProperty("line.separator"));
+                    	    for(String s : pair.getBlockTwo()) {
+                    		    sb.append(s);
+                    		    sb.append(System.getProperty("line.separator"));
+                    	    }
+                    	    sb.append("------------");
+                    	    sb.append(System.getProperty("line.separator"));
+                        }
+                    }
+                    sb.append(System.getProperty("line.separator"));
+                    sb.append("Clones between Sprites:");
+                    for(ClonePairCode pair : formattedCode.get(formattedCode.size() - 1)) {
+                        sb.append(System.getProperty("line.separator"));
+                	    sb.append("The code:");
+                	    sb.append(System.getProperty("line.separator"));
+                	    for(String s : pair.getBlockOne()) {
+                		    sb.append(s);
+                		    sb.append(System.getProperty("line.separator"));
+                	    }
+                	    sb.append(System.getProperty("line.separator"));
+                	    sb.append("is a clone of: ");
+                	    sb.append(System.getProperty("line.separator"));
+                	    for(String s : pair.getBlockTwo()) {
+                		    sb.append(s);
+                		    sb.append(System.getProperty("line.separator"));
+                	    }
+                	    sb.append("------------");
+                	    sb.append(System.getProperty("line.separator"));
                     }
                     System.out.println("------------");
+                    int numberOfClones = 0;
+                    for(List<ClonePairCode> pair : formattedCode) {
+                    	numberOfClones = numberOfClones + pair.size();
+                    }
+                    System.out.println("Number of Sprites: " + numberOfSprites);
                     System.out.println("Number of clones: " + numberOfClones);
                     System.out.println("------------");
                     System.out.println(sb.toString());

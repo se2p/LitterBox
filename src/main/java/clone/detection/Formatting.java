@@ -18,18 +18,22 @@ public class Formatting {
 	 * @param original The original code.
 	 * @return A list of the cloned code.
 	 */
-	public List<ClonePairCode> formatting(List<CloneBlock> clones, List<String> original) {
-		List<ClonePairCode> codePairs = new ArrayList<ClonePairCode>();
-		for(CloneBlock bl : clones) {
-			List<String> firstBlock = new ArrayList<String>();
-			List<String> secondBlock = new ArrayList<String>();
-			for(ClonePairLine clonePair : bl.getBlock()) {
-				String firstLine = original.get(clonePair.getLineOne());
-				String secondLine = original.get(clonePair.getLineTwo());
-				firstBlock.add(firstLine);
-				secondBlock.add(secondLine);
-			}
-			codePairs.add(new ClonePairCode(firstBlock, secondBlock));
+	public List<List<ClonePairCode>> formatting(List<List<CloneBlock>> clones, List<String> original) {
+		List<List<ClonePairCode>> codePairs = new ArrayList<List<ClonePairCode>>();
+		for(List<CloneBlock> list : clones) {
+			List<ClonePairCode> spriteCode = new ArrayList<ClonePairCode>();
+		    for(CloneBlock bl : list) {
+			    List<String> firstBlock = new ArrayList<String>();
+			    List<String> secondBlock = new ArrayList<String>();
+			    for(ClonePairLine clonePair : bl.getBlock()) {
+				    String firstLine = original.get(clonePair.getLineOne());
+				    String secondLine = original.get(clonePair.getLineTwo());
+				    firstBlock.add(firstLine);
+				    secondBlock.add(secondLine);
+			    }
+			    spriteCode.add(new ClonePairCode(firstBlock, secondBlock));
+		    }
+		    codePairs.add(spriteCode);
 		}
 		return codePairs;
 	}
