@@ -10,6 +10,11 @@ public class ClonePairCode {
 	private List<String> blockOne;
 	private List<String> blockTwo;
 	
+	/**
+	 * Creates a new ClonePairCode with the given blocks.
+	 * @param blockOne The first code block.
+	 * @param blockTwo The clone of the code block.
+	 */
 	public ClonePairCode(List<String> blockOne, List<String> blockTwo) {
 		this.blockOne = blockOne;
 		this.blockTwo = blockTwo;

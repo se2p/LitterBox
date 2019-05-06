@@ -24,6 +24,7 @@ public class Preparation {
 		return blockScript;
 	}
 	
+	// Joins the script of all sprites and stage.
 	private List<Script> joinScriptLists(Project project) {
 		List<Script> script = project.getStage().getScripts();
 		
@@ -38,6 +39,7 @@ public class Preparation {
 		return script;
 	}
 	
+	// Reads and writes the code from the scripts.
 	private List<String> getContentFromScript(List<Script> script) {
 		List<String> scripts = new ArrayList<String>();
 		int scriptNr = 0;
@@ -49,14 +51,17 @@ public class Preparation {
 				    getContentFromBlock(bl, scripts);
 			    }
 			    scripts.add("~endBlock~" + scriptNr);
+			    scripts.add("~endBlock~" + scriptNr + "'");
 			} else {
 				spriteNr++;
 				scripts.add("~endSprite~" + spriteNr);
+				scripts.add("~endSprite~" + spriteNr + "'");
 			}
 		}
 		return scripts;
 	}
 	
+	// Reads and writes the code from a block.
 	private List<String> getContentFromBlock(ScBlock block, List<String> scripts){
 	    scripts.add(block.getContent());
 		if (block.getNestedBlocks() != null) {

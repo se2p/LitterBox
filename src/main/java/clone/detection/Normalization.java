@@ -23,13 +23,12 @@ public class Normalization {
 		return normalizedOperator;
 	}
 	
+	/*
+	 * If in a block appears "" then a text and then ", then the text will 
+	 * be changed to DUMMY.
+	 */
 	private List<String> normalizationDropDown(List<String> list) {
 		List<String> normalizedScript = new ArrayList<String>(list.size());
-		
-		/*
-		 * If in a block appears "" then a text and then ", then the text will 
-		 * be changed to DUMMY.
-		 */
 		for(int k = 0; k < list.size(); k++) {
 			char[] ch = list.get(k).toCharArray();
 			List<Character> listBlock = new ArrayList<Character>();
@@ -55,10 +54,9 @@ public class Normalization {
 		return normalizedScript;
 	}
 	
+	//If a number exists in the script, then this will be changed to NUMBER.
 	private List<String> normalizationNumbers(List<String> list) {
 		List<String> normalizedScript = new ArrayList<String>(list.size());
-		
-		//If a number exists in the script, then this will be changed to NUMBER.
 		for(int k = 0; k < list.size(); k++) {
 			char[] ch = list.get(k).toCharArray();
 			List<Character> listBlock = new ArrayList<Character>();
@@ -95,13 +93,12 @@ public class Normalization {
 		return normalizedScript;
 	}
 	
+	/*
+	 * If in a block appears :"," then a text and then ", then the text will 
+	 * be changed to DUMMY.
+	 */
 	private List<String> normalizationSensing(List<String> list) {
 		List<String> normalizedScript = new ArrayList<String>(list.size());
-		
-		/*
-		 * If in a block appears :"," then a text and then ", then the text will 
-		 * be changed to DUMMY.
-		 */
 		for(int k = 0; k < list.size(); k++) {
 			char[] ch = list.get(k).toCharArray();
 			List<Character> listBlock = new ArrayList<Character>();
@@ -128,10 +125,9 @@ public class Normalization {
 		return normalizedScript;
 	}
 	
+	// If a operator is in a block, it will be changed to OPERATOR.
 	private List<String> normalizationOperator(List<String> list) {
 		List<String> normalizedScript = new ArrayList<String>(list.size());
-		
-		// If a operator is in a block, it will be changed to OPERATOR.
 		for(int k = 0; k < list.size(); k++) {
 			char[] ch = list.get(k).toCharArray();
 			List<Character> listBlock = new ArrayList<Character>();
@@ -180,6 +176,7 @@ public class Normalization {
 		return normalizedScript;
 	} 
 	
+	// Writes at a specific index NUMBER in a Character list. 
 	private List<Character> writeNumber(List<Character> list, int index) {
 		if(index > -1) {
 		    list.add(index, 'N');
@@ -192,6 +189,7 @@ public class Normalization {
 		return list;
 	}
 	
+	// Writes at a specific index DUMMY in a Character list. 
 	private List<Character> writeDummy(List<Character> list, int index) {
 		if(index > -1) {
 		    list.add(index, 'D');
@@ -203,6 +201,7 @@ public class Normalization {
 		return list;
 	}
 	
+	// Writes at a specific index OPERATOR in a Character list. 
 	private List<Character> writeOperator(List<Character> list, int index) {
 		if(index > -1) {
 		    list.add(index, 'O');
