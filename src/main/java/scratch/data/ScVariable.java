@@ -1,10 +1,11 @@
-package scratch2.data;
+package scratch.data;
 
 /**
  * Wrapper for Scratch Variables
  */
 public class ScVariable {
 
+    private String id;
     private String name;
     private String value;
     private boolean isNumber;
@@ -15,11 +16,19 @@ public class ScVariable {
 
     @Override
     public String toString() {
-        return "ScVariable{" +
-                "name='" + name + '\'' +
+        return "ScVariable{ " + id +
+                " name='" + name + '\'' +
                 ", value='" + value + '\'' +
                 ", isNumber=" + isNumber +
                 '}';
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getName() {

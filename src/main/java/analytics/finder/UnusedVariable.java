@@ -2,11 +2,13 @@ package analytics.finder;
 
 import analytics.Issue;
 import analytics.IssueFinder;
-import scratch2.data.ScBlock;
-import scratch2.data.ScVariable;
-import scratch2.data.Script;
-import scratch2.structure.Project;
-import scratch2.structure.Scriptable;
+import scratch.data.ScBlock;
+import scratch.data.ScVariable;
+import scratch.data.Script;
+import scratch.structure.Project;
+import scratch.structure.Scriptable;
+import utils.Identifier;
+import utils.Version;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,7 +24,7 @@ public class UnusedVariable implements IssueFinder {
     public Issue check(Project project) {
         List<Scriptable> scriptables = new ArrayList<>(project.getSprites());
         scriptables.add(project.getStage());
-        int count = 0;
+        int count;
         List<String> pos = new ArrayList<>();
         Map<String, List<String>> variableScope = new HashMap<>();
         List<ScVariable> vars = new ArrayList<>();
@@ -31,7 +33,11 @@ public class UnusedVariable implements IssueFinder {
             for (Script script : scable.getScripts()) {
                 if (script != null) {
                     if (script.getBlocks().size() > 1) {
-                        searchBlocks(script.getBlocks(), scable, variableScope);
+                        if (project.getVersion().equals(Version.SCRATCH2)) {
+                            searchBlocks2(script.getBlocks(), scable, variableScope);
+                        } else if (project.getVersion().equals(Version.SCRATCH3)) {
+                            searchBlocks3(script.getBlocks(), scable, variableScope);
+                        }
                     }
                 }
             }
@@ -52,15 +58,38 @@ public class UnusedVariable implements IssueFinder {
         return new Issue(name, count, pos, project.getPath(), notes);
     }
 
-    private void searchBlocks(List<ScBlock> blocks, Scriptable scable, Map<String, List<String>> variableScope) {
+    private void searchBlocks3(List<ScBlock> blocks, Scriptable scable, Map<String, List<String>> variableScope) {
         if (blocks != null) {
             for (ScBlock block : blocks) {
-                if (block.getContent().replace("\"", "").contains("readVariable")) {
+                if (block.getFields() != null && block.getFields().containsKey(Identifier.FIELD_VARIABLE.getValue())) {
+                    String var = block.getFields().get(Identifier.FIELD_VARIABLE.getValue()).get(0);
+                    if (variableScope.containsKey(var)) {
+                        if (!variableScope.get(var).contains(scable.getName())) {
+                            variableScope.get(var).add(scable.getName());
+                        }
+                    } else {
+                        variableScope.put(var, new ArrayList<>());
+                        variableScope.get(var).add(scable.getName());
+                    }
+                }
+                if (block.getNestedBlocks() != null && block.getNestedBlocks().size() > 0) {
+                    searchBlocks3(block.getNestedBlocks(), scable, variableScope);
+                }
+                if (block.getElseBlocks() != null && block.getElseBlocks().size() > 0) {
+                    searchBlocks3(block.getElseBlocks(), scable, variableScope);
+                }
+            }
+        }
+    }
+
+    private void searchBlocks2(List<ScBlock> blocks, Scriptable scable, Map<String, List<String>> variableScope) {
+        if (blocks != null) {
+            for (ScBlock block : blocks) {
+                if (block.getContent().replace("\"", "").contains(Identifier.LEGACY_READ_VAR.getValue())) {
                     String[] splits = block.getContent().split(",");
-                    List<String> vars = new ArrayList<>();
                     int count = 0;
                     for (String s : splits) {
-                        if (s.contains("readVariable")) {
+                        if (s.contains(Identifier.LEGACY_READ_VAR.getValue())) {
                             try {
                                 String split = splits[count + 1].replace("\"", "").split("]")[0];
                                 if (variableScope.containsKey(split)) {
@@ -77,9 +106,10 @@ public class UnusedVariable implements IssueFinder {
                         }
                         count++;
                     }
-                } else if (block.getContent().replace("\"", "").contains("changeVar") ||
-                        block.getContent().replace("\"", "").contains("setVar")) {
-                    String[] splits = block.getContent().replace("\"setVar:to:\"\"", "").replace("\"changeVar:by:\"\"", "").split("\"");
+                } else if (block.getContent().contains(Identifier.LEGACY_CHANGE_VAR.getValue()) ||
+                        block.getContent().contains(Identifier.LEGACY_SETVAR.getValue())) {
+                    String[] splits = block.getContent().replace(Identifier.LEGACY_SETVAR.getValue(), "")
+                            .replace(Identifier.LEGACY_CHANGE_VAR.getValue(), "").split("\"");
                     try {
                         String split = splits[0];
                         if (variableScope.containsKey(split)) {
@@ -95,10 +125,10 @@ public class UnusedVariable implements IssueFinder {
                     }
                 }
                 if (block.getNestedBlocks() != null && block.getNestedBlocks().size() > 0) {
-                    searchBlocks(block.getNestedBlocks(), scable, variableScope);
+                    searchBlocks2(block.getNestedBlocks(), scable, variableScope);
                 }
                 if (block.getElseBlocks() != null && block.getElseBlocks().size() > 0) {
-                    searchBlocks(block.getElseBlocks(), scable, variableScope);
+                    searchBlocks2(block.getElseBlocks(), scable, variableScope);
                 }
             }
         }

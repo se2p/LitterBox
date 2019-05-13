@@ -1,11 +1,11 @@
-package scratch2.structure;
+package scratch.structure;
 
-import scratch2.data.*;
+import com.fasterxml.jackson.databind.JsonNode;
+import scratch.data.*;
 import utils.JsonParser;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 /**
  * A scriptable object displayed on the project stage.
@@ -17,7 +17,6 @@ public class Sprite extends Scriptable {
     private double rotation;
     private String rotationStyle;
     private int size;
-    private boolean isVisible;
 
     /**
      * @param name          Name of Sprite
@@ -32,24 +31,22 @@ public class Sprite extends Scriptable {
      * @param rotation      Rotation of Sprite
      * @param rotationStyle RotationStyle
      * @param size          Scale of Sprite
-     * @param isVisible     Visibility of Sprite
      */
     public Sprite(String name, List<Script> scripts, List<Comment> comments, List<ScVariable> variables,
-                  List<ScList> lists, List<Costume> costumes, List<Sound> sounds, int initCostume,
-                  double[] position, double rotation, String rotationStyle, int size, boolean isVisible) {
-        super(name, scripts, comments, variables, lists, costumes, sounds, initCostume);
+                  List<ScList> lists, List<Costume> costumes, List<Sound> sounds, int initCostume, JsonNode blockStack,
+                  double[] position, double rotation, String rotationStyle, int size) {
+        super(name, scripts, comments, variables, lists, costumes, sounds, initCostume, blockStack);
         this.position = position;
         this.rotation = rotation;
         this.rotationStyle = rotationStyle;
         this.size = size;
-        this.isVisible = isVisible;
     }
 
     @Override
     public String toString() {
         return ("---------------------" + "\n") +
                 "Name: " + this.getName() + "\n" +
-                JsonParser.prettyPrintScript(this.getScripts()) + "\n" +
+                JsonParser.prettyPrintScript3(this.getScripts()) + "\n" +
                 "Comments: " + this.getComments() + "\n" +
                 "Variables: " + this.getVariables() + "\n" +
                 "Lists: " + this.getLists() + "\n" +
@@ -60,7 +57,6 @@ public class Sprite extends Scriptable {
                 "Rotation: " + this.getRotation() + "\n" +
                 "RotationStyle: " + this.getRotationStyle() + "\n" +
                 "Scale: " + this.getSize() + "\n" +
-                "Visibility: " + this.isVisible() + "\n" +
                 "---------------------";
     }
 
@@ -96,11 +92,4 @@ public class Sprite extends Scriptable {
         this.size = size;
     }
 
-    public boolean isVisible() {
-        return isVisible;
-    }
-
-    public void setVisible(boolean visible) {
-        isVisible = visible;
-    }
 }

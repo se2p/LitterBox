@@ -2,9 +2,11 @@ package analytics.finder;
 
 import analytics.Issue;
 import analytics.IssueFinder;
-import scratch2.data.Script;
-import scratch2.structure.Project;
-import scratch2.structure.Scriptable;
+import scratch.data.Script;
+import scratch.structure.Project;
+import scratch.structure.Scriptable;
+import utils.Identifier;
+import utils.Version;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +22,15 @@ public class GlobalStartingPoint implements IssueFinder {
 
     @Override
     public Issue check(Project project) {
+        if (project.getVersion().equals(Version.SCRATCH2)) {
+            return runCheck(project, Identifier.LEGACY_GREEN_FLAG.getValue());
+        } else if (project.getVersion().equals(Version.SCRATCH3)) {
+            return runCheck(project, Identifier.GREEN_FLAG.getValue());
+        }
+        return null;
+    }
+
+    private Issue runCheck(Project project, String idf) {
         List<Scriptable> scriptables = new ArrayList<>();
         scriptables.add(project.getStage());
         scriptables.addAll(project.getSprites());
@@ -29,7 +40,7 @@ public class GlobalStartingPoint implements IssueFinder {
         for (Scriptable scable : scriptables) {
             for (Script script : scable.getScripts()) {
                 if (script != null) {
-                    if (script.getBlocks().size() > 1 && script.getBlocks().get(0).getContent().replace("\"", "").startsWith("whenGreenFlag")) {
+                    if (script.getBlocks().size() > 1 && script.getBlocks().get(0).getContent().startsWith(idf)) {
                         hasGreenFlag = true;
                         break;
                     }

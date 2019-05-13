@@ -1,4 +1,4 @@
-package scratch2.data;
+package scratch.data;
 
 import java.util.Arrays;
 import java.util.List;

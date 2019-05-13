@@ -1,8 +1,8 @@
 package utils.deserializer.scratch2;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import scratch2.data.*;
-import scratch2.structure.Stage;
+import scratch.data.*;
+import scratch.structure.Stage;
 
 import java.util.List;
 
@@ -27,6 +27,6 @@ public class StageDeserializer {
         List<Sound> sounds = SoundDeserializer.deserialize(rootNode);
         int initCostume = rootNode.get("currentCostumeIndex").asInt();
 
-        return new Stage(name, scripts, comments, variables, lists, costumes, sounds, initCostume);
+        return new Stage(name, scripts, comments, variables, lists, costumes, sounds, initCostume, rootNode);
     }
 }

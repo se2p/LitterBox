@@ -2,10 +2,12 @@ package analytics.finder;
 
 import analytics.Issue;
 import analytics.IssueFinder;
-import scratch2.data.ScBlock;
-import scratch2.data.Script;
-import scratch2.structure.Project;
-import scratch2.structure.Scriptable;
+import scratch.data.ScBlock;
+import scratch.data.Script;
+import scratch.structure.Scriptable;
+import scratch.structure.Project;
+import utils.Identifier;
+import utils.Version;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -21,15 +23,20 @@ public class MiddleMan implements IssueFinder {
         List<Scriptable> scriptables = new ArrayList<>();
         scriptables.add(project.getStage());
         scriptables.addAll(project.getSprites());
-        int count = 0;
+        int count;
         List<String> pos = new ArrayList<>();
         for (Scriptable scable : scriptables) {
             for (Script script : scable.getScripts()) {
                 if (script != null) {
                     if (script.getBlocks().size() > 1) {
-                        String x = "whenIReceive";
-                        if (script.getBlocks().size() > 0 && script.getBlocks().get(0).getContent().replace("\"", "").startsWith(x)) {
-                            searchBlocks(script.getBlocks(), scable, script, pos);
+                        if (project.getVersion().equals(Version.SCRATCH2)) {
+                            if (script.getBlocks().size() > 0 && script.getBlocks().get(0).getContent().startsWith(Identifier.LEGACY_RECEIVE.getValue())) {
+                                searchBlocks(script.getBlocks(), scable, script, pos);
+                            }
+                        } else if (project.getVersion().equals(Version.SCRATCH3)) {
+                            if (script.getBlocks().size() > 0 && script.getBlocks().get(0).getContent().startsWith(Identifier.RECEIVE.getValue())) {
+                                searchBlocks3(script.getBlocks(), scable, script, pos);
+                            }
                         }
                     }
                 }
@@ -46,10 +53,29 @@ public class MiddleMan implements IssueFinder {
         return new Issue(name, count, pos, project.getPath(), notes);
     }
 
+    private void searchBlocks3(List<ScBlock> blocks, Scriptable scable, Script script, List<String> pos) {
+        if (blocks != null) {
+            for (ScBlock block : blocks) {
+                if (block.getContent().startsWith(Identifier.BROADCAST.getValue())
+                        || block.getContent().startsWith(Identifier.BROADCAST_WAIT.getValue())) {
+                    pos.add(scable.getName() + " at " + Arrays.toString(script.getPosition()));
+                }
+                if (block.getNestedBlocks() != null && block.getNestedBlocks().size() > 0) {
+                    searchBlocks3(block.getNestedBlocks(), scable, script, pos);
+                }
+                if (block.getElseBlocks() != null && block.getElseBlocks().size() > 0) {
+                    searchBlocks3(block.getElseBlocks(), scable, script, pos);
+                }
+            }
+        }
+    }
+
+
     private void searchBlocks(List<ScBlock> blocks, Scriptable scable, Script script, List<String> pos) {
         if (blocks != null) {
             for (ScBlock block : blocks) {
-                if (block.getContent().replace("\"", "").startsWith("broadcast:") || block.getContent().replace("\"", "").startsWith("doBroadcastAndWait")) {
+                if (block.getContent().startsWith(Identifier.LEGACY_BROADCAST.getValue())
+                        || block.getContent().startsWith(Identifier.LEGACY_BROADCAST_WAIT.getValue())) {
                     pos.add(scable.getName() + " at " + Arrays.toString(script.getPosition()));
                 }
                 if (block.getNestedBlocks() != null && block.getNestedBlocks().size() > 0) {

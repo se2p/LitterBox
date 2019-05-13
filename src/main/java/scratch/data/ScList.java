@@ -1,4 +1,4 @@
-package scratch2.data;
+package scratch.data;
 
 import java.util.Arrays;
 import java.util.List;
@@ -8,6 +8,7 @@ import java.util.List;
  */
 public class ScList {
 
+    private String id;
     private String name;
     private List<String> content;
     private int[] position;
@@ -15,12 +16,20 @@ public class ScList {
 
     @Override
     public String toString() {
-        return "ScList{" +
-                "name='" + name + '\'' +
+        return "ScList{ " + id +
+                " name='" + name + '\'' +
                 ", content=" + content +
                 ", position=" + Arrays.toString(position) +
                 ", visible=" + visible +
                 '}';
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getName() {

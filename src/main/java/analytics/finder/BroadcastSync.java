@@ -2,14 +2,14 @@ package analytics.finder;
 
 import analytics.Issue;
 import analytics.IssueFinder;
-import scratch2.data.ScBlock;
-import scratch2.data.Script;
-import scratch2.structure.Project;
-import scratch2.structure.Scriptable;
+import scratch.data.ScBlock;
+import scratch.data.Script;
+import scratch.structure.Project;
+import scratch.structure.Scriptable;
+import utils.Identifier;
+import utils.Version;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -22,7 +22,7 @@ public class BroadcastSync implements IssueFinder {
         List<Scriptable> scriptables = new ArrayList<>();
         scriptables.add(project.getStage());
         scriptables.addAll(project.getSprites());
-        int count = 0;
+        int count;
         List<String> pos = new ArrayList<>();
         List<String> broadcasts = new ArrayList<>();
         List<String> receive = new ArrayList<>();
@@ -30,8 +30,13 @@ public class BroadcastSync implements IssueFinder {
             for (Script script : scable.getScripts()) {
                 if (script != null) {
                     if (script.getBlocks().size() > 1) {
-                        searchBlocks(script.getBlocks(), broadcasts);
-                        searchBlocksFirst(script.getBlocks(), receive);
+                        if (project.getVersion().equals(Version.SCRATCH2)) {
+                            searchBlocks(script.getBlocks(), broadcasts);
+                            searchBlocksFirst(script.getBlocks(), receive);
+                        } else if (project.getVersion().equals(Version.SCRATCH3)) {
+                            searchBlocks3(script.getBlocks(), broadcasts);
+                            searchBlocksFirst3(script.getBlocks(), receive);
+                        }
                     }
                 }
             }
@@ -70,8 +75,32 @@ public class BroadcastSync implements IssueFinder {
         return new Issue(name, count, pos, project.getPath(), notes);
     }
 
+    private void searchBlocksFirst3(List<ScBlock> blocks, List<String> receive) {
+        if (blocks.size() > 0 && blocks.get(0).getContent().startsWith(Identifier.RECEIVE.getValue())) {
+            String content = blocks.get(0).getFields().get(Identifier.FIELD_RECEIVE.getValue()).get(0);
+            receive.add(content);
+        }
+    }
+
+    private void searchBlocks3(List<ScBlock> blocks, List<String> broadcasts) {
+        for (ScBlock b : blocks) {
+            if (b.getContent().startsWith(Identifier.BROADCAST.getValue()) || b.getContent().startsWith(Identifier.BROADCAST_WAIT.getValue())) {
+                String content = b.getInputs().get(Identifier.FIELD_BROADCAST.getValue()).get(2);
+                if (!broadcasts.contains(content)) {
+                    broadcasts.add(content);
+                }
+            }
+            if (b.getNestedBlocks() != null && b.getNestedBlocks().size() > 0) {
+                searchBlocks3(b.getNestedBlocks(), broadcasts);
+            }
+            if (b.getElseBlocks() != null && b.getElseBlocks().size() > 0) {
+                searchBlocks3(b.getElseBlocks(), broadcasts);
+            }
+        }
+    }
+
     private void searchBlocksFirst(List<ScBlock> blocks, List<String> list) {
-        String x = "whenIReceive";
+        String x = Identifier.LEGACY_RECEIVE.getValue();
         if (blocks.size() > 0 && blocks.get(0).getContent().replace("\"", "").startsWith(x)) {
             String content = blocks.get(0).getContent().replace("\"", "").replace(x, "");
             list.add(content);
@@ -79,7 +108,7 @@ public class BroadcastSync implements IssueFinder {
     }
 
     private void searchBlocks(List<ScBlock> blocks, List<String> list) {
-        String x = "broadcast:";
+        String x = Identifier.LEGACY_BROADCAST.getValue();
         for (ScBlock b : blocks) {
             if (b.getContent().replace("\"", "").startsWith(x)) {
                 String content = b.getContent().replace("\"", "").replace(x, "");

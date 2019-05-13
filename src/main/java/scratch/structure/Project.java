@@ -1,4 +1,7 @@
-package scratch2.structure;
+package scratch.structure;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import utils.Version;
 
 import java.util.List;
 
@@ -12,6 +15,7 @@ public class Project {
     private String filenameExtension;
     private Stage stage;
     private List<Sprite> sprites;
+    private Version version;
 
     /**
      * The default Constructor, which creates the whole Project object
@@ -40,6 +44,7 @@ public class Project {
         sb.append("Name: ").append(this.getName()).append("\n");
         sb.append("Path: ").append(this.getPath()).append("\n");
         sb.append("Extension: ").append(this.getFilenameExtension()).append("\n");
+        sb.append("Version: ").append(this.getVersion().toString()).append("\n");
         sb.append(stage.toString()).append("\n");
         if (sprites != null) {
             for (Sprite s : sprites) {
@@ -48,6 +53,14 @@ public class Project {
         }
         sb.append("~~~~~~~~~~~~~~~~~~~~~");
         return sb.toString();
+    }
+
+    public Version getVersion() {
+        return version;
+    }
+
+    public void setVersion(Version version) {
+        this.version = version;
     }
 
     public String getName() {

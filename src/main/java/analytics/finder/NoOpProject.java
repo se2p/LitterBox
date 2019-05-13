@@ -2,13 +2,13 @@ package analytics.finder;
 
 import analytics.Issue;
 import analytics.IssueFinder;
-import scratch2.data.ScBlock;
-import scratch2.data.Script;
-import scratch2.structure.Project;
-import scratch2.structure.Scriptable;
+import scratch.data.ScBlock;
+import scratch.data.Script;
+import scratch.structure.Scriptable;
+import scratch.structure.Project;
+import utils.Identifier;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -16,10 +16,12 @@ import java.util.List;
  */
 public class NoOpProject implements IssueFinder {
 
-    private String[] operations = {"forward:", "turnLeft", "turnRight", "heading:", "pointTowards:", "turnAwayFromEdge", "comeToFront",
-            "gotoSpriteOrMouse:", "gotoX", "glideSecs", "change", "xpos:", "ypos:", "setRotationStyle", "say", "think",
-            "show", "hide", "hideAll", "lookLike", "startScene", "goBackByLayers", "doPlaySoundAndWait", "drum",
-            "noteOn", "playDrum", "playSound", "set", "putPenDown"};
+    private String[] operations = {Identifier.MOTION.getValue(), Identifier.LOOKS.getValue(), Identifier.SOUND.getValue(),
+            Identifier.LEGACY_FORWARD.getValue(), Identifier.LEGACY_TURN.getValue(), Identifier.LEGACY_HEADING.getValue(),
+            Identifier.LEGACY_POINT.getValue(), Identifier.LEGACY_FRONT.getValue(), Identifier.LEGACY_GO.getValue(),
+            Identifier.LEGACY_GLIDE.getValue(), Identifier.LEGACY_CHANGE.getValue(), Identifier.LEGACY_SAY.getValue(),
+            Identifier.LEGACY_THINK.getValue(), Identifier.LEGACY_HIDE.getValue(), Identifier.LEGACY_SHOW.getValue(),
+            Identifier.LEGACY_PLAY_WAIT.getValue(), Identifier.LEGACY_DRUM.getValue(), Identifier.LEGACY_PLAY.getValue()};
 
     @Override
     public Issue check(Project project) {
@@ -50,7 +52,7 @@ public class NoOpProject implements IssueFinder {
     private boolean searchBlocks(List<ScBlock> blocks) {
         for (ScBlock b : blocks) {
             for (String str : operations) {
-                if (b.getContent().replace("\"", "").startsWith(str)) {
+                if (b.getContent().replace("\"", "").startsWith(str.replace("\"", ""))) {
                     return true;
                 }
             }

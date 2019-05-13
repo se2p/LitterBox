@@ -1,6 +1,6 @@
 package analytics;
 
-import scratch2.structure.Project;
+import scratch.structure.Project;
 
 /**
  * Interface for all IssueFinders
@@ -13,4 +13,5 @@ public interface IssueFinder {
      */
 
     Issue check(Project project);
+
 }

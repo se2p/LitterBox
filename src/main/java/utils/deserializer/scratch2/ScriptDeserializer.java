@@ -1,8 +1,8 @@
 package utils.deserializer.scratch2;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import scratch2.data.ScBlock;
-import scratch2.data.Script;
+import scratch.data.ScBlock;
+import scratch.data.Script;
 
 import java.util.ArrayList;
 import java.util.Iterator;

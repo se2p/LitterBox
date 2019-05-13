@@ -1,4 +1,4 @@
-package utils.deserializer.scratch2;
+package utils.deserializer.scratch3;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import scratch.data.Sound;
@@ -7,11 +7,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-/**
- * More information about the JSON Scratch 2 file format and its JSON arrays and nodes:
- * https://en.scratch-wiki.info/wiki/Scratch_File_Format
- */
-class SoundDeserializer {
+class SoundDeserializer3 {
 
     /**
      * Deserialize the JSON String and creating a List<Sound> with Sound objects
@@ -21,14 +17,15 @@ class SoundDeserializer {
      */
 
     static List<Sound> deserialize(JsonNode rootNode) {
-        JsonNode globalVariables = rootNode.path("sounds");
-        Iterator<JsonNode> elements = globalVariables.elements();
+        JsonNode globalSounds = rootNode.path("sounds");
+        Iterator<JsonNode> elements = globalSounds.elements();
         List<Sound> sounds = new ArrayList<>();
         while (elements.hasNext()) {
-            JsonNode variable = elements.next();
+            JsonNode sound = elements.next();
             Sound scSound = new Sound();
-            scSound.setName(variable.get("soundName").asText());
-            scSound.setAssetId(variable.get("soundID").asText());
+            scSound.setName(sound.get("name").asText());
+            scSound.setAssetId(sound.get("assetId").asText());
+            scSound.setDataFormat(sound.get("dataFormat").asText());
             sounds.add(scSound);
         }
         return sounds;

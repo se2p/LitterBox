@@ -2,10 +2,10 @@ package analytics.finder;
 
 import analytics.Issue;
 import analytics.IssueFinder;
-import scratch2.data.ScBlock;
-import scratch2.data.Script;
-import scratch2.structure.Project;
-import scratch2.structure.Scriptable;
+import scratch.data.ScBlock;
+import scratch.data.Script;
+import scratch.structure.Scriptable;
+import scratch.structure.Project;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -21,14 +21,14 @@ public class LongScript implements IssueFinder {
         List<Scriptable> scriptables = new ArrayList<>();
         scriptables.add(project.getStage());
         scriptables.addAll(project.getSprites());
-        int count = 0;
+        int count;
         List<String> pos = new ArrayList<>();
         for (Scriptable scable : scriptables) {
             for (Script script : scable.getScripts()) {
                 if (script != null) {
                     if (script.getBlocks().size() > 1) {
                         int localCount = searchBlocks(script.getBlocks(), 0);
-                        if (localCount > 12) {
+                        if (localCount >= 12) {
                             pos.add(scable.getName() + " at " + Arrays.toString(script.getPosition()));
                         }
                     }
@@ -44,6 +44,7 @@ public class LongScript implements IssueFinder {
         String name = "long_script";
         return new Issue(name, count, pos, project.getPath(), notes);
     }
+
 
     private int searchBlocks(List<ScBlock> blocks, int count) {
         for (ScBlock b : blocks) {

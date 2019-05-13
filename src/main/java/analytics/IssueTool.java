@@ -2,7 +2,7 @@ package analytics;
 
 import analytics.finder.*;
 import org.apache.commons.csv.CSVPrinter;
-import scratch2.structure.Project;
+import scratch.structure.Project;
 import utils.CSVWriter;
 
 import java.io.IOException;
@@ -47,6 +47,20 @@ public class IssueTool {
     }
 
     /**
+     * Executes all checks. Only creates console output for a single project.
+     *
+     * @param project the project to check
+     */
+    public void checkRaw(Project project) {
+        for (IssueFinder iF : finder) {
+            if (project != null) {
+                Issue issue = iF.check(project);
+                System.out.println(issue);
+            }
+        }
+    }
+
+    /**
      * Executes all checks
      *
      * @param project the project to check
@@ -67,4 +81,5 @@ public class IssueTool {
             e.printStackTrace();
         }
     }
+
 }

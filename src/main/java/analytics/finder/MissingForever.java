@@ -2,10 +2,12 @@ package analytics.finder;
 
 import analytics.Issue;
 import analytics.IssueFinder;
-import scratch2.data.ScBlock;
-import scratch2.data.Script;
-import scratch2.structure.Project;
-import scratch2.structure.Scriptable;
+import scratch.data.ScBlock;
+import scratch.data.Script;
+import scratch.structure.Scriptable;
+import scratch.structure.Project;
+import utils.Identifier;
+import utils.Version;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -16,8 +18,6 @@ import java.util.List;
  */
 public class MissingForever implements IssueFinder {
 
-    private String name = "missing_forever_loop";
-
     @Override
     public Issue check(Project project) {
         List<Scriptable> scriptables = new ArrayList<>();
@@ -27,12 +27,16 @@ public class MissingForever implements IssueFinder {
         for (Scriptable scable : scriptables) {
             for (Script script : scable.getScripts()) {
                 if (script != null) {
-                    if (script.getBlocks().size() > 1 && script.getBlocks().get(0).getContent().replace("\"", "").startsWith("whenGreenFlag")) {
-                        for (ScBlock b : script.getBlocks()) {
-                            if (b.getContent().replace("\"", "").startsWith("doIf[touching:") ||
-                                    b.getContent().replace("\"", "").startsWith("doIf[touchingColor:") ||
-                                    b.getContent().replace("\"", "").startsWith("doIf[keyPressed:")) {
-                                pos.add(scable.getName() + " at " + Arrays.toString(script.getPosition()));
+                    if (project.getVersion().equals(Version.SCRATCH2)) {
+                        if (script.getBlocks().size() > 1 && script.getBlocks().get(0).getContent().startsWith(Identifier.LEGACY_GREEN_FLAG.getValue())) {
+                            for (ScBlock b : script.getBlocks()) {
+                                checkMovement(pos, scable, script, b);
+                            }
+                        }
+                    } else if (project.getVersion().equals(Version.SCRATCH3)) {
+                        if (script.getBlocks().size() > 1 && script.getBlocks().get(0).getContent().startsWith(Identifier.GREEN_FLAG.getValue())) {
+                            for (ScBlock b : script.getBlocks()) {
+                                checkMovement3(pos, scable, script, b);
                             }
                         }
                     }
@@ -40,11 +44,30 @@ public class MissingForever implements IssueFinder {
             }
         }
         String note = "There is no fishy touching or keyPressed checks without a loop.";
-        if (pos.size()> 0) {
+        if (pos.size() > 0) {
             note = "The project contains some fishy touching and / or keyPressed checks without a loop.";
 
         }
+        String name = "missing_forever_loop";
         return new Issue(name, pos.size(), pos, project.getPath(), note);
     }
+
+    private void checkMovement3(List<String> pos, Scriptable scable, Script script, ScBlock b) {
+        if (b.getContent().startsWith(Identifier.IF.getValue())) {
+            if (b.getCondition().startsWith(Identifier.SENSE_KEYPRESS.getValue())
+                    || b.getCondition().startsWith(Identifier.SENSE_TOUCHING.getValue())) {
+                pos.add(scable.getName() + " at " + Arrays.toString(script.getPosition()));
+            }
+        }
+    }
+
+    private void checkMovement(List<String> pos, Scriptable scable, Script script, ScBlock b) {
+        if (b.getContent().startsWith(Identifier.LEGACY_IF_TOUCHING.getValue()) ||
+                b.getContent().startsWith(Identifier.LEGACY_IF_COLOR.getValue()) ||
+                b.getContent().startsWith(Identifier.LEGACY_IF_KEY.getValue())) {
+            pos.add(scable.getName() + " at " + Arrays.toString(script.getPosition()));
+        }
+    }
+
 
 }

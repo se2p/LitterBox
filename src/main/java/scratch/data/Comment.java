@@ -1,4 +1,4 @@
-package scratch2.data;
+package scratch.data;
 
 import java.util.Arrays;
 
@@ -8,14 +8,24 @@ import java.util.Arrays;
 public class Comment {
 
     private double[] position;
+    private String id;
     private String content;
 
     @Override
     public String toString() {
-        return "Comment{" +
-                "position=" + Arrays.toString(position) +
+        return "Comment{ " +
+                id +
+                " position=" + Arrays.toString(position) +
                 ", content='" + content + '\'' +
                 '}';
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public double[] getPosition() {

@@ -2,10 +2,12 @@ package analytics.finder;
 
 import analytics.Issue;
 import analytics.IssueFinder;
-import scratch2.data.ScBlock;
-import scratch2.data.Script;
-import scratch2.structure.Project;
-import scratch2.structure.Sprite;
+import scratch.data.ScBlock;
+import scratch.data.Script;
+import scratch.structure.Project;
+import scratch.structure.Sprite;
+import utils.Identifier;
+import utils.Version;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -24,15 +26,20 @@ public class LaggyMovement implements IssueFinder {
         for (Sprite sprite : sprites) {
             for (Script script : sprite.getScripts()) {
                 if (script != null) {
-                    if (script.getBlocks().size() > 1 && script.getBlocks().get(0).getContent().replace("\"", "").startsWith("whenKeyPressed")) {
-                        for (ScBlock b : script.getBlocks()) {
-                            if (b.getContent().replace("\"", "").startsWith("forward:")
-                                    || b.getContent().replace("\"", "").startsWith("changeXposBy:")
-                                    || b.getContent().replace("\"", "").startsWith("changeYposBy:")) {
-                                pos.add(sprite.getName() + " at " + Arrays.toString(sprite.getPosition()));
-                                count++;
-                            }
-                        }
+                    if (project.getVersion().equals(Version.SCRATCH2)) {
+                        List<String> idfs = new ArrayList<>();
+                        idfs.add(Identifier.LEGACY_KEYPRESS.getValue());
+                        idfs.add(Identifier.LEGACY_FORWARD.getValue());
+                        idfs.add(Identifier.LEGACY_CHANGEX.getValue());
+                        idfs.add(Identifier.LEGACY_CHANGEY.getValue());
+                        count = getCount(count, pos, sprite, script, idfs);
+                    } else if (project.getVersion().equals(Version.SCRATCH3)) {
+                        List<String> idfs = new ArrayList<>();
+                        idfs.add(Identifier.KEYPRESS.getValue());
+                        idfs.add(Identifier.FORWARD.getValue());
+                        idfs.add(Identifier.CHANGE_X.getValue());
+                        idfs.add(Identifier.CHANGE_Y.getValue());
+                        count = getCount(count, pos, sprite, script, idfs);
                     }
                 }
             }
@@ -45,4 +52,19 @@ public class LaggyMovement implements IssueFinder {
         String name = "laggy_movement";
         return new Issue(name, count, pos, project.getPath(), notes);
     }
+
+    private int getCount(int count, List<String> pos, Sprite sprite, Script script, List<String> idfs) {
+        if (script.getBlocks().size() > 1 && script.getBlocks().get(0).getContent().startsWith(idfs.get(0))) {
+            for (ScBlock b : script.getBlocks()) {
+                if (b.getContent().startsWith(idfs.get(1))
+                        || b.getContent().startsWith(idfs.get(2))
+                        || b.getContent().startsWith(idfs.get(3))) {
+                    pos.add(sprite.getName() + " at " + Arrays.toString(sprite.getPosition()));
+                    count++;
+                }
+            }
+        }
+        return count;
+    }
+
 }

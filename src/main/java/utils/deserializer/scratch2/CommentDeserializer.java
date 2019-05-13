@@ -1,7 +1,7 @@
 package utils.deserializer.scratch2;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import scratch2.data.Comment;
+import scratch.data.Comment;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -22,7 +22,7 @@ class CommentDeserializer {
     static List<Comment> deserialize(JsonNode rootNode) {
         JsonNode globalComments = rootNode.path("scriptComments");
         Iterator<JsonNode> elements = globalComments.elements();
-        List<Comment> comments = new ArrayList<Comment>();
+        List<Comment> comments = new ArrayList<>();
         while (elements.hasNext()) {
             JsonNode c = elements.next();
             List<String> comm = new ArrayList<>();

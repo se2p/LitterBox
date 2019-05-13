@@ -3,9 +3,10 @@ package utils;
 import analytics.Issue;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
-import scratch2.structure.Project;
+import scratch.structure.Project;
 
-import java.io.*;
+import java.io.BufferedWriter;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -18,8 +19,9 @@ public class CSVWriter {
 
     /**
      * Adds data to an existing CSVPrinter
-     *
+     * <p>
      * TODO: [Improvement] Create a check name ENUM with all check names for easy expandability when creating new checks instead of extending the csv heads manually
+     *
      * @param csvPrinter the CSVPrinter to add the information
      * @param project    the project with the information
      * @param issues     all the issues found in the project
@@ -49,6 +51,7 @@ public class CSVWriter {
     /**
      * Creates a new CSVPrinter with the correct head of all implemented issue names
      * TODO: [Improvement] Create a check name ENUM with all check names for easy expandability when creating new checks instead of extending the csv heads manually
+     *
      * @return a new CSVPrinter
      * @throws IOException corrupt file path
      */

@@ -2,9 +2,10 @@ package analytics.finder;
 
 import analytics.Issue;
 import analytics.IssueFinder;
-import scratch2.data.Script;
-import scratch2.structure.Project;
-import scratch2.structure.Scriptable;
+import scratch.data.Script;
+import scratch.structure.Scriptable;
+import scratch.structure.Project;
+import utils.Identifier;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,13 +23,20 @@ public class StartingPoint implements IssueFinder {
     public StartingPoint() {
 
         name = "sprite_starting_point";
-        headBlocks.add("whenClicked");
-        headBlocks.add("whenCloned");
-        headBlocks.add("whenGreenFlag");
-        headBlocks.add("whenIReceive");
-        headBlocks.add("whenKeyPressed");
-        headBlocks.add("whenSceneStarts");
-        headBlocks.add("whenSensorGreaterThan");
+        headBlocks.add(Identifier.LEGACY_THIS_CLICKED.getValue());
+        headBlocks.add(Identifier.THIS_CLICKED.getValue());
+        headBlocks.add(Identifier.LEGACY_START_CLONE.getValue());
+        headBlocks.add(Identifier.START_CLONE.getValue());
+        headBlocks.add(Identifier.LEGACY_GREEN_FLAG.getValue());
+        headBlocks.add(Identifier.GREEN_FLAG.getValue());
+        headBlocks.add(Identifier.LEGACY_RECEIVE.getValue());
+        headBlocks.add(Identifier.RECEIVE.getValue());
+        headBlocks.add(Identifier.LEGACY_KEYPRESS.getValue());
+        headBlocks.add(Identifier.KEYPRESS.getValue());
+        headBlocks.add(Identifier.LEGACY_BACKDROP.getValue());
+        headBlocks.add(Identifier.BACKDROP.getValue());
+        headBlocks.add(Identifier.LEGACY_GREATER_THAN.getValue());
+        headBlocks.add(Identifier.GREATER_THAN.getValue());
         note1 = "Every Sprite and Stage is correctly initialized and has a starting point.";
         note2 = "Some of the Sprites are not correctly initialized and have no starting point!";
 
@@ -70,6 +78,7 @@ public class StartingPoint implements IssueFinder {
 
         return new Issue(name, count, pos, project.getPath(), notes);
     }
+
 
     public String getNote1() {
         return note1;

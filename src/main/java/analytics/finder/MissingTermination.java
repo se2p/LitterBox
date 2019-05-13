@@ -2,10 +2,12 @@ package analytics.finder;
 
 import analytics.Issue;
 import analytics.IssueFinder;
-import scratch2.data.ScBlock;
-import scratch2.data.Script;
-import scratch2.structure.Project;
-import scratch2.structure.Scriptable;
+import scratch.data.ScBlock;
+import scratch.data.Script;
+import scratch.structure.Scriptable;
+import scratch.structure.Project;
+import utils.Identifier;
+import utils.Version;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,7 +29,11 @@ public class MissingTermination implements IssueFinder {
             for (Script script : scable.getScripts()) {
                 if (script != null) {
                     if (script.getBlocks().size() > 1) {
-                        searchBlocks(scable, script, script.getBlocks(), pos);
+                        if (project.getVersion().equals(Version.SCRATCH2)) {
+                            searchBlocks(scable, script, script.getBlocks(), pos);
+                        } else if (project.getVersion().equals(Version.SCRATCH3)) {
+                            searchBlocks3(scable, script, script.getBlocks(), pos);
+                        }
                     }
                 }
             }
@@ -42,9 +48,24 @@ public class MissingTermination implements IssueFinder {
         return new Issue(name, count, pos, project.getPath(), notes);
     }
 
+    private void searchBlocks3(Scriptable scable, Script sc, List<ScBlock> blocks, List<String> pos) {
+        for (ScBlock b : blocks) {
+            if (b.getContent().startsWith(Identifier.REPEAT_UNTIL.getValue()) && b.getCondition() == null) {
+                pos.add(scable.getName() + " at " + Arrays.toString(sc.getPosition()));
+            }
+            if (b.getNestedBlocks() != null && b.getNestedBlocks().size() > 0) {
+                searchBlocks3(scable, sc, b.getNestedBlocks(), pos);
+            }
+            if (b.getElseBlocks() != null && b.getElseBlocks().size() > 0) {
+                searchBlocks3(scable, sc, b.getElseBlocks(), pos);
+            }
+        }
+    }
+
+
     private void searchBlocks(Scriptable scable, Script sc, List<ScBlock> blocks, List<String> pos) {
         for (ScBlock b : blocks) {
-            if (b.getContent().replace("\"", "").startsWith("doUntilfalse")) {
+            if (b.getContent().startsWith(Identifier.LEGACY_REPEAT_FALSE.getValue())) {
                 pos.add(scable.getName() + " at " + Arrays.toString(sc.getPosition()));
             }
             if (b.getNestedBlocks() != null && b.getNestedBlocks().size() > 0) {

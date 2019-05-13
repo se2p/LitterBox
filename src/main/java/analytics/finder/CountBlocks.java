@@ -2,12 +2,13 @@ package analytics.finder;
 
 import analytics.Issue;
 import analytics.IssueFinder;
-import scratch2.data.ScBlock;
-import scratch2.data.Script;
-import scratch2.structure.Project;
-import scratch2.structure.Scriptable;
+import scratch.data.ScBlock;
+import scratch.data.Script;
+import scratch.structure.Project;
+import scratch.structure.Scriptable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Counts the blocks of a project.

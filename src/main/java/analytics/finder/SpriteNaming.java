@@ -2,12 +2,10 @@ package analytics.finder;
 
 import analytics.Issue;
 import analytics.IssueFinder;
-import scratch2.data.Script;
-import scratch2.structure.Project;
-import scratch2.structure.Scriptable;
+import scratch.structure.Scriptable;
+import scratch.structure.Project;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -46,6 +44,7 @@ public class SpriteNaming implements IssueFinder {
         }
         return new Issue(name, pos.size(), pos, project.getPath(), notes);
     }
+
 
     public String getNote1() {
         return note1;

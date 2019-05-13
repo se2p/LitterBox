@@ -1,9 +1,9 @@
-package scratch2.structure;
+package scratch.structure;
 
-import scratch2.data.*;
+import com.fasterxml.jackson.databind.JsonNode;
+import scratch.data.*;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * Superclass for all scriptable objects (Stage and Sprite)
@@ -18,6 +18,7 @@ public class Scriptable {
     private List<Costume> costumes;
     private List<Sound> sounds;
     private int initCostume;
+    private JsonNode blockStack;
 
     /**
      * @param scripts      List containing Scripts
@@ -29,7 +30,7 @@ public class Scriptable {
      * @param initCostume  The current selected Costume
      */
     public Scriptable(String name, List<Script> scripts, List<Comment> comments, List<ScVariable> variables,
-                      List<ScList> lists, List<Costume> costumes, List<Sound> sounds, int initCostume) {
+                      List<ScList> lists, List<Costume> costumes, List<Sound> sounds, int initCostume, JsonNode blockStack) {
         this.name = name;
         this.scripts = scripts;
         this.comments = comments;
@@ -38,6 +39,15 @@ public class Scriptable {
         this.costumes = costumes;
         this.sounds = sounds;
         this.initCostume = initCostume;
+        this.blockStack = blockStack;
+    }
+
+    public JsonNode getBlockStack() {
+        return blockStack;
+    }
+
+    public void setBlockStack(JsonNode blockStack) {
+        this.blockStack = blockStack;
     }
 
     public String getName() {

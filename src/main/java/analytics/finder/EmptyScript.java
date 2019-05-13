@@ -2,9 +2,10 @@ package analytics.finder;
 
 import analytics.Issue;
 import analytics.IssueFinder;
-import scratch2.data.Script;
-import scratch2.structure.Project;
-import scratch2.structure.Scriptable;
+import scratch.data.Script;
+import scratch.structure.Scriptable;
+import scratch.structure.Project;
+import utils.Identifier;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -21,18 +22,24 @@ public class EmptyScript implements IssueFinder {
     private String name;
 
     public EmptyScript() {
-
         name = "empty_script";
-        headBlocks.add("whenClicked");
-        headBlocks.add("whenCloned");
-        headBlocks.add("whenGreenFlag");
-        headBlocks.add("whenIReceive");
-        headBlocks.add("whenKeyPressed");
-        headBlocks.add("whenSceneStarts");
-        headBlocks.add("whenSensorGreaterThan");
+        headBlocks.add(Identifier.LEGACY_THIS_CLICKED.getValue());
+        headBlocks.add(Identifier.THIS_CLICKED.getValue());
+        headBlocks.add(Identifier.LEGACY_START_CLONE.getValue());
+        headBlocks.add(Identifier.START_CLONE.getValue());
+        headBlocks.add(Identifier.LEGACY_GREEN_FLAG.getValue());
+        headBlocks.add(Identifier.GREEN_FLAG.getValue());
+        headBlocks.add(Identifier.LEGACY_RECEIVE.getValue());
+        headBlocks.add(Identifier.RECEIVE.getValue());
+        headBlocks.add(Identifier.LEGACY_KEYPRESS.getValue());
+        headBlocks.add(Identifier.KEYPRESS.getValue());
+        headBlocks.add(Identifier.LEGACY_BACKDROP.getValue());
+        headBlocks.add(Identifier.BACKDROP.getValue());
+        headBlocks.add(Identifier.LEGACY_GREATER_THAN.getValue());
+        headBlocks.add(Identifier.GREATER_THAN.getValue());
+
         note1 = "There are no scripts with empty Body in your Project.";
         note2 = "Some of the Sprites contain scripts with a empty body.";
-
     }
 
     @Override
@@ -58,37 +65,5 @@ public class EmptyScript implements IssueFinder {
         }
 
         return new Issue(name, pos.size(), pos, project.getPath(), notes);
-    }
-
-    public String getNote1() {
-        return note1;
-    }
-
-    public void setNote1(String note1) {
-        this.note1 = note1;
-    }
-
-    public String getNote2() {
-        return note2;
-    }
-
-    public void setNote2(String note2) {
-        this.note2 = note2;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public List<String> getHeadBlocks() {
-        return headBlocks;
-    }
-
-    public void setHeadBlocks(List<String> headBlocks) {
-        this.headBlocks = headBlocks;
     }
 }

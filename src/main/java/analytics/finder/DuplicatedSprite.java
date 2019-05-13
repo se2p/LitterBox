@@ -2,9 +2,9 @@ package analytics.finder;
 
 import analytics.Issue;
 import analytics.IssueFinder;
-import scratch2.data.Script;
-import scratch2.structure.Project;
-import scratch2.structure.Scriptable;
+import scratch.data.Script;
+import scratch.structure.Scriptable;
+import scratch.structure.Project;
 
 import java.util.*;
 
@@ -27,7 +27,7 @@ public class DuplicatedSprite implements IssueFinder {
                 scriptMap.put(scable.getName(), new ArrayList<>());
                 for (Script script : scable.getScripts()) {
                     if (script != null) {
-                        scriptMap.get(scable.getName()).add(script.toString());
+                        scriptMap.get(scable.getName()).add(script.getBlocks().toString());
                     }
                 }
             }
@@ -54,6 +54,7 @@ public class DuplicatedSprite implements IssueFinder {
         return new Issue(name, count, pos, project.getPath(), notes);
     }
 
+
     private boolean equalLists(List<String> one, List<String> two) {
         if (one == null && two == null) {
             return true;
@@ -65,7 +66,6 @@ public class DuplicatedSprite implements IssueFinder {
 
         one = new ArrayList<>(one);
         two = new ArrayList<>(two);
-
         Collections.sort(one);
         Collections.sort(two);
         return one.equals(two);

@@ -1,6 +1,7 @@
-package scratch2.structure;
+package scratch.structure;
 
-import scratch2.data.*;
+import com.fasterxml.jackson.databind.JsonNode;
+import scratch.data.*;
 import utils.JsonParser;
 
 import java.util.List;
@@ -23,15 +24,15 @@ public class Stage extends Scriptable {
      * @param initCostume The current selected Costume
      */
     public Stage(String name, List<Script> scripts, List<Comment> comments, List<ScVariable> variables,
-                 List<ScList> lists, List<Costume> costumes, List<Sound> sounds, int initCostume) {
-        super(name, scripts, comments, variables, lists, costumes, sounds, initCostume);
+                 List<ScList> lists, List<Costume> costumes, List<Sound> sounds, int initCostume, JsonNode blockStack) {
+        super(name, scripts, comments, variables, lists, costumes, sounds, initCostume, blockStack);
     }
 
     @Override
     public String toString() {
         return ("---------------------" + "\n") +
                 "Name: " + this.getName() + "\n" +
-                JsonParser.prettyPrintScript(this.getScripts()) + "\n" +
+                JsonParser.prettyPrintScript3(this.getScripts()) + "\n" +
                 "Comments: " + this.getComments() + "\n" +
                 "Variables: " + this.getVariables() + "\n" +
                 "Lists: " + this.getLists() + "\n" +

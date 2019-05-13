@@ -2,10 +2,12 @@ package analytics.finder;
 
 import analytics.Issue;
 import analytics.IssueFinder;
-import scratch2.data.ScBlock;
-import scratch2.data.Script;
-import scratch2.structure.Project;
-import scratch2.structure.Scriptable;
+import scratch.data.ScBlock;
+import scratch.data.Script;
+import scratch.structure.Scriptable;
+import scratch.structure.Project;
+import utils.Identifier;
+import utils.Version;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -21,13 +23,18 @@ public class DoubleIf implements IssueFinder {
         List<Scriptable> scriptables = new ArrayList<>();
         scriptables.add(project.getStage());
         scriptables.addAll(project.getSprites());
-        int count = 0;
+        int count;
         List<String> pos = new ArrayList<>();
         for (Scriptable scable : scriptables) {
             for (Script script : scable.getScripts()) {
                 if (script != null) {
                     if (script.getBlocks().size() > 1) {
-                        searchBlocks(scable, script, script.getBlocks(), pos);
+                        if (project.getVersion().equals(Version.SCRATCH2)) {
+                            searchBlocks(scable, script, script.getBlocks(), pos);
+                        } else if (project.getVersion().equals(Version.SCRATCH3)) {
+                            searchBlocks3(scable, script, script.getBlocks(), pos);
+                        }
+
                     }
                 }
             }
@@ -42,6 +49,31 @@ public class DoubleIf implements IssueFinder {
         return new Issue(name, count, pos, project.getPath(), notes);
     }
 
+    private void searchBlocks3(Scriptable scable, Script sc, List<ScBlock> blocks, List<String> pos) {
+        String content1 = "";
+        for (ScBlock b : blocks) {
+            if (!content1.equals("")) {
+                if (b.getContent().startsWith(Identifier.IF.getValue())) {
+                    String content2 = b.getCondition();
+                    if (content1.equals(content2)) {
+                        pos.add(scable.getName() + " at " + Arrays.toString(sc.getPosition()));
+                        continue;
+                    }
+                }
+            }
+            if (b.getContent().startsWith(Identifier.IF.getValue())) {
+                content1 = b.getCondition();
+                continue;
+            }
+            if (b.getNestedBlocks() != null && b.getNestedBlocks().size() > 0) {
+                searchBlocks3(scable, sc, b.getNestedBlocks(), pos);
+            }
+            if (b.getElseBlocks() != null && b.getElseBlocks().size() > 0) {
+                searchBlocks3(scable, sc, b.getElseBlocks(), pos);
+            }
+        }
+    }
+
     private void searchBlocks(Scriptable scable, Script sc, List<ScBlock> blocks, List<String> pos) {
         String content1 = "";
         for (ScBlock b : blocks) {
@@ -51,7 +83,7 @@ public class DoubleIf implements IssueFinder {
                     continue;
                 }
             }
-            if (b.getContent().replace("\"", "").startsWith("doIf")) {
+            if (b.getContent().startsWith(Identifier.LEGACY_IF.getValue())) {
                 content1 = b.getContent();
                 continue;
             }
