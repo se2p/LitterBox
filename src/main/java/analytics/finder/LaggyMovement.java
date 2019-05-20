@@ -1,6 +1,6 @@
 package analytics.finder;
 
-import analytics.Issue;
+import analytics.IssueReport;
 import analytics.IssueFinder;
 import scratch.data.ScBlock;
 import scratch.data.Script;
@@ -18,8 +18,10 @@ import java.util.List;
  */
 public class LaggyMovement implements IssueFinder {
 
+    String name = "laggy_movement";
+
     @Override
-    public Issue check(Project project) {
+    public IssueReport check(Project project) {
         List<Sprite> sprites = project.getSprites();
         int count = 0;
         List<String> pos = new ArrayList<>();
@@ -49,8 +51,7 @@ public class LaggyMovement implements IssueFinder {
             notes = "Some of your user input movement scripts are laggy. Try using a forever loop!";
         }
 
-        String name = "laggy_movement";
-        return new Issue(name, count, pos, project.getPath(), notes);
+        return new IssueReport(name, count, pos, project.getPath(), notes);
     }
 
     private int getCount(int count, List<String> pos, Sprite sprite, Script script, List<String> idfs) {
@@ -67,4 +68,8 @@ public class LaggyMovement implements IssueFinder {
         return count;
     }
 
+    @Override
+    public String getName() {
+        return name;
+    }
 }

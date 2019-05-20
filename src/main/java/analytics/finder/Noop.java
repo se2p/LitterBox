@@ -1,6 +1,6 @@
 package analytics.finder;
 
-import analytics.Issue;
+import analytics.IssueReport;
 import analytics.IssueFinder;
 import scratch.data.ScBlock;
 import scratch.data.Script;
@@ -18,8 +18,10 @@ import java.util.List;
  */
 public class Noop implements IssueFinder {
 
+    String name = "no_op";
+
     @Override
-    public Issue check(Project project) {
+    public IssueReport check(Project project) {
         List<Scriptable> scriptables = new ArrayList<>();
         scriptables.add(project.getStage());
         scriptables.addAll(project.getSprites());
@@ -64,8 +66,7 @@ public class Noop implements IssueFinder {
             notes = "There are unused custom blocks in your project.";
         }
 
-        String name = "no_op";
-        return new Issue(name, count, pos, project.getPath(), notes);
+        return new IssueReport(name, count, pos, project.getPath(), notes);
     }
 
     private void searchBlocks3(List<ScBlock> blocks, Scriptable scable, Script script, List<String> tempPos, String methodName) {
@@ -100,4 +101,8 @@ public class Noop implements IssueFinder {
         }
     }
 
+    @Override
+    public String getName() {
+        return name;
+    }
 }

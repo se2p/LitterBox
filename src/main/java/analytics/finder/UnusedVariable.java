@@ -1,6 +1,6 @@
 package analytics.finder;
 
-import analytics.Issue;
+import analytics.IssueReport;
 import analytics.IssueFinder;
 import scratch.data.ScBlock;
 import scratch.data.ScVariable;
@@ -20,8 +20,10 @@ import java.util.Map;
  */
 public class UnusedVariable implements IssueFinder {
 
+    String name = "unused_variable";
+
     @Override
-    public Issue check(Project project) {
+    public IssueReport check(Project project) {
         List<Scriptable> scriptables = new ArrayList<>(project.getSprites());
         scriptables.add(project.getStage());
         int count;
@@ -54,8 +56,7 @@ public class UnusedVariable implements IssueFinder {
             notes = "There are unused variables in your project.";
         }
 
-        String name = "unused_variable";
-        return new Issue(name, count, pos, project.getPath(), notes);
+        return new IssueReport(name, count, pos, project.getPath(), notes);
     }
 
     private void searchBlocks3(List<ScBlock> blocks, Scriptable scable, Map<String, List<String>> variableScope) {
@@ -134,4 +135,8 @@ public class UnusedVariable implements IssueFinder {
         }
     }
 
+    @Override
+    public String getName() {
+        return name;
+    }
 }

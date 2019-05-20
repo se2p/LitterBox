@@ -1,6 +1,6 @@
 package analytics.finder;
 
-import analytics.Issue;
+import analytics.IssueReport;
 import analytics.IssueFinder;
 import scratch.data.Script;
 import scratch.structure.Scriptable;
@@ -13,8 +13,10 @@ import java.util.*;
  */
 public class DuplicatedSprite implements IssueFinder {
 
+    String name = "duplicated_sprite";
+
     @Override
-    public Issue check(Project project) {
+    public IssueReport check(Project project) {
         List<Scriptable> scriptables = new ArrayList<>();
         scriptables.add(project.getStage());
         scriptables.addAll(project.getSprites());
@@ -50,8 +52,7 @@ public class DuplicatedSprite implements IssueFinder {
             notes = "There are duplicated sprites in your project.";
         }
 
-        String name = "duplicated_sprite";
-        return new Issue(name, count, pos, project.getPath(), notes);
+        return new IssueReport(name, count, pos, project.getPath(), notes);
     }
 
 
@@ -71,4 +72,8 @@ public class DuplicatedSprite implements IssueFinder {
         return one.equals(two);
     }
 
+    @Override
+    public String getName() {
+        return name;
+    }
 }

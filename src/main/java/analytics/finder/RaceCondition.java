@@ -1,6 +1,6 @@
 package analytics.finder;
 
-import analytics.Issue;
+import analytics.IssueReport;
 import analytics.IssueFinder;
 import scratch.data.ScBlock;
 import scratch.data.Script;
@@ -18,8 +18,10 @@ import java.util.List;
  */
 public class RaceCondition implements IssueFinder {
 
+    String name = "race_condition";
+
     @Override
-    public Issue check(Project project) {
+    public IssueReport check(Project project) {
         List<Scriptable> scriptables = new ArrayList<>();
         scriptables.add(project.getStage());
         scriptables.addAll(project.getSprites());
@@ -47,8 +49,7 @@ public class RaceCondition implements IssueFinder {
             note = "Some variables get initialised multiple times from different scripts at the beginning.";
 
         }
-        String name = "race_condition";
-        return new Issue(name, pos.size(), pos, project.getPath(), note);
+        return new IssueReport(name, pos.size(), pos, project.getPath(), note);
     }
 
     private void checkVariables3(Script script, List<String> temp) {
@@ -77,4 +78,8 @@ public class RaceCondition implements IssueFinder {
         }
     }
 
+    @Override
+    public String getName() {
+        return name;
+    }
 }

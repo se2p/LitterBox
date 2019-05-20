@@ -1,6 +1,6 @@
 package analytics.finder;
 
-import analytics.Issue;
+import analytics.IssueReport;
 import analytics.IssueFinder;
 import scratch.structure.Scriptable;
 import scratch.structure.Project;
@@ -18,7 +18,7 @@ public class SpriteNaming implements IssueFinder {
     private String name = "sprite_naming";
 
     @Override
-    public Issue check(Project project) {
+    public IssueReport check(Project project) {
         List<Scriptable> scriptables = new ArrayList<>(project.getSprites());
         List<String> pos = new ArrayList<>();
         for (Scriptable scable : scriptables) {
@@ -42,7 +42,7 @@ public class SpriteNaming implements IssueFinder {
         } else {
             notes = note1;
         }
-        return new Issue(name, pos.size(), pos, project.getPath(), notes);
+        return new IssueReport(name, pos.size(), pos, project.getPath(), notes);
     }
 
 

@@ -1,3 +1,4 @@
+import analytics.IssueFinder;
 import analytics.IssueTool;
 import org.apache.commons.csv.CSVPrinter;
 import scratch.structure.Project;
@@ -7,6 +8,8 @@ import utils.Version;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class Main {
@@ -14,37 +17,22 @@ public class Main {
     private final static File folder = new File("C:\\scratchprojects\\files3\\");
     private static Version version = Version.SCRATCH3;
 
-    /**
-     * The main method for analyzing one Scratch project file (ZIP).
-     * It will produce only console output.
-     */
     public static void main(String[] args) {
-        checkScratch(folder + "\\z.sb3");
+        //checkSingle(folder + "\\z.sb3");
+        checkMultiple(folder.getPath());
     }
 
     /**
-     *  Check method, uses the version
-      * @param path the file path
+     * The method for analyzing one Scratch project file (ZIP).
+     * It will produce only console output.
+     *
+     * @param path the file path
      */
-    private static void checkScratch(String path) {
+    private static void checkSingle(String path) {
         try {
-            Project project = null;
             File fileEntry = new File(path);
             if (!fileEntry.isDirectory()) {
-                System.out.println(fileEntry);
-                System.out.println(fileEntry.getName());
-                try {
-                    if (version == Version.SCRATCH2) {
-                        project = JsonParser.parse2(fileEntry.getName(), fileEntry.getPath());
-                    } else if (version == Version.SCRATCH3) {
-                        project = JsonParser.parse3(fileEntry.getName(), fileEntry.getPath());
-                    }
-                    assert project != null;
-                    //System.out.println(project.toString());
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                assert project != null;
+                Project project = getProject(fileEntry);
                 //System.out.println(project.toString());
                 IssueTool iT = new IssueTool();
                 iT.checkRaw(project);
@@ -58,25 +46,23 @@ public class Main {
      * The main method for analyzing all Scratch project files (ZIP) in the given folder location.
      * It will produce a .csv file with all entries.
      */
-    public static void mainMultiple() {
+    private static void checkMultiple(String path) {
+        File folder = new File(path);
         CSVPrinter printer = null;
         try {
             String name = "./test.csv";
-            Project project = null;
-            printer = CSVWriter.getNewPrinter(name);
+            IssueTool iT = new IssueTool();
+            List<String> heads = new ArrayList<>();
+            heads.add("project");
+            for (IssueFinder iF : iT.getFinder()) {
+                heads.add(iF.getName());
+            }
+            printer = CSVWriter.getNewPrinter(name, heads);
             for (final File fileEntry : Objects.requireNonNull(folder.listFiles())) {
                 if (!fileEntry.isDirectory()) {
-                    System.out.println(fileEntry);
-                    System.out.println(fileEntry.getName());
-                    try {
-                        project = JsonParser.parse2(fileEntry.getName(), fileEntry.getPath());
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    assert project != null;
+                    Project project = getProject(fileEntry);
                     //System.out.println(project.toString());
-                    IssueTool iT = new IssueTool();
-                    iT.check(project, printer, name);
+                    iT.check(project, printer);
                 }
             }
         } catch (Exception e) {
@@ -91,6 +77,23 @@ public class Main {
         }
     }
 
+    private static Project getProject(File fileEntry) {
+        System.out.println(fileEntry);
+        System.out.println(fileEntry.getName());
+        Project project = null;
+        try {
+            if (version == Version.SCRATCH2) {
+                project = JsonParser.parse2(fileEntry.getName(), fileEntry.getPath());
+            } else if (version == Version.SCRATCH3) {
+                project = JsonParser.parse3(fileEntry.getName(), fileEntry.getPath());
+            }
+            assert project != null;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return project;
+    }
+
     /**
      * This main method was used for analyzing a repository with 250.000 projects, that only contained the JSON files.
      * A Scratch project is normally zipped and contains pictures, sounds and the JSON.
@@ -102,9 +105,15 @@ public class Main {
         try {
             String name = "./dataset0.csv";
             Project project = null;
+            IssueTool iT = new IssueTool();
+            List<String> heads = new ArrayList<>();
+            heads.add("project");
+            for (IssueFinder iF : iT.getFinder()) {
+                heads.add(iF.getName());
+            }
+            printer = CSVWriter.getNewPrinter(name, heads);
             int count = 0;
             int datacount = 0;
-            printer = CSVWriter.getNewPrinter(name);
             for (final File fileEntry : Objects.requireNonNull(folder.listFiles())) {
                 if (!fileEntry.isDirectory()) {
                     System.out.println(fileEntry);
@@ -114,9 +123,8 @@ public class Main {
                         e.printStackTrace();
                     }
                     if (project != null) {
-                        //System.out.println(project.toString());
-                        IssueTool iT = new IssueTool();
-                        iT.check(project, printer, name);
+                        //System.out.println(project.toString());2
+                        iT.check(project, printer);
                         count++;
                     }
                 }
@@ -130,7 +138,6 @@ public class Main {
                     System.out.println("Finished: " + name);
                     datacount++;
                     name = "./dataset" + datacount + ".csv";
-                    printer = CSVWriter.getNewPrinter(name);
                 }
             }
         } catch (Exception e) {

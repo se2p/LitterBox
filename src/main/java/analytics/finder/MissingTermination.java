@@ -1,6 +1,6 @@
 package analytics.finder;
 
-import analytics.Issue;
+import analytics.IssueReport;
 import analytics.IssueFinder;
 import scratch.data.ScBlock;
 import scratch.data.Script;
@@ -18,8 +18,10 @@ import java.util.List;
  */
 public class MissingTermination implements IssueFinder {
 
+    String name = "missing_termination";
+
     @Override
-    public Issue check(Project project) {
+    public IssueReport check(Project project) {
         List<Scriptable> scriptables = new ArrayList<>();
         scriptables.add(project.getStage());
         scriptables.addAll(project.getSprites());
@@ -44,8 +46,7 @@ public class MissingTermination implements IssueFinder {
             notes = "Some 'repeat until' blocks have no termination statement.";
         }
 
-        String name = "missing_termination";
-        return new Issue(name, count, pos, project.getPath(), notes);
+        return new IssueReport(name, count, pos, project.getPath(), notes);
     }
 
     private void searchBlocks3(Scriptable scable, Script sc, List<ScBlock> blocks, List<String> pos) {
@@ -77,5 +78,8 @@ public class MissingTermination implements IssueFinder {
         }
     }
 
-
+    @Override
+    public String getName() {
+        return name;
+    }
 }

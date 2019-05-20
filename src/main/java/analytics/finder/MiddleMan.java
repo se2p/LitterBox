@@ -1,6 +1,6 @@
 package analytics.finder;
 
-import analytics.Issue;
+import analytics.IssueReport;
 import analytics.IssueFinder;
 import scratch.data.ScBlock;
 import scratch.data.Script;
@@ -18,8 +18,10 @@ import java.util.List;
  */
 public class MiddleMan implements IssueFinder {
 
+    String name = "middle_man";
+
     @Override
-    public Issue check(Project project) {
+    public IssueReport check(Project project) {
         List<Scriptable> scriptables = new ArrayList<>();
         scriptables.add(project.getStage());
         scriptables.addAll(project.getSprites());
@@ -49,8 +51,7 @@ public class MiddleMan implements IssueFinder {
             notes = "There is a Receive Script that broadcasts an event.";
         }
 
-        String name = "middle_man";
-        return new Issue(name, count, pos, project.getPath(), notes);
+        return new IssueReport(name, count, pos, project.getPath(), notes);
     }
 
     private void searchBlocks3(List<ScBlock> blocks, Scriptable scable, Script script, List<String> pos) {
@@ -88,4 +89,8 @@ public class MiddleMan implements IssueFinder {
         }
     }
 
+    @Override
+    public String getName() {
+        return name;
+    }
 }

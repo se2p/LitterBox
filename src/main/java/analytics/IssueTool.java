@@ -54,8 +54,8 @@ public class IssueTool {
     public void checkRaw(Project project) {
         for (IssueFinder iF : finder) {
             if (project != null) {
-                Issue issue = iF.check(project);
-                System.out.println(issue);
+                IssueReport issueReport = iF.check(project);
+                System.out.println(issueReport);
             }
         }
     }
@@ -65,21 +65,29 @@ public class IssueTool {
      *
      * @param project the project to check
      */
-    public void check(Project project, CSVPrinter printer, String name) {
-        List<Issue> issues = new ArrayList<>();
+    public void check(Project project, CSVPrinter printer) {
+        List<IssueReport> issueReports = new ArrayList<>();
         for (IssueFinder iF : finder) {
             if (project != null) {
-                Issue issue = iF.check(project);
-                issues.add(issue);
-                //System.out.println(issue);
+                IssueReport issueReport = iF.check(project);
+                issueReports.add(issueReport);
+                //System.out.println(issueReport);
+            } else {
+                return;
             }
         }
-
         try {
-            CSVWriter.addData(printer, project, issues, name);
+            CSVWriter.addData(printer, project, issueReports);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
+    public List<IssueFinder> getFinder() {
+        return finder;
+    }
+
+    public void setFinder(List<IssueFinder> finder) {
+        this.finder = finder;
+    }
 }

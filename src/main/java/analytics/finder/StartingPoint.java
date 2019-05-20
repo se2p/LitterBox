@@ -1,6 +1,6 @@
 package analytics.finder;
 
-import analytics.Issue;
+import analytics.IssueReport;
 import analytics.IssueFinder;
 import scratch.data.Script;
 import scratch.structure.Scriptable;
@@ -21,7 +21,6 @@ public class StartingPoint implements IssueFinder {
     private String name;
 
     public StartingPoint() {
-
         name = "sprite_starting_point";
         headBlocks.add(Identifier.LEGACY_THIS_CLICKED.getValue());
         headBlocks.add(Identifier.THIS_CLICKED.getValue());
@@ -43,7 +42,7 @@ public class StartingPoint implements IssueFinder {
     }
 
     @Override
-    public Issue check(Project project) {
+    public IssueReport check(Project project) {
         List<Scriptable> scriptables = new ArrayList<>();
         scriptables.add(project.getStage());
         scriptables.addAll(project.getSprites());
@@ -76,39 +75,11 @@ public class StartingPoint implements IssueFinder {
             notes = note2;
         }
 
-        return new Issue(name, count, pos, project.getPath(), notes);
+        return new IssueReport(name, count, pos, project.getPath(), notes);
     }
 
-
-    public String getNote1() {
-        return note1;
-    }
-
-    public void setNote1(String note1) {
-        this.note1 = note1;
-    }
-
-    public String getNote2() {
-        return note2;
-    }
-
-    public void setNote2(String note2) {
-        this.note2 = note2;
-    }
-
+    @Override
     public String getName() {
         return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public List<String> getHeadBlocks() {
-        return headBlocks;
-    }
-
-    public void setHeadBlocks(List<String> headBlocks) {
-        this.headBlocks = headBlocks;
     }
 }

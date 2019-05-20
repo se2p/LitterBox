@@ -58,6 +58,7 @@ public enum Identifier {
     KEY_OPTION("KEY_OPTION"),
     TOUCHING_OBJECT("TOUCHINGOBJECTMENU"),
     CLONE_OPTION("CLONE_OPTION"),
+    MYSELF("_myself_"),
     THIS_CLICKED("event_whenthisspriteclicked"),
     IF("control_if"),
     IF_ELSE("control_if_else"),

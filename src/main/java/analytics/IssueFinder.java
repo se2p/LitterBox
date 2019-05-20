@@ -9,9 +9,11 @@ public interface IssueFinder {
 
     /**
      * @param project The project to check
-     * @return a Issue object
+     * @return a IssueReport object
      */
 
-    Issue check(Project project);
+    IssueReport check(Project project);
+
+    String getName();
 
 }

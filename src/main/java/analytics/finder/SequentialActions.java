@@ -1,6 +1,6 @@
 package analytics.finder;
 
-import analytics.Issue;
+import analytics.IssueReport;
 import analytics.IssueFinder;
 import scratch.data.ScBlock;
 import scratch.data.Script;
@@ -18,8 +18,10 @@ import java.util.List;
  */
 public class SequentialActions implements IssueFinder {
 
+    String name = "sequential_actions";
+
     @Override
-    public Issue check(Project project) {
+    public IssueReport check(Project project) {
         List<Scriptable> scriptables = new ArrayList<>();
         scriptables.add(project.getStage());
         scriptables.addAll(project.getSprites());
@@ -40,8 +42,7 @@ public class SequentialActions implements IssueFinder {
             notes = "Some scripts have sequential actions with the same content.";
         }
 
-        String name = "sequential_actions";
-        return new Issue(name, count, pos, project.getPath(), notes);
+        return new IssueReport(name, count, pos, project.getPath(), notes);
     }
 
 
@@ -78,4 +79,8 @@ public class SequentialActions implements IssueFinder {
         }
     }
 
+    @Override
+    public String getName() {
+        return name;
+    }
 }

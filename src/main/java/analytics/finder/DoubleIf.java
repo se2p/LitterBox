@@ -1,6 +1,6 @@
 package analytics.finder;
 
-import analytics.Issue;
+import analytics.IssueReport;
 import analytics.IssueFinder;
 import scratch.data.ScBlock;
 import scratch.data.Script;
@@ -18,8 +18,10 @@ import java.util.List;
  */
 public class DoubleIf implements IssueFinder {
 
+    String name = "double_condition";
+
     @Override
-    public Issue check(Project project) {
+    public IssueReport check(Project project) {
         List<Scriptable> scriptables = new ArrayList<>();
         scriptables.add(project.getStage());
         scriptables.addAll(project.getSprites());
@@ -45,8 +47,7 @@ public class DoubleIf implements IssueFinder {
             notes = "Some scripts have if clauses with the same condition twice in a row.";
         }
 
-        String name = "double_condition";
-        return new Issue(name, count, pos, project.getPath(), notes);
+        return new IssueReport(name, count, pos, project.getPath(), notes);
     }
 
     private void searchBlocks3(Scriptable scable, Script sc, List<ScBlock> blocks, List<String> pos) {
@@ -94,5 +95,10 @@ public class DoubleIf implements IssueFinder {
                 searchBlocks(scable, sc, b.getElseBlocks(), pos);
             }
         }
+    }
+
+    @Override
+    public String getName() {
+        return name;
     }
 }

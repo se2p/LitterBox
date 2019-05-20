@@ -1,6 +1,6 @@
 package analytics.finder;
 
-import analytics.Issue;
+import analytics.IssueReport;
 import analytics.IssueFinder;
 import scratch.data.ScBlock;
 import scratch.data.Script;
@@ -22,13 +22,13 @@ public class NoOpProject implements IssueFinder {
             Identifier.LEGACY_GLIDE.getValue(), Identifier.LEGACY_CHANGE.getValue(), Identifier.LEGACY_SAY.getValue(),
             Identifier.LEGACY_THINK.getValue(), Identifier.LEGACY_HIDE.getValue(), Identifier.LEGACY_SHOW.getValue(),
             Identifier.LEGACY_PLAY_WAIT.getValue(), Identifier.LEGACY_DRUM.getValue(), Identifier.LEGACY_PLAY.getValue()};
+    String name = "noop_project";
 
     @Override
-    public Issue check(Project project) {
+    public IssueReport check(Project project) {
         List<Scriptable> scriptables = new ArrayList<>();
         scriptables.add(project.getStage());
         scriptables.addAll(project.getSprites());
-        String name = "noop_project";
         int count = 0;
         List<String> pos = new ArrayList<>();
         for (Scriptable scable : scriptables) {
@@ -37,7 +37,7 @@ public class NoOpProject implements IssueFinder {
                     if (script.getBlocks().size() > 1) {
                         if (searchBlocks(script.getBlocks())) {
                             String notes = "Your project is not empty and contains actions.";
-                            return new Issue(name, count, pos, project.getPath(), notes);
+                            return new IssueReport(name, count, pos, project.getPath(), notes);
                         }
                     }
                 }
@@ -45,9 +45,8 @@ public class NoOpProject implements IssueFinder {
         }
         String notes = "Your project is empty or does not contain any actions.";
         count = 1;
-        return new Issue(name, count, pos, project.getPath(), notes);
+        return new IssueReport(name, count, pos, project.getPath(), notes);
     }
-
 
     private boolean searchBlocks(List<ScBlock> blocks) {
         for (ScBlock b : blocks) {
@@ -66,4 +65,8 @@ public class NoOpProject implements IssueFinder {
         return false;
     }
 
+    @Override
+    public String getName() {
+        return name;
+    }
 }

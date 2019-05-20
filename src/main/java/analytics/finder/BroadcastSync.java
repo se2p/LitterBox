@@ -1,6 +1,6 @@
 package analytics.finder;
 
-import analytics.Issue;
+import analytics.IssueReport;
 import analytics.IssueFinder;
 import scratch.data.ScBlock;
 import scratch.data.Script;
@@ -17,8 +17,10 @@ import java.util.List;
  */
 public class BroadcastSync implements IssueFinder {
 
+    String name = "broadcast_sync";
+
     @Override
-    public Issue check(Project project) {
+    public IssueReport check(Project project) {
         List<Scriptable> scriptables = new ArrayList<>();
         scriptables.add(project.getStage());
         scriptables.addAll(project.getSprites());
@@ -71,8 +73,7 @@ public class BroadcastSync implements IssueFinder {
             notes = "One or more Broadcast blocks don't have a corresponding Receive block.";
         }
 
-        String name = "broadcast_sync";
-        return new Issue(name, count, pos, project.getPath(), notes);
+        return new IssueReport(name, count, pos, project.getPath(), notes);
     }
 
     private void searchBlocksFirst3(List<ScBlock> blocks, List<String> receive) {
@@ -124,4 +125,11 @@ public class BroadcastSync implements IssueFinder {
             }
         }
     }
+
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
 }

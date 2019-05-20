@@ -1,6 +1,6 @@
 package analytics.finder;
 
-import analytics.Issue;
+import analytics.IssueReport;
 import analytics.IssueFinder;
 import scratch.data.ScBlock;
 import scratch.data.Script;
@@ -18,12 +18,14 @@ import java.util.List;
  */
 public class AttributeModification implements IssueFinder {
 
+    String name = "multiple_attribute_modification";
+
     @Override
-    public Issue check(Project project) {
+    public IssueReport check(Project project) {
         return runCheck(project);
     }
 
-    private Issue runCheck(Project project) {
+    private IssueReport runCheck(Project project) {
         List<Scriptable> scriptables = new ArrayList<>();
         scriptables.add(project.getStage());
         scriptables.addAll(project.getSprites());
@@ -50,8 +52,7 @@ public class AttributeModification implements IssueFinder {
             notes = "Some scripts modify the same variable multiple times in a row.";
         }
 
-        String name = "multiple_attribute_modification";
-        return new Issue(name, count, pos, project.getPath(), notes);
+        return new IssueReport(name, count, pos, project.getPath(), notes);
     }
 
     private void searchVariableModification3(Scriptable scable, Script sc, List<ScBlock> blocks, List<String> pos) {
@@ -140,16 +141,16 @@ public class AttributeModification implements IssueFinder {
         String content1 = "";
         for (ScBlock b : blocks) {
             if (!content1.equals("")) {
-                if (b.getContent().replace("\"", "").startsWith("changeYposBy:") && content1.equals("y") ||
-                        b.getContent().replace("\"", "").startsWith("changeXposBy:") && content1.equals("x")) {
+                if (b.getContent().startsWith(Identifier.LEGACY_CHANGEY.getValue()) && content1.equals("y") ||
+                        b.getContent().startsWith(Identifier.LEGACY_CHANGEX.getValue()) && content1.equals("x")) {
                     pos.add(scable.getName() + " at " + Arrays.toString(sc.getPosition()));
                     break;
                 }
             }
-            if (b.getContent().replace("\"", "").startsWith("changeYposBy:")) {
+            if (b.getContent().startsWith(Identifier.LEGACY_CHANGEY.getValue())) {
                 content1 = "y";
                 continue;
-            } else if (b.getContent().replace("\"", "").startsWith("changeXposBy:")) {
+            } else if (b.getContent().startsWith(Identifier.LEGACY_CHANGEX.getValue())) {
                 content1 = "x";
                 continue;
             }
@@ -160,5 +161,10 @@ public class AttributeModification implements IssueFinder {
                 searchXYModification(scable, sc, b.getElseBlocks(), pos);
             }
         }
+    }
+
+    @Override
+    public String getName() {
+        return name;
     }
 }

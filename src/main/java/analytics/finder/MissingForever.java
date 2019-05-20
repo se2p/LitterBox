@@ -1,6 +1,6 @@
 package analytics.finder;
 
-import analytics.Issue;
+import analytics.IssueReport;
 import analytics.IssueFinder;
 import scratch.data.ScBlock;
 import scratch.data.Script;
@@ -18,8 +18,10 @@ import java.util.List;
  */
 public class MissingForever implements IssueFinder {
 
+    String name = "missing_forever_loop";
+
     @Override
-    public Issue check(Project project) {
+    public IssueReport check(Project project) {
         List<Scriptable> scriptables = new ArrayList<>();
         scriptables.add(project.getStage());
         scriptables.addAll(project.getSprites());
@@ -48,8 +50,7 @@ public class MissingForever implements IssueFinder {
             note = "The project contains some fishy touching and / or keyPressed checks without a loop.";
 
         }
-        String name = "missing_forever_loop";
-        return new Issue(name, pos.size(), pos, project.getPath(), note);
+        return new IssueReport(name, pos.size(), pos, project.getPath(), note);
     }
 
     private void checkMovement3(List<String> pos, Scriptable scable, Script script, ScBlock b) {
@@ -69,5 +70,8 @@ public class MissingForever implements IssueFinder {
         }
     }
 
-
+    @Override
+    public String getName() {
+        return name;
+    }
 }

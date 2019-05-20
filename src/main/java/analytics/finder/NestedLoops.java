@@ -1,6 +1,6 @@
 package analytics.finder;
 
-import analytics.Issue;
+import analytics.IssueReport;
 import analytics.IssueFinder;
 import scratch.data.ScBlock;
 import scratch.data.Script;
@@ -18,8 +18,10 @@ import java.util.List;
  */
 public class NestedLoops implements IssueFinder {
 
+    String name = "nested_loops";
+
     @Override
-    public Issue check(Project project) {
+    public IssueReport check(Project project) {
         List<Scriptable> scriptables = new ArrayList<>();
         scriptables.add(project.getStage());
         scriptables.addAll(project.getSprites());
@@ -44,8 +46,7 @@ public class NestedLoops implements IssueFinder {
             notes = "Some scripts have nested loops.";
         }
 
-        String name = "nested_loops";
-        return new Issue(name, count, pos, project.getPath(), notes);
+        return new IssueReport(name, count, pos, project.getPath(), notes);
     }
 
     private void searchBlocks3(Scriptable scable, Script sc, List<ScBlock> blocks, List<String> pos) {
@@ -71,7 +72,6 @@ public class NestedLoops implements IssueFinder {
         }
     }
 
-
     private void searchBlocks(Scriptable scable, Script sc, List<ScBlock> blocks, List<String> pos) {
         for (ScBlock b : blocks) {
             if (b.getContent().replace("\"", "").startsWith(Identifier.LEGACY_FOREVER.getValue())
@@ -95,5 +95,10 @@ public class NestedLoops implements IssueFinder {
                 searchBlocks(scable, sc, b.getElseBlocks(), pos);
             }
         }
+    }
+
+    @Override
+    public String getName() {
+        return name;
     }
 }

@@ -1,6 +1,6 @@
 package analytics.finder;
 
-import analytics.Issue;
+import analytics.IssueReport;
 import analytics.IssueFinder;
 import scratch.data.ScBlock;
 import scratch.data.ScVariable;
@@ -20,8 +20,10 @@ import java.util.Map;
  */
 public class VariableScope implements IssueFinder {
 
+    String name = "variable_scope";
+
     @Override
-    public Issue check(Project project) {
+    public IssueReport check(Project project) {
         List<Scriptable> scriptables = new ArrayList<>(project.getSprites());
         scriptables.add(project.getStage());
         int count;
@@ -57,8 +59,7 @@ public class VariableScope implements IssueFinder {
             notes = "There are global variables, that are only used in one single sprite.";
         }
 
-        String name = "variable_scope";
-        return new Issue(name, count, pos, project.getPath(), notes);
+        return new IssueReport(name, count, pos, project.getPath(), notes);
     }
 
     private void searchBlocks3(List<ScBlock> blocks, Scriptable scable, Map<String, List<String>> variableScope) {
@@ -137,4 +138,8 @@ public class VariableScope implements IssueFinder {
         }
     }
 
+    @Override
+    public String getName() {
+        return name;
+    }
 }

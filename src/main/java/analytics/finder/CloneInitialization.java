@@ -1,6 +1,6 @@
 package analytics.finder;
 
-import analytics.Issue;
+import analytics.IssueReport;
 import analytics.IssueFinder;
 import scratch.data.ScBlock;
 import scratch.data.Script;
@@ -18,8 +18,10 @@ import java.util.List;
  */
 public class CloneInitialization implements IssueFinder {
 
+    String name = "clone_initialization";
+
     @Override
-    public Issue check(Project project) {
+    public IssueReport check(Project project) {
         List<Scriptable> scriptables = new ArrayList<>();
         scriptables.add(project.getStage());
         scriptables.addAll(project.getSprites());
@@ -44,8 +46,7 @@ public class CloneInitialization implements IssueFinder {
             notes = "Some scriptables were cloned but never initialized.";
         }
 
-        String name = "clone_initialization";
-        return new Issue(name, count, pos, project.getPath(), notes);
+        return new IssueReport(name, count, pos, project.getPath(), notes);
     }
 
     private void searchBlocks3(Project project, Scriptable scr, Script sc, List<ScBlock> blocks, List<String> pos) {
@@ -56,7 +57,7 @@ public class CloneInitialization implements IssueFinder {
                 if (b.getCreatedClone() == null) {
                     break;
                 }
-                if ("_myself_".equals(b.getCreatedClone())) {
+                if (Identifier.MYSELF.getValue().equals(b.getCreatedClone())) {
                     scable = scr;
                 } else {
                     for (Scriptable scri : project.getSprites()) {
@@ -110,4 +111,11 @@ public class CloneInitialization implements IssueFinder {
             }
         }
     }
+
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
 }

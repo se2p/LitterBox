@@ -1,6 +1,6 @@
 package analytics.finder;
 
-import analytics.Issue;
+import analytics.IssueReport;
 import analytics.IssueFinder;
 import scratch.data.ScBlock;
 import scratch.data.Script;
@@ -17,8 +17,10 @@ import java.util.List;
  */
 public class InappropriateIntimacy implements IssueFinder {
 
+    String name = "inappropriate_intimacy";
+
     @Override
-    public Issue check(Project project) {
+    public IssueReport check(Project project) {
         List<Scriptable> scriptables = new ArrayList<>();
         scriptables.add(project.getStage());
         scriptables.addAll(project.getSprites());
@@ -47,8 +49,7 @@ public class InappropriateIntimacy implements IssueFinder {
             notes = "One ore more Sprites are excessively reading other sprite’s private variables (at least 4).";
         }
 
-        String name = "inappropriate_intimacy";
-        return new Issue(name, count, pos, project.getPath(), notes);
+        return new IssueReport(name, count, pos, project.getPath(), notes);
     }
 
 
@@ -70,4 +71,8 @@ public class InappropriateIntimacy implements IssueFinder {
         }
     }
 
+    @Override
+    public String getName() {
+        return name;
+    }
 }

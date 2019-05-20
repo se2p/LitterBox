@@ -1,6 +1,6 @@
 package analytics.finder;
 
-import analytics.Issue;
+import analytics.IssueReport;
 import analytics.IssueFinder;
 import scratch.data.Script;
 import scratch.structure.Project;
@@ -21,7 +21,7 @@ public class GlobalStartingPoint implements IssueFinder {
     private String name = "has_global_start";
 
     @Override
-    public Issue check(Project project) {
+    public IssueReport check(Project project) {
         if (project.getVersion().equals(Version.SCRATCH2)) {
             return runCheck(project, Identifier.LEGACY_GREEN_FLAG.getValue());
         } else if (project.getVersion().equals(Version.SCRATCH3)) {
@@ -30,7 +30,7 @@ public class GlobalStartingPoint implements IssueFinder {
         return null;
     }
 
-    private Issue runCheck(Project project, String idf) {
+    private IssueReport runCheck(Project project, String idf) {
         List<Scriptable> scriptables = new ArrayList<>();
         scriptables.add(project.getStage());
         scriptables.addAll(project.getSprites());
@@ -60,31 +60,11 @@ public class GlobalStartingPoint implements IssueFinder {
         } else {
             notes = note1;
         }
-        return new Issue(name, count, pos, project.getPath(), notes);
+        return new IssueReport(name, count, pos, project.getPath(), notes);
     }
 
-    public String getNote1() {
-        return note1;
-    }
-
-    public void setNote1(String note1) {
-        this.note1 = note1;
-    }
-
-    public String getNote2() {
-        return note2;
-    }
-
-    public void setNote2(String note2) {
-        this.note2 = note2;
-    }
-
+    @Override
     public String getName() {
         return name;
     }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
 }

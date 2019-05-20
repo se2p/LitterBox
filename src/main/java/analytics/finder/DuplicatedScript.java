@@ -1,11 +1,10 @@
 package analytics.finder;
 
-import analytics.Issue;
+import analytics.IssueReport;
 import analytics.IssueFinder;
 import scratch.data.Script;
 import scratch.structure.Project;
 import scratch.structure.Scriptable;
-import utils.Version;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -16,8 +15,10 @@ import java.util.List;
  */
 public class DuplicatedScript implements IssueFinder {
 
+    String name = "duplicated_script";
+
     @Override
-    public Issue check(Project project) {
+    public IssueReport check(Project project) {
         List<Scriptable> scriptables = new ArrayList<>();
         scriptables.add(project.getStage());
         scriptables.addAll(project.getSprites());
@@ -39,8 +40,7 @@ public class DuplicatedScript implements IssueFinder {
             notes = "Some scripts have duplicated code.";
         }
 
-        String name = "duplicated_script";
-        return new Issue(name, count, pos, project.getPath(), notes);
+        return new IssueReport(name, count, pos, project.getPath(), notes);
     }
 
     private void searchBlocks(List<Scriptable> scriptables, Scriptable currentSc, Script sc, List<String> pos, List<String> duplicated) {
@@ -57,5 +57,10 @@ public class DuplicatedScript implements IssueFinder {
                 }
             }
         }
+    }
+
+    @Override
+    public String getName() {
+        return name;
     }
 }

@@ -129,6 +129,9 @@ class ScriptDeserializer3 {
                     String touchingObject = Identifier.TOUCHING_OBJECT.getValue();
                     String operator = "operator_gt";
                     String subId = ins.get(1);
+                    if (subId.equals("null")) {
+                        break;
+                    }
                     String condition = globalBlocks.get(subId).get("opcode").asText();
                     if (globalBlocks.get(subId).get("inputs").get(keyOption) != null) {
                         String subsubId = globalBlocks.get(subId).get("inputs").get(keyOption).get(1).asText();

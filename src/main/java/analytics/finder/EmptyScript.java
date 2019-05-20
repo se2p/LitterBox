@@ -1,6 +1,6 @@
 package analytics.finder;
 
-import analytics.Issue;
+import analytics.IssueReport;
 import analytics.IssueFinder;
 import scratch.data.Script;
 import scratch.structure.Scriptable;
@@ -19,10 +19,9 @@ public class EmptyScript implements IssueFinder {
     private List<String> headBlocks = new ArrayList<>();
     private String note1;
     private String note2;
-    private String name;
+    private String name = "empty_script";
 
     public EmptyScript() {
-        name = "empty_script";
         headBlocks.add(Identifier.LEGACY_THIS_CLICKED.getValue());
         headBlocks.add(Identifier.THIS_CLICKED.getValue());
         headBlocks.add(Identifier.LEGACY_START_CLONE.getValue());
@@ -43,7 +42,7 @@ public class EmptyScript implements IssueFinder {
     }
 
     @Override
-    public Issue check(Project project) {
+    public IssueReport check(Project project) {
         List<Scriptable> scriptables = new ArrayList<>();
         scriptables.add(project.getStage());
         scriptables.addAll(project.getSprites());
@@ -64,6 +63,11 @@ public class EmptyScript implements IssueFinder {
             notes = note2;
         }
 
-        return new Issue(name, pos.size(), pos, project.getPath(), notes);
+        return new IssueReport(name, pos.size(), pos, project.getPath(), notes);
+    }
+
+    @Override
+    public String getName() {
+        return name;
     }
 }

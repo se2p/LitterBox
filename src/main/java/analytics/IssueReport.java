@@ -5,7 +5,7 @@ import java.util.List;
 /**
  * Wrapper class that simulates a issue and holds different information
  */
-public class Issue {
+public class IssueReport {
 
     private String name;
     private int count;
@@ -15,12 +15,12 @@ public class Issue {
 
     /**
      *
-     * @param count How often the Issue appears
+     * @param count How often the IssueReport appears
      * @param position [0] = stage, [1],[2],... = sprites
      * @param projectPath The projects path
      * @param notes Notes defined by each IssueFinder
      */
-    public Issue(String name, int count, List<String> position, String projectPath, String notes) {
+    public IssueReport(String name, int count, List<String> position, String projectPath, String notes) {
         this.name = name;
         this.count = count;
         this.position = position;

@@ -1,6 +1,6 @@
 package analytics.finder;
 
-import analytics.Issue;
+import analytics.IssueReport;
 import analytics.IssueFinder;
 import scratch.data.ScBlock;
 import scratch.data.Script;
@@ -15,8 +15,10 @@ import java.util.List;
  */
 public class CountBlocks implements IssueFinder {
 
+    String name = "block_count";
+
     @Override
-    public Issue check(Project project) {
+    public IssueReport check(Project project) {
         List<Scriptable> scriptables = new ArrayList<>();
         scriptables.add(project.getStage());
         scriptables.addAll(project.getSprites());
@@ -34,8 +36,7 @@ public class CountBlocks implements IssueFinder {
         for (int x : countList) {
             count += x;
         }
-        String name = "block_count";
-        return new Issue(name, count, new ArrayList<>(), project.getPath(), "");
+        return new IssueReport(name, count, new ArrayList<>(), project.getPath(), "");
     }
 
     private void searchBlocks(List<ScBlock> blocks, List<Integer> countList) {
@@ -48,5 +49,10 @@ public class CountBlocks implements IssueFinder {
                 searchBlocks(b.getElseBlocks(), countList);
             }
         }
+    }
+
+    @Override
+    public String getName() {
+        return name;
     }
 }
