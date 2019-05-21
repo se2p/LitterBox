@@ -20,7 +20,46 @@ public class Normalization {
 		List<String> normalizedNumber = normalizationNumbers(normalizedDropDown);
 		List<String> normalizedSensing = normalizationSensing(normalizedNumber);
 		List<String> normalizedOperator = normalizationOperator(normalizedSensing);
-		return normalizedOperator;
+		List<String> normalizedVariable = normalizationVariable(normalizedOperator);
+		return normalizedVariable;
+	}
+	
+	/*
+	 * If in a block appears , then " then a text and then ", then the text will 
+	 * be changed to VARIABLE.
+	 */
+	private List<String> normalizationVariable(List<String> list) {
+		List<String> normalizedScript = new ArrayList<String>(list.size());
+		for(int k = 0; k < list.size(); k++) {
+			char[] ch = list.get(k).toCharArray();
+			List<Character> listBlock = new ArrayList<Character>();
+			for(char c : ch) {
+				listBlock.add(c);
+			}
+			for(int i = 0; i < listBlock.size(); i++) {
+				if(i + 2 < listBlock.size() && listBlock.get(i + 1) == ',' && 
+					listBlock.get(i + 2) == '"') {
+					int j = i + 3;
+					boolean notLastQuote = false;
+					for(int b = j; b < listBlock.size(); b++) {
+						if(listBlock.get(b) == '"') {
+							notLastQuote = true;
+							break;
+						}
+					}
+					while(notLastQuote && listBlock.get(j) != '"') {
+						listBlock.remove(j);
+					}
+					listBlock = writeVariable(listBlock, j);
+				}
+			}
+			StringBuilder sb = new StringBuilder();
+			for(Character c : listBlock) {
+				sb.append(c);
+			}
+			normalizedScript.add(sb.toString());
+		}
+		return normalizedScript;
 	}
 	
 	/*
@@ -39,7 +78,14 @@ public class Normalization {
 				if(i + 2 < listBlock.size() && listBlock.get(i + 1) == '"' && 
 					listBlock.get(i + 2) == '"') {
 					int j = i + 3;
-					while(listBlock.get(j) != '"') {
+					boolean notLastQuote = false;
+					for(int b = j; b < listBlock.size(); b++) {
+						if(listBlock.get(b) == '"') {
+							notLastQuote = true;
+							break;
+						}
+					}
+					while(notLastQuote && listBlock.get(j) != '"') {
 						listBlock.remove(j);
 					}
 					listBlock = writeDummy(listBlock, j);
@@ -212,6 +258,20 @@ public class Normalization {
 		    list.add(index + 5, 'T');
 		    list.add(index + 6, 'O');
 		    list.add(index + 7, 'R');
+		}
+		return list;
+	}
+	
+	private List<Character> writeVariable(List<Character> list, int index) {
+		if(index > -1) {
+		    list.add(index, 'V');
+		    list.add(index + 1, 'A');
+		    list.add(index + 2, 'R');
+		    list.add(index + 3, 'I');
+		    list.add(index + 4, 'A');
+		    list.add(index + 5, 'B');
+		    list.add(index + 6, 'L');
+		    list.add(index + 7, 'E');
 		}
 		return list;
 	}

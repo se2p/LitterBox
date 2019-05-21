@@ -1,76 +1,100 @@
 package utils;
 
-//import analytics.Issue;
-import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVPrinter;
-import scratch2.structure.Project;
-
-import java.io.*;
+import java.io.BufferedWriter;
+import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Util class for writing and saving the csv
- */
+import clone.structure.ClonePairCode;
+
 public class CSVWriter {
 
-    /**
-     * Adds data to an existing CSVPrinter
-     *
-     * TODO: [Improvement] Create a check name ENUM with all check names for easy expandability when creating new checks instead of extending the csv heads manually
-     * @param csvPrinter the CSVPrinter to add the information
-     * @param project    the project with the information
-     * @param issues     all the issues found in the project
-     * @throws IOException corrupt file path
-     */
-  /*  public static void addData(CSVPrinter csvPrinter, Project project, List<Issue> issues, String name) throws IOException {
-        if (issues.size() == 26) {
-            if (csvPrinter == null) {
-                BufferedWriter writer = Files.newBufferedWriter(Paths.get(name));
-                csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT
-                        .withHeader("project", "blockCount", "has_global_start", "sprite_starting_point", "laggy_movement",
-                                "double_condition", "missing_forever_loop", "clone_initialization", "missing_termination",
-                                "loose_blocks", "multiple_attribute_modification", "empty_body", "sequential_actions",
-                                "sprite_naming", "long_script", "broadcast_sync", "nested_loops", "duplicated_script",
-                                "race_condition", "empty_script", "middle_man", "no_op", "variable_scope", "unused_variable",
-                                "duplicated_sprite", "inappropriate_intimacy", "noop_project"));
-            }
-            List<String> data = new ArrayList<>();
-            data.add(project.getName());
-            for (Issue is : issues) {
-                data.add(Integer.toString(is.getCount()));
-            }
-            csvPrinter.printRecord(data);
-        }
-    }*/
-
-    /**
-     * Creates a new CSVPrinter with the correct head of all implemented issue names
-     * TODO: [Improvement] Create a check name ENUM with all check names for easy expandability when creating new checks instead of extending the csv heads manually
-     * @return a new CSVPrinter
-     * @throws IOException corrupt file path
-     */
-    public static CSVPrinter getNewPrinter(String name) throws IOException {
-        BufferedWriter writer = Files.newBufferedWriter(Paths.get(name));
-        return new CSVPrinter(writer, CSVFormat.DEFAULT
-                .withHeader("project", "blockCount", "has_global_start", "sprite_starting_point", "laggy_movement",
-                        "double_condition", "missing_forever_loop", "clone_initialization", "missing_termination",
-                        "loose_blocks", "multiple_attribute_modification", "empty_body", "sequential_actions",
-                        "sprite_naming", "long_script", "broadcast_sync", "nested_loops", "duplicated_script",
-                        "race_condition", "empty_script", "middle_man", "no_op", "variable_scope", "unused_variable",
-                        "duplicated_sprite", "inappropriate_intimacy", "noop_project"));
-    }
-
-
-    /**
-     * Saves the file
-     *
-     * @param csvPrinter the CSVPrinter to save the data
-     * @throws IOException corrupt file path
-     */
-    public static void flushCSV(CSVPrinter csvPrinter) throws IOException {
-        csvPrinter.flush();
-    }
+	private static Path path;
+	
+	/**
+	 * Writes the CSV-file with the total number of clones, the clones in the stage,
+	 * the clones in the sprites and the clones between sprites to the home directory.
+	 * @param formattedCode The code of the clones
+	 * @param nameOfFile the name of CSV-file
+	 */
+	public static void writeCSV(List<List<List<ClonePairCode>>> formattedCode, String nameOfFile, List<String> projectName) {
+		path = Paths.get("C:\\Users\\magge\\Desktop\\Uni\\6. Semester\\Bachelorarbeit\\CSV-Dateien", nameOfFile);
+		try(BufferedWriter writeBuffer = Files.newBufferedWriter(path)) {
+			String header = String.format("%s;%s;%s;%s", "Name", "Total", "Between_Sprites", "Sprites");
+	        writeBuffer.write(header +"\n");
+	    	for(int r = 0; r < formattedCode.size(); r++) {
+	    		try {
+		        int[] numberOfClones = new int[formattedCode.get(r).size()];
+		        for(int i = 0; i < numberOfClones.length; i++) {
+			        numberOfClones[i] = formattedCode.get(r).get(i).size();
+		        }
+		        int numberTotal = 0;
+		        for(int j : numberOfClones) {
+			        numberTotal += j;
+		        }
+		        List<String> sprites = new ArrayList<String>();
+		        for(int i = 1; i < numberOfClones.length - 1; i++) {
+			        sprites.add("Sprite" + i);
+		        }
+		        int[] numberSprites = new int[numberOfClones.length - 2];
+		        for(int i = 1; i < numberSprites.length - 1; i++) {
+			        numberSprites[i - 1] = numberOfClones[i];
+		        }
+		        int spriteClones = numberOfClones[0];
+		        for(int i = 1; i < numberOfClones.length - 1; i++) {
+	    		    spriteClones += numberOfClones[i];
+			    }
+			    String line = String.format("%s;%d;%d;%d", projectName.get(r), numberTotal, numberOfClones[numberOfClones.length - 1], spriteClones);
+			    writeBuffer.write(line + "\n");
+	    		} catch(Exception e) {
+	    			continue;
+	    		}
+		    }
+		} catch(IOException e) {
+	    	e.printStackTrace();
+    	}
+	}
+	
+	/**
+	 * Writes the CSV-file with the total number of clones, the clones in the original 
+	 * project, the clones between the projects and the clones who are additionally 
+	 * in the remix.
+	 * @param total The total number of clones.
+	 * @param original The number of clones in the original.
+	 * @param remix The number of clones in the remix.
+	 * @param between The number of clones between the projects.
+	 * @param nameOfFile The name of the CSV-file.
+	 */
+	public static void writeCSVRemix(int total, int original, int remix, int between, String nameOfFile) {
+		path = Paths.get("C:\\Users\\magge\\Desktop\\Uni\\6. Semester\\Bachelorarbeit\\CSV-Dateien", nameOfFile);
+		try(BufferedWriter writeBuffer = Files.newBufferedWriter(path)) {
+			String totalH = String.format("%s;%d", "Total", total);
+			writeBuffer.write(totalH + "\n");
+			String betweenH = String.format("%s;%d", "Between_Projects", between);
+			writeBuffer.write(betweenH + "\n");
+			String originalH = String.format("%s;%d", "Original", original);
+			writeBuffer.write(originalH + "\n");
+			String remixH = String.format("%s;%d", "Additionally_In_Remix", remix);
+			writeBuffer.write(remixH + "\n");
+		} catch(IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public static void writeCSVOnlyTotal(int[] numberOfClones, String[] names, String nameOfFile) {
+		path = Paths.get("C:\\Users\\magge\\Desktop\\Uni\\6. Semester\\Bachelorarbeit\\CSV-Dateien", nameOfFile);
+		try(BufferedWriter writeBuffer = Files.newBufferedWriter(path)) {
+			String header = String.format("%s;%s", "Project_Name", "Number_Of_Clones");
+			writeBuffer.write(header + "\n");
+			for(int i = 0; i < numberOfClones.length; i++) {
+			    String total = String.format("%s;%d", names[i], numberOfClones[i]);
+			    writeBuffer.write(total + "\n");
+			}
+		} catch(IOException e) {
+			e.printStackTrace();
+		}
+	}
 }

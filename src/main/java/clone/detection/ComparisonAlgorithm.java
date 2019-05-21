@@ -518,11 +518,15 @@ public class ComparisonAlgorithm {
 	private int numberOfSprites(List<String> normalizedCode) {
 		String last = normalizedCode.get(normalizedCode.size() - 2);
 		char[] lastBlock = last.toCharArray();
-		char numberSprites = lastBlock[lastBlock.length - 1];
-		int number = -1;
-		if(Character.isDigit(numberSprites)) {
-			number = Character.getNumericValue(numberSprites);
+		int firstNumber = 0;
+		while(!Character.isDigit(lastBlock[firstNumber])) {
+			firstNumber++;
 		}
+		String spriteNumber = "";
+		for(int i = firstNumber; i < lastBlock.length; i++) {
+			spriteNumber += lastBlock[i];
+		}
+		int number = Integer.parseInt(spriteNumber);
 		return number;
 	}
 	
