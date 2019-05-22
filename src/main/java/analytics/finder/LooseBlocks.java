@@ -50,16 +50,14 @@ public class LooseBlocks implements IssueFinder {
         for (Scriptable scable : scriptables) {
             for (Script script : scable.getScripts()) {
                 hit = false;
-                if (script != null) {
-                    for (String head : headBlocks) {
-                        if (script.getBlocks().size() >= 1 && script.getBlocks().get(0).getContent().replace("\"", "").startsWith(head)) {
-                            hit = true;
-                            break;
-                        }
+                for (String head : headBlocks) {
+                    if (script.getBlocks().size() >= 1 && script.getBlocks().get(0).getContent().replace("\"", "").startsWith(head)) {
+                        hit = true;
+                        break;
                     }
-                    if (!hit) {
-                        pos.add(scable.getName() + " at " + Arrays.toString(script.getPosition()));
-                    }
+                }
+                if (!hit) {
+                    pos.add(scable.getName() + " at " + Arrays.toString(script.getPosition()));
                 }
             }
         }

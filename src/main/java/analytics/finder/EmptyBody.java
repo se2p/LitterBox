@@ -29,14 +29,10 @@ public class EmptyBody implements IssueFinder {
         List<String> pos = new ArrayList<>();
         for (Scriptable scable : scriptables) {
             for (Script script : scable.getScripts()) {
-                if (script != null) {
-                    if (script.getBlocks().size() > 1) {
-                        if (project.getVersion().equals(Version.SCRATCH2)) {
-                            searchBlocks(scable, script, script.getBlocks(), pos, Identifier.LEGACY_IF.getValue(), Identifier.LEGACY_IF_ELSE.getValue());
-                        } else if (project.getVersion().equals(Version.SCRATCH3)) {
-                            searchBlocks(scable, script, script.getBlocks(), pos, Identifier.IF.getValue(), Identifier.IF_ELSE.getValue());
-                        }
-                    }
+                if (project.getVersion().equals(Version.SCRATCH2)) {
+                    searchBlocks(scable, script, script.getBlocks(), pos, Identifier.LEGACY_IF.getValue(), Identifier.LEGACY_IF_ELSE.getValue());
+                } else if (project.getVersion().equals(Version.SCRATCH3)) {
+                    searchBlocks(scable, script, script.getBlocks(), pos, Identifier.IF.getValue(), Identifier.IF_ELSE.getValue());
                 }
             }
         }
@@ -54,9 +50,6 @@ public class EmptyBody implements IssueFinder {
         for (ScBlock b : blocks) {
             if (b.getContent().startsWith(ifElseId)) {
                 if (b.getNestedBlocks() == null || b.getNestedBlocks().size() == 0) {
-                    pos.add(scable.getName() + " at " + Arrays.toString(sc.getPosition()));
-                }
-                if (b.getElseBlocks() == null || b.getElseBlocks().size() == 0) {
                     pos.add(scable.getName() + " at " + Arrays.toString(sc.getPosition()));
                 }
             } else {

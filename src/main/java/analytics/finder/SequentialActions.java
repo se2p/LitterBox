@@ -29,10 +29,8 @@ public class SequentialActions implements IssueFinder {
         List<String> pos = new ArrayList<>();
         for (Scriptable scable : scriptables) {
             for (Script script : scable.getScripts()) {
-                if (script != null) {
-                    if (script.getBlocks().size() > 1) {
-                        searchVariableModification(scable, script, script.getBlocks(), pos, project);
-                    }
+                if (script.getBlocks().size() > 1) {
+                    searchVariableModification(scable, script, script.getBlocks(), pos, project);
                 }
             }
         }

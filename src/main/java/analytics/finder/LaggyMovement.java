@@ -27,22 +27,20 @@ public class LaggyMovement implements IssueFinder {
         List<String> pos = new ArrayList<>();
         for (Sprite sprite : sprites) {
             for (Script script : sprite.getScripts()) {
-                if (script != null) {
-                    if (project.getVersion().equals(Version.SCRATCH2)) {
-                        List<String> idfs = new ArrayList<>();
-                        idfs.add(Identifier.LEGACY_KEYPRESS.getValue());
-                        idfs.add(Identifier.LEGACY_FORWARD.getValue());
-                        idfs.add(Identifier.LEGACY_CHANGEX.getValue());
-                        idfs.add(Identifier.LEGACY_CHANGEY.getValue());
-                        count = getCount(count, pos, sprite, script, idfs);
-                    } else if (project.getVersion().equals(Version.SCRATCH3)) {
-                        List<String> idfs = new ArrayList<>();
-                        idfs.add(Identifier.KEYPRESS.getValue());
-                        idfs.add(Identifier.FORWARD.getValue());
-                        idfs.add(Identifier.CHANGE_X.getValue());
-                        idfs.add(Identifier.CHANGE_Y.getValue());
-                        count = getCount(count, pos, sprite, script, idfs);
-                    }
+                if (project.getVersion().equals(Version.SCRATCH2)) {
+                    List<String> idfs = new ArrayList<>();
+                    idfs.add(Identifier.LEGACY_KEYPRESS.getValue());
+                    idfs.add(Identifier.LEGACY_FORWARD.getValue());
+                    idfs.add(Identifier.LEGACY_CHANGEX.getValue());
+                    idfs.add(Identifier.LEGACY_CHANGEY.getValue());
+                    count = getCount(count, pos, sprite, script, idfs);
+                } else if (project.getVersion().equals(Version.SCRATCH3)) {
+                    List<String> idfs = new ArrayList<>();
+                    idfs.add(Identifier.KEYPRESS.getValue());
+                    idfs.add(Identifier.FORWARD.getValue());
+                    idfs.add(Identifier.CHANGE_X.getValue());
+                    idfs.add(Identifier.CHANGE_Y.getValue());
+                    count = getCount(count, pos, sprite, script, idfs);
                 }
             }
         }

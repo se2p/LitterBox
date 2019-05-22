@@ -29,14 +29,10 @@ public class InappropriateIntimacy implements IssueFinder {
         for (Scriptable scable : scriptables) {
             List<String> counter = new ArrayList<>();
             for (Script script : scable.getScripts()) {
-                if (script != null) {
-                    if (script.getBlocks().size() > 1) {
-                        if (project.getVersion().equals(Version.SCRATCH2)) {
-                            searchBlocks(script.getBlocks(), counter, Identifier.LEGACY_SENSE.getValue());
-                        } else if (project.getVersion().equals(Version.SCRATCH3)) {
-                            searchBlocks(script.getBlocks(), counter, Identifier.SENSE.getValue());
-                        }
-                    }
+                if (project.getVersion().equals(Version.SCRATCH2)) {
+                    searchBlocks(script.getBlocks(), counter, Identifier.LEGACY_SENSE.getValue());
+                } else if (project.getVersion().equals(Version.SCRATCH3)) {
+                    searchBlocks(script.getBlocks(), counter, Identifier.SENSE.getValue());
                 }
             }
             if (counter.size() >= 4) {

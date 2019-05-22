@@ -26,11 +26,7 @@ public class CountBlocks implements IssueFinder {
         List<Integer> countList = new ArrayList<>();
         for (Scriptable scable : scriptables) {
             for (Script script : scable.getScripts()) {
-                if (script != null) {
-                    if (script.getBlocks().size() > 1) {
-                        searchBlocks(script.getBlocks(), countList);
-                    }
-                }
+                searchBlocks(script.getBlocks(), countList);
             }
         }
         for (int x : countList) {

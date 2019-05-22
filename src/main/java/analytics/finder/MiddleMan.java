@@ -29,17 +29,13 @@ public class MiddleMan implements IssueFinder {
         List<String> pos = new ArrayList<>();
         for (Scriptable scable : scriptables) {
             for (Script script : scable.getScripts()) {
-                if (script != null) {
-                    if (script.getBlocks().size() > 1) {
-                        if (project.getVersion().equals(Version.SCRATCH2)) {
-                            if (script.getBlocks().size() > 0 && script.getBlocks().get(0).getContent().startsWith(Identifier.LEGACY_RECEIVE.getValue())) {
-                                searchBlocks(script.getBlocks(), scable, script, pos);
-                            }
-                        } else if (project.getVersion().equals(Version.SCRATCH3)) {
-                            if (script.getBlocks().size() > 0 && script.getBlocks().get(0).getContent().startsWith(Identifier.RECEIVE.getValue())) {
-                                searchBlocks3(script.getBlocks(), scable, script, pos);
-                            }
-                        }
+                if (project.getVersion().equals(Version.SCRATCH2)) {
+                    if (script.getBlocks().size() > 0 && script.getBlocks().get(0).getContent().startsWith(Identifier.LEGACY_RECEIVE.getValue())) {
+                        searchBlocks(script.getBlocks(), scable, script, pos);
+                    }
+                } else if (project.getVersion().equals(Version.SCRATCH3)) {
+                    if (script.getBlocks().size() > 0 && script.getBlocks().get(0).getContent().startsWith(Identifier.RECEIVE.getValue())) {
+                        searchBlocks3(script.getBlocks(), scable, script, pos);
                     }
                 }
             }
@@ -50,7 +46,6 @@ public class MiddleMan implements IssueFinder {
         if (count > 0) {
             notes = "There is a Receive Script that broadcasts an event.";
         }
-
         return new IssueReport(name, count, pos, project.getPath(), notes);
     }
 
@@ -70,7 +65,6 @@ public class MiddleMan implements IssueFinder {
             }
         }
     }
-
 
     private void searchBlocks(List<ScBlock> blocks, Scriptable scable, Script script, List<String> pos) {
         if (blocks != null) {

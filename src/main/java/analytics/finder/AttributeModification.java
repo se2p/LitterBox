@@ -33,16 +33,12 @@ public class AttributeModification implements IssueFinder {
         List<String> pos = new ArrayList<>();
         for (Scriptable scable : scriptables) {
             for (Script script : scable.getScripts()) {
-                if (script != null) {
-                    if (script.getBlocks().size() > 1) {
-                        if (project.getVersion().equals(Version.SCRATCH2)) {
-                            searchVariableModification(scable, script, script.getBlocks(), pos);
-                            searchXYModification(scable, script, script.getBlocks(), pos);
-                        } else if (project.getVersion().equals(Version.SCRATCH3)) {
-                            searchVariableModification3(scable, script, script.getBlocks(), pos);
-                            searchXYModification3(scable, script, script.getBlocks(), pos);
-                        }
-                    }
+                if (project.getVersion().equals(Version.SCRATCH2)) {
+                    searchVariableModification(scable, script, script.getBlocks(), pos);
+                    searchXYModification(scable, script, script.getBlocks(), pos);
+                } else if (project.getVersion().equals(Version.SCRATCH3)) {
+                    searchVariableModification3(scable, script, script.getBlocks(), pos);
+                    searchXYModification3(scable, script, script.getBlocks(), pos);
                 }
             }
         }

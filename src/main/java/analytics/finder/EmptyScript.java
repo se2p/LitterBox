@@ -49,11 +49,9 @@ public class EmptyScript implements IssueFinder {
         List<String> pos = new ArrayList<>();
         for (Scriptable scable : scriptables) {
             for (Script script : scable.getScripts()) {
-                if (script != null) {
-                    for (String head : headBlocks) {
-                        if (script.getBlocks().size() == 1 && script.getBlocks().get(0).getContent().replace("\"", "").startsWith(head)) {
-                            pos.add(scable.getName() + " at " + Arrays.toString(script.getPosition()));
-                        }
+                for (String head : headBlocks) {
+                    if (script.getBlocks().size() == 1 && script.getBlocks().get(0).getContent().replace("\"", "").startsWith(head)) {
+                        pos.add(scable.getName() + " at " + Arrays.toString(script.getPosition()));
                     }
                 }
             }

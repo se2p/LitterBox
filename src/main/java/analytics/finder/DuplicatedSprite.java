@@ -28,9 +28,7 @@ public class DuplicatedSprite implements IssueFinder {
             if (scable.getScripts().size() > 0) {
                 scriptMap.put(scable.getName(), new ArrayList<>());
                 for (Script script : scable.getScripts()) {
-                    if (script != null) {
-                        scriptMap.get(scable.getName()).add(script.getBlocks().toString());
-                    }
+                    scriptMap.get(scable.getName()).add(script.getBlocks().toString());
                 }
             }
         }

@@ -55,12 +55,10 @@ public class StartingPoint implements IssueFinder {
                 hasGreenFlag = true;
             } else {
                 for (Script script : scable.getScripts()) {
-                    if (script != null) {
-                        for (String head : headBlocks) {
-                            if (script.getBlocks().size() > 1 && script.getBlocks().get(0).getContent().replace("\"", "").startsWith(head)) {
-                                hasGreenFlag = true;
-                                break;
-                            }
+                    for (String head : headBlocks) {
+                        if (script.getBlocks().size() > 1 && script.getBlocks().get(0).getContent().replace("\"", "").startsWith(head)) {
+                            hasGreenFlag = true;
+                            break;
                         }
                     }
                 }

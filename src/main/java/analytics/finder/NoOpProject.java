@@ -33,12 +33,10 @@ public class NoOpProject implements IssueFinder {
         List<String> pos = new ArrayList<>();
         for (Scriptable scable : scriptables) {
             for (Script script : scable.getScripts()) {
-                if (script != null) {
-                    if (script.getBlocks().size() > 1) {
-                        if (searchBlocks(script.getBlocks())) {
-                            String notes = "Your project is not empty and contains actions.";
-                            return new IssueReport(name, count, pos, project.getPath(), notes);
-                        }
+                if (script.getBlocks().size() > 1) {
+                    if (searchBlocks(script.getBlocks())) {
+                        String notes = "Your project is not empty and contains actions.";
+                        return new IssueReport(name, count, pos, project.getPath(), notes);
                     }
                 }
             }

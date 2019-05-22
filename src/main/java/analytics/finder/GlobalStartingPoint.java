@@ -39,11 +39,9 @@ public class GlobalStartingPoint implements IssueFinder {
         List<String> pos = new ArrayList<>();
         for (Scriptable scable : scriptables) {
             for (Script script : scable.getScripts()) {
-                if (script != null) {
-                    if (script.getBlocks().size() > 1 && script.getBlocks().get(0).getContent().startsWith(idf)) {
-                        hasGreenFlag = true;
-                        break;
-                    }
+                if (script.getBlocks().size() > 1 && script.getBlocks().get(0).getContent().startsWith(idf)) {
+                    hasGreenFlag = true;
+                    break;
                 }
             }
             if (hasGreenFlag) {

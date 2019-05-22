@@ -30,16 +30,12 @@ public class BroadcastSync implements IssueFinder {
         List<String> receive = new ArrayList<>();
         for (Scriptable scable : scriptables) {
             for (Script script : scable.getScripts()) {
-                if (script != null) {
-                    if (script.getBlocks().size() > 1) {
-                        if (project.getVersion().equals(Version.SCRATCH2)) {
-                            searchBlocks(script.getBlocks(), broadcasts);
-                            searchBlocksFirst(script.getBlocks(), receive);
-                        } else if (project.getVersion().equals(Version.SCRATCH3)) {
-                            searchBlocks3(script.getBlocks(), broadcasts);
-                            searchBlocksFirst3(script.getBlocks(), receive);
-                        }
-                    }
+                if (project.getVersion().equals(Version.SCRATCH2)) {
+                    searchBlocks(script.getBlocks(), broadcasts);
+                    searchBlocksFirst(script.getBlocks(), receive);
+                } else if (project.getVersion().equals(Version.SCRATCH3)) {
+                    searchBlocks3(script.getBlocks(), broadcasts);
+                    searchBlocksFirst3(script.getBlocks(), receive);
                 }
             }
         }
@@ -77,7 +73,7 @@ public class BroadcastSync implements IssueFinder {
     }
 
     private void searchBlocksFirst3(List<ScBlock> blocks, List<String> receive) {
-        if (blocks.size() > 0 && blocks.get(0).getContent().startsWith(Identifier.RECEIVE.getValue())) {
+        if (blocks.get(0).getContent().startsWith(Identifier.RECEIVE.getValue())) {
             String content = blocks.get(0).getFields().get(Identifier.FIELD_RECEIVE.getValue()).get(0);
             receive.add(content);
         }
@@ -102,7 +98,7 @@ public class BroadcastSync implements IssueFinder {
 
     private void searchBlocksFirst(List<ScBlock> blocks, List<String> list) {
         String x = Identifier.LEGACY_RECEIVE.getValue();
-        if (blocks.size() > 0 && blocks.get(0).getContent().replace("\"", "").startsWith(x)) {
+        if (blocks.get(0).getContent().replace("\"", "").startsWith(x)) {
             String content = blocks.get(0).getContent().replace("\"", "").replace(x, "");
             list.add(content);
         }

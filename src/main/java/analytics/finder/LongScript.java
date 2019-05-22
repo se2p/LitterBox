@@ -27,13 +27,9 @@ public class LongScript implements IssueFinder {
         List<String> pos = new ArrayList<>();
         for (Scriptable scable : scriptables) {
             for (Script script : scable.getScripts()) {
-                if (script != null) {
-                    if (script.getBlocks().size() > 1) {
-                        int localCount = searchBlocks(script.getBlocks(), 0);
-                        if (localCount >= 12) {
-                            pos.add(scable.getName() + " at " + Arrays.toString(script.getPosition()));
-                        }
-                    }
+                int localCount = searchBlocks(script.getBlocks(), 0);
+                if (localCount >= 12) {
+                    pos.add(scable.getName() + " at " + Arrays.toString(script.getPosition()));
                 }
             }
         }

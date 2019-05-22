@@ -33,14 +33,10 @@ public class UnusedVariable implements IssueFinder {
         for (Scriptable scable : scriptables) {
             vars.addAll(scable.getVariables());
             for (Script script : scable.getScripts()) {
-                if (script != null) {
-                    if (script.getBlocks().size() > 1) {
-                        if (project.getVersion().equals(Version.SCRATCH2)) {
-                            searchBlocks2(script.getBlocks(), scable, variableScope);
-                        } else if (project.getVersion().equals(Version.SCRATCH3)) {
-                            searchBlocks3(script.getBlocks(), scable, variableScope);
-                        }
-                    }
+                if (project.getVersion().equals(Version.SCRATCH2)) {
+                    searchBlocks2(script.getBlocks(), scable, variableScope);
+                } else if (project.getVersion().equals(Version.SCRATCH3)) {
+                    searchBlocks3(script.getBlocks(), scable, variableScope);
                 }
             }
         }

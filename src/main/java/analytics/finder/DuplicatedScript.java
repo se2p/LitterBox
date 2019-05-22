@@ -27,10 +27,8 @@ public class DuplicatedScript implements IssueFinder {
         List<String> duplicated = new ArrayList<>();
         for (Scriptable scable : scriptables) {
             for (Script script : scable.getScripts()) {
-                if (script != null) {
-                    if (script.getBlocks().size() > 1) {
-                        searchBlocks(scriptables, scable, script, pos, duplicated);
-                    }
+                if (script.getBlocks().size() > 1) {
+                    searchBlocks(scriptables, scable, script, pos, duplicated);
                 }
             }
         }
@@ -47,12 +45,10 @@ public class DuplicatedScript implements IssueFinder {
         String toSearch = sc.getBlocks().toString();
         for (Scriptable scable : scriptables) {
             for (Script script : scable.getScripts()) {
-                if (script != null) {
-                    if (script.getBlocks().size() > 1) {
-                        if (script.getBlocks().toString().equals(toSearch) && script.getPosition() != sc.getPosition() && !duplicated.contains(toSearch)) {
-                            pos.add(currentSc.getName() + " and " + scable.getName() + " at " + Arrays.toString(sc.getPosition()) + " and " + Arrays.toString(script.getPosition()));
-                            duplicated.add(toSearch);
-                        }
+                if (script.getBlocks().size() > 1) {
+                    if (script.getBlocks().toString().equals(toSearch) && script.getPosition() != sc.getPosition() && !duplicated.contains(toSearch)) {
+                        pos.add(currentSc.getName() + " and " + scable.getName() + " at " + Arrays.toString(sc.getPosition()) + " and " + Arrays.toString(script.getPosition()));
+                        duplicated.add(toSearch);
                     }
                 }
             }

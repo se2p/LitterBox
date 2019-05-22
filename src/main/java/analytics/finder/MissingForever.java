@@ -28,18 +28,16 @@ public class MissingForever implements IssueFinder {
         List<String> pos = new ArrayList<>();
         for (Scriptable scable : scriptables) {
             for (Script script : scable.getScripts()) {
-                if (script != null) {
-                    if (project.getVersion().equals(Version.SCRATCH2)) {
-                        if (script.getBlocks().size() > 1 && script.getBlocks().get(0).getContent().startsWith(Identifier.LEGACY_GREEN_FLAG.getValue())) {
-                            for (ScBlock b : script.getBlocks()) {
-                                checkMovement(pos, scable, script, b);
-                            }
+                if (project.getVersion().equals(Version.SCRATCH2)) {
+                    if (script.getBlocks().size() > 1 && script.getBlocks().get(0).getContent().startsWith(Identifier.LEGACY_GREEN_FLAG.getValue())) {
+                        for (ScBlock b : script.getBlocks()) {
+                            checkMovement(pos, scable, script, b);
                         }
-                    } else if (project.getVersion().equals(Version.SCRATCH3)) {
-                        if (script.getBlocks().size() > 1 && script.getBlocks().get(0).getContent().startsWith(Identifier.GREEN_FLAG.getValue())) {
-                            for (ScBlock b : script.getBlocks()) {
-                                checkMovement3(pos, scable, script, b);
-                            }
+                    }
+                } else if (project.getVersion().equals(Version.SCRATCH3)) {
+                    if (script.getBlocks().size() > 1 && script.getBlocks().get(0).getContent().startsWith(Identifier.GREEN_FLAG.getValue())) {
+                        for (ScBlock b : script.getBlocks()) {
+                            checkMovement3(pos, scable, script, b);
                         }
                     }
                 }

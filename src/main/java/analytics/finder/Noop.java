@@ -29,31 +29,27 @@ public class Noop implements IssueFinder {
         List<String> pos = new ArrayList<>();
         for (Scriptable scable : scriptables) {
             for (Script script : scable.getScripts()) {
-                if (script != null) {
-                    if (script.getBlocks().size() > 1) {
-                        if (project.getVersion().equals(Version.SCRATCH2)) {
-                            if (script.getBlocks().size() > 0 && script.getBlocks().get(0).getContent().startsWith(Identifier.LEGACY_CUSTOM_BLOCK.getValue())) {
-                                List<String> tempPos = new ArrayList<>();
-                                String methodName = script.getBlocks().get(0).getContent().replace(Identifier.LEGACY_CUSTOM_BLOCK.getValue(), "");
-                                methodName = methodName.split("\"")[0];
-                                for (Script script2 : scable.getScripts()) {
-                                    searchBlocks(script2.getBlocks(), scable, script2, tempPos, methodName);
-                                }
-                                if (tempPos.size() == 0) {
-                                    pos.add(scable.getName() + " at " + Arrays.toString(script.getPosition()));
-                                }
-                            }
-                        } else if (project.getVersion().equals(Version.SCRATCH3)) {
-                            if (script.getBlocks().size() > 0 && script.getBlocks().get(0).getContent().startsWith(Identifier.CUSTOM_BLOCK.getValue())) {
-                                List<String> tempPos = new ArrayList<>();
-                                String methodName = script.getBlocks().get(0).getProcode();
-                                for (Script script2 : scable.getScripts()) {
-                                    searchBlocks3(script2.getBlocks(), scable, script2, tempPos, methodName);
-                                }
-                                if (tempPos.size() == 0) {
-                                    pos.add(scable.getName() + " at " + Arrays.toString(script.getPosition()));
-                                }
-                            }
+                if (project.getVersion().equals(Version.SCRATCH2)) {
+                    if (script.getBlocks().size() > 0 && script.getBlocks().get(0).getContent().startsWith(Identifier.LEGACY_CUSTOM_BLOCK.getValue())) {
+                        List<String> tempPos = new ArrayList<>();
+                        String methodName = script.getBlocks().get(0).getContent().replace(Identifier.LEGACY_CUSTOM_BLOCK.getValue(), "");
+                        methodName = methodName.split("\"")[0];
+                        for (Script script2 : scable.getScripts()) {
+                            searchBlocks(script2.getBlocks(), scable, script2, tempPos, methodName);
+                        }
+                        if (tempPos.size() == 0) {
+                            pos.add(scable.getName() + " at " + Arrays.toString(script.getPosition()));
+                        }
+                    }
+                } else if (project.getVersion().equals(Version.SCRATCH3)) {
+                    if (script.getBlocks().size() > 0 && script.getBlocks().get(0).getContent().startsWith(Identifier.CUSTOM_BLOCK.getValue())) {
+                        List<String> tempPos = new ArrayList<>();
+                        String methodName = script.getBlocks().get(0).getProcode();
+                        for (Script script2 : scable.getScripts()) {
+                            searchBlocks3(script2.getBlocks(), scable, script2, tempPos, methodName);
+                        }
+                        if (tempPos.size() == 0) {
+                            pos.add(scable.getName() + " at " + Arrays.toString(script.getPosition()));
                         }
                     }
                 }
