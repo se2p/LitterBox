@@ -83,6 +83,7 @@ inappint->inappropriate_intimacy
 java -cp C:\ScratchAnalytics-1.0.jar Main -path C:\scratchprojects\files\ -version 3 -folder C:\scratchprojects\files\test.csv -detectors cnt,glblstrt
 
 This will run only BlockCount and GlobalStartingpoint on all projects in C:\scratchprojects\files\; and it will also save the test.csv file in the same location.
+
 ## Extendability
 
 First of all, create a new IssueFinder and implement the corresponding interface. 
