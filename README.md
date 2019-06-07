@@ -17,14 +17,14 @@ This method produces a csv file with all issue counts for every project.
 ##
 To use LitterBox with the command line, build the Jar with mvn clean and mvn package.
 
-###Command Line Options:
+### Command Line Options:
 
 1. path (required) - the Scratch projects path or a folder path with multiple Scratch projects
 2. folder - if you want to analyze multiple projects give a output path for the csv file
 3. detectors - all the detectors you want to run (short names seperated by ","), if not set, all will be used
 4. version (required) - the Scratch Version ('2' or '3')
 
-####Detectors short names:
+#### Detectors short names:
 
 mssfrev->missing_forever_loop
 
@@ -78,7 +78,7 @@ emptybd->empty_body
 
 inappint->inappropriate_intimacy
 
-####Example:
+#### Example:
 
 java -cp C:\ScratchAnalytics-1.0.jar Main -path C:\scratchprojects\files\ -version 3 -folder C:\scratchprojects\files\test.csv -detectors cnt,glblstrt
 
