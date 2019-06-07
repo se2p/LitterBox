@@ -57,8 +57,8 @@ public class JsonParser {
             }
             project.setSprites(sprites);
             return project;
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            //e.printStackTrace();
             return null;
         }
     }

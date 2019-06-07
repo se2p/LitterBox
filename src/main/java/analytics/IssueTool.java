@@ -7,7 +7,9 @@ import utils.CSVWriter;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Holds all IssueFinder and executes them.
@@ -15,35 +17,35 @@ import java.util.List;
  */
 public class IssueTool {
 
-    private List<IssueFinder> finder = new ArrayList<>();
+    private Map<String, IssueFinder> finder = new HashMap<>();
 
     public IssueTool() {
-        finder.add(new CountBlocks());
-        finder.add(new GlobalStartingPoint());
-        finder.add(new StartingPoint());
-        finder.add(new LaggyMovement());
-        finder.add(new DoubleIf());
-        finder.add(new MissingForever());
-        finder.add(new CloneInitialization());
-        finder.add(new MissingTermination());
-        finder.add(new LooseBlocks());
-        finder.add(new AttributeModification());
-        finder.add(new EmptyBody());
-        finder.add(new SequentialActions());
-        finder.add(new SpriteNaming());
-        finder.add(new LongScript());
-        finder.add(new BroadcastSync());
-        finder.add(new NestedLoops());
-        finder.add(new DuplicatedScript());
-        finder.add(new RaceCondition());
-        finder.add(new EmptyScript());
-        finder.add(new MiddleMan());
-        finder.add(new Noop());
-        finder.add(new VariableScope());
-        finder.add(new UnusedVariable());
-        finder.add(new DuplicatedSprite());
-        finder.add(new InappropriateIntimacy());
-        finder.add(new NoOpProject());
+        finder.put("cnt", new CountBlocks());
+        finder.put("glblstrt", new GlobalStartingPoint());
+        finder.put("strt", new StartingPoint());
+        finder.put("lggymve", new LaggyMovement());
+        finder.put("dblif", new DoubleIf());
+        finder.put("mssfrev", new MissingForever());
+        finder.put("clninit", new CloneInitialization());
+        finder.put("msstrm", new MissingTermination());
+        finder.put("lsblck", new LooseBlocks());
+        finder.put("attrmod", new AttributeModification());
+        finder.put("emptybd", new EmptyBody());
+        finder.put("squact", new SequentialActions());
+        finder.put("sprtname", new SpriteNaming());
+        finder.put("lngscr", new LongScript());
+        finder.put("brdcstsync", new BroadcastSync());
+        finder.put("nstloop", new NestedLoops());
+        finder.put("dplscrpt", new DuplicatedScript());
+        finder.put("racecnd", new RaceCondition());
+        finder.put("emptyscrpt", new EmptyScript());
+        finder.put("mdlman", new MiddleMan());
+        finder.put("noop", new Noop());
+        finder.put("vrblscp", new VariableScope());
+        finder.put("unusedvar", new UnusedVariable());
+        finder.put("dplsprt", new DuplicatedSprite());
+        finder.put("inappint", new InappropriateIntimacy());
+        finder.put("noopprjct", new NoOpProject());
     }
 
     /**
@@ -51,11 +53,20 @@ public class IssueTool {
      *
      * @param project the project to check
      */
-    public void checkRaw(Project project) {
-        for (IssueFinder iF : finder) {
-            if (project != null) {
-                IssueReport issueReport = iF.check(project);
-                System.out.println(issueReport);
+    public void checkRaw(Project project, String dtctrs) {
+        String[] detectors;
+        if (dtctrs.equals("all")) {
+            detectors = finder.keySet().toArray(new String[0]);
+        } else {
+            detectors = dtctrs.split(",");
+        }
+        for (String s : detectors) {
+            if (finder.containsKey(s)) {
+                IssueFinder iF = finder.get(s);
+                if (project != null) {
+                    IssueReport issueReport = iF.check(project);
+                    System.out.println(issueReport);
+                }
             }
         }
     }
@@ -65,15 +76,24 @@ public class IssueTool {
      *
      * @param project the project to check
      */
-    public void check(Project project, CSVPrinter printer) {
+    public void check(Project project, CSVPrinter printer, String dtctrs) {
         List<IssueReport> issueReports = new ArrayList<>();
-        for (IssueFinder iF : finder) {
-            if (project != null) {
-                IssueReport issueReport = iF.check(project);
-                issueReports.add(issueReport);
-                //System.out.println(issueReport);
-            } else {
-                return;
+        String[] detectors;
+        if (dtctrs.equals("all")) {
+            detectors = finder.keySet().toArray(new String[0]);
+        } else {
+            detectors = dtctrs.split(",");
+        }
+        for (String s : detectors) {
+            if (finder.containsKey(s)) {
+                IssueFinder iF = finder.get(s);
+                if (project != null) {
+                    IssueReport issueReport = iF.check(project);
+                    issueReports.add(issueReport);
+                    //System.out.println(issueReport);
+                } else {
+                    return;
+                }
             }
         }
         try {
@@ -83,11 +103,11 @@ public class IssueTool {
         }
     }
 
-    public List<IssueFinder> getFinder() {
+    public Map<String, IssueFinder> getFinder() {
         return finder;
     }
 
-    public void setFinder(List<IssueFinder> finder) {
+    public void setFinder(Map<String, IssueFinder> finder) {
         this.finder = finder;
     }
 }
