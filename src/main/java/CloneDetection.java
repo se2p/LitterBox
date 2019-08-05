@@ -10,6 +10,7 @@ import utils.JsonParser;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -19,13 +20,70 @@ import java.util.Objects;
 public class CloneDetection {
 
 	// The folder where the to analyze code is.
-    private final static File folder = new File("C:\\Users\\magge\\Desktop\\Uni\\6. Semester\\Bachelorarbeit\\ScratchDaten\\TestEinlesen\\test");
-	//private final static File folder = new File("C:\\Users\\magge\\Desktop\\Uni\\6. Semester\\Bachelorarbeit\\ScratchTest\\JSON_Files_Data\\files");
+    private final static File folder = new File("...");
+    
     /**
-     * The main method reads the json file from the scratch project and runs 
-     * the clone detection algorithm.
+     * This main-method returns the total number of clones from a scratch 1 or 2 
+     * projects.
      */
     public static void main(String[] args) {
+    	try {
+    		int numberFiles = folder.listFiles().length;
+    		int[] numberClones = new int[numberFiles];
+    		String[] projectName = new String[numberFiles];
+    		for(int i = 0; i < numberFiles; i++) {
+    			try {
+    		    Project project = null;
+                final File fileEntry = Objects.requireNonNull(folder.listFiles())[i];
+                if (!fileEntry.isDirectory()) {
+                    System.out.println(fileEntry);
+                    System.out.println("------------");
+                    System.out.println("Projekt: " + fileEntry.getName());
+                    System.out.println("------------");
+                    try {
+                        project = JsonParser.parse(fileEntry.getName(), fileEntry.getPath());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    if(project != null) {
+                    	String name = project.getName();
+                        Preparation preparation = new Preparation();
+                        List<String> preparatedProject = preparation.codePreparation(project);
+                        Normalization norm = new Normalization();
+                        List<String> normalizedProject = norm.codeNormalization(preparatedProject);
+                        ComparisonAlgorithm comp = new ComparisonAlgorithm();
+                        List<List<CloneBlock>> allClones = comp.findAllClones(normalizedProject);
+                        for(List<CloneBlock> g : allClones) {
+                        	for(CloneBlock n : g) {
+                        		System.out.println(n.toString());
+                        	}
+                        }
+                        Formatting form = new Formatting();
+                        List<List<ClonePairCode>> formattedCode = form.formatting(allClones, preparatedProject);
+                        int numberOfClones = 0;
+                        for(List<ClonePairCode> pair : formattedCode) {
+                    	    numberOfClones = numberOfClones + pair.size();
+                        }
+                        numberClones[i] = numberOfClones;
+                        projectName[i] = name;
+                    }
+                }
+    			} catch(Exception e) {
+    				continue;
+    			}
+    		}
+    		String fileName = "clones.csv";
+    		CSVWriter.writeCSVOnlyTotal(numberClones, projectName, fileName);
+    	} catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
+    /**
+     * This main method returns the total number of clones in the project,  
+     * between sprites and in the sprites.
+     */
+    public static void mainWhere(String[] args) {
     	String name = "clones.csv";
     	List<List<List<ClonePairCode>>> allClones = new ArrayList<List<List<ClonePairCode>>>();
     	List<String> allNames = new ArrayList<String>();
@@ -66,9 +124,6 @@ public class CloneDetection {
                     System.out.println("Number of Sprites: " + numberOfSprites);
                     System.out.println("Number of clones: " + numberOfClones);
                     System.out.println("------------");
-                    /*listStageClones(formattedCode);
-                    listSpriteClones(formattedCode, numberOfSprites);
-                    listClonesBetweenSprites(formattedCode);*/
                     String projectName = project.getName();
                     allClones.add(formattedCode);
                     allNames.add(projectName);
@@ -85,26 +140,40 @@ public class CloneDetection {
      * This main method runs the algorithm to detect clones in remixes and says
      * whether the clone is from the original project or is a new clone.
      */
-    public static void mainR(String[] args) {
+    public static void mainRemix(String[] args) {
+    	
+    	/* 
+    	 * This is the number of remixes included the original which are written
+    	 * in one csv-file.
+    	 */
+    	int numberOfProjectsInOneFile = 100;
     	try {
             Project project = null;
             Project remix = null;
-            
+            int numberFiles = folder.listFiles().length;
+            String[] nameOriginal = new String[numberOfProjectsInOneFile];
+            String[] nameRemix = new String[numberOfProjectsInOneFile];
+            int[] clonesOriginal = new int[numberOfProjectsInOneFile];
+            int[] clonesOnlyRemix = new int[numberOfProjectsInOneFile];
+            int[] clonesTotal = new int[numberOfProjectsInOneFile];
+            int[] clonesBetween = new int[numberOfProjectsInOneFile];
             /*
              * The original project must be the first project in the folder and
              * the remix the second. 
              */
-            final File fileEntry = Objects.requireNonNull(folder.listFiles())[0];
-            final File fileEntryRemix = Objects.requireNonNull(folder.listFiles())[1];
+            int count = 0;
+            int fileNumber = 0;
+            for(int i = 0; i < numberFiles; i += 2) {
+            	count++;
+                final File fileEntry = Objects.requireNonNull(folder.listFiles())[i];
+                final File fileEntryRemix = Objects.requireNonNull(folder.listFiles())[i + 1];
                 if (!fileEntry.isDirectory()) {
-                    System.out.println(fileEntry);
-                    System.out.println("------------");
                     System.out.println("Projekt: " + fileEntry.getName());
                     System.out.println("Remix: " + fileEntryRemix.getName());
                     System.out.println("------------");
                     try {
-                        project = JsonParser.parse(fileEntry.getName(), fileEntry.getPath());
-                        remix = JsonParser.parse(fileEntryRemix.getName(), fileEntryRemix.getPath());
+                        project = JsonParser.parseRaw(fileEntry);
+                        remix = JsonParser.parseRaw(fileEntryRemix);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -140,25 +209,70 @@ public class CloneDetection {
                     int numberClonesBetweenProjects = formattedCode.get(0).size();
                     int numberClonesOriginal = formattedCode.get(1).size();
                     int numberClonesRemix = formattedCode.get(2).size();
-                    System.out.println("Total number of clones: " + numberOfClones);
-                    System.out.println("Number of clones between projects: " + numberClonesBetweenProjects);
-                    System.out.println("Number of clones in original code: " + numberClonesOriginal);
-                    System.out.println("Number of new clones in the remix: " + numberClonesRemix);
-                    System.out.println("------------");
-                    CSVWriter.writeCSVRemix(numberOfClones, numberClonesOriginal, numberClonesRemix, numberClonesBetweenProjects, "clonesRemix.csv");
-                    // Prints the clones.
-                   /* listClonesBetweenProjects(formattedCode);
-                    listClonesOriginal(formattedCode);
-                    listClonesRemix(formattedCode);*/
+                    char[] originalName = project.getName().toCharArray();
+                    char[] remixName = remix.getName().toCharArray();
+                    int indexShift = 0;
+                    while(originalName[indexShift] != '_') {
+                    	indexShift++;
+                    }
+                    char[] realNameO = Arrays.copyOfRange(originalName, indexShift + 1, originalName.length);
+                    char[] realNameR = Arrays.copyOfRange(remixName, indexShift + 1, remixName.length);
+                    String nameO = "";
+                    String nameR = "";
+                    for(char c : realNameO) {
+                    	nameO += c;
+                    }
+                    for(char c : realNameR) {
+                    	nameR += c;
+                    }
+                    nameOriginal[((i + 1) / 2) % numberOfProjectsInOneFile] = nameO;
+                    nameRemix[((i + 1) / 2) % numberOfProjectsInOneFile] = nameR;
+                    clonesOriginal[((i + 1) / 2) % numberOfProjectsInOneFile] = numberClonesOriginal;
+                    clonesOnlyRemix[((i + 1) / 2) % numberOfProjectsInOneFile] = numberClonesRemix;
+                    clonesTotal[((i + 1) / 2) % numberOfProjectsInOneFile] = numberOfClones;
+                    clonesBetween[((i + 1) / 2) % numberOfProjectsInOneFile] = numberClonesBetweenProjects;
                 }
+                if(count != 0 && count % numberOfProjectsInOneFile == 0) {
+                	fileNumber++;
+                	CSVWriter.writeCSVRemix(nameOriginal, nameRemix, clonesTotal, clonesOriginal, clonesOnlyRemix, clonesBetween, "clonesRemix" + fileNumber + ".csv");
+                	nameOriginal = new String[numberOfProjectsInOneFile];
+                    nameRemix = new String[numberOfProjectsInOneFile];
+                    clonesOriginal = new int[numberOfProjectsInOneFile];
+                    clonesOnlyRemix = new int[numberOfProjectsInOneFile];
+                    clonesTotal = new int[numberOfProjectsInOneFile];
+                    clonesBetween = new int[numberOfProjectsInOneFile];
+                }
+            }
+            int numberRestFiles = (numberFiles / 2) % numberOfProjectsInOneFile;
+            if(numberRestFiles > 0) {
+                fileNumber++;
+                
+                // Avoid null-values in the csv-file.
+                String[] nameOriginalNew = new String[numberRestFiles];
+                String[] nameRemixNew = new String[numberRestFiles];
+                int[] clonesOriginalNew = new int[numberRestFiles];
+                int[] clonesOnlyRemixNew = new int[numberRestFiles];
+                int[] clonesTotalNew = new int[numberRestFiles];
+                int[] clonesBetweenNew = new int[numberRestFiles];
+                System.arraycopy(nameOriginal, 0, nameOriginalNew, 0, numberRestFiles);
+                System.arraycopy(nameRemix, 0, nameRemixNew, 0, numberRestFiles);
+                System.arraycopy(clonesOriginal, 0, clonesOriginalNew, 0, numberRestFiles);
+                System.arraycopy(clonesOnlyRemix, 0, clonesOnlyRemixNew, 0, numberRestFiles);
+                System.arraycopy(clonesTotal, 0, clonesTotalNew, 0, numberRestFiles);
+                System.arraycopy(clonesBetween, 0, clonesBetweenNew, 0, numberRestFiles);
+                CSVWriter.writeCSVRemix(nameOriginalNew, nameRemixNew, clonesTotalNew, clonesOriginalNew, clonesOnlyRemixNew, clonesBetweenNew, "clonesRemix" + fileNumber + ".csv");
+            }
     	} catch (Exception e) {
             e.printStackTrace();
         }    
     }
     
-    public static void mainAll(String[] args) {
+    /**
+     * This main-method returns the total number of clones from json-files.
+     */
+    public static void mainTotal(String[] args) {
     	try {
-    		int numberInOneFile = 10000;
+    		int numberInOneFile = 100;
     		int numberFiles = folder.listFiles().length;
     		int[] numberClones = new int[numberInOneFile];
     		String[] projectName = new String[numberInOneFile];
@@ -206,8 +320,13 @@ public class CloneDetection {
                 }
     		}
     		countFile++;
+    		int rest = numberFiles % numberInOneFile;
+    		int[] numberClonesNew = new int[rest];
+    		String[] projectNameNew = new String[rest];
     		String fileName = "allClones" + countFile + ".csv";
-    		CSVWriter.writeCSVOnlyTotal(numberClones, projectName, fileName);
+    		System.arraycopy(numberClones, 0, numberClonesNew, 0, rest);
+    		System.arraycopy(projectName, 0, projectNameNew, 0, rest);
+    		CSVWriter.writeCSVOnlyTotal(numberClonesNew, projectNameNew, fileName);
     	} catch (Exception e) {
             e.printStackTrace();
         }

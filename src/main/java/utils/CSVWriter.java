@@ -12,6 +12,7 @@ import clone.structure.ClonePairCode;
 
 public class CSVWriter {
 
+	private final static String folder = "...";
 	private static Path path;
 	
 	/**
@@ -21,7 +22,7 @@ public class CSVWriter {
 	 * @param nameOfFile the name of CSV-file
 	 */
 	public static void writeCSV(List<List<List<ClonePairCode>>> formattedCode, String nameOfFile, List<String> projectName) {
-		path = Paths.get("C:\\Users\\magge\\Desktop\\Uni\\6. Semester\\Bachelorarbeit\\CSV-Dateien", nameOfFile);
+		path = Paths.get(folder, nameOfFile);
 		try(BufferedWriter writeBuffer = Files.newBufferedWriter(path)) {
 			String header = String.format("%s;%s;%s;%s", "Name", "Total", "Between_Sprites", "Sprites");
 	        writeBuffer.write(header +"\n");
@@ -68,24 +69,22 @@ public class CSVWriter {
 	 * @param between The number of clones between the projects.
 	 * @param nameOfFile The name of the CSV-file.
 	 */
-	public static void writeCSVRemix(int total, int original, int remix, int between, String nameOfFile) {
-		path = Paths.get("C:\\Users\\magge\\Desktop\\Uni\\6. Semester\\Bachelorarbeit\\CSV-Dateien", nameOfFile);
+	public static void writeCSVRemix(String[] nameOriginal, String[] nameRemix, int[] total, int[] original, int[] remix, int[] between, String nameOfFile) {
+		path = Paths.get(folder, nameOfFile);
 		try(BufferedWriter writeBuffer = Files.newBufferedWriter(path)) {
-			String totalH = String.format("%s;%d", "Total", total);
-			writeBuffer.write(totalH + "\n");
-			String betweenH = String.format("%s;%d", "Between_Projects", between);
-			writeBuffer.write(betweenH + "\n");
-			String originalH = String.format("%s;%d", "Original", original);
-			writeBuffer.write(originalH + "\n");
-			String remixH = String.format("%s;%d", "Additionally_In_Remix", remix);
-			writeBuffer.write(remixH + "\n");
+			String header = String.format("%s;%s;%s;%s;%s;%s", "Original", "Remix", "Total", "Clones_Original", "Clones_Only_Remix", "Clones_Between_Projects");
+			writeBuffer.write(header + "\n");
+			for(int i = 0; i < nameOriginal.length; i++) {
+				String line = String.format("%s;%s;%d;%d;%d;%d", nameOriginal[i], nameRemix[i], total[i], original[i], remix[i], between[i]);
+				writeBuffer.write(line + "\n");
+			}
 		} catch(IOException e) {
 			e.printStackTrace();
 		}
 	}
 	
 	public static void writeCSVOnlyTotal(int[] numberOfClones, String[] names, String nameOfFile) {
-		path = Paths.get("C:\\Users\\magge\\Desktop\\Uni\\6. Semester\\Bachelorarbeit\\CSV-Dateien", nameOfFile);
+		path = Paths.get(folder, nameOfFile);
 		try(BufferedWriter writeBuffer = Files.newBufferedWriter(path)) {
 			String header = String.format("%s;%s", "Project_Name", "Number_Of_Clones");
 			writeBuffer.write(header + "\n");
