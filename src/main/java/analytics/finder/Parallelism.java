@@ -14,7 +14,7 @@ import utils.Identifier;
 import utils.Version;
 
 /**
- * Evaluates the level of parallelism in the Scratch programme.
+ * Evaluates the level of parallelism in the Scratch program.
  */
 public class Parallelism implements IssueFinder {
 
