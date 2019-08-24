@@ -14,7 +14,7 @@ import utils.Identifier;
 import utils.Version;
 
 /**
- * Evaluates the abstraction level of the Scratch programme.
+ * Evaluates the abstraction level of the Scratch program.
  */
 public class Abstraction implements IssueFinder {
 
