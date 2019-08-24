@@ -14,7 +14,7 @@ import utils.Identifier;
 import utils.Version;
 
 /**
- * Evaluates the synchronization level of the Scratch programme.
+ * Evaluates the synchronization level of the Scratch program.
  */
 public class Synchronization implements IssueFinder {
 
