@@ -14,7 +14,7 @@ import utils.Identifier;
 import utils.Version;
 
 /**
- * Evaluates the logical thinking level of the programme.
+ * Evaluates the logical thinking level of the program.
  */
 public class LogicalThinking implements IssueFinder {
 
