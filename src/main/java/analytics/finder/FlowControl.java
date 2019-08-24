@@ -14,7 +14,7 @@ import utils.Identifier;
 import utils.Version;
 
 /**
- * Evaluates the level of flow control of the Scratch programme.
+ * Evaluates the level of flow control of the Scratch program.
  */
 public class FlowControl implements IssueFinder {
 
