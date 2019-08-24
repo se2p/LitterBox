@@ -14,7 +14,7 @@ import utils.Identifier;
 import utils.Version;
 
 /**
- * Evaluates the level of user interactivity of the Scratch programme.
+ * Evaluates the level of user interactivity of the Scratch program.
  */
 public class UserInteractivity implements IssueFinder {
 
