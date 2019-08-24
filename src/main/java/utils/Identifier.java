@@ -81,7 +81,27 @@ public enum Identifier {
     LOOKS("looks_"),
     SOUND("sound_"),
     CHANGE_X("motion_changexby"),
-    CHANGE_Y("motion_changeyby");
+    CHANGE_Y("motion_changeyby"),
+
+    LEGACY_MOTION("motion"),
+    LEGACY_LOOKS("looks"),
+    LEGACY_DATA("data"),
+    LEGACY_AND("and"),
+    LEGACY_OR("or"),
+    LEGACY_NOT("not"),
+    LEGACY_STOP("stop"),
+    LEGACY_WAIT_UNTIL("wait_until"),
+    LEGACY_ASK_WAIT("ask_and_wait"),
+    LEGACY_VIDEO("video"),
+    AND("operator_and"),
+    OR("operator_or"),
+    NOT("operator_not"),
+    WAIT_UNTIL("control_wait_until"),
+    ASK_WAIT("control_ask_and_wait"),
+    STOP("control_stop"),
+    VIDEO("videoSensing_"),
+    DATA("data_");
+
 
     Identifier(String value) {
         this.value = value;
