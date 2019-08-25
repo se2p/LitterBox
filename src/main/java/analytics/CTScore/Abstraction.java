@@ -1,4 +1,4 @@
-package analytics.finder;
+package analytics.CTScore;
 
 import analytics.IssueFinder;
 import analytics.IssueReport;
@@ -14,29 +14,29 @@ import utils.Identifier;
 import utils.Version;
 
 /**
- * Evaluates the level of flow control of the Scratch program.
+ * Evaluates the abstraction level of the Scratch program.
  */
-public class FlowControl implements IssueFinder {
+public class Abstraction implements IssueFinder {
 
     private List<List<String>> ids = new ArrayList<>();
     private List<List<String>> legacyIds = new ArrayList<>();
     private String[] notes = new String[4];
-    private String name = "flow_control";
+    private String name = "abstraction";
 
-    public FlowControl() {
-        ids.add(0, Arrays.asList(Identifier.REPEAT.getValue(),
-                Identifier.FOREVER.getValue()));
+    public Abstraction() {
+        ids.add(0,
+                Collections.singletonList(Identifier.CUSTOM_BLOCK.getValue()));
         ids.add(1,
-                Collections.singletonList(Identifier.REPEAT_UNTIL.getValue()));
+                Collections.singletonList(Identifier.CREATE_CLONE.getValue()));
 
-        legacyIds.add(0, Arrays.asList(Identifier.LEGACY_REPEAT.getValue(),
-                Identifier.LEGACY_FOREVER.getValue()));
+        legacyIds.add(0,
+                Collections.singletonList(Identifier.LEGACY_CUSTOM_BLOCK.getValue()));
         legacyIds.add(1,
-                Collections.singletonList(Identifier.LEGACY_REPEAT_UNTIL.getValue()));
+                Collections.singletonList(Identifier.LEGACY_CREATE_CLONE.getValue()));
 
-        notes[0] = "There is a sequence of blocks missing.";
-        notes[1] = "Basic Level. There is repeat or forever missing.";
-        notes[2] = "Developing Level. There is repeat until missing.";
+        notes[0] = "There is only one sprite.";
+        notes[1] = "Basic Level. There are no defined blocks.";
+        notes[2] = "Developing Level. There are no used clones.";
         notes[3] = "Proficiency Level. Good work!";
     }
 
@@ -54,25 +54,20 @@ public class FlowControl implements IssueFinder {
 
         List<List<String>> versionIds = checkVersion(project);
 
-        for (List<String> id : versionIds) {
+        for (int i = 0; i < versionIds.size(); i++) {
             for (Scriptable scable : scriptables) {
                 for (Script script : scable.getScripts()) {
-                    search(scable, script, script.getBlocks(), found, id);
+                   search(scable, script, script.getBlocks(), found,
+                           versionIds.get(i));
                 }
             }
             if (found.size() > 0) {
-                ++level;
+                level = i + 1;
                 pos.addAll(found);
                 found.clear();
             }
         }
-
-        int foundBlockStack = checkBlockStacks(scriptables);
-        if (foundBlockStack == 1 && level != 0) {
-            ++level;
-        } else {
-            level += foundBlockStack;
-        }
+        level = countScripts(scriptables, level);
 
         return new IssueReport(name, level, pos, project.getPath(),
                 notes[level]);
@@ -88,8 +83,8 @@ public class FlowControl implements IssueFinder {
      * @param ids    The identifiers for the current version of the project.
      */
     private void search(Scriptable scable, Script sc,
-                        List<ScBlock> blocks, List<String> found,
-                        List<String> ids) {
+                       List<ScBlock> blocks, List<String> found,
+                       List<String> ids) {
         for (ScBlock b : blocks) {
             if (ids.contains(b.getContent())) {
                 if (found.size() < 10) {
@@ -107,21 +102,18 @@ public class FlowControl implements IssueFinder {
     }
 
     /**
-     * Checks if there is a set of blocks that is executed one after another.
+     * Counts the amount of scripts of the project.
      *
-     * @param scriptables Scriptable objects in the project.
-     * @return            {@code 1} if block stacks were found, {@code 0}
-     *                    otherwise.
+     * @param scriptables Scriptable objects.
+     * @param level       The current level of abstraction.
+     * @return            The updated level.
      */
-    private int checkBlockStacks(List<Scriptable> scriptables) {
-        int found = 0;
-        for (Scriptable scable : scriptables) {
-            if (scable.getBlockStack().size() > 1) {
-                ++found;
-                break;
-            }
+    private int countScripts(List scriptables, int level) {
+        if (scriptables.size() == 0) {
+            return 0;
+        } else {
+            return ++level;
         }
-        return found;
     }
 
     /**

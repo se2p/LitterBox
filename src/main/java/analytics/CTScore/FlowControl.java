@@ -1,4 +1,4 @@
-package analytics.finder;
+package analytics.CTScore;
 
 import analytics.IssueFinder;
 import analytics.IssueReport;
@@ -14,37 +14,29 @@ import utils.Identifier;
 import utils.Version;
 
 /**
- * Evaluates the synchronization level of the Scratch program.
+ * Evaluates the level of flow control of the Scratch program.
  */
-public class Synchronization implements IssueFinder {
+public class FlowControl implements IssueFinder {
 
     private List<List<String>> ids = new ArrayList<>();
     private List<List<String>> legacyIds = new ArrayList<>();
     private String[] notes = new String[4];
-    private String name = "synchronization";
+    private String name = "flow_control";
 
-    public Synchronization() {
-        ids.add(0, Collections.singletonList(Identifier.WAIT.getValue()));
-        ids.add(1, Arrays.asList(Identifier.BROADCAST.getValue(),
-                Identifier.RECEIVE.getValue(), Identifier.STOP.getValue()));
-        ids.add(2, Arrays.asList(Identifier.BACKDROP.getValue(),
-                Identifier.BROADCAST_WAIT.getValue(),
-                Identifier.WAIT_UNTIL.getValue()));
+    public FlowControl() {
+        ids.add(0, Arrays.asList(Identifier.REPEAT.getValue(),
+                Identifier.FOREVER.getValue()));
+        ids.add(1,
+                Collections.singletonList(Identifier.REPEAT_UNTIL.getValue()));
 
-        legacyIds.add(0,
-                Collections.singletonList(Identifier.LEGACY_WAIT.getValue()));
-        legacyIds.add(1, Arrays.asList(Identifier.LEGACY_BROADCAST.getValue(),
-                Identifier.LEGACY_RECEIVE.getValue(),
-                Identifier.LEGACY_STOP.getValue()));
-        legacyIds.add(2, Arrays.asList(Identifier.LEGACY_BACKDROP.getValue(),
-                Identifier.LEGACY_BROADCAST_WAIT.getValue(),
-                Identifier.LEGACY_WAIT_UNTIL.getValue()));
+        legacyIds.add(0, Arrays.asList(Identifier.LEGACY_REPEAT.getValue(),
+                Identifier.LEGACY_FOREVER.getValue()));
+        legacyIds.add(1,
+                Collections.singletonList(Identifier.LEGACY_REPEAT_UNTIL.getValue()));
 
-        notes[0] = "There is a wait block missing.";
-        notes[1] = "Basic Level. There is broadcast, receive message, stop "
-                + "all or stop program sprite missing.";
-        notes[2] = "Developing Level. There is wait until, backdrop change or"
-                + " broadcast and wait missing.";
+        notes[0] = "There is a sequence of blocks missing.";
+        notes[1] = "Basic Level. There is repeat or forever missing.";
+        notes[2] = "Developing Level. There is repeat until missing.";
         notes[3] = "Proficiency Level. Good work!";
     }
 
@@ -62,18 +54,24 @@ public class Synchronization implements IssueFinder {
 
         List<List<String>> versionIds = checkVersion(project);
 
-        for (int i = 0; i < versionIds.size(); i++) {
+        for (List<String> id : versionIds) {
             for (Scriptable scable : scriptables) {
                 for (Script script : scable.getScripts()) {
-                    search(scable, script, script.getBlocks(), found,
-                            versionIds.get(i));
+                    search(scable, script, script.getBlocks(), found, id);
                 }
             }
             if (found.size() > 0) {
-                level = i + 1;
+                ++level;
                 pos.addAll(found);
                 found.clear();
             }
+        }
+
+        int foundBlockStack = checkBlockStacks(scriptables);
+        if (foundBlockStack == 1 && level != 0) {
+            ++level;
+        } else {
+            level += foundBlockStack;
         }
 
         return new IssueReport(name, level, pos, project.getPath(),
@@ -92,7 +90,6 @@ public class Synchronization implements IssueFinder {
     private void search(Scriptable scable, Script sc,
                         List<ScBlock> blocks, List<String> found,
                         List<String> ids) {
-
         for (ScBlock b : blocks) {
             if (ids.contains(b.getContent())) {
                 if (found.size() < 10) {
@@ -107,6 +104,24 @@ public class Synchronization implements IssueFinder {
                 search(scable, sc, b.getElseBlocks(), found, ids);
             }
         }
+    }
+
+    /**
+     * Checks if there is a set of blocks that is executed one after another.
+     *
+     * @param scriptables Scriptable objects in the project.
+     * @return            {@code 1} if block stacks were found, {@code 0}
+     *                    otherwise.
+     */
+    private int checkBlockStacks(List<Scriptable> scriptables) {
+        int found = 0;
+        for (Scriptable scable : scriptables) {
+            if (scable.getBlockStack().size() > 1) {
+                ++found;
+                break;
+            }
+        }
+        return found;
     }
 
     /**

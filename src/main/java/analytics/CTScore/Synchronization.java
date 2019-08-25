@@ -1,4 +1,4 @@
-package analytics.finder;
+package analytics.CTScore;
 
 import analytics.IssueFinder;
 import analytics.IssueReport;
@@ -14,29 +14,37 @@ import utils.Identifier;
 import utils.Version;
 
 /**
- * Evaluates the abstraction level of the Scratch program.
+ * Evaluates the synchronization level of the Scratch program.
  */
-public class Abstraction implements IssueFinder {
+public class Synchronization implements IssueFinder {
 
     private List<List<String>> ids = new ArrayList<>();
     private List<List<String>> legacyIds = new ArrayList<>();
     private String[] notes = new String[4];
-    private String name = "abstraction";
+    private String name = "synchronization";
 
-    public Abstraction() {
-        ids.add(0,
-                Collections.singletonList(Identifier.CUSTOM_BLOCK.getValue()));
-        ids.add(1,
-                Collections.singletonList(Identifier.CREATE_CLONE.getValue()));
+    public Synchronization() {
+        ids.add(0, Collections.singletonList(Identifier.WAIT.getValue()));
+        ids.add(1, Arrays.asList(Identifier.BROADCAST.getValue(),
+                Identifier.RECEIVE.getValue(), Identifier.STOP.getValue()));
+        ids.add(2, Arrays.asList(Identifier.BACKDROP.getValue(),
+                Identifier.BROADCAST_WAIT.getValue(),
+                Identifier.WAIT_UNTIL.getValue()));
 
         legacyIds.add(0,
-                Collections.singletonList(Identifier.LEGACY_CUSTOM_BLOCK.getValue()));
-        legacyIds.add(1,
-                Collections.singletonList(Identifier.LEGACY_CREATE_CLONE.getValue()));
+                Collections.singletonList(Identifier.LEGACY_WAIT.getValue()));
+        legacyIds.add(1, Arrays.asList(Identifier.LEGACY_BROADCAST.getValue(),
+                Identifier.LEGACY_RECEIVE.getValue(),
+                Identifier.LEGACY_STOP.getValue()));
+        legacyIds.add(2, Arrays.asList(Identifier.LEGACY_BACKDROP.getValue(),
+                Identifier.LEGACY_BROADCAST_WAIT.getValue(),
+                Identifier.LEGACY_WAIT_UNTIL.getValue()));
 
-        notes[0] = "There is only one sprite.";
-        notes[1] = "Basic Level. There are no defined blocks.";
-        notes[2] = "Developing Level. There are no used clones.";
+        notes[0] = "There is a wait block missing.";
+        notes[1] = "Basic Level. There is broadcast, receive message, stop "
+                + "all or stop program sprite missing.";
+        notes[2] = "Developing Level. There is wait until, backdrop change or"
+                + " broadcast and wait missing.";
         notes[3] = "Proficiency Level. Good work!";
     }
 
@@ -57,8 +65,8 @@ public class Abstraction implements IssueFinder {
         for (int i = 0; i < versionIds.size(); i++) {
             for (Scriptable scable : scriptables) {
                 for (Script script : scable.getScripts()) {
-                   search(scable, script, script.getBlocks(), found,
-                           versionIds.get(i));
+                    search(scable, script, script.getBlocks(), found,
+                            versionIds.get(i));
                 }
             }
             if (found.size() > 0) {
@@ -67,7 +75,6 @@ public class Abstraction implements IssueFinder {
                 found.clear();
             }
         }
-        level = countScripts(scriptables, level);
 
         return new IssueReport(name, level, pos, project.getPath(),
                 notes[level]);
@@ -83,8 +90,9 @@ public class Abstraction implements IssueFinder {
      * @param ids    The identifiers for the current version of the project.
      */
     private void search(Scriptable scable, Script sc,
-                       List<ScBlock> blocks, List<String> found,
-                       List<String> ids) {
+                        List<ScBlock> blocks, List<String> found,
+                        List<String> ids) {
+
         for (ScBlock b : blocks) {
             if (ids.contains(b.getContent())) {
                 if (found.size() < 10) {
@@ -98,21 +106,6 @@ public class Abstraction implements IssueFinder {
             if (b.getElseBlocks() != null && b.getElseBlocks().size() > 0) {
                 search(scable, sc, b.getElseBlocks(), found, ids);
             }
-        }
-    }
-
-    /**
-     * Counts the amount of scripts of the project.
-     *
-     * @param scriptables Scriptable objects.
-     * @param level       The current level of abstraction.
-     * @return            The updated level.
-     */
-    private int countScripts(List scriptables, int level) {
-        if (scriptables.size() == 0) {
-            return 0;
-        } else {
-            return ++level;
         }
     }
 

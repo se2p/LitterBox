@@ -1,4 +1,4 @@
-package analytics.finder;
+package analytics.CTScore;
 
 import analytics.IssueFinder;
 import analytics.IssueReport;
@@ -26,6 +26,7 @@ public class LogicalThinking implements IssueFinder {
     public LogicalThinking() {
         ids.add(0, Collections.singletonList(Identifier.IF.getValue()));
         ids.add(1, Collections.singletonList(Identifier.IF_ELSE.getValue()));
+        // TODO Program doesn't check logic operations in if conditions.
         ids.add(2, Arrays.asList(Identifier.AND.getValue(),
                 Identifier.OR.getValue(), Identifier.NOT.getValue()));
 
