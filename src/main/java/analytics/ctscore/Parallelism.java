@@ -1,4 +1,4 @@
-package analytics.CTScore;
+package analytics.ctscore;
 
 import analytics.IssueFinder;
 import analytics.IssueReport;
@@ -14,37 +14,38 @@ import utils.Identifier;
 import utils.Version;
 
 /**
- * Evaluates the synchronization level of the Scratch program.
+ * Evaluates the level of parallelism in the Scratch program.
  */
-public class Synchronization implements IssueFinder {
+public class Parallelism implements IssueFinder {
 
     private List<List<String>> ids = new ArrayList<>();
     private List<List<String>> legacyIds = new ArrayList<>();
     private String[] notes = new String[4];
-    private String name = "synchronization";
+    private String name = "parallelism";
 
-    public Synchronization() {
-        ids.add(0, Collections.singletonList(Identifier.WAIT.getValue()));
-        ids.add(1, Arrays.asList(Identifier.BROADCAST.getValue(),
-                Identifier.RECEIVE.getValue(), Identifier.STOP.getValue()));
-        ids.add(2, Arrays.asList(Identifier.BACKDROP.getValue(),
-                Identifier.BROADCAST_WAIT.getValue(),
-                Identifier.WAIT_UNTIL.getValue()));
+    public Parallelism() {
+        ids.add(0, Collections.singletonList(Identifier.GREEN_FLAG.getValue()));
+        ids.add(1, Arrays.asList(Identifier.KEYPRESS.getValue(),
+                Identifier.THIS_CLICKED.getValue()));
+        ids.add(2, Arrays.asList(Identifier.RECEIVE.getValue(),
+                Identifier.CREATE_CLONE.getValue(),
+                Identifier.GREATER_THAN.getValue(),
+                Identifier.BACKDROP.getValue()));
 
         legacyIds.add(0,
-                Collections.singletonList(Identifier.LEGACY_WAIT.getValue()));
-        legacyIds.add(1, Arrays.asList(Identifier.LEGACY_BROADCAST.getValue(),
-                Identifier.LEGACY_RECEIVE.getValue(),
-                Identifier.LEGACY_STOP.getValue()));
-        legacyIds.add(2, Arrays.asList(Identifier.LEGACY_BACKDROP.getValue(),
-                Identifier.LEGACY_BROADCAST_WAIT.getValue(),
-                Identifier.LEGACY_WAIT_UNTIL.getValue()));
+                Collections.singletonList(Identifier.LEGACY_GREEN_FLAG.getValue()));
+        legacyIds.add(1, Arrays.asList(Identifier.LEGACY_KEYPRESS.getValue(),
+                Identifier.LEGACY_THIS_CLICKED.getValue()));
+        legacyIds.add(Arrays.asList(Identifier.LEGACY_RECEIVE.getValue(),
+                Identifier.LEGACY_CREATE_CLONE.getValue(),
+                Identifier.LEGACY_GREATER_THAN.getValue(),
+                Identifier.LEGACY_BACKDROP.getValue()));
 
-        notes[0] = "There is a wait block missing.";
-        notes[1] = "Basic Level. There is broadcast, receive message, stop "
-                + "all or stop program sprite missing.";
-        notes[2] = "Developing Level. There is wait until, backdrop change or"
-                + " broadcast and wait missing.";
+        notes[0] = "There are not two scripts with a green flag.";
+        notes[1] = "Basic Level. There are missing scripts on key pressed or "
+                + "sprite clicked.";
+        notes[2] = "Developing Level. There are missing scripts on receive "
+                + "message, create clone, %s is > %s or backdrop change.";
         notes[3] = "Proficiency Level. Good work!";
     }
 
@@ -59,20 +60,22 @@ public class Synchronization implements IssueFinder {
         List<String> pos = new ArrayList<>();
         List<String> found = new ArrayList<>();
         int level = 0;
+        int[] flag = new int[3];
 
         List<List<String>> versionIds = checkVersion(project);
 
         for (int i = 0; i < versionIds.size(); i++) {
             for (Scriptable scable : scriptables) {
                 for (Script script : scable.getScripts()) {
-                    search(scable, script, script.getBlocks(), found,
-                            versionIds.get(i));
+                    flag[i] = search(scable, script, script.getBlocks(), pos,
+                            found, versionIds.get(i), flag[i]);
                 }
             }
-            if (found.size() > 0) {
+        }
+
+        for (int i = 0; i < flag.length; i++) {
+            if (flag[i] == 1) {
                 level = i + 1;
-                pos.addAll(found);
-                found.clear();
             }
         }
 
@@ -88,25 +91,32 @@ public class Synchronization implements IssueFinder {
      * @param blocks All blocks that are given in the scripts.
      * @param found  The identifiers that were found.
      * @param ids    The identifiers for the current version of the project.
+     * @param flag   Shows if a identifier was found.
      */
-    private void search(Scriptable scable, Script sc,
-                        List<ScBlock> blocks, List<String> found,
-                        List<String> ids) {
-
+    private int search(Scriptable scable, Script sc,
+                        List<ScBlock> blocks, List<String> pos,
+                        List<String> found,
+                        List<String> ids, int flag) {
         for (ScBlock b : blocks) {
-            if (ids.contains(b.getContent())) {
-                if (found.size() < 10) {
-                    found.add(scable.getName() + " at " + Arrays.toString(sc.getPosition()));
+            String content = b.getContent();
+            if (ids.contains(content)) {
+                if (found.contains(content)) {
+                    flag = 1;
+                }
+                found.add(content);
+                if (pos.size() < 10) {
+                    pos.add(scable.getName() + " at " + Arrays.toString(sc.getPosition()));
                 }
                 continue;
             }
             if (b.getNestedBlocks() != null && b.getNestedBlocks().size() > 0) {
-                search(scable, sc, b.getNestedBlocks(), found, ids);
+                search(scable, sc, b.getNestedBlocks(), pos, found, ids, flag);
             }
             if (b.getElseBlocks() != null && b.getElseBlocks().size() > 0) {
-                search(scable, sc, b.getElseBlocks(), found, ids);
+                search(scable, sc, b.getElseBlocks(), pos, found, ids, flag);
             }
         }
+        return flag;
     }
 
     /**

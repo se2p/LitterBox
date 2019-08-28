@@ -1,4 +1,4 @@
-package analytics.CTScore;
+package analytics.ctscore;
 
 import analytics.IssueFinder;
 import analytics.IssueReport;

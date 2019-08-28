@@ -1,4 +1,4 @@
-package analytics.CTScore;
+package analytics.ctscore;
 
 import analytics.IssueFinder;
 import analytics.IssueReport;
@@ -14,38 +14,33 @@ import utils.Identifier;
 import utils.Version;
 
 /**
- * Evaluates the level of user interactivity of the Scratch program.
+ * Evaluates the logical thinking level of the program.
  */
-public class UserInteractivity implements IssueFinder {
+public class LogicalThinking implements IssueFinder {
 
     private List<List<String>> ids = new ArrayList<>();
     private List<List<String>> legacyIds = new ArrayList<>();
     private String[] notes = new String[4];
-    private String name = "user_interactivity";
+    private String name = "logical_thinking";
 
-    public UserInteractivity() {
-        ids.add(0, Collections.singletonList(Identifier.GREEN_FLAG.getValue()));
-        ids.add(1, Arrays.asList(Identifier.KEYPRESS.getValue(),
-                Identifier.THIS_CLICKED.getValue(),
-                Identifier.ASK_WAIT.getValue(), Identifier.SENSE.getValue()));
-        ids.add(2, Arrays.asList(Identifier.GREATER_THAN.getValue(),
-                Identifier.VIDEO.getValue()));
+    public LogicalThinking() {
+        ids.add(0, Collections.singletonList(Identifier.IF.getValue()));
+        ids.add(1, Collections.singletonList(Identifier.IF_ELSE.getValue()));
+        // TODO Program doesn't check logic operations in if conditions.
+        ids.add(2, Arrays.asList(Identifier.AND.getValue(),
+                Identifier.OR.getValue(), Identifier.NOT.getValue()));
 
         legacyIds.add(0,
-                Collections.singletonList(Identifier.LEGACY_GREEN_FLAG.getValue()));
-        legacyIds.add(1, Arrays.asList(Identifier.LEGACY_KEYPRESS.getValue(),
-                Identifier.LEGACY_THIS_CLICKED.getValue(),
-                Identifier.LEGACY_ASK_WAIT.getValue(),
-                Identifier.LEGACY_SENSE.getValue()));
-        legacyIds.add(2,
-                Arrays.asList(Identifier.LEGACY_GREATER_THAN.getValue(),
-                        Identifier.LEGACY_VIDEO.getValue()));
+                Collections.singletonList(Identifier.LEGACY_IF.getValue()));
+        legacyIds.add(1,
+                Collections.singletonList(Identifier.LEGACY_IF_ELSE.getValue()));
+        legacyIds.add(2, Arrays.asList(Identifier.LEGACY_AND.getValue(),
+                Identifier.LEGACY_OR.getValue(),
+                Identifier.LEGACY_NOT.getValue()));
 
-        notes[0] = "There is a green flag missing.";
-        notes[1] = "Basic Level. There is key pressed, sprite clicked, ask "
-                + "and wait or mouse blocks missing.";
-        notes[2] = "Developing Level. There is %s is > %s, video or audio "
-                + "missing.";
+        notes[0] = "There are no if conditions.";
+        notes[1] = "Basic Level. There are no if else conditions.";
+        notes[2] = "Developing Level. There are no logic operations.";
         notes[3] = "Proficiency Level. Good work!";
     }
 
@@ -91,9 +86,8 @@ public class UserInteractivity implements IssueFinder {
      * @param ids    The identifiers for the current version of the project.
      */
     private void search(Scriptable scable, Script sc,
-                        List<ScBlock> blocks, List<String> found,
-                        List<String> ids) {
-
+                       List<ScBlock> blocks, List<String> found,
+                       List<String> ids) {
         for (ScBlock b : blocks) {
             if (ids.contains(b.getContent())) {
                 if (found.size() < 10) {
@@ -129,4 +123,5 @@ public class UserInteractivity implements IssueFinder {
     public String getName() {
         return name;
     }
+
 }

@@ -1,4 +1,4 @@
-package analytics.CTScore;
+package analytics.ctscore;
 
 import analytics.IssueFinder;
 import analytics.IssueReport;
@@ -14,28 +14,29 @@ import utils.Identifier;
 import utils.Version;
 
 /**
- * Evaluates the level of data representation of the Scratch program.
+ * Evaluates the level of flow control of the Scratch program.
  */
-public class DataRepresentation implements IssueFinder {
+public class FlowControl implements IssueFinder {
 
     private List<List<String>> ids = new ArrayList<>();
     private List<List<String>> legacyIds = new ArrayList<>();
     private String[] notes = new String[4];
-    private String name = "data_representation";
+    private String name = "flow_control";
 
-    public DataRepresentation() {
-        ids.add(0, Arrays.asList(Identifier.MOTION.getValue(),
-                Identifier.LOOKS.getValue()));
-        ids.add(1, Collections.singletonList(Identifier.DATA.getValue()));
+    public FlowControl() {
+        ids.add(0, Arrays.asList(Identifier.REPEAT.getValue(),
+                Identifier.FOREVER.getValue()));
+        ids.add(1,
+                Collections.singletonList(Identifier.REPEAT_UNTIL.getValue()));
 
-        legacyIds.add(0, Arrays.asList(Identifier.LEGACY_MOTION.getValue(),
-                Identifier.LEGACY_LOOKS.getValue()));
+        legacyIds.add(0, Arrays.asList(Identifier.LEGACY_REPEAT.getValue(),
+                Identifier.LEGACY_FOREVER.getValue()));
         legacyIds.add(1,
-                Collections.singletonList(Identifier.LEGACY_DATA.getValue()));
+                Collections.singletonList(Identifier.LEGACY_REPEAT_UNTIL.getValue()));
 
-        notes[0] = "There are no modifiers of sprites properties.";
-        notes[1] = "Basic Level. There are operations on variables missing.";
-        notes[2] = "Developing Level. There are operations on lists missing.";
+        notes[0] = "There is a sequence of blocks missing.";
+        notes[1] = "Basic Level. There is repeat or forever missing.";
+        notes[2] = "Developing Level. There is repeat until missing.";
         notes[3] = "Proficiency Level. Good work!";
     }
 
@@ -50,23 +51,27 @@ public class DataRepresentation implements IssueFinder {
         List<String> pos = new ArrayList<>();
         List<String> found = new ArrayList<>();
         int level = 0;
-        int count = 0;
 
         List<List<String>> versionIds = checkVersion(project);
 
-        for (Scriptable scable : scriptables) {
-            for (Script script : scable.getScripts()) {
-                level = search(scable, script, script.getBlocks(), found,
-                        versionIds,0);
+        for (List<String> id : versionIds) {
+            for (Scriptable scable : scriptables) {
+                for (Script script : scable.getScripts()) {
+                    search(scable, script, script.getBlocks(), found, id);
+                }
+            }
+            if (found.size() > 0) {
+                ++level;
+                pos.addAll(found);
+                found.clear();
             }
         }
-        if (found.size() != 0) {
-            pos.addAll(found);
-        }
 
-        count += checkLists(scriptables);
-        if (count == 1) {
-            level = 3;
+        int foundBlockStack = checkBlockStacks(scriptables);
+        if (foundBlockStack == 1 && level != 0) {
+            ++level;
+        } else {
+            level += foundBlockStack;
         }
 
         return new IssueReport(name, level, pos, project.getPath(),
@@ -81,51 +86,42 @@ public class DataRepresentation implements IssueFinder {
      * @param blocks All blocks that are given in the scripts.
      * @param found  The identifiers that were found.
      * @param ids    The identifiers for the current version of the project.
-     * @param level  The current level of data representation.
      */
-    private int search(Scriptable scable, Script sc,
+    private void search(Scriptable scable, Script sc,
                         List<ScBlock> blocks, List<String> found,
-                        List<List<String>> ids, int level) {
-
+                        List<String> ids) {
         for (ScBlock b : blocks) {
-            String content = b.getContent();
-            if (content.startsWith(ids.get(1).get(0))) {
-                level = 2;
-                found.add(scable.getName() + " at " + Arrays.toString(sc.getPosition()));
-                return level;
-            } else if (content.startsWith(ids.get(0).get(0))
-                   || content.startsWith(ids.get(0).get(1)) ){
-                level = 1;
-                found.add(scable.getName() + " at " + Arrays.toString(sc.getPosition()));
+            if (ids.contains(b.getContent())) {
+                if (found.size() < 10) {
+                    found.add(scable.getName() + " at " + Arrays.toString(sc.getPosition()));
+                }
                 continue;
             }
             if (b.getNestedBlocks() != null && b.getNestedBlocks().size() > 0) {
-                search(scable, sc, b.getNestedBlocks(), found, ids, level);
+                search(scable, sc, b.getNestedBlocks(), found, ids);
             }
             if (b.getElseBlocks() != null && b.getElseBlocks().size() > 0) {
-                search(scable, sc, b.getElseBlocks(), found, ids, level);
+                search(scable, sc, b.getElseBlocks(), found, ids);
             }
         }
-        return level;
     }
 
     /**
-     * Checks if the project uses lists.
+     * Checks if there is a set of blocks that is executed one after another.
      *
-     * @param scriptables Scriptable objects.
-     * @return            {@code 1} if lists were found, {@code 0} otherwise.
+     * @param scriptables Scriptable objects in the project.
+     * @return            {@code 1} if block stacks were found, {@code 0}
+     *                    otherwise.
      */
-    private int checkLists(List<Scriptable> scriptables) {
-        int foundList = 0;
+    private int checkBlockStacks(List<Scriptable> scriptables) {
+        int found = 0;
         for (Scriptable scable : scriptables) {
-            if (foundList == 1) {
+            if (scable.getBlockStack().size() > 1) {
+                ++found;
                 break;
             }
-            if (scable.getLists().size() > 0) {
-                ++foundList;
-            }
         }
-        return foundList;
+        return found;
     }
 
     /**
