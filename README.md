@@ -78,6 +78,22 @@ emptybd->empty_body
 
 inappint->inappropriate_intimacy
 
+#### CT Score Evaluation
+
+logthink->logical_thinking
+
+abstr->abstraction
+
+para->parallelism
+
+synch->synchronization
+
+flow->flow_control
+
+userint->user_interactivity
+
+datarep->data_representation
+
 #### Example:
 
 java -cp C:\ScratchAnalytics-1.0.jar Main -path C:\scratchprojects\files\ -version 3 -folder C:\scratchprojects\files\test.csv -detectors cnt,glblstrt

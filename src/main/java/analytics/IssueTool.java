@@ -1,5 +1,6 @@
 package analytics;
 
+import analytics.ctscore.*;
 import analytics.finder.*;
 import org.apache.commons.csv.CSVPrinter;
 import scratch.structure.Project;
@@ -46,6 +47,15 @@ public class IssueTool {
         finder.put("dplsprt", new DuplicatedSprite());
         finder.put("inappint", new InappropriateIntimacy());
         finder.put("noopprjct", new NoOpProject());
+
+        // To evaluate the CT score
+        finder.put("logthink", new LogicalThinking());
+        finder.put("abstr", new Abstraction());
+        finder.put("para", new Parallelism());
+        finder.put("synch", new Synchronization());
+        finder.put("flow", new FlowControl());
+        finder.put("userint", new UserInteractivity());
+        finder.put("datarep", new DataRepresentation());
     }
 
     /**
