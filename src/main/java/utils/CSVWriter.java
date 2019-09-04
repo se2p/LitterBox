@@ -12,6 +12,7 @@ import clone.structure.ClonePairCode;
 
 public class CSVWriter {
 
+	// The csv-files are written in this folder.
 	private final static String folder = "...";
 	private static Path path;
 	
@@ -83,6 +84,12 @@ public class CSVWriter {
 		}
 	}
 	
+	/**
+	 * Writes the CSV-file with the total number of Clones and the name of the project.
+	 * @param numberOfClones The total numbers of clones.
+	 * @param names The names of the projects.
+	 * @param nameOfFile The name of the CSV-file.
+	 */
 	public static void writeCSVOnlyTotal(int[] numberOfClones, String[] names, String nameOfFile) {
 		path = Paths.get(folder, nameOfFile);
 		try(BufferedWriter writeBuffer = Files.newBufferedWriter(path)) {
