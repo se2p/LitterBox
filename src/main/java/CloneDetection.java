@@ -53,11 +53,6 @@ public class CloneDetection {
                         List<String> normalizedProject = norm.codeNormalization(preparatedProject);
                         ComparisonAlgorithm comp = new ComparisonAlgorithm();
                         List<List<CloneBlock>> allClones = comp.findAllClones(normalizedProject);
-                        for(List<CloneBlock> g : allClones) {
-                        	for(CloneBlock n : g) {
-                        		System.out.println(n.toString());
-                        	}
-                        }
                         Formatting form = new Formatting();
                         List<List<ClonePairCode>> formattedCode = form.formatting(allClones, preparatedProject);
                         int numberOfClones = 0;
@@ -74,6 +69,54 @@ public class CloneDetection {
     		}
     		String fileName = "clones.csv";
     		CSVWriter.writeCSVOnlyTotal(numberClones, projectName, fileName);
+    	} catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
+    /**
+     * This main-Method returns the total number of clones, the number of clones 
+     * with gaps and the number of clones without gaps.
+     */
+    public static void mainGaps(String[] args) {
+    	try {
+    		int numberFiles = folder.listFiles().length;
+    		int[] numberClonesWithoutGap = new int[numberFiles];
+    		int[] numberClonesWithGap = new int[numberFiles];
+    		String[] projectName = new String[numberFiles];
+    		for(int i = 0; i < numberFiles; i++) {
+    			try {
+    		    Project project = null;
+                final File fileEntry = Objects.requireNonNull(folder.listFiles())[i];
+                if (!fileEntry.isDirectory()) {
+                    System.out.println(fileEntry);
+                    System.out.println("------------");
+                    System.out.println("Projekt: " + fileEntry.getName());
+                    System.out.println("------------");
+                    try {
+                        project = JsonParser.parseRaw(fileEntry);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    if(project != null) {
+                    	String name = project.getName();
+                        Preparation preparation = new Preparation();
+                        List<String> preparatedProject = preparation.codePreparation(project);
+                        Normalization norm = new Normalization();
+                        List<String> normalizedProject = norm.codeNormalization(preparatedProject);
+                        ComparisonAlgorithm comp = new ComparisonAlgorithm();
+                        List<List<CloneBlock>> allClones = comp.findAllClonesGap(normalizedProject);
+                        numberClonesWithoutGap[i] = allClones.get(0).size();
+                        numberClonesWithGap[i] = allClones.get(1).size();
+                        projectName[i] = name;
+                    }
+                }
+    			} catch(Exception e) {
+    				continue;
+    			}
+    		}
+    		String fileName = "clonesGap.csv";
+    		CSVWriter.writeCSVGap(numberClonesWithoutGap, numberClonesWithGap, fileName, projectName);
     	} catch (Exception e) {
             e.printStackTrace();
         }

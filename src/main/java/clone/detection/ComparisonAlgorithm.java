@@ -13,7 +13,7 @@ import clone.structure.ClonePairLine;
 public class ComparisonAlgorithm {
 	
 	/**
-	 * This method search for clones in sprites and between the sprites.
+	 * This method searchs for clones in sprites and between the sprites.
 	 * @param normalizedCode The normalized code of the project.
 	 * @return A list with lists with clones. In the first list there are the 
 	 *         clones in the stage and than the clones in the sprites and in the
@@ -25,6 +25,54 @@ public class ComparisonAlgorithm {
 		List<CloneBlock> clonesBetweenSprites = getClonesBetweenSprites(allClones, clonesInSprite);
 		clonesInSprite.add(clonesBetweenSprites);
 		return clonesInSprite;
+	}
+	
+	/**
+	 * This method searchs for clones with and without gaps.
+	 * 
+	 * @param normalizedCode The normalized code of the project.
+	 * @return A list with two lists. In the first list are the clones without gaps
+	 *         and in the second the clones with gaps.
+	 */
+	public List<List<CloneBlock>> findAllClonesGap(List<String> normalizedCode) {
+		List<CloneBlock> allClones = findClones(normalizedCode);
+		List<CloneBlock> clonesWithGap = getClonesWithGap(allClones);
+		List<CloneBlock> clonesWithoutGap = getClonesWithoutGap(allClones, clonesWithGap);
+		List<List<CloneBlock>> clones = new ArrayList<List<CloneBlock>>();
+		clones.add(clonesWithoutGap);
+		clones.add(clonesWithGap);
+		return clones;
+	}
+	
+	private List<CloneBlock> getClonesWithGap(List<CloneBlock> clones) {
+		List<CloneBlock> clonesWithGap = new ArrayList<CloneBlock>();
+		for(CloneBlock block : clones) {
+			for(int i = 0; i < block.getBlock().size() - 1; i++) {
+				if(block.getBlock().get(i).getLineOne() + 1 != block.getBlock().get(i + 1).getLineOne()) {
+					clonesWithGap.add(block);
+					System.out.println(block.toString());
+					break;
+				}
+			}
+		}
+		return clonesWithGap;
+	}
+	
+	private List<CloneBlock> getClonesWithoutGap(List<CloneBlock> allClones, List<CloneBlock> withGap) {
+		List<CloneBlock> clonesWithoutGap = new ArrayList<CloneBlock>();
+		for(CloneBlock block : allClones) {
+			boolean blockIsWithGap = false;
+			for(CloneBlock blockGap : withGap) {
+				if(block.equals(blockGap)) {
+					blockIsWithGap = true;
+				}
+			}
+			if(!blockIsWithGap) {
+				clonesWithoutGap.add(block);
+			}
+		}
+		System.out.println("withoutGap:" + clonesWithoutGap.size());
+		return clonesWithoutGap;
 	}
 	
 	/**
@@ -441,7 +489,7 @@ public class ComparisonAlgorithm {
 	
 	/*
 	 * Search for clone blocks by doing search for diagonals in the coordinate 
-	 * system. And in the diagonal can be a hole of the length one.
+	 * system. And in the diagonal can be a gap of the length one.
 	 */
 	private List<CloneBlock> findCloneBlocks(List<ClonePairLine> coordinateSystem, List<String> normalizedCode) {
 		List<CloneBlock> cloneBlock = new ArrayList<CloneBlock>();
@@ -453,20 +501,46 @@ public class ComparisonAlgorithm {
 			for(int j = 0; j < coordinateSystem.size(); j++) {
 				while(x + 1 < normalizedCode.size() && 
 					y + 1 < normalizedCode.size() && 
-					(coordinateSystem.get(j).getLineOne() == x + 1 || coordinateSystem.get(j).getLineOne() == x + 2) &&
-					(coordinateSystem.get(j).getLineTwo() == y + 1 || coordinateSystem.get(j).getLineTwo() == y + 2)) {
-					block.addPair(coordinateSystem.get(j));
-					x++;
-					y++;
+					((coordinateSystem.get(j).getLineOne() == x + 1 && coordinateSystem.get(j).getLineTwo() == y + 1) ||
+					(coordinateSystem.get(j).getLineOne() == x + 2 && coordinateSystem.get(j).getLineTwo() == y + 2))) {
+					if(!block.contains(coordinateSystem.get(j))) {
+					    block.addPair(coordinateSystem.get(j));
+					}
+					if(coordinateSystem.get(j).getLineOne() == x + 1 && coordinateSystem.get(j).getLineTwo() == y + 1) {
+						x++;
+						y++;
+					}
+					if(coordinateSystem.get(j).getLineOne() == x + 2 && coordinateSystem.get(j).getLineTwo() == y + 2) {
+						x += 2;
+						y += 2;
+					}
+					
 				}
 			}
 			
 			// Only clones with more than four clone pairs will be listed.
-			if(!isSubsetOfOtherBlock(block, cloneBlock) && block.getBlock().size() > 4) {
+			if(!isSubsetOfOtherBlock(block, cloneBlock) && block.getBlock().size() > 4 && !checkClonesIsInHimSelf(block)) {
 				cloneBlock.add(block);
 			}
 		}
 		return cloneBlock;
+	}
+	
+	private boolean checkClonesIsInHimSelf(CloneBlock toCheck) {
+		int[] x = new int[toCheck.getBlock().size()];
+		int[] y = new int[toCheck.getBlock().size()];
+		for(int i = 0; i < toCheck.getBlock().size(); i++) {
+			x[i] = toCheck.getBlock().get(i).getLineOne();
+			y[i] = toCheck.getBlock().get(i).getLineTwo();
+		}
+		for(int i = 0; i < x.length; i++) {
+			for(int j = 0; j < y.length; j++) {
+				if(x[i] == y[j]) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 	
 	// Checks if a block in list complete contains block.

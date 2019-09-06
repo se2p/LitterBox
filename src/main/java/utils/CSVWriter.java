@@ -18,7 +18,7 @@ public class CSVWriter {
 	
 	/**
 	 * Writes the CSV-file with the total number of clones, the clones in the stage,
-	 * the clones in the sprites and the clones between sprites to the home directory.
+	 * the clones in the sprites and the clones between sprites.
 	 * @param formattedCode The code of the clones
 	 * @param nameOfFile the name of CSV-file
 	 */
@@ -55,6 +55,29 @@ public class CSVWriter {
 	    			continue;
 	    		}
 		    }
+		} catch(IOException e) {
+	    	e.printStackTrace();
+    	}
+	}
+	
+	/**
+	 * Writes the CSV-file with the total number of clones, the clones with gaps and
+	 * the clones without gaps.
+	 * 
+	 * @param withoutGap The clones without gaps
+	 * @param withGap The clones with gaps
+	 * @param nameOfFile The name of the csv-file
+	 * @param projectName The name of the projects
+	 */
+	public static void writeCSVGap(int[] withoutGap, int[] withGap, String nameOfFile, String[] projectName) {
+		path = Paths.get(folder, nameOfFile);
+		try(BufferedWriter writeBuffer = Files.newBufferedWriter(path)) {
+			String header = String.format("%s;%s;%s;%s", "Name", "Total", "WithGap", "WithoutGap");
+	        writeBuffer.write(header +"\n");
+	    	for(int r = 0; r < projectName.length; r++) {
+			    String line = String.format("%s;%d;%d;%d", projectName[r], withoutGap[r] + withGap[r], withGap[r], withoutGap[r]);
+			    writeBuffer.write(line + "\n");
+	    	}
 		} catch(IOException e) {
 	    	e.printStackTrace();
     	}
