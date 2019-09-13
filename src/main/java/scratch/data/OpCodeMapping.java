@@ -165,8 +165,23 @@ public class OpCodeMapping {
             "showList:",
             "data_hidelist",
             "hideList:",
-            "procedures_call"
+            "procedures_call",
             // TODO find Scratch 2 opcode of custom block call
+            "looks_changesizeby",
+            "changeSizeBy:",
+            // Pen blocks were default in Scratch 2.
+            "changePenHueBy:",
+            "changePenShadeBy:",
+            "changePenSizeBy:",
+            "clearPenTrails",
+            "penColor:",
+            "penSize: ",
+            "putPenDown ",
+            "putPenUp",
+            "setPenHueTo:",
+            "setPenShadeTo:",
+            "stampCostume"
+
     ));
 
     /**
