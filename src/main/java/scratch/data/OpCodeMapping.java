@@ -6,12 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static scratch.data.OpCodeMapping.BlockShape.BOOLEAN;
-import static scratch.data.OpCodeMapping.BlockShape.C;
-import static scratch.data.OpCodeMapping.BlockShape.CAP;
-import static scratch.data.OpCodeMapping.BlockShape.HAT;
-import static scratch.data.OpCodeMapping.BlockShape.REPORTER;
-import static scratch.data.OpCodeMapping.BlockShape.STACK;
+import static scratch.data.OpCodeMapping.BlockShape.*;
 
 /**
  * The OpCodeMapping Class contains lists of all block opcodes of Scratch 2 and 3
@@ -358,6 +353,14 @@ public class OpCodeMapping {
     ));
 
     /**
+     * List of all opcodes of undefined blocks.
+     */
+    public static final List<String> undefinedBlockOpcodes = new ArrayList<>(Arrays.asList(
+            "undefined",
+            "obsolete"
+    ));
+    
+    /**
      * Maps every every block opcode to its corresponding Block Shape.
      * Contains both Scratch 2 and 3 block opcodes.
      */
@@ -382,12 +385,15 @@ public class OpCodeMapping {
         for (String opcode: capBlockOpcodes) {
             opcodeShape.put(opcode, CAP);
         }
+        for (String opcode: undefinedBlockOpcodes) {
+            opcodeShape.put(opcode, UNDEFINED);
+        }
     }
 
     /**
      * All available Block Shapes of Scratch.
      */
     public enum BlockShape {
-        HAT, STACK, BOOLEAN, REPORTER, C, CAP
+        HAT, STACK, BOOLEAN, REPORTER, C, CAP, UNDEFINED
     }
 }
