@@ -180,8 +180,31 @@ public class OpCodeMapping {
             "putPenUp",
             "setPenHueTo:",
             "setPenShadeTo:",
-            "stampCostume"
-
+            "stampCostume",
+            "fxTest", // This block is not included in Scratch 3.
+            "goBackByLayers:", // This block is not included in Scratch 3.
+            "hideAll", // Only in Scratch 2 alpha.
+            "scrollAlign", // Only in Scratch 2 alpha.
+            "scrollRight", // Only in Scratch 2 alpha.
+            "scrollUp", // Only in Scratch 2 alpha.
+            // Some Scratch 2 blocks without Scratch 3 equivalent (so far).
+            "turnAwayFromEdge", // Obsolete in Scratch 2.
+            "changeTempoBy:",
+            "CLR_COUNT",
+            "drum:duration:elapsed:from:",
+            "instrument:",
+            "midiInstrument:",
+            "noteOn:duration:elapsed:from: \tPl",
+            "playDrum",
+            "rest:elapsed:from:",
+            "sayNothing",
+            "setTempoTo:",
+            "setVideoState",
+            "startSceneAndWait",
+            "setVideoTransparency", // This block is in the list for Scratch 2, although it was introduced in Scratch 3.
+            "INCR_COUNT", // Not sure this one exists, but it is in the list.
+            "stopSound:",  // Not sure this one exists, but it is in the list.
+            "think:duration:elapsed:from:"
     ));
 
     /**
@@ -214,7 +237,8 @@ public class OpCodeMapping {
             "operator_contains",
             "list:contains:",
             "data_listcontainsitem",
-            "list:contains:"
+            // Some Scratch 2 blocks without Scratch 3 equivalent (so far).
+            "isLoud"
     ));
 
     /**
@@ -276,15 +300,26 @@ public class OpCodeMapping {
             "operator_mod",
             "%",
             "operator_round",
-            "round",
+            "rounded",
             "operator_mathop",
+            "computeFunction:of:",
             "abs",
             "data_itemoflist",
             // There is no item Number of in block in Scratch 2.
             "data_itemnumoflist",
             "getLine:ofList:",
             "data_lengthoflist",
-            "lineCountOfList:"
+            "lineCountOfList:",
+            "getUserId", // There is no User ID block in Scratch 3.
+            "xScroll", // Introduced and removed in Scratch 2.0 alpha.
+            "yScroll", // Introduced and removed in Scratch 2.0 alpha.
+            // Some Scratch 2 blocks without Scratch 3 equivalent (so far).
+            "costumeName", // Not sure this one exists, but it is in the list.
+            "COUNT",  // Not sure this one exists, but it is in the list.
+            "sceneName",
+            "senseVideoMotion",
+            "sqrt",
+            "tempo"
     ));
 
     /**
@@ -301,7 +336,11 @@ public class OpCodeMapping {
             "control_if_else",
             "doIfElse",
             "control_repeat_until",
-            "doUntil"
+            "doUntil",
+            "doForeverIf", // This block is not included in Scratch 3.
+            "doForLoop", // Not sure this one exists, but it is in the list.
+            "doWhile", // Not sure this one exists, but it is in the list.
+            "warpSpeed" // Introduced and removed in Scratch 2.0 alpha.
     ));
 
     /**
@@ -312,7 +351,10 @@ public class OpCodeMapping {
             "control_stop",
             "stopAll",
             "control_delete_this_clone",
-            "deleteClone"
+            "deleteClone",
+            // Some Scratch 2 blocks without Scratch 3 equivalent (so far).
+            "doReturn", // This block is obsolete in Scratch 2 and 3 but has an opcode.
+            "stopScripts"
     ));
 
     /**
