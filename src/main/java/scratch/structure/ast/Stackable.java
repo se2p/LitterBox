@@ -1,4 +1,4 @@
 package scratch.structure.ast;
 
-public interface Stackable {
+public interface Stackable extends BasicBlock{
 }

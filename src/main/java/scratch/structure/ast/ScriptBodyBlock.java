@@ -1,4 +1,4 @@
 package scratch.structure.ast;
 
-public interface ScriptBodyBlock extends Stackable, Extendable {
+public abstract class ScriptBodyBlock implements Stackable, Extendable {
 }
