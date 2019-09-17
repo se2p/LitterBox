@@ -6,7 +6,7 @@ import scratch.structure.ast.ScriptBodyBlock;
 import scratch.structure.ast.Stackable;
 import scratch.structure.ast.visitor.BlockVisitor;
 
-public class StackBlock extends ScriptBodyBlock implements BasicBlock {
+public abstract class StackBlock extends ScriptBodyBlock implements BasicBlock {
 
     private String opcode;
     private Stackable next;
