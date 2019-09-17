@@ -34,8 +34,8 @@ public class OpCodeMapping {
             "whenCloned",
             "event_whengreaterthan",
             "whenSensorGreaterThan",
-            "procedures_definition"
-            // TODO find Scratch 2 opcode of custom block definition
+            "procedures_definition",
+            "procDef"
     ));
 
     /**
@@ -161,7 +161,7 @@ public class OpCodeMapping {
             "data_hidelist",
             "hideList:",
             "procedures_call",
-            // TODO find Scratch 2 opcode of custom block call
+            "call",
             "looks_changesizeby",
             "changeSizeBy:",
             // Pen blocks were default in Scratch 2.
