@@ -53,7 +53,6 @@ public abstract class StackBlock extends ScriptBodyBlock implements BasicBlock {
         return next;
     }
 
-    @Override
     public void setNext(BasicBlock basicBlock) {
         //todo add type check
         this.next = (Stackable) basicBlock;

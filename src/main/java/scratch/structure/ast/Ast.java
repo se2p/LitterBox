@@ -22,7 +22,7 @@ public class Ast {
         Iterator<String> it = blocksNode.fieldNames();
 
         //Build the basic blocks
-        while(it.hasNext()) {
+        while (it.hasNext()) {
             String nextId = it.next();
             JsonNode node = blocksNode.get(nextId);
             String opcode = node.get("opcode").toString().replaceAll("^\"|\"$", "");
@@ -39,16 +39,20 @@ public class Ast {
 
         //Connect the blocks
         for (Map.Entry<String, BasicBlock> block : nodesIdMap.entrySet()) {
-            if(block.getValue().getParent() == null) {
-                String parent = blocksNode.at("/" + block.getKey()).get("parent").toString();
-                parent = parent.replaceAll("^\"|\"$", ""); //remove quotes around string
-                block.getValue().setParent(nodesIdMap.get(parent));
+            if (block.getValue().getParent() == null) {
+                JsonNode parentNode = blocksNode.at("/" + block.getKey()).get("parent");
+                if (parentNode != null) {
+                    String parent = parentNode.toString();
+                    parent = parent.replaceAll("^\"|\"$", ""); //remove quotes around string
+                    block.getValue().setParent(nodesIdMap.get(parent));
+
+                }
             }
 
-            if(block.getValue().getNext() == null && blocksNode.at("/"+block.getKey()).get("next") != null) {
+            if (block.getValue().getNext() == null && blocksNode.at("/" + block.getKey()).get("next") != null) {
                 String next = blocksNode.at("/" + block.getKey()).get("next").toString();
                 next = next.replaceAll("^\"|\"$", ""); //remove quotes around string
-                block.getValue().setNext(nodesIdMap.get(next));
+                block.getValue().setNext((Stackable) nodesIdMap.get(next));
             }
         }
         return tree;

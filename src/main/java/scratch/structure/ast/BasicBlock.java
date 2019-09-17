@@ -12,5 +12,5 @@ public interface BasicBlock {
 
     BasicBlock getNext();
 
-    void setNext(BasicBlock basicBlock);
+    void setNext(Stackable basicBlock);
 }

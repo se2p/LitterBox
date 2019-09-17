@@ -1,5 +1,7 @@
 package scratch.structure.ast;
 
+import scratch.structure.ast.hat.HatBlock;
+
 public class Script {
 
     private BasicBlock block;

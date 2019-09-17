@@ -7,7 +7,7 @@ import scratch.structure.ast.Extendable;
 import scratch.structure.ast.Stackable;
 import scratch.structure.ast.stack.StackBlock;
 
-public class StackTransformer implements Transformer {
+public abstract class StackTransformer implements Transformer {
     @Override
     public String getIdentifier() {
         return "motion_movestep";
@@ -29,18 +29,18 @@ public class StackTransformer implements Transformer {
 
         Stackable block;
         if (!topLevel) {
-            block = new StackBlock(this.getIdentifier(), null, null, shadow, topLevel, 0, 0);
+            //block = new StackBlock(this.getIdentifier(), null, null, shadow, topLevel, 0, 0);
         } else {
             int x = node.get("x").intValue();
             int y = node.get("x").intValue();
-            block = new StackBlock(this.getIdentifier(), null, null, shadow, topLevel, x, y);
+            //block = new StackBlock(this.getIdentifier(), null, null, shadow, topLevel, x, y);
         }
 
 
         if (parentNode != null) {
-            parentNode.setNext(block);
+            //parentNode.setNext(block);
         }
 
-        return block;
+        return null;
     }
 }
