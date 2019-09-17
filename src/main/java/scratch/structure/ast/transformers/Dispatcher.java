@@ -15,6 +15,7 @@ public class Dispatcher {
     static{
         dispatcher = new Dispatcher(); //Maybe get a container system or initialize somehow else
         dispatcher.registerTransformer(new MoveStepTransformer());
+        dispatcher.registerTransformer(new WhenFlagClickedTransformer());
 
     }
 

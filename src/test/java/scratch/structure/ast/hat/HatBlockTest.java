@@ -1,4 +1,4 @@
-package scratch.structure.ast.stack;
+package scratch.structure.ast.hat;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -6,6 +6,7 @@ import org.junit.Before;
 import org.junit.Test;
 import scratch.structure.ast.Ast;
 import scratch.structure.ast.BasicBlock;
+import scratch.structure.ast.stack.MoveStepBlock;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -13,10 +14,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Iterator;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
-public class MoveStepBlockTest {
+public class HatBlockTest {
 
     JsonNode script;
 
@@ -30,7 +30,7 @@ public class MoveStepBlockTest {
         ObjectMapper mapper = new ObjectMapper();
         try {
 
-            BufferedReader br = new BufferedReader(new FileReader("./src/test/java/scratch/structure/ast/fixtures/movesteps.json"));
+            BufferedReader br = new BufferedReader(new FileReader("./src/test/java/scratch/structure/ast/fixtures/whenflagclicked.json"));
             StringBuilder sb = new StringBuilder();
             String line;
             while ((line = br.readLine()) != null) {
@@ -57,19 +57,19 @@ public class MoveStepBlockTest {
         ast.parseScript(script);
 
         BasicBlock root = ast.getRoot();
-        if (!(root instanceof MoveStepBlock)) {
+        if (!(root instanceof WhenFlagClickedBlock)) {
             fail("Result of this fixture should be a movesteps block");
         }
 
         BasicBlock node = root;
-        int count = 0;
+        int count = 1;
         while(node.getNext() != null) {
             count++;
             node = node.getNext();
         }
 
-        MoveStepBlock block = (MoveStepBlock) root;
-        assertEquals("Three nodes expected", 3, count);
-        assertEquals(10, block.getSteps());
+        WhenFlagClickedBlock block = (WhenFlagClickedBlock) root;
+        assertEquals("One node expected", 1, count);
+        assertEquals("event_whenflagclicked", block.getOpcode());
     }
 }
