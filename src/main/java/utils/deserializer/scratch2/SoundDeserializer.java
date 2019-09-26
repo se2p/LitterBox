@@ -1,7 +1,7 @@
 package utils.deserializer.scratch2;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import scratch2.data.Sound;
+import scratch.data.Sound;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -28,7 +28,7 @@ class SoundDeserializer {
             JsonNode variable = elements.next();
             Sound scSound = new Sound();
             scSound.setName(variable.get("soundName").asText());
-            scSound.setSoundId(variable.get("soundID").asInt());
+            scSound.setAssetId(variable.get("soundID").asText());
             sounds.add(scSound);
         }
         return sounds;

@@ -1,7 +1,7 @@
 package utils.deserializer.scratch2;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import scratch2.data.ScVariable;
+import scratch.data.ScVariable;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -22,7 +22,7 @@ class VariableListDeserializer {
     static List<ScVariable> deserialize(JsonNode rootNode) {
         JsonNode globalVariables = rootNode.path("variables");
         Iterator<JsonNode> elements = globalVariables.elements();
-        List<ScVariable> vars = new ArrayList<ScVariable>();
+        List<ScVariable> vars = new ArrayList<>();
         while (elements.hasNext()) {
             JsonNode variable = elements.next();
             ScVariable scvariable = new ScVariable();

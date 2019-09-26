@@ -1,8 +1,8 @@
 package utils.deserializer.scratch2;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import scratch2.data.*;
-import scratch2.structure.Sprite;
+import scratch.data.*;
+import scratch.structure.Sprite;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -38,9 +38,8 @@ public class SpriteDeserializer {
                 double rotation = c.get("direction").asDouble();
                 String rotationStyle = c.get("rotationStyle").asText();
                 int size = c.get("scale").asInt();
-                boolean isVisible = c.get("visible").asBoolean();
                 sprites.add(new Sprite(name, scripts, comments, variables, lists, costumes, sounds,
-                        initCostume, position, rotation, rotationStyle, size, isVisible));
+                        initCostume, rootNode, position, rotation, rotationStyle, size));
             }
         }
 

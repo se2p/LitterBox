@@ -1,7 +1,7 @@
 package utils.deserializer.scratch2;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import scratch2.data.Costume;
+import scratch.data.Costume;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -22,12 +22,12 @@ class CostumeDeserializer {
     static List<Costume> deserialize(JsonNode rootNode) {
         JsonNode globalVariables = rootNode.path("costumes");
         Iterator<JsonNode> elements = globalVariables.elements();
-        List<Costume> costumes = new ArrayList<Costume>();
+        List<Costume> costumes = new ArrayList<>();
         while (elements.hasNext()) {
             JsonNode variable = elements.next();
             Costume scCostume = new Costume();
             scCostume.setName(variable.get("costumeName").asText());
-            scCostume.setBaseLayerID(variable.get("baseLayerID").asInt());
+            scCostume.setAssetId(variable.get("baseLayerID").asText());
             costumes.add(scCostume);
         }
         return costumes;
