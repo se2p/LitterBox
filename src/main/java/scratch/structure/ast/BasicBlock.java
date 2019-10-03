@@ -2,15 +2,41 @@ package scratch.structure.ast;
 
 import scratch.structure.ast.visitor.BlockVisitor;
 
-public interface BasicBlock {
+public abstract class BasicBlock {
 
-    BasicBlock getParent();
+    private String opcode;
+    private Extendable parent;
+    private Stackable next;
 
-    void accept(BlockVisitor visitor);
+    public BasicBlock(String opcode, Extendable parent, Stackable next) {
+        this.opcode = opcode;
+        this.parent = parent;
+        this.next = next;
+    }
 
-    void setParent(BasicBlock basicBlock);
+    public abstract void accept(BlockVisitor visitor);
 
-    BasicBlock getNext();
+    public String getOpcode() {
+        return opcode;
+    }
 
-    void setNext(Stackable basicBlock);
+    public void setOpcode(String opcode) {
+        this.opcode = opcode;
+    }
+
+    public Extendable getParent() {
+        return parent;
+    }
+
+    public void setParent(Extendable parent) {
+        this.parent = parent;
+    }
+
+    public Stackable getNext() {
+        return next;
+    }
+
+    public void setNext(Stackable next) {
+        this.next = next;
+    }
 }

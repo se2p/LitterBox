@@ -8,16 +8,8 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 public class WhenFlagClickedBlock extends HatBlock {
 
-    private Stackable next;
-
     public WhenFlagClickedBlock(String opcode, Stackable next, boolean shadow, boolean topLevel, int x, int y) {
         super(opcode, next, shadow, topLevel, x, y);
-        this.next = next;
-    }
-
-    @Override
-    public BasicBlock getParent() {
-        return null;
     }
 
     @Override
@@ -26,12 +18,7 @@ public class WhenFlagClickedBlock extends HatBlock {
     }
 
     @Override
-    public void setParent(BasicBlock basicBlock) {
+    public void setParent(Extendable basicBlock) {
         throw new NotImplementedException();
-    }
-
-    @Override
-    public void setNext(Stackable next) {
-        this.next = next;
     }
 }
