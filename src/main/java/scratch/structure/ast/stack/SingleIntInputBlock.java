@@ -14,6 +14,12 @@ public abstract class SingleIntInputBlock extends StackBlock {
         this.inputValue = inputValue;
     }
 
+    public SingleIntInputBlock(String opcode, Stackable next, Extendable parent, boolean shadow, boolean topLevel, int x, int y, String inputName, int inputValue) {
+        super(opcode, parent, next, shadow, topLevel, x, y);
+        this.inputName = inputName;
+        this.inputValue = inputValue;
+    }
+
     public String getInputName() {
         return inputName;
     }
