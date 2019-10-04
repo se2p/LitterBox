@@ -61,9 +61,4 @@ public class MoveStepBlock extends ScriptBodyBlock {
     public int getY() {
         return y;
     }
-
-    @Override
-    public void accept(BlockVisitor visitor) {
-        visitor.visit(this);
-    }
 }
