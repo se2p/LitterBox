@@ -18,6 +18,6 @@ public class WhenFlagClickedBlock extends HatBlock {
 
     @Override
     public void setParent(Extendable basicBlock) {
-       // throw new NotImplementedException();
+       throw new NotImplementedException();
     }
 }
