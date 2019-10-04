@@ -16,7 +16,7 @@ public class Dispatcher {
         dispatcher = new Dispatcher(); //Maybe get a container system or initialize somehow else
         dispatcher.registerTransformer(new MoveStepTransformer());
         dispatcher.registerTransformer(new WhenFlagClickedTransformer());
-
+        dispatcher.registerTransformer(new TurnDegreesTransformer());
     }
 
     private Map<String, Transformer> transformerMap = new HashMap<>();
