@@ -32,7 +32,7 @@ public abstract class StackTransformer implements Transformer {
             //block = new StackBlock(this.getIdentifier(), null, null, shadow, topLevel, 0, 0);
         } else {
             int x = node.get("x").intValue();
-            int y = node.get("x").intValue();
+            int y = node.get("y").intValue();
             //block = new StackBlock(this.getIdentifier(), null, null, shadow, topLevel, x, y);
         }
 
