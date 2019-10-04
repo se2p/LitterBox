@@ -1,10 +1,8 @@
 package scratch.structure.ast.stack;
 
-import scratch.structure.ast.BasicBlock;
 import scratch.structure.ast.Extendable;
 import scratch.structure.ast.ScriptBodyBlock;
 import scratch.structure.ast.Stackable;
-import scratch.structure.ast.visitor.BlockVisitor;
 
 public class MoveStepBlock extends ScriptBodyBlock {
 
