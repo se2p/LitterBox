@@ -12,4 +12,12 @@ public class TurnDegreesBlock extends SingleIntInputBlock {
     public TurnDegreesBlock(String opcode, Stackable next, Extendable parent, boolean shadow, boolean topLevel, int x, int y, String inputName, int inputValue) {
         super(opcode, next, parent, shadow, topLevel, x, y, inputName, inputValue);
     }
+
+    public TurnDegreesBlock(String opcode, Stackable next, Extendable parent, boolean shadow, boolean topLevel, String inputName, String inputVariableID) {
+        super(opcode, next, parent, shadow, topLevel, inputName, inputVariableID);
+    }
+
+    public TurnDegreesBlock(String opcode, Stackable next, Extendable parent, boolean shadow, boolean topLevel, int x, int y, String inputName, String inputVariableID) {
+        super(opcode, next, parent, shadow, topLevel, x, y, inputName, inputVariableID);
+    }
 }

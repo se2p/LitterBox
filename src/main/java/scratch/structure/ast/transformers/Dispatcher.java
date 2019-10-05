@@ -34,7 +34,9 @@ public class Dispatcher {
     }
 
     public void registerTransformer(Transformer transformer) {
-        transformerMap.put(transformer.getIdentifier(), transformer);
+        for(String identifier: transformer.getIdentifiers()) {
+            transformerMap.put(identifier, transformer);
+        }
     }
 
     public Object[] transformArray(String fields, JsonNode fields1) {

@@ -7,6 +7,7 @@ public abstract class SingleIntInputBlock extends StackBlock {
 
     private String inputName;
     private int inputValue;
+    private String inputVariableID;
 
     public SingleIntInputBlock(String opcode, Stackable next, Extendable parent, boolean shadow, boolean topLevel, String inputName, int inputValue) {
         super(opcode, parent, next, shadow, topLevel);
@@ -18,6 +19,18 @@ public abstract class SingleIntInputBlock extends StackBlock {
         super(opcode, parent, next, shadow, topLevel, x, y);
         this.inputName = inputName;
         this.inputValue = inputValue;
+    }
+
+    public SingleIntInputBlock(String opcode, Stackable next, Extendable parent, boolean shadow, boolean topLevel, String inputName, String inputVariableID) {
+        super(opcode, parent, next, shadow, topLevel);
+        this.inputName = inputName;
+        this.inputVariableID = inputVariableID;
+    }
+
+    public SingleIntInputBlock(String opcode, Stackable next, Extendable parent, boolean shadow, boolean topLevel, int x, int y, String inputName, String inputVariableID) {
+        super(opcode, parent, next, shadow, topLevel, x, y);
+        this.inputName = inputName;
+        this.inputVariableID = inputVariableID;
     }
 
     public String getInputName() {
@@ -34,5 +47,13 @@ public abstract class SingleIntInputBlock extends StackBlock {
 
     public void setInputValue(int inputValue) {
         this.inputValue = inputValue;
+    }
+
+    public String getInputVariableID() {
+        return inputVariableID;
+    }
+
+    public void setInputVariableID(String inputVariableID) {
+        this.inputVariableID = inputVariableID;
     }
 }

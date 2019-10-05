@@ -4,19 +4,22 @@ import com.fasterxml.jackson.databind.JsonNode;
 import scratch.structure.ast.Ast;
 import scratch.structure.ast.BasicBlock;
 import scratch.structure.ast.Extendable;
-import scratch.structure.ast.Stackable;
 import scratch.structure.ast.stack.MoveStepBlock;
-import scratch.structure.ast.stack.StackBlock;
+
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 public class MoveStepTransformer implements Transformer {
     @Override
-    public String getIdentifier() {
-        return "motion_movesteps";
+    public Set<String> getIdentifiers() {
+        return new HashSet<>(Arrays.asList("motion_movesteps"));
     }
 
     @Override
     public BasicBlock transform(JsonNode node, Ast ast) {
 
+        String opcode = node.get("opcode").toString().replaceAll("^\"|\"$", "");
         String parent = node.get("parent").toString();
         JsonNode inputs = node.get("inputs");
         int inputShadow = inputs.get("STEPS").get(0).asInt(); //Is there a nice way to access those values?
@@ -35,11 +38,11 @@ public class MoveStepTransformer implements Transformer {
 
         MoveStepBlock block;
         if (!topLevel) {
-            block = new MoveStepBlock(this.getIdentifier(), null, null, steps, inputShadow, shadow, topLevel, 0, 0);
+            block = new MoveStepBlock(opcode, null, null, steps, inputShadow, shadow, topLevel, 0, 0);
         } else {
             int x = node.get("x").intValue();
             int y = node.get("x").intValue();
-            block = new MoveStepBlock(this.getIdentifier(), null, null, steps, inputShadow, shadow, topLevel, x, y);
+            block = new MoveStepBlock(opcode, null, null, steps, inputShadow, shadow, topLevel, x, y);
         }
 
 

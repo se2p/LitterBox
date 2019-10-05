@@ -7,10 +7,14 @@ import scratch.structure.ast.Extendable;
 import scratch.structure.ast.Stackable;
 import scratch.structure.ast.stack.StackBlock;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
 public abstract class StackTransformer implements Transformer {
     @Override
-    public String getIdentifier() {
-        return "motion_movestep";
+    public Set<String> getIdentifiers() {
+        return new HashSet<>(Arrays.asList("motion_movestep"));
     }
 
     @Override
