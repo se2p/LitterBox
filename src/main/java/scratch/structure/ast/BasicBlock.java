@@ -14,9 +14,7 @@ public abstract class BasicBlock {
         this.next = next;
     }
 
-    public void accept(BlockVisitor visitor) {
-        visitor.visit(this);
-    }
+    public abstract void accept(BlockVisitor visitor);
 
     public String getOpcode() {
         return opcode;
