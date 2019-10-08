@@ -333,8 +333,8 @@ public class OpCodeMapping {
             "control_repeat_until",
             "doUntil",
             "doForeverIf", // This block is not included in Scratch 3.
-            "doForLoop", // Not sure this one exists, but it is in the list.
-            "doWhile", // Not sure this one exists, but it is in the list.
+            "doForLoop",
+            "doWhile",
             "warpSpeed" // Introduced and removed in Scratch 2.0 alpha.
     ));
 
