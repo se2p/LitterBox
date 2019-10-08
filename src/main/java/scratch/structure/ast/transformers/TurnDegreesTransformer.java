@@ -9,7 +9,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-public class TurnDegreesTransformer implements Transformer {
+public class TurnDegreesTransformer extends Transformer {
 
     @Override
     public Set<String> getIdentifiers() {
@@ -19,13 +19,12 @@ public class TurnDegreesTransformer implements Transformer {
     @Override
     public TurnDegreesBlock transform(JsonNode node, Ast ast) {
 
-        String opcode = node.get("opcode").toString().replaceAll("^\"|\"$", "");
-        boolean topLevel = node.get("topLevel").asBoolean();
-        boolean shadow = node.get("shadow").asBoolean();
+        extractStandardValues(node);
 
         TurnDegreesBlock block;
         ArrayNode input = (ArrayNode) node.get("inputs").get("DEGREES");
         if(input.get(1).get(0).asInt() == 4) {
+            int inputShadow = input.get(1).get(0).asInt(); //FIXME Use This value in the block
             int inputValue = input.get(1).get(1).asInt();
             if (!topLevel) {
                 block = new TurnDegreesBlock(opcode, null, null, shadow, topLevel, "DEGREES", inputValue);

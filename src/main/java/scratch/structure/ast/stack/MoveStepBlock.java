@@ -10,17 +10,9 @@ public class MoveStepBlock extends ScriptBodyBlock {
     private final int inputType = 4; // Type of input in the inputs array according to file format
     private int inputShadow;
     private int steps;
-    private boolean shadow;
-    private boolean topLevel;
-    private int x;
-    private int y;
 
     public MoveStepBlock(String opcode, Extendable parent, Stackable next, int steps, int inputShadow, boolean shadow, boolean topLevel) {
-        super(opcode, parent, next);
-        this.steps = steps;
-        this.inputShadow = inputShadow;
-        this.shadow = shadow;
-        this.topLevel = topLevel;
+        this(opcode, parent, next, steps, inputShadow, shadow, topLevel, 0, 0);
     }
 
     public MoveStepBlock(String opcode,  Extendable parent, Stackable next,int steps, int inputShadow,  boolean shadow, boolean topLevel, int x, int y) {
@@ -43,22 +35,6 @@ public class MoveStepBlock extends ScriptBodyBlock {
 
     public int getSteps() {
         return steps;
-    }
-
-    public boolean isShadow() {
-        return shadow;
-    }
-
-    public boolean isTopLevel() {
-        return topLevel;
-    }
-
-    public int getX() {
-        return x;
-    }
-
-    public int getY() {
-        return y;
     }
 
     @Override

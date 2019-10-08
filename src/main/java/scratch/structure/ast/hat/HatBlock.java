@@ -8,10 +8,6 @@ public abstract class HatBlock extends BasicBlock implements Extendable {
 
     //    private Object[] inputs; //Todo: Make this more specific, once we have proper types for inputs
     //    private Object[] fields; //Todo: Make this more specific, once we have proper types for fields
-    private boolean shadow;
-    private boolean topLevel; //This most likely will always be true
-    private int x;
-    private int y;
 
     public HatBlock(String opcode, Stackable next, boolean shadow, boolean topLevel, int x, int y) {
         super(opcode, null, next); // Hat Blocks do not ever have parents
@@ -37,19 +33,4 @@ public abstract class HatBlock extends BasicBlock implements Extendable {
         this.topLevel = topLevel;
     }
 
-    public int getX() {
-        return x;
-    }
-
-    public void setX(int x) {
-        this.x = x;
-    }
-
-    public int getY() {
-        return y;
-    }
-
-    public void setY(int y) {
-        this.y = y;
-    }
 }

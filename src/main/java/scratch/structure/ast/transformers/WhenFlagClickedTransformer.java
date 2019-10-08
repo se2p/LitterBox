@@ -9,7 +9,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-public class WhenFlagClickedTransformer implements Transformer {
+public class WhenFlagClickedTransformer extends Transformer {
 
     @Override
     public Set<String> getIdentifiers() {
@@ -18,9 +18,7 @@ public class WhenFlagClickedTransformer implements Transformer {
 
     @Override
     public BasicBlock transform(JsonNode node, Ast ast) {
-        String opcode = node.get("opcode").toString().replaceAll("^\"|\"$", "");
-        boolean topLevel = node.get("topLevel").asBoolean();
-        boolean shadow = node.get("shadow").asBoolean();
+        extractStandardValues(node);
 
         WhenFlagClickedBlock block;
         if (!topLevel) {
@@ -32,6 +30,5 @@ public class WhenFlagClickedTransformer implements Transformer {
         }
 
         return block;
-
     }
 }

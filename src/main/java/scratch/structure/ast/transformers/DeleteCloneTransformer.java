@@ -10,7 +10,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-public class DeleteCloneTransformer implements Transformer {
+public class DeleteCloneTransformer extends Transformer {
 
     @Override
     public Set<String> getIdentifiers() {
@@ -19,11 +19,10 @@ public class DeleteCloneTransformer implements Transformer {
 
     @Override
     public BasicBlock transform(JsonNode node, Ast ast) {
-        String opcode = node.get("opcode").toString().replaceAll("^\"|\"$", "");
-        boolean topLevel = node.get("topLevel").asBoolean();
-        boolean shadow = node.get("shadow").asBoolean();
+        extractStandardValues(node);
 
         DeleteCloneBlock block;
+
         if (!topLevel) {
             block = new DeleteCloneBlock(opcode, null, shadow, topLevel, 0, 0);
         } else {

@@ -6,10 +6,7 @@ import scratch.structure.ast.Stackable;
 
 public abstract class CapBlock extends BasicBlock {
 
-    private boolean shadow;
-    private boolean topLevel;
-    private int x;
-    private int y;
+
     //    private Object[] inputs; //Todo: Make this more specific, once we have proper types for inputs
     //    private Object[] fields; //Todo: Make this more specific, once we have proper types for fields
 

@@ -11,7 +11,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-public abstract class StackTransformer implements Transformer {
+public abstract class StackTransformer extends Transformer {
     @Override
     public Set<String> getIdentifiers() {
         return new HashSet<>(Arrays.asList("motion_movestep"));

@@ -6,10 +6,19 @@ import scratch.structure.ast.BasicBlock;
 
 import java.util.Set;
 
-public interface Transformer {
+public abstract class Transformer {
 
-    //Returns the opcode(s)/id(s) this transformer works for.
-    Set<String> getIdentifiers();
+    protected String opcode;
+    protected boolean topLevel;
+    protected boolean shadow; //Returns the opcode(s)/id(s) this transformer works for.
 
-    BasicBlock transform(JsonNode node, Ast ast);
+    abstract Set<String> getIdentifiers();
+
+    abstract BasicBlock transform(JsonNode node, Ast ast);
+
+    protected void extractStandardValues(JsonNode node) {
+        opcode = node.get("opcode").toString().replaceAll("^\"|\"$", "");
+        topLevel = node.get("topLevel").asBoolean();
+        shadow = node.get("shadow").asBoolean();
+    }
 }
