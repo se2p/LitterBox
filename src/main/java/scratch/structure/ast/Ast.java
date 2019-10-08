@@ -44,7 +44,7 @@ public class Ast {
                 if (parentNode != null) {
                     String parent = parentNode.toString();
                     parent = parent.replaceAll("^\"|\"$", ""); //remove quotes around string
-                    block.getValue().setParent(nodesIdMap.get(parent));
+                    block.getValue().setParent((Extendable) nodesIdMap.get(parent));
 
                 }
             }
