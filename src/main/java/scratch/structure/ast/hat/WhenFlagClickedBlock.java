@@ -3,7 +3,6 @@ package scratch.structure.ast.hat;
 import scratch.structure.ast.Extendable;
 import scratch.structure.ast.Stackable;
 import scratch.structure.ast.visitor.BlockVisitor;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 public class WhenFlagClickedBlock extends HatBlock {
 
@@ -18,6 +17,6 @@ public class WhenFlagClickedBlock extends HatBlock {
 
     @Override
     public void setParent(Extendable basicBlock) {
-       throw new NotImplementedException();
+       throw new RuntimeException(); // TODO find proper exception
     }
 }
