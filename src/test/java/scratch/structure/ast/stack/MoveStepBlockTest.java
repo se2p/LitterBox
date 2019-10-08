@@ -6,6 +6,7 @@ import org.junit.Before;
 import org.junit.Test;
 import scratch.structure.ast.Ast;
 import scratch.structure.ast.BasicBlock;
+import scratch.structure.ast.Stackable;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -65,7 +66,7 @@ public class MoveStepBlockTest {
         int count = 0;
         while(node.getNext() != null) {
             count++;
-            node = node.getNext();
+            node = (BasicBlock) node.getNext();
         }
 
         MoveStepBlock block = (MoveStepBlock) root;

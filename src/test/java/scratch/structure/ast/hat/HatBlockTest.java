@@ -65,7 +65,7 @@ public class HatBlockTest {
         int count = 1;
         while(node.getNext() != null) {
             count++;
-            node = node.getNext();
+            node = (BasicBlock) node.getNext();
         }
 
         WhenFlagClickedBlock block = (WhenFlagClickedBlock) root;
