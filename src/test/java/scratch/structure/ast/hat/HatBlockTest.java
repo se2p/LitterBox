@@ -18,7 +18,7 @@ import static org.junit.Assert.*;
 
 public class HatBlockTest {
 
-    JsonNode script;
+    private JsonNode script;
 
     @Before
     public void setup() {
@@ -52,13 +52,13 @@ public class HatBlockTest {
     }
 
     @Test
-    public void readMoveStepsScript() {
+    public void readWhenFlagClickedScript() {
         Ast ast = new Ast();
         ast.parseScript(script);
 
         BasicBlock root = ast.getRoot();
         if (!(root instanceof WhenFlagClickedBlock)) {
-            fail("Result of this fixture should be a movesteps block");
+            fail("Result of this fixture should be a WhenFlagClicked block");
         }
 
         BasicBlock node = root;
