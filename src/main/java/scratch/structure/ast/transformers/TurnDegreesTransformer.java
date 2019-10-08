@@ -27,20 +27,21 @@ public class TurnDegreesTransformer extends Transformer {
             int inputShadow = input.get(1).get(0).asInt(); //FIXME Use This value in the block
             int inputValue = input.get(1).get(1).asInt();
             if (!topLevel) {
-                block = new TurnDegreesBlock(opcode, null, null, shadow, topLevel, "DEGREES", inputValue);
+                block = new TurnDegreesBlock(opcode, null, null, shadow, topLevel, "DEGREES", inputValue, inputShadow);
             } else {
                 int x = node.get("x").intValue();
                 int y = node.get("y").intValue();
-                block = new TurnDegreesBlock(opcode, null, null, shadow, topLevel, x, y, "DEGREES", inputValue);
+                block = new TurnDegreesBlock(opcode, null, null, shadow, topLevel, x, y, "DEGREES", inputValue, inputShadow);
             }
         } else {
+            int inputShadow = input.get(1).get(0).asInt(); //FIXME Use This value in the block
             String inputVariableID = input.get(1).get(2).toString().replaceAll("^\"|\"$", "");
             if (!topLevel) {
-                block = new TurnDegreesBlock(opcode, null, null, shadow, topLevel, "DEGREES", inputVariableID);
+                block = new TurnDegreesBlock(opcode, null, null, shadow, topLevel, "DEGREES", inputVariableID, inputShadow);
             } else {
                 int x = node.get("x").intValue();
                 int y = node.get("y").intValue();
-                block = new TurnDegreesBlock(opcode, null, null, shadow, topLevel, x, y, "DEGREES", inputVariableID);
+                block = new TurnDegreesBlock(opcode, null, null, shadow, topLevel, x, y, "DEGREES", inputVariableID, inputShadow);
             }
         }
         return block;

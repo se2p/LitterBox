@@ -5,37 +5,24 @@ import scratch.structure.ast.ScriptBodyBlock;
 import scratch.structure.ast.Stackable;
 import scratch.structure.ast.visitor.BlockVisitor;
 
-public class MoveStepBlock extends ScriptBodyBlock {
+public class MoveStepBlock extends SingleIntInputBlock {
 
-    private final int inputType = 4; // Type of input in the inputs array according to file format
-    private int inputShadow;
-    private int steps;
-
-    public MoveStepBlock(String opcode, Extendable parent, Stackable next, int steps, int inputShadow, boolean shadow, boolean topLevel) {
-        this(opcode, parent, next, steps, inputShadow, shadow, topLevel, 0, 0);
+    public MoveStepBlock(String opcode, Stackable next, Extendable parent, boolean shadow, boolean topLevel, String inputName, int inputValue, int inputShadow) {
+        super(opcode, next, parent, shadow, topLevel, inputName, inputValue, inputShadow);
     }
 
-    public MoveStepBlock(String opcode,  Extendable parent, Stackable next,int steps, int inputShadow,  boolean shadow, boolean topLevel, int x, int y) {
-        super(opcode, parent, next);
-        this.steps = steps;
-        this.inputShadow = inputShadow;
-        this.shadow = shadow;
-        this.topLevel = topLevel;
-        this.x = x;
-        this.y = y;
+    public MoveStepBlock(String opcode, Stackable next, Extendable parent, boolean shadow, boolean topLevel, int x, int y, String inputName, int inputValue, int inputShadow) {
+        super(opcode, next, parent, shadow, topLevel, x, y, inputName, inputValue, inputShadow);
     }
 
-    public int getInputType() {
-        return inputType;
+    public MoveStepBlock(String opcode, Stackable next, Extendable parent, boolean shadow, boolean topLevel, String inputName, String inputVariableID, int inputShadow) {
+        super(opcode, next, parent, shadow, topLevel, inputName, inputVariableID, inputShadow);
     }
 
-    public int getInputShadow() {
-        return inputShadow;
+    public MoveStepBlock(String opcode, Stackable next, Extendable parent, boolean shadow, boolean topLevel, int x, int y, String inputName, String inputVariableID, int inputShadow) {
+        super(opcode, next, parent, shadow, topLevel, x, y, inputName, inputVariableID, inputShadow);
     }
 
-    public int getSteps() {
-        return steps;
-    }
 
     @Override
     public void accept(BlockVisitor visitor) {

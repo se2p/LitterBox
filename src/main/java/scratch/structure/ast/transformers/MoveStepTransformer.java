@@ -5,6 +5,7 @@ import scratch.structure.ast.Ast;
 import scratch.structure.ast.BasicBlock;
 import scratch.structure.ast.Extendable;
 import scratch.structure.ast.stack.MoveStepBlock;
+import scratch.structure.ast.stack.TurnDegreesBlock;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -24,7 +25,7 @@ public class MoveStepTransformer extends Transformer {
         String parent = node.get("parent").toString();
         JsonNode inputs = node.get("inputs");
         int inputShadow = inputs.get("STEPS").get(0).asInt(); //Is there a nice way to access those values?
-        int steps = inputs.get("STEPS").get(1).get(1).asInt();
+        int inputValue = inputs.get("STEPS").get(1).get(1).asInt();
 
         //remove quotes around string
         parent = parent.replaceAll("^\"|\"$", "");
@@ -36,11 +37,11 @@ public class MoveStepTransformer extends Transformer {
 
         MoveStepBlock block;
         if (!topLevel) {
-            block = new MoveStepBlock(opcode, null, null, steps, inputShadow, shadow, topLevel);
+            block = new MoveStepBlock(opcode, null, null, shadow, topLevel, "STEPS", inputValue, inputShadow);
         } else {
             int x = node.get("x").intValue();
             int y = node.get("x").intValue();
-            block = new MoveStepBlock(opcode, null, null, steps, inputShadow, shadow, topLevel, x, y);
+            block = new MoveStepBlock(opcode, null, null, shadow, topLevel, x, y, "STEPS", inputValue, inputShadow);
         }
 
 

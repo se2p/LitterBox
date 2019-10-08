@@ -7,30 +7,36 @@ public abstract class SingleIntInputBlock extends StackBlock {
 
     private String inputName;
     private int inputValue;
+    private int inputShadow;
     private String inputVariableID;
+    private final int inputType = 4; // TODO: Is this always true?
 
-    public SingleIntInputBlock(String opcode, Stackable next, Extendable parent, boolean shadow, boolean topLevel, String inputName, int inputValue) {
+    public SingleIntInputBlock(String opcode, Stackable next, Extendable parent, boolean shadow, boolean topLevel, String inputName, int inputValue, int inputShadow) {
         super(opcode, parent, next, shadow, topLevel);
         this.inputName = inputName;
         this.inputValue = inputValue;
+        this.inputShadow = inputShadow;
     }
 
-    public SingleIntInputBlock(String opcode, Stackable next, Extendable parent, boolean shadow, boolean topLevel, int x, int y, String inputName, int inputValue) {
+    public SingleIntInputBlock(String opcode, Stackable next, Extendable parent, boolean shadow, boolean topLevel, int x, int y, String inputName, int inputValue, int inputShadow ) {
         super(opcode, parent, next, shadow, topLevel, x, y);
         this.inputName = inputName;
         this.inputValue = inputValue;
+        this.inputShadow = inputShadow;
     }
 
-    public SingleIntInputBlock(String opcode, Stackable next, Extendable parent, boolean shadow, boolean topLevel, String inputName, String inputVariableID) {
+    public SingleIntInputBlock(String opcode, Stackable next, Extendable parent, boolean shadow, boolean topLevel, String inputName, String inputVariableID, int inputShadow) {
         super(opcode, parent, next, shadow, topLevel);
         this.inputName = inputName;
         this.inputVariableID = inputVariableID;
+        this.inputShadow = inputShadow;
     }
 
-    public SingleIntInputBlock(String opcode, Stackable next, Extendable parent, boolean shadow, boolean topLevel, int x, int y, String inputName, String inputVariableID) {
+    public SingleIntInputBlock(String opcode, Stackable next, Extendable parent, boolean shadow, boolean topLevel, int x, int y, String inputName, String inputVariableID, int inputShadow) {
         super(opcode, parent, next, shadow, topLevel, x, y);
         this.inputName = inputName;
         this.inputVariableID = inputVariableID;
+        this.inputShadow = inputShadow;
     }
 
     public String getInputName() {
@@ -55,5 +61,13 @@ public abstract class SingleIntInputBlock extends StackBlock {
 
     public void setInputVariableID(String inputVariableID) {
         this.inputVariableID = inputVariableID;
+    }
+
+    public int getInputType() {
+        return inputType;
+    }
+
+    public int getInputShadow() {
+        return inputShadow;
     }
 }
