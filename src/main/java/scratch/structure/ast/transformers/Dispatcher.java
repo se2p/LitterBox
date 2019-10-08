@@ -17,6 +17,7 @@ public class Dispatcher {
         dispatcher.registerTransformer(new MoveStepTransformer());
         dispatcher.registerTransformer(new WhenFlagClickedTransformer());
         dispatcher.registerTransformer(new TurnDegreesTransformer());
+        dispatcher.registerTransformer(new DeleteCloneTransformer());
     }
 
     private Map<String, Transformer> transformerMap = new HashMap<>();
@@ -29,8 +30,7 @@ public class Dispatcher {
             throw new IllegalArgumentException("No transformer for opcode '" + opcode + "' registered");
         }
 
-        BasicBlock block = transformer.transform(node, ast);
-        return block;
+        return transformer.transform(node, ast);
     }
 
     public void registerTransformer(Transformer transformer) {
