@@ -27,6 +27,19 @@ public abstract class Transformer {
     protected static final int LIST_PRIMITIVE = 13; // list
 
     /**
+     * The terms "input array" and "(input) data array" refer to specific parts
+     * in the JSON file where inputs are stored.
+     *
+     * In the example
+     * "DEGREES": [1,[4,"15"]]
+     *
+     * [1,[4,"15"]] is the input array
+     * holding the input shadow indicator and the data array
+     *
+     * and [4,"15"] is the data array holding the input type and the input value.
+     */
+
+    /**
      * The position of the input shadow indicator in the input array.
      */
     protected static final int POS_INPUT_SHADOW = 0;
