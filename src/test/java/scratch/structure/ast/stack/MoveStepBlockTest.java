@@ -71,6 +71,6 @@ public class MoveStepBlockTest {
 
         MoveStepBlock block = (MoveStepBlock) root;
         assertEquals("Three nodes expected", 3, count);
-        assertEquals(10, block.getSteps());
+        assertEquals(10, block.getInputValue());
     }
 }
