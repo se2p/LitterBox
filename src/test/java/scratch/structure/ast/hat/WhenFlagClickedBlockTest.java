@@ -16,7 +16,7 @@ import java.util.Iterator;
 
 import static org.junit.Assert.*;
 
-public class HatBlockTest {
+public class WhenFlagClickedBlockTest {
 
     private JsonNode script;
 
@@ -63,7 +63,7 @@ public class HatBlockTest {
 
         BasicBlock node = root;
         int count = 1;
-        while(node.getNext() != null) {
+        while (node.getNext() != null) {
             count++;
             node = (BasicBlock) node.getNext();
         }
