@@ -5,35 +5,39 @@ import scratch.structure.ast.Stackable;
 
 public abstract class SingleIntInputBlock extends StackBlock {
 
+    private int inputType;
     private String inputName;
     private int inputValue;
     private int inputShadow;
     private String inputVariableID;
-    private final int inputType = 4; // TODO: Is this always true?
 
-    public SingleIntInputBlock(String opcode, Stackable next, Extendable parent, boolean shadow, boolean topLevel, String inputName, int inputValue, int inputShadow) {
+    public SingleIntInputBlock(String opcode, Stackable next, Extendable parent, boolean shadow, boolean topLevel, int inputType, String inputName, int inputValue, int inputShadow) {
         super(opcode, parent, next, shadow, topLevel);
+        this.inputType = inputType;
         this.inputName = inputName;
         this.inputValue = inputValue;
         this.inputShadow = inputShadow;
     }
 
-    public SingleIntInputBlock(String opcode, Stackable next, Extendable parent, boolean shadow, boolean topLevel, int x, int y, String inputName, int inputValue, int inputShadow ) {
+    public SingleIntInputBlock(String opcode, Stackable next, Extendable parent, boolean shadow, boolean topLevel, int x, int y, int inputType, String inputName, int inputValue, int inputShadow ) {
         super(opcode, parent, next, shadow, topLevel, x, y);
+        this.inputType = inputType;
         this.inputName = inputName;
         this.inputValue = inputValue;
         this.inputShadow = inputShadow;
     }
 
-    public SingleIntInputBlock(String opcode, Stackable next, Extendable parent, boolean shadow, boolean topLevel, String inputName, String inputVariableID, int inputShadow) {
+    public SingleIntInputBlock(String opcode, Stackable next, Extendable parent, boolean shadow, boolean topLevel, int inputType, String inputName, String inputVariableID, int inputShadow) {
         super(opcode, parent, next, shadow, topLevel);
+        this.inputType = inputType;
         this.inputName = inputName;
         this.inputVariableID = inputVariableID;
         this.inputShadow = inputShadow;
     }
 
-    public SingleIntInputBlock(String opcode, Stackable next, Extendable parent, boolean shadow, boolean topLevel, int x, int y, String inputName, String inputVariableID, int inputShadow) {
+    public SingleIntInputBlock(String opcode, Stackable next, Extendable parent, boolean shadow, boolean topLevel, int x, int y, int inputType, String inputName, String inputVariableID, int inputShadow) {
         super(opcode, parent, next, shadow, topLevel, x, y);
+        this.inputType = inputType;
         this.inputName = inputName;
         this.inputVariableID = inputVariableID;
         this.inputShadow = inputShadow;

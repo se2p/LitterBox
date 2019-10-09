@@ -1,11 +1,11 @@
 package scratch.structure.ast.transformers;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import scratch.structure.ast.Ast;
 import scratch.structure.ast.BasicBlock;
 import scratch.structure.ast.Extendable;
 import scratch.structure.ast.stack.MoveStepBlock;
-import scratch.structure.ast.stack.TurnDegreesBlock;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -24,8 +24,10 @@ public class MoveStepTransformer extends Transformer {
 
         String parent = node.get("parent").toString();
         JsonNode inputs = node.get("inputs");
-        int inputShadow = inputs.get("STEPS").get(0).asInt(); //Is there a nice way to access those values?
-        int inputValue = inputs.get("STEPS").get(1).get(1).asInt();
+        int inputShadow = inputs.get("STEPS").get(POS_INPUT_SHADOW).asInt(); //Is there a nice way to access those values?
+        ArrayNode input = (ArrayNode) node.get("inputs").get("STEPS");
+        int inputType = input.get(POS_DATA_ARRAY).get(POS_INPUT_TYPE).asInt(); // FIXME also cover the variable case
+        int inputValue = inputs.get("STEPS").get(POS_DATA_ARRAY).get(POS_INPUT_VALUE).asInt();
 
         //remove quotes around string
         parent = parent.replaceAll("^\"|\"$", "");
@@ -37,11 +39,11 @@ public class MoveStepTransformer extends Transformer {
 
         MoveStepBlock block;
         if (!topLevel) {
-            block = new MoveStepBlock(opcode, null, null, shadow, topLevel, "STEPS", inputValue, inputShadow);
+            block = new MoveStepBlock(opcode, null, null, shadow, topLevel, inputType, "STEPS", inputValue, inputShadow);
         } else {
             int x = node.get("x").intValue();
             int y = node.get("x").intValue();
-            block = new MoveStepBlock(opcode, null, null, shadow, topLevel, x, y, "STEPS", inputValue, inputShadow);
+            block = new MoveStepBlock(opcode, null, null, shadow, topLevel, x, y, inputType, "STEPS", inputValue, inputShadow);
         }
 
 
