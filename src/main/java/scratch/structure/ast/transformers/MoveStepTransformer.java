@@ -42,7 +42,7 @@ public class MoveStepTransformer extends Transformer {
             block = new MoveStepBlock(opcode, null, null, shadow, topLevel, inputType, "STEPS", inputValue, inputShadow);
         } else {
             int x = node.get("x").intValue();
-            int y = node.get("x").intValue();
+            int y = node.get("y").intValue();
             block = new MoveStepBlock(opcode, null, null, shadow, topLevel, x, y, inputType, "STEPS", inputValue, inputShadow);
         }
 

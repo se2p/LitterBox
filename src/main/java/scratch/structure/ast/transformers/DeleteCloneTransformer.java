@@ -27,7 +27,7 @@ public class DeleteCloneTransformer extends Transformer {
             block = new DeleteCloneBlock(opcode, null, shadow, topLevel, 0, 0);
         } else {
             int x = node.get("x").intValue();
-            int y = node.get("x").intValue();
+            int y = node.get("y").intValue();
             block = new DeleteCloneBlock(opcode, null, shadow, topLevel, x, y);
         }
 

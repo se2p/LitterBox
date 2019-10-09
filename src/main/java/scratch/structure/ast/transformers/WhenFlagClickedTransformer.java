@@ -25,7 +25,7 @@ public class WhenFlagClickedTransformer extends Transformer {
             block = new WhenFlagClickedBlock(opcode, null, shadow, topLevel, 0, 0);
         } else {
             int x = node.get("x").intValue();
-            int y = node.get("x").intValue();
+            int y = node.get("y").intValue();
             block = new WhenFlagClickedBlock(opcode, null, shadow, topLevel, x, y);
         }
 
