@@ -23,7 +23,7 @@ public class TurnDegreesTransformer extends Transformer {
 
         TurnDegreesBlock block;
         ArrayNode input = (ArrayNode) node.get("inputs").get("DEGREES");
-        if(input.get(1).get(0).asInt() == 4) {
+        if(input.get(1).get(0).asInt() == MATH_NUM_PRIMITIVE) {
             int inputShadow = input.get(1).get(0).asInt(); //FIXME Use This value in the block
             int inputValue = input.get(1).get(1).asInt();
             if (!topLevel) {
