@@ -18,6 +18,7 @@ public class Dispatcher {
         dispatcher.registerTransformer(new WhenFlagClickedTransformer());
         dispatcher.registerTransformer(new TurnDegreesTransformer());
         dispatcher.registerTransformer(new DeleteCloneTransformer());
+        dispatcher.registerTransformer(new WhenSpriteClickedTransformer());
     }
 
     private Map<String, Transformer> transformerMap = new HashMap<>();
