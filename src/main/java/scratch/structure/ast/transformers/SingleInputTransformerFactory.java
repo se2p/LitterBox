@@ -31,53 +31,41 @@ public class SingleInputTransformerFactory {
                 int inputType = inputArray.get(POS_DATA_ARRAY).get(POS_INPUT_TYPE).asInt();
                 int inputShadow = inputArray.get(POS_INPUT_SHADOW).asInt();
 
-                if (inputType == expectedInputType) {
-                    int inputValue = inputArray.get(POS_DATA_ARRAY).get(POS_INPUT_VALUE).asInt();
-                    if (!topLevel) {
-                        try {
+                try {
+                    if (inputType == expectedInputType) {
+                        int inputValue = inputArray.get(POS_DATA_ARRAY).get(POS_INPUT_VALUE).asInt();
+                        if (!topLevel) {
                             Class<?> clazz = Class.forName(singleInputBlockClass);
                             Constructor<?> constructor = clazz.getConstructor(String.class, Stackable.class, Extendable.class, Boolean.class, Boolean.class, Integer.class, String.class, Integer.class, Integer.class);
                             block = (SingleIntInputBlock) constructor.newInstance(opcode, null, null, shadow, topLevel, inputType, inputName, inputValue, inputShadow);
-                        } catch (ClassNotFoundException | NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
-                            throw new RuntimeException("Excuse me?"); //Todo use an exception that is also acceptable when code is published on github
-                        }
-                    } else {
-                        int x = node.get("x").intValue();
-                        int y = node.get("y").intValue();
-                        try {
+                        } else {
+                            int x = node.get("x").intValue();
+                            int y = node.get("y").intValue();
                             Class<?> clazz = Class.forName(singleInputBlockClass);
                             Constructor<?> constructor = clazz.getConstructor(String.class, Stackable.class, Extendable.class, Boolean.class, Boolean.class, Integer.class, Integer.class, Integer.class, String.class, Integer.class, Integer.class);
                             block = (SingleIntInputBlock) constructor.newInstance(opcode, null, null, shadow, topLevel, x, y, inputType, inputName, inputValue, inputShadow);
-                        } catch (ClassNotFoundException | NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
-                            throw new RuntimeException("Excuse me?"); //Todo use an exception that is also acceptable when code is published on github
                         }
-                    }
-                } else if (inputType == VAR_PRIMITIVE) { // FIXME also store the value of the obscured input
-                    String inputVariableID = inputArray.get(POS_DATA_ARRAY).get(POS_VAR_ID).toString().replaceAll("^\"|\"$", "");
-                    if (!topLevel) {
-                        try {
+                    } else if (inputType == VAR_PRIMITIVE) { // FIXME also store the value of the obscured input
+                        String inputVariableID = inputArray.get(POS_DATA_ARRAY).get(POS_VAR_ID).toString().replaceAll("^\"|\"$", "");
+                        if (!topLevel) {
                             Class<?> clazz = Class.forName(singleInputBlockClass);
-                            Constructor<?> constructor = clazz.getConstructor(String.class, Stackable.class, Extendable.class, Boolean.class, Boolean.class, Integer.class, String.class, Integer.class, Integer.class);
+                            Constructor<?> constructor = clazz.getConstructor(String.class, Stackable.class, Extendable.class, Boolean.class, Boolean.class, Integer.class, String.class, String.class, Integer.class);
                             block = (SingleIntInputBlock) constructor.newInstance(opcode, null, null, shadow, topLevel, inputType, inputName, inputVariableID, inputShadow);
-                        } catch (ClassNotFoundException | NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
-                            throw new RuntimeException("Excuse me?"); //Todo use an exception that is also acceptable when code is published on github
-                        }
-                    } else {
-                        int x = node.get("x").intValue();
-                        int y = node.get("y").intValue();
-                        try {
+                        } else {
+                            int x = node.get("x").intValue();
+                            int y = node.get("y").intValue();
                             Class<?> clazz = Class.forName(singleInputBlockClass);
-                            Constructor<?> constructor = clazz.getConstructor(String.class, Stackable.class, Extendable.class, Boolean.class, Boolean.class, Integer.class, Integer.class, Integer.class, String.class, Integer.class, Integer.class);
+                            Constructor<?> constructor = clazz.getConstructor(String.class, Stackable.class, Extendable.class, Boolean.class, Boolean.class, Integer.class, Integer.class, Integer.class, String.class, String.class, Integer.class);
                             block = (SingleIntInputBlock) constructor.newInstance(opcode, null, null, shadow, topLevel, x, y, inputType, inputName, inputVariableID, inputShadow);
-                        } catch (ClassNotFoundException | NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
-                            throw new RuntimeException("Excuse me?"); //Todo use an exception that is also acceptable when code is published on github
+
                         }
+
+                    } else {
+                        throw new RuntimeException("Unexpected input type: " + inputType); // TODO what is an appropriate error handling strategy here?
                     }
-
-                } else {
-                    throw new RuntimeException("Unexpected input type: " + inputType); // TODO what is an appropriate error handling strategy here?
+                } catch (ClassNotFoundException | NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
+                    throw new RuntimeException("Excuse me?"); //Todo use an exception that is also acceptable when code is published on github
                 }
-
 
                 return block;
             }

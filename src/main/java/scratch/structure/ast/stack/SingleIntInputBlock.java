@@ -11,7 +11,7 @@ public abstract class SingleIntInputBlock extends StackBlock {
     private int inputShadow;
     private String inputVariableID;
 
-    public SingleIntInputBlock(String opcode, Stackable next, Extendable parent, boolean shadow, boolean topLevel, int inputType, String inputName, int inputValue, int inputShadow) {
+    public SingleIntInputBlock(String opcode, Stackable next, Extendable parent, Boolean shadow, Boolean topLevel, Integer inputType, String inputName, Integer inputValue, Integer inputShadow) {
         super(opcode, parent, next, shadow, topLevel);
         this.inputType = inputType;
         this.inputName = inputName;
@@ -19,7 +19,7 @@ public abstract class SingleIntInputBlock extends StackBlock {
         this.inputShadow = inputShadow;
     }
 
-    public SingleIntInputBlock(String opcode, Stackable next, Extendable parent, boolean shadow, boolean topLevel, int x, int y, int inputType, String inputName, int inputValue, int inputShadow ) {
+    public SingleIntInputBlock(String opcode, Stackable next, Extendable parent, Boolean shadow, Boolean topLevel, Integer x, Integer y, Integer inputType, String inputName, Integer inputValue, Integer inputShadow ) {
         super(opcode, parent, next, shadow, topLevel, x, y);
         this.inputType = inputType;
         this.inputName = inputName;
@@ -27,7 +27,7 @@ public abstract class SingleIntInputBlock extends StackBlock {
         this.inputShadow = inputShadow;
     }
 
-    public SingleIntInputBlock(String opcode, Stackable next, Extendable parent, boolean shadow, boolean topLevel, int inputType, String inputName, String inputVariableID, int inputShadow) {
+    public SingleIntInputBlock(String opcode, Stackable next, Extendable parent, Boolean shadow, Boolean topLevel, Integer inputType, String inputName, String inputVariableID, Integer inputShadow) {
         super(opcode, parent, next, shadow, topLevel);
         this.inputType = inputType;
         this.inputName = inputName;
@@ -35,7 +35,7 @@ public abstract class SingleIntInputBlock extends StackBlock {
         this.inputShadow = inputShadow;
     }
 
-    public SingleIntInputBlock(String opcode, Stackable next, Extendable parent, boolean shadow, boolean topLevel, int x, int y, int inputType, String inputName, String inputVariableID, int inputShadow) {
+    public SingleIntInputBlock(String opcode, Stackable next, Extendable parent, Boolean shadow, Boolean topLevel, Integer x, Integer y, Integer inputType, String inputName, String inputVariableID, Integer inputShadow) {
         super(opcode, parent, next, shadow, topLevel, x, y);
         this.inputType = inputType;
         this.inputName = inputName;
