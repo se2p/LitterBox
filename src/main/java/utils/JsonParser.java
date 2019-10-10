@@ -11,8 +11,12 @@ import utils.deserializer.scratch2.StageDeserializer;
 import utils.deserializer.scratch3.SpriteDeserializer3;
 import utils.deserializer.scratch3.StageDeserializer3;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -223,5 +227,36 @@ public class JsonParser {
                 prettyBlocks2(sb, nb, x);
             }
         }
+    }
+
+    public static JsonNode getBlocksNodeFromJSON(String path) {
+        JsonNode script = null;
+        Path currentRelativePath = Paths.get("");
+        String s = currentRelativePath.toAbsolutePath().toString();
+        System.out.println("Current relative path is: " + s);
+
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+
+            BufferedReader br = new BufferedReader(new FileReader(path));
+            StringBuilder sb = new StringBuilder();
+            String line;
+            while ((line = br.readLine()) != null) {
+                sb.append(line);
+            }
+            JsonNode rootNode = mapper.readTree(sb.toString());
+
+            Iterator<JsonNode> elements = rootNode.get("targets").elements();
+            while (elements.hasNext()) {
+                JsonNode c = elements.next();
+                if (c.has("isStage") && !c.get("isStage").asBoolean() && c.has("blocks")) {
+                    script = c.get("blocks");
+                    break;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return script;
     }
 }

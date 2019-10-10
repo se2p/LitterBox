@@ -5,7 +5,7 @@ import org.junit.Before;
 import org.junit.Test;
 import scratch.structure.ast.Ast;
 import scratch.structure.ast.BasicBlock;
-import scratch.structure.ast.Utils;
+import utils.JsonParser;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
@@ -15,7 +15,7 @@ public class WhenStartAsCloneTest {
 
     @Before
     public void setup() {
-        script = Utils.parseScript("./src/test/java/scratch/structure/ast/fixtures/whenstartasclone.json");
+        script = JsonParser.getBlocksNodeFromJSON("./src/test/java/scratch/structure/ast/fixtures/whenstartasclone.json");
     }
 
     @Test
