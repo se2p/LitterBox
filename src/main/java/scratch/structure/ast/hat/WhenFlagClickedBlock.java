@@ -14,9 +14,4 @@ public class WhenFlagClickedBlock extends HatBlock {
     public void accept(BlockVisitor visitor) {
         visitor.visit(this);
     }
-
-    @Override
-    public void setParent(Extendable basicBlock) {
-       throw new RuntimeException(); // TODO find proper exception
-    }
 }

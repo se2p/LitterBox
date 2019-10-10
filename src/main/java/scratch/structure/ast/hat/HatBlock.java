@@ -33,4 +33,8 @@ public abstract class HatBlock extends BasicBlock implements Extendable {
         this.topLevel = topLevel;
     }
 
+    @Override
+    public void setParent(Extendable basicBlock) {
+        throw new RuntimeException(); // TODO find proper exception
+    }
 }

@@ -1,6 +1,7 @@
 package scratch.structure.ast;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.NullNode;
 import scratch.structure.ast.transformers.Dispatcher;
 
 import java.util.HashMap;
@@ -41,7 +42,7 @@ public class Ast {
         for (Map.Entry<String, BasicBlock> block : nodesIdMap.entrySet()) {
             if (block.getValue().getParent() == null) {
                 JsonNode parentNode = blocksNode.at("/" + block.getKey()).get("parent");
-                if (parentNode != null) {
+                if (parentNode != null && !(parentNode instanceof NullNode)) {
                     String parent = parentNode.toString();
                     parent = parent.replaceAll("^\"|\"$", ""); //remove quotes around string
                     block.getValue().setParent((Extendable) nodesIdMap.get(parent));
@@ -49,8 +50,9 @@ public class Ast {
                 }
             }
 
-            if (block.getValue().getNext() == null && blocksNode.at("/" + block.getKey()).get("next") != null) {
-                String next = blocksNode.at("/" + block.getKey()).get("next").toString();
+            JsonNode nextNode = blocksNode.at("/" + block.getKey()).get("next");
+            if (block.getValue().getNext() == null && nextNode != null && !(nextNode instanceof NullNode)) {
+                String next = nextNode.toString();
                 next = next.replaceAll("^\"|\"$", ""); //remove quotes around string
                 block.getValue().setNext((Stackable) nodesIdMap.get(next));
             }

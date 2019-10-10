@@ -15,8 +15,4 @@ public class WhenStartAsCloneBlock extends HatBlock {
         visitor.visit(this);
     }
 
-    @Override
-    public void setParent(Extendable basicBlock) {
-        throw new RuntimeException(); // TODO find proper exception
-    }
 }
