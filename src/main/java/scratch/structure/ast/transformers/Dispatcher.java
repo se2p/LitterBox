@@ -4,17 +4,23 @@ package scratch.structure.ast.transformers;
 import com.fasterxml.jackson.databind.JsonNode;
 import scratch.structure.ast.Ast;
 import scratch.structure.ast.BasicBlock;
+import scratch.structure.ast.stack.MoveStepBlock;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 
 public class Dispatcher {
 
     public static Dispatcher dispatcher;
 
+
     static{
         dispatcher = new Dispatcher(); //Maybe get a container system or initialize somehow else
-        dispatcher.registerTransformer(new MoveStepTransformer());
+        //dispatcher.registerTransformer(new MoveStepTransformer());
+        dispatcher.registerTransformer(SingleInputTransformerFactory.buildTransformer(MoveStepBlock.class.getName(), new HashSet<>(Arrays.asList("motion_movesteps")), Transformer.MATH_NUM_PRIMITIVE, "STEPS"));
+
         dispatcher.registerTransformer(new WhenFlagClickedTransformer());
         dispatcher.registerTransformer(new TurnDegreesTransformer());
         dispatcher.registerTransformer(new DeleteCloneTransformer());

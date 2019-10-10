@@ -10,7 +10,7 @@ public class MoveStepBlock extends SingleIntInputBlock {
         super(opcode, next, parent, shadow, topLevel, inputType, inputName, inputValue, inputShadow);
     }
 
-    public MoveStepBlock(String opcode, Stackable next, Extendable parent, boolean shadow, boolean topLevel, int x, int y, int inputType, String inputName, int inputValue, int inputShadow) {
+    public MoveStepBlock(String opcode, Stackable next, Extendable parent, Boolean shadow, Boolean topLevel, Integer x, Integer y, Integer inputType, String inputName, Integer inputValue, Integer inputShadow) {
         super(opcode, next, parent, shadow, topLevel, x, y, inputType, inputName, inputValue, inputShadow);
     }
 

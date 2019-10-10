@@ -70,7 +70,7 @@ public abstract class Transformer {
 
     abstract Set<String> getIdentifiers(); //Returns the opcode(s)/id(s) this transformer works for.
 
-    abstract BasicBlock transform(JsonNode node, Ast ast);
+    abstract BasicBlock transform(JsonNode node, Ast ast); // TODO do we need the Ast here?
 
     protected void extractStandardValues(JsonNode node) {
         opcode = node.get("opcode").toString().replaceAll("^\"|\"$", "");
