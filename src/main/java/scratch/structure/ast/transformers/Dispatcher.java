@@ -6,6 +6,8 @@ import scratch.structure.ast.Ast;
 import scratch.structure.ast.BasicBlock;
 import scratch.structure.ast.stack.ChangeSizeByBlock;
 import scratch.structure.ast.stack.ChangeVolumeByBlock;
+import scratch.structure.ast.stack.ChangeXCoordinateByBlock;
+import scratch.structure.ast.stack.ChangeYCoordinateByBlock;
 import scratch.structure.ast.stack.MoveStepBlock;
 import scratch.structure.ast.stack.PointInDirectionBlock;
 import scratch.structure.ast.stack.SetSizeToBlock;
@@ -33,6 +35,8 @@ public class Dispatcher {
         dispatcher.registerTransformer(SingleInputTransformerFactory.buildTransformer(ChangeVolumeByBlock.class.getName(), new HashSet<>(Arrays.asList("sound_changevolumeby")), Transformer.MATH_NUM_PRIMITIVE, "VOLUME"));
         dispatcher.registerTransformer(SingleInputTransformerFactory.buildTransformer(SetVolumeToBlock.class.getName(), new HashSet<>(Arrays.asList("sound_setvolumeto")), Transformer.MATH_NUM_PRIMITIVE, "VOLUME"));
         dispatcher.registerTransformer(SingleInputTransformerFactory.buildTransformer(WaitSecondsBlock.class.getName(), new HashSet<>(Arrays.asList("control_wait")), Transformer.POSITIVE_NUM_PRIMITIVE, "DURATION"));
+        dispatcher.registerTransformer(SingleInputTransformerFactory.buildTransformer(ChangeXCoordinateByBlock.class.getName(), new HashSet<>(Arrays.asList("motion_changexby")), Transformer.MATH_NUM_PRIMITIVE, "DX"));
+        dispatcher.registerTransformer(SingleInputTransformerFactory.buildTransformer(ChangeYCoordinateByBlock.class.getName(), new HashSet<>(Arrays.asList("motion_changeyby")), Transformer.MATH_NUM_PRIMITIVE, "DY"));
 
         dispatcher.registerTransformer(new WhenFlagClickedTransformer());
         dispatcher.registerTransformer(new DeleteCloneTransformer());
