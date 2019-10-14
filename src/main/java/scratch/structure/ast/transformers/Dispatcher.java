@@ -6,6 +6,7 @@ import scratch.structure.ast.Ast;
 import scratch.structure.ast.BasicBlock;
 import scratch.structure.ast.stack.MoveStepBlock;
 import scratch.structure.ast.stack.PointInDirectionBlock;
+import scratch.structure.ast.stack.TurnDegreesBlock;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -21,9 +22,9 @@ public class Dispatcher {
         dispatcher = new Dispatcher(); //Maybe get a container system or initialize somehow else
         dispatcher.registerTransformer(SingleInputTransformerFactory.buildTransformer(MoveStepBlock.class.getName(), new HashSet<>(Arrays.asList("motion_movesteps")), Transformer.MATH_NUM_PRIMITIVE, "STEPS"));
         dispatcher.registerTransformer(SingleInputTransformerFactory.buildTransformer(PointInDirectionBlock.class.getName(), new HashSet<>(Arrays.asList("motion_pointindirection")), Transformer.ANGLE_NUM_PRIMITIVE, "DIRECTION"));
+        dispatcher.registerTransformer(SingleInputTransformerFactory.buildTransformer(TurnDegreesBlock.class.getName(), new HashSet<>(Arrays.asList("motion_turnright", "motion_turnleft")), Transformer.MATH_NUM_PRIMITIVE, "DEGREES"));
 
         dispatcher.registerTransformer(new WhenFlagClickedTransformer());
-        dispatcher.registerTransformer(new TurnDegreesTransformer());
         dispatcher.registerTransformer(new DeleteCloneTransformer());
         dispatcher.registerTransformer(new WhenSpriteClickedTransformer());
         dispatcher.registerTransformer(new WhenStartAsCloneTransformer());
