@@ -16,7 +16,7 @@ public class ChangeSizeByBlockTest {
 
     @Before
     public void setup() {
-        script = JsonParser.getBlocksNodeFromJSON("./src/test/java/scratch/structure/ast/fixtures/changesizebywithcomment.json");
+        script = JsonParser.getBlocksNodeFromJSON("./src/test/java/scratch/structure/ast/fixtures/changesizeby.json");
     }
 
     @Test
