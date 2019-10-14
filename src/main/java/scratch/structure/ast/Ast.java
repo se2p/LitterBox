@@ -39,22 +39,22 @@ public class Ast {
         }
 
         //Connect the blocks
-        for (Map.Entry<String, BasicBlock> block : nodesIdMap.entrySet()) {
-            if (block.getValue().getParent() == null) {
-                JsonNode parentNode = blocksNode.at("/" + block.getKey()).get("parent");
+        for (Map.Entry<String, BasicBlock> blockIdAndBlock : nodesIdMap.entrySet()) {
+            BasicBlock block = blockIdAndBlock.getValue();
+            if (block.getParent() == null) {
+                JsonNode parentNode = blocksNode.get(blockIdAndBlock.getKey()).get("parent");
                 if (parentNode != null && !(parentNode instanceof NullNode)) {
                     String parent = parentNode.toString();
                     parent = parent.replaceAll("^\"|\"$", ""); //remove quotes around string
-                    block.getValue().setParent((Extendable) nodesIdMap.get(parent));
-
+                    blockIdAndBlock.getValue().setParent((Extendable) nodesIdMap.get(parent));
                 }
             }
 
-            JsonNode nextNode = blocksNode.at("/" + block.getKey()).get("next");
-            if (block.getValue().getNext() == null && nextNode != null && !(nextNode instanceof NullNode)) {
+            JsonNode nextNode = blocksNode.get(blockIdAndBlock.getKey()).get("next");
+            if (block.getNext() == null && nextNode != null && !(nextNode instanceof NullNode)) {
                 String next = nextNode.toString();
                 next = next.replaceAll("^\"|\"$", ""); //remove quotes around string
-                block.getValue().setNext((Stackable) nodesIdMap.get(next));
+                blockIdAndBlock.getValue().setNext((Stackable) nodesIdMap.get(next));
             }
         }
         return tree;
