@@ -25,7 +25,7 @@ public class PointInDirectionTest {
         ast.parseScript(script);
 
         BasicBlock root = ast.getRoot();
-        if (!(root instanceof TurnDegreesBlock)) {
+        if (!(root instanceof PointInDirectionBlock)) {
             fail("Result of this fixture should be a pointindirection block");
         }
 
@@ -44,10 +44,10 @@ public class PointInDirectionTest {
         ast.parseScript(script);
 
         BasicBlock root = ast.getRoot();
-        if (!(root instanceof TurnDegreesBlock)) {
+        if (!(root instanceof PointInDirectionBlock)) {
             fail("Result of this fixture should be a pointindirection block");
         }
-        TurnDegreesBlock block = (TurnDegreesBlock) root;
+        PointInDirectionBlock block = (PointInDirectionBlock) root;
         assertEquals(90, block.getInputValue());
     }
 
@@ -57,10 +57,10 @@ public class PointInDirectionTest {
         ast.parseScript(script);
 
         BasicBlock root = ast.getRoot();
-        if (!(root instanceof TurnDegreesBlock)) {
+        if (!(root instanceof PointInDirectionBlock)) {
             fail("Result of this fixture should be a pointindirection block");
         }
-        TurnDegreesBlock block = (TurnDegreesBlock) root.getNext();
+        PointInDirectionBlock block = (PointInDirectionBlock) root.getNext();
 
         assertEquals("`jEk@4|i[#Fk?(8x)AV.-my variable", block.getInputVariableID());
     }
