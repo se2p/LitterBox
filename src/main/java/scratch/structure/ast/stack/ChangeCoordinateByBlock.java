@@ -21,9 +21,4 @@ public abstract class ChangeCoordinateByBlock extends SingleIntInputBlock {
     public ChangeCoordinateByBlock(String opcode, Stackable next, Extendable parent, Boolean shadow, Boolean topLevel, Integer x, Integer y, Integer inputType, String inputName, String inputVariableID, Integer inputShadow) {
         super(opcode, next, parent, shadow, topLevel, x, y, inputType, inputName, inputVariableID, inputShadow);
     }
-
-    @Override
-    public void accept(BlockVisitor visitor) {
-        visitor.visit(this);
-    }
 }
