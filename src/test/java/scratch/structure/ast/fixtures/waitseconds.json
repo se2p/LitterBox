@@ -1,0 +1,218 @@
+{
+  "targets": [
+    {
+      "isStage": true,
+      "name": "Stage",
+      "variables": {
+        "`jEk@4|i[#Fk?(8x)AV.-my variable": [
+          "meine Variable",
+          0
+        ]
+      },
+      "lists": {},
+      "broadcasts": {},
+      "blocks": {},
+      "comments": {},
+      "currentCostume": 0,
+      "costumes": [
+        {
+          "assetId": "cd21514d0531fdffb22204e0ec5ed84a",
+          "name": "Bühnenbild1",
+          "md5ext": "cd21514d0531fdffb22204e0ec5ed84a.svg",
+          "dataFormat": "svg",
+          "rotationCenterX": 240,
+          "rotationCenterY": 180
+        }
+      ],
+      "sounds": [
+        {
+          "assetId": "83a9787d4cb6f3b7632b4ddfebf74367",
+          "name": "Plopp",
+          "dataFormat": "wav",
+          "format": "",
+          "rate": 44100,
+          "sampleCount": 1032,
+          "md5ext": "83a9787d4cb6f3b7632b4ddfebf74367.wav"
+        }
+      ],
+      "volume": 100,
+      "layerOrder": 0,
+      "tempo": 60,
+      "videoTransparency": 50,
+      "videoState": "on",
+      "textToSpeechLanguage": null
+    },
+    {
+      "isStage": false,
+      "name": "Figur1",
+      "variables": {},
+      "lists": {},
+      "broadcasts": {},
+      "blocks": {
+        "WSe04Ce6KC^ss*f+Y6#R": {
+          "opcode": "control_wait",
+          "next": "Xfa=*6{If_57|.j0_nx7",
+          "parent": null,
+          "inputs": {
+            "DURATION": [
+              1,
+              [
+                5,
+                "1"
+              ]
+            ]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": true,
+          "x": 283,
+          "y": 52,
+          "comment": "6s5ijtgpL5$0,m^VTgB]"
+        },
+        "Xfa=*6{If_57|.j0_nx7": {
+          "opcode": "control_wait",
+          "next": "8y`Bs0c4n6OzIA1Te/2B",
+          "parent": "WSe04Ce6KC^ss*f+Y6#R",
+          "inputs": {
+            "DURATION": [
+              3,
+              [
+                12,
+                "meine Variable",
+                "`jEk@4|i[#Fk?(8x)AV.-my variable"
+              ],
+              [
+                5,
+                "2"
+              ]
+            ]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "8y`Bs0c4n6OzIA1Te/2B": {
+          "opcode": "control_wait",
+          "next": null,
+          "parent": "Xfa=*6{If_57|.j0_nx7",
+          "inputs": {
+            "DURATION": [
+              1,
+              [
+                5,
+                "3"
+              ]
+            ]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        }
+      },
+      "comments": {
+        "hRYE-p;l_8[]^tU;s{oP": {
+          "blockId": "C,g5v2#3rb85#135bR#5",
+          "x": 976.7777666162561,
+          "y": 255.25925925925924,
+          "width": 200,
+          "height": 200,
+          "minimized": false,
+          "text": "foobar(42)"
+        },
+        "Nw}*0Km*V:]b;R1x.zvV": {
+          "blockId": "M,4fRgWrMh`rDj`JY{Cs",
+          "x": 656.6296299121998,
+          "y": 197.18518518518488,
+          "width": 200,
+          "height": 200,
+          "minimized": false,
+          "text": "commenttext\n"
+        },
+        "p9]mIlL(,|x9#[8$S8c0": {
+          "blockId": "IM,|j!)W!@}~iAMsl!FQ",
+          "x": 524.74074045817,
+          "y": 347.8518518518516,
+          "width": 200,
+          "height": 200,
+          "minimized": false,
+          "text": "foobar(42)"
+        },
+        "|WnB=GcuCz}1c1RZqJn7": {
+          "blockId": "W?1TFihHcxg_$c5;0$+6",
+          "x": 733.9999999999995,
+          "y": 170.81481481481427,
+          "width": 200,
+          "height": 200,
+          "minimized": false,
+          "text": "foobar(42)"
+        },
+        "tsnw.;+oJnCe!]~kLjFy": {
+          "blockId": "36VjerrK2t/JpEKf`jYz",
+          "x": 414.22222222222223,
+          "y": 295.1111111111111,
+          "width": 200,
+          "height": 200,
+          "minimized": false,
+          "text": "foobar(42)"
+        },
+        "6s5ijtgpL5$0,m^VTgB]": {
+          "blockId": "WSe04Ce6KC^ss*f+Y6#R",
+          "x": 772.1111111111111,
+          "y": 60.00000000000071,
+          "width": 200,
+          "height": 200,
+          "minimized": false,
+          "text": "foobar(42)"
+        }
+      },
+      "currentCostume": 0,
+      "costumes": [
+        {
+          "assetId": "b7853f557e4426412e64bb3da6531a99",
+          "name": "Kostüm1",
+          "bitmapResolution": 1,
+          "md5ext": "b7853f557e4426412e64bb3da6531a99.svg",
+          "dataFormat": "svg",
+          "rotationCenterX": 48,
+          "rotationCenterY": 50
+        },
+        {
+          "assetId": "e6ddc55a6ddd9cc9d84fe0b4c21e016f",
+          "name": "Kostüm2",
+          "bitmapResolution": 1,
+          "md5ext": "e6ddc55a6ddd9cc9d84fe0b4c21e016f.svg",
+          "dataFormat": "svg",
+          "rotationCenterX": 46,
+          "rotationCenterY": 53
+        }
+      ],
+      "sounds": [
+        {
+          "assetId": "83c36d806dc92327b9e7049a565c6bff",
+          "name": "Miau",
+          "dataFormat": "wav",
+          "format": "",
+          "rate": 44100,
+          "sampleCount": 37376,
+          "md5ext": "83c36d806dc92327b9e7049a565c6bff.wav"
+        }
+      ],
+      "volume": 100,
+      "layerOrder": 1,
+      "visible": true,
+      "x": 0,
+      "y": 0,
+      "size": 100,
+      "direction": 90,
+      "draggable": false,
+      "rotationStyle": "all around"
+    }
+  ],
+  "monitors": [],
+  "extensions": [],
+  "meta": {
+    "semver": "3.0.0",
+    "vm": "0.2.0-prerelease.20191001145300",
+    "agent": "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:69.0) Gecko/20100101 Firefox/69.0"
+  }
+}

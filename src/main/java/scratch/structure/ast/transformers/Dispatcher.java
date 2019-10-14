@@ -11,6 +11,7 @@ import scratch.structure.ast.stack.PointInDirectionBlock;
 import scratch.structure.ast.stack.SetSizeToBlock;
 import scratch.structure.ast.stack.SetVolumeToBlock;
 import scratch.structure.ast.stack.TurnDegreesBlock;
+import scratch.structure.ast.stack.WaitSecondsBlock;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -31,6 +32,7 @@ public class Dispatcher {
         dispatcher.registerTransformer(SingleInputTransformerFactory.buildTransformer(SetSizeToBlock.class.getName(), new HashSet<>(Arrays.asList("looks_setsizeto")), Transformer.MATH_NUM_PRIMITIVE, "SIZE"));
         dispatcher.registerTransformer(SingleInputTransformerFactory.buildTransformer(ChangeVolumeByBlock.class.getName(), new HashSet<>(Arrays.asList("sound_changevolumeby")), Transformer.MATH_NUM_PRIMITIVE, "VOLUME"));
         dispatcher.registerTransformer(SingleInputTransformerFactory.buildTransformer(SetVolumeToBlock.class.getName(), new HashSet<>(Arrays.asList("sound_setvolumeto")), Transformer.MATH_NUM_PRIMITIVE, "VOLUME"));
+        dispatcher.registerTransformer(SingleInputTransformerFactory.buildTransformer(WaitSecondsBlock.class.getName(), new HashSet<>(Arrays.asList("control_wait")), Transformer.POSITIVE_NUM_PRIMITIVE, "DURATION"));
 
         dispatcher.registerTransformer(new WhenFlagClickedTransformer());
         dispatcher.registerTransformer(new DeleteCloneTransformer());
