@@ -12,6 +12,8 @@ import scratch.structure.ast.stack.MoveStepBlock;
 import scratch.structure.ast.stack.PointInDirectionBlock;
 import scratch.structure.ast.stack.SetSizeToBlock;
 import scratch.structure.ast.stack.SetVolumeToBlock;
+import scratch.structure.ast.stack.SetXCoordinateToBlock;
+import scratch.structure.ast.stack.SetYCoordinateToBlock;
 import scratch.structure.ast.stack.TurnDegreesBlock;
 import scratch.structure.ast.stack.WaitSecondsBlock;
 
@@ -37,6 +39,8 @@ public class Dispatcher {
         dispatcher.registerTransformer(SingleInputTransformerFactory.buildTransformer(WaitSecondsBlock.class.getName(), new HashSet<>(Arrays.asList("control_wait")), Transformer.POSITIVE_NUM_PRIMITIVE, "DURATION"));
         dispatcher.registerTransformer(SingleInputTransformerFactory.buildTransformer(ChangeXCoordinateByBlock.class.getName(), new HashSet<>(Arrays.asList("motion_changexby")), Transformer.MATH_NUM_PRIMITIVE, "DX"));
         dispatcher.registerTransformer(SingleInputTransformerFactory.buildTransformer(ChangeYCoordinateByBlock.class.getName(), new HashSet<>(Arrays.asList("motion_changeyby")), Transformer.MATH_NUM_PRIMITIVE, "DY"));
+        dispatcher.registerTransformer(SingleInputTransformerFactory.buildTransformer(SetXCoordinateToBlock.class.getName(), new HashSet<>(Arrays.asList("motion_setx")), Transformer.MATH_NUM_PRIMITIVE, "X"));
+        dispatcher.registerTransformer(SingleInputTransformerFactory.buildTransformer(SetYCoordinateToBlock.class.getName(), new HashSet<>(Arrays.asList("motion_sety")), Transformer.MATH_NUM_PRIMITIVE, "Y"));
 
         dispatcher.registerTransformer(new WhenFlagClickedTransformer());
         dispatcher.registerTransformer(new DeleteCloneTransformer());
