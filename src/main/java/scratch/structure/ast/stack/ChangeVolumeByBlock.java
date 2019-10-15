@@ -14,12 +14,12 @@ public class ChangeVolumeByBlock extends SingleIntInputBlock {
         super(opcode, next, parent, shadow, topLevel, x, y, inputType, inputName, inputValue, inputShadow);
     }
 
-    public ChangeVolumeByBlock(String opcode, Stackable next, Extendable parent, Boolean shadow, Boolean topLevel, Integer inputType, String inputName, String inputVariableID, Integer inputShadow) {
-        super(opcode, next, parent, shadow, topLevel, inputType, inputName, inputVariableID, inputShadow);
+    public ChangeVolumeByBlock(String opcode, Stackable next, Extendable parent, Boolean shadow, Boolean topLevel, Integer inputType, String inputName, String inputID, Integer inputShadow) {
+        super(opcode, next, parent, shadow, topLevel, inputType, inputName, inputID, inputShadow);
     }
 
-    public ChangeVolumeByBlock(String opcode, Stackable next, Extendable parent, Boolean shadow, Boolean topLevel, Integer x, Integer y, Integer inputType, String inputName, String inputVariableID, Integer inputShadow) {
-        super(opcode, next, parent, shadow, topLevel, x, y, inputType, inputName, inputVariableID, inputShadow);
+    public ChangeVolumeByBlock(String opcode, Stackable next, Extendable parent, Boolean shadow, Boolean topLevel, Integer x, Integer y, Integer inputType, String inputName, String inputID, Integer inputShadow) {
+        super(opcode, next, parent, shadow, topLevel, x, y, inputType, inputName, inputID, inputShadow);
     }
 
     @Override

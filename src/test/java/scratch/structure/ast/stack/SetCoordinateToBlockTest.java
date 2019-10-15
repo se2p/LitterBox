@@ -62,7 +62,21 @@ public class SetCoordinateToBlockTest {
         }
         SetCoordinateToBlock block = (SetCoordinateToBlock) ((SetCoordinateToBlock) (root.getNext())).getNext();
 
-        assertEquals("`jEk@4|i[#Fk?(8x)AV.-my variable", block.getInputVariableID());
+        assertEquals("`jEk@4|i[#Fk?(8x)AV.-my variable", block.getInputID());
+    }
+
+    @Test
+    public void testListInput() {
+        Ast ast = new Ast();
+        ast.parseScript(JsonParser.getBlocksNodeFromJSON("./src/test/java/scratch/structure/ast/fixtures/setcoordinateto_list.json"));
+
+        BasicBlock root = ast.getRoot();
+        if (!(root instanceof SetCoordinateToBlock)) {
+            fail("Result of this fixture should be a setcoordinateto block");
+        }
+        SetCoordinateToBlock block = (SetCoordinateToBlock) root.getNext();
+
+        assertEquals("TOXx2wvdeM)Hd4dXaT~-", block.getInputID());
     }
 
      @Test

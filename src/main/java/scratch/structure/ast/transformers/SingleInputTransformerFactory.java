@@ -6,7 +6,6 @@ import scratch.structure.ast.Ast;
 import scratch.structure.ast.Extendable;
 import scratch.structure.ast.Stackable;
 import scratch.structure.ast.stack.SingleIntInputBlock;
-import scratch.structure.ast.stack.TurnDegreesBlock;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -45,20 +44,23 @@ public class SingleInputTransformerFactory {
                             Constructor<?> constructor = clazz.getConstructor(String.class, Stackable.class, Extendable.class, Boolean.class, Boolean.class, Integer.class, Integer.class, Integer.class, String.class, Integer.class, Integer.class);
                             block = (SingleIntInputBlock) constructor.newInstance(opcode, null, null, shadow, topLevel, x, y, inputType, inputName, inputValue, inputShadow);
                         }
-                    } else if (inputType == VAR_PRIMITIVE) { // FIXME also store the value of the obscured input
-                        String inputVariableID = inputArray.get(POS_DATA_ARRAY).get(POS_VAR_ID).toString().replaceAll("^\"|\"$", "");
+                    } else if (inputType == VAR_PRIMITIVE || inputType == LIST_PRIMITIVE) { // FIXME also store the value of the obscured input
+                        String inputID = inputArray.get(POS_DATA_ARRAY).get(POS_INPUT_ID).toString().replaceAll("^\"|\"$", "");
                         if (!topLevel) {
                             Class<?> clazz = Class.forName(singleInputBlockClass);
                             Constructor<?> constructor = clazz.getConstructor(String.class, Stackable.class, Extendable.class, Boolean.class, Boolean.class, Integer.class, String.class, String.class, Integer.class);
-                            block = (SingleIntInputBlock) constructor.newInstance(opcode, null, null, shadow, topLevel, inputType, inputName, inputVariableID, inputShadow);
+                            block = (SingleIntInputBlock) constructor.newInstance(opcode, null, null, shadow, topLevel, inputType, inputName, inputID, inputShadow);
                         } else {
                             int x = node.get("x").intValue();
                             int y = node.get("y").intValue();
                             Class<?> clazz = Class.forName(singleInputBlockClass);
                             Constructor<?> constructor = clazz.getConstructor(String.class, Stackable.class, Extendable.class, Boolean.class, Boolean.class, Integer.class, Integer.class, Integer.class, String.class, String.class, Integer.class);
-                            block = (SingleIntInputBlock) constructor.newInstance(opcode, null, null, shadow, topLevel, x, y, inputType, inputName, inputVariableID, inputShadow);
-
+                            block = (SingleIntInputBlock) constructor.newInstance(opcode, null, null, shadow, topLevel, x, y, inputType, inputName, inputID, inputShadow);
                         }
+                        int shadowType = inputArray.get(POS_SHADOW_ARRAY).get(POS_INPUT_TYPE).asInt();
+                        int shadowValue = inputArray.get(POS_SHADOW_ARRAY).get(POS_INPUT_VALUE).asInt();
+                        block.setShadowType(shadowType);
+                        block.setShadowValue(shadowValue);
 
                     } else {
                         throw new RuntimeException("Unexpected input type: " + inputType); // TODO what is an appropriate error handling strategy here?

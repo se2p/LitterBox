@@ -62,7 +62,7 @@ public class SetSizeToBlockTest {
         }
         SetSizeToBlock block = (SetSizeToBlock) root.getNext();
 
-        assertEquals("`jEk@4|i[#Fk?(8x)AV.-my variable", block.getInputVariableID());
+        assertEquals("`jEk@4|i[#Fk?(8x)AV.-my variable", block.getInputID());
     }
 }
 

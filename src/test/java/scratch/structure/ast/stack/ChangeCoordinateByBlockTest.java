@@ -62,7 +62,7 @@ public class ChangeCoordinateByBlockTest {
         }
         ChangeCoordinateByBlock block = (ChangeCoordinateByBlock) ((ChangeCoordinateByBlock) (root.getNext())).getNext();
 
-        assertEquals("`jEk@4|i[#Fk?(8x)AV.-my variable", block.getInputVariableID());
+        assertEquals("`jEk@4|i[#Fk?(8x)AV.-my variable", block.getInputID());
     }
 
      @Test

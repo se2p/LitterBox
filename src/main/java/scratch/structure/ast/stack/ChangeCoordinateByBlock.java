@@ -14,11 +14,11 @@ public abstract class ChangeCoordinateByBlock extends SingleIntInputBlock {
         super(opcode, next, parent, shadow, topLevel, x, y, inputType, inputName, inputValue, inputShadow);
     }
 
-    public ChangeCoordinateByBlock(String opcode, Stackable next, Extendable parent, Boolean shadow, Boolean topLevel, Integer inputType, String inputName, String inputVariableID, Integer inputShadow) {
-        super(opcode, next, parent, shadow, topLevel, inputType, inputName, inputVariableID, inputShadow);
+    public ChangeCoordinateByBlock(String opcode, Stackable next, Extendable parent, Boolean shadow, Boolean topLevel, Integer inputType, String inputName, String inputID, Integer inputShadow) {
+        super(opcode, next, parent, shadow, topLevel, inputType, inputName, inputID, inputShadow);
     }
 
-    public ChangeCoordinateByBlock(String opcode, Stackable next, Extendable parent, Boolean shadow, Boolean topLevel, Integer x, Integer y, Integer inputType, String inputName, String inputVariableID, Integer inputShadow) {
-        super(opcode, next, parent, shadow, topLevel, x, y, inputType, inputName, inputVariableID, inputShadow);
+    public ChangeCoordinateByBlock(String opcode, Stackable next, Extendable parent, Boolean shadow, Boolean topLevel, Integer x, Integer y, Integer inputType, String inputName, String inputID, Integer inputShadow) {
+        super(opcode, next, parent, shadow, topLevel, x, y, inputType, inputName, inputID, inputShadow);
     }
 }

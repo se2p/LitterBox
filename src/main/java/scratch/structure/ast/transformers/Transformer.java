@@ -15,7 +15,7 @@ public abstract class Transformer {
     protected static final int INPUT_SAME_BLOCK_SHADOW = 1; // unobscured shadow
     protected static final int INPUT_BLOCK_NO_SHADOW = 2; // no shadow
     protected static final int INPUT_DIFF_BLOCK_SHADOW = 3; // obscured shadow
-    protected static final int MATH_NUM_PRIMITIVE = 4; // number
+    public static final int MATH_NUM_PRIMITIVE = 4; // number
     protected static final int POSITIVE_NUM_PRIMITIVE = 5; // positive number
     protected static final int WHOLE_NUM_PRIMITIVE = 6; // positive integer
     protected static final int INTEGER_NUM_PRIMITIVE = 7; // integer
@@ -60,9 +60,14 @@ public abstract class Transformer {
     protected static final int POS_INPUT_VALUE = 1;
 
     /**
-     * The position of the inputVariableID in the data array.
+     * The position of the inputID in the data array.
      */
-    protected static final int POS_VAR_ID = 2;
+    protected static final int POS_INPUT_ID = 2;
+
+    /**
+     * The position of the shadow array in the input array.
+     */
+    protected static final int POS_SHADOW_ARRAY = 2;
 
     protected String opcode;
     protected boolean topLevel;
