@@ -37,6 +37,20 @@ public abstract class Transformer {
      * holding the input shadow indicator and the data array
      *
      * and [4,"15"] is the data array holding the input type and the input value.
+     *
+     * If the input array holds a variable or a list, there is another array
+     * holding information about the obscured input. This array is called
+     * "shadow array".
+     *
+     * In the example
+     * "inputs": {"DEGREES": [3, [12, "meine Variable","`jEk@4|i[#Fk?(8x)AV.-my variable"], [4,"40"]]},
+     *
+     * [3, [12, "meine Variable","`jEk@4|i[#Fk?(8x)AV.-my variable"], [4,"40"]]
+     * is the input array holding input shadow indicator, data array and shadow array,
+     *
+     * [12, "meine Variable","`jEk@4|i[#Fk?(8x)AV.-my variable"] is the input array
+     *
+     * and [4,"40"] is the shadow array.
      */
 
     /**
@@ -50,24 +64,25 @@ public abstract class Transformer {
     protected static final int POS_DATA_ARRAY = 1;
 
     /**
-     * The position of the input type in the input data array.
+     * The position of the shadow array in the input array.
+     */
+    protected static final int POS_SHADOW_ARRAY = 2;
+
+    /**
+     * The position of the input type in the input and the shadow array.
      */
     protected static final int POS_INPUT_TYPE = 0;
 
     /**
-     * The position of the input value in the input data array.
+     * The position of the input value in the input data array and the shadow array.
      */
     protected static final int POS_INPUT_VALUE = 1;
 
     /**
-     * The position of the inputID in the data array.
+     * The position of the inputID in the data array. The inputID is either
+     * a variable ID or a list ID.
      */
     protected static final int POS_INPUT_ID = 2;
-
-    /**
-     * The position of the shadow array in the input array.
-     */
-    protected static final int POS_SHADOW_ARRAY = 2;
 
     protected String opcode;
     protected boolean topLevel;
