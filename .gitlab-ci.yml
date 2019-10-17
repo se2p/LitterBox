@@ -21,6 +21,7 @@ test:
   stage: test
   script:
     - mvn test
+    - mvn jacoco:report
     - cat target/site/jacoco-ut/index.html | grep -o '<tfoot>.*</tfoot>'
   artifacts:
     paths:
