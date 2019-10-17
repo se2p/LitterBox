@@ -1,29 +1,19 @@
-image: openjdk:11-jdk
-
-stages:
-  - build
-  - test
-
-before_script:
-  - export GRADLE_USER_HOME=`pwd`/.gradle
+variables:
+  MAVEN_CLI_OPTS: "-s .m2/settings.xml --batch-mode"
+  MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository"
 
 cache:
   paths:
-    - .gradle/wrapper
-    - .gradle/caches
+    - .m2/repository/
+    - target/
 
 build:
   stage: build
   script:
-    - ./gradlew assemble
-  artifacts:
-    paths:
-      - build/libs/litterbox-1.0-SNAPSHOT.jar
-    expire_in: 1 week
-  only:
-    - master
+    - mvn $MAVEN_CLI_OPTS compile
 
 test:
   stage: test
   script:
-    - ./gradlew check
+    - mvn $MAVEN_CLI_OPTS test
+
