@@ -22,10 +22,10 @@ test:
   script:
     - mvn test
     - mvn jacoco:report
-    - cat target/site/jacoco-ut/index.html | grep -o '<tfoot>.*</tfoot>'
+    - cat target/site/jacoco/index.html | grep -o '<tfoot>.*</tfoot>'
   artifacts:
     paths:
       - target/surefire-reports/
-      - target/site/jacoco-ut/
+      - target/site/jacoco/
 
 
