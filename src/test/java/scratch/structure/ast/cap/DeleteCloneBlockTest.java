@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import org.junit.Before;
 import org.junit.Test;
 import scratch.structure.ast.Ast;
-import scratch.structure.ast.BasicBlock;
+import scratch.structure.ast.ScratchBlock;
 import utils.JsonParser;
 
 import static org.junit.Assert.*;
@@ -22,16 +22,16 @@ public class DeleteCloneBlockTest {
         Ast ast = new Ast();
         ast.parseScript(script);
 
-        BasicBlock root = ast.getRoot();
+        ScratchBlock root = ast.getRoot();
         if (!(root instanceof DeleteCloneBlock)) {
             fail("Result of this fixture should be a deleteClone block");
         }
 
-        BasicBlock node = root;
+        ScratchBlock node = root;
         int count = 1;
         while(node.getNext() != null) {
             count++;
-            node = (BasicBlock) node.getNext();
+            node = (ScratchBlock) node.getNext();
         }
 
         DeleteCloneBlock block = (DeleteCloneBlock) root;

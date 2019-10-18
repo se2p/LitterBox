@@ -1,10 +1,9 @@
 package scratch.structure.ast.cap;
 
-import scratch.structure.ast.BasicBlock;
+import scratch.structure.ast.ScratchBlock;
 import scratch.structure.ast.Extendable;
-import scratch.structure.ast.Stackable;
 
-public abstract class CapBlock extends BasicBlock {
+public abstract class CapBlock extends ScratchBlock {
 
 
     //    private Object[] inputs; //Todo: Make this more specific, once we have proper types for inputs

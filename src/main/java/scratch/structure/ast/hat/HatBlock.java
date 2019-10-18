@@ -1,10 +1,10 @@
 package scratch.structure.ast.hat;
 
-import scratch.structure.ast.BasicBlock;
+import scratch.structure.ast.ScratchBlock;
 import scratch.structure.ast.Extendable;
 import scratch.structure.ast.Stackable;
 
-public abstract class HatBlock extends BasicBlock implements Extendable {
+public abstract class HatBlock extends ScratchBlock implements Extendable {
 
     //    private Object[] inputs; //Todo: Make this more specific, once we have proper types for inputs
     //    private Object[] fields; //Todo: Make this more specific, once we have proper types for fields

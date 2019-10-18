@@ -10,13 +10,13 @@ import java.util.Map;
 
 public class Ast {
 
-    BasicBlock root = null;
+    ScratchBlock root = null;
 
-    public Map<String, BasicBlock> getNodesIdMap() {
+    public Map<String, ScratchBlock> getNodesIdMap() {
         return nodesIdMap;
     }
 
-    Map<String, BasicBlock> nodesIdMap = new HashMap();
+    Map<String, ScratchBlock> nodesIdMap = new HashMap();
 
     public Ast parseScript(JsonNode blocksNode) {
         Ast tree = new Ast();
@@ -27,7 +27,7 @@ public class Ast {
             String nextId = it.next();
             JsonNode node = blocksNode.get(nextId);
             String opcode = node.get("opcode").toString().replaceAll("^\"|\"$", "");
-            BasicBlock block = Dispatcher.dispatcher.transform(opcode, node, this);
+            ScratchBlock block = Dispatcher.dispatcher.transform(opcode, node, this);
 
             nodesIdMap.put(nextId, block);
 
@@ -39,8 +39,8 @@ public class Ast {
         }
 
         //Connect the blocks
-        for (Map.Entry<String, BasicBlock> blockIdAndBlock : nodesIdMap.entrySet()) {
-            BasicBlock block = blockIdAndBlock.getValue();
+        for (Map.Entry<String, ScratchBlock> blockIdAndBlock : nodesIdMap.entrySet()) {
+            ScratchBlock block = blockIdAndBlock.getValue();
             if (block.getParent() == null) {
                 JsonNode parentNode = blocksNode.get(blockIdAndBlock.getKey()).get("parent");
                 if (parentNode != null && !(parentNode instanceof NullNode)) {
@@ -60,7 +60,7 @@ public class Ast {
         return tree;
     }
 
-    public BasicBlock getRoot() {
+    public ScratchBlock getRoot() {
         return root;
     }
 }

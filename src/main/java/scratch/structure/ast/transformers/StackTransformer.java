@@ -2,10 +2,9 @@ package scratch.structure.ast.transformers;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import scratch.structure.ast.Ast;
-import scratch.structure.ast.BasicBlock;
+import scratch.structure.ast.ScratchBlock;
 import scratch.structure.ast.Extendable;
 import scratch.structure.ast.Stackable;
-import scratch.structure.ast.stack.StackBlock;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -18,7 +17,7 @@ public abstract class StackTransformer extends Transformer {
     }
 
     @Override
-    public BasicBlock transform(JsonNode node, Ast ast) {
+    public ScratchBlock transform(JsonNode node, Ast ast) {
 
         String parent = node.get("parent").toString();
         boolean topLevel = node.get("topLevel").asBoolean();

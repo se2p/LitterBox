@@ -2,7 +2,7 @@ package scratch.structure.ast;
 
 import scratch.structure.ast.visitor.BlockVisitor;
 
-public abstract class BasicBlock {
+public abstract class ScratchBlock {
 
     private String opcode;
     private Extendable parent;
@@ -12,7 +12,7 @@ public abstract class BasicBlock {
     protected int x;
     protected int y;
 
-    public BasicBlock(String opcode, Extendable parent, Stackable next) {
+    public ScratchBlock(String opcode, Extendable parent, Stackable next) {
         this.opcode = opcode;
         this.parent = parent;
         this.next = next;

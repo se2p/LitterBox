@@ -3,7 +3,7 @@ package scratch.structure.ast.transformers;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import scratch.structure.ast.Ast;
-import scratch.structure.ast.BasicBlock;
+import scratch.structure.ast.ScratchBlock;
 import scratch.structure.ast.stack.ChangeSizeByBlock;
 import scratch.structure.ast.stack.ChangeVolumeByBlock;
 import scratch.structure.ast.stack.ChangeXCoordinateByBlock;
@@ -50,7 +50,7 @@ public class Dispatcher {
 
     private Map<String, Transformer> transformerMap = new HashMap<>();
 
-    public BasicBlock transform(String opcode, JsonNode node, Ast ast) {
+    public ScratchBlock transform(String opcode, JsonNode node, Ast ast) {
         Transformer transformer = transformerMap.get(opcode);
 
         if (transformer == null) {

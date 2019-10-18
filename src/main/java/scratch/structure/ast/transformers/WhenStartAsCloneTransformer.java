@@ -2,7 +2,7 @@ package scratch.structure.ast.transformers;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import scratch.structure.ast.Ast;
-import scratch.structure.ast.BasicBlock;
+import scratch.structure.ast.ScratchBlock;
 import scratch.structure.ast.hat.WhenStartAsCloneBlock;
 
 import java.util.Arrays;
@@ -16,7 +16,7 @@ public class WhenStartAsCloneTransformer extends Transformer {
     }
 
     @Override
-    BasicBlock transform(JsonNode node, Ast ast) {
+    ScratchBlock transform(JsonNode node, Ast ast) {
         extractStandardValues(node);
 
         WhenStartAsCloneBlock block;

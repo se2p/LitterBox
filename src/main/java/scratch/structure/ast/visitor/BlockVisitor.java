@@ -1,8 +1,8 @@
 package scratch.structure.ast.visitor;
 
-import scratch.structure.ast.BasicBlock;
+import scratch.structure.ast.ScratchBlock;
 
 public interface BlockVisitor {
 
-    void visit(BasicBlock block);
+    void visit(ScratchBlock block);
 }

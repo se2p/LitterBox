@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import org.junit.Before;
 import org.junit.Test;
 import scratch.structure.ast.Ast;
-import scratch.structure.ast.BasicBlock;
+import scratch.structure.ast.ScratchBlock;
 import utils.JsonParser;
 
 import static org.junit.Assert.assertEquals;
@@ -24,16 +24,16 @@ public class SetCoordinateToBlockTest {
         Ast ast = new Ast();
         ast.parseScript(script);
 
-        BasicBlock root = ast.getRoot();
+        ScratchBlock root = ast.getRoot();
         if (!(root instanceof SetCoordinateToBlock)) {
             fail("Result of this fixture should be a setcoordinateto block");
         }
 
-        BasicBlock node = root;
+        ScratchBlock node = root;
         int count = 0;
         while (node.getNext() != null) {
             count++;
-            node = (BasicBlock) node.getNext();
+            node = (ScratchBlock) node.getNext();
         }
         assertEquals("Three nodes expected", 3, count);
     }
@@ -43,7 +43,7 @@ public class SetCoordinateToBlockTest {
         Ast ast = new Ast();
         ast.parseScript(script);
 
-        BasicBlock root = ast.getRoot();
+        ScratchBlock root = ast.getRoot();
         if (!(root instanceof SetCoordinateToBlock)) {
             fail("Result of this fixture should be a setcoordinateto block");
         }
@@ -56,7 +56,7 @@ public class SetCoordinateToBlockTest {
         Ast ast = new Ast();
         ast.parseScript(script);
 
-        BasicBlock root = ast.getRoot();
+        ScratchBlock root = ast.getRoot();
         if (!(root instanceof SetCoordinateToBlock)) {
             fail("Result of this fixture should be a setcoordinateto block");
         }
@@ -70,7 +70,7 @@ public class SetCoordinateToBlockTest {
         Ast ast = new Ast();
         ast.parseScript(JsonParser.getBlocksNodeFromJSON("./src/test/java/scratch/structure/ast/fixtures/setcoordinateto_list.json"));
 
-        BasicBlock root = ast.getRoot();
+        ScratchBlock root = ast.getRoot();
         if (!(root instanceof SetCoordinateToBlock)) {
             fail("Result of this fixture should be a setcoordinateto block");
         }
@@ -84,7 +84,7 @@ public class SetCoordinateToBlockTest {
          Ast ast = new Ast();
          ast.parseScript(script);
 
-         BasicBlock root = ast.getRoot();
+         ScratchBlock root = ast.getRoot();
          if (!(root instanceof SetXCoordinateToBlock)) {
              fail("Result of this fixture should be a setxcoordinateto block");
          }

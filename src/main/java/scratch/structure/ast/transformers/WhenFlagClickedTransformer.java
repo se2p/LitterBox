@@ -2,7 +2,7 @@ package scratch.structure.ast.transformers;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import scratch.structure.ast.Ast;
-import scratch.structure.ast.BasicBlock;
+import scratch.structure.ast.ScratchBlock;
 import scratch.structure.ast.hat.WhenFlagClickedBlock;
 
 import java.util.Arrays;
@@ -17,7 +17,7 @@ public class WhenFlagClickedTransformer extends Transformer {
     }
 
     @Override
-    public BasicBlock transform(JsonNode node, Ast ast) {
+    public ScratchBlock transform(JsonNode node, Ast ast) {
         extractStandardValues(node);
 
         WhenFlagClickedBlock block;

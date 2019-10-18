@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import org.junit.Before;
 import org.junit.Test;
 import scratch.structure.ast.Ast;
-import scratch.structure.ast.BasicBlock;
+import scratch.structure.ast.ScratchBlock;
 import utils.JsonParser;
 
 import static org.junit.Assert.assertEquals;
@@ -24,16 +24,16 @@ public class PointInDirectionTest {
         Ast ast = new Ast();
         ast.parseScript(script);
 
-        BasicBlock root = ast.getRoot();
+        ScratchBlock root = ast.getRoot();
         if (!(root instanceof PointInDirectionBlock)) {
             fail("Result of this fixture should be a pointindirection block");
         }
 
-        BasicBlock node = root;
+        ScratchBlock node = root;
         int count = 0;
         while(node.getNext() != null) {
             count++;
-            node = (BasicBlock) node.getNext();
+            node = (ScratchBlock) node.getNext();
         }
         assertEquals("Two nodes expected", 2, count);
     }
@@ -43,7 +43,7 @@ public class PointInDirectionTest {
         Ast ast = new Ast();
         ast.parseScript(script);
 
-        BasicBlock root = ast.getRoot();
+        ScratchBlock root = ast.getRoot();
         if (!(root instanceof PointInDirectionBlock)) {
             fail("Result of this fixture should be a pointindirection block");
         }
@@ -56,7 +56,7 @@ public class PointInDirectionTest {
         Ast ast = new Ast();
         ast.parseScript(script);
 
-        BasicBlock root = ast.getRoot();
+        ScratchBlock root = ast.getRoot();
         if (!(root instanceof PointInDirectionBlock)) {
             fail("Result of this fixture should be a pointindirection block");
         }
