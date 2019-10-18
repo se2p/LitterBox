@@ -1,7 +1,7 @@
 package scratch.structure.ast.hat;
 
-import scratch.structure.ast.ScratchBlock;
 import scratch.structure.ast.Extendable;
+import scratch.structure.ast.ScratchBlock;
 import scratch.structure.ast.Stackable;
 
 public abstract class HatBlock extends ScratchBlock implements Extendable {

@@ -38,31 +38,31 @@ public class ChangeSizeByBlockTest {
         assertEquals("Two nodes expected", 2, count);
     }
 
-    @Test
-    public void testIntInput() {
-        Ast ast = new Ast();
-        ast.parseScript(script);
-
-        ScratchBlock root = ast.getRoot();
-        if (!(root instanceof ChangeSizeByBlock)) {
-            fail("Result of this fixture should be a changesizeby block");
-        }
-        ChangeSizeByBlock block = (ChangeSizeByBlock) root;
-        assertEquals(10, block.getInputValue());
-    }
-
-    @Test
-    public void testVariableInput() {
-        Ast ast = new Ast();
-        ast.parseScript(script);
-
-        ScratchBlock root = ast.getRoot();
-        if (!(root instanceof ChangeSizeByBlock)) {
-            fail("Result of this fixture should be a changesizeby block");
-        }
-        ChangeSizeByBlock block = (ChangeSizeByBlock) root.getNext();
-
-        assertEquals("`jEk@4|i[#Fk?(8x)AV.-my variable", block.getInputID());
-    }
+//    @Test
+//    public void testIntInput() {
+//        Ast ast = new Ast();
+//        ast.parseScript(script);
+//
+//        ScratchBlock root = ast.getRoot();
+//        if (!(root instanceof ChangeSizeByBlock)) {
+//            fail("Result of this fixture should be a changesizeby block");
+//        }
+//        ChangeSizeByBlock block = (ChangeSizeByBlock) root;
+//        assertEquals(10, block.getInputValue());
+//    }
+//
+//    @Test
+//    public void testVariableInput() {
+//        Ast ast = new Ast();
+//        ast.parseScript(script);
+//
+//        ScratchBlock root = ast.getRoot();
+//        if (!(root instanceof ChangeSizeByBlock)) {
+//            fail("Result of this fixture should be a changesizeby block");
+//        }
+//        ChangeSizeByBlock block = (ChangeSizeByBlock) root.getNext();
+//
+//        assertEquals("`jEk@4|i[#Fk?(8x)AV.-my variable", block.getInputID());
+//    }
 }
 

@@ -2,8 +2,8 @@ package scratch.structure.ast.transformers;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import scratch.structure.ast.Ast;
-import scratch.structure.ast.ScratchBlock;
 import scratch.structure.ast.Extendable;
+import scratch.structure.ast.ScratchBlock;
 import scratch.structure.ast.Stackable;
 
 import java.util.Arrays;

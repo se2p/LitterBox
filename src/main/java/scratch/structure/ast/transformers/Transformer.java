@@ -12,19 +12,19 @@ public abstract class Transformer {
      * Constants used for serialization and deserialization for Scratch 3.
      * Names and values are the same as in the Scratch 3 source code.
      */
-    protected static final int INPUT_SAME_BLOCK_SHADOW = 1; // unobscured shadow
-    protected static final int INPUT_BLOCK_NO_SHADOW = 2; // no shadow
-    protected static final int INPUT_DIFF_BLOCK_SHADOW = 3; // obscured shadow
+    public static final int INPUT_SAME_BLOCK_SHADOW = 1; // unobscured shadow
+    public static final int INPUT_BLOCK_NO_SHADOW = 2; // no shadow
+    public static final int INPUT_DIFF_BLOCK_SHADOW = 3; // obscured shadow
     public static final int MATH_NUM_PRIMITIVE = 4; // number
-    protected static final int POSITIVE_NUM_PRIMITIVE = 5; // positive number
-    protected static final int WHOLE_NUM_PRIMITIVE = 6; // positive integer
-    protected static final int INTEGER_NUM_PRIMITIVE = 7; // integer
-    protected static final int ANGLE_NUM_PRIMITIVE = 8; // angle
-    protected static final int COLOR_PICKER_PRIMITIVE = 9; // colour
-    protected static final int TEXT_PRIMITIVE = 10; // string
-    protected static final int BROADCAST_PRIMITIVE = 11; // broadcast
-    protected static final int VAR_PRIMITIVE = 12; // variable
-    protected static final int LIST_PRIMITIVE = 13; // list
+    public static final int POSITIVE_NUM_PRIMITIVE = 5; // positive number
+    public static final int WHOLE_NUM_PRIMITIVE = 6; // positive integer
+    public static final int INTEGER_NUM_PRIMITIVE = 7; // integer
+    public static final int ANGLE_NUM_PRIMITIVE = 8; // angle
+    public static final int COLOR_PICKER_PRIMITIVE = 9; // colour
+    public static final int TEXT_PRIMITIVE = 10; // string
+    public static final int BROADCAST_PRIMITIVE = 11; // broadcast
+    public static final int VAR_PRIMITIVE = 12; // variable
+    public static final int LIST_PRIMITIVE = 13; // list
 
     /**
      * The terms "input array" and "(input) data array" refer to specific parts
@@ -56,33 +56,33 @@ public abstract class Transformer {
     /**
      * The position of the input shadow indicator in the input array.
      */
-    protected static final int POS_INPUT_SHADOW = 0;
+    public static final int POS_INPUT_SHADOW = 0;
 
     /**
      * The position of the data array holding input type and input value in the input array.
      */
-    protected static final int POS_DATA_ARRAY = 1;
+    public static final int POS_DATA_ARRAY = 1;
 
     /**
      * The position of the shadow array in the input array.
      */
-    protected static final int POS_SHADOW_ARRAY = 2;
+    public static final int POS_SHADOW_ARRAY = 2;
 
     /**
      * The position of the input type in the input and the shadow array.
      */
-    protected static final int POS_INPUT_TYPE = 0;
+    public static final int POS_INPUT_TYPE = 0;
 
     /**
      * The position of the input value in the input data array and the shadow array.
      */
-    protected static final int POS_INPUT_VALUE = 1;
+    public static final int POS_INPUT_VALUE = 1;
 
     /**
      * The position of the inputID in the data array. The inputID is either
      * a variable ID or a list ID.
      */
-    protected static final int POS_INPUT_ID = 2;
+    public static final int POS_INPUT_ID = 2;
 
     protected String opcode;
     protected boolean topLevel;

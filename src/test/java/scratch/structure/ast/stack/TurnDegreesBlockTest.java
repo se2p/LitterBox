@@ -31,37 +31,37 @@ public class TurnDegreesBlockTest {
 
         ScratchBlock node = root;
         int count = 0;
-        while(node.getNext() != null) {
+        while (node.getNext() != null) {
             count++;
             node = (ScratchBlock) node.getNext();
         }
         assertEquals("Two nodes expected", 2, count);
     }
-
-    @Test
-    public void testIntInput() {
-        Ast ast = new Ast();
-        ast.parseScript(script);
-
-        ScratchBlock root = ast.getRoot();
-        if (!(root instanceof TurnDegreesBlock)) {
-            fail("Result of this fixture should be a turndegrees block");
-        }
-        TurnDegreesBlock block = (TurnDegreesBlock) root;
-        assertEquals(40, block.getInputValue());
-    }
-
-    @Test
-    public void testVariableInput() {
-        Ast ast = new Ast();
-        ast.parseScript(script);
-
-        ScratchBlock root = ast.getRoot();
-        if (!(root instanceof TurnDegreesBlock)) {
-            fail("Result of this fixture should be a turndegrees block");
-        }
-        TurnDegreesBlock block = (TurnDegreesBlock) root.getNext();
-
-        assertEquals("`jEk@4|i[#Fk?(8x)AV.-my variable", block.getInputID());
-    }
+//
+//    @Test
+//    public void testIntInput() {
+//        Ast ast = new Ast();
+//        ast.parseScript(script);
+//
+//        ScratchBlock root = ast.getRoot();
+//        if (!(root instanceof TurnDegreesBlock)) {
+//            fail("Result of this fixture should be a turndegrees block");
+//        }
+//        TurnDegreesBlock block = (TurnDegreesBlock) root;
+//        assertEquals(40, block.getInputValue());
+//    }
+//
+//    @Test
+//    public void testVariableInput() {
+//        Ast ast = new Ast();
+//        ast.parseScript(script);
+//
+//        ScratchBlock root = ast.getRoot();
+//        if (!(root instanceof TurnDegreesBlock)) {
+//            fail("Result of this fixture should be a turndegrees block");
+//        }
+//        TurnDegreesBlock block = (TurnDegreesBlock) root.getNext();
+//
+//        assertEquals("`jEk@4|i[#Fk?(8x)AV.-my variable", block.getInputID());
+//    }
 }

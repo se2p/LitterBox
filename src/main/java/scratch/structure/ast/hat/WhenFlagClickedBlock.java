@@ -1,6 +1,5 @@
 package scratch.structure.ast.hat;
 
-import scratch.structure.ast.Extendable;
 import scratch.structure.ast.Stackable;
 import scratch.structure.ast.visitor.BlockVisitor;
 

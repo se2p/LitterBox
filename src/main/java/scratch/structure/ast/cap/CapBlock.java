@@ -1,7 +1,7 @@
 package scratch.structure.ast.cap;
 
-import scratch.structure.ast.ScratchBlock;
 import scratch.structure.ast.Extendable;
+import scratch.structure.ast.ScratchBlock;
 
 public abstract class CapBlock extends ScratchBlock {
 

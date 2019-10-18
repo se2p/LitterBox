@@ -38,32 +38,32 @@ public class ChangeCoordinateByBlockTest {
         assertEquals("Three nodes expected", 3, count);
     }
 
-    @Test
-    public void testIntInput() {
-        Ast ast = new Ast();
-        ast.parseScript(script);
+//    @Test
+//    public void testIntInput() {
+//        Ast ast = new Ast();
+//        ast.parseScript(script);
+//
+//        ScratchBlock root = ast.getRoot();
+//        if (!(root instanceof ChangeCoordinateByBlock)) {
+//            fail("Result of this fixture should be a changecoordinateby block");
+//        }
+//        ChangeCoordinateByBlock block = (ChangeCoordinateByBlock) root;
+//        assertEquals(10, block.getInputValue());
+//    }
 
-        ScratchBlock root = ast.getRoot();
-        if (!(root instanceof ChangeCoordinateByBlock)) {
-            fail("Result of this fixture should be a changecoordinateby block");
-        }
-        ChangeCoordinateByBlock block = (ChangeCoordinateByBlock) root;
-        assertEquals(10, block.getInputValue());
-    }
-
-    @Test
-    public void testVariableInput() {
-        Ast ast = new Ast();
-        ast.parseScript(script);
-
-        ScratchBlock root = ast.getRoot();
-        if (!(root instanceof ChangeCoordinateByBlock)) {
-            fail("Result of this fixture should be a changecoordinateby block");
-        }
-        ChangeCoordinateByBlock block = (ChangeCoordinateByBlock) ((ChangeCoordinateByBlock) (root.getNext())).getNext();
-
-        assertEquals("`jEk@4|i[#Fk?(8x)AV.-my variable", block.getInputID());
-    }
+//    @Test
+//    public void testVariableInput() {
+//        Ast ast = new Ast();
+//        ast.parseScript(script);
+//
+//        ScratchBlock root = ast.getRoot();
+//        if (!(root instanceof ChangeCoordinateByBlock)) {
+//            fail("Result of this fixture should be a changecoordinateby block");
+//        }
+//        ChangeCoordinateByBlock block = (ChangeCoordinateByBlock) ((ChangeCoordinateByBlock) (root.getNext())).getNext();
+//
+//        assertEquals("`jEk@4|i[#Fk?(8x)AV.-my variable", block.getInputID());
+//    }
 
      @Test
     public void testXAndYDistinction() {
