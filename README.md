@@ -1,5 +1,9 @@
 # LitterBox
 
+[![pipeline status](https://gitlab.infosun.fim.uni-passau.de/se2/litterbox/badges/master/pipeline.svg)](https://gitlab.infosun.fim.uni-passau.de/se2/litterbox/pipelines)
+[![coverage report](https://gitlab.infosun.fim.uni-passau.de/se2/litterbox/badges/master/coverage.svg)](https://gitlab.infosun.fim.uni-passau.de/se2/litterbox/commits/master)
+
+
 Static code analysis tool for detecting recurring bug patterns in Scratch projects. 
 Currently holding 25 different detectors.
 
