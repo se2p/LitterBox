@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2019 LitterBox contributors
  *
  * This file is part of LitterBox.
