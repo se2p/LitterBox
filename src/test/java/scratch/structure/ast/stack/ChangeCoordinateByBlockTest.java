@@ -68,30 +68,30 @@ public class ChangeCoordinateByBlockTest {
 //        assertEquals("`jEk@4|i[#Fk?(8x)AV.-my variable", block.getInputID());
 //    }
 
-     @Test
+    @Test
     public void testXAndYDistinction() {
-         Ast ast = new Ast();
-         ast.parseScript(script);
+        Ast ast = new Ast();
+        ast.parseScript(script);
 
-         ScratchBlock root = ast.getRoot();
-         if (!(root instanceof ChangeXCoordinateByBlock)) {
-             fail("Result of this fixture should be a changexcoordinateby block");
-         }
+        ScratchBlock root = ast.getRoot();
+        if (!(root instanceof ChangeXCoordinateByBlock)) {
+            fail("Result of this fixture should be a changexcoordinateby block");
+        }
 
-         ChangeCoordinateByBlock block = (ChangeCoordinateByBlock) root.getNext();
-         if (!(block instanceof ChangeYCoordinateByBlock)) {
-             fail("Result of this fixture should be a changeycoordinateby block");
-         }
+        ChangeCoordinateByBlock block = (ChangeCoordinateByBlock) root.getNext();
+        if (!(block instanceof ChangeYCoordinateByBlock)) {
+            fail("Result of this fixture should be a changeycoordinateby block");
+        }
 
-         block = (ChangeCoordinateByBlock) block.getNext();
-         if (!(block instanceof ChangeXCoordinateByBlock)) {
-             fail("Result of this fixture should be a changexcoordinateby block");
-         }
+        block = (ChangeCoordinateByBlock) block.getNext();
+        if (!(block instanceof ChangeXCoordinateByBlock)) {
+            fail("Result of this fixture should be a changexcoordinateby block");
+        }
 
-         block = (ChangeCoordinateByBlock) block.getNext();
-         if (!(block instanceof ChangeYCoordinateByBlock)) {
-             fail("Result of this fixture should be a changeycoordinateby block");
-         }
-     }
+        block = (ChangeCoordinateByBlock) block.getNext();
+        if (!(block instanceof ChangeYCoordinateByBlock)) {
+            fail("Result of this fixture should be a changeycoordinateby block");
+        }
+    }
 }
 

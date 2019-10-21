@@ -32,7 +32,7 @@ public class MoveStepBlockTest {
 
         ScratchBlock node = root;
         int count = 0;
-        while(node.getNext() != null) {
+        while (node.getNext() != null) {
             count++;
             node = (ScratchBlock) node.getNext();
         }
