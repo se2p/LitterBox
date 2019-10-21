@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import static scratch.structure.ast.transformers.Transformer.*;
+import static scratch.structure.ast.Constants.*;
 
 public class Ast {
 
