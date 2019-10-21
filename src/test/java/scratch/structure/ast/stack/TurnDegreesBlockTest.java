@@ -5,6 +5,7 @@ import org.junit.Before;
 import org.junit.Test;
 import scratch.structure.ast.Ast;
 import scratch.structure.ast.ScratchBlock;
+import scratch.structure.ast.inputs.Literal;
 import utils.JsonParser;
 
 import static org.junit.Assert.assertEquals;
@@ -37,21 +38,23 @@ public class TurnDegreesBlockTest {
         }
         assertEquals("Two nodes expected", 2, count);
     }
-//
-//    @Test
-//    public void testIntInput() {
-//        Ast ast = new Ast();
-//        ast.parseScript(script);
-//
-//        ScratchBlock root = ast.getRoot();
-//        if (!(root instanceof TurnDegreesBlock)) {
-//            fail("Result of this fixture should be a turndegrees block");
-//        }
-//        TurnDegreesBlock block = (TurnDegreesBlock) root;
-//        assertEquals(40, block.getInputValue());
-//    }
-//
-//    @Test
+
+    @Test
+    public void testIntInput() {
+        Ast ast = new Ast();
+        ast.parseScript(script);
+
+        ScratchBlock root = ast.getRoot();
+        if (!(root instanceof TurnDegreesBlock)) {
+            fail("Result of this fixture should be a turndegrees block");
+        }
+        TurnDegreesBlock block = (TurnDegreesBlock) root;
+        Literal primary = (Literal) block.getSlot().getPrimary();
+        String value = primary.getValue();
+        assertEquals("40", value);
+    }
+
+//    @Test TODO update this test as soon as we have variable blocks
 //    public void testVariableInput() {
 //        Ast ast = new Ast();
 //        ast.parseScript(script);

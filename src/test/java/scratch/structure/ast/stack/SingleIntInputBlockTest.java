@@ -2,7 +2,12 @@ package scratch.structure.ast.stack;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.junit.Before;
+import org.junit.Test;
+import scratch.structure.ast.Ast;
+import scratch.structure.ast.inputs.Literal;
 import utils.JsonParser;
+
+import static org.junit.Assert.fail;
 
 public class SingleIntInputBlockTest {
 
@@ -13,7 +18,7 @@ public class SingleIntInputBlockTest {
         script = JsonParser.getBlocksNodeFromJSON("./src/test/java/scratch/structure/ast/fixtures/singlelistinput.json");
     }
 
-//    @Test
+//    @Test TODO update this test as soon as we have list blocks
 //    public void testListInput() {
 //        Ast ast = new Ast();
 //        ast.parseScript(script);
@@ -26,19 +31,21 @@ public class SingleIntInputBlockTest {
 //            block = (SingleIntInputBlock) block.getNext();
 //        }
 //    }
-//
-//    @Test
-//    public void testInputShadows() {
-//        Ast ast = new Ast();
-//        ast.parseScript(script);
-//
-//        SingleIntInputBlock block = (SingleIntInputBlock) ast.getRoot();
-//        while (block.getNext() != null) {
-//            if (!(block.getShadowValue() == 0)) {
-//                fail("Every block should have a shadow with the value 0.");
-//            }
-//            block = (SingleIntInputBlock) block.getNext();
-//        }
-//    }
+
+    @Test
+    public void testInputShadows() {
+        Ast ast = new Ast();
+        ast.parseScript(script);
+
+        SingleIntInputBlock block = (SingleIntInputBlock) ast.getRoot();
+        while (block.getNext() != null) {
+            Literal shadow = (Literal) block.getSlot().getShadow();
+            String value = shadow.getValue();
+            if (!"0".equals(value)) {
+                fail("Every block should have a shadow with the value 0.");
+            }
+            block = (SingleIntInputBlock) block.getNext();
+        }
+    }
 
 }
