@@ -50,14 +50,17 @@ public class Constants {
      * The position of the input shadow indicator in the input array.
      */
     public static final int POS_INPUT_SHADOW = 0;
+
     /**
      * The position of the data array holding input type and input value in the input array.
      */
     public static final int POS_DATA_ARRAY = 1;
+
     /**
      * The position of the shadow array in the input array.
      */
     public static final int POS_SHADOW_ARRAY = 2;
+
     /**
      * The position of the input type in the input and the shadow array.
      */
