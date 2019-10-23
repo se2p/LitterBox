@@ -2,8 +2,9 @@ package scratch.structure.ast.cap;
 
 import scratch.structure.ast.Extendable;
 import scratch.structure.ast.ScratchBlock;
+import scratch.structure.ast.Stackable;
 
-public abstract class CapBlock extends ScratchBlock {
+public abstract class CapBlock extends ScratchBlock implements Stackable {
 
 
     //    private Object[] inputs; //Todo: Make this more specific, once we have proper types for inputs

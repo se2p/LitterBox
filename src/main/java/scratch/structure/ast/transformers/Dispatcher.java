@@ -4,6 +4,7 @@ package scratch.structure.ast.transformers;
 import com.fasterxml.jackson.databind.JsonNode;
 import scratch.structure.ast.Ast;
 import scratch.structure.ast.ScratchBlock;
+import scratch.structure.ast.cblock.RepeatBlock;
 import scratch.structure.ast.stack.*;
 
 import java.util.*;
@@ -36,6 +37,7 @@ public class Dispatcher {
         dispatcher.registerTransformer(NoInputTransformerFactory.buildTransformer(ResetTimerBlock.class.getName(), new HashSet<>(Collections.singletonList("sensing_resettimer"))));
         dispatcher.registerTransformer(NoInputTransformerFactory.buildTransformer(ShowBlock.class.getName(), new HashSet<>(Collections.singletonList("looks_show"))));
         dispatcher.registerTransformer(NoInputTransformerFactory.buildTransformer(HideBlock.class.getName(), new HashSet<>(Collections.singletonList("looks_hide"))));
+        dispatcher.registerTransformer(CBlockTransformerFactory.buildTransformer(RepeatBlock.class.getName(), new HashSet<>(Collections.singleton("control_repeat"))));
 
         dispatcher.registerTransformer(new WhenFlagClickedTransformer());
         dispatcher.registerTransformer(new DeleteCloneTransformer());

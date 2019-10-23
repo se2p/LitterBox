@@ -3,6 +3,8 @@ package scratch.structure.ast;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.NullNode;
+import scratch.structure.ast.cblock.CBlock;
+import scratch.structure.ast.cblock.RepeatBlock;
 import scratch.structure.ast.inputs.Literal;
 import scratch.structure.ast.inputs.Slot;
 import scratch.structure.ast.stack.SingleIntInputBlock;
@@ -76,18 +78,45 @@ public class Ast {
                 blockIdAndBlock.getValue().setNext((Stackable) nodesIdMap.get(next));
             }
             if (block instanceof SingleIntInputBlock) {
-                parseSingleIntInputs(blocksNode.get(blockIdAndBlock.getKey()).get("inputs"), (SingleIntInputBlock) block);
+                JsonNode inputs = blocksNode.get(blockIdAndBlock.getKey()).get("inputs");
+                parseAndSetSingleIntInputs(inputs, (SingleIntInputBlock) block);
+            } else if(block instanceof CBlock) {
+                JsonNode inputs = blocksNode.get(blockIdAndBlock.getKey()).get("inputs");
+                parseCBlockInputs(inputs, (CBlock) block);
             }
         }
     }
 
     /**
-     * Adds and fills in the slot of a SingleIntInputBlocks.
+     * Adds and fills in the slot of a CBlock as well as its substacks.
      *
      * @param inputs          The JsonNode containing the inputs of the block.
-     * @param block           The SingleIntInputBlock of which the slot is filled in.
+     * @param block           The CBlock of which the slot and substack is filled in.
      */
-    private void parseSingleIntInputs(JsonNode inputs, SingleIntInputBlock block) {
+    private void parseCBlockInputs(JsonNode inputs, CBlock block) {
+       if (block instanceof RepeatBlock) {
+           Slot slot = parseSingleIntInputs(inputs);
+           ((RepeatBlock) block).setSlot(slot);
+
+           ScriptBodyBlock subStackHead = parseSubstack(inputs);
+           block.setSubstack(subStackHead);
+       }
+    }
+
+    private ScriptBodyBlock parseSubstack(JsonNode node) {
+        String subStackHeadID = node.get("SUBSTACK").get(1).asText();
+        ScratchBlock substackHead = nodesIdMap.get(subStackHeadID);
+
+        if (!(substackHead instanceof ScriptBodyBlock)) {
+            throw new RuntimeException("Substack Block is not a ScriptBodyBlock. This should not be possible");
+        }
+        return (ScriptBodyBlock) substackHead;
+    }
+
+    /**
+     * Extracts a single int input from a inputs array.
+     */
+    private Slot parseSingleIntInputs(JsonNode inputs) {
         Map.Entry slotEntry = inputs.fields().next();
         String slotName = (String) slotEntry.getKey();
         ArrayNode inputArray = (ArrayNode) slotEntry.getValue();
@@ -107,7 +136,7 @@ public class Ast {
             String shadowValue = inputArray.get(POS_SHADOW_ARRAY).get(POS_INPUT_VALUE).asText();
             Literal shadow = new Literal(shadowType, shadowValue);
             Slot slot = new Slot(slotName, shadowIndicator, primary, shadow);
-            block.setSlot(slot);
+            return slot;
 
         } else if (shadowIndicator == INPUT_BLOCK_NO_SHADOW || shadowIndicator == INPUT_SAME_BLOCK_SHADOW) {
             //TODO find out what the difference between the meaning of these constants really is
@@ -116,8 +145,20 @@ public class Ast {
             String value = inputArray.get(POS_DATA_ARRAY).get(POS_INPUT_VALUE).asText();
             Literal primary = new Literal(type, value);
             Slot slot = new Slot(slotName, shadowIndicator, primary);
-            block.setSlot(slot);
+            return slot;
         }
+        return null;
+    }
+
+    /**
+     * Adds and fills in the slot of a SingleIntInputBlocks.
+     *
+     * @param inputs          The JsonNode containing the inputs of the block.
+     * @param block           The SingleIntInputBlock of which the slot is filled in.
+     */
+    public void parseAndSetSingleIntInputs(JsonNode inputs, SingleIntInputBlock block) {
+        Slot slot = parseSingleIntInputs(inputs);
+        block.setSlot(slot);
     }
 
     public ScratchBlock getRoot() {
