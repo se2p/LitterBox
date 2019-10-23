@@ -28,6 +28,14 @@ public class Dispatcher {
         dispatcher.registerTransformer(SingleInputTransformerFactory.buildTransformer(SetXCoordinateToBlock.class.getName(), new HashSet<>(Collections.singletonList("motion_setx"))));
         dispatcher.registerTransformer(SingleInputTransformerFactory.buildTransformer(SetYCoordinateToBlock.class.getName(), new HashSet<>(Collections.singletonList("motion_sety"))));
         dispatcher.registerTransformer(NoInputTransformerFactory.buildTransformer(IfOnEdgeBounceBlock.class.getName(), new HashSet<>(Collections.singletonList("motion_ifonedgebounce"))));
+        dispatcher.registerTransformer(NoInputTransformerFactory.buildTransformer(NextCostumeBlock.class.getName(), new HashSet<>(Collections.singletonList("looks_nextcostume"))));
+        dispatcher.registerTransformer(NoInputTransformerFactory.buildTransformer(NextBackdropBlock.class.getName(), new HashSet<>(Collections.singletonList("looks_nextbackdrop"))));
+        dispatcher.registerTransformer(NoInputTransformerFactory.buildTransformer(ClearGraphEffectsBlock.class.getName(), new HashSet<>(Collections.singletonList("looks_cleargraphiceffects"))));
+        dispatcher.registerTransformer(NoInputTransformerFactory.buildTransformer(ClearSoundEffectsBlock.class.getName(), new HashSet<>(Collections.singletonList("sound_cleareffects"))));
+        dispatcher.registerTransformer(NoInputTransformerFactory.buildTransformer(StopAllSoundsBlock.class.getName(), new HashSet<>(Collections.singletonList("sound_stopallsounds"))));
+        dispatcher.registerTransformer(NoInputTransformerFactory.buildTransformer(ResetTimerBlock.class.getName(), new HashSet<>(Collections.singletonList("sensing_resettimer"))));
+        dispatcher.registerTransformer(NoInputTransformerFactory.buildTransformer(ShowBlock.class.getName(), new HashSet<>(Collections.singletonList("looks_show"))));
+        dispatcher.registerTransformer(NoInputTransformerFactory.buildTransformer(HideBlock.class.getName(), new HashSet<>(Collections.singletonList("looks_hide"))));
 
         dispatcher.registerTransformer(new WhenFlagClickedTransformer());
         dispatcher.registerTransformer(new DeleteCloneTransformer());
