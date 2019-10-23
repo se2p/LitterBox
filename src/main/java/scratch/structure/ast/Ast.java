@@ -24,12 +24,9 @@ public class Ast {
 
     Map<String, ScratchBlock> nodesIdMap = new HashMap();
 
-    public Ast parseScript(JsonNode blocksNode) {
-        Ast tree = new Ast();
+    public void parseScript(JsonNode blocksNode) {
         buildBasicBlocks(blocksNode);
         connectAndFillSlots(blocksNode);
-
-        return tree;
     }
 
     private void buildBasicBlocks(JsonNode blocksNode) {
