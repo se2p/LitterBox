@@ -4,23 +4,9 @@ package scratch.structure.ast.transformers;
 import com.fasterxml.jackson.databind.JsonNode;
 import scratch.structure.ast.Ast;
 import scratch.structure.ast.ScratchBlock;
-import scratch.structure.ast.stack.ChangeSizeByBlock;
-import scratch.structure.ast.stack.ChangeVolumeByBlock;
-import scratch.structure.ast.stack.ChangeXCoordinateByBlock;
-import scratch.structure.ast.stack.ChangeYCoordinateByBlock;
-import scratch.structure.ast.stack.MoveStepBlock;
-import scratch.structure.ast.stack.PointInDirectionBlock;
-import scratch.structure.ast.stack.SetSizeToBlock;
-import scratch.structure.ast.stack.SetVolumeToBlock;
-import scratch.structure.ast.stack.SetXCoordinateToBlock;
-import scratch.structure.ast.stack.SetYCoordinateToBlock;
-import scratch.structure.ast.stack.TurnDegreesBlock;
-import scratch.structure.ast.stack.WaitSecondsBlock;
+import scratch.structure.ast.stack.*;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
+import java.util.*;
 
 public class Dispatcher {
 
@@ -29,18 +15,19 @@ public class Dispatcher {
 
     static{
         dispatcher = new Dispatcher(); //Maybe get a container system or initialize somehow else
-        dispatcher.registerTransformer(SingleInputTransformerFactory.buildTransformer(MoveStepBlock.class.getName(), new HashSet<>(Arrays.asList("motion_movesteps"))));
-        dispatcher.registerTransformer(SingleInputTransformerFactory.buildTransformer(PointInDirectionBlock.class.getName(), new HashSet<>(Arrays.asList("motion_pointindirection"))));
+        dispatcher.registerTransformer(SingleInputTransformerFactory.buildTransformer(MoveStepBlock.class.getName(), new HashSet<>(Collections.singletonList("motion_movesteps"))));
+        dispatcher.registerTransformer(SingleInputTransformerFactory.buildTransformer(PointInDirectionBlock.class.getName(), new HashSet<>(Collections.singletonList("motion_pointindirection"))));
         dispatcher.registerTransformer(SingleInputTransformerFactory.buildTransformer(TurnDegreesBlock.class.getName(), new HashSet<>(Arrays.asList("motion_turnright", "motion_turnleft"))));
-        dispatcher.registerTransformer(SingleInputTransformerFactory.buildTransformer(ChangeSizeByBlock.class.getName(), new HashSet<>(Arrays.asList("looks_changesizeby"))));
-        dispatcher.registerTransformer(SingleInputTransformerFactory.buildTransformer(SetSizeToBlock.class.getName(), new HashSet<>(Arrays.asList("looks_setsizeto"))));
-        dispatcher.registerTransformer(SingleInputTransformerFactory.buildTransformer(ChangeVolumeByBlock.class.getName(), new HashSet<>(Arrays.asList("sound_changevolumeby"))));
-        dispatcher.registerTransformer(SingleInputTransformerFactory.buildTransformer(SetVolumeToBlock.class.getName(), new HashSet<>(Arrays.asList("sound_setvolumeto"))));
-        dispatcher.registerTransformer(SingleInputTransformerFactory.buildTransformer(WaitSecondsBlock.class.getName(), new HashSet<>(Arrays.asList("control_wait"))));
-        dispatcher.registerTransformer(SingleInputTransformerFactory.buildTransformer(ChangeXCoordinateByBlock.class.getName(), new HashSet<>(Arrays.asList("motion_changexby"))));
-        dispatcher.registerTransformer(SingleInputTransformerFactory.buildTransformer(ChangeYCoordinateByBlock.class.getName(), new HashSet<>(Arrays.asList("motion_changeyby"))));
-        dispatcher.registerTransformer(SingleInputTransformerFactory.buildTransformer(SetXCoordinateToBlock.class.getName(), new HashSet<>(Arrays.asList("motion_setx"))));
-        dispatcher.registerTransformer(SingleInputTransformerFactory.buildTransformer(SetYCoordinateToBlock.class.getName(), new HashSet<>(Arrays.asList("motion_sety"))));
+        dispatcher.registerTransformer(SingleInputTransformerFactory.buildTransformer(ChangeSizeByBlock.class.getName(), new HashSet<>(Collections.singletonList("looks_changesizeby"))));
+        dispatcher.registerTransformer(SingleInputTransformerFactory.buildTransformer(SetSizeToBlock.class.getName(), new HashSet<>(Collections.singletonList("looks_setsizeto"))));
+        dispatcher.registerTransformer(SingleInputTransformerFactory.buildTransformer(ChangeVolumeByBlock.class.getName(), new HashSet<>(Collections.singletonList("sound_changevolumeby"))));
+        dispatcher.registerTransformer(SingleInputTransformerFactory.buildTransformer(SetVolumeToBlock.class.getName(), new HashSet<>(Collections.singletonList("sound_setvolumeto"))));
+        dispatcher.registerTransformer(SingleInputTransformerFactory.buildTransformer(WaitSecondsBlock.class.getName(), new HashSet<>(Collections.singletonList("control_wait"))));
+        dispatcher.registerTransformer(SingleInputTransformerFactory.buildTransformer(ChangeXCoordinateByBlock.class.getName(), new HashSet<>(Collections.singletonList("motion_changexby"))));
+        dispatcher.registerTransformer(SingleInputTransformerFactory.buildTransformer(ChangeYCoordinateByBlock.class.getName(), new HashSet<>(Collections.singletonList("motion_changeyby"))));
+        dispatcher.registerTransformer(SingleInputTransformerFactory.buildTransformer(SetXCoordinateToBlock.class.getName(), new HashSet<>(Collections.singletonList("motion_setx"))));
+        dispatcher.registerTransformer(SingleInputTransformerFactory.buildTransformer(SetYCoordinateToBlock.class.getName(), new HashSet<>(Collections.singletonList("motion_sety"))));
+        dispatcher.registerTransformer(NoInputTransformerFactory.buildTransformer(IfOnEdgeBounceBlock.class.getName(), new HashSet<>(Collections.singletonList("motion_ifonedgebounce"))));
 
         dispatcher.registerTransformer(new WhenFlagClickedTransformer());
         dispatcher.registerTransformer(new DeleteCloneTransformer());
