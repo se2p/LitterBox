@@ -7,12 +7,11 @@ import scratch.structure.ast.cblock.CBlock;
 import scratch.structure.ast.cblock.RepeatBlock;
 import scratch.structure.ast.inputs.Literal;
 import scratch.structure.ast.inputs.Slot;
+import scratch.structure.ast.inputs.SubstackSlot;
 import scratch.structure.ast.stack.SingleIntInputBlock;
-import scratch.structure.ast.transformers.Dispatcher;
+import scratch.structure.ast.transformers.Transformer;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 
 import static scratch.structure.ast.Constants.*;
 
@@ -38,7 +37,7 @@ public class Ast {
             String nextId = it.next();
             JsonNode node = blocksNode.get(nextId);
             String opcode = node.get("opcode").toString().replaceAll("^\"|\"$", "");
-            ScratchBlock block = Dispatcher.dispatcher.transform(opcode, node, this);
+            ScratchBlock block = Transformer.transformGeneric(Transformer.opCodeClassMapping.get(opcode), node);
 
             nodesIdMap.put(nextId, block);
 
@@ -95,11 +94,14 @@ public class Ast {
      */
     private void parseCBlockInputs(JsonNode inputs, CBlock block) {
        if (block instanceof RepeatBlock) {
-           Slot slot = parseSingleIntInputs(inputs);
+           List<Map.Entry> slotEntries = new LinkedList<>();
+           inputs.fields().forEachRemaining(slotEntries::add);
+           Slot slot = parseInputAtPos(slotEntries, 0);
            ((RepeatBlock) block).setSlot(slot);
 
            ScriptBodyBlock subStackHead = parseSubstack(inputs);
-           block.setSubstack(subStackHead);
+           SubstackSlot substackSlot = new SubstackSlot("SUBSTACK", INPUT_BLOCK_NO_SHADOW, subStackHead);
+           block.setSubstack(substackSlot);
        }
     }
 
@@ -114,10 +116,10 @@ public class Ast {
     }
 
     /**
-     * Extracts a single int input from a inputs array.
+     * Extracts a single int input from an inputs array.
      */
-    private Slot parseSingleIntInputs(JsonNode inputs) {
-        Map.Entry slotEntry = inputs.fields().next();
+    private Slot parseInputAtPos(List<Map.Entry> slotEntries, int pos) {
+        Map.Entry slotEntry =  slotEntries.get(pos);
         String slotName = (String) slotEntry.getKey();
         ArrayNode inputArray = (ArrayNode) slotEntry.getValue();
         int shadowIndicator = inputArray.get(POS_INPUT_SHADOW).asInt();
@@ -135,8 +137,7 @@ public class Ast {
             int shadowType = inputArray.get(POS_SHADOW_ARRAY).get(POS_INPUT_TYPE).asInt();
             String shadowValue = inputArray.get(POS_SHADOW_ARRAY).get(POS_INPUT_VALUE).asText();
             Literal shadow = new Literal(shadowType, shadowValue);
-            Slot slot = new Slot(slotName, shadowIndicator, primary, shadow);
-            return slot;
+            return new Slot(slotName, shadowIndicator, primary, shadow);
 
         } else if (shadowIndicator == INPUT_BLOCK_NO_SHADOW || shadowIndicator == INPUT_SAME_BLOCK_SHADOW) {
             //TODO find out what the difference between the meaning of these constants really is
@@ -144,8 +145,7 @@ public class Ast {
             int type = inputArray.get(POS_DATA_ARRAY).get(POS_INPUT_TYPE).asInt();
             String value = inputArray.get(POS_DATA_ARRAY).get(POS_INPUT_VALUE).asText();
             Literal primary = new Literal(type, value);
-            Slot slot = new Slot(slotName, shadowIndicator, primary);
-            return slot;
+            return new Slot(slotName, shadowIndicator, primary);
         }
         return null;
     }
@@ -157,7 +157,9 @@ public class Ast {
      * @param block           The SingleIntInputBlock of which the slot is filled in.
      */
     public void parseAndSetSingleIntInputs(JsonNode inputs, SingleIntInputBlock block) {
-        Slot slot = parseSingleIntInputs(inputs);
+        List<Map.Entry> slotEntries = new LinkedList<>();
+        inputs.fields().forEachRemaining(slotEntries::add);
+        Slot slot = parseInputAtPos(slotEntries, 0);
         block.setSlot(slot);
     }
 

@@ -1,20 +1,22 @@
 package scratch.structure.ast.cblock;
 
-import scratch.structure.ast.*;
-import scratch.structure.ast.visitor.BlockVisitor;
+import scratch.structure.ast.Extendable;
+import scratch.structure.ast.ScratchBlock;
+import scratch.structure.ast.Stackable;
+import scratch.structure.ast.inputs.SubstackSlot;
 
 public abstract class CBlock extends ScratchBlock  {
 
-    protected ScriptBodyBlock substack; //First block of the substack // TODO: Should we use a slot for this?
+    protected SubstackSlot substack; //First block of the substack // TODO: Should we use a slot for this?
 
-    public CBlock(String opcode, Extendable parent, Stackable next, ScriptBodyBlock substack, Boolean shadow, Boolean topLevel) {
+    public CBlock(String opcode, Extendable parent, Stackable next, SubstackSlot substack, Boolean shadow, Boolean topLevel) {
         super(opcode, parent, next);
         this.shadow = shadow;
         this.topLevel = topLevel;
         this.substack = substack;
     }
 
-    public CBlock(String opcode, Extendable parent, Stackable next, ScriptBodyBlock substack, Boolean shadow, Boolean topLevel, Integer x, Integer y) {
+    public CBlock(String opcode, Extendable parent, Stackable next, SubstackSlot substack, Boolean shadow, Boolean topLevel, Integer x, Integer y) {
         super(opcode, parent, next);
         this.shadow = shadow;
         this.topLevel = topLevel;
@@ -23,11 +25,11 @@ public abstract class CBlock extends ScratchBlock  {
         this.substack = substack;
     }
 
-    public ScriptBodyBlock getSubstack() {
+    public SubstackSlot getSubstack() {
         return substack;
     }
 
-    public void setSubstack(ScriptBodyBlock substack) {
+    public void setSubstack(SubstackSlot substack) {
         this.substack = substack;
     }
 }

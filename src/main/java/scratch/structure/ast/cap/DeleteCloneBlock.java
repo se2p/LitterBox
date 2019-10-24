@@ -5,7 +5,7 @@ import scratch.structure.ast.visitor.BlockVisitor;
 
 public class DeleteCloneBlock extends CapBlock {
 
-    public DeleteCloneBlock(String opcode, Extendable parent, boolean shadow, boolean topLevel, int x, int y) {
+    public DeleteCloneBlock(String opcode, Extendable parent, Boolean shadow, Boolean topLevel, Integer x, Integer y) {
         super(opcode, parent, shadow, topLevel, x, y);
     }
 

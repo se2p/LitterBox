@@ -5,7 +5,7 @@ import scratch.structure.ast.visitor.BlockVisitor;
 
 public class WhenSpriteClickedBlock extends HatBlock {
 
-    public WhenSpriteClickedBlock(String opcode, Stackable next, boolean shadow, boolean topLevel, int x, int y) {
+    public WhenSpriteClickedBlock(String opcode, Stackable next, Boolean shadow, Boolean topLevel, Integer x, Integer y) {
         super(opcode, next, shadow, topLevel, x, y);
     }
 

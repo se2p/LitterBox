@@ -6,8 +6,6 @@ import org.junit.Before;
 import org.junit.Test;
 import scratch.structure.ast.Ast;
 import scratch.structure.ast.ScratchBlock;
-import scratch.structure.ast.Stackable;
-import scratch.structure.ast.cap.DeleteCloneBlock;
 import scratch.structure.ast.hat.WhenFlagClickedBlock;
 import scratch.structure.ast.inputs.Literal;
 import utils.JsonParser;
@@ -24,7 +22,7 @@ public class RepeatBlockTest {
     }
 
     @Test
-    public void readDeleteCloneScript() {
+    public void readRepeatMoveScript() {
         Ast ast = new Ast();
         ast.parseScript(script);
 
@@ -39,7 +37,7 @@ public class RepeatBlockTest {
         RepeatBlock repeat = (RepeatBlock) root.getNext();
         assertEquals("control_repeat", repeat.getOpcode());
         assertEquals("10", ((Literal) repeat.getSlot().getPrimary()).getValue());
-        assertEquals("motion_movesteps", repeat.getSubstack().getOpcode());
+        assertEquals("motion_movesteps", repeat.getSubstack().getSubstack().getOpcode()); //FIXME Rename methods
 
 
     }
