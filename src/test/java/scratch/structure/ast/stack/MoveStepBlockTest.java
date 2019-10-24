@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import org.junit.Before;
 import org.junit.Test;
 import scratch.structure.ast.Ast;
+import scratch.structure.ast.Extendable;
 import scratch.structure.ast.ScratchBlock;
 import scratch.structure.ast.inputs.Literal;
 import utils.JsonParser;
@@ -30,11 +31,11 @@ public class MoveStepBlockTest {
             fail("Result of this fixture should be a movesteps block");
         }
 
-        ScratchBlock node = root;
+        Extendable node = (Extendable) root;
         int count = 0;
         while (node.getNext() != null) {
             count++;
-            node = (ScratchBlock) node.getNext();
+            node = (Extendable) node.getNext();
         }
 
         MoveStepBlock block = (MoveStepBlock) root;

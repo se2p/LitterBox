@@ -2,5 +2,7 @@ package scratch.structure.ast;
 
 public interface Stackable {
 
-    Stackable getNext();
+    Extendable getParent();
+
+    void setParent(Extendable parent);
 }

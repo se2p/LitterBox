@@ -4,9 +4,9 @@ import com.fasterxml.jackson.databind.JsonNode;
 import org.junit.Before;
 import org.junit.Test;
 import scratch.structure.ast.Ast;
+import scratch.structure.ast.Extendable;
 import scratch.structure.ast.ScratchBlock;
-import scratch.structure.ast.Stackable;
-import scratch.structure.ast.cap.DeleteCloneBlock;
+import scratch.structure.ast.ScriptBodyBlock;
 import utils.JsonParser;
 
 import java.util.Arrays;
@@ -45,21 +45,21 @@ public class NoInputBlocksTest {
             fail("Result of this fixture should be a deleteClone block");
         }
 
-        ScratchBlock node = root;
+        Extendable node = (Extendable) root;
         int count = 1;
-        while(node.getNext() != null) {
+        while (node.getNext() != null) {
             count++;
-            node = (ScratchBlock) node.getNext();
+            node = (Extendable) node.getNext();
         }
 
         IfOnEdgeBounceBlock block = (IfOnEdgeBounceBlock) root;
         Iterator<String> it = opcodes.iterator();
         assertEquals(it.next(), block.getOpcode());
 
-        Stackable next = root.getNext();
+        ScriptBodyBlock next = (ScriptBodyBlock) ((Extendable) root).getNext();
         while(next != null && it.hasNext()) {
             assertEquals(it.next(), block.getOpcode());
-            next = next.getNext();
+            next = (ScriptBodyBlock) next.getNext();
         }
     }
 }

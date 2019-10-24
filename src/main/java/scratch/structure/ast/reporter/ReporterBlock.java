@@ -7,7 +7,26 @@ import scratch.structure.ast.Stackable;
 
 public abstract class ReporterBlock extends ScratchBlock implements Input {
 
-    public ReporterBlock(String opcode, Extendable parent, Stackable next) {
-        super(opcode, parent, next);
+    Stackable next = null;
+    Extendable parent = null;
+
+    public ReporterBlock(String opcode) {
+        super(opcode);
+    }
+
+    public Stackable getNext() {
+        return next;
+    }
+
+    public void setNext(Stackable next) {
+        this.next = next;
+    }
+
+    public Extendable getParent() {
+        return parent;
+    }
+
+    public void setParent(Extendable parent) {
+        this.parent = parent;
     }
 }

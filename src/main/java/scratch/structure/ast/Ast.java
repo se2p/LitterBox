@@ -60,21 +60,21 @@ public class Ast {
         for (Map.Entry<String, ScratchBlock> blockIdAndBlock : nodesIdMap.entrySet()) {
             ScratchBlock block = blockIdAndBlock.getValue();
             // FIXME remove null check as soon as all blocks of the slottest fixture are implemented
-            if (block != null && block.getParent() == null) {
+            if (block instanceof Stackable && ((Stackable) block).getParent() == null) {
                 JsonNode parentNode = blocksNode.get(blockIdAndBlock.getKey()).get("parent");
                 if (parentNode != null && !(parentNode instanceof NullNode)) {
                     String parent = parentNode.toString();
                     parent = parent.replaceAll("^\"|\"$", ""); //remove quotes around string
-                    blockIdAndBlock.getValue().setParent((Extendable) nodesIdMap.get(parent));
+                    ((Stackable) block).setParent((Extendable) nodesIdMap.get(parent));
                 }
             }
 
             JsonNode nextNode = blocksNode.get(blockIdAndBlock.getKey()).get("next");
             // FIXME remove null check as soon as all blocks of the slottest fixture are implemented
-            if (block != null && block.getNext() == null && nextNode != null && !(nextNode instanceof NullNode)) {
+            if (block instanceof Extendable && ((Extendable) block).getNext() == null && nextNode != null && !(nextNode instanceof NullNode)) {
                 String next = nextNode.toString();
                 next = next.replaceAll("^\"|\"$", ""); //remove quotes around string
-                blockIdAndBlock.getValue().setNext((Stackable) nodesIdMap.get(next));
+                ((Extendable) block).setNext((Stackable) nodesIdMap.get(next));
             }
             if (block instanceof SingleIntInputBlock) {
                 JsonNode inputs = blocksNode.get(blockIdAndBlock.getKey()).get("inputs");

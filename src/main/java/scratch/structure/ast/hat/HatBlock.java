@@ -6,11 +6,10 @@ import scratch.structure.ast.Stackable;
 
 public abstract class HatBlock extends ScratchBlock implements Extendable {
 
-    //    private Object[] inputs; //Todo: Make this more specific, once we have proper types for inputs
-    //    private Object[] fields; //Todo: Make this more specific, once we have proper types for fields
+    Stackable next = null;
 
-    public HatBlock(String opcode, Stackable next, boolean shadow, boolean topLevel, int x, int y) {
-        super(opcode, null, next); // Hat Blocks do not ever have parents
+    public HatBlock(String opcode, boolean shadow, boolean topLevel, int x, int y) {
+        super(opcode); // Hat Blocks do not ever have parents
         this.shadow = shadow;
         this.topLevel = topLevel;
         this.x = x;
@@ -34,7 +33,12 @@ public abstract class HatBlock extends ScratchBlock implements Extendable {
     }
 
     @Override
-    public void setParent(Extendable basicBlock) {
-        throw new RuntimeException(); // TODO find proper exception
+    public Stackable getNext() {
+        return next;
+    }
+
+    @Override
+    public void setNext(Stackable next) {
+        this.next = next;
     }
 }

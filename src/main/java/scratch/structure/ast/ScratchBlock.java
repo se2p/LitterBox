@@ -5,17 +5,13 @@ import scratch.structure.ast.visitor.BlockVisitor;
 public abstract class ScratchBlock {
 
     private String opcode;
-    private Extendable parent;
-    private Stackable next;
     protected boolean shadow;
     protected boolean topLevel;
     protected int x;
     protected int y;
 
-    public ScratchBlock(String opcode, Extendable parent, Stackable next) {
+    public ScratchBlock(String opcode) {
         this.opcode = opcode;
-        this.parent = parent;
-        this.next = next;
     }
 
     public abstract void accept(BlockVisitor visitor);
@@ -26,22 +22,6 @@ public abstract class ScratchBlock {
 
     public void setOpcode(String opcode) {
         this.opcode = opcode;
-    }
-
-    public Extendable getParent() {
-        return parent;
-    }
-
-    public void setParent(Extendable parent) {
-        this.parent = parent;
-    }
-
-    public Stackable getNext() {
-        return next;
-    }
-
-    public void setNext(Stackable next) {
-        this.next = next;
     }
 
     public boolean isShadow() {

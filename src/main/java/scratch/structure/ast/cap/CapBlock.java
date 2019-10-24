@@ -7,11 +7,10 @@ import scratch.structure.ast.Stackable;
 public abstract class CapBlock extends ScratchBlock implements Stackable {
 
 
-    //    private Object[] inputs; //Todo: Make this more specific, once we have proper types for inputs
-    //    private Object[] fields; //Todo: Make this more specific, once we have proper types for fields
+    private Extendable parent = null;
 
-    public CapBlock(String opcode, Extendable parent, boolean shadow, boolean topLevel, int x, int y) {
-        super(opcode, parent, null);
+    public CapBlock(String opcode, boolean shadow, boolean topLevel, int x, int y) {
+        super(opcode);
         this.shadow = shadow;
         this.topLevel = topLevel;
         this.x = x;
@@ -48,5 +47,15 @@ public abstract class CapBlock extends ScratchBlock implements Stackable {
 
     public void setY(int y) {
         this.y = y;
+    }
+
+    @Override
+    public void setParent(Extendable parent) {
+        this.parent = parent;
+    }
+
+    @Override
+    public Extendable getParent() {
+        return parent;
     }
 }

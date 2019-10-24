@@ -5,24 +5,23 @@ import scratch.structure.ast.ScratchBlock;
 import scratch.structure.ast.Stackable;
 import scratch.structure.ast.inputs.SubstackSlot;
 
-public abstract class CBlock extends ScratchBlock  {
+public abstract class CBlock extends ScratchBlock implements Stackable {
 
-    protected SubstackSlot substack; //First block of the substack // TODO: Should we use a slot for this?
+    protected SubstackSlot substack = null; //First block of the substack
+    protected Extendable parent = null;
 
-    public CBlock(String opcode, Extendable parent, Stackable next, SubstackSlot substack, Boolean shadow, Boolean topLevel) {
-        super(opcode, parent, next);
+    public CBlock(String opcode, Boolean shadow, Boolean topLevel) {
+        super(opcode);
         this.shadow = shadow;
         this.topLevel = topLevel;
-        this.substack = substack;
     }
 
-    public CBlock(String opcode, Extendable parent, Stackable next, SubstackSlot substack, Boolean shadow, Boolean topLevel, Integer x, Integer y) {
-        super(opcode, parent, next);
+    public CBlock(String opcode, Boolean shadow, Boolean topLevel, Integer x, Integer y) {
+        super(opcode);
         this.shadow = shadow;
         this.topLevel = topLevel;
         this.x = x;
         this.y = y;
-        this.substack = substack;
     }
 
     public SubstackSlot getSubstack() {
@@ -31,5 +30,15 @@ public abstract class CBlock extends ScratchBlock  {
 
     public void setSubstack(SubstackSlot substack) {
         this.substack = substack;
+    }
+
+    @Override
+    public Extendable getParent() {
+        return parent;
+    }
+
+    @Override
+    public void setParent(Extendable parent) {
+        this.parent = parent;
     }
 }

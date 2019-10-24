@@ -7,7 +7,8 @@ import scratch.structure.ast.Ast;
 import scratch.structure.ast.ScratchBlock;
 import utils.JsonParser;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 public class DeleteCloneBlockTest {
     private JsonNode script;
@@ -27,15 +28,8 @@ public class DeleteCloneBlockTest {
             fail("Result of this fixture should be a deleteClone block");
         }
 
-        ScratchBlock node = root;
-        int count = 1;
-        while(node.getNext() != null) {
-            count++;
-            node = (ScratchBlock) node.getNext();
-        }
-
+        //TODO Improve
         DeleteCloneBlock block = (DeleteCloneBlock) root;
-        assertEquals("One node expected", 1, count);
         assertEquals("control_delete_this_clone", block.getOpcode());
     }
 }

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import org.junit.Before;
 import org.junit.Test;
 import scratch.structure.ast.Ast;
+import scratch.structure.ast.Extendable;
 import scratch.structure.ast.ScratchBlock;
 import scratch.structure.ast.hat.WhenFlagClickedBlock;
 import scratch.structure.ast.inputs.Literal;
@@ -34,7 +35,7 @@ public class RepeatBlockTest {
         ScratchBlock node = root;
 
         WhenFlagClickedBlock block = (WhenFlagClickedBlock) root;
-        RepeatBlock repeat = (RepeatBlock) root.getNext();
+        RepeatBlock repeat = (RepeatBlock) ((Extendable) root).getNext();
         assertEquals("control_repeat", repeat.getOpcode());
         assertEquals("10", ((Literal) repeat.getSlot().getPrimary()).getValue());
         assertEquals("motion_movesteps", repeat.getSubstack().getSubstack().getOpcode()); //FIXME Rename methods

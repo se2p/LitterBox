@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import org.junit.Before;
 import org.junit.Test;
 import scratch.structure.ast.Ast;
+import scratch.structure.ast.Extendable;
 import scratch.structure.ast.ScratchBlock;
 import utils.JsonParser;
 
@@ -28,11 +29,11 @@ public class WhenStartAsCloneTest {
             fail("Result of this fixture should be a WhenStartAsClone block");
         }
 
-        ScratchBlock node = root;
+        Extendable node = (Extendable) root;
         int count = 1;
         while (node.getNext() != null) {
             count++;
-            node = (ScratchBlock) node.getNext();
+            node = (Extendable) node.getNext();
         }
 
         WhenStartAsCloneBlock block = (WhenStartAsCloneBlock) root;

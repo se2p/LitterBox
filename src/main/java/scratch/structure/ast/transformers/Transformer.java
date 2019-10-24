@@ -1,9 +1,7 @@
 package scratch.structure.ast.transformers;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import scratch.structure.ast.Extendable;
 import scratch.structure.ast.ScratchBlock;
-import scratch.structure.ast.Stackable;
 import scratch.structure.ast.cap.DeleteCloneBlock;
 import scratch.structure.ast.cblock.RepeatBlock;
 import scratch.structure.ast.hat.WhenFlagClickedBlock;
@@ -61,13 +59,13 @@ public class Transformer {
         T block;
         try {
             if (!topLevel) {
-                Constructor<?> constructor = clazz.getConstructor(String.class, Stackable.class, Extendable.class, Boolean.class, Boolean.class);
-                block = (T) constructor.newInstance(opcode, null, null, shadow, topLevel);
+                Constructor<?> constructor = clazz.getConstructor(String.class, Boolean.class, Boolean.class);
+                block = (T) constructor.newInstance(opcode, shadow, topLevel);
             } else {
                 int x = node.get("x").intValue();
                 int y = node.get("y").intValue();
-                Constructor<?> constructor = clazz.getConstructor(String.class, Stackable.class, Extendable.class, Boolean.class, Boolean.class, Integer.class, Integer.class);
-                block = (T) constructor.newInstance(opcode, null, null, shadow, topLevel, x, y);
+                Constructor<?> constructor = clazz.getConstructor(String.class, Boolean.class, Boolean.class, Integer.class, Integer.class);
+                block = (T) constructor.newInstance(opcode, shadow, topLevel, x, y);
             }
         } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
             throw new RuntimeException("Excuse me?"); //Todo use an exception that is also acceptable when code is published on github

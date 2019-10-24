@@ -3,19 +3,20 @@ package scratch.structure.ast.cblock;
 import scratch.structure.ast.Extendable;
 import scratch.structure.ast.Stackable;
 import scratch.structure.ast.inputs.Slot;
-import scratch.structure.ast.inputs.SubstackSlot;
 import scratch.structure.ast.visitor.BlockVisitor;
 
 public class RepeatBlock extends CBlock implements Extendable, Stackable {
 
     private Slot slot; //Slot into which an input can be inserted
+    private Stackable next;
 
-    public RepeatBlock(String opcode, Extendable parent, Stackable next, SubstackSlot substack, Boolean shadow, Boolean topLevel) {
-        super(opcode, parent, next, substack, shadow, topLevel);
+
+    public RepeatBlock(String opcode, Boolean shadow, Boolean topLevel) {
+        super(opcode, shadow, topLevel);
     }
 
-    public RepeatBlock(String opcode, Extendable parent, Stackable next, SubstackSlot substack, Boolean shadow, Boolean topLevel, Integer x, Integer y) {
-        super(opcode, parent, next, substack, shadow, topLevel, x, y);
+    public RepeatBlock(String opcode, Boolean shadow, Boolean topLevel, Integer x, Integer y) {
+        super(opcode, shadow, topLevel, x, y);
     }
 
     @Override
@@ -29,5 +30,15 @@ public class RepeatBlock extends CBlock implements Extendable, Stackable {
 
     public void setSlot(Slot slot) {
         this.slot = slot;
+    }
+
+    @Override
+    public void setNext(Stackable next) {
+        this.next = next;
+    }
+
+    @Override
+    public Stackable getNext() {
+        return next;
     }
 }
