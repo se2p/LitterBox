@@ -2,7 +2,13 @@ package scratch.structure.ast.inputs;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.junit.Before;
+import org.junit.Test;
+import scratch.structure.ast.Ast;
+import scratch.structure.ast.ScratchBlock;
+import scratch.structure.ast.stack.MoveStepBlock;
 import utils.JsonParser;
+
+import static junit.framework.TestCase.assertEquals;
 
 public class InputsTest {
     JsonNode script;
@@ -11,15 +17,15 @@ public class InputsTest {
     public void setup() {
         script = JsonParser.getBlocksNodeFromJSON("./src/test/java/scratch/structure/ast/fixtures/slottest.json");
     }
-//
-//    @Test
-//    public void testLiteral() {
-//        Ast ast = new Ast();
-//        ast.parseScript(script);
-//        ScratchBlock root = ast.getRoot();
-//        assertEquals("\"STEPS\": [1, [4, 10]]", ((MoveStepBlock) root).getSlot().toString());
-//    }
-//
+
+    @Test
+    public void testLiteral() {
+        Ast ast = new Ast();
+        ast.parseScript(script);
+        ScratchBlock root = ast.getRoot();
+        assertEquals("\"STEPS\": [1, [4, 10]]", ((MoveStepBlock) root).getSlot().toString());
+    }
+
 //    @Test
 //    public void testVariable() {
 //        Ast ast = new Ast();

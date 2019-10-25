@@ -5,8 +5,8 @@ public abstract class ScriptBodyBlock extends ScratchBlock implements Stackable,
     Extendable parent = null;
     Stackable next = null;
 
-    public ScriptBodyBlock(String opcode) {
-        super(opcode);
+    public ScriptBodyBlock(String opcode, String id) {
+        super(opcode, id);
     }
 
     @Override

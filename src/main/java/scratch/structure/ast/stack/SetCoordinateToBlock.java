@@ -1,11 +1,13 @@
 package scratch.structure.ast.stack;
 
 public abstract class SetCoordinateToBlock extends SingleIntInputBlock {
-    public SetCoordinateToBlock(String opcode, Boolean shadow, Boolean topLevel) {
-        super(opcode, shadow, topLevel);
+
+
+    public SetCoordinateToBlock(String opcode, String id, Boolean shadow, Boolean topLevel) {
+        super(opcode, id, shadow, topLevel);
     }
 
-    public SetCoordinateToBlock(String opcode, Boolean shadow, Boolean topLevel, Integer x, Integer y) {
-        super(opcode, shadow, topLevel, x, y);
+    public SetCoordinateToBlock(String opcode, String id, Boolean shadow, Boolean topLevel, Integer x, Integer y) {
+        super(opcode, id, shadow, topLevel, x, y);
     }
 }

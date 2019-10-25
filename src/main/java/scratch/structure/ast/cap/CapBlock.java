@@ -9,8 +9,15 @@ public abstract class CapBlock extends ScratchBlock implements Stackable {
 
     private Extendable parent = null;
 
-    public CapBlock(String opcode, boolean shadow, boolean topLevel, int x, int y) {
-        super(opcode);
+    public CapBlock(String opcode, String id, Boolean shadow, Boolean topLevel) {
+        super(opcode, id);
+        this.shadow = shadow;
+        this.topLevel = topLevel;
+    }
+
+
+    public CapBlock(String opcode, String id, boolean shadow, boolean topLevel, int x, int y) {
+        super(opcode, id);
         this.shadow = shadow;
         this.topLevel = topLevel;
         this.x = x;

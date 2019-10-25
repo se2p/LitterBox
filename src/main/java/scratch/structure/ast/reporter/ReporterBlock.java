@@ -10,9 +10,20 @@ public abstract class ReporterBlock extends ScratchBlock implements Input {
     Stackable next = null;
     Extendable parent = null;
 
-    public ReporterBlock(String opcode) {
-        super(opcode);
+    public ReporterBlock(String opcode, String id, Boolean shadow, Boolean topLevel) {
+        super(opcode, id);
+        this.shadow = shadow;
+        this.topLevel = topLevel;
     }
+
+    public ReporterBlock(String opcode, String id, Boolean shadow, Boolean topLevel, Integer x, Integer y) {
+        super(opcode, id);
+        this.shadow = shadow;
+        this.topLevel = topLevel;
+        this.x = x;
+        this.y = y;
+    }
+
 
     public Stackable getNext() {
         return next;

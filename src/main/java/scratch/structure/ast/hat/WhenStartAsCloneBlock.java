@@ -4,8 +4,8 @@ import scratch.structure.ast.visitor.BlockVisitor;
 
 public class WhenStartAsCloneBlock extends HatBlock {
 
-    public WhenStartAsCloneBlock(String opcode, Boolean shadow, Boolean topLevel, Integer x, Integer y) {
-        super(opcode, shadow, topLevel, x, y);
+    public WhenStartAsCloneBlock(String opcode, String id, Boolean shadow, Boolean topLevel, Integer x, Integer y) {
+        super(opcode, id, shadow, topLevel, x, y);
     }
 
     @Override

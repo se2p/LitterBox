@@ -5,7 +5,7 @@ import scratch.structure.ast.ScratchBlock;
 
 public abstract class BooleanBlock extends ScratchBlock implements Input {
 
-    public BooleanBlock(String opcode) {
-        super(opcode);
+    public BooleanBlock(String opcode, String id) {
+        super(opcode, id);
     }
 }

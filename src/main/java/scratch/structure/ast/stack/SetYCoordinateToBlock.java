@@ -4,12 +4,12 @@ import scratch.structure.ast.visitor.BlockVisitor;
 
 public class SetYCoordinateToBlock extends SetCoordinateToBlock {
 
-    public SetYCoordinateToBlock(String opcode, Boolean shadow, Boolean topLevel) {
-        super(opcode, shadow, topLevel);
+    public SetYCoordinateToBlock(String opcode, String id, Boolean shadow, Boolean topLevel) {
+        super(opcode, id, shadow, topLevel);
     }
 
-    public SetYCoordinateToBlock(String opcode, Boolean shadow, Boolean topLevel, Integer x, Integer y) {
-        super(opcode, shadow, topLevel, x, y);
+    public SetYCoordinateToBlock(String opcode, String id, Boolean shadow, Boolean topLevel, Integer x, Integer y) {
+        super(opcode, id, shadow, topLevel, x, y);
     }
 
     @Override

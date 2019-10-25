@@ -10,13 +10,12 @@ public class RepeatBlock extends CBlock implements Extendable, Stackable {
     private Slot slot; //Slot into which an input can be inserted
     private Stackable next;
 
-
-    public RepeatBlock(String opcode, Boolean shadow, Boolean topLevel) {
-        super(opcode, shadow, topLevel);
+    public RepeatBlock(String opcode, String id, Boolean shadow, Boolean topLevel) {
+        super(opcode, id, shadow, topLevel);
     }
 
-    public RepeatBlock(String opcode, Boolean shadow, Boolean topLevel, Integer x, Integer y) {
-        super(opcode, shadow, topLevel, x, y);
+    public RepeatBlock(String opcode, String id, Boolean shadow, Boolean topLevel, Integer x, Integer y) {
+        super(opcode, id, shadow, topLevel, x, y);
     }
 
     @Override

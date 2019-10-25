@@ -7,6 +7,7 @@ import scratch.structure.ast.cblock.RepeatBlock;
 import scratch.structure.ast.hat.WhenFlagClickedBlock;
 import scratch.structure.ast.hat.WhenSpriteClickedBlock;
 import scratch.structure.ast.hat.WhenStartAsCloneBlock;
+import scratch.structure.ast.reporter.OperatorAdd;
 import scratch.structure.ast.stack.*;
 
 import java.lang.reflect.Constructor;
@@ -45,10 +46,11 @@ public class Transformer {
         opCodeClassMapping.put("control_delete_this_clone", DeleteCloneBlock.class);
         opCodeClassMapping.put("event_whenthisspriteclicked", WhenSpriteClickedBlock.class);
         opCodeClassMapping.put("event_whenflagclicked", WhenFlagClickedBlock.class);
+        opCodeClassMapping.put("operator_add", OperatorAdd.class);
     }
 
 
-    public static <T extends ScratchBlock> T transformGeneric(Class<T> clazz, JsonNode node) {
+    public static <T extends ScratchBlock> T transformGeneric(Class<T> clazz, JsonNode node, String id) {
         String opcode;
         boolean topLevel;
         boolean shadow;
@@ -57,15 +59,21 @@ public class Transformer {
         shadow = node.get("shadow").asBoolean();
 
         T block;
+
+        if (clazz == null) {
+            //FIXME
+            return null;
+        }
+
         try {
             if (!topLevel) {
-                Constructor<?> constructor = clazz.getConstructor(String.class, Boolean.class, Boolean.class);
-                block = (T) constructor.newInstance(opcode, shadow, topLevel);
+                Constructor<?> constructor = clazz.getConstructor(String.class, String.class, Boolean.class, Boolean.class);
+                block = (T) constructor.newInstance(opcode, id, shadow, topLevel);
             } else {
                 int x = node.get("x").intValue();
                 int y = node.get("y").intValue();
-                Constructor<?> constructor = clazz.getConstructor(String.class, Boolean.class, Boolean.class, Integer.class, Integer.class);
-                block = (T) constructor.newInstance(opcode, shadow, topLevel, x, y);
+                Constructor<?> constructor = clazz.getConstructor(String.class, String.class, Boolean.class, Boolean.class, Integer.class, Integer.class);
+                block = (T) constructor.newInstance(opcode, id, shadow, topLevel, x, y);
             }
         } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
             throw new RuntimeException("Excuse me?"); //Todo use an exception that is also acceptable when code is published on github

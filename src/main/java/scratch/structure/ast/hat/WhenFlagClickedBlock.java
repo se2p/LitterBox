@@ -4,8 +4,8 @@ import scratch.structure.ast.visitor.BlockVisitor;
 
 public class WhenFlagClickedBlock extends HatBlock {
 
-    public WhenFlagClickedBlock(String opcode, Boolean shadow, Boolean topLevel, Integer x, Integer y) {
-        super(opcode, shadow, topLevel, x, y);
+    public WhenFlagClickedBlock(String opcode, String id, Boolean shadow, Boolean topLevel, Integer x, Integer y) {
+        super(opcode, id, shadow, topLevel, x, y);
     }
 
     @Override

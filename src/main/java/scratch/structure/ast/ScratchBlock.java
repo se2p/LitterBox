@@ -5,12 +5,14 @@ import scratch.structure.ast.visitor.BlockVisitor;
 public abstract class ScratchBlock {
 
     private String opcode;
+    private String id;
     protected boolean shadow;
     protected boolean topLevel;
     protected int x;
     protected int y;
 
-    public ScratchBlock(String opcode) {
+    public ScratchBlock(String opcode, String id) {
+        this.id = id;
         this.opcode = opcode;
     }
 
@@ -54,5 +56,13 @@ public abstract class ScratchBlock {
 
     public void setY(int y) {
         this.y = y;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 }

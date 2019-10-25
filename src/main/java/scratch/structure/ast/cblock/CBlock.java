@@ -10,14 +10,14 @@ public abstract class CBlock extends ScratchBlock implements Stackable {
     protected SubstackSlot substack = null; //First block of the substack
     protected Extendable parent = null;
 
-    public CBlock(String opcode, Boolean shadow, Boolean topLevel) {
-        super(opcode);
+    public CBlock(String opcode, String id, Boolean shadow, Boolean topLevel) {
+        super(opcode, id);
         this.shadow = shadow;
         this.topLevel = topLevel;
     }
 
-    public CBlock(String opcode, Boolean shadow, Boolean topLevel, Integer x, Integer y) {
-        super(opcode);
+    public CBlock(String opcode, String id, Boolean shadow, Boolean topLevel, Integer x, Integer y) {
+        super(opcode, id);
         this.shadow = shadow;
         this.topLevel = topLevel;
         this.x = x;

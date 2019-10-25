@@ -8,6 +8,8 @@ import scratch.structure.ast.cblock.RepeatBlock;
 import scratch.structure.ast.inputs.Literal;
 import scratch.structure.ast.inputs.Slot;
 import scratch.structure.ast.inputs.SubstackSlot;
+import scratch.structure.ast.reporter.OperatorAdd;
+import scratch.structure.ast.reporter.ReporterBlock;
 import scratch.structure.ast.stack.SingleIntInputBlock;
 import scratch.structure.ast.transformers.Transformer;
 
@@ -37,7 +39,7 @@ public class Ast {
             String nextId = it.next();
             JsonNode node = blocksNode.get(nextId);
             String opcode = node.get("opcode").toString().replaceAll("^\"|\"$", "");
-            ScratchBlock block = Transformer.transformGeneric(Transformer.opCodeClassMapping.get(opcode), node);
+            ScratchBlock block = Transformer.transformGeneric(Transformer.opCodeClassMapping.get(opcode), node, nextId);
 
             nodesIdMap.put(nextId, block);
 
@@ -82,7 +84,27 @@ public class Ast {
             } else if(block instanceof CBlock) {
                 JsonNode inputs = blocksNode.get(blockIdAndBlock.getKey()).get("inputs");
                 parseCBlockInputs(inputs, (CBlock) block);
+            } else if (block instanceof ReporterBlock) {
+                JsonNode inputs = blocksNode.get(blockIdAndBlock.getKey()).get("inputs");
+                parseReporterBlockInputs(inputs, (ReporterBlock) block);
             }
+        }
+    }
+
+    /**
+     * Adds and fills in the slot of a ReporterBlock.
+     *
+     * @param inputs          The JsonNode containing the inputs of the block.
+     * @param block           The CBlock of which the slot and substack is filled in.
+     */
+    private void parseReporterBlockInputs(JsonNode inputs, ReporterBlock block) {
+        if (block instanceof OperatorAdd) {
+            List<Map.Entry> slotEntries = new LinkedList<>();
+            inputs.fields().forEachRemaining(slotEntries::add);
+            Slot num1 = parseInputAtPos(slotEntries, 0);
+            Slot num2 = parseInputAtPos(slotEntries, 1);
+            ((OperatorAdd) block).setNum1(num1);
+            ((OperatorAdd) block).setNum1(num2);
         }
     }
 

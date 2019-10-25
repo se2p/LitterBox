@@ -4,12 +4,12 @@ import scratch.structure.ast.visitor.BlockVisitor;
 
 public class StopAllSoundsBlock extends StackBlock {
 
-    public StopAllSoundsBlock(String opcode, boolean shadow, boolean topLevel) {
-        super(opcode, shadow, topLevel);
+    public StopAllSoundsBlock(String opcode, String id, boolean shadow, boolean topLevel) {
+        super(opcode, id, shadow, topLevel);
     }
 
-    public StopAllSoundsBlock(String opcode, boolean shadow, boolean topLevel, int x, int y) {
-        super(opcode, shadow, topLevel, x, y);
+    public StopAllSoundsBlock(String opcode, String id, boolean shadow, boolean topLevel, int x, int y) {
+        super(opcode, id, shadow, topLevel, x, y);
     }
 
     @Override

@@ -8,8 +8,8 @@ public abstract class HatBlock extends ScratchBlock implements Extendable {
 
     Stackable next = null;
 
-    public HatBlock(String opcode, boolean shadow, boolean topLevel, int x, int y) {
-        super(opcode); // Hat Blocks do not ever have parents
+    public HatBlock(String opcode, String id, Boolean shadow, Boolean topLevel, Integer x, Integer y) {
+        super(opcode, id);
         this.shadow = shadow;
         this.topLevel = topLevel;
         this.x = x;

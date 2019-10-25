@@ -4,13 +4,12 @@ import scratch.structure.ast.visitor.BlockVisitor;
 
 public class TurnDegreesBlock extends SingleIntInputBlock {
 
-
-    public TurnDegreesBlock(String opcode, Boolean shadow, Boolean topLevel) {
-        super(opcode, shadow, topLevel);
+    public TurnDegreesBlock(String opcode, String id, Boolean shadow, Boolean topLevel) {
+        super(opcode, id, shadow, topLevel);
     }
 
-    public TurnDegreesBlock(String opcode, Boolean shadow, Boolean topLevel, Integer x, Integer y) {
-        super(opcode, shadow, topLevel, x, y);
+    public TurnDegreesBlock(String opcode, String id, Boolean shadow, Boolean topLevel, Integer x, Integer y) {
+        super(opcode, id, shadow, topLevel, x, y);
     }
 
     @Override

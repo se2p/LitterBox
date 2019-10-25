@@ -4,12 +4,12 @@ import scratch.structure.ast.visitor.BlockVisitor;
 
 public class WaitSecondsBlock extends SingleIntInputBlock {
 
-    public WaitSecondsBlock(String opcode, Boolean shadow, Boolean topLevel) {
-        super(opcode, shadow, topLevel);
+    public WaitSecondsBlock(String opcode, String id, Boolean shadow, Boolean topLevel) {
+        super(opcode, id, shadow, topLevel);
     }
 
-    public WaitSecondsBlock(String opcode, Boolean shadow, Boolean topLevel, Integer x, Integer y) {
-        super(opcode, shadow, topLevel, x, y);
+    public WaitSecondsBlock(String opcode, String id, Boolean shadow, Boolean topLevel, Integer x, Integer y) {
+        super(opcode, id, shadow, topLevel, x, y);
     }
 
     @Override
