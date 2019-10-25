@@ -5,9 +5,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.NullNode;
 import scratch.structure.ast.cblock.CBlock;
 import scratch.structure.ast.cblock.RepeatBlock;
-import scratch.structure.ast.inputs.Literal;
-import scratch.structure.ast.inputs.Slot;
-import scratch.structure.ast.inputs.SubstackSlot;
+import scratch.structure.ast.inputs.*;
 import scratch.structure.ast.reporter.OperatorAdd;
 import scratch.structure.ast.reporter.ReporterBlock;
 import scratch.structure.ast.stack.SingleIntInputBlock;
@@ -81,7 +79,7 @@ public class Ast {
             if (block instanceof SingleIntInputBlock) {
                 JsonNode inputs = blocksNode.get(blockIdAndBlock.getKey()).get("inputs");
                 parseAndSetSingleIntInputs(inputs, (SingleIntInputBlock) block);
-            } else if(block instanceof CBlock) {
+            } else if (block instanceof CBlock) {
                 JsonNode inputs = blocksNode.get(blockIdAndBlock.getKey()).get("inputs");
                 parseCBlockInputs(inputs, (CBlock) block);
             } else if (block instanceof ReporterBlock) {
@@ -94,8 +92,8 @@ public class Ast {
     /**
      * Adds and fills in the slot of a ReporterBlock.
      *
-     * @param inputs          The JsonNode containing the inputs of the block.
-     * @param block           The CBlock of which the slot and substack is filled in.
+     * @param inputs The JsonNode containing the inputs of the block.
+     * @param block  The CBlock of which the slot and substack is filled in.
      */
     private void parseReporterBlockInputs(JsonNode inputs, ReporterBlock block) {
         if (block instanceof OperatorAdd) {
@@ -111,20 +109,20 @@ public class Ast {
     /**
      * Adds and fills in the slot of a CBlock as well as its substacks.
      *
-     * @param inputs          The JsonNode containing the inputs of the block.
-     * @param block           The CBlock of which the slot and substack is filled in.
+     * @param inputs The JsonNode containing the inputs of the block.
+     * @param block  The CBlock of which the slot and substack is filled in.
      */
     private void parseCBlockInputs(JsonNode inputs, CBlock block) {
-       if (block instanceof RepeatBlock) {
-           List<Map.Entry> slotEntries = new LinkedList<>();
-           inputs.fields().forEachRemaining(slotEntries::add);
-           Slot slot = parseInputAtPos(slotEntries, 0);
-           ((RepeatBlock) block).setSlot(slot);
+        if (block instanceof RepeatBlock) {
+            List<Map.Entry> slotEntries = new LinkedList<>();
+            inputs.fields().forEachRemaining(slotEntries::add);
+            Slot slot = parseInputAtPos(slotEntries, 0);
+            ((RepeatBlock) block).setSlot(slot);
 
-           ScriptBodyBlock subStackHead = parseSubstack(inputs);
-           SubstackSlot substackSlot = new SubstackSlot("SUBSTACK", INPUT_BLOCK_NO_SHADOW, subStackHead);
-           block.setSubstack(substackSlot);
-       }
+            ScriptBodyBlock subStackHead = parseSubstack(inputs);
+            SubstackSlot substackSlot = new SubstackSlot("SUBSTACK", INPUT_BLOCK_NO_SHADOW, subStackHead);
+            block.setSubstack(substackSlot);
+        }
     }
 
     private ScriptBodyBlock parseSubstack(JsonNode node) {
@@ -141,25 +139,40 @@ public class Ast {
      * Extracts a single int input from an inputs array.
      */
     private Slot parseInputAtPos(List<Map.Entry> slotEntries, int pos) {
-        Map.Entry slotEntry =  slotEntries.get(pos);
+        Map.Entry slotEntry = slotEntries.get(pos);
         String slotName = (String) slotEntry.getKey();
         ArrayNode inputArray = (ArrayNode) slotEntry.getValue();
         int shadowIndicator = inputArray.get(POS_INPUT_SHADOW).asInt();
 
+        //TODO Refactor. Currently this code is very hard to read
         if (shadowIndicator == INPUT_DIFF_BLOCK_SHADOW) {
             String blockID;
-            if (inputArray.get(POS_DATA_ARRAY).get(POS_INPUT_ID) instanceof ArrayNode) {
+            if (inputArray.get(POS_DATA_ARRAY) instanceof ArrayNode) {
                 // It is either a variable or a list primary input
                 blockID = inputArray.get(POS_DATA_ARRAY).get(POS_INPUT_ID).toString().replaceAll("^\"|\"$", "");
+                Input primary = (Input) nodesIdMap.get(blockID);
+
+                if (primary == null && inputArray.get(POS_DATA_ARRAY).get(POS_INPUT_TYPE).asInt() == VAR_PRIMITIVE) {
+                    primary = new VariableBlock(VAR_PRIMITIVE, inputArray.get(POS_DATA_ARRAY).get(POS_INPUT_VALUE).asText(),
+                            inputArray.get(POS_DATA_ARRAY).get(POS_INPUT_ID).asText());
+                } else if (primary == null && inputArray.get(POS_DATA_ARRAY).get(POS_INPUT_TYPE).asInt() == LIST_PRIMITIVE) {
+                    primary = new ListBlock(VAR_PRIMITIVE, inputArray.get(POS_DATA_ARRAY).get(POS_INPUT_VALUE).asText(),
+                            inputArray.get(POS_DATA_ARRAY).get(POS_INPUT_ID).asText());
+                }
+
+                int shadowType = inputArray.get(POS_SHADOW_ARRAY).get(POS_INPUT_TYPE).asInt();
+                String shadowValue = inputArray.get(POS_SHADOW_ARRAY).get(POS_INPUT_VALUE).asText();
+                Literal shadow = new Literal(shadowType, shadowValue);
+                return new Slot(slotName, shadowIndicator, primary, shadow);
             } else {
                 // It is a block primary input
                 blockID = inputArray.get(POS_DATA_ARRAY).asText(); //TODO add an own constant instead of using one with the same value
+                Input primary = (Input) nodesIdMap.get(blockID);
+                int shadowType = inputArray.get(POS_SHADOW_ARRAY).get(POS_INPUT_TYPE).asInt();
+                String shadowValue = inputArray.get(POS_SHADOW_ARRAY).get(POS_INPUT_VALUE).asText();
+                Literal shadow = new Literal(shadowType, shadowValue);
+                return new Slot(slotName, shadowIndicator, primary, shadow);
             }
-            Input primary = (Input) nodesIdMap.get(blockID);
-            int shadowType = inputArray.get(POS_SHADOW_ARRAY).get(POS_INPUT_TYPE).asInt();
-            String shadowValue = inputArray.get(POS_SHADOW_ARRAY).get(POS_INPUT_VALUE).asText();
-            Literal shadow = new Literal(shadowType, shadowValue);
-            return new Slot(slotName, shadowIndicator, primary, shadow);
 
         } else if (shadowIndicator == INPUT_BLOCK_NO_SHADOW || shadowIndicator == INPUT_SAME_BLOCK_SHADOW) {
             //TODO find out what the difference between the meaning of these constants really is
@@ -175,8 +188,8 @@ public class Ast {
     /**
      * Adds and fills in the slot of a SingleIntInputBlocks.
      *
-     * @param inputs          The JsonNode containing the inputs of the block.
-     * @param block           The SingleIntInputBlock of which the slot is filled in.
+     * @param inputs The JsonNode containing the inputs of the block.
+     * @param block  The SingleIntInputBlock of which the slot is filled in.
      */
     public void parseAndSetSingleIntInputs(JsonNode inputs, SingleIntInputBlock block) {
         List<Map.Entry> slotEntries = new LinkedList<>();

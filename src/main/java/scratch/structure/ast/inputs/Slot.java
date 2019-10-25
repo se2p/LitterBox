@@ -57,7 +57,7 @@ public class Slot {
 
     @Override
     public String toString() {
-        if (primary instanceof Literal) {
+        if (primary instanceof Literal || primary instanceof ListBlock || primary instanceof VariableBlock) {
             if (shadow == null) {
                 return "\"" + name + "\": [" + shadowIndicator + ", [" + primary + "]]";
             } else {
