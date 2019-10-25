@@ -1,6 +1,7 @@
 package scratch.structure.ast.inputs;
 
 import scratch.structure.ast.Input;
+import scratch.structure.ast.ScratchBlock;
 
 public class Slot {
     private String name;
@@ -56,10 +57,18 @@ public class Slot {
 
     @Override
     public String toString() {
-        if (shadow == null) {
-            return "\"" + name + "\": [" + shadowIndicator + ", [" + primary + "]]";
+        if (primary instanceof Literal) {
+            if (shadow == null) {
+                return "\"" + name + "\": [" + shadowIndicator + ", [" + primary + "]]";
+            } else {
+                return "\"" + name + "\": [" + shadowIndicator + ", [" + primary + "], [" + shadow + "]";
+            }
         } else {
-            return "\"" + name + "\": [" + shadowIndicator + ", [" + primary + "], [" + shadow + "]";
+            if (shadow == null) {
+                return "\"" + name + "\": [" + shadowIndicator + ", " + ((ScratchBlock) primary).getId() + "]";
+            } else {
+                return "\"" + name + "\": [" + shadowIndicator + ", " + ((ScratchBlock) primary).getId() + ", [" + shadow + "]";
+            }
         }
     }
 }
