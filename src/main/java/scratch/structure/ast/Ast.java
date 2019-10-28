@@ -3,6 +3,10 @@ package scratch.structure.ast;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.NullNode;
+import com.fasterxml.jackson.databind.node.TextNode;
+import scratch.structure.ast.bool.BooleanBlock;
+import scratch.structure.ast.bool.OperatorGT;
+import scratch.structure.ast.bool.OperatorNot;
 import scratch.structure.ast.cblock.CBlock;
 import scratch.structure.ast.cblock.RepeatBlock;
 import scratch.structure.ast.inputs.*;
@@ -84,7 +88,10 @@ public class Ast {
                 parseCBlockInputs(inputs, (CBlock) block);
             } else if (block instanceof ReporterBlock) {
                 JsonNode inputs = blocksNode.get(blockIdAndBlock.getKey()).get("inputs");
-                parseReporterBlockInputs(inputs, (ReporterBlock) block);
+                parseReporterBlocks(inputs, (ReporterBlock) block);
+            } else if (block instanceof BooleanBlock) {
+                JsonNode inputs = blocksNode.get(blockIdAndBlock.getKey()).get("inputs");
+                parseBooleanBlocks(inputs, (BooleanBlock) block);
             }
         }
     }
@@ -93,16 +100,37 @@ public class Ast {
      * Adds and fills in the slot of a ReporterBlock.
      *
      * @param inputs The JsonNode containing the inputs of the block.
-     * @param block  The CBlock of which the slot and substack is filled in.
+     * @param block  The ReporterBlock of which the slot.
      */
-    private void parseReporterBlockInputs(JsonNode inputs, ReporterBlock block) {
+    private void parseReporterBlocks(JsonNode inputs, ReporterBlock block) {
+        List<Map.Entry> slotEntries = new LinkedList<>();
+        inputs.fields().forEachRemaining(slotEntries::add);
         if (block instanceof OperatorAdd) {
-            List<Map.Entry> slotEntries = new LinkedList<>();
-            inputs.fields().forEachRemaining(slotEntries::add);
             Slot num1 = parseInputAtPos(slotEntries, 0);
             Slot num2 = parseInputAtPos(slotEntries, 1);
             ((OperatorAdd) block).setNum1(num1);
             ((OperatorAdd) block).setNum1(num2);
+        }
+    }
+
+
+    /**
+     * Adds and fills in the slot of a BooleanBlock.
+     *
+     * @param inputs The JsonNode containing the inputs of the block.
+     * @param block  The BooleanBlock of which the slot in.
+     */
+    private void parseBooleanBlocks(JsonNode inputs, BooleanBlock block) {
+        List<Map.Entry> slotEntries = new LinkedList<>();
+        inputs.fields().forEachRemaining(slotEntries::add);
+       if (block instanceof OperatorNot) {
+            Slot condition = parseInputAtPos(slotEntries, 0);
+            ((OperatorNot) block).setCondition(condition);
+        } else if (block instanceof OperatorGT) {
+            Slot operand1 = parseInputAtPos(slotEntries, 0);
+            Slot operand2 = parseInputAtPos(slotEntries, 1);
+            ((OperatorGT) block).setOperand1(operand1);
+            ((OperatorGT) block).setOperand2(operand2);
         }
     }
 
@@ -177,10 +205,18 @@ public class Ast {
         } else if (shadowIndicator == INPUT_BLOCK_NO_SHADOW || shadowIndicator == INPUT_SAME_BLOCK_SHADOW) {
             //TODO find out what the difference between the meaning of these constants really is
             //There is no shadow, so create a new Literal and add it as primary.
-            int type = inputArray.get(POS_DATA_ARRAY).get(POS_INPUT_TYPE).asInt();
-            String value = inputArray.get(POS_DATA_ARRAY).get(POS_INPUT_VALUE).asText();
-            Literal primary = new Literal(type, value);
-            return new Slot(slotName, shadowIndicator, primary);
+
+            if (inputArray.get(POS_DATA_ARRAY) instanceof TextNode) {
+                //We simply have an input, which may be a reference
+                String value = inputArray.get(POS_DATA_ARRAY).asText();
+                Literal primary = new Literal(BLOCK_REFERENCE, value);
+                return new Slot(slotName, shadowIndicator, primary);
+            } else {
+                int type = inputArray.get(POS_DATA_ARRAY).get(POS_INPUT_TYPE).asInt();
+                String value = inputArray.get(POS_DATA_ARRAY).get(POS_INPUT_VALUE).asText();
+                Literal primary = new Literal(type, value);
+                return new Slot(slotName, shadowIndicator, primary);
+            }
         }
         return null;
     }

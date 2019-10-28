@@ -24,7 +24,6 @@ public abstract class ReporterBlock extends ScratchBlock implements Input {
         this.y = y;
     }
 
-
     public Stackable getNext() {
         return next;
     }

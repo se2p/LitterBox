@@ -41,7 +41,7 @@ public class OperatorAdd extends ReporterBlock {
 
     @Override
     public String toString() {
-        return  num1 + "," +
-                 num2 ;
+       return  num1 + "," +
+                 num2 + ", [" + x + "," + y + "]";
     }
 }

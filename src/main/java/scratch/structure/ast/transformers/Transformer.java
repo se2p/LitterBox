@@ -2,6 +2,8 @@ package scratch.structure.ast.transformers;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import scratch.structure.ast.ScratchBlock;
+import scratch.structure.ast.bool.OperatorGT;
+import scratch.structure.ast.bool.OperatorNot;
 import scratch.structure.ast.cap.DeleteCloneBlock;
 import scratch.structure.ast.cblock.RepeatBlock;
 import scratch.structure.ast.hat.WhenFlagClickedBlock;
@@ -47,6 +49,8 @@ public class Transformer {
         opCodeClassMapping.put("event_whenthisspriteclicked", WhenSpriteClickedBlock.class);
         opCodeClassMapping.put("event_whenflagclicked", WhenFlagClickedBlock.class);
         opCodeClassMapping.put("operator_add", OperatorAdd.class);
+        opCodeClassMapping.put("operator_not", OperatorNot.class);
+        opCodeClassMapping.put("operator_gt", OperatorGT.class);
     }
 
 
