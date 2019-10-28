@@ -18,7 +18,6 @@ public class Constants {
     public static final int BROADCAST_PRIMITIVE = 11; // broadcast
     public static final int VAR_PRIMITIVE = 12; // variable
     public static final int LIST_PRIMITIVE = 13; // list
-    public static final int BLOCK_REFERENCE = -1; //A reference to another block. FIXME
 
     /**
      * The terms "input array" and "(input) data array" refer to specific parts

@@ -16,7 +16,7 @@ public class Slot {
         this.shadow = shadow;
     }
 
-    public Slot(String name, int shadowIndicator, Literal primary) {
+    public Slot(String name, int shadowIndicator, Input primary) {
         this.name = name;
         this.shadowIndicator = shadowIndicator;
         this.primary = primary;
@@ -57,6 +57,10 @@ public class Slot {
 
     @Override
     public String toString() {
+        if (primary == null) {
+            return "excuse me";
+        }
+
         if (primary instanceof Literal || primary instanceof ListBlock || primary instanceof VariableBlock) {
             if (shadow == null) {
                 return "\"" + name + "\": [" + shadowIndicator + ", [" + primary + "]]";

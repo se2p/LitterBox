@@ -5,10 +5,14 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.NullNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import scratch.structure.ast.bool.BooleanBlock;
+import scratch.structure.ast.bool.KeyPressedBlock;
 import scratch.structure.ast.bool.OperatorGT;
 import scratch.structure.ast.bool.OperatorNot;
 import scratch.structure.ast.cblock.CBlock;
+import scratch.structure.ast.cblock.IfBlock;
 import scratch.structure.ast.cblock.RepeatBlock;
+import scratch.structure.ast.dynamicMenu.DynamicMenuBlock;
+import scratch.structure.ast.dynamicMenu.KeyOptionsBlock;
 import scratch.structure.ast.inputs.*;
 import scratch.structure.ast.reporter.OperatorAdd;
 import scratch.structure.ast.reporter.ReporterBlock;
@@ -80,18 +84,19 @@ public class Ast {
                 next = next.replaceAll("^\"|\"$", ""); //remove quotes around string
                 ((Extendable) block).setNext((Stackable) nodesIdMap.get(next));
             }
+
+            JsonNode inputs = blocksNode.get(blockIdAndBlock.getKey()).get("inputs");
             if (block instanceof SingleIntInputBlock) {
-                JsonNode inputs = blocksNode.get(blockIdAndBlock.getKey()).get("inputs");
                 parseAndSetSingleIntInputs(inputs, (SingleIntInputBlock) block);
             } else if (block instanceof CBlock) {
-                JsonNode inputs = blocksNode.get(blockIdAndBlock.getKey()).get("inputs");
                 parseCBlockInputs(inputs, (CBlock) block);
             } else if (block instanceof ReporterBlock) {
-                JsonNode inputs = blocksNode.get(blockIdAndBlock.getKey()).get("inputs");
                 parseReporterBlocks(inputs, (ReporterBlock) block);
             } else if (block instanceof BooleanBlock) {
-                JsonNode inputs = blocksNode.get(blockIdAndBlock.getKey()).get("inputs");
                 parseBooleanBlocks(inputs, (BooleanBlock) block);
+            } else if (block instanceof DynamicMenuBlock) {
+                JsonNode fields = blocksNode.get(blockIdAndBlock.getKey()).get("fields");
+                parseDynamicMenuBlock(fields, (DynamicMenuBlock) block);
             }
         }
     }
@@ -113,6 +118,28 @@ public class Ast {
         }
     }
 
+    /**
+     * Adds and fills in the slot of a DynamicMenuBlock.
+     *
+     * @param blockFields The JsonNode containing the fields of the block.
+     * @param block  The DynamicMenuBlock of which the slot.
+     */
+    private void parseDynamicMenuBlock(JsonNode blockFields, DynamicMenuBlock block) {
+        List<Map.Entry> slotEntries = new LinkedList<>();
+        blockFields.fields().forEachRemaining(slotEntries::add);
+        if (block instanceof KeyOptionsBlock) {
+            String keyOption = parseFieldAtPos(slotEntries, 0);
+            ((KeyOptionsBlock) block).setKeyOption(keyOption);
+        }
+    }
+
+    private String parseFieldAtPos(List<Map.Entry> fields, int pos) {
+        ArrayNode fieldArray = (ArrayNode) fields.get(pos).getValue();
+        String fieldValue = fieldArray.get(0).asText();
+        return fieldValue;
+    }
+
+
 
     /**
      * Adds and fills in the slot of a BooleanBlock.
@@ -131,7 +158,10 @@ public class Ast {
             Slot operand2 = parseInputAtPos(slotEntries, 1);
             ((OperatorGT) block).setOperand1(operand1);
             ((OperatorGT) block).setOperand2(operand2);
-        }
+        } else if (block instanceof KeyPressedBlock) {
+           Slot condition = parseInputAtPos(slotEntries, 0);
+           ((KeyPressedBlock) block).setKeyOption(condition);
+       }
     }
 
     /**
@@ -146,6 +176,15 @@ public class Ast {
             inputs.fields().forEachRemaining(slotEntries::add);
             Slot slot = parseInputAtPos(slotEntries, 0);
             ((RepeatBlock) block).setSlot(slot);
+
+            ScriptBodyBlock subStackHead = parseSubstack(inputs);
+            SubstackSlot substackSlot = new SubstackSlot("SUBSTACK", INPUT_BLOCK_NO_SHADOW, subStackHead);
+            block.setSubstack(substackSlot);
+        } else if (block instanceof IfBlock) {
+            List<Map.Entry> slotEntries = new LinkedList<>();
+            inputs.fields().forEachRemaining(slotEntries::add);
+            Slot slot = parseInputAtPos(slotEntries, 0);
+            ((IfBlock) block).setSlot(slot);
 
             ScriptBodyBlock subStackHead = parseSubstack(inputs);
             SubstackSlot substackSlot = new SubstackSlot("SUBSTACK", INPUT_BLOCK_NO_SHADOW, subStackHead);
@@ -209,8 +248,8 @@ public class Ast {
             if (inputArray.get(POS_DATA_ARRAY) instanceof TextNode) {
                 //We simply have an input, which may be a reference
                 String value = inputArray.get(POS_DATA_ARRAY).asText();
-                Literal primary = new Literal(BLOCK_REFERENCE, value);
-                return new Slot(slotName, shadowIndicator, primary);
+                Input input = (Input) nodesIdMap.get(value);
+                return new Slot(slotName, shadowIndicator, input);
             } else {
                 int type = inputArray.get(POS_DATA_ARRAY).get(POS_INPUT_TYPE).asInt();
                 String value = inputArray.get(POS_DATA_ARRAY).get(POS_INPUT_VALUE).asText();

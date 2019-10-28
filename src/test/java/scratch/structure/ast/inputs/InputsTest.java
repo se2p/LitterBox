@@ -64,9 +64,9 @@ public class InputsTest {
         ast.parseScript(script);
         ScratchBlock root = ast.getRoot();
         BooleanBlock next = (BooleanBlock) root;
-        assertEquals("\"OPERAND\": [2, [-1, sO~t38~=J!nqZ(qm/{v!]]", ((OperatorNot) next).getCondition().toString());
-        String id = ((Literal) ((OperatorNot) next).getCondition().getPrimary()).getValue();
-        ScratchBlock operatorGT = ast.getNodesIdMap().get(id);
+        assertEquals("\"OPERAND\": [2, sO~t38~=J!nqZ(qm/{v!]", ((OperatorNot) next).getCondition().toString());
+
+        ScratchBlock operatorGT = (ScratchBlock) ((OperatorNot) next).getCondition().getPrimary();
         assertEquals("\"OPERAND1\": [1, [10, 30]],\"OPERAND2\": [1, [10, 50]], [0,0]", operatorGT.toString());
     }
 }

@@ -2,10 +2,13 @@ package scratch.structure.ast.transformers;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import scratch.structure.ast.ScratchBlock;
+import scratch.structure.ast.bool.KeyPressedBlock;
 import scratch.structure.ast.bool.OperatorGT;
 import scratch.structure.ast.bool.OperatorNot;
 import scratch.structure.ast.cap.DeleteCloneBlock;
+import scratch.structure.ast.cblock.IfBlock;
 import scratch.structure.ast.cblock.RepeatBlock;
+import scratch.structure.ast.dynamicMenu.KeyOptionsBlock;
 import scratch.structure.ast.hat.WhenFlagClickedBlock;
 import scratch.structure.ast.hat.WhenSpriteClickedBlock;
 import scratch.structure.ast.hat.WhenStartAsCloneBlock;
@@ -44,6 +47,7 @@ public class Transformer {
         opCodeClassMapping.put("looks_show", ShowBlock.class);
         opCodeClassMapping.put("looks_hide", HideBlock.class);
         opCodeClassMapping.put("control_repeat", RepeatBlock.class);
+        opCodeClassMapping.put("control_if", IfBlock.class);
         opCodeClassMapping.put("control_start_as_clone", WhenStartAsCloneBlock.class);
         opCodeClassMapping.put("control_delete_this_clone", DeleteCloneBlock.class);
         opCodeClassMapping.put("event_whenthisspriteclicked", WhenSpriteClickedBlock.class);
@@ -51,6 +55,8 @@ public class Transformer {
         opCodeClassMapping.put("operator_add", OperatorAdd.class);
         opCodeClassMapping.put("operator_not", OperatorNot.class);
         opCodeClassMapping.put("operator_gt", OperatorGT.class);
+        opCodeClassMapping.put("sensing_keypressed", KeyPressedBlock.class);
+        opCodeClassMapping.put("sensing_keyoptions", KeyOptionsBlock.class);
     }
 
 
