@@ -37,8 +37,7 @@ public class JsonParser {
     public static Project parse3(String fileName, String path) {
         ObjectMapper mapper = new ObjectMapper();
         try {
-            JsonNode sc = buildScriptFromJSONString(ZipReader.getJsonString(path));
-            System.out.println(sc.toString());
+           
             Project project = new Project();
             project.setName(fileName);
             project.setFilenameExtension(".sb3");
