@@ -37,12 +37,14 @@ public class JsonParser {
     public static Project parse3(String fileName, String path) {
         ObjectMapper mapper = new ObjectMapper();
         try {
+            JsonNode sc = buildScriptFromJSONString(ZipReader.getJsonString(path));
+            System.out.println(sc.toString());
             Project project = new Project();
             project.setName(fileName);
             project.setFilenameExtension(".sb3");
             project.setVersion(Version.SCRATCH3);
             project.setPath(path);
-            JsonNode rootNode = mapper.readTree(ZipReader.getJson(path));
+            JsonNode rootNode = mapper.readTree(ZipReader.getJsonString(path));
             List<Sprite> sprites = new ArrayList<>();
             if (!rootNode.has("targets")) {
                 return null;
@@ -83,7 +85,7 @@ public class JsonParser {
             project.setFilenameExtension(".sb2");
             project.setVersion(Version.SCRATCH2);
             project.setPath(path);
-            JsonNode rootNode = mapper.readTree(ZipReader.getJson(path));
+            JsonNode rootNode = mapper.readTree(ZipReader.getJsonString(path));
             project.setStage(StageDeserializer.deserialize(rootNode));
             project.setSprites(SpriteDeserializer.deserialize(rootNode));
             return project;
@@ -244,16 +246,27 @@ public class JsonParser {
             while ((line = br.readLine()) != null) {
                 sb.append(line);
             }
-            JsonNode rootNode = mapper.readTree(sb.toString());
+            script= buildScriptFromJSONString(sb.toString());
 
-            Iterator<JsonNode> elements = rootNode.get("targets").elements();
-            while (elements.hasNext()) {
-                JsonNode c = elements.next();
-                if (c.has("isStage") && !c.get("isStage").asBoolean() && c.has("blocks")) {
-                    script = c.get("blocks");
-                    break;
-                }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return script;
+    }
+
+    private static JsonNode buildScriptFromJSONString(String json){
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode script = null;
+        try {
+        JsonNode rootNode = mapper.readTree(json);
+        Iterator<JsonNode> elements = rootNode.get("targets").elements();
+        while (elements.hasNext()) {
+            JsonNode c = elements.next();
+            if (c.has("isStage") && !c.get("isStage").asBoolean() && c.has("blocks")) {
+                script = c.get("blocks");
+                break;
             }
+        }
         } catch (Exception e) {
             e.printStackTrace();
         }
