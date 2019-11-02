@@ -1,6 +1,8 @@
-package scratch.newast.model.statement;
+package scratch.newast.model.statement.control;
 
 import scratch.newast.model.expression.bool.BoolExpr;
+import scratch.newast.model.statement.Stmt;
+import scratch.newast.model.statement.control.IfStmt;
 
 import java.util.List;
 
