@@ -1,4 +1,4 @@
-package scratch.newast.model.statement;
+package scratch.newast.model.statement.termination;
 
 public class StopThisScript implements TerminationStmt {
 

@@ -2,7 +2,7 @@ package scratch.newast.model;
 
 import scratch.newast.model.event.Event;
 import scratch.newast.model.statement.Stmt;
-import scratch.newast.model.statement.TerminationStmt;
+import scratch.newast.model.statement.termination.TerminationStmt;
 
 import java.util.List;
 
