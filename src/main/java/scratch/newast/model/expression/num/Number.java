@@ -10,4 +10,11 @@ public class Number implements NumExpr {
         this.value = value;
     }
 
+    public BigInteger getValue() {
+        return value;
+    }
+
+    public void setValue(BigInteger value) {
+        this.value = value;
+    }
 }
