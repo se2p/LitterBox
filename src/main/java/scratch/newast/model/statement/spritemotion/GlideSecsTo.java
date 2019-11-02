@@ -1,4 +1,4 @@
-package scratch.newast.model.statement;
+package scratch.newast.model.statement.spritemotion;
 
 import scratch.newast.model.expression.num.NumExpr;
 import scratch.newast.model.position.Position;

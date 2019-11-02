@@ -1,11 +1,11 @@
-package scratch.newast.model.statement;
+package scratch.newast.model.statement.spritemotion;
 
 import scratch.newast.model.expression.num.NumExpr;
 
-public class SetYTo implements SpriteMotionStmt {
+public class ChangeYBy implements SpriteMotionStmt {
     private NumExpr num;
 
-    public SetYTo(NumExpr num) {
+    public ChangeYBy(NumExpr num) {
         this.num = num;
     }
 

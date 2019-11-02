@@ -1,11 +1,11 @@
-package scratch.newast.model.statement;
+package scratch.newast.model.statement.spritemotion;
 
 import scratch.newast.model.expression.num.NumExpr;
 
-public class TurnLeft implements SpriteMotionStmt {
+public class TurnRight implements SpriteMotionStmt {
     private NumExpr degrees;
 
-    public TurnLeft(NumExpr degrees) {
+    public TurnRight(NumExpr degrees) {
         this.degrees = degrees;
     }
 

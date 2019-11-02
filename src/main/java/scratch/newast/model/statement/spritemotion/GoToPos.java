@@ -1,11 +1,11 @@
-package scratch.newast.model.statement;
+package scratch.newast.model.statement.spritemotion;
 
 import scratch.newast.model.position.Position;
 
-public class PointTowards implements SpriteMotionStmt {
+public class GoToPos implements SpriteMotionStmt {
     private Position position;
 
-    public PointTowards(Position position) {
+    public GoToPos(Position position) {
         this.position = position;
     }
 
