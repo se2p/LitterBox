@@ -2,7 +2,6 @@ package scratch.newast.model.statement.list;
 
 import scratch.newast.model.expression.num.NumExpr;
 import scratch.newast.model.expression.string.StringExpr;
-import scratch.newast.model.statement.list.ListStmt;
 import scratch.newast.model.variable.Variable;
 
 public class ReplaceItem implements ListStmt {

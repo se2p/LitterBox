@@ -1,6 +1,5 @@
 package scratch.newast.model.statement.list;
 
-import scratch.newast.model.statement.list.ListStmt;
 import scratch.newast.model.variable.Variable;
 
 public class DeleteAllOf implements ListStmt {

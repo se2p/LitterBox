@@ -1,7 +1,6 @@
 package scratch.newast.model.statement.control;
 
 import scratch.newast.model.statement.Stmt;
-import scratch.newast.model.statement.control.ControlStmt;
 
 import java.util.List;
 
