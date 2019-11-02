@@ -1,6 +1,6 @@
 package scratch.newast.model.statement;
 
-import scratch.newast.model.expression.BoolExpr;
+import scratch.newast.model.expression.bool.BoolExpr;
 
 import java.util.List;
 

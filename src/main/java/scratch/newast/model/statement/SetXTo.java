@@ -1,6 +1,6 @@
 package scratch.newast.model.statement;
 
-import scratch.newast.model.expression.numexpression.NumExpr;
+import scratch.newast.model.expression.num.NumExpr;
 
 public class SetXTo implements SpriteMotionStmt {
     private NumExpr num;

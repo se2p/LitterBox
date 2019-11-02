@@ -1,6 +1,6 @@
 package scratch.newast.model.event;
 
-import scratch.newast.model.expression.numexpression.NumExpr;
+import scratch.newast.model.expression.num.NumExpr;
 import scratch.newast.model.variable.Variable;
 
 public class VariableAboveValue implements Event {
