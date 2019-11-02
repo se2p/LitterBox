@@ -1,4 +1,4 @@
-package scratch.newast.model.statement;
+package scratch.newast.model.statement.entitysound;
 
 public class ClearSoundEffects implements EntitySoundStmt {
 

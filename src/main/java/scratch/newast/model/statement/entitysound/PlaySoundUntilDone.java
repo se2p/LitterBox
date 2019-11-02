@@ -1,4 +1,4 @@
-package scratch.newast.model.statement;
+package scratch.newast.model.statement.entitysound;
 
 import scratch.newast.model.sound.Sound;
 
