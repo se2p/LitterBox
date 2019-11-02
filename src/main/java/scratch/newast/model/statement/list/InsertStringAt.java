@@ -1,14 +1,18 @@
-package scratch.newast.model.statement;
+package scratch.newast.model.statement.list;
 
+import scratch.newast.model.expression.num.NumExpr;
 import scratch.newast.model.expression.string.StringExpr;
+import scratch.newast.model.statement.list.ListStmt;
 import scratch.newast.model.variable.Variable;
 
-public class AddStringTo implements ListStmt {
+public class InsertStringAt implements ListStmt {
     private StringExpr string;
+    private NumExpr index;
     private Variable variable;
 
-    public AddStringTo(StringExpr string, Variable variable) {
+    public InsertStringAt(StringExpr string, NumExpr index, Variable variable) {
         this.string = string;
+        this.index = index;
         this.variable = variable;
     }
 
@@ -18,6 +22,14 @@ public class AddStringTo implements ListStmt {
 
     public void setString(StringExpr string) {
         this.string = string;
+    }
+
+    public NumExpr getIndex() {
+        return index;
+    }
+
+    public void setIndex(NumExpr index) {
+        this.index = index;
     }
 
     public Variable getVariable() {
