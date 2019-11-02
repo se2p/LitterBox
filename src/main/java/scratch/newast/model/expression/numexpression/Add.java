@@ -1,10 +1,12 @@
-package scratch.newast.model.expression;
+package scratch.newast.model.expression.numexpression;
 
-public class Div implements NumExpr {
+import scratch.newast.model.expression.numexpression.NumExpr;
+
+public class Add implements NumExpr {
     private NumExpr first;
     private NumExpr second;
 
-    public Div(NumExpr first, NumExpr second) {
+    public Add(NumExpr first, NumExpr second) {
         this.first = first;
         this.second = second;
     }

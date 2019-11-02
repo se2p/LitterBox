@@ -1,6 +1,6 @@
-package scratch.newast.model.numfunct;
+package scratch.newast.model.expression.numexpression;
 
-import scratch.newast.model.expression.NumExpr;
+import scratch.newast.model.numfunct.NumFunct;
 
 public class NumFunctOf implements NumExpr {
     private NumFunct funct;

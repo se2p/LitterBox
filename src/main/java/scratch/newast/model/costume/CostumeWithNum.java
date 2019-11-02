@@ -1,6 +1,6 @@
 package scratch.newast.model.costume;
 
-import scratch.newast.model.expression.Number;
+import scratch.newast.model.expression.numexpression.Number;
 
 public class CostumeWithNum implements Costume {
     private Number num;

@@ -1,6 +1,6 @@
 package scratch.newast.model.backdrop;
 
-import scratch.newast.model.expression.Number;
+import scratch.newast.model.expression.numexpression.Number;
 
 public class BackdropWithNum implements Backdrop {
     private Number num;

@@ -1,6 +1,6 @@
 package scratch.newast.model.statement;
 
-import scratch.newast.model.expression.NumExpr;
+import scratch.newast.model.expression.numexpression.NumExpr;
 import scratch.newast.model.expression.StringExpr;
 import scratch.newast.model.variable.Variable;
 

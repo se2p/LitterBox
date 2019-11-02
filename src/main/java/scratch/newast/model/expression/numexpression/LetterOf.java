@@ -1,4 +1,7 @@
-package scratch.newast.model.expression;
+package scratch.newast.model.expression.numexpression;
+
+import scratch.newast.model.expression.StringExpr;
+import scratch.newast.model.expression.numexpression.NumExpr;
 
 public class LetterOf implements StringExpr {
     private NumExpr num;

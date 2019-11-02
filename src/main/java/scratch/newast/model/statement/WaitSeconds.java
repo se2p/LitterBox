@@ -1,6 +1,6 @@
 package scratch.newast.model.statement;
 
-import scratch.newast.model.expression.NumExpr;
+import scratch.newast.model.expression.numexpression.NumExpr;
 
 public class WaitSeconds implements CommonStmt {
     private NumExpr seconds;

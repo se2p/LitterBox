@@ -1,6 +1,6 @@
 package scratch.newast.model.position;
 
-import scratch.newast.model.expression.Number;
+import scratch.newast.model.expression.numexpression.Number;
 
 public class CoordinatePosition implements Position {
     private Number xCoord;

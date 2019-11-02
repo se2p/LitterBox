@@ -1,10 +1,12 @@
-package scratch.newast.model.expression;
+package scratch.newast.model.expression.numexpression;
 
-public class Equals implements BoolExpr {
+import scratch.newast.model.expression.numexpression.NumExpr;
+
+public class Minus implements NumExpr {
     private NumExpr first;
     private NumExpr second;
 
-    public Equals(NumExpr first, NumExpr second) {
+    public Minus(NumExpr first, NumExpr second) {
         this.first = first;
         this.second = second;
     }

@@ -1,10 +1,12 @@
-package scratch.newast.model.expression;
+package scratch.newast.model.expression.numexpression;
 
-public class BiggerThan implements BoolExpr {
+import scratch.newast.model.expression.numexpression.NumExpr;
+
+public class Div implements NumExpr {
     private NumExpr first;
     private NumExpr second;
 
-    public BiggerThan(NumExpr first, NumExpr second) {
+    public Div(NumExpr first, NumExpr second) {
         this.first = first;
         this.second = second;
     }

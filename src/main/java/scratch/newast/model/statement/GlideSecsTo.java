@@ -1,6 +1,6 @@
 package scratch.newast.model.statement;
 
-import scratch.newast.model.expression.NumExpr;
+import scratch.newast.model.expression.numexpression.NumExpr;
 import scratch.newast.model.position.Position;
 
 public class GlideSecsTo implements SpriteMotionStmt {
