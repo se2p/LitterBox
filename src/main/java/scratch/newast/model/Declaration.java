@@ -1,12 +1,13 @@
 package scratch.newast.model;
 
+import scratch.newast.model.type.Type;
 import scratch.newast.model.variable.Identifier;
 
 public class Declaration {
     private Identifier ident;
-    private Class type;
+    private Type type;
 
-    public Declaration(Identifier ident, Class type) {
+    public Declaration(Identifier ident, Type type) {
         this.ident = ident;
         this.type = type;
     }
@@ -19,11 +20,11 @@ public class Declaration {
         this.ident = ident;
     }
 
-    public Class getType() {
+    public Type getType() {
         return type;
     }
 
-    public void setType(Class type) {
+    public void setType(Type type) {
         this.type = type;
     }
 }
