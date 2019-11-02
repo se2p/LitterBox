@@ -1,4 +1,5 @@
 package scratch.newast.model.indextype;
 
-public interface IndexType {
+public enum  IndexType {
+    NUMBER, STRING
 }
