@@ -1,19 +1,19 @@
 package scratch.newast.model;
 
-import scratch.newast.model.ressource.Ressource;
+import scratch.newast.model.resource.Resource;
 import scratch.newast.model.variable.Identifier;
 
 import java.util.List;
 
 public class ScriptGroup {
     private Identifier ident;
-    private List<Ressource> ressources;
+    private List<Resource> resources;
     private List<Declaration> decls;
     private List<Script> scripts;
 
-    public ScriptGroup(Identifier ident, List<Ressource> ressources, List<Declaration> decls, List<Script> scripts) {
+    public ScriptGroup(Identifier ident, List<Resource> resources, List<Declaration> decls, List<Script> scripts) {
         this.ident = ident;
-        this.ressources = ressources;
+        this.resources = resources;
         this.decls = decls;
         this.scripts = scripts;
     }
@@ -26,12 +26,12 @@ public class ScriptGroup {
         this.ident = ident;
     }
 
-    public List<Ressource> getRessources() {
-        return ressources;
+    public List<Resource> getResources() {
+        return resources;
     }
 
-    public void setRessources(List<Ressource> ressources) {
-        this.ressources = ressources;
+    public void setResources(List<Resource> resources) {
+        this.resources = resources;
     }
 
     public List<Declaration> getDecls() {
