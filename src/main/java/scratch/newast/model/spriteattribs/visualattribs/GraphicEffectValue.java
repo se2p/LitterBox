@@ -1,7 +1,6 @@
 package scratch.newast.model.spriteattribs.visualattribs;
 
 import scratch.newast.model.graphiceffect.GraphicEffect;
-import scratch.newast.model.spriteattribs.VisualAttribs;
 
 public class GraphicEffectValue implements VisualAttribs {
     private GraphicEffect effect;

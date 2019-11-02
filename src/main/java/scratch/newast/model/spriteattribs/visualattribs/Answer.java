@@ -1,4 +1,4 @@
-package scratch.newast.model.spriteattribs;
+package scratch.newast.model.spriteattribs.visualattribs;
 
 public class Answer implements VisualAttribs {
 

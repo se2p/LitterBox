@@ -1,7 +1,6 @@
 package scratch.newast.model.spriteattribs.visualattribs;
 
 import scratch.newast.model.soundeffect.SoundEffect;
-import scratch.newast.model.spriteattribs.VisualAttribs;
 
 public class SoundEffectValue implements VisualAttribs {
     private SoundEffect effect;
