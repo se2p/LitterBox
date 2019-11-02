@@ -7,9 +7,9 @@ import java.util.List;
 public class Program {
     private Identifier ident;
     private ScriptGroup stage;
-    private List<Script> sprites;
+    private List<ScriptGroup> sprites;
 
-    public Program(Identifier ident, ScriptGroup stage, List<Script> sprites) {
+    public Program(Identifier ident, ScriptGroup stage, List<ScriptGroup> sprites) {
         this.ident = ident;
         this.stage = stage;
         this.sprites = sprites;
@@ -31,11 +31,11 @@ public class Program {
         this.stage = stage;
     }
 
-    public List<Script> getSprites() {
+    public List<ScriptGroup> getSprites() {
         return sprites;
     }
 
-    public void setSprites(List<Script> sprites) {
+    public void setSprites(List<ScriptGroup> sprites) {
         this.sprites = sprites;
     }
 }
