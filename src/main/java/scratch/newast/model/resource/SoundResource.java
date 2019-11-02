@@ -1,12 +1,12 @@
-package scratch.newast.model.ressource;
+package scratch.newast.model.resource;
 
 import scratch.newast.model.variable.Identifier;
 
-public class SoundRessource extends Ressource {
+public class SoundResource implements Resource {
     private Identifier ident;
     private String uri;
 
-    public SoundRessource(Identifier ident, String uri) {
+    public SoundResource(Identifier ident, String uri) {
         this.ident = ident;
         this.uri = uri;
     }

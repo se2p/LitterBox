@@ -1,12 +1,12 @@
-package scratch.newast.model.ressource;
+package scratch.newast.model.resource;
 
 import scratch.newast.model.variable.Identifier;
 
-public class ImageRessource extends Ressource {
+public class ImageResource implements Resource {
     private Identifier ident;
     private String uri;
 
-    public ImageRessource(Identifier ident, String uri) {
+    public ImageResource(Identifier ident, String uri) {
         this.ident = ident;
         this.uri = uri;
     }
