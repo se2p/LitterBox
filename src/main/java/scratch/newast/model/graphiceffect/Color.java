@@ -1,5 +1,5 @@
 package scratch.newast.model.graphiceffect;
 
-public interface Color extends GraphicEffect {
+public class Color implements GraphicEffect {
 
 }
