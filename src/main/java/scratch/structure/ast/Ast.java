@@ -34,11 +34,11 @@ public class Ast {
     Map<String, ScratchBlock> nodesIdMap = new HashMap();
 
     public void parseScript(JsonNode blocksNode) {
-        buildBasicBlocks(blocksNode);
+        buildScratchBlocks(blocksNode);
         connectAndFillSlots(blocksNode);
     }
 
-    private void buildBasicBlocks(JsonNode blocksNode) {
+    private void buildScratchBlocks(JsonNode blocksNode) {
         Iterator<String> it = blocksNode.fieldNames();
 
         while (it.hasNext()) {
