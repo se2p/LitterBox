@@ -1,6 +1,6 @@
 package scratch.newast.model.event;
 
-public class StartedAsClone extends Event {
+public class StartedAsClone implements Event {
 
     public StartedAsClone() {
     }

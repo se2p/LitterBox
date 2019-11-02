@@ -1,6 +1,6 @@
 package scratch.newast.model.expression;
 
-public class Round extends NumExpr {
+public class Round implements NumExpr {
     private NumExpr num;
 
     public Round(NumExpr num) {

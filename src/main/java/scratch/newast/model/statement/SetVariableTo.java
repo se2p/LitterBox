@@ -3,7 +3,7 @@ package scratch.newast.model.statement;
 import scratch.newast.model.expression.Expression;
 import scratch.newast.model.variable.Variable;
 
-public class SetVariableTo extends CommonStmt {
+public class SetVariableTo implements CommonStmt {
     private Variable variable;
     private Expression expr;
 

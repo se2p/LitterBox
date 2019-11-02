@@ -2,7 +2,7 @@ package scratch.newast.model.expression;
 
 import scratch.newast.model.Key;
 
-public class IsKeyPressed extends BoolExpr {
+public class IsKeyPressed implements BoolExpr {
     private Key key;
 
     public IsKeyPressed(Key key) {

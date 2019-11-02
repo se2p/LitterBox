@@ -2,7 +2,7 @@ package scratch.newast.model.expression;
 
 import scratch.newast.model.position.Position;
 
-public class DistanceTo extends NumExpr {
+public class DistanceTo implements NumExpr {
     private Position position;
 
     public DistanceTo(Position position) {

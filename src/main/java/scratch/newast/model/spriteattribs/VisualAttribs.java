@@ -1,8 +1,5 @@
 package scratch.newast.model.spriteattribs;
 
-public class VisualAttribs extends SpriteAttribs {
-
-    public VisualAttribs() {
-    }
+public interface VisualAttribs extends SpriteAttribs {
 
 }

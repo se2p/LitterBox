@@ -1,5 +1,5 @@
 package scratch.newast.model.statement;
 
-public class IfStmt extends ControlStmt {
+public interface IfStmt extends ControlStmt {
 
 }

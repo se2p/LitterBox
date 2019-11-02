@@ -4,7 +4,7 @@ import scratch.newast.model.expression.NumExpr;
 import scratch.newast.model.expression.StringExpr;
 import scratch.newast.model.variable.Variable;
 
-public class ReplaceItem extends ListStmt {
+public class ReplaceItem implements ListStmt {
     private NumExpr index;
     private Variable variable;
     private StringExpr string;

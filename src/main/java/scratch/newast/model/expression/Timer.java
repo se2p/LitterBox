@@ -1,6 +1,6 @@
 package scratch.newast.model.expression;
 
-public class Timer extends NumExpr {
+public class Timer implements NumExpr {
 
     public Timer() {
     }

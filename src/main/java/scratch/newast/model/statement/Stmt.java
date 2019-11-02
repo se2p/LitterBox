@@ -1,8 +1,5 @@
 package scratch.newast.model.statement;
 
-public class Stmt {
-
-    public Stmt() {
-    }
+public interface Stmt {
 
 }

@@ -2,7 +2,7 @@ package scratch.newast.model.event;
 
 import scratch.newast.model.Key;
 
-public class KeyPressed extends Event {
+public class KeyPressed implements Event {
     private Key key;
 
     public KeyPressed(Key key) {

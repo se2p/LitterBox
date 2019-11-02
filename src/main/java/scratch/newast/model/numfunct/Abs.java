@@ -1,6 +1,6 @@
 package scratch.newast.model.numfunct;
 
-public class Abs extends NumFunct {
+public class Abs implements NumFunct {
 
     public Abs() {
     }

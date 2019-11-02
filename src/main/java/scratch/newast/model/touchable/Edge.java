@@ -1,6 +1,6 @@
 package scratch.newast.model.touchable;
 
-public class Edge extends Touchable {
+public class Edge implements Touchable {
 
     public Edge() {
     }

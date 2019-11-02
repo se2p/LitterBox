@@ -1,6 +1,6 @@
 package scratch.newast.model.expression;
 
-public class LessThan extends BoolExpr {
+public class LessThan implements BoolExpr {
     private NumExpr first;
     private NumExpr second;
 

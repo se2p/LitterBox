@@ -1,6 +1,6 @@
 package scratch.newast.model.statement;
 
-public class StopAllSounds extends EntitySoundStmt {
+public class StopAllSounds implements EntitySoundStmt {
 
     public StopAllSounds() {
     }

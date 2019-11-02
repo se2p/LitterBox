@@ -1,6 +1,6 @@
 package scratch.newast.model.statement;
 
-public class ResetTimer extends CommonStmt {
+public class ResetTimer implements CommonStmt {
 
     public ResetTimer() {
     }

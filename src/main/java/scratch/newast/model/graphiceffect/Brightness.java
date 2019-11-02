@@ -1,6 +1,6 @@
 package scratch.newast.model.graphiceffect;
 
-public class Brightness extends GraphicEffect {
+public class Brightness implements GraphicEffect {
 
     public Brightness() {
     }

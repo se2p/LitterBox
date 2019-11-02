@@ -1,6 +1,6 @@
 package scratch.newast.model.expression;
 
-public class Not extends BoolExpr {
+public class Not implements BoolExpr {
     private BoolExpr boolExpr;
 
     public Not(BoolExpr boolExpr) {

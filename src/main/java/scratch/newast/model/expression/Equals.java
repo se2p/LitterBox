@@ -1,6 +1,6 @@
 package scratch.newast.model.expression;
 
-public class Equals extends BoolExpr {
+public class Equals implements BoolExpr {
     private NumExpr first;
     private NumExpr second;
 

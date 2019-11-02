@@ -1,6 +1,6 @@
 package scratch.newast.model.spriteattribs;
 
-public class XPosition extends SpriteAttribs {
+public class XPosition implements SpriteAttribs {
 
     public XPosition() {
     }

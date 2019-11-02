@@ -1,6 +1,6 @@
 package scratch.newast.model.sound;
 
-public class NextSound extends Sound {
+public class NextSound implements Sound {
 
     public NextSound() {
     }

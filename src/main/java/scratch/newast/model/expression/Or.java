@@ -1,6 +1,6 @@
 package scratch.newast.model.expression;
 
-public class Or extends BoolExpr {
+public class Or implements BoolExpr {
     private BoolExpr first;
     private BoolExpr second;
 

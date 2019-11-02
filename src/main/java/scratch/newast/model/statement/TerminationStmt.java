@@ -1,8 +1,5 @@
 package scratch.newast.model.statement;
 
-public class TerminationStmt extends Stmt {
-
-    public TerminationStmt() {
-    }
+public interface TerminationStmt extends Stmt {
 
 }

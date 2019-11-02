@@ -2,7 +2,7 @@ package scratch.newast.model.statement;
 
 import scratch.newast.model.variable.Variable;
 
-public class ShowVariable extends SpriteLookStmt {
+public class ShowVariable implements SpriteLookStmt {
     private Variable variable;
 
     public ShowVariable(Variable variable) {

@@ -1,6 +1,6 @@
 package scratch.newast.model.costume;
 
-public class RandomCostume extends Costume {
+public class RandomCostume implements Costume {
 
     public RandomCostume() {
     }

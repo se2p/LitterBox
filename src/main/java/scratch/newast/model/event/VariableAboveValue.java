@@ -3,7 +3,7 @@ package scratch.newast.model.event;
 import scratch.newast.model.expression.NumExpr;
 import scratch.newast.model.variable.Variable;
 
-public class VariableAboveValue extends Event {
+public class VariableAboveValue implements Event {
     private Variable variable;
     private NumExpr value;
 

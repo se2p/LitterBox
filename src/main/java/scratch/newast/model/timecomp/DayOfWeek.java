@@ -1,6 +1,6 @@
 package scratch.newast.model.timecomp;
 
-public class DayOfWeek extends TimeComp {
+public class DayOfWeek implements TimeComp {
 
     public DayOfWeek() {
     }

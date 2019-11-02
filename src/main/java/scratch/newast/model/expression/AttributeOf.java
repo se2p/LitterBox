@@ -2,7 +2,7 @@ package scratch.newast.model.expression;
 
 import scratch.newast.model.ScratchEntity;
 
-public class AttributeOf extends StringExpr {
+public class AttributeOf implements StringExpr {
     private StringExpr attribute;
     private ScratchEntity entity;
 

@@ -1,6 +1,6 @@
 package scratch.newast.model.numfunct;
 
-public class Ceiling extends NumFunct {
+public class Ceiling implements NumFunct {
 
     public Ceiling() {
     }

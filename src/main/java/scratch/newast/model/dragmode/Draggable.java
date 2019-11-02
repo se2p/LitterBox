@@ -1,6 +1,6 @@
 package scratch.newast.model.dragmode;
 
-public class Draggable extends DragMode {
+public class Draggable implements DragMode {
 
     public Draggable() {
     }

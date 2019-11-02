@@ -2,7 +2,7 @@ package scratch.newast.model.statement;
 
 import scratch.newast.model.rotationstyle.RotationStyle;
 
-public class SetRotationStyle extends SpriteMotionStmt {
+public class SetRotationStyle implements SpriteMotionStmt {
     private RotationStyle rotationStyle;
 
     public SetRotationStyle(RotationStyle rotationStyle) {

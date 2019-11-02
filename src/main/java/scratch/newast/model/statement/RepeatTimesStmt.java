@@ -4,7 +4,7 @@ import scratch.newast.model.expression.NumExpr;
 
 import java.util.List;
 
-public class RepeatTimesStmt extends ControlStmt {
+public class RepeatTimesStmt implements ControlStmt {
     private NumExpr times;
     private List<Stmt> stmtList;
 

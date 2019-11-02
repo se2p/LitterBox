@@ -2,7 +2,7 @@ package scratch.newast.model.statement;
 
 import scratch.newast.model.backdrop.Backdrop;
 
-public class SwitchBackdrop extends EntityLookStmt {
+public class SwitchBackdrop implements EntityLookStmt {
     private Backdrop backdrop;
 
     public SwitchBackdrop(Backdrop backdrop) {

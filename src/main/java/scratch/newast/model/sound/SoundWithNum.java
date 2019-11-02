@@ -1,6 +1,6 @@
 package scratch.newast.model.sound;
 
-public class SoundWithNum extends Sound {
+public class SoundWithNum implements Sound {
     private java.lang.Number num;
 
     public SoundWithNum(java.lang.Number num) {

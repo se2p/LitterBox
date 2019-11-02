@@ -3,7 +3,7 @@ package scratch.newast.model.statement;
 import scratch.newast.model.expression.NumExpr;
 import scratch.newast.model.graphiceffect.GraphicEffect;
 
-public class ChangeEffectBy extends EntityLookStmt {
+public class ChangeEffectBy implements EntityLookStmt {
     private GraphicEffect effect;
     private NumExpr num;
 

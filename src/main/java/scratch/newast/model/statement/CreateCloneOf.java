@@ -2,7 +2,7 @@ package scratch.newast.model.statement;
 
 import scratch.newast.model.Sprite;
 
-public class CreateCloneOf extends CommonStmt {
+public class CreateCloneOf implements CommonStmt {
     private Sprite sprite;
 
     public CreateCloneOf(Sprite sprite) {

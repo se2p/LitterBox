@@ -1,6 +1,6 @@
 package scratch.newast.model.expression;
 
-public class LetterOf extends StringExpr {
+public class LetterOf implements StringExpr {
     private NumExpr num;
     private StringExpr stringExpr;
 

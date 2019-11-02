@@ -1,8 +1,5 @@
 package scratch.newast.model.expression;
 
-public class Expression {
-
-    public Expression() {
-    }
+public interface Expression {
 
 }

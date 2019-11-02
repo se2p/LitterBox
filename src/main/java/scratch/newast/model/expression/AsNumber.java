@@ -1,6 +1,6 @@
 package scratch.newast.model.expression;
 
-public class AsNumber extends NumExpr {
+public class AsNumber implements NumExpr {
     private Expression expr;
 
     public AsNumber(Expression expr) {

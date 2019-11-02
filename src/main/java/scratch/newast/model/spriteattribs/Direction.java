@@ -1,6 +1,6 @@
 package scratch.newast.model.spriteattribs;
 
-public class Direction extends SpriteAttribs {
+public class Direction implements SpriteAttribs {
 
     public Direction() {
     }

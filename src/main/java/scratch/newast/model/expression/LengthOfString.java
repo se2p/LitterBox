@@ -1,6 +1,6 @@
 package scratch.newast.model.expression;
 
-public class LengthOfString extends NumExpr {
+public class LengthOfString implements NumExpr {
     private StringExpr stringExpr;
 
     public LengthOfString(StringExpr stringExpr) {

@@ -2,7 +2,7 @@ package scratch.newast.model.backdrop;
 
 import scratch.newast.model.expression.Number;
 
-public class BackdropWithNum extends Backdrop {
+public class BackdropWithNum implements Backdrop {
     private Number num;
 
     public BackdropWithNum(Number num) {

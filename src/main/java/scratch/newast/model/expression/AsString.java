@@ -1,6 +1,6 @@
 package scratch.newast.model.expression;
 
-public class AsString extends StringExpr {
+public class AsString implements StringExpr {
 
     public AsString() {
     }

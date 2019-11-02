@@ -1,6 +1,6 @@
 package scratch.newast.model.statement;
 
-public class Say extends SpriteLookStmt {
+public class Say implements SpriteLookStmt {
     private String string;
 
     public Say(String string) {

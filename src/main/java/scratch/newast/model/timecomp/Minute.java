@@ -1,6 +1,6 @@
 package scratch.newast.model.timecomp;
 
-public class Minute extends TimeComp {
+public class Minute implements TimeComp {
 
     public Minute() {
     }

@@ -1,6 +1,6 @@
 package scratch.newast.model.sound;
 
-public class RandomSound extends Sound {
+public class RandomSound implements Sound {
 
     public RandomSound() {
     }

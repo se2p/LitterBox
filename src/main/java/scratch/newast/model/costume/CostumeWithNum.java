@@ -2,7 +2,7 @@ package scratch.newast.model.costume;
 
 import scratch.newast.model.expression.Number;
 
-public class CostumeWithNum extends Costume {
+public class CostumeWithNum implements Costume {
     private Number num;
 
     public CostumeWithNum(Number num) {

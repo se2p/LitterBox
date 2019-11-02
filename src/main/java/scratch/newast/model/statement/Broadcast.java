@@ -2,7 +2,7 @@ package scratch.newast.model.statement;
 
 import scratch.newast.model.Message;
 
-public class Broadcast extends CommonStmt {
+public class Broadcast implements CommonStmt {
     private Message message;
 
     public Broadcast(Message message) {

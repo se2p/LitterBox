@@ -1,6 +1,6 @@
 package scratch.newast.model.expression;
 
-public class False extends BoolExpr {
+public class False implements BoolLiteral {
 
     public False() {
     }

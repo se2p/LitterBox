@@ -2,10 +2,10 @@ package scratch.newast.model.statement;
 
 import scratch.newast.model.expression.NumExpr;
 
-public class ChangeVolumBy extends EntitySoundStmt {
+public class SetVolumeTo implements EntitySoundStmt {
     private NumExpr num;
 
-    public ChangeVolumBy(NumExpr num) {
+    public SetVolumeTo(NumExpr num) {
         this.num = num;
     }
 

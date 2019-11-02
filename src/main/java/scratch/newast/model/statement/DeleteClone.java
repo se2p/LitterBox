@@ -1,6 +1,6 @@
 package scratch.newast.model.statement;
 
-public class DeleteClone extends TerminationStmt {
+public class DeleteClone implements TerminationStmt {
 
     public DeleteClone() {
     }

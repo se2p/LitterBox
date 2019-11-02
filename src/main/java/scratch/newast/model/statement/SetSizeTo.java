@@ -2,7 +2,7 @@ package scratch.newast.model.statement;
 
 import scratch.newast.model.expression.NumExpr;
 
-public class SetSizeTo extends SpriteLookStmt {
+public class SetSizeTo implements SpriteLookStmt {
     private NumExpr percent;
 
     public SetSizeTo(NumExpr percent) {

@@ -1,6 +1,6 @@
 package scratch.newast.model.variable;
 
-public class Identifier extends Variable {
+public class Identifier implements Variable {
 
     public Identifier() {
     }

@@ -2,7 +2,7 @@ package scratch.newast.model.statement;
 
 import scratch.newast.model.expression.NumExpr;
 
-public class WaitUntil extends CommonStmt {
+public class WaitUntil implements CommonStmt {
     private NumExpr until;
 
     public WaitUntil(NumExpr until) {

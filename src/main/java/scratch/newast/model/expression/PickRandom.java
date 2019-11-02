@@ -1,6 +1,6 @@
 package scratch.newast.model.expression;
 
-public class PickRandom extends NumExpr {
+public class PickRandom implements NumExpr {
     private NumExpr from;
     private NumExpr to;
 

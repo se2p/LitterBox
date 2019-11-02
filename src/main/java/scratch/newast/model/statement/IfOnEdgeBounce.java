@@ -1,6 +1,6 @@
 package scratch.newast.model.statement;
 
-public class IfOnEdgeBounce extends SpriteMotionStmt {
+public class IfOnEdgeBounce implements SpriteMotionStmt {
 
     public IfOnEdgeBounce() {
     }

@@ -2,7 +2,7 @@ package scratch.newast.model.position;
 
 import scratch.newast.model.expression.Number;
 
-public class CoordinatePosition extends Position {
+public class CoordinatePosition implements Position {
     private Number xCoord;
     private Number yCoord;
 

@@ -1,6 +1,6 @@
 package scratch.newast.model.event;
 
-public class GreenFlag extends Event {
+public class GreenFlag implements Event {
 
     public GreenFlag() {
     }

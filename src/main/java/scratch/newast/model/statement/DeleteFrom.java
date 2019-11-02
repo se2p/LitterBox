@@ -3,7 +3,7 @@ package scratch.newast.model.statement;
 import scratch.newast.model.expression.NumExpr;
 import scratch.newast.model.variable.Variable;
 
-public class DeleteFrom extends ListStmt {
+public class DeleteFrom implements ListStmt {
     private NumExpr num;
     private Variable variable;
 

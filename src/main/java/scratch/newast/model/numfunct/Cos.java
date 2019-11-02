@@ -1,6 +1,6 @@
 package scratch.newast.model.numfunct;
 
-public class Cos extends NumFunct {
+public class Cos implements NumFunct {
 
     public Cos() {
     }

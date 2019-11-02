@@ -2,7 +2,7 @@ package scratch.newast.model.statement;
 
 import scratch.newast.model.expression.NumExpr;
 
-public class TurnLeft extends SpriteMotionStmt {
+public class TurnLeft implements SpriteMotionStmt {
     private NumExpr degrees;
 
     public TurnLeft(NumExpr degrees) {

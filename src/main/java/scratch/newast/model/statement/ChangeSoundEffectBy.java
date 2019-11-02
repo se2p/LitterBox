@@ -3,7 +3,7 @@ package scratch.newast.model.statement;
 import scratch.newast.model.expression.NumExpr;
 import scratch.newast.model.soundeffect.SoundEffect;
 
-public class ChangeSoundEffectBy extends EntitySoundStmt {
+public class ChangeSoundEffectBy implements EntitySoundStmt {
     private SoundEffect effect;
     private NumExpr num;
 

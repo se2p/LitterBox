@@ -2,7 +2,7 @@ package scratch.newast.model.statement;
 
 import scratch.newast.model.position.Position;
 
-public class GoToPos extends SpriteMotionStmt {
+public class GoToPos implements SpriteMotionStmt {
     private Position position;
 
     public GoToPos(Position position) {

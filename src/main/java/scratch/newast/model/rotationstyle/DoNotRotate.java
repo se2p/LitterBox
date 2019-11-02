@@ -1,6 +1,6 @@
 package scratch.newast.model.rotationstyle;
 
-public class DoNotRotate extends RotationStyle {
+public class DoNotRotate implements RotationStyle {
 
     public DoNotRotate() {
     }

@@ -1,6 +1,6 @@
 package scratch.newast.model.expression;
 
-public class MouseY extends NumExpr {
+public class MouseY implements NumExpr {
 
     public MouseY() {
     }

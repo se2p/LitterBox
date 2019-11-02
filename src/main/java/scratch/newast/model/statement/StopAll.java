@@ -1,6 +1,6 @@
 package scratch.newast.model.statement;
 
-public class StopAll extends TerminationStmt {
+public class StopAll implements TerminationStmt {
 
     public StopAll() {
     }

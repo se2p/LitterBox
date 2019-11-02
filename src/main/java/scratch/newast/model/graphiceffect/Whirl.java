@@ -1,6 +1,6 @@
 package scratch.newast.model.graphiceffect;
 
-public class Whirl extends GraphicEffect {
+public class Whirl implements GraphicEffect {
 
     public Whirl() {
     }

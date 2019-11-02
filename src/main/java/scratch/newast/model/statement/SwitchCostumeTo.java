@@ -2,7 +2,7 @@ package scratch.newast.model.statement;
 
 import scratch.newast.model.costume.Costume;
 
-public class SwitchCostumeTo extends SpriteLookStmt {
+public class SwitchCostumeTo implements SpriteLookStmt {
     private Costume costume;
 
     public SwitchCostumeTo(Costume costume) {

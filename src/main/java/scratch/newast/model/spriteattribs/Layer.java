@@ -1,6 +1,6 @@
 package scratch.newast.model.spriteattribs;
 
-public class Layer extends SpriteAttribs {
+public class Layer implements SpriteAttribs {
 
     public Layer() {
     }

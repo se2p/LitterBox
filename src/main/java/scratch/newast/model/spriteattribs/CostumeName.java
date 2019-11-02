@@ -1,6 +1,6 @@
 package scratch.newast.model.spriteattribs;
 
-public class CostumeName extends SpriteAttribs {
+public class CostumeName implements SpriteAttribs {
 
     public CostumeName() {
     }

@@ -2,7 +2,7 @@ package scratch.newast.model.expression;
 
 import scratch.newast.model.timecomp.TimeComp;
 
-public class Current extends NumExpr {
+public class Current implements NumExpr {
     private TimeComp timeComp;
 
     public Current(TimeComp timeComp) {

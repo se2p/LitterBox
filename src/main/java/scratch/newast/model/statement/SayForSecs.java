@@ -2,7 +2,7 @@ package scratch.newast.model.statement;
 
 import scratch.newast.model.expression.NumExpr;
 
-public class SayForSecs extends SpriteLookStmt {
+public class SayForSecs implements SpriteLookStmt {
     private String string;
     private NumExpr secs;
 

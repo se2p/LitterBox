@@ -2,7 +2,7 @@ package scratch.newast.model.expression;
 
 import scratch.newast.model.graphiceffect.Color;
 
-public class ColorTouches extends BoolExpr {
+public class ColorTouches implements BoolExpr {
     private Color first;
     private Color second;
 

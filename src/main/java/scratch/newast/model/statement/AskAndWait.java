@@ -2,7 +2,7 @@ package scratch.newast.model.statement;
 
 import scratch.newast.model.expression.StringExpr;
 
-public class AskAndWait extends EntityLookStmt {
+public class AskAndWait implements EntityLookStmt {
     private StringExpr question;
 
     public AskAndWait(StringExpr question) {

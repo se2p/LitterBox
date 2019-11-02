@@ -2,7 +2,7 @@ package scratch.newast.model.statement;
 
 import scratch.newast.model.expression.NumExpr;
 
-public class ChangeLayerBy extends SpriteLookStmt {
+public class ChangeLayerBy implements SpriteLookStmt {
     private NumExpr num;
 
     public ChangeLayerBy(NumExpr num) {

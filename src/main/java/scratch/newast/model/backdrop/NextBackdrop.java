@@ -1,6 +1,6 @@
 package scratch.newast.model.backdrop;
 
-public class NextBackdrop extends Backdrop {
+public class NextBackdrop implements Backdrop {
 
     public NextBackdrop() {
     }

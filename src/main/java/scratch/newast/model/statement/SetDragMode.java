@@ -2,7 +2,7 @@ package scratch.newast.model.statement;
 
 import scratch.newast.model.dragmode.DragMode;
 
-public class SetDragMode extends SpriteMotionStmt {
+public class SetDragMode implements SpriteMotionStmt {
     private DragMode dragMode;
 
     public SetDragMode(DragMode dragMode) {

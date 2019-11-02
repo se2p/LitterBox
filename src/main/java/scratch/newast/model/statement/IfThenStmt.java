@@ -4,7 +4,7 @@ import scratch.newast.model.expression.BoolExpr;
 
 import java.util.List;
 
-public class IfThenStmt extends IfStmt {
+public class IfThenStmt implements IfStmt {
     private BoolExpr boolExpr;
     private List<Stmt> thenStmts;
 

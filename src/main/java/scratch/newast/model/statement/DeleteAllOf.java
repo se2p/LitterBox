@@ -2,7 +2,7 @@ package scratch.newast.model.statement;
 
 import scratch.newast.model.variable.Variable;
 
-public class DeleteAllOf extends ListStmt {
+public class DeleteAllOf implements ListStmt {
     private Variable variable;
 
     public DeleteAllOf(Variable variable) {

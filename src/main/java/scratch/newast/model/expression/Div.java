@@ -1,6 +1,6 @@
 package scratch.newast.model.expression;
 
-public class Div extends NumExpr {
+public class Div implements NumExpr {
     private NumExpr first;
     private NumExpr second;
 

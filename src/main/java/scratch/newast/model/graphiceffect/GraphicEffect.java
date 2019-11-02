@@ -1,8 +1,5 @@
 package scratch.newast.model.graphiceffect;
 
-public class GraphicEffect {
-
-    public GraphicEffect() {
-    }
+public interface GraphicEffect {
 
 }

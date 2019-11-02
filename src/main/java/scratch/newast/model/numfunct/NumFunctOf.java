@@ -2,7 +2,7 @@ package scratch.newast.model.numfunct;
 
 import scratch.newast.model.expression.NumExpr;
 
-public class NumFunctOf extends NumExpr {
+public class NumFunctOf implements NumExpr {
     private NumFunct funct;
     private NumExpr num;
 

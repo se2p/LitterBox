@@ -2,7 +2,7 @@ package scratch.newast.model.event;
 
 import scratch.newast.model.variable.Identifier;
 
-public class BackdropSwitchTo extends Event {
+public class BackdropSwitchTo implements Event {
     private Identifier backdrop;
 
     public BackdropSwitchTo(Identifier backdrop) {

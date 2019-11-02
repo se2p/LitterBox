@@ -1,6 +1,6 @@
 package scratch.newast.model.expression;
 
-public class StringContains extends BoolExpr {
+public class StringContains implements BoolExpr {
     private StringExpr first;
     private StringExpr second;
 

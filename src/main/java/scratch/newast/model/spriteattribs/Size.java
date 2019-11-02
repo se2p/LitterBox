@@ -1,6 +1,6 @@
 package scratch.newast.model.spriteattribs;
 
-public class Size extends SpriteAttribs {
+public class Size implements SpriteAttribs {
 
     public Size() {
     }

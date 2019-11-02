@@ -3,7 +3,7 @@ package scratch.newast.model.statement;
 import scratch.newast.model.expression.StringExpr;
 import scratch.newast.model.variable.Variable;
 
-public class AddStringTo extends ListStmt {
+public class AddStringTo implements ListStmt {
     private StringExpr string;
     private Variable variable;
 

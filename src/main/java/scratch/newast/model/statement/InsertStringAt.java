@@ -4,7 +4,7 @@ import scratch.newast.model.expression.NumExpr;
 import scratch.newast.model.expression.StringExpr;
 import scratch.newast.model.variable.Variable;
 
-public class InsertStringAt extends ListStmt {
+public class InsertStringAt implements ListStmt {
     private StringExpr string;
     private NumExpr index;
     private Variable variable;

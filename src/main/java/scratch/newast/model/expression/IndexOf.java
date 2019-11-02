@@ -2,7 +2,7 @@ package scratch.newast.model.expression;
 
 import scratch.newast.model.variable.Variable;
 
-public class IndexOf extends NumExpr {
+public class IndexOf implements NumExpr {
     private Expression expr;
     private Variable variable;
 

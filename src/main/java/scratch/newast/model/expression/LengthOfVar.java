@@ -2,7 +2,7 @@ package scratch.newast.model.expression;
 
 import scratch.newast.model.variable.Variable;
 
-public class LengthOfVar extends NumExpr {
+public class LengthOfVar implements NumExpr {
     private Variable variable;
 
     public LengthOfVar(Variable variable) {

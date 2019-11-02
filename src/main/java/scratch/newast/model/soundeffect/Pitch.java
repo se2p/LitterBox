@@ -1,6 +1,6 @@
 package scratch.newast.model.soundeffect;
 
-public class Pitch extends SoundEffect {
+public class Pitch implements SoundEffect {
 
     public Pitch() {
     }

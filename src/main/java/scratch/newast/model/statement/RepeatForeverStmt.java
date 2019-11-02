@@ -2,7 +2,7 @@ package scratch.newast.model.statement;
 
 import java.util.List;
 
-public class RepeatForeverStmt extends ControlStmt {
+public class RepeatForeverStmt implements ControlStmt {
     private List<Stmt> stmtList;
 
     public RepeatForeverStmt(List<Stmt> stmtList) {

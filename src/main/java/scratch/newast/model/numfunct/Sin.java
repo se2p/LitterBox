@@ -1,6 +1,6 @@
 package scratch.newast.model.numfunct;
 
-public class Sin extends NumFunct {
+public class Sin implements NumFunct {
 
     public Sin() {
     }

@@ -1,8 +1,5 @@
 package scratch.newast.model.statement;
 
-public class SpriteMotionStmt extends Stmt {
-
-    public SpriteMotionStmt() {
-    }
+public interface SpriteMotionStmt extends Stmt {
 
 }

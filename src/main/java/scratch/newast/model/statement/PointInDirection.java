@@ -2,7 +2,7 @@ package scratch.newast.model.statement;
 
 import scratch.newast.model.expression.NumExpr;
 
-public class PointInDirection extends SpriteMotionStmt {
+public class PointInDirection implements SpriteMotionStmt {
     private NumExpr direction;
 
     public PointInDirection(NumExpr direction) {

@@ -1,6 +1,6 @@
 package scratch.newast.model.event;
 
-public class Never extends Event {
+public class Never implements Event {
 
     public Never() {
     }

@@ -2,7 +2,7 @@ package scratch.newast.model.statement;
 
 import scratch.newast.model.sound.Sound;
 
-public class PlaySoundUntilDone extends EntitySoundStmt {
+public class PlaySoundUntilDone implements EntitySoundStmt {
     private Sound sound;
 
     public PlaySoundUntilDone(Sound sound) {

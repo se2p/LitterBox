@@ -1,6 +1,6 @@
 package scratch.newast.model.expression;
 
-public class VariableContains extends BoolExpr {
+public class VariableContains implements BoolExpr {
     private StringExpr variable;
     private Expression expr;
 

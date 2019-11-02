@@ -2,7 +2,7 @@ package scratch.newast.model.event;
 
 import scratch.newast.model.Message;
 
-public class ReceptionOfMessage extends Event {
+public class ReceptionOfMessage implements Event {
     private Message msg;
 
     public ReceptionOfMessage(Message msg) {

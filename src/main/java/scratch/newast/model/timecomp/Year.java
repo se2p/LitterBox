@@ -1,6 +1,6 @@
 package scratch.newast.model.timecomp;
 
-public class Year extends TimeComp {
+public class Year implements TimeComp {
 
     public Year() {
     }

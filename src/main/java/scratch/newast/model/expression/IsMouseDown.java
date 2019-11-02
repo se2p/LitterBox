@@ -1,6 +1,6 @@
 package scratch.newast.model.expression;
 
-public class IsMouseDown extends BoolExpr {
+public class IsMouseDown implements BoolExpr {
 
     public IsMouseDown() {
     }

@@ -1,6 +1,6 @@
 package scratch.newast.model.costume;
 
-public class PrevCostume extends Costume {
+public class PrevCostume implements Costume {
 
     public PrevCostume() {
     }

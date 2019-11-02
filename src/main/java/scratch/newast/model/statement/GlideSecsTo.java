@@ -3,7 +3,7 @@ package scratch.newast.model.statement;
 import scratch.newast.model.expression.NumExpr;
 import scratch.newast.model.position.Position;
 
-public class GlideSecsTo extends SpriteMotionStmt {
+public class GlideSecsTo implements SpriteMotionStmt {
     private NumExpr secs;
     private Position position;
 

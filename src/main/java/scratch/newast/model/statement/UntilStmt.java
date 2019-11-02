@@ -4,7 +4,7 @@ import scratch.newast.model.expression.BoolExpr;
 
 import java.util.List;
 
-public class UntilStmt extends ControlStmt {
+public class UntilStmt implements ControlStmt {
     private BoolExpr boolExpr;
     private List<Stmt> stmtList;
 

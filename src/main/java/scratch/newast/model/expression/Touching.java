@@ -2,7 +2,7 @@ package scratch.newast.model.expression;
 
 import scratch.newast.model.touchable.Touchable;
 
-public class Touching extends BoolExpr {
+public class Touching implements BoolExpr {
     private Touchable touchable;
 
     public Touching(Touchable touchable) {

@@ -2,7 +2,7 @@ package scratch.newast.model.statement;
 
 import scratch.newast.model.expression.NumExpr;
 
-public class SetXTo extends SpriteMotionStmt {
+public class SetXTo implements SpriteMotionStmt {
     private NumExpr num;
 
     public SetXTo(NumExpr num) {

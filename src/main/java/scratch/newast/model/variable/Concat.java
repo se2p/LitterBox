@@ -1,6 +1,6 @@
 package scratch.newast.model.variable;
 
-public class Concat extends Variable {
+public class Concat implements Variable {
     private Identifier first;
     private Identifier second;
 

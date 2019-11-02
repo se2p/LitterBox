@@ -1,6 +1,6 @@
 package scratch.newast.model.numfunct;
 
-public class Asin extends NumFunct {
+public class Asin implements NumFunct {
 
     public Asin() {
     }

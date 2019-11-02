@@ -2,7 +2,7 @@ package scratch.newast.model.position;
 
 import scratch.newast.model.Sprite;
 
-public class PivotOf extends Position {
+public class PivotOf implements Position {
     private Sprite sprite;
 
     public PivotOf(Sprite sprite) {

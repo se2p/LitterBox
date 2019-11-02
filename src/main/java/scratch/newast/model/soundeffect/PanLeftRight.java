@@ -1,6 +1,6 @@
 package scratch.newast.model.soundeffect;
 
-public class PanLeftRight extends SoundEffect {
+public class PanLeftRight implements SoundEffect {
 
     public PanLeftRight() {
     }

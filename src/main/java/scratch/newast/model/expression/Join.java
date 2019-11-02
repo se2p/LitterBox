@@ -1,6 +1,6 @@
 package scratch.newast.model.expression;
 
-public class Join extends StringExpr {
+public class Join implements StringExpr {
     private StringExpr first;
     private StringExpr second;
 

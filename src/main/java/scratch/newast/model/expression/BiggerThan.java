@@ -1,6 +1,6 @@
 package scratch.newast.model.expression;
 
-public class BiggerThan extends BoolExpr {
+public class BiggerThan implements BoolExpr {
     private NumExpr first;
     private NumExpr second;
 
