@@ -1,11 +1,11 @@
-package scratch.newast.model.statement;
+package scratch.newast.model.statement.spritelook;
 
 import scratch.newast.model.variable.Variable;
 
-public class HideVariable implements SpriteLookStmt {
+public class ShowVariable implements SpriteLookStmt {
     private Variable variable;
 
-    public HideVariable(Variable variable) {
+    public ShowVariable(Variable variable) {
         this.variable = variable;
     }
 

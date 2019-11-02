@@ -1,4 +1,4 @@
-package scratch.newast.model.statement;
+package scratch.newast.model.statement.spritelook;
 
 import scratch.newast.model.expression.num.NumExpr;
 
