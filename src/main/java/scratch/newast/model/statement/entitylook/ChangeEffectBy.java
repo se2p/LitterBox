@@ -1,13 +1,13 @@
-package scratch.newast.model.statement;
+package scratch.newast.model.statement.entitylook;
 
 import scratch.newast.model.expression.num.NumExpr;
 import scratch.newast.model.graphiceffect.GraphicEffect;
 
-public class SetEffectTo implements EntityLookStmt {
+public class ChangeEffectBy implements EntityLookStmt {
     private GraphicEffect effect;
     private NumExpr num;
 
-    public SetEffectTo(GraphicEffect effect, NumExpr num) {
+    public ChangeEffectBy(GraphicEffect effect, NumExpr num) {
         this.effect = effect;
         this.num = num;
     }
