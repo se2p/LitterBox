@@ -1,4 +1,4 @@
-package scratch.newast.model.statement;
+package scratch.newast.model.statement.common;
 
 public class ResetTimer implements CommonStmt {
 
