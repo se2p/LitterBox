@@ -1,20 +1,18 @@
 package scratch.newast.model.expression.num;
 
-import java.math.BigInteger;
-
 public class Number implements NumExpr {
 
-    private BigInteger value;
+    private float value;
 
-    public Number(BigInteger value) {
+    public Number(float value) {
         this.value = value;
     }
 
-    public BigInteger getValue() {
+    public float getValue() {
         return value;
     }
 
-    public void setValue(BigInteger value) {
+    public void setValue(float value) {
         this.value = value;
     }
 }
