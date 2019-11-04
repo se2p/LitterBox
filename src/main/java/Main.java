@@ -21,9 +21,9 @@ public class Main {
 
         Options options = new Options();
 
-        options.addOption("path", true, "folder or file path (required)");
-        options.addOption("folder", true, "true if the given path is a folder, value = path with name of the csv file you want to save");
-        options.addOption("detectors", true, "name all detectors you want to run seperated by ',' " +
+        options.addOption("path", true, "path to folder or file that should be analyzed (required)");
+        options.addOption("output", true, "path with name of the csv file you want to save (required if path argument is a folder path)");
+        options.addOption("detectors", true, "name all detectors you want to run separated by ',' " +
                 "\n(all detectors defined in the README)");
         options.addOption("version", true, "the Scratch Version ('2' or '3') (required)");
 
@@ -32,9 +32,9 @@ public class Main {
         CommandLine cmd = parser.parse(options, args);
 
         if (cmd.hasOption("path") && cmd.hasOption("version")) {
-            if (cmd.hasOption("folder")) {
+            if (cmd.hasOption("output")) {
                 checkMultiple(cmd.getOptionValue("path"), cmd.getOptionValue("detectors", "all"),
-                        cmd.getOptionValue("folder"), cmd.getOptionValue("version"));
+                        cmd.getOptionValue("output"), cmd.getOptionValue("version"));
             } else {
                 checkSingle(cmd.getOptionValue("path"), cmd.getOptionValue("detectors",
                         "all"), cmd.getOptionValue("version"));
@@ -43,7 +43,7 @@ public class Main {
         }
         HelpFormatter formatter = new HelpFormatter();
         formatter.printHelp("LitterBox", options);
-        System.out.println("Example: " + "java -cp C:\\ScratchAnalytics-1.0.jar Main -path C:\\scratchprojects\\files\\ -version 3 -folder C:\\scratchprojects\\files\\test.csv -detectors cnt,glblstrt");
+        System.out.println("Example: " + "java -cp C:\\ScratchAnalytics-1.0.jar Main -path C:\\scratchprojects\\files\\ -version 3 -output C:\\scratchprojects\\files\\test.csv -detectors cnt,glblstrt");
     }
 
     /**
@@ -75,6 +75,10 @@ public class Main {
      */
     private static void checkMultiple(String path, String dtctrs, String csv, String version) {
         File folder = new File(path);
+        if (!folder.exists()){
+            System.err.println("[Error] folder path given does not exist");
+            return;
+        }
         CSVPrinter printer = null;
         try {
             String name = csv;
