@@ -2,17 +2,13 @@ package scratch.newast.model;
 
 import scratch.newast.model.variable.Identifier;
 
-import java.util.List;
-
 public class Program {
     private Identifier ident;
-    private ScriptGroup stage;
-    private List<ScriptGroup> sprites;
+    private ScriptGroupList scriptGroupList;
 
-    public Program(Identifier ident, ScriptGroup stage, List<ScriptGroup> sprites) {
+    public Program(Identifier ident, ScriptGroupList scriptGroupList) {
         this.ident = ident;
-        this.stage = stage;
-        this.sprites = sprites;
+        this.scriptGroupList = scriptGroupList;
     }
 
     public Identifier getIdent() {
@@ -23,19 +19,11 @@ public class Program {
         this.ident = ident;
     }
 
-    public ScriptGroup getStage() {
-        return stage;
+    public ScriptGroupList getScriptGroupList() {
+        return scriptGroupList;
     }
 
-    public void setStage(ScriptGroup stage) {
-        this.stage = stage;
-    }
-
-    public List<ScriptGroup> getSprites() {
-        return sprites;
-    }
-
-    public void setSprites(List<ScriptGroup> sprites) {
-        this.sprites = sprites;
+    public void setScriptGroupList(ScriptGroupList scriptGroupList) {
+        this.scriptGroupList = scriptGroupList;
     }
 }

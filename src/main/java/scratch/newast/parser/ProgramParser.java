@@ -3,6 +3,7 @@ package scratch.newast.parser;
 import com.fasterxml.jackson.databind.JsonNode;
 import scratch.newast.model.Program;
 import scratch.newast.model.ScriptGroup;
+import scratch.newast.model.ScriptGroupList;
 import scratch.newast.model.variable.Identifier;
 
 import java.util.LinkedList;
@@ -23,7 +24,7 @@ public class ProgramParser {
 
         Iterable<JsonNode> iterable = () -> programNode.get("targets").iterator();
         Stream<JsonNode> stream = StreamSupport.stream(iterable.spliterator(), false);
-        Optional<JsonNode> stageNode = stream.filter(node -> node.get("isStage").asBoolean()).findFirst();
+        Optional<JsonNode> stageNode = stream.filter(node -> node.get("isStage").asBoolean()).findFirst(); //TODO: Check that only one stage exists
         if (!stageNode.isPresent()) {
             throw new IllegalArgumentException("Program has no Stage");
         }
@@ -35,11 +36,14 @@ public class ProgramParser {
         List<JsonNode> nonStageNodes = stream.filter(node -> !(node.get("isStage").asBoolean())).collect(Collectors.toList());
 
         List<ScriptGroup> scriptGroups = new LinkedList<>();
+        scriptGroups.add(stage);
         for (JsonNode nonStageNode : nonStageNodes) {
             ScriptGroup group = ScriptGroupParser.parse(nonStageNode);
             scriptGroups.add(group);
         }
 
-        return new Program(ident, stage, scriptGroups);
+        ScriptGroupList scriptGroupList = new ScriptGroupList(scriptGroups);
+
+        return new Program(ident, scriptGroupList);
     }
 }

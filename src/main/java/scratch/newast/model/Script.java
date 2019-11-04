@@ -1,25 +1,14 @@
 package scratch.newast.model;
 
 import scratch.newast.model.event.Event;
-import scratch.newast.model.statement.Stmt;
-import scratch.newast.model.statement.termination.TerminationStmt;
-
-import java.util.List;
 
 public class Script {
     private Event event;
-    private List<Stmt> stmtList;
-    private TerminationStmt terminationStmt;
+    private StmtList stmtList;
 
-    public Script(Event event, List<Stmt> stmtList) {
+    public Script(Event event, StmtList stmtList) {
         this.event = event;
         this.stmtList = stmtList;
-    }
-
-    public Script(Event event, List<Stmt> stmtList, TerminationStmt terminationStmt) {
-        this.event = event;
-        this.stmtList = stmtList;
-        this.terminationStmt = terminationStmt;
     }
 
     public Event getEvent() {
@@ -30,20 +19,11 @@ public class Script {
         this.event = event;
     }
 
-    public List<Stmt> getStmtList() {
+    public StmtList getStmtList() {
         return stmtList;
     }
 
-    public void setStmtList(List<Stmt> stmtList) {
+    public void setStmtList(StmtList stmtList) {
         this.stmtList = stmtList;
     }
-
-    public TerminationStmt getTerminationStmt() {
-        return terminationStmt;
-    }
-
-    public void setTerminationStmt(TerminationStmt terminationStmt) {
-        this.terminationStmt = terminationStmt;
-    }
-
 }
