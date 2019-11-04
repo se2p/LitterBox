@@ -1,7 +1,6 @@
 package scratch.newast.parser;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import scratch.data.OpCodeMapping;
 import scratch.newast.model.Script;
 import scratch.newast.model.StmtList;
 import scratch.newast.model.event.Event;
@@ -39,7 +38,7 @@ public class ScriptParser {
 
     private static boolean isEvent(JsonNode current) {
         String opcode = current.get(OPCODE).asText();
-        return OpCodeMapping.hatBlockOpcodes.contains(opcode); //TODO Check if all these are events. Watchout for self defined procedures
+        return EventParser.eventOpcodes.contains(opcode); //TODO Check if all these are events. Watchout for self defined procedures
     }
 
     private static StmtList parseStmtList(JsonNode current, JsonNode blocks) {
