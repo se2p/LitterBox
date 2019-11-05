@@ -1,11 +1,14 @@
 import analytics.IssueFinder;
 import analytics.IssueTool;
+import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.commons.cli.*;
 import org.apache.commons.csv.CSVPrinter;
+import scratch.newast.model.Program;
+import scratch.newast.parser.ProgramParser;
 import scratch.structure.Project;
 import utils.CSVWriter;
 import utils.JsonParser;
-import utils.Version;
+import utils.ZipReader;
 
 import java.io.File;
 import java.io.IOException;
@@ -22,84 +25,112 @@ public class Main {
         Options options = new Options();
 
         options.addOption("path", true, "path to folder or file that should be analyzed (required)");
-        options.addOption("output", true, "path with name of the csv file you want to save (required if path argument is a folder path)");
+        options.addOption("output", true, "path with name of the csv file you want to save (required if path argument" +
+                " is a folder path)");
         options.addOption("detectors", true, "name all detectors you want to run separated by ',' " +
                 "\n(all detectors defined in the README)");
         options.addOption("version", true, "the Scratch Version ('2' or '3') (required)");
-
+       // options.addOption("filetype", true, "use if JSON files instead of whole Scratch files should be used");
         CommandLineParser parser = new DefaultParser();
 
         CommandLine cmd = parser.parse(options, args);
 
         if (cmd.hasOption("path") && cmd.hasOption("version")) {
-            if (cmd.hasOption("output")) {
-                checkMultiple(cmd.getOptionValue("path"), cmd.getOptionValue("detectors", "all"),
-                        cmd.getOptionValue("output"), cmd.getOptionValue("version"));
+            File folder = new File(cmd.getOptionValue("path"));
+            if (folder.exists() && folder.isDirectory()) {
+                checkMultiple(folder, cmd.getOptionValue("detectors", "all"),
+                        cmd.getOptionValue("output"), cmd.getOptionValue("version") );
+            } else if (folder.exists() && !folder.isDirectory()) {
+                checkSingle(folder, cmd.getOptionValue("detectors",
+                        "all"), cmd.getOptionValue("output"), cmd.getOptionValue("version"));
             } else {
-                checkSingle(cmd.getOptionValue("path"), cmd.getOptionValue("detectors",
-                        "all"), cmd.getOptionValue("version"));
+                System.err.println("[Error] folder path given does not exist");
+                return;
             }
             return;
         }
         HelpFormatter formatter = new HelpFormatter();
         formatter.printHelp("LitterBox", options);
-        System.out.println("Example: " + "java -cp C:\\ScratchAnalytics-1.0.jar Main -path C:\\scratchprojects\\files\\ -version 3 -output C:\\scratchprojects\\files\\test.csv -detectors cnt,glblstrt");
+        System.out.println("Example: " + "java -cp C:\\ScratchAnalytics-1.0.jar Main -path " +
+                "C:\\scratchprojects\\files\\ -version 3 -output C:\\scratchprojects\\files\\test.csv -detectors cnt," +
+                "glblstrt");
     }
 
     /**
      * The method for analyzing one Scratch project file (ZIP).
      * It will produce only console output.
      *
-     * @param path      the file path
+     * @param fileEntry the file to analyze
      * @param detectors
      */
-    private static void checkSingle(String path, String detectors, String version) {
+    private static void checkSingle(File fileEntry, String detectors, String csv, String version) {
         try {
-            File fileEntry = new File(path);
-            if (!fileEntry.isDirectory()) {
-                Project project = getProject(fileEntry, version);
-                //System.out.println(project.toString());
-                IssueTool iT = new IssueTool();
+            Project project = getProject(fileEntry, version);
+            //System.out.println(project.toString());
+            IssueTool iT = new IssueTool();
+            if (csv == null || csv.equals("")) {
                 iT.checkRaw(project, detectors);
             } else {
-                System.err.println("[Error] Path does not target a single project file!");
+                CSVPrinter printer = prepareCSVPrinter(detectors,iT,csv);
+                iT.check(project, printer, detectors);
+                System.out.println("Finished: " + fileEntry.getName());
+                try {
+                    assert printer != null;
+                    CSVWriter.flushCSV(printer);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
+
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private static CSVPrinter prepareCSVPrinter(String dtctrs, IssueTool iT, String name) {
+        List<String> heads = new ArrayList<>();
+        heads.add("project");
+        String[] detectors;
+        if (dtctrs.equals("all")) {
+            detectors = iT.getFinder().keySet().toArray(new String[0]);
+        } else {
+            detectors = dtctrs.split(",");
+        }
+        for (String s : detectors) {
+            if (iT.getFinder().containsKey(s)) {
+                IssueFinder iF = iT.getFinder().get(s);
+                heads.add(iF.getName());
+            }
+        }
+        try {
+            return CSVWriter.getNewPrinter(name, heads);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     /**
      * The main method for analyzing all Scratch project files (ZIP) in the given folder location.
      * It will produce a .csv file with all entries.
      */
-    private static void checkMultiple(String path, String dtctrs, String csv, String version) {
-        File folder = new File(path);
-        if (!folder.exists()){
-            System.err.println("[Error] folder path given does not exist");
-            return;
-        }
+    private static void checkMultiple(File folder, String dtctrs, String csv, String version) {
+
         CSVPrinter printer = null;
         try {
             String name = csv;
             IssueTool iT = new IssueTool();
-            List<String> heads = new ArrayList<>();
-            heads.add("project");
-            String[] detectors;
-            if (dtctrs.equals("all")) {
-                detectors = iT.getFinder().keySet().toArray(new String[0]);
-            } else {
-                detectors = dtctrs.split(",");
-            }
-            for (String s : detectors) {
-                if (iT.getFinder().containsKey(s)) {
-                    IssueFinder iF = iT.getFinder().get(s);
-                    heads.add(iF.getName());
-                }
-            }
-            printer = CSVWriter.getNewPrinter(name, heads);
+            printer= prepareCSVPrinter(dtctrs,iT,name);
             for (final File fileEntry : Objects.requireNonNull(folder.listFiles())) {
                 if (!fileEntry.isDirectory()) {
+                    JsonNode node =
+                            JsonParser.getTargetsNodeFromJSONString(ZipReader.getJsonString(fileEntry.getPath()));
+                    if (node == null) {
+                        System.err.println("[Error] project json did not contain root node");
+                    }
+                    Program program = ProgramParser.parseProgram(fileEntry.getName(), node);
+
+
                     Project project = getProject(fileEntry, version);
                     //System.out.println(project.toString());
                     iT.check(project, printer, dtctrs);

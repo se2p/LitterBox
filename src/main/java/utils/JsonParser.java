@@ -271,4 +271,15 @@ public class JsonParser {
         }
         return script;
     }
+
+    public static JsonNode getTargetsNodeFromJSONString(String json){
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            JsonNode rootNode = mapper.readTree(json);
+            return rootNode;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 }
