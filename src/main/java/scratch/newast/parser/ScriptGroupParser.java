@@ -1,26 +1,31 @@
 package scratch.newast.parser;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import scratch.newast.model.*;
-import scratch.newast.model.procedure.ProcedureDeclarationList;
-import scratch.newast.model.resource.Resource;
-import scratch.newast.model.resource.ResourceList;
-import scratch.newast.model.variable.Identifier;
-
+import com.google.common.base.Preconditions;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
+import scratch.newast.ParsingException;
+import scratch.newast.model.Declaration;
+import scratch.newast.model.DeclarationList;
+import scratch.newast.model.Entity;
+import scratch.newast.model.Script;
+import scratch.newast.model.ScriptGroup;
+import scratch.newast.model.ScriptList;
+import scratch.newast.model.procedure.ProcedureDeclarationList;
+import scratch.newast.model.resource.Resource;
+import scratch.newast.model.resource.ResourceList;
+import scratch.newast.model.variable.Identifier;
 
 public class ScriptGroupParser {
 
-    public static ScriptGroup parse(JsonNode jsonNode) {
-
-        if (!jsonNode.has("isStage") || !jsonNode.has("name")) {
-            throw new IllegalArgumentException("Expected fields 'isStage' and 'name' in ScriptGroup.");
-        }
+    public static ScriptGroup parse(JsonNode jsonNode) throws ParsingException {
+        Preconditions.checkNotNull(jsonNode);
+        Preconditions.checkArgument(jsonNode.has("isStage"), "Missing field isStage in ScriptGroup");
+        Preconditions.checkArgument(jsonNode.has("name"), "Missing field name in ScriptGroup");
 
         Entity entity;
         if (jsonNode.get("isStage").asBoolean()) {
@@ -44,7 +49,8 @@ public class ScriptGroupParser {
         Iterator<String> fieldIterator = allBlocks.fieldNames();
         Iterable<String> iterable = () -> fieldIterator;
         Stream<String> stream = StreamSupport.stream(iterable.spliterator(), false);
-        List<String> topLevelNodes = stream.filter(fieldName -> allBlocks.get(fieldName).get("topLevel").asBoolean()).collect(Collectors.toList());
+        List<String> topLevelNodes = stream.filter(fieldName -> allBlocks.get(fieldName).get("topLevel").asBoolean())
+            .collect(Collectors.toList());
         List<Script> scripts = new LinkedList<>();
         for (String topLevelID : topLevelNodes) {
             Script script = ScriptParser.parse(topLevelID, allBlocks);

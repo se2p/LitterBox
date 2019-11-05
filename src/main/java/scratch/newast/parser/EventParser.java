@@ -1,16 +1,33 @@
 package scratch.newast.parser;
 
+import static scratch.newast.Constants.FIELDS_KEY;
+import static scratch.newast.Constants.FIELD_VALUE;
+import static scratch.newast.Constants.OPCODE_KEY;
+import static scratch.newast.opcodes.EventOpcode.control_start_as_clone;
+import static scratch.newast.opcodes.EventOpcode.event_whenbackdropswitchesto;
+import static scratch.newast.opcodes.EventOpcode.event_whenbroadcastreceived;
+import static scratch.newast.opcodes.EventOpcode.event_whenflagclicked;
+import static scratch.newast.opcodes.EventOpcode.event_whengreaterthan;
+import static scratch.newast.opcodes.EventOpcode.event_whenkeypressed;
+import static scratch.newast.opcodes.EventOpcode.event_whenthisspriteclicked;
+
 import com.fasterxml.jackson.databind.JsonNode;
+import com.google.common.base.Preconditions;
+import scratch.newast.ParsingException;
 import scratch.newast.model.Key;
 import scratch.newast.model.Message;
-import scratch.newast.model.event.*;
+import scratch.newast.model.event.BackdropSwitchTo;
+import scratch.newast.model.event.Clicked;
+import scratch.newast.model.event.Event;
+import scratch.newast.model.event.GreenFlag;
+import scratch.newast.model.event.KeyPressed;
+import scratch.newast.model.event.ReceptionOfMessage;
+import scratch.newast.model.event.StartedAsClone;
 import scratch.newast.model.variable.Identifier;
 import scratch.newast.opcodes.EventOpcode;
 
-import static scratch.newast.Constants.*;
-import static scratch.newast.opcodes.EventOpcode.*;
-
 public class EventParser {
+
     public static String INPUTS = "WHENGREATERTHANMENU";
     public static String KEY_OPTION = "KEY_OPTION";
     public static String BCAST_OPTION = "BROADCAST_OPTION";
@@ -18,16 +35,14 @@ public class EventParser {
     public static String VALUE = "WHENGREATERTHANMENU";
     public static String BACKDROP = "BACKDROP";
 
-    public static Event parse(String blockID, JsonNode allBlocks) {
-        if (!allBlocks.has(blockID)) {
-            throw new IllegalArgumentException("Given blockID does not exist in blocks list.");
-        }
+    public static Event parse(String blockID, JsonNode allBlocks) throws ParsingException {
+        Preconditions.checkNotNull(blockID);
+        Preconditions.checkNotNull(allBlocks);
 
         JsonNode current = allBlocks.get(blockID);
         String opcodeString = current.get(OPCODE_KEY).asText();
-        if (!EventOpcode.contains(opcodeString)) {
-            throw new IllegalArgumentException("Given blockID does not point to an event block.");
-        }
+        Preconditions
+            .checkArgument(EventOpcode.contains(opcodeString), "Given blockID does not point to an event block.");
 
         Event event;
         EventOpcode opcode = EventOpcode.valueOf(opcodeString);
@@ -44,7 +59,7 @@ public class EventParser {
             JsonNode fields = current.get(FIELDS_KEY);
             String msgValue = fields.get(BCAST_OPTION).get(FIELD_VALUE).asText();
             Message msg =
-                    new Message(msgValue); // TODO should we reference the previously parsed broadcast?
+                new Message(msgValue); // TODO should we reference the previously parsed broadcast?
             event = new ReceptionOfMessage(msg);
         } else if (opcode.equals(control_start_as_clone)) {
             event = new StartedAsClone();
