@@ -1,5 +1,7 @@
 package scratch.newast.model.event;
 
-public interface Event {
+import scratch.newast.model.ASTNode;
+
+public interface Event extends ASTNode {
 
 }

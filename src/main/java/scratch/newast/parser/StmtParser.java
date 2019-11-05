@@ -35,7 +35,7 @@ public class StmtParser {
         throws ParsingException {
         String opCodeString = current.get(Constants.OPCODE_KEY).asText();
         if (TerminationStmtOpcode.contains(opCodeString)) {
-            throw new IllegalArgumentException(
+            throw new ParsingException(
                 "Called parseTerminationStmt with a block that does not qualify as such"
                     + "a statement");
         }

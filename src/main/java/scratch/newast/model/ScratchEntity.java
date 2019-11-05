@@ -1,4 +1,16 @@
 package scratch.newast.model;
 
-public class ScratchEntity {
+import com.google.common.collect.ImmutableList;
+
+public class ScratchEntity implements ASTNode {
+
+    @Override
+    public void accept(ScratchVisitor visitor) {
+        visitor.visit(this);
+    }
+
+    @Override
+    public ImmutableList<Object> getChildren() {
+        return ImmutableList.builder().build();
+    }
 }

@@ -1,5 +1,7 @@
 package scratch.newast.model.statement;
 
-public interface Stmt {
+import scratch.newast.model.ASTNode;
+
+public interface Stmt extends ASTNode {
 
 }
