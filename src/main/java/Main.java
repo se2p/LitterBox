@@ -1,8 +1,11 @@
 import analytics.IssueFinder;
 import analytics.IssueTool;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.cli.*;
 import org.apache.commons.csv.CSVPrinter;
+import org.apache.commons.io.FilenameUtils;
+import scratch.newast.ParsingException;
 import scratch.newast.model.Program;
 import scratch.newast.parser.ProgramParser;
 import scratch.structure.Project;
@@ -30,7 +33,6 @@ public class Main {
         options.addOption("detectors", true, "name all detectors you want to run separated by ',' " +
                 "\n(all detectors defined in the README)");
         options.addOption("version", true, "the Scratch Version ('2' or '3') (required)");
-       // options.addOption("filetype", true, "use if JSON files instead of whole Scratch files should be used");
         CommandLineParser parser = new DefaultParser();
 
         CommandLine cmd = parser.parse(options, args);
@@ -39,7 +41,7 @@ public class Main {
             File folder = new File(cmd.getOptionValue("path"));
             if (folder.exists() && folder.isDirectory()) {
                 checkMultiple(folder, cmd.getOptionValue("detectors", "all"),
-                        cmd.getOptionValue("output"), cmd.getOptionValue("version") );
+                        cmd.getOptionValue("output"), cmd.getOptionValue("version"));
             } else if (folder.exists() && !folder.isDirectory()) {
                 checkSingle(folder, cmd.getOptionValue("detectors",
                         "all"), cmd.getOptionValue("output"), cmd.getOptionValue("version"));
@@ -65,13 +67,16 @@ public class Main {
      */
     private static void checkSingle(File fileEntry, String detectors, String csv, String version) {
         try {
+
             Project project = getProject(fileEntry, version);
+            Program program = extractProgram(fileEntry);
+
             //System.out.println(project.toString());
             IssueTool iT = new IssueTool();
             if (csv == null || csv.equals("")) {
                 iT.checkRaw(project, detectors);
             } else {
-                CSVPrinter printer = prepareCSVPrinter(detectors,iT,csv);
+                CSVPrinter printer = prepareCSVPrinter(detectors, iT, csv);
                 iT.check(project, printer, detectors);
                 System.out.println("Finished: " + fileEntry.getName());
                 try {
@@ -120,17 +125,10 @@ public class Main {
         try {
             String name = csv;
             IssueTool iT = new IssueTool();
-            printer= prepareCSVPrinter(dtctrs,iT,name);
+            printer = prepareCSVPrinter(dtctrs, iT, name);
             for (final File fileEntry : Objects.requireNonNull(folder.listFiles())) {
                 if (!fileEntry.isDirectory()) {
-                    JsonNode node =
-                            JsonParser.getTargetsNodeFromJSONString(ZipReader.getJsonString(fileEntry.getPath()));
-                    if (node == null) {
-                        System.err.println("[Error] project json did not contain root node");
-                    }
-                    Program program = ProgramParser.parseProgram(fileEntry.getName(), node);
-
-
+                    Program program = extractProgram(fileEntry);
                     Project project = getProject(fileEntry, version);
                     //System.out.println(project.toString());
                     iT.check(project, printer, dtctrs);
@@ -214,5 +212,33 @@ public class Main {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private static Program extractProgram(File fileEntry) {
+        ObjectMapper mapper = new ObjectMapper();
+        Program program = null;
+        if ((FilenameUtils.getExtension(fileEntry.getPath())).toLowerCase().equals("json")) {
+            try {
+                program = ProgramParser.parseProgram(fileEntry.getName(), mapper.readTree(fileEntry));
+            } catch (ParsingException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else {
+            JsonNode node = null;
+            try {
+                node = JsonParser.getTargetsNodeFromJSONString(ZipReader.getJsonString(fileEntry.getPath()));
+                if (node == null) {
+                    System.err.println("[Error] project json did not contain root node");
+                }
+                program = ProgramParser.parseProgram(fileEntry.getName(), node);
+            } catch (ParsingException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return program;
     }
 }
