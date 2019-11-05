@@ -5,56 +5,13 @@ import scratch.newast.model.Key;
 import scratch.newast.model.Message;
 import scratch.newast.model.event.*;
 import scratch.newast.model.variable.Identifier;
+import scratch.newast.opcodes.EventOpcode;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import static scratch.newast.Constants.*;
+import static scratch.newast.opcodes.EventOpcode.*;
 
 public class EventParser {
-
-    public static final String EVENT_WHENFLAGCLICKED = "event_whenflagclicked";
-    public static final String WHEN_GREEN_FLAG = "whenGreenFlag";
-    public static final String EVENT_WHENKEYPRESSED = "event_whenkeypressed";
-    public static final String WHEN_KEY_PRESSED = "whenKeyPressed";
-    public static final String EVENT_WHENTHISSPRITECLICKED = "event_whenthisspriteclicked";
-    public static final String WHEN_CLICKED = "whenClicked";
-    public static final String EVENT_WHENBROADCASTRECEIVED = "event_whenbroadcastreceived";
-    public static final String WHEN_I_RECEIVE = "whenIReceive";
-    public static final String EVENT_WHENBACKDROPSWITCHESTO = "event_whenbackdropswitchesto";
-    public static final String WHEN_SCENE_STARTS = "whenSceneStarts";
-    public static final String CONTROL_START_AS_CLONE = "control_start_as_clone";
-    public static final String WHEN_CLONED = "whenCloned";
-    public static final String EVENT_WHENGREATERTHAN = "event_whengreaterthan";
-    public static final String WHEN_SENSOR_GREATER_THAN = "whenSensorGreaterThan";
-    /**
-     * List of all opcodes of blocks which produce Events.
-     * These are similar to Hat blocks, with the exception that a procedure_defintion is not an event.
-     * Scratch 3 opcodes are followed by their equivalent in Scratch 2.
-     */
-    public static final List<String> eventOpcodes = new ArrayList<>(Arrays.asList(
-            EVENT_WHENFLAGCLICKED,
-            WHEN_GREEN_FLAG,
-            EVENT_WHENKEYPRESSED,
-            WHEN_KEY_PRESSED,
-            EVENT_WHENTHISSPRITECLICKED,
-            WHEN_CLICKED,
-            EVENT_WHENBROADCASTRECEIVED,
-            WHEN_I_RECEIVE,
-            EVENT_WHENBACKDROPSWITCHESTO,
-            WHEN_SCENE_STARTS,
-            CONTROL_START_AS_CLONE,
-            WHEN_CLONED,
-            EVENT_WHENGREATERTHAN,
-            WHEN_SENSOR_GREATER_THAN
-    ));
-    /**
-     * These are constants we might need more often
-     */
-    public static String OPCODE = "opcode";
-    public static String FIELDS = "fields";
     public static String INPUTS = "WHENGREATERTHANMENU";
-    /****************************************************/
-
     public static String KEY_OPTION = "KEY_OPTION";
     public static String BCAST_OPTION = "BROADCAST_OPTION";
     public static String VARIABLE_MENU = "WHENGREATERTHANMENU";
@@ -67,28 +24,31 @@ public class EventParser {
         }
 
         JsonNode current = allBlocks.get(blockID);
-        String opcode = current.get(OPCODE).asText();
-        if (!eventOpcodes.contains(opcode)) {
+        String opcodeString = current.get(OPCODE_KEY).asText();
+        if (!EventOpcode.contains(opcodeString)) {
             throw new IllegalArgumentException("Given blockID does not point to an event block.");
         }
 
         Event event;
-        if (opcode.equals(EVENT_WHENFLAGCLICKED) || opcode.equals(WHEN_GREEN_FLAG)) {
+        EventOpcode opcode = EventOpcode.valueOf(opcodeString);
+        if (opcode.equals(event_whenflagclicked)) {
             event = new GreenFlag();
-        } else if (opcode.equals(EVENT_WHENKEYPRESSED) || opcode.equals(WHEN_KEY_PRESSED)) {
-            //TODO should we catch/throw a "parser" exception?
-            String keyValue = current.get(FIELDS).get(KEY_OPTION).get(0).asText();
+        } else if (opcode.equals(event_whenkeypressed)) {
+            // TODO should we catch/throw a "parser" exception?
+            String keyValue = current.get(FIELDS_KEY).get(KEY_OPTION).get(FIELD_VALUE).asText();
             Key key = new Key(keyValue);
             event = new KeyPressed(key);
-        } else if (opcode.equals(EVENT_WHENTHISSPRITECLICKED) || opcode.equals(WHEN_CLICKED)) {
+        } else if (opcode.equals(event_whenthisspriteclicked)) {
             event = new Clicked();
-        } else if (opcode.equals(EVENT_WHENBROADCASTRECEIVED) || opcode.equals(WHEN_I_RECEIVE)) {
-            String msgValue = current.get(FIELDS).get(BCAST_OPTION).get(0).asText();
-            Message msg = new Message(msgValue); //TODO should we reference the previously parsed broadcast?
+        } else if (opcode.equals(event_whenbroadcastreceived)) {
+            JsonNode fields = current.get(FIELDS_KEY);
+            String msgValue = fields.get(BCAST_OPTION).get(FIELD_VALUE).asText();
+            Message msg =
+                    new Message(msgValue); // TODO should we reference the previously parsed broadcast?
             event = new ReceptionOfMessage(msg);
-        } else if (opcode.equals(CONTROL_START_AS_CLONE) || opcode.equals(WHEN_CLONED)) {
+        } else if (opcode.equals(control_start_as_clone)) {
             event = new StartedAsClone();
-        } else if (opcode.equals(EVENT_WHENGREATERTHAN) || opcode.equals(WHEN_SENSOR_GREATER_THAN)) {
+        } else if (opcode.equals(event_whengreaterthan)) {
             /*
             String variableValue = current.get(FIELDS).get(VARIABLE_MENU).get(0).asText();
             //TODO do I need a variable parser here?
@@ -100,8 +60,10 @@ public class EventParser {
             event = new VariableAboveValue(var, fieldValue);
             */
             throw new RuntimeException("Not implemented yet");
-        } else if (opcode.equals(EVENT_WHENBACKDROPSWITCHESTO) || opcode.equals(WHEN_SCENE_STARTS)) {
-            String backdropName = current.get(FIELDS).get(BACKDROP).get(0).asText();
+        } else if (opcode.equals(event_whenbackdropswitchesto)) {
+            JsonNode fields = current.get(FIELDS_KEY);
+            JsonNode backdropArray = fields.get(BACKDROP);
+            String backdropName = backdropArray.get(FIELD_VALUE).asText();
             Identifier id = new Identifier(backdropName);
             event = new BackdropSwitchTo(id);
         } else {
