@@ -91,7 +91,10 @@
             <artifactId>commons-cli</artifactId>
             <version>1.4</version>
         </dependency>
-
-
+        <dependency>
+            <artifactId>guava</artifactId>
+            <groupId>com.google.guava</groupId>
+            <version>28.1-jre</version>
+        </dependency>
     </dependencies>
 </project>
