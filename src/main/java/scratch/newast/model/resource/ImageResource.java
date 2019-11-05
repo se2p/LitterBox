@@ -1,12 +1,13 @@
 package scratch.newast.model.resource;
 
+import scratch.newast.model.URI;
 import scratch.newast.model.variable.Identifier;
 
 public class ImageResource implements Resource {
     private Identifier ident;
-    private String uri;
+    private URI uri;
 
-    public ImageResource(Identifier ident, String uri) {
+    public ImageResource(Identifier ident, URI uri) {
         this.ident = ident;
         this.uri = uri;
     }
@@ -15,16 +16,8 @@ public class ImageResource implements Resource {
         return ident;
     }
 
-    public void setIdent(Identifier ident) {
-        this.ident = ident;
-    }
-
-    public String getUri() {
+    public URI getUri() {
         return uri;
-    }
-
-    public void setUri(String uri) {
-        this.uri = uri;
     }
 
 }

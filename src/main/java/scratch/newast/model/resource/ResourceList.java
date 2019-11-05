@@ -13,8 +13,4 @@ public class ResourceList {
     public List<Resource> getResourceList() {
         return resourceList;
     }
-
-    public void setResourceList(List<Resource> resourceList) {
-        this.resourceList = resourceList;
-    }
 }
