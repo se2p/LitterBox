@@ -1,5 +1,7 @@
 package scratch.newast.model.touchable;
 
-public interface Touchable {
+import scratch.newast.model.ASTNode;
+
+public interface Touchable extends ASTNode {
 
 }

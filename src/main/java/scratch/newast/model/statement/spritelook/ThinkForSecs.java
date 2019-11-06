@@ -1,29 +1,37 @@
 package scratch.newast.model.statement.spritelook;
 
+import com.google.common.collect.ImmutableList;
+import scratch.newast.model.ASTNode;
+import scratch.newast.model.ScratchVisitor;
 import scratch.newast.model.expression.num.NumExpr;
+import scratch.newast.model.expression.string.StringExpr;
 
 public class ThinkForSecs implements SpriteLookStmt {
-    private String thought;
-    private NumExpr secs;
+    private final StringExpr thought;
+    private final NumExpr secs;
+    private final ImmutableList<ASTNode> children;
 
-    public ThinkForSecs(String thought, NumExpr secs) {
+    public ThinkForSecs(StringExpr thought, NumExpr secs) {
         this.thought = thought;
         this.secs = secs;
+        children = ImmutableList.<ASTNode>builder().add(thought).add(secs).build();
     }
 
-    public String getThought() {
+    public StringExpr getThought() {
         return thought;
-    }
-
-    public void setThought(String thought) {
-        this.thought = thought;
     }
 
     public NumExpr getSecs() {
         return secs;
     }
 
-    public void setSecs(NumExpr secs) {
-        this.secs = secs;
+    @Override
+    public void accept(ScratchVisitor visitor) {
+        visitor.visit(this);
+    }
+
+    @Override
+    public ImmutableList<ASTNode> getChildren() {
+        return children;
     }
 }

@@ -1,21 +1,31 @@
 package scratch.newast.model.statement.control;
 
-import scratch.newast.model.statement.Stmt;
-
-import java.util.List;
+import com.google.common.collect.ImmutableList;
+import scratch.newast.model.ASTNode;
+import scratch.newast.model.ScratchVisitor;
+import scratch.newast.model.StmtList;
 
 public class RepeatForeverStmt implements ControlStmt {
-    private List<Stmt> stmtList;
 
-    public RepeatForeverStmt(List<Stmt> stmtList) {
+    private final StmtList stmtList;
+    private final ImmutableList<ASTNode> children;
+
+    public RepeatForeverStmt(StmtList stmtList) {
         this.stmtList = stmtList;
+        children = ImmutableList.<ASTNode>builder().add(stmtList).build();
     }
 
-    public List<Stmt> getStmtList() {
+    public StmtList getStmtList() {
         return stmtList;
     }
 
-    public void setStmtList(List<Stmt> stmtList) {
-        this.stmtList = stmtList;
+    @Override
+    public void accept(ScratchVisitor visitor) {
+        visitor.visit(this);
+    }
+
+    @Override
+    public ImmutableList<ASTNode> getChildren() {
+        return children;
     }
 }

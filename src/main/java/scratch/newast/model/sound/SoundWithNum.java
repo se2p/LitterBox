@@ -1,17 +1,31 @@
 package scratch.newast.model.sound;
 
-public class SoundWithNum implements Sound {
-    private java.lang.Number num;
+import com.google.common.collect.ImmutableList;
+import scratch.newast.model.ASTNode;
+import scratch.newast.model.ScratchVisitor;
+import scratch.newast.model.expression.num.Number;
 
-    public SoundWithNum(java.lang.Number num) {
+public class SoundWithNum implements Sound {
+    private final Number num;
+    private final ImmutableList<ASTNode> children;
+
+    public SoundWithNum(Number num) {
         this.num = num;
+        children = ImmutableList.<ASTNode>builder().add(num).build();
     }
 
-    public java.lang.Number getNum() {
+    public Number getNum() {
         return num;
     }
 
-    public void setNum(java.lang.Number num) {
-        this.num = num;
+    @Override
+    public void accept(ScratchVisitor visitor) {
+        visitor.visit(this);
     }
+
+    @Override
+    public ImmutableList<ASTNode> getChildren() {
+        return children;
+    }
+
 }

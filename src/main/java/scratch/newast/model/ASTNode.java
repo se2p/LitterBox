@@ -4,9 +4,7 @@ import com.google.common.collect.ImmutableList;
 
 public interface ASTNode {
 
-    default void accept(ScratchVisitor visitor) {
-        visitor.visit(this);
-    }
+    void accept(ScratchVisitor visitor);
 
     ImmutableList<ASTNode> getChildren();
 

@@ -1,5 +1,7 @@
 package scratch.newast.model.costume;
 
-public interface Costume {
+import scratch.newast.model.ASTNode;
+
+public interface Costume extends ASTNode {
 
 }

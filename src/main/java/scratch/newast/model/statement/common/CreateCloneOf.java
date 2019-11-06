@@ -1,19 +1,15 @@
 package scratch.newast.model.statement.common;
 
-import scratch.newast.model.Sprite;
+import scratch.newast.model.variable.Identifier;
 
 public class CreateCloneOf implements CommonStmt {
-    private Sprite sprite;
+    private Identifier identifier;
 
-    public CreateCloneOf(Sprite sprite) {
-        this.sprite = sprite;
+    public CreateCloneOf(Identifier identifier) {
+        this.identifier = identifier;
     }
 
-    public Sprite getSprite() {
-        return sprite;
-    }
-
-    public void setSprite(Sprite sprite) {
-        this.sprite = sprite;
+    public Identifier getIdentifier() {
+        return identifier;
     }
 }

@@ -1,29 +1,39 @@
 package scratch.newast.model.expression.string;
 
-import scratch.newast.model.ScratchEntity;
+import com.google.common.collect.ImmutableList;
+import scratch.newast.model.ASTNode;
+import scratch.newast.model.ScratchVisitor;
+import scratch.newast.model.variable.Identifier;
 
 public class AttributeOf implements StringExpr {
-    private StringExpr attribute;
-    private ScratchEntity entity;
 
-    public AttributeOf(StringExpr attribute, ScratchEntity entity) {
+    private final ImmutableList<ASTNode> children;
+    private final StringExpr attribute;
+    private final Identifier identifier;
+
+    public AttributeOf(StringExpr attribute, Identifier identifier) {
         this.attribute = attribute;
-        this.entity = entity;
+        this.identifier = identifier;
+
+        ImmutableList.Builder<ASTNode> builder = ImmutableList.builder();
+        children = builder.add(attribute).add(identifier).build();
     }
 
     public StringExpr getAttribute() {
         return attribute;
     }
 
-    public void setAttribute(StringExpr attribute) {
-        this.attribute = attribute;
+    public Identifier getIdentifier() {
+        return identifier;
     }
 
-    public ScratchEntity getEntity() {
-        return entity;
+    @Override
+    public void accept(ScratchVisitor visitor) {
+        visitor.visit(this);
     }
 
-    public void setEntity(ScratchEntity entity) {
-        this.entity = entity;
+    @Override
+    public ImmutableList<ASTNode> getChildren() {
+        return children;
     }
 }

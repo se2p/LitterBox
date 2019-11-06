@@ -5,15 +5,15 @@ import scratch.newast.model.resource.ResourceList;
 import scratch.newast.model.variable.Identifier;
 
 public class ScriptGroup {
-    private Entity entity;
+    private EntityType entityType;
     private Identifier ident;
     private ResourceList resources;
     private DeclarationList decls;
     private ProcedureDeclarationList procedureDeclarationList;
     private ScriptList scripts;
 
-    public ScriptGroup(Entity entity, Identifier ident, ResourceList resources, DeclarationList decls, ProcedureDeclarationList procedureDeclarationList, ScriptList scripts) {
-        this.entity = entity;
+    public ScriptGroup(EntityType entityType, Identifier ident, ResourceList resources, DeclarationList decls, ProcedureDeclarationList procedureDeclarationList, ScriptList scripts) {
+        this.entityType = entityType;
         this.ident = ident;
         this.resources = resources;
         this.decls = decls;
@@ -21,12 +21,12 @@ public class ScriptGroup {
         this.scripts = scripts;
     }
 
-    public Entity getEntity() {
-        return entity;
+    public EntityType getEntityType() {
+        return entityType;
     }
 
-    public void setEntity(Entity entity) {
-        this.entity = entity;
+    public void setEntityType(EntityType entityType) {
+        this.entityType = entityType;
     }
 
     public Identifier getIdent() {

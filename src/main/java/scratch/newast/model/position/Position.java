@@ -1,5 +1,7 @@
 package scratch.newast.model.position;
 
-public interface Position {
+import scratch.newast.model.ASTNode;
+
+public interface Position extends ASTNode {
 
 }

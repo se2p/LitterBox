@@ -1,5 +1,7 @@
 package scratch.newast.model.spriteattribs;
 
-public interface SpriteAttribs {
+import scratch.newast.model.ASTNode;
+
+public interface SpriteAttribs extends ASTNode {
 
 }
