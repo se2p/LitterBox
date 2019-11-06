@@ -37,7 +37,7 @@ public class JsonParser {
     public static Project parse3(String fileName, String path) {
         ObjectMapper mapper = new ObjectMapper();
         try {
-           
+
             Project project = new Project();
             project.setName(fileName);
             project.setFilenameExtension(".sb3");
