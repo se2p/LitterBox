@@ -66,9 +66,13 @@ public class Main {
      * @param detectors
      */
     private static void checkSingle(File fileEntry, String detectors, String csv, String version) {
+        Project project;
         try {
-
-            Project project = getProject(fileEntry, version);
+            if ((FilenameUtils.getExtension(fileEntry.getPath())).toLowerCase().equals("json") && version.equals(2)) {
+                project = JsonParser.parseRaw(fileEntry);
+            }else{
+                 project = getProject(fileEntry, version);
+            }
             Program program = extractProgram(fileEntry);
 
             //System.out.println(project.toString());
@@ -129,7 +133,12 @@ public class Main {
             for (final File fileEntry : Objects.requireNonNull(folder.listFiles())) {
                 if (!fileEntry.isDirectory()) {
                     Program program = extractProgram(fileEntry);
-                    Project project = getProject(fileEntry, version);
+                    Project project;
+                    if ((FilenameUtils.getExtension(fileEntry.getPath())).toLowerCase().equals("json") && version.equals(2)) {
+                        project = JsonParser.parseRaw(fileEntry);
+                    }else{
+                        project = getProject(fileEntry, version);
+                    }
                     //System.out.println(project.toString());
                     iT.check(project, printer, dtctrs);
                     System.out.println("Finished: " + fileEntry.getName());
@@ -161,57 +170,6 @@ public class Main {
             e.printStackTrace();
         }
         return project;
-    }
-
-    /**
-     * This main method was used for analyzing a repository with 250.000 projects, that only contained the JSON files.
-     * A Scratch project is normally zipped and contains pictures, sounds and the JSON.
-     * This method uses a different JsonParser method which takes a raw JSON file and not the ZIP file.
-     * Also it creates .csv files with 10.000 entries and 25 files in total.
-     */
-    public static void mainJson(File folder) {
-        CSVPrinter printer;
-        try {
-            String name = "./dataset0.csv";
-            Project project = null;
-            IssueTool iT = new IssueTool();
-            List<String> heads = new ArrayList<>();
-            heads.add("project");
-            for (IssueFinder iF : iT.getFinder().values()) {
-                heads.add(iF.getName());
-            }
-            printer = CSVWriter.getNewPrinter(name, heads);
-            int count = 0;
-            int datacount = 0;
-            for (final File fileEntry : Objects.requireNonNull(folder.listFiles())) {
-                if (!fileEntry.isDirectory()) {
-                    System.out.println(fileEntry);
-                    try {
-                        project = JsonParser.parseRaw(fileEntry);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    if (project != null) {
-                        //System.out.println(project.toString());2
-                        iT.check(project, printer, "all");
-                        count++;
-                    }
-                }
-                if (count == 10000) {
-                    if (count == Objects.requireNonNull(folder.listFiles()).length - 1 || datacount == 24) {
-                        CSVWriter.flushCSV(printer);
-                        return;
-                    }
-                    CSVWriter.flushCSV(printer);
-                    count = 0;
-                    System.out.println("Finished: " + name);
-                    datacount++;
-                    name = "./dataset" + datacount + ".csv";
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     private static Program extractProgram(File fileEntry) {
