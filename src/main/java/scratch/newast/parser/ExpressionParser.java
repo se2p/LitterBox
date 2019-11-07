@@ -2,7 +2,6 @@ package scratch.newast.parser;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
-import scratch.newast.Constants;
 import scratch.newast.model.expression.Expression;
 import scratch.newast.model.expression.bool.BoolExpr;
 import scratch.newast.model.expression.num.NumExpr;
@@ -12,6 +11,9 @@ import scratch.newast.model.expression.string.StringExpr;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+
+import static scratch.newast.Constants.POS_DATA_ARRAY;
+import static scratch.newast.Constants.POS_INPUT_VALUE;
 
 public class ExpressionParser {
 
@@ -75,7 +77,7 @@ public class ExpressionParser {
         inputs.fields().forEachRemaining(slotEntries::add);
         Map.Entry slotEntry = slotEntries.get(pos);
         ArrayNode inputArray = (ArrayNode) slotEntry.getValue();
-        Number number = new Number(Float.parseFloat(inputArray.get(Constants.POS_DATA_ARRAY).get(Constants.POS_INPUT_VALUE).asText()));
+        Number number = new Number(Float.parseFloat(inputArray.get(POS_DATA_ARRAY).get(POS_INPUT_VALUE).asText()));
 
         String numberName = (String) slotEntry.getKey(); // we don't need that here but maybe later for storing additional information
         return number;
