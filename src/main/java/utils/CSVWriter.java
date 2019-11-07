@@ -10,7 +10,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -30,6 +29,23 @@ public class CSVWriter {
         List<String> data = new ArrayList<>();
         data.add(project.getName());
         for (IssueReport is : issueReports) {
+            data.add(Integer.toString(is.getCount()));
+        }
+        csvPrinter.printRecord(data);
+    }
+
+    /**
+     * Adds data to an existing CSVPrinter
+     *
+     * @param csvPrinter   the CSVPrinter to add the information
+     * @param project      the project with the information
+     * @param issueReports all the issueReports found in the project
+     * @throws IOException corrupt file path
+     */
+    public static void addData(CSVPrinter csvPrinter, List<newanalytics.IssueReport> issueReports, Project project) throws IOException {
+        List<String> data = new ArrayList<>();
+        data.add(project.getName());
+        for (newanalytics.IssueReport is : issueReports) {
             data.add(Integer.toString(is.getCount()));
         }
         csvPrinter.printRecord(data);
