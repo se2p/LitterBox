@@ -61,7 +61,7 @@ public class ExpressionParser {
      * you can parse the first input to a Number like this:
      *
      * JsonNode inputs = script.get("EU(l=G6)z8NGlJFcx|fS").get("inputs");
-     * Number result = ExpressionParser_new.parseNumber(inputs, 0);
+     * Number result = ExpressionParser.parseNumber(inputs, 0);
      *
      * Note that this method only works if there is a number literal at the
      * given position of the inputs.
