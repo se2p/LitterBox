@@ -10,18 +10,24 @@ public class IfElseStmt implements IfStmt {
 
     private final ImmutableList<ASTNode> children;
     private final BoolExpr boolExpr;
+    private final StmtList stmtList;
     private final StmtList elseStmts;
 
-    public IfElseStmt(BoolExpr boolExpr, StmtList elseStmts) {
+    public IfElseStmt(BoolExpr boolExpr, StmtList stmtList, StmtList elseStmts) {
         super();
         this.boolExpr = boolExpr;
+        this.stmtList = stmtList;
         this.elseStmts = elseStmts;
         ImmutableList.Builder<ASTNode> builder = ImmutableList.builder();
-        children = builder.add(boolExpr).add(elseStmts).build();
+        children = builder.add(boolExpr).add(stmtList).add(elseStmts).build();
     }
 
     public BoolExpr getBoolExpr() {
         return boolExpr;
+    }
+
+    public StmtList getStmtList() {
+        return stmtList;
     }
 
     public StmtList getElseStmts() {
@@ -30,11 +36,11 @@ public class IfElseStmt implements IfStmt {
 
     @Override
     public void accept(ScratchVisitor visitor) {
-
+        visitor.visit(this);
     }
 
     @Override
     public ImmutableList<ASTNode> getChildren() {
-        return null;
+        return children;
     }
 }
