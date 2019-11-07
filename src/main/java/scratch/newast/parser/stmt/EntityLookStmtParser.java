@@ -30,7 +30,7 @@ import scratch.newast.parser.GraphicEffectParser;
 
 public class EntityLookStmtParser {
 
-    private static final String INPUTS = "inputs";
+    public static final String INPUTS = "inputs";
     private static final String ASKANDWAIT_INPUT_KEY = "QUESTION";
     private static final String CHANGE_EFFECTBY_INPUT_KEY = "CHANGE";
     private static final String SET_EFFECTTO_INPUT_KEY = "CHANGE";

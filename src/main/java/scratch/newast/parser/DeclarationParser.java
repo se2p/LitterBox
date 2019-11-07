@@ -7,12 +7,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.google.common.base.Preconditions;
 import scratch.newast.model.Declaration;
-import scratch.newast.model.URI;
-import scratch.newast.model.resource.Resource;
-import scratch.newast.model.resource.SoundResource;
-import scratch.newast.model.type.MessageType;
 import scratch.newast.model.type.NumberType;
 import scratch.newast.model.type.StringType;
 import scratch.newast.model.variable.Identifier;
@@ -22,21 +19,13 @@ public class DeclarationParser {
     public static List<Declaration> parseVariables(JsonNode variableNode) {
         Preconditions.checkNotNull(variableNode);
         List<Declaration> parsedVariables = new ArrayList<>();
-        Iterator<JsonNode> iter = variableNode.elements();
-        while (iter.hasNext()) {
-            JsonNode node = iter.next();
-            Iterator<JsonNode> iter2 = node.elements();
-            String name = iter2.next().textValue();
-            JsonNode type = iter2.next();
-            Declaration var;
-            if (type.isNumber()) {
-                var = new Declaration(new Identifier(name),
-                        new NumberType());
-            } else {
-                var = new Declaration(new Identifier(name),
-                        new StringType());
-            }
-            parsedVariables.add(var);
+        Iterator<Map.Entry<String, JsonNode>> iter = variableNode.fields();
+        while (iter.hasNext()){
+            Map.Entry<String, JsonNode> currentEntry = iter.next();
+            Preconditions.checkArgument(currentEntry.getValue().isArray());
+            ArrayNode arrNode = (ArrayNode) currentEntry.getValue();
+            //Todo other types than string?
+            parsedVariables.add(new Declaration(new Identifier(arrNode.get(0).textValue()), new StringType()));
         }
         return parsedVariables;
     }
