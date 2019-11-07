@@ -12,7 +12,7 @@ public enum EventOpcode {
 
     public static boolean contains(String opcode) {
         for (EventOpcode value : EventOpcode.values()) {
-            if (value.toString().equals(opcode)) {
+            if (value.name().equals(opcode)) {
                 return true;
             }
         }

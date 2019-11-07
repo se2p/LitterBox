@@ -15,6 +15,7 @@ import scratch.newast.model.statement.Stmt;
 import scratch.newast.model.statement.spritelook.ListOfStmt;
 import scratch.newast.model.statement.termination.TerminationStmt;
 import scratch.newast.opcodes.EventOpcode;
+import scratch.newast.parser.stmt.StmtParser;
 
 public class ScriptParser {
 

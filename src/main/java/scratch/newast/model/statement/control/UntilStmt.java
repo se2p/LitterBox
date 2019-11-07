@@ -1,32 +1,39 @@
 package scratch.newast.model.statement.control;
 
+import com.google.common.collect.ImmutableList;
+import scratch.newast.model.ASTNode;
+import scratch.newast.model.ScratchVisitor;
+import scratch.newast.model.StmtList;
 import scratch.newast.model.expression.bool.BoolExpr;
-import scratch.newast.model.statement.Stmt;
-
-import java.util.List;
 
 public class UntilStmt implements ControlStmt {
-    private BoolExpr boolExpr;
-    private List<Stmt> stmtList;
+    private final BoolExpr boolExpr;
+    private final StmtList stmtList;
+    private final ImmutableList<ASTNode> children;
 
-    public UntilStmt(BoolExpr boolExpr, List<Stmt> stmtList) {
+    public UntilStmt(BoolExpr boolExpr, StmtList stmtList) {
         this.boolExpr = boolExpr;
         this.stmtList = stmtList;
+        children = ImmutableList.<ASTNode>builder().add(boolExpr).add(stmtList).build();
     }
 
     public BoolExpr getBoolExpr() {
         return boolExpr;
     }
 
-    public void setBoolExpr(BoolExpr boolExpr) {
-        this.boolExpr = boolExpr;
-    }
 
-    public List<Stmt> getStmtList() {
+    public StmtList getStmtList() {
         return stmtList;
     }
 
-    public void setStmtList(List<Stmt> stmtList) {
-        this.stmtList = stmtList;
+    @Override
+    public void accept(ScratchVisitor visitor) {
+        visitor.visit(this);
     }
+
+    @Override
+    public ImmutableList<ASTNode> getChildren() {
+        return children;
+    }
+
 }

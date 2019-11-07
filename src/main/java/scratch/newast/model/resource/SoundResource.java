@@ -1,12 +1,13 @@
 package scratch.newast.model.resource;
 
+import scratch.newast.model.URI;
 import scratch.newast.model.variable.Identifier;
 
 public class SoundResource implements Resource {
     private Identifier ident;
-    private String uri;
+    private URI uri;
 
-    public SoundResource(Identifier ident, String uri) {
+    public SoundResource(Identifier ident, URI uri) {
         this.ident = ident;
         this.uri = uri;
     }
@@ -15,15 +16,8 @@ public class SoundResource implements Resource {
         return ident;
     }
 
-    public void setIdent(Identifier ident) {
-        this.ident = ident;
-    }
-
-    public String getUri() {
+    public URI getUri() {
         return uri;
     }
 
-    public void setUri(String uri) {
-        this.uri = uri;
-    }
 }

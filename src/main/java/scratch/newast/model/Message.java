@@ -1,18 +1,28 @@
 package scratch.newast.model;
 
-public class Message {
+import com.google.common.collect.ImmutableList;
 
-    String message;
+public class Message implements ASTNode {
+
+    private final String message;
+    private final ImmutableList<ASTNode> children;
 
     public Message(String message) {
         this.message = message;
+        children = ImmutableList.<ASTNode>builder().build();
     }
 
     public String getMessage() {
         return message;
     }
 
-    public void setMessage(String message) {
-        this.message = message;
+    @Override
+    public void accept(ScratchVisitor visitor) {
+        visitor.visit(this);
+    }
+
+    @Override
+    public ImmutableList<ASTNode> getChildren() {
+        return children;
     }
 }

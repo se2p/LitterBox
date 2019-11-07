@@ -1,33 +1,40 @@
 package scratch.newast.model.statement.control;
 
+import com.google.common.collect.ImmutableList;
+import scratch.newast.model.ASTNode;
+import scratch.newast.model.ScratchVisitor;
+import scratch.newast.model.StmtList;
 import scratch.newast.model.expression.bool.BoolExpr;
-import scratch.newast.model.statement.Stmt;
-
-import java.util.List;
 
 public class IfElseStmt implements IfStmt {
-    private BoolExpr boolExpr;
-    private List<Stmt> elseStmts;
 
-    public IfElseStmt(BoolExpr boolExpr, List<Stmt> elseStmts) {
+    private final ImmutableList<ASTNode> children;
+    private final BoolExpr boolExpr;
+    private final StmtList elseStmts;
+
+    public IfElseStmt(BoolExpr boolExpr, StmtList elseStmts) {
         super();
         this.boolExpr = boolExpr;
         this.elseStmts = elseStmts;
+        ImmutableList.Builder<ASTNode> builder = ImmutableList.builder();
+        children = builder.add(boolExpr).add(elseStmts).build();
     }
 
     public BoolExpr getBoolExpr() {
         return boolExpr;
     }
 
-    public void setBoolExpr(BoolExpr boolExpr) {
-        this.boolExpr = boolExpr;
-    }
-
-    public List<Stmt> getElseStmts() {
+    public StmtList getElseStmts() {
         return elseStmts;
     }
 
-    public void setElseStmts(List<Stmt> elseStmts) {
-        this.elseStmts = elseStmts;
+    @Override
+    public void accept(ScratchVisitor visitor) {
+
+    }
+
+    @Override
+    public ImmutableList<ASTNode> getChildren() {
+        return null;
     }
 }

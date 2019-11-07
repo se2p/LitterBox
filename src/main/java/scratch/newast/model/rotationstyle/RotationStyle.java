@@ -1,5 +1,7 @@
 package scratch.newast.model.rotationstyle;
 
-public interface RotationStyle {
+import scratch.newast.model.ASTNode;
+
+public interface RotationStyle extends ASTNode {
 
 }

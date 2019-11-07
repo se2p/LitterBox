@@ -11,7 +11,7 @@ import java.util.stream.StreamSupport;
 import scratch.newast.ParsingException;
 import scratch.newast.model.Declaration;
 import scratch.newast.model.DeclarationList;
-import scratch.newast.model.Entity;
+import scratch.newast.model.EntityType;
 import scratch.newast.model.Script;
 import scratch.newast.model.ScriptGroup;
 import scratch.newast.model.ScriptList;
@@ -27,11 +27,11 @@ public class ScriptGroupParser {
         Preconditions.checkArgument(jsonNode.has("isStage"), "Missing field isStage in ScriptGroup");
         Preconditions.checkArgument(jsonNode.has("name"), "Missing field name in ScriptGroup");
 
-        Entity entity;
+        EntityType entityType;
         if (jsonNode.get("isStage").asBoolean()) {
-            entity = Entity.stage;
+            entityType = EntityType.stage;
         } else {
-            entity = Entity.sprite;
+            entityType = EntityType.sprite;
         }
 
         Identifier identifier = new Identifier(jsonNode.get("name").asText());
@@ -60,7 +60,7 @@ public class ScriptGroupParser {
 
         ProcedureDeclarationList procDeclList = ProcDeclParser.parse(allBlocks);
 
-        return new ScriptGroup(entity, identifier, resources, declarations, procDeclList, scriptList);
+        return new ScriptGroup(entityType, identifier, resources, declarations, procDeclList, scriptList);
     }
 
 }

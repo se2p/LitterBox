@@ -1,5 +1,7 @@
 package scratch.newast.model.backdrop;
 
-public interface Backdrop {
+import scratch.newast.model.ASTNode;
+
+public interface Backdrop extends ASTNode {
 
 }

@@ -1,5 +1,7 @@
 package scratch.newast.model.soundeffect;
 
-public interface SoundEffect {
+import scratch.newast.model.ASTNode;
+
+public interface SoundEffect extends ASTNode {
 
 }

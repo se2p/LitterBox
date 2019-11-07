@@ -1,5 +1,7 @@
 package scratch.newast.model.graphiceffect;
 
-public interface GraphicEffect {
+import scratch.newast.model.ASTNode;
+
+public interface GraphicEffect extends ASTNode {
 
 }

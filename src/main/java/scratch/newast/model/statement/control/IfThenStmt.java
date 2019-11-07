@@ -1,32 +1,39 @@
 package scratch.newast.model.statement.control;
 
+import com.google.common.collect.ImmutableList;
+import scratch.newast.model.ASTNode;
+import scratch.newast.model.ScratchVisitor;
+import scratch.newast.model.StmtList;
 import scratch.newast.model.expression.bool.BoolExpr;
-import scratch.newast.model.statement.Stmt;
-
-import java.util.List;
 
 public class IfThenStmt implements IfStmt {
-    private BoolExpr boolExpr;
-    private List<Stmt> thenStmts;
 
-    public IfThenStmt(BoolExpr boolExpr, List<Stmt> thenStmts) {
+    private final BoolExpr boolExpr;
+    private final StmtList thenStmts;
+    private final ImmutableList<ASTNode> children;
+
+    public IfThenStmt(BoolExpr boolExpr, StmtList thenStmts) {
         this.boolExpr = boolExpr;
         this.thenStmts = thenStmts;
+        children = ImmutableList.<ASTNode>builder().add(boolExpr).add(thenStmts).build();
     }
 
     public BoolExpr getBoolExpr() {
         return boolExpr;
     }
 
-    public void setBoolExpr(BoolExpr boolExpr) {
-        this.boolExpr = boolExpr;
-    }
 
-    public List<Stmt> getThenStmts() {
+    public StmtList getThenStmts() {
         return thenStmts;
     }
 
-    public void setThenStmts(List<Stmt> thenStmts) {
-        this.thenStmts = thenStmts;
+    @Override
+    public void accept(ScratchVisitor visitor) {
+        visitor.visit(this);
+    }
+
+    @Override
+    public ImmutableList<ASTNode> getChildren() {
+        return children;
     }
 }

@@ -1,5 +1,7 @@
 package scratch.newast.model.expression;
 
-public interface Expression {
+import scratch.newast.model.ASTNode;
+
+public interface Expression extends ASTNode {
 
 }

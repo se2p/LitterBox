@@ -1,6 +1,6 @@
 package scratch.newast.model;
 
-public enum Entity {
+public enum EntityType {
     stage,
     group,
     sprite,

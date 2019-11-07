@@ -1,27 +1,35 @@
 package scratch.newast.model.variable;
 
+import com.google.common.collect.ImmutableList;
+import scratch.newast.model.ASTNode;
+import scratch.newast.model.ScratchVisitor;
+
 public class Concat implements Variable {
-    private Identifier first;
-    private Identifier second;
+    private final Identifier first;
+    private final Identifier second;
+    private final ImmutableList<ASTNode> children;
 
     public Concat(Identifier first, Identifier second) {
         this.first = first;
         this.second = second;
+        children =  ImmutableList.<ASTNode>builder().add(first).add(second).build();
     }
 
     public Identifier getFirst() {
         return first;
     }
 
-    public void setFirst(Identifier first) {
-        this.first = first;
-    }
-
     public Identifier getSecond() {
         return second;
     }
 
-    public void setSecond(Identifier second) {
-        this.second = second;
+    @Override
+    public void accept(ScratchVisitor visitor) {
+        visitor.visit(this);
+    }
+
+    @Override
+    public ImmutableList<ASTNode> getChildren() {
+        return children;
     }
 }

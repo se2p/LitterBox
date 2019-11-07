@@ -1,19 +1,31 @@
 package scratch.newast.model.position;
 
-import scratch.newast.model.Sprite;
+import com.google.common.collect.ImmutableList;
+import scratch.newast.model.ASTNode;
+import scratch.newast.model.ScratchVisitor;
+import scratch.newast.model.variable.Identifier;
 
 public class PivotOf implements Position {
-    private Sprite sprite;
 
-    public PivotOf(Sprite sprite) {
-        this.sprite = sprite;
+    private final Identifier identifier;
+    private final ImmutableList<ASTNode> children;
+
+    public PivotOf(Identifier identifier) {
+        this.identifier = identifier;
+        children = ImmutableList.<ASTNode>builder().add(identifier).build();
     }
 
-    public Sprite getSprite() {
-        return sprite;
+    public Identifier getIdentifier() {
+        return identifier;
     }
 
-    public void setSprite(Sprite sprite) {
-        this.sprite = sprite;
+    @Override
+    public void accept(ScratchVisitor visitor) {
+        visitor.visit(this);
+    }
+
+    @Override
+    public ImmutableList<ASTNode> getChildren() {
+        return children;
     }
 }

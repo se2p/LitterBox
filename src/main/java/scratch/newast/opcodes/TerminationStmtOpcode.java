@@ -7,7 +7,7 @@ public enum TerminationStmtOpcode {
 
     public static boolean contains(String opcode) {
         for (TerminationStmtOpcode value : TerminationStmtOpcode.values()) {
-            if (value.toString().equals(opcode)) {
+            if (value.name().equals(opcode)) {
                 return true;
             }
         }

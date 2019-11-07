@@ -13,6 +13,7 @@ import static scratch.newast.opcodes.EventOpcode.event_whenthisspriteclicked;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.base.Preconditions;
+import scratch.newast.Constants;
 import scratch.newast.ParsingException;
 import scratch.newast.model.Key;
 import scratch.newast.model.Message;
@@ -23,6 +24,8 @@ import scratch.newast.model.event.GreenFlag;
 import scratch.newast.model.event.KeyPressed;
 import scratch.newast.model.event.ReceptionOfMessage;
 import scratch.newast.model.event.StartedAsClone;
+import scratch.newast.model.event.VariableAboveValue;
+import scratch.newast.model.expression.num.NumExpr;
 import scratch.newast.model.variable.Identifier;
 import scratch.newast.opcodes.EventOpcode;
 
@@ -32,7 +35,6 @@ public class EventParser {
     public static String KEY_OPTION = "KEY_OPTION";
     public static String BCAST_OPTION = "BROADCAST_OPTION";
     public static String VARIABLE_MENU = "WHENGREATERTHANMENU";
-    public static String VALUE = "WHENGREATERTHANMENU";
     public static String BACKDROP = "BACKDROP";
 
     public static Event parse(String blockID, JsonNode allBlocks) throws ParsingException {
@@ -64,17 +66,15 @@ public class EventParser {
         } else if (opcode.equals(control_start_as_clone)) {
             event = new StartedAsClone();
         } else if (opcode.equals(event_whengreaterthan)) {
-            /*
-            String variableValue = current.get(FIELDS).get(VARIABLE_MENU).get(0).asText();
+
+            String variableValue = current.get(FIELDS_KEY).get(VARIABLE_MENU).get(0).asText();
             //TODO do I need a variable parser here?
             Identifier var = new Identifier(variableValue);
 
-            JsonNode jsonNode = current.get(INPUTS).get(VALUE).get(1);
-            NumExpr fieldValue = NumExprParser.parse(jsonNode);
+            JsonNode jsonNode = current.get(INPUTS).get(VARIABLE_MENU).get(Constants.POS_DATA_ARRAY);
+            NumExpr fieldValue = ExpressionParser.parseNumExpr(jsonNode);
 
             event = new VariableAboveValue(var, fieldValue);
-            */
-            throw new RuntimeException("Not implemented yet");
         } else if (opcode.equals(event_whenbackdropswitchesto)) {
             JsonNode fields = current.get(FIELDS_KEY);
             JsonNode backdropArray = fields.get(BACKDROP);

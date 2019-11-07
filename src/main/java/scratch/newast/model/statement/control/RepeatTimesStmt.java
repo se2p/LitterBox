@@ -1,32 +1,38 @@
 package scratch.newast.model.statement.control;
 
+import com.google.common.collect.ImmutableList;
+import scratch.newast.model.ASTNode;
+import scratch.newast.model.ScratchVisitor;
+import scratch.newast.model.StmtList;
 import scratch.newast.model.expression.num.NumExpr;
-import scratch.newast.model.statement.Stmt;
-
-import java.util.List;
 
 public class RepeatTimesStmt implements ControlStmt {
-    private NumExpr times;
-    private List<Stmt> stmtList;
+    private final NumExpr times;
+    private final StmtList stmtList;
+    private final ImmutableList<ASTNode> children;
 
-    public RepeatTimesStmt(NumExpr times, List<Stmt> stmtList) {
+    public RepeatTimesStmt(NumExpr times, StmtList stmtList) {
         this.times = times;
         this.stmtList = stmtList;
+        children = ImmutableList.<ASTNode>builder().add(times).add(stmtList).build();
     }
 
     public NumExpr getTimes() {
         return times;
     }
 
-    public void setTimes(NumExpr times) {
-        this.times = times;
-    }
-
-    public List<Stmt> getStmtList() {
+   public StmtList getStmtList() {
         return stmtList;
     }
 
-    public void setStmtList(List<Stmt> stmtList) {
-        this.stmtList = stmtList;
+    @Override
+    public void accept(ScratchVisitor visitor) {
+        visitor.visit(this);
     }
+
+    @Override
+    public ImmutableList<ASTNode> getChildren() {
+        return children;
+    }
+
 }
