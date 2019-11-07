@@ -1,19 +1,18 @@
 package scratch.newast.parser;
 
+import static scratch.newast.Constants.POS_DATA_ARRAY;
+import static scratch.newast.Constants.POS_INPUT_VALUE;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import scratch.newast.model.expression.Expression;
 import scratch.newast.model.expression.bool.BoolExpr;
 import scratch.newast.model.expression.num.NumExpr;
 import scratch.newast.model.expression.num.Number;
 import scratch.newast.model.expression.string.StringExpr;
-
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
-import static scratch.newast.Constants.POS_DATA_ARRAY;
-import static scratch.newast.Constants.POS_INPUT_VALUE;
 
 public class ExpressionParser {
 
@@ -29,13 +28,18 @@ public class ExpressionParser {
         return numExpr;
     }
 
-
-    public static NumExpr parseNumExpr(JsonNode numExprData) { // TODO check if these params are sufficient/reasonable
+    public static NumExpr parseNumExpr(JsonNode node,
+        JsonNode numExprData) { // TODO check if these params are sufficient/reasonable
         //This method is here in case we only have an "inputs" array, and not a real block
         NumExpr numExpr = null;
         return numExpr;
     }
 
+    public static BoolExpr parseBoolExpr(
+        JsonNode boolExprData, JsonNode allBlocks) { // TODO check if these params are sufficient/reasonable
+        BoolExpr boolExpr = null;
+        return boolExpr;
+    }
 
     public static BoolExpr parseBoolExpr(String boolExprId,
         JsonNode boolExprData) { // TODO check if these params are sufficient/reasonable

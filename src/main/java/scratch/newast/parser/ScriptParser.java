@@ -55,13 +55,13 @@ public class ScriptParser {
         return EventOpcode.contains(opcode);
     }
 
-    private static StmtList parseStmtList(String blockID, JsonNode blocks) throws ParsingException {
+    public static StmtList parseStmtList(String blockID, JsonNode blocks) throws ParsingException {
         TerminationStmt terminationStmt = null;
         List<Stmt> list = new LinkedList<>();
         JsonNode current = blocks.get(blockID);
 
         while (!current.isNull()) {
-            Stmt stmt = StmtParser.parse(current, blocks);
+            Stmt stmt = StmtParser.parse(blockID, blocks);
             if (stmt instanceof TerminationStmt) {
                 terminationStmt = (TerminationStmt) stmt;
                 if (!current.get(NEXT_KEY).isNull()) { //TODO check if this is the correct way to check this

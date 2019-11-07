@@ -85,8 +85,9 @@ public class Constants {
     /**
      * JSon Field Names of JSon Blocks
      */
-    public static String OPCODE_KEY = "opcode";
-    public static String FIELDS_KEY = "fields";
-    public static String NEXT_KEY = "next";
+    public static final String OPCODE_KEY = "opcode";
+    public static final String FIELDS_KEY = "fields";
+    public static final String NEXT_KEY = "next";
+    public static final String INPUTS_KEY = "inputs";
 
 }

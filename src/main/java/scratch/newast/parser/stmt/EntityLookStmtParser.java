@@ -30,13 +30,11 @@ import scratch.newast.parser.GraphicEffectParser;
 
 public class EntityLookStmtParser {
 
-    private static final String INPUTS = "inputs";
     private static final String ASKANDWAIT_INPUT_KEY = "QUESTION";
     private static final String CHANGE_EFFECTBY_INPUT_KEY = "CHANGE";
     private static final String SET_EFFECTTO_INPUT_KEY = "CHANGE";
     private static final String SWITCH_BACKDROPTO_INPUT_KEY = "BACKDROP";
     private static final String EFFECTS_FIELD_KEY = "EFFECT";
-
 
     public static EntityLookStmt parse(JsonNode current, JsonNode allBlocks) throws ParsingException {
         Preconditions.checkNotNull(current);
@@ -50,11 +48,13 @@ public class EntityLookStmtParser {
         EntityLookStmt stmt;
 
         if (opcode.equals(sensing_askandwait)) {
-            JsonNode questionNode = current.get(INPUTS).get(ASKANDWAIT_INPUT_KEY).get(Constants.POS_DATA_ARRAY);
+            JsonNode questionNode = current.get(Constants.INPUTS_KEY).get(ASKANDWAIT_INPUT_KEY)
+                .get(Constants.POS_DATA_ARRAY);
             StringExpr question = ExpressionParser.parseStringExpr(questionNode);
             stmt = new AskAndWait(question);
         } else if (opcode.equals(looks_switchbackdropto)) {
-            JsonNode backdropNodeId = current.get(INPUTS).get(CHANGE_EFFECTBY_INPUT_KEY).get(Constants.POS_DATA_ARRAY)
+            JsonNode backdropNodeId = current.get(Constants.INPUTS_KEY).get(CHANGE_EFFECTBY_INPUT_KEY)
+                .get(Constants.POS_DATA_ARRAY)
                 .get(Constants.POS_INPUT_VALUE);
             JsonNode backdropMenu = allBlocks.get(backdropNodeId.asText());
             String backdropName = backdropMenu.get(FIELDS_KEY).get(SWITCH_BACKDROPTO_INPUT_KEY).get(FIELD_VALUE)
@@ -63,15 +63,17 @@ public class EntityLookStmtParser {
             Backdrop backdrop = new BackdropWithId(new Identifier(backdropName));
             stmt = new SwitchBackdrop(backdrop);
         } else if (opcode.equals(looks_changeeffectby)) {
-            JsonNode effectValueNode = current.get(INPUTS).get(CHANGE_EFFECTBY_INPUT_KEY).get(Constants.POS_DATA_ARRAY);
-            NumExpr effectValue = ExpressionParser.parseNumExpr(effectValueNode);
+            JsonNode effectValueNode = current.get(Constants.INPUTS_KEY).get(CHANGE_EFFECTBY_INPUT_KEY)
+                .get(Constants.POS_DATA_ARRAY);
+            NumExpr effectValue = ExpressionParser.parseNumExpr(effectValueNode, allBlocks);
             String fieldValue = current.get(FIELDS_KEY).get(EFFECTS_FIELD_KEY).get(Constants.FIELD_VALUE).asText();
             GraphicEffect effect = GraphicEffectParser.parse(fieldValue);
             stmt = new ChangeEffectBy(effect, effectValue);
 
         } else if (opcode.equals(looks_seteffectto)) {
-            JsonNode effectValueNode = current.get(INPUTS).get(SET_EFFECTTO_INPUT_KEY).get(Constants.POS_DATA_ARRAY);
-            NumExpr effectValue = ExpressionParser.parseNumExpr(effectValueNode);
+            JsonNode effectValueNode = current.get(Constants.INPUTS_KEY).get(SET_EFFECTTO_INPUT_KEY)
+                .get(Constants.POS_DATA_ARRAY);
+            NumExpr effectValue = ExpressionParser.parseNumExpr(effectValueNode, allBlocks);
             String fieldValue = current.get(FIELDS_KEY).get(EFFECTS_FIELD_KEY).get(Constants.FIELD_VALUE).asText();
             GraphicEffect effect = GraphicEffectParser.parse(fieldValue);
             stmt = new ChangeEffectBy(effect, effectValue);

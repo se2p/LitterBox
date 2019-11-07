@@ -13,7 +13,6 @@ import static scratch.newast.opcodes.EventOpcode.event_whenthisspriteclicked;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.base.Preconditions;
-import scratch.newast.Constants;
 import scratch.newast.ParsingException;
 import scratch.newast.model.Key;
 import scratch.newast.model.Message;
@@ -71,8 +70,8 @@ public class EventParser {
             //TODO do I need a variable parser here?
             Identifier var = new Identifier(variableValue);
 
-            JsonNode jsonNode = current.get(INPUTS).get(VARIABLE_MENU).get(Constants.POS_DATA_ARRAY);
-            NumExpr fieldValue = ExpressionParser.parseNumExpr(jsonNode);
+            JsonNode jsonNode = current.get(INPUTS);
+            NumExpr fieldValue = ExpressionParser.parseNumExpr(jsonNode, allBlocks);
 
             event = new VariableAboveValue(var, fieldValue);
         } else if (opcode.equals(event_whenbackdropswitchesto)) {
