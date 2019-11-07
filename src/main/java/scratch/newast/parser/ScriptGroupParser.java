@@ -36,8 +36,8 @@ public class ScriptGroupParser {
 
         Identifier identifier = new Identifier(jsonNode.get("name").asText());
 
-        List<Resource> res = ResourceParser.parse(jsonNode.get("sounds"));
-        res.addAll(ResourceParser.parse(jsonNode.get("costumes")));
+        List<Resource> res = ResourceParser.parseSound(jsonNode.get("sounds"));
+        res.addAll(ResourceParser.parseCostume(jsonNode.get("costumes")));
         ResourceList resources = new ResourceList(res);
 
         List<Declaration> decls = DeclarationParser.parse(jsonNode.get("lists"));
