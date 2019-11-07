@@ -40,9 +40,9 @@ public class ScriptGroupParser {
         res.addAll(ResourceParser.parseCostume(jsonNode.get("costumes")));
         ResourceList resources = new ResourceList(res);
 
-        List<Declaration> decls = DeclarationParser.parse(jsonNode.get("lists"));
-        decls.addAll(DeclarationParser.parse(jsonNode.get("broadcasts")));
-        decls.addAll(DeclarationParser.parse(jsonNode.get("variables")));
+        List<Declaration> decls = DeclarationParser.parseLists(jsonNode.get("lists"));
+        decls.addAll(DeclarationParser.parseBroadcasts(jsonNode.get("broadcasts")));
+        decls.addAll(DeclarationParser.parseVariables(jsonNode.get("variables")));
         DeclarationList declarations = new DeclarationList(decls);
 
         JsonNode allBlocks = jsonNode.get("blocks");
