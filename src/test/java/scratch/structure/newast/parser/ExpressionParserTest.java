@@ -18,7 +18,7 @@ public class ExpressionParserTest {
     }
 
     @Test
-    public void testNumExpr() {
+    public void testParseNumber() {
         JsonNode inputs = script.get("EU(l=G6)z8NGlJFcx|fS").get("inputs");
         Number result = ExpressionParser.parseNumber(inputs, 0);
         assertEquals("10.0", String.valueOf(result.getValue()));
