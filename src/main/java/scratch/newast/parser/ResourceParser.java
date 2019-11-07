@@ -23,8 +23,8 @@ public class ResourceParser {
         Iterator<JsonNode> iter = resourceNode.elements();
         while (iter.hasNext()) {
             JsonNode node = iter.next();
-            SoundResource res = new SoundResource(new Identifier(node.get(NAME).asText()),
-                    new URI(node.get(MD5EXT).asText()));
+            SoundResource res = new SoundResource(new Identifier(node.get(NAME).textValue()),
+                    new URI(node.get(MD5EXT).textValue()));
             parsedRessources.add(res);
         }
         return parsedRessources;
@@ -36,8 +36,8 @@ public class ResourceParser {
         Iterator<JsonNode> iter = resourceNode.elements();
         while (iter.hasNext()) {
             JsonNode node = iter.next();
-            SoundResource res = new SoundResource(new Identifier(node.get(NAME).asText()),
-                    new URI(node.get(MD5EXT).asText()));
+            ImageResource res = new ImageResource(new Identifier(node.get(NAME).textValue()),
+                    new URI(node.get(MD5EXT).textValue()));
             parsedRessources.add(res);
         }
         return parsedRessources;
