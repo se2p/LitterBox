@@ -1,4 +1,4 @@
-package scratch.newast.parser;
+package scratch.newast.parser.stmt;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import scratch.newast.Constants;
@@ -8,6 +8,7 @@ import scratch.newast.model.statement.termination.DeleteClone;
 import scratch.newast.model.statement.termination.StopAll;
 import scratch.newast.model.statement.termination.StopThisScript;
 import scratch.newast.model.statement.termination.TerminationStmt;
+import scratch.newast.opcodes.EntityLookStmtOpcode;
 import scratch.newast.opcodes.TerminationStmtOpcode;
 
 public class StmtParser {
@@ -24,8 +25,9 @@ public class StmtParser {
             TerminationStmt terminationStmt = parseTerminationStmt(current, blocks);
             stmt = terminationStmt;
             return stmt;
-        } else {
-
+        } else if (EntityLookStmtOpcode.contains(opcode)) {
+            stmt = EntityLookStmtParser.parse(current, blocks);
+            return stmt;
         }
 
         throw new RuntimeException("Not implemented");
