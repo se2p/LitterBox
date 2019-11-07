@@ -53,6 +53,13 @@ public class ExpressionParser {
         return stringExpr;
     }
 
+    public static StringExpr parseStringExpr(JsonNode current,
+        JsonNode stringExprData) { // TODO check if these params are sufficient/reasonable
+        StringExpr stringExpr = null;
+        return stringExpr;
+    }
+
+
     public static StringExpr parseStringExpr(
         JsonNode stringExprData) { // TODO check if these params are sufficient/reasonable
         StringExpr stringExpr = null;

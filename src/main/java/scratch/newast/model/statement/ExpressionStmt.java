@@ -1,20 +1,32 @@
 package scratch.newast.model.statement;
 
+import com.google.common.collect.ImmutableList;
+import scratch.newast.model.ASTNode;
+import scratch.newast.model.ScratchVisitor;
 import scratch.newast.model.expression.Expression;
 
-public class ExpressionStmt {
+public class ExpressionStmt implements Stmt {
 
-    Expression expression;
+    private final Expression expression;
+    private final ImmutableList<ASTNode> children;
+
 
     public ExpressionStmt(Expression expression) {
         this.expression = expression;
+        children = ImmutableList.<ASTNode>builder().add(expression).build();
     }
 
     public Expression getExpression() {
         return expression;
     }
 
-    public void setExpression(Expression expression) {
-        this.expression = expression;
+    @Override
+    public void accept(ScratchVisitor visitor) {
+        visitor.visit(this);
+    }
+
+    @Override
+    public ImmutableList<ASTNode> getChildren() {
+        return children;
     }
 }
