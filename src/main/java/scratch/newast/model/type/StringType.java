@@ -1,5 +1,5 @@
 package scratch.newast.model.type;
 
-public class StringType {
+public class StringType implements Type{
 }
 
