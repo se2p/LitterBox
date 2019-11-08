@@ -10,6 +10,7 @@ import java.util.Map;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.google.common.base.Preconditions;
 import scratch.newast.model.Declaration;
+import scratch.newast.model.type.BooleanType;
 import scratch.newast.model.type.NumberType;
 import scratch.newast.model.type.StringType;
 import scratch.newast.model.variable.Identifier;
@@ -24,8 +25,14 @@ public class DeclarationParser {
             Map.Entry<String, JsonNode> currentEntry = iter.next();
             Preconditions.checkArgument(currentEntry.getValue().isArray());
             ArrayNode arrNode = (ArrayNode) currentEntry.getValue();
-            //Todo other types than string?
-            parsedVariables.add(new Declaration(new Identifier(arrNode.get(0).textValue()), new StringType()));
+            //Todo identifier?
+            if(arrNode.get(1).isNumber()){
+                parsedVariables.add(new Declaration(new Identifier(arrNode.get(0).textValue()), new NumberType()));
+            }else if(arrNode.get(1).isBoolean()){
+                parsedVariables.add(new Declaration(new Identifier(arrNode.get(0).textValue()), new BooleanType()));
+            }else {
+                parsedVariables.add(new Declaration(new Identifier(arrNode.get(0).textValue()), new StringType()));
+            }
         }
         return parsedVariables;
     }
@@ -40,6 +47,7 @@ public class DeclarationParser {
         Iterator<Map.Entry<String, JsonNode>> iter = broadcastsNode.fields();
         while (iter.hasNext()) {
             Map.Entry<String, JsonNode> current = iter.next();
+            //Todo identifier?
             parsedBroadcasts.add(new Declaration(new Identifier(current.getValue().textValue()), new StringType()));
         }
         return parsedBroadcasts;

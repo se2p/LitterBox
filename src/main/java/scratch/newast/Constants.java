@@ -89,5 +89,5 @@ public class Constants {
     public static final String FIELDS_KEY = "fields";
     public static final String NEXT_KEY = "next";
     public static final String INPUTS_KEY = "inputs";
-
+    public static final String PARENT_KEY = "parent";
 }
