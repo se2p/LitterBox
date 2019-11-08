@@ -8,8 +8,8 @@ public enum NumExprOpcode {
     sensing_loudness, operator_mathop;
 
     public static boolean contains(String opcode) {
-        for (EventOpcode value : EventOpcode.values()) {
-            if (value.toString().equals(opcode)) {
+        for (NumExprOpcode value : NumExprOpcode.values()) {
+            if (value.name().equals(opcode)) {
                 return true;
             }
         }
