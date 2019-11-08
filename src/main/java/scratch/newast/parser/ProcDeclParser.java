@@ -20,9 +20,9 @@ import java.util.Map;
 import static scratch.newast.Constants.*;
 
 public class ProcDeclParser {
-    private final static String CUSTOM_BLOCK = "custom_block";
-    private final static String MUTATION = "mutation";
-    private final static String PROCCODE = "proccode";
+    private final static String CUSTOM_BLOCK_KEY = "custom_block";
+    private final static String MUTATION_KEY = "mutation";
+    private final static String PROCCODE_KEY = "proccode";
     private final static String VALUE_KEY = "VALUE";
 
     public static ProcedureDeclarationList parse(JsonNode blocks) throws ParsingException {
@@ -53,10 +53,10 @@ public class ProcDeclParser {
     }
 
     private static ProcedureDeclaration parseProcDecl(JsonNode def, JsonNode blocks) throws ParsingException {
-        JsonNode input = def.get(Constants.INPUTS_KEY).get(CUSTOM_BLOCK);
+        JsonNode input = def.get(Constants.INPUTS_KEY).get(CUSTOM_BLOCK_KEY);
         Preconditions.checkArgument(input.isArray());
         ArrayNode inputArray = (ArrayNode) input;
-        String protoReference = inputArray.get(2).textValue();
+        String protoReference = inputArray.get(1).textValue();
         JsonNode proto = blocks.get(protoReference);
         Iterator<Map.Entry<String, JsonNode>> iter = proto.get(INPUTS_KEY).fields();
         ArrayList<Parameter> inputs = new ArrayList<>();
@@ -65,11 +65,11 @@ public class ProcDeclParser {
             JsonNode currentInput = iter.next().getValue();
             Preconditions.checkArgument(currentInput.isArray());
             ArrayNode current = (ArrayNode) currentInput;
-            inputs.add(parseParameter(blocks, inputRef, current.get(2).textValue()));
+            inputs.add(parseParameter(blocks, inputRef, current.get(1).textValue()));
         }
         ParameterListPlain parameterListPlain = new ParameterListPlain(inputs);
         ParameterList parameterList = new ParameterList(parameterListPlain);
-        String methodName = proto.get(MUTATION).get(PROCCODE).textValue();
+        String methodName = proto.get(MUTATION_KEY).get(PROCCODE_KEY).textValue();
         //TODO add name in ProcNameMapping
         Identifier ident = new Identifier(proto.get(PARENT_KEY).textValue());
         StmtList stmtList = ScriptParser.parseStmtList(def.get(NEXT_KEY).textValue(), blocks);
