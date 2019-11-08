@@ -17,6 +17,9 @@ import scratch.newast.model.variable.Identifier;
 public class ProgramParser {
 
     public static Program parseProgram(String zipFileName, JsonNode programNode) throws ParsingException {
+        Preconditions.checkNotNull(zipFileName);
+        Preconditions.checkNotNull(programNode);
+
         Identifier ident = new Identifier(zipFileName);
 
         Preconditions.checkArgument(programNode.has("targets"),

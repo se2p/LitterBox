@@ -15,6 +15,7 @@ import scratch.newast.model.EntityType;
 import scratch.newast.model.Script;
 import scratch.newast.model.ScriptGroup;
 import scratch.newast.model.ScriptList;
+import scratch.newast.model.SetStmtList;
 import scratch.newast.model.procedure.ProcedureDeclarationList;
 import scratch.newast.model.resource.Resource;
 import scratch.newast.model.resource.ResourceList;
@@ -60,7 +61,13 @@ public class ScriptGroupParser {
 
         ProcedureDeclarationList procDeclList = ProcDeclParser.parse(allBlocks);
 
-        return new ScriptGroup(entityType, identifier, resources, declarations, procDeclList, scriptList);
+        SetStmtList setStmtList = parseSetStmts(jsonNode);
+
+        return new ScriptGroup(entityType, identifier, resources, declarations, setStmtList, procDeclList, scriptList);
+    }
+
+    private static SetStmtList parseSetStmts(JsonNode jsonNode) {
+        throw new RuntimeException("Not implemented yet");
     }
 
 }

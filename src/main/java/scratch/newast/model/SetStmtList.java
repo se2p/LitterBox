@@ -2,23 +2,16 @@ package scratch.newast.model;
 
 import com.google.common.collect.ImmutableList;
 import java.util.List;
+import scratch.newast.model.statement.common.SetStmt;
 
-public class DeclarationList implements ASTNode {
+public class SetStmtList implements ASTNode {
 
-    List<Declaration> declarationList;
     private final ImmutableList<ASTNode> children;
+    private List<SetStmt> setStmtList;
 
-    public DeclarationList(List<Declaration> declarationList) {
-        this.declarationList = declarationList;
+    public SetStmtList(List<SetStmt> setStmtList) {
+        this.setStmtList = setStmtList;
         children = ImmutableList.<ASTNode>builder().build();
-    }
-
-    public List<Declaration> getDeclarationList() {
-        return declarationList;
-    }
-
-    public void setDeclarationList(List<Declaration> declarationList) {
-        this.declarationList = declarationList;
     }
 
     @Override
@@ -30,4 +23,5 @@ public class DeclarationList implements ASTNode {
     public ImmutableList<ASTNode> getChildren() {
         return children;
     }
+
 }
