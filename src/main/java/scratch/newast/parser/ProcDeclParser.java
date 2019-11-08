@@ -23,6 +23,7 @@ public class ProcDeclParser {
     private final static String CUSTOM_BLOCK = "custom_block";
     private final static String MUTATION = "mutation";
     private final static String PROCCODE = "proccode";
+    private final static String VALUE_KEY = "VALUE";
 
     public static ProcedureDeclarationList parse(JsonNode blocks) throws ParsingException {
         Preconditions.checkNotNull(blocks);
@@ -41,16 +42,14 @@ public class ProcDeclParser {
         //each definition needs the prototype block because it holds the name of the procedure
         Preconditions.checkArgument(protoBlock.size() == defBlock.size());
         if (defBlock.size() == 0) {
-            //TODO what to return if no custom blocks are found
-            return null;
+            return new ProcedureDeclarationList(new ArrayList<>());
         }
         List<ProcedureDeclaration> procdecls = new ArrayList<>();
         for (JsonNode jsonNode : defBlock) {
 
             procdecls.add(parseProcDecl(jsonNode, blocks));
         }
-        //TODO ProcedureDeclarationList == ProcedureDeclaration? does not make sense...
-        throw new RuntimeException("Not implemented");
+        return new ProcedureDeclarationList(procdecls);
     }
 
     private static ProcedureDeclaration parseProcDecl(JsonNode def, JsonNode blocks) throws ParsingException {
@@ -81,12 +80,16 @@ public class ProcDeclParser {
         JsonNode param = blocks.get(textValue);
         String opcodeString = param.get(OPCODE_KEY).textValue();
         Parameter returnParam;
-        //Todo what about parameter names?
         if (opcodeString.equals(ProcedureOpcode.argument_reporter_boolean.name())) {
             returnParam = new Parameter(new Identifier(reference), new BooleanType());
         } else {
             returnParam = new Parameter(new Identifier(reference), new StringType());
         }
+        JsonNode values = param.get(FIELDS_KEY).get(VALUE_KEY);
+        Preconditions.checkArgument(values.isArray());
+        ArrayNode arrayNode = (ArrayNode) values;
+        String name = arrayNode.get(0).textValue();
+        returnParam.setValue(name);
         return returnParam;
     }
 }

@@ -1,15 +1,19 @@
 package scratch.newast.model;
 
+import com.google.common.collect.ImmutableList;
 import scratch.newast.model.type.Type;
 import scratch.newast.model.variable.Identifier;
 
-public class Declaration {
+public class Declaration implements ASTNode{
     private Identifier ident;
     private Type type;
+    private final ImmutableList<ASTNode> children;
 
     public Declaration(Identifier ident, Type type) {
         this.ident = ident;
         this.type = type;
+        ImmutableList.Builder<ASTNode> builder = ImmutableList.builder();
+        children = builder.build();
     }
 
     public Identifier getIdent() {
@@ -26,5 +30,15 @@ public class Declaration {
 
     public void setType(Type type) {
         this.type = type;
+    }
+
+    @Override
+    public void accept(ScratchVisitor visitor) {
+        visitor.visit(this);
+    }
+
+    @Override
+    public ImmutableList<ASTNode> getChildren() {
+        return children;
     }
 }

@@ -25,7 +25,7 @@ public class DeclarationParser {
             Map.Entry<String, JsonNode> currentEntry = iter.next();
             Preconditions.checkArgument(currentEntry.getValue().isArray());
             ArrayNode arrNode = (ArrayNode) currentEntry.getValue();
-            //Todo identifier?
+            //Todo add variables to symboltable
             if(arrNode.get(1).isNumber()){
                 parsedVariables.add(new Declaration(new Identifier(arrNode.get(0).textValue()), new NumberType()));
             }else if(arrNode.get(1).isBoolean()){
@@ -45,9 +45,9 @@ public class DeclarationParser {
         Preconditions.checkNotNull(broadcastsNode);
         List<Declaration> parsedBroadcasts = new ArrayList<>();
         Iterator<Map.Entry<String, JsonNode>> iter = broadcastsNode.fields();
+        //TODO add broadcasts messages to symboltable
         while (iter.hasNext()) {
             Map.Entry<String, JsonNode> current = iter.next();
-            //Todo identifier?
             parsedBroadcasts.add(new Declaration(new Identifier(current.getValue().textValue()), new StringType()));
         }
         return parsedBroadcasts;

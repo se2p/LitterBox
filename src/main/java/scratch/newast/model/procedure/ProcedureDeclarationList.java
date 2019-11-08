@@ -1,41 +1,20 @@
 package scratch.newast.model.procedure;
 
-import scratch.newast.model.StmtList;
-import scratch.newast.model.variable.Identifier;
+import java.util.List;
 
 public class ProcedureDeclarationList {
 
-    Identifier identifier;
-    ParameterList parameterList;
-    StmtList stmtList;
+    private List<ProcedureDeclaration> list;
 
-    public ProcedureDeclarationList(Identifier identifier, ParameterList parameterList, StmtList stmtList) {
-        this.identifier = identifier;
-        this.parameterList = parameterList;
-        this.stmtList = stmtList;
+    public ProcedureDeclarationList(List<ProcedureDeclaration> list) {
+        this.list=list;
     }
 
-    public Identifier getIdentifier() {
-        return identifier;
+    public List<ProcedureDeclaration> getList() {
+        return list;
     }
 
-    public void setIdentifier(Identifier identifier) {
-        this.identifier = identifier;
-    }
-
-    public ParameterList getParameterList() {
-        return parameterList;
-    }
-
-    public void setParameterList(ParameterList parameterList) {
-        this.parameterList = parameterList;
-    }
-
-    public StmtList getStmtList() {
-        return stmtList;
-    }
-
-    public void setStmtList(StmtList stmtList) {
-        this.stmtList = stmtList;
+    public void setList(List<ProcedureDeclaration> list) {
+        this.list = list;
     }
 }
