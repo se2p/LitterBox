@@ -17,31 +17,31 @@ import scratch.newast.model.variable.Identifier;
 
 public class DeclarationParser {
 
-    public static List<Declaration> parseVariables(JsonNode variableNode) {
+    public static List<Declaration> parseVariables(JsonNode variableNode, String scriptGroupName, boolean isStage) {
         Preconditions.checkNotNull(variableNode);
         List<Declaration> parsedVariables = new ArrayList<>();
         Iterator<Map.Entry<String, JsonNode>> iter = variableNode.fields();
-        while (iter.hasNext()){
+        while (iter.hasNext()) {
             Map.Entry<String, JsonNode> currentEntry = iter.next();
             Preconditions.checkArgument(currentEntry.getValue().isArray());
             ArrayNode arrNode = (ArrayNode) currentEntry.getValue();
             //Todo add variables to symboltable
-            if(arrNode.get(1).isNumber()){
+            if (arrNode.get(1).isNumber()) {
                 parsedVariables.add(new Declaration(new Identifier(arrNode.get(0).textValue()), new NumberType()));
-            }else if(arrNode.get(1).isBoolean()){
+            } else if (arrNode.get(1).isBoolean()) {
                 parsedVariables.add(new Declaration(new Identifier(arrNode.get(0).textValue()), new BooleanType()));
-            }else {
+            } else {
                 parsedVariables.add(new Declaration(new Identifier(arrNode.get(0).textValue()), new StringType()));
             }
         }
         return parsedVariables;
     }
 
-    public static List<Declaration> parseLists(JsonNode listsNode) {
+    public static List<Declaration> parseLists(JsonNode listsNode, String scriptGroupName, boolean isStage) {
         throw new RuntimeException("Not Implemented");
     }
 
-    public static List<Declaration> parseBroadcasts(JsonNode broadcastsNode) {
+    public static List<Declaration> parseBroadcasts(JsonNode broadcastsNode, String scriptGroupName, boolean isStage) {
         Preconditions.checkNotNull(broadcastsNode);
         List<Declaration> parsedBroadcasts = new ArrayList<>();
         Iterator<Map.Entry<String, JsonNode>> iter = broadcastsNode.fields();

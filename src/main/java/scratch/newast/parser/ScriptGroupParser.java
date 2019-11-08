@@ -2,12 +2,14 @@ package scratch.newast.parser;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.base.Preconditions;
+
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
+
 import scratch.newast.ParsingException;
 import scratch.newast.model.Declaration;
 import scratch.newast.model.DeclarationList;
@@ -49,9 +51,12 @@ public class ScriptGroupParser {
         res.addAll(ResourceParser.parseCostume(scriptGroupNode.get("costumes")));
         ResourceList resources = new ResourceList(res);
 
-        List<Declaration> decls = DeclarationParser.parseLists(scriptGroupNode.get("lists"));
-        decls.addAll(DeclarationParser.parseBroadcasts(scriptGroupNode.get("broadcasts")));
-        decls.addAll(DeclarationParser.parseVariables(scriptGroupNode.get("variables")));
+        List<Declaration> decls = DeclarationParser.parseLists(scriptGroupNode.get("lists"), identifier.getValue(),
+                scriptGroupNode.get("isStage").asBoolean());
+        decls.addAll(DeclarationParser.parseBroadcasts(scriptGroupNode.get("broadcasts"), identifier.getValue(),
+                scriptGroupNode.get("isStage").asBoolean()));
+        decls.addAll(DeclarationParser.parseVariables(scriptGroupNode.get("variables"), identifier.getValue(),
+                scriptGroupNode.get("isStage").asBoolean()));
         DeclarationList declarations = new DeclarationList(decls);
 
         JsonNode allBlocks = scriptGroupNode.get("blocks");
@@ -59,7 +64,7 @@ public class ScriptGroupParser {
         Iterable<String> iterable = () -> fieldIterator;
         Stream<String> stream = StreamSupport.stream(iterable.spliterator(), false);
         List<String> topLevelNodes = stream.filter(fieldName -> allBlocks.get(fieldName).get("topLevel").asBoolean())
-            .collect(Collectors.toList());
+                .collect(Collectors.toList());
         List<Script> scripts = new LinkedList<>();
         for (String topLevelID : topLevelNodes) {
             Script script = ScriptParser.parse(topLevelID, allBlocks);
