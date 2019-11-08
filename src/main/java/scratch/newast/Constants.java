@@ -83,6 +83,11 @@ public class Constants {
     public static final int FIELD_VALUE = 0;
 
     /**
+     * The position of the block ID in an expr array.
+     */
+    public static final int POS_BLOCK_ID = 1;
+
+    /**
      * JSon Field Names of JSon Blocks
      */
     public static final String OPCODE_KEY = "opcode";

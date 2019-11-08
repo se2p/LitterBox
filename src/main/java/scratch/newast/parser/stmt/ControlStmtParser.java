@@ -60,7 +60,8 @@ public class ControlStmtParser {
                 break;
             case control_repeat:
                 conditionNode = inputs.get(INPUT_TIMES);
-                NumExpr numExpr = ExpressionParser.parseNumExpr(conditionNode, allBlocks);
+                //NumExpr numExpr = ExpressionParser.parseNumExpr(conditionNode, allBlocks);
+                NumExpr numExpr = null; //FIXME use the right arguments and then actually parse the expr
 
                 substackNode = inputs.get(INPUT_SUBSTACK).get(Constants.POS_INPUT_VALUE);
                 stmtList = ScriptParser.parseStmtList(substackNode.asText(), allBlocks);

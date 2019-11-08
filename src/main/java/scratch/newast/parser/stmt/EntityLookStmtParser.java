@@ -50,7 +50,8 @@ public class EntityLookStmtParser {
         if (opcode.equals(sensing_askandwait)) {
             JsonNode questionNode = current.get(Constants.INPUTS_KEY).get(ASKANDWAIT_INPUT_KEY)
                 .get(Constants.POS_DATA_ARRAY);
-            StringExpr question = ExpressionParser.parseStringExpr(questionNode);
+            // StringExpr question = ExpressionParser.parseStringExpr(questionNode);
+            StringExpr question = null; // FIXME use the right arguments and then actually parse the expr
             stmt = new AskAndWait(question);
         } else if (opcode.equals(looks_switchbackdropto)) {
             JsonNode backdropNodeId = current.get(Constants.INPUTS_KEY).get(CHANGE_EFFECTBY_INPUT_KEY)
@@ -65,7 +66,8 @@ public class EntityLookStmtParser {
         } else if (opcode.equals(looks_changeeffectby)) {
             JsonNode effectValueNode = current.get(Constants.INPUTS_KEY).get(CHANGE_EFFECTBY_INPUT_KEY)
                 .get(Constants.POS_DATA_ARRAY);
-            NumExpr effectValue = ExpressionParser.parseNumExpr(effectValueNode, allBlocks);
+            // NumExpr effectValue = ExpressionParser.parseNumExpr(effectValueNode, allBlocks);
+            NumExpr effectValue = null; //FIXME use the right arguments and then actually parse the expr
             String fieldValue = current.get(FIELDS_KEY).get(EFFECTS_FIELD_KEY).get(Constants.FIELD_VALUE).asText();
             GraphicEffect effect = GraphicEffectParser.parse(fieldValue);
             stmt = new ChangeEffectBy(effect, effectValue);
@@ -73,7 +75,8 @@ public class EntityLookStmtParser {
         } else if (opcode.equals(looks_seteffectto)) {
             JsonNode effectValueNode = current.get(Constants.INPUTS_KEY).get(SET_EFFECTTO_INPUT_KEY)
                 .get(Constants.POS_DATA_ARRAY);
-            NumExpr effectValue = ExpressionParser.parseNumExpr(effectValueNode, allBlocks);
+            // NumExpr effectValue = ExpressionParser.parseNumExpr(effectValueNode, allBlocks);
+            NumExpr effectValue = null; //FIXME use the right arguments and then actually parse the expr
             String fieldValue = current.get(FIELDS_KEY).get(EFFECTS_FIELD_KEY).get(Constants.FIELD_VALUE).asText();
             GraphicEffect effect = GraphicEffectParser.parse(fieldValue);
             stmt = new ChangeEffectBy(effect, effectValue);

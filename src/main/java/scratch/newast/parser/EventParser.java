@@ -71,7 +71,7 @@ public class EventParser {
             Identifier var = new Identifier(variableValue);
 
             JsonNode jsonNode = current.get(INPUTS);
-            NumExpr fieldValue = ExpressionParser.parseNumExpr(jsonNode, allBlocks);
+            NumExpr fieldValue = ExpressionParser.parseNumExpr(jsonNode, 0, allBlocks); // FIXME which pos
 
             event = new VariableAboveValue(var, fieldValue);
         } else if (opcode.equals(event_whenbackdropswitchesto)) {
