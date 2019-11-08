@@ -4,12 +4,12 @@ import com.google.common.collect.ImmutableList;
 import scratch.newast.model.ASTNode;
 import scratch.newast.model.ScratchVisitor;
 
-public class Concat implements Variable {
+public class Qualified implements Variable {
     private final Identifier first;
     private final Identifier second;
     private final ImmutableList<ASTNode> children;
 
-    public Concat(Identifier first, Identifier second) {
+    public Qualified(Identifier first, Identifier second) {
         this.first = first;
         this.second = second;
         children =  ImmutableList.<ASTNode>builder().add(first).add(second).build();
