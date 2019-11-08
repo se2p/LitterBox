@@ -4,25 +4,22 @@ import com.google.common.collect.ImmutableList;
 import scratch.newast.model.ASTNode;
 import scratch.newast.model.ScratchVisitor;
 import scratch.newast.model.expression.Expression;
-import scratch.newast.model.variable.Variable;
+import scratch.newast.model.expression.string.StringExpr;
 
-public class SetVariableTo implements SetStmt {
-    private Variable variable;
-    private Expression expr;
+public class SetAttributeTo implements SetStmt {
+
     private final ImmutableList<ASTNode> children;
+    private StringExpr stringExpr;
+    private Expression expr;
 
-    public SetVariableTo(Variable variable, Expression expr) {
-        this.variable = variable;
+    public SetAttributeTo(StringExpr stringExpr, Expression expr) {
+        this.stringExpr = stringExpr;
         this.expr = expr;
-        children = ImmutableList.<ASTNode>builder().add(variable).add(expr).build();
+        children = ImmutableList.<ASTNode>builder().add(stringExpr).add(expr).build();
     }
 
-    public Variable getVariable() {
-        return variable;
-    }
-
-    public void setVariable(Variable variable) {
-        this.variable = variable;
+    public StringExpr getStringExpr() {
+        return stringExpr;
     }
 
     public Expression getExpr() {

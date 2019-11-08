@@ -1,5 +1,7 @@
 package scratch.newast.model.statement.common;
 
-public interface CommonStmt {
+import scratch.newast.model.ASTNode;
+
+public interface CommonStmt extends ASTNode {
 
 }
