@@ -13,12 +13,17 @@ import scratch.newast.model.Program;
 import scratch.newast.model.ScriptGroup;
 import scratch.newast.model.ScriptGroupList;
 import scratch.newast.model.variable.Identifier;
+import scratch.newast.parser.symboltable.SymbolTable;
 
 public class ProgramParser {
+
+    public static SymbolTable symbolTable;
 
     public static Program parseProgram(String zipFileName, JsonNode programNode) throws ParsingException {
         Preconditions.checkNotNull(zipFileName);
         Preconditions.checkNotNull(programNode);
+
+        symbolTable = new SymbolTable();
 
         Identifier ident = new Identifier(zipFileName);
 
