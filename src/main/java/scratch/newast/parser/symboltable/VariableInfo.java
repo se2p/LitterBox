@@ -1,5 +1,6 @@
 package scratch.newast.parser.symboltable;
 
+import scratch.newast.model.type.Type;
 import scratch.newast.model.variable.Variable;
 
 public class VariableInfo {
@@ -7,14 +8,14 @@ public class VariableInfo {
     boolean global;
     String scriptGroup;
     String variableName;
-    Variable variable;
+    Type type;
 
     public VariableInfo(boolean global, String scriptGroup, String ident,
-        Variable variable) {
+        Type type) {
         this.global = global;
         this.scriptGroup = scriptGroup;
         this.variableName = ident;
-        this.variable = variable;
+        this.type = type;
     }
 
     public boolean isGlobal() {
@@ -29,7 +30,7 @@ public class VariableInfo {
         return variableName;
     }
 
-    public Variable getVariable() {
-        return variable;
+    public Type getType() {
+        return type;
     }
 }

@@ -10,6 +10,7 @@ import java.util.Map;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.google.common.base.Preconditions;
 import scratch.newast.model.Declaration;
+import scratch.newast.model.Message;
 import scratch.newast.model.type.BooleanType;
 import scratch.newast.model.type.NumberType;
 import scratch.newast.model.type.StringType;
@@ -25,12 +26,17 @@ public class DeclarationParser {
             Map.Entry<String, JsonNode> currentEntry = iter.next();
             Preconditions.checkArgument(currentEntry.getValue().isArray());
             ArrayNode arrNode = (ArrayNode) currentEntry.getValue();
-            //Todo add variables to symboltable
             if (arrNode.get(1).isNumber()) {
+                ProgramParser.symbolTable.addVariable(arrNode.get(0).textValue(), new NumberType(), isStage,
+                        scriptGroupName);
                 parsedVariables.add(new Declaration(new Identifier(arrNode.get(0).textValue()), new NumberType()));
             } else if (arrNode.get(1).isBoolean()) {
+                ProgramParser.symbolTable.addVariable(arrNode.get(0).textValue(), new BooleanType(), isStage,
+                        scriptGroupName);
                 parsedVariables.add(new Declaration(new Identifier(arrNode.get(0).textValue()), new BooleanType()));
             } else {
+                ProgramParser.symbolTable.addVariable(arrNode.get(0).textValue(), new StringType(), isStage,
+                        scriptGroupName);
                 parsedVariables.add(new Declaration(new Identifier(arrNode.get(0).textValue()), new StringType()));
             }
         }
@@ -45,9 +51,10 @@ public class DeclarationParser {
         Preconditions.checkNotNull(broadcastsNode);
         List<Declaration> parsedBroadcasts = new ArrayList<>();
         Iterator<Map.Entry<String, JsonNode>> iter = broadcastsNode.fields();
-        //TODO add broadcasts messages to symboltable
         while (iter.hasNext()) {
             Map.Entry<String, JsonNode> current = iter.next();
+            ProgramParser.symbolTable.addMessage(current.getValue().textValue(),
+                    new Message(current.getValue().textValue()), isStage, scriptGroupName);
             parsedBroadcasts.add(new Declaration(new Identifier(current.getValue().textValue()), new StringType()));
         }
         return parsedBroadcasts;

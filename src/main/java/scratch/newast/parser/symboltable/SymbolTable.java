@@ -3,6 +3,7 @@ package scratch.newast.parser.symboltable;
 import java.util.HashMap;
 import scratch.newast.model.Message;
 import scratch.newast.model.expression.list.ExpressionList;
+import scratch.newast.model.type.Type;
 import scratch.newast.model.variable.Variable;
 
 public class SymbolTable {
@@ -29,8 +30,8 @@ public class SymbolTable {
         return lists;
     }
 
-    public void addVariable(String ident, Variable variable, boolean global, String scriptGroupName) {
-        VariableInfo info = new VariableInfo(global, scriptGroupName, ident, variable);
+    public void addVariable(String ident, Type type, boolean global, String scriptGroupName) {
+        VariableInfo info = new VariableInfo(global, scriptGroupName, ident, type);
         variables.put(ident, info);
     }
 
