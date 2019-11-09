@@ -97,7 +97,7 @@ public class ExpressionParserTest {
     }
 
     @Test
-    public void testMulitply() throws ParsingException {
+    public void testMult() throws ParsingException {
         NumExpr mult = ExpressionParser.parseNumExpr(multBlock.get(INPUTS_KEY), 0, twoNumExprSlotsNumExprs);
         assertTrue(mult instanceof Mult);
         assertEquals("1.0", String.valueOf(((Number) ((Mult) mult).getFirst()).getValue()));
