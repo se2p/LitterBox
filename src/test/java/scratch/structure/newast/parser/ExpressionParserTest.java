@@ -84,24 +84,24 @@ public class ExpressionParserTest {
     public void testAdd() throws ParsingException {
         NumExpr add = ExpressionParser.parseNumExpr(addBlock.get(INPUTS_KEY), 0, twoNumExprSlotsNumExprs);
         assertTrue(add instanceof Add);
-        assertEquals("1.0",String.valueOf(((Number) ((Add) add).getFirst()).getValue()));
-        assertEquals("2.0",String.valueOf(((Number) ((Add) add).getSecond()).getValue()));
+        assertEquals("1.0", String.valueOf(((Number) ((Add) add).getFirst()).getValue()));
+        assertEquals("2.0", String.valueOf(((Number) ((Add) add).getSecond()).getValue()));
     }
 
     @Test
     public void testMinus() throws ParsingException {
         NumExpr minus = ExpressionParser.parseNumExpr(minusBlock.get(INPUTS_KEY), 0, twoNumExprSlotsNumExprs);
         assertTrue(minus instanceof Minus);
-        assertEquals("1.0",String.valueOf(((Number) ((Minus) minus).getFirst()).getValue()));
-        assertEquals("2.0",String.valueOf(((Number) ((Minus) minus).getSecond()).getValue()));
+        assertEquals("1.0", String.valueOf(((Number) ((Minus) minus).getFirst()).getValue()));
+        assertEquals("2.0", String.valueOf(((Number) ((Minus) minus).getSecond()).getValue()));
     }
 
     @Test
     public void testMulitply() throws ParsingException {
         NumExpr mult = ExpressionParser.parseNumExpr(multBlock.get(INPUTS_KEY), 0, twoNumExprSlotsNumExprs);
         assertTrue(mult instanceof Mult);
-        assertEquals("1.0",String.valueOf(((Number) ((Mult) mult).getFirst()).getValue()));
-        assertEquals("2.0",String.valueOf(((Number) ((Mult) mult).getSecond()).getValue()));
+        assertEquals("1.0", String.valueOf(((Number) ((Mult) mult).getFirst()).getValue()));
+        assertEquals("2.0", String.valueOf(((Number) ((Mult) mult).getSecond()).getValue()));
     }
 
     @Test
@@ -109,13 +109,12 @@ public class ExpressionParserTest {
         NumExpr div = ExpressionParser.parseNumExpr(divBlock.get(INPUTS_KEY), 0, twoNumExprSlotsNumExprs);
         assertTrue(div instanceof Div);
         PickRandom pickRandom = (PickRandom) ((Div) div).getFirst();
-        assertEquals("1.0",String.valueOf(((Number) (pickRandom.getFrom())).getValue()));
-        assertEquals("2.0",String.valueOf(((Number) (pickRandom.getTo())).getValue()));
+        assertEquals("1.0", String.valueOf(((Number) (pickRandom.getFrom())).getValue()));
+        assertEquals("2.0", String.valueOf(((Number) (pickRandom.getTo())).getValue()));
         Mod mod = (Mod) ((Div) div).getSecond();
-        assertEquals("1.0",String.valueOf(((Number) (mod.getFirst())).getValue()));
-        assertEquals("2.0",String.valueOf(((Number) (mod.getSecond())).getValue()));
+        assertEquals("1.0", String.valueOf(((Number) (mod.getFirst())).getValue()));
+        assertEquals("2.0", String.valueOf(((Number) (mod.getSecond())).getValue()));
     }
-
 
 
 }
