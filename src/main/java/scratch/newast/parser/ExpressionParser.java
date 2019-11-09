@@ -4,21 +4,30 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import com.google.common.base.Preconditions;
+import scratch.newast.Constants;
 import scratch.newast.ParsingException;
 import scratch.newast.model.expression.Expression;
 import scratch.newast.model.expression.bool.BoolExpr;
+import scratch.newast.model.expression.num.Add;
 import scratch.newast.model.expression.num.DaysSince2000;
+import scratch.newast.model.expression.num.DistanceTo;
+import scratch.newast.model.expression.num.Div;
 import scratch.newast.model.expression.num.Loudness;
+import scratch.newast.model.expression.num.Minus;
+import scratch.newast.model.expression.num.Mod;
 import scratch.newast.model.expression.num.MouseX;
 import scratch.newast.model.expression.num.MouseY;
+import scratch.newast.model.expression.num.Mult;
 import scratch.newast.model.expression.num.NumExpr;
 import scratch.newast.model.expression.num.Number;
+import scratch.newast.model.expression.num.PickRandom;
 import scratch.newast.model.expression.num.Round;
 import scratch.newast.model.expression.num.Timer;
 import scratch.newast.model.expression.string.StringExpr;
+import scratch.newast.model.position.Position;
 import scratch.newast.opcodes.NumExprOpcode;
-import scratch.newast.Constants;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -38,7 +47,11 @@ public class ExpressionParser {
     public static NumExpr parseNumExpr(JsonNode inputsNode, int pos, JsonNode blocks) throws ParsingException { // we ignored "(" NumExpr ")"
         ArrayNode exprArray = getExprArrayAtPos(inputsNode, pos);
         if (getShadowIndicator(exprArray) == 1) {
-            return parseNumber(inputsNode, pos);
+            try {
+                return parseNumber(inputsNode, pos);
+            } catch (NumberFormatException e) {
+                throw new ParsingException("There was no parsable float but we didn't implement a solution yet.");
+            }
         } else if (exprArray.get(POS_BLOCK_ID) instanceof TextNode) {
             String identifier = exprArray.get(POS_BLOCK_ID).asText();
             String opcode = blocks.get(identifier).get(OPCODE_KEY).asText();
@@ -113,28 +126,32 @@ public class ExpressionParser {
             return new Round(num);
         // One StringExpr or Variable as input
         case operator_length:
+            // FIXME TODO
         case data_lengthoflist:
+            // FIXME TODO you have to differentiate between LengthOfString and LengthOfVar here
             // FIXME TODO
             // One TimeComp as input
         case sensing_current:
             // FIXME TODO
             // one Position as input
         case sensing_distanceto:
-            // two NumExpr as inputs
-            // FIXME TODO you have to differentiate between LengthOfString and LengthOfVar here
+            JsonNode distanceBlock = blocks.get(identifier);
+            Position pos = null; // TODO parse position
+            return new DistanceTo(pos);
+        // two NumExprs as input
         case operator_add:
-            // FIXME TODO
+            return buildTwoNumExprStatement(Add.class, identifier, blocks);
         case operator_subtract:
-            // FIXME TODO
+            return buildTwoNumExprStatement(Minus.class, identifier, blocks);
         case operator_multiply:
-            // FIXME TODO
+            return buildTwoNumExprStatement(Mult.class, identifier, blocks);
         case operator_divide:
-            // FIXME TODO
+            return buildTwoNumExprStatement(Div.class, identifier, blocks);
         case operator_mod:
-            // FIXME TODO
+            return buildTwoNumExprStatement(Mod.class, identifier, blocks);
         case operator_random:
-            // FIXME TODO
-            // NumFunct and NumExpr as inputs
+            return buildTwoNumExprStatement(PickRandom.class, identifier, blocks);
+        // NumFunct and NumExpr as inputs
         case operator_mathop:
             // FIXME TODO
             // one Expr and one Variable as inputs
@@ -146,6 +163,18 @@ public class ExpressionParser {
             throw new ParsingException(opcodeString + " not implemented yet");
         }
     }
+
+    private static <T extends NumExpr> NumExpr buildTwoNumExprStatement(Class<T> clazz, String identifier, JsonNode blocks) throws ParsingException {
+        JsonNode inputs = blocks.get(identifier).get(INPUTS_KEY);
+        NumExpr first = parseNumExpr(inputs, 0, blocks);
+        NumExpr second = parseNumExpr(inputs, 1, blocks);
+        try {
+            return (T) clazz.getConstructor(NumExpr.class, NumExpr.class).newInstance(first, second);
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            throw new ParsingException(e);
+        }
+    }
+
 
     public static Expression parseExpression(JsonNode inputsNode, int pos, JsonNode blocks) {
         return null;
