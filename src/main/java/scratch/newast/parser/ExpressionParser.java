@@ -9,9 +9,11 @@ import scratch.newast.ParsingException;
 import scratch.newast.model.expression.Expression;
 import scratch.newast.model.expression.bool.BoolExpr;
 import scratch.newast.model.expression.num.Add;
+import scratch.newast.model.expression.num.Current;
 import scratch.newast.model.expression.num.DaysSince2000;
 import scratch.newast.model.expression.num.DistanceTo;
 import scratch.newast.model.expression.num.Div;
+import scratch.newast.model.expression.num.IndexOf;
 import scratch.newast.model.expression.num.Loudness;
 import scratch.newast.model.expression.num.Minus;
 import scratch.newast.model.expression.num.Mod;
@@ -19,12 +21,16 @@ import scratch.newast.model.expression.num.MouseX;
 import scratch.newast.model.expression.num.MouseY;
 import scratch.newast.model.expression.num.Mult;
 import scratch.newast.model.expression.num.NumExpr;
+import scratch.newast.model.expression.num.NumFunctOf;
 import scratch.newast.model.expression.num.Number;
 import scratch.newast.model.expression.num.PickRandom;
 import scratch.newast.model.expression.num.Round;
 import scratch.newast.model.expression.num.Timer;
 import scratch.newast.model.expression.string.StringExpr;
+import scratch.newast.model.numfunct.NumFunct;
 import scratch.newast.model.position.Position;
+import scratch.newast.model.timecomp.TimeComp;
+import scratch.newast.model.variable.Variable;
 import scratch.newast.opcodes.NumExprOpcode;
 
 import java.lang.reflect.InvocationTargetException;
@@ -125,46 +131,42 @@ public class ExpressionParser {
             NumExpr num = parseNumExpr(getDataArrayAtPos(block.get(INPUTS_KEY), 0), 0, blocks);
             return new Round(num);
         // One StringExpr or Variable as input
+        // FIXME TODO you have to differentiate between LengthOfString and LengthOfVar here
         case operator_length:
-            // FIXME TODO
         case data_lengthoflist:
-            // FIXME TODO you have to differentiate between LengthOfString and LengthOfVar here
             // FIXME TODO
-            // One TimeComp as input
         case sensing_current:
-            // FIXME TODO
-            // one Position as input
+            TimeComp timeComp = null; // TODO parse TimeComp
+            return new Current(timeComp);
         case sensing_distanceto:
-            JsonNode distanceBlock = blocks.get(identifier);
             Position pos = null; // TODO parse position
             return new DistanceTo(pos);
-        // two NumExprs as input
         case operator_add:
-            return buildTwoNumExprStatement(Add.class, identifier, blocks);
+            return buildExprWithTwoNumExprInputs(Add.class, identifier, blocks);
         case operator_subtract:
-            return buildTwoNumExprStatement(Minus.class, identifier, blocks);
+            return buildExprWithTwoNumExprInputs(Minus.class, identifier, blocks);
         case operator_multiply:
-            return buildTwoNumExprStatement(Mult.class, identifier, blocks);
+            return buildExprWithTwoNumExprInputs(Mult.class, identifier, blocks);
         case operator_divide:
-            return buildTwoNumExprStatement(Div.class, identifier, blocks);
+            return buildExprWithTwoNumExprInputs(Div.class, identifier, blocks);
         case operator_mod:
-            return buildTwoNumExprStatement(Mod.class, identifier, blocks);
+            return buildExprWithTwoNumExprInputs(Mod.class, identifier, blocks);
         case operator_random:
-            return buildTwoNumExprStatement(PickRandom.class, identifier, blocks);
-        // NumFunct and NumExpr as inputs
+            return buildExprWithTwoNumExprInputs(PickRandom.class, identifier, blocks);
         case operator_mathop:
-            // FIXME TODO
-            // one Expr and one Variable as inputs
+            NumFunct funct = null; // TODO parse funct
+            NumExpr numExpr = parseNumExpr(blocks.get(identifier).get(INPUTS_KEY), 0, blocks);
+            return new NumFunctOf(funct, numExpr);
         case data_itemnumoflist:
-            // FIXME TODO
-            return null;
-
+            Expression item = parseExpression(blocks.get(identifier).get(INPUTS_KEY), 0, blocks);
+            Variable list = null; // TODO parse - note that the list is in the "fields" node.
+            return new IndexOf(item, list);
         default:
             throw new ParsingException(opcodeString + " not implemented yet");
         }
     }
 
-    private static <T extends NumExpr> NumExpr buildTwoNumExprStatement(Class<T> clazz, String identifier, JsonNode blocks) throws ParsingException {
+    private static <T extends NumExpr> NumExpr buildExprWithTwoNumExprInputs(Class<T> clazz, String identifier, JsonNode blocks) throws ParsingException {
         JsonNode inputs = blocks.get(identifier).get(INPUTS_KEY);
         NumExpr first = parseNumExpr(inputs, 0, blocks);
         NumExpr second = parseNumExpr(inputs, 1, blocks);
