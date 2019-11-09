@@ -142,17 +142,17 @@ public class ExpressionParser {
             Position pos = null; // TODO parse position
             return new DistanceTo(pos);
         case operator_add:
-            return buildExprWithTwoNumExprInputs(Add.class, identifier, blocks);
+            return buildNumExprWithTwoNumExprInputs(Add.class, identifier, blocks);
         case operator_subtract:
-            return buildExprWithTwoNumExprInputs(Minus.class, identifier, blocks);
+            return buildNumExprWithTwoNumExprInputs(Minus.class, identifier, blocks);
         case operator_multiply:
-            return buildExprWithTwoNumExprInputs(Mult.class, identifier, blocks);
+            return buildNumExprWithTwoNumExprInputs(Mult.class, identifier, blocks);
         case operator_divide:
-            return buildExprWithTwoNumExprInputs(Div.class, identifier, blocks);
+            return buildNumExprWithTwoNumExprInputs(Div.class, identifier, blocks);
         case operator_mod:
-            return buildExprWithTwoNumExprInputs(Mod.class, identifier, blocks);
+            return buildNumExprWithTwoNumExprInputs(Mod.class, identifier, blocks);
         case operator_random:
-            return buildExprWithTwoNumExprInputs(PickRandom.class, identifier, blocks);
+            return buildNumExprWithTwoNumExprInputs(PickRandom.class, identifier, blocks);
         case operator_mathop:
             NumFunct funct = null; // TODO parse funct
             NumExpr numExpr = parseNumExpr(blocks.get(identifier).get(INPUTS_KEY), 0, blocks);
@@ -166,7 +166,7 @@ public class ExpressionParser {
         }
     }
 
-    private static <T extends NumExpr> NumExpr buildExprWithTwoNumExprInputs(Class<T> clazz, String identifier, JsonNode blocks) throws ParsingException {
+    private static <T extends NumExpr> NumExpr buildNumExprWithTwoNumExprInputs(Class<T> clazz, String identifier, JsonNode blocks) throws ParsingException {
         JsonNode inputs = blocks.get(identifier).get(INPUTS_KEY);
         NumExpr first = parseNumExpr(inputs, 0, blocks);
         NumExpr second = parseNumExpr(inputs, 1, blocks);
