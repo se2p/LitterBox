@@ -1,9 +1,20 @@
 package scratch.newast.parser;
 
+import static scratch.newast.Constants.INPUTS_KEY;
+import static scratch.newast.Constants.OPCODE_KEY;
+import static scratch.newast.Constants.POS_BLOCK_ID;
+import static scratch.newast.Constants.POS_DATA_ARRAY;
+import static scratch.newast.Constants.POS_INPUT_ID;
+import static scratch.newast.Constants.POS_INPUT_VALUE;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import com.google.common.base.Preconditions;
+import java.lang.reflect.InvocationTargetException;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import scratch.newast.Constants;
 import scratch.newast.ParsingException;
 import scratch.newast.model.expression.Expression;
@@ -32,13 +43,6 @@ import scratch.newast.model.position.Position;
 import scratch.newast.model.timecomp.TimeComp;
 import scratch.newast.model.variable.Variable;
 import scratch.newast.opcodes.NumExprOpcode;
-
-import java.lang.reflect.InvocationTargetException;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
-import static scratch.newast.Constants.*;
 
 public class ExpressionParser {
 
@@ -183,11 +187,15 @@ public class ExpressionParser {
     }
 
     public static StringExpr parseStringExpr(JsonNode inputsNode, int pos, JsonNode blocks) {
-        return null;
+        throw new RuntimeException("Not implemented yet");
     }
 
+    public static BoolExpr parseBoolExpr(JsonNode inputsNode, int pos, JsonNode blocks) {
+        throw new RuntimeException("Not implemented yet");
+    }
     public static BoolExpr parseBoolExpr(JsonNode blocksNode, JsonNode allNodes) {
-        return null;
+
+        throw new RuntimeException("Not implemented yet");
     }
 
     // assumption: there is no use case in litterbox where an expression is not inside of the "inputs" part of a block.

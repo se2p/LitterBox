@@ -22,6 +22,7 @@ import scratch.newast.model.variable.Identifier;
 public class DeclarationParser {
 
     public static List<DeclarationStmt> parseVariables(JsonNode variableNode, String scriptGroupName, boolean isStage) {
+        // TODO use constants instead of magic numbers
         Preconditions.checkNotNull(variableNode);
         List<DeclarationStmt> parsedVariables = new ArrayList<>();
         Iterator<Map.Entry<String, JsonNode>> iter = variableNode.fields();

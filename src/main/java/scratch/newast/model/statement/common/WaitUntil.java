@@ -3,23 +3,20 @@ package scratch.newast.model.statement.common;
 import com.google.common.collect.ImmutableList;
 import scratch.newast.model.ASTNode;
 import scratch.newast.model.ScratchVisitor;
-import scratch.newast.model.expression.num.NumExpr;
+import scratch.newast.model.expression.bool.BoolExpr;
 
 public class WaitUntil implements CommonStmt {
-    private NumExpr until;
+
+    private BoolExpr until;
     private final ImmutableList<ASTNode> children;
 
-    public WaitUntil(NumExpr until) {
+    public WaitUntil(BoolExpr until) {
         this.until = until;
         children = ImmutableList.<ASTNode>builder().add(until).build();
     }
 
-    public NumExpr getUntil() {
+    public BoolExpr getUntil() {
         return until;
-    }
-
-    public void setUntil(NumExpr until) {
-        this.until = until;
     }
 
     @Override
