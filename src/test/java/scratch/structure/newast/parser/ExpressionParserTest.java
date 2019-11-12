@@ -13,6 +13,7 @@ import scratch.newast.model.expression.num.Mult;
 import scratch.newast.model.expression.num.NumExpr;
 import scratch.newast.model.expression.num.Number;
 import scratch.newast.model.expression.num.PickRandom;
+import scratch.newast.model.numfunct.Pow10;
 import scratch.newast.parser.ExpressionParser;
 import utils.JsonParser;
 
@@ -114,6 +115,13 @@ public class ExpressionParserTest {
         Mod mod = (Mod) ((Div) div).getSecond();
         assertEquals("1.0", String.valueOf(((Number) (mod.getFirst())).getValue()));
         assertEquals("2.0", String.valueOf(((Number) (mod.getSecond())).getValue()));
+    }
+
+    @Test
+    public void testNumFuncts() throws ParsingException {
+        JsonNode script = JsonParser.getBlocksNodeFromJSON("./src/test/java/scratch/structure/ast/fixtures/numfuncts.json");
+        JsonNode pow10Block = script.get("xbBc!xS=1Yz2Yp/DF;JT");
+        assertTrue(ExpressionParser.parseNumFunct(pow10Block.get("fields")) instanceof Pow10);
     }
 
 

@@ -1,0 +1,469 @@
+{
+  "targets": [
+    {
+      "isStage": true,
+      "name": "Stage",
+      "variables": {
+        "`jEk@4|i[#Fk?(8x)AV.-my variable": [
+          "meine Variable",
+          0
+        ]
+      },
+      "lists": {
+        "AuKQGntN71yB3pJ%s*mT": [
+          "listenname",
+          []
+        ]
+      },
+      "broadcasts": {},
+      "blocks": {},
+      "comments": {},
+      "currentCostume": 0,
+      "costumes": [
+        {
+          "assetId": "cd21514d0531fdffb22204e0ec5ed84a",
+          "name": "Hintergrund 1",
+          "md5ext": "cd21514d0531fdffb22204e0ec5ed84a.svg",
+          "dataFormat": "svg",
+          "rotationCenterX": 240,
+          "rotationCenterY": 180
+        },
+        {
+          "assetId": "a5865738283613a2725b2c9dda6d8c78",
+          "name": "Hintergrund 2",
+          "bitmapResolution": 2,
+          "dataFormat": "png",
+          "rotationCenterX": 480,
+          "rotationCenterY": 360
+        }
+      ],
+      "sounds": [
+        {
+          "assetId": "83a9787d4cb6f3b7632b4ddfebf74367",
+          "name": "Plopp",
+          "dataFormat": "wav",
+          "format": "",
+          "rate": 48000,
+          "sampleCount": 1124,
+          "md5ext": "83a9787d4cb6f3b7632b4ddfebf74367.wav"
+        }
+      ],
+      "volume": 100,
+      "layerOrder": 0,
+      "tempo": 60,
+      "videoTransparency": 50,
+      "videoState": "on",
+      "textToSpeechLanguage": null
+    },
+    {
+      "isStage": false,
+      "name": "Figur1",
+      "variables": {},
+      "lists": {},
+      "broadcasts": {},
+      "blocks": {
+        "6G/o7zB@fY+:I|spgJ3j": {
+          "opcode": "operator_mathop",
+          "next": null,
+          "parent": null,
+          "inputs": {
+            "NUM": [
+              1,
+              [
+                4,
+                ""
+              ]
+            ]
+          },
+          "fields": {
+            "OPERATOR": [
+              "abs",
+              null
+            ]
+          },
+          "shadow": false,
+          "topLevel": true,
+          "x": 356,
+          "y": 159
+        },
+        "ItE2pRk]ZGazh)U1Ps.s": {
+          "opcode": "operator_mathop",
+          "next": null,
+          "parent": null,
+          "inputs": {
+            "NUM": [
+              1,
+              [
+                4,
+                ""
+              ]
+            ]
+          },
+          "fields": {
+            "OPERATOR": [
+              "floor",
+              null
+            ]
+          },
+          "shadow": false,
+          "topLevel": true,
+          "x": 335,
+          "y": 260
+        },
+        "E^6xm8Ppszq`DBk`d{!E": {
+          "opcode": "operator_mathop",
+          "next": null,
+          "parent": null,
+          "inputs": {
+            "NUM": [
+              1,
+              [
+                4,
+                ""
+              ]
+            ]
+          },
+          "fields": {
+            "OPERATOR": [
+              "ceiling",
+              null
+            ]
+          },
+          "shadow": false,
+          "topLevel": true,
+          "x": 325,
+          "y": 372
+        },
+        "-Z}Qb#nQ%P)ypuTa2)y~": {
+          "opcode": "operator_mathop",
+          "next": null,
+          "parent": null,
+          "inputs": {
+            "NUM": [
+              1,
+              [
+                4,
+                ""
+              ]
+            ]
+          },
+          "fields": {
+            "OPERATOR": [
+              "sqrt",
+              null
+            ]
+          },
+          "shadow": false,
+          "topLevel": true,
+          "x": 307,
+          "y": 494
+        },
+        "nGczSbhCV2_sBHJ,y7Bq": {
+          "opcode": "operator_mathop",
+          "next": null,
+          "parent": null,
+          "inputs": {
+            "NUM": [
+              1,
+              [
+                4,
+                ""
+              ]
+            ]
+          },
+          "fields": {
+            "OPERATOR": [
+              "sin",
+              null
+            ]
+          },
+          "shadow": false,
+          "topLevel": true,
+          "x": 269,
+          "y": 566
+        },
+        "F;|HB|{JK0Nel3ueRbU*": {
+          "opcode": "operator_mathop",
+          "next": null,
+          "parent": null,
+          "inputs": {
+            "NUM": [
+              1,
+              [
+                4,
+                ""
+              ]
+            ]
+          },
+          "fields": {
+            "OPERATOR": [
+              "cos",
+              null
+            ]
+          },
+          "shadow": false,
+          "topLevel": true,
+          "x": 196,
+          "y": 642
+        },
+        "sjzND{-LQ|wa?t}oBVf-": {
+          "opcode": "operator_mathop",
+          "next": null,
+          "parent": null,
+          "inputs": {
+            "NUM": [
+              1,
+              [
+                4,
+                ""
+              ]
+            ]
+          },
+          "fields": {
+            "OPERATOR": [
+              "tan",
+              null
+            ]
+          },
+          "shadow": false,
+          "topLevel": true,
+          "x": 154,
+          "y": 724
+        },
+        "g=mu2(4,Po5*eY/2KyBo": {
+          "opcode": "operator_mathop",
+          "next": null,
+          "parent": null,
+          "inputs": {
+            "NUM": [
+              1,
+              [
+                4,
+                ""
+              ]
+            ]
+          },
+          "fields": {
+            "OPERATOR": [
+              "asin",
+              null
+            ]
+          },
+          "shadow": false,
+          "topLevel": true,
+          "x": 119,
+          "y": 805
+        },
+        "88ZzCkr?iv8Wh:V~s4A;": {
+          "opcode": "operator_mathop",
+          "next": null,
+          "parent": null,
+          "inputs": {
+            "NUM": [
+              1,
+              [
+                4,
+                ""
+              ]
+            ]
+          },
+          "fields": {
+            "OPERATOR": [
+              "acos",
+              null
+            ]
+          },
+          "shadow": false,
+          "topLevel": true,
+          "x": 163,
+          "y": 890
+        },
+        "RS#!a5+#2XP7#CEBKN.-": {
+          "opcode": "operator_mathop",
+          "next": null,
+          "parent": null,
+          "inputs": {
+            "NUM": [
+              1,
+              [
+                4,
+                ""
+              ]
+            ]
+          },
+          "fields": {
+            "OPERATOR": [
+              "atan",
+              null
+            ]
+          },
+          "shadow": false,
+          "topLevel": true,
+          "x": 180,
+          "y": 957
+        },
+        ";yzTKE`U!9idl;lud/-)": {
+          "opcode": "operator_mathop",
+          "next": null,
+          "parent": null,
+          "inputs": {
+            "NUM": [
+              1,
+              [
+                4,
+                ""
+              ]
+            ]
+          },
+          "fields": {
+            "OPERATOR": [
+              "ln",
+              null
+            ]
+          },
+          "shadow": false,
+          "topLevel": true,
+          "x": 170,
+          "y": 1047
+        },
+        "oWCgj5H6C{g5oZB@.pQO": {
+          "opcode": "operator_mathop",
+          "next": null,
+          "parent": null,
+          "inputs": {
+            "NUM": [
+              1,
+              [
+                4,
+                ""
+              ]
+            ]
+          },
+          "fields": {
+            "OPERATOR": [
+              "log",
+              null
+            ]
+          },
+          "shadow": false,
+          "topLevel": true,
+          "x": 131,
+          "y": 1122
+        },
+        "90#NG-LB/43q8VWga.he": {
+          "opcode": "operator_mathop",
+          "next": null,
+          "parent": null,
+          "inputs": {
+            "NUM": [
+              1,
+              [
+                4,
+                ""
+              ]
+            ]
+          },
+          "fields": {
+            "OPERATOR": [
+              "e ^",
+              null
+            ]
+          },
+          "shadow": false,
+          "topLevel": true,
+          "x": 127,
+          "y": 1192
+        },
+        "xbBc!xS=1Yz2Yp/DF;JT": {
+          "opcode": "operator_mathop",
+          "next": null,
+          "parent": null,
+          "inputs": {
+            "NUM": [
+              1,
+              [
+                4,
+                ""
+              ]
+            ]
+          },
+          "fields": {
+            "OPERATOR": [
+              "10 ^",
+              null
+            ]
+          },
+          "shadow": false,
+          "topLevel": true,
+          "x": 139,
+          "y": 1250
+        }
+      },
+      "comments": {},
+      "currentCostume": 0,
+      "costumes": [
+        {
+          "assetId": "b7853f557e4426412e64bb3da6531a99",
+          "name": "Kostüm1",
+          "bitmapResolution": 1,
+          "md5ext": "b7853f557e4426412e64bb3da6531a99.svg",
+          "dataFormat": "svg",
+          "rotationCenterX": 48,
+          "rotationCenterY": 50
+        },
+        {
+          "assetId": "e6ddc55a6ddd9cc9d84fe0b4c21e016f",
+          "name": "Kostüm2",
+          "bitmapResolution": 1,
+          "md5ext": "e6ddc55a6ddd9cc9d84fe0b4c21e016f.svg",
+          "dataFormat": "svg",
+          "rotationCenterX": 46,
+          "rotationCenterY": 53
+        }
+      ],
+      "sounds": [
+        {
+          "assetId": "83c36d806dc92327b9e7049a565c6bff",
+          "name": "Miau",
+          "dataFormat": "wav",
+          "format": "",
+          "rate": 48000,
+          "sampleCount": 40682,
+          "md5ext": "83c36d806dc92327b9e7049a565c6bff.wav"
+        }
+      ],
+      "volume": 100,
+      "layerOrder": 1,
+      "visible": true,
+      "x": -25,
+      "y": -14.000000000000009,
+      "size": 100,
+      "direction": 0,
+      "draggable": false,
+      "rotationStyle": "all around"
+    }
+  ],
+  "monitors": [
+    {
+      "id": "AuKQGntN71yB3pJ%s*mT",
+      "mode": "list",
+      "opcode": "data_listcontents",
+      "params": {
+        "LIST": "listenname"
+      },
+      "spriteName": null,
+      "value": [],
+      "width": 0,
+      "height": 0,
+      "x": 0,
+      "y": 0,
+      "visible": true
+    }
+  ],
+  "extensions": [],
+  "meta": {
+    "semver": "3.0.0",
+    "vm": "0.2.0-prerelease.20191017151616",
+    "agent": "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:70.0) Gecko/20100101 Firefox/70.0"
+  }
+}

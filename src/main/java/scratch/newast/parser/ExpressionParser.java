@@ -27,7 +27,21 @@ import scratch.newast.model.expression.num.PickRandom;
 import scratch.newast.model.expression.num.Round;
 import scratch.newast.model.expression.num.Timer;
 import scratch.newast.model.expression.string.StringExpr;
+import scratch.newast.model.numfunct.Abs;
+import scratch.newast.model.numfunct.Acos;
+import scratch.newast.model.numfunct.Asin;
+import scratch.newast.model.numfunct.Atan;
+import scratch.newast.model.numfunct.Ceiling;
+import scratch.newast.model.numfunct.Cos;
+import scratch.newast.model.numfunct.Floor;
+import scratch.newast.model.numfunct.Ln;
+import scratch.newast.model.numfunct.Log;
 import scratch.newast.model.numfunct.NumFunct;
+import scratch.newast.model.numfunct.Pow10;
+import scratch.newast.model.numfunct.PowE;
+import scratch.newast.model.numfunct.Sin;
+import scratch.newast.model.numfunct.Sqrt;
+import scratch.newast.model.numfunct.Tan;
 import scratch.newast.model.position.Position;
 import scratch.newast.model.timecomp.TimeComp;
 import scratch.newast.model.variable.Variable;
@@ -41,6 +55,8 @@ import java.util.Map;
 import static scratch.newast.Constants.*;
 
 public class ExpressionParser {
+
+    private static final String OPERATOR_KEY = "OPERATOR";
 
     /**
      * Parses the NumExpr at the given position of the given inputsNode.
@@ -154,7 +170,7 @@ public class ExpressionParser {
         case operator_random:
             return buildNumExprWithTwoNumExprInputs(PickRandom.class, identifier, blocks);
         case operator_mathop:
-            NumFunct funct = null; // TODO parse funct
+            NumFunct funct = null; // TODO call parseNumFunct as soon as we have the fields in here
             NumExpr numExpr = parseNumExpr(blocks.get(identifier).get(INPUTS_KEY), 0, blocks);
             return new NumFunctOf(funct, numExpr);
         case data_itemnumoflist:
@@ -163,6 +179,43 @@ public class ExpressionParser {
             return new IndexOf(item, list);
         default:
             throw new ParsingException(opcodeString + " not implemented yet");
+        }
+    }
+
+    public static NumFunct parseNumFunct(JsonNode fields) throws ParsingException { // TODO maybe add opcodes enum for NumFuncts
+        ArrayNode operator = (ArrayNode) fields.get(OPERATOR_KEY); // TODO move operator key to suitable place
+        String operatorOpcode = operator.get(0).asText(); //TODO remove magic num
+        switch (operatorOpcode) {
+        case "abs":
+            return new Abs();
+        case "floor":
+            return new Floor();
+        case "ceiling":
+            return new Ceiling();
+        case "sqrt":
+            return new Sqrt();
+        case "sin":
+            return new Sin();
+        case "cos":
+            return new Cos();
+        case "tan":
+            return new Tan();
+        case "asin":
+            return new Asin();
+        case "acos":
+            return new Acos();
+        case "atan":
+            return new Atan();
+        case "ln":
+            return new Ln();
+        case "log":
+            return new Log();
+        case "e ^":
+            return new PowE();
+        case "10 ^":
+            return new Pow10();
+        default:
+            throw new ParsingException("There is no NumFunct with opcode " + operatorOpcode);
         }
     }
 
@@ -190,5 +243,6 @@ public class ExpressionParser {
         return null;
     }
 
-    // assumption: there is no use case in litterbox where an expression is not inside of the "inputs" part of a block.
+    // (partly wrong) assumption: there is no use case in litterbox where an expression is not inside of the "inputs" part of a block.
+    // Well, yes but no: the operator of a NumFunct is in "fields".
 }
