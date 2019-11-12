@@ -5,20 +5,20 @@ import java.util.List;
 
 public class DeclarationList implements ASTNode {
 
-    List<Declaration> declarationList;
+    List<DeclarationStmt> declarationStmtList;
     private final ImmutableList<ASTNode> children;
 
-    public DeclarationList(List<Declaration> declarationList) {
-        this.declarationList = declarationList;
+    public DeclarationList(List<DeclarationStmt> declarationStmtList) {
+        this.declarationStmtList = declarationStmtList;
         children = ImmutableList.<ASTNode>builder().build();
     }
 
-    public List<Declaration> getDeclarationList() {
-        return declarationList;
+    public List<DeclarationStmt> getDeclarationStmtList() {
+        return declarationStmtList;
     }
 
-    public void setDeclarationList(List<Declaration> declarationList) {
-        this.declarationList = declarationList;
+    public void setDeclarationStmtList(List<DeclarationStmt> declarationStmtList) {
+        this.declarationStmtList = declarationStmtList;
     }
 
     @Override

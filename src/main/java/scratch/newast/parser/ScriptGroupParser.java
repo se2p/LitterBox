@@ -2,17 +2,15 @@ package scratch.newast.parser;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.base.Preconditions;
-
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
-
 import scratch.newast.ParsingException;
-import scratch.newast.model.Declaration;
 import scratch.newast.model.DeclarationList;
+import scratch.newast.model.DeclarationStmt;
 import scratch.newast.model.EntityType;
 import scratch.newast.model.Script;
 import scratch.newast.model.ScriptGroup;
@@ -51,7 +49,7 @@ public class ScriptGroupParser {
         res.addAll(ResourceParser.parseCostume(scriptGroupNode.get("costumes")));
         ResourceList resources = new ResourceList(res);
 
-        List<Declaration> decls = DeclarationParser.parseLists(scriptGroupNode.get("lists"), identifier.getValue(),
+        List<DeclarationStmt> decls = DeclarationParser.parseLists(scriptGroupNode.get("lists"), identifier.getValue(),
                 scriptGroupNode.get("isStage").asBoolean());
         decls.addAll(DeclarationParser.parseBroadcasts(scriptGroupNode.get("broadcasts"), identifier.getValue(),
                 scriptGroupNode.get("isStage").asBoolean()));

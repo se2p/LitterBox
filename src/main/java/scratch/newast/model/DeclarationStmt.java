@@ -1,15 +1,17 @@
 package scratch.newast.model;
 
 import com.google.common.collect.ImmutableList;
+import scratch.newast.model.statement.Stmt;
 import scratch.newast.model.type.Type;
 import scratch.newast.model.variable.Identifier;
 
-public class Declaration implements ASTNode{
+public class DeclarationStmt implements Stmt {
+
     private Identifier ident;
     private Type type;
     private final ImmutableList<ASTNode> children;
 
-    public Declaration(Identifier ident, Type type) {
+    public DeclarationStmt(Identifier ident, Type type) {
         this.ident = ident;
         this.type = type;
         ImmutableList.Builder<ASTNode> builder = ImmutableList.builder();
