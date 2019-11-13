@@ -3,17 +3,18 @@ package scratch.newast.model.statement.spritelook;
 import com.google.common.collect.ImmutableList;
 import scratch.newast.model.ASTNode;
 import scratch.newast.model.ScratchVisitor;
+import scratch.newast.model.expression.string.StringExpr;
 
 public class Say implements SpriteLookStmt {
-    private final String string;
+    private final StringExpr string;
     private final ImmutableList<ASTNode> children;
 
-    public Say(String string) {
+    public Say(StringExpr string) {
         this.string = string;
         children = ImmutableList.<ASTNode>builder().build();
     }
 
-    public String getString() {
+    public StringExpr getString() {
         return string;
     }
 

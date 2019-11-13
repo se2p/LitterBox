@@ -3,18 +3,19 @@ package scratch.newast.model.statement.spritelook;
 import com.google.common.collect.ImmutableList;
 import scratch.newast.model.ASTNode;
 import scratch.newast.model.ScratchVisitor;
+import scratch.newast.model.expression.string.StringExpr;
 
 public class Think implements SpriteLookStmt {
-    private final String thought;
+    private final StringExpr thought;
     private final ImmutableList<ASTNode> children;
 
 
-    public Think(String thought) {
+    public Think(StringExpr thought) {
         this.thought = thought;
         children = ImmutableList.<ASTNode>builder().build();
     }
 
-    public String getThought() {
+    public StringExpr getThought() {
         return thought;
     }
 

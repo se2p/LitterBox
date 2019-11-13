@@ -1,32 +1,22 @@
 package scratch.newast.parser.stmt;
 
-import static scratch.newast.Constants.FIELDS_KEY;
-import static scratch.newast.Constants.FIELD_VALUE;
-import static scratch.newast.Constants.OPCODE_KEY;
-import static scratch.newast.opcodes.ActorLookStmtOpcode.looks_changeeffectby;
-import static scratch.newast.opcodes.ActorLookStmtOpcode.looks_seteffectto;
-import static scratch.newast.opcodes.ActorLookStmtOpcode.looks_switchbackdropto;
-import static scratch.newast.opcodes.ActorLookStmtOpcode.sensing_askandwait;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.base.Preconditions;
 import scratch.newast.Constants;
 import scratch.newast.ParsingException;
 import scratch.newast.model.elementchoice.ElementChoice;
-import scratch.newast.model.elementchoice.WithId;
 import scratch.newast.model.expression.num.NumExpr;
 import scratch.newast.model.expression.string.StringExpr;
 import scratch.newast.model.graphiceffect.GraphicEffect;
-import scratch.newast.model.statement.actorlook.ActorLookStmt;
-import scratch.newast.model.statement.actorlook.AskAndWait;
-import scratch.newast.model.statement.actorlook.ChangeEffectBy;
-import scratch.newast.model.statement.actorlook.ClearGraphicEffects;
-import scratch.newast.model.statement.actorlook.SwitchBackdrop;
-import scratch.newast.model.variable.Identifier;
+import scratch.newast.model.statement.actorlook.*;
 import scratch.newast.opcodes.ActorLookStmtOpcode;
 import scratch.newast.opcodes.EventOpcode;
+import scratch.newast.parser.ElementChoiceParser;
 import scratch.newast.parser.ExpressionParser;
 import scratch.newast.parser.GraphicEffectParser;
+
+import static scratch.newast.Constants.OPCODE_KEY;
+import static scratch.newast.opcodes.ActorLookStmtOpcode.*;
 
 public class ActorLookStmtParser {
 
@@ -53,10 +43,8 @@ public class ActorLookStmtParser {
                 .get(Constants.POS_DATA_ARRAY)
                 .get(Constants.POS_INPUT_VALUE);
             JsonNode backdropMenu = allBlocks.get(backdropNodeId.asText());
-            String backdropName = backdropMenu.get(FIELDS_KEY).get(SWITCH_BACKDROPTO_INPUT_KEY).get(FIELD_VALUE)
-                .asText();
 
-            ElementChoice elementChoice = new WithId(new Identifier(backdropName));
+            ElementChoice elementChoice = ElementChoiceParser.parse(backdropMenu, allBlocks);
             stmt = new SwitchBackdrop(elementChoice);
         } else if (opcode.equals(looks_changeeffectby)) {
             NumExpr effectValue = ExpressionParser.parseNumExpr(current, 0, allBlocks);
