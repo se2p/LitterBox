@@ -1,9 +1,21 @@
 package scratch.newast.parser;
 
+import static scratch.newast.Constants.FIELDS_KEY;
+import static scratch.newast.Constants.INPUTS_KEY;
+import static scratch.newast.Constants.OPCODE_KEY;
+import static scratch.newast.Constants.POS_BLOCK_ID;
+import static scratch.newast.Constants.POS_DATA_ARRAY;
+import static scratch.newast.Constants.POS_INPUT_ID;
+import static scratch.newast.Constants.POS_INPUT_VALUE;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import com.google.common.base.Preconditions;
+import java.lang.reflect.InvocationTargetException;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import scratch.newast.Constants;
 import scratch.newast.ParsingException;
 import scratch.newast.model.Key;
@@ -66,15 +78,9 @@ import scratch.newast.model.timecomp.TimeComp;
 import scratch.newast.model.touchable.Touchable;
 import scratch.newast.model.variable.Variable;
 import scratch.newast.opcodes.BoolExprOpcode;
+import scratch.newast.opcodes.CallStmtOpcode;
 import scratch.newast.opcodes.NumExprOpcode;
 import scratch.newast.opcodes.StringExprOpcode;
-
-import java.lang.reflect.InvocationTargetException;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
-import static scratch.newast.Constants.*;
 
 public class ExpressionParser {
 
@@ -359,8 +365,15 @@ public class ExpressionParser {
         }
     }
 
-    public static Expression parseExpression(JsonNode block, int pos, JsonNode blocks) throws ParsingException {
-        throw new RuntimeException("Not implemented yet");
+
+    public static Expression parseExpression(JsonNode block, int pos, JsonNode blocks) {
+        String opcodeString = block.get(OPCODE_KEY).asText();
+        if (CallStmtOpcode.contains(opcodeString)) {
+            //Get Argumenttypes from ProcedureDefinitionNameMapping
+            throw new RuntimeException("Not implemented yet");
+        }
+
+        return null;
     }
 
     public static StringExpr parseStringExpr(JsonNode block, int pos, JsonNode blocks) throws ParsingException {
