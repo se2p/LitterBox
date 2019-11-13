@@ -1,14 +1,14 @@
-package scratch.newast.model.backdrop;
+package scratch.newast.model.elementchoice;
 
 import com.google.common.collect.ImmutableList;
 import scratch.newast.model.ASTNode;
 import scratch.newast.model.ScratchVisitor;
 
-public class PrevBackdrop implements Backdrop {
+public class Prev implements ElementChoice {
 
     private final ImmutableList<ASTNode> children;
 
-    public PrevBackdrop() {
+    public Prev() {
         children = ImmutableList.<ASTNode>builder().build();
     }
 
@@ -21,4 +21,5 @@ public class PrevBackdrop implements Backdrop {
     public ImmutableList<ASTNode> getChildren() {
         return children;
     }
+
 }

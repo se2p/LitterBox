@@ -1,15 +1,18 @@
-package scratch.newast.model.sound;
+package scratch.newast.model.elementchoice;
 
 import com.google.common.collect.ImmutableList;
 import scratch.newast.model.ASTNode;
 import scratch.newast.model.ScratchVisitor;
+import scratch.newast.model.expression.num.NumExpr;
 
-public class NextSound implements Sound {
+public class WithNumber implements ElementChoice {
 
+    private final NumExpr numExpr;
     private final ImmutableList<ASTNode> children;
 
-    public NextSound() {
-        children = ImmutableList.<ASTNode>builder().build();
+    public WithNumber(NumExpr numExpr) {
+        this.numExpr = numExpr;
+        children = ImmutableList.<ASTNode>builder().add(numExpr).build();
     }
 
     @Override

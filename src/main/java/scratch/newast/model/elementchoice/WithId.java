@@ -1,15 +1,18 @@
-package scratch.newast.model.sound;
+package scratch.newast.model.elementchoice;
 
 import com.google.common.collect.ImmutableList;
 import scratch.newast.model.ASTNode;
 import scratch.newast.model.ScratchVisitor;
+import scratch.newast.model.variable.Identifier;
 
-public class PrevSound implements Sound {
+public class WithId implements ElementChoice {
 
+    private final Identifier ident;
     private final ImmutableList<ASTNode> children;
 
-    public PrevSound() {
-        children = ImmutableList.<ASTNode>builder().build();
+    public WithId(Identifier ident) {
+        this.ident = ident;
+        children = ImmutableList.<ASTNode>builder().add(ident).build();
     }
 
     @Override
@@ -21,5 +24,4 @@ public class PrevSound implements Sound {
     public ImmutableList<ASTNode> getChildren() {
         return children;
     }
-
 }

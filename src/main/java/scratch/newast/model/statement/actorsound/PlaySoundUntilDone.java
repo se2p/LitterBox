@@ -3,19 +3,19 @@ package scratch.newast.model.statement.actorsound;
 import com.google.common.collect.ImmutableList;
 import scratch.newast.model.ASTNode;
 import scratch.newast.model.ScratchVisitor;
-import scratch.newast.model.sound.Sound;
+import scratch.newast.model.elementchoice.ElementChoice;
 
 public class PlaySoundUntilDone implements ActorSoundStmt {
-    private final Sound sound;
+    private final ElementChoice elementChoice;
     private final ImmutableList<ASTNode> children;
 
-    public PlaySoundUntilDone(Sound sound) {
-        this.sound = sound;
-        children = ImmutableList.<ASTNode>builder().add(sound).build();
+    public PlaySoundUntilDone(ElementChoice elementChoice) {
+        this.elementChoice = elementChoice;
+        children = ImmutableList.<ASTNode>builder().add(this.elementChoice).build();
     }
 
-    public Sound getSound() {
-        return sound;
+    public ElementChoice getElementChoice() {
+        return elementChoice;
     }
 
     @Override

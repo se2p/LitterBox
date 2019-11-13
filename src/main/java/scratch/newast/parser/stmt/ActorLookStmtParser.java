@@ -12,8 +12,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.base.Preconditions;
 import scratch.newast.Constants;
 import scratch.newast.ParsingException;
-import scratch.newast.model.backdrop.Backdrop;
-import scratch.newast.model.backdrop.BackdropWithId;
+import scratch.newast.model.elementchoice.ElementChoice;
+import scratch.newast.model.elementchoice.WithId;
 import scratch.newast.model.expression.num.NumExpr;
 import scratch.newast.model.expression.string.StringExpr;
 import scratch.newast.model.graphiceffect.GraphicEffect;
@@ -60,8 +60,8 @@ public class ActorLookStmtParser {
             String backdropName = backdropMenu.get(FIELDS_KEY).get(SWITCH_BACKDROPTO_INPUT_KEY).get(FIELD_VALUE)
                 .asText();
 
-            Backdrop backdrop = new BackdropWithId(new Identifier(backdropName));
-            stmt = new SwitchBackdrop(backdrop);
+            ElementChoice elementChoice = new WithId(new Identifier(backdropName));
+            stmt = new SwitchBackdrop(elementChoice);
         } else if (opcode.equals(looks_changeeffectby)) {
             JsonNode effectValueNode = current.get(Constants.INPUTS_KEY).get(CHANGE_EFFECTBY_INPUT_KEY)
                 .get(Constants.POS_DATA_ARRAY);

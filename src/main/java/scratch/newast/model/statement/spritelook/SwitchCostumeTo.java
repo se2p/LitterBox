@@ -3,19 +3,19 @@ package scratch.newast.model.statement.spritelook;
 import com.google.common.collect.ImmutableList;
 import scratch.newast.model.ASTNode;
 import scratch.newast.model.ScratchVisitor;
-import scratch.newast.model.costume.Costume;
+import scratch.newast.model.elementchoice.ElementChoice;
 
 public class SwitchCostumeTo implements SpriteLookStmt {
-    private final Costume costume;
+    private final ElementChoice elementChoice;
     private final ImmutableList<ASTNode> children;
 
-    public SwitchCostumeTo(Costume costume) {
-        this.costume = costume;
-        children = ImmutableList.<ASTNode>builder().add(costume).build();
+    public SwitchCostumeTo(ElementChoice elementChoice) {
+        this.elementChoice = elementChoice;
+        children = ImmutableList.<ASTNode>builder().add(elementChoice).build();
     }
 
-    public Costume getCostume() {
-        return costume;
+    public ElementChoice getElementChoice() {
+        return elementChoice;
     }
 
     @Override

@@ -1,14 +1,14 @@
-package scratch.newast.model.backdrop;
+package scratch.newast.model.elementchoice;
 
 import com.google.common.collect.ImmutableList;
 import scratch.newast.model.ASTNode;
 import scratch.newast.model.ScratchVisitor;
 
-public class RandomBackdrop implements Backdrop {
+public class Random implements ElementChoice {
 
     private final ImmutableList<ASTNode> children;
 
-    public RandomBackdrop() {
+    public Random() {
         children = ImmutableList.<ASTNode>builder().build();
     }
 

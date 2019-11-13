@@ -1,14 +1,14 @@
-package scratch.newast.model.sound;
+package scratch.newast.model.elementchoice;
 
 import com.google.common.collect.ImmutableList;
 import scratch.newast.model.ASTNode;
 import scratch.newast.model.ScratchVisitor;
 
-public class RandomSound implements Sound {
+public class Next implements ElementChoice {
 
     private final ImmutableList<ASTNode> children;
 
-    public RandomSound() {
+    public Next() {
         children = ImmutableList.<ASTNode>builder().build();
     }
 
