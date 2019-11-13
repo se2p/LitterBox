@@ -25,15 +25,14 @@ import scratch.newast.model.statement.actorlook.SwitchBackdrop;
 import scratch.newast.model.variable.Identifier;
 import scratch.newast.opcodes.ActorLookStmtOpcode;
 import scratch.newast.opcodes.EventOpcode;
+import scratch.newast.parser.ExpressionParser;
 import scratch.newast.parser.GraphicEffectParser;
 
 public class ActorLookStmtParser {
 
-    private static final String ASKANDWAIT_INPUT_KEY = "QUESTION";
     private static final String CHANGE_EFFECTBY_INPUT_KEY = "CHANGE";
     private static final String SET_EFFECTTO_INPUT_KEY = "CHANGE";
     private static final String SWITCH_BACKDROPTO_INPUT_KEY = "BACKDROP";
-    private static final String EFFECTS_FIELD_KEY = "EFFECT";
 
     public static ActorLookStmt parse(JsonNode current, JsonNode allBlocks) throws ParsingException {
         Preconditions.checkNotNull(current);
@@ -47,10 +46,7 @@ public class ActorLookStmtParser {
         ActorLookStmt stmt;
 
         if (opcode.equals(sensing_askandwait)) {
-            JsonNode questionNode = current.get(Constants.INPUTS_KEY).get(ASKANDWAIT_INPUT_KEY)
-                .get(Constants.POS_DATA_ARRAY);
-            // StringExpr question = ExpressionParser.parseStringExpr(questionNode);
-            StringExpr question = null; // FIXME use the right arguments and then actually parse the expr
+            StringExpr question = ExpressionParser.parseStringExpr(current, 0, allBlocks);
             stmt = new AskAndWait(question);
         } else if (opcode.equals(looks_switchbackdropto)) {
             JsonNode backdropNodeId = current.get(Constants.INPUTS_KEY).get(CHANGE_EFFECTBY_INPUT_KEY)
@@ -63,21 +59,14 @@ public class ActorLookStmtParser {
             ElementChoice elementChoice = new WithId(new Identifier(backdropName));
             stmt = new SwitchBackdrop(elementChoice);
         } else if (opcode.equals(looks_changeeffectby)) {
-            JsonNode effectValueNode = current.get(Constants.INPUTS_KEY).get(CHANGE_EFFECTBY_INPUT_KEY)
-                .get(Constants.POS_DATA_ARRAY);
-            // NumExpr effectValue = ExpressionParser.parseNumExpr(effectValueNode, allBlocks);
-            NumExpr effectValue = null; //FIXME use the right arguments and then actually parse the expr
-            String fieldValue = current.get(FIELDS_KEY).get(EFFECTS_FIELD_KEY).get(Constants.FIELD_VALUE).asText();
-            GraphicEffect effect = GraphicEffectParser.parse(fieldValue);
+            NumExpr effectValue = ExpressionParser.parseNumExpr(current, 0, allBlocks);
+            GraphicEffect effect = GraphicEffectParser.parse(current);
             stmt = new ChangeEffectBy(effect, effectValue);
-
         } else if (opcode.equals(looks_seteffectto)) {
             JsonNode effectValueNode = current.get(Constants.INPUTS_KEY).get(SET_EFFECTTO_INPUT_KEY)
                 .get(Constants.POS_DATA_ARRAY);
-            // NumExpr effectValue = ExpressionParser.parseNumExpr(effectValueNode, allBlocks);
-            NumExpr effectValue = null; //FIXME use the right arguments and then actually parse the expr
-            String fieldValue = current.get(FIELDS_KEY).get(EFFECTS_FIELD_KEY).get(Constants.FIELD_VALUE).asText();
-            GraphicEffect effect = GraphicEffectParser.parse(fieldValue);
+            NumExpr effectValue = ExpressionParser.parseNumExpr(effectValueNode, 0, allBlocks);
+            GraphicEffect effect = GraphicEffectParser.parse(current);
             stmt = new ChangeEffectBy(effect, effectValue);
         } else if (opcode.equals(ActorLookStmtOpcode.looks_cleargraphiceffects)) {
             stmt = new ClearGraphicEffects();
