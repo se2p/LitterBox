@@ -12,6 +12,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.google.common.base.Preconditions;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -87,9 +88,20 @@ public class ProcDefinitionParser {
         Identifier ident = new Identifier(proto.get(PARENT_KEY).textValue());
         JsonNode argumentNamesNode = proto.get(MUTATION_KEY).get(ARGUMENTNAMES_KEY);
         ObjectMapper mapper = new ObjectMapper();
-       // mapper.readTree(argumentNamesNode.textValue());
-        //TODO get array out of string
-        //ProgramParser.procDefMap.addProcedure(ident,methodName,);
+        JsonNode argumentsNode;
+        try {
+            argumentsNode = mapper.readTree(argumentNamesNode.textValue());
+        } catch (IOException e) {
+            throw new ParsingException("Could not read argument names of a procedure");
+        }
+        Preconditions.checkArgument(argumentsNode.isArray());
+        ArrayNode argumentsArray = (ArrayNode) argumentsNode;
+        String[] arguments = new String[argumentsArray.size()];
+        for (int i = 0; i < arguments.length; i++) {
+            arguments[i] = argumentsArray.get(i).textValue();
+        }
+        ProgramParser.procDefMap.addProcedure(ident, methodName, arguments);
+        //TODO add argument type
         StmtList stmtList = ScriptParser.parseStmtList(def.get(NEXT_KEY).textValue(), blocks);
         return new ProcedureDefinition(ident, parameterList, stmtList);
     }
