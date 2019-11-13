@@ -4,10 +4,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import com.google.common.base.Preconditions;
-import java.lang.reflect.InvocationTargetException;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
 import scratch.newast.Constants;
 import scratch.newast.ParsingException;
 import scratch.newast.model.expression.Expression;
@@ -30,7 +26,12 @@ import scratch.newast.model.expression.num.Number;
 import scratch.newast.model.expression.num.PickRandom;
 import scratch.newast.model.expression.num.Round;
 import scratch.newast.model.expression.num.Timer;
+import scratch.newast.model.expression.string.ItemOfVariable;
+import scratch.newast.model.expression.string.Join;
+import scratch.newast.model.expression.string.LetterOf;
+import scratch.newast.model.expression.string.Str;
 import scratch.newast.model.expression.string.StringExpr;
+import scratch.newast.model.expression.string.Username;
 import scratch.newast.model.numfunct.Abs;
 import scratch.newast.model.numfunct.Acos;
 import scratch.newast.model.numfunct.Asin;
@@ -50,6 +51,12 @@ import scratch.newast.model.position.Position;
 import scratch.newast.model.timecomp.TimeComp;
 import scratch.newast.model.variable.Variable;
 import scratch.newast.opcodes.NumExprOpcode;
+import scratch.newast.opcodes.StringExprOpcode;
+
+import java.lang.reflect.InvocationTargetException;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 import static scratch.newast.Constants.*;
 
@@ -60,14 +67,14 @@ public class ExpressionParser {
     /**
      * Parses the NumExpr at the given position of the given block.
      *
-     * @param block The JsonNode holding the block of which a NumExpr has to be parsed.
-     * @param pos        The index of the NumExpr in the block.
-     * @param blocks     All blocks of the current entity.
+     * @param block  The JsonNode holding the block of which a NumExpr has to be parsed.
+     * @param pos    The index of the NumExpr in the block.
+     * @param blocks All blocks of the current entity.
      * @return The NumExpr at the position of the block.
      */
     public static NumExpr parseNumExpr(JsonNode block, int pos, JsonNode blocks) throws ParsingException { // we ignored "(" NumExpr ")"
         ArrayNode exprArray = getExprArrayAtPos(block.get(INPUTS_KEY), pos);
-        if (getShadowIndicator(exprArray) == 1) {
+        if (getShadowIndicator(exprArray) == 1) { // TODO replace magic num
             try {
                 return parseNumber(block.get(INPUTS_KEY), pos);
             } catch (NumberFormatException e) {
@@ -119,6 +126,11 @@ public class ExpressionParser {
         String valueString = getDataArrayAtPos(inputs, pos).get(POS_INPUT_VALUE).asText();
         float value = Float.parseFloat(valueString);
         return new Number(value);
+    }
+
+    public static Str parseStr(JsonNode inputs, int pos) {
+        String value = getDataArrayAtPos(inputs, pos).get(POS_INPUT_VALUE).asText();
+        return new Str(value);
     }
 
     public static ArrayNode getDataArrayAtPos(JsonNode inputs, int pos) { // TODO maybe rename or comment
@@ -181,6 +193,29 @@ public class ExpressionParser {
         }
     }
 
+    private static StringExpr parseBlockStringExpr(String opcodeString, String identifier, JsonNode blocks, JsonNode jsonNode) throws ParsingException {
+        Preconditions.checkArgument(StringExprOpcode.contains(opcodeString), opcodeString + " is not a StringExprOpcode.");
+        StringExprOpcode opcode = StringExprOpcode.valueOf(opcodeString);
+        switch (opcode) {
+        case operator_join:
+            StringExpr first = parseStringExpr(blocks.get(identifier), 0, blocks);
+            StringExpr second = parseStringExpr(blocks.get(identifier), 1, blocks);
+            return new Join(first, second);
+        case operator_letter_of:
+            NumExpr num = parseNumExpr(blocks.get(identifier), 0, blocks);
+            StringExpr word = parseStringExpr(blocks.get(identifier), 1, blocks);
+            return new LetterOf(num, word);
+        case sensing_username:
+            return new Username();
+        case data_itemoflist:
+            NumExpr index = parseNumExpr(blocks.get(identifier), 0, blocks);
+            Variable var = null; //FIXME some time soon I will have to understand vars and fix this
+            return new ItemOfVariable(index, var);
+        default:
+            throw new ParsingException(opcodeString + " not implemented yet");
+        }
+    }
+
     public static NumFunct parseNumFunct(JsonNode fields) throws ParsingException { // TODO maybe add opcodes enum for NumFuncts
         ArrayNode operator = (ArrayNode) fields.get(OPERATOR_KEY); // TODO move operator key to suitable place
         String operatorOpcode = operator.get(0).asText(); //TODO remove magic num
@@ -234,13 +269,27 @@ public class ExpressionParser {
         return null;
     }
 
-    public static StringExpr parseStringExpr(JsonNode block, int pos, JsonNode blocks) {
+    public static StringExpr parseStringExpr(JsonNode block, int pos, JsonNode blocks) throws ParsingException {
+        ArrayNode exprArray = getExprArrayAtPos(block.get(INPUTS_KEY), pos);
+        if (getShadowIndicator(exprArray) == 1) {
+            return parseStr(block.get(INPUTS_KEY), pos);
+        } else if (exprArray.get(POS_BLOCK_ID) instanceof TextNode) {
+            String identifier = exprArray.get(POS_BLOCK_ID).asText();
+            String opcode = blocks.get(identifier).get(OPCODE_KEY).asText();
+            return parseBlockStringExpr(opcode, identifier, blocks, block.get(FIELDS_KEY));
+        } else if (exprArray.get(POS_DATA_ARRAY).get(POS_INPUT_ID).asText().endsWith("-my variable")) {
+            System.out.println("hooray! it's a variable!");
+        } else if (!exprArray.get(POS_DATA_ARRAY).get(POS_INPUT_ID).asText().endsWith("-my variable")) {
+            System.out.println("hooray! it's a list!");
+        }
         throw new RuntimeException("Not implemented yet");
     }
+
 
     public static BoolExpr parseBoolExpr(JsonNode block, int pos, JsonNode blocks) {
         throw new RuntimeException("Not implemented yet");
     }
+
     public static BoolExpr parseBoolExpr(JsonNode block, JsonNode allNodes) {
 
         throw new RuntimeException("Not implemented yet");
