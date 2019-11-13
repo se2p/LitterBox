@@ -1,5 +1,7 @@
 package scratch.newast.model.expression.list;
 
-public interface ListExpr {
+import scratch.newast.model.expression.Expression;
+
+public interface ListExpr extends Expression {
 
 }

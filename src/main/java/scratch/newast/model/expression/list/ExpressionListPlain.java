@@ -6,7 +6,7 @@ import scratch.newast.model.ASTNode;
 import scratch.newast.model.ScratchVisitor;
 import scratch.newast.model.expression.Expression;
 
-public class ExpressionListPlain implements ASTNode {
+public class ExpressionListPlain implements ASTNode, ListExpr {
 
     private final ImmutableList<ASTNode> children;
     private List<Expression> expressions;
