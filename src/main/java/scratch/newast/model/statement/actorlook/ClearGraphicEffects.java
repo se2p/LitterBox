@@ -1,14 +1,14 @@
-package scratch.newast.model.statement.entitysound;
+package scratch.newast.model.statement.actorlook;
 
 import com.google.common.collect.ImmutableList;
 import scratch.newast.model.ASTNode;
 import scratch.newast.model.ScratchVisitor;
 
-public class StopAllSounds implements ActorSoundStmt {
+public class ClearGraphicEffects implements ActorLookStmt {
 
     private final ImmutableList<ASTNode> children;
 
-    public StopAllSounds() {
+    public ClearGraphicEffects() {
         children = ImmutableList.<ASTNode>builder().build();
     }
 
@@ -21,5 +21,4 @@ public class StopAllSounds implements ActorSoundStmt {
     public ImmutableList<ASTNode> getChildren() {
         return children;
     }
-
 }

@@ -1,15 +1,21 @@
-package scratch.newast.model.statement.entitysound;
+package scratch.newast.model.statement.actorsound;
 
 import com.google.common.collect.ImmutableList;
 import scratch.newast.model.ASTNode;
 import scratch.newast.model.ScratchVisitor;
+import scratch.newast.model.sound.Sound;
 
-public class ClearSoundEffects implements ActorSoundStmt {
-
+public class StartSound implements ActorSoundStmt {
+    private final Sound sound;
     private final ImmutableList<ASTNode> children;
 
-    public ClearSoundEffects() {
-        children = ImmutableList.<ASTNode>builder().build();
+    public StartSound(Sound sound) {
+        this.sound = sound;
+        children = ImmutableList.<ASTNode>builder().add(sound).build();
+    }
+
+    public Sound getSound() {
+        return sound;
     }
 
     @Override

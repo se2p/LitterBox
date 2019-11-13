@@ -1,4 +1,4 @@
-package scratch.newast.model.statement.entitylook;
+package scratch.newast.model.statement.actorlook;
 
 import scratch.newast.model.statement.Stmt;
 

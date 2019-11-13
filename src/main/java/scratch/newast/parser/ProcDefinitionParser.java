@@ -6,13 +6,17 @@ import static scratch.newast.Constants.NEXT_KEY;
 import static scratch.newast.Constants.OPCODE_KEY;
 import static scratch.newast.Constants.PARENT_KEY;
 
+import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.google.common.base.Preconditions;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
 import scratch.newast.Constants;
 import scratch.newast.ParsingException;
 import scratch.newast.model.StmtList;
@@ -30,7 +34,10 @@ public class ProcDefinitionParser {
     private final static String CUSTOM_BLOCK_KEY = "custom_block";
     private final static String MUTATION_KEY = "mutation";
     private final static String PROCCODE_KEY = "proccode";
+    private final static String ARGUMENTNAMES_KEY = "argumentnames";
     private final static String VALUE_KEY = "VALUE";
+    private final static int PROTOTYPE_REFERENCE_POS = 1;
+    private final static int PARAMETER_REFERENCE_POS = 1;
 
     public static ProcedureDefinitionList parse(JsonNode blocks) throws ParsingException {
         Preconditions.checkNotNull(blocks);
@@ -63,7 +70,7 @@ public class ProcDefinitionParser {
         JsonNode input = def.get(Constants.INPUTS_KEY).get(CUSTOM_BLOCK_KEY);
         Preconditions.checkArgument(input.isArray());
         ArrayNode inputArray = (ArrayNode) input;
-        String protoReference = inputArray.get(1).textValue();
+        String protoReference = inputArray.get(PROTOTYPE_REFERENCE_POS).textValue();
         JsonNode proto = blocks.get(protoReference);
         Iterator<Map.Entry<String, JsonNode>> iter = proto.get(INPUTS_KEY).fields();
         ArrayList<Parameter> inputs = new ArrayList<>();
@@ -72,13 +79,17 @@ public class ProcDefinitionParser {
             JsonNode currentInput = iter.next().getValue();
             Preconditions.checkArgument(currentInput.isArray());
             ArrayNode current = (ArrayNode) currentInput;
-            inputs.add(parseParameter(blocks, inputRef, current.get(1).textValue()));
+            inputs.add(parseParameter(blocks, inputRef, current.get(PARAMETER_REFERENCE_POS).textValue()));
         }
         ParameterListPlain parameterListPlain = new ParameterListPlain(inputs);
         ParameterList parameterList = new ParameterList(parameterListPlain);
         String methodName = proto.get(MUTATION_KEY).get(PROCCODE_KEY).textValue();
-        //TODO add name in ProcNameMapping
         Identifier ident = new Identifier(proto.get(PARENT_KEY).textValue());
+        JsonNode argumentNamesNode = proto.get(MUTATION_KEY).get(ARGUMENTNAMES_KEY);
+        ObjectMapper mapper = new ObjectMapper();
+       // mapper.readTree(argumentNamesNode.textValue());
+        //TODO get array out of string
+        //ProgramParser.procDefMap.addProcedure(ident,methodName,);
         StmtList stmtList = ScriptParser.parseStmtList(def.get(NEXT_KEY).textValue(), blocks);
         return new ProcedureDefinition(ident, parameterList, stmtList);
     }

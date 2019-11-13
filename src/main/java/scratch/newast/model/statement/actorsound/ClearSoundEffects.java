@@ -1,14 +1,14 @@
-package scratch.newast.model.statement.entitylook;
+package scratch.newast.model.statement.actorsound;
 
 import com.google.common.collect.ImmutableList;
 import scratch.newast.model.ASTNode;
 import scratch.newast.model.ScratchVisitor;
 
-public class ClearGraphicEffects implements ActorLookStmt {
+public class ClearSoundEffects implements ActorSoundStmt {
 
     private final ImmutableList<ASTNode> children;
 
-    public ClearGraphicEffects() {
+    public ClearSoundEffects() {
         children = ImmutableList.<ASTNode>builder().build();
     }
 

@@ -1,21 +1,21 @@
-package scratch.newast.model.statement.entitysound;
+package scratch.newast.model.statement.actorsound;
 
 import com.google.common.collect.ImmutableList;
 import scratch.newast.model.ASTNode;
 import scratch.newast.model.ScratchVisitor;
-import scratch.newast.model.sound.Sound;
+import scratch.newast.model.expression.num.NumExpr;
 
-public class PlaySoundUntilDone implements ActorSoundStmt {
-    private final Sound sound;
+public class ChangeVolumeBy implements ActorSoundStmt {
+    private final NumExpr num;
     private final ImmutableList<ASTNode> children;
 
-    public PlaySoundUntilDone(Sound sound) {
-        this.sound = sound;
-        children = ImmutableList.<ASTNode>builder().add(sound).build();
+    public ChangeVolumeBy(NumExpr num) {
+        this.num = num;
+        children = ImmutableList.<ASTNode>builder().add(num).build();
     }
 
-    public Sound getSound() {
-        return sound;
+    public NumExpr getNum() {
+        return num;
     }
 
     @Override

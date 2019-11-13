@@ -41,7 +41,7 @@ public class StmtParser {
         } else if (ActorSoundStmtOpcode.contains(opcode)) {
             throw new RuntimeException("Not implemented");
         } else if (CallStmtOpcode.contains(opcode)) {
-           stmt = CallStmtParser.parse(current, blocks);
+           stmt = CallStmtParser.parse(current, blockID, blocks);
            return stmt;
             // Are these corner cases we have to deal with separately
 //        } else if (ProceduralStmtOpcode.contains(opcode)) {

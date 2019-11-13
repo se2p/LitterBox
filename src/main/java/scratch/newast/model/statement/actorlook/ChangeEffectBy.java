@@ -1,17 +1,24 @@
-package scratch.newast.model.statement.entitysound;
+package scratch.newast.model.statement.actorlook;
 
 import com.google.common.collect.ImmutableList;
 import scratch.newast.model.ASTNode;
 import scratch.newast.model.ScratchVisitor;
 import scratch.newast.model.expression.num.NumExpr;
+import scratch.newast.model.graphiceffect.GraphicEffect;
 
-public class SetVolumeTo implements ActorSoundStmt {
+public class ChangeEffectBy implements ActorLookStmt {
+    private final GraphicEffect effect;
     private final NumExpr num;
     private final ImmutableList<ASTNode> children;
 
-    public SetVolumeTo(NumExpr num) {
+    public ChangeEffectBy(GraphicEffect effect, NumExpr num) {
+        this.effect = effect;
         this.num = num;
-        children = ImmutableList.<ASTNode>builder().add(num).build();
+        children = ImmutableList.<ASTNode>builder().add(effect).add(num).build();
+    }
+
+    public GraphicEffect getEffect() {
+        return effect;
     }
 
     public NumExpr getNum() {

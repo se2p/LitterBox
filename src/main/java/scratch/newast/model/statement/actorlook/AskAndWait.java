@@ -1,4 +1,4 @@
-package scratch.newast.model.statement.entitylook;
+package scratch.newast.model.statement.actorlook;
 
 import com.google.common.collect.ImmutableList;
 import scratch.newast.model.ASTNode;

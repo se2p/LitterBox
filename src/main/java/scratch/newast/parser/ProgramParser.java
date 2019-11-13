@@ -13,17 +13,20 @@ import scratch.newast.model.ActorDefinition;
 import scratch.newast.model.ActorDefinitionList;
 import scratch.newast.model.Program;
 import scratch.newast.model.variable.Identifier;
+import scratch.newast.parser.symboltable.ProcedureDefinitionNameMapping;
 import scratch.newast.parser.symboltable.SymbolTable;
 
 public class ProgramParser {
 
     public static SymbolTable symbolTable;
+    public static ProcedureDefinitionNameMapping procDefMap;
 
     public static Program parseProgram(String zipFileName, JsonNode programNode) throws ParsingException {
         Preconditions.checkNotNull(zipFileName);
         Preconditions.checkNotNull(programNode);
 
         symbolTable = new SymbolTable();
+        procDefMap = new ProcedureDefinitionNameMapping();
 
         Identifier ident = new Identifier(zipFileName);
 
