@@ -6,7 +6,6 @@ import static scratch.newast.Constants.NEXT_KEY;
 import static scratch.newast.Constants.OPCODE_KEY;
 import static scratch.newast.Constants.PARENT_KEY;
 
-import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -28,6 +27,7 @@ import scratch.newast.model.procedure.ProcedureDefinition;
 import scratch.newast.model.procedure.ProcedureDefinitionList;
 import scratch.newast.model.type.BooleanType;
 import scratch.newast.model.type.StringType;
+import scratch.newast.model.type.Type;
 import scratch.newast.model.variable.Identifier;
 import scratch.newast.opcodes.ProcedureOpcode;
 
@@ -75,7 +75,6 @@ public class ProcDefinitionParser {
         JsonNode proto = blocks.get(protoReference);
         Iterator<Map.Entry<String, JsonNode>> iter = proto.get(INPUTS_KEY).fields();
         ArrayList<Parameter> inputs = new ArrayList<>();
-
         while (iter.hasNext()) {
             String inputRef = iter.next().getKey();
             JsonNode currentInput = iter.next().getValue();
@@ -101,10 +100,17 @@ public class ProcDefinitionParser {
         for (int i = 0; i < arguments.length; i++) {
             arguments[i] = argumentsArray.get(i).textValue();
         }
-        // ProgramParser.procDefMap.addProcedure(ident, methodName, arguments);
-        //TODO add argument type
+        ProgramParser.procDefMap.addProcedure(ident, methodName, arguments, getTypes(inputs));
         StmtList stmtList = ScriptParser.parseStmtList(def.get(NEXT_KEY).textValue(), blocks);
         return new ProcedureDefinition(ident, parameterList, stmtList);
+    }
+
+    private static Type[] getTypes(ArrayList<Parameter> inputs) {
+        Type[] types = new Type[inputs.size()];
+        for (int i = 0; i < inputs.size(); i++) {
+            types[i] = inputs.get(i).getType();
+        }
+        return types;
     }
 
     private static Parameter parseParameter(JsonNode blocks, String reference, String textValue) {

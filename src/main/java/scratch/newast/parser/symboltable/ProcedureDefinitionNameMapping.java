@@ -1,6 +1,7 @@
 package scratch.newast.parser.symboltable;
 
 import com.google.common.base.Preconditions;
+import scratch.newast.model.type.Type;
 import scratch.newast.model.variable.Identifier;
 import scratch.newast.opcodes.ProcedureOpcode;
 
@@ -14,17 +15,17 @@ public class ProcedureDefinitionNameMapping {
     }
 
     public void addProcedure(Identifier identifier, String procedureName, String[] argumentNames,
-                             ProcedureOpcode[] opcodes) {
+                             Type[] types) {
 
-        procedures.put(identifier, new ProcedureInfo(procedureName, makeArguments(argumentNames, opcodes)));
+        procedures.put(identifier, new ProcedureInfo(procedureName, makeArguments(argumentNames, types)));
 
     }
 
-    private ArgumentInfo[] makeArguments(String[] argumentNames, ProcedureOpcode[] opcodes) {
-        Preconditions.checkArgument(argumentNames.length == opcodes.length);
+    private ArgumentInfo[] makeArguments(String[] argumentNames, Type[] types) {
+        Preconditions.checkArgument(argumentNames.length == types.length);
         ArgumentInfo[] arguments = new ArgumentInfo[argumentNames.length];
         for (int i = 0; i < argumentNames.length; i++) {
-            arguments[i] = new ArgumentInfo(argumentNames[i], opcodes[i]);
+            arguments[i] = new ArgumentInfo(argumentNames[i], types[i]);
         }
         return arguments;
     }

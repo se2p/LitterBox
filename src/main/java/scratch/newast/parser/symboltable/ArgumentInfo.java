@@ -1,12 +1,12 @@
 package scratch.newast.parser.symboltable;
 
-import scratch.newast.opcodes.ProcedureOpcode;
+import scratch.newast.model.type.Type;
 
 public class ArgumentInfo {
     String name;
-    ProcedureOpcode type;
+    Type type;
 
-    public ArgumentInfo(String name, ProcedureOpcode type) {
+    public ArgumentInfo(String name, Type type) {
         this.name = name;
         this.type = type;
     }
@@ -15,7 +15,7 @@ public class ArgumentInfo {
         return name;
     }
 
-    public ProcedureOpcode getType() {
+    public Type getType() {
         return type;
     }
 }
