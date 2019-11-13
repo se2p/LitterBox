@@ -39,7 +39,7 @@ public class ControlStmtParser {
         switch (opcode) {
             case control_if:
                 conditionNode = inputs.get(INPUT_CONDITION);
-                boolExpr = ExpressionParser.parseBoolExpr(conditionNode, allBlocks);
+                boolExpr = ExpressionParser.parseBoolExpr(conditionNode, 0, allBlocks);
 
                 substackNode = inputs.get(INPUT_SUBSTACK).get(Constants.POS_INPUT_VALUE);
                 stmtList = ScriptParser.parseStmtList(substackNode.asText(), allBlocks);
@@ -48,7 +48,7 @@ public class ControlStmtParser {
                 break;
             case control_if_else:
                 conditionNode = inputs.get(INPUT_CONDITION);
-                boolExpr = ExpressionParser.parseBoolExpr(conditionNode, allBlocks);
+                boolExpr = ExpressionParser.parseBoolExpr(conditionNode, 0, allBlocks);
 
                 substackNode = inputs.get(INPUT_SUBSTACK).get(Constants.POS_INPUT_VALUE);
                 stmtList = ScriptParser.parseStmtList(substackNode.asText(), allBlocks);
@@ -70,7 +70,7 @@ public class ControlStmtParser {
                 break;
             case control_repeat_until:
                 conditionNode = inputs.get(INPUT_CONDITION);
-                boolExpr = ExpressionParser.parseBoolExpr(conditionNode, allBlocks);
+                boolExpr = ExpressionParser.parseBoolExpr(conditionNode, 0, allBlocks);
 
                 substackNode = inputs.get(INPUT_SUBSTACK).get(Constants.POS_INPUT_VALUE);
                 stmtList = ScriptParser.parseStmtList(substackNode.asText(), allBlocks);

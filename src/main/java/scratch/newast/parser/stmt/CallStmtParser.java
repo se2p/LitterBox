@@ -1,6 +1,7 @@
 package scratch.newast.parser.stmt;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import scratch.newast.ParsingException;
 import scratch.newast.model.expression.Expression;
 import scratch.newast.model.expression.list.ExpressionList;
 import scratch.newast.model.expression.list.ExpressionListPlain;
@@ -15,7 +16,7 @@ import java.util.List;
 import static scratch.newast.Constants.INPUTS_KEY;
 
 public class CallStmtParser {
-    public static Stmt parse(JsonNode current, String blockId, JsonNode blocks) {
+    public static Stmt parse(JsonNode current, String blockId, JsonNode blocks) throws ParsingException {
         List<Expression> expressions = new ArrayList<>();
         JsonNode inputNode = current.get(INPUTS_KEY);
         for (int i = 0; i < inputNode.size(); i++) {

@@ -79,7 +79,7 @@ public class CommonStmtParser {
         }
     }
 
-    private static CommonStmt parseChangeVariableBy(JsonNode current, JsonNode allBlocks) {
+    private static CommonStmt parseChangeVariableBy(JsonNode current, JsonNode allBlocks) throws ParsingException {
         Expression stringExpr = ExpressionParser.parseExpression(current, 0, allBlocks);
 
         String variableName = current.get(FIELDS_KEY).get("VARIABLE").get(FIELD_VALUE).asText();
@@ -124,7 +124,7 @@ public class CommonStmtParser {
         return new CreateCloneOf(ident);
     }
 
-    private static WaitUntil parseWaitUntil(JsonNode current, JsonNode allBlocks) {
+    private static WaitUntil parseWaitUntil(JsonNode current, JsonNode allBlocks) throws ParsingException {
         JsonNode inputs = current.get(INPUTS_KEY);
         BoolExpr boolExpr = ExpressionParser.parseBoolExpr(inputs, 0, allBlocks);
         return new WaitUntil(boolExpr);

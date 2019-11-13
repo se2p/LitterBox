@@ -6,8 +6,21 @@ import com.fasterxml.jackson.databind.node.TextNode;
 import com.google.common.base.Preconditions;
 import scratch.newast.Constants;
 import scratch.newast.ParsingException;
+import scratch.newast.model.Key;
 import scratch.newast.model.expression.Expression;
+import scratch.newast.model.expression.bool.And;
+import scratch.newast.model.expression.bool.BiggerThan;
+import scratch.newast.model.expression.bool.Bool;
 import scratch.newast.model.expression.bool.BoolExpr;
+import scratch.newast.model.expression.bool.ColorTouches;
+import scratch.newast.model.expression.bool.Equals;
+import scratch.newast.model.expression.bool.IsKeyPressed;
+import scratch.newast.model.expression.bool.IsMouseDown;
+import scratch.newast.model.expression.bool.LessThan;
+import scratch.newast.model.expression.bool.Not;
+import scratch.newast.model.expression.bool.Or;
+import scratch.newast.model.expression.bool.Touching;
+import scratch.newast.model.expression.list.ListExpr;
 import scratch.newast.model.expression.num.Add;
 import scratch.newast.model.expression.num.Current;
 import scratch.newast.model.expression.num.DaysSince2000;
@@ -32,6 +45,7 @@ import scratch.newast.model.expression.string.LetterOf;
 import scratch.newast.model.expression.string.Str;
 import scratch.newast.model.expression.string.StringExpr;
 import scratch.newast.model.expression.string.Username;
+import scratch.newast.model.graphiceffect.Color;
 import scratch.newast.model.numfunct.Abs;
 import scratch.newast.model.numfunct.Acos;
 import scratch.newast.model.numfunct.Asin;
@@ -49,7 +63,9 @@ import scratch.newast.model.numfunct.Sqrt;
 import scratch.newast.model.numfunct.Tan;
 import scratch.newast.model.position.Position;
 import scratch.newast.model.timecomp.TimeComp;
+import scratch.newast.model.touchable.Touchable;
 import scratch.newast.model.variable.Variable;
+import scratch.newast.opcodes.BoolExprOpcode;
 import scratch.newast.opcodes.NumExprOpcode;
 import scratch.newast.opcodes.StringExprOpcode;
 
@@ -134,6 +150,11 @@ public class ExpressionParser {
         return new Str(value);
     }
 
+    public static Bool parseBool(JsonNode inputs, int pos) {
+        boolean value = getDataArrayAtPos(inputs, pos).get(POS_INPUT_VALUE).asBoolean();
+        return new Bool(value);
+    }
+
     public static ArrayNode getDataArrayAtPos(JsonNode inputs, int pos) { // TODO maybe rename or comment
         return (ArrayNode) getExprArrayAtPos(inputs, pos).get(POS_DATA_ARRAY);
     }
@@ -162,12 +183,12 @@ public class ExpressionParser {
         // FIXME TODO you have to differentiate between LengthOfString and LengthOfVar here
         case operator_length:
         case data_lengthoflist:
-            // FIXME TODO
+            throw new RuntimeException("Not implemented yet");
         case sensing_current:
-            TimeComp timeComp = null; // TODO parse TimeComp
+            TimeComp timeComp = parseTimeComp();
             return new Current(timeComp);
         case sensing_distanceto:
-            Position pos = null; // TODO parse position
+            Position pos = parsePosition();
             return new DistanceTo(pos);
         case operator_add:
             return buildNumExprWithTwoNumExprInputs(Add.class, identifier, blocks);
@@ -187,14 +208,26 @@ public class ExpressionParser {
             return new NumFunctOf(funct, numExpr);
         case data_itemnumoflist:
             Expression item = parseExpression(blocks.get(identifier).get(INPUTS_KEY), 0, blocks);
-            Variable list = null; // TODO parse - note that the list is in the "fields" node. -- update probably I have to use the lookuptable here in order to distinguish Ident and Ident . Ident
+            Variable list = parseVariable();
             return new IndexOf(item, list);
         default:
             throw new ParsingException(opcodeString + " not implemented yet");
         }
     }
 
-    private static StringExpr parseBlockStringExpr(String opcodeString, String identifier, JsonNode blocks, JsonNode jsonNode) throws ParsingException {
+    private static Variable parseVariable() { // TODO parse - note that the list is in the "fields" node. -- update probably I have to use the lookuptable here in order to distinguish Ident and Ident . Ident
+        throw new RuntimeException("Not implemented yet. VARIABLES ARE EVIL BUT DO PARSE THEM");
+    }
+
+    private static Position parsePosition() {
+        throw new RuntimeException("Not implemented yet");
+    }
+
+    private static TimeComp parseTimeComp() {
+        throw new RuntimeException("Not implemented yet");
+    }
+
+    private static StringExpr parseBlockStringExpr(String opcodeString, String identifier, JsonNode blocks, JsonNode fields) throws ParsingException {
         Preconditions.checkArgument(StringExprOpcode.contains(opcodeString), opcodeString + " is not a StringExprOpcode.");
         StringExprOpcode opcode = StringExprOpcode.valueOf(opcodeString);
         switch (opcode) {
@@ -210,11 +243,72 @@ public class ExpressionParser {
             return new Username();
         case data_itemoflist:
             NumExpr index = parseNumExpr(blocks.get(identifier), 0, blocks);
-            Variable var = null; //FIXME some time soon I will have to understand vars and fix this
+            Variable var = parseVariable();
             return new ItemOfVariable(index, var);
         default:
             throw new RuntimeException(opcodeString + " not implemented yet or this method was not called properly (or JSON is wrong)");
         }
+    }
+
+    private static BoolExpr parseBlockBoolExpr(String opcodeString, String identifier, JsonNode blocks, JsonNode fields) throws ParsingException {
+        Preconditions.checkArgument(BoolExprOpcode.contains(opcodeString), opcodeString + " is not a StringExprOpcode.");
+        BoolExprOpcode opcode = BoolExprOpcode.valueOf(opcodeString);
+        switch (opcode) {
+        case sensing_touchingobject:
+            Touchable touchable = parseTouchable();
+            return new Touching(touchable);
+        case sensing_touchingcolor:
+            throw new RuntimeException("Not implemented yet");
+        case sensing_coloristouchingcolor:
+            Color first = parseColor();
+            Color second = parseColor();
+            return new ColorTouches(first, second);
+        case sensing_keypressed:
+            Key key = parseKey();
+            return new IsKeyPressed(key);
+        case sensing_mousedown:
+            return new IsMouseDown();
+        case operator_gt:
+            NumExpr firstNum = parseNumExpr(blocks.get(identifier), 0, blocks);
+            NumExpr secondNum = parseNumExpr(blocks.get(identifier), 1, blocks);
+            return new BiggerThan(firstNum, secondNum);
+        case operator_lt:
+            NumExpr lessFirst = parseNumExpr(blocks.get(identifier), 0, blocks);
+            NumExpr lessSecond = parseNumExpr(blocks.get(identifier), 1, blocks);
+            return new LessThan(lessFirst, lessSecond);
+        case operator_equals:
+            NumExpr eqFirst = parseNumExpr(blocks.get(identifier), 0, blocks);
+            NumExpr eqSecond = parseNumExpr(blocks.get(identifier), 1, blocks);
+            return new Equals(eqFirst, eqSecond);
+        case operator_and:
+            BoolExpr andFirst = parseBoolExpr(blocks.get(identifier), 0, blocks);
+            BoolExpr andSecond = parseBoolExpr(blocks.get(identifier), 1, blocks);
+            return new And(andFirst, andSecond);
+        case operator_or:
+            BoolExpr orFirst = parseBoolExpr(blocks.get(identifier), 0, blocks);
+            BoolExpr orSecond = parseBoolExpr(blocks.get(identifier), 1, blocks);
+            return new Or(orFirst, orSecond);
+        case operator_not:
+            BoolExpr notInput = parseBoolExpr(blocks.get(identifier), 0, blocks);
+            return new Not(notInput);
+        case operator_contains:
+        case data_listcontainsitem:
+            throw new RuntimeException("Not implemented yet"); // I don't know which Classes should be returned here
+        default:
+            throw new RuntimeException(opcodeString + " not implemented yet or this method was not called properly (or JSON is wrong)");
+        }
+    }
+
+    private static Key parseKey() {
+        throw new RuntimeException("Not implemented yet");
+    }
+
+    private static Color parseColor() { // Take care here as we have two different kinds of color classes
+        throw new RuntimeException("Not implemented yet");
+    }
+
+    private static Touchable parseTouchable() {
+        throw new RuntimeException("Not implemented yet");
     }
 
     public static NumFunct parseNumFunct(JsonNode fields) throws ParsingException { // TODO maybe add opcodes enum for NumFuncts
@@ -265,9 +359,8 @@ public class ExpressionParser {
         }
     }
 
-
-    public static Expression parseExpression(JsonNode block, int pos, JsonNode blocks) {
-        return null;
+    public static Expression parseExpression(JsonNode block, int pos, JsonNode blocks) throws ParsingException {
+        throw new RuntimeException("Not implemented yet");
     }
 
     public static StringExpr parseStringExpr(JsonNode block, int pos, JsonNode blocks) throws ParsingException {
@@ -289,12 +382,25 @@ public class ExpressionParser {
     }
 
 
-    public static BoolExpr parseBoolExpr(JsonNode block, int pos, JsonNode blocks) {
+    public static BoolExpr parseBoolExpr(JsonNode block, int pos, JsonNode blocks) throws ParsingException {
+        ArrayNode exprArray = getExprArrayAtPos(block.get(INPUTS_KEY), pos);
+        if (getShadowIndicator(exprArray) == 1) {
+            return parseBool(block.get(INPUTS_KEY), pos);
+        } else if (exprArray.get(POS_BLOCK_ID) instanceof TextNode) {
+            String identifier = exprArray.get(POS_BLOCK_ID).asText();
+            String opcode = blocks.get(identifier).get(OPCODE_KEY).asText();
+            return parseBlockBoolExpr(opcode, identifier, blocks, block.get(FIELDS_KEY));
+        } else if (exprArray.get(POS_DATA_ARRAY).get(POS_INPUT_ID).asText().endsWith("-my variable")) {
+            System.out.println("hooray! it's a variable!");
+            throw new RuntimeException("Not implemented yet");
+        } else if (!exprArray.get(POS_DATA_ARRAY).get(POS_INPUT_ID).asText().endsWith("-my variable")) {
+            System.out.println("hooray! it's a list!");
+            throw new RuntimeException("Not implemented yet");
+        }
         throw new RuntimeException("Not implemented yet");
     }
 
-    public static BoolExpr parseBoolExpr(JsonNode block, JsonNode allNodes) {
-
+    public static ListExpr parseListExpr(JsonNode block, int pos, JsonNode blocks) throws ParsingException {
         throw new RuntimeException("Not implemented yet");
     }
 
