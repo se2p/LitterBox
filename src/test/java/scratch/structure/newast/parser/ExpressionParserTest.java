@@ -59,31 +59,31 @@ public class ExpressionParserTest {
 
     @Test
     public void testParseNumExprLiteral() throws ParsingException {
-        NumExpr numExpr = ExpressionParser.parseNumExpr(literalBlock.get(INPUTS_KEY), 0, allExprTypesScript);
+        NumExpr numExpr = ExpressionParser.parseNumExpr(literalBlock, 0, allExprTypesScript);
         assertTrue(numExpr instanceof Number);
     }
 
     @Test
     public void testParseNumExprVar() throws ParsingException {
-        NumExpr numExpr = ExpressionParser.parseNumExpr(variableBlock.get(INPUTS_KEY), 0, allExprTypesScript);
+        NumExpr numExpr = ExpressionParser.parseNumExpr(variableBlock, 0, allExprTypesScript);
         assertNull(numExpr);
     }
 
     @Test
     public void testParseNumExprList() throws ParsingException {
-        NumExpr numExpr = ExpressionParser.parseNumExpr(listBlock.get(INPUTS_KEY), 0, allExprTypesScript);
+        NumExpr numExpr = ExpressionParser.parseNumExpr(listBlock, 0, allExprTypesScript);
         assertNull(numExpr);
     }
 
     @Test
     public void testParseNumExprBlock() throws ParsingException {
-        NumExpr numExpr = ExpressionParser.parseNumExpr(blockBlock.get(INPUTS_KEY), 0, allExprTypesScript);
+        NumExpr numExpr = ExpressionParser.parseNumExpr(blockBlock, 0, allExprTypesScript);
         assertTrue(numExpr instanceof MouseX);
     }
 
     @Test
     public void testAdd() throws ParsingException {
-        NumExpr add = ExpressionParser.parseNumExpr(addBlock.get(INPUTS_KEY), 0, twoNumExprSlotsNumExprs);
+        NumExpr add = ExpressionParser.parseNumExpr(addBlock, 0, twoNumExprSlotsNumExprs);
         assertTrue(add instanceof Add);
         assertEquals("1.0", String.valueOf(((Number) ((Add) add).getFirst()).getValue()));
         assertEquals("2.0", String.valueOf(((Number) ((Add) add).getSecond()).getValue()));
@@ -91,7 +91,7 @@ public class ExpressionParserTest {
 
     @Test
     public void testMinus() throws ParsingException {
-        NumExpr minus = ExpressionParser.parseNumExpr(minusBlock.get(INPUTS_KEY), 0, twoNumExprSlotsNumExprs);
+        NumExpr minus = ExpressionParser.parseNumExpr(minusBlock, 0, twoNumExprSlotsNumExprs);
         assertTrue(minus instanceof Minus);
         assertEquals("1.0", String.valueOf(((Number) ((Minus) minus).getFirst()).getValue()));
         assertEquals("2.0", String.valueOf(((Number) ((Minus) minus).getSecond()).getValue()));
@@ -99,7 +99,7 @@ public class ExpressionParserTest {
 
     @Test
     public void testMult() throws ParsingException {
-        NumExpr mult = ExpressionParser.parseNumExpr(multBlock.get(INPUTS_KEY), 0, twoNumExprSlotsNumExprs);
+        NumExpr mult = ExpressionParser.parseNumExpr(multBlock, 0, twoNumExprSlotsNumExprs);
         assertTrue(mult instanceof Mult);
         assertEquals("1.0", String.valueOf(((Number) ((Mult) mult).getFirst()).getValue()));
         assertEquals("2.0", String.valueOf(((Number) ((Mult) mult).getSecond()).getValue()));
@@ -107,7 +107,7 @@ public class ExpressionParserTest {
 
     @Test
     public void testDiv() throws ParsingException {
-        NumExpr div = ExpressionParser.parseNumExpr(divBlock.get(INPUTS_KEY), 0, twoNumExprSlotsNumExprs);
+        NumExpr div = ExpressionParser.parseNumExpr(divBlock, 0, twoNumExprSlotsNumExprs);
         assertTrue(div instanceof Div);
         PickRandom pickRandom = (PickRandom) ((Div) div).getFirst();
         assertEquals("1.0", String.valueOf(((Number) (pickRandom.getFrom())).getValue()));
