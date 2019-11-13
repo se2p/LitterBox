@@ -2,12 +2,10 @@ package scratch.newast.opcodes;
 
 public enum ActorSoundStmtOpcode {
 
-    ;
-//    sensing_askandwait, //  "ask"  StringExpr  "and" "wait"
-//    looks_switchbackdropto, // "switch" "backdrop" "to"  Backdrop
-//    looks_changeeffectby, //  "change" "effect"  GraphicEffect  "by" NumExpr
-//    looks_seteffectto, // "set" "effect"  GraphicEffect  "to" NumExpr
-//    looks_cleargraphiceffects; // "clear" "graphic" "effects"
+    sound_playuntildone,    //    "play" "sound"  ElementChoice  "until" "done"
+    sound_play,             // |  "start" "sound"  ElementChoice
+    sound_cleareffects,     // |  "clear" "sound" "effects"
+    sound_stopallsounds;    // |  "stop" "all" "sounds"
 
     public static boolean contains(String opcode) {
         for (ActorSoundStmtOpcode value : ActorSoundStmtOpcode.values()) {
