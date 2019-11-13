@@ -86,8 +86,10 @@ public class ExpressionParser {
             return parseBlockNumExpr(opcode, identifier, blocks, block.get(FIELDS_KEY));
         } else if (exprArray.get(POS_DATA_ARRAY).get(POS_INPUT_ID).asText().endsWith("-my variable")) {
             System.out.println("hooray! it's a variable!");
+            throw new RuntimeException("Not implemented yet");
         } else if (!exprArray.get(POS_DATA_ARRAY).get(POS_INPUT_ID).asText().endsWith("-my variable")) {
             System.out.println("hooray! it's a list!");
+            throw new RuntimeException("Not implemented yet");
         }
         return null;
     }
@@ -98,7 +100,6 @@ public class ExpressionParser {
         Map.Entry slotEntry = slotEntries.get(pos);
         ArrayNode exprArray = (ArrayNode) slotEntry.getValue();
         String numberName = (String) slotEntry.getKey(); // we don't need that here but maybe later for storing additional information
-
         return exprArray;
     }
 
@@ -212,7 +213,7 @@ public class ExpressionParser {
             Variable var = null; //FIXME some time soon I will have to understand vars and fix this
             return new ItemOfVariable(index, var);
         default:
-            throw new ParsingException(opcodeString + " not implemented yet");
+            throw new RuntimeException(opcodeString + " not implemented yet or this method was not called properly (or JSON is wrong)");
         }
     }
 
@@ -279,8 +280,10 @@ public class ExpressionParser {
             return parseBlockStringExpr(opcode, identifier, blocks, block.get(FIELDS_KEY));
         } else if (exprArray.get(POS_DATA_ARRAY).get(POS_INPUT_ID).asText().endsWith("-my variable")) {
             System.out.println("hooray! it's a variable!");
+            throw new RuntimeException("Not implemented yet");
         } else if (!exprArray.get(POS_DATA_ARRAY).get(POS_INPUT_ID).asText().endsWith("-my variable")) {
             System.out.println("hooray! it's a list!");
+            throw new RuntimeException("Not implemented yet");
         }
         throw new RuntimeException("Not implemented yet");
     }

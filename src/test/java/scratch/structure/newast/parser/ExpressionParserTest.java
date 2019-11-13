@@ -64,18 +64,6 @@ public class ExpressionParserTest {
     }
 
     @Test
-    public void testParseNumExprVar() throws ParsingException {
-        NumExpr numExpr = ExpressionParser.parseNumExpr(variableBlock, 0, allExprTypesScript);
-        assertNull(numExpr);
-    }
-
-    @Test
-    public void testParseNumExprList() throws ParsingException {
-        NumExpr numExpr = ExpressionParser.parseNumExpr(listBlock, 0, allExprTypesScript);
-        assertNull(numExpr);
-    }
-
-    @Test
     public void testParseNumExprBlock() throws ParsingException {
         NumExpr numExpr = ExpressionParser.parseNumExpr(blockBlock, 0, allExprTypesScript);
         assertTrue(numExpr instanceof MouseX);
