@@ -1,28 +1,35 @@
 package scratch.newast.parser.symboltable;
 
+import com.google.common.base.Preconditions;
 import scratch.newast.model.variable.Identifier;
+import scratch.newast.opcodes.ProcedureOpcode;
 
 import java.util.HashMap;
 
 public class ProcedureDefinitionNameMapping {
-    private HashMap<Identifier, String>  procedureNames;
-    private HashMap<Identifier, String[]> procedureArgumentNames;
+    private HashMap<Identifier, ProcedureInfo> procedures;
 
-    public ProcedureDefinitionNameMapping(){
-        procedureNames = new HashMap<>();
-        procedureArgumentNames = new HashMap<>();
+    public ProcedureDefinitionNameMapping() {
+        procedures = new HashMap<>();
     }
 
-    public void addProcedure(Identifier identifier, String procedureName, String[] argumentNames){
-        procedureNames.put(identifier, procedureName);
-        procedureArgumentNames.put(identifier,argumentNames);
+    public void addProcedure(Identifier identifier, String procedureName, String[] argumentNames,
+                             ProcedureOpcode[] opcodes) {
+
+        procedures.put(identifier, new ProcedureInfo(procedureName, makeArguments(argumentNames, opcodes)));
+
     }
 
-    public HashMap<Identifier, String> getProcedureNames() {
-        return procedureNames;
+    private ArgumentInfo[] makeArguments(String[] argumentNames, ProcedureOpcode[] opcodes) {
+        Preconditions.checkArgument(argumentNames.length == opcodes.length);
+        ArgumentInfo[] arguments = new ArgumentInfo[argumentNames.length];
+        for (int i = 0; i < argumentNames.length; i++) {
+            arguments[i] = new ArgumentInfo(argumentNames[i], opcodes[i]);
+        }
+        return arguments;
     }
 
-    public HashMap<Identifier, String[]> getProcedureArgumentNames() {
-        return procedureArgumentNames;
+    public HashMap<Identifier, ProcedureInfo> getProcedures() {
+        return procedures;
     }
 }

@@ -75,6 +75,7 @@ public class ProcDefinitionParser {
         JsonNode proto = blocks.get(protoReference);
         Iterator<Map.Entry<String, JsonNode>> iter = proto.get(INPUTS_KEY).fields();
         ArrayList<Parameter> inputs = new ArrayList<>();
+
         while (iter.hasNext()) {
             String inputRef = iter.next().getKey();
             JsonNode currentInput = iter.next().getValue();
@@ -100,7 +101,7 @@ public class ProcDefinitionParser {
         for (int i = 0; i < arguments.length; i++) {
             arguments[i] = argumentsArray.get(i).textValue();
         }
-        ProgramParser.procDefMap.addProcedure(ident, methodName, arguments);
+        // ProgramParser.procDefMap.addProcedure(ident, methodName, arguments);
         //TODO add argument type
         StmtList stmtList = ScriptParser.parseStmtList(def.get(NEXT_KEY).textValue(), blocks);
         return new ProcedureDefinition(ident, parameterList, stmtList);
