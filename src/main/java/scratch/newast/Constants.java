@@ -95,4 +95,24 @@ public class Constants {
     public static final String NEXT_KEY = "next";
     public static final String INPUTS_KEY = "inputs";
     public static final String PARENT_KEY = "parent";
+
+    /**
+     * The position of the variable's value in the declaration.
+     */
+    public static final int DECLARATION_VARIABLE_VALUE_POS = 1;
+
+    /**
+     * The position of the variable's name in the declaration.
+     */
+    public static final int DECLARATION_VARIABLE_NAME_POS = 0;
+
+    /**
+     * The position of the list's name in the declaration.
+     */
+    public static final int DECLARATION_LIST_NAME_POS = 0;
+
+    /**
+     * The position of the list's values in the declaration.
+     */
+    public static final int DECLARATION_LIST_VALUES_POS = 1;
 }

@@ -3,10 +3,12 @@ package scratch.newast.parser;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.google.common.base.Preconditions;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
 import scratch.newast.model.DeclarationStmt;
 import scratch.newast.model.Message;
 import scratch.newast.model.expression.Expression;
@@ -19,10 +21,11 @@ import scratch.newast.model.type.NumberType;
 import scratch.newast.model.type.StringType;
 import scratch.newast.model.variable.Identifier;
 
+import static scratch.newast.Constants.*;
+
 public class DeclarationParser {
 
     public static List<DeclarationStmt> parseVariables(JsonNode variableNode, String scriptGroupName, boolean isStage) {
-        // TODO use constants instead of magic numbers
         Preconditions.checkNotNull(variableNode);
         List<DeclarationStmt> parsedVariables = new ArrayList<>();
         Iterator<Map.Entry<String, JsonNode>> iter = variableNode.fields();
@@ -30,18 +33,18 @@ public class DeclarationParser {
             Map.Entry<String, JsonNode> currentEntry = iter.next();
             Preconditions.checkArgument(currentEntry.getValue().isArray());
             ArrayNode arrNode = (ArrayNode) currentEntry.getValue();
-            if (arrNode.get(1).isNumber()) {
-                ProgramParser.symbolTable.addVariable(arrNode.get(0).textValue(), new NumberType(), isStage,
-                        scriptGroupName);
-                parsedVariables.add(new DeclarationStmt(new Identifier(arrNode.get(0).textValue()), new NumberType()));
-            } else if (arrNode.get(1).isBoolean()) {
-                ProgramParser.symbolTable.addVariable(arrNode.get(0).textValue(), new BooleanType(), isStage,
-                        scriptGroupName);
-                parsedVariables.add(new DeclarationStmt(new Identifier(arrNode.get(0).textValue()), new BooleanType()));
+            if (arrNode.get(DECLARATION_VARIABLE_VALUE_POS).isNumber()) {
+                ProgramParser.symbolTable.addVariable(arrNode.get(DECLARATION_VARIABLE_NAME_POS).textValue(),
+                        new NumberType(), isStage, scriptGroupName);
+                parsedVariables.add(new DeclarationStmt(new Identifier(arrNode.get(DECLARATION_VARIABLE_NAME_POS).textValue()), new NumberType()));
+            } else if (arrNode.get(DECLARATION_VARIABLE_VALUE_POS).isBoolean()) {
+                ProgramParser.symbolTable.addVariable(arrNode.get(DECLARATION_VARIABLE_NAME_POS).textValue(),
+                        new BooleanType(), isStage, scriptGroupName);
+                parsedVariables.add(new DeclarationStmt(new Identifier(arrNode.get(DECLARATION_VARIABLE_NAME_POS).textValue()), new BooleanType()));
             } else {
-                ProgramParser.symbolTable.addVariable(arrNode.get(0).textValue(), new StringType(), isStage,
-                        scriptGroupName);
-                parsedVariables.add(new DeclarationStmt(new Identifier(arrNode.get(0).textValue()), new StringType()));
+                ProgramParser.symbolTable.addVariable(arrNode.get(DECLARATION_VARIABLE_NAME_POS).textValue(),
+                        new StringType(), isStage, scriptGroupName);
+                parsedVariables.add(new DeclarationStmt(new Identifier(arrNode.get(DECLARATION_VARIABLE_NAME_POS).textValue()), new StringType()));
             }
         }
         return parsedVariables;
@@ -55,8 +58,8 @@ public class DeclarationParser {
             Map.Entry<String, JsonNode> currentEntry = iter.next();
             Preconditions.checkArgument(currentEntry.getValue().isArray());
             ArrayNode arrNode = (ArrayNode) currentEntry.getValue();
-            String listName = arrNode.get(0).textValue();
-            JsonNode listValues = arrNode.get(1);
+            String listName = arrNode.get(DECLARATION_LIST_NAME_POS).textValue();
+            JsonNode listValues = arrNode.get(DECLARATION_LIST_VALUES_POS);
             Preconditions.checkArgument(listValues.isArray());
             ArrayNode valuesArray = (ArrayNode) listValues;
             List<Expression> expressions = new ArrayList<>();
@@ -73,7 +76,7 @@ public class DeclarationParser {
     }
 
     public static List<DeclarationStmt> parseBroadcasts(JsonNode broadcastsNode, String scriptGroupName,
-        boolean isStage) {
+                                                        boolean isStage) {
         Preconditions.checkNotNull(broadcastsNode);
         List<DeclarationStmt> parsedBroadcasts = new ArrayList<>();
         Iterator<Map.Entry<String, JsonNode>> iter = broadcastsNode.fields();
