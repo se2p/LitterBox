@@ -2,12 +2,20 @@ package scratch.newast.opcodes;
 
 public enum SpriteMotionStmtOpcode {
 
-    ;
-//    sensing_askandwait, //  "ask"  StringExpr  "and" "wait"
-//    looks_switchbackdropto, // "switch" "backdrop" "to"  Backdrop
-//    looks_changeeffectby, //  "change" "effect"  GraphicEffect  "by" NumExpr
-//    looks_seteffectto, // "set" "effect"  GraphicEffect  "to" NumExpr
-//    looks_cleargraphiceffects; // "clear" "graphic" "effects"
+    motion_movesteps,       // "move"  NumExpr  "steps"
+    motion_turnright,       // |  "turn" "right"  NumExpr "degrees"
+    motion_turnleft,        // |  "turn" "left"  NumExpr "degrees"
+    motion_gotoxy,
+    motion_goto,            // |  "go" "to"  Position
+    motion_glideto,
+    motion_glidesecstoxy,   // |  "glide"  NumExpr  "secs" "to" Position
+    motion_pointindirection,// |  "point" "in" "direction" NumExpr
+    motion_pointtowards,    // |  "point" "towards"  Position
+    motion_changexby,       // |  "change" "x" "by"  NumExpr
+    motion_changeyby,       // |  "change" "y" "by"  NumExpr
+    motion_setx,            // |  "set" "x" "to"  NumExpr
+    motion_sety,            // |  "set" "y" "to"  NumExpr
+    motion_ifonedgebounce;  // |  "if" "on" "edge" "bounce"
 
     public static boolean contains(String opcode) {
         for (SpriteMotionStmtOpcode value : SpriteMotionStmtOpcode.values()) {

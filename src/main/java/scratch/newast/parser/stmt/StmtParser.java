@@ -46,7 +46,8 @@ public class StmtParser {
             stmt = CommonStmtParser.parse(current, blocks);
             return stmt;
         } else if (SpriteMotionStmtOpcode.contains(opcode)) {
-            throw new RuntimeException("Not implemented");
+            stmt = SpriteMotionStmtParser.parse(current,blocks);
+            return stmt;
         } else if (SpriteLookStmtOpcode.contains(opcode)) {
             throw new RuntimeException("Not implemented");
         } else if (ActorSoundStmtOpcode.contains(opcode)) {
