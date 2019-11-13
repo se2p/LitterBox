@@ -4,7 +4,7 @@ import com.google.common.collect.ImmutableList;
 import scratch.newast.model.ASTNode;
 import scratch.newast.model.ScratchVisitor;
 
-public class StopAllSounds implements EntitySoundStmt {
+public class StopAllSounds implements ActorSoundStmt {
 
     private final ImmutableList<ASTNode> children;
 

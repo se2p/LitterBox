@@ -4,7 +4,7 @@ import com.google.common.collect.ImmutableList;
 import scratch.newast.model.ASTNode;
 import scratch.newast.model.ScratchVisitor;
 
-public class ClearGraphicEffects implements EntityLookStmt {
+public class ClearGraphicEffects implements ActorLookStmt {
 
     private final ImmutableList<ASTNode> children;
 

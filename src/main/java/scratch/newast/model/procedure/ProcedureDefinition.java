@@ -6,14 +6,14 @@ import scratch.newast.model.ScratchVisitor;
 import scratch.newast.model.StmtList;
 import scratch.newast.model.variable.Identifier;
 
-public class ProcedureDeclaration implements ASTNode {
+public class ProcedureDefinition implements ASTNode {
 
     private Identifier ident;
     private ParameterList parameterList;
     private StmtList stmtList;
     private final ImmutableList<ASTNode> children;
 
-    public ProcedureDeclaration(Identifier ident, ParameterList parameterList, StmtList stmtList) {
+    public ProcedureDefinition(Identifier ident, ParameterList parameterList, StmtList stmtList) {
         this.ident = ident;
         this.parameterList = parameterList;
         this.stmtList = stmtList;

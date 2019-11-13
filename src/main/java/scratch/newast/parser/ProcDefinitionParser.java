@@ -1,31 +1,38 @@
 package scratch.newast.parser;
 
+import static scratch.newast.Constants.FIELDS_KEY;
+import static scratch.newast.Constants.INPUTS_KEY;
+import static scratch.newast.Constants.NEXT_KEY;
+import static scratch.newast.Constants.OPCODE_KEY;
+import static scratch.newast.Constants.PARENT_KEY;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.google.common.base.Preconditions;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import scratch.newast.Constants;
 import scratch.newast.ParsingException;
 import scratch.newast.model.StmtList;
-import scratch.newast.model.procedure.*;
+import scratch.newast.model.procedure.Parameter;
+import scratch.newast.model.procedure.ParameterList;
+import scratch.newast.model.procedure.ParameterListPlain;
+import scratch.newast.model.procedure.ProcedureDefinition;
+import scratch.newast.model.procedure.ProcedureDefinitionList;
 import scratch.newast.model.type.BooleanType;
 import scratch.newast.model.type.StringType;
 import scratch.newast.model.variable.Identifier;
 import scratch.newast.opcodes.ProcedureOpcode;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import static scratch.newast.Constants.*;
-
-public class ProcDeclParser {
+public class ProcDefinitionParser {
     private final static String CUSTOM_BLOCK_KEY = "custom_block";
     private final static String MUTATION_KEY = "mutation";
     private final static String PROCCODE_KEY = "proccode";
     private final static String VALUE_KEY = "VALUE";
 
-    public static ProcedureDeclarationList parse(JsonNode blocks) throws ParsingException {
+    public static ProcedureDefinitionList parse(JsonNode blocks) throws ParsingException {
         Preconditions.checkNotNull(blocks);
         Iterator<JsonNode> iter = blocks.elements();
         List<JsonNode> defBlock = new ArrayList<>();
@@ -42,17 +49,17 @@ public class ProcDeclParser {
         //each definition needs the prototype block because it holds the name of the procedure
         Preconditions.checkArgument(protoBlock.size() == defBlock.size());
         if (defBlock.size() == 0) {
-            return new ProcedureDeclarationList(new ArrayList<>());
+            return new ProcedureDefinitionList(new ArrayList<>());
         }
-        List<ProcedureDeclaration> procdecls = new ArrayList<>();
+        List<ProcedureDefinition> procdecls = new ArrayList<>();
         for (JsonNode jsonNode : defBlock) {
 
             procdecls.add(parseProcDecl(jsonNode, blocks));
         }
-        return new ProcedureDeclarationList(procdecls);
+        return new ProcedureDefinitionList(procdecls);
     }
 
-    private static ProcedureDeclaration parseProcDecl(JsonNode def, JsonNode blocks) throws ParsingException {
+    private static ProcedureDefinition parseProcDecl(JsonNode def, JsonNode blocks) throws ParsingException {
         JsonNode input = def.get(Constants.INPUTS_KEY).get(CUSTOM_BLOCK_KEY);
         Preconditions.checkArgument(input.isArray());
         ArrayNode inputArray = (ArrayNode) input;
@@ -73,7 +80,7 @@ public class ProcDeclParser {
         //TODO add name in ProcNameMapping
         Identifier ident = new Identifier(proto.get(PARENT_KEY).textValue());
         StmtList stmtList = ScriptParser.parseStmtList(def.get(NEXT_KEY).textValue(), blocks);
-        return new ProcedureDeclaration(ident, parameterList, stmtList);
+        return new ProcedureDefinition(ident, parameterList, stmtList);
     }
 
     private static Parameter parseParameter(JsonNode blocks, String reference, String textValue) {

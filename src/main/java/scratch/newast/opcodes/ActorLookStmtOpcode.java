@@ -1,6 +1,6 @@
 package scratch.newast.opcodes;
 
-public enum EntityLookStmtOpcode {
+public enum ActorLookStmtOpcode {
 
     sensing_askandwait, //  "ask"  StringExpr  "and" "wait"
     looks_switchbackdropto, // "switch" "backdrop" "to"  Backdrop
@@ -10,7 +10,7 @@ public enum EntityLookStmtOpcode {
 
 
     public static boolean contains(String opcode) {
-        for (EntityLookStmtOpcode value : EntityLookStmtOpcode.values()) {
+        for (ActorLookStmtOpcode value : ActorLookStmtOpcode.values()) {
             if (value.name().equals(opcode)) {
                 return true;
             }

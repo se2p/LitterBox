@@ -5,7 +5,7 @@ import scratch.newast.model.ASTNode;
 import scratch.newast.model.ScratchVisitor;
 import scratch.newast.model.sound.Sound;
 
-public class StartSound implements EntitySoundStmt {
+public class StartSound implements ActorSoundStmt {
     private final Sound sound;
     private final ImmutableList<ASTNode> children;
 

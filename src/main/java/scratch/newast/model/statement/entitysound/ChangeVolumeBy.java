@@ -5,7 +5,7 @@ import scratch.newast.model.ASTNode;
 import scratch.newast.model.ScratchVisitor;
 import scratch.newast.model.expression.num.NumExpr;
 
-public class ChangeVolumeBy implements EntitySoundStmt {
+public class ChangeVolumeBy implements ActorSoundStmt {
     private final NumExpr num;
     private final ImmutableList<ASTNode> children;
 

@@ -5,21 +5,21 @@ import java.util.List;
 import scratch.newast.model.ASTNode;
 import scratch.newast.model.ScratchVisitor;
 
-public class ProcedureDeclarationList implements ASTNode {
+public class ProcedureDefinitionList implements ASTNode {
 
-    private List<ProcedureDeclaration> list;
+    private List<ProcedureDefinition> list;
     private final ImmutableList<ASTNode> children;
 
-    public ProcedureDeclarationList(List<ProcedureDeclaration> list) {
+    public ProcedureDefinitionList(List<ProcedureDefinition> list) {
         this.list = list;
         children = ImmutableList.<ASTNode>builder().build();
     }
 
-    public List<ProcedureDeclaration> getList() {
+    public List<ProcedureDefinition> getList() {
         return list;
     }
 
-    public void setList(List<ProcedureDeclaration> list) {
+    public void setList(List<ProcedureDefinition> list) {
         this.list = list;
     }
 

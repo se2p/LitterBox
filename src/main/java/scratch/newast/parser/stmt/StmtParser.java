@@ -5,11 +5,11 @@ import com.google.common.base.Preconditions;
 import scratch.newast.Constants;
 import scratch.newast.ParsingException;
 import scratch.newast.model.statement.Stmt;
+import scratch.newast.opcodes.ActorLookStmtOpcode;
+import scratch.newast.opcodes.ActorSoundStmtOpcode;
 import scratch.newast.opcodes.BoolExprOpcode;
 import scratch.newast.opcodes.CommonStmtOpcode;
 import scratch.newast.opcodes.ControlStmtOpcode;
-import scratch.newast.opcodes.EntityLookStmtOpcode;
-import scratch.newast.opcodes.EntitySoundStmtOpcode;
 import scratch.newast.opcodes.NumExprOpcode;
 import scratch.newast.opcodes.SpriteLookStmtOpcode;
 import scratch.newast.opcodes.SpriteMotionStmtOpcode;
@@ -28,10 +28,11 @@ public class StmtParser {
 
         Stmt stmt;
         if (TerminationStmtOpcode.contains(opcode)) {
+            // FIXME Control_Stop is also a CommonStmt
             stmt = TerminationStmtParser.parseTerminationStmt(current, blocks);
             return stmt;
-        } else if (EntityLookStmtOpcode.contains(opcode)) {
-            stmt = EntityLookStmtParser.parse(current, blocks);
+        } else if (ActorLookStmtOpcode.contains(opcode)) {
+            stmt = ActorLookStmtParser.parse(current, blocks);
             return stmt;
         } else if (ControlStmtOpcode.contains(opcode)) {
             stmt = ControlStmtParser.parse(current, blocks);
@@ -46,7 +47,7 @@ public class StmtParser {
             throw new RuntimeException("Not implemented");
         } else if (SpriteLookStmtOpcode.contains(opcode)) {
             throw new RuntimeException("Not implemented");
-        } else if (EntitySoundStmtOpcode.contains(opcode)) {
+        } else if (ActorSoundStmtOpcode.contains(opcode)) {
             throw new RuntimeException("Not implemented");
             // Are these corner cases we have to deal with separately
 //        } else if (ProceduralStmtOpcode.contains(opcode)) {

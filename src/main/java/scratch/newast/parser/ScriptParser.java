@@ -7,6 +7,7 @@ import com.google.common.base.Preconditions;
 import java.util.LinkedList;
 import java.util.List;
 import scratch.newast.ParsingException;
+import scratch.newast.model.ActorDefinition;
 import scratch.newast.model.Script;
 import scratch.newast.model.StmtList;
 import scratch.newast.model.event.Event;
@@ -27,7 +28,7 @@ public class ScriptParser {
      * a topLevel block.
      *
      * @param blockID of the first block in this script
-     * @param blocks  all blocks in the {@link scratch.newast.model.ScriptGroup} of this {@link
+     * @param blocks  all blocks in the {@link ActorDefinition} of this {@link
      *                scratch.newast.model.Script}
      * @return Script that was parsed
      */

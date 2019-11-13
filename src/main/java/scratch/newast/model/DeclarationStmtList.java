@@ -3,12 +3,12 @@ package scratch.newast.model;
 import com.google.common.collect.ImmutableList;
 import java.util.List;
 
-public class DeclarationList implements ASTNode {
+public class DeclarationStmtList implements ASTNode {
 
     List<DeclarationStmt> declarationStmtList;
     private final ImmutableList<ASTNode> children;
 
-    public DeclarationList(List<DeclarationStmt> declarationStmtList) {
+    public DeclarationStmtList(List<DeclarationStmt> declarationStmtList) {
         this.declarationStmtList = declarationStmtList;
         children = ImmutableList.<ASTNode>builder().build();
     }

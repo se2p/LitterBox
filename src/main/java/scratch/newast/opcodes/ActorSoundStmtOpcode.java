@@ -1,6 +1,6 @@
 package scratch.newast.opcodes;
 
-public enum EntitySoundStmtOpcode {
+public enum ActorSoundStmtOpcode {
 
     ;
 //    sensing_askandwait, //  "ask"  StringExpr  "and" "wait"
@@ -10,7 +10,7 @@ public enum EntitySoundStmtOpcode {
 //    looks_cleargraphiceffects; // "clear" "graphic" "effects"
 
     public static boolean contains(String opcode) {
-        for (EntitySoundStmtOpcode value : EntitySoundStmtOpcode.values()) {
+        for (ActorSoundStmtOpcode value : ActorSoundStmtOpcode.values()) {
             if (value.name().equals(opcode)) {
                 return true;
             }

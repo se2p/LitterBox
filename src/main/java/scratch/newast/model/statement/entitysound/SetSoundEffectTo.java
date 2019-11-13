@@ -6,7 +6,7 @@ import scratch.newast.model.ScratchVisitor;
 import scratch.newast.model.expression.num.NumExpr;
 import scratch.newast.model.soundeffect.SoundEffect;
 
-public class SetSoundEffectTo implements EntitySoundStmt {
+public class SetSoundEffectTo implements ActorSoundStmt {
     private final SoundEffect effect;
     private final NumExpr num;
     private final ImmutableList<ASTNode> children;

@@ -9,9 +9,9 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 import scratch.newast.ParsingException;
+import scratch.newast.model.ActorDefinition;
+import scratch.newast.model.ActorDefinitionList;
 import scratch.newast.model.Program;
-import scratch.newast.model.ScriptGroup;
-import scratch.newast.model.ScriptGroupList;
 import scratch.newast.model.variable.Identifier;
 import scratch.newast.parser.symboltable.SymbolTable;
 
@@ -39,22 +39,22 @@ public class ProgramParser {
             throw new ParsingException("Program has no Stage");
         }
 
-        ScriptGroup stage = ScriptGroupParser.parse(stageNode.get());
+        ActorDefinition stage = ActorDefinitionParser.parse(stageNode.get());
 
         iterable = () -> programNode.get("targets").iterator();
         stream = StreamSupport.stream(iterable.spliterator(), false);
         List<JsonNode> nonStageNodes = stream.filter(node -> !(node.get("isStage").asBoolean()))
             .collect(Collectors.toList());
 
-        List<ScriptGroup> scriptGroups = new LinkedList<>();
-        scriptGroups.add(stage);
+        List<ActorDefinition> actorDefinitions = new LinkedList<>();
+        actorDefinitions.add(stage);
         for (JsonNode nonStageNode : nonStageNodes) {
-            ScriptGroup group = ScriptGroupParser.parse(nonStageNode);
-            scriptGroups.add(group);
+            ActorDefinition group = ActorDefinitionParser.parse(nonStageNode);
+            actorDefinitions.add(group);
         }
 
-        ScriptGroupList scriptGroupList = new ScriptGroupList(scriptGroups);
+        ActorDefinitionList actorDefinitionList = new ActorDefinitionList(actorDefinitions);
 
-        return new Program(ident, scriptGroupList);
+        return new Program(ident, actorDefinitionList);
     }
 }

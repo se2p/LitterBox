@@ -9,11 +9,11 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 import scratch.newast.ParsingException;
-import scratch.newast.model.DeclarationList;
+import scratch.newast.model.ActorDefinition;
+import scratch.newast.model.ActorType;
 import scratch.newast.model.DeclarationStmt;
-import scratch.newast.model.EntityType;
+import scratch.newast.model.DeclarationStmtList;
 import scratch.newast.model.Script;
-import scratch.newast.model.ScriptGroup;
 import scratch.newast.model.ScriptList;
 import scratch.newast.model.SetStmtList;
 import scratch.newast.model.expression.bool.Bool;
@@ -22,42 +22,43 @@ import scratch.newast.model.expression.num.NumExpr;
 import scratch.newast.model.expression.num.Number;
 import scratch.newast.model.expression.string.Str;
 import scratch.newast.model.expression.string.StringExpr;
-import scratch.newast.model.procedure.ProcedureDeclarationList;
+import scratch.newast.model.procedure.ProcedureDefinitionList;
 import scratch.newast.model.resource.Resource;
 import scratch.newast.model.resource.ResourceList;
 import scratch.newast.model.statement.common.SetAttributeTo;
 import scratch.newast.model.statement.common.SetStmt;
 import scratch.newast.model.variable.Identifier;
 
-public class ScriptGroupParser {
+public class ActorDefinitionParser {
 
-    public static ScriptGroup parse(JsonNode scriptGroupNode) throws ParsingException {
-        Preconditions.checkNotNull(scriptGroupNode);
-        Preconditions.checkArgument(scriptGroupNode.has("isStage"), "Missing field isStage in ScriptGroup");
-        Preconditions.checkArgument(scriptGroupNode.has("name"), "Missing field name in ScriptGroup");
+    public static ActorDefinition parse(JsonNode actorDefinitionNode) throws ParsingException {
+        Preconditions.checkNotNull(actorDefinitionNode);
+        Preconditions.checkArgument(actorDefinitionNode.has("isStage"), "Missing field isStage in ScriptGroup");
+        Preconditions.checkArgument(actorDefinitionNode.has("name"), "Missing field name in ScriptGroup");
 
-        EntityType entityType;
-        if (scriptGroupNode.get("isStage").asBoolean()) {
-            entityType = EntityType.stage;
+        ActorType actorType;
+        if (actorDefinitionNode.get("isStage").asBoolean()) {
+            actorType = ActorType.stage;
         } else {
-            entityType = EntityType.sprite;
+            actorType = ActorType.sprite;
         }
 
-        Identifier identifier = new Identifier(scriptGroupNode.get("name").asText());
+        Identifier identifier = new Identifier(actorDefinitionNode.get("name").asText());
 
-        List<Resource> res = ResourceParser.parseSound(scriptGroupNode.get("sounds"));
-        res.addAll(ResourceParser.parseCostume(scriptGroupNode.get("costumes")));
+        List<Resource> res = ResourceParser.parseSound(actorDefinitionNode.get("sounds"));
+        res.addAll(ResourceParser.parseCostume(actorDefinitionNode.get("costumes")));
         ResourceList resources = new ResourceList(res);
 
-        List<DeclarationStmt> decls = DeclarationParser.parseLists(scriptGroupNode.get("lists"), identifier.getValue(),
-                scriptGroupNode.get("isStage").asBoolean());
-        decls.addAll(DeclarationParser.parseBroadcasts(scriptGroupNode.get("broadcasts"), identifier.getValue(),
-                scriptGroupNode.get("isStage").asBoolean()));
-        decls.addAll(DeclarationParser.parseVariables(scriptGroupNode.get("variables"), identifier.getValue(),
-                scriptGroupNode.get("isStage").asBoolean()));
-        DeclarationList declarations = new DeclarationList(decls);
+        List<DeclarationStmt> decls = DeclarationStmtParser
+            .parseLists(actorDefinitionNode.get("lists"), identifier.getValue(),
+                actorDefinitionNode.get("isStage").asBoolean());
+        decls.addAll(DeclarationStmtParser.parseBroadcasts(actorDefinitionNode.get("broadcasts"), identifier.getValue(),
+            actorDefinitionNode.get("isStage").asBoolean()));
+        decls.addAll(DeclarationStmtParser.parseVariables(actorDefinitionNode.get("variables"), identifier.getValue(),
+            actorDefinitionNode.get("isStage").asBoolean()));
+        DeclarationStmtList declarations = new DeclarationStmtList(decls);
 
-        JsonNode allBlocks = scriptGroupNode.get("blocks");
+        JsonNode allBlocks = actorDefinitionNode.get("blocks");
         Iterator<String> fieldIterator = allBlocks.fieldNames();
         Iterable<String> iterable = () -> fieldIterator;
         Stream<String> stream = StreamSupport.stream(iterable.spliterator(), false);
@@ -70,11 +71,13 @@ public class ScriptGroupParser {
         }
         ScriptList scriptList = new ScriptList(scripts);
 
-        ProcedureDeclarationList procDeclList = ProcDeclParser.parse(allBlocks);
+        ProcedureDefinitionList procDeclList = ProcDefinitionParser.parse(allBlocks);
 
-        SetStmtList setStmtList = parseSetStmts(scriptGroupNode);
+        //Todo, add setStmts from Declarations
+        SetStmtList setStmtList = parseSetStmts(actorDefinitionNode);
 
-        return new ScriptGroup(entityType, identifier, resources, declarations, setStmtList, procDeclList, scriptList);
+        return new ActorDefinition(actorType, identifier, resources, declarations, setStmtList, procDeclList,
+            scriptList);
     }
 
     private static SetStmtList parseSetStmts(JsonNode scriptGroupNode) {

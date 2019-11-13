@@ -5,7 +5,7 @@ import scratch.newast.model.ASTNode;
 import scratch.newast.model.ScratchVisitor;
 import scratch.newast.model.expression.string.StringExpr;
 
-public class AskAndWait implements EntityLookStmt {
+public class AskAndWait implements ActorLookStmt {
 
     private final StringExpr question;
     private final ImmutableList<ASTNode> children;

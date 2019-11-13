@@ -5,12 +5,12 @@ import scratch.newast.model.variable.Identifier;
 
 public class Program implements ASTNode {
     private final Identifier ident;
-    private final ScriptGroupList scriptGroupList;
+    private final ActorDefinitionList actorDefinitionList;
     private final ImmutableList<ASTNode> children;
 
-    public Program(Identifier ident, ScriptGroupList scriptGroupList) {
+    public Program(Identifier ident, ActorDefinitionList actorDefinitionList) {
         this.ident = ident;
-        this.scriptGroupList = scriptGroupList;
+        this.actorDefinitionList = actorDefinitionList;
         children = ImmutableList.<ASTNode>builder().build();
     }
 
@@ -18,8 +18,8 @@ public class Program implements ASTNode {
         return ident;
     }
 
-    public ScriptGroupList getScriptGroupList() {
-        return scriptGroupList;
+    public ActorDefinitionList getActorDefinitionList() {
+        return actorDefinitionList;
     }
 
     @Override

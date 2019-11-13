@@ -1,48 +1,48 @@
 package scratch.newast.model;
 
 import com.google.common.collect.ImmutableList;
-import scratch.newast.model.procedure.ProcedureDeclarationList;
+import scratch.newast.model.procedure.ProcedureDefinitionList;
 import scratch.newast.model.resource.ResourceList;
 import scratch.newast.model.variable.Identifier;
 
-public class ScriptGroup implements ASTNode {
+public class ActorDefinition implements ASTNode {
 
     private final ImmutableList<ASTNode> children;
-    private EntityType entityType;
+    private ActorType actorType;
     private Identifier ident;
     private ResourceList resources;
-    private DeclarationList decls;
-    private ProcedureDeclarationList procedureDeclarationList;
-    private ScriptList scripts;
+    private DeclarationStmtList decls;
     private SetStmtList setStmtList;
+    private ProcedureDefinitionList procedureDefinitionList;
+    private ScriptList scripts;
 
-    public ScriptGroup(EntityType entityType, Identifier ident, ResourceList resources, DeclarationList decls,
+    public ActorDefinition(ActorType actorType, Identifier ident, ResourceList resources, DeclarationStmtList decls,
         SetStmtList setStmtList,
-        ProcedureDeclarationList procedureDeclarationList, ScriptList scripts) {
-        this.entityType = entityType;
+        ProcedureDefinitionList procedureDefinitionList, ScriptList scripts) {
+        this.actorType = actorType;
         this.ident = ident;
         this.resources = resources;
         this.decls = decls;
         this.setStmtList = setStmtList;
-        this.procedureDeclarationList = procedureDeclarationList;
+        this.procedureDefinitionList = procedureDefinitionList;
         this.scripts = scripts;
         children = ImmutableList.<ASTNode>builder()
-            .add(entityType)
+            .add(actorType)
             .add(ident)
             .add(resources)
             .add(decls)
             .add(setStmtList)
-            .add(procedureDeclarationList)
+            .add(procedureDefinitionList)
             .add(scripts)
             .build();
     }
 
-    public EntityType getEntityType() {
-        return entityType;
+    public ActorType getActorType() {
+        return actorType;
     }
 
-    public void setEntityType(EntityType entityType) {
-        this.entityType = entityType;
+    public void setActorType(ActorType actorType) {
+        this.actorType = actorType;
     }
 
     public Identifier getIdent() {
@@ -61,20 +61,20 @@ public class ScriptGroup implements ASTNode {
         this.resources = resources;
     }
 
-    public DeclarationList getDecls() {
+    public DeclarationStmtList getDecls() {
         return decls;
     }
 
-    public void setDecls(DeclarationList decls) {
+    public void setDecls(DeclarationStmtList decls) {
         this.decls = decls;
     }
 
-    public ProcedureDeclarationList getProcedureDeclarationList() {
-        return procedureDeclarationList;
+    public ProcedureDefinitionList getProcedureDefinitionList() {
+        return procedureDefinitionList;
     }
 
-    public void setProcedureDeclarationList(ProcedureDeclarationList procedureDeclarationList) {
-        this.procedureDeclarationList = procedureDeclarationList;
+    public void setProcedureDefinitionList(ProcedureDefinitionList procedureDefinitionList) {
+        this.procedureDefinitionList = procedureDefinitionList;
     }
 
     public SetStmtList getSetStmtList() {

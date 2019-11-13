@@ -6,7 +6,7 @@ import scratch.newast.model.ScratchVisitor;
 import scratch.newast.model.expression.num.NumExpr;
 import scratch.newast.model.graphiceffect.GraphicEffect;
 
-public class SetEffectTo implements EntityLookStmt {
+public class SetEffectTo implements ActorLookStmt {
     private final GraphicEffect effect;
     private final NumExpr num;
     private final ImmutableList<ASTNode> children;

@@ -5,7 +5,7 @@ import scratch.newast.model.ASTNode;
 import scratch.newast.model.ScratchVisitor;
 import scratch.newast.model.backdrop.Backdrop;
 
-public class SwitchBackdrop implements EntityLookStmt {
+public class SwitchBackdrop implements ActorLookStmt {
     private final Backdrop backdrop;
     private final ImmutableList<ASTNode> children;
 

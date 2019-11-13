@@ -2,13 +2,10 @@ package scratch.newast.model;
 
 import com.google.common.collect.ImmutableList;
 
-public enum EntityType implements ASTNode {
+public enum ActorType implements ASTNode {
+    actor,
     stage,
-    group,
-    sprite,
-    module,
-    agent,
-    entity;
+    sprite;
 
     private final ImmutableList<ASTNode> children = ImmutableList.<ASTNode>builder().build();
 

@@ -3,10 +3,10 @@ package scratch.newast.parser.stmt;
 import static scratch.newast.Constants.FIELDS_KEY;
 import static scratch.newast.Constants.FIELD_VALUE;
 import static scratch.newast.Constants.OPCODE_KEY;
-import static scratch.newast.opcodes.EntityLookStmtOpcode.looks_changeeffectby;
-import static scratch.newast.opcodes.EntityLookStmtOpcode.looks_seteffectto;
-import static scratch.newast.opcodes.EntityLookStmtOpcode.looks_switchbackdropto;
-import static scratch.newast.opcodes.EntityLookStmtOpcode.sensing_askandwait;
+import static scratch.newast.opcodes.ActorLookStmtOpcode.looks_changeeffectby;
+import static scratch.newast.opcodes.ActorLookStmtOpcode.looks_seteffectto;
+import static scratch.newast.opcodes.ActorLookStmtOpcode.looks_switchbackdropto;
+import static scratch.newast.opcodes.ActorLookStmtOpcode.sensing_askandwait;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.base.Preconditions;
@@ -17,18 +17,17 @@ import scratch.newast.model.backdrop.BackdropWithId;
 import scratch.newast.model.expression.num.NumExpr;
 import scratch.newast.model.expression.string.StringExpr;
 import scratch.newast.model.graphiceffect.GraphicEffect;
+import scratch.newast.model.statement.entitylook.ActorLookStmt;
 import scratch.newast.model.statement.entitylook.AskAndWait;
 import scratch.newast.model.statement.entitylook.ChangeEffectBy;
 import scratch.newast.model.statement.entitylook.ClearGraphicEffects;
-import scratch.newast.model.statement.entitylook.EntityLookStmt;
 import scratch.newast.model.statement.entitylook.SwitchBackdrop;
 import scratch.newast.model.variable.Identifier;
-import scratch.newast.opcodes.EntityLookStmtOpcode;
+import scratch.newast.opcodes.ActorLookStmtOpcode;
 import scratch.newast.opcodes.EventOpcode;
-import scratch.newast.parser.ExpressionParser;
 import scratch.newast.parser.GraphicEffectParser;
 
-public class EntityLookStmtParser {
+public class ActorLookStmtParser {
 
     private static final String ASKANDWAIT_INPUT_KEY = "QUESTION";
     private static final String CHANGE_EFFECTBY_INPUT_KEY = "CHANGE";
@@ -36,7 +35,7 @@ public class EntityLookStmtParser {
     private static final String SWITCH_BACKDROPTO_INPUT_KEY = "BACKDROP";
     private static final String EFFECTS_FIELD_KEY = "EFFECT";
 
-    public static EntityLookStmt parse(JsonNode current, JsonNode allBlocks) throws ParsingException {
+    public static ActorLookStmt parse(JsonNode current, JsonNode allBlocks) throws ParsingException {
         Preconditions.checkNotNull(current);
         Preconditions.checkNotNull(allBlocks);
 
@@ -44,8 +43,8 @@ public class EntityLookStmtParser {
         Preconditions
             .checkArgument(EventOpcode.contains(opcodeString), "Given blockID does not point to an event block.");
 
-        EntityLookStmtOpcode opcode = EntityLookStmtOpcode.valueOf(opcodeString);
-        EntityLookStmt stmt;
+        ActorLookStmtOpcode opcode = ActorLookStmtOpcode.valueOf(opcodeString);
+        ActorLookStmt stmt;
 
         if (opcode.equals(sensing_askandwait)) {
             JsonNode questionNode = current.get(Constants.INPUTS_KEY).get(ASKANDWAIT_INPUT_KEY)
@@ -80,7 +79,7 @@ public class EntityLookStmtParser {
             String fieldValue = current.get(FIELDS_KEY).get(EFFECTS_FIELD_KEY).get(Constants.FIELD_VALUE).asText();
             GraphicEffect effect = GraphicEffectParser.parse(fieldValue);
             stmt = new ChangeEffectBy(effect, effectValue);
-        } else if (opcode.equals(EntityLookStmtOpcode.looks_cleargraphiceffects)) {
+        } else if (opcode.equals(ActorLookStmtOpcode.looks_cleargraphiceffects)) {
             stmt = new ClearGraphicEffects();
         } else {
             throw new ParsingException("No parser for opcode " + opcodeString);

@@ -1,14 +1,17 @@
 package scratch.newast.parser;
 
+import static scratch.newast.Constants.DECLARATION_LIST_NAME_POS;
+import static scratch.newast.Constants.DECLARATION_LIST_VALUES_POS;
+import static scratch.newast.Constants.DECLARATION_VARIABLE_NAME_POS;
+import static scratch.newast.Constants.DECLARATION_VARIABLE_VALUE_POS;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.google.common.base.Preconditions;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
 import scratch.newast.model.DeclarationStmt;
 import scratch.newast.model.Message;
 import scratch.newast.model.expression.Expression;
@@ -21,9 +24,7 @@ import scratch.newast.model.type.NumberType;
 import scratch.newast.model.type.StringType;
 import scratch.newast.model.variable.Identifier;
 
-import static scratch.newast.Constants.*;
-
-public class DeclarationParser {
+public class DeclarationStmtParser {
 
     public static List<DeclarationStmt> parseVariables(JsonNode variableNode, String scriptGroupName, boolean isStage) {
         Preconditions.checkNotNull(variableNode);
