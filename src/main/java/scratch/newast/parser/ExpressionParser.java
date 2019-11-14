@@ -1,13 +1,5 @@
 package scratch.newast.parser;
 
-import static scratch.newast.Constants.FIELDS_KEY;
-import static scratch.newast.Constants.INPUTS_KEY;
-import static scratch.newast.Constants.OPCODE_KEY;
-import static scratch.newast.Constants.POS_BLOCK_ID;
-import static scratch.newast.Constants.POS_DATA_ARRAY;
-import static scratch.newast.Constants.POS_INPUT_ID;
-import static scratch.newast.Constants.POS_INPUT_VALUE;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.TextNode;
@@ -33,24 +25,8 @@ import scratch.newast.model.expression.bool.Not;
 import scratch.newast.model.expression.bool.Or;
 import scratch.newast.model.expression.bool.Touching;
 import scratch.newast.model.expression.list.ListExpr;
-import scratch.newast.model.expression.num.Add;
-import scratch.newast.model.expression.num.Current;
-import scratch.newast.model.expression.num.DaysSince2000;
-import scratch.newast.model.expression.num.DistanceTo;
-import scratch.newast.model.expression.num.Div;
-import scratch.newast.model.expression.num.IndexOf;
-import scratch.newast.model.expression.num.Loudness;
-import scratch.newast.model.expression.num.Minus;
-import scratch.newast.model.expression.num.Mod;
-import scratch.newast.model.expression.num.MouseX;
-import scratch.newast.model.expression.num.MouseY;
-import scratch.newast.model.expression.num.Mult;
-import scratch.newast.model.expression.num.NumExpr;
-import scratch.newast.model.expression.num.NumFunctOf;
+import scratch.newast.model.expression.num.*;
 import scratch.newast.model.expression.num.Number;
-import scratch.newast.model.expression.num.PickRandom;
-import scratch.newast.model.expression.num.Round;
-import scratch.newast.model.expression.num.Timer;
 import scratch.newast.model.expression.string.ItemOfVariable;
 import scratch.newast.model.expression.string.Join;
 import scratch.newast.model.expression.string.LetterOf;
@@ -76,11 +52,14 @@ import scratch.newast.model.numfunct.Tan;
 import scratch.newast.model.position.Position;
 import scratch.newast.model.timecomp.TimeComp;
 import scratch.newast.model.touchable.Touchable;
+import scratch.newast.model.variable.Identifier;
 import scratch.newast.model.variable.Variable;
 import scratch.newast.opcodes.BoolExprOpcode;
 import scratch.newast.opcodes.CallStmtOpcode;
 import scratch.newast.opcodes.NumExprOpcode;
 import scratch.newast.opcodes.StringExprOpcode;
+
+import static scratch.newast.Constants.*;
 
 public class ExpressionParser {
 
@@ -186,10 +165,10 @@ public class ExpressionParser {
             NumExpr num = parseNumExpr(block, 0, blocks);
             return new Round(num);
         // One StringExpr or Variable as input
-        // FIXME TODO you have to differentiate between LengthOfString and LengthOfVar here
         case operator_length:
+            return new LengthOfString(parseStringExpr(blocks.get(identifier),0, blocks));
         case data_lengthoflist:
-            throw new RuntimeException("Not implemented yet");
+            return new LengthOfVar(new Identifier(blocks.get(identifier).get(FIELDS_KEY).get(LIST_NAME_POS).textValue()));
         case sensing_current:
             TimeComp timeComp = parseTimeComp();
             return new Current(timeComp);
@@ -372,6 +351,7 @@ public class ExpressionParser {
             String identifier = exprArray.get(POS_BLOCK_ID).asText();
             String opcode = blocks.get(identifier).get(OPCODE_KEY).asText();
             return parseBlockStringExpr(opcode, identifier, blocks, block.get(FIELDS_KEY));
+            //FIXME will not work this way, have to look up exprArray.get(POS_DATA_ARRAY).get(POS_INPUT_ID) in symboltable
         } else if (exprArray.get(POS_DATA_ARRAY).get(POS_INPUT_ID).asText().endsWith("-my variable")) {
             System.out.println("hooray! it's a variable!");
             throw new RuntimeException("Not implemented yet");

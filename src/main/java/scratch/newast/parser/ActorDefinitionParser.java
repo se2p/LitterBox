@@ -183,9 +183,15 @@ public class ActorDefinitionParser {
             Logger.getGlobal().warning("rotationStyle not implemented");
         }
 
+
+
         list.addAll(DeclarationStmtParser.parseListSetStmts(actorDefinitionNode.get("lists"), actorName));
         list.addAll(DeclarationStmtParser.parseVariableSetStmts(actorDefinitionNode.get("variables"), actorName));
         return new SetStmtList(list);
+    }
+
+    private static List<SetStmt> parseEffectSetStatements(){
+        throw new RuntimeException("Not implemented");
     }
 
 }
