@@ -25,8 +25,8 @@ public class ColorParser {
         f = Float.intBitsToFloat(i.intValue());
         Number bNumber = new Number(f);
 
-        //TODO There is no alpha value?
-        Number aNumber = new Number(0);
+        //There is no alpha value
+        Number aNumber = new Number(1);
 
         return new Rgba(rNumber, gNumber, bNumber, aNumber);
     }
