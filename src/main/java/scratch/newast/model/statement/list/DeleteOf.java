@@ -6,12 +6,12 @@ import scratch.newast.model.ScratchVisitor;
 import scratch.newast.model.expression.num.NumExpr;
 import scratch.newast.model.variable.Variable;
 
-public class DeleteFrom implements ListStmt {
+public class DeleteOf implements ListStmt {
     private final NumExpr num;
     private final Variable variable;
     private final ImmutableList<ASTNode> children;
 
-    public DeleteFrom(NumExpr num, Variable variable) {
+    public DeleteOf(NumExpr num, Variable variable) {
         this.num = num;
         this.variable = variable;
         children = ImmutableList.<ASTNode>builder().add(num).add(variable).build();

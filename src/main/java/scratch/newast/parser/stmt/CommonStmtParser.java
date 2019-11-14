@@ -1,11 +1,5 @@
 package scratch.newast.parser.stmt;
 
-import static scratch.newast.Constants.FIELDS_KEY;
-import static scratch.newast.Constants.FIELD_VALUE;
-import static scratch.newast.Constants.INPUTS_KEY;
-import static scratch.newast.Constants.OPCODE_KEY;
-import static scratch.newast.Constants.POS_INPUT_VALUE;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.base.Preconditions;
 import scratch.newast.Constants;
@@ -28,6 +22,8 @@ import scratch.newast.opcodes.CommonStmtOpcode;
 import scratch.newast.opcodes.EventOpcode;
 import scratch.newast.parser.ExpressionParser;
 
+import static scratch.newast.Constants.*;
+
 public class CommonStmtParser {
 
     private static final String CLONE_OPTION = "CLONE_OPTION";
@@ -41,7 +37,7 @@ public class CommonStmtParser {
 
         String opcodeString = current.get(OPCODE_KEY).asText();
         Preconditions
-            .checkArgument(EventOpcode.contains(opcodeString), "Given blockID does not point to an event block.");
+            .checkArgument(CommonStmtOpcode.contains(opcodeString), "Given blockID does not point to an event block.");
 
         CommonStmtOpcode opcode = CommonStmtOpcode.valueOf(opcodeString);
         CommonStmt stmt;
@@ -79,7 +75,7 @@ public class CommonStmtParser {
     private static CommonStmt parseChangeVariableBy(JsonNode current, JsonNode allBlocks) throws ParsingException {
         Expression stringExpr = ExpressionParser.parseExpression(current, 0, allBlocks);
 
-        String variableName = current.get(FIELDS_KEY).get("VARIABLE").get(FIELD_VALUE).asText();
+        String variableName = current.get(FIELDS_KEY).get(VARIABLE_KEY).get(FIELD_VALUE).asText();
         Identifier ident = new Identifier(variableName);
 
         return new ChangeVariableBy(ident, stringExpr);

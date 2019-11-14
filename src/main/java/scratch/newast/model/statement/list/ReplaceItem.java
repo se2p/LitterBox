@@ -15,7 +15,7 @@ public class ReplaceItem implements ListStmt {
     private final StringExpr string;
     private final ImmutableList<ASTNode> children;
 
-    public ReplaceItem(NumExpr index, Variable variable, StringExpr string) {
+    public ReplaceItem(StringExpr string, NumExpr index, Variable variable) {
         this.index = index;
         this.variable = variable;
         this.string = string;

@@ -29,14 +29,14 @@ public class SymbolTable {
         return lists;
     }
 
-    public void addVariable(String ident, Type type, boolean global, String scriptGroupName) {
-        VariableInfo info = new VariableInfo(global, scriptGroupName, ident, type);
+    public void addVariable(String ident, String variableName, Type type, boolean global, String scriptGroupName) {
+        VariableInfo info = new VariableInfo(global, scriptGroupName, ident, type, variableName);
         variables.put(ident, info);
     }
 
-    public void addExpressionListInfo(String ident, ExpressionList expressionList, boolean global,
+    public void addExpressionListInfo(String ident, String listName, ExpressionList expressionList, boolean global,
         String scriptGroupName) {
-        ExpressionListInfo info = new ExpressionListInfo(global, scriptGroupName, ident, expressionList);
+        ExpressionListInfo info = new ExpressionListInfo(global, scriptGroupName, ident, expressionList, listName);
         lists.put(ident, info);
     }
 

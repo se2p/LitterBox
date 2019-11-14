@@ -2,27 +2,33 @@ package scratch.newast.parser.symboltable;
 
 import scratch.newast.model.expression.list.ExpressionList;
 
-class ExpressionListInfo {
+public class ExpressionListInfo {
 
-    boolean global;
-    String scriptGroup;
-    String variableName;
-    ExpressionList expressionList;
+    private boolean global;
+    private String actor;
+    private String variableName;
+    private ExpressionList expressionList;
+    private String ident;
 
-    public ExpressionListInfo(boolean global, String scriptGroup, String ident,
-        ExpressionList expressionList) {
+    public ExpressionListInfo(boolean global, String actor, String ident,
+                              ExpressionList expressionList, String variableName) {
         this.global = global;
-        this.scriptGroup = scriptGroup;
-        this.variableName = ident;
+        this.actor = actor;
+        this.ident = ident;
         this.expressionList = expressionList;
+        this.variableName = variableName;
     }
 
     public boolean isGlobal() {
         return global;
     }
 
-    public String getScriptGroup() {
-        return scriptGroup;
+    public String getActor() {
+        return actor;
+    }
+
+    public String getIdent() {
+        return ident;
     }
 
     public String getVariableName() {

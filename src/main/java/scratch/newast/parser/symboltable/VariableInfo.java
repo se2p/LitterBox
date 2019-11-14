@@ -7,14 +7,16 @@ public class VariableInfo {
     private boolean global;
     private String actor;
     private String variableName;
+    private String ident;
     private Type type;
 
     public VariableInfo(boolean global, String actor, String ident,
-        Type type) {
+        Type type, String variableName) {
         this.global = global;
         this.actor = actor;
-        this.variableName = ident;
+        this.ident = ident;
         this.type = type;
+        this.variableName = variableName;
     }
 
     public boolean isGlobal() {
@@ -31,5 +33,9 @@ public class VariableInfo {
 
     public Type getType() {
         return type;
+    }
+
+    public String getIdent() {
+        return ident;
     }
 }
