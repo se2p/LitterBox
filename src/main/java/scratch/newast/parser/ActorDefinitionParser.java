@@ -8,6 +8,7 @@ import com.google.common.base.Preconditions;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -179,11 +180,11 @@ public class ActorDefinitionParser {
             setStmt = new SetAttributeTo(keyExpr, boolExpr);
             list.add(setStmt);
 
-            throw new RuntimeException("rotationStyle not implemented");
+            Logger.getGlobal().warning("rotationStyle not implemented");
         }
 
         list.addAll(DeclarationStmtParser.parseListSetStmts(actorDefinitionNode.get("lists"), actorName));
-        list.addAll(DeclarationStmtParser.parseListSetStmts(actorDefinitionNode.get("variables"), actorName));
+        list.addAll(DeclarationStmtParser.parseVariableSetStmts(actorDefinitionNode.get("variables"), actorName));
         return new SetStmtList(list);
     }
 

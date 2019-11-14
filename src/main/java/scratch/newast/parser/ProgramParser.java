@@ -21,14 +21,14 @@ public class ProgramParser {
     public static SymbolTable symbolTable;
     public static ProcedureDefinitionNameMapping procDefMap;
 
-    public static Program parseProgram(String zipFileName, JsonNode programNode) throws ParsingException {
-        Preconditions.checkNotNull(zipFileName);
+    public static Program parseProgram(String programName, JsonNode programNode) throws ParsingException {
+        Preconditions.checkNotNull(programName);
         Preconditions.checkNotNull(programNode);
 
         symbolTable = new SymbolTable();
         procDefMap = new ProcedureDefinitionNameMapping();
 
-        Identifier ident = new Identifier(zipFileName);
+        Identifier ident = new Identifier(programName);
 
         Preconditions.checkArgument(programNode.has("targets"),
             "Program node has no field targets");
