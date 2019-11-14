@@ -1,17 +1,16 @@
 package analytics.finder;
 
-import analytics.IssueReport;
 import analytics.IssueFinder;
+import analytics.IssueReport;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import scratch.data.ScBlock;
 import scratch.data.Script;
 import scratch.structure.Project;
 import scratch.structure.Sprite;
 import utils.Identifier;
 import utils.Version;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * Checks for missing for-loops in movement scripts.

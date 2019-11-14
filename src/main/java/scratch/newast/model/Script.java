@@ -1,11 +1,10 @@
 package scratch.newast.model;
 
 import com.google.common.collect.ImmutableList;
-import java.util.Arrays;
 import scratch.newast.model.event.Event;
-import scratch.structure.ast.Ast;
 
 public class Script implements ASTNode {
+
     private final Event event;
     private final StmtList stmtList;
     private final ImmutableList<ASTNode> children;

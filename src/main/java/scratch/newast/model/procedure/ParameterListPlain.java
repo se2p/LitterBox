@@ -1,10 +1,9 @@
 package scratch.newast.model.procedure;
 
 import com.google.common.collect.ImmutableList;
+import java.util.List;
 import scratch.newast.model.ASTNode;
 import scratch.newast.model.ScratchVisitor;
-
-import java.util.List;
 
 public class ParameterListPlain implements ASTNode{
 

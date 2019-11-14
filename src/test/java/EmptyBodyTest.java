@@ -1,6 +1,9 @@
+import static org.junit.Assert.assertEquals;
+
 import analytics.IssueReport;
-import analytics.finder.DuplicatedSprite;
 import analytics.finder.EmptyBody;
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.Test;
 import scratch.data.ScBlock;
 import scratch.data.Script;
@@ -9,10 +12,6 @@ import scratch.structure.Sprite;
 import scratch.structure.Stage;
 import utils.Identifier;
 import utils.Version;
-
-import java.util.*;
-
-import static org.junit.Assert.assertEquals;
 
 public class EmptyBodyTest {
 

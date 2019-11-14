@@ -5,7 +5,18 @@ import com.google.common.base.Preconditions;
 import scratch.newast.Constants;
 import scratch.newast.ParsingException;
 import scratch.newast.model.statement.Stmt;
-import scratch.newast.opcodes.*;
+import scratch.newast.opcodes.ActorLookStmtOpcode;
+import scratch.newast.opcodes.ActorSoundStmtOpcode;
+import scratch.newast.opcodes.BoolExprOpcode;
+import scratch.newast.opcodes.CallStmtOpcode;
+import scratch.newast.opcodes.CommonStmtOpcode;
+import scratch.newast.opcodes.ControlStmtOpcode;
+import scratch.newast.opcodes.ListStmtOpcode;
+import scratch.newast.opcodes.NumExprOpcode;
+import scratch.newast.opcodes.SpriteLookStmtOpcode;
+import scratch.newast.opcodes.SpriteMotionStmtOpcode;
+import scratch.newast.opcodes.StringExprOpcode;
+import scratch.newast.opcodes.TerminationStmtOpcode;
 
 public class StmtParser {
 

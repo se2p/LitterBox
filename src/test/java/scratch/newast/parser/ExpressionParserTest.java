@@ -1,5 +1,8 @@
 package scratch.newast.parser;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import org.junit.Before;
 import org.junit.Test;
@@ -14,11 +17,7 @@ import scratch.newast.model.expression.num.NumExpr;
 import scratch.newast.model.expression.num.Number;
 import scratch.newast.model.expression.num.PickRandom;
 import scratch.newast.model.numfunct.Pow10;
-import scratch.newast.parser.ExpressionParser;
 import utils.JsonParser;
-
-import static org.junit.Assert.*;
-import static scratch.newast.Constants.INPUTS_KEY;
 
 public class ExpressionParserTest {
     private static JsonNode moveStepsScript;

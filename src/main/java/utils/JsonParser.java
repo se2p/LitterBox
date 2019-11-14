@@ -2,15 +2,6 @@ package utils;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import scratch.data.ScBlock;
-import scratch.data.Script;
-import scratch.structure.Project;
-import scratch.structure.Sprite;
-import utils.deserializer.scratch2.SpriteDeserializer;
-import utils.deserializer.scratch2.StageDeserializer;
-import utils.deserializer.scratch3.SpriteDeserializer3;
-import utils.deserializer.scratch3.StageDeserializer3;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -20,6 +11,14 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import scratch.data.ScBlock;
+import scratch.data.Script;
+import scratch.structure.Project;
+import scratch.structure.Sprite;
+import utils.deserializer.scratch2.SpriteDeserializer;
+import utils.deserializer.scratch2.StageDeserializer;
+import utils.deserializer.scratch3.SpriteDeserializer3;
+import utils.deserializer.scratch3.StageDeserializer3;
 
 /**
  * Util class for parsing the JSON files

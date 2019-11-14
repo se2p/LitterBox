@@ -1,15 +1,14 @@
 package newanalytics.smells;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import newanalytics.IssueFinder;
 import newanalytics.IssueReport;
 import scratch.data.ScBlock;
 import scratch.data.Script;
 import scratch.structure.Project;
 import scratch.structure.Scriptable;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * Checks for scripts with more than 12 blocks.

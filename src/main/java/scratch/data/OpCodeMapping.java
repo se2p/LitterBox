@@ -1,12 +1,18 @@
 package scratch.data;
 
+import static scratch.data.OpCodeMapping.BlockShape.BOOLEAN;
+import static scratch.data.OpCodeMapping.BlockShape.C;
+import static scratch.data.OpCodeMapping.BlockShape.CAP;
+import static scratch.data.OpCodeMapping.BlockShape.HAT;
+import static scratch.data.OpCodeMapping.BlockShape.REPORTER;
+import static scratch.data.OpCodeMapping.BlockShape.STACK;
+import static scratch.data.OpCodeMapping.BlockShape.UNDEFINED;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static scratch.data.OpCodeMapping.BlockShape.*;
 
 /**
  * The OpCodeMapping Class contains lists of all block opcodes of Scratch 2 and 3

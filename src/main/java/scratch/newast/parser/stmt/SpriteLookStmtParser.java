@@ -1,16 +1,24 @@
 package scratch.newast.parser.stmt;
 
+import static scratch.newast.Constants.OPCODE_KEY;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.base.Preconditions;
 import scratch.newast.ParsingException;
 import scratch.newast.model.expression.num.NumExpr;
 import scratch.newast.model.expression.string.StringExpr;
-import scratch.newast.model.statement.spritelook.*;
+import scratch.newast.model.statement.spritelook.ChangeSizeBy;
+import scratch.newast.model.statement.spritelook.Hide;
+import scratch.newast.model.statement.spritelook.Say;
+import scratch.newast.model.statement.spritelook.SayForSecs;
+import scratch.newast.model.statement.spritelook.SetSizeTo;
+import scratch.newast.model.statement.spritelook.Show;
+import scratch.newast.model.statement.spritelook.SpriteLookStmt;
+import scratch.newast.model.statement.spritelook.Think;
+import scratch.newast.model.statement.spritelook.ThinkForSecs;
 import scratch.newast.opcodes.SpriteLookStmtOpcode;
 import scratch.newast.opcodes.SpriteMotionStmtOpcode;
 import scratch.newast.parser.ExpressionParser;
-
-import static scratch.newast.Constants.OPCODE_KEY;
 
 public class SpriteLookStmtParser {
 

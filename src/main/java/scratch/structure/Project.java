@@ -1,9 +1,7 @@
 package scratch.structure;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import utils.Version;
-
 import java.util.List;
+import utils.Version;
 
 /**
  * The Project class holds all content of a Scratch project file

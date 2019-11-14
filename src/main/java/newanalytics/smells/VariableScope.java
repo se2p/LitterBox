@@ -1,5 +1,9 @@
 package newanalytics.smells;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import newanalytics.IssueFinder;
 import newanalytics.IssueReport;
 import scratch.data.ScBlock;
@@ -9,11 +13,6 @@ import scratch.structure.Project;
 import scratch.structure.Scriptable;
 import utils.Identifier;
 import utils.Version;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Checks if there are variables with a broad scope.

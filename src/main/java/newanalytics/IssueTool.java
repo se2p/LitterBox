@@ -1,16 +1,46 @@
 package newanalytics;
 
-import newanalytics.ctscore.*;
-import newanalytics.smells.*;
-import org.apache.commons.csv.CSVPrinter;
-import scratch.structure.Project;
-import utils.CSVWriter;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import newanalytics.ctscore.Abstraction;
+import newanalytics.ctscore.DataRepresentation;
+import newanalytics.ctscore.FlowControl;
+import newanalytics.ctscore.LogicalThinking;
+import newanalytics.ctscore.Parallelism;
+import newanalytics.ctscore.Synchronization;
+import newanalytics.ctscore.UserInteractivity;
+import newanalytics.smells.AttributeModification;
+import newanalytics.smells.BroadcastSync;
+import newanalytics.smells.CloneInitialization;
+import newanalytics.smells.CountBlocks;
+import newanalytics.smells.DoubleIf;
+import newanalytics.smells.DuplicatedScript;
+import newanalytics.smells.DuplicatedSprite;
+import newanalytics.smells.EmptyBody;
+import newanalytics.smells.EmptyScript;
+import newanalytics.smells.GlobalStartingPoint;
+import newanalytics.smells.InappropriateIntimacy;
+import newanalytics.smells.LaggyMovement;
+import newanalytics.smells.LongScript;
+import newanalytics.smells.LooseBlocks;
+import newanalytics.smells.MiddleMan;
+import newanalytics.smells.MissingForever;
+import newanalytics.smells.MissingTermination;
+import newanalytics.smells.NestedLoops;
+import newanalytics.smells.NoOpProject;
+import newanalytics.smells.Noop;
+import newanalytics.smells.RaceCondition;
+import newanalytics.smells.SequentialActions;
+import newanalytics.smells.SpriteNaming;
+import newanalytics.smells.StartingPoint;
+import newanalytics.smells.UnusedVariable;
+import newanalytics.smells.VariableScope;
+import org.apache.commons.csv.CSVPrinter;
+import scratch.structure.Project;
+import utils.CSVWriter;
 
 /**
  * Holds all IssueFinder and executes them.

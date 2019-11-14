@@ -1,10 +1,14 @@
 package utils.deserializer.scratch2;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import scratch.data.*;
-import scratch.structure.Stage;
-
 import java.util.List;
+import scratch.data.Comment;
+import scratch.data.Costume;
+import scratch.data.ScList;
+import scratch.data.ScVariable;
+import scratch.data.Script;
+import scratch.data.Sound;
+import scratch.structure.Stage;
 
 /**
  * More information about the JSON Scratch 2 file format and its JSON arrays and nodes:

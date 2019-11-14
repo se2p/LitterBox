@@ -1,5 +1,7 @@
 package newanalytics.smells;
 
+import java.util.ArrayList;
+import java.util.List;
 import newanalytics.IssueFinder;
 import newanalytics.IssueReport;
 import scratch.data.ScBlock;
@@ -8,9 +10,6 @@ import scratch.structure.Project;
 import scratch.structure.Scriptable;
 import utils.Identifier;
 import utils.Version;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Checks if there is a Broadcast and Receive block for every event.

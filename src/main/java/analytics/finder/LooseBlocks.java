@@ -1,15 +1,14 @@
 package analytics.finder;
 
-import analytics.IssueReport;
 import analytics.IssueFinder;
-import scratch.data.Script;
-import scratch.structure.Scriptable;
-import scratch.structure.Project;
-import utils.Identifier;
-
+import analytics.IssueReport;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import scratch.data.Script;
+import scratch.structure.Project;
+import scratch.structure.Scriptable;
+import utils.Identifier;
 
 /**
  * Checks if the project has loose blocks without a head.

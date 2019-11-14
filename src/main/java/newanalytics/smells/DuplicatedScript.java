@@ -1,14 +1,13 @@
 package newanalytics.smells;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import newanalytics.IssueFinder;
 import newanalytics.IssueReport;
 import scratch.data.Script;
 import scratch.structure.Project;
 import scratch.structure.Scriptable;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * Checks for duplicated scripts. Only uses full String representation comparison.

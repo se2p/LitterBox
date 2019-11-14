@@ -1,11 +1,9 @@
 package scratch.newast.parser.symboltable;
 
 import com.google.common.base.Preconditions;
+import java.util.HashMap;
 import scratch.newast.model.type.Type;
 import scratch.newast.model.variable.Identifier;
-import scratch.newast.opcodes.ProcedureOpcode;
-
-import java.util.HashMap;
 
 public class ProcedureDefinitionNameMapping {
     private HashMap<Identifier, ProcedureInfo> procedures;

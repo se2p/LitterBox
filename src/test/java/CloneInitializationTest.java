@@ -1,6 +1,9 @@
+import static org.junit.Assert.assertEquals;
+
 import analytics.IssueReport;
-import analytics.finder.BroadcastSync;
 import analytics.finder.CloneInitialization;
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.Test;
 import scratch.data.ScBlock;
 import scratch.data.Script;
@@ -8,10 +11,6 @@ import scratch.structure.Project;
 import scratch.structure.Stage;
 import utils.Identifier;
 import utils.Version;
-
-import java.util.*;
-
-import static org.junit.Assert.assertEquals;
 
 public class CloneInitializationTest {
 

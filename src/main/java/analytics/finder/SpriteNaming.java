@@ -1,12 +1,11 @@
 package analytics.finder;
 
-import analytics.IssueReport;
 import analytics.IssueFinder;
-import scratch.structure.Scriptable;
-import scratch.structure.Project;
-
+import analytics.IssueReport;
 import java.util.ArrayList;
 import java.util.List;
+import scratch.structure.Project;
+import scratch.structure.Scriptable;
 
 /**
  * Checks if all Sprites have different names.

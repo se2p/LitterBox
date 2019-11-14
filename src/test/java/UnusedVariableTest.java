@@ -1,6 +1,10 @@
+import static org.junit.Assert.assertEquals;
+
 import analytics.IssueReport;
-import analytics.finder.StartingPoint;
 import analytics.finder.UnusedVariable;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import org.junit.Test;
 import scratch.data.ScBlock;
 import scratch.data.ScVariable;
@@ -10,12 +14,6 @@ import scratch.structure.Sprite;
 import scratch.structure.Stage;
 import utils.Identifier;
 import utils.Version;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import static org.junit.Assert.assertEquals;
 
 public class UnusedVariableTest {
 

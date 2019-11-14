@@ -1,7 +1,11 @@
 package analytics.finder;
 
-import analytics.IssueReport;
 import analytics.IssueFinder;
+import analytics.IssueReport;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import scratch.data.ScBlock;
 import scratch.data.ScVariable;
 import scratch.data.Script;
@@ -9,11 +13,6 @@ import scratch.structure.Project;
 import scratch.structure.Scriptable;
 import utils.Identifier;
 import utils.Version;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Checks if there are variables with a broad scope.

@@ -8,18 +8,17 @@ import static scratch.newast.Constants.DECLARATION_VARIABLE_VALUE_POS;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.google.common.base.Preconditions;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
 import scratch.newast.model.DeclarationStmt;
 import scratch.newast.model.Message;
 import scratch.newast.model.expression.Expression;
 import scratch.newast.model.expression.bool.Bool;
 import scratch.newast.model.expression.list.ExpressionList;
 import scratch.newast.model.expression.list.ExpressionListPlain;
+import scratch.newast.model.expression.num.Number;
 import scratch.newast.model.expression.string.Str;
 import scratch.newast.model.statement.common.SetStmt;
 import scratch.newast.model.statement.common.SetVariableTo;
@@ -28,7 +27,6 @@ import scratch.newast.model.type.ListType;
 import scratch.newast.model.type.NumberType;
 import scratch.newast.model.type.StringType;
 import scratch.newast.model.variable.Identifier;
-import scratch.newast.model.expression.num.Number;
 import scratch.newast.model.variable.Qualified;
 
 public class DeclarationStmtParser {

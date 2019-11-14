@@ -1,5 +1,12 @@
+import static org.junit.Assert.assertEquals;
+
 import analytics.IssueReport;
 import analytics.finder.BroadcastSync;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import org.junit.Test;
 import scratch.data.ScBlock;
 import scratch.data.Script;
@@ -7,10 +14,6 @@ import scratch.structure.Project;
 import scratch.structure.Stage;
 import utils.Identifier;
 import utils.Version;
-
-import java.util.*;
-
-import static org.junit.Assert.assertEquals;
 
 public class BroadcastSyncTest {
 

@@ -1,10 +1,14 @@
 package scratch.structure;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import scratch.data.*;
-import utils.JsonParser;
-
 import java.util.List;
+import scratch.data.Comment;
+import scratch.data.Costume;
+import scratch.data.ScList;
+import scratch.data.ScVariable;
+import scratch.data.Script;
+import scratch.data.Sound;
+import utils.JsonParser;
 
 /**
  * Represents the background of the project. The stage is similar to a

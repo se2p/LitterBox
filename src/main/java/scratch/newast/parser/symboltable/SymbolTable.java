@@ -4,7 +4,6 @@ import java.util.HashMap;
 import scratch.newast.model.Message;
 import scratch.newast.model.expression.list.ExpressionList;
 import scratch.newast.model.type.Type;
-import scratch.newast.model.variable.Variable;
 
 public class SymbolTable {
 

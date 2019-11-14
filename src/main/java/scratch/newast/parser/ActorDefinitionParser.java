@@ -1,15 +1,16 @@
 package scratch.newast.parser;
 
+import static scratch.newast.Constants.IS_STAGE_KEY;
+import static scratch.newast.Constants.NAME_KEY;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.base.Preconditions;
-
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
-
 import scratch.newast.ParsingException;
 import scratch.newast.model.ActorDefinition;
 import scratch.newast.model.ActorType;
@@ -30,9 +31,6 @@ import scratch.newast.model.resource.ResourceList;
 import scratch.newast.model.statement.common.SetAttributeTo;
 import scratch.newast.model.statement.common.SetStmt;
 import scratch.newast.model.variable.Identifier;
-
-import static scratch.newast.Constants.IS_STAGE_KEY;
-import static scratch.newast.Constants.NAME_KEY;
 
 public class ActorDefinitionParser {
 

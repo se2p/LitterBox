@@ -1,6 +1,9 @@
+import static org.junit.Assert.assertEquals;
+
 import analytics.IssueReport;
-import analytics.finder.CloneInitialization;
 import analytics.finder.CountBlocks;
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.Test;
 import scratch.data.ScBlock;
 import scratch.data.Script;
@@ -8,11 +11,6 @@ import scratch.structure.Project;
 import scratch.structure.Stage;
 import utils.Identifier;
 import utils.Version;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.junit.Assert.assertEquals;
 
 public class CountBlocksTest {
 

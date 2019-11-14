@@ -1,16 +1,15 @@
 package utils;
 
 import analytics.IssueReport;
-import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVPrinter;
-import scratch.structure.Project;
-
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVPrinter;
+import scratch.structure.Project;
 
 /**
  * Util class for writing and saving the csv

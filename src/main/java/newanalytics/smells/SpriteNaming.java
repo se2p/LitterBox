@@ -1,12 +1,11 @@
 package newanalytics.smells;
 
+import java.util.ArrayList;
+import java.util.List;
 import newanalytics.IssueFinder;
 import newanalytics.IssueReport;
 import scratch.structure.Project;
 import scratch.structure.Scriptable;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Checks if all Sprites have different names.

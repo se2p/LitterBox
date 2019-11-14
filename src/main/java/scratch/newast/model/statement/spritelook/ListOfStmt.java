@@ -1,11 +1,10 @@
 package scratch.newast.model.statement.spritelook;
 
 import com.google.common.collect.ImmutableList;
+import java.util.List;
 import scratch.newast.model.ASTNode;
 import scratch.newast.model.ScratchVisitor;
 import scratch.newast.model.statement.Stmt;
-
-import java.util.List;
 
 public class ListOfStmt implements ASTNode {
 

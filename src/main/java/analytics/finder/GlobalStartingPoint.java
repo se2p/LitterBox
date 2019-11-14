@@ -1,15 +1,14 @@
 package analytics.finder;
 
-import analytics.IssueReport;
 import analytics.IssueFinder;
+import analytics.IssueReport;
+import java.util.ArrayList;
+import java.util.List;
 import scratch.data.Script;
 import scratch.structure.Project;
 import scratch.structure.Scriptable;
 import utils.Identifier;
 import utils.Version;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Checks if the project has a starting point / 'GreenFlag'.

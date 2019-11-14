@@ -1,14 +1,13 @@
 package analytics.finder;
 
-import analytics.IssueReport;
 import analytics.IssueFinder;
+import analytics.IssueReport;
+import java.util.ArrayList;
+import java.util.List;
 import scratch.data.ScBlock;
 import scratch.data.Script;
 import scratch.structure.Project;
 import scratch.structure.Scriptable;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Counts the blocks of a project.

@@ -1,12 +1,10 @@
 package scratch.newast.parser;
 
 import com.fasterxml.jackson.databind.JsonNode;
-
+import com.google.common.base.Preconditions;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
-import com.google.common.base.Preconditions;
 import scratch.newast.model.URI;
 import scratch.newast.model.resource.ImageResource;
 import scratch.newast.model.resource.Resource;

@@ -1,14 +1,13 @@
 package analytics.finder;
 
-import analytics.IssueReport;
 import analytics.IssueFinder;
-import scratch.data.Script;
-import scratch.structure.Project;
-import scratch.structure.Scriptable;
-
+import analytics.IssueReport;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import scratch.data.Script;
+import scratch.structure.Project;
+import scratch.structure.Scriptable;
 
 /**
  * Checks for duplicated scripts. Only uses full String representation comparison.

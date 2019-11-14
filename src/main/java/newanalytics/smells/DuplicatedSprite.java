@@ -1,12 +1,15 @@
 package newanalytics.smells;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import newanalytics.IssueFinder;
 import newanalytics.IssueReport;
 import scratch.data.Script;
 import scratch.structure.Project;
 import scratch.structure.Scriptable;
-
-import java.util.*;
 
 /**
  * Checks for duplicated sprites.

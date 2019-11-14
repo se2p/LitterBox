@@ -1,5 +1,9 @@
 package newanalytics.ctscore;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import newanalytics.IssueFinder;
 import newanalytics.IssueReport;
 import scratch.data.ScBlock;
@@ -8,11 +12,6 @@ import scratch.structure.Project;
 import scratch.structure.Scriptable;
 import utils.Identifier;
 import utils.Version;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * Evaluates the level of flow control of the Scratch program.
