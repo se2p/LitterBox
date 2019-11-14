@@ -11,7 +11,7 @@ public class Program implements ASTNode {
     public Program(Identifier ident, ActorDefinitionList actorDefinitionList) {
         this.ident = ident;
         this.actorDefinitionList = actorDefinitionList;
-        children = ImmutableList.<ASTNode>builder().build();
+        children = ImmutableList.<ASTNode>builder().add(ident).add(actorDefinitionList).build();
     }
 
     public Identifier getIdent() {
