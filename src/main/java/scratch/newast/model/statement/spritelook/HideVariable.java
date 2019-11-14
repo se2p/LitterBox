@@ -3,9 +3,10 @@ package scratch.newast.model.statement.spritelook;
 import com.google.common.collect.ImmutableList;
 import scratch.newast.model.ASTNode;
 import scratch.newast.model.ScratchVisitor;
+import scratch.newast.model.statement.actorlook.ActorLookStmt;
 import scratch.newast.model.variable.Variable;
 
-public class HideVariable implements SpriteLookStmt {
+public class HideVariable implements ActorLookStmt {
     private final Variable variable;
     private final ImmutableList<ASTNode> children;
 

@@ -1,19 +1,18 @@
 package scratch.newast.parser.symboltable;
 
 import scratch.newast.model.type.Type;
-import scratch.newast.model.variable.Variable;
 
 public class VariableInfo {
 
-    boolean global;
-    String scriptGroup;
-    String variableName;
-    Type type;
+    private boolean global;
+    private String actor;
+    private String variableName;
+    private Type type;
 
-    public VariableInfo(boolean global, String scriptGroup, String ident,
+    public VariableInfo(boolean global, String actor, String ident,
         Type type) {
         this.global = global;
-        this.scriptGroup = scriptGroup;
+        this.actor = actor;
         this.variableName = ident;
         this.type = type;
     }
@@ -22,8 +21,8 @@ public class VariableInfo {
         return global;
     }
 
-    public String getScriptGroup() {
-        return scriptGroup;
+    public String getActor() {
+        return actor;
     }
 
     public String getVariableName() {
