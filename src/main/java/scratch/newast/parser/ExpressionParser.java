@@ -261,16 +261,16 @@ public class ExpressionParser {
         BoolExprOpcode opcode = BoolExprOpcode.valueOf(opcodeString);
         switch (opcode) {
         case sensing_touchingobject:
-            Touchable touchable = parseTouchable();
+            Touchable touchable = TouchableParser.parseTouchable(blocks.get(identifier), blocks);
             return new Touching(touchable);
         case sensing_touchingcolor:
             throw new RuntimeException("Not implemented yet");
         case sensing_coloristouchingcolor:
-            Color first = parseColor();
-            Color second = parseColor();
+            Color first = ColorParser.parseColor(blocks.get(identifier), blocks);
+            Color second = ColorParser.parseColor(blocks.get(identifier), blocks);
             return new ColorTouches(first, second);
         case sensing_keypressed:
-            Key key = parseKey();
+            Key key = KeyParser.parse(blocks.get(identifier), blocks);
             return new IsKeyPressed(key);
         case sensing_mousedown:
             return new IsMouseDown();
@@ -303,18 +303,6 @@ public class ExpressionParser {
         default:
             throw new RuntimeException(opcodeString + " not implemented yet or this method was not called properly (or JSON is wrong)");
         }
-    }
-
-    private static Key parseKey() {
-        throw new RuntimeException("Not implemented yet");
-    }
-
-    private static Color parseColor() { // Take care here as we have two different kinds of color classes
-        throw new RuntimeException("Not implemented yet");
-    }
-
-    private static Touchable parseTouchable() {
-        throw new RuntimeException("Not implemented yet");
     }
 
     public static NumFunct parseNumFunct(JsonNode fields) throws ParsingException { // TODO maybe add opcodes enum for NumFuncts

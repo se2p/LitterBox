@@ -51,8 +51,7 @@ public class EventParser {
             event = new GreenFlag();
         } else if (opcode.equals(event_whenkeypressed)) {
             // TODO should we catch/throw a "parser" exception?
-            String keyValue = current.get(FIELDS_KEY).get(KEY_OPTION).get(FIELD_VALUE).asText();
-            Key key = new Key(keyValue);
+            Key key = KeyParser.parse(current, allBlocks);
             event = new KeyPressed(key);
         } else if (opcode.equals(event_whenthisspriteclicked)) {
             event = new Clicked();
