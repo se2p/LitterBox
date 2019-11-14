@@ -45,8 +45,24 @@
     {
       "isStage": false,
       "name": "Sprite1",
-      "variables": {},
-      "lists": {},
+      "variables": {
+        "T`*[?;c}xR8b/N5!*)zs": [
+          "SpriteLocalVariable",
+          50
+        ]
+      },
+      "lists": {
+        "`,MZU[U7]S{f6ol:cWhB": [
+          "SpriteLocalList",
+          [
+            "Elem1",
+            "Elem2",
+            "1",
+            "2",
+            ""
+          ]
+        ]
+      },
       "broadcasts": {},
       "blocks": {},
       "comments": {},
@@ -93,7 +109,47 @@
       "rotationStyle": "all around"
     }
   ],
-  "monitors": [],
+  "monitors": [
+    {
+      "id": "T`*[?;c}xR8b/N5!*)zs",
+      "mode": "default",
+      "opcode": "data_variable",
+      "params": {
+        "VARIABLE": "SpriteLocalVariable"
+      },
+      "spriteName": "Sprite1",
+      "value": 50,
+      "width": 0,
+      "height": 0,
+      "x": 5,
+      "y": 5,
+      "visible": true,
+      "sliderMin": 0,
+      "sliderMax": 100,
+      "isDiscrete": true
+    },
+    {
+      "id": "`,MZU[U7]S{f6ol:cWhB",
+      "mode": "list",
+      "opcode": "data_listcontents",
+      "params": {
+        "LIST": "SpriteLocalList"
+      },
+      "spriteName": "Sprite1",
+      "value": [
+        "Elem1",
+        "Elem2",
+        "1",
+        "2",
+        ""
+      ],
+      "width": 0,
+      "height": 0,
+      "x": 5,
+      "y": 36,
+      "visible": true
+    }
+  ],
   "extensions": [],
   "meta": {
     "semver": "3.0.0",

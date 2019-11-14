@@ -14,6 +14,10 @@ public class SetStmtList implements ASTNode {
         children = ImmutableList.<ASTNode>builder().build();
     }
 
+    public List<SetStmt> getStmts() {
+        return setStmtList;
+    }
+
     @Override
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);

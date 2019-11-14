@@ -137,7 +137,7 @@ public class ActorDefinitionParser {
             list.add(setStmt);
 
             keyExpr = new Str(vidState);
-            jsonString = actorDefinitionNode.get(vidTransKey).asText();
+            jsonString = actorDefinitionNode.get(vidState).asText();
             stringExpr = new Str(jsonString);
             setStmt = new SetAttributeTo(keyExpr, stringExpr);
             list.add(setStmt);

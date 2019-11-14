@@ -13,7 +13,7 @@ public class ActorDefinitionList implements ASTNode {
         children = ImmutableList.<ASTNode>builder().addAll(actorDefinitionList).build();
     }
 
-    public List<ActorDefinition> getActorDefinitionList() {
+    public List<ActorDefinition> getDefintions() {
         return actorDefinitionList;
     }
 
