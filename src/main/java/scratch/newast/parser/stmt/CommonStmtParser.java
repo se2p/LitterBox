@@ -4,7 +4,6 @@ import static scratch.newast.Constants.FIELDS_KEY;
 import static scratch.newast.Constants.FIELD_VALUE;
 import static scratch.newast.Constants.INPUTS_KEY;
 import static scratch.newast.Constants.OPCODE_KEY;
-import static scratch.newast.Constants.POS_INPUT_ID;
 import static scratch.newast.Constants.POS_INPUT_VALUE;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -15,7 +14,6 @@ import scratch.newast.model.Message;
 import scratch.newast.model.expression.Expression;
 import scratch.newast.model.expression.bool.BoolExpr;
 import scratch.newast.model.expression.num.NumExpr;
-import scratch.newast.model.expression.string.StringExpr;
 import scratch.newast.model.statement.common.Broadcast;
 import scratch.newast.model.statement.common.BroadcastAndWait;
 import scratch.newast.model.statement.common.ChangeVariableBy;
@@ -29,7 +27,6 @@ import scratch.newast.model.variable.Identifier;
 import scratch.newast.opcodes.CommonStmtOpcode;
 import scratch.newast.opcodes.EventOpcode;
 import scratch.newast.parser.ExpressionParser;
-import scratch.structure.ast.Input;
 
 public class CommonStmtParser {
 
