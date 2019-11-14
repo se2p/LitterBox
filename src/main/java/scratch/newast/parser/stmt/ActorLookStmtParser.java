@@ -46,6 +46,7 @@ public class ActorLookStmtParser {
         ActorLookStmtOpcode opcode = ActorLookStmtOpcode.valueOf(opcodeString);
         ActorLookStmt stmt;
         String variableName;
+        String variableID;
         VariableInfo variableInfo;
         String actorName;
         Variable var;
@@ -75,7 +76,8 @@ public class ActorLookStmtParser {
             case data_showvariable:
             case data_showlist:
                 variableName = current.get(FIELDS_KEY).get(VARIABLE).get(FIELD_VALUE).asText();
-                variableInfo = ProgramParser.symbolTable.getVariables().get(variableName);
+                variableID = current.get(FIELDS_KEY).get(VARIABLE).get(1).asText();
+                variableInfo = ProgramParser.symbolTable.getVariables().get(variableID);
                 actorName = variableInfo.getActor();
                 var = new Qualified(new Identifier(actorName), new Identifier(variableName));
                 stmt = new ShowVariable(var);
@@ -83,7 +85,8 @@ public class ActorLookStmtParser {
             case data_hidevariable:
             case data_hidelist:
                 variableName = current.get(FIELDS_KEY).get(VARIABLE).get(FIELD_VALUE).asText();
-                variableInfo = ProgramParser.symbolTable.getVariables().get(variableName);
+                variableID = current.get(FIELDS_KEY).get(VARIABLE).get(1).asText();
+                variableInfo = ProgramParser.symbolTable.getVariables().get(variableID);
                 actorName = variableInfo.getActor();
                 var = new Qualified(new Identifier(actorName), new Identifier(variableName));
                 stmt = new HideVariable(var);
