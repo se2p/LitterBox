@@ -4,11 +4,11 @@ import com.google.common.collect.ImmutableList;
 import scratch.newast.model.ASTNode;
 import scratch.newast.model.ScratchVisitor;
 
-public class MousPos implements Position {
+public class MousePos implements Position {
 
     private final ImmutableList<ASTNode> children;
 
-    public MousPos() {
+    public MousePos() {
         children = ImmutableList.<ASTNode>builder().build();
     }
 
