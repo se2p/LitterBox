@@ -11,6 +11,7 @@ import java.util.Map;
 import scratch.newast.Constants;
 import scratch.newast.ParsingException;
 import scratch.newast.model.Key;
+import scratch.newast.model.color.Color;
 import scratch.newast.model.expression.Expression;
 import scratch.newast.model.expression.bool.And;
 import scratch.newast.model.expression.bool.BiggerThan;
@@ -25,15 +26,32 @@ import scratch.newast.model.expression.bool.Not;
 import scratch.newast.model.expression.bool.Or;
 import scratch.newast.model.expression.bool.Touching;
 import scratch.newast.model.expression.list.ListExpr;
-import scratch.newast.model.expression.num.*;
+import scratch.newast.model.expression.num.Add;
+import scratch.newast.model.expression.num.Current;
+import scratch.newast.model.expression.num.DaysSince2000;
+import scratch.newast.model.expression.num.DistanceTo;
+import scratch.newast.model.expression.num.Div;
+import scratch.newast.model.expression.num.IndexOf;
+import scratch.newast.model.expression.num.LengthOfString;
+import scratch.newast.model.expression.num.LengthOfVar;
+import scratch.newast.model.expression.num.Loudness;
+import scratch.newast.model.expression.num.Minus;
+import scratch.newast.model.expression.num.Mod;
+import scratch.newast.model.expression.num.MouseX;
+import scratch.newast.model.expression.num.MouseY;
+import scratch.newast.model.expression.num.Mult;
+import scratch.newast.model.expression.num.NumExpr;
+import scratch.newast.model.expression.num.NumFunctOf;
 import scratch.newast.model.expression.num.Number;
+import scratch.newast.model.expression.num.PickRandom;
+import scratch.newast.model.expression.num.Round;
+import scratch.newast.model.expression.num.Timer;
 import scratch.newast.model.expression.string.ItemOfVariable;
 import scratch.newast.model.expression.string.Join;
 import scratch.newast.model.expression.string.LetterOf;
 import scratch.newast.model.expression.string.Str;
 import scratch.newast.model.expression.string.StringExpr;
 import scratch.newast.model.expression.string.Username;
-import scratch.newast.model.graphiceffect.Color;
 import scratch.newast.model.numfunct.Abs;
 import scratch.newast.model.numfunct.Acos;
 import scratch.newast.model.numfunct.Asin;
@@ -73,7 +91,8 @@ public class ExpressionParser {
      * @param blocks All blocks of the current entity.
      * @return The NumExpr at the position of the block.
      */
-    public static NumExpr parseNumExpr(JsonNode block, int pos, JsonNode blocks) throws ParsingException { // we ignored "(" NumExpr ")"
+    public static NumExpr parseNumExpr(JsonNode block, int pos, JsonNode blocks)
+        throws ParsingException { // we ignored "(" NumExpr ")"
         ArrayNode exprArray = getExprArrayAtPos(block.get(INPUTS_KEY), pos);
         if (getShadowIndicator(exprArray) == 1) { // TODO replace magic num
             try {
@@ -100,7 +119,8 @@ public class ExpressionParser {
         inputs.fields().forEachRemaining(slotEntries::add);
         Map.Entry slotEntry = slotEntries.get(pos);
         ArrayNode exprArray = (ArrayNode) slotEntry.getValue();
-        String numberName = (String) slotEntry.getKey(); // we don't need that here but maybe later for storing additional information
+        String numberName = (String) slotEntry
+            .getKey(); // we don't need that here but maybe later for storing additional information
         return exprArray;
     }
 
@@ -109,16 +129,13 @@ public class ExpressionParser {
     }
 
     /**
-     * Returns the number at the position in the inputs node.
-     * For example, if script is the JsonNode holding all blocks
-     * and "EU(l=G6)z8NGlJFcx|fS" is a blockID,
-     * you can parse the first input to a Number like this:
+     * Returns the number at the position in the inputs node. For example, if script is the JsonNode holding all blocks
+     * and "EU(l=G6)z8NGlJFcx|fS" is a blockID, you can parse the first input to a Number like this:
      * <p>
-     * JsonNode inputs = script.get("EU(l=G6)z8NGlJFcx|fS").get("inputs");
-     * Number result = ExpressionParser.parseNumber(inputs, 0);
+     * JsonNode inputs = script.get("EU(l=G6)z8NGlJFcx|fS").get("inputs"); Number result =
+     * ExpressionParser.parseNumber(inputs, 0);
      * <p>
-     * Note that this method only works if there is a number literal at the
-     * given position of the inputs.
+     * Note that this method only works if there is a number literal at the given position of the inputs.
      *
      * @param inputs The JsonNode holding all inputs of a block.
      * @param pos    The position of the number to parse in the inputs node.
@@ -144,8 +161,8 @@ public class ExpressionParser {
         return (ArrayNode) getExprArrayAtPos(inputs, pos).get(POS_DATA_ARRAY);
     }
 
-
-    public static NumExpr parseBlockNumExpr(String opcodeString, String identifier, JsonNode blocks, JsonNode fields) throws ParsingException {
+    public static NumExpr parseBlockNumExpr(String opcodeString, String identifier, JsonNode blocks, JsonNode fields)
+        throws ParsingException {
         Preconditions.checkArgument(NumExprOpcode.contains(opcodeString), opcodeString + " is not a NumExprOpcode.");
         NumExprOpcode opcode = NumExprOpcode.valueOf(opcodeString);
         switch (opcode) {
@@ -212,116 +229,124 @@ public class ExpressionParser {
         throw new RuntimeException("Not implemented yet");
     }
 
-    private static StringExpr parseBlockStringExpr(String opcodeString, String identifier, JsonNode blocks, JsonNode fields) throws ParsingException {
-        Preconditions.checkArgument(StringExprOpcode.contains(opcodeString), opcodeString + " is not a StringExprOpcode.");
+    private static StringExpr parseBlockStringExpr(String opcodeString, String identifier, JsonNode blocks,
+        JsonNode fields) throws ParsingException {
+        Preconditions
+            .checkArgument(StringExprOpcode.contains(opcodeString), opcodeString + " is not a StringExprOpcode.");
         StringExprOpcode opcode = StringExprOpcode.valueOf(opcodeString);
         switch (opcode) {
-        case operator_join:
-            StringExpr first = parseStringExpr(blocks.get(identifier), 0, blocks);
-            StringExpr second = parseStringExpr(blocks.get(identifier), 1, blocks);
-            return new Join(first, second);
-        case operator_letter_of:
-            NumExpr num = parseNumExpr(blocks.get(identifier), 0, blocks);
-            StringExpr word = parseStringExpr(blocks.get(identifier), 1, blocks);
-            return new LetterOf(num, word);
-        case sensing_username:
-            return new Username();
-        case data_itemoflist:
-            NumExpr index = parseNumExpr(blocks.get(identifier), 0, blocks);
-            Variable var = parseVariable();
-            return new ItemOfVariable(index, var);
-        default:
-            throw new RuntimeException(opcodeString + " not implemented yet or this method was not called properly (or JSON is wrong)");
+            case operator_join:
+                StringExpr first = parseStringExpr(blocks.get(identifier), 0, blocks);
+                StringExpr second = parseStringExpr(blocks.get(identifier), 1, blocks);
+                return new Join(first, second);
+            case operator_letter_of:
+                NumExpr num = parseNumExpr(blocks.get(identifier), 0, blocks);
+                StringExpr word = parseStringExpr(blocks.get(identifier), 1, blocks);
+                return new LetterOf(num, word);
+            case sensing_username:
+                return new Username();
+            case data_itemoflist:
+                NumExpr index = parseNumExpr(blocks.get(identifier), 0, blocks);
+                Variable var = parseVariable();
+                return new ItemOfVariable(index, var);
+            default:
+                throw new RuntimeException(
+                    opcodeString + " not implemented yet or this method was not called properly (or JSON is wrong)");
         }
     }
 
-    private static BoolExpr parseBlockBoolExpr(String opcodeString, String identifier, JsonNode blocks, JsonNode fields) throws ParsingException {
-        Preconditions.checkArgument(BoolExprOpcode.contains(opcodeString), opcodeString + " is not a StringExprOpcode.");
+    private static BoolExpr parseBlockBoolExpr(String opcodeString, String identifier, JsonNode blocks, JsonNode fields)
+        throws ParsingException {
+        Preconditions
+            .checkArgument(BoolExprOpcode.contains(opcodeString), opcodeString + " is not a StringExprOpcode.");
         BoolExprOpcode opcode = BoolExprOpcode.valueOf(opcodeString);
         switch (opcode) {
-        case sensing_touchingobject:
-            Touchable touchable = TouchableParser.parseTouchable(blocks.get(identifier), blocks);
-            return new Touching(touchable);
-        case sensing_touchingcolor:
-            throw new RuntimeException("Not implemented yet");
-        case sensing_coloristouchingcolor:
-            Color first = ColorParser.parseColor(blocks.get(identifier), blocks);
-            Color second = ColorParser.parseColor(blocks.get(identifier), blocks);
-            return new ColorTouches(first, second);
-        case sensing_keypressed:
-            Key key = KeyParser.parse(blocks.get(identifier), blocks);
-            return new IsKeyPressed(key);
-        case sensing_mousedown:
-            return new IsMouseDown();
-        case operator_gt:
-            NumExpr firstNum = parseNumExpr(blocks.get(identifier), 0, blocks);
-            NumExpr secondNum = parseNumExpr(blocks.get(identifier), 1, blocks);
-            return new BiggerThan(firstNum, secondNum);
-        case operator_lt:
-            NumExpr lessFirst = parseNumExpr(blocks.get(identifier), 0, blocks);
-            NumExpr lessSecond = parseNumExpr(blocks.get(identifier), 1, blocks);
-            return new LessThan(lessFirst, lessSecond);
-        case operator_equals:
-            NumExpr eqFirst = parseNumExpr(blocks.get(identifier), 0, blocks);
-            NumExpr eqSecond = parseNumExpr(blocks.get(identifier), 1, blocks);
-            return new Equals(eqFirst, eqSecond);
-        case operator_and:
-            BoolExpr andFirst = parseBoolExpr(blocks.get(identifier), 0, blocks);
-            BoolExpr andSecond = parseBoolExpr(blocks.get(identifier), 1, blocks);
-            return new And(andFirst, andSecond);
-        case operator_or:
-            BoolExpr orFirst = parseBoolExpr(blocks.get(identifier), 0, blocks);
-            BoolExpr orSecond = parseBoolExpr(blocks.get(identifier), 1, blocks);
-            return new Or(orFirst, orSecond);
-        case operator_not:
-            BoolExpr notInput = parseBoolExpr(blocks.get(identifier), 0, blocks);
-            return new Not(notInput);
-        case operator_contains:
-        case data_listcontainsitem:
-            throw new RuntimeException("Not implemented yet"); // I don't know which Classes should be returned here
-        default:
-            throw new RuntimeException(opcodeString + " not implemented yet or this method was not called properly (or JSON is wrong)");
+            case sensing_touchingobject:
+                Touchable touchable = TouchableParser.parseTouchable(blocks.get(identifier), blocks);
+                return new Touching(touchable);
+            case sensing_touchingcolor:
+                throw new RuntimeException("Not implemented yet");
+            case sensing_coloristouchingcolor:
+                Color first = ColorParser.parseColor(blocks.get(identifier), 0, blocks);
+                Color second = ColorParser.parseColor(blocks.get(identifier), 1, blocks);
+                return new ColorTouches(first, second);
+            case sensing_keypressed:
+                Key key = KeyParser.parse(blocks.get(identifier), blocks);
+                return new IsKeyPressed(key);
+            case sensing_mousedown:
+                return new IsMouseDown();
+            case operator_gt:
+                NumExpr firstNum = parseNumExpr(blocks.get(identifier), 0, blocks);
+                NumExpr secondNum = parseNumExpr(blocks.get(identifier), 1, blocks);
+                return new BiggerThan(firstNum, secondNum);
+            case operator_lt:
+                NumExpr lessFirst = parseNumExpr(blocks.get(identifier), 0, blocks);
+                NumExpr lessSecond = parseNumExpr(blocks.get(identifier), 1, blocks);
+                return new LessThan(lessFirst, lessSecond);
+            case operator_equals:
+                NumExpr eqFirst = parseNumExpr(blocks.get(identifier), 0, blocks);
+                NumExpr eqSecond = parseNumExpr(blocks.get(identifier), 1, blocks);
+                return new Equals(eqFirst, eqSecond);
+            case operator_and:
+                BoolExpr andFirst = parseBoolExpr(blocks.get(identifier), 0, blocks);
+                BoolExpr andSecond = parseBoolExpr(blocks.get(identifier), 1, blocks);
+                return new And(andFirst, andSecond);
+            case operator_or:
+                BoolExpr orFirst = parseBoolExpr(blocks.get(identifier), 0, blocks);
+                BoolExpr orSecond = parseBoolExpr(blocks.get(identifier), 1, blocks);
+                return new Or(orFirst, orSecond);
+            case operator_not:
+                BoolExpr notInput = parseBoolExpr(blocks.get(identifier), 0, blocks);
+                return new Not(notInput);
+            case operator_contains:
+            case data_listcontainsitem:
+                throw new RuntimeException("Not implemented yet"); // I don't know which Classes should be returned here
+            default:
+                throw new RuntimeException(
+                    opcodeString + " not implemented yet or this method was not called properly (or JSON is wrong)");
         }
     }
 
-    public static NumFunct parseNumFunct(JsonNode fields) throws ParsingException { // TODO maybe add opcodes enum for NumFuncts
+    public static NumFunct parseNumFunct(JsonNode fields)
+        throws ParsingException { // TODO maybe add opcodes enum for NumFuncts
         ArrayNode operator = (ArrayNode) fields.get(OPERATOR_KEY); // TODO move operator key to suitable place
         String operatorOpcode = operator.get(0).asText(); //TODO remove magic num
         switch (operatorOpcode) {
-        case "abs":
-            return new Abs();
-        case "floor":
-            return new Floor();
-        case "ceiling":
-            return new Ceiling();
-        case "sqrt":
-            return new Sqrt();
-        case "sin":
-            return new Sin();
-        case "cos":
-            return new Cos();
-        case "tan":
-            return new Tan();
-        case "asin":
-            return new Asin();
-        case "acos":
-            return new Acos();
-        case "atan":
-            return new Atan();
-        case "ln":
-            return new Ln();
-        case "log":
-            return new Log();
-        case "e ^":
-            return new PowE();
-        case "10 ^":
-            return new Pow10();
-        default:
-            throw new ParsingException("There is no NumFunct with opcode " + operatorOpcode);
+            case "abs":
+                return new Abs();
+            case "floor":
+                return new Floor();
+            case "ceiling":
+                return new Ceiling();
+            case "sqrt":
+                return new Sqrt();
+            case "sin":
+                return new Sin();
+            case "cos":
+                return new Cos();
+            case "tan":
+                return new Tan();
+            case "asin":
+                return new Asin();
+            case "acos":
+                return new Acos();
+            case "atan":
+                return new Atan();
+            case "ln":
+                return new Ln();
+            case "log":
+                return new Log();
+            case "e ^":
+                return new PowE();
+            case "10 ^":
+                return new Pow10();
+            default:
+                throw new ParsingException("There is no NumFunct with opcode " + operatorOpcode);
         }
     }
 
-    private static <T extends NumExpr> NumExpr buildNumExprWithTwoNumExprInputs(Class<T> clazz, String identifier, JsonNode blocks) throws ParsingException {
+    private static <T extends NumExpr> NumExpr buildNumExprWithTwoNumExprInputs(Class<T> clazz, String identifier,
+        JsonNode blocks) throws ParsingException {
         JsonNode block = blocks.get(identifier);
         NumExpr first = parseNumExpr(block, 0, blocks);
         NumExpr second = parseNumExpr(block, 1, blocks);
@@ -331,7 +356,6 @@ public class ExpressionParser {
             throw new ParsingException(e);
         }
     }
-
 
     public static Expression parseExpression(JsonNode block, int pos, JsonNode blocks) {
         String opcodeString = block.get(OPCODE_KEY).asText();

@@ -3,7 +3,7 @@ package scratch.newast.model.expression.bool;
 import com.google.common.collect.ImmutableList;
 import scratch.newast.model.ASTNode;
 import scratch.newast.model.ScratchVisitor;
-import scratch.newast.model.graphiceffect.Color;
+import scratch.newast.model.color.Color;
 
 public class ColorTouches implements BoolExpr {
     private final Color first;

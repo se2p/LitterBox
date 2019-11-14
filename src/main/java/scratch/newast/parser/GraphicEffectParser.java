@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.base.Preconditions;
 import scratch.newast.Constants;
 import scratch.newast.model.graphiceffect.Brightness;
-import scratch.newast.model.graphiceffect.Color;
 import scratch.newast.model.graphiceffect.Fisheye;
 import scratch.newast.model.graphiceffect.Ghost;
 import scratch.newast.model.graphiceffect.GraphicEffect;
@@ -33,7 +32,8 @@ public class GraphicEffectParser {
         String effectName = jsonNode.get(FIELDS_KEY).get(EFFECTS_FIELD_KEY).get(Constants.FIELD_VALUE).asText();
         switch (effectName) {
             case COLOR:
-                return new Color();
+                //    return new Color();
+                throw new RuntimeException("Not implemented yet");
             case FISHEYE:
                 return new Fisheye();
             case WHIRL:
