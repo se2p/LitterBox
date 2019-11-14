@@ -5,17 +5,7 @@ import com.google.common.base.Preconditions;
 import scratch.newast.Constants;
 import scratch.newast.ParsingException;
 import scratch.newast.model.statement.Stmt;
-import scratch.newast.opcodes.ActorLookStmtOpcode;
-import scratch.newast.opcodes.ActorSoundStmtOpcode;
-import scratch.newast.opcodes.BoolExprOpcode;
-import scratch.newast.opcodes.CallStmtOpcode;
-import scratch.newast.opcodes.CommonStmtOpcode;
-import scratch.newast.opcodes.ControlStmtOpcode;
-import scratch.newast.opcodes.NumExprOpcode;
-import scratch.newast.opcodes.SpriteLookStmtOpcode;
-import scratch.newast.opcodes.SpriteMotionStmtOpcode;
-import scratch.newast.opcodes.StringExprOpcode;
-import scratch.newast.opcodes.TerminationStmtOpcode;
+import scratch.newast.opcodes.*;
 
 public class StmtParser {
 
@@ -39,14 +29,14 @@ public class StmtParser {
             stmt = ControlStmtParser.parse(current, blocks);
             return stmt;
         } else if (BoolExprOpcode.contains(opcode) || NumExprOpcode.contains(opcode) || StringExprOpcode
-            .contains(opcode)) {
+                .contains(opcode)) {
             stmt = ExpressionStmtParser.parse(current, blocks);
             return stmt;
         } else if (CommonStmtOpcode.contains(opcode)) {
             stmt = CommonStmtParser.parse(current, blocks);
             return stmt;
         } else if (SpriteMotionStmtOpcode.contains(opcode)) {
-            stmt = SpriteMotionStmtParser.parse(current,blocks);
+            stmt = SpriteMotionStmtParser.parse(current, blocks);
             return stmt;
         } else if (SpriteLookStmtOpcode.contains(opcode)) {
             throw new RuntimeException("Not implemented");
@@ -56,10 +46,11 @@ public class StmtParser {
         } else if (CallStmtOpcode.contains(opcode)) {
             stmt = CallStmtParser.parse(current, blockID, blocks);
             return stmt;
+        } else if (ListStmtOpcode.contains(opcode)) {
+            stmt = ListStmtParser.parse(current, blocks);
+            return stmt;
             // Are these corner cases we have to deal with separately
 //        } else if (ProceduralStmtOpcode.contains(opcode)) {
-//            throw new RuntimeException("Not implemented");
-//        } else if (ListStmtOpcode.contains(opcode)) {
 //            throw new RuntimeException("Not implemented");
         }
 

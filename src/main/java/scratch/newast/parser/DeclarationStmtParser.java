@@ -29,6 +29,7 @@ import scratch.newast.model.type.NumberType;
 import scratch.newast.model.type.StringType;
 import scratch.newast.model.variable.Identifier;
 import scratch.newast.model.expression.num.Number;
+import scratch.newast.model.variable.Qualified;
 
 public class DeclarationStmtParser {
 
@@ -57,7 +58,7 @@ public class DeclarationStmtParser {
         return parsedVariables;
     }
 
-    public static List<SetStmt> parseVariableSetStmts(JsonNode variableNode, String scriptGroupName, boolean isStage) {
+    public static List<SetStmt> parseVariableSetStmts(JsonNode variableNode, String scriptGroupName) {
         Preconditions.checkNotNull(variableNode);
         List<SetStmt> parsedVariables = new ArrayList<>();
         Iterator<Map.Entry<String, JsonNode>> iter = variableNode.fields();
@@ -67,13 +68,16 @@ public class DeclarationStmtParser {
             ArrayNode arrNode = (ArrayNode) currentEntry.getValue();
             //TODO check is ExpressionParser should be used
             if (arrNode.get(DECLARATION_VARIABLE_VALUE_POS).isNumber()) {
-                parsedVariables.add(new SetVariableTo(new Identifier(arrNode.get(DECLARATION_VARIABLE_NAME_POS).textValue()),
+                parsedVariables.add(new SetVariableTo(new Qualified(new Identifier(scriptGroupName),
+                        new Identifier(arrNode.get(DECLARATION_VARIABLE_NAME_POS).textValue())),
                         new Number((float) arrNode.get(DECLARATION_VARIABLE_VALUE_POS).asDouble())));
             } else if (arrNode.get(DECLARATION_VARIABLE_VALUE_POS).isBoolean()) {
-                parsedVariables.add(new SetVariableTo(new Identifier(arrNode.get(DECLARATION_VARIABLE_NAME_POS).textValue()),
+                parsedVariables.add(new SetVariableTo(new Qualified(new Identifier(scriptGroupName),
+                        new Identifier(arrNode.get(DECLARATION_VARIABLE_NAME_POS).textValue())),
                         new Bool(arrNode.get(DECLARATION_VARIABLE_VALUE_POS).asBoolean())));
             } else {
-                parsedVariables.add(new SetVariableTo(new Identifier(arrNode.get(DECLARATION_VARIABLE_NAME_POS).textValue()),
+                parsedVariables.add(new SetVariableTo(new Qualified(new Identifier(scriptGroupName),
+                        new Identifier(arrNode.get(DECLARATION_VARIABLE_NAME_POS).textValue())),
                         new Str(arrNode.get(DECLARATION_VARIABLE_VALUE_POS).textValue())));
             }
         }
@@ -107,7 +111,7 @@ public class DeclarationStmtParser {
         return new ExpressionListPlain(expressions);
     }
 
-    public static List<SetStmt> parseListSetStmts(JsonNode listNode, String scriptGroupName, boolean isStage) {
+    public static List<SetStmt> parseListSetStmts(JsonNode listNode, String scriptGroupName) {
         Preconditions.checkNotNull(listNode);
         List<SetStmt> parsedLists = new ArrayList<>();
         Iterator<Map.Entry<String, JsonNode>> iter = listNode.fields();
@@ -118,7 +122,7 @@ public class DeclarationStmtParser {
             String listName = arrNode.get(DECLARATION_LIST_NAME_POS).textValue();
             JsonNode listValues = arrNode.get(DECLARATION_LIST_VALUES_POS);
             Preconditions.checkArgument(listValues.isArray());
-            parsedLists.add(new SetVariableTo(new Identifier(listName),
+            parsedLists.add(new SetVariableTo(new Qualified(new Identifier(scriptGroupName), new Identifier(listName)),
                     makeExpressionListPlain((ArrayNode) listValues)));
         }
         return parsedLists;

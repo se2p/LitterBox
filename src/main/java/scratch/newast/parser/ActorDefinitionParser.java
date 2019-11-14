@@ -2,12 +2,14 @@ package scratch.newast.parser;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.base.Preconditions;
+
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
+
 import scratch.newast.ParsingException;
 import scratch.newast.model.ActorDefinition;
 import scratch.newast.model.ActorType;
@@ -29,33 +31,36 @@ import scratch.newast.model.statement.common.SetAttributeTo;
 import scratch.newast.model.statement.common.SetStmt;
 import scratch.newast.model.variable.Identifier;
 
+import static scratch.newast.Constants.IS_STAGE_KEY;
+import static scratch.newast.Constants.NAME_KEY;
+
 public class ActorDefinitionParser {
 
     public static ActorDefinition parse(JsonNode actorDefinitionNode) throws ParsingException {
         Preconditions.checkNotNull(actorDefinitionNode);
-        Preconditions.checkArgument(actorDefinitionNode.has("isStage"), "Missing field isStage in ScriptGroup");
-        Preconditions.checkArgument(actorDefinitionNode.has("name"), "Missing field name in ScriptGroup");
+        Preconditions.checkArgument(actorDefinitionNode.has(IS_STAGE_KEY), "Missing field isStage in ScriptGroup");
+        Preconditions.checkArgument(actorDefinitionNode.has(NAME_KEY), "Missing field name in ScriptGroup");
 
         ActorType actorType;
-        if (actorDefinitionNode.get("isStage").asBoolean()) {
+        if (actorDefinitionNode.get(IS_STAGE_KEY).asBoolean()) {
             actorType = ActorType.stage;
         } else {
             actorType = ActorType.sprite;
         }
 
-        Identifier identifier = new Identifier(actorDefinitionNode.get("name").asText());
+        Identifier identifier = new Identifier(actorDefinitionNode.get(NAME_KEY).asText());
 
         List<Resource> res = ResourceParser.parseSound(actorDefinitionNode.get("sounds"));
         res.addAll(ResourceParser.parseCostume(actorDefinitionNode.get("costumes")));
         ResourceList resources = new ResourceList(res);
 
         List<DeclarationStmt> decls = DeclarationStmtParser
-            .parseLists(actorDefinitionNode.get("lists"), identifier.getValue(),
-                actorDefinitionNode.get("isStage").asBoolean());
+                .parseLists(actorDefinitionNode.get("lists"), identifier.getValue(),
+                        actorDefinitionNode.get(IS_STAGE_KEY).asBoolean());
         decls.addAll(DeclarationStmtParser.parseBroadcasts(actorDefinitionNode.get("broadcasts"), identifier.getValue(),
-            actorDefinitionNode.get("isStage").asBoolean()));
+                actorDefinitionNode.get(IS_STAGE_KEY).asBoolean()));
         decls.addAll(DeclarationStmtParser.parseVariables(actorDefinitionNode.get("variables"), identifier.getValue(),
-            actorDefinitionNode.get("isStage").asBoolean()));
+                actorDefinitionNode.get(IS_STAGE_KEY).asBoolean()));
         DeclarationStmtList declarations = new DeclarationStmtList(decls);
 
         JsonNode allBlocks = actorDefinitionNode.get("blocks");
@@ -73,14 +78,13 @@ public class ActorDefinitionParser {
 
         ProcedureDefinitionList procDeclList = ProcDefinitionParser.parse(allBlocks);
 
-        //Todo, add setStmts from Declarations
-        SetStmtList setStmtList = parseSetStmts(actorDefinitionNode);
+        SetStmtList setStmtList = parseSetStmts(actorDefinitionNode, identifier.getValue());
 
         return new ActorDefinition(actorType, identifier, resources, declarations, setStmtList, procDeclList,
-            scriptList);
+                scriptList);
     }
 
-    private static SetStmtList parseSetStmts(JsonNode scriptGroupNode) {
+    private static SetStmtList parseSetStmts(JsonNode actorDefinitionNode, String actorName) {
         //Todo refactor to avoid code duplication
         String volumeKey = "volume";
         String layerOrderKey = "layerOrder";
@@ -107,34 +111,34 @@ public class ActorDefinitionParser {
         List<SetStmt> list = new LinkedList<>();
 
         keyExpr = new Str(volumeKey);
-        jsonDouble = scriptGroupNode.get(volumeKey).asDouble();
+        jsonDouble = actorDefinitionNode.get(volumeKey).asDouble();
         numExpr = new Number((float) jsonDouble);
         setStmt = new SetAttributeTo(keyExpr, numExpr);
         list.add(setStmt);
 
         keyExpr = new Str(layerOrderKey);
-        jsonDouble = scriptGroupNode.get(layerOrderKey).asDouble();
+        jsonDouble = actorDefinitionNode.get(layerOrderKey).asDouble();
         numExpr = new Number((float) jsonDouble);
         setStmt = new SetAttributeTo(keyExpr, numExpr);
         list.add(setStmt);
 
-        if (scriptGroupNode.get("isStage").asBoolean()) {
+        if (actorDefinitionNode.get("isStage").asBoolean()) {
             //Stage
 
             keyExpr = new Str(tempoKey);
-            jsonDouble = scriptGroupNode.get(tempoKey).asDouble();
+            jsonDouble = actorDefinitionNode.get(tempoKey).asDouble();
             numExpr = new Number((float) jsonDouble);
             setStmt = new SetAttributeTo(keyExpr, numExpr);
             list.add(setStmt);
 
             keyExpr = new Str(vidTransKey);
-            jsonDouble = scriptGroupNode.get(vidTransKey).asDouble();
+            jsonDouble = actorDefinitionNode.get(vidTransKey).asDouble();
             numExpr = new Number((float) jsonDouble);
             setStmt = new SetAttributeTo(keyExpr, numExpr);
             list.add(setStmt);
 
             keyExpr = new Str(vidState);
-            jsonString = scriptGroupNode.get(vidTransKey).asText();
+            jsonString = actorDefinitionNode.get(vidTransKey).asText();
             stringExpr = new Str(jsonString);
             setStmt = new SetAttributeTo(keyExpr, stringExpr);
             list.add(setStmt);
@@ -142,37 +146,37 @@ public class ActorDefinitionParser {
         } else {
 
             keyExpr = new Str(visibleKey);
-            jsonBool = scriptGroupNode.get(visibleKey).asBoolean();
+            jsonBool = actorDefinitionNode.get(visibleKey).asBoolean();
             boolExpr = new Bool(jsonBool);
             setStmt = new SetAttributeTo(keyExpr, boolExpr);
             list.add(setStmt);
 
             keyExpr = new Str(xKey);
-            jsonDouble = scriptGroupNode.get(xKey).asDouble();
+            jsonDouble = actorDefinitionNode.get(xKey).asDouble();
             numExpr = new Number((float) jsonDouble);
             setStmt = new SetAttributeTo(keyExpr, numExpr);
             list.add(setStmt);
 
             keyExpr = new Str(yKey);
-            jsonDouble = scriptGroupNode.get(yKey).asDouble();
+            jsonDouble = actorDefinitionNode.get(yKey).asDouble();
             numExpr = new Number((float) jsonDouble);
             setStmt = new SetAttributeTo(keyExpr, numExpr);
             list.add(setStmt);
 
             keyExpr = new Str(sizeKey);
-            jsonDouble = scriptGroupNode.get(sizeKey).asDouble();
+            jsonDouble = actorDefinitionNode.get(sizeKey).asDouble();
             numExpr = new Number((float) jsonDouble);
             setStmt = new SetAttributeTo(keyExpr, numExpr);
             list.add(setStmt);
 
             keyExpr = new Str(directionKey);
-            jsonDouble = scriptGroupNode.get(directionKey).asDouble();
+            jsonDouble = actorDefinitionNode.get(directionKey).asDouble();
             numExpr = new Number((float) jsonDouble);
             setStmt = new SetAttributeTo(keyExpr, numExpr);
             list.add(setStmt);
 
             keyExpr = new Str(dragKey);
-            jsonBool = scriptGroupNode.get(dragKey).asBoolean();
+            jsonBool = actorDefinitionNode.get(dragKey).asBoolean();
             boolExpr = new Bool(jsonBool);
             setStmt = new SetAttributeTo(keyExpr, boolExpr);
             list.add(setStmt);
@@ -180,6 +184,8 @@ public class ActorDefinitionParser {
             throw new RuntimeException("rotationStyle not implemented");
         }
 
+        list.addAll(DeclarationStmtParser.parseListSetStmts(actorDefinitionNode.get("lists"), actorName));
+        list.addAll(DeclarationStmtParser.parseListSetStmts(actorDefinitionNode.get("variables"), actorName));
         return new SetStmtList(list);
     }
 

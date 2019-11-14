@@ -95,6 +95,8 @@ public class Constants {
     public static final String NEXT_KEY = "next";
     public static final String INPUTS_KEY = "inputs";
     public static final String PARENT_KEY = "parent";
+    public static final String NAME_KEY = "name";
+    public static final String IS_STAGE_KEY = "isStage";
 
     /**
      * The position of the variable's value in the declaration.
