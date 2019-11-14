@@ -50,7 +50,6 @@ public class EventParser {
         if (opcode.equals(event_whenflagclicked)) {
             event = new GreenFlag();
         } else if (opcode.equals(event_whenkeypressed)) {
-            // TODO should we catch/throw a "parser" exception?
             Key key = KeyParser.parse(current, allBlocks);
             event = new KeyPressed(key);
         } else if (opcode.equals(event_whenthisspriteclicked)) {
@@ -66,11 +65,9 @@ public class EventParser {
         } else if (opcode.equals(event_whengreaterthan)) {
 
             String variableValue = current.get(FIELDS_KEY).get(VARIABLE_MENU).get(0).asText();
-            //TODO do I need a variable parser here?
             Identifier var = new Identifier(variableValue);
 
-            JsonNode jsonNode = current.get(INPUTS);
-            NumExpr fieldValue = ExpressionParser.parseNumExpr(jsonNode, 0, allBlocks); // FIXME which pos
+            NumExpr fieldValue = ExpressionParser.parseNumExpr(current, 1, allBlocks); // FIXME which pos
 
             event = new VariableAboveValue(var, fieldValue);
         } else if (opcode.equals(event_whenbackdropswitchesto)) {

@@ -5,6 +5,7 @@ import static scratch.newast.Constants.OPCODE_KEY;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.base.Preconditions;
 import scratch.newast.ParsingException;
+import scratch.newast.model.elementchoice.ElementChoice;
 import scratch.newast.model.expression.num.NumExpr;
 import scratch.newast.model.expression.string.StringExpr;
 import scratch.newast.model.statement.spritelook.ChangeSizeBy;
@@ -14,10 +15,12 @@ import scratch.newast.model.statement.spritelook.SayForSecs;
 import scratch.newast.model.statement.spritelook.SetSizeTo;
 import scratch.newast.model.statement.spritelook.Show;
 import scratch.newast.model.statement.spritelook.SpriteLookStmt;
+import scratch.newast.model.statement.spritelook.SwitchCostumeTo;
 import scratch.newast.model.statement.spritelook.Think;
 import scratch.newast.model.statement.spritelook.ThinkForSecs;
 import scratch.newast.opcodes.SpriteLookStmtOpcode;
 import scratch.newast.opcodes.SpriteMotionStmtOpcode;
+import scratch.newast.parser.ElementChoiceParser;
 import scratch.newast.parser.ExpressionParser;
 
 public class SpriteLookStmtParser {
@@ -55,9 +58,8 @@ public class SpriteLookStmtParser {
                 stringExpr = ExpressionParser.parseStringExpr(current, 0, allBlocks);
                 return new Think(stringExpr);
             case looks_switchcostumeto:
-                throw new RuntimeException("Not implemented yet");
-//                ElementChoice choice = ElementChoiceParser.parse(null, null); //FIXME
-//                return new SwitchCostumeTo(choice);
+                ElementChoice choice = ElementChoiceParser.parse(current, allBlocks);
+                return new SwitchCostumeTo(choice);
             case looks_changesizeby:
                 numExpr = ExpressionParser.parseNumExpr(current, 0, allBlocks);
                 return new ChangeSizeBy(numExpr);

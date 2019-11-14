@@ -6,6 +6,7 @@ import scratch.newast.Constants;
 import scratch.newast.ParsingException;
 import scratch.newast.model.StmtList;
 import scratch.newast.model.expression.bool.BoolExpr;
+import scratch.newast.model.expression.bool.UnspecifiedBoolExpr;
 import scratch.newast.model.expression.num.NumExpr;
 import scratch.newast.model.statement.Stmt;
 import scratch.newast.model.statement.control.IfElseStmt;
@@ -38,8 +39,11 @@ public class ControlStmtParser {
         JsonNode inputs = current.get(Constants.INPUTS_KEY);
         switch (opcode) {
             case control_if:
-                conditionNode = inputs.get(INPUT_CONDITION);
-                boolExpr = ExpressionParser.parseBoolExpr(conditionNode, 0, allBlocks);
+                if (inputs.has(INPUT_CONDITION)) {
+                    boolExpr = ExpressionParser.parseBoolExpr(current, 0, allBlocks);
+                } else {
+                    boolExpr = new UnspecifiedBoolExpr();
+                }
 
                 substackNode = inputs.get(INPUT_SUBSTACK).get(Constants.POS_INPUT_VALUE);
                 stmtList = ScriptParser.parseStmtList(substackNode.asText(), allBlocks);
@@ -47,21 +51,21 @@ public class ControlStmtParser {
                 stmt = new IfThenStmt(boolExpr, stmtList);
                 break;
             case control_if_else:
-                conditionNode = inputs.get(INPUT_CONDITION);
-                boolExpr = ExpressionParser.parseBoolExpr(conditionNode, 0, allBlocks);
-
+                if (inputs.has(INPUT_CONDITION)) {
+                    boolExpr = ExpressionParser.parseBoolExpr(current, 0, allBlocks);
+                } else {
+                    boolExpr = new UnspecifiedBoolExpr();
+                }
                 substackNode = inputs.get(INPUT_SUBSTACK).get(Constants.POS_INPUT_VALUE);
                 stmtList = ScriptParser.parseStmtList(substackNode.asText(), allBlocks);
 
                 elseSubstackNode = inputs.get(INPUT_ELSE_SUBSTACK).get(Constants.POS_INPUT_VALUE);
                 elseStmtList = ScriptParser.parseStmtList(elseSubstackNode.asText(), allBlocks);
 
-                stmt = new IfElseStmt(boolExpr, stmtList, elseStmtList);
+                stmt = new IfElseStmt(boolExpr, stmtList, elseStmtList); // FIXME
                 break;
             case control_repeat:
-                conditionNode = inputs.get(INPUT_TIMES);
-                //NumExpr numExpr = ExpressionParser.parseNumExpr(conditionNode, allBlocks);
-                NumExpr numExpr = null; //FIXME use the right arguments and then actually parse the expr
+                NumExpr numExpr = ExpressionParser.parseNumExpr(current, 0, allBlocks);
 
                 substackNode = inputs.get(INPUT_SUBSTACK).get(Constants.POS_INPUT_VALUE);
                 stmtList = ScriptParser.parseStmtList(substackNode.asText(), allBlocks);
@@ -69,12 +73,13 @@ public class ControlStmtParser {
                 stmt = new RepeatTimesStmt(numExpr, stmtList);
                 break;
             case control_repeat_until:
-                conditionNode = inputs.get(INPUT_CONDITION);
-                boolExpr = ExpressionParser.parseBoolExpr(conditionNode, 0, allBlocks);
-
+                if (inputs.has(INPUT_CONDITION)) {
+                    boolExpr = ExpressionParser.parseBoolExpr(current, 0, allBlocks);
+                } else {
+                    boolExpr = new UnspecifiedBoolExpr();
+                }
                 substackNode = inputs.get(INPUT_SUBSTACK).get(Constants.POS_INPUT_VALUE);
                 stmtList = ScriptParser.parseStmtList(substackNode.asText(), allBlocks);
-
                 stmt = new UntilStmt(boolExpr, stmtList);
                 break;
             case control_forever:

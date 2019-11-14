@@ -1,5 +1,12 @@
 package scratch.newast.parser.stmt;
 
+import static scratch.newast.Constants.FIELDS_KEY;
+import static scratch.newast.Constants.FIELD_VALUE;
+import static scratch.newast.Constants.INPUTS_KEY;
+import static scratch.newast.Constants.OPCODE_KEY;
+import static scratch.newast.Constants.POS_INPUT_VALUE;
+import static scratch.newast.Constants.VARIABLE_KEY;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.base.Preconditions;
 import scratch.newast.Constants;
@@ -7,6 +14,7 @@ import scratch.newast.ParsingException;
 import scratch.newast.model.Message;
 import scratch.newast.model.expression.Expression;
 import scratch.newast.model.expression.bool.BoolExpr;
+import scratch.newast.model.expression.bool.UnspecifiedBoolExpr;
 import scratch.newast.model.expression.num.NumExpr;
 import scratch.newast.model.statement.common.Broadcast;
 import scratch.newast.model.statement.common.BroadcastAndWait;
@@ -19,10 +27,7 @@ import scratch.newast.model.statement.common.WaitSeconds;
 import scratch.newast.model.statement.common.WaitUntil;
 import scratch.newast.model.variable.Identifier;
 import scratch.newast.opcodes.CommonStmtOpcode;
-import scratch.newast.opcodes.EventOpcode;
 import scratch.newast.parser.ExpressionParser;
-
-import static scratch.newast.Constants.*;
 
 public class CommonStmtParser {
 
@@ -119,8 +124,12 @@ public class CommonStmtParser {
 
     private static WaitUntil parseWaitUntil(JsonNode current, JsonNode allBlocks) throws ParsingException {
         JsonNode inputs = current.get(INPUTS_KEY);
-        BoolExpr boolExpr = ExpressionParser.parseBoolExpr(inputs, 0, allBlocks);
-        return new WaitUntil(boolExpr);
+        if (inputs.elements().hasNext()) {
+            BoolExpr boolExpr = ExpressionParser.parseBoolExpr(inputs, 0, allBlocks);
+            return new WaitUntil(boolExpr);
+        } else {
+            return new WaitUntil(new UnspecifiedBoolExpr());
+        }
     }
 
     private static WaitSeconds parseWaitSeconds(JsonNode current, JsonNode allBlocks) throws ParsingException {
