@@ -14,7 +14,6 @@ import scratch.newast.model.expression.string.StringExpr;
 import scratch.newast.model.graphiceffect.GraphicEffect;
 import scratch.newast.model.statement.actorlook.ActorLookStmt;
 import scratch.newast.model.statement.actorlook.AskAndWait;
-import scratch.newast.model.statement.actorlook.ChangeEffectBy;
 import scratch.newast.model.statement.actorlook.ClearGraphicEffects;
 import scratch.newast.model.statement.actorlook.SwitchBackdrop;
 import scratch.newast.model.statement.spritelook.HideVariable;
@@ -59,16 +58,6 @@ public class ActorLookStmtParser {
             case looks_switchbackdropto:
                 ElementChoice elementChoice = parseSwitchBackdropTo(current, allBlocks);
                 stmt = new SwitchBackdrop(elementChoice);
-                break;
-            case looks_changeeffectby:
-                NumExpr effectValue = ExpressionParser.parseNumExpr(current, 0, allBlocks);
-                GraphicEffect effect = GraphicEffectParser.parse(current);
-                stmt = new ChangeEffectBy(effect, effectValue);
-                break;
-            case looks_seteffectto:
-                effectValue = ExpressionParser.parseNumExpr(current, 0, allBlocks);
-                effect = GraphicEffectParser.parse(current);
-                stmt = new ChangeEffectBy(effect, effectValue);
                 break;
             case looks_cleargraphiceffects:
                 stmt = new ClearGraphicEffects();
