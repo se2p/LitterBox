@@ -13,6 +13,7 @@ import static scratch.newast.Constants.VOLUME_KEY;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.base.Preconditions;
+import scratch.newast.ParsingException;
 import scratch.newast.model.expression.string.Str;
 import scratch.newast.model.statement.Stmt;
 import scratch.newast.model.statement.common.SetAttributeTo;
@@ -30,7 +31,7 @@ import scratch.newast.parser.attributes.SoundEffect;
 import scratch.newast.parser.symboltable.VariableInfo;
 
 public class SetStmtParser {
-    public static Stmt parse(JsonNode current, JsonNode allBlocks) {
+    public static Stmt parse(JsonNode current, JsonNode allBlocks) throws ParsingException {
         Preconditions.checkNotNull(current);
         Preconditions.checkNotNull(allBlocks);
 
@@ -65,19 +66,19 @@ public class SetStmtParser {
         }
     }
 
-    private static SetStmt parseSetVolumeTo(JsonNode current, JsonNode allBlocks) {
+    private static SetStmt parseSetVolumeTo(JsonNode current, JsonNode allBlocks) throws ParsingException {
         return new SetAttributeTo(new Str(VOLUME_KEY), ExpressionParser.parseExpression(current, 0,
                 allBlocks));
     }
 
-    private static SetStmt parseSetSoundEffect(JsonNode current, JsonNode allBlocks) {
+    private static SetStmt parseSetSoundEffect(JsonNode current, JsonNode allBlocks) throws ParsingException {
         String effect = current.get(FIELDS_KEY).get(EFFECT_KEY).get(0).textValue();
         Preconditions.checkArgument(SoundEffect.contains(effect));
         return new SetAttributeTo(new Str(effect), ExpressionParser.parseExpression(current, 0,
                 allBlocks));
     }
 
-    private static SetStmt parseSetLookEffect(JsonNode current, JsonNode allBlocks) {
+    private static SetStmt parseSetLookEffect(JsonNode current, JsonNode allBlocks) throws ParsingException {
         String effect = current.get(FIELDS_KEY).get(EFFECT_KEY).get(0).textValue();
         Preconditions.checkArgument(GraphicEffect.contains(effect));
         return new SetAttributeTo(new Str(effect), ExpressionParser.parseExpression(current, 0,
@@ -97,7 +98,7 @@ public class SetStmtParser {
         return new SetAttributeTo(new Str(DRAG_KEY), new Str(drag));
     }
 
-    private static SetStmt parseSetVariable(JsonNode current, JsonNode allBlocks) {
+    private static SetStmt parseSetVariable(JsonNode current, JsonNode allBlocks) throws ParsingException {
         String unique = current.get(FIELDS_KEY).get(VARIABLE_KEY).get(VARIABLE_IDENTIFIER_POS).textValue();
         Preconditions.checkArgument(ProgramParser.symbolTable.getVariables().containsKey(unique));
         VariableInfo info = ProgramParser.symbolTable.getVariables().get(unique);

@@ -72,7 +72,6 @@ import scratch.newast.model.variable.Identifier;
 import scratch.newast.model.variable.Qualified;
 import scratch.newast.model.variable.Variable;
 import scratch.newast.opcodes.BoolExprOpcode;
-import scratch.newast.opcodes.CallStmtOpcode;
 import scratch.newast.opcodes.NumExprOpcode;
 import scratch.newast.opcodes.StringExprOpcode;
 import scratch.newast.parser.symboltable.ExpressionListInfo;
@@ -240,7 +239,7 @@ public class ExpressionParser {
             Variable list = parseVariableFromFields(fields);
             return new IndexOf(item, list);
         default:
-            throw new ParsingException(opcodeString + " not implemented yet");
+            throw new ParsingException(opcodeString + " is not covered by parseBlockNumExpr");
         }
     }
 
@@ -265,9 +264,9 @@ public class ExpressionParser {
             NumExpr index = parseNumExpr(blocks.get(identifier), 0, blocks);
             Variable var = parseVariableFromFields(fields);
             return new ItemOfVariable(index, var);
+        //case FIXME size...answer...
         default:
-            throw new RuntimeException(
-                    opcodeString + " not implemented yet or this method was not called properly (or JSON is wrong)");
+            throw new RuntimeException(opcodeString + " is not covered by parseBlockStringExpr");
         }
     }
 
@@ -277,12 +276,10 @@ public class ExpressionParser {
                 .checkArgument(BoolExprOpcode.contains(opcodeString), opcodeString + " is not a BoolExprOpcode.");
         BoolExprOpcode opcode = BoolExprOpcode.valueOf(opcodeString);
         switch (opcode) {
+        case sensing_touchingcolor:
         case sensing_touchingobject:
             Touchable touchable = TouchableParser.parseTouchable(blocks.get(identifier), blocks);
             return new Touching(touchable);
-        case sensing_touchingcolor:
-            //TODO
-            throw new RuntimeException("Not implemented yet");
         case sensing_coloristouchingcolor:
             Color first = ColorParser.parseColor(blocks.get(identifier), 0, blocks);
             Color second = ColorParser.parseColor(blocks.get(identifier), 1, blocks);
@@ -320,7 +317,7 @@ public class ExpressionParser {
             throw new RuntimeException("Not implemented yet"); // I don't know which Classes should be returned here
         default:
             throw new RuntimeException(
-                    opcodeString + " not implemented yet or this method was not called properly (or JSON is wrong)");
+                    opcodeString + " is not covered by parseBlockExpr");
         }
     }
 
@@ -454,7 +451,7 @@ public class ExpressionParser {
             }
         }
 
-        throw new ParsingException("Not implemented yet");
+        throw new ParsingException("Could not parse BoolExpr");
     }
 
     public static ListExpr parseListExpr(JsonNode block, int pos, JsonNode blocks) throws ParsingException {
