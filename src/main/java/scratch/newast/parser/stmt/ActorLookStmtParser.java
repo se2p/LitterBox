@@ -1,9 +1,5 @@
 package scratch.newast.parser.stmt;
 
-import static scratch.newast.Constants.FIELDS_KEY;
-import static scratch.newast.Constants.FIELD_VALUE;
-import static scratch.newast.Constants.OPCODE_KEY;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.base.Preconditions;
 import scratch.newast.Constants;
@@ -20,16 +16,19 @@ import scratch.newast.model.variable.Identifier;
 import scratch.newast.model.variable.Qualified;
 import scratch.newast.model.variable.Variable;
 import scratch.newast.opcodes.ActorLookStmtOpcode;
-import scratch.newast.opcodes.EventOpcode;
 import scratch.newast.parser.ElementChoiceParser;
 import scratch.newast.parser.ExpressionParser;
 import scratch.newast.parser.ProgramParser;
+import scratch.newast.parser.symboltable.ExpressionListInfo;
 import scratch.newast.parser.symboltable.VariableInfo;
+
+import static scratch.newast.Constants.*;
 
 public class ActorLookStmtParser {
 
     private static final String CHANGE_EFFECTBY_INPUT_KEY = "CHANGE";
     private static final String VARIABLE = "VARIABLE";
+    private static final String LIST = "LIST";
 
     public static ActorLookStmt parse(JsonNode current, JsonNode allBlocks) throws ParsingException {
         Preconditions.checkNotNull(current);
@@ -37,7 +36,7 @@ public class ActorLookStmtParser {
 
         String opcodeString = current.get(OPCODE_KEY).asText();
         Preconditions
-            .checkArgument(EventOpcode.contains(opcodeString), "Given blockID does not point to an event block.");
+                .checkArgument(ActorLookStmtOpcode.contains(opcodeString), "Given blockID does not point to an event block.");
 
         ActorLookStmtOpcode opcode = ActorLookStmtOpcode.valueOf(opcodeString);
         ActorLookStmt stmt;
@@ -46,6 +45,7 @@ public class ActorLookStmtParser {
         VariableInfo variableInfo;
         String actorName;
         Variable var;
+        ExpressionListInfo expressionListInfo;
 
         switch (opcode) {
             case sensing_askandwait:
@@ -59,8 +59,15 @@ public class ActorLookStmtParser {
             case looks_cleargraphiceffects:
                 stmt = new ClearGraphicEffects();
                 break;
+            case data_hidevariable:
+                variableName = current.get(FIELDS_KEY).get(VARIABLE).get(FIELD_VALUE).asText();
+                variableID = current.get(FIELDS_KEY).get(VARIABLE).get(1).asText();
+                variableInfo = ProgramParser.symbolTable.getVariables().get(variableID);
+                actorName = variableInfo.getActor();
+                var = new Qualified(new Identifier(actorName), new Identifier(variableName));
+                stmt = new HideVariable(var);
+                break;
             case data_showvariable:
-            case data_showlist:
                 variableName = current.get(FIELDS_KEY).get(VARIABLE).get(FIELD_VALUE).asText();
                 variableID = current.get(FIELDS_KEY).get(VARIABLE).get(1).asText();
                 variableInfo = ProgramParser.symbolTable.getVariables().get(variableID);
@@ -68,12 +75,19 @@ public class ActorLookStmtParser {
                 var = new Qualified(new Identifier(actorName), new Identifier(variableName));
                 stmt = new ShowVariable(var);
                 break;
-            case data_hidevariable:
+            case data_showlist:
+                variableName = current.get(FIELDS_KEY).get(LIST).get(FIELD_VALUE).asText();
+                variableID = current.get(FIELDS_KEY).get(LIST).get(1).asText();
+                expressionListInfo = ProgramParser.symbolTable.getLists().get(variableID);
+                actorName = expressionListInfo.getActor();
+                var = new Qualified(new Identifier(actorName), new Identifier(variableName));
+                stmt = new ShowVariable(var);
+                break;
             case data_hidelist:
-                variableName = current.get(FIELDS_KEY).get(VARIABLE).get(FIELD_VALUE).asText();
-                variableID = current.get(FIELDS_KEY).get(VARIABLE).get(1).asText();
-                variableInfo = ProgramParser.symbolTable.getVariables().get(variableID);
-                actorName = variableInfo.getActor();
+                variableName = current.get(FIELDS_KEY).get(LIST).get(FIELD_VALUE).asText();
+                variableID = current.get(FIELDS_KEY).get(LIST).get(1).asText();
+                expressionListInfo = ProgramParser.symbolTable.getLists().get(variableID);
+                actorName = expressionListInfo.getActor();
                 var = new Qualified(new Identifier(actorName), new Identifier(variableName));
                 stmt = new HideVariable(var);
                 break;
