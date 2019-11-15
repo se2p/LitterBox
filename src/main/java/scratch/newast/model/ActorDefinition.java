@@ -1,6 +1,7 @@
 package scratch.newast.model;
 
 import com.google.common.collect.ImmutableList;
+import scratch.newast.model.statement.declaration.DeclarationStmtList;
 import scratch.newast.model.procedure.ProcedureDefinitionList;
 import scratch.newast.model.resource.ResourceList;
 import scratch.newast.model.variable.Identifier;

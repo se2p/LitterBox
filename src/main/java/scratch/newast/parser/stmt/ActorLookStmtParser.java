@@ -9,9 +9,7 @@ import com.google.common.base.Preconditions;
 import scratch.newast.Constants;
 import scratch.newast.ParsingException;
 import scratch.newast.model.elementchoice.ElementChoice;
-import scratch.newast.model.expression.num.NumExpr;
 import scratch.newast.model.expression.string.StringExpr;
-import scratch.newast.model.graphiceffect.GraphicEffect;
 import scratch.newast.model.statement.actorlook.ActorLookStmt;
 import scratch.newast.model.statement.actorlook.AskAndWait;
 import scratch.newast.model.statement.actorlook.ClearGraphicEffects;
@@ -25,7 +23,6 @@ import scratch.newast.opcodes.ActorLookStmtOpcode;
 import scratch.newast.opcodes.EventOpcode;
 import scratch.newast.parser.ElementChoiceParser;
 import scratch.newast.parser.ExpressionParser;
-import scratch.newast.parser.GraphicEffectParser;
 import scratch.newast.parser.ProgramParser;
 import scratch.newast.parser.symboltable.VariableInfo;
 

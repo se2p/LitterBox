@@ -5,11 +5,10 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.google.common.base.Preconditions;
 
 import java.util.*;
-import java.util.logging.Logger;
 
-import scratch.newast.model.DeclarationStmt;
+import scratch.newast.model.statement.declaration.DeclarationAttributeAsTypeStmt;
+import scratch.newast.model.statement.declaration.DeclarationIdentAsTypeStmt;
 import scratch.newast.model.Message;
-import scratch.newast.model.SetStmtList;
 import scratch.newast.model.expression.Expression;
 import scratch.newast.model.expression.bool.Bool;
 import scratch.newast.model.expression.bool.BoolExpr;
@@ -22,13 +21,13 @@ import scratch.newast.model.expression.string.StringExpr;
 import scratch.newast.model.statement.common.SetAttributeTo;
 import scratch.newast.model.statement.common.SetStmt;
 import scratch.newast.model.statement.common.SetVariableTo;
+import scratch.newast.model.statement.declaration.DeclarationStmt;
 import scratch.newast.model.type.BooleanType;
 import scratch.newast.model.type.ListType;
 import scratch.newast.model.type.NumberType;
 import scratch.newast.model.type.StringType;
 import scratch.newast.model.variable.Identifier;
 import scratch.newast.model.variable.Qualified;
-import scratch.newast.parser.attributes.RotationStyle;
 
 import static scratch.newast.Constants.*;
 import static scratch.newast.Constants.DRAG_KEY;
@@ -47,17 +46,17 @@ public class DeclarationStmtParser {
                 ProgramParser.symbolTable.addVariable(currentEntry.getKey(),
                         arrNode.get(DECLARATION_VARIABLE_NAME_POS).textValue(),
                         new NumberType(), isStage, actorName);
-                parsedVariables.add(new DeclarationStmt(new Identifier(arrNode.get(DECLARATION_VARIABLE_NAME_POS).textValue()), new NumberType()));
+                parsedVariables.add(new DeclarationIdentAsTypeStmt(new Identifier(arrNode.get(DECLARATION_VARIABLE_NAME_POS).textValue()), new NumberType()));
             } else if (arrNode.get(DECLARATION_VARIABLE_VALUE_POS).isBoolean()) {
                 ProgramParser.symbolTable.addVariable(currentEntry.getKey(),
                         arrNode.get(DECLARATION_VARIABLE_NAME_POS).textValue(),
                         new BooleanType(), isStage, actorName);
-                parsedVariables.add(new DeclarationStmt(new Identifier(arrNode.get(DECLARATION_VARIABLE_NAME_POS).textValue()), new BooleanType()));
+                parsedVariables.add(new DeclarationIdentAsTypeStmt(new Identifier(arrNode.get(DECLARATION_VARIABLE_NAME_POS).textValue()), new BooleanType()));
             } else {
                 ProgramParser.symbolTable.addVariable(currentEntry.getKey(),
                         arrNode.get(DECLARATION_VARIABLE_NAME_POS).textValue(),
                         new StringType(), isStage, actorName);
-                parsedVariables.add(new DeclarationStmt(new Identifier(arrNode.get(DECLARATION_VARIABLE_NAME_POS).textValue()), new StringType()));
+                parsedVariables.add(new DeclarationIdentAsTypeStmt(new Identifier(arrNode.get(DECLARATION_VARIABLE_NAME_POS).textValue()), new StringType()));
             }
         }
         return parsedVariables;
@@ -103,7 +102,7 @@ public class DeclarationStmtParser {
             ExpressionList expressionList = new ExpressionList(makeExpressionListPlain((ArrayNode) listValues));
             ProgramParser.symbolTable.addExpressionListInfo(currentEntry.getKey(), listName, expressionList, isStage,
                     actorName);
-            parsedLists.add(new DeclarationStmt(new Identifier(listName), new ListType()));
+            parsedLists.add(new DeclarationIdentAsTypeStmt(new Identifier(listName), new ListType()));
         }
         return parsedLists;
     }
@@ -143,12 +142,73 @@ public class DeclarationStmtParser {
             Map.Entry<String, JsonNode> current = iter.next();
             ProgramParser.symbolTable.addMessage(current.getValue().textValue(),
                     new Message(current.getValue().textValue()), isStage, actorName);
-            parsedBroadcasts.add(new DeclarationStmt(new Identifier(current.getValue().textValue()), new StringType()));
+            parsedBroadcasts.add(new DeclarationIdentAsTypeStmt(new Identifier(current.getValue().textValue()),
+                    new StringType()));
         }
         return parsedBroadcasts;
     }
 
-    public static List<SetStmt> parseAttributeDeclarationSetStmts(JsonNode actorDefinitionNode, String actorName) {
+    public static List<DeclarationStmt> parseAttributeDeclarations(JsonNode actorDefinitionNode) {
+        StringExpr keyExpr;
+
+        List<DeclarationStmt> list = new LinkedList<>();
+
+        keyExpr = new Str(VOLUME_KEY);
+        Preconditions.checkArgument(actorDefinitionNode.get(VOLUME_KEY).isNumber());
+        list.add(new DeclarationAttributeAsTypeStmt(keyExpr, new NumberType()));
+
+        keyExpr = new Str(LAYERORDER_KEY);
+        Preconditions.checkArgument(actorDefinitionNode.get(LAYERORDER_KEY).isNumber());
+        list.add(new DeclarationAttributeAsTypeStmt(keyExpr, new NumberType()));
+
+        if (actorDefinitionNode.get("isStage").asBoolean()) {
+
+            keyExpr = new Str(TEMPO_KEY);
+            Preconditions.checkArgument(actorDefinitionNode.get(TEMPO_KEY).isNumber());
+            list.add(new DeclarationAttributeAsTypeStmt(keyExpr, new NumberType()));
+
+            keyExpr = new Str(VIDTRANSPARENCY_KEY);
+            Preconditions.checkArgument(actorDefinitionNode.get(TEMPO_KEY).isNumber());
+            list.add(new DeclarationAttributeAsTypeStmt(keyExpr, new NumberType()));
+
+            keyExpr = new Str(VIDSTATE_KEY);
+            Preconditions.checkArgument(actorDefinitionNode.get(VIDSTATE_KEY).isTextual());
+            list.add(new DeclarationAttributeAsTypeStmt(keyExpr, new StringType()));
+
+        } else {
+
+            keyExpr = new Str(VISIBLE_KEY);
+            Preconditions.checkArgument(actorDefinitionNode.get(VISIBLE_KEY).isBoolean());
+            list.add(new DeclarationAttributeAsTypeStmt(keyExpr, new BooleanType()));
+
+            keyExpr = new Str(X_KEY);
+            Preconditions.checkArgument(actorDefinitionNode.get(X_KEY).isNumber());
+            list.add(new DeclarationAttributeAsTypeStmt(keyExpr, new NumberType()));
+
+            keyExpr = new Str(Y_KEY);
+            Preconditions.checkArgument(actorDefinitionNode.get(Y_KEY).isNumber());
+            list.add(new DeclarationAttributeAsTypeStmt(keyExpr, new NumberType()));
+
+            keyExpr = new Str(SIZE_KEY);
+            Preconditions.checkArgument(actorDefinitionNode.get(SIZE_KEY).isNumber());
+            list.add(new DeclarationAttributeAsTypeStmt(keyExpr, new NumberType()));
+
+            keyExpr = new Str(DIRECTION_KEY);
+            Preconditions.checkArgument(actorDefinitionNode.get(DIRECTION_KEY).isNumber());
+            list.add(new DeclarationAttributeAsTypeStmt(keyExpr, new NumberType()));
+
+            keyExpr = new Str(DRAG_KEY);
+            Preconditions.checkArgument(actorDefinitionNode.get(DRAG_KEY).isBoolean());
+            list.add(new DeclarationAttributeAsTypeStmt(keyExpr, new BooleanType()));
+
+            keyExpr = new Str(ROTATIONSTYLE_KEY);
+            Preconditions.checkArgument(actorDefinitionNode.get(ROTATIONSTYLE_KEY).isTextual());
+            list.add(new DeclarationAttributeAsTypeStmt(keyExpr, new StringType()));
+        }
+        return list;
+    }
+
+    public static List<SetStmt> parseAttributeDeclarationSetStmts(JsonNode actorDefinitionNode) {
         //String ttSLang = "textToSpeechLanguage"; // Ignored as this is an extension
 
         StringExpr keyExpr;
@@ -163,12 +223,14 @@ public class DeclarationStmtParser {
         List<SetStmt> list = new LinkedList<>();
 
         keyExpr = new Str(VOLUME_KEY);
+        Preconditions.checkArgument(actorDefinitionNode.get(VOLUME_KEY).isNumber());
         jsonDouble = actorDefinitionNode.get(VOLUME_KEY).asDouble();
         numExpr = new Number((float) jsonDouble);
         setStmt = new SetAttributeTo(keyExpr, numExpr);
         list.add(setStmt);
 
         keyExpr = new Str(LAYERORDER_KEY);
+        Preconditions.checkArgument(actorDefinitionNode.get(LAYERORDER_KEY).isNumber());
         jsonDouble = actorDefinitionNode.get(LAYERORDER_KEY).asDouble();
         numExpr = new Number((float) jsonDouble);
         setStmt = new SetAttributeTo(keyExpr, numExpr);
@@ -178,17 +240,20 @@ public class DeclarationStmtParser {
 
             keyExpr = new Str(TEMPO_KEY);
             jsonDouble = actorDefinitionNode.get(TEMPO_KEY).asDouble();
+            Preconditions.checkArgument(actorDefinitionNode.get(TEMPO_KEY).isNumber());
             numExpr = new Number((float) jsonDouble);
             setStmt = new SetAttributeTo(keyExpr, numExpr);
             list.add(setStmt);
 
             keyExpr = new Str(VIDTRANSPARENCY_KEY);
+            Preconditions.checkArgument(actorDefinitionNode.get(VIDTRANSPARENCY_KEY).isNumber());
             jsonDouble = actorDefinitionNode.get(VIDTRANSPARENCY_KEY).asDouble();
             numExpr = new Number((float) jsonDouble);
             setStmt = new SetAttributeTo(keyExpr, numExpr);
             list.add(setStmt);
 
             keyExpr = new Str(VIDSTATE_KEY);
+            Preconditions.checkArgument(actorDefinitionNode.get(VIDSTATE_KEY).isTextual());
             jsonString = actorDefinitionNode.get(VIDSTATE_KEY).asText();
             stringExpr = new Str(jsonString);
             setStmt = new SetAttributeTo(keyExpr, stringExpr);
@@ -197,42 +262,49 @@ public class DeclarationStmtParser {
         } else {
 
             keyExpr = new Str(VISIBLE_KEY);
+            Preconditions.checkArgument(actorDefinitionNode.get(VISIBLE_KEY).isBoolean());
             jsonBool = actorDefinitionNode.get(VISIBLE_KEY).asBoolean();
             boolExpr = new Bool(jsonBool);
             setStmt = new SetAttributeTo(keyExpr, boolExpr);
             list.add(setStmt);
 
             keyExpr = new Str(X_KEY);
+            Preconditions.checkArgument(actorDefinitionNode.get(X_KEY).isNumber());
             jsonDouble = actorDefinitionNode.get(X_KEY).asDouble();
             numExpr = new Number((float) jsonDouble);
             setStmt = new SetAttributeTo(keyExpr, numExpr);
             list.add(setStmt);
 
             keyExpr = new Str(Y_KEY);
+            Preconditions.checkArgument(actorDefinitionNode.get(Y_KEY).isNumber());
             jsonDouble = actorDefinitionNode.get(Y_KEY).asDouble();
             numExpr = new Number((float) jsonDouble);
             setStmt = new SetAttributeTo(keyExpr, numExpr);
             list.add(setStmt);
 
             keyExpr = new Str(SIZE_KEY);
+            Preconditions.checkArgument(actorDefinitionNode.get(SIZE_KEY).isNumber());
             jsonDouble = actorDefinitionNode.get(SIZE_KEY).asDouble();
             numExpr = new Number((float) jsonDouble);
             setStmt = new SetAttributeTo(keyExpr, numExpr);
             list.add(setStmt);
 
             keyExpr = new Str(DIRECTION_KEY);
+            Preconditions.checkArgument(actorDefinitionNode.get(DIRECTION_KEY).isNumber());
             jsonDouble = actorDefinitionNode.get(DIRECTION_KEY).asDouble();
             numExpr = new Number((float) jsonDouble);
             setStmt = new SetAttributeTo(keyExpr, numExpr);
             list.add(setStmt);
 
             keyExpr = new Str(DRAG_KEY);
+            Preconditions.checkArgument(actorDefinitionNode.get(DRAG_KEY).isBoolean());
             jsonBool = actorDefinitionNode.get(DRAG_KEY).asBoolean();
             boolExpr = new Bool(jsonBool);
             setStmt = new SetAttributeTo(keyExpr, boolExpr);
             list.add(setStmt);
 
             keyExpr = new Str(ROTATIONSTYLE_KEY);
+            Preconditions.checkArgument(actorDefinitionNode.get(ROTATIONSTYLE_KEY).isTextual());
             jsonString = actorDefinitionNode.get(ROTATIONSTYLE_KEY).textValue();
             stringExpr = new Str(jsonString);
             setStmt = new SetAttributeTo(keyExpr, stringExpr);

@@ -13,8 +13,9 @@ import java.util.stream.StreamSupport;
 import scratch.newast.ParsingException;
 import scratch.newast.model.ActorDefinition;
 import scratch.newast.model.ActorType;
-import scratch.newast.model.DeclarationStmt;
-import scratch.newast.model.DeclarationStmtList;
+import scratch.newast.model.statement.declaration.DeclarationIdentAsTypeStmt;
+import scratch.newast.model.statement.declaration.DeclarationStmt;
+import scratch.newast.model.statement.declaration.DeclarationStmtList;
 import scratch.newast.model.Script;
 import scratch.newast.model.ScriptList;
 import scratch.newast.model.SetStmtList;
@@ -53,6 +54,7 @@ public class ActorDefinitionParser {
                 actorDefinitionNode.get(IS_STAGE_KEY).asBoolean()));
         decls.addAll(DeclarationStmtParser.parseVariables(actorDefinitionNode.get("variables"), identifier.getValue(),
                 actorDefinitionNode.get(IS_STAGE_KEY).asBoolean()));
+        decls.addAll(DeclarationStmtParser.parseAttributeDeclarations(actorDefinitionNode));
         DeclarationStmtList declarations = new DeclarationStmtList(decls);
 
         JsonNode allBlocks = actorDefinitionNode.get("blocks");
@@ -70,7 +72,7 @@ public class ActorDefinitionParser {
 
         ProcedureDefinitionList procDeclList = ProcDefinitionParser.parse(allBlocks);
 
-        List<SetStmt> setStmtList = DeclarationStmtParser.parseAttributeDeclarationSetStmts(actorDefinitionNode, identifier.getValue());
+        List<SetStmt> setStmtList = DeclarationStmtParser.parseAttributeDeclarationSetStmts(actorDefinitionNode);
         setStmtList.addAll(DeclarationStmtParser.parseListDeclarationSetStmts(actorDefinitionNode.get("lists"),
                 identifier.getValue()));
         setStmtList.addAll(DeclarationStmtParser.parseVariableDeclarationSetStmts(actorDefinitionNode.get("variables"),
