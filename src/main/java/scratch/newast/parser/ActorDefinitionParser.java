@@ -1,8 +1,5 @@
 package scratch.newast.parser;
 
-import static scratch.newast.Constants.IS_STAGE_KEY;
-import static scratch.newast.Constants.NAME_KEY;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.base.Preconditions;
 import java.util.Iterator;
@@ -32,6 +29,8 @@ import scratch.newast.model.resource.ResourceList;
 import scratch.newast.model.statement.common.SetAttributeTo;
 import scratch.newast.model.statement.common.SetStmt;
 import scratch.newast.model.variable.Identifier;
+
+import static scratch.newast.Constants.*;
 
 public class ActorDefinitionParser {
 
@@ -85,17 +84,7 @@ public class ActorDefinitionParser {
 
     private static SetStmtList parseSetStmts(JsonNode actorDefinitionNode, String actorName) {
         //Todo refactor to avoid code duplication
-        String volumeKey = "volume";
-        String layerOrderKey = "layerOrder";
-        String tempoKey = "tempo";
-        String vidTransKey = "videoTransparency";
-        String vidState = "videoState";
-        String visibleKey = "visible";
-        String xKey = "x";
-        String yKey = "y";
-        String sizeKey = "size";
-        String directionKey = "direction";
-        String dragKey = "draggable";
+
         //String ttSLang = "textToSpeechLanguage"; // Ignored as this is an extension
 
         StringExpr keyExpr;
@@ -109,14 +98,14 @@ public class ActorDefinitionParser {
 
         List<SetStmt> list = new LinkedList<>();
 
-        keyExpr = new Str(volumeKey);
-        jsonDouble = actorDefinitionNode.get(volumeKey).asDouble();
+        keyExpr = new Str(VOLUME_KEY);
+        jsonDouble = actorDefinitionNode.get(VOLUME_KEY).asDouble();
         numExpr = new Number((float) jsonDouble);
         setStmt = new SetAttributeTo(keyExpr, numExpr);
         list.add(setStmt);
 
-        keyExpr = new Str(layerOrderKey);
-        jsonDouble = actorDefinitionNode.get(layerOrderKey).asDouble();
+        keyExpr = new Str(LAYERORDER_KEY);
+        jsonDouble = actorDefinitionNode.get(LAYERORDER_KEY).asDouble();
         numExpr = new Number((float) jsonDouble);
         setStmt = new SetAttributeTo(keyExpr, numExpr);
         list.add(setStmt);
@@ -124,58 +113,58 @@ public class ActorDefinitionParser {
         if (actorDefinitionNode.get("isStage").asBoolean()) {
             //Stage
 
-            keyExpr = new Str(tempoKey);
-            jsonDouble = actorDefinitionNode.get(tempoKey).asDouble();
+            keyExpr = new Str(TEMPO_KEY);
+            jsonDouble = actorDefinitionNode.get(TEMPO_KEY).asDouble();
             numExpr = new Number((float) jsonDouble);
             setStmt = new SetAttributeTo(keyExpr, numExpr);
             list.add(setStmt);
 
-            keyExpr = new Str(vidTransKey);
-            jsonDouble = actorDefinitionNode.get(vidTransKey).asDouble();
+            keyExpr = new Str(VIDTRANSPARENCY_KEY);
+            jsonDouble = actorDefinitionNode.get(VIDTRANSPARENCY_KEY).asDouble();
             numExpr = new Number((float) jsonDouble);
             setStmt = new SetAttributeTo(keyExpr, numExpr);
             list.add(setStmt);
 
-            keyExpr = new Str(vidState);
-            jsonString = actorDefinitionNode.get(vidState).asText();
+            keyExpr = new Str(VIDSTATE_KEY);
+            jsonString = actorDefinitionNode.get(VIDSTATE_KEY).asText();
             stringExpr = new Str(jsonString);
             setStmt = new SetAttributeTo(keyExpr, stringExpr);
             list.add(setStmt);
 
         } else {
 
-            keyExpr = new Str(visibleKey);
-            jsonBool = actorDefinitionNode.get(visibleKey).asBoolean();
+            keyExpr = new Str(VISIBLE_KEY);
+            jsonBool = actorDefinitionNode.get(VISIBLE_KEY).asBoolean();
             boolExpr = new Bool(jsonBool);
             setStmt = new SetAttributeTo(keyExpr, boolExpr);
             list.add(setStmt);
 
-            keyExpr = new Str(xKey);
-            jsonDouble = actorDefinitionNode.get(xKey).asDouble();
+            keyExpr = new Str(X_KEY);
+            jsonDouble = actorDefinitionNode.get(X_KEY).asDouble();
             numExpr = new Number((float) jsonDouble);
             setStmt = new SetAttributeTo(keyExpr, numExpr);
             list.add(setStmt);
 
-            keyExpr = new Str(yKey);
-            jsonDouble = actorDefinitionNode.get(yKey).asDouble();
+            keyExpr = new Str(Y_KEY);
+            jsonDouble = actorDefinitionNode.get(Y_KEY).asDouble();
             numExpr = new Number((float) jsonDouble);
             setStmt = new SetAttributeTo(keyExpr, numExpr);
             list.add(setStmt);
 
-            keyExpr = new Str(sizeKey);
-            jsonDouble = actorDefinitionNode.get(sizeKey).asDouble();
+            keyExpr = new Str(SIZE_KEY);
+            jsonDouble = actorDefinitionNode.get(SIZE_KEY).asDouble();
             numExpr = new Number((float) jsonDouble);
             setStmt = new SetAttributeTo(keyExpr, numExpr);
             list.add(setStmt);
 
-            keyExpr = new Str(directionKey);
-            jsonDouble = actorDefinitionNode.get(directionKey).asDouble();
+            keyExpr = new Str(DIRECTION_KEY);
+            jsonDouble = actorDefinitionNode.get(DIRECTION_KEY).asDouble();
             numExpr = new Number((float) jsonDouble);
             setStmt = new SetAttributeTo(keyExpr, numExpr);
             list.add(setStmt);
 
-            keyExpr = new Str(dragKey);
-            jsonBool = actorDefinitionNode.get(dragKey).asBoolean();
+            keyExpr = new Str(DRAG_KEY);
+            jsonBool = actorDefinitionNode.get(DRAG_KEY).asBoolean();
             boolExpr = new Bool(jsonBool);
             setStmt = new SetAttributeTo(keyExpr, boolExpr);
             list.add(setStmt);
@@ -190,8 +179,5 @@ public class ActorDefinitionParser {
         return new SetStmtList(list);
     }
 
-    private static List<SetStmt> parseEffectSetStatements(){
-        throw new RuntimeException("Not implemented");
-    }
 
 }

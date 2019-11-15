@@ -129,4 +129,16 @@ public class Constants {
      * The position of the list's values in the declaration.
      */
     public static final int DECLARATION_LIST_VALUES_POS = 1;
+
+    public static final String VOLUME_KEY = "volume";
+    public static final String LAYERORDER_KEY = "layerOrder";
+    public static final String TEMPO_KEY = "tempo";
+    public static final String VIDTRANSPARENCY_KEY = "videoTransparency";
+    public static final String VIDSTATE_KEY = "videoState";
+    public static final String VISIBLE_KEY = "visible";
+    public static final String X_KEY = "x";
+    public static final String Y_KEY= "y";
+    public static final String SIZE_KEY = "size";
+    public static final String DIRECTION_KEY = "direction";
+    public static final String DRAG_KEY = "draggable";
 }

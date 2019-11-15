@@ -1,10 +1,11 @@
-package scratch.newast.opcodes;
+package scratch.newast.parser.attributes;
 
-public enum CallStmtOpcode {
-    procedures_call;
+public enum SoundEffect {
+
+     PAN, PITCH;
 
     public static boolean contains(String opcode) {
-        for (CallStmtOpcode value : CallStmtOpcode.values()) {
+        for (SoundEffect value : SoundEffect.values()) {
             if (value.name().equals(opcode)) {
                 return true;
             }
