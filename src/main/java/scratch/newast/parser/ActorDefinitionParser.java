@@ -1,21 +1,19 @@
 package scratch.newast.parser;
 
+import static scratch.newast.Constants.IS_STAGE_KEY;
+import static scratch.newast.Constants.NAME_KEY;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.base.Preconditions;
-
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
-
 import scratch.newast.ParsingException;
 import scratch.newast.model.ActorDefinition;
 import scratch.newast.model.ActorType;
-import scratch.newast.model.statement.declaration.DeclarationIdentAsTypeStmt;
-import scratch.newast.model.statement.declaration.DeclarationStmt;
-import scratch.newast.model.statement.declaration.DeclarationStmtList;
 import scratch.newast.model.Script;
 import scratch.newast.model.ScriptList;
 import scratch.newast.model.SetStmtList;
@@ -23,11 +21,13 @@ import scratch.newast.model.procedure.ProcedureDefinitionList;
 import scratch.newast.model.resource.Resource;
 import scratch.newast.model.resource.ResourceList;
 import scratch.newast.model.statement.common.SetStmt;
+import scratch.newast.model.statement.declaration.DeclarationStmt;
+import scratch.newast.model.statement.declaration.DeclarationStmtList;
 import scratch.newast.model.variable.Identifier;
 
-import static scratch.newast.Constants.*;
-
 public class ActorDefinitionParser {
+
+    private static Identifier currentActor;
 
     public static ActorDefinition parse(JsonNode actorDefinitionNode) throws ParsingException {
         Preconditions.checkNotNull(actorDefinitionNode);
@@ -42,6 +42,7 @@ public class ActorDefinitionParser {
         }
 
         Identifier identifier = new Identifier(actorDefinitionNode.get(NAME_KEY).asText());
+        currentActor = identifier;
 
         List<Resource> res = ResourceParser.parseSound(actorDefinitionNode.get("sounds"));
         res.addAll(ResourceParser.parseCostume(actorDefinitionNode.get("costumes")));
@@ -82,4 +83,12 @@ public class ActorDefinitionParser {
                 scriptList);
     }
 
+    /**
+     * This may be a temporary solution
+     *
+     * @return
+     */
+    public static Identifier getCurrentActor() {
+        return new Identifier(currentActor.getValue());
+    }
 }
