@@ -13,7 +13,7 @@ public class ExpressionListPlain implements ASTNode, ListExpr {
 
     public ExpressionListPlain(List<Expression> expressions) {
         this.expressions = expressions;
-        children = ImmutableList.<ASTNode>builder().build();
+        children = ImmutableList.<ASTNode>builder().addAll(expressions).build();
     }
 
     public List<Expression> getExpressions() {

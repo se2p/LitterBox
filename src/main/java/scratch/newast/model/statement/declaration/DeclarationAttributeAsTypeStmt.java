@@ -15,7 +15,7 @@ public class DeclarationAttributeAsTypeStmt implements DeclarationStmt{
         this.stringExpr = stringExpr;
         this.type = type;
         ImmutableList.Builder<ASTNode> builder = ImmutableList.builder();
-        children = builder.build();
+        children = builder.add(stringExpr).add(type).build();
     }
 
     public StringExpr getStringExpr() {

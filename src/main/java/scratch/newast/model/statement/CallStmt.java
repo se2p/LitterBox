@@ -15,7 +15,7 @@ public class CallStmt implements Stmt {
         this.ident = ident;
         this.expressions = expressions;
         ImmutableList.Builder<ASTNode> builder = ImmutableList.builder();
-        children = builder.build();
+        children = builder.add(ident).add(expressions).build();
     }
 
     @Override

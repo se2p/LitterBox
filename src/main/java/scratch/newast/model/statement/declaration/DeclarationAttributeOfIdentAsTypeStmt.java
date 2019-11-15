@@ -18,7 +18,7 @@ public class DeclarationAttributeOfIdentAsTypeStmt implements DeclarationStmt {
         this.ident = ident;
         this.type = type;
         ImmutableList.Builder<ASTNode> builder = ImmutableList.builder();
-        children = builder.build();
+        children = builder.add(stringExpr).add(ident).add(type).build();
     }
 
     public StringExpr getStringExpr() {

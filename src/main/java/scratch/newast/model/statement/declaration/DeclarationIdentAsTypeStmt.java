@@ -16,7 +16,7 @@ public class DeclarationIdentAsTypeStmt implements DeclarationStmt {
         this.ident = ident;
         this.type = type;
         ImmutableList.Builder<ASTNode> builder = ImmutableList.builder();
-        children = builder.build();
+        children = builder.add(ident).add(type).build();
     }
 
     public Identifier getIdent() {
