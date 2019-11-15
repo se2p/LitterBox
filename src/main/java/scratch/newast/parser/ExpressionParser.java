@@ -197,7 +197,7 @@ public class ExpressionParser {
             TimeComp timeComp = TimecompParser.parse(blocks.get(identifier));
             return new Current(timeComp);
         case sensing_distanceto:
-            Position pos = parsePosition();
+            Position pos = PositionParser.parse(blocks.get(identifier), blocks);
             return new DistanceTo(pos);
         case operator_add:
             return buildNumExprWithTwoNumExprInputs(Add.class, identifier, blocks);
@@ -226,14 +226,6 @@ public class ExpressionParser {
 
     private static Variable parseVariable() { // TODO parse - note that the list is in the "fields" node. -- update probably I have to use the lookuptable here in order to distinguish Ident and Ident . Ident
         throw new RuntimeException("Not implemented yet. VARIABLES ARE EVIL BUT DO PARSE THEM");
-    }
-
-    private static Position parsePosition() {
-        throw new RuntimeException("Not implemented yet");
-    }
-
-    private static TimeComp parseTimeComp() {
-        throw new RuntimeException("Not implemented yet");
     }
 
     private static StringExpr parseBlockStringExpr(String opcodeString, String identifier, JsonNode blocks,
