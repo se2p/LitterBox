@@ -19,6 +19,8 @@ import scratch.newast.model.SetStmtList;
 import scratch.newast.model.expression.list.ExpressionListPlain;
 import scratch.newast.model.expression.num.Number;
 import scratch.newast.model.expression.string.Str;
+import scratch.newast.model.resource.ImageResource;
+import scratch.newast.model.resource.SoundResource;
 import scratch.newast.model.statement.common.SetAttributeTo;
 import scratch.newast.model.statement.common.SetStmt;
 import scratch.newast.model.statement.common.SetVariableTo;
@@ -119,6 +121,31 @@ public class ProgramParserTest {
             Truth.assertThat(((Str) exprListPlain.getExpressions().get(1)).getStr()).isEqualTo("Elem2");
             Truth.assertThat(((Str) exprListPlain.getExpressions().get(2)).getStr()).isEqualTo("1");
             Truth.assertThat(((Str) exprListPlain.getExpressions().get(3)).getStr()).isEqualTo("2");
+
+        } catch (ParsingException e) {
+            e.printStackTrace();
+            fail();
+        }
+    }
+
+    @Test
+    public void testResources() {
+        Program program = null;
+        try {
+            program = ProgramParser.parseProgram("Empty", project);
+            ActorDefinition stage = program.getActorDefinitionList().getDefintions().get(0);
+            SoundResource soundResource = (SoundResource) stage.getResources().getResourceList().get(0);
+            Truth.assertThat(soundResource.getIdent().getValue()).isEqualTo("pop");
+            ImageResource imageResource = (ImageResource) stage.getResources().getResourceList().get(1);
+            Truth.assertThat(imageResource.getIdent().getValue()).isEqualTo("backdrop1");
+
+            ActorDefinition sprite = program.getActorDefinitionList().getDefintions().get(1);
+            soundResource = (SoundResource) sprite.getResources().getResourceList().get(0);
+            Truth.assertThat(soundResource.getIdent().getValue()).isEqualTo("Meow");
+            imageResource = (ImageResource) sprite.getResources().getResourceList().get(1);
+            Truth.assertThat(imageResource.getIdent().getValue()).isEqualTo("costume1");
+            imageResource = (ImageResource) sprite.getResources().getResourceList().get(2);
+            Truth.assertThat(imageResource.getIdent().getValue()).isEqualTo("costume2");
 
         } catch (ParsingException e) {
             e.printStackTrace();
