@@ -1,5 +1,12 @@
 package scratch.newast.parser;
 
+import static scratch.newast.opcodes.SpriteMotionStmtOpcode.motion_glidesecstoxy;
+import static scratch.newast.opcodes.SpriteMotionStmtOpcode.motion_glideto;
+import static scratch.newast.opcodes.SpriteMotionStmtOpcode.motion_goto;
+import static scratch.newast.opcodes.SpriteMotionStmtOpcode.motion_gotoxy;
+import static scratch.newast.opcodes.SpriteMotionStmtOpcode.motion_pointtowards;
+import static scratch.newast.opcodes.SpriteMotionStmtOpcode.valueOf;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.base.Preconditions;
 import java.util.ArrayList;
@@ -31,11 +38,22 @@ public class PositionParser {
         }
     }
 
-    private static Position parseRelativePos(JsonNode current, JsonNode allBlocks) {
+    private static Position parseRelativePos(JsonNode current, JsonNode allBlocks) throws ParsingException {
         ArrayList<JsonNode> inputs = new ArrayList();
         current.get(Constants.INPUTS_KEY).elements().forEachRemaining(inputs::add);
 
-        JsonNode menuID = inputs.get(0).get(Constants.POS_INPUT_VALUE);
+        JsonNode menuID;
+        SpriteMotionStmtOpcode opcode = valueOf(current.get(Constants.OPCODE_KEY).asText());
+
+        if (motion_goto.equals(opcode) || motion_pointtowards.equals(opcode)) {
+            menuID = inputs.get(0).get(Constants.POS_INPUT_VALUE);
+        } else if (motion_glideto.equals(opcode)) {
+            menuID = inputs.get(1).get(Constants.POS_INPUT_VALUE);
+        } else {
+            throw new ParsingException(
+                "Cannot parse relative coordinates for a block with opcode " + current.get(Constants.OPCODE_KEY));
+        }
+
         ArrayList<JsonNode> fields = new ArrayList();
         allBlocks.get(menuID.asText()).get(Constants.FIELDS_KEY).elements().forEachRemaining(fields::add);
         String posString = fields.get(Constants.FIELD_VALUE).get(0).asText();
@@ -50,13 +68,12 @@ public class PositionParser {
     }
 
     private static Position parseCoordinate(JsonNode current, JsonNode allBlocks) throws ParsingException {
-        SpriteMotionStmtOpcode spriteMotionStmtOpcode = SpriteMotionStmtOpcode
-            .valueOf(current.get(Constants.OPCODE_KEY).asText());
-        if (SpriteMotionStmtOpcode.motion_glidesecstoxy.equals(spriteMotionStmtOpcode)) {
+        SpriteMotionStmtOpcode spriteMotionStmtOpcode = valueOf(current.get(Constants.OPCODE_KEY).asText());
+        if (motion_glidesecstoxy.equals(spriteMotionStmtOpcode)) {
             NumExpr xExpr = ExpressionParser.parseNumExpr(current, 1, allBlocks);
             NumExpr yExpr = ExpressionParser.parseNumExpr(current, 2, allBlocks);
             return new CoordinatePosition(xExpr, yExpr);
-        } else if (SpriteMotionStmtOpcode.motion_gotoxy.equals(spriteMotionStmtOpcode)) {
+        } else if (motion_gotoxy.equals(spriteMotionStmtOpcode)) {
             NumExpr xExpr = ExpressionParser.parseNumExpr(current, 0, allBlocks);
             NumExpr yExpr = ExpressionParser.parseNumExpr(current, 1, allBlocks);
             return new CoordinatePosition(xExpr, yExpr);
