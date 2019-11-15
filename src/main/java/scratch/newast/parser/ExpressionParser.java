@@ -411,7 +411,6 @@ public class ExpressionParser {
                     }
                 }
             }
-            //FIXME will not work this way, have to look up exprArray.get(POS_DATA_ARRAY).get(POS_INPUT_ID) in symboltable
         } else {
             String idString = exprArray.get(POS_DATA_ARRAY).get(POS_INPUT_ID).asText();
             if (ProgramParser.symbolTable.getVariables().containsKey(idString)) {
