@@ -14,7 +14,11 @@ public class StmtList implements ASTNode {
         this.stmts = stmts;
         this.terminationStmt = terminationStmt;
         ImmutableList.Builder<ASTNode> builder = ImmutableList.builder();
-        this.children = builder.add(stmts, terminationStmt).build();
+        builder.add(stmts);
+        if (terminationStmt != null) {
+            builder.add(terminationStmt);
+        }
+        this.children = builder.build();
     }
 
     public ListOfStmt getStmts() {

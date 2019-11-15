@@ -4,6 +4,8 @@ import static scratch.newast.Constants.FIELDS_KEY;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.base.Preconditions;
+import java.util.ArrayList;
+import java.util.List;
 import scratch.newast.Constants;
 import scratch.newast.model.elementchoice.ElementChoice;
 import scratch.newast.model.elementchoice.Next;
@@ -18,12 +20,23 @@ public class ElementChoiceParser {
         Preconditions.checkNotNull(current);
         Preconditions.checkNotNull(allBlocks);
 
-        //TODO this may not work for all blocks, needs testing
-        String blockMenuID = current.get(Constants.INPUTS_KEY).get(0).get(Constants.POS_INPUT_VALUE).asText();
-        JsonNode menu = allBlocks.get(blockMenuID);
-        String elementName = menu.get(FIELDS_KEY).get(0).get(0).asText();
+        //Make a list of all elements in inputs
+        List<JsonNode> inputsList = new ArrayList<>();
+        current.get(Constants.INPUTS_KEY).elements().forEachRemaining(inputsList::add);
 
-        StandardElemChoice standardElemChoice = StandardElemChoice.valueOf((elementName.split(" ")[0]));
+        String blockMenuID = inputsList.get(0).get(Constants.POS_INPUT_VALUE).asText();
+        JsonNode menu = allBlocks.get(blockMenuID);
+
+        List<JsonNode> fieldsList = new ArrayList<>();
+        menu.get(FIELDS_KEY).elements().forEachRemaining(fieldsList::add);
+        String elementName = fieldsList.get(0).get(0).asText();
+
+        String elemKey = elementName.split(" ")[0];
+        if (!StandardElemChoice.contains(elemKey)) {
+            return new WithId(new Identifier(elementName));
+        }
+
+        StandardElemChoice standardElemChoice = StandardElemChoice.valueOf(elemKey);
         switch (standardElemChoice) {
             case random:
                 return new Random();
@@ -32,11 +45,20 @@ public class ElementChoiceParser {
             case previous:
                 return new Prev();
             default:
-                return new WithId(new Identifier(elementName));
+                throw new RuntimeException("No implementation for " + standardElemChoice);
         }
     }
 
     private enum StandardElemChoice {
-        random, next, previous
+        random, next, previous;
+
+        public static boolean contains(String opcode) {
+            for (StandardElemChoice value : StandardElemChoice.values()) {
+                if (value.name().equals(opcode)) {
+                    return true;
+                }
+            }
+            return false;
+        }
     }
 }

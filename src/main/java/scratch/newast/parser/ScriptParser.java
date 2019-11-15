@@ -61,7 +61,7 @@ public class ScriptParser {
         List<Stmt> list = new LinkedList<>();
         JsonNode current = blocks.get(blockID);
 
-        while (!current.isNull()) {
+        while (current != null && !current.isNull()) {
             Stmt stmt = StmtParser.parse(blockID, blocks);
             if (stmt instanceof TerminationStmt) {
                 terminationStmt = (TerminationStmt) stmt;

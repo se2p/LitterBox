@@ -22,10 +22,10 @@ public class TerminationStmtParser {
         Preconditions.checkNotNull(blocks);
 
         String opCodeString = current.get(Constants.OPCODE_KEY).asText();
-        if (TerminationStmtOpcode.contains(opCodeString)) {
+        if (!TerminationStmtOpcode.contains(opCodeString)) {
             throw new ParsingException(
                 "Called parseTerminationStmt with a block that does not qualify as such"
-                    + "a statement");
+                    + " a statement. Opcode is " + opCodeString);
         }
 
         TerminationStmtOpcode opcode = TerminationStmtOpcode.valueOf(opCodeString);

@@ -267,7 +267,7 @@ public class ExpressionParser {
     private static BoolExpr parseBlockBoolExpr(String opcodeString, String identifier, JsonNode blocks, JsonNode fields)
         throws ParsingException {
         Preconditions
-            .checkArgument(BoolExprOpcode.contains(opcodeString), opcodeString + " is not a StringExprOpcode.");
+            .checkArgument(BoolExprOpcode.contains(opcodeString), opcodeString + " is not a BoolExprOpcode.");
         BoolExprOpcode opcode = BoolExprOpcode.valueOf(opcodeString);
         switch (opcode) {
             case sensing_touchingobject:

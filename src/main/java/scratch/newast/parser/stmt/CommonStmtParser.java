@@ -97,7 +97,7 @@ public class CommonStmtParser {
         if (sound_changevolumeby.equals(opcode)) {
             String attributeName = "VOLUME";
             NumExpr numExpr = ExpressionParser.parseNumExpr(current, 0,
-                allBlocks); //Todo How does the expression parser handle blocks where there is a string in the inputsfield?
+                allBlocks);
             return new ChangeAttributeBy(new Str(attributeName), numExpr);
         } else if (sound_changeeffectby.equals(opcode) || looks_changeeffectby.equals(opcode)) {
             NumExpr numExpr = ExpressionParser.parseNumExpr(current, 0, allBlocks);
@@ -110,12 +110,12 @@ public class CommonStmtParser {
     }
 
     private static CommonStmt parseChangeVariableBy(JsonNode current, JsonNode allBlocks) throws ParsingException {
-        Expression stringExpr = ExpressionParser.parseExpression(current, 0, allBlocks);
+        Expression numExpr = ExpressionParser.parseNumExpr(current, 0, allBlocks);
 
         String variableName = current.get(FIELDS_KEY).get(VARIABLE_KEY).get(FIELD_VALUE).asText();
         Identifier ident = new Identifier(variableName);
 
-        return new ChangeVariableBy(ident, stringExpr);
+        return new ChangeVariableBy(ident, numExpr);
     }
 
     private static CommonStmt parseBroadcast(JsonNode current, JsonNode allBlocks) {
@@ -155,7 +155,7 @@ public class CommonStmtParser {
     private static WaitUntil parseWaitUntil(JsonNode current, JsonNode allBlocks) throws ParsingException {
         JsonNode inputs = current.get(INPUTS_KEY);
         if (inputs.elements().hasNext()) {
-            BoolExpr boolExpr = ExpressionParser.parseBoolExpr(inputs, 0, allBlocks);
+            BoolExpr boolExpr = ExpressionParser.parseBoolExpr(current, 0, allBlocks);
             return new WaitUntil(boolExpr);
         } else {
             return new WaitUntil(new UnspecifiedBoolExpr());
@@ -163,8 +163,7 @@ public class CommonStmtParser {
     }
 
     private static WaitSeconds parseWaitSeconds(JsonNode current, JsonNode allBlocks) throws ParsingException {
-        JsonNode inputs = current.get(INPUTS_KEY);
-        NumExpr numExpr = ExpressionParser.parseNumExpr(inputs, 0, allBlocks);
+        NumExpr numExpr = ExpressionParser.parseNumExpr(current, 0, allBlocks);
         return new WaitSeconds(numExpr);
     }
 

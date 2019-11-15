@@ -19,7 +19,6 @@ import scratch.newast.model.statement.spritelook.SwitchCostumeTo;
 import scratch.newast.model.statement.spritelook.Think;
 import scratch.newast.model.statement.spritelook.ThinkForSecs;
 import scratch.newast.opcodes.SpriteLookStmtOpcode;
-import scratch.newast.opcodes.SpriteMotionStmtOpcode;
 import scratch.newast.parser.ElementChoiceParser;
 import scratch.newast.parser.ExpressionParser;
 
@@ -31,8 +30,8 @@ public class SpriteLookStmtParser {
 
         String opcodeString = current.get(OPCODE_KEY).asText();
         Preconditions
-                .checkArgument(SpriteMotionStmtOpcode.contains(opcodeString),
-                        "Given blockID does not point to a sprite motion block.");
+            .checkArgument(SpriteLookStmtOpcode.contains(opcodeString),
+                "Given blockID does not point to a sprite look block. Opcode is " + opcodeString);
 
         SpriteLookStmtOpcode opcode = SpriteLookStmtOpcode.valueOf(opcodeString);
         StringExpr stringExpr;
