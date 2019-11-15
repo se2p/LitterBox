@@ -14,7 +14,6 @@ import org.junit.Test;
 import scratch.newast.ParsingException;
 import scratch.newast.model.ActorDefinition;
 import scratch.newast.model.ActorDefinitionList;
-import scratch.newast.model.statement.declaration.DeclarationIdentAsTypeStmt;
 import scratch.newast.model.Program;
 import scratch.newast.model.SetStmtList;
 import scratch.newast.model.expression.list.ExpressionListPlain;
@@ -23,6 +22,7 @@ import scratch.newast.model.expression.string.Str;
 import scratch.newast.model.statement.common.SetAttributeTo;
 import scratch.newast.model.statement.common.SetStmt;
 import scratch.newast.model.statement.common.SetVariableTo;
+import scratch.newast.model.statement.declaration.DeclarationIdentAsTypeStmt;
 import scratch.newast.model.statement.declaration.DeclarationStmt;
 import scratch.newast.model.variable.Qualified;
 
@@ -97,8 +97,8 @@ public class ProgramParserTest {
             Program program = ProgramParser.parseProgram("Empty", project);
             ActorDefinition stage = program.getActorDefinitionList().getDefintions().get(0);
             List<DeclarationStmt> decls = stage.getDecls().getDeclarationStmtList();
-            //TODO DeclarationStmt is now an Interface
-            //Truth.assertThat(decls.get(0).getIdent().getValue()).isEqualTo("my variable");
+            Truth.assertThat(((DeclarationIdentAsTypeStmt) decls.get(0)).getIdent()
+                .getValue()).isEqualTo("my variable");
 
             SetVariableTo setStmt = (SetVariableTo) stage.getSetStmtList().getStmts().stream()
                 .filter(t -> t instanceof SetVariableTo)
@@ -110,7 +110,6 @@ public class ProgramParserTest {
             List<SetStmt> spriteSetStmts = sprite.getSetStmtList().getStmts().stream()
                 .filter(t -> t instanceof SetVariableTo).collect(
                     Collectors.toList());
-            System.out.println(spriteSetStmts);
 
             SetVariableTo setList = (SetVariableTo) spriteSetStmts.get(0);
             Qualified variable = (Qualified) setList.getVariable();
