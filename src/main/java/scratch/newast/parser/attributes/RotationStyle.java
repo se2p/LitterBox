@@ -17,7 +17,7 @@ public enum RotationStyle {
 
     public static boolean contains(String opcode) {
         for (RotationStyle value : RotationStyle.values()) {
-            if (value.name().equals(opcode)) {
+            if (value.toString().equals(opcode)) {
                 return true;
             }
         }
