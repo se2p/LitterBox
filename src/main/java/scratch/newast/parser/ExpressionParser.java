@@ -374,14 +374,24 @@ public class ExpressionParser {
         }
     }
 
-    public static Expression parseExpression(JsonNode block, int pos, JsonNode blocks) {
-        String opcodeString = block.get(OPCODE_KEY).asText();
-        if (CallStmtOpcode.contains(opcodeString)) {
-            //Get Argumenttypes from ProcedureDefinitionNameMapping
-            throw new RuntimeException("Not implemented yet");
+    public static Expression parseExpression(JsonNode block, int pos, JsonNode blocks) throws ParsingException {
+        try {
+            return parseNumExpr(block, pos, blocks);
+        } catch (Exception e) {
+            try {
+                return parseStringExpr(block, pos, blocks);
+            } catch (Exception ex) {
+                try {
+                    return parseBoolExpr(block, pos, blocks);
+                } catch (Exception exc) {
+                    try {
+                        return parseListExpr(block, pos, blocks);
+                    } catch (Exception excp) {
+                        throw new ParsingException("This is no expression we can parse.");
+                    }
+                }
+            }
         }
-
-        throw new RuntimeException("Not implemented yet");
     }
 
     public static StringExpr parseStringExpr(JsonNode block, int pos, JsonNode blocks) throws ParsingException {
