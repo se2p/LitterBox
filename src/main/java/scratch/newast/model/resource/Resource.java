@@ -1,5 +1,7 @@
 package scratch.newast.model.resource;
 
-public interface Resource {
+import scratch.newast.model.ASTNode;
+
+public interface Resource extends ASTNode {
 
 }

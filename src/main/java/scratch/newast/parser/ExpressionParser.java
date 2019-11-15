@@ -374,7 +374,7 @@ public class ExpressionParser {
             throw new RuntimeException("Not implemented yet");
         }
 
-        return null;
+        throw new RuntimeException("Not implemented yet");
     }
 
     public static StringExpr parseStringExpr(JsonNode block, int pos, JsonNode blocks) throws ParsingException {

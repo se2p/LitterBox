@@ -12,7 +12,7 @@ public class ResourceList implements ASTNode {
 
     public ResourceList(List<Resource> resourceList) {
         this.resourceList = resourceList;
-        children = ImmutableList.<ASTNode>builder().build();
+        children = ImmutableList.<ASTNode>builder().addAll(resourceList).build();
     }
 
     public List<Resource> getResourceList() {

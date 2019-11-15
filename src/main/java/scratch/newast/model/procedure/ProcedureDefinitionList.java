@@ -12,7 +12,7 @@ public class ProcedureDefinitionList implements ASTNode {
 
     public ProcedureDefinitionList(List<ProcedureDefinition> list) {
         this.list = list;
-        children = ImmutableList.<ASTNode>builder().build();
+        children = ImmutableList.<ASTNode>builder().addAll(list).build();
     }
 
     public List<ProcedureDefinition> getList() {
