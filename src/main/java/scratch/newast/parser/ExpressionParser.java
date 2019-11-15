@@ -83,14 +83,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import static scratch.newast.Constants.FIELDS_KEY;
-import static scratch.newast.Constants.INPUTS_KEY;
-import static scratch.newast.Constants.LIST_NAME_POS;
-import static scratch.newast.Constants.OPCODE_KEY;
-import static scratch.newast.Constants.POS_BLOCK_ID;
-import static scratch.newast.Constants.POS_DATA_ARRAY;
-import static scratch.newast.Constants.POS_INPUT_ID;
-import static scratch.newast.Constants.POS_INPUT_VALUE;
+import static scratch.newast.Constants.*;
 
 public class ExpressionParser {
 
@@ -244,7 +237,7 @@ public class ExpressionParser {
             return new NumFunctOf(funct, numExpr);
         case data_itemnumoflist:
             Expression item = parseExpression(blocks.get(identifier).get(INPUTS_KEY), 0, blocks);
-            Variable list = parseVariable();
+            Variable list = parseVariableFromFields(fields);
             return new IndexOf(item, list);
         default:
             throw new ParsingException(opcodeString + " not implemented yet");
@@ -270,7 +263,7 @@ public class ExpressionParser {
             return new Username();
         case data_itemoflist:
             NumExpr index = parseNumExpr(blocks.get(identifier), 0, blocks);
-            Variable var = parseVariable();
+            Variable var = parseVariableFromFields(fields);
             return new ItemOfVariable(index, var);
         default:
             throw new RuntimeException(
@@ -281,7 +274,7 @@ public class ExpressionParser {
     private static BoolExpr parseBlockBoolExpr(String opcodeString, String identifier, JsonNode blocks, JsonNode fields)
             throws ParsingException {
         Preconditions
-            .checkArgument(BoolExprOpcode.contains(opcodeString), opcodeString + " is not a BoolExprOpcode.");
+                .checkArgument(BoolExprOpcode.contains(opcodeString), opcodeString + " is not a BoolExprOpcode.");
         BoolExprOpcode opcode = BoolExprOpcode.valueOf(opcodeString);
         switch (opcode) {
         case sensing_touchingobject:
@@ -467,12 +460,19 @@ public class ExpressionParser {
             return new Qualified(new Identifier(variableInfo.getActor()),
                     new Identifier((variableInfo.getVariableName())));
         }
-
         throw new ParsingException("Block does not contain a list"); //Todo improve message
     }
 
-    private static Variable parseVariable() { // TODO parse - note that the list is in the "fields" node. -- update probably I have to use the lookuptable here in order to distinguish Ident and Ident . Ident
-        throw new RuntimeException("Not implemented yet. VARIABLES ARE EVIL BUT DO PARSE THEM");
+    private static Variable parseVariableFromFields(JsonNode fields) throws ParsingException {
+        String identifier = fields.get("LIST").get(1).asText(); // TODO add some constants
+        if (ProgramParser.symbolTable.getLists().containsKey(identifier)) {
+            ExpressionListInfo variableInfo = ProgramParser.symbolTable.getLists().get(identifier);
+            return new Qualified(new Identifier(variableInfo.getActor()),
+                    new Identifier((variableInfo.getVariableName())));
+        } else {
+            throw new ParsingException("No list to parse found in fields.");
+        }
+
     }
 
 
