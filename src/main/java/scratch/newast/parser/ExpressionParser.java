@@ -80,11 +80,14 @@ import scratch.newast.model.position.Position;
 import scratch.newast.model.timecomp.TimeComp;
 import scratch.newast.model.touchable.Touchable;
 import scratch.newast.model.variable.Identifier;
+import scratch.newast.model.variable.Qualified;
 import scratch.newast.model.variable.Variable;
 import scratch.newast.opcodes.BoolExprOpcode;
 import scratch.newast.opcodes.CallStmtOpcode;
 import scratch.newast.opcodes.NumExprOpcode;
 import scratch.newast.opcodes.StringExprOpcode;
+import scratch.newast.parser.symboltable.ExpressionListInfo;
+import scratch.newast.parser.symboltable.VariableInfo;
 
 public class ExpressionParser {
 
@@ -107,18 +110,27 @@ public class ExpressionParser {
             } catch (NumberFormatException e) {
                 throw new ParsingException("There was no parsable float but we didn't implement a solution yet.");
             }
+
         } else if (exprArray.get(POS_BLOCK_ID) instanceof TextNode) {
             String identifier = exprArray.get(POS_BLOCK_ID).asText();
             String opcode = blocks.get(identifier).get(OPCODE_KEY).asText();
             return parseBlockNumExpr(opcode, identifier, blocks, block.get(FIELDS_KEY));
-        } else if (exprArray.get(POS_DATA_ARRAY).get(POS_INPUT_ID).asText().endsWith("-my variable")) {
-            System.out.println("hooray! it's a variable!");
-            throw new RuntimeException("Not implemented yet");
-        } else if (!exprArray.get(POS_DATA_ARRAY).get(POS_INPUT_ID).asText().endsWith("-my variable")) {
-            System.out.println("hooray! it's a list!");
-            throw new RuntimeException("Not implemented yet");
+
+        } else {
+            String idString = exprArray.get(POS_DATA_ARRAY).get(POS_INPUT_ID).asText();
+            if (ProgramParser.symbolTable.getVariables().containsKey(idString)) {
+                VariableInfo variableInfo = ProgramParser.symbolTable.getVariables().get(idString);
+
+                return new Qualified(new Identifier(variableInfo.getActor()),
+                    new Identifier((variableInfo.getVariableName())));
+
+            } else if (ProgramParser.symbolTable.getLists().containsKey(idString)) {
+                ExpressionListInfo variableInfo = ProgramParser.symbolTable.getLists().get(idString);
+                return new Qualified(new Identifier(variableInfo.getActor()),
+                    new Identifier((variableInfo.getVariableName())));
+            }
         }
-        return null;
+        throw new ParsingException("Could not parse NumExpr.");
     }
 
     public static ArrayNode getExprArrayAtPos(JsonNode inputs, int pos) {
@@ -173,60 +185,58 @@ public class ExpressionParser {
         Preconditions.checkArgument(NumExprOpcode.contains(opcodeString), opcodeString + " is not a NumExprOpcode.");
         NumExprOpcode opcode = NumExprOpcode.valueOf(opcodeString);
         switch (opcode) {
-        // pure reporters
-        case sensing_timer:
-            return new Timer();
-        case sensing_dayssince2000:
-            return new DaysSince2000();
-        case sensing_mousex:
-            return new MouseX();
-        case sensing_mousey:
-            return new MouseY();
-        case sensing_loudness:
-            return new Loudness();
-        case operator_round:
-            JsonNode block = blocks.get(identifier);
-            NumExpr num = parseNumExpr(block, 0, blocks);
-            return new Round(num);
-        // One StringExpr or Variable as input
-        case operator_length:
-            return new LengthOfString(parseStringExpr(blocks.get(identifier),0, blocks));
-        case data_lengthoflist:
-            return new LengthOfVar(new Identifier(blocks.get(identifier).get(FIELDS_KEY).get(LIST_NAME_POS).textValue()));
-        case sensing_current:
-            TimeComp timeComp = TimecompParser.parse(blocks.get(identifier));
-            return new Current(timeComp);
-        case sensing_distanceto:
-            Position pos = PositionParser.parse(blocks.get(identifier), blocks);
-            return new DistanceTo(pos);
-        case operator_add:
-            return buildNumExprWithTwoNumExprInputs(Add.class, identifier, blocks);
-        case operator_subtract:
-            return buildNumExprWithTwoNumExprInputs(Minus.class, identifier, blocks);
-        case operator_multiply:
-            return buildNumExprWithTwoNumExprInputs(Mult.class, identifier, blocks);
-        case operator_divide:
-            return buildNumExprWithTwoNumExprInputs(Div.class, identifier, blocks);
-        case operator_mod:
-            return buildNumExprWithTwoNumExprInputs(Mod.class, identifier, blocks);
-        case operator_random:
-            return buildNumExprWithTwoNumExprInputs(PickRandom.class, identifier, blocks);
-        case operator_mathop:
-            NumFunct funct = parseNumFunct(fields);
-            NumExpr numExpr = parseNumExpr(blocks.get(identifier), 0, blocks);
-            return new NumFunctOf(funct, numExpr);
-        case data_itemnumoflist:
-            Expression item = parseExpression(blocks.get(identifier).get(INPUTS_KEY), 0, blocks);
-            Variable list = parseVariable();
-            return new IndexOf(item, list);
-        default:
-            throw new ParsingException(opcodeString + " not implemented yet");
+            // pure reporters
+            case sensing_timer:
+                return new Timer();
+            case sensing_dayssince2000:
+                return new DaysSince2000();
+            case sensing_mousex:
+                return new MouseX();
+            case sensing_mousey:
+                return new MouseY();
+            case sensing_loudness:
+                return new Loudness();
+            case operator_round:
+                JsonNode block = blocks.get(identifier);
+                NumExpr num = parseNumExpr(block, 0, blocks);
+                return new Round(num);
+            // One StringExpr or Variable as input
+            case operator_length:
+                return new LengthOfString(parseStringExpr(blocks.get(identifier), 0, blocks));
+            case data_lengthoflist:
+                return new LengthOfVar(
+                    new Identifier(blocks.get(identifier).get(FIELDS_KEY).get(LIST_NAME_POS).textValue()));
+            case sensing_current:
+                TimeComp timeComp = TimecompParser.parse(blocks.get(identifier));
+                return new Current(timeComp);
+            case sensing_distanceto:
+                Position pos = PositionParser.parse(blocks.get(identifier), blocks);
+                return new DistanceTo(pos);
+            case operator_add:
+                return buildNumExprWithTwoNumExprInputs(Add.class, identifier, blocks);
+            case operator_subtract:
+                return buildNumExprWithTwoNumExprInputs(Minus.class, identifier, blocks);
+            case operator_multiply:
+                return buildNumExprWithTwoNumExprInputs(Mult.class, identifier, blocks);
+            case operator_divide:
+                return buildNumExprWithTwoNumExprInputs(Div.class, identifier, blocks);
+            case operator_mod:
+                return buildNumExprWithTwoNumExprInputs(Mod.class, identifier, blocks);
+            case operator_random:
+                return buildNumExprWithTwoNumExprInputs(PickRandom.class, identifier, blocks);
+            case operator_mathop:
+                NumFunct funct = parseNumFunct(fields);
+                NumExpr numExpr = parseNumExpr(blocks.get(identifier), 0, blocks);
+                return new NumFunctOf(funct, numExpr);
+            case data_itemnumoflist:
+                Expression item = parseExpression(blocks.get(identifier).get(INPUTS_KEY), 0, blocks);
+                Variable list = parseVariable();
+                return new IndexOf(item, list);
+            default:
+                throw new ParsingException(opcodeString + " not implemented yet");
         }
     }
 
-    private static Variable parseVariable() { // TODO parse - note that the list is in the "fields" node. -- update probably I have to use the lookuptable here in order to distinguish Ident and Ident . Ident
-        throw new RuntimeException("Not implemented yet. VARIABLES ARE EVIL BUT DO PARSE THEM");
-    }
 
     private static StringExpr parseBlockStringExpr(String opcodeString, String identifier, JsonNode blocks,
         JsonNode fields) throws ParsingException {
@@ -264,6 +274,7 @@ public class ExpressionParser {
                 Touchable touchable = TouchableParser.parseTouchable(blocks.get(identifier), blocks);
                 return new Touching(touchable);
             case sensing_touchingcolor:
+                //TODO
                 throw new RuntimeException("Not implemented yet");
             case sensing_coloristouchingcolor:
                 Color first = ColorParser.parseColor(blocks.get(identifier), 0, blocks);
@@ -375,16 +386,22 @@ public class ExpressionParser {
             String opcode = blocks.get(identifier).get(OPCODE_KEY).asText();
             return parseBlockStringExpr(opcode, identifier, blocks, block.get(FIELDS_KEY));
             //FIXME will not work this way, have to look up exprArray.get(POS_DATA_ARRAY).get(POS_INPUT_ID) in symboltable
-        } else if (exprArray.get(POS_DATA_ARRAY).get(POS_INPUT_ID).asText().endsWith("-my variable")) {
-            System.out.println("hooray! it's a variable!");
-            throw new RuntimeException("Not implemented yet");
-        } else if (!exprArray.get(POS_DATA_ARRAY).get(POS_INPUT_ID).asText().endsWith("-my variable")) {
-            System.out.println("hooray! it's a list!");
-            throw new RuntimeException("Not implemented yet");
-        }
-        throw new RuntimeException("Not implemented yet");
-    }
+        } else {
+            String idString = exprArray.get(POS_DATA_ARRAY).get(POS_INPUT_ID).asText();
+            if (ProgramParser.symbolTable.getVariables().containsKey(idString)) {
+                VariableInfo variableInfo = ProgramParser.symbolTable.getVariables().get(idString);
 
+                return new Qualified(new Identifier(variableInfo.getActor()),
+                    new Identifier((variableInfo.getVariableName())));
+
+            } else if (ProgramParser.symbolTable.getLists().containsKey(idString)) {
+                ExpressionListInfo variableInfo = ProgramParser.symbolTable.getLists().get(idString);
+                return new Qualified(new Identifier(variableInfo.getActor()),
+                    new Identifier((variableInfo.getVariableName())));
+            }
+        }
+        throw new ParsingException("Could not parse StringExpr");
+    }
 
     public static BoolExpr parseBoolExpr(JsonNode block, int pos, JsonNode blocks) throws ParsingException {
         ArrayNode exprArray = getExprArrayAtPos(block.get(INPUTS_KEY), pos);
@@ -394,19 +411,45 @@ public class ExpressionParser {
             String identifier = exprArray.get(POS_BLOCK_ID).asText();
             String opcode = blocks.get(identifier).get(OPCODE_KEY).asText();
             return parseBlockBoolExpr(opcode, identifier, blocks, block.get(FIELDS_KEY));
-        } else if (exprArray.get(POS_DATA_ARRAY).get(POS_INPUT_ID).asText().endsWith("-my variable")) {
-            System.out.println("hooray! it's a variable!");
-            throw new RuntimeException("Not implemented yet");
-        } else if (!exprArray.get(POS_DATA_ARRAY).get(POS_INPUT_ID).asText().endsWith("-my variable")) {
-            System.out.println("hooray! it's a list!");
-            throw new RuntimeException("Not implemented yet");
+        } else {
+            String idString = exprArray.get(POS_DATA_ARRAY).get(POS_INPUT_ID).asText();
+            if (ProgramParser.symbolTable.getVariables().containsKey(idString)) {
+                VariableInfo variableInfo = ProgramParser.symbolTable.getVariables().get(idString);
+
+                return new Qualified(new Identifier(variableInfo.getActor()),
+                    new Identifier((variableInfo.getVariableName())));
+
+            } else if (ProgramParser.symbolTable.getLists().containsKey(idString)) {
+                ExpressionListInfo variableInfo = ProgramParser.symbolTable.getLists().get(idString);
+                return new Qualified(new Identifier(variableInfo.getActor()),
+                    new Identifier((variableInfo.getVariableName())));
+            }
         }
-        throw new RuntimeException("Not implemented yet");
+
+        throw new ParsingException("Not implemented yet");
     }
 
     public static ListExpr parseListExpr(JsonNode block, int pos, JsonNode blocks) throws ParsingException {
-        throw new RuntimeException("Not implemented yet");
+        ArrayNode exprArray = getExprArrayAtPos(block.get(INPUTS_KEY), pos);
+
+        if (getShadowIndicator(exprArray) == 1 || exprArray.get(POS_BLOCK_ID) instanceof TextNode) {
+            throw new ParsingException("Block does not contain a list"); //Todo improve message
+        }
+
+        String idString = exprArray.get(POS_DATA_ARRAY).get(POS_INPUT_ID).asText();
+        if (ProgramParser.symbolTable.getLists().containsKey(idString)) {
+            ExpressionListInfo variableInfo = ProgramParser.symbolTable.getLists().get(idString);
+            return new Qualified(new Identifier(variableInfo.getActor()),
+                new Identifier((variableInfo.getVariableName())));
+        }
+
+        throw new ParsingException("Block does not contain a list"); //Todo improve message
     }
+
+    private static Variable parseVariable() { // TODO parse - note that the list is in the "fields" node. -- update probably I have to use the lookuptable here in order to distinguish Ident and Ident . Ident
+        throw new RuntimeException("Not implemented yet. VARIABLES ARE EVIL BUT DO PARSE THEM");
+    }
+
 
     // (partly wrong) assumption: there is no use case in litterbox where an expression is not inside of the "inputs" part of a block.
     // Well, yes but no: the operator of a NumFunct is in "fields".
