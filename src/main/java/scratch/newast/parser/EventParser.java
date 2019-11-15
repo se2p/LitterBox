@@ -67,7 +67,7 @@ public class EventParser {
             String variableValue = current.get(FIELDS_KEY).get(VARIABLE_MENU).get(0).asText();
             Identifier var = new Identifier(variableValue);
 
-            NumExpr fieldValue = ExpressionParser.parseNumExpr(current, 1, allBlocks); // FIXME which pos
+            NumExpr fieldValue = ExpressionParser.parseNumExpr(current, 0, allBlocks);
 
             event = new VariableAboveValue(var, fieldValue);
         } else if (opcode.equals(event_whenbackdropswitchesto)) {
