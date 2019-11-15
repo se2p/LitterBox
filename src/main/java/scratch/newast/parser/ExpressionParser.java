@@ -1,5 +1,14 @@
 package scratch.newast.parser;
 
+import static scratch.newast.Constants.FIELDS_KEY;
+import static scratch.newast.Constants.INPUTS_KEY;
+import static scratch.newast.Constants.LIST_NAME_POS;
+import static scratch.newast.Constants.OPCODE_KEY;
+import static scratch.newast.Constants.POS_BLOCK_ID;
+import static scratch.newast.Constants.POS_DATA_ARRAY;
+import static scratch.newast.Constants.POS_INPUT_ID;
+import static scratch.newast.Constants.POS_INPUT_VALUE;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.TextNode;
@@ -76,8 +85,6 @@ import scratch.newast.opcodes.BoolExprOpcode;
 import scratch.newast.opcodes.CallStmtOpcode;
 import scratch.newast.opcodes.NumExprOpcode;
 import scratch.newast.opcodes.StringExprOpcode;
-
-import static scratch.newast.Constants.*;
 
 public class ExpressionParser {
 
@@ -187,7 +194,7 @@ public class ExpressionParser {
         case data_lengthoflist:
             return new LengthOfVar(new Identifier(blocks.get(identifier).get(FIELDS_KEY).get(LIST_NAME_POS).textValue()));
         case sensing_current:
-            TimeComp timeComp = parseTimeComp();
+            TimeComp timeComp = TimecompParser.parse(blocks.get(identifier));
             return new Current(timeComp);
         case sensing_distanceto:
             Position pos = parsePosition();
