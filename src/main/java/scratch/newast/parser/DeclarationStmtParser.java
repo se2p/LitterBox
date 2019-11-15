@@ -8,10 +8,12 @@ import static scratch.newast.Constants.DECLARATION_VARIABLE_VALUE_POS;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.google.common.base.Preconditions;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
 import scratch.newast.model.DeclarationStmt;
 import scratch.newast.model.Message;
 import scratch.newast.model.expression.Expression;
@@ -97,7 +99,7 @@ public class DeclarationStmtParser {
             JsonNode listValues = arrNode.get(DECLARATION_LIST_VALUES_POS);
             Preconditions.checkArgument(listValues.isArray());
             ExpressionList expressionList = new ExpressionList(makeExpressionListPlain((ArrayNode) listValues));
-            ProgramParser.symbolTable.addExpressionListInfo(listName, currentEntry.getKey(), expressionList, isStage,
+            ProgramParser.symbolTable.addExpressionListInfo(currentEntry.getKey(), listName, expressionList, isStage,
                     actorName);
             parsedLists.add(new DeclarationStmt(new Identifier(listName), new ListType()));
         }
