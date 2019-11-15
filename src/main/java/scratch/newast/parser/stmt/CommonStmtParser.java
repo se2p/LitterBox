@@ -6,6 +6,9 @@ import static scratch.newast.Constants.INPUTS_KEY;
 import static scratch.newast.Constants.OPCODE_KEY;
 import static scratch.newast.Constants.POS_INPUT_VALUE;
 import static scratch.newast.Constants.VARIABLE_KEY;
+import static scratch.newast.opcodes.CommonStmtOpcode.looks_changeeffectby;
+import static scratch.newast.opcodes.CommonStmtOpcode.sound_changeeffectby;
+import static scratch.newast.opcodes.CommonStmtOpcode.sound_changevolumeby;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.base.Preconditions;
@@ -16,8 +19,10 @@ import scratch.newast.model.expression.Expression;
 import scratch.newast.model.expression.bool.BoolExpr;
 import scratch.newast.model.expression.bool.UnspecifiedBoolExpr;
 import scratch.newast.model.expression.num.NumExpr;
+import scratch.newast.model.expression.string.Str;
 import scratch.newast.model.statement.common.Broadcast;
 import scratch.newast.model.statement.common.BroadcastAndWait;
+import scratch.newast.model.statement.common.ChangeAttributeBy;
 import scratch.newast.model.statement.common.ChangeVariableBy;
 import scratch.newast.model.statement.common.CommonStmt;
 import scratch.newast.model.statement.common.CreateCloneOf;
@@ -42,7 +47,7 @@ public class CommonStmtParser {
 
         String opcodeString = current.get(OPCODE_KEY).asText();
         Preconditions
-            .checkArgument(CommonStmtOpcode.contains(opcodeString), "Given blockID does not point to an event block.");
+            .checkArgument(CommonStmtOpcode.contains(opcodeString), "Given blockID does not point to a common block.");
 
         CommonStmtOpcode opcode = CommonStmtOpcode.valueOf(opcodeString);
         CommonStmt stmt;
@@ -58,7 +63,7 @@ public class CommonStmtParser {
                 stmt = parseControlStop(current);
                 return stmt;
             case control_create_clone_of:
-                stmt = parseCreateCloneOf(current,allBlocks);
+                stmt = parseCreateCloneOf(current, allBlocks);
                 return stmt;
             case event_broadcast:
                 stmt = parseBroadcast(current, allBlocks);
@@ -72,8 +77,35 @@ public class CommonStmtParser {
             case data_changevariableby:
                 stmt = parseChangeVariableBy(current, allBlocks);
                 return stmt;
+
+            case sound_changevolumeby:
+            case sound_changeeffectby:
+                //case looks_changesizeby: //FIXME is this now a common stmt?
+            case looks_changeeffectby:
+                stmt = parseChangeAttributeBy(current, allBlocks);
+                return stmt;
             default:
                 throw new RuntimeException("Not Implemented yet");
+        }
+    }
+
+    private static CommonStmt parseChangeAttributeBy(JsonNode current, JsonNode allBlocks) throws ParsingException {
+        String opcodeString = current.get(OPCODE_KEY).asText();
+        CommonStmtOpcode opcode = CommonStmtOpcode.valueOf(opcodeString);
+        CommonStmt stmt;
+
+        if (sound_changevolumeby.equals(opcode)) {
+            String attributeName = "VOLUME";
+            NumExpr numExpr = ExpressionParser.parseNumExpr(current, 0,
+                allBlocks); //Todo How does the expression parser handle blocks where there is a string in the inputsfield?
+            return new ChangeAttributeBy(new Str(attributeName), numExpr);
+        } else if (sound_changeeffectby.equals(opcode) || looks_changeeffectby.equals(opcode)) {
+            NumExpr numExpr = ExpressionParser.parseNumExpr(current, 0, allBlocks);
+            String effectName = current.get(FIELDS_KEY).get("EFFECT").get(0).asText();
+            return new ChangeAttributeBy(new Str(effectName), numExpr);
+//        } else if (looks_changesizeby.equals(opcode)) {
+        } else {
+            throw new ParsingException("Cannot parse block with opcode " + opcodeString + " to ChangeAttributeBy");
         }
     }
 
@@ -98,7 +130,6 @@ public class CommonStmtParser {
         return new Broadcast(message);
     }
 
-
     private static CommonStmt parseBroadcastAndWait(JsonNode current, JsonNode allBlocks) {
         Preconditions.checkArgument(current.get(INPUTS_KEY).get(BROADCAST_INPUT_KEY).isArray());
 
@@ -111,7 +142,6 @@ public class CommonStmtParser {
         BroadcastAndWait broadcast = new BroadcastAndWait(message);
         return broadcast;
     }
-
 
     private static CommonStmt parseCreateCloneOf(JsonNode current, JsonNode allBlocks) {
         JsonNode inputs = current.get(INPUTS_KEY);

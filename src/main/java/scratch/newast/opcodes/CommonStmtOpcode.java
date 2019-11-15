@@ -9,13 +9,13 @@ public enum CommonStmtOpcode {
     event_broadcast,         // "broadcast" Message
     event_broadcastandwait,  // "broadcast" Message "and" "wait"
     sensing_resettimer,      // "reset" "timer"
-    data_changevariableby    // "change" Variable "by" Expression
-    ;
-//    sensing_askandwait, //  "ask"  StringExpr  "and" "wait"
-//    looks_switchbackdropto, // "switch" "backdrop" "to"  Backdrop
-//    looks_changeeffectby, //  "change" "effect"  GraphicEffect  "by" NumExpr
-//    looks_seteffectto, // "set" "effect"  GraphicEffect  "to" NumExpr
-//    looks_cleargraphiceffects; // "clear" "graphic" "effects"
+    data_changevariableby,    // "change" Variable "by" Expression
+
+    // "change" "attribute" StringExpr "by" NumExpr
+    sound_changevolumeby,
+    sound_changeeffectby,
+    //    looks_changesizeby, //FIXME is this now a common stmt?
+    looks_changeeffectby;
 
     public static boolean contains(String opcode) {
         for (CommonStmtOpcode value : CommonStmtOpcode.values()) {
