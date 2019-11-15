@@ -1,5 +1,16 @@
 package scratch.newast.parser.stmt;
 
+import static scratch.newast.Constants.DRAGMODE_KEY;
+import static scratch.newast.Constants.DRAG_KEY;
+import static scratch.newast.Constants.EFFECT_KEY;
+import static scratch.newast.Constants.FIELDS_KEY;
+import static scratch.newast.Constants.OPCODE_KEY;
+import static scratch.newast.Constants.ROTATIONSTYLE_KEY;
+import static scratch.newast.Constants.STYLE_KEY;
+import static scratch.newast.Constants.VARIABLE_IDENTIFIER_POS;
+import static scratch.newast.Constants.VARIABLE_KEY;
+import static scratch.newast.Constants.VOLUME_KEY;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.base.Preconditions;
 import scratch.newast.model.expression.string.Str;
@@ -17,8 +28,6 @@ import scratch.newast.parser.attributes.GraphicEffect;
 import scratch.newast.parser.attributes.RotationStyle;
 import scratch.newast.parser.attributes.SoundEffect;
 import scratch.newast.parser.symboltable.VariableInfo;
-
-import static scratch.newast.Constants.*;
 
 public class SetStmtParser {
     public static Stmt parse(JsonNode current, JsonNode allBlocks) {
@@ -57,21 +66,21 @@ public class SetStmtParser {
     }
 
     private static SetStmt parseSetVolumeTo(JsonNode current, JsonNode allBlocks) {
-        return new SetAttributeTo(new Str(VOLUME_KEY), ExpressionParser.parseExpression(current.get(INPUTS_KEY), 0,
+        return new SetAttributeTo(new Str(VOLUME_KEY), ExpressionParser.parseExpression(current, 0,
                 allBlocks));
     }
 
     private static SetStmt parseSetSoundEffect(JsonNode current, JsonNode allBlocks) {
         String effect = current.get(FIELDS_KEY).get(EFFECT_KEY).get(0).textValue();
         Preconditions.checkArgument(SoundEffect.contains(effect));
-        return new SetAttributeTo(new Str(effect), ExpressionParser.parseExpression(current.get(INPUTS_KEY), 0,
+        return new SetAttributeTo(new Str(effect), ExpressionParser.parseExpression(current, 0,
                 allBlocks));
     }
 
     private static SetStmt parseSetLookEffect(JsonNode current, JsonNode allBlocks) {
         String effect = current.get(FIELDS_KEY).get(EFFECT_KEY).get(0).textValue();
         Preconditions.checkArgument(GraphicEffect.contains(effect));
-        return new SetAttributeTo(new Str(effect), ExpressionParser.parseExpression(current.get(INPUTS_KEY), 0,
+        return new SetAttributeTo(new Str(effect), ExpressionParser.parseExpression(current, 0,
                 allBlocks));
     }
 
@@ -93,7 +102,7 @@ public class SetStmtParser {
         Preconditions.checkArgument(ProgramParser.symbolTable.getVariables().containsKey(unique));
         VariableInfo info = ProgramParser.symbolTable.getVariables().get(unique);
         return new SetVariableTo(new Qualified(new Identifier(info.getActor()),
-                new Identifier((info.getVariableName()))), ExpressionParser.parseExpression(current.get(INPUTS_KEY),
+            new Identifier((info.getVariableName()))), ExpressionParser.parseExpression(current,
                 0, allBlocks));
     }
 }
