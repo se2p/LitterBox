@@ -2,6 +2,7 @@ package scratch.newast.parser;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.base.Preconditions;
+import java.util.ArrayList;
 import scratch.newast.Constants;
 import scratch.newast.ParsingException;
 import scratch.newast.model.expression.num.NumExpr;
@@ -31,10 +32,14 @@ public class PositionParser {
     }
 
     private static Position parseRelativePos(JsonNode current, JsonNode allBlocks) {
-        //TODO eliminate magic numbers
-        JsonNode menuID = current.get(Constants.INPUTS_KEY).get(1);
-        String posString = allBlocks.get(menuID.asText()).get(Constants.FIELDS_KEY).get(Constants.FIELD_VALUE).get(0)
-            .asText();
+        ArrayList<JsonNode> inputs = new ArrayList();
+        current.get(Constants.INPUTS_KEY).elements().forEachRemaining(inputs::add);
+
+        JsonNode menuID = inputs.get(0).get(Constants.POS_INPUT_VALUE);
+        ArrayList<JsonNode> fields = new ArrayList();
+        allBlocks.get(menuID.asText()).get(Constants.FIELDS_KEY).elements().forEachRemaining(fields::add);
+        String posString = fields.get(Constants.FIELD_VALUE).get(0).asText();
+
         if (posString.equals("_mouse_")) {
             return new MousePos();
         } else if (posString.equals("_random_")) {
