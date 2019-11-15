@@ -11,8 +11,7 @@ import scratch.newast.model.ASTNode;
 import scratch.newast.model.ScratchVisitor;
 
 /**
- * Visitor that creates a .dot output for a Program-AST Currently this is not correct as we use the class name instead
- * of a proper name String representation. This needs to be changed once ASTNodes have a proper toString method.
+ * Visitor that creates a .dot output for a Program-AST
  */
 public class DotVisitor implements ScratchVisitor {
 
@@ -20,9 +19,9 @@ public class DotVisitor implements ScratchVisitor {
 
     @Override
     public void visit(ASTNode node) {
-        String name = node.getClass().getSimpleName();
+        String name = node.getUniqueName();
         for (ASTNode child : node.getChildren()) {
-            String edge = name + " -> " + child.getClass().getSimpleName();
+            String edge = name + " -> " + child.getUniqueName();
             edges.add(edge);
         }
 
