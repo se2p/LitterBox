@@ -98,6 +98,16 @@ public class Constants {
     public static final int LIST_NAME_POS = 0;
 
     /**
+     * The position of the unique identifier in a VARIABLE.
+     */
+    public static final int VARIABLE_IDENTIFIER_POS = 1;
+
+    /**
+     * The position of the name in a VARIABLE.
+     */
+    public static final int VARIABLE_NAME_POS = 0;
+
+    /**
      * JSon Field Names of JSon Blocks
      */
     public static final String OPCODE_KEY = "opcode";
@@ -137,8 +147,12 @@ public class Constants {
     public static final String VIDSTATE_KEY = "videoState";
     public static final String VISIBLE_KEY = "visible";
     public static final String X_KEY = "x";
-    public static final String Y_KEY= "y";
+    public static final String Y_KEY = "y";
     public static final String SIZE_KEY = "size";
     public static final String DIRECTION_KEY = "direction";
     public static final String DRAG_KEY = "draggable";
+    public static final String ROTATIONSTYLE_KEY = "rotationStyle";
+    public static final String EFFECT_KEY = "EFFECT";
+    public static final String DRAGMODE_KEY = "DRAG_MODE";
+    public static final String STYLE_KEY = "STYLE";
 }
