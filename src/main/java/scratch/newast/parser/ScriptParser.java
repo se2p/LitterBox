@@ -1,11 +1,13 @@
 package scratch.newast.parser;
 
 import static scratch.newast.Constants.NEXT_KEY;
+import static scratch.newast.Constants.OPCODE_KEY;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.base.Preconditions;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Logger;
 import scratch.newast.ParsingException;
 import scratch.newast.model.ActorDefinition;
 import scratch.newast.model.Script;
@@ -28,8 +30,7 @@ public class ScriptParser {
      * a topLevel block.
      *
      * @param blockID of the first block in this script
-     * @param blocks  all blocks in the {@link ActorDefinition} of this {@link
-     *                scratch.newast.model.Script}
+     * @param blocks  all blocks in the {@link ActorDefinition} of this {@link scratch.newast.model.Script}
      * @return Script that was parsed
      */
     public static Script parse(String blockID, JsonNode blocks) throws ParsingException {
@@ -62,17 +63,24 @@ public class ScriptParser {
         JsonNode current = blocks.get(blockID);
 
         while (current != null && !current.isNull()) {
-            Stmt stmt = StmtParser.parse(blockID, blocks);
-            if (stmt instanceof TerminationStmt) {
-                terminationStmt = (TerminationStmt) stmt;
-                if (!current.get(NEXT_KEY).isNull()) { //TODO check if this is the correct way to check this
-
-                    //Todo Use Identifier of Block in Exception
-                    throw new ParsingException(
-                        "TerminationStmt found but there still is a next key for block " + blockID);
+            try {
+                Stmt stmt = StmtParser.parse(blockID, blocks);
+                if (stmt instanceof TerminationStmt) {
+                    terminationStmt = (TerminationStmt) stmt;
+                    if (current.get(NEXT_KEY) == null) {
+                        throw new ParsingException(
+                            "TerminationStmt found but there still is a next key for block " + blockID);
+                    }
+                } else {
+                    list.add(stmt);
                 }
-            } else {
-                list.add(stmt);
+            } catch (ParsingException | RuntimeException e) { // FIXME Runtime Exception is temporary for development and needs to be removed
+                Logger.getGlobal().warning("Could not parse block with ID " + blockID + " and opcode "
+                    + current.get(OPCODE_KEY));
+                Logger.getGlobal().warning(e.getMessage());
+                if (e instanceof NullPointerException) {
+                    throw e;
+                }
             }
             blockID = current.get(NEXT_KEY).asText();
             current = blocks.get(blockID);

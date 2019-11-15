@@ -9,9 +9,11 @@ import scratch.newast.model.statement.Stmt;
 public class ListOfStmt implements ASTNode {
 
     List<Stmt> listOfStmt;
+    private final ImmutableList<ASTNode> children;
 
     public ListOfStmt(List<Stmt> listOfStmt) {
         this.listOfStmt = listOfStmt;
+        children = ImmutableList.<ASTNode>builder().addAll(listOfStmt).build();
     }
 
     public List<Stmt> getListOfStmt() {
@@ -25,6 +27,6 @@ public class ListOfStmt implements ASTNode {
 
     @Override
     public ImmutableList<ASTNode> getChildren() {
-        throw new RuntimeException("Not Implemented yet");
+        return children;
     }
 }

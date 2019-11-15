@@ -10,7 +10,7 @@ public class ScriptList implements ASTNode {
 
     public ScriptList(List<Script> scriptList) {
         this.scriptList = scriptList;
-        children = ImmutableList.<ASTNode>builder().build();
+        children = ImmutableList.<ASTNode>builder().addAll(scriptList).build();
     }
 
     public List<Script> getScriptList() {

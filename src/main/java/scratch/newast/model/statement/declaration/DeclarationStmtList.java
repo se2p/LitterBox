@@ -1,10 +1,9 @@
 package scratch.newast.model.statement.declaration;
 
 import com.google.common.collect.ImmutableList;
+import java.util.List;
 import scratch.newast.model.ASTNode;
 import scratch.newast.model.ScratchVisitor;
-
-import java.util.List;
 
 public class DeclarationStmtList implements ASTNode {
 
@@ -13,7 +12,7 @@ public class DeclarationStmtList implements ASTNode {
 
     public DeclarationStmtList(List<DeclarationStmt> declarationStmtList) {
         this.declarationStmtList = declarationStmtList;
-        children = ImmutableList.<ASTNode>builder().build();
+        children = ImmutableList.<ASTNode>builder().addAll(declarationStmtList).build();
     }
 
     public List<DeclarationStmt> getDeclarationStmtList() {

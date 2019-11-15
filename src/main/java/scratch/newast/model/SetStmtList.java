@@ -11,7 +11,7 @@ public class SetStmtList implements ASTNode {
 
     public SetStmtList(List<SetStmt> setStmtList) {
         this.setStmtList = setStmtList;
-        children = ImmutableList.<ASTNode>builder().build();
+        children = ImmutableList.<ASTNode>builder().addAll(setStmtList).build();
     }
 
     public List<SetStmt> getStmts() {

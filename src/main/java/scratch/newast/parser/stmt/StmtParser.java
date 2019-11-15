@@ -41,7 +41,7 @@ public class StmtParser {
             stmt = ControlStmtParser.parse(current, blocks);
             return stmt;
         } else if (BoolExprOpcode.contains(opcode) || NumExprOpcode.contains(opcode) || StringExprOpcode
-                .contains(opcode)) {
+            .contains(opcode)) {
             stmt = ExpressionStmtParser.parse(current, blocks);
             return stmt;
         } else if (CommonStmtOpcode.contains(opcode)) {
@@ -62,12 +62,9 @@ public class StmtParser {
         } else if (ListStmtOpcode.contains(opcode)) {
             stmt = ListStmtParser.parse(current, blocks);
             return stmt;
-        }else if(SetStmtOpcode.contains(opcode)){
+        } else if (SetStmtOpcode.contains(opcode)) {
             stmt = SetStmtParser.parse(current, blocks);
             return stmt;
-            // Are these corner cases we have to deal with separately
-//        } else if (ProceduralStmtOpcode.contains(opcode)) {
-//            throw new RuntimeException("Not implemented");
         }
 
         throw new RuntimeException("Not implemented");
