@@ -7,6 +7,7 @@ import newanalytics.IssueFinder;
 import newanalytics.IssueReport;
 import scratch.data.ScBlock;
 import scratch.data.Script;
+import scratch.newast.model.Program;
 import scratch.structure.Project;
 import scratch.structure.Scriptable;
 import utils.Identifier;
@@ -20,16 +21,17 @@ public class SequentialActions implements IssueFinder {
     String name = "sequential_actions";
 
     @Override
-    public IssueReport check(Project project) {
+    public IssueReport check(Program program) {
+        /*
         List<Scriptable> scriptables = new ArrayList<>();
-        scriptables.add(project.getStage());
-        scriptables.addAll(project.getSprites());
+        scriptables.add(program.getStage());
+        scriptables.addAll(program.getSprites());
         int count;
         List<String> pos = new ArrayList<>();
         for (Scriptable scable : scriptables) {
             for (Script script : scable.getScripts()) {
                 if (script.getBlocks().size() > 1) {
-                    searchVariableModification(scable, script, script.getBlocks(), pos, project);
+                    searchVariableModification(scable, script, script.getBlocks(), pos, program);
                 }
             }
         }
@@ -39,7 +41,10 @@ public class SequentialActions implements IssueFinder {
             notes = "Some scripts have sequential actions with the same content.";
         }
 
-        return new IssueReport(name, count, pos, project.getPath(), notes);
+        return new IssueReport(name, count, pos, program.getPath(), notes);
+
+         */
+        throw new RuntimeException("not implemented");
     }
 
 

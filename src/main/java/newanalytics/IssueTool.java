@@ -39,7 +39,7 @@ import newanalytics.smells.StartingPoint;
 import newanalytics.smells.UnusedVariable;
 import newanalytics.smells.VariableScope;
 import org.apache.commons.csv.CSVPrinter;
-import scratch.structure.Project;
+import scratch.newast.model.Program;
 import utils.CSVWriter;
 
 /**
@@ -91,9 +91,9 @@ public class IssueTool {
     /**
      * Executes all checks. Only creates console output for a single project.
      *
-     * @param project the project to check
+     * @param program the project to check
      */
-    public void checkRaw(Project project, String dtctrs) {
+    public void checkRaw(Program program, String dtctrs) {
         String[] detectors;
         if (dtctrs.equals("all")) {
             detectors = finder.keySet().toArray(new String[0]);
@@ -103,8 +103,8 @@ public class IssueTool {
         for (String s : detectors) {
             if (finder.containsKey(s)) {
                 IssueFinder iF = finder.get(s);
-                if (project != null) {
-                    IssueReport issueReport = iF.check(project);
+                if (program != null) {
+                    IssueReport issueReport = iF.check(program);
                     System.out.println(issueReport);
                 }
             }
@@ -114,9 +114,9 @@ public class IssueTool {
     /**
      * Executes all checks
      *
-     * @param project the project to check
+     * @param program the project to check
      */
-    public void check(Project project, CSVPrinter printer, String dtctrs) {
+    public void check(Program program, CSVPrinter printer, String dtctrs) {
         List<IssueReport> issueReports = new ArrayList<>();
         String[] detectors;
         if (dtctrs.equals("all")) {
@@ -127,8 +127,8 @@ public class IssueTool {
         for (String s : detectors) {
             if (finder.containsKey(s)) {
                 IssueFinder iF = finder.get(s);
-                if (project != null) {
-                    IssueReport issueReport = iF.check(project);
+                if (program != null) {
+                    IssueReport issueReport = iF.check(program);
                     issueReports.add(issueReport);
                     //System.out.println(issueReport);
                 } else {
@@ -137,7 +137,7 @@ public class IssueTool {
             }
         }
         try {
-            CSVWriter.addData(printer, issueReports, project);
+            CSVWriter.addData(printer, issueReports, program);
         } catch (IOException e) {
             e.printStackTrace();
         }

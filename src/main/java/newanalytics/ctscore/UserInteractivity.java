@@ -8,6 +8,7 @@ import newanalytics.IssueFinder;
 import newanalytics.IssueReport;
 import scratch.data.ScBlock;
 import scratch.data.Script;
+import scratch.newast.model.Program;
 import scratch.structure.Project;
 import scratch.structure.Scriptable;
 import utils.Identifier;
@@ -18,28 +19,10 @@ import utils.Version;
  */
 public class UserInteractivity implements IssueFinder {
 
-    private List<List<String>> ids = new ArrayList<>();
-    private List<List<String>> legacyIds = new ArrayList<>();
     private String[] notes = new String[4];
     private String name = "user_interactivity";
 
     public UserInteractivity() {
-        ids.add(0, Collections.singletonList(Identifier.GREEN_FLAG.getValue()));
-        ids.add(1, Arrays.asList(Identifier.KEYPRESS.getValue(),
-                Identifier.THIS_CLICKED.getValue(),
-                Identifier.ASK_WAIT.getValue(), Identifier.SENSE.getValue()));
-        ids.add(2, Arrays.asList(Identifier.GREATER_THAN.getValue(),
-                Identifier.VIDEO.getValue()));
-
-        legacyIds.add(0,
-                Collections.singletonList(Identifier.LEGACY_GREEN_FLAG.getValue()));
-        legacyIds.add(1, Arrays.asList(Identifier.LEGACY_KEYPRESS.getValue(),
-                Identifier.LEGACY_THIS_CLICKED.getValue(),
-                Identifier.LEGACY_ASK_WAIT.getValue(),
-                Identifier.LEGACY_SENSE.getValue()));
-        legacyIds.add(2,
-                Arrays.asList(Identifier.LEGACY_GREATER_THAN.getValue(),
-                        Identifier.LEGACY_VIDEO.getValue()));
 
         notes[0] = "There is a green flag missing.";
         notes[1] = "Basic Level. There is key pressed, sprite clicked, ask "
@@ -51,17 +34,19 @@ public class UserInteractivity implements IssueFinder {
 
     /**
      * {@inheritDoc}
+     * @param program
      */
     @Override
-    public IssueReport check(Project project) {
+    public IssueReport check(Program program) {
+        /*
         List<Scriptable> scriptables = new ArrayList<>();
-        scriptables.add(project.getStage());
-        scriptables.addAll(project.getSprites());
+        scriptables.add(program.getStage());
+        scriptables.addAll(program.getSprites());
         List<String> pos = new ArrayList<>();
         List<String> found = new ArrayList<>();
         int level = 0;
 
-        List<List<String>> versionIds = checkVersion(project);
+        List<List<String>> versionIds = checkVersion(program);
 
         for (int i = 0; i < versionIds.size(); i++) {
             for (Scriptable scable : scriptables) {
@@ -77,8 +62,10 @@ public class UserInteractivity implements IssueFinder {
             }
         }
 
-        return new IssueReport(name, level, pos, project.getPath(),
+        return new IssueReport(name, level, pos, program.getPath(),
                 notes[level]);
+         */
+        throw new RuntimeException("not implemented");
     }
 
     /**
@@ -107,21 +94,6 @@ public class UserInteractivity implements IssueFinder {
             if (b.getElseBlocks() != null && b.getElseBlocks().size() > 0) {
                 search(scable, sc, b.getElseBlocks(), found, ids);
             }
-        }
-    }
-
-    /**
-     * Checks the version of the Scratch project and returns the right
-     * identifiers for the block keywords.
-     *
-     * @param project The project to check.
-     * @return        The keyword identifiers for the project's version.
-     */
-    private List<List<String>> checkVersion(Project project) {
-        if (project.getVersion().equals(Version.SCRATCH2)) {
-            return legacyIds;
-        } else {
-            return ids;
         }
     }
 

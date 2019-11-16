@@ -7,7 +7,7 @@ import newanalytics.IssueFinder;
 import newanalytics.IssueReport;
 import scratch.data.ScBlock;
 import scratch.data.Script;
-import scratch.structure.Project;
+import scratch.newast.model.Program;
 import scratch.structure.Scriptable;
 
 /**
@@ -18,10 +18,11 @@ public class LongScript implements IssueFinder {
     String name = "long_script";
 
     @Override
-    public IssueReport check(Project project) {
+    public IssueReport check(Program program) {
+        /*
         List<Scriptable> scriptables = new ArrayList<>();
-        scriptables.add(project.getStage());
-        scriptables.addAll(project.getSprites());
+        scriptables.add(program.getStage());
+        scriptables.addAll(program.getSprites());
         int count;
         List<String> pos = new ArrayList<>();
         for (Scriptable scable : scriptables) {
@@ -38,7 +39,10 @@ public class LongScript implements IssueFinder {
             notes = "Some scripts are very long.";
         }
 
-        return new IssueReport(name, count, pos, project.getPath(), notes);
+        return new IssueReport(name, count, pos, program.getPath(), notes);
+
+         */
+        throw new RuntimeException("not implemented");
     }
 
 

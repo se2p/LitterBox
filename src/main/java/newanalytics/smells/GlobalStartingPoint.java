@@ -5,6 +5,7 @@ import java.util.List;
 import newanalytics.IssueFinder;
 import newanalytics.IssueReport;
 import scratch.data.Script;
+import scratch.newast.model.Program;
 import scratch.structure.Project;
 import scratch.structure.Scriptable;
 import utils.Identifier;
@@ -20,13 +21,17 @@ public class GlobalStartingPoint implements IssueFinder {
     private String name = "has_global_start";
 
     @Override
-    public IssueReport check(Project project) {
-        if (project.getVersion().equals(Version.SCRATCH2)) {
-            return runCheck(project, Identifier.LEGACY_GREEN_FLAG.getValue());
-        } else if (project.getVersion().equals(Version.SCRATCH3)) {
-            return runCheck(project, Identifier.GREEN_FLAG.getValue());
+    public IssueReport check(Program program) {
+        /*
+        if (program.getVersion().equals(Version.SCRATCH2)) {
+            return runCheck(program, Identifier.LEGACY_GREEN_FLAG.getValue());
+        } else if (program.getVersion().equals(Version.SCRATCH3)) {
+            return runCheck(program, Identifier.GREEN_FLAG.getValue());
         }
         return null;
+
+         */
+        throw new RuntimeException("not implemented");
     }
 
     private IssueReport runCheck(Project project, String idf) {

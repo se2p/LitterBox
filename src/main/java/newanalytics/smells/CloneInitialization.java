@@ -7,6 +7,7 @@ import newanalytics.IssueFinder;
 import newanalytics.IssueReport;
 import scratch.data.ScBlock;
 import scratch.data.Script;
+import scratch.newast.model.Program;
 import scratch.structure.Project;
 import scratch.structure.Scriptable;
 import utils.Identifier;
@@ -20,18 +21,19 @@ public class CloneInitialization implements IssueFinder {
     String name = "clone_initialization";
 
     @Override
-    public IssueReport check(Project project) {
+    public IssueReport check(Program program) {
+        /*
         List<Scriptable> scriptables = new ArrayList<>();
-        scriptables.add(project.getStage());
-        scriptables.addAll(project.getSprites());
+        scriptables.add(program.getStage());
+        scriptables.addAll(program.getSprites());
         int count;
         List<String> pos = new ArrayList<>();
         for (Scriptable scable : scriptables) {
             for (Script script : scable.getScripts()) {
-                if (project.getVersion().equals(Version.SCRATCH2)) {
+                if (program.getVersion().equals(Version.SCRATCH2)) {
                     searchBlocks(scable, script, script.getBlocks(), pos);
-                } else if (project.getVersion().equals(Version.SCRATCH3)) {
-                    searchBlocks3(project, scable, script, script.getBlocks(), pos);
+                } else if (program.getVersion().equals(Version.SCRATCH3)) {
+                    searchBlocks3(program, scable, script, script.getBlocks(), pos);
                 }
             }
         }
@@ -41,7 +43,9 @@ public class CloneInitialization implements IssueFinder {
             notes = "Some scriptables were cloned but never initialized.";
         }
 
-        return new IssueReport(name, count, pos, project.getPath(), notes);
+        return new IssueReport(name, count, pos, program.getPath(), notes);
+         */
+        throw new RuntimeException("not implemented");
     }
 
     private void searchBlocks3(Project project, Scriptable scr, Script sc, List<ScBlock> blocks, List<String> pos) {
@@ -83,30 +87,6 @@ public class CloneInitialization implements IssueFinder {
             }
         }
     }
-
-    private void searchBlocks(Scriptable scable, Script sc, List<ScBlock> blocks, List<String> pos) {
-        for (ScBlock b : blocks) {
-            if (b.getContent().replace("\"", "").startsWith(Identifier.LEGACY_START_CLONE.getValue())) {
-                boolean check = false;
-                for (Script s : scable.getScripts()) {
-                    if (s.getBlocks().get(0).getContent().replace("\"", "").startsWith(Identifier.LEGACY_CREATE_CLONE.getValue())) {
-                        check = true;
-                        break;
-                    }
-                }
-                if (!check) {
-                    pos.add(scable.getName() + " at " + Arrays.toString(sc.getPosition()));
-                }
-            }
-            if (b.getNestedBlocks() != null && b.getNestedBlocks().size() > 0) {
-                searchBlocks(scable, sc, b.getNestedBlocks(), pos);
-            }
-            if (b.getElseBlocks() != null && b.getElseBlocks().size() > 0) {
-                searchBlocks(scable, sc, b.getElseBlocks(), pos);
-            }
-        }
-    }
-
 
     @Override
     public String getName() {

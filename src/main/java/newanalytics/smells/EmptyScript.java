@@ -6,7 +6,7 @@ import java.util.List;
 import newanalytics.IssueFinder;
 import newanalytics.IssueReport;
 import scratch.data.Script;
-import scratch.structure.Project;
+import scratch.newast.model.Program;
 import scratch.structure.Scriptable;
 import utils.Identifier;
 
@@ -41,10 +41,11 @@ public class EmptyScript implements IssueFinder {
     }
 
     @Override
-    public IssueReport check(Project project) {
+    public IssueReport check(Program program) {
+        /*
         List<Scriptable> scriptables = new ArrayList<>();
-        scriptables.add(project.getStage());
-        scriptables.addAll(project.getSprites());
+        scriptables.add(program.getStage());
+        scriptables.addAll(program.getSprites());
         List<String> pos = new ArrayList<>();
         for (Scriptable scable : scriptables) {
             for (Script script : scable.getScripts()) {
@@ -60,7 +61,10 @@ public class EmptyScript implements IssueFinder {
             notes = note2;
         }
 
-        return new IssueReport(name, pos.size(), pos, project.getPath(), notes);
+        return new IssueReport(name, pos.size(), pos, program.getPath(), notes);
+
+         */
+        throw new RuntimeException("not implemented");
     }
 
     @Override

@@ -6,7 +6,7 @@ import newanalytics.IssueFinder;
 import newanalytics.IssueReport;
 import scratch.data.ScBlock;
 import scratch.data.Script;
-import scratch.structure.Project;
+import scratch.newast.model.Program;
 import scratch.structure.Scriptable;
 import utils.Identifier;
 
@@ -24,10 +24,11 @@ public class NoOpProject implements IssueFinder {
     String name = "noop_project";
 
     @Override
-    public IssueReport check(Project project) {
+    public IssueReport check(Program program) {
+        /*
         List<Scriptable> scriptables = new ArrayList<>();
-        scriptables.add(project.getStage());
-        scriptables.addAll(project.getSprites());
+        scriptables.add(program.getStage());
+        scriptables.addAll(program.getSprites());
         int count = 0;
         List<String> pos = new ArrayList<>();
         for (Scriptable scable : scriptables) {
@@ -35,14 +36,17 @@ public class NoOpProject implements IssueFinder {
                 if (script.getBlocks().size() > 1) {
                     if (searchBlocks(script.getBlocks())) {
                         String notes = "Your project is not empty and contains actions.";
-                        return new IssueReport(name, count, pos, project.getPath(), notes);
+                        return new IssueReport(name, count, pos, program.getPath(), notes);
                     }
                 }
             }
         }
         String notes = "Your project is empty or does not contain any actions.";
         count = 1;
-        return new IssueReport(name, count, pos, project.getPath(), notes);
+        return new IssueReport(name, count, pos, program.getPath(), notes);
+
+         */
+        throw new RuntimeException("not implemented");
     }
 
     private boolean searchBlocks(List<ScBlock> blocks) {

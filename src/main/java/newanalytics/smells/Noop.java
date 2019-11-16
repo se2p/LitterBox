@@ -7,7 +7,7 @@ import newanalytics.IssueFinder;
 import newanalytics.IssueReport;
 import scratch.data.ScBlock;
 import scratch.data.Script;
-import scratch.structure.Project;
+import scratch.newast.model.Program;
 import scratch.structure.Scriptable;
 import utils.Identifier;
 import utils.Version;
@@ -20,15 +20,16 @@ public class Noop implements IssueFinder {
     String name = "no_op";
 
     @Override
-    public IssueReport check(Project project) {
+    public IssueReport check(Program program) {
+        /*
         List<Scriptable> scriptables = new ArrayList<>();
-        scriptables.add(project.getStage());
-        scriptables.addAll(project.getSprites());
+        scriptables.add(program.getStage());
+        scriptables.addAll(program.getSprites());
         int count;
         List<String> pos = new ArrayList<>();
         for (Scriptable scable : scriptables) {
             for (Script script : scable.getScripts()) {
-                if (project.getVersion().equals(Version.SCRATCH2)) {
+                if (program.getVersion().equals(Version.SCRATCH2)) {
                     if (script.getBlocks().size() > 0 && script.getBlocks().get(0).getContent().startsWith(Identifier.LEGACY_CUSTOM_BLOCK.getValue())) {
                         List<String> tempPos = new ArrayList<>();
                         String methodName = script.getBlocks().get(0).getContent().replace(Identifier.LEGACY_CUSTOM_BLOCK.getValue(), "");
@@ -40,7 +41,7 @@ public class Noop implements IssueFinder {
                             pos.add(scable.getName() + " at " + Arrays.toString(script.getPosition()));
                         }
                     }
-                } else if (project.getVersion().equals(Version.SCRATCH3)) {
+                } else if (program.getVersion().equals(Version.SCRATCH3)) {
                     if (script.getBlocks().size() > 0 && script.getBlocks().get(0).getContent().startsWith(Identifier.CUSTOM_BLOCK.getValue())) {
                         List<String> tempPos = new ArrayList<>();
                         String methodName = script.getBlocks().get(0).getProcode();
@@ -61,7 +62,10 @@ public class Noop implements IssueFinder {
             notes = "There are unused custom blocks in your project.";
         }
 
-        return new IssueReport(name, count, pos, project.getPath(), notes);
+        return new IssueReport(name, count, pos, program.getPath(), notes);
+
+         */
+        throw new RuntimeException("not implemented");
     }
 
     private void searchBlocks3(List<ScBlock> blocks, Scriptable scable, Script script, List<String> tempPos, String methodName) {
@@ -75,22 +79,6 @@ public class Noop implements IssueFinder {
                 }
                 if (block.getElseBlocks() != null && block.getElseBlocks().size() > 0) {
                     searchBlocks3(block.getElseBlocks(), scable, script, tempPos, methodName);
-                }
-            }
-        }
-    }
-
-    private void searchBlocks(List<ScBlock> blocks, Scriptable scable, Script script, List<String> tempPos, String methodName) {
-        if (blocks != null) {
-            for (ScBlock block : blocks) {
-                if (block.getContent().startsWith(Identifier.LEGACY_CUSTOM_BLOCK_CALL.getValue())) {
-                    tempPos.add(scable.getName() + " at " + Arrays.toString(script.getPosition()));
-                }
-                if (block.getNestedBlocks() != null && block.getNestedBlocks().size() > 0) {
-                    searchBlocks(block.getNestedBlocks(), scable, script, tempPos, methodName);
-                }
-                if (block.getElseBlocks() != null && block.getElseBlocks().size() > 0) {
-                    searchBlocks(block.getElseBlocks(), scable, script, tempPos, methodName);
                 }
             }
         }

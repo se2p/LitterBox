@@ -7,7 +7,7 @@ import newanalytics.IssueFinder;
 import newanalytics.IssueReport;
 import scratch.data.ScBlock;
 import scratch.data.Script;
-import scratch.structure.Project;
+import scratch.newast.model.Program;
 import scratch.structure.Scriptable;
 import utils.Identifier;
 import utils.Version;
@@ -20,20 +20,21 @@ public class MissingForever implements IssueFinder {
     String name = "missing_forever_loop";
 
     @Override
-    public IssueReport check(Project project) {
+    public IssueReport check(Program program) {
+        /*
         List<Scriptable> scriptables = new ArrayList<>();
-        scriptables.add(project.getStage());
-        scriptables.addAll(project.getSprites());
+        scriptables.add(program.getStage());
+        scriptables.addAll(program.getSprites());
         List<String> pos = new ArrayList<>();
         for (Scriptable scable : scriptables) {
             for (Script script : scable.getScripts()) {
-                if (project.getVersion().equals(Version.SCRATCH2)) {
+                if (program.getVersion().equals(Version.SCRATCH2)) {
                     if (script.getBlocks().size() > 1 && script.getBlocks().get(0).getContent().startsWith(Identifier.LEGACY_GREEN_FLAG.getValue())) {
                         for (ScBlock b : script.getBlocks()) {
                             checkMovement(pos, scable, script, b);
                         }
                     }
-                } else if (project.getVersion().equals(Version.SCRATCH3)) {
+                } else if (program.getVersion().equals(Version.SCRATCH3)) {
                     if (script.getBlocks().size() > 1 && script.getBlocks().get(0).getContent().startsWith(Identifier.GREEN_FLAG.getValue())) {
                         for (ScBlock b : script.getBlocks()) {
                             checkMovement3(pos, scable, script, b);
@@ -47,7 +48,10 @@ public class MissingForever implements IssueFinder {
             note = "The project contains some fishy touching and / or keyPressed checks without a loop.";
 
         }
-        return new IssueReport(name, pos.size(), pos, project.getPath(), note);
+        return new IssueReport(name, pos.size(), pos, program.getPath(), note);
+
+         */
+        throw new RuntimeException("not implemented");
     }
 
     private void checkMovement3(List<String> pos, Scriptable scable, Script script, ScBlock b) {
@@ -56,14 +60,6 @@ public class MissingForever implements IssueFinder {
                     || b.getCondition().startsWith(Identifier.SENSE_TOUCHING.getValue())) {
                 pos.add(scable.getName() + " at " + Arrays.toString(script.getPosition()));
             }
-        }
-    }
-
-    private void checkMovement(List<String> pos, Scriptable scable, Script script, ScBlock b) {
-        if (b.getContent().startsWith(Identifier.LEGACY_IF_TOUCHING.getValue()) ||
-                b.getContent().startsWith(Identifier.LEGACY_IF_COLOR.getValue()) ||
-                b.getContent().startsWith(Identifier.LEGACY_IF_KEY.getValue())) {
-            pos.add(scable.getName() + " at " + Arrays.toString(script.getPosition()));
         }
     }
 

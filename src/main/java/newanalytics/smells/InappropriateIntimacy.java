@@ -6,7 +6,7 @@ import newanalytics.IssueFinder;
 import newanalytics.IssueReport;
 import scratch.data.ScBlock;
 import scratch.data.Script;
-import scratch.structure.Project;
+import scratch.newast.model.Program;
 import scratch.structure.Scriptable;
 import utils.Identifier;
 import utils.Version;
@@ -19,18 +19,19 @@ public class InappropriateIntimacy implements IssueFinder {
     String name = "inappropriate_intimacy";
 
     @Override
-    public IssueReport check(Project project) {
+    public IssueReport check(Program program) {
+        /*
         List<Scriptable> scriptables = new ArrayList<>();
-        scriptables.add(project.getStage());
-        scriptables.addAll(project.getSprites());
+        scriptables.add(program.getStage());
+        scriptables.addAll(program.getSprites());
         int count;
         List<String> pos = new ArrayList<>();
         for (Scriptable scable : scriptables) {
             List<String> counter = new ArrayList<>();
             for (Script script : scable.getScripts()) {
-                if (project.getVersion().equals(Version.SCRATCH2)) {
+                if (program.getVersion().equals(Version.SCRATCH2)) {
                     searchBlocks(script.getBlocks(), counter, Identifier.LEGACY_SENSE.getValue());
-                } else if (project.getVersion().equals(Version.SCRATCH3)) {
+                } else if (program.getVersion().equals(Version.SCRATCH3)) {
                     searchBlocks(script.getBlocks(), counter, Identifier.SENSE.getValue());
                 }
             }
@@ -44,7 +45,10 @@ public class InappropriateIntimacy implements IssueFinder {
             notes = "One ore more Sprites are excessively reading other sprite’s private variables (at least 4).";
         }
 
-        return new IssueReport(name, count, pos, project.getPath(), notes);
+        return new IssueReport(name, count, pos, program.getPath(), notes);
+
+         */
+        throw new RuntimeException("not implemented");
     }
 
 

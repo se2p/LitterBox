@@ -7,7 +7,7 @@ import newanalytics.IssueFinder;
 import newanalytics.IssueReport;
 import scratch.data.ScBlock;
 import scratch.data.Script;
-import scratch.structure.Project;
+import scratch.newast.model.Program;
 import scratch.structure.Sprite;
 import utils.Identifier;
 import utils.Version;
@@ -20,20 +20,21 @@ public class LaggyMovement implements IssueFinder {
     String name = "laggy_movement";
 
     @Override
-    public IssueReport check(Project project) {
-        List<Sprite> sprites = project.getSprites();
+    public IssueReport check(Program program) {
+        /*
+        List<Sprite> sprites = program.getSprites();
         int count = 0;
         List<String> pos = new ArrayList<>();
         for (Sprite sprite : sprites) {
             for (Script script : sprite.getScripts()) {
-                if (project.getVersion().equals(Version.SCRATCH2)) {
+                if (program.getVersion().equals(Version.SCRATCH2)) {
                     List<String> idfs = new ArrayList<>();
                     idfs.add(Identifier.LEGACY_KEYPRESS.getValue());
                     idfs.add(Identifier.LEGACY_FORWARD.getValue());
                     idfs.add(Identifier.LEGACY_CHANGEX.getValue());
                     idfs.add(Identifier.LEGACY_CHANGEY.getValue());
                     count = getCount(count, pos, sprite, script, idfs);
-                } else if (project.getVersion().equals(Version.SCRATCH3)) {
+                } else if (program.getVersion().equals(Version.SCRATCH3)) {
                     List<String> idfs = new ArrayList<>();
                     idfs.add(Identifier.KEYPRESS.getValue());
                     idfs.add(Identifier.FORWARD.getValue());
@@ -48,7 +49,10 @@ public class LaggyMovement implements IssueFinder {
             notes = "Some of your user input movement scripts are laggy. Try using a forever loop!";
         }
 
-        return new IssueReport(name, count, pos, project.getPath(), notes);
+        return new IssueReport(name, count, pos, program.getPath(), notes);
+
+         */
+        throw new RuntimeException("not implemented");
     }
 
     private int getCount(int count, List<String> pos, Sprite sprite, Script script, List<String> idfs) {

@@ -6,7 +6,7 @@ import newanalytics.IssueFinder;
 import newanalytics.IssueReport;
 import scratch.data.ScBlock;
 import scratch.data.Script;
-import scratch.structure.Project;
+import scratch.newast.model.Program;
 import scratch.structure.Scriptable;
 import utils.Identifier;
 import utils.Version;
@@ -19,20 +19,21 @@ public class BroadcastSync implements IssueFinder {
     String name = "broadcast_sync";
 
     @Override
-    public IssueReport check(Project project) {
+    public IssueReport check(Program program) {
+        /*
         List<Scriptable> scriptables = new ArrayList<>();
-        scriptables.add(project.getStage());
-        scriptables.addAll(project.getSprites());
+        scriptables.add(program.getStage());
+        scriptables.addAll(program.getSprites());
         int count;
         List<String> pos = new ArrayList<>();
         List<String> broadcasts = new ArrayList<>();
         List<String> receive = new ArrayList<>();
         for (Scriptable scable : scriptables) {
             for (Script script : scable.getScripts()) {
-                if (project.getVersion().equals(Version.SCRATCH2)) {
+                if (program.getVersion().equals(Version.SCRATCH2)) {
                     searchBlocks(script.getBlocks(), broadcasts);
                     searchBlocksFirst(script.getBlocks(), receive);
-                } else if (project.getVersion().equals(Version.SCRATCH3)) {
+                } else if (program.getVersion().equals(Version.SCRATCH3)) {
                     searchBlocks3(script.getBlocks(), broadcasts);
                     searchBlocksFirst3(script.getBlocks(), receive);
                 }
@@ -68,7 +69,9 @@ public class BroadcastSync implements IssueFinder {
             notes = "One or more Broadcast blocks don't have a corresponding Receive block.";
         }
 
-        return new IssueReport(name, count, pos, project.getPath(), notes);
+        return new IssueReport(name, count, pos, program.getPath(), notes);
+         */
+        throw new RuntimeException("not implemented");
     }
 
     private void searchBlocksFirst3(List<ScBlock> blocks, List<String> receive) {
@@ -94,33 +97,6 @@ public class BroadcastSync implements IssueFinder {
             }
         }
     }
-
-    private void searchBlocksFirst(List<ScBlock> blocks, List<String> list) {
-        String x = Identifier.LEGACY_RECEIVE.getValue();
-        if (blocks.get(0).getContent().replace("\"", "").startsWith(x)) {
-            String content = blocks.get(0).getContent().replace("\"", "").replace(x, "");
-            list.add(content);
-        }
-    }
-
-    private void searchBlocks(List<ScBlock> blocks, List<String> list) {
-        String x = Identifier.LEGACY_BROADCAST.getValue();
-        for (ScBlock b : blocks) {
-            if (b.getContent().replace("\"", "").startsWith(x)) {
-                String content = b.getContent().replace("\"", "").replace(x, "");
-                if (!list.contains(content)) {
-                    list.add(content);
-                }
-            }
-            if (b.getNestedBlocks() != null && b.getNestedBlocks().size() > 0) {
-                searchBlocks(b.getNestedBlocks(), list);
-            }
-            if (b.getElseBlocks() != null && b.getElseBlocks().size() > 0) {
-                searchBlocks(b.getElseBlocks(), list);
-            }
-        }
-    }
-
 
     @Override
     public String getName() {

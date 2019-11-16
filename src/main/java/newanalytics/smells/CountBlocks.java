@@ -6,7 +6,7 @@ import newanalytics.IssueFinder;
 import newanalytics.IssueReport;
 import scratch.data.ScBlock;
 import scratch.data.Script;
-import scratch.structure.Project;
+import scratch.newast.model.Program;
 import scratch.structure.Scriptable;
 
 /**
@@ -17,10 +17,11 @@ public class CountBlocks implements IssueFinder {
     String name = "block_count";
 
     @Override
-    public IssueReport check(Project project) {
+    public IssueReport check(Program program) {
+        /*
         List<Scriptable> scriptables = new ArrayList<>();
-        scriptables.add(project.getStage());
-        scriptables.addAll(project.getSprites());
+        scriptables.add(program.getStage());
+        scriptables.addAll(program.getSprites());
         int count = 0;
         List<Integer> countList = new ArrayList<>();
         for (Scriptable scable : scriptables) {
@@ -31,7 +32,9 @@ public class CountBlocks implements IssueFinder {
         for (int x : countList) {
             count += x;
         }
-        return new IssueReport(name, count, new ArrayList<>(), project.getPath(), "");
+        return new IssueReport(name, count, new ArrayList<>(), program.getPath(), "");
+         */
+        throw new RuntimeException("not implemented");
     }
 
     private void searchBlocks(List<ScBlock> blocks, List<Integer> countList) {

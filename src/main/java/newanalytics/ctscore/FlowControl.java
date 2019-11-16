@@ -8,6 +8,7 @@ import newanalytics.IssueFinder;
 import newanalytics.IssueReport;
 import scratch.data.ScBlock;
 import scratch.data.Script;
+import scratch.newast.model.Program;
 import scratch.structure.Project;
 import scratch.structure.Scriptable;
 import utils.Identifier;
@@ -18,21 +19,10 @@ import utils.Version;
  */
 public class FlowControl implements IssueFinder {
 
-    private List<List<String>> ids = new ArrayList<>();
-    private List<List<String>> legacyIds = new ArrayList<>();
     private String[] notes = new String[4];
     private String name = "flow_control";
 
     public FlowControl() {
-        ids.add(0, Arrays.asList(Identifier.REPEAT.getValue(),
-                Identifier.FOREVER.getValue()));
-        ids.add(1,
-                Collections.singletonList(Identifier.REPEAT_UNTIL.getValue()));
-
-        legacyIds.add(0, Arrays.asList(Identifier.LEGACY_REPEAT.getValue(),
-                Identifier.LEGACY_FOREVER.getValue()));
-        legacyIds.add(1,
-                Collections.singletonList(Identifier.LEGACY_REPEAT_UNTIL.getValue()));
 
         notes[0] = "There is a sequence of blocks missing.";
         notes[1] = "Basic Level. There is repeat or forever missing.";
@@ -42,17 +32,19 @@ public class FlowControl implements IssueFinder {
 
     /**
      * {@inheritDoc}
+     * @param program
      */
     @Override
-    public IssueReport check(Project project) {
+    public IssueReport check(Program program) {
+        /*
         List<Scriptable> scriptables = new ArrayList<>();
-        scriptables.add(project.getStage());
-        scriptables.addAll(project.getSprites());
+        scriptables.add(program.getStage());
+        scriptables.addAll(program.getSprites());
         List<String> pos = new ArrayList<>();
         List<String> found = new ArrayList<>();
         int level = 0;
 
-        List<List<String>> versionIds = checkVersion(project);
+        List<List<String>> versionIds = checkVersion(program);
 
         for (List<String> id : versionIds) {
             for (Scriptable scable : scriptables) {
@@ -74,8 +66,10 @@ public class FlowControl implements IssueFinder {
             level += foundBlockStack;
         }
 
-        return new IssueReport(name, level, pos, project.getPath(),
+        return new IssueReport(name, level, pos, program.getPath(),
                 notes[level]);
+         */
+        throw new RuntimeException("not implemented");
     }
 
     /**
@@ -122,21 +116,6 @@ public class FlowControl implements IssueFinder {
             }
         }
         return found;
-    }
-
-    /**
-     * Checks the version of the Scratch project and returns the right
-     * identifiers for the block keywords.
-     *
-     * @param project The project to check.
-     * @return        The keyword identifiers for the project's version.
-     */
-    private List<List<String>> checkVersion(Project project) {
-        if (project.getVersion().equals(Version.SCRATCH2)) {
-            return legacyIds;
-        } else {
-            return ids;
-        }
     }
 
     @Override

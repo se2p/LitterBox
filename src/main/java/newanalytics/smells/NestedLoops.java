@@ -7,7 +7,7 @@ import newanalytics.IssueFinder;
 import newanalytics.IssueReport;
 import scratch.data.ScBlock;
 import scratch.data.Script;
-import scratch.structure.Project;
+import scratch.newast.model.Program;
 import scratch.structure.Scriptable;
 import utils.Identifier;
 import utils.Version;
@@ -20,17 +20,18 @@ public class NestedLoops implements IssueFinder {
     String name = "nested_loops";
 
     @Override
-    public IssueReport check(Project project) {
+    public IssueReport check(Program program) {
+        /*
         List<Scriptable> scriptables = new ArrayList<>();
-        scriptables.add(project.getStage());
-        scriptables.addAll(project.getSprites());
+        scriptables.add(program.getStage());
+        scriptables.addAll(program.getSprites());
         int count;
         List<String> pos = new ArrayList<>();
         for (Scriptable scable : scriptables) {
             for (Script script : scable.getScripts()) {
-                if (project.getVersion().equals(Version.SCRATCH2)) {
+                if (program.getVersion().equals(Version.SCRATCH2)) {
                     searchBlocks(scable, script, script.getBlocks(), pos);
-                } else if (project.getVersion().equals(Version.SCRATCH3)) {
+                } else if (program.getVersion().equals(Version.SCRATCH3)) {
                     searchBlocks3(scable, script, script.getBlocks(), pos);
                 }
             }
@@ -41,7 +42,10 @@ public class NestedLoops implements IssueFinder {
             notes = "Some scripts have nested loops.";
         }
 
-        return new IssueReport(name, count, pos, project.getPath(), notes);
+        return new IssueReport(name, count, pos, program.getPath(), notes);
+
+         */
+        throw new RuntimeException("not implemented");
     }
 
     private void searchBlocks3(Scriptable scable, Script sc, List<ScBlock> blocks, List<String> pos) {
@@ -63,31 +67,6 @@ public class NestedLoops implements IssueFinder {
             }
             if (b.getElseBlocks() != null && b.getElseBlocks().size() > 0) {
                 searchBlocks3(scable, sc, b.getElseBlocks(), pos);
-            }
-        }
-    }
-
-    private void searchBlocks(Scriptable scable, Script sc, List<ScBlock> blocks, List<String> pos) {
-        for (ScBlock b : blocks) {
-            if (b.getContent().replace("\"", "").startsWith(Identifier.LEGACY_FOREVER.getValue())
-                    || b.getContent().replace("\"", "").startsWith(Identifier.LEGACY_FOREVER_IF.getValue())
-                    || b.getContent().replace("\"", "").startsWith(Identifier.LEGACY_REPEAT.getValue())
-                    || b.getContent().replace("\"", "").startsWith(Identifier.LEGACY_REPEAT_UNTIL.getValue())) {
-                if (b.getNestedBlocks() != null && b.getNestedBlocks().size() == 1) {
-                    ScBlock nested = b.getNestedBlocks().get(0);
-                    if (nested.getContent().replace("\"", "").startsWith(Identifier.LEGACY_FOREVER.getValue())
-                            || nested.getContent().replace("\"", "").startsWith(Identifier.LEGACY_FOREVER_IF.getValue())
-                            || nested.getContent().replace("\"", "").startsWith(Identifier.LEGACY_REPEAT.getValue())
-                            || nested.getContent().replace("\"", "").startsWith(Identifier.LEGACY_REPEAT_UNTIL.getValue())) {
-                        pos.add(scable.getName() + " at " + Arrays.toString(sc.getPosition()));
-                    }
-                }
-            }
-            if (b.getNestedBlocks() != null && b.getNestedBlocks().size() > 0) {
-                searchBlocks(scable, sc, b.getNestedBlocks(), pos);
-            }
-            if (b.getElseBlocks() != null && b.getElseBlocks().size() > 0) {
-                searchBlocks(scable, sc, b.getElseBlocks(), pos);
             }
         }
     }

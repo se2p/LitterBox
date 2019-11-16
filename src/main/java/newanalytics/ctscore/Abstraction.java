@@ -2,15 +2,14 @@ package newanalytics.ctscore;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import newanalytics.IssueFinder;
 import newanalytics.IssueReport;
 import scratch.data.ScBlock;
 import scratch.data.Script;
+import scratch.newast.model.Program;
 import scratch.structure.Project;
 import scratch.structure.Scriptable;
-import utils.Identifier;
 import utils.Version;
 
 /**
@@ -18,21 +17,12 @@ import utils.Version;
  */
 public class Abstraction implements IssueFinder {
 
-    private List<List<String>> ids = new ArrayList<>();
-    private List<List<String>> legacyIds = new ArrayList<>();
+
     private String[] notes = new String[4];
     private String name = "abstraction";
 
     public Abstraction() {
-        ids.add(0,
-                Collections.singletonList(Identifier.CUSTOM_BLOCK.getValue()));
-        ids.add(1,
-                Collections.singletonList(Identifier.CREATE_CLONE.getValue()));
 
-        legacyIds.add(0,
-                Collections.singletonList(Identifier.LEGACY_CUSTOM_BLOCK.getValue()));
-        legacyIds.add(1,
-                Collections.singletonList(Identifier.LEGACY_CREATE_CLONE.getValue()));
 
         notes[0] = "There is only one sprite.";
         notes[1] = "Basic Level. There are no defined blocks.";
@@ -42,17 +32,19 @@ public class Abstraction implements IssueFinder {
 
     /**
      * {@inheritDoc}
+     * @param program
      */
     @Override
-    public IssueReport check(Project project) {
+    public IssueReport check(Program program) {
+        /*
         List<Scriptable> scriptables = new ArrayList<>();
-        scriptables.add(project.getStage());
-        scriptables.addAll(project.getSprites());
+        scriptables.add(program.getStage());
+        scriptables.addAll(program.getSprites());
         List<String> pos = new ArrayList<>();
         List<String> found = new ArrayList<>();
         int level = 0;
 
-        List<List<String>> versionIds = checkVersion(project);
+        List<List<String>> versionIds = checkVersion(program);
 
         for (int i = 0; i < versionIds.size(); i++) {
             for (Scriptable scable : scriptables) {
@@ -69,8 +61,10 @@ public class Abstraction implements IssueFinder {
         }
         level = countScripts(scriptables, level);
 
-        return new IssueReport(name, level, pos, project.getPath(),
+        return new IssueReport(name, level, pos, program.getPath(),
                 notes[level]);
+         */
+        throw new RuntimeException("not implemented");
     }
 
     /**
@@ -116,20 +110,6 @@ public class Abstraction implements IssueFinder {
         }
     }
 
-    /**
-     * Checks the version of the Scratch project and returns the right
-     * identifiers for the block keywords.
-     *
-     * @param project The project to check.
-     * @return        The keyword identifiers for the project's version.
-     */
-    private List<List<String>> checkVersion(Project project) {
-        if (project.getVersion().equals(Version.SCRATCH2)) {
-            return legacyIds;
-        } else {
-            return ids;
-        }
-    }
 
     @Override
     public String getName() {

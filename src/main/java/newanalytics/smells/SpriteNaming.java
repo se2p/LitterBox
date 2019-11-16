@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import newanalytics.IssueFinder;
 import newanalytics.IssueReport;
-import scratch.structure.Project;
+import scratch.newast.model.Program;
 import scratch.structure.Scriptable;
 
 /**
@@ -17,8 +17,9 @@ public class SpriteNaming implements IssueFinder {
     private String name = "sprite_naming";
 
     @Override
-    public IssueReport check(Project project) {
-        List<Scriptable> scriptables = new ArrayList<>(project.getSprites());
+    public IssueReport check(Program program) {
+        /*
+        List<Scriptable> scriptables = new ArrayList<>(program.getSprites());
         List<String> pos = new ArrayList<>();
         for (Scriptable scable : scriptables) {
             String name = scable.getName();
@@ -41,7 +42,10 @@ public class SpriteNaming implements IssueFinder {
         } else {
             notes = note1;
         }
-        return new IssueReport(name, pos.size(), pos, project.getPath(), notes);
+        return new IssueReport(name, pos.size(), pos, program.getPath(), notes);
+
+         */
+        throw new RuntimeException("not implemented");
     }
 
 

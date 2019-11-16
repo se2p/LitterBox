@@ -1,6 +1,6 @@
 package newanalytics;
 
-import scratch.structure.Project;
+import scratch.newast.model.Program;
 
 /**
  * Interface for all IssueFinders
@@ -8,11 +8,11 @@ import scratch.structure.Project;
 public interface IssueFinder {
 
     /**
-     * @param project The project to check
+     * @param program The project to check
      * @return a IssueReport object
      */
 
-    IssueReport check(Project project);
+    IssueReport check(Program program);
 
     String getName();
 

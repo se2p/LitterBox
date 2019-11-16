@@ -8,6 +8,7 @@ import newanalytics.IssueFinder;
 import newanalytics.IssueReport;
 import scratch.data.ScBlock;
 import scratch.data.Script;
+import scratch.newast.model.Program;
 import scratch.structure.Project;
 import scratch.structure.Scriptable;
 import utils.Identifier;
@@ -18,20 +19,11 @@ import utils.Version;
  */
 public class DataRepresentation implements IssueFinder {
 
-    private List<List<String>> ids = new ArrayList<>();
-    private List<List<String>> legacyIds = new ArrayList<>();
+
     private String[] notes = new String[4];
     private String name = "data_representation";
 
     public DataRepresentation() {
-        ids.add(0, Arrays.asList(Identifier.MOTION.getValue(),
-                Identifier.LOOKS.getValue()));
-        ids.add(1, Collections.singletonList(Identifier.DATA.getValue()));
-
-        legacyIds.add(0, Arrays.asList(Identifier.LEGACY_MOTION.getValue(),
-                Identifier.LEGACY_LOOKS.getValue()));
-        legacyIds.add(1,
-                Collections.singletonList(Identifier.LEGACY_DATA.getValue()));
 
         notes[0] = "There are no modifiers of sprites properties.";
         notes[1] = "Basic Level. There are operations on variables missing.";
@@ -41,18 +33,20 @@ public class DataRepresentation implements IssueFinder {
 
     /**
      * {@inheritDoc}
+     * @param program
      */
     @Override
-    public IssueReport check(Project project) {
+    public IssueReport check(Program program) {
+        /*
         List<Scriptable> scriptables = new ArrayList<>();
-        scriptables.add(project.getStage());
-        scriptables.addAll(project.getSprites());
+        scriptables.add(program.getStage());
+        scriptables.addAll(program.getSprites());
         List<String> pos = new ArrayList<>();
         List<String> found = new ArrayList<>();
         int level = 0;
         int count = 0;
 
-        List<List<String>> versionIds = checkVersion(project);
+        List<List<String>> versionIds = checkVersion(program);
 
         for (Scriptable scable : scriptables) {
             for (Script script : scable.getScripts()) {
@@ -69,8 +63,10 @@ public class DataRepresentation implements IssueFinder {
             level = 3;
         }
 
-        return new IssueReport(name, level, pos, project.getPath(),
+        return new IssueReport(name, level, pos, program.getPath(),
                 notes[level]);
+         */
+        throw new RuntimeException("not implemented");
     }
 
     /**
@@ -126,21 +122,6 @@ public class DataRepresentation implements IssueFinder {
             }
         }
         return foundList;
-    }
-
-    /**
-     * Checks the version of the Scratch project and returns the right
-     * identifiers for the block keywords.
-     *
-     * @param project The project to check.
-     * @return        The keyword identifiers for the project's version.
-     */
-    private List<List<String>> checkVersion(Project project) {
-        if (project.getVersion().equals(Version.SCRATCH2)) {
-            return legacyIds;
-        } else {
-            return ids;
-        }
     }
 
     @Override

@@ -8,7 +8,7 @@ import java.util.Map;
 import newanalytics.IssueFinder;
 import newanalytics.IssueReport;
 import scratch.data.Script;
-import scratch.structure.Project;
+import scratch.newast.model.Program;
 import scratch.structure.Scriptable;
 
 /**
@@ -19,10 +19,11 @@ public class DuplicatedSprite implements IssueFinder {
     String name = "duplicated_sprite";
 
     @Override
-    public IssueReport check(Project project) {
+    public IssueReport check(Program program) {
+        /*
         List<Scriptable> scriptables = new ArrayList<>();
-        scriptables.add(project.getStage());
-        scriptables.addAll(project.getSprites());
+        scriptables.add(program.getStage());
+        scriptables.addAll(program.getSprites());
         int count;
         List<String> duplicated = new ArrayList<>();
         List<String> pos = new ArrayList<>();
@@ -53,7 +54,10 @@ public class DuplicatedSprite implements IssueFinder {
             notes = "There are duplicated sprites in your project.";
         }
 
-        return new IssueReport(name, count, pos, project.getPath(), notes);
+        return new IssueReport(name, count, pos, program.getPath(), notes);
+
+         */
+        throw new RuntimeException("not implemented");
     }
 
 
