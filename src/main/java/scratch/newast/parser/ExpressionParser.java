@@ -44,6 +44,7 @@ import scratch.newast.model.expression.num.PickRandom;
 import scratch.newast.model.expression.num.Round;
 import scratch.newast.model.expression.num.Timer;
 import scratch.newast.model.expression.string.AsString;
+import scratch.newast.model.expression.string.AttributeOf;
 import scratch.newast.model.expression.string.ItemOfVariable;
 import scratch.newast.model.expression.string.Join;
 import scratch.newast.model.expression.string.LetterOf;
@@ -244,7 +245,7 @@ public class ExpressionParser {
     }
 
 
-    private static StringExpr parseBlockStringExpr(String opcodeString, String identifier, JsonNode blocks,
+    public static StringExpr parseBlockStringExpr(String opcodeString, String identifier, JsonNode blocks,
                                                    JsonNode fields) throws ParsingException {
         Preconditions
                 .checkArgument(StringExprOpcode.contains(opcodeString), opcodeString + " is not a StringExprOpcode.");
@@ -264,7 +265,16 @@ public class ExpressionParser {
             NumExpr index = parseNumExpr(blocks.get(identifier), 0, blocks);
             Variable var = parseVariableFromFields(fields);
             return new ItemOfVariable(index, var);
-        //case FIXME size...answer...
+        case sound_volume:
+        case motion_xposition:
+        case motion_yposition:
+        case motion_direction:
+        case looks_costumenumbername:
+        case looks_backdropnumbername:
+        case looks_size:
+        case sensing_answer:
+            StringExpr attribute = new Str(opcodeString);
+            return new AttributeOf(attribute, ActorDefinitionParser.getCurrentActor());
         default:
             throw new RuntimeException(opcodeString + " is not covered by parseBlockStringExpr");
         }
