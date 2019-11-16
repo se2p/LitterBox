@@ -14,7 +14,7 @@ public enum DragMode {
 
     public static boolean contains(String opcode) {
         for (DragMode value : DragMode.values()) {
-            if (value.name().equals(opcode)) {
+            if (value.toString().equals(opcode)) {
                 return true;
             }
         }
