@@ -1,8 +1,5 @@
 package scratch.newast.parser;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import org.junit.Before;
 import org.junit.Test;
@@ -18,6 +15,9 @@ import scratch.newast.model.expression.num.Number;
 import scratch.newast.model.expression.num.PickRandom;
 import scratch.newast.model.numfunct.Pow10;
 import utils.JsonParser;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class ExpressionParserTest {
     private static JsonNode moveStepsScript;
@@ -52,25 +52,25 @@ public class ExpressionParserTest {
     @Test
     public void testParseNumber() {
         JsonNode inputs = moveStepsScript.get("EU(l=G6)z8NGlJFcx|fS").get("inputs");
-        Number result = ExpressionParser.parseNumber(inputs, 0);
+        Number result = NumExprParser.parseNumber(inputs, 0);
         assertEquals("10.0", String.valueOf(result.getValue()));
     }
 
     @Test
     public void testParseNumExprLiteral() throws ParsingException {
-        NumExpr numExpr = ExpressionParser.parseNumExpr(literalBlock, 0, allExprTypesScript);
+        NumExpr numExpr = NumExprParser.parseNumExpr(literalBlock, 0, allExprTypesScript);
         assertTrue(numExpr instanceof Number);
     }
 
     @Test
     public void testParseNumExprBlock() throws ParsingException {
-        NumExpr numExpr = ExpressionParser.parseNumExpr(blockBlock, 0, allExprTypesScript);
+        NumExpr numExpr = NumExprParser.parseNumExpr(blockBlock, 0, allExprTypesScript);
         assertTrue(numExpr instanceof MouseX);
     }
 
     @Test
     public void testAdd() throws ParsingException {
-        NumExpr add = ExpressionParser.parseNumExpr(addBlock, 0, twoNumExprSlotsNumExprs);
+        NumExpr add = NumExprParser.parseNumExpr(addBlock, 0, twoNumExprSlotsNumExprs);
         assertTrue(add instanceof Add);
         assertEquals("1.0", String.valueOf(((Number) ((Add) add).getFirst()).getValue()));
         assertEquals("2.0", String.valueOf(((Number) ((Add) add).getSecond()).getValue()));
@@ -78,7 +78,7 @@ public class ExpressionParserTest {
 
     @Test
     public void testMinus() throws ParsingException {
-        NumExpr minus = ExpressionParser.parseNumExpr(minusBlock, 0, twoNumExprSlotsNumExprs);
+        NumExpr minus = NumExprParser.parseNumExpr(minusBlock, 0, twoNumExprSlotsNumExprs);
         assertTrue(minus instanceof Minus);
         assertEquals("1.0", String.valueOf(((Number) ((Minus) minus).getFirst()).getValue()));
         assertEquals("2.0", String.valueOf(((Number) ((Minus) minus).getSecond()).getValue()));
@@ -86,7 +86,7 @@ public class ExpressionParserTest {
 
     @Test
     public void testMult() throws ParsingException {
-        NumExpr mult = ExpressionParser.parseNumExpr(multBlock, 0, twoNumExprSlotsNumExprs);
+        NumExpr mult = NumExprParser.parseNumExpr(multBlock, 0, twoNumExprSlotsNumExprs);
         assertTrue(mult instanceof Mult);
         assertEquals("1.0", String.valueOf(((Number) ((Mult) mult).getFirst()).getValue()));
         assertEquals("2.0", String.valueOf(((Number) ((Mult) mult).getSecond()).getValue()));
@@ -94,7 +94,7 @@ public class ExpressionParserTest {
 
     @Test
     public void testDiv() throws ParsingException {
-        NumExpr div = ExpressionParser.parseNumExpr(divBlock, 0, twoNumExprSlotsNumExprs);
+        NumExpr div = NumExprParser.parseNumExpr(divBlock, 0, twoNumExprSlotsNumExprs);
         assertTrue(div instanceof Div);
         PickRandom pickRandom = (PickRandom) ((Div) div).getFirst();
         assertEquals("1.0", String.valueOf(((Number) (pickRandom.getFrom())).getValue()));
@@ -108,8 +108,6 @@ public class ExpressionParserTest {
     public void testNumFuncts() throws ParsingException {
         JsonNode script = JsonParser.getBlocksNodeFromJSON("./src/test/java/scratch/fixtures/numfuncts.json");
         JsonNode pow10Block = script.get("xbBc!xS=1Yz2Yp/DF;JT");
-        assertTrue(ExpressionParser.parseNumFunct(pow10Block.get("fields")) instanceof Pow10);
+        assertTrue(NumExprParser.parseNumFunct(pow10Block.get("fields")) instanceof Pow10);
     }
-
-
 }
