@@ -17,8 +17,8 @@ import scratch.newast.model.variable.Qualified;
 import scratch.newast.model.variable.Variable;
 import scratch.newast.opcodes.ActorLookStmtOpcode;
 import scratch.newast.parser.ElementChoiceParser;
-import scratch.newast.parser.ExpressionParser;
 import scratch.newast.parser.ProgramParser;
+import scratch.newast.parser.StringExprParser;
 import scratch.newast.parser.symboltable.ExpressionListInfo;
 import scratch.newast.parser.symboltable.VariableInfo;
 
@@ -49,7 +49,7 @@ public class ActorLookStmtParser {
 
         switch (opcode) {
             case sensing_askandwait:
-                StringExpr question = ExpressionParser.parseStringExpr(current, 0, allBlocks);
+                StringExpr question = StringExprParser.parseStringExpr(current, 0, allBlocks);
                 stmt = new AskAndWait(question);
                 break;
             case looks_switchbackdropto:

@@ -20,7 +20,8 @@ import scratch.newast.model.statement.spritelook.Think;
 import scratch.newast.model.statement.spritelook.ThinkForSecs;
 import scratch.newast.opcodes.SpriteLookStmtOpcode;
 import scratch.newast.parser.ElementChoiceParser;
-import scratch.newast.parser.ExpressionParser;
+import scratch.newast.parser.NumExprParser;
+import scratch.newast.parser.StringExprParser;
 
 public class SpriteLookStmtParser {
 
@@ -43,27 +44,27 @@ public class SpriteLookStmtParser {
             case looks_hide:
                 return new Hide();
             case looks_sayforsecs:
-                stringExpr = ExpressionParser.parseStringExpr(current, 0, allBlocks);
-                numExpr = ExpressionParser.parseNumExpr(current, 1, allBlocks);
+                stringExpr = StringExprParser.parseStringExpr(current, 0, allBlocks);
+                numExpr = NumExprParser.parseNumExpr(current, 1, allBlocks);
                 return new SayForSecs(stringExpr, numExpr);
             case looks_say:
-                stringExpr = ExpressionParser.parseStringExpr(current, 0, allBlocks);
+                stringExpr = StringExprParser.parseStringExpr(current, 0, allBlocks);
                 return new Say(stringExpr);
             case looks_thinkforsecs:
-                stringExpr = ExpressionParser.parseStringExpr(current, 0, allBlocks);
-                numExpr = ExpressionParser.parseNumExpr(current, 1, allBlocks);
+                stringExpr = StringExprParser.parseStringExpr(current, 0, allBlocks);
+                numExpr = NumExprParser.parseNumExpr(current, 1, allBlocks);
                 return new ThinkForSecs(stringExpr, numExpr);
             case looks_think:
-                stringExpr = ExpressionParser.parseStringExpr(current, 0, allBlocks);
+                stringExpr = StringExprParser.parseStringExpr(current, 0, allBlocks);
                 return new Think(stringExpr);
             case looks_switchcostumeto:
                 ElementChoice choice = ElementChoiceParser.parse(current, allBlocks);
                 return new SwitchCostumeTo(choice);
             case looks_changesizeby:
-                numExpr = ExpressionParser.parseNumExpr(current, 0, allBlocks);
+                numExpr = NumExprParser.parseNumExpr(current, 0, allBlocks);
                 return new ChangeSizeBy(numExpr);
             case looks_setsizeto:
-                numExpr = ExpressionParser.parseNumExpr(current, 0, allBlocks);
+                numExpr = NumExprParser.parseNumExpr(current, 0, allBlocks);
                 return new SetSizeTo(numExpr);
             case looks_gotofrontback:
             case looks_goforwardbackwardlayers:

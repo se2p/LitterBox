@@ -15,7 +15,8 @@ import scratch.newast.model.statement.control.RepeatForeverStmt;
 import scratch.newast.model.statement.control.RepeatTimesStmt;
 import scratch.newast.model.statement.control.UntilStmt;
 import scratch.newast.opcodes.ControlStmtOpcode;
-import scratch.newast.parser.ExpressionParser;
+import scratch.newast.parser.BoolExprParser;
+import scratch.newast.parser.NumExprParser;
 import scratch.newast.parser.ScriptParser;
 
 public class ControlStmtParser {
@@ -40,7 +41,7 @@ public class ControlStmtParser {
         switch (opcode) {
             case control_if:
                 if (inputs.has(INPUT_CONDITION)) {
-                    boolExpr = ExpressionParser.parseBoolExpr(current, 0, allBlocks);
+                    boolExpr = BoolExprParser.parseBoolExpr(current, 0, allBlocks);
                 } else {
                     boolExpr = new UnspecifiedBoolExpr();
                 }
@@ -52,7 +53,7 @@ public class ControlStmtParser {
                 break;
             case control_if_else:
                 if (inputs.has(INPUT_CONDITION)) {
-                    boolExpr = ExpressionParser.parseBoolExpr(current, 0, allBlocks);
+                    boolExpr = BoolExprParser.parseBoolExpr(current, 0, allBlocks);
                 } else {
                     boolExpr = new UnspecifiedBoolExpr();
                 }
@@ -65,7 +66,7 @@ public class ControlStmtParser {
                 stmt = new IfElseStmt(boolExpr, stmtList, elseStmtList); // FIXME
                 break;
             case control_repeat:
-                NumExpr numExpr = ExpressionParser.parseNumExpr(current, 0, allBlocks);
+                NumExpr numExpr = NumExprParser.parseNumExpr(current, 0, allBlocks);
 
                 substackNode = inputs.get(INPUT_SUBSTACK).get(Constants.POS_INPUT_VALUE);
                 stmtList = ScriptParser.parseStmtList(substackNode.asText(), allBlocks);
@@ -74,7 +75,7 @@ public class ControlStmtParser {
                 break;
             case control_repeat_until:
                 if (inputs.has(INPUT_CONDITION)) {
-                    boolExpr = ExpressionParser.parseBoolExpr(current, 0, allBlocks);
+                    boolExpr = BoolExprParser.parseBoolExpr(current, 0, allBlocks);
                 } else {
                     boolExpr = new UnspecifiedBoolExpr();
                 }

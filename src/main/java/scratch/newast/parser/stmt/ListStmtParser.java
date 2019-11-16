@@ -10,8 +10,9 @@ import scratch.newast.model.statement.list.*;
 import scratch.newast.model.variable.Identifier;
 import scratch.newast.model.variable.Qualified;
 import scratch.newast.opcodes.ListStmtOpcode;
-import scratch.newast.parser.ExpressionParser;
+import scratch.newast.parser.NumExprParser;
 import scratch.newast.parser.ProgramParser;
+import scratch.newast.parser.StringExprParser;
 import scratch.newast.parser.symboltable.ExpressionListInfo;
 
 import static scratch.newast.Constants.*;
@@ -54,7 +55,7 @@ public class ListStmtParser {
     private static ListStmt parseAddToList(JsonNode current, JsonNode allBlocks) throws ParsingException {
         Preconditions.checkNotNull(current);
         Preconditions.checkNotNull(allBlocks);
-        StringExpr expr = ExpressionParser.parseStringExpr(current, 0, allBlocks);
+        StringExpr expr = StringExprParser.parseStringExpr(current, 0, allBlocks);
 
         ExpressionListInfo info = getListInfo(current);
         if (info.isGlobal()) {
@@ -78,7 +79,7 @@ public class ListStmtParser {
     private static ListStmt parseDeleteOfList(JsonNode current, JsonNode allBlocks) throws ParsingException {
         Preconditions.checkNotNull(current);
         Preconditions.checkNotNull(allBlocks);
-        NumExpr expr = ExpressionParser.parseNumExpr(current, 0, allBlocks);
+        NumExpr expr = NumExprParser.parseNumExpr(current, 0, allBlocks);
         ExpressionListInfo info = getListInfo(current);
         if (info.isGlobal()) {
             return new DeleteOf(expr, new Identifier(info.getVariableName()));
@@ -103,8 +104,8 @@ public class ListStmtParser {
     private static ListStmt parseInsertAtList(JsonNode current, JsonNode allBlocks) throws ParsingException {
         Preconditions.checkNotNull(current);
         Preconditions.checkNotNull(allBlocks);
-        StringExpr stringExpr = ExpressionParser.parseStringExpr(current, 0, allBlocks);
-        NumExpr numExpr = ExpressionParser.parseNumExpr(current, 1, allBlocks);
+        StringExpr stringExpr = StringExprParser.parseStringExpr(current, 0, allBlocks);
+        NumExpr numExpr = NumExprParser.parseNumExpr(current, 1, allBlocks);
         ExpressionListInfo info = getListInfo(current);
         if (info.isGlobal()) {
             return new InsertAt(stringExpr, numExpr, new Identifier(info.getVariableName()));
@@ -117,8 +118,8 @@ public class ListStmtParser {
     private static ListStmt parseReplaceItemOfList(JsonNode current, JsonNode allBlocks) throws ParsingException {
         Preconditions.checkNotNull(current);
         Preconditions.checkNotNull(allBlocks);
-        StringExpr stringExpr = ExpressionParser.parseStringExpr(current, 1, allBlocks);
-        NumExpr numExpr = ExpressionParser.parseNumExpr(current, 0, allBlocks);
+        StringExpr stringExpr = StringExprParser.parseStringExpr(current, 1, allBlocks);
+        NumExpr numExpr = NumExprParser.parseNumExpr(current, 0, allBlocks);
 
         ExpressionListInfo info = getListInfo(current);
         if (info.isGlobal()) {

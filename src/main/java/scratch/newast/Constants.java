@@ -120,6 +120,8 @@ public class Constants {
     public static final String NAME_KEY = "name";
     public static final String IS_STAGE_KEY = "isStage";
 
+    public static final String OPERATOR_KEY = "OPERATOR";
+
     /**
      * The position of the variable's value in the declaration.
      */
@@ -155,4 +157,5 @@ public class Constants {
     public static final String EFFECT_KEY = "EFFECT";
     public static final String DRAGMODE_KEY = "DRAG_MODE";
     public static final String STYLE_KEY = "STYLE";
+
 }

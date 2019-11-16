@@ -70,12 +70,12 @@ public class PositionParser {
     private static Position parseCoordinate(JsonNode current, JsonNode allBlocks) throws ParsingException {
         SpriteMotionStmtOpcode spriteMotionStmtOpcode = valueOf(current.get(Constants.OPCODE_KEY).asText());
         if (motion_glidesecstoxy.equals(spriteMotionStmtOpcode)) {
-            NumExpr xExpr = ExpressionParser.parseNumExpr(current, 1, allBlocks);
-            NumExpr yExpr = ExpressionParser.parseNumExpr(current, 2, allBlocks);
+            NumExpr xExpr = NumExprParser.parseNumExpr(current, 1, allBlocks);
+            NumExpr yExpr = NumExprParser.parseNumExpr(current, 2, allBlocks);
             return new CoordinatePosition(xExpr, yExpr);
         } else if (motion_gotoxy.equals(spriteMotionStmtOpcode)) {
-            NumExpr xExpr = ExpressionParser.parseNumExpr(current, 0, allBlocks);
-            NumExpr yExpr = ExpressionParser.parseNumExpr(current, 1, allBlocks);
+            NumExpr xExpr = NumExprParser.parseNumExpr(current, 0, allBlocks);
+            NumExpr yExpr = NumExprParser.parseNumExpr(current, 1, allBlocks);
             return new CoordinatePosition(xExpr, yExpr);
         } else {
             throw new ParsingException(

@@ -32,7 +32,8 @@ import scratch.newast.model.statement.common.WaitSeconds;
 import scratch.newast.model.statement.common.WaitUntil;
 import scratch.newast.model.variable.Identifier;
 import scratch.newast.opcodes.CommonStmtOpcode;
-import scratch.newast.parser.ExpressionParser;
+import scratch.newast.parser.BoolExprParser;
+import scratch.newast.parser.NumExprParser;
 
 public class CommonStmtParser {
 
@@ -96,11 +97,11 @@ public class CommonStmtParser {
 
         if (sound_changevolumeby.equals(opcode)) {
             String attributeName = "VOLUME";
-            NumExpr numExpr = ExpressionParser.parseNumExpr(current, 0,
+            NumExpr numExpr = NumExprParser.parseNumExpr(current, 0,
                 allBlocks);
             return new ChangeAttributeBy(new Str(attributeName), numExpr);
         } else if (sound_changeeffectby.equals(opcode) || looks_changeeffectby.equals(opcode)) {
-            NumExpr numExpr = ExpressionParser.parseNumExpr(current, 0, allBlocks);
+            NumExpr numExpr = NumExprParser.parseNumExpr(current, 0, allBlocks);
             String effectName = current.get(FIELDS_KEY).get("EFFECT").get(0).asText();
             return new ChangeAttributeBy(new Str(effectName), numExpr);
 //        } else if (looks_changesizeby.equals(opcode)) {
@@ -110,7 +111,7 @@ public class CommonStmtParser {
     }
 
     private static CommonStmt parseChangeVariableBy(JsonNode current, JsonNode allBlocks) throws ParsingException {
-        Expression numExpr = ExpressionParser.parseNumExpr(current, 0, allBlocks);
+        Expression numExpr = NumExprParser.parseNumExpr(current, 0, allBlocks);
 
         String variableName = current.get(FIELDS_KEY).get(VARIABLE_KEY).get(FIELD_VALUE).asText();
         Identifier ident = new Identifier(variableName);
@@ -155,7 +156,7 @@ public class CommonStmtParser {
     private static WaitUntil parseWaitUntil(JsonNode current, JsonNode allBlocks) throws ParsingException {
         JsonNode inputs = current.get(INPUTS_KEY);
         if (inputs.elements().hasNext()) {
-            BoolExpr boolExpr = ExpressionParser.parseBoolExpr(current, 0, allBlocks);
+            BoolExpr boolExpr = BoolExprParser.parseBoolExpr(current, 0, allBlocks);
             return new WaitUntil(boolExpr);
         } else {
             return new WaitUntil(new UnspecifiedBoolExpr());
@@ -163,7 +164,7 @@ public class CommonStmtParser {
     }
 
     private static WaitSeconds parseWaitSeconds(JsonNode current, JsonNode allBlocks) throws ParsingException {
-        NumExpr numExpr = ExpressionParser.parseNumExpr(current, 0, allBlocks);
+        NumExpr numExpr = NumExprParser.parseNumExpr(current, 0, allBlocks);
         return new WaitSeconds(numExpr);
     }
 
