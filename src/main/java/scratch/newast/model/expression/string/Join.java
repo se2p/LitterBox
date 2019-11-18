@@ -32,6 +32,6 @@ public class Join implements StringExpr {
 
     @Override
     public ImmutableList<ASTNode> getChildren() {
-        return null;
+        return children;
     }
 }

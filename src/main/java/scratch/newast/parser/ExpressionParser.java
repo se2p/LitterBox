@@ -5,11 +5,19 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import scratch.newast.Constants;
 import scratch.newast.ParsingException;
 import scratch.newast.model.expression.Expression;
+import scratch.newast.model.variable.Identifier;
+import scratch.newast.model.variable.Qualified;
+import scratch.newast.opcodes.BoolExprOpcode;
+import scratch.newast.opcodes.NumExprOpcode;
+import scratch.newast.opcodes.StringExprOpcode;
+import scratch.newast.parser.symboltable.ExpressionListInfo;
+import scratch.newast.parser.symboltable.VariableInfo;
 
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import static scratch.newast.Constants.OPCODE_KEY;
 import static scratch.newast.Constants.POS_DATA_ARRAY;
 
 public class ExpressionParser {
@@ -50,5 +58,36 @@ public class ExpressionParser {
 
     static ArrayNode getDataArrayAtPos(JsonNode inputs, int pos) { // TODO maybe rename or comment
         return (ArrayNode) getExprArrayAtPos(inputs, pos).get(POS_DATA_ARRAY);
+    }
+
+    public static Expression parseExpressionBlock(JsonNode current, JsonNode allBlocks) throws ParsingException {
+        if (current instanceof ArrayNode) {
+            // it's a list or variable
+            String idString = current.get(2).asText();
+            if (ProgramParser.symbolTable.getVariables().containsKey(idString)) {
+                VariableInfo variableInfo = ProgramParser.symbolTable.getVariables().get(idString);
+
+                return new Qualified(new Identifier(variableInfo.getActor()),
+                        new Identifier((variableInfo.getVariableName())));
+
+            } else if (ProgramParser.symbolTable.getLists().containsKey(idString)) {
+                ExpressionListInfo variableInfo = ProgramParser.symbolTable.getLists().get(idString);
+                return new Qualified(new Identifier(variableInfo.getActor()),
+                        new Identifier((variableInfo.getVariableName())));
+            }
+        } else {
+            // it's a normal reporter block
+            String opcode = current.get(OPCODE_KEY).asText();
+            if (NumExprOpcode.contains(opcode)) {
+                return NumExprParser.parseBlockNumExpr(current, allBlocks);
+            } else if (StringExprOpcode.contains(opcode)) {
+                return StringExprParser.parseBlockStringExpr(current, allBlocks);
+            } else if (BoolExprOpcode.contains(opcode)) {
+                return BoolExprParser.parseBlockBoolExpr(current, allBlocks);
+            } else {
+                throw new ParsingException(opcode + " is an unexpected opcode for an expression");
+            }
+        }
+        throw new ParsingException("Calling parseExpressionBlock here went wrong");
     }
 }
