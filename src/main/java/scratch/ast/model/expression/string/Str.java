@@ -21,7 +21,7 @@ package scratch.ast.model.expression.string;
 import com.google.common.collect.ImmutableList;
 import scratch.ast.model.ASTLeaf;
 import scratch.ast.model.ASTNode;
-import scratch.ast.model.ScratchVisitor;
+import scratch.ast.visitor.ScratchVisitor;
 
 //Concrete string: StringExpr ::= String
 public class Str implements StringExpr, ASTLeaf {

@@ -20,7 +20,7 @@ package scratch.ast.model.timecomp;
 
 import com.google.common.collect.ImmutableList;
 import scratch.ast.model.ASTNode;
-import scratch.ast.model.ScratchVisitor;
+import scratch.ast.visitor.ScratchVisitor;
 
 public class Second implements TimeComp {
 

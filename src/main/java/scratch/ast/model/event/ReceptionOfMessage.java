@@ -21,7 +21,7 @@ package scratch.ast.model.event;
 import com.google.common.collect.ImmutableList;
 import scratch.ast.model.ASTNode;
 import scratch.ast.model.Message;
-import scratch.ast.model.ScratchVisitor;
+import scratch.ast.visitor.ScratchVisitor;
 
 public class ReceptionOfMessage implements Event {
 

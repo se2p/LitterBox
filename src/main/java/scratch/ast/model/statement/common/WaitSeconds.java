@@ -20,8 +20,8 @@ package scratch.ast.model.statement.common;
 
 import com.google.common.collect.ImmutableList;
 import scratch.ast.model.ASTNode;
-import scratch.ast.model.ScratchVisitor;
 import scratch.ast.model.expression.num.NumExpr;
+import scratch.ast.visitor.ScratchVisitor;
 
 public class WaitSeconds implements CommonStmt {
 

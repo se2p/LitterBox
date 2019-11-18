@@ -20,9 +20,9 @@ package scratch.ast.model.expression.bool;
 
 import com.google.common.collect.ImmutableList;
 import scratch.ast.model.ASTNode;
-import scratch.ast.model.ScratchVisitor;
 import scratch.ast.model.expression.Expression;
 import scratch.ast.model.expression.string.StringExpr;
+import scratch.ast.visitor.ScratchVisitor;
 
 public class VariableContains implements BoolExpr {
 

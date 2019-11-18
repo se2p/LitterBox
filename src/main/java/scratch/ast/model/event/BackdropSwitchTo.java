@@ -20,8 +20,8 @@ package scratch.ast.model.event;
 
 import com.google.common.collect.ImmutableList;
 import scratch.ast.model.ASTNode;
-import scratch.ast.model.ScratchVisitor;
 import scratch.ast.model.variable.Identifier;
+import scratch.ast.visitor.ScratchVisitor;
 
 public class BackdropSwitchTo implements Event {
 

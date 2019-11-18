@@ -20,9 +20,9 @@ package scratch.ast.model.procedure;
 
 import com.google.common.collect.ImmutableList;
 import scratch.ast.model.ASTNode;
-import scratch.ast.model.ScratchVisitor;
 import scratch.ast.model.StmtList;
 import scratch.ast.model.variable.Identifier;
+import scratch.ast.visitor.ScratchVisitor;
 
 public class ProcedureDefinition implements ASTNode {
 

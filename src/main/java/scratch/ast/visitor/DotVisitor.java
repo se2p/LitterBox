@@ -27,7 +27,6 @@ import java.util.LinkedList;
 import java.util.List;
 import scratch.ast.model.ASTLeaf;
 import scratch.ast.model.ASTNode;
-import scratch.ast.model.ScratchVisitor;
 
 /**
  * Visitor that creates a .dot output for a Program-AST

@@ -21,6 +21,7 @@ package scratch.ast.model;
 import com.google.common.collect.ImmutableList;
 import scratch.ast.model.statement.spritelook.ListOfStmt;
 import scratch.ast.model.statement.termination.TerminationStmt;
+import scratch.ast.visitor.ScratchVisitor;
 
 public class StmtList implements ASTNode {
 

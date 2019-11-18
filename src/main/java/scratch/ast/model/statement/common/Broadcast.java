@@ -21,7 +21,7 @@ package scratch.ast.model.statement.common;
 import com.google.common.collect.ImmutableList;
 import scratch.ast.model.ASTNode;
 import scratch.ast.model.Message;
-import scratch.ast.model.ScratchVisitor;
+import scratch.ast.visitor.ScratchVisitor;
 
 public class Broadcast implements CommonStmt {
 

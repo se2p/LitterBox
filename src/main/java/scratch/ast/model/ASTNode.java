@@ -19,6 +19,7 @@
 package scratch.ast.model;
 
 import com.google.common.collect.ImmutableList;
+import scratch.ast.visitor.ScratchVisitor;
 
 public interface ASTNode {
 

@@ -20,6 +20,7 @@ package scratch.ast.model;
 
 import com.google.common.collect.ImmutableList;
 import java.util.List;
+import scratch.ast.visitor.ScratchVisitor;
 
 public class ScriptList implements ASTNode {
 

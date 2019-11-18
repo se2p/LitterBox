@@ -21,6 +21,7 @@ package scratch.ast.model;
 import com.google.common.collect.ImmutableList;
 import java.util.List;
 import scratch.ast.model.statement.common.SetStmt;
+import scratch.ast.visitor.ScratchVisitor;
 
 public class SetStmtList implements ASTNode {
 

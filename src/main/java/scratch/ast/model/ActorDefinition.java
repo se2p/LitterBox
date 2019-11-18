@@ -23,6 +23,7 @@ import scratch.ast.model.procedure.ProcedureDefinitionList;
 import scratch.ast.model.resource.ResourceList;
 import scratch.ast.model.statement.declaration.DeclarationStmtList;
 import scratch.ast.model.variable.Identifier;
+import scratch.ast.visitor.ScratchVisitor;
 
 public class ActorDefinition implements ASTNode {
 

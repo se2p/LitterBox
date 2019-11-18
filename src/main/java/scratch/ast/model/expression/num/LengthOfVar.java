@@ -20,8 +20,8 @@ package scratch.ast.model.expression.num;
 
 import com.google.common.collect.ImmutableList;
 import scratch.ast.model.ASTNode;
-import scratch.ast.model.ScratchVisitor;
 import scratch.ast.model.variable.Variable;
+import scratch.ast.visitor.ScratchVisitor;
 
 public class LengthOfVar implements NumExpr {
 
