@@ -21,27 +21,26 @@ package scratch.ast.model.expression.bool;
 import com.google.common.collect.ImmutableList;
 import scratch.ast.model.ASTNode;
 import scratch.ast.model.expression.Expression;
-import scratch.ast.model.expression.string.StringExpr;
 import scratch.ast.visitor.ScratchVisitor;
 
-public class VariableContains implements BoolExpr {
+public class ExpressionContains implements BoolExpr {
 
-    private final StringExpr variable;
-    private final Expression expr;
+    private final Expression containing;
+    private final Expression contained;
     private final ImmutableList<ASTNode> children;
 
-    public VariableContains(StringExpr variable, Expression expr) {
-        this.variable = variable;
-        this.expr = expr;
-        children = ImmutableList.<ASTNode>builder().add(variable).add(expr).build();
+    public ExpressionContains(Expression containing, Expression contained) {
+        this.containing = containing;
+        this.contained = contained;
+        children = ImmutableList.<ASTNode>builder().add(containing).add(contained).build();
     }
 
-    public StringExpr getVariable() {
-        return variable;
+    public Expression getContaining() {
+        return containing;
     }
 
-    public Expression getExpr() {
-        return expr;
+    public Expression getContained() {
+        return contained;
     }
 
     @Override
