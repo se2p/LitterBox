@@ -71,7 +71,7 @@ public class ControlStmtParser {
                 break;
             case control_if_else:
                 if (inputs.has(INPUT_CONDITION)) {
-                    boolExpr = BoolExprParser.parseBoolExpr(current, 0, allBlocks);
+                    boolExpr = BoolExprParser.parseBoolExpr(current, 1, allBlocks); // TODO maybe the position differs if there are no substacks?
                 } else {
                     boolExpr = new UnspecifiedBoolExpr();
                 }
@@ -93,7 +93,7 @@ public class ControlStmtParser {
                 break;
             case control_repeat_until:
                 if (inputs.has(INPUT_CONDITION)) {
-                    boolExpr = BoolExprParser.parseBoolExpr(current, 0, allBlocks);
+                    boolExpr = BoolExprParser.parseBoolExpr(current, 1, allBlocks); // TODO maybe the position differs if there are no substacks?
                 } else {
                     boolExpr = new UnspecifiedBoolExpr();
                 }

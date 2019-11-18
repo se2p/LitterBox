@@ -27,6 +27,6 @@ import scratch.newast.parser.ExpressionParser;
 public class ExpressionStmtParser {
 
     public static Stmt parse(JsonNode current, JsonNode allBlocks) throws ParsingException {
-        return new ExpressionStmt(ExpressionParser.parseExpression(current, 0, allBlocks));
+        return new ExpressionStmt(ExpressionParser.parseExpressionBlock(current, allBlocks));
     }
 }
