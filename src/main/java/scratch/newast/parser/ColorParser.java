@@ -10,7 +10,7 @@ import scratch.newast.model.expression.num.Number;
 public class ColorParser {
 
     public static Color parseColor(JsonNode current, int pos, JsonNode allBlocks) {
-        String rgbCode = current.get(INPUTS_KEY).get(pos).get(1).asText();
+        String rgbCode = current.get(INPUTS_KEY).get("COLOR").get(1).get(1).asText(); //TODO replace magic nums
         Long i;
         Float f;
         i = Long.parseLong(rgbCode.substring(1, 3), 16);
