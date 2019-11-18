@@ -9,7 +9,7 @@ public interface ASTNode {
     ImmutableList<ASTNode> getChildren();
 
     default String getUniqueName() {
-        return this.getClass().getSimpleName() + this.hashCode();
+        return this.getClass().getSimpleName();
     }
 
 }
