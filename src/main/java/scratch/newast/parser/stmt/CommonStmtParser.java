@@ -99,7 +99,6 @@ public class CommonStmtParser {
 
             case sound_changevolumeby:
             case sound_changeeffectby:
-                //case looks_changesizeby: //FIXME is this now a common stmt?
             case looks_changeeffectby:
                 stmt = parseChangeAttributeBy(current, allBlocks);
                 return stmt;
