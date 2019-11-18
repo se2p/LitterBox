@@ -24,7 +24,6 @@ import static scratch.newast.Constants.OPCODE_KEY;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.base.Preconditions;
-import scratch.newast.Constants;
 import scratch.newast.ParsingException;
 import scratch.newast.model.elementchoice.ElementChoice;
 import scratch.newast.model.expression.string.StringExpr;
@@ -46,7 +45,7 @@ import scratch.newast.parser.symboltable.VariableInfo;
 
 public class ActorLookStmtParser {
 
-    private static final String CHANGE_EFFECTBY_INPUT_KEY = "CHANGE";
+    private static final String CHANGE_BACKDROP_TO = "BACKDROP";
     private static final String VARIABLE = "VARIABLE";
     private static final String LIST = "LIST";
 
@@ -73,7 +72,7 @@ public class ActorLookStmtParser {
                 stmt = new AskAndWait(question);
                 break;
             case looks_switchbackdropto:
-                ElementChoice elementChoice = parseSwitchBackdropTo(current, allBlocks);
+                ElementChoice elementChoice = ElementChoiceParser.parse(current, allBlocks);
                 stmt = new SwitchBackdrop(elementChoice);
                 break;
             case looks_cleargraphiceffects:
@@ -116,14 +115,5 @@ public class ActorLookStmtParser {
         }
 
         return stmt;
-    }
-
-    private static ElementChoice parseSwitchBackdropTo(JsonNode current, JsonNode allBlocks) {
-        JsonNode backdropNodeId = current.get(Constants.INPUTS_KEY).get(CHANGE_EFFECTBY_INPUT_KEY)
-            .get(Constants.POS_DATA_ARRAY)
-            .get(Constants.POS_INPUT_VALUE);
-        JsonNode backdropMenu = allBlocks.get(backdropNodeId.asText());
-
-        return ElementChoiceParser.parse(backdropMenu, allBlocks);
     }
 }
