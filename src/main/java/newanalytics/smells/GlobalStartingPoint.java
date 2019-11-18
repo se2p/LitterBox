@@ -62,7 +62,7 @@ public class GlobalStartingPoint implements IssueFinder {
         } else {
             notes = note1;
         }
-        return new IssueReport(name, count, pos, project.getPath(), notes);
+        return new IssueReport(name, count, pos, notes);
     }
 
     @Override

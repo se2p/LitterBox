@@ -10,21 +10,19 @@ public class IssueReport {
     private String name;
     private int count;
     private List<String> position;
-    private String projectPath;
     private String notes;
 
     /**
      *
      * @param count How often the IssueReport appears
      * @param position [0] = stage, [1],[2],... = sprites
-     * @param projectPath The projects path
      * @param notes Notes defined by each IssueFinder
      */
-    public IssueReport(String name, int count, List<String> position, String projectPath, String notes) {
+    public IssueReport(String name, int count, List<String> position, String notes) {
         this.name = name;
         this.count = count;
         this.position = position;
-        this.projectPath = projectPath;
+
         this.notes = notes;
     }
 
@@ -35,7 +33,6 @@ public class IssueReport {
         if(position != null && position.size() > 0) {
             sb.append("\nPosition: ").append(position);
         }
-        sb.append("\nProject: ").append(projectPath);
         sb.append("\nNotes: ").append(notes);
         sb.append("\n--------------------------------------------");
         return sb.toString();
@@ -63,14 +60,6 @@ public class IssueReport {
 
     public void setPosition(List<String> position) {
         this.position = position;
-    }
-
-    public String getProjectPath() {
-        return projectPath;
-    }
-
-    public void setProjectPath(String projectPath) {
-        this.projectPath = projectPath;
     }
 
     public String getNotes() {
