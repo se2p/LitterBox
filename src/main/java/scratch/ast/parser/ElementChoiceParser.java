@@ -19,6 +19,7 @@
 package scratch.ast.parser;
 
 import static scratch.ast.Constants.FIELDS_KEY;
+import static scratch.ast.opcodes.SpriteLookStmtOpcode.looks_nextcostume;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.base.Preconditions;
@@ -37,6 +38,11 @@ public class ElementChoiceParser {
     public static ElementChoice parse(JsonNode current, JsonNode allBlocks) {
         Preconditions.checkNotNull(current);
         Preconditions.checkNotNull(allBlocks);
+
+        String opcodeString = current.get(Constants.OPCODE_KEY).asText();
+        if (opcodeString.equals(looks_nextcostume.toString())) {
+            return new Next();
+        }
 
         //Make a list of all elements in inputs
         List<JsonNode> inputsList = new ArrayList<>();

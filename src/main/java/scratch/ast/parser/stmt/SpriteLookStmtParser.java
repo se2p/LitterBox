@@ -75,6 +75,7 @@ public class SpriteLookStmtParser {
             case looks_think:
                 stringExpr = StringExprParser.parseStringExpr(current, 0, allBlocks);
                 return new Think(stringExpr);
+            case looks_nextcostume:
             case looks_switchcostumeto:
                 ElementChoice choice = ElementChoiceParser.parse(current, allBlocks);
                 return new SwitchCostumeTo(choice);
