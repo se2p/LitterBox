@@ -20,7 +20,7 @@ package newanalytics.smells;
 
 import newanalytics.IssueFinder;
 import newanalytics.IssueReport;
-import scratch.newast.model.Program;
+import scratch.ast.model.Program;
 
 /**
  * Checks if all Sprites have different names.

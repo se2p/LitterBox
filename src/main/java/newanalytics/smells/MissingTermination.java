@@ -22,16 +22,16 @@ import java.util.ArrayList;
 import java.util.List;
 import newanalytics.IssueFinder;
 import newanalytics.IssueReport;
-import scratch.newast.model.ActorDefinition;
-import scratch.newast.model.Program;
-import scratch.newast.model.Script;
-import scratch.newast.model.expression.bool.UnspecifiedBoolExpr;
-import scratch.newast.model.statement.Stmt;
-import scratch.newast.model.statement.control.IfElseStmt;
-import scratch.newast.model.statement.control.IfThenStmt;
-import scratch.newast.model.statement.control.RepeatForeverStmt;
-import scratch.newast.model.statement.control.RepeatTimesStmt;
-import scratch.newast.model.statement.control.UntilStmt;
+import scratch.ast.model.ActorDefinition;
+import scratch.ast.model.Program;
+import scratch.ast.model.Script;
+import scratch.ast.model.expression.bool.UnspecifiedBoolExpr;
+import scratch.ast.model.statement.Stmt;
+import scratch.ast.model.statement.control.IfElseStmt;
+import scratch.ast.model.statement.control.IfThenStmt;
+import scratch.ast.model.statement.control.RepeatForeverStmt;
+import scratch.ast.model.statement.control.RepeatTimesStmt;
+import scratch.ast.model.statement.control.UntilStmt;
 
 /**
  * Checks for missing statements in repeat-until blocks.

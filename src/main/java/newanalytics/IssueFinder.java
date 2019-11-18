@@ -18,7 +18,7 @@
  */
 package newanalytics;
 
-import scratch.newast.model.Program;
+import scratch.ast.model.Program;
 
 /**
  * Interface for all IssueFinders

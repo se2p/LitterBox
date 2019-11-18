@@ -23,7 +23,7 @@ import java.util.Collections;
 import java.util.List;
 import newanalytics.IssueFinder;
 import newanalytics.IssueReport;
-import scratch.newast.model.Program;
+import scratch.ast.model.Program;
 
 /**
  * Checks for duplicated sprites.

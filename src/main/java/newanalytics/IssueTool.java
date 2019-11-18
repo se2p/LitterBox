@@ -57,7 +57,7 @@ import newanalytics.smells.StartingPoint;
 import newanalytics.smells.UnusedVariable;
 import newanalytics.smells.VariableScope;
 import org.apache.commons.csv.CSVPrinter;
-import scratch.newast.model.Program;
+import scratch.ast.model.Program;
 import utils.CSVWriter;
 
 /**

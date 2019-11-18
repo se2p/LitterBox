@@ -22,18 +22,18 @@ import java.util.ArrayList;
 import java.util.List;
 import newanalytics.IssueFinder;
 import newanalytics.IssueReport;
-import scratch.newast.model.ActorDefinition;
-import scratch.newast.model.Program;
-import scratch.newast.model.Script;
-import scratch.newast.model.event.GreenFlag;
-import scratch.newast.model.expression.bool.BoolExpr;
-import scratch.newast.model.expression.bool.IsKeyPressed;
-import scratch.newast.model.expression.bool.IsMouseDown;
-import scratch.newast.model.expression.bool.Touching;
-import scratch.newast.model.statement.Stmt;
-import scratch.newast.model.statement.control.IfElseStmt;
-import scratch.newast.model.statement.control.IfThenStmt;
-import scratch.newast.model.statement.control.RepeatForeverStmt;
+import scratch.ast.model.ActorDefinition;
+import scratch.ast.model.Program;
+import scratch.ast.model.Script;
+import scratch.ast.model.event.GreenFlag;
+import scratch.ast.model.expression.bool.BoolExpr;
+import scratch.ast.model.expression.bool.IsKeyPressed;
+import scratch.ast.model.expression.bool.IsMouseDown;
+import scratch.ast.model.expression.bool.Touching;
+import scratch.ast.model.statement.Stmt;
+import scratch.ast.model.statement.control.IfElseStmt;
+import scratch.ast.model.statement.control.IfThenStmt;
+import scratch.ast.model.statement.control.RepeatForeverStmt;
 
 /**
  * Checks for missing loops in event based actions.

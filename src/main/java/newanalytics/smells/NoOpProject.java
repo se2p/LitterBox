@@ -21,8 +21,8 @@ package newanalytics.smells;
 import java.util.List;
 import newanalytics.IssueFinder;
 import newanalytics.IssueReport;
+import scratch.ast.model.Program;
 import scratch.data.ScBlock;
-import scratch.newast.model.Program;
 import utils.Identifier;
 
 /**

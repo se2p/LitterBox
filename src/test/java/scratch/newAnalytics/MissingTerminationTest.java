@@ -23,12 +23,12 @@ import java.io.File;
 import java.io.IOException;
 import newanalytics.IssueReport;
 import newanalytics.smells.MissingTermination;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import scratch.newast.ParsingException;
-import scratch.newast.model.Program;
-import scratch.newast.parser.ProgramParser;
-import org.junit.jupiter.api.Assertions;
+import scratch.ast.ParsingException;
+import scratch.ast.model.Program;
+import scratch.ast.parser.ProgramParser;
 
 public class MissingTerminationTest {
     private static ObjectMapper mapper = new ObjectMapper();

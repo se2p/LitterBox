@@ -27,7 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
-import scratch.newast.model.Program;
+import scratch.ast.model.Program;
 import scratch.structure.Project;
 
 /**

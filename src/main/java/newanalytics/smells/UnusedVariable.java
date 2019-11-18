@@ -23,8 +23,8 @@ import java.util.List;
 import java.util.Map;
 import newanalytics.IssueFinder;
 import newanalytics.IssueReport;
+import scratch.ast.model.Program;
 import scratch.data.ScBlock;
-import scratch.newast.model.Program;
 import scratch.structure.Scriptable;
 import utils.Identifier;
 
