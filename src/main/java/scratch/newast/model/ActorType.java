@@ -2,7 +2,7 @@ package scratch.newast.model;
 
 import com.google.common.collect.ImmutableList;
 
-public enum ActorType implements ASTNode {
+public enum ActorType implements ASTLeaf {
     actor,
     stage,
     sprite;
@@ -17,5 +17,11 @@ public enum ActorType implements ASTNode {
     @Override
     public ImmutableList<ASTNode> getChildren() {
         return children;
+    }
+
+    @Override
+    public String[] toSimpleStringArray() {
+        String[] returnArray = {this.name()};
+        return returnArray;
     }
 }

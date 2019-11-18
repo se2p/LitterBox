@@ -1,10 +1,11 @@
 package scratch.newast.model.expression.num;
 
 import com.google.common.collect.ImmutableList;
+import scratch.newast.model.ASTLeaf;
 import scratch.newast.model.ASTNode;
 import scratch.newast.model.ScratchVisitor;
 
-public class Loudness implements NumExpr {
+public class Loudness implements NumExpr, ASTLeaf {
 
     private final ImmutableList<ASTNode> children;
 

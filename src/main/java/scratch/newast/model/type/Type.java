@@ -1,6 +1,6 @@
 package scratch.newast.model.type;
 
-import scratch.newast.model.ASTNode;
+import scratch.newast.model.ASTLeaf;
 
-public interface Type extends ASTNode {
+public interface Type extends ASTLeaf {
 }

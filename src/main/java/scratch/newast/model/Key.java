@@ -2,7 +2,7 @@ package scratch.newast.model;
 
 import com.google.common.collect.ImmutableList;
 
-public class Key implements ASTNode{
+public class Key implements ASTLeaf{
 
     private final String key; // Todo should this be a string?
     private final ImmutableList<ASTNode> children;
@@ -25,5 +25,11 @@ public class Key implements ASTNode{
     @Override
     public ImmutableList<ASTNode> getChildren() {
         return children;
+    }
+
+    @Override
+    public String[] toSimpleStringArray() {
+        String[] returnArray = {key};
+        return returnArray;
     }
 }

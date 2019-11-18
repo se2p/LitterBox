@@ -11,7 +11,7 @@ public class Say implements SpriteLookStmt {
 
     public Say(StringExpr string) {
         this.string = string;
-        children = ImmutableList.<ASTNode>builder().build();
+        children = ImmutableList.<ASTNode>builder().add(string).build();
     }
 
     public StringExpr getString() {

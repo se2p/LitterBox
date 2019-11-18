@@ -1,10 +1,11 @@
 package scratch.newast.model.variable;
 
 import com.google.common.collect.ImmutableList;
+import scratch.newast.model.ASTLeaf;
 import scratch.newast.model.ASTNode;
 import scratch.newast.model.ScratchVisitor;
 
-public class Identifier implements Variable {
+public class Identifier implements Variable, ASTLeaf {
 
     private final String value; // TODO check if this is correct
     private final ImmutableList<ASTNode> children;
@@ -26,5 +27,11 @@ public class Identifier implements Variable {
     @Override
     public ImmutableList<ASTNode> getChildren() {
         return children;
+    }
+
+    @Override
+    public String[] toSimpleStringArray() {
+        String[] returnArray = {value};
+        return returnArray;
     }
 }

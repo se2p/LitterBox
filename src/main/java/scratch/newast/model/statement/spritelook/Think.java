@@ -12,7 +12,7 @@ public class Think implements SpriteLookStmt {
 
     public Think(StringExpr thought) {
         this.thought = thought;
-        children = ImmutableList.<ASTNode>builder().build();
+        children = ImmutableList.<ASTNode>builder().add(thought).build();
     }
 
     public StringExpr getThought() {

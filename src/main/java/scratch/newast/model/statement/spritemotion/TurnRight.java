@@ -11,7 +11,7 @@ public class TurnRight implements SpriteMotionStmt {
 
     public TurnRight(NumExpr degrees) {
         this.degrees = degrees;
-        children = ImmutableList.<ASTNode>builder().build();
+        children = ImmutableList.<ASTNode>builder().add(degrees).build();
     }
 
     public NumExpr getDegrees() {

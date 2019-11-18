@@ -1,10 +1,11 @@
 package scratch.newast.model.statement.spritemotion;
 
 import com.google.common.collect.ImmutableList;
+import scratch.newast.model.ASTLeaf;
 import scratch.newast.model.ASTNode;
 import scratch.newast.model.ScratchVisitor;
 
-public class IfOnEdgeBounce implements SpriteMotionStmt {
+public class IfOnEdgeBounce implements SpriteMotionStmt, ASTLeaf {
 
     private final ImmutableList<ASTNode> children;
 

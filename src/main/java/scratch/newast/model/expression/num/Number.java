@@ -1,10 +1,11 @@
 package scratch.newast.model.expression.num;
 
 import com.google.common.collect.ImmutableList;
+import scratch.newast.model.ASTLeaf;
 import scratch.newast.model.ASTNode;
 import scratch.newast.model.ScratchVisitor;
 
-public class Number implements NumExpr {
+public class Number implements NumExpr, ASTLeaf {
 
     private final float value;
     private final ImmutableList<ASTNode> children;
@@ -28,4 +29,9 @@ public class Number implements NumExpr {
         return children;
     }
 
+    @Override
+    public String[] toSimpleStringArray() {
+        String[] returnArray = {""+value};
+        return returnArray;
+    }
 }

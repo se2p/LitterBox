@@ -1,7 +1,7 @@
 package scratch.newast.model.timecomp;
 
-import scratch.newast.model.ASTNode;
+import scratch.newast.model.ASTLeaf;
 
-public interface TimeComp extends ASTNode {
+public interface TimeComp extends ASTLeaf {
 
 }

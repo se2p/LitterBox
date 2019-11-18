@@ -1,10 +1,11 @@
 package scratch.newast.model.statement.actorlook;
 
 import com.google.common.collect.ImmutableList;
+import scratch.newast.model.ASTLeaf;
 import scratch.newast.model.ASTNode;
 import scratch.newast.model.ScratchVisitor;
 
-public class ClearGraphicEffects implements ActorLookStmt {
+public class ClearGraphicEffects implements ActorLookStmt, ASTLeaf {
 
     private final ImmutableList<ASTNode> children;
 

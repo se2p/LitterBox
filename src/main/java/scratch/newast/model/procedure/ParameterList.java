@@ -12,7 +12,7 @@ public class ParameterList implements ASTNode {
     public ParameterList(ParameterListPlain parameterListPlain) {
         this.parameterListPlain = parameterListPlain;
         ImmutableList.Builder<ASTNode> builder = ImmutableList.builder();
-        children = builder.build();
+        children = builder.add(parameterListPlain).build();
     }
 
     public ParameterListPlain getParameterListPlain() {

@@ -18,7 +18,7 @@ public class ProcedureDefinition implements ASTNode {
         this.parameterList = parameterList;
         this.stmtList = stmtList;
         ImmutableList.Builder<ASTNode> builder = ImmutableList.builder();
-        children = builder.build();
+        children = builder.add(ident).add(parameterList).add(stmtList).build();
     }
 
     public Identifier getIdent() {

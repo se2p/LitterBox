@@ -1,7 +1,7 @@
 package scratch.newast.model.numfunct;
 
-import scratch.newast.model.ASTNode;
+import scratch.newast.model.ASTLeaf;
 
-public interface NumFunct extends ASTNode {
+public interface NumFunct extends ASTLeaf {
 
 }

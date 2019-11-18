@@ -1,10 +1,11 @@
 package scratch.newast.model.statement.actorsound;
 
 import com.google.common.collect.ImmutableList;
+import scratch.newast.model.ASTLeaf;
 import scratch.newast.model.ASTNode;
 import scratch.newast.model.ScratchVisitor;
 
-public class StopAllSounds implements ActorSoundStmt {
+public class StopAllSounds implements ActorSoundStmt, ASTLeaf {
 
     private final ImmutableList<ASTNode> children;
 

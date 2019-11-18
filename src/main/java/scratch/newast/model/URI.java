@@ -2,7 +2,7 @@ package scratch.newast.model;
 
 import com.google.common.collect.ImmutableList;
 
-public class URI implements ASTNode {
+public class URI implements ASTLeaf {
 
     private final String uri;
     private final ImmutableList<ASTNode> children;
@@ -24,5 +24,11 @@ public class URI implements ASTNode {
     @Override
     public ImmutableList<ASTNode> getChildren() {
         return children;
+    }
+
+    @Override
+    public String[] toSimpleStringArray() {
+        String[] returnString = {uri};
+        return returnString;
     }
 }
