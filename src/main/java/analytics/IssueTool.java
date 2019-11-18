@@ -49,6 +49,7 @@ import analytics.finder.RaceCondition;
 import analytics.finder.SequentialActions;
 import analytics.finder.SpriteNaming;
 import analytics.finder.StartingPoint;
+import analytics.finder.TotalClones;
 import analytics.finder.UnusedVariable;
 import analytics.finder.VariableScope;
 import java.io.IOException;
