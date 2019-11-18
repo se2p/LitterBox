@@ -41,7 +41,7 @@ public class ControlStmtParser {
         switch (opcode) {
             case control_if:
                 if (inputs.has(INPUT_CONDITION)) {
-                    boolExpr = BoolExprParser.parseBoolExpr(current, 0, allBlocks);
+                    boolExpr = BoolExprParser.parseBoolExpr(current, 1, allBlocks);
                 } else {
                     boolExpr = new UnspecifiedBoolExpr();
                 }
