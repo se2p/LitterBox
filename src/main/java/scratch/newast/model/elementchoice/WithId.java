@@ -15,6 +15,10 @@ public class WithId implements ElementChoice {
         children = ImmutableList.<ASTNode>builder().add(ident).build();
     }
 
+    public Identifier getIdent() {
+        return ident;
+    }
+
     @Override
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);

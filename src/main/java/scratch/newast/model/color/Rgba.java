@@ -26,6 +26,22 @@ public class Rgba implements Color {
             .build();
     }
 
+    public NumExpr getrValue() {
+        return rValue;
+    }
+
+    public NumExpr getgValue() {
+        return gValue;
+    }
+
+    public NumExpr getbValue() {
+        return bValue;
+    }
+
+    public NumExpr getaValue() {
+        return aValue;
+    }
+
     @Override
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);

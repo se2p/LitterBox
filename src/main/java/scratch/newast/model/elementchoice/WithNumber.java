@@ -15,6 +15,10 @@ public class WithNumber implements ElementChoice {
         children = ImmutableList.<ASTNode>builder().add(numExpr).build();
     }
 
+    public NumExpr getNumExpr() {
+        return numExpr;
+    }
+
     @Override
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);

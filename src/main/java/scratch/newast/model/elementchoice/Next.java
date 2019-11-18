@@ -1,10 +1,11 @@
 package scratch.newast.model.elementchoice;
 
 import com.google.common.collect.ImmutableList;
+import scratch.newast.model.ASTLeaf;
 import scratch.newast.model.ASTNode;
 import scratch.newast.model.ScratchVisitor;
 
-public class Next implements ElementChoice {
+public class Next implements ElementChoice, ASTLeaf {
 
     private final ImmutableList<ASTNode> children;
 
