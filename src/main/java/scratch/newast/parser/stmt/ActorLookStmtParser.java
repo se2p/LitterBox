@@ -1,4 +1,26 @@
+/*
+ * Copyright (C) 2019 LitterBox contributors
+ *
+ * This file is part of LitterBox.
+ *
+ * LitterBox is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or (at
+ * your option) any later version.
+ *
+ * LitterBox is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
+ */
 package scratch.newast.parser.stmt;
+
+import static scratch.newast.Constants.FIELDS_KEY;
+import static scratch.newast.Constants.FIELD_VALUE;
+import static scratch.newast.Constants.OPCODE_KEY;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.base.Preconditions;
@@ -22,8 +44,6 @@ import scratch.newast.parser.StringExprParser;
 import scratch.newast.parser.symboltable.ExpressionListInfo;
 import scratch.newast.parser.symboltable.VariableInfo;
 
-import static scratch.newast.Constants.*;
-
 public class ActorLookStmtParser {
 
     private static final String CHANGE_EFFECTBY_INPUT_KEY = "CHANGE";
@@ -36,7 +56,7 @@ public class ActorLookStmtParser {
 
         String opcodeString = current.get(OPCODE_KEY).asText();
         Preconditions
-                .checkArgument(ActorLookStmtOpcode.contains(opcodeString), "Given blockID does not point to an event block.");
+            .checkArgument(ActorLookStmtOpcode.contains(opcodeString), "Given blockID does not point to an event block.");
 
         ActorLookStmtOpcode opcode = ActorLookStmtOpcode.valueOf(opcodeString);
         ActorLookStmt stmt;

@@ -1,3 +1,21 @@
+/*
+ * Copyright (C) 2019 LitterBox contributors
+ *
+ * This file is part of LitterBox.
+ *
+ * LitterBox is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or (at
+ * your option) any later version.
+ *
+ * LitterBox is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
+ */
 package scratch.newast.parser.stmt;
 
 import static scratch.newast.Constants.DRAGMODE_KEY;
@@ -31,13 +49,14 @@ import scratch.newast.parser.attributes.SoundEffect;
 import scratch.newast.parser.symboltable.VariableInfo;
 
 public class SetStmtParser {
+
     public static Stmt parse(JsonNode current, JsonNode allBlocks) throws ParsingException {
         Preconditions.checkNotNull(current);
         Preconditions.checkNotNull(allBlocks);
 
         String opcodeString = current.get(OPCODE_KEY).asText();
         Preconditions
-                .checkArgument(SetStmtOpcode.contains(opcodeString), "Given blockID does not point to a set block.");
+            .checkArgument(SetStmtOpcode.contains(opcodeString), "Given blockID does not point to a set block.");
 
         SetStmtOpcode opcode = SetStmtOpcode.valueOf(opcodeString);
         SetStmt stmt;
@@ -68,21 +87,21 @@ public class SetStmtParser {
 
     private static SetStmt parseSetVolumeTo(JsonNode current, JsonNode allBlocks) throws ParsingException {
         return new SetAttributeTo(new Str(VOLUME_KEY), ExpressionParser.parseExpression(current, 0,
-                allBlocks));
+            allBlocks));
     }
 
     private static SetStmt parseSetSoundEffect(JsonNode current, JsonNode allBlocks) throws ParsingException {
         String effect = current.get(FIELDS_KEY).get(EFFECT_KEY).get(0).textValue();
         Preconditions.checkArgument(SoundEffect.contains(effect));
         return new SetAttributeTo(new Str(effect), ExpressionParser.parseExpression(current, 0,
-                allBlocks));
+            allBlocks));
     }
 
     private static SetStmt parseSetLookEffect(JsonNode current, JsonNode allBlocks) throws ParsingException {
         String effect = current.get(FIELDS_KEY).get(EFFECT_KEY).get(0).textValue();
         Preconditions.checkArgument(GraphicEffect.contains(effect));
         return new SetAttributeTo(new Str(effect), ExpressionParser.parseExpression(current, 0,
-                allBlocks));
+            allBlocks));
     }
 
     private static SetStmt parseSetRotationStyle(JsonNode current) {
@@ -104,6 +123,6 @@ public class SetStmtParser {
         VariableInfo info = ProgramParser.symbolTable.getVariables().get(unique);
         return new SetVariableTo(new Qualified(new Identifier(info.getActor()),
             new Identifier((info.getVariableName()))), ExpressionParser.parseExpression(current,
-                0, allBlocks));
+            0, allBlocks));
     }
 }

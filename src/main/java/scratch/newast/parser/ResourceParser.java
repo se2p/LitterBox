@@ -1,3 +1,21 @@
+/*
+ * Copyright (C) 2019 LitterBox contributors
+ *
+ * This file is part of LitterBox.
+ *
+ * LitterBox is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or (at
+ * your option) any later version.
+ *
+ * LitterBox is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
+ */
 package scratch.newast.parser;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -14,6 +32,7 @@ import scratch.newast.model.resource.SoundResource;
 import scratch.newast.model.variable.Identifier;
 
 public class ResourceParser {
+
     private final static String NAME = "name";
     private final static String MD5EXT = "md5ext";
 
@@ -24,7 +43,7 @@ public class ResourceParser {
         while (iter.hasNext()) {
             JsonNode node = iter.next();
             SoundResource res = new SoundResource(new Identifier(node.get(NAME).textValue()),
-                    new URI(node.get(MD5EXT).textValue()));
+                new URI(node.get(MD5EXT).textValue()));
             parsedRessources.add(res);
         }
         return parsedRessources;

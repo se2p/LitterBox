@@ -1,13 +1,28 @@
+/*
+ * Copyright (C) 2019 LitterBox contributors
+ *
+ * This file is part of LitterBox.
+ *
+ * LitterBox is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or (at
+ * your option) any later version.
+ *
+ * LitterBox is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
+ */
 package newanalytics.smells;
 
-import java.util.ArrayList;
 import java.util.List;
 import newanalytics.IssueFinder;
 import newanalytics.IssueReport;
 import scratch.data.ScBlock;
-import scratch.data.Script;
 import scratch.newast.model.Program;
-import scratch.structure.Scriptable;
 import utils.Identifier;
 
 /**
@@ -16,11 +31,11 @@ import utils.Identifier;
 public class NoOpProject implements IssueFinder {
 
     private String[] operations = {Identifier.MOTION.getValue(), Identifier.LOOKS.getValue(), Identifier.SOUND.getValue(),
-            Identifier.LEGACY_FORWARD.getValue(), Identifier.LEGACY_TURN.getValue(), Identifier.LEGACY_HEADING.getValue(),
-            Identifier.LEGACY_POINT.getValue(), Identifier.LEGACY_FRONT.getValue(), Identifier.LEGACY_GO.getValue(),
-            Identifier.LEGACY_GLIDE.getValue(), Identifier.LEGACY_CHANGE.getValue(), Identifier.LEGACY_SAY.getValue(),
-            Identifier.LEGACY_THINK.getValue(), Identifier.LEGACY_HIDE.getValue(), Identifier.LEGACY_SHOW.getValue(),
-            Identifier.LEGACY_PLAY_WAIT.getValue(), Identifier.LEGACY_DRUM.getValue(), Identifier.LEGACY_PLAY.getValue()};
+        Identifier.LEGACY_FORWARD.getValue(), Identifier.LEGACY_TURN.getValue(), Identifier.LEGACY_HEADING.getValue(),
+        Identifier.LEGACY_POINT.getValue(), Identifier.LEGACY_FRONT.getValue(), Identifier.LEGACY_GO.getValue(),
+        Identifier.LEGACY_GLIDE.getValue(), Identifier.LEGACY_CHANGE.getValue(), Identifier.LEGACY_SAY.getValue(),
+        Identifier.LEGACY_THINK.getValue(), Identifier.LEGACY_HIDE.getValue(), Identifier.LEGACY_SHOW.getValue(),
+        Identifier.LEGACY_PLAY_WAIT.getValue(), Identifier.LEGACY_DRUM.getValue(), Identifier.LEGACY_PLAY.getValue()};
     String name = "noop_project";
 
     @Override

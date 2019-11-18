@@ -1,3 +1,21 @@
+/*
+ * Copyright (C) 2019 LitterBox contributors
+ *
+ * This file is part of LitterBox.
+ *
+ * LitterBox is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or (at
+ * your option) any later version.
+ *
+ * LitterBox is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
+ */
 package scratch.newast.parser;
 
 import static scratch.newast.Constants.IS_STAGE_KEY;
@@ -49,12 +67,12 @@ public class ActorDefinitionParser {
         ResourceList resources = new ResourceList(res);
 
         List<DeclarationStmt> decls = DeclarationStmtParser
-                .parseLists(actorDefinitionNode.get("lists"), identifier.getValue(),
-                        actorDefinitionNode.get(IS_STAGE_KEY).asBoolean());
+            .parseLists(actorDefinitionNode.get("lists"), identifier.getValue(),
+                actorDefinitionNode.get(IS_STAGE_KEY).asBoolean());
         decls.addAll(DeclarationStmtParser.parseBroadcasts(actorDefinitionNode.get("broadcasts"), identifier.getValue(),
-                actorDefinitionNode.get(IS_STAGE_KEY).asBoolean()));
+            actorDefinitionNode.get(IS_STAGE_KEY).asBoolean()));
         decls.addAll(DeclarationStmtParser.parseVariables(actorDefinitionNode.get("variables"), identifier.getValue(),
-                actorDefinitionNode.get(IS_STAGE_KEY).asBoolean()));
+            actorDefinitionNode.get(IS_STAGE_KEY).asBoolean()));
         decls.addAll(DeclarationStmtParser.parseAttributeDeclarations(actorDefinitionNode));
         DeclarationStmtList declarations = new DeclarationStmtList(decls);
 
@@ -63,7 +81,7 @@ public class ActorDefinitionParser {
         Iterable<String> iterable = () -> fieldIterator;
         Stream<String> stream = StreamSupport.stream(iterable.spliterator(), false);
         List<String> topLevelNodes = stream.filter(fieldName -> allBlocks.get(fieldName).get("topLevel").asBoolean())
-                .collect(Collectors.toList());
+            .collect(Collectors.toList());
         List<Script> scripts = new LinkedList<>();
         for (String topLevelID : topLevelNodes) {
             Script script = ScriptParser.parse(topLevelID, allBlocks);
@@ -75,12 +93,12 @@ public class ActorDefinitionParser {
 
         List<SetStmt> setStmtList = DeclarationStmtParser.parseAttributeDeclarationSetStmts(actorDefinitionNode);
         setStmtList.addAll(DeclarationStmtParser.parseListDeclarationSetStmts(actorDefinitionNode.get("lists"),
-                identifier.getValue()));
+            identifier.getValue()));
         setStmtList.addAll(DeclarationStmtParser.parseVariableDeclarationSetStmts(actorDefinitionNode.get("variables"),
-                identifier.getValue()));
+            identifier.getValue()));
         return new ActorDefinition(actorType, identifier, resources, declarations, new SetStmtList(setStmtList),
-                procDeclList,
-                scriptList);
+            procDeclList,
+            scriptList);
     }
 
     /**

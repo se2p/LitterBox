@@ -1,18 +1,31 @@
+/*
+ * Copyright (C) 2019 LitterBox contributors
+ *
+ * This file is part of LitterBox.
+ *
+ * LitterBox is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or (at
+ * your option) any later version.
+ *
+ * LitterBox is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
+ */
 package newanalytics.ctscore;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import newanalytics.IssueFinder;
 import newanalytics.IssueReport;
 import scratch.data.ScBlock;
 import scratch.data.Script;
 import scratch.newast.model.Program;
-import scratch.structure.Project;
 import scratch.structure.Scriptable;
-import utils.Identifier;
-import utils.Version;
 
 /**
  * Evaluates the level of user interactivity of the Scratch program.
@@ -26,9 +39,9 @@ public class UserInteractivity implements IssueFinder {
 
         notes[0] = "There is a green flag missing.";
         notes[1] = "Basic Level. There is key pressed, sprite clicked, ask "
-                + "and wait or mouse blocks missing.";
+            + "and wait or mouse blocks missing.";
         notes[2] = "Developing Level. There is %s is > %s, video or audio "
-                + "missing.";
+            + "missing.";
         notes[3] = "Proficiency Level. Good work!";
     }
 
@@ -78,8 +91,8 @@ public class UserInteractivity implements IssueFinder {
      * @param ids    The identifiers for the current version of the project.
      */
     private void search(Scriptable scable, Script sc,
-                        List<ScBlock> blocks, List<String> found,
-                        List<String> ids) {
+        List<ScBlock> blocks, List<String> found,
+        List<String> ids) {
 
         for (ScBlock b : blocks) {
             if (ids.contains(b.getContent())) {
