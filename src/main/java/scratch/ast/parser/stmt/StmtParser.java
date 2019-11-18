@@ -48,11 +48,19 @@ public class StmtParser {
         String opcode = current.get(Constants.OPCODE_KEY).asText();
 
         Stmt stmt;
+
         if (TerminationStmtOpcode.contains(opcode)) {
-            // FIXME Control_Stop is also a CommonStmt
-            stmt = TerminationStmtParser.parseTerminationStmt(current, blocks);
-            return stmt;
-        } else if (ActorLookStmtOpcode.contains(opcode)) {
+            if (!(current.get(Constants.FIELDS_KEY).has("STOP_OPTION")
+                && current.get(Constants.FIELDS_KEY).get("STOP_OPTION").get(Constants.FIELD_VALUE).asText()
+                .equals("other scripts in sprite"))) {
+
+                // FIXME Control_Stop is also a CommonStmt
+                stmt = TerminationStmtParser.parseTerminationStmt(current, blocks);
+                return stmt;
+            }
+        }
+
+        if (ActorLookStmtOpcode.contains(opcode)) {
             stmt = ActorLookStmtParser.parse(current, blocks);
             return stmt;
         } else if (ControlStmtOpcode.contains(opcode)) {
