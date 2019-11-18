@@ -1,64 +1,79 @@
 package newanalytics.smells;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import newanalytics.IssueFinder;
 import newanalytics.IssueReport;
-import scratch.data.ScBlock;
-import scratch.data.Script;
+import scratch.newast.model.ActorDefinition;
 import scratch.newast.model.Program;
-import scratch.structure.Scriptable;
-import utils.Identifier;
-import utils.Version;
+import scratch.newast.model.event.GreenFlag;
+import scratch.newast.model.expression.bool.BoolExpr;
+import scratch.newast.model.expression.bool.IsKeyPressed;
+import scratch.newast.model.expression.bool.IsMouseDown;
+import scratch.newast.model.expression.bool.Touching;
+import scratch.newast.model.statement.Stmt;
+import scratch.newast.model.statement.control.IfElseStmt;
+import scratch.newast.model.statement.control.IfThenStmt;
+import scratch.newast.model.statement.control.RepeatForeverStmt;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Checks for missing loops in event based actions.
  */
 public class MissingForever implements IssueFinder {
 
-    String name = "missing_forever_loop";
+    private String name = "missing_forever_loop";
+    private List<String> found;
+    private int counter;
+
+    public MissingForever() {
+        found = new ArrayList<>();
+        counter = 0;
+    }
 
     @Override
     public IssueReport check(Program program) {
-        /*
-        List<Scriptable> scriptables = new ArrayList<>();
-        scriptables.add(program.getStage());
-        scriptables.addAll(program.getSprites());
-        List<String> pos = new ArrayList<>();
-        for (Scriptable scable : scriptables) {
-            for (Script script : scable.getScripts()) {
-                if (program.getVersion().equals(Version.SCRATCH2)) {
-                    if (script.getBlocks().size() > 1 && script.getBlocks().get(0).getContent().startsWith(Identifier.LEGACY_GREEN_FLAG.getValue())) {
-                        for (ScBlock b : script.getBlocks()) {
-                            checkMovement(pos, scable, script, b);
-                        }
-                    }
-                } else if (program.getVersion().equals(Version.SCRATCH3)) {
-                    if (script.getBlocks().size() > 1 && script.getBlocks().get(0).getContent().startsWith(Identifier.GREEN_FLAG.getValue())) {
-                        for (ScBlock b : script.getBlocks()) {
-                            checkMovement3(pos, scable, script, b);
-                        }
-                    }
+        List<ActorDefinition> actorDefs = program.getActorDefinitionList().getDefintions();
+        for (int i = 0; i < actorDefs.size(); i++) {
+            List<scratch.newast.model.Script> scripts = actorDefs.get(i).getScripts().getScriptList();
+            for (int j = 0; j < scripts.size(); j++) {
+                List<Stmt> stmts = scripts.get(0).getStmtList().getStmts().getListOfStmt();
+                if (stmts.size() > 0 && scripts.get(0).getEvent() instanceof GreenFlag) {
+
+                    checkMissForever(stmts, actorDefs.get(i).getIdent().getValue());
                 }
             }
         }
         String note = "There is no fishy touching or keyPressed checks without a loop.";
-        if (pos.size() > 0) {
+        if (found.size() > 0) {
             note = "The project contains some fishy touching and / or keyPressed checks without a loop.";
 
         }
-        return new IssueReport(name, pos.size(), pos, program.getPath(), note);
-
-         */
-        throw new RuntimeException("not implemented");
+        return new IssueReport(name, counter, found, note);
     }
 
-    private void checkMovement3(List<String> pos, Scriptable scable, Script script, ScBlock b) {
-        if (b.getContent().startsWith(Identifier.IF.getValue())) {
-            if (b.getCondition().startsWith(Identifier.SENSE_KEYPRESS.getValue())
-                    || b.getCondition().startsWith(Identifier.SENSE_TOUCHING.getValue())) {
-                pos.add(scable.getName() + " at " + Arrays.toString(script.getPosition()));
+    private void checkMissForever(List<Stmt> stmts, String actorName) {
+        for (int i = 0; i < stmts.size(); i++) {
+            if (stmts.get(i) instanceof RepeatForeverStmt) {
+                return;
+            }
+            if (stmts.get(i) instanceof IfThenStmt) {
+                BoolExpr bool = ((IfThenStmt) stmts.get(i)).getBoolExpr();
+                if (bool instanceof IsKeyPressed || bool instanceof Touching || bool instanceof IsMouseDown) {
+                    found.add(actorName);
+                    counter++;
+                } else {
+                    checkMissForever(((IfThenStmt) stmts.get(i)).getThenStmts().getStmts().getListOfStmt(), actorName);
+                }
+            } else if (stmts.get(i) instanceof IfElseStmt) {
+                BoolExpr bool = ((IfElseStmt) stmts.get(i)).getBoolExpr();
+                if (bool instanceof IsKeyPressed || bool instanceof Touching || bool instanceof IsMouseDown) {
+                    found.add(actorName);
+                    counter++;
+                } else {
+                    checkMissForever(((IfElseStmt) stmts.get(i)).getStmtList().getStmts().getListOfStmt(), actorName);
+                    checkMissForever(((IfElseStmt) stmts.get(i)).getElseStmts().getStmts().getListOfStmt(), actorName);
+                }
             }
         }
     }
