@@ -37,6 +37,7 @@ import scratch.ast.model.position.PivotOf;
 import scratch.ast.model.position.Position;
 import scratch.ast.model.position.RandomPos;
 import scratch.ast.model.variable.Identifier;
+import scratch.ast.opcodes.NumExprOpcode;
 import scratch.ast.opcodes.SpriteMotionStmtOpcode;
 
 public class PositionParser {
@@ -49,7 +50,7 @@ public class PositionParser {
             return parseCoordinate(current, allBlocks);
         } else if (current.get(Constants.INPUTS_KEY).has("TO") ||
             current.get(Constants.INPUTS_KEY).has("TOWARDS") ||
-            current.get(Constants.INPUTS_KEY).has("DISTANCETO")) {
+            current.get(Constants.INPUTS_KEY).has("DISTANCETOMENU")) {
             return parseRelativePos(current, allBlocks);
         } else {
             throw new ParsingException("Could not parse block " + current.toString());
@@ -57,16 +58,24 @@ public class PositionParser {
     }
 
     private static Position parseRelativePos(JsonNode current, JsonNode allBlocks) throws ParsingException {
-        ArrayList<JsonNode> inputs = new ArrayList();
+        ArrayList<JsonNode> inputs = new ArrayList<>();
         current.get(Constants.INPUTS_KEY).elements().forEachRemaining(inputs::add);
 
         JsonNode menuID;
-        SpriteMotionStmtOpcode opcode = valueOf(current.get(Constants.OPCODE_KEY).asText());
+        String opcodeString = current.get(Constants.OPCODE_KEY).asText();
+        if (SpriteMotionStmtOpcode.contains(opcodeString)) {
+            SpriteMotionStmtOpcode opcode = valueOf(opcodeString);
 
-        if (motion_goto.equals(opcode) || motion_pointtowards.equals(opcode)) {
+            if (motion_goto.equals(opcode) || motion_pointtowards.equals(opcode)) {
+                menuID = inputs.get(0).get(Constants.POS_INPUT_VALUE);
+            } else if (motion_glideto.equals(opcode)) {
+                menuID = inputs.get(1).get(Constants.POS_INPUT_VALUE);
+            } else {
+                throw new ParsingException(
+                    "Cannot parse relative coordinates for a block with opcode " + current.get(Constants.OPCODE_KEY));
+            }
+        } else if (NumExprOpcode.sensing_distanceto.toString().equals(opcodeString)) {
             menuID = inputs.get(0).get(Constants.POS_INPUT_VALUE);
-        } else if (motion_glideto.equals(opcode)) {
-            menuID = inputs.get(1).get(Constants.POS_INPUT_VALUE);
         } else {
             throw new ParsingException(
                 "Cannot parse relative coordinates for a block with opcode " + current.get(Constants.OPCODE_KEY));
