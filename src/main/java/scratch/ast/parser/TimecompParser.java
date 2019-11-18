@@ -35,8 +35,8 @@ import scratch.ast.model.timecomp.Year;
 
 public class TimecompParser {
 
-    public static final String CURRENT_OPCODE = "sensing_current";
-    public static final String CURRENT_MENU = "CURRENT_MENU";
+    private static final String CURRENT_OPCODE = "sensing_current";
+    private static final String CURRENT_MENU = "CURRENTMENU";
 
     public static TimeComp parse(JsonNode current) throws ParsingException {
         Preconditions.checkNotNull(current);
