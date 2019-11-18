@@ -20,6 +20,7 @@ package newanalytics.smells;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import newanalytics.IssueFinder;
 import newanalytics.IssueReport;
 import scratch.ast.model.ActorDefinition;
@@ -34,6 +35,7 @@ import scratch.ast.model.statement.Stmt;
 import scratch.ast.model.statement.control.IfElseStmt;
 import scratch.ast.model.statement.control.IfThenStmt;
 import scratch.ast.model.statement.control.RepeatForeverStmt;
+import scratch.ast.model.statement.control.RepeatTimesStmt;
 
 /**
  * Checks for missing loops in event based actions.
@@ -74,7 +76,6 @@ public class MissingForever implements IssueFinder {
         for (int i = 0; i < stmts.size(); i++) {
             if (stmts.get(i) instanceof RepeatForeverStmt) {
                 return;
-                //Todo check inside repeats
             } else if (stmts.get(i) instanceof IfThenStmt) {
                 BoolExpr bool = ((IfThenStmt) stmts.get(i)).getBoolExpr();
                 if (bool instanceof IsKeyPressed || bool instanceof Touching || bool instanceof IsMouseDown) {
@@ -92,6 +93,9 @@ public class MissingForever implements IssueFinder {
                     checkMissForever(((IfElseStmt) stmts.get(i)).getStmtList().getStmts().getListOfStmt(), actorName);
                     checkMissForever(((IfElseStmt) stmts.get(i)).getElseStmts().getStmts().getListOfStmt(), actorName);
                 }
+            } else if (stmts.get(i) instanceof RepeatTimesStmt) {
+                checkMissForever(((RepeatTimesStmt) stmts.get(i)).getStmtList().getStmts().getListOfStmt(),
+                        actorName);
             }
         }
     }

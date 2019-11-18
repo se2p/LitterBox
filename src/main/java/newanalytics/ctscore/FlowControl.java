@@ -20,6 +20,7 @@ package newanalytics.ctscore;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import newanalytics.IssueFinder;
 import newanalytics.IssueReport;
 import scratch.ast.model.ActorDefinition;
@@ -91,20 +92,32 @@ public class FlowControl implements IssueFinder {
                 return rewardLevel;
             } else if (stmt instanceof UntilStmt && rewardLevel == UNTIL) {
                 return rewardLevel;
+            } else if (stmt instanceof RepeatTimesStmt && rewardLevel == UNTIL) {
+                int internalLevel = checkStmts(((RepeatTimesStmt) stmt).getStmtList().getStmts().getListOfStmt(),
+                        level, rewardLevel);
+                if (internalLevel == rewardLevel) {
+                    return rewardLevel;
+                }
+            } else if (stmt instanceof RepeatForeverStmt && rewardLevel == UNTIL) {
+                int internalLevel = checkStmts(((RepeatForeverStmt) stmt).getStmtList().getStmts().getListOfStmt(),
+                        level, rewardLevel);
+                if (internalLevel == rewardLevel) {
+                    return rewardLevel;
+                }
             } else if (stmt instanceof IfElseStmt) {
                 int internLevel =
-                    checkStmts(((IfElseStmt) stmt).getStmtList().getStmts().getListOfStmt(),
-                        level, rewardLevel);
+                        checkStmts(((IfElseStmt) stmt).getStmtList().getStmts().getListOfStmt(),
+                                level, rewardLevel);
                 int internLevel2 =
-                    checkStmts(((IfElseStmt) stmt).getElseStmts().getStmts().getListOfStmt(),
-                        level, rewardLevel);
+                        checkStmts(((IfElseStmt) stmt).getElseStmts().getStmts().getListOfStmt(),
+                                level, rewardLevel);
                 if (internLevel == rewardLevel || internLevel2 == rewardLevel) {
                     return rewardLevel;
                 }
             } else if (stmt instanceof IfThenStmt) {
                 int internLevel =
-                    checkStmts((((IfThenStmt) stmt).getThenStmts().getStmts().getListOfStmt()),
-                        level, rewardLevel);
+                        checkStmts((((IfThenStmt) stmt).getThenStmts().getStmts().getListOfStmt()),
+                                level, rewardLevel);
                 if (internLevel == rewardLevel) {
                     return rewardLevel;
                 }
