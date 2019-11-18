@@ -18,6 +18,7 @@
  */
 package scratch.ast.parser;
 
+import static scratch.ast.Constants.FIELD_VALUE;
 import static scratch.ast.Constants.INPUTS_KEY;
 import static scratch.ast.Constants.OPCODE_KEY;
 import static scratch.ast.Constants.POS_BLOCK_ID;
@@ -29,15 +30,18 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import com.google.common.base.Preconditions;
+import scratch.ast.Constants;
 import scratch.ast.ParsingException;
 import scratch.ast.model.Key;
 import scratch.ast.model.color.Color;
+import scratch.ast.model.expression.Expression;
 import scratch.ast.model.expression.bool.And;
 import scratch.ast.model.expression.bool.BiggerThan;
 import scratch.ast.model.expression.bool.Bool;
 import scratch.ast.model.expression.bool.BoolExpr;
 import scratch.ast.model.expression.bool.ColorTouches;
 import scratch.ast.model.expression.bool.Equals;
+import scratch.ast.model.expression.bool.ExpressionContains;
 import scratch.ast.model.expression.bool.IsKeyPressed;
 import scratch.ast.model.expression.bool.IsMouseDown;
 import scratch.ast.model.expression.bool.LessThan;
@@ -48,6 +52,7 @@ import scratch.ast.model.expression.num.NumExpr;
 import scratch.ast.model.touchable.Touchable;
 import scratch.ast.model.variable.Identifier;
 import scratch.ast.model.variable.Qualified;
+import scratch.ast.model.variable.Variable;
 import scratch.ast.opcodes.BoolExprOpcode;
 import scratch.ast.parser.symboltable.ExpressionListInfo;
 import scratch.ast.parser.symboltable.VariableInfo;
@@ -128,8 +133,15 @@ public class BoolExprParser {
             BoolExpr notInput = parseBoolExpr(expressionBlock, 0, blocks);
             return new Not(notInput);
         case operator_contains:
+            Expression containing = ExpressionParser.parseExpression(expressionBlock, 0, blocks);
+            Expression contained = ExpressionParser.parseExpression(expressionBlock, 1, blocks);
+            return new ExpressionContains(containing, contained);
         case data_listcontainsitem:
-            throw new RuntimeException("Not implemented yet"); // I don't know which Classes should be returned here
+            String listName = expressionBlock.get(Constants.FIELDS_KEY).get("LIST").get(FIELD_VALUE).asText();
+            Variable containingVar = new Identifier(listName);// Variable as a ListExpr
+            contained = ExpressionParser.parseExpression(expressionBlock, 0, blocks);
+            return new ExpressionContains(containingVar, contained);
+
 
         default:
             throw new RuntimeException(
