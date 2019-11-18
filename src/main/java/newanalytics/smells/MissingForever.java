@@ -4,6 +4,7 @@ import newanalytics.IssueFinder;
 import newanalytics.IssueReport;
 import scratch.newast.model.ActorDefinition;
 import scratch.newast.model.Program;
+import scratch.newast.model.Script;
 import scratch.newast.model.event.GreenFlag;
 import scratch.newast.model.expression.bool.BoolExpr;
 import scratch.newast.model.expression.bool.IsKeyPressed;
@@ -35,7 +36,7 @@ public class MissingForever implements IssueFinder {
     public IssueReport check(Program program) {
         List<ActorDefinition> actorDefs = program.getActorDefinitionList().getDefintions();
         for (int i = 0; i < actorDefs.size(); i++) {
-            List<scratch.newast.model.Script> scripts = actorDefs.get(i).getScripts().getScriptList();
+            List<Script> scripts = actorDefs.get(i).getScripts().getScriptList();
             for (int j = 0; j < scripts.size(); j++) {
                 List<Stmt> stmts = scripts.get(0).getStmtList().getStmts().getListOfStmt();
                 if (stmts.size() > 0 && scripts.get(0).getEvent() instanceof GreenFlag) {
@@ -56,8 +57,7 @@ public class MissingForever implements IssueFinder {
         for (int i = 0; i < stmts.size(); i++) {
             if (stmts.get(i) instanceof RepeatForeverStmt) {
                 return;
-            }
-            if (stmts.get(i) instanceof IfThenStmt) {
+            }else if (stmts.get(i) instanceof IfThenStmt) {
                 BoolExpr bool = ((IfThenStmt) stmts.get(i)).getBoolExpr();
                 if (bool instanceof IsKeyPressed || bool instanceof Touching || bool instanceof IsMouseDown) {
                     found.add(actorName);
