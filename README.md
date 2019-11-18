@@ -82,6 +82,8 @@ emptybd->empty_body
 
 inappint->inappropriate_intimacy
 
+clone->total_clones
+
 #### CT Score Evaluation
 
 logthink->logical_thinking

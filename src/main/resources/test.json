@@ -1,35 +1,78 @@
 {
-  "objName": "Stage",
-  "sounds": [{
-    "soundName": "pop",
-    "soundID": -1,
-    "md5": "83a9787d4cb6f3b7632b4ddfebf74367.wav",
-    "sampleCount": 258,
-    "rate": 11025,
-    "format": ""
-  }],
-  "costumes": [{
-    "costumeName": "backdrop1",
-    "baseLayerID": -1,
-    "baseLayerMD5": "510da64cf172d53750dffd23fbf73563.png",
-    "bitmapResolution": 1,
-    "rotationCenterX": 240,
-    "rotationCenterY": 180
-  },
-    {
-      "costumeName": "backdrop2",
-      "baseLayerID": -1,
-      "baseLayerMD5": "46909e8a746097d617f4eeb6549d6bb3.png",
-      "bitmapResolution": 2,
-      "rotationCenterX": 480,
-      "rotationCenterY": 360
-    }],
-  "currentCostumeIndex": 1,
-  "penLayerMD5": "5c81a336fab8be57adc039a8a2b33ca9.png",
-  "penLayerID": -1,
-  "tempoBPM": 60,
-  "videoAlpha": 0.5,
-  "children": [{
+	"objName": "Stage",
+	"sounds": [
+		{
+			"soundName": "pop",
+			"soundID": -1,
+			"md5": "83a9787d4cb6f3b7632b4ddfebf74367.wav",
+			"sampleCount": 258,
+			"rate": 11025,
+			"format": ""
+		}
+	],
+	"costumes": [
+		{
+			"costumeName": "backdrop1",
+			"baseLayerID": -1,
+			"baseLayerMD5": "510da64cf172d53750dffd23fbf73563.png",
+			"bitmapResolution": 1,
+			"rotationCenterX": 240,
+			"rotationCenterY": 180
+		},
+		{
+			"costumeName": "backdrop2",
+			"baseLayerID": -1,
+			"baseLayerMD5": "46909e8a746097d617f4eeb6549d6bb3.png",
+			"bitmapResolution": 2,
+			"rotationCenterX": 480,
+			"rotationCenterY": 360
+		}
+	],
+	"currentCostumeIndex": 1,
+	"penLayerMD5": "5c81a336fab8be57adc039a8a2b33ca9.png",
+	"penLayerID": -1,
+	"tempoBPM": 60,
+	"videoAlpha": 0.5,
+	"children": [
+		{
+			"objName": "Neigh Pony",
+			"sounds": [
+				{
+					"soundName": "horse",
+					"soundID": -1,
+					"md5": "45ffcf97ee2edca0199ff5aa71a5b72e.wav",
+					"sampleCount": 14464,
+					"rate": 11025,
+					"format": ""
+				}
+			],
+			"costumes": [
+				{
+					"costumeName": "neigh pony",
+					"baseLayerID": -1,
+					"baseLayerMD5": "176c4fb4df80df899ca28a48bd1f0edf.svg",
+					"bitmapResolution": 1,
+					"rotationCenterX": 74,
+					"rotationCenterY": 78
+				}
+			],
+			"currentCostumeIndex": 0,
+			"scratchX": -3,
+			"scratchY": 59,
+			"scale": 0.5000000000000001,
+			"direction": 90,
+			"rotationStyle": "normal",
+			"isDraggable": false,
+			"indexInLibrary": 2,
+			"visible": true,
+			"spriteInfo": {
+				
+			}
+		},
+		{
+			"objName": "Sprite3",
+			"scripts": 
+	[{
     "objName": "Neigh Pony",
     "sounds": [{
       "soundName": "horse",

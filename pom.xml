@@ -59,6 +59,35 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>com.mycila</groupId>
+                <artifactId>license-maven-plugin</artifactId>
+                <version>3.0</version>
+                <configuration>
+                    <header>src/etc/header.txt</header>
+                    <properties>
+                        <year>2019</year>
+                    </properties>
+                    <excludes>
+                        <exclude>**/README</exclude>
+                        <exclude>**/.gitlab-ci.yml</exclude>
+                        <exclude>**/pom.xml</exclude>
+                        <exclude>src/test/resources/**</exclude>
+                        <exclude>src/main/resources/**</exclude>
+                    </excludes>
+                    <mapping>
+                        <java>SLASHSTAR_STYLE</java>
+                    </mapping>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+
+            </plugin>
 
         </plugins>
     </build>
