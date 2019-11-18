@@ -57,7 +57,7 @@ public class MissingForever implements IssueFinder {
         for (int i = 0; i < stmts.size(); i++) {
             if (stmts.get(i) instanceof RepeatForeverStmt) {
                 return;
-            }else if (stmts.get(i) instanceof IfThenStmt) {
+            } else if (stmts.get(i) instanceof IfThenStmt) {
                 BoolExpr bool = ((IfThenStmt) stmts.get(i)).getBoolExpr();
                 if (bool instanceof IsKeyPressed || bool instanceof Touching || bool instanceof IsMouseDown) {
                     found.add(actorName);

@@ -25,7 +25,7 @@ public class MissingTermination implements IssueFinder {
 
     public MissingTermination() {
         found = new ArrayList<>();
-        counter=0;
+        counter = 0;
     }
 
     @Override
@@ -35,7 +35,7 @@ public class MissingTermination implements IssueFinder {
             List<Script> scripts = actorDefs.get(i).getScripts().getScriptList();
             for (int j = 0; j < scripts.size(); j++) {
                 List<Stmt> stmts = scripts.get(0).getStmtList().getStmts().getListOfStmt();
-                if(stmts.size()>0){
+                if (stmts.size() > 0) {
                     checkMissTermination(stmts, actorDefs.get(i).getIdent().getValue());
                 }
             }
@@ -50,16 +50,16 @@ public class MissingTermination implements IssueFinder {
 
     private void checkMissTermination(List<Stmt> stmts, String actorName) {
         for (int i = 0; i < stmts.size(); i++) {
-            if (stmts.get(i) instanceof UntilStmt){
-                if (((UntilStmt) stmts.get(i)).getBoolExpr() instanceof UnspecifiedBoolExpr){
+            if (stmts.get(i) instanceof UntilStmt) {
+                if (((UntilStmt) stmts.get(i)).getBoolExpr() instanceof UnspecifiedBoolExpr) {
                     counter++;
                     found.add(actorName);
                 }
-            }else if (stmts.get(i) instanceof IfThenStmt){
-                checkMissTermination(((IfThenStmt) stmts.get(i)).getThenStmts().getStmts().getListOfStmt(),actorName);
-            }else if (stmts.get(i) instanceof IfElseStmt){
-                checkMissTermination(((IfElseStmt) stmts.get(i)).getStmtList().getStmts().getListOfStmt(),actorName);
-                checkMissTermination(((IfElseStmt) stmts.get(i)).getElseStmts().getStmts().getListOfStmt(),actorName);
+            } else if (stmts.get(i) instanceof IfThenStmt) {
+                checkMissTermination(((IfThenStmt) stmts.get(i)).getThenStmts().getStmts().getListOfStmt(), actorName);
+            } else if (stmts.get(i) instanceof IfElseStmt) {
+                checkMissTermination(((IfElseStmt) stmts.get(i)).getStmtList().getStmts().getListOfStmt(), actorName);
+                checkMissTermination(((IfElseStmt) stmts.get(i)).getElseStmts().getStmts().getListOfStmt(), actorName);
             }
         }
     }
