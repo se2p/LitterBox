@@ -7,9 +7,7 @@ import scratch.newast.model.Program;
 import scratch.newast.model.Script;
 import scratch.newast.model.expression.bool.UnspecifiedBoolExpr;
 import scratch.newast.model.statement.Stmt;
-import scratch.newast.model.statement.control.IfElseStmt;
-import scratch.newast.model.statement.control.IfThenStmt;
-import scratch.newast.model.statement.control.UntilStmt;
+import scratch.newast.model.statement.control.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -60,6 +58,12 @@ public class MissingTermination implements IssueFinder {
             } else if (stmts.get(i) instanceof IfElseStmt) {
                 checkMissTermination(((IfElseStmt) stmts.get(i)).getStmtList().getStmts().getListOfStmt(), actorName);
                 checkMissTermination(((IfElseStmt) stmts.get(i)).getElseStmts().getStmts().getListOfStmt(), actorName);
+            } else if (stmts.get(i) instanceof RepeatTimesStmt) {
+                checkMissTermination(((RepeatTimesStmt) stmts.get(i)).getStmtList().getStmts().getListOfStmt(),
+                        actorName);
+            } else if (stmts.get(i) instanceof RepeatForeverStmt){
+                checkMissTermination(((RepeatForeverStmt) stmts.get(i)).getStmtList().getStmts().getListOfStmt(),
+                        actorName);
             }
         }
     }
