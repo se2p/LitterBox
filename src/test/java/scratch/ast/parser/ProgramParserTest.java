@@ -18,11 +18,17 @@
  */
 package scratch.ast.parser;
 
+import static junit.framework.TestCase.fail;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.truth.Truth;
-import org.junit.Test;
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+import java.util.stream.Collectors;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import scratch.ast.ParsingException;
 import scratch.ast.model.ActorDefinition;
 import scratch.ast.model.ActorDefinitionList;
@@ -39,13 +45,6 @@ import scratch.ast.model.statement.common.SetVariableTo;
 import scratch.ast.model.statement.declaration.DeclarationIdentAsTypeStmt;
 import scratch.ast.model.statement.declaration.DeclarationStmt;
 import scratch.ast.model.variable.Qualified;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import static junit.framework.TestCase.fail;
 
 public class ProgramParserTest {
 

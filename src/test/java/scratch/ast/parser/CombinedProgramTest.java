@@ -18,18 +18,17 @@
  */
 package scratch.ast.parser;
 
+import static junit.framework.TestCase.fail;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.Test;
+import java.io.File;
+import java.io.IOException;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import scratch.ast.ParsingException;
 import scratch.ast.model.Program;
 import scratch.ast.visitor.DotVisitor;
-
-import java.io.File;
-import java.io.IOException;
-
-import static junit.framework.TestCase.fail;
 
 /**
  * This class contains test cases for a program that contains most constructions from the AST. The fixture for these
@@ -41,8 +40,7 @@ public class CombinedProgramTest {
 
     @BeforeAll
     public static void setup() {
-        //FIXME why is this never used in the test?
-        String path = "src/test/java/scratch/fixtures/combinedProgram.json";
+        String path = "src/test/java/scratch/fixtures/allBlocks.json";
         File file = new File(path);
         ObjectMapper objectMapper = new ObjectMapper();
         try {
@@ -54,13 +52,9 @@ public class CombinedProgramTest {
 
     @Test
     public void dummyParseAllBlocks() {
-        String path = "src/test/java/scratch/fixtures/allBlocks.json";
-        File file = new File(path);
-        ObjectMapper objectMapper = new ObjectMapper();
         try {
-            project = objectMapper.readTree(file);
             Program program = ProgramParser.parseProgram("All", project);
-        } catch (IOException | ParsingException e) {
+        } catch (ParsingException e) {
             fail();
         }
     }
@@ -68,17 +62,18 @@ public class CombinedProgramTest {
     @Test
     public void testVisitor() {
         DotVisitor visitor = new DotVisitor();
-        String path = "src/test/java/scratch/fixtures/allBlocks.json";
-        File file = new File(path);
-        ObjectMapper objectMapper = new ObjectMapper();
         try {
-            project = objectMapper.readTree(file);
             Program program = ProgramParser.parseProgram("All", project);
             program.accept(visitor);
             visitor.printGraph();
             //visitor.saveGraph("./target/graph.dot");
-        } catch (IOException | ParsingException e) {
+        } catch (ParsingException e) {
             fail();
         }
+    }
+
+    @Test
+    public void testApi() {
+
     }
 }

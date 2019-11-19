@@ -1,10 +1,15 @@
 package scratch.ast.parser.stmt;
 
+import static junit.framework.TestCase.fail;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.truth.Truth;
-import org.junit.Test;
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import scratch.ast.ParsingException;
 import scratch.ast.model.ActorDefinition;
 import scratch.ast.model.ActorDefinitionList;
@@ -21,12 +26,6 @@ import scratch.ast.model.statement.spritelook.ShowVariable;
 import scratch.ast.model.statement.termination.StopAll;
 import scratch.ast.model.variable.Qualified;
 import scratch.ast.parser.ProgramParser;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
-
-import static junit.framework.TestCase.fail;
 
 public class ActorLookStmtParserTest {
 
