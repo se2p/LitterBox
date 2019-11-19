@@ -69,12 +69,20 @@ public class ExpressionParser {
         return exprArray;
     }
 
+    static ArrayNode getExprArrayByName(JsonNode inputs, String inputName) {
+        return (ArrayNode) inputs.get(inputName);
+    }
+
     static int getShadowIndicator(ArrayNode exprArray) {
         return exprArray.get(Constants.POS_INPUT_SHADOW).asInt();
     }
 
     static ArrayNode getDataArrayAtPos(JsonNode inputs, int pos) { // TODO maybe rename or comment
         return (ArrayNode) getExprArrayAtPos(inputs, pos).get(POS_DATA_ARRAY);
+    }
+
+    static ArrayNode getDataArrayAtPos(JsonNode inputs, String inputName) { // TODO maybe rename or comment
+        return (ArrayNode) getExprArrayByName(inputs, inputName).get(POS_DATA_ARRAY);
     }
 
     public static Expression parseExpressionBlock(JsonNode current, JsonNode allBlocks) throws ParsingException {

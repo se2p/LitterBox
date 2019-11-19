@@ -49,6 +49,43 @@ import scratch.ast.parser.symboltable.ExpressionListInfo;
 import scratch.ast.parser.symboltable.VariableInfo;
 
 public class StringExprParser {
+    public static StringExpr parseStringExpr(JsonNode block, String inputName, JsonNode blocks) throws ParsingException {
+        ArrayNode exprArray = ExpressionParser.getExprArrayByName(block.get(INPUTS_KEY), inputName);
+        if (ExpressionParser.getShadowIndicator(exprArray) == 1) {
+            return parseStr(block.get(INPUTS_KEY), inputName);
+        } else if (exprArray.get(POS_BLOCK_ID) instanceof TextNode) {
+            String identifier = exprArray.get(POS_BLOCK_ID).asText();
+            String opcode = blocks.get(identifier).get(OPCODE_KEY).asText();
+            try {
+                return parseBlockStringExpr(blocks.get(identifier), blocks);
+            } catch (Exception e) {
+                try {
+                    return new AsString(NumExprParser.parseBlockNumExpr(blocks.get(identifier), blocks));
+                } catch (Exception ex) {
+                    try {
+                        return new AsString(BoolExprParser.parseBlockBoolExpr(blocks.get(identifier), blocks));
+                    } catch (Exception exc) {
+                        throw new ParsingException(exc);
+                    }
+                }
+            }
+        } else {
+            String idString = exprArray.get(POS_DATA_ARRAY).get(POS_INPUT_ID).asText();
+            if (ProgramParser.symbolTable.getVariables().containsKey(idString)) {
+                VariableInfo variableInfo = ProgramParser.symbolTable.getVariables().get(idString);
+
+                return new Qualified(new StrId(variableInfo.getActor()),
+                        new StrId((variableInfo.getVariableName())));
+
+            } else if (ProgramParser.symbolTable.getLists().containsKey(idString)) {
+                ExpressionListInfo variableInfo = ProgramParser.symbolTable.getLists().get(idString);
+                return new Qualified(new StrId(variableInfo.getActor()),
+                        new StrId((variableInfo.getVariableName())));
+            }
+        }
+        throw new ParsingException("Could not parse StringExpr");
+    }
+
 
     public static StringExpr parseStringExpr(JsonNode block, int pos, JsonNode blocks) throws ParsingException {
         ArrayNode exprArray = ExpressionParser.getExprArrayAtPos(block.get(INPUTS_KEY), pos);
@@ -89,6 +126,11 @@ public class StringExprParser {
 
     private static Str parseStr(JsonNode inputs, int pos) {
         String value = ExpressionParser.getDataArrayAtPos(inputs, pos).get(POS_INPUT_VALUE).asText();
+        return new Str(value);
+    }
+
+    private static Str parseStr(JsonNode inputs, String inputName) {
+        String value = ExpressionParser.getDataArrayByName(inputs, inputName).get(POS_INPUT_VALUE).asText();
         return new Str(value);
     }
 

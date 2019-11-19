@@ -27,10 +27,7 @@ import static scratch.ast.Constants.POS_BLOCK_ID;
 import static scratch.ast.Constants.POS_DATA_ARRAY;
 import static scratch.ast.Constants.POS_INPUT_ID;
 import static scratch.ast.Constants.POS_INPUT_VALUE;
-import static scratch.ast.parser.ExpressionParser.getDataArrayAtPos;
-import static scratch.ast.parser.ExpressionParser.getExprArrayAtPos;
-import static scratch.ast.parser.ExpressionParser.getShadowIndicator;
-import static scratch.ast.parser.ExpressionParser.parseExpression;
+import static scratch.ast.parser.ExpressionParser.*;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -85,6 +82,49 @@ import scratch.ast.parser.symboltable.ExpressionListInfo;
 import scratch.ast.parser.symboltable.VariableInfo;
 
 public class NumExprParser {
+
+    public static NumExpr parseNumExpr(JsonNode block, String inputName, JsonNode blocks)
+            throws ParsingException { // we ignored "(" NumExpr ")"
+        ArrayNode exprArray = getExprArrayByName(block.get(INPUTS_KEY), inputName);
+        if (getShadowIndicator(exprArray) == 1) { // TODO replace magic num
+            try {
+                return parseNumber(block.get(INPUTS_KEY), inputName);
+            } catch (NumberFormatException e) { // right exception? hm.
+                throw new ParsingException("There was no parsable float but we didn't implement a solution yet.");
+            }
+
+        } else if (exprArray.get(POS_BLOCK_ID) instanceof TextNode) {
+            String identifier = exprArray.get(POS_BLOCK_ID).asText();
+            String opcode = blocks.get(identifier).get(OPCODE_KEY).asText();
+            try {
+                return parseBlockNumExpr(blocks.get(identifier), blocks);
+            } catch (Exception e) {
+                try {
+                    return new AsNumber(StringExprParser.parseBlockStringExpr(blocks.get(identifier), blocks));
+                } catch (Exception ex) {
+                    try {
+                        return new AsNumber(BoolExprParser.parseBlockBoolExpr(blocks.get(identifier), blocks));
+                    } catch (Exception exc) {
+                        throw new ParsingException(exc);
+                    }
+                }
+            }
+        } else {
+            String idString = exprArray.get(POS_DATA_ARRAY).get(POS_INPUT_ID).asText();
+            if (ProgramParser.symbolTable.getVariables().containsKey(idString)) {
+                VariableInfo variableInfo = ProgramParser.symbolTable.getVariables().get(idString);
+
+                return new Qualified(new StrId(variableInfo.getActor()),
+                        new StrId((variableInfo.getVariableName())));
+
+            } else if (ProgramParser.symbolTable.getLists().containsKey(idString)) {
+                ExpressionListInfo variableInfo = ProgramParser.symbolTable.getLists().get(idString);
+                return new Qualified(new StrId(variableInfo.getActor()),
+                        new StrId((variableInfo.getVariableName())));
+            }
+        }
+        throw new ParsingException("Could not parse NumExpr.");
+    }
     /**
      * Parses the NumExpr at the given position of the given block.
      *
@@ -151,6 +191,12 @@ public class NumExprParser {
      */
     static Number parseNumber(JsonNode inputs, int pos) {
         String valueString = getDataArrayAtPos(inputs, pos).get(POS_INPUT_VALUE).asText();
+        float value = Float.parseFloat(valueString);
+        return new Number(value);
+    }
+
+    static Number parseNumber(JsonNode inputs, String inputName) {
+        String valueString = ExpressionParser.getDataArrayByName(inputs, inputName).get(POS_INPUT_VALUE).asText();
         float value = Float.parseFloat(valueString);
         return new Number(value);
     }

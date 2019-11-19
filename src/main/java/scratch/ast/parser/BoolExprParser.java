@@ -58,6 +58,30 @@ import scratch.ast.parser.symboltable.ExpressionListInfo;
 import scratch.ast.parser.symboltable.VariableInfo;
 
 public class BoolExprParser {
+    public static BoolExpr parseBoolExpr(JsonNode block, String inputName, JsonNode blocks) throws ParsingException {
+        ArrayNode exprArray = ExpressionParser.getExprArrayByName(block.get(INPUTS_KEY), inputName);
+        if (ExpressionParser.getShadowIndicator(exprArray) == 1) {
+            return parseBool(block.get(INPUTS_KEY), inputName);
+        } else if (exprArray.get(POS_BLOCK_ID) instanceof TextNode) {
+            String identifier = exprArray.get(POS_BLOCK_ID).asText();
+            return parseBlockBoolExpr(blocks.get(identifier), blocks);
+        } else {
+            String idString = exprArray.get(POS_DATA_ARRAY).get(POS_INPUT_ID).asText();
+            if (ProgramParser.symbolTable.getVariables().containsKey(idString)) {
+                VariableInfo variableInfo = ProgramParser.symbolTable.getVariables().get(idString);
+
+                return new Qualified(new StrId(variableInfo.getActor()),
+                        new StrId((variableInfo.getVariableName())));
+
+            } else if (ProgramParser.symbolTable.getLists().containsKey(idString)) {
+                ExpressionListInfo variableInfo = ProgramParser.symbolTable.getLists().get(idString);
+                return new Qualified(new StrId(variableInfo.getActor()),
+                        new StrId((variableInfo.getVariableName())));
+            }
+        }
+
+        throw new ParsingException("Could not parse BoolExpr");
+    }
 
     public static BoolExpr parseBoolExpr(JsonNode block, int pos, JsonNode blocks) throws ParsingException {
         ArrayNode exprArray = ExpressionParser.getExprArrayAtPos(block.get(INPUTS_KEY), pos);
@@ -86,6 +110,11 @@ public class BoolExprParser {
 
     private static Bool parseBool(JsonNode inputs, int pos) {
         boolean value = ExpressionParser.getDataArrayAtPos(inputs, pos).get(POS_INPUT_VALUE).asBoolean();
+        return new Bool(value);
+    }
+
+    private static Bool parseBool(JsonNode inputs, String inputName) {
+        boolean value = ExpressionParser.getDataArrayByName(inputs, inputName).get(POS_INPUT_VALUE).asBoolean();
         return new Bool(value);
     }
 

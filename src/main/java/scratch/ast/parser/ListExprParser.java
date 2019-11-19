@@ -34,6 +34,21 @@ import scratch.ast.model.variable.Variable;
 import scratch.ast.parser.symboltable.ExpressionListInfo;
 
 public class ListExprParser {
+    public static ListExpr parseListExpr(JsonNode block, String inputName, JsonNode blocks) throws ParsingException {
+        ArrayNode exprArray = ExpressionParser.getExprArrayByName(block.get(INPUTS_KEY), inputName);
+
+        if (ExpressionParser.getShadowIndicator(exprArray) == 1 || exprArray.get(POS_BLOCK_ID) instanceof TextNode) {
+            throw new ParsingException("Block does not contain a list"); //Todo improve message
+        }
+
+        String idString = exprArray.get(POS_DATA_ARRAY).get(POS_INPUT_ID).asText();
+        if (ProgramParser.symbolTable.getLists().containsKey(idString)) {
+            ExpressionListInfo variableInfo = ProgramParser.symbolTable.getLists().get(idString);
+            return new Qualified(new StrId(variableInfo.getActor()),
+                    new StrId((variableInfo.getVariableName())));
+        }
+        throw new ParsingException("Block does not contain a list"); //Todo improve message
+    }
 
     public static ListExpr parseListExpr(JsonNode block, int pos, JsonNode blocks) throws ParsingException {
         ArrayNode exprArray = ExpressionParser.getExprArrayAtPos(block.get(INPUTS_KEY), pos);
