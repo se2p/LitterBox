@@ -19,6 +19,7 @@
 package scratch.ast.parser;
 
 import static scratch.ast.Constants.FIELDS_KEY;
+import static scratch.ast.Constants.OPCODE_KEY;
 import static scratch.ast.opcodes.SpriteLookStmtOpcode.looks_nextcostume;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -26,12 +27,19 @@ import com.google.common.base.Preconditions;
 import java.util.ArrayList;
 import java.util.List;
 import scratch.ast.Constants;
+import scratch.ast.ParsingException;
 import scratch.ast.model.elementchoice.ElementChoice;
 import scratch.ast.model.elementchoice.Next;
 import scratch.ast.model.elementchoice.Prev;
 import scratch.ast.model.elementchoice.Random;
 import scratch.ast.model.elementchoice.WithId;
+import scratch.ast.model.elementchoice.WithNumber;
+import scratch.ast.model.expression.num.NumExpr;
+import scratch.ast.model.expression.num.UnspecifiedNumExpr;
 import scratch.ast.model.variable.StrId;
+import scratch.ast.opcodes.BoolExprOpcode;
+import scratch.ast.opcodes.NumExprOpcode;
+import scratch.ast.opcodes.StringExprOpcode;
 
 public class ElementChoiceParser {
 
@@ -50,6 +58,22 @@ public class ElementChoiceParser {
 
         String blockMenuID = inputsList.get(0).get(Constants.POS_INPUT_VALUE).asText();
         JsonNode menu = allBlocks.get(blockMenuID);
+
+        if (NumExprOpcode.contains(menu.get(OPCODE_KEY).asText()) ||
+            StringExprOpcode.contains(menu.get(OPCODE_KEY).asText()) ||
+            BoolExprOpcode.contains(menu.get(OPCODE_KEY).asText())) {
+
+            NumExpr numExpr;
+            try {
+                numExpr = NumExprParser.parseNumExpr(current, 0, allBlocks);
+            } catch (ParsingException e) {
+                numExpr = new UnspecifiedNumExpr();
+
+            }
+            return new WithNumber(numExpr);
+        }
+
+        //FIXME cover case where a variable is used instead of menu
 
         List<JsonNode> fieldsList = new ArrayList<>();
         menu.get(FIELDS_KEY).elements().forEachRemaining(fieldsList::add);
