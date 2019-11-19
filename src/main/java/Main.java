@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
+
 import analytics.IssueFinder;
 import analytics.IssueTool;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -38,6 +39,7 @@ import scratch.ast.model.Program;
 import scratch.ast.parser.ProgramParser;
 import scratch.structure.Project;
 import utils.CSVWriter;
+import utils.Downloader;
 import utils.JsonParser;
 import utils.ZipReader;
 
@@ -50,10 +52,12 @@ public class Main {
         Options options = new Options();
 
         options.addOption("path", true, "path to folder or file that should be analyzed (required)");
+        options.addOption("projectid", true,
+            "id of the project that should be downloaded and analysed. Only works for Scratch 3");
         options.addOption("output", true, "path with name of the csv file you want to save (required if path argument" +
-                " is a folder path)");
+            " is a folder path)");
         options.addOption("detectors", true, "name all detectors you want to run separated by ',' " +
-                "\n(all detectors defined in the README)");
+            "\n(all detectors defined in the README)");
         options.addOption("version", true, "the Scratch Version ('2' or '3') (required)");
         CommandLineParser parser = new DefaultParser();
 
@@ -63,26 +67,74 @@ public class Main {
             File folder = new File(cmd.getOptionValue("path"));
             if (folder.exists() && folder.isDirectory()) {
                 checkMultiple(folder, cmd.getOptionValue("detectors", "all"),
-                        cmd.getOptionValue("output"), cmd.getOptionValue("version"));
+                    cmd.getOptionValue("output"), cmd.getOptionValue("version"));
             } else if (folder.exists() && !folder.isDirectory()) {
                 checkSingle(folder, cmd.getOptionValue("detectors",
-                        "all"), cmd.getOptionValue("output"), cmd.getOptionValue("version"));
+                    "all"), cmd.getOptionValue("output"), cmd.getOptionValue("version"));
             } else {
                 System.err.println("[Error] folder path given does not exist");
                 return;
             }
             return;
+        } else if (cmd.hasOption("projectid")) {
+            String projectid = cmd.getOptionValue("projectid");
+            String json = null;
+            try {
+                json = Downloader.downloadProjectJSON(projectid);
+            } catch (IOException e) {
+                System.err.println("Could not load project with id " + projectid);
+                return;
+            }
+            checkDownloaded(json, projectid, cmd.getOptionValue("detectors", //TODO projectid is not the same as name
+                "all"), cmd.getOptionValue("output"));
         }
         HelpFormatter formatter = new HelpFormatter();
         formatter.printHelp("LitterBox", options);
         System.out.println("Example: " + "java -cp C:\\ScratchAnalytics-1.0.jar Main -path " +
-                "C:\\scratchprojects\\files\\ -version 3 -output C:\\scratchprojects\\files\\test.csv -detectors cnt," +
-                "glblstrt");
+            "C:\\scratchprojects\\files\\ -version 3 -output C:\\scratchprojects\\files\\test.csv -detectors cnt," +
+            "glblstrt");
+    }
+
+
+    /**
+     * The method for analyzing one Scratch project file (ZIP). It will produce only console output.
+     *
+     * @param json string of the project ot analyze the file to analyze
+     * @param projectName name of the project to analyze
+     * @param detectors to be executed
+     * @param csv file where the results should be stored
+     */
+    private static void checkDownloaded(String json, String projectName, String detectors, String csv) {
+        try {
+
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode projectNode = mapper.readTree(json);
+            Program program = ProgramParser.parseProgram(projectName, projectNode);
+
+            //System.out.println(project.toString());
+            newanalytics.IssueTool it = new newanalytics.IssueTool();
+            if (csv == null || csv.equals("")) {
+                it.checkRaw(program, detectors);
+            } else {
+                //FIXME
+                //     CSVPrinter printer = prepareCSVPrinter(detectors, it, csv);
+                //     it.check(program, printer, detectors);
+                //     System.out.println("Finished: " + fileEntry.getName());
+                //     try {
+                //         assert printer != null;
+                //         CSVWriter.flushCSV(printer);
+                //     } catch (IOException e) {
+                //         e.printStackTrace();
+                //     }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**
-     * The method for analyzing one Scratch project file (ZIP).
-     * It will produce only console output.
+     * The method for analyzing one Scratch project file (ZIP). It will produce only console output.
      *
      * @param fileEntry the file to analyze
      * @param detectors
@@ -92,8 +144,8 @@ public class Main {
         try {
             if ((FilenameUtils.getExtension(fileEntry.getPath())).toLowerCase().equals("json") && version.equals(2)) {
                 project = JsonParser.parseRaw(fileEntry);
-            }else{
-                 project = getProject(fileEntry, version);
+            } else {
+                project = getProject(fileEntry, version);
             }
             Program program = extractProgram(fileEntry);
 
@@ -142,8 +194,8 @@ public class Main {
     }
 
     /**
-     * The main method for analyzing all Scratch project files (ZIP) in the given folder location.
-     * It will produce a .csv file with all entries.
+     * The main method for analyzing all Scratch project files (ZIP) in the given folder location. It will produce a
+     * .csv file with all entries.
      */
     private static void checkMultiple(File folder, String dtctrs, String csv, String version) {
 
@@ -156,9 +208,10 @@ public class Main {
                 if (!fileEntry.isDirectory()) {
                     Program program = extractProgram(fileEntry);
                     Project project;
-                    if ((FilenameUtils.getExtension(fileEntry.getPath())).toLowerCase().equals("json") && version.equals(2)) {
+                    if ((FilenameUtils.getExtension(fileEntry.getPath())).toLowerCase().equals("json") && version
+                        .equals(2)) {
                         project = JsonParser.parseRaw(fileEntry);
-                    }else{
+                    } else {
                         project = getProject(fileEntry, version);
                     }
                     //System.out.println(project.toString());

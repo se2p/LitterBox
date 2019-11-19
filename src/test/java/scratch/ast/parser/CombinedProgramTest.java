@@ -71,9 +71,4 @@ public class CombinedProgramTest {
             fail();
         }
     }
-
-    @Test
-    public void testApi() {
-
-    }
 }
