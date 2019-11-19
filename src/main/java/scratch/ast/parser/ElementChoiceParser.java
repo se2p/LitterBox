@@ -36,6 +36,8 @@ import scratch.ast.model.elementchoice.WithId;
 import scratch.ast.model.elementchoice.WithNumber;
 import scratch.ast.model.expression.num.NumExpr;
 import scratch.ast.model.expression.num.UnspecifiedNumExpr;
+import scratch.ast.model.expression.string.StringExpr;
+import scratch.ast.model.expression.string.UnspecifiedStringExpr;
 import scratch.ast.model.variable.StrId;
 import scratch.ast.opcodes.BoolExprOpcode;
 import scratch.ast.opcodes.NumExprOpcode;
@@ -59,8 +61,10 @@ public class ElementChoiceParser {
         String blockMenuID = inputsList.get(0).get(Constants.POS_INPUT_VALUE).asText();
         JsonNode menu = allBlocks.get(blockMenuID);
 
-        if (NumExprOpcode.contains(menu.get(OPCODE_KEY).asText()) ||
-            StringExprOpcode.contains(menu.get(OPCODE_KEY).asText()) ||
+        if (!menu.has(OPCODE_KEY)) {
+            // Variable or List?
+            throw new RuntimeException("Not implemented yet");
+        } else if (NumExprOpcode.contains(menu.get(OPCODE_KEY).asText()) ||
             BoolExprOpcode.contains(menu.get(OPCODE_KEY).asText())) {
 
             NumExpr numExpr;
@@ -71,6 +75,16 @@ public class ElementChoiceParser {
 
             }
             return new WithNumber(numExpr);
+        } else if (StringExprOpcode.contains(menu.get(OPCODE_KEY).asText())) {
+            StringExpr strExpr;
+            try {
+                strExpr = StringExprParser.parseStringExpr(current, 0, allBlocks);
+            } catch (ParsingException e) {
+                strExpr = new UnspecifiedStringExpr();
+
+            }
+            throw new RuntimeException("NotImplementedYet");
+//            return new WithId(new StrId(strExpr));
         }
 
         //FIXME cover case where a variable is used instead of menu
