@@ -27,7 +27,11 @@ import static scratch.ast.Constants.POS_BLOCK_ID;
 import static scratch.ast.Constants.POS_DATA_ARRAY;
 import static scratch.ast.Constants.POS_INPUT_ID;
 import static scratch.ast.Constants.POS_INPUT_VALUE;
-import static scratch.ast.parser.ExpressionParser.*;
+import static scratch.ast.parser.ExpressionParser.getDataArrayAtPos;
+import static scratch.ast.parser.ExpressionParser.getExprArrayAtPos;
+import static scratch.ast.parser.ExpressionParser.getExprArrayByName;
+import static scratch.ast.parser.ExpressionParser.getShadowIndicator;
+import static scratch.ast.parser.ExpressionParser.parseExpression;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -57,6 +61,7 @@ import scratch.ast.model.expression.num.Number;
 import scratch.ast.model.expression.num.PickRandom;
 import scratch.ast.model.expression.num.Round;
 import scratch.ast.model.expression.num.Timer;
+import scratch.ast.model.expression.num.UnspecifiedNumExpr;
 import scratch.ast.model.numfunct.Abs;
 import scratch.ast.model.numfunct.Acos;
 import scratch.ast.model.numfunct.Asin;
@@ -90,7 +95,8 @@ public class NumExprParser {
             try {
                 return parseNumber(block.get(INPUTS_KEY), inputName);
             } catch (NumberFormatException e) { // right exception? hm.
-                throw new ParsingException("There was no parsable float but we didn't implement a solution yet.");
+                return new UnspecifiedNumExpr();
+//                throw new ParsingException("There was no parsable float but we didn't implement a solution yet.");
             }
 
         } else if (exprArray.get(POS_BLOCK_ID) instanceof TextNode) {
@@ -140,7 +146,8 @@ public class NumExprParser {
             try {
                 return parseNumber(block.get(INPUTS_KEY), pos);
             } catch (NumberFormatException e) { // right exception? hm.
-                throw new ParsingException("There was no parsable float but we didn't implement a solution yet.");
+                return new UnspecifiedNumExpr(); // FIXME is this correct?
+//                throw new ParsingException("There was no parsable float but we didn't implement a solution yet.");
             }
 
         } else if (exprArray.get(POS_BLOCK_ID) instanceof TextNode) {
