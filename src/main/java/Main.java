@@ -45,8 +45,6 @@ import utils.ZipReader;
 
 public class Main {
 
-    //"C:\\scratchprojects\\files3\\"
-
     public static void main(String[] args) throws ParseException {
 
         Options options = new Options();
