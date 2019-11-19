@@ -20,6 +20,7 @@ package scratch.ast.parser.stmt;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.base.Preconditions;
+import java.util.ArrayList;
 import scratch.ast.Constants;
 import scratch.ast.ParsingException;
 import scratch.ast.model.StmtList;
@@ -27,14 +28,16 @@ import scratch.ast.model.expression.bool.BoolExpr;
 import scratch.ast.model.expression.bool.UnspecifiedBoolExpr;
 import scratch.ast.model.expression.num.NumExpr;
 import scratch.ast.model.statement.Stmt;
-import scratch.ast.model.statement.control.*;
+import scratch.ast.model.statement.control.IfElseStmt;
+import scratch.ast.model.statement.control.IfThenStmt;
+import scratch.ast.model.statement.control.RepeatForeverStmt;
+import scratch.ast.model.statement.control.RepeatTimesStmt;
+import scratch.ast.model.statement.control.UntilStmt;
 import scratch.ast.model.statement.spritelook.ListOfStmt;
 import scratch.ast.opcodes.ControlStmtOpcode;
 import scratch.ast.parser.BoolExprParser;
 import scratch.ast.parser.NumExprParser;
 import scratch.ast.parser.ScriptParser;
-
-import java.util.ArrayList;
 
 public class ControlStmtParser {
 
@@ -51,98 +54,33 @@ public class ControlStmtParser {
         ControlStmtOpcode opcode = ControlStmtOpcode.valueOf(opcodeString);
 
         Stmt stmt;
-        JsonNode conditionNode, substackNode, elseSubstackNode;
         BoolExpr boolExpr;
         StmtList stmtList, elseStmtList;
         JsonNode inputs = current.get(Constants.INPUTS_KEY);
         switch (opcode) {
             case control_if:
-                if (inputs.has(INPUT_SUBSTACK)) {
-                    substackNode = inputs.get(INPUT_SUBSTACK).get(Constants.POS_INPUT_VALUE);
-                    stmtList = ScriptParser.parseStmtList(substackNode.asText(), allBlocks);
-                    if (inputs.has(INPUT_CONDITION)) {
-                        boolExpr = BoolExprParser.parseBoolExpr(current, 1, allBlocks);
-                    } else {
-                        boolExpr = new UnspecifiedBoolExpr();
-                    }
-                } else {
-                    stmtList = new StmtList(new ListOfStmt(new ArrayList<Stmt>()), null);
-                    if (inputs.has(INPUT_CONDITION)) {
-                        boolExpr = BoolExprParser.parseBoolExpr(current, 0, allBlocks);
-                    } else {
-                        boolExpr = new UnspecifiedBoolExpr();
-                    }
-                }
-
+                stmtList = getSubstackStmtList(allBlocks, inputs, INPUT_SUBSTACK);
+                boolExpr = getCondition(current, allBlocks, inputs);
                 stmt = new IfThenStmt(boolExpr, stmtList);
                 break;
             case control_if_else:
-
-                if (inputs.has(INPUT_SUBSTACK)) {
-                    substackNode = inputs.get(INPUT_SUBSTACK).get(Constants.POS_INPUT_VALUE);
-                    stmtList = ScriptParser.parseStmtList(substackNode.asText(), allBlocks);
-                    if (inputs.has(INPUT_CONDITION)) {
-                        boolExpr = BoolExprParser.parseBoolExpr(current, 1, allBlocks);
-                    } else {
-                        boolExpr = new UnspecifiedBoolExpr();
-                    }
-                } else {
-                    stmtList = new StmtList(new ListOfStmt(new ArrayList<Stmt>()), null);
-                    if (inputs.has(INPUT_CONDITION)) {
-                        boolExpr = BoolExprParser.parseBoolExpr(current, 0, allBlocks);
-                    } else {
-                        boolExpr = new UnspecifiedBoolExpr();
-                    }
-                }
-
-                if (inputs.has(INPUT_ELSE_SUBSTACK)) {
-                    elseSubstackNode = inputs.get(INPUT_ELSE_SUBSTACK).get(Constants.POS_INPUT_VALUE);
-                    elseStmtList = ScriptParser.parseStmtList(elseSubstackNode.asText(), allBlocks);
-                } else {
-                    elseStmtList = new StmtList(new ListOfStmt(new ArrayList<Stmt>()), null);
-                }
-
+                stmtList = getSubstackStmtList(allBlocks, inputs, INPUT_SUBSTACK);
+                boolExpr = getCondition(current, allBlocks, inputs);
+                elseStmtList = getSubstackStmtList(allBlocks, inputs, INPUT_ELSE_SUBSTACK);
                 stmt = new IfElseStmt(boolExpr, stmtList, elseStmtList);
                 break;
             case control_repeat:
                 NumExpr numExpr = NumExprParser.parseNumExpr(current, 0, allBlocks);
-
-                if (inputs.has(INPUT_SUBSTACK)) {
-                    substackNode = inputs.get(INPUT_SUBSTACK).get(Constants.POS_INPUT_VALUE);
-                    stmtList = ScriptParser.parseStmtList(substackNode.asText(), allBlocks);
-                } else {
-                    stmtList = new StmtList(new ListOfStmt(new ArrayList<Stmt>()), null);
-                }
-
+                stmtList = getSubstackStmtList(allBlocks, inputs, INPUT_SUBSTACK);
                 stmt = new RepeatTimesStmt(numExpr, stmtList);
                 break;
             case control_repeat_until:
-                if (inputs.has(INPUT_SUBSTACK)) {
-                    substackNode = inputs.get(INPUT_SUBSTACK).get(Constants.POS_INPUT_VALUE);
-                    stmtList = ScriptParser.parseStmtList(substackNode.asText(), allBlocks);
-                    if (inputs.has(INPUT_CONDITION)) {
-                        boolExpr = BoolExprParser.parseBoolExpr(current, 1, allBlocks);
-                    } else {
-                        boolExpr = new UnspecifiedBoolExpr();
-                    }
-
-                } else {
-                    stmtList = new StmtList(new ListOfStmt(new ArrayList<Stmt>()), null);
-                    if (inputs.has(INPUT_CONDITION)) {
-                        boolExpr = BoolExprParser.parseBoolExpr(current, 0, allBlocks);
-                    } else {
-                        boolExpr = new UnspecifiedBoolExpr();
-                    }
-                }
+                stmtList = getSubstackStmtList(allBlocks, inputs, INPUT_SUBSTACK);
+                boolExpr = getCondition(current, allBlocks, inputs);
                 stmt = new UntilStmt(boolExpr, stmtList);
                 break;
             case control_forever:
-                if (inputs.has(INPUT_SUBSTACK)) {
-                    substackNode = inputs.get(INPUT_SUBSTACK).get(Constants.POS_INPUT_VALUE);
-                    stmtList = ScriptParser.parseStmtList(substackNode.asText(), allBlocks);
-                } else {
-                    stmtList = new StmtList(new ListOfStmt(new ArrayList<Stmt>()), null);
-                }
+                stmtList = getSubstackStmtList(allBlocks, inputs, INPUT_SUBSTACK);
                 stmt = new RepeatForeverStmt(stmtList);
                 break;
             default:
@@ -150,5 +88,29 @@ public class ControlStmtParser {
         }
 
         return stmt;
+    }
+
+    private static BoolExpr getCondition(JsonNode current, JsonNode allBlocks, JsonNode inputs)
+        throws ParsingException {
+        BoolExpr boolExpr;
+        if (inputs.has(INPUT_CONDITION)) {
+            boolExpr = BoolExprParser.parseBoolExpr(current, INPUT_CONDITION, allBlocks);
+        } else {
+            boolExpr = new UnspecifiedBoolExpr();
+        }
+        return boolExpr;
+    }
+
+    private static StmtList getSubstackStmtList(JsonNode allBlocks, JsonNode inputs, String inputSubstack)
+        throws ParsingException {
+        JsonNode substackNode;
+        StmtList stmtList;
+        if (inputs.has(inputSubstack)) {
+            substackNode = inputs.get(inputSubstack).get(Constants.POS_INPUT_VALUE);
+            stmtList = ScriptParser.parseStmtList(substackNode.asText(), allBlocks);
+        } else {
+            stmtList = new StmtList(new ListOfStmt(new ArrayList<Stmt>()), null);
+        }
+        return stmtList;
     }
 }
