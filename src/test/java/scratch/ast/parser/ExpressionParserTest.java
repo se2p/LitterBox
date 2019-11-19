@@ -18,24 +18,17 @@
  */
 package scratch.ast.parser;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
 import com.fasterxml.jackson.databind.JsonNode;
-import org.junit.Before;
 import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
 import scratch.ast.ParsingException;
-import scratch.ast.model.expression.num.Add;
-import scratch.ast.model.expression.num.Div;
-import scratch.ast.model.expression.num.Minus;
-import scratch.ast.model.expression.num.Mod;
-import scratch.ast.model.expression.num.MouseX;
-import scratch.ast.model.expression.num.Mult;
-import scratch.ast.model.expression.num.NumExpr;
 import scratch.ast.model.expression.num.Number;
-import scratch.ast.model.expression.num.PickRandom;
+import scratch.ast.model.expression.num.*;
 import scratch.ast.model.numfunct.Pow10;
 import utils.JsonParser;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class ExpressionParserTest {
 
@@ -52,8 +45,8 @@ public class ExpressionParserTest {
     private static JsonNode divBlock;
     private static JsonNode multBlock;
 
-    @Before
-    public void setup() {
+    @BeforeAll
+    public static void setup() {
         moveStepsScript = JsonParser.getBlocksNodeFromJSON("./src/test/java/scratch/fixtures/movesteps.json");
         allExprTypesScript = JsonParser.getBlocksNodeFromJSON("./src/test/java/scratch/fixtures/allexprtypes.json");
         twoNumExprSlotsNumExprs = JsonParser.getBlocksNodeFromJSON("./src/test/java/scratch/fixtures/twoNumExprSlotsNumExprs.json");

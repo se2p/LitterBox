@@ -1,15 +1,10 @@
 package scratch.ast.parser.stmt;
 
-import static junit.framework.TestCase.fail;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.truth.Truth;
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
-import org.junit.Before;
 import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
 import scratch.ast.ParsingException;
 import scratch.ast.model.ActorDefinition;
 import scratch.ast.model.ActorDefinitionList;
@@ -24,12 +19,18 @@ import scratch.ast.model.statement.actorsound.StopAllSounds;
 import scratch.ast.model.statement.termination.StopAll;
 import scratch.ast.parser.ProgramParser;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+
+import static junit.framework.TestCase.fail;
+
 public class ActorSoundStmtParserTest {
 
-    private JsonNode project;
+    private static JsonNode project;
 
-    @Before
-    public void setup() {
+    @BeforeAll
+    public static void setup() {
         String path = "src/test/java/scratch/fixtures/actorSoundStmts.json";
         File file = new File(path);
         ObjectMapper objectMapper = new ObjectMapper();

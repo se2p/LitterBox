@@ -18,17 +18,11 @@
  */
 package scratch.ast.parser;
 
-import static junit.framework.TestCase.fail;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.truth.Truth;
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
-import java.util.stream.Collectors;
-import org.junit.Before;
 import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
 import scratch.ast.ParsingException;
 import scratch.ast.model.ActorDefinition;
 import scratch.ast.model.ActorDefinitionList;
@@ -46,12 +40,19 @@ import scratch.ast.model.statement.declaration.DeclarationIdentAsTypeStmt;
 import scratch.ast.model.statement.declaration.DeclarationStmt;
 import scratch.ast.model.variable.Qualified;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static junit.framework.TestCase.fail;
+
 public class ProgramParserTest {
 
-    private JsonNode project;
+    private static JsonNode project;
 
-    @Before
-    public void setup() {
+    @BeforeAll
+    public static void setup() {
         String path = "src/test/java/scratch/fixtures/emptyProject.json";
         File file = new File(path);
         ObjectMapper objectMapper = new ObjectMapper();

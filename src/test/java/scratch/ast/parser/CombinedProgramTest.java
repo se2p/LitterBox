@@ -18,17 +18,18 @@
  */
 package scratch.ast.parser;
 
-import static junit.framework.TestCase.fail;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.io.File;
-import java.io.IOException;
-import org.junit.Before;
 import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
 import scratch.ast.ParsingException;
 import scratch.ast.model.Program;
 import scratch.ast.visitor.DotVisitor;
+
+import java.io.File;
+import java.io.IOException;
+
+import static junit.framework.TestCase.fail;
 
 /**
  * This class contains test cases for a program that contains most constructions from the AST. The fixture for these
@@ -36,10 +37,11 @@ import scratch.ast.visitor.DotVisitor;
  */
 public class CombinedProgramTest {
 
-    private JsonNode project;
+    private static JsonNode project;
 
-    @Before
-    public void setup() {
+    @BeforeAll
+    public static void setup() {
+        //FIXME why is this never used in the test?
         String path = "src/test/java/scratch/fixtures/combinedProgram.json";
         File file = new File(path);
         ObjectMapper objectMapper = new ObjectMapper();
