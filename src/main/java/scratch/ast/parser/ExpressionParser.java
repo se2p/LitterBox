@@ -81,7 +81,7 @@ public class ExpressionParser {
         return (ArrayNode) getExprArrayAtPos(inputs, pos).get(POS_DATA_ARRAY);
     }
 
-    static ArrayNode getDataArrayAtPos(JsonNode inputs, String inputName) { // TODO maybe rename or comment
+    static ArrayNode getDataArrayByName(JsonNode inputs, String inputName) { // TODO maybe rename or comment
         return (ArrayNode) getExprArrayByName(inputs, inputName).get(POS_DATA_ARRAY);
     }
 
