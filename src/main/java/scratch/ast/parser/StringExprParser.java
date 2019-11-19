@@ -42,6 +42,7 @@ import scratch.ast.model.expression.string.StringExpr;
 import scratch.ast.model.expression.string.Username;
 import scratch.ast.model.variable.Identifier;
 import scratch.ast.model.variable.Qualified;
+import scratch.ast.model.variable.StrId;
 import scratch.ast.model.variable.Variable;
 import scratch.ast.opcodes.StringExprOpcode;
 import scratch.ast.parser.symboltable.ExpressionListInfo;
@@ -74,13 +75,13 @@ public class StringExprParser {
             if (ProgramParser.symbolTable.getVariables().containsKey(idString)) {
                 VariableInfo variableInfo = ProgramParser.symbolTable.getVariables().get(idString);
 
-                return new Qualified(new Identifier(variableInfo.getActor()),
-                        new Identifier((variableInfo.getVariableName())));
+                return new Qualified(new StrId(variableInfo.getActor()),
+                    new StrId((variableInfo.getVariableName())));
 
             } else if (ProgramParser.symbolTable.getLists().containsKey(idString)) {
                 ExpressionListInfo variableInfo = ProgramParser.symbolTable.getLists().get(idString);
-                return new Qualified(new Identifier(variableInfo.getActor()),
-                        new Identifier((variableInfo.getVariableName())));
+                return new Qualified(new StrId(variableInfo.getActor()),
+                    new StrId((variableInfo.getVariableName())));
             }
         }
         throw new ParsingException("Could not parse StringExpr");
@@ -126,7 +127,8 @@ public class StringExprParser {
             Str property = new Str(prop);
             String menuIdentifier = expressionBlock.get(INPUTS_KEY).get("OBJECT").get(1).asText();
             JsonNode objectMenuBlock = blocks.get(menuIdentifier);
-            Identifier identifier = new Identifier(objectMenuBlock.get(FIELDS_KEY).get("OBJECT").get(0).asText()); // TODO introduce constants here
+            Identifier identifier = new StrId(
+                objectMenuBlock.get(FIELDS_KEY).get("OBJECT").get(0).asText()); // TODO introduce constants here
             return new AttributeOf(property, identifier);
         default:
             throw new RuntimeException(opcodeString + " is not covered by parseBlockStringExpr");

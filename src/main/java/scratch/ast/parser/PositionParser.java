@@ -36,7 +36,7 @@ import scratch.ast.model.position.MousePos;
 import scratch.ast.model.position.PivotOf;
 import scratch.ast.model.position.Position;
 import scratch.ast.model.position.RandomPos;
-import scratch.ast.model.variable.Identifier;
+import scratch.ast.model.variable.StrId;
 import scratch.ast.opcodes.NumExprOpcode;
 import scratch.ast.opcodes.SpriteMotionStmtOpcode;
 
@@ -90,7 +90,7 @@ public class PositionParser {
         } else if (posString.equals("_random_")) {
             return new RandomPos();
         } else {
-            return new PivotOf(new Identifier(posString));
+            return new PivotOf(new StrId(posString));
         }
     }
 

@@ -77,8 +77,8 @@ import scratch.ast.model.numfunct.Sqrt;
 import scratch.ast.model.numfunct.Tan;
 import scratch.ast.model.position.Position;
 import scratch.ast.model.timecomp.TimeComp;
-import scratch.ast.model.variable.Identifier;
 import scratch.ast.model.variable.Qualified;
+import scratch.ast.model.variable.StrId;
 import scratch.ast.model.variable.Variable;
 import scratch.ast.opcodes.NumExprOpcode;
 import scratch.ast.parser.symboltable.ExpressionListInfo;
@@ -124,13 +124,13 @@ public class NumExprParser {
             if (ProgramParser.symbolTable.getVariables().containsKey(idString)) {
                 VariableInfo variableInfo = ProgramParser.symbolTable.getVariables().get(idString);
 
-                return new Qualified(new Identifier(variableInfo.getActor()),
-                        new Identifier((variableInfo.getVariableName())));
+                return new Qualified(new StrId(variableInfo.getActor()),
+                    new StrId((variableInfo.getVariableName())));
 
             } else if (ProgramParser.symbolTable.getLists().containsKey(idString)) {
                 ExpressionListInfo variableInfo = ProgramParser.symbolTable.getLists().get(idString);
-                return new Qualified(new Identifier(variableInfo.getActor()),
-                        new Identifier((variableInfo.getVariableName())));
+                return new Qualified(new StrId(variableInfo.getActor()),
+                    new StrId((variableInfo.getVariableName())));
             }
         }
         throw new ParsingException("Could not parse NumExpr.");
@@ -178,7 +178,7 @@ public class NumExprParser {
             return new LengthOfString(StringExprParser.parseStringExpr(expressionBlock, 0, blocks));
         case data_lengthoflist:
             return new LengthOfVar(
-                    new Identifier(expressionBlock.get(FIELDS_KEY).get(LIST_NAME_POS).textValue()));
+                new StrId(expressionBlock.get(FIELDS_KEY).get(LIST_NAME_POS).textValue()));
         case sensing_current:
             TimeComp timeComp = TimecompParser.parse(expressionBlock);
             return new Current(timeComp);

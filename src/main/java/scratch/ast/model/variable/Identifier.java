@@ -23,7 +23,7 @@ import scratch.ast.model.ASTLeaf;
 import scratch.ast.model.ASTNode;
 import scratch.ast.visitor.ScratchVisitor;
 
-public class Identifier implements Variable, ASTLeaf {
+public abstract class Identifier implements Variable, ASTLeaf {
 
     private final String value; // TODO check if this is correct
     private final ImmutableList<ASTNode> children;

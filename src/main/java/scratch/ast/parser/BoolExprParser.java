@@ -50,8 +50,8 @@ import scratch.ast.model.expression.bool.Or;
 import scratch.ast.model.expression.bool.Touching;
 import scratch.ast.model.expression.num.NumExpr;
 import scratch.ast.model.touchable.Touchable;
-import scratch.ast.model.variable.Identifier;
 import scratch.ast.model.variable.Qualified;
+import scratch.ast.model.variable.StrId;
 import scratch.ast.model.variable.Variable;
 import scratch.ast.opcodes.BoolExprOpcode;
 import scratch.ast.parser.symboltable.ExpressionListInfo;
@@ -71,13 +71,13 @@ public class BoolExprParser {
             if (ProgramParser.symbolTable.getVariables().containsKey(idString)) {
                 VariableInfo variableInfo = ProgramParser.symbolTable.getVariables().get(idString);
 
-                return new Qualified(new Identifier(variableInfo.getActor()),
-                        new Identifier((variableInfo.getVariableName())));
+                return new Qualified(new StrId(variableInfo.getActor()),
+                    new StrId((variableInfo.getVariableName())));
 
             } else if (ProgramParser.symbolTable.getLists().containsKey(idString)) {
                 ExpressionListInfo variableInfo = ProgramParser.symbolTable.getLists().get(idString);
-                return new Qualified(new Identifier(variableInfo.getActor()),
-                        new Identifier((variableInfo.getVariableName())));
+                return new Qualified(new StrId(variableInfo.getActor()),
+                    new StrId((variableInfo.getVariableName())));
             }
         }
 
@@ -138,7 +138,7 @@ public class BoolExprParser {
             return new ExpressionContains(containing, contained);
         case data_listcontainsitem:
             String listName = expressionBlock.get(Constants.FIELDS_KEY).get("LIST").get(FIELD_VALUE).asText();
-            Variable containingVar = new Identifier(listName);// Variable as a ListExpr
+            Variable containingVar = new StrId(listName);// Variable as a ListExpr
             contained = ExpressionParser.parseExpression(expressionBlock, 0, blocks);
             return new ExpressionContains(containingVar, contained);
 

@@ -42,6 +42,7 @@ import scratch.ast.model.statement.common.SetStmt;
 import scratch.ast.model.statement.declaration.DeclarationStmt;
 import scratch.ast.model.statement.declaration.DeclarationStmtList;
 import scratch.ast.model.variable.Identifier;
+import scratch.ast.model.variable.StrId;
 
 public class ActorDefinitionParser {
 
@@ -59,7 +60,7 @@ public class ActorDefinitionParser {
             actorType = ActorType.sprite;
         }
 
-        Identifier identifier = new Identifier(actorDefinitionNode.get(NAME_KEY).asText());
+        Identifier identifier = new StrId(actorDefinitionNode.get(NAME_KEY).asText());
         currentActor = identifier;
 
         List<Resource> res = ResourceParser.parseSound(actorDefinitionNode.get("sounds"));
@@ -107,6 +108,6 @@ public class ActorDefinitionParser {
      * @return
      */
     public static Identifier getCurrentActor() {
-        return new Identifier(currentActor.getValue());
+        return new StrId(currentActor.getValue());
     }
 }

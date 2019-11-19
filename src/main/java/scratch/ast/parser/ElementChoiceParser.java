@@ -31,7 +31,7 @@ import scratch.ast.model.elementchoice.Next;
 import scratch.ast.model.elementchoice.Prev;
 import scratch.ast.model.elementchoice.Random;
 import scratch.ast.model.elementchoice.WithId;
-import scratch.ast.model.variable.Identifier;
+import scratch.ast.model.variable.StrId;
 
 public class ElementChoiceParser {
 
@@ -57,7 +57,7 @@ public class ElementChoiceParser {
 
         String elemKey = elementName.split(" ")[0];
         if (!StandardElemChoice.contains(elemKey)) {
-            return new WithId(new Identifier(elementName));
+            return new WithId(new StrId(elementName));
         }
 
         StandardElemChoice standardElemChoice = StandardElemChoice.valueOf(elemKey);

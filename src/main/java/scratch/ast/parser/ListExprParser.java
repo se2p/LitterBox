@@ -28,8 +28,8 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import scratch.ast.ParsingException;
 import scratch.ast.model.expression.list.ListExpr;
-import scratch.ast.model.variable.Identifier;
 import scratch.ast.model.variable.Qualified;
+import scratch.ast.model.variable.StrId;
 import scratch.ast.model.variable.Variable;
 import scratch.ast.parser.symboltable.ExpressionListInfo;
 
@@ -45,8 +45,8 @@ public class ListExprParser {
         String idString = exprArray.get(POS_DATA_ARRAY).get(POS_INPUT_ID).asText();
         if (ProgramParser.symbolTable.getLists().containsKey(idString)) {
             ExpressionListInfo variableInfo = ProgramParser.symbolTable.getLists().get(idString);
-            return new Qualified(new Identifier(variableInfo.getActor()),
-                new Identifier((variableInfo.getVariableName())));
+            return new Qualified(new StrId(variableInfo.getActor()),
+                new StrId((variableInfo.getVariableName())));
         }
         throw new ParsingException("Block does not contain a list"); //Todo improve message
     }
@@ -55,8 +55,8 @@ public class ListExprParser {
         String identifier = fields.get("LIST").get(1).asText(); // TODO add some constants
         if (ProgramParser.symbolTable.getLists().containsKey(identifier)) {
             ExpressionListInfo variableInfo = ProgramParser.symbolTable.getLists().get(identifier);
-            return new Qualified(new Identifier(variableInfo.getActor()),
-                new Identifier((variableInfo.getVariableName())));
+            return new Qualified(new StrId(variableInfo.getActor()),
+                new StrId((variableInfo.getVariableName())));
         } else {
             throw new ParsingException("No list to parse found in fields.");
         }

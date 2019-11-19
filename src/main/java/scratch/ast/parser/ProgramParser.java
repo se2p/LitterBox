@@ -31,6 +31,7 @@ import scratch.ast.model.ActorDefinition;
 import scratch.ast.model.ActorDefinitionList;
 import scratch.ast.model.Program;
 import scratch.ast.model.variable.Identifier;
+import scratch.ast.model.variable.StrId;
 import scratch.ast.parser.symboltable.ProcedureDefinitionNameMapping;
 import scratch.ast.parser.symboltable.SymbolTable;
 
@@ -46,7 +47,7 @@ public class ProgramParser {
         symbolTable = new SymbolTable();
         procDefMap = new ProcedureDefinitionNameMapping();
 
-        Identifier ident = new Identifier(programName);
+        Identifier ident = new StrId(programName);
 
         Preconditions.checkArgument(programNode.has("targets"),
             "Program node has no field targets");

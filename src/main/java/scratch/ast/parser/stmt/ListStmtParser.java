@@ -36,8 +36,8 @@ import scratch.ast.model.statement.list.DeleteOf;
 import scratch.ast.model.statement.list.InsertAt;
 import scratch.ast.model.statement.list.ListStmt;
 import scratch.ast.model.statement.list.ReplaceItem;
-import scratch.ast.model.variable.Identifier;
 import scratch.ast.model.variable.Qualified;
+import scratch.ast.model.variable.StrId;
 import scratch.ast.opcodes.ListStmtOpcode;
 import scratch.ast.parser.NumExprParser;
 import scratch.ast.parser.ProgramParser;
@@ -86,10 +86,10 @@ public class ListStmtParser {
 
         ExpressionListInfo info = getListInfo(current);
         if (info.isGlobal()) {
-            return new AddTo(expr, new Identifier(info.getVariableName()));
+            return new AddTo(expr, new StrId(info.getVariableName()));
         } else {
-            return new AddTo(expr, new Qualified(new Identifier(info.getActor()),
-                new Identifier(info.getVariableName())));
+            return new AddTo(expr, new Qualified(new StrId(info.getActor()),
+                new StrId(info.getVariableName())));
         }
     }
 
@@ -109,10 +109,10 @@ public class ListStmtParser {
         NumExpr expr = NumExprParser.parseNumExpr(current, 0, allBlocks);
         ExpressionListInfo info = getListInfo(current);
         if (info.isGlobal()) {
-            return new DeleteOf(expr, new Identifier(info.getVariableName()));
+            return new DeleteOf(expr, new StrId(info.getVariableName()));
         } else {
-            return new DeleteOf(expr, new Qualified(new Identifier(info.getActor()),
-                new Identifier(info.getVariableName())));
+            return new DeleteOf(expr, new Qualified(new StrId(info.getActor()),
+                new StrId(info.getVariableName())));
         }
     }
 
@@ -121,10 +121,10 @@ public class ListStmtParser {
 
         ExpressionListInfo info = getListInfo(current);
         if (info.isGlobal()) {
-            return new DeleteAllOf(new Identifier(info.getVariableName()));
+            return new DeleteAllOf(new StrId(info.getVariableName()));
         } else {
-            return new DeleteAllOf(new Qualified(new Identifier(info.getActor()),
-                new Identifier(info.getVariableName())));
+            return new DeleteAllOf(new Qualified(new StrId(info.getActor()),
+                new StrId(info.getVariableName())));
         }
     }
 
@@ -135,10 +135,10 @@ public class ListStmtParser {
         NumExpr numExpr = NumExprParser.parseNumExpr(current, 1, allBlocks);
         ExpressionListInfo info = getListInfo(current);
         if (info.isGlobal()) {
-            return new InsertAt(stringExpr, numExpr, new Identifier(info.getVariableName()));
+            return new InsertAt(stringExpr, numExpr, new StrId(info.getVariableName()));
         } else {
-            return new InsertAt(stringExpr, numExpr, new Qualified(new Identifier(info.getActor()),
-                new Identifier(info.getVariableName())));
+            return new InsertAt(stringExpr, numExpr, new Qualified(new StrId(info.getActor()),
+                new StrId(info.getVariableName())));
         }
     }
 
@@ -150,10 +150,10 @@ public class ListStmtParser {
 
         ExpressionListInfo info = getListInfo(current);
         if (info.isGlobal()) {
-            return new ReplaceItem(stringExpr, numExpr, new Identifier(info.getVariableName()));
+            return new ReplaceItem(stringExpr, numExpr, new StrId(info.getVariableName()));
         } else {
-            return new ReplaceItem(stringExpr, numExpr, new Qualified(new Identifier(info.getActor()),
-                new Identifier(info.getVariableName())));
+            return new ReplaceItem(stringExpr, numExpr, new Qualified(new StrId(info.getActor()),
+                new StrId(info.getVariableName())));
         }
     }
 }

@@ -45,6 +45,7 @@ import scratch.ast.model.type.BooleanType;
 import scratch.ast.model.type.StringType;
 import scratch.ast.model.type.Type;
 import scratch.ast.model.variable.Identifier;
+import scratch.ast.model.variable.StrId;
 import scratch.ast.opcodes.ProcedureOpcode;
 
 public class ProcDefinitionParser {
@@ -102,7 +103,7 @@ public class ProcDefinitionParser {
         ParameterListPlain parameterListPlain = new ParameterListPlain(inputs);
         ParameterList parameterList = new ParameterList(parameterListPlain);
         String methodName = proto.get(MUTATION_KEY).get(PROCCODE_KEY).textValue();
-        Identifier ident = new Identifier(proto.get(PARENT_KEY).textValue());
+        Identifier ident = new StrId(proto.get(PARENT_KEY).textValue());
         JsonNode argumentNamesNode = proto.get(MUTATION_KEY).get(ARGUMENTNAMES_KEY);
         ObjectMapper mapper = new ObjectMapper();
         JsonNode argumentsNode;
@@ -135,9 +136,9 @@ public class ProcDefinitionParser {
         String opcodeString = param.get(OPCODE_KEY).textValue();
         Parameter returnParam;
         if (opcodeString.equals(ProcedureOpcode.argument_reporter_boolean.name())) {
-            returnParam = new Parameter(new Identifier(reference), new BooleanType());
+            returnParam = new Parameter(new StrId(reference), new BooleanType());
         } else {
-            returnParam = new Parameter(new Identifier(reference), new StringType());
+            returnParam = new Parameter(new StrId(reference), new StringType());
         }
         JsonNode values = param.get(FIELDS_KEY).get(VALUE_KEY);
         Preconditions.checkArgument(values.isArray());

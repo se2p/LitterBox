@@ -37,8 +37,8 @@ import scratch.ast.model.statement.Stmt;
 import scratch.ast.model.statement.common.SetAttributeTo;
 import scratch.ast.model.statement.common.SetStmt;
 import scratch.ast.model.statement.common.SetVariableTo;
-import scratch.ast.model.variable.Identifier;
 import scratch.ast.model.variable.Qualified;
+import scratch.ast.model.variable.StrId;
 import scratch.ast.opcodes.SetStmtOpcode;
 import scratch.ast.parser.ExpressionParser;
 import scratch.ast.parser.ProgramParser;
@@ -121,8 +121,8 @@ public class SetStmtParser {
         String unique = current.get(FIELDS_KEY).get(VARIABLE_KEY).get(VARIABLE_IDENTIFIER_POS).textValue();
         Preconditions.checkArgument(ProgramParser.symbolTable.getVariables().containsKey(unique));
         VariableInfo info = ProgramParser.symbolTable.getVariables().get(unique);
-        return new SetVariableTo(new Qualified(new Identifier(info.getActor()),
-            new Identifier((info.getVariableName()))), ExpressionParser.parseExpression(current,
+        return new SetVariableTo(new Qualified(new StrId(info.getActor()),
+            new StrId((info.getVariableName()))), ExpressionParser.parseExpression(current,
             0, allBlocks));
     }
 }

@@ -33,7 +33,7 @@ import scratch.ast.model.statement.actorsound.ClearSoundEffects;
 import scratch.ast.model.statement.actorsound.PlaySoundUntilDone;
 import scratch.ast.model.statement.actorsound.StartSound;
 import scratch.ast.model.statement.actorsound.StopAllSounds;
-import scratch.ast.model.variable.Identifier;
+import scratch.ast.model.variable.StrId;
 import scratch.ast.opcodes.ActorSoundStmtOpcode;
 
 public class ActorSoundStmtParser {
@@ -58,14 +58,14 @@ public class ActorSoundStmtParser {
                 soundMenuId = current.get(INPUTS_KEY).get(SOUND_MENU).get(Constants.POS_INPUT_VALUE).asText();
                 soundMenu = allBlocks.get(soundMenuId);
                 soundValue = soundMenu.get(FIELDS_KEY).get(SOUND_MENU).get(FIELD_VALUE).asText();
-                elementChoice = new WithId(new Identifier(soundValue));
+                elementChoice = new WithId(new StrId(soundValue));
                 stmt = new PlaySoundUntilDone(elementChoice);
                 break;
             case sound_play:
                 soundMenuId = current.get(INPUTS_KEY).get(SOUND_MENU).get(Constants.POS_INPUT_VALUE).asText();
                 soundMenu = allBlocks.get(soundMenuId);
                 soundValue = soundMenu.get(FIELDS_KEY).get(SOUND_MENU).get(FIELD_VALUE).asText();
-                elementChoice = new WithId(new Identifier(soundValue));
+                elementChoice = new WithId(new StrId(soundValue));
                 stmt = new StartSound(elementChoice);
                 break;
             case sound_cleareffects:

@@ -29,8 +29,8 @@ import java.util.Map;
 import scratch.ast.Constants;
 import scratch.ast.ParsingException;
 import scratch.ast.model.expression.Expression;
-import scratch.ast.model.variable.Identifier;
 import scratch.ast.model.variable.Qualified;
+import scratch.ast.model.variable.StrId;
 import scratch.ast.opcodes.BoolExprOpcode;
 import scratch.ast.opcodes.NumExprOpcode;
 import scratch.ast.opcodes.StringExprOpcode;
@@ -84,13 +84,13 @@ public class ExpressionParser {
             if (ProgramParser.symbolTable.getVariables().containsKey(idString)) {
                 VariableInfo variableInfo = ProgramParser.symbolTable.getVariables().get(idString);
 
-                return new Qualified(new Identifier(variableInfo.getActor()),
-                        new Identifier((variableInfo.getVariableName())));
+                return new Qualified(new StrId(variableInfo.getActor()),
+                    new StrId((variableInfo.getVariableName())));
 
             } else if (ProgramParser.symbolTable.getLists().containsKey(idString)) {
                 ExpressionListInfo variableInfo = ProgramParser.symbolTable.getLists().get(idString);
-                return new Qualified(new Identifier(variableInfo.getActor()),
-                        new Identifier((variableInfo.getVariableName())));
+                return new Qualified(new StrId(variableInfo.getActor()),
+                    new StrId((variableInfo.getVariableName())));
             }
         } else {
             // it's a normal reporter block

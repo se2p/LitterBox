@@ -33,8 +33,8 @@ import scratch.ast.model.statement.actorlook.ClearGraphicEffects;
 import scratch.ast.model.statement.actorlook.SwitchBackdrop;
 import scratch.ast.model.statement.spritelook.HideVariable;
 import scratch.ast.model.statement.spritelook.ShowVariable;
-import scratch.ast.model.variable.Identifier;
 import scratch.ast.model.variable.Qualified;
+import scratch.ast.model.variable.StrId;
 import scratch.ast.model.variable.Variable;
 import scratch.ast.opcodes.ActorLookStmtOpcode;
 import scratch.ast.parser.ElementChoiceParser;
@@ -83,7 +83,7 @@ public class ActorLookStmtParser {
                 variableID = current.get(FIELDS_KEY).get(VARIABLE).get(1).asText();
                 variableInfo = ProgramParser.symbolTable.getVariables().get(variableID);
                 actorName = variableInfo.getActor();
-                var = new Qualified(new Identifier(actorName), new Identifier(variableName));
+                var = new Qualified(new StrId(actorName), new StrId(variableName));
                 stmt = new HideVariable(var);
                 break;
             case data_showvariable:
@@ -91,7 +91,7 @@ public class ActorLookStmtParser {
                 variableID = current.get(FIELDS_KEY).get(VARIABLE).get(1).asText();
                 variableInfo = ProgramParser.symbolTable.getVariables().get(variableID);
                 actorName = variableInfo.getActor();
-                var = new Qualified(new Identifier(actorName), new Identifier(variableName));
+                var = new Qualified(new StrId(actorName), new StrId(variableName));
                 stmt = new ShowVariable(var);
                 break;
             case data_showlist:
@@ -99,7 +99,7 @@ public class ActorLookStmtParser {
                 variableID = current.get(FIELDS_KEY).get(LIST).get(1).asText();
                 expressionListInfo = ProgramParser.symbolTable.getLists().get(variableID);
                 actorName = expressionListInfo.getActor();
-                var = new Qualified(new Identifier(actorName), new Identifier(variableName));
+                var = new Qualified(new StrId(actorName), new StrId(variableName));
                 stmt = new ShowVariable(var);
                 break;
             case data_hidelist:
@@ -107,7 +107,7 @@ public class ActorLookStmtParser {
                 variableID = current.get(FIELDS_KEY).get(LIST).get(1).asText();
                 expressionListInfo = ProgramParser.symbolTable.getLists().get(variableID);
                 actorName = expressionListInfo.getActor();
-                var = new Qualified(new Identifier(actorName), new Identifier(variableName));
+                var = new Qualified(new StrId(actorName), new StrId(variableName));
                 stmt = new HideVariable(var);
                 break;
             default:

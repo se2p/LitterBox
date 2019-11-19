@@ -28,7 +28,7 @@ import com.google.common.base.Preconditions;
 import scratch.ast.model.touchable.Edge;
 import scratch.ast.model.touchable.MousePointer;
 import scratch.ast.model.touchable.Touchable;
-import scratch.ast.model.variable.Identifier;
+import scratch.ast.model.variable.StrId;
 import scratch.ast.opcodes.BoolExprOpcode;
 
 public class TouchableParser {
@@ -49,7 +49,7 @@ public class TouchableParser {
             } else if (touchingobject.equals("_edge_")) {
                 return new Edge();
             } else {
-                return new Identifier(touchingobject);
+                return new StrId(touchingobject);
             }
 
         } else if (BoolExprOpcode.sensing_touchingcolor.name().equals(opcodeString)) {

@@ -29,7 +29,7 @@ import scratch.ast.model.URI;
 import scratch.ast.model.resource.ImageResource;
 import scratch.ast.model.resource.Resource;
 import scratch.ast.model.resource.SoundResource;
-import scratch.ast.model.variable.Identifier;
+import scratch.ast.model.variable.StrId;
 
 public class ResourceParser {
 
@@ -42,7 +42,7 @@ public class ResourceParser {
         Iterator<JsonNode> iter = resourceNode.elements();
         while (iter.hasNext()) {
             JsonNode node = iter.next();
-            SoundResource res = new SoundResource(new Identifier(node.get(NAME).textValue()),
+            SoundResource res = new SoundResource(new StrId(node.get(NAME).textValue()),
                 new URI(node.get(MD5EXT).textValue()));
             parsedRessources.add(res);
         }
@@ -57,7 +57,7 @@ public class ResourceParser {
             JsonNode node = iter.next();
             ImageResource res = null;
             try {
-                res = new ImageResource(new Identifier(node.get(NAME).textValue()),
+                res = new ImageResource(new StrId(node.get(NAME).textValue()),
                     getURI(node));
             } catch (ParsingException e) {
                 Logger.getGlobal().warning(e.getMessage());

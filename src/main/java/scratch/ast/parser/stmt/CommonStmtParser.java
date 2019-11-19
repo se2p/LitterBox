@@ -49,6 +49,7 @@ import scratch.ast.model.statement.common.StopOtherScriptsInSprite;
 import scratch.ast.model.statement.common.WaitSeconds;
 import scratch.ast.model.statement.common.WaitUntil;
 import scratch.ast.model.variable.Identifier;
+import scratch.ast.model.variable.StrId;
 import scratch.ast.opcodes.CommonStmtOpcode;
 import scratch.ast.parser.BoolExprParser;
 import scratch.ast.parser.NumExprParser;
@@ -131,7 +132,7 @@ public class CommonStmtParser {
         Expression numExpr = NumExprParser.parseNumExpr(current, 0, allBlocks);
 
         String variableName = current.get(FIELDS_KEY).get(VARIABLE_KEY).get(FIELD_VALUE).asText();
-        Identifier ident = new Identifier(variableName);
+        Identifier ident = new StrId(variableName);
 
         return new ChangeVariableBy(ident, numExpr);
     }
@@ -166,7 +167,7 @@ public class CommonStmtParser {
         String cloneOptionMenu = inputs.get(CLONE_OPTION).get(Constants.POS_INPUT_VALUE).asText();
         JsonNode optionBlock = allBlocks.get(cloneOptionMenu);
         String cloneValue = optionBlock.get(FIELDS_KEY).get(CLONE_OPTION).get(FIELD_VALUE).asText();
-        Identifier ident = new Identifier(cloneValue);
+        Identifier ident = new StrId(cloneValue);
         return new CreateCloneOf(ident);
     }
 

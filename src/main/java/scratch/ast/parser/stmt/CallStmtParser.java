@@ -29,7 +29,7 @@ import scratch.ast.model.expression.list.ExpressionList;
 import scratch.ast.model.expression.list.ExpressionListPlain;
 import scratch.ast.model.statement.CallStmt;
 import scratch.ast.model.statement.Stmt;
-import scratch.ast.model.variable.Identifier;
+import scratch.ast.model.variable.StrId;
 import scratch.ast.parser.ExpressionParser;
 
 public class CallStmtParser {
@@ -41,6 +41,6 @@ public class CallStmtParser {
             expressions.add(ExpressionParser.parseExpression(current,i,blocks));
         }
 
-        return new CallStmt(new Identifier(blockId),new ExpressionList(new ExpressionListPlain(expressions)));
+        return new CallStmt(new StrId(blockId), new ExpressionList(new ExpressionListPlain(expressions)));
     }
 }

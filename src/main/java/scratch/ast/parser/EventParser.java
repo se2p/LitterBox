@@ -44,6 +44,7 @@ import scratch.ast.model.event.StartedAsClone;
 import scratch.ast.model.event.VariableAboveValue;
 import scratch.ast.model.expression.num.NumExpr;
 import scratch.ast.model.variable.Identifier;
+import scratch.ast.model.variable.StrId;
 import scratch.ast.opcodes.EventOpcode;
 
 public class EventParser {
@@ -83,7 +84,7 @@ public class EventParser {
         } else if (opcode.equals(event_whengreaterthan)) {
 
             String variableValue = current.get(FIELDS_KEY).get(VARIABLE_MENU).get(0).asText();
-            Identifier var = new Identifier(variableValue);
+            Identifier var = new StrId(variableValue);
 
             NumExpr fieldValue = NumExprParser.parseNumExpr(current, 0, allBlocks);
 
@@ -92,7 +93,7 @@ public class EventParser {
             JsonNode fields = current.get(FIELDS_KEY);
             JsonNode backdropArray = fields.get(BACKDROP);
             String backdropName = backdropArray.get(FIELD_VALUE).asText();
-            Identifier id = new Identifier(backdropName);
+            Identifier id = new StrId(backdropName);
             event = new BackdropSwitchTo(id);
         } else {
             throw new IllegalStateException("EventBlock with opcode " + opcode + " was not parsed");
