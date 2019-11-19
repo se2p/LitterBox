@@ -52,6 +52,7 @@ public class Main {
         options.addOption("path", true, "path to folder or file that should be analyzed (required)");
         options.addOption("projectid", true,
             "id of the project that should be downloaded and analysed. Only works for Scratch 3");
+        options.addOption("projectout", true, "path where the downloaded project should be stored");
         options.addOption("output", true, "path with name of the csv file you want to save (required if path argument" +
             " is a folder path)");
         options.addOption("detectors", true, "name all detectors you want to run separated by ',' " +
@@ -79,6 +80,7 @@ public class Main {
             String json = null;
             try {
                 json = Downloader.downloadProjectJSON(projectid);
+                Downloader.saveDownloadedProject(json, projectid, cmd.getOptionValue("projectout"));
             } catch (IOException e) {
                 System.err.println("Could not load project with id " + projectid);
                 return;

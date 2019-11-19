@@ -1,6 +1,11 @@
 package utils;
 
+import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -24,4 +29,15 @@ public class Downloader {
             return sb.toString();
         }
     }
+
+    public static void saveDownloadedProject(String json, String projectid, String projectout) throws IOException {
+        if (projectout == null) {
+            return;
+        }
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode jsonNode = mapper.readTree(json);
+        ObjectWriter writer = mapper.writer(new DefaultPrettyPrinter());
+        writer.writeValue(new File(projectout + projectid + ".json"), jsonNode);
+    }
+
 }
