@@ -20,21 +20,21 @@ package scratch.ast.model.elementchoice;
 
 import com.google.common.collect.ImmutableList;
 import scratch.ast.model.ASTNode;
-import scratch.ast.model.variable.Identifier;
+import scratch.ast.model.expression.string.StringExpr;
 import scratch.ast.visitor.ScratchVisitor;
 
 public class WithId implements ElementChoice {
 
-    private final Identifier ident;
+    private final StringExpr stringExpr;
     private final ImmutableList<ASTNode> children;
 
-    public WithId(Identifier ident) {
-        this.ident = ident;
-        children = ImmutableList.<ASTNode>builder().add(ident).build();
+    public WithId(StringExpr stringExpr) {
+        this.stringExpr = stringExpr;
+        children = ImmutableList.<ASTNode>builder().add(stringExpr).build();
     }
 
-    public Identifier getIdent() {
-        return ident;
+    public StringExpr getStringExpr() {
+        return stringExpr;
     }
 
     @Override

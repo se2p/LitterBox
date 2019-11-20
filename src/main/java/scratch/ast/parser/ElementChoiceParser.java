@@ -83,8 +83,7 @@ public class ElementChoiceParser {
                 strExpr = new UnspecifiedStringExpr();
 
             }
-            throw new RuntimeException("NotImplementedYet");
-//            return new WithId(new StrId(strExpr));
+            return new WithId(strExpr);
         }
 
         //FIXME cover case where a variable is used instead of menu

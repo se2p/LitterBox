@@ -22,6 +22,7 @@ import scratch.ast.model.statement.actorsound.PlaySoundUntilDone;
 import scratch.ast.model.statement.actorsound.StartSound;
 import scratch.ast.model.statement.actorsound.StopAllSounds;
 import scratch.ast.model.statement.termination.StopAll;
+import scratch.ast.model.variable.StrId;
 import scratch.ast.parser.ProgramParser;
 
 public class ActorSoundStmtParserTest {
@@ -87,7 +88,8 @@ public class ActorSoundStmtParserTest {
             Truth.assertThat(listOfStmt.get(0).getClass()).isEqualTo(PlaySoundUntilDone.class);
 
             PlaySoundUntilDone playSoundUntilDone = (PlaySoundUntilDone) listOfStmt.get(0);
-            Truth.assertThat(((WithId) playSoundUntilDone.getElementChoice()).getIdent().getValue()).isEqualTo("Meow");
+            Truth.assertThat(((StrId) ((WithId) playSoundUntilDone.getElementChoice()).getStringExpr()).getValue())
+                .isEqualTo("Meow");
 
         } catch (ParsingException e) {
             e.printStackTrace();
@@ -108,7 +110,8 @@ public class ActorSoundStmtParserTest {
             Truth.assertThat(listOfStmt.get(0).getClass()).isEqualTo(PlaySoundUntilDone.class);
 
             StartSound startSound = (StartSound) listOfStmt.get(1);
-            Truth.assertThat(((WithId) startSound.getElementChoice()).getIdent().getValue()).isEqualTo("Meow");
+            Truth.assertThat(((StrId) ((WithId) startSound.getElementChoice()).getStringExpr()).getValue())
+                .isEqualTo("Meow");
 
         } catch (ParsingException e) {
             e.printStackTrace();

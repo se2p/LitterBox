@@ -25,6 +25,7 @@ import scratch.ast.model.statement.spritelook.HideVariable;
 import scratch.ast.model.statement.spritelook.ShowVariable;
 import scratch.ast.model.statement.termination.StopAll;
 import scratch.ast.model.variable.Qualified;
+import scratch.ast.model.variable.StrId;
 import scratch.ast.parser.ProgramParser;
 
 public class ActorLookStmtParserTest {
@@ -113,7 +114,8 @@ public class ActorLookStmtParserTest {
 
             Stmt switchBackropStmt = listOfStmt.get(1);
             Truth.assertThat(switchBackropStmt.getClass()).isEqualTo(SwitchBackdrop.class);
-            Truth.assertThat(((WithId) ((SwitchBackdrop) switchBackropStmt).getElementChoice()).getIdent().getValue())
+            Truth.assertThat(
+                ((StrId) ((WithId) ((SwitchBackdrop) switchBackropStmt).getElementChoice()).getStringExpr()).getValue())
                 .isEqualTo(
                     "Baseball 1");
 
