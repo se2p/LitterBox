@@ -27,17 +27,12 @@ import scratch.ast.visitor.ScratchVisitor;
 public class StmtList implements ASTNode {
 
     private final ListOfStmt stmts;
-    private final TerminationStmt terminationStmt;
     private final ImmutableList<ASTNode> children;
 
-    public StmtList(ListOfStmt stmts, TerminationStmt terminationStmt) {
+    public StmtList(ListOfStmt stmts) {
         this.stmts = Preconditions.checkNotNull(stmts);
-        this.terminationStmt = Preconditions.checkNotNull(terminationStmt);
         ImmutableList.Builder<ASTNode> builder = ImmutableList.builder();
         builder.add(stmts);
-        if (terminationStmt != null) {
-            builder.add(terminationStmt);
-        }
         this.children = builder.build();
     }
 
@@ -45,11 +40,7 @@ public class StmtList implements ASTNode {
         return stmts;
     }
 
-    public TerminationStmt getTerminationStmt() {
-        return terminationStmt;
-    }
-
-    @Override
+   @Override
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);
     }

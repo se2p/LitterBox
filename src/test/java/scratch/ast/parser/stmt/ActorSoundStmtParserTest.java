@@ -85,7 +85,7 @@ public class ActorSoundStmtParserTest {
             Truth.assertThat(listOfStmt.get(1).getClass()).isEqualTo(StartSound.class);
             Truth.assertThat(listOfStmt.get(2).getClass()).isEqualTo(ClearSoundEffects.class);
             Truth.assertThat(listOfStmt.get(3).getClass()).isEqualTo(StopAllSounds.class);
-            Truth.assertThat(script.getStmtList().getTerminationStmt().getClass()).isEqualTo(StopAll.class);
+            Truth.assertThat(listOfStmt.get(4).getClass()).isEqualTo(StopAll.class);
 
         } catch (ParsingException e) {
             e.printStackTrace();

@@ -77,7 +77,6 @@ public class ScriptParser {
     }
 
     public static StmtList parseStmtList(String blockID, JsonNode blocks) throws ParsingException {
-        TerminationStmt terminationStmt = null;
         List<Stmt> list = new LinkedList<>();
         JsonNode current = blocks.get(blockID);
 
@@ -91,15 +90,15 @@ public class ScriptParser {
                 }
 
                 Stmt stmt = StmtParser.parse(blockID, blocks);
-                if (stmt instanceof TerminationStmt) {
-                    terminationStmt = (TerminationStmt) stmt;
-                    if (current.get(NEXT_KEY) == null) {
-                        throw new ParsingException(
-                            "TerminationStmt found but there still is a next key for block " + blockID);
-                    }
-                } else {
+//                if (stmt instanceof TerminationStmt) {
+//                    terminationStmt = (TerminationStmt) stmt;
+//                    if (current.get(NEXT_KEY) == null) {
+//                        throw new ParsingException(
+//                            "TerminationStmt found but there still is a next key for block " + blockID);
+//                    }
+//                } else {
                     list.add(stmt);
-                }
+//                }
             } catch (ParsingException | RuntimeException e) { // FIXME Runtime Exception is temporary for development and needs to be removed
                 Logger.getGlobal().warning("Could not parse block with ID " + blockID + " and opcode "
                     + current.get(OPCODE_KEY));
@@ -113,6 +112,6 @@ public class ScriptParser {
         }
 
         ListOfStmt listOfStmt = new ListOfStmt(list);
-        return new StmtList(listOfStmt, terminationStmt);
+        return new StmtList(listOfStmt);
     }
 }

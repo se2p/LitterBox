@@ -96,7 +96,7 @@ public class CommonStmtParserTest {
             Truth.assertThat(listOfStmt.get(8).getClass()).isEqualTo(ChangeAttributeBy.class);
             Truth.assertThat(listOfStmt.get(9).getClass()).isEqualTo(SetAttributeTo.class);
             Truth.assertThat(listOfStmt.get(10).getClass()).isEqualTo(ChangeAttributeBy.class);
-            Truth.assertThat(script.getStmtList().getTerminationStmt().getClass()).isEqualTo(DeleteClone.class);
+            Truth.assertThat(listOfStmt.get(11).getClass()).isEqualTo(DeleteClone.class);
 
         } catch (ParsingException e) {
             e.printStackTrace();

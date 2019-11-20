@@ -91,7 +91,7 @@ public class ActorLookStmtParserTest {
             Truth.assertThat(listOfStmt.get(4).getClass()).isEqualTo(ShowVariable.class);
             Truth.assertThat(listOfStmt.get(5).getClass()).isEqualTo(HideVariable.class);
             Truth.assertThat(listOfStmt.get(6).getClass()).isEqualTo(ClearGraphicEffects.class);
-            Truth.assertThat(script.getStmtList().getTerminationStmt().getClass()).isEqualTo(StopAll.class);
+            Truth.assertThat(listOfStmt.get(7).getClass()).isEqualTo(StopAll.class);
 
         } catch (ParsingException e) {
             e.printStackTrace();
