@@ -34,8 +34,8 @@ public class KeyParser {
 
     public static Key parse(JsonNode current, JsonNode allBlocks) {
 
-        JsonNode block;
-        String opcodeString = current.get(OPCODE_KEY).asText();
+        final JsonNode block;
+        final String opcodeString = current.get(OPCODE_KEY).asText();
         if (BoolExprOpcode.sensing_keypressed.name().equals(opcodeString)) {
             String menuBlockID = current.get(INPUTS_KEY).get(KEY_OPTION).get(POS_INPUT_VALUE).asText();
             block = allBlocks.get(menuBlockID);

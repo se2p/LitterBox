@@ -39,38 +39,37 @@ public class TerminationStmtParser {
         Preconditions.checkNotNull(current);
         Preconditions.checkNotNull(blocks);
 
-        String opCodeString = current.get(Constants.OPCODE_KEY).asText();
+        final String opCodeString = current.get(Constants.OPCODE_KEY).asText();
         if (!TerminationStmtOpcode.contains(opCodeString)) {
             throw new ParsingException(
                 "Called parseTerminationStmt with a block that does not qualify as such"
                     + " a statement. Opcode is " + opCodeString);
         }
 
-        TerminationStmtOpcode opcode = TerminationStmtOpcode.valueOf(opCodeString);
-        TerminationStmt stmt;
+        final TerminationStmtOpcode opcode = TerminationStmtOpcode.valueOf(opCodeString);
         switch (opcode) {
             case control_stop:
-                stmt = parseControlStop(current);
-                break;
+                return parseControlStop(current);
             case control_delete_this_clone:
-                stmt = new DeleteClone();
-                break;
+                return new DeleteClone();
             default:
                 throw new RuntimeException("Not implemented yet for opcode " + opcode);
         }
-
-        return stmt;
     }
 
     private static TerminationStmt parseControlStop(JsonNode current) throws ParsingException {
-        TerminationStmt stmt;
-        String stopOptionValue =
-            current.get(Constants.FIELDS_KEY).get(STOP_OPTION).get(Constants.FIELD_VALUE)
+        final String stopOptionValue = current
+                .get(Constants.FIELDS_KEY)
+                .get(STOP_OPTION)
+                .get(Constants.FIELD_VALUE)
                 .asText();
+
         if (stopOptionValue.equals(STOP_ALL)) {
-            stmt = new StopAll();
+            return new StopAll();
+
         } else if (stopOptionValue.equals(STOP_THIS)) {
-            stmt = new StopThisScript();
+            return new StopThisScript();
+
         } else {
             throw new ParsingException(
                 "Unknown Stop Option Value "
@@ -78,6 +77,5 @@ public class TerminationStmtParser {
                     + " for TerminationStmt "
                     + TerminationStmtOpcode.control_stop.name());
         }
-        return stmt;
     }
 }

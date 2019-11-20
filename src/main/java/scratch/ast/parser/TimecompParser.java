@@ -40,11 +40,11 @@ public class TimecompParser {
 
     public static TimeComp parse(JsonNode current) throws ParsingException {
         Preconditions.checkNotNull(current);
-        String opcodeString = current.get(OPCODE_KEY).asText();
+        final String opcodeString = current.get(OPCODE_KEY).asText();
         Preconditions.checkArgument(opcodeString.equals(CURRENT_OPCODE),
             "Timecomp parsing is only allowed for opcode %s and not %s", CURRENT_OPCODE, opcodeString);
 
-        String currentString = current.get(FIELDS_KEY).get(CURRENT_MENU).get(0).asText();
+        final String currentString = current.get(FIELDS_KEY).get(CURRENT_MENU).get(0).asText();
         switch (currentString) {
             case "YEAR":
                 return new Year();

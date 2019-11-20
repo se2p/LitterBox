@@ -54,32 +54,25 @@ public class SetStmtParser {
         Preconditions.checkNotNull(current);
         Preconditions.checkNotNull(allBlocks);
 
-        String opcodeString = current.get(OPCODE_KEY).asText();
+        final String opcodeString = current.get(OPCODE_KEY).asText();
         Preconditions
             .checkArgument(SetStmtOpcode.contains(opcodeString), "Given blockID does not point to a set block.");
 
-        SetStmtOpcode opcode = SetStmtOpcode.valueOf(opcodeString);
-        SetStmt stmt;
+        final SetStmtOpcode opcode = SetStmtOpcode.valueOf(opcodeString);
 
         switch (opcode) {
             case data_setvariableto:
-                stmt = parseSetVariable(current, allBlocks);
-                return stmt;
+                return parseSetVariable(current, allBlocks);
             case sensing_setdragmode:
-                stmt = parseSetDragmode(current);
-                return stmt;
+                return parseSetDragmode(current);
             case motion_setrotationstyle:
-                stmt = parseSetRotationStyle(current);
-                return stmt;
+                return parseSetRotationStyle(current);
             case looks_seteffectto:
-                stmt = parseSetLookEffect(current, allBlocks);
-                return stmt;
+                return parseSetLookEffect(current, allBlocks);
             case sound_seteffectto:
-                stmt = parseSetSoundEffect(current, allBlocks);
-                return stmt;
+                return parseSetSoundEffect(current, allBlocks);
             case sound_setvolumeto:
-                stmt = parseSetVolumeTo(current, allBlocks);
-                return stmt;
+                return parseSetVolumeTo(current, allBlocks);
             default:
                 throw new RuntimeException("Not Implemented yet");
         }

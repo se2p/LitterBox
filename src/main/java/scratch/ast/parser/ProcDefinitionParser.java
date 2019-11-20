@@ -63,6 +63,7 @@ public class ProcDefinitionParser {
         Iterator<JsonNode> iter = blocks.elements();
         List<JsonNode> defBlock = new ArrayList<>();
         List<JsonNode> protoBlock = new ArrayList<>();
+
         while (iter.hasNext()) {
             JsonNode current = iter.next();
             String opcodeString = current.get(OPCODE_KEY).textValue();
@@ -72,16 +73,19 @@ public class ProcDefinitionParser {
                 protoBlock.add(current);
             }
         }
+
         //each definition needs the prototype block because it holds the name of the procedure
         Preconditions.checkArgument(protoBlock.size() == defBlock.size());
         if (defBlock.size() == 0) {
             return new ProcedureDefinitionList(new ArrayList<>());
         }
+
         List<ProcedureDefinition> procdecls = new ArrayList<>();
         for (JsonNode jsonNode : defBlock) {
 
             procdecls.add(parseProcDecl(jsonNode, blocks));
         }
+
         return new ProcedureDefinitionList(procdecls);
     }
 
@@ -91,8 +95,9 @@ public class ProcDefinitionParser {
         ArrayNode inputArray = (ArrayNode) input;
         String protoReference = inputArray.get(PROTOTYPE_REFERENCE_POS).textValue();
         JsonNode proto = blocks.get(protoReference);
-        Iterator<Map.Entry<String, JsonNode>> iter = proto.get(INPUTS_KEY).fields();
         ArrayList<Parameter> inputs = new ArrayList<>();
+
+        Iterator<Map.Entry<String, JsonNode>> iter = proto.get(INPUTS_KEY).fields();
         while (iter.hasNext()) {
             String inputRef = iter.next().getKey();
             JsonNode currentInput = iter.next().getValue();
@@ -100,24 +105,29 @@ public class ProcDefinitionParser {
             ArrayNode current = (ArrayNode) currentInput;
             inputs.add(parseParameter(blocks, inputRef, current.get(PARAMETER_REFERENCE_POS).textValue()));
         }
+
         ParameterListPlain parameterListPlain = new ParameterListPlain(inputs);
         ParameterList parameterList = new ParameterList(parameterListPlain);
         String methodName = proto.get(MUTATION_KEY).get(PROCCODE_KEY).textValue();
         Identifier ident = new StrId(proto.get(PARENT_KEY).textValue());
         JsonNode argumentNamesNode = proto.get(MUTATION_KEY).get(ARGUMENTNAMES_KEY);
         ObjectMapper mapper = new ObjectMapper();
-        JsonNode argumentsNode;
+
+        final JsonNode argumentsNode;
         try {
             argumentsNode = mapper.readTree(argumentNamesNode.textValue());
         } catch (IOException e) {
             throw new ParsingException("Could not read argument names of a procedure");
         }
+
         Preconditions.checkArgument(argumentsNode.isArray());
         ArrayNode argumentsArray = (ArrayNode) argumentsNode;
+
         String[] arguments = new String[argumentsArray.size()];
         for (int i = 0; i < arguments.length; i++) {
             arguments[i] = argumentsArray.get(i).textValue();
         }
+
         ProgramParser.procDefMap.addProcedure(ident, methodName, arguments, getTypes(inputs));
         StmtList stmtList = ScriptParser.parseStmtList(def.get(NEXT_KEY).textValue(), blocks);
         return new ProcedureDefinition(ident, parameterList, stmtList);
@@ -128,23 +138,26 @@ public class ProcDefinitionParser {
         for (int i = 0; i < inputs.size(); i++) {
             types[i] = inputs.get(i).getType();
         }
+
         return types;
     }
 
     private static Parameter parseParameter(JsonNode blocks, String reference, String textValue) {
         JsonNode param = blocks.get(textValue);
-        String opcodeString = param.get(OPCODE_KEY).textValue();
-        Parameter returnParam;
+        final String opcodeString = param.get(OPCODE_KEY).textValue();
+        final Parameter returnParam;
         if (opcodeString.equals(ProcedureOpcode.argument_reporter_boolean.name())) {
             returnParam = new Parameter(new StrId(reference), new BooleanType());
         } else {
             returnParam = new Parameter(new StrId(reference), new StringType());
         }
+
         JsonNode values = param.get(FIELDS_KEY).get(VALUE_KEY);
         Preconditions.checkArgument(values.isArray());
         ArrayNode arrayNode = (ArrayNode) values;
         String name = arrayNode.get(0).textValue();
         returnParam.setValue(name);
+
         return returnParam;
     }
 }

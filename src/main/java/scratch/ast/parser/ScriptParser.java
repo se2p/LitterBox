@@ -56,9 +56,9 @@ public class ScriptParser {
         Preconditions.checkNotNull(blockID);
         Preconditions.checkNotNull(blocks);
 
-        JsonNode current = blocks.get(blockID);
-        Event event;
-        StmtList stmtList;
+        final JsonNode current = blocks.get(blockID);
+        final Event event;
+        final StmtList stmtList;
 
         if (isEvent(current)) {
             event = EventParser.parse(blockID, blocks);

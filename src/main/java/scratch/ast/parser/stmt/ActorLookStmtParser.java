@@ -53,12 +53,12 @@ public class ActorLookStmtParser {
         Preconditions.checkNotNull(current);
         Preconditions.checkNotNull(allBlocks);
 
-        String opcodeString = current.get(OPCODE_KEY).asText();
+        final String opcodeString = current.get(OPCODE_KEY).asText();
         Preconditions
             .checkArgument(ActorLookStmtOpcode.contains(opcodeString), "Given blockID does not point to an event block.");
 
-        ActorLookStmtOpcode opcode = ActorLookStmtOpcode.valueOf(opcodeString);
-        ActorLookStmt stmt;
+        final ActorLookStmtOpcode opcode = ActorLookStmtOpcode.valueOf(opcodeString);
+
         String variableName;
         String variableID;
         VariableInfo variableInfo;
@@ -69,51 +69,49 @@ public class ActorLookStmtParser {
         switch (opcode) {
             case sensing_askandwait:
                 StringExpr question = StringExprParser.parseStringExpr(current, 0, allBlocks);
-                stmt = new AskAndWait(question);
-                break;
+                return new AskAndWait(question);
+
             case looks_switchbackdropto:
                 ElementChoice elementChoice = ElementChoiceParser.parse(current, allBlocks);
-                stmt = new SwitchBackdrop(elementChoice);
-                break;
+                return new SwitchBackdrop(elementChoice);
+
             case looks_cleargraphiceffects:
-                stmt = new ClearGraphicEffects();
-                break;
+                return new ClearGraphicEffects();
+
             case data_hidevariable:
                 variableName = current.get(FIELDS_KEY).get(VARIABLE).get(FIELD_VALUE).asText();
                 variableID = current.get(FIELDS_KEY).get(VARIABLE).get(1).asText();
                 variableInfo = ProgramParser.symbolTable.getVariables().get(variableID);
                 actorName = variableInfo.getActor();
                 var = new Qualified(new StrId(actorName), new StrId(variableName));
-                stmt = new HideVariable(var);
-                break;
+                return new HideVariable(var);
+
             case data_showvariable:
                 variableName = current.get(FIELDS_KEY).get(VARIABLE).get(FIELD_VALUE).asText();
                 variableID = current.get(FIELDS_KEY).get(VARIABLE).get(1).asText();
                 variableInfo = ProgramParser.symbolTable.getVariables().get(variableID);
                 actorName = variableInfo.getActor();
                 var = new Qualified(new StrId(actorName), new StrId(variableName));
-                stmt = new ShowVariable(var);
-                break;
+                return new ShowVariable(var);
+
             case data_showlist:
                 variableName = current.get(FIELDS_KEY).get(LIST).get(FIELD_VALUE).asText();
                 variableID = current.get(FIELDS_KEY).get(LIST).get(1).asText();
                 expressionListInfo = ProgramParser.symbolTable.getLists().get(variableID);
                 actorName = expressionListInfo.getActor();
                 var = new Qualified(new StrId(actorName), new StrId(variableName));
-                stmt = new ShowVariable(var);
-                break;
+                return new ShowVariable(var);
+
             case data_hidelist:
                 variableName = current.get(FIELDS_KEY).get(LIST).get(FIELD_VALUE).asText();
                 variableID = current.get(FIELDS_KEY).get(LIST).get(1).asText();
                 expressionListInfo = ProgramParser.symbolTable.getLists().get(variableID);
                 actorName = expressionListInfo.getActor();
                 var = new Qualified(new StrId(actorName), new StrId(variableName));
-                stmt = new HideVariable(var);
-                break;
+                return new HideVariable(var);
+
             default:
                 throw new ParsingException("No parser for opcode " + opcodeString);
         }
-
-        return stmt;
     }
 }

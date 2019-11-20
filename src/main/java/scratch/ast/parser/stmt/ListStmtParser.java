@@ -50,30 +50,29 @@ public class ListStmtParser {
         Preconditions.checkNotNull(current);
         Preconditions.checkNotNull(allBlocks);
 
-        String opcodeString = current.get(OPCODE_KEY).textValue();
+        final String opcodeString = current.get(OPCODE_KEY).textValue();
         Preconditions
             .checkArgument(ListStmtOpcode.contains(opcodeString), "Given blockID does not point to a list " +
                 "statement block.");
 
-        ListStmtOpcode opcode = ListStmtOpcode.valueOf(opcodeString);
-        ListStmt stmt;
+        final ListStmtOpcode opcode = ListStmtOpcode.valueOf(opcodeString);
 
         switch (opcode) {
             case data_replaceitemoflist:
-                stmt = parseReplaceItemOfList(current, allBlocks);
-                return stmt;
+                return parseReplaceItemOfList(current, allBlocks);
+
             case data_insertatlist:
-                stmt = parseInsertAtList(current, allBlocks);
-                return stmt;
+                return parseInsertAtList(current, allBlocks);
+
             case data_deletealloflist:
-                stmt = parseDeleteAllOfList(current);
-                return stmt;
+                return parseDeleteAllOfList(current);
+
             case data_deleteoflist:
-                stmt = parseDeleteOfList(current, allBlocks);
-                return stmt;
+                return parseDeleteOfList(current, allBlocks);
+
             case data_addtolist:
-                stmt = parseAddToList(current, allBlocks);
-                return stmt;
+                return parseAddToList(current, allBlocks);
+
             default:
                 throw new RuntimeException("Not Implemented yet");
         }

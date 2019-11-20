@@ -65,44 +65,42 @@ public class CommonStmtParser {
         Preconditions.checkNotNull(current);
         Preconditions.checkNotNull(allBlocks);
 
-        String opcodeString = current.get(OPCODE_KEY).asText();
+        final String opcodeString = current.get(OPCODE_KEY).asText();
         Preconditions
             .checkArgument(CommonStmtOpcode.contains(opcodeString), "Given blockID does not point to a common block.");
 
-        CommonStmtOpcode opcode = CommonStmtOpcode.valueOf(opcodeString);
-        CommonStmt stmt;
+        final CommonStmtOpcode opcode = CommonStmtOpcode.valueOf(opcodeString);
 
         switch (opcode) {
             case control_wait:
-                stmt = parseWaitSeconds(current, allBlocks);
-                return stmt;
+                return parseWaitSeconds(current, allBlocks);
+
             case control_wait_until:
-                stmt = parseWaitUntil(current, allBlocks);
-                return stmt;
+                return parseWaitUntil(current, allBlocks);
+
             case control_stop:
-                stmt = parseControlStop(current);
-                return stmt;
+                return parseControlStop(current);
+
             case control_create_clone_of:
-                stmt = parseCreateCloneOf(current, allBlocks);
-                return stmt;
+                return parseCreateCloneOf(current, allBlocks);
+
             case event_broadcast:
-                stmt = parseBroadcast(current, allBlocks);
-                return stmt;
+                return parseBroadcast(current, allBlocks);
+
             case event_broadcastandwait:
-                stmt = parseBroadcastAndWait(current, allBlocks);
-                return stmt;
+                return parseBroadcastAndWait(current, allBlocks);
+
             case sensing_resettimer:
-                stmt = new ResetTimer();
-                return stmt;
+                return new ResetTimer();
+
             case data_changevariableby:
-                stmt = parseChangeVariableBy(current, allBlocks);
-                return stmt;
+                return parseChangeVariableBy(current, allBlocks);
 
             case sound_changevolumeby:
             case sound_changeeffectby:
             case looks_changeeffectby:
-                stmt = parseChangeAttributeBy(current, allBlocks);
-                return stmt;
+                return parseChangeAttributeBy(current, allBlocks);
+
             default:
                 throw new RuntimeException("Not Implemented yet");
         }
@@ -111,17 +109,18 @@ public class CommonStmtParser {
     private static CommonStmt parseChangeAttributeBy(JsonNode current, JsonNode allBlocks) throws ParsingException {
         String opcodeString = current.get(OPCODE_KEY).asText();
         CommonStmtOpcode opcode = CommonStmtOpcode.valueOf(opcodeString);
-        CommonStmt stmt;
 
         if (sound_changevolumeby.equals(opcode)) {
             String attributeName = "VOLUME";
             NumExpr numExpr = NumExprParser.parseNumExpr(current, 0,
                 allBlocks);
             return new ChangeAttributeBy(new Str(attributeName), numExpr);
+
         } else if (sound_changeeffectby.equals(opcode) || looks_changeeffectby.equals(opcode)) {
             NumExpr numExpr = NumExprParser.parseNumExpr(current, 0, allBlocks);
             String effectName = current.get(FIELDS_KEY).get("EFFECT").get(0).asText();
             return new ChangeAttributeBy(new Str(effectName), numExpr);
+
 //        } else if (looks_changesizeby.equals(opcode)) {
         } else {
             throw new ParsingException("Cannot parse block with opcode " + opcodeString + " to ChangeAttributeBy");

@@ -55,12 +55,12 @@ public class SpriteLookStmtParser {
         Preconditions.checkNotNull(current);
         Preconditions.checkNotNull(allBlocks);
 
-        String opcodeString = current.get(OPCODE_KEY).asText();
+        final String opcodeString = current.get(OPCODE_KEY).asText();
         Preconditions
             .checkArgument(SpriteLookStmtOpcode.contains(opcodeString),
                 "Given blockID does not point to a sprite look block. Opcode is " + opcodeString);
 
-        SpriteLookStmtOpcode opcode = SpriteLookStmtOpcode.valueOf(opcodeString);
+        final SpriteLookStmtOpcode opcode = SpriteLookStmtOpcode.valueOf(opcodeString);
         StringExpr stringExpr;
         NumExpr numExpr;
 
@@ -97,7 +97,6 @@ public class SpriteLookStmtParser {
                 return parseGoToLayer(current, allBlocks);
             case looks_goforwardbackwardlayers:
                 return parseGoForwardBackwardLayer(current, allBlocks);
-
             default:
                 throw new RuntimeException("Not implemented for opcode " + opcodeString);
         }

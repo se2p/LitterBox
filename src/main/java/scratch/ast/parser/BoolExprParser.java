@@ -120,10 +120,11 @@ public class BoolExprParser {
 
     static BoolExpr parseBlockBoolExpr(JsonNode expressionBlock, JsonNode blocks)
             throws ParsingException {
-        String opcodeString = expressionBlock.get(OPCODE_KEY).asText();
+        final String opcodeString = expressionBlock.get(OPCODE_KEY).asText();
         Preconditions
                 .checkArgument(BoolExprOpcode.contains(opcodeString), opcodeString + " is not a BoolExprOpcode.");
-        BoolExprOpcode opcode = BoolExprOpcode.valueOf(opcodeString);
+        final BoolExprOpcode opcode = BoolExprOpcode.valueOf(opcodeString);
+
         switch (opcode) {
         case sensing_touchingcolor:
         case sensing_touchingobject:
@@ -170,8 +171,6 @@ public class BoolExprParser {
             Variable containingVar = new StrId(listName);// Variable as a ListExpr
             contained = ExpressionParser.parseExpression(expressionBlock, 0, blocks);
             return new ExpressionContains(containingVar, contained);
-
-
         default:
             throw new RuntimeException(
                     opcodeString + " is not covered by parseBlockExpr");
