@@ -59,42 +59,54 @@ public class StringExprParser {
         if (ExpressionParser.getShadowIndicator(exprArray) == 1) {
             return parseStr(block.get(INPUTS_KEY), inputName);
         } else if (exprArray.get(POS_BLOCK_ID) instanceof TextNode) {
-            String identifier = exprArray.get(POS_BLOCK_ID).asText();
-            String opcode = blocks.get(identifier).get(OPCODE_KEY).asText();
-
-            final Optional<StringExpr> stringExpr = maybeParseStringBoolExpr(blocks.get(identifier), blocks);
-            if (stringExpr.isPresent()) {
-                return stringExpr.get();
-            }
-
-            final Optional<NumExpr> optExpr = NumExprParser.maybeParseBlockNumExpr(blocks.get(identifier), blocks);
-            if (optExpr.isPresent()) {
-                return new AsString(optExpr.get());
-            }
-
-            final Optional<BoolExpr> boolExpr = BoolExprParser.maybeParseBlockBoolExpr(blocks.get(identifier), blocks);
-            if (boolExpr.isPresent()) {
-                return new AsString(boolExpr.get());
-            }
-
-            throw new ParsingException(
-                "Could not parse NumExpr for block with id " + identifier + " and opcode " + opcode);
+            return parseTextNode(blocks, exprArray);
 
         } else {
-            String idString = exprArray.get(POS_DATA_ARRAY).get(POS_INPUT_ID).asText();
-            if (ProgramParser.symbolTable.getVariables().containsKey(idString)) {
-                VariableInfo variableInfo = ProgramParser.symbolTable.getVariables().get(idString);
-
-                return new Qualified(new StrId(variableInfo.getActor()),
-                    new StrId((variableInfo.getVariableName())));
-
-            } else if (ProgramParser.symbolTable.getLists().containsKey(idString)) {
-                ExpressionListInfo variableInfo = ProgramParser.symbolTable.getLists().get(idString);
-                return new Qualified(new StrId(variableInfo.getActor()),
-                    new StrId((variableInfo.getVariableName())));
+            StringExpr variableInfo = parseVariable(exprArray);
+            if (variableInfo != null) {
+                return variableInfo;
             }
         }
         throw new ParsingException("Could not parse StringExpr");
+    }
+
+    private static StringExpr parseVariable(ArrayNode exprArray) {
+        String idString = exprArray.get(POS_DATA_ARRAY).get(POS_INPUT_ID).asText();
+        if (ProgramParser.symbolTable.getVariables().containsKey(idString)) {
+            VariableInfo variableInfo = ProgramParser.symbolTable.getVariables().get(idString);
+
+            return new Qualified(new StrId(variableInfo.getActor()),
+                new StrId((variableInfo.getVariableName())));
+
+        } else if (ProgramParser.symbolTable.getLists().containsKey(idString)) {
+            ExpressionListInfo variableInfo = ProgramParser.symbolTable.getLists().get(idString);
+            return new Qualified(new StrId(variableInfo.getActor()),
+                new StrId((variableInfo.getVariableName())));
+        }
+        return null;
+    }
+
+    private static StringExpr parseTextNode(JsonNode blocks, ArrayNode exprArray) throws ParsingException {
+        String identifier = exprArray.get(POS_BLOCK_ID).asText();
+        String opcode = blocks.get(identifier).get(OPCODE_KEY).asText();
+
+        final Optional<StringExpr> stringExpr = maybeParseStringBoolExpr(blocks.get(identifier), blocks);
+        if (stringExpr.isPresent()) {
+            return stringExpr.get();
+        }
+
+        final Optional<NumExpr> optExpr = NumExprParser.maybeParseBlockNumExpr(blocks.get(identifier), blocks);
+        if (optExpr.isPresent()) {
+            return new AsString(optExpr.get());
+        }
+
+        final Optional<BoolExpr> boolExpr = BoolExprParser.maybeParseBlockBoolExpr(blocks.get(identifier), blocks);
+        if (boolExpr.isPresent()) {
+            return new AsString(boolExpr.get());
+        }
+
+        throw new ParsingException(
+            "Could not parse NumExpr for block with id " + identifier + " and opcode " + opcode);
     }
 
     public static StringExpr parseStringExpr(JsonNode block, int pos, JsonNode blocks) throws ParsingException {
@@ -102,26 +114,7 @@ public class StringExprParser {
         if (ExpressionParser.getShadowIndicator(exprArray) == 1) {
             return parseStr(block.get(INPUTS_KEY), pos);
         } else if (exprArray.get(POS_BLOCK_ID) instanceof TextNode) {
-            String identifier = exprArray.get(POS_BLOCK_ID).asText();
-            String opcode = blocks.get(identifier).get(OPCODE_KEY).asText();
-
-            final Optional<StringExpr> stringExpr = maybeParseStringBoolExpr(blocks.get(identifier), blocks);
-            if (stringExpr.isPresent()) {
-                return stringExpr.get();
-            }
-
-            final Optional<NumExpr> optExpr = NumExprParser.maybeParseBlockNumExpr(blocks.get(identifier), blocks);
-            if (optExpr.isPresent()) {
-                return new AsString(optExpr.get());
-            }
-
-            final Optional<BoolExpr> boolExpr = BoolExprParser.maybeParseBlockBoolExpr(blocks.get(identifier), blocks);
-            if (boolExpr.isPresent()) {
-                return new AsString(boolExpr.get());
-            }
-
-            throw new ParsingException(
-                "Could not parse NumExpr for block with id " + identifier + " and opcode " + opcode);
+            return parseTextNode(blocks, exprArray);
 
         } else {
             String idString = exprArray.get(POS_DATA_ARRAY).get(POS_INPUT_ID).asText();

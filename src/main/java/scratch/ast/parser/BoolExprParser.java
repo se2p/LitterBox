@@ -67,21 +67,29 @@ public class BoolExprParser {
             String identifier = exprArray.get(POS_BLOCK_ID).asText();
             return parseBlockBoolExpr(blocks.get(identifier), blocks);
         } else {
-            String idString = exprArray.get(POS_DATA_ARRAY).get(POS_INPUT_ID).asText();
-            if (ProgramParser.symbolTable.getVariables().containsKey(idString)) {
-                VariableInfo variableInfo = ProgramParser.symbolTable.getVariables().get(idString);
-
-                return new Qualified(new StrId(variableInfo.getActor()),
-                        new StrId((variableInfo.getVariableName())));
-
-            } else if (ProgramParser.symbolTable.getLists().containsKey(idString)) {
-                ExpressionListInfo variableInfo = ProgramParser.symbolTable.getLists().get(idString);
-                return new Qualified(new StrId(variableInfo.getActor()),
-                        new StrId((variableInfo.getVariableName())));
+            BoolExpr variableInfo = parseVariable(exprArray);
+            if (variableInfo != null) {
+                return variableInfo;
             }
         }
 
         throw new ParsingException("Could not parse BoolExpr");
+    }
+
+    private static BoolExpr parseVariable(ArrayNode exprArray) {
+        String idString = exprArray.get(POS_DATA_ARRAY).get(POS_INPUT_ID).asText();
+        if (ProgramParser.symbolTable.getVariables().containsKey(idString)) {
+            VariableInfo variableInfo = ProgramParser.symbolTable.getVariables().get(idString);
+
+            return new Qualified(new StrId(variableInfo.getActor()),
+                new StrId((variableInfo.getVariableName())));
+
+        } else if (ProgramParser.symbolTable.getLists().containsKey(idString)) {
+            ExpressionListInfo variableInfo = ProgramParser.symbolTable.getLists().get(idString);
+            return new Qualified(new StrId(variableInfo.getActor()),
+                new StrId((variableInfo.getVariableName())));
+        }
+        return null;
     }
 
     public static BoolExpr parseBoolExpr(JsonNode block, int pos, JsonNode blocks) throws ParsingException {
@@ -92,17 +100,9 @@ public class BoolExprParser {
             String identifier = exprArray.get(POS_BLOCK_ID).asText();
             return parseBlockBoolExpr(blocks.get(identifier), blocks);
         } else {
-            String idString = exprArray.get(POS_DATA_ARRAY).get(POS_INPUT_ID).asText();
-            if (ProgramParser.symbolTable.getVariables().containsKey(idString)) {
-                VariableInfo variableInfo = ProgramParser.symbolTable.getVariables().get(idString);
-
-                return new Qualified(new StrId(variableInfo.getActor()),
-                    new StrId((variableInfo.getVariableName())));
-
-            } else if (ProgramParser.symbolTable.getLists().containsKey(idString)) {
-                ExpressionListInfo variableInfo = ProgramParser.symbolTable.getLists().get(idString);
-                return new Qualified(new StrId(variableInfo.getActor()),
-                    new StrId((variableInfo.getVariableName())));
+            BoolExpr variableInfo = parseVariable(exprArray);
+            if (variableInfo != null) {
+                return variableInfo;
             }
         }
 
