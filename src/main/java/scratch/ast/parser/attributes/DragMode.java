@@ -19,15 +19,19 @@
 package scratch.ast.parser.attributes;
 
 public enum DragMode {
-    not_draggable, draggable;
+
+    not_draggable("not draggable"),
+    draggable("draggable");
+
+    private final String token;
+
+    DragMode(String token) {
+        this.token = token;
+    }
 
     @Override
     public String toString() {
-        if(this==not_draggable){
-            return("not draggable");
-        }else{
-            return ("draggable");
-        }
+        return token;
     }
 
     public static boolean contains(String opcode) {

@@ -45,50 +45,46 @@ public class StmtParser {
         Preconditions.checkState(blocks.has(blockID), "No block for id %s", blockID);
 
         JsonNode current = blocks.get(blockID);
-        String opcode = current.get(Constants.OPCODE_KEY).asText();
-
-        Stmt stmt;
+        final String opcode = current.get(Constants.OPCODE_KEY).asText();
 
         if (TerminationStmtOpcode.contains(opcode)) {
             if (!(current.get(Constants.FIELDS_KEY).has("STOP_OPTION")
                 && current.get(Constants.FIELDS_KEY).get("STOP_OPTION").get(Constants.FIELD_VALUE).asText()
                 .equals("other scripts in sprite"))) {
-                stmt = TerminationStmtParser.parseTerminationStmt(current, blocks);
-                return stmt;
+                return TerminationStmtParser.parseTerminationStmt(current, blocks);
             }
         }
 
         if (ActorLookStmtOpcode.contains(opcode)) {
-            stmt = ActorLookStmtParser.parse(current, blocks);
-            return stmt;
+            return ActorLookStmtParser.parse(current, blocks);
+
         } else if (ControlStmtOpcode.contains(opcode)) {
-            stmt = ControlStmtParser.parse(current, blocks);
-            return stmt;
+            return ControlStmtParser.parse(current, blocks);
+
         } else if (BoolExprOpcode.contains(opcode) || NumExprOpcode.contains(opcode) || StringExprOpcode
             .contains(opcode)) {
-            stmt = ExpressionStmtParser.parse(current, blocks);
-            return stmt;
+            return ExpressionStmtParser.parse(current, blocks);
+
         } else if (CommonStmtOpcode.contains(opcode)) {
-            stmt = CommonStmtParser.parse(current, blocks);
-            return stmt;
+            return CommonStmtParser.parse(current, blocks);
+
         } else if (SpriteMotionStmtOpcode.contains(opcode)) {
-            stmt = SpriteMotionStmtParser.parse(current, blocks);
-            return stmt;
+            return SpriteMotionStmtParser.parse(current, blocks);
+
         } else if (SpriteLookStmtOpcode.contains(opcode)) {
-            stmt = SpriteLookStmtParser.parse(current, blocks);
-            return stmt;
+            return SpriteLookStmtParser.parse(current, blocks);
+
         } else if (ActorSoundStmtOpcode.contains(opcode)) {
-            stmt = ActorSoundStmtParser.parse(current, blocks);
-            return stmt;
+            return ActorSoundStmtParser.parse(current, blocks);
+
         } else if (CallStmtOpcode.contains(opcode)) {
-            stmt = CallStmtParser.parse(current, blockID, blocks);
-            return stmt;
+            return CallStmtParser.parse(current, blockID, blocks);
+
         } else if (ListStmtOpcode.contains(opcode)) {
-            stmt = ListStmtParser.parse(current, blocks);
-            return stmt;
+            return ListStmtParser.parse(current, blocks);
+
         } else if (SetStmtOpcode.contains(opcode)) {
-            stmt = SetStmtParser.parse(current, blocks);
-            return stmt;
+            return SetStmtParser.parse(current, blocks);
         }
 
         throw new RuntimeException("Not implemented");

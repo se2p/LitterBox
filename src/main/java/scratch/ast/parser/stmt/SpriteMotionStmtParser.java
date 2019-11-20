@@ -48,12 +48,12 @@ public class SpriteMotionStmtParser {
         Preconditions.checkNotNull(current);
         Preconditions.checkNotNull(allBlocks);
 
-        String opcodeString = current.get(OPCODE_KEY).asText();
+        final String opcodeString = current.get(OPCODE_KEY).asText();
         Preconditions
             .checkArgument(SpriteMotionStmtOpcode.contains(opcodeString),
                 "Given blockID does not point to a sprite motion block.");
 
-        SpriteMotionStmtOpcode opcode = SpriteMotionStmtOpcode.valueOf(opcodeString);
+        final SpriteMotionStmtOpcode opcode = SpriteMotionStmtOpcode.valueOf(opcodeString);
         NumExpr numExpr;
         Position position;
 

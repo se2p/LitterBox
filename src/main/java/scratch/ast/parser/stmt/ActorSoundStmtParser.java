@@ -41,17 +41,20 @@ public class ActorSoundStmtParser {
     private static final String SOUND_MENU = "SOUND_MENU";
 
     public static ActorSoundStmt parse(JsonNode current, JsonNode allBlocks) {
-        String opCodeString = current.get(OPCODE_KEY).asText();
+        Preconditions.checkNotNull(current);
+        Preconditions.checkNotNull(allBlocks);
+
+        final String opCodeString = current.get(OPCODE_KEY).asText();
 
         Preconditions.checkArgument(ActorSoundStmtOpcode.contains(opCodeString), "Given block is not an "
             + "ActorStmtBlock");
 
-        ActorSoundStmtOpcode opcode = ActorSoundStmtOpcode.valueOf(opCodeString);
-        ActorSoundStmt stmt;
         JsonNode soundMenu;
         String soundValue;
         String soundMenuId;
         ElementChoice elementChoice;
+
+        final ActorSoundStmtOpcode opcode = ActorSoundStmtOpcode.valueOf(opCodeString);
 
         switch (opcode) {
             case sound_playuntildone:
@@ -59,26 +62,24 @@ public class ActorSoundStmtParser {
                 soundMenu = allBlocks.get(soundMenuId);
                 soundValue = soundMenu.get(FIELDS_KEY).get(SOUND_MENU).get(FIELD_VALUE).asText();
                 elementChoice = new WithId(new StrId(soundValue));
-                stmt = new PlaySoundUntilDone(elementChoice);
-                break;
+                return new PlaySoundUntilDone(elementChoice);
+
             case sound_play:
                 soundMenuId = current.get(INPUTS_KEY).get(SOUND_MENU).get(Constants.POS_INPUT_VALUE).asText();
                 soundMenu = allBlocks.get(soundMenuId);
                 soundValue = soundMenu.get(FIELDS_KEY).get(SOUND_MENU).get(FIELD_VALUE).asText();
                 elementChoice = new WithId(new StrId(soundValue));
-                stmt = new StartSound(elementChoice);
-                break;
+                return new StartSound(elementChoice);
+
             case sound_cleareffects:
-                stmt = new ClearSoundEffects();
-                break;
+                return new ClearSoundEffects();
+
             case sound_stopallsounds:
-                stmt = new StopAllSounds();
-                break;
+                return new StopAllSounds();
+
             default:
                 throw new RuntimeException("Not implemented yet for opcode " + opCodeString);
         }
-
-        return stmt;
     }
 
 }

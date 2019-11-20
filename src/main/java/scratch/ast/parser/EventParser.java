@@ -64,23 +64,28 @@ public class EventParser {
         Preconditions
             .checkArgument(EventOpcode.contains(opcodeString), "Given blockID does not point to an event block.");
 
-        Event event;
+
         EventOpcode opcode = EventOpcode.valueOf(opcodeString);
         if (opcode.equals(event_whenflagclicked)) {
-            event = new GreenFlag();
+            return new GreenFlag();
+
         } else if (opcode.equals(event_whenkeypressed)) {
             Key key = KeyParser.parse(current, allBlocks);
-            event = new KeyPressed(key);
+            return new KeyPressed(key);
+
         } else if (opcode.equals(event_whenthisspriteclicked)) {
-            event = new Clicked();
+            return new Clicked();
+
         } else if (opcode.equals(event_whenbroadcastreceived)) {
             JsonNode fields = current.get(FIELDS_KEY);
             String msgValue = fields.get(BCAST_OPTION).get(FIELD_VALUE).asText();
             Message msg =
                 new Message(msgValue); // TODO should we reference the previously parsed broadcast?
-            event = new ReceptionOfMessage(msg);
+            return new ReceptionOfMessage(msg);
+
         } else if (opcode.equals(control_start_as_clone)) {
-            event = new StartedAsClone();
+            return new StartedAsClone();
+
         } else if (opcode.equals(event_whengreaterthan)) {
 
             String variableValue = current.get(FIELDS_KEY).get(VARIABLE_MENU).get(0).asText();
@@ -88,17 +93,17 @@ public class EventParser {
 
             NumExpr fieldValue = NumExprParser.parseNumExpr(current, 0, allBlocks);
 
-            event = new VariableAboveValue(var, fieldValue);
+            return new VariableAboveValue(var, fieldValue);
+
         } else if (opcode.equals(event_whenbackdropswitchesto)) {
             JsonNode fields = current.get(FIELDS_KEY);
             JsonNode backdropArray = fields.get(BACKDROP);
             String backdropName = backdropArray.get(FIELD_VALUE).asText();
             Identifier id = new StrId(backdropName);
-            event = new BackdropSwitchTo(id);
+            return new BackdropSwitchTo(id);
+
         } else {
             throw new IllegalStateException("EventBlock with opcode " + opcode + " was not parsed");
         }
-
-        return event;
     }
 }

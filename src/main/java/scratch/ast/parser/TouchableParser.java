@@ -34,22 +34,24 @@ import scratch.ast.opcodes.BoolExprOpcode;
 public class TouchableParser {
 
     public static final String TOUCHINGOBJECTMENU = "TOUCHINGOBJECTMENU";
+    public static final String TOUCHING_MOUSE = "_mouse_";
+    public static final String TOUCHING_EDGE = "_edge_";
 
     public static Touchable parseTouchable(JsonNode current, JsonNode allBlocks) {
         Preconditions.checkNotNull(current);
         Preconditions.checkNotNull(allBlocks);
-        String opcodeString = current.get(OPCODE_KEY).asText();
+        final String opcodeString = current.get(OPCODE_KEY).asText();
 
         if (BoolExprOpcode.sensing_touchingobject.name().equals(opcodeString)) {
             String menuID = current.get(INPUTS_KEY).get(TOUCHINGOBJECTMENU).get(POS_INPUT_VALUE).asText();
-            String touchingobject = allBlocks.get(menuID).get(FIELDS_KEY).get(TOUCHINGOBJECTMENU).get(0).asText();
+            String touchingObject = allBlocks.get(menuID).get(FIELDS_KEY).get(TOUCHINGOBJECTMENU).get(0).asText();
 
-            if (touchingobject.equals("_mouse_")) {
+            if (touchingObject.equals(TOUCHING_MOUSE)) {
                 return new MousePointer();
-            } else if (touchingobject.equals("_edge_")) {
+            } else if (touchingObject.equals(TOUCHING_EDGE)) {
                 return new Edge();
             } else {
-                return new StrId(touchingobject);
+                return new StrId(touchingObject);
             }
 
         } else if (BoolExprOpcode.sensing_touchingcolor.name().equals(opcodeString)) {

@@ -19,17 +19,20 @@
 package scratch.ast.parser.attributes;
 
 public enum RotationStyle {
-    dont_rotate, left_right, all_around;
+
+    dont_rotate("don't rotate"),
+    left_right("left-right"),
+    all_around("left-right");
+
+    private final String token;
+
+    RotationStyle(String token) {
+        this.token = token;
+    }
 
     @Override
     public String toString() {
-        if (this == dont_rotate) {
-            return "don't rotate";
-        } else if (this == left_right) {
-            return "left-right";
-        } else {
-            return "all around";
-        }
+        return token;
     }
 
     public static boolean contains(String opcode) {

@@ -38,6 +38,7 @@ public class ResourceParser {
 
     public static List<Resource> parseSound(JsonNode resourceNode) {
         Preconditions.checkNotNull(resourceNode);
+
         List<Resource> parsedRessources = new ArrayList<>();
         Iterator<JsonNode> iter = resourceNode.elements();
         while (iter.hasNext()) {
@@ -51,6 +52,7 @@ public class ResourceParser {
 
     public static List<Resource> parseCostume(JsonNode resourceNode) {
         Preconditions.checkNotNull(resourceNode);
+
         List<Resource> parsedRessources = new ArrayList<>();
         Iterator<JsonNode> iter = resourceNode.elements();
         while (iter.hasNext()) {

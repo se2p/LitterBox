@@ -19,6 +19,7 @@
 package scratch.ast.parser.attributes;
 
 public enum GraphicEffect {
+
     COLOR, GHOST, BRIGHTNESS, WHIRL, FISHEYE, PIXELATE, MOSAIC;
 
     public static boolean contains(String opcode) {
