@@ -59,6 +59,7 @@ import scratch.ast.parser.symboltable.ExpressionListInfo;
 import scratch.ast.parser.symboltable.VariableInfo;
 
 public class BoolExprParser {
+
     public static BoolExpr parseBoolExpr(JsonNode block, String inputName, JsonNode blocks) throws ParsingException {
         ArrayNode exprArray = ExpressionParser.getExprArrayByName(block.get(INPUTS_KEY), inputName);
         if (ExpressionParser.getShadowIndicator(exprArray) == 1) {
@@ -76,22 +77,6 @@ public class BoolExprParser {
         throw new ParsingException("Could not parse BoolExpr");
     }
 
-    private static BoolExpr parseVariable(ArrayNode exprArray) {
-        String idString = exprArray.get(POS_DATA_ARRAY).get(POS_INPUT_ID).asText();
-        if (ProgramParser.symbolTable.getVariables().containsKey(idString)) {
-            VariableInfo variableInfo = ProgramParser.symbolTable.getVariables().get(idString);
-
-            return new Qualified(new StrId(variableInfo.getActor()),
-                new StrId((variableInfo.getVariableName())));
-
-        } else if (ProgramParser.symbolTable.getLists().containsKey(idString)) {
-            ExpressionListInfo variableInfo = ProgramParser.symbolTable.getLists().get(idString);
-            return new Qualified(new StrId(variableInfo.getActor()),
-                new StrId((variableInfo.getVariableName())));
-        }
-        return null;
-    }
-
     public static BoolExpr parseBoolExpr(JsonNode block, int pos, JsonNode blocks) throws ParsingException {
         ArrayNode exprArray = ExpressionParser.getExprArrayAtPos(block.get(INPUTS_KEY), pos);
         if (ExpressionParser.getShadowIndicator(exprArray) == 1) {
@@ -107,6 +92,23 @@ public class BoolExprParser {
         }
 
         throw new ParsingException("Could not parse BoolExpr");
+    }
+
+
+    private static BoolExpr parseVariable(ArrayNode exprArray) {
+        String idString = exprArray.get(POS_DATA_ARRAY).get(POS_INPUT_ID).asText();
+        if (ProgramParser.symbolTable.getVariables().containsKey(idString)) {
+            VariableInfo variableInfo = ProgramParser.symbolTable.getVariables().get(idString);
+
+            return new Qualified(new StrId(variableInfo.getActor()),
+                new StrId((variableInfo.getVariableName())));
+
+        } else if (ProgramParser.symbolTable.getLists().containsKey(idString)) {
+            ExpressionListInfo variableInfo = ProgramParser.symbolTable.getLists().get(idString);
+            return new Qualified(new StrId(variableInfo.getActor()),
+                new StrId((variableInfo.getVariableName())));
+        }
+        return null;
     }
 
     private static Bool parseBool(JsonNode inputs, int pos) {
