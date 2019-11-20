@@ -30,7 +30,7 @@ public class TurnLeft implements SpriteMotionStmt {
 
     public TurnLeft(NumExpr degrees) {
         this.degrees = degrees;
-        children = ImmutableList.<ASTNode>builder().add(degrees).build();
+        this.children = ImmutableList.<ASTNode>builder().add(degrees).build();
     }
 
     public NumExpr getDegrees() {

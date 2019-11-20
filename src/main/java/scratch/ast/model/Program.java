@@ -18,6 +18,7 @@
  */
 package scratch.ast.model;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import scratch.ast.model.variable.Identifier;
 import scratch.ast.visitor.ScratchVisitor;
@@ -29,9 +30,9 @@ public class Program implements ASTNode {
     private final ImmutableList<ASTNode> children;
 
     public Program(Identifier ident, ActorDefinitionList actorDefinitionList) {
-        this.ident = ident;
-        this.actorDefinitionList = actorDefinitionList;
-        children = ImmutableList.<ASTNode>builder().add(ident).add(actorDefinitionList).build();
+        this.ident = Preconditions.checkNotNull(ident);
+        this.actorDefinitionList = Preconditions.checkNotNull(actorDefinitionList);
+        this.children = ImmutableList.<ASTNode>builder().add(ident).add(actorDefinitionList).build();
     }
 
     public Identifier getIdent() {

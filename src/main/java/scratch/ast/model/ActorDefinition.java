@@ -18,6 +18,7 @@
  */
 package scratch.ast.model;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import scratch.ast.model.procedure.ProcedureDefinitionList;
 import scratch.ast.model.resource.ResourceList;
@@ -28,25 +29,25 @@ import scratch.ast.visitor.ScratchVisitor;
 public class ActorDefinition implements ASTNode {
 
     private final ImmutableList<ASTNode> children;
-    private ActorType actorType;
-    private Identifier ident;
-    private ResourceList resources;
-    private DeclarationStmtList decls;
-    private SetStmtList setStmtList;
-    private ProcedureDefinitionList procedureDefinitionList;
-    private ScriptList scripts;
+    private final ActorType actorType;
+    private final Identifier ident;
+    private final ResourceList resources;
+    private final DeclarationStmtList decls;
+    private final SetStmtList setStmtList;
+    private final ProcedureDefinitionList procedureDefinitionList;
+    private final ScriptList scripts;
 
     public ActorDefinition(ActorType actorType, Identifier ident, ResourceList resources, DeclarationStmtList decls,
-        SetStmtList setStmtList,
-        ProcedureDefinitionList procedureDefinitionList, ScriptList scripts) {
-        this.actorType = actorType;
-        this.ident = ident;
-        this.resources = resources;
-        this.decls = decls;
-        this.setStmtList = setStmtList;
-        this.procedureDefinitionList = procedureDefinitionList;
-        this.scripts = scripts;
-        children = ImmutableList.<ASTNode>builder()
+        SetStmtList setStmtList, ProcedureDefinitionList procedureDefinitionList, ScriptList scripts) {
+
+        this.actorType = Preconditions.checkNotNull(actorType);
+        this.ident = Preconditions.checkNotNull(ident);
+        this.resources = Preconditions.checkNotNull(resources);
+        this.decls = Preconditions.checkNotNull(decls);
+        this.setStmtList = Preconditions.checkNotNull(setStmtList);
+        this.procedureDefinitionList = Preconditions.checkNotNull(procedureDefinitionList);
+        this.scripts = Preconditions.checkNotNull(scripts);
+        this.children = ImmutableList.<ASTNode>builder()
             .add(actorType)
             .add(ident)
             .add(resources)
@@ -61,40 +62,20 @@ public class ActorDefinition implements ASTNode {
         return actorType;
     }
 
-    public void setActorType(ActorType actorType) {
-        this.actorType = actorType;
-    }
-
     public Identifier getIdent() {
         return ident;
-    }
-
-    public void setIdent(Identifier ident) {
-        this.ident = ident;
     }
 
     public ResourceList getResources() {
         return resources;
     }
 
-    public void setResources(ResourceList resources) {
-        this.resources = resources;
-    }
-
     public DeclarationStmtList getDecls() {
         return decls;
     }
 
-    public void setDecls(DeclarationStmtList decls) {
-        this.decls = decls;
-    }
-
     public ProcedureDefinitionList getProcedureDefinitionList() {
         return procedureDefinitionList;
-    }
-
-    public void setProcedureDefinitionList(ProcedureDefinitionList procedureDefinitionList) {
-        this.procedureDefinitionList = procedureDefinitionList;
     }
 
     public SetStmtList getSetStmtList() {
@@ -103,10 +84,6 @@ public class ActorDefinition implements ASTNode {
 
     public ScriptList getScripts() {
         return scripts;
-    }
-
-    public void setScripts(ScriptList scripts) {
-        this.scripts = scripts;
     }
 
     @Override

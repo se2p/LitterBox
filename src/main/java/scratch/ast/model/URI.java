@@ -19,6 +19,7 @@
 package scratch.ast.model;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.base.Preconditions;
 import scratch.ast.visitor.ScratchVisitor;
 
 public class URI implements ASTLeaf {
@@ -27,7 +28,7 @@ public class URI implements ASTLeaf {
     private final ImmutableList<ASTNode> children;
 
     public URI(String uri) {
-        this.uri = uri;
+        this.uri = Preconditions.checkNotNull(uri);
         children = ImmutableList.<ASTNode>builder().build();
     }
 

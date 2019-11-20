@@ -19,6 +19,7 @@
 package scratch.ast.model.statement.common;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.base.Preconditions;
 import scratch.ast.model.ASTNode;
 import scratch.ast.model.expression.Expression;
 import scratch.ast.model.variable.Variable;
@@ -26,13 +27,13 @@ import scratch.ast.visitor.ScratchVisitor;
 
 public class SetVariableTo implements SetStmt {
 
-    private Variable variable;
-    private Expression expr;
+    private final Variable variable;
+    private final Expression expr;
     private final ImmutableList<ASTNode> children;
 
     public SetVariableTo(Variable variable, Expression expr) {
-        this.variable = variable;
-        this.expr = expr;
+        this.variable = Preconditions.checkNotNull(variable);
+        this.expr = Preconditions.checkNotNull(expr);
         children = ImmutableList.<ASTNode>builder().add(variable).add(expr).build();
     }
 
@@ -40,16 +41,8 @@ public class SetVariableTo implements SetStmt {
         return variable;
     }
 
-    public void setVariable(Variable variable) {
-        this.variable = variable;
-    }
-
     public Expression getExpr() {
         return expr;
-    }
-
-    public void setExpr(Expression expr) {
-        this.expr = expr;
     }
 
     @Override

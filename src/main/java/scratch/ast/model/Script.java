@@ -19,6 +19,7 @@
 package scratch.ast.model;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.base.Preconditions;
 import scratch.ast.model.event.Event;
 import scratch.ast.visitor.ScratchVisitor;
 
@@ -29,10 +30,10 @@ public class Script implements ASTNode {
     private final ImmutableList<ASTNode> children;
 
     public Script(Event event, StmtList stmtList) {
-        this.event = event;
-        this.stmtList = stmtList;
+        this.event = Preconditions.checkNotNull(event);
+        this.stmtList = Preconditions.checkNotNull(stmtList);
         ImmutableList.Builder<ASTNode> builder = ImmutableList.builder();
-        children = builder.add(this.event, this.stmtList).build();
+        this.children = builder.add(this.event, this.stmtList).build();
     }
 
     public Event getEvent() {

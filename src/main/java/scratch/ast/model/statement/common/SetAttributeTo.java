@@ -19,6 +19,7 @@
 package scratch.ast.model.statement.common;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.base.Preconditions;
 import scratch.ast.model.ASTNode;
 import scratch.ast.model.expression.Expression;
 import scratch.ast.model.expression.string.StringExpr;
@@ -27,13 +28,13 @@ import scratch.ast.visitor.ScratchVisitor;
 public class SetAttributeTo implements SetStmt {
 
     private final ImmutableList<ASTNode> children;
-    private StringExpr stringExpr;
-    private Expression expr;
+    private final StringExpr stringExpr;
+    private final Expression expr;
 
     public SetAttributeTo(StringExpr stringExpr, Expression expr) {
-        this.stringExpr = stringExpr;
-        this.expr = expr;
-        children = ImmutableList.<ASTNode>builder().add(stringExpr).add(expr).build();
+        this.stringExpr = Preconditions.checkNotNull(stringExpr);
+        this.expr = Preconditions.checkNotNull(expr);
+        this.children = ImmutableList.<ASTNode>builder().add(stringExpr).add(expr).build();
     }
 
     public StringExpr getStringExpr() {
@@ -42,10 +43,6 @@ public class SetAttributeTo implements SetStmt {
 
     public Expression getExpr() {
         return expr;
-    }
-
-    public void setExpr(Expression expr) {
-        this.expr = expr;
     }
 
     @Override

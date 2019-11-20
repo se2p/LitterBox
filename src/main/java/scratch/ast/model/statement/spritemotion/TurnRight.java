@@ -19,6 +19,7 @@
 package scratch.ast.model.statement.spritemotion;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.base.Preconditions;
 import scratch.ast.model.ASTNode;
 import scratch.ast.model.expression.num.NumExpr;
 import scratch.ast.visitor.ScratchVisitor;
@@ -29,8 +30,8 @@ public class TurnRight implements SpriteMotionStmt {
     private final ImmutableList<ASTNode> children;
 
     public TurnRight(NumExpr degrees) {
-        this.degrees = degrees;
-        children = ImmutableList.<ASTNode>builder().add(degrees).build();
+        this.degrees = Preconditions.checkNotNull(degrees);
+        this.children = ImmutableList.<ASTNode>builder().add(degrees).build();
     }
 
     public NumExpr getDegrees() {

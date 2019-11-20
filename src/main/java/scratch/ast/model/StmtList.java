@@ -19,6 +19,7 @@
 package scratch.ast.model;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.base.Preconditions;
 import scratch.ast.model.statement.spritelook.ListOfStmt;
 import scratch.ast.model.statement.termination.TerminationStmt;
 import scratch.ast.visitor.ScratchVisitor;
@@ -30,8 +31,8 @@ public class StmtList implements ASTNode {
     private final ImmutableList<ASTNode> children;
 
     public StmtList(ListOfStmt stmts, TerminationStmt terminationStmt) {
-        this.stmts = stmts;
-        this.terminationStmt = terminationStmt;
+        this.stmts = Preconditions.checkNotNull(stmts);
+        this.terminationStmt = Preconditions.checkNotNull(terminationStmt);
         ImmutableList.Builder<ASTNode> builder = ImmutableList.builder();
         builder.add(stmts);
         if (terminationStmt != null) {

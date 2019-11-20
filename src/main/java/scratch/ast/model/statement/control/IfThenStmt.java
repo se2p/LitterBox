@@ -19,6 +19,7 @@
 package scratch.ast.model.statement.control;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.base.Preconditions;
 import scratch.ast.model.ASTNode;
 import scratch.ast.model.StmtList;
 import scratch.ast.model.expression.bool.BoolExpr;
@@ -31,9 +32,9 @@ public class IfThenStmt implements IfStmt {
     private final ImmutableList<ASTNode> children;
 
     public IfThenStmt(BoolExpr boolExpr, StmtList thenStmts) {
-        this.boolExpr = boolExpr;
-        this.thenStmts = thenStmts;
-        children = ImmutableList.<ASTNode>builder().add(boolExpr).add(thenStmts).build();
+        this.boolExpr = Preconditions.checkNotNull(boolExpr);
+        this.thenStmts = Preconditions.checkNotNull(thenStmts);
+        this.children = ImmutableList.<ASTNode>builder().add(boolExpr).add(thenStmts).build();
     }
 
     public BoolExpr getBoolExpr() {

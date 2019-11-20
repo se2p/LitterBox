@@ -19,6 +19,7 @@
 package scratch.ast.model;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.base.Preconditions;
 import scratch.ast.visitor.ScratchVisitor;
 
 public class Key implements ASTLeaf{
@@ -27,7 +28,7 @@ public class Key implements ASTLeaf{
     private final ImmutableList<ASTNode> children;
 
     public Key(String key) {
-        this.key = key;
+        this.key = Preconditions.checkNotNull(key);
         ImmutableList.Builder<ASTNode> builder = ImmutableList.builder();
         children = builder.build();
     }

@@ -19,6 +19,7 @@
 package scratch.ast.model.variable;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.base.Preconditions;
 import scratch.ast.model.ASTNode;
 import scratch.ast.visitor.ScratchVisitor;
 
@@ -29,8 +30,8 @@ public class Qualified implements Variable {
     private final ImmutableList<ASTNode> children;
 
     public Qualified(Identifier first, Identifier second) {
-        this.first = first;
-        this.second = second;
+        this.first = Preconditions.checkNotNull(first);
+        this.second = Preconditions.checkNotNull(second);
         children =  ImmutableList.<ASTNode>builder().add(first).add(second).build();
     }
 

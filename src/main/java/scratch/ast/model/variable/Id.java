@@ -19,6 +19,7 @@
 package scratch.ast.model.variable;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.base.Preconditions;
 import scratch.ast.model.ASTNode;
 import scratch.ast.visitor.ScratchVisitor;
 
@@ -29,8 +30,8 @@ public class Id extends Identifier {
 
     public Id(String value) {
         super(value);
-        this.value = value;
-        children = ImmutableList.<ASTNode>builder().build();
+        this.value = Preconditions.checkNotNull(value);
+        this.children = ImmutableList.<ASTNode>builder().build();
     }
 
     public String getValue() {

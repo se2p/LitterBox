@@ -19,6 +19,7 @@
 package scratch.ast.model.statement.declaration;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.base.Preconditions;
 import scratch.ast.model.ASTNode;
 import scratch.ast.model.expression.string.StringExpr;
 import scratch.ast.model.type.Type;
@@ -26,31 +27,22 @@ import scratch.ast.visitor.ScratchVisitor;
 
 public class DeclarationAttributeAsTypeStmt implements DeclarationStmt{
 
-    private StringExpr stringExpr;
-    private Type type;
+    private final StringExpr stringExpr;
+    private final Type type;
     private final ImmutableList<ASTNode> children;
 
     public DeclarationAttributeAsTypeStmt(StringExpr stringExpr, Type type) {
-        this.stringExpr = stringExpr;
-        this.type = type;
-        ImmutableList.Builder<ASTNode> builder = ImmutableList.builder();
-        children = builder.add(stringExpr).add(type).build();
+        this.stringExpr = Preconditions.checkNotNull(stringExpr);
+        this.type = Preconditions.checkNotNull(type);
+        this.children = ImmutableList.<ASTNode>builder().add(stringExpr).add(type).build();
     }
 
     public StringExpr getStringExpr() {
         return stringExpr;
     }
 
-    public void setStringExpr(StringExpr stringExpr) {
-        this.stringExpr = stringExpr;
-    }
-
     public Type getType() {
         return type;
-    }
-
-    public void setType(Type type) {
-        this.type = type;
     }
 
     @Override

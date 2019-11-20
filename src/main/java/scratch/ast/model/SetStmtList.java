@@ -20,16 +20,18 @@ package scratch.ast.model;
 
 import com.google.common.collect.ImmutableList;
 import java.util.List;
+
+import com.google.common.base.Preconditions;
 import scratch.ast.model.statement.common.SetStmt;
 import scratch.ast.visitor.ScratchVisitor;
 
 public class SetStmtList implements ASTNode {
 
     private final ImmutableList<ASTNode> children;
-    private List<SetStmt> setStmtList;
+    private final List<SetStmt> setStmtList;
 
     public SetStmtList(List<SetStmt> setStmtList) {
-        this.setStmtList = setStmtList;
+        this.setStmtList = Preconditions.checkNotNull(setStmtList);
         children = ImmutableList.<ASTNode>builder().addAll(setStmtList).build();
     }
 

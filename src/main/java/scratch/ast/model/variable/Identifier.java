@@ -18,6 +18,7 @@
  */
 package scratch.ast.model.variable;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import scratch.ast.model.ASTLeaf;
 import scratch.ast.model.ASTNode;
@@ -29,7 +30,7 @@ public abstract class Identifier implements Variable, ASTLeaf {
     private final ImmutableList<ASTNode> children;
 
     public Identifier(String value) {
-        this.value = value;
+        this.value = Preconditions.checkNotNull(value);
         children = ImmutableList.<ASTNode>builder().build();
     }
 

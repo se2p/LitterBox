@@ -22,10 +22,11 @@ import com.google.common.collect.ImmutableList;
 import scratch.ast.visitor.ScratchVisitor;
 
 public enum ActorType implements ASTLeaf {
-    actor,
-    stage,
-    sprite;
+    ACTOR,
+    STAGE,
+    SPRITE;
 
+    // FIXME: .add(this) missing?
     private final ImmutableList<ASTNode> children = ImmutableList.<ASTNode>builder().build();
 
     @Override
