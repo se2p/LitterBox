@@ -53,8 +53,6 @@ public class StmtParser {
             if (!(current.get(Constants.FIELDS_KEY).has("STOP_OPTION")
                 && current.get(Constants.FIELDS_KEY).get("STOP_OPTION").get(Constants.FIELD_VALUE).asText()
                 .equals("other scripts in sprite"))) {
-
-                // FIXME Control_Stop is also a CommonStmt
                 stmt = TerminationStmtParser.parseTerminationStmt(current, blocks);
                 return stmt;
             }

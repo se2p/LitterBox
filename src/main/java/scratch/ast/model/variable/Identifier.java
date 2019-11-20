@@ -25,7 +25,7 @@ import scratch.ast.visitor.ScratchVisitor;
 
 public abstract class Identifier implements Variable, ASTLeaf {
 
-    private final String value; // TODO check if this is correct
+    private final String value;
     private final ImmutableList<ASTNode> children;
 
     public Identifier(String value) {

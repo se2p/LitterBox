@@ -55,7 +55,7 @@ public class ProgramParser {
         Iterable<JsonNode> iterable = () -> programNode.get("targets").iterator();
         Stream<JsonNode> stream = StreamSupport.stream(iterable.spliterator(), false);
         Optional<JsonNode> stageNode = stream.filter(node -> node.get("isStage").asBoolean())
-            .findFirst(); //TODO: Check that only one stage exists
+            .findFirst(); //Is it necessary to check that only one stage exists?
 
         if (!stageNode.isPresent()) {
             throw new ParsingException("Program has no Stage");

@@ -6,7 +6,7 @@ import scratch.ast.visitor.ScratchVisitor;
 
 public class Id extends Identifier {
 
-    private final String value; // TODO check if this is correct
+    private final String value;
     private final ImmutableList<ASTNode> children;
 
     public Id(String value) {

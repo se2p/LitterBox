@@ -28,9 +28,9 @@ public enum SpriteLookStmtOpcode {
     looks_think,           //   |  "think" StringExpr
     looks_switchcostumeto,    //   |  "switch" "costume" "to" ElementChoice
     looks_nextcostume,        //   |  "switch" "costume" "to" ElementChoice
-    looks_changesizeby,       //   |  "change" "size" "by"  NumExpr TODO mybe remove
-    looks_setsizeto,          //   |  "set" "size" "to"  NumExpr  "percent"TODO mybe remove
-    looks_gotofrontback,      //   |  "go" "to" "layer"  NumExpr TODO this should be a string
+    looks_changesizeby,       //   |  "change" "size" "by"  NumExpr
+    looks_setsizeto,          //   |  "set" "size" "to"  NumExpr  "percent"
+    looks_gotofrontback,      //   |  "go" "to" "layer"  NumExpr
     looks_goforwardbackwardlayers;    //   |  "change" "layer" "by"  NumExpr
 
     public static boolean contains(String opcode) {

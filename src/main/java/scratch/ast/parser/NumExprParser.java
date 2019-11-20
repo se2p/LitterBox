@@ -19,6 +19,7 @@
 package scratch.ast.parser;
 
 import static scratch.ast.Constants.FIELDS_KEY;
+import static scratch.ast.Constants.FIELD_VALUE;
 import static scratch.ast.Constants.INPUTS_KEY;
 import static scratch.ast.Constants.LIST_NAME_POS;
 import static scratch.ast.Constants.OPCODE_KEY;
@@ -145,9 +146,8 @@ public class NumExprParser {
         if (getShadowIndicator(exprArray) == 1) { // TODO replace magic num
             try {
                 return parseNumber(block.get(INPUTS_KEY), pos);
-            } catch (NumberFormatException e) { // right exception? hm.
-                return new UnspecifiedNumExpr(); // FIXME is this correct?
-//                throw new ParsingException("There was no parsable float but we didn't implement a solution yet.");
+            } catch (NumberFormatException e) {
+                return new UnspecifiedNumExpr();
             }
 
         } else if (exprArray.get(POS_BLOCK_ID) instanceof TextNode) {
@@ -209,7 +209,7 @@ public class NumExprParser {
     }
 
     static NumExpr parseBlockNumExpr(JsonNode expressionBlock, JsonNode blocks)
-            throws ParsingException { // TODO remove unnecessary params as expressionBlock contains opcodeString and fields
+        throws ParsingException {
         String opcodeString = expressionBlock.get(OPCODE_KEY).asText();
         Preconditions.checkArgument(NumExprOpcode.contains(opcodeString), opcodeString + " is not a NumExprOpcode.");
         NumExprOpcode opcode = NumExprOpcode.valueOf(opcodeString);
@@ -287,8 +287,8 @@ public class NumExprParser {
 
     static NumFunct parseNumFunct(JsonNode fields)
         throws ParsingException { // TODO maybe add opcodes enum for NumFuncts
-        ArrayNode operator = (ArrayNode) fields.get(OPERATOR_KEY); // TODO move operator key to suitable place
-        String operatorOpcode = operator.get(0).asText(); //TODO remove magic num
+        ArrayNode operator = (ArrayNode) fields.get(OPERATOR_KEY);
+        String operatorOpcode = operator.get(FIELD_VALUE).asText();
         switch (operatorOpcode) {
             case "abs":
                 return new Abs();

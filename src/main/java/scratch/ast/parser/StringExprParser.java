@@ -19,6 +19,7 @@
 package scratch.ast.parser;
 
 import static scratch.ast.Constants.FIELDS_KEY;
+import static scratch.ast.Constants.FIELD_VALUE;
 import static scratch.ast.Constants.INPUTS_KEY;
 import static scratch.ast.Constants.OPCODE_KEY;
 import static scratch.ast.Constants.POS_BLOCK_ID;
@@ -170,7 +171,8 @@ public class StringExprParser {
             String menuIdentifier = expressionBlock.get(INPUTS_KEY).get("OBJECT").get(1).asText();
             JsonNode objectMenuBlock = blocks.get(menuIdentifier);
             Identifier identifier = new StrId(
-                objectMenuBlock.get(FIELDS_KEY).get("OBJECT").get(0).asText()); // TODO introduce constants here
+                objectMenuBlock.get(FIELDS_KEY).get("OBJECT").get(FIELD_VALUE)
+                    .asText()); // TODO introduce constants here
             return new AttributeOf(property, identifier);
         default:
             throw new RuntimeException(opcodeString + " is not covered by parseBlockStringExpr");

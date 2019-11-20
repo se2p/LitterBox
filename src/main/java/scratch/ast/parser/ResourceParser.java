@@ -69,7 +69,6 @@ public class ResourceParser {
     }
 
     private static URI getURI(JsonNode node) throws ParsingException {
-        //TODO this works but is not really beautiful
         if (node.has(MD5EXT)) {
             return new URI(node.get(MD5EXT).textValue());
         } else if (node.has("assetId") && node.has("dataFormat")) {

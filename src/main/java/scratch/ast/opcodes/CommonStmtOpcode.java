@@ -29,10 +29,8 @@ public enum CommonStmtOpcode {
     sensing_resettimer,      // "reset" "timer"
     data_changevariableby,    // "change" Variable "by" Expression
 
-    // "change" "attribute" StringExpr "by" NumExpr
     sound_changevolumeby,
     sound_changeeffectby,
-    //    looks_changesizeby, //FIXME is this now a common stmt?
     looks_changeeffectby;
 
     public static boolean contains(String opcode) {

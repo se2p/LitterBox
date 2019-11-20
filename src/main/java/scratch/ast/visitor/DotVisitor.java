@@ -41,7 +41,7 @@ public class DotVisitor implements ScratchVisitor {
         if (node instanceof ASTLeaf) {
             recordLeaf((ASTLeaf) node);
         } else {
-            String name = String.valueOf(node.hashCode()); //FIXME this is a hack
+            String name = String.valueOf(node.hashCode()); //This should only be a workaround this is a hack
             String label = name + " [label = \"" + node.getUniqueName() + "\"];";
             edges.add(label);
             for (ASTNode child : node.getChildren()) {

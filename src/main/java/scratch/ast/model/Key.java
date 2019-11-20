@@ -23,7 +23,7 @@ import scratch.ast.visitor.ScratchVisitor;
 
 public class Key implements ASTLeaf{
 
-    private final String key; // Todo should this be a string?
+    private final String key;
     private final ImmutableList<ASTNode> children;
 
     public Key(String key) {
@@ -48,7 +48,6 @@ public class Key implements ASTLeaf{
 
     @Override
     public String[] toSimpleStringArray() {
-        String[] returnArray = {key};
-        return returnArray;
+        return new String[]{key};
     }
 }

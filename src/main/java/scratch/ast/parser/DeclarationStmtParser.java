@@ -107,7 +107,7 @@ public class DeclarationStmtParser {
             Map.Entry<String, JsonNode> currentEntry = iter.next();
             Preconditions.checkArgument(currentEntry.getValue().isArray());
             ArrayNode arrNode = (ArrayNode) currentEntry.getValue();
-            //TODO check is ExpressionParser should be used
+
             if (arrNode.get(DECLARATION_VARIABLE_VALUE_POS).isNumber()) {
                 parsedVariables.add(new SetVariableTo(new Qualified(new StrId(actorName),
                     new StrId(arrNode.get(DECLARATION_VARIABLE_NAME_POS).textValue())),

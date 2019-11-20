@@ -76,6 +76,7 @@ public class ElementChoiceParser {
             }
             return new WithNumber(numExpr);
         } else if (StringExprOpcode.contains(menu.get(OPCODE_KEY).asText())) {
+            //Todo check if this case also covers variables
             StringExpr strExpr;
             try {
                 strExpr = StringExprParser.parseStringExpr(current, 0, allBlocks);
@@ -86,7 +87,6 @@ public class ElementChoiceParser {
             return new WithId(strExpr);
         }
 
-        //FIXME cover case where a variable is used instead of menu
 
         List<JsonNode> fieldsList = new ArrayList<>();
         menu.get(FIELDS_KEY).elements().forEachRemaining(fieldsList::add);
