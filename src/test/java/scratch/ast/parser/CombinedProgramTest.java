@@ -59,7 +59,7 @@ public class CombinedProgramTest {
         }
     }
 
-    @Test
+    //@Test
     public void testVisitor() {
         DotVisitor visitor = new DotVisitor();
         try {

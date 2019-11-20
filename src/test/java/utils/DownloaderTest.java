@@ -25,7 +25,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.File;
 import java.io.IOException;
 import org.junit.FixMethodOrder;
-import org.junit.jupiter.api.Test;
 import org.junit.runners.MethodSorters;
 import scratch.ast.ParsingException;
 import scratch.ast.model.Program;
@@ -37,7 +36,7 @@ class DownloaderTest {
 
     private JsonNode project;
 
-    @Test
+    //@Test
     void downloadProjectJSON() {
         try {
             String json = Downloader.downloadProjectJSON("338832275");
@@ -56,7 +55,7 @@ class DownloaderTest {
         }
     }
 
-    @Test
+    //@Test
     void testDownloaded() {
         String path = "/tmp/stuff.json";
         File file = new File(path);

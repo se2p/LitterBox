@@ -30,6 +30,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import com.google.common.base.Preconditions;
+import java.util.Optional;
 import scratch.ast.Constants;
 import scratch.ast.ParsingException;
 import scratch.ast.model.Key;
@@ -116,6 +117,14 @@ public class BoolExprParser {
     private static Bool parseBool(JsonNode inputs, String inputName) {
         boolean value = ExpressionParser.getDataArrayByName(inputs, inputName).get(POS_INPUT_VALUE).asBoolean();
         return new Bool(value);
+    }
+
+    static Optional<BoolExpr> maybeParseBlockBoolExpr(JsonNode expressionBlock, JsonNode blocks) {
+        try {
+            return Optional.of(parseBlockBoolExpr(expressionBlock, blocks));
+        } catch (ParsingException | IllegalArgumentException e) {
+            return Optional.empty();
+        }
     }
 
     static BoolExpr parseBlockBoolExpr(JsonNode expressionBlock, JsonNode blocks)

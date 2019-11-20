@@ -29,6 +29,7 @@ import java.util.Map;
 import scratch.ast.Constants;
 import scratch.ast.ParsingException;
 import scratch.ast.model.expression.Expression;
+import scratch.ast.model.expression.UnspecifiedExpression;
 import scratch.ast.model.variable.Qualified;
 import scratch.ast.model.variable.StrId;
 import scratch.ast.opcodes.BoolExprOpcode;
@@ -52,7 +53,8 @@ public class ExpressionParser {
                     try {
                         return ListExprParser.parseListExpr(block, pos, blocks);
                     } catch (Exception excp) {
-                        throw new ParsingException("This is no expression we can parse.");
+                        return new UnspecifiedExpression();
+                        //throw new ParsingException("This is no expression we can parse.");
                     }
                 }
             }
