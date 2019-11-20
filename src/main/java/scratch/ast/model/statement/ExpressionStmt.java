@@ -19,6 +19,7 @@
 package scratch.ast.model.statement;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.base.Preconditions;
 import scratch.ast.model.ASTNode;
 import scratch.ast.model.expression.Expression;
 import scratch.ast.visitor.ScratchVisitor;
@@ -29,7 +30,7 @@ public class ExpressionStmt implements Stmt {
     private final ImmutableList<ASTNode> children;
 
     public ExpressionStmt(Expression expression) {
-        this.expression = expression;
+        this.expression = Preconditions.checkNotNull(expression);
         children = ImmutableList.<ASTNode>builder().add(expression).build();
     }
 

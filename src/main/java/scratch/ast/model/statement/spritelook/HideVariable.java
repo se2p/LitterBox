@@ -19,6 +19,7 @@
 package scratch.ast.model.statement.spritelook;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.base.Preconditions;
 import scratch.ast.model.ASTNode;
 import scratch.ast.model.statement.actorlook.ActorLookStmt;
 import scratch.ast.model.variable.Variable;
@@ -30,7 +31,7 @@ public class HideVariable implements ActorLookStmt {
     private final ImmutableList<ASTNode> children;
 
     public HideVariable(Variable variable) {
-        this.variable = variable;
+        this.variable = Preconditions.checkNotNull(variable);
         children = ImmutableList.<ASTNode>builder().add(variable).build();
     }
 

@@ -19,6 +19,7 @@
 package scratch.ast.model.statement.list;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.base.Preconditions;
 import scratch.ast.model.ASTNode;
 import scratch.ast.model.expression.string.StringExpr;
 import scratch.ast.model.variable.Variable;
@@ -31,9 +32,9 @@ public class AddTo implements ListStmt {
     private final ImmutableList<ASTNode> children;
 
     public AddTo(StringExpr string, Variable variable) {
-        this.string = string;
-        this.variable = variable;
-        children = ImmutableList.<ASTNode>builder().add(string).add(variable).build();
+        this.string = Preconditions.checkNotNull(string);
+        this.variable = Preconditions.checkNotNull(variable);
+        this.children = ImmutableList.<ASTNode>builder().add(string).add(variable).build();
     }
 
     public StringExpr getString() {

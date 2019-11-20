@@ -19,6 +19,7 @@
 package scratch.ast.model.statement;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.base.Preconditions;
 import scratch.ast.model.ASTNode;
 import scratch.ast.model.expression.list.ExpressionList;
 import scratch.ast.model.variable.Identifier;
@@ -27,14 +28,13 @@ import scratch.ast.visitor.ScratchVisitor;
 public class CallStmt implements Stmt {
 
     private final ImmutableList<ASTNode> children;
-    private Identifier ident;
-    private ExpressionList expressions;
+    private final Identifier ident;
+    private final ExpressionList expressions;
 
     public CallStmt(Identifier ident, ExpressionList expressions) {
-        this.ident = ident;
-        this.expressions = expressions;
-        ImmutableList.Builder<ASTNode> builder = ImmutableList.builder();
-        children = builder.add(ident).add(expressions).build();
+        this.ident = Preconditions.checkNotNull(ident);
+        this.expressions = Preconditions.checkNotNull(expressions);
+        this.children = ImmutableList.<ASTNode>builder().add(ident).add(expressions).build();
     }
 
     @Override
@@ -51,15 +51,7 @@ public class CallStmt implements Stmt {
         return ident;
     }
 
-    public void setIdent(Identifier ident) {
-        this.ident = ident;
-    }
-
     public ExpressionList getExpressions() {
         return expressions;
-    }
-
-    public void setExpressions(ExpressionList expressions) {
-        this.expressions = expressions;
     }
 }

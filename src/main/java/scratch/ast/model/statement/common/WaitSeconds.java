@@ -19,26 +19,23 @@
 package scratch.ast.model.statement.common;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.base.Preconditions;
 import scratch.ast.model.ASTNode;
 import scratch.ast.model.expression.num.NumExpr;
 import scratch.ast.visitor.ScratchVisitor;
 
 public class WaitSeconds implements CommonStmt {
 
-    private NumExpr seconds;
+    private final NumExpr seconds;
     private final ImmutableList<ASTNode> children;
 
     public WaitSeconds(NumExpr seconds) {
-        this.seconds = seconds;
-        children = ImmutableList.<ASTNode>builder().add(seconds).build();
+        this.seconds = Preconditions.checkNotNull(seconds);
+        this.children = ImmutableList.<ASTNode>builder().add(seconds).build();
     }
 
     public NumExpr getSeconds() {
         return seconds;
-    }
-
-    public void setSeconds(NumExpr seconds) {
-        this.seconds = seconds;
     }
 
     @Override

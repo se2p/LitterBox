@@ -19,6 +19,7 @@
 package scratch.ast.model.statement.actorsound;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.base.Preconditions;
 import scratch.ast.model.ASTNode;
 import scratch.ast.model.elementchoice.ElementChoice;
 import scratch.ast.visitor.ScratchVisitor;
@@ -29,8 +30,8 @@ public class PlaySoundUntilDone implements ActorSoundStmt {
     private final ImmutableList<ASTNode> children;
 
     public PlaySoundUntilDone(ElementChoice elementChoice) {
-        this.elementChoice = elementChoice;
-        children = ImmutableList.<ASTNode>builder().add(this.elementChoice).build();
+        this.elementChoice = Preconditions.checkNotNull(elementChoice);
+        this.children = ImmutableList.<ASTNode>builder().add(this.elementChoice).build();
     }
 
     public ElementChoice getElementChoice() {

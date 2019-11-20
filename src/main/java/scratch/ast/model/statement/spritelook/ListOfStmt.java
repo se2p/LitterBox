@@ -20,18 +20,20 @@ package scratch.ast.model.statement.spritelook;
 
 import com.google.common.collect.ImmutableList;
 import java.util.List;
+
+import com.google.common.base.Preconditions;
 import scratch.ast.model.ASTNode;
 import scratch.ast.model.statement.Stmt;
 import scratch.ast.visitor.ScratchVisitor;
 
 public class ListOfStmt implements ASTNode {
 
-    List<Stmt> listOfStmt;
+    private final List<Stmt> listOfStmt;
     private final ImmutableList<ASTNode> children;
 
     public ListOfStmt(List<Stmt> listOfStmt) {
-        this.listOfStmt = listOfStmt;
-        children = ImmutableList.<ASTNode>builder().addAll(listOfStmt).build();
+        this.listOfStmt = Preconditions.checkNotNull(listOfStmt);
+        this.children = ImmutableList.<ASTNode>builder().addAll(listOfStmt).build();
     }
 
     public List<Stmt> getListOfStmt() {

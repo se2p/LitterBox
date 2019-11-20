@@ -19,6 +19,7 @@
 package scratch.ast.model.statement.common;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.base.Preconditions;
 import scratch.ast.model.ASTNode;
 import scratch.ast.model.variable.Identifier;
 import scratch.ast.visitor.ScratchVisitor;
@@ -29,7 +30,7 @@ public class CreateCloneOf implements CommonStmt {
     private final ImmutableList<ASTNode> children;
 
     public CreateCloneOf(Identifier identifier) {
-        this.identifier = identifier;
+        this.identifier = Preconditions.checkNotNull(identifier);
         children = ImmutableList.<ASTNode>builder().add(identifier).build();
     }
 

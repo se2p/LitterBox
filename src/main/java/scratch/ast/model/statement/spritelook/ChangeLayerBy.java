@@ -19,6 +19,7 @@
 package scratch.ast.model.statement.spritelook;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.base.Preconditions;
 import scratch.ast.model.ASTNode;
 import scratch.ast.model.expression.num.NumExpr;
 import scratch.ast.visitor.ScratchVisitor;
@@ -29,9 +30,8 @@ public class ChangeLayerBy implements SpriteLookStmt {
     private final ImmutableList<ASTNode> children;
 
     public ChangeLayerBy(NumExpr num) {
-        this.num = num;
-        ImmutableList.Builder<ASTNode> builder = ImmutableList.builder();
-        children = builder.add(num).build();
+        this.num = Preconditions.checkNotNull(num);
+        this.children = ImmutableList.<ASTNode>builder().add(num).build();
     }
 
     public NumExpr getNum() {

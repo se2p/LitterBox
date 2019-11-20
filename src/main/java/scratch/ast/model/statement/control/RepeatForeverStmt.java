@@ -19,6 +19,7 @@
 package scratch.ast.model.statement.control;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.base.Preconditions;
 import scratch.ast.model.ASTNode;
 import scratch.ast.model.StmtList;
 import scratch.ast.visitor.ScratchVisitor;
@@ -29,8 +30,8 @@ public class RepeatForeverStmt implements ControlStmt {
     private final ImmutableList<ASTNode> children;
 
     public RepeatForeverStmt(StmtList stmtList) {
-        this.stmtList = stmtList;
-        children = ImmutableList.<ASTNode>builder().add(stmtList).build();
+        this.stmtList = Preconditions.checkNotNull(stmtList);
+        this.children = ImmutableList.<ASTNode>builder().add(stmtList).build();
     }
 
     public StmtList getStmtList() {

@@ -30,7 +30,7 @@ public class SetSizeTo implements SpriteLookStmt {
 
     public SetSizeTo(NumExpr percent) {
         this.percent = percent;
-        children = ImmutableList.<ASTNode>builder().add(percent).build();
+        this.children = ImmutableList.<ASTNode>builder().add(percent).build();
     }
 
     public NumExpr getPercent() {

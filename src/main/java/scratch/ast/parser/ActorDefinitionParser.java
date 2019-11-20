@@ -55,9 +55,9 @@ public class ActorDefinitionParser {
 
         ActorType actorType;
         if (actorDefinitionNode.get(IS_STAGE_KEY).asBoolean()) {
-            actorType = ActorType.stage;
+            actorType = ActorType.STAGE;
         } else {
-            actorType = ActorType.sprite;
+            actorType = ActorType.SPRITE;
         }
 
         Identifier identifier = new StrId(actorDefinitionNode.get(NAME_KEY).asText());

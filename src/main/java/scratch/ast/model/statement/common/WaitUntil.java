@@ -18,6 +18,7 @@
  */
 package scratch.ast.model.statement.common;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import scratch.ast.model.ASTNode;
 import scratch.ast.model.expression.bool.BoolExpr;
@@ -25,12 +26,12 @@ import scratch.ast.visitor.ScratchVisitor;
 
 public class WaitUntil implements CommonStmt {
 
-    private BoolExpr until;
+    private final BoolExpr until;
     private final ImmutableList<ASTNode> children;
 
     public WaitUntil(BoolExpr until) {
-        this.until = until;
-        children = ImmutableList.<ASTNode>builder().add(until).build();
+        this.until = Preconditions.checkNotNull(until);
+        this.children = ImmutableList.<ASTNode>builder().add(until).build();
     }
 
     public BoolExpr getUntil() {

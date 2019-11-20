@@ -19,6 +19,7 @@
 package scratch.ast.model.statement.spritelook;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.base.Preconditions;
 import scratch.ast.model.ASTNode;
 import scratch.ast.model.expression.string.StringExpr;
 import scratch.ast.visitor.ScratchVisitor;
@@ -29,8 +30,8 @@ public class Say implements SpriteLookStmt {
     private final ImmutableList<ASTNode> children;
 
     public Say(StringExpr string) {
-        this.string = string;
-        children = ImmutableList.<ASTNode>builder().add(string).build();
+        this.string = Preconditions.checkNotNull(string);
+        this.children = ImmutableList.<ASTNode>builder().add(string).build();
     }
 
     public StringExpr getString() {

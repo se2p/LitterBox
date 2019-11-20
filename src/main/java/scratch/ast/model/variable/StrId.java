@@ -1,5 +1,6 @@
 package scratch.ast.model.variable;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import scratch.ast.model.ASTNode;
 import scratch.ast.visitor.ScratchVisitor;
@@ -11,8 +12,8 @@ public class StrId extends Identifier {
 
     public StrId(String value) {
         super(value);
-        this.value = value;
-        children = ImmutableList.<ASTNode>builder().build();
+        this.value = Preconditions.checkNotNull(value);
+        this.children = ImmutableList.<ASTNode>builder().build();
     }
 
     public String getValue() {

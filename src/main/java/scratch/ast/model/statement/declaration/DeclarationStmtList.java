@@ -20,25 +20,23 @@ package scratch.ast.model.statement.declaration;
 
 import com.google.common.collect.ImmutableList;
 import java.util.List;
+
+import com.google.common.base.Preconditions;
 import scratch.ast.model.ASTNode;
 import scratch.ast.visitor.ScratchVisitor;
 
 public class DeclarationStmtList implements ASTNode {
 
-    private List<DeclarationStmt> declarationStmtList;
+    private final List<DeclarationStmt> declarationStmtList;
     private final ImmutableList<ASTNode> children;
 
     public DeclarationStmtList(List<DeclarationStmt> declarationStmtList) {
-        this.declarationStmtList = declarationStmtList;
-        children = ImmutableList.<ASTNode>builder().addAll(declarationStmtList).build();
+        this.declarationStmtList = Preconditions.checkNotNull(declarationStmtList);
+        this.children = ImmutableList.<ASTNode>builder().addAll(declarationStmtList).build();
     }
 
     public List<DeclarationStmt> getDeclarationStmtList() {
         return declarationStmtList;
-    }
-
-    public void setDeclarationStmtList(List<DeclarationStmt> declarationStmtList) {
-        this.declarationStmtList = declarationStmtList;
     }
 
     @Override
