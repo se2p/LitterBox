@@ -30,6 +30,8 @@ import scratch.ast.model.expression.num.Number;
 public class ColorParser {
 
     public static Color parseColor(JsonNode current, int pos, JsonNode allBlocks) {
+        //FIXME parse inputs that are not a text color as a "FromNumber" color
+
         String rgbCode = current.get(INPUTS_KEY).get("COLOR").get(POS_DATA_ARRAY).get(POS_INPUT_VALUE).asText();
         long i;
         float f;
