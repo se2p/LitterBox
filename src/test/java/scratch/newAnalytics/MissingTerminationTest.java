@@ -37,9 +37,9 @@ public class MissingTerminationTest {
 
     @BeforeAll
     public static void setUp() throws IOException, ParsingException {
-        File f = new File("./src/test/java/scratch/fixtures/missingTermination.json");
+        File f = new File("./src/test/fixtures/missingTermination/missingTermination.json");
         program = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
-        f= new File("./src/test/java/scratch/fixtures/missingTerminationNested.json");
+        f = new File("./src/test/fixtures/missingTermination/missingTerminationNested.json");
         programNested = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
     }
 

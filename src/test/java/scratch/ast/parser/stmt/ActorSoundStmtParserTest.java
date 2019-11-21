@@ -49,7 +49,7 @@ public class ActorSoundStmtParserTest {
 
     @BeforeAll
     public static void setup() {
-        String path = "src/test/java/scratch/fixtures/actorSoundStmts.json";
+        String path = "src/test/fixtures/stmtParser/actorSoundStmts.json";
         File file = new File(path);
         ObjectMapper objectMapper = new ObjectMapper();
         try {

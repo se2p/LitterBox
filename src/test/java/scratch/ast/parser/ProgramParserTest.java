@@ -52,7 +52,7 @@ public class ProgramParserTest {
 
     @BeforeAll
     public static void setup() {
-        String path = "src/test/java/scratch/fixtures/emptyProject.json";
+        String path = "src/test/fixtures/emptyProject.json";
         File file = new File(path);
         ObjectMapper objectMapper = new ObjectMapper();
         try {

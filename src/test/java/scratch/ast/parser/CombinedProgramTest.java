@@ -40,7 +40,7 @@ public class CombinedProgramTest {
 
     @BeforeAll
     public static void setup() {
-        String path = "src/test/java/scratch/fixtures/allBlocks.json";
+        String path = "src/test/fixtures/allBlocks.json";
         File file = new File(path);
         ObjectMapper objectMapper = new ObjectMapper();
         try {

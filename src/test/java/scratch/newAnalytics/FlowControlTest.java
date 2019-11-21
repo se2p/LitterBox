@@ -42,17 +42,17 @@ public class FlowControlTest {
 
     @BeforeAll
     public static void setUp() throws IOException, ParsingException {
-        File f = new File("./src/test/java/scratch/fixtures/flowControlNestedMiddleScore.json");
+        File f = new File("./src/test/fixtures/flowControl/flowControlNestedMiddleScore.json");
         programMiddleNested = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
-        f= new File("./src/test/java/scratch/fixtures/flowControlTopNestedInsideMiddle.json");
+        f = new File("./src/test/fixtures/flowControl/flowControlTopNestedInsideMiddle.json");
         programTopNested = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
-        f=new File("./src/test/java/scratch/fixtures/emptyProject.json");
+        f = new File("./src/test/fixtures/emptyProject.json");
         empty =ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
-        f=new File("./src/test/java/scratch/fixtures/flowControlMiddle.json");
+        f = new File("./src/test/fixtures/flowControl/flowControlMiddle.json");
         programMiddle =ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
-        f=new File("./src/test/java/scratch/fixtures/flowControlTopNestedElse.json");
+        f = new File("./src/test/fixtures/flowControl/flowControlTopNestedElse.json");
         programTopNestedElse =ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
-        f=new File("./src/test/java/scratch/fixtures/flowControlZero.json");
+        f = new File("./src/test/fixtures/flowControl/flowControlZero.json");
         programZero =ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
     }
 

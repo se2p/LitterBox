@@ -53,7 +53,7 @@ public class CommonStmtParserTest {
 
     @BeforeAll
     public static void setup() {
-        String path = "src/test/java/scratch/fixtures/commonStmts.json";
+        String path = "src/test/fixtures/stmtParser/commonStmts.json";
         File file = new File(path);
         ObjectMapper objectMapper = new ObjectMapper();
         try {

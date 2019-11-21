@@ -52,7 +52,7 @@ public class ActorLookStmtParserTest {
 
     @BeforeAll
     public static void setup() {
-        String path = "src/test/java/scratch/fixtures/actorLookStmts.json";
+        String path = "src/test/fixtures/stmtParser/actorLookStmts.json";
         File file = new File(path);
         ObjectMapper objectMapper = new ObjectMapper();
         try {

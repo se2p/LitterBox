@@ -54,9 +54,9 @@ public class ExpressionParserTest {
 
     @BeforeAll
     public static void setup() {
-        moveStepsScript = JsonParser.getBlocksNodeFromJSON("./src/test/java/scratch/fixtures/movesteps.json");
-        allExprTypesScript = JsonParser.getBlocksNodeFromJSON("./src/test/java/scratch/fixtures/allexprtypes.json");
-        twoNumExprSlotsNumExprs = JsonParser.getBlocksNodeFromJSON("./src/test/java/scratch/fixtures/twoNumExprSlotsNumExprs.json");
+        moveStepsScript = JsonParser.getBlocksNodeFromJSON("./src/test/fixtures/movesteps.json");
+        allExprTypesScript = JsonParser.getBlocksNodeFromJSON("./src/test/fixtures/allexprtypes.json");
+        twoNumExprSlotsNumExprs = JsonParser.getBlocksNodeFromJSON("./src/test/fixtures/twoNumExprSlotsNumExprs.json");
         literalBlock = allExprTypesScript.get("QJ:02/{CIWEai#dfuC(k");
         variableBlock = allExprTypesScript.get("Q0r@4R,=K;bq+x;8?O)j");
         listBlock = allExprTypesScript.get("3k1#g23nWs5dk)w3($|+");
@@ -125,7 +125,7 @@ public class ExpressionParserTest {
 
     @Test
     public void testNumFuncts() throws ParsingException {
-        JsonNode script = JsonParser.getBlocksNodeFromJSON("./src/test/java/scratch/fixtures/numfuncts.json");
+        JsonNode script = JsonParser.getBlocksNodeFromJSON("./src/test/fixtures/numfuncts.json");
         JsonNode pow10Block = script.get("xbBc!xS=1Yz2Yp/DF;JT");
         assertTrue(NumExprParser.parseNumFunct(pow10Block.get("fields")) instanceof Pow10);
     }
