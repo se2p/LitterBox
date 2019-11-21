@@ -26,7 +26,6 @@ public enum ActorType implements ASTLeaf {
     STAGE,
     SPRITE;
 
-    // FIXME: .add(this) missing?
     private final ImmutableList<ASTNode> children = ImmutableList.<ASTNode>builder().build();
 
     @Override

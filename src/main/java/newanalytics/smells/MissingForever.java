@@ -41,7 +41,7 @@ import scratch.ast.model.statement.control.RepeatTimesStmt;
  * Checks for missing loops in event based actions.
  */
 public class MissingForever implements IssueFinder {
-
+//TODO Add check for Until loops
     private String name = "missing_forever_loop";
     private List<String> found;
     private int counter;

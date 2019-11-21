@@ -79,8 +79,7 @@ public class EventParser {
         } else if (opcode.equals(event_whenbroadcastreceived)) {
             JsonNode fields = current.get(FIELDS_KEY);
             String msgValue = fields.get(BCAST_OPTION).get(FIELD_VALUE).asText();
-            Message msg =
-                new Message(msgValue); // TODO should we reference the previously parsed broadcast?
+            Message msg = new Message(msgValue);
             return new ReceptionOfMessage(msg);
 
         } else if (opcode.equals(control_start_as_clone)) {
