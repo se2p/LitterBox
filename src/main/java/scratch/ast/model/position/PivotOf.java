@@ -18,7 +18,7 @@
  */
 package scratch.ast.model.position;
 
-import com.google.common.collect.ImmutableList;
+import scratch.utils.UnmodifiableListBuilder;
 import scratch.ast.model.ASTNode;
 import scratch.ast.model.variable.Identifier;
 import scratch.ast.visitor.ScratchVisitor;

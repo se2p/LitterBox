@@ -18,6 +18,6 @@
  */
 package scratch.ast.model.indextype;
 
-public enum  IndexType {
+public enum IndexType {
     NUMBER, STRING
 }

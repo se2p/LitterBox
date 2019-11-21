@@ -16,18 +16,24 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-package scratch.ast.model.numfunct;
+package scratch.ast.model.expression.color;
 
-import com.google.common.collect.ImmutableList;
-import scratch.ast.model.ASTNode;
+import scratch.ast.model.AbstractNode;
+import scratch.ast.model.expression.num.NumExpr;
 import scratch.ast.visitor.ScratchVisitor;
+import scratch.utils.Preconditions;
 
-public class Floor implements NumFunct {
+public class FromNumber extends AbstractNode implements ColorExpression {
 
-    private final ImmutableList<ASTNode> children;
+    private NumExpr value;
 
-    public Floor() {
-        children = ImmutableList.<ASTNode>builder().build();
+    public FromNumber(NumExpr value) {
+        super(value);
+        this.value = Preconditions.checkNotNull(value);
+    }
+
+    public NumExpr getValue() {
+        return value;
     }
 
     @Override
@@ -35,8 +41,4 @@ public class Floor implements NumFunct {
         visitor.visit(this);
     }
 
-    @Override
-    public ImmutableList<ASTNode> getChildren() {
-        return children;
-    }
 }

@@ -19,7 +19,7 @@
 package scratch.ast.model;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
+import scratch.utils.UnmodifiableListBuilder;
 import scratch.ast.model.variable.Identifier;
 import scratch.ast.visitor.ScratchVisitor;
 

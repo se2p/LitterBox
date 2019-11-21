@@ -18,19 +18,17 @@
  */
 package scratch.ast.model.expression.bool;
 
-import com.google.common.collect.ImmutableList;
-import scratch.ast.model.ASTNode;
+import scratch.ast.model.AbstractNode;
 import scratch.ast.model.Key;
 import scratch.ast.visitor.ScratchVisitor;
 
-public class IsKeyPressed implements BoolExpr {
+public class IsKeyPressed extends AbstractNode implements BoolExpr {
 
     private final Key key;
-    private final ImmutableList<ASTNode> children;
 
     public IsKeyPressed(Key key) {
+        super(key);
         this.key = key;
-        children = ImmutableList.<ASTNode>builder().add(key).build();
     }
 
     public Key getKey() {
@@ -42,8 +40,4 @@ public class IsKeyPressed implements BoolExpr {
         visitor.visit(this);
     }
 
-    @Override
-    public ImmutableList<ASTNode> getChildren() {
-        return children;
-    }
 }

@@ -18,34 +18,19 @@
  */
 package scratch.ast.model.expression.string;
 
-import com.google.common.collect.ImmutableList;
-import scratch.ast.model.ASTNode;
 import scratch.ast.model.expression.Expression;
+import scratch.ast.model.expression.UnaryExpression;
 import scratch.ast.visitor.ScratchVisitor;
 
-public class AsString implements StringExpr {
-
-    private final Expression expression;
-    private final ImmutableList<ASTNode> children;
+public class AsString extends UnaryExpression<Expression> implements StringExpr {
 
     public AsString(Expression expression) {
-        this.expression = expression;
-        ImmutableList.Builder<ASTNode> builder = ImmutableList.builder();
-        children = builder.add(expression).build();
-    }
-
-    public Expression getExpression() {
-        return expression;
+        super(expression);
     }
 
     @Override
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);
-    }
-
-    @Override
-    public ImmutableList<ASTNode> getChildren() {
-        return children;
     }
 
 }

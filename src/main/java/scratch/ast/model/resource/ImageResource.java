@@ -18,7 +18,7 @@
  */
 package scratch.ast.model.resource;
 
-import com.google.common.collect.ImmutableList;
+import scratch.utils.UnmodifiableListBuilder;
 import scratch.ast.model.ASTNode;
 import scratch.ast.model.URI;
 import scratch.ast.model.variable.Identifier;

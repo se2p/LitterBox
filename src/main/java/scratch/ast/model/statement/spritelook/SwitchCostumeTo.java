@@ -19,7 +19,7 @@
 package scratch.ast.model.statement.spritelook;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
+import scratch.utils.UnmodifiableListBuilder;
 import scratch.ast.model.ASTNode;
 import scratch.ast.model.elementchoice.ElementChoice;
 import scratch.ast.visitor.ScratchVisitor;

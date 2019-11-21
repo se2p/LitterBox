@@ -34,7 +34,6 @@ import scratch.ast.model.ActorDefinitionList;
 import scratch.ast.model.Program;
 import scratch.ast.model.Script;
 import scratch.ast.model.elementchoice.WithId;
-import scratch.ast.model.expression.string.Str;
 import scratch.ast.model.statement.Stmt;
 import scratch.ast.model.statement.actorlook.AskAndWait;
 import scratch.ast.model.statement.actorlook.ClearGraphicEffects;

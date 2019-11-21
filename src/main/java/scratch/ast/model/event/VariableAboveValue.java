@@ -18,22 +18,20 @@
  */
 package scratch.ast.model.event;
 
-import com.google.common.collect.ImmutableList;
-import scratch.ast.model.ASTNode;
+import scratch.ast.model.AbstractNode;
 import scratch.ast.model.expression.num.NumExpr;
 import scratch.ast.model.variable.Variable;
 import scratch.ast.visitor.ScratchVisitor;
 
-public class VariableAboveValue implements Event {
+public class VariableAboveValue extends AbstractNode implements Event {
 
     private final Variable variable;
     private final NumExpr value;
-    private final ImmutableList<ASTNode> children;
 
     public VariableAboveValue(Variable variable, NumExpr value) {
+        super(variable, value);
         this.variable = variable;
         this.value = value;
-        children = ImmutableList.<ASTNode>builder().add(value).add(value).build();
     }
 
     public Variable getVariable() {
@@ -49,8 +47,4 @@ public class VariableAboveValue implements Event {
         visitor.visit(this);
     }
 
-    @Override
-    public ImmutableList<ASTNode> getChildren() {
-        return children;
-    }
 }

@@ -18,28 +18,13 @@
  */
 package scratch.ast.model.expression.num;
 
-import com.google.common.collect.ImmutableList;
-import scratch.ast.model.ASTNode;
+import scratch.ast.model.expression.BinaryExpression;
 import scratch.ast.visitor.ScratchVisitor;
 
-public class Mult implements NumExpr {
+public class Mult extends BinaryExpression<NumExpr, NumExpr> implements NumExpr {
 
-    private final NumExpr first;
-    private final NumExpr second;
-    private final ImmutableList<ASTNode> children;
-
-    public Mult(NumExpr first, NumExpr second) {
-        this.first = first;
-        this.second = second;
-        children = ImmutableList.<ASTNode>builder().add(first).add(second).build();
-    }
-
-    public NumExpr getFirst() {
-        return first;
-    }
-
-    public NumExpr getSecond() {
-        return second;
+    protected Mult(NumExpr operand1, NumExpr operand2) {
+        super(operand1, operand2);
     }
 
     @Override
@@ -47,8 +32,4 @@ public class Mult implements NumExpr {
         visitor.visit(this);
     }
 
-    @Override
-    public ImmutableList<ASTNode> getChildren() {
-        return children;
-    }
 }

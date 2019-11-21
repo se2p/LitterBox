@@ -18,17 +18,15 @@
  */
 package scratch.ast.model;
 
-import com.google.common.collect.ImmutableList;
 import scratch.ast.visitor.ScratchVisitor;
+import java.util.List;
 
 public interface ASTNode {
 
     void accept(ScratchVisitor visitor);
 
-    ImmutableList<ASTNode> getChildren();
+    List<? extends ASTNode> getChildren();
 
-    default String getUniqueName() {
-        return this.getClass().getSimpleName();
-    }
+    String getUniqueName();
 
 }

@@ -23,9 +23,7 @@ import static scratch.ast.Constants.POS_DATA_ARRAY;
 import static scratch.ast.Constants.POS_INPUT_VALUE;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import scratch.ast.model.color.Color;
-import scratch.ast.model.color.Rgba;
-import scratch.ast.model.expression.num.Number;
+import scratch.ast.model.expression.color.Rgba;
 
 public class ColorParser {
 

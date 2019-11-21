@@ -18,21 +18,19 @@
  */
 package scratch.ast.model.expression.bool;
 
-import com.google.common.collect.ImmutableList;
-import scratch.ast.model.ASTNode;
+import scratch.ast.model.AbstractNode;
 import scratch.ast.model.expression.Expression;
 import scratch.ast.visitor.ScratchVisitor;
 
-public class ExpressionContains implements BoolExpr {
+public class ExpressionContains extends AbstractNode implements BoolExpr {
 
     private final Expression containing;
     private final Expression contained;
-    private final ImmutableList<ASTNode> children;
 
     public ExpressionContains(Expression containing, Expression contained) {
+        super(containing, contained);
         this.containing = containing;
         this.contained = contained;
-        children = ImmutableList.<ASTNode>builder().add(containing).add(contained).build();
     }
 
     public Expression getContaining() {
@@ -48,8 +46,4 @@ public class ExpressionContains implements BoolExpr {
         visitor.visit(this);
     }
 
-    @Override
-    public ImmutableList<ASTNode> getChildren() {
-        return children;
-    }
 }

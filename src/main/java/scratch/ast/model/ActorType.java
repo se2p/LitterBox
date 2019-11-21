@@ -18,7 +18,7 @@
  */
 package scratch.ast.model;
 
-import com.google.common.collect.ImmutableList;
+import scratch.utils.UnmodifiableListBuilder;
 import scratch.ast.visitor.ScratchVisitor;
 
 public enum ActorType implements ASTLeaf {

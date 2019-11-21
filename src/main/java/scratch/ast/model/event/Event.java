@@ -18,8 +18,6 @@
  */
 package scratch.ast.model.event;
 
-import scratch.ast.model.ASTNode;
-
-public interface Event extends ASTNode {
+public interface Event {
 
 }

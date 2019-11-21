@@ -18,18 +18,16 @@
  */
 package scratch.ast.model.expression.num;
 
-import com.google.common.collect.ImmutableList;
-import scratch.ast.model.ASTNode;
+import scratch.ast.model.expression.UnaryExpression;
 import scratch.ast.visitor.ScratchVisitor;
 
-public class Round implements NumExpr {
+public class Round extends UnaryExpression implements NumExpr {
 
     private final NumExpr num;
-    private final ImmutableList<ASTNode> children;
 
     public Round(NumExpr num) {
+        super(num);
         this.num = num;
-        children = ImmutableList.<ASTNode>builder().add(num).build();
     }
 
     public NumExpr getNum() {
@@ -41,8 +39,4 @@ public class Round implements NumExpr {
         visitor.visit(this);
     }
 
-    @Override
-    public ImmutableList<ASTNode> getChildren() {
-        return children;
-    }
 }

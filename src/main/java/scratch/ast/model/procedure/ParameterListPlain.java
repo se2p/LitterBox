@@ -18,7 +18,7 @@
  */
 package scratch.ast.model.procedure;
 
-import com.google.common.collect.ImmutableList;
+import scratch.utils.UnmodifiableListBuilder;
 import java.util.List;
 import scratch.ast.model.ASTNode;
 import scratch.ast.visitor.ScratchVisitor;

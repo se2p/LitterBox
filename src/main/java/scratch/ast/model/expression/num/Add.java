@@ -18,28 +18,15 @@
  */
 package scratch.ast.model.expression.num;
 
-import com.google.common.collect.ImmutableList;
+import scratch.ast.model.expression.BinaryExpression;
+import scratch.utils.UnmodifiableListBuilder;
 import scratch.ast.model.ASTNode;
 import scratch.ast.visitor.ScratchVisitor;
 
-public class Add implements NumExpr {
-
-    private final NumExpr first;
-    private final NumExpr second;
-    private final ImmutableList<ASTNode> children;
+public class Add extends BinaryExpression<NumExpr, NumExpr> implements NumExpr {
 
     public Add(NumExpr first, NumExpr second) {
-        this.first = first;
-        this.second = second;
-        children = ImmutableList.<ASTNode>builder().add(first).add(second).build();
-    }
-
-    public NumExpr getFirst() {
-        return first;
-    }
-
-    public NumExpr getSecond() {
-        return second;
+        super(first, second);
     }
 
     @Override
@@ -47,8 +34,4 @@ public class Add implements NumExpr {
         visitor.visit(this);
     }
 
-    @Override
-    public ImmutableList<ASTNode> getChildren() {
-        return children;
-    }
 }

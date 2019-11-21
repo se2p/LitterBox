@@ -32,7 +32,6 @@ import static scratch.ast.Constants.VOLUME_KEY;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.base.Preconditions;
 import scratch.ast.ParsingException;
-import scratch.ast.model.expression.string.Str;
 import scratch.ast.model.statement.Stmt;
 import scratch.ast.model.statement.common.SetAttributeTo;
 import scratch.ast.model.statement.common.SetStmt;

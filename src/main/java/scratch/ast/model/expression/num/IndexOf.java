@@ -18,22 +18,20 @@
  */
 package scratch.ast.model.expression.num;
 
-import com.google.common.collect.ImmutableList;
-import scratch.ast.model.ASTNode;
+import scratch.ast.model.AbstractNode;
 import scratch.ast.model.expression.Expression;
 import scratch.ast.model.variable.Variable;
 import scratch.ast.visitor.ScratchVisitor;
 
-public class IndexOf implements NumExpr {
+public class IndexOf extends AbstractNode implements NumExpr {
 
     private final Expression expr;
     private final Variable variable;
-    private final ImmutableList<ASTNode> children;
 
     public IndexOf(Expression expr, Variable variable) {
+        super(expr, variable);
         this.expr = expr;
         this.variable = variable;
-        children = ImmutableList.<ASTNode>builder().add(expr).add(variable).build();
     }
 
     public Expression getExpr() {
@@ -49,8 +47,4 @@ public class IndexOf implements NumExpr {
         visitor.visit(this);
     }
 
-    @Override
-    public ImmutableList<ASTNode> getChildren() {
-        return children;
-    }
 }

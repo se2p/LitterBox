@@ -18,17 +18,14 @@
  */
 package scratch.ast.model.elementchoice;
 
-import com.google.common.collect.ImmutableList;
 import scratch.ast.model.ASTLeaf;
-import scratch.ast.model.ASTNode;
+import scratch.ast.model.AbstractNode;
 import scratch.ast.visitor.ScratchVisitor;
 
-public class Random implements ElementChoice, ASTLeaf {
-
-    private final ImmutableList<ASTNode> children;
+public class Random extends AbstractNode implements ElementChoice, ASTLeaf {
 
     public Random() {
-        children = ImmutableList.<ASTNode>builder().build();
+        super();
     }
 
     @Override
@@ -36,8 +33,4 @@ public class Random implements ElementChoice, ASTLeaf {
         visitor.visit(this);
     }
 
-    @Override
-    public ImmutableList<ASTNode> getChildren() {
-        return children;
-    }
 }

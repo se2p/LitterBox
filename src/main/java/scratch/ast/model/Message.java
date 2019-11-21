@@ -18,18 +18,16 @@
  */
 package scratch.ast.model;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.base.Preconditions;
 import scratch.ast.visitor.ScratchVisitor;
 
-public class Message implements ASTLeaf {
+public class Message extends AbstractNode implements ASTLeaf {
 
     private final String message;
-    private final ImmutableList<ASTNode> children;
 
     public Message(String message) {
+        super();
         this.message = Preconditions.checkNotNull(message);
-        children = ImmutableList.<ASTNode>builder().build();
     }
 
     public String getMessage() {
@@ -39,11 +37,6 @@ public class Message implements ASTLeaf {
     @Override
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);
-    }
-
-    @Override
-    public ImmutableList<ASTNode> getChildren() {
-        return children;
     }
 
     @Override

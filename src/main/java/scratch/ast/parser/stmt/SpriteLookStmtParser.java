@@ -29,7 +29,6 @@ import scratch.ast.ParsingException;
 import scratch.ast.model.elementchoice.ElementChoice;
 import scratch.ast.model.expression.num.Mult;
 import scratch.ast.model.expression.num.NumExpr;
-import scratch.ast.model.expression.num.Number;
 import scratch.ast.model.expression.string.StringExpr;
 import scratch.ast.model.statement.spritelook.ChangeLayerBy;
 import scratch.ast.model.statement.spritelook.ChangeSizeBy;

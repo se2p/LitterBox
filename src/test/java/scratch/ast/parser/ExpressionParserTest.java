@@ -32,9 +32,7 @@ import scratch.ast.model.expression.num.Mod;
 import scratch.ast.model.expression.num.MouseX;
 import scratch.ast.model.expression.num.Mult;
 import scratch.ast.model.expression.num.NumExpr;
-import scratch.ast.model.expression.num.Number;
 import scratch.ast.model.expression.num.PickRandom;
-import scratch.ast.model.numfunct.Pow10;
 import utils.JsonParser;
 
 public class ExpressionParserTest {

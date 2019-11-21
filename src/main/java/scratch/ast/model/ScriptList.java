@@ -18,7 +18,7 @@
  */
 package scratch.ast.model;
 
-import com.google.common.collect.ImmutableList;
+import scratch.utils.UnmodifiableListBuilder;
 import java.util.List;
 
 import com.google.common.base.Preconditions;

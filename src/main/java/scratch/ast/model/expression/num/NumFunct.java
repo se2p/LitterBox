@@ -16,18 +16,41 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-package scratch.ast.model.expression.bool.literal;
+package scratch.ast.model.expression.num;
 
-import com.google.common.collect.ImmutableList;
+import scratch.ast.model.ASTLeaf;
 import scratch.ast.model.ASTNode;
 import scratch.ast.visitor.ScratchVisitor;
+import scratch.utils.Preconditions;
 
-public class True implements BoolLiteral {
+import java.util.Collections;
+import java.util.List;
 
-    private final ImmutableList<ASTNode> children;
+public enum NumFunct implements ASTNode, ASTLeaf {
 
-    public True() {
-        children = ImmutableList.<ASTNode>builder().build();
+    ABS("abs"),
+    ACOS("acos"),
+    ASIN("asin"),
+    ATAN("atan"),
+    CEILING("ceiling"),
+    COS("cos"),
+    FLOOR("floor"),
+    LN("ln"),
+    LOG("log"),
+    POW10("pow10"),
+    POWE("powe"),
+    SIN("sin"),
+    SQRT("sqrt"),
+    TAN("tan");
+
+    private final String function;
+
+    NumFunct(String function) {
+        this.function = Preconditions.checkNotNull(function);
+    }
+
+    public String getFunction() {
+        return function;
     }
 
     @Override
@@ -36,7 +59,12 @@ public class True implements BoolLiteral {
     }
 
     @Override
-    public ImmutableList<ASTNode> getChildren() {
-        return children;
+    public List<? extends ASTNode> getChildren() {
+        return Collections.EMPTY_LIST;
+    }
+
+    @Override
+    public String getUniqueName() {
+        return this.getClass().getSimpleName();
     }
 }

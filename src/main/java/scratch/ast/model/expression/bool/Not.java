@@ -18,22 +18,13 @@
  */
 package scratch.ast.model.expression.bool;
 
-import com.google.common.collect.ImmutableList;
-import scratch.ast.model.ASTNode;
+import scratch.ast.model.expression.UnaryExpression;
 import scratch.ast.visitor.ScratchVisitor;
 
-public class Not implements BoolExpr {
+public class Not extends UnaryExpression<BoolExpr> implements BoolExpr {
 
-    private final BoolExpr boolExpr;
-    private final ImmutableList<ASTNode> children;
-
-    public Not(BoolExpr boolExpr) {
-        this.boolExpr = boolExpr;
-        children = ImmutableList.<ASTNode>builder().add(boolExpr).build();
-    }
-
-    public BoolExpr getBoolExpr() {
-        return boolExpr;
+    protected Not(BoolExpr operand1) {
+        super(operand1);
     }
 
     @Override
@@ -41,8 +32,4 @@ public class Not implements BoolExpr {
         visitor.visit(this);
     }
 
-    @Override
-    public ImmutableList<ASTNode> getChildren() {
-        return children;
-    }
 }

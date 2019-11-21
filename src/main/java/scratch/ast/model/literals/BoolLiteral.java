@@ -16,26 +16,24 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-package scratch.ast.model.expression.string;
+package scratch.ast.model.literals;
 
-import com.google.common.collect.ImmutableList;
 import scratch.ast.model.ASTLeaf;
-import scratch.ast.model.ASTNode;
+import scratch.ast.model.AbstractNode;
+import scratch.ast.model.expression.bool.BoolExpr;
 import scratch.ast.visitor.ScratchVisitor;
 
-//Concrete string: StringExpr ::= String
-public class Str implements StringExpr, ASTLeaf {
+public class BoolLiteral extends AbstractNode implements BoolExpr, ASTLeaf {
 
-    private final ImmutableList<ASTNode> children;
-    private String str;
+    private final boolean value;
 
-    public Str(String str) {
-        this.str = str;
-        children = ImmutableList.<ASTNode>builder().build();
+    BoolLiteral(boolean value) {
+        super();
+        this.value = value;
     }
 
-    public String getStr() {
-        return str;
+    boolean getValue() {
+        return value;
     }
 
     @Override
@@ -44,13 +42,12 @@ public class Str implements StringExpr, ASTLeaf {
     }
 
     @Override
-    public ImmutableList<ASTNode> getChildren() {
-        return children;
-    }
-
-    @Override
     public String[] toSimpleStringArray() {
-        String[] returnArray = {str};
+        String[] returnArray = {"" + value};
         return returnArray;
     }
+
+    public static final BoolLiteral FALSE = new BoolLiteral(false);
+
+    public static final BoolLiteral TRUE = new BoolLiteral(true);
 }

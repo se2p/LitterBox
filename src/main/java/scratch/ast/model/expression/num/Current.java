@@ -18,19 +18,17 @@
  */
 package scratch.ast.model.expression.num;
 
-import com.google.common.collect.ImmutableList;
-import scratch.ast.model.ASTNode;
+import scratch.ast.model.AbstractNode;
 import scratch.ast.model.timecomp.TimeComp;
 import scratch.ast.visitor.ScratchVisitor;
 
-public class Current implements NumExpr {
+public class Current extends AbstractNode implements NumExpr {
 
     private final TimeComp timeComp;
-    private final ImmutableList<ASTNode> children;
 
     public Current(TimeComp timeComp) {
+        super(timeComp);
         this.timeComp = timeComp;
-        children = ImmutableList.<ASTNode>builder().add(timeComp).build();
     }
 
     public TimeComp getTimeComp() {
@@ -42,8 +40,4 @@ public class Current implements NumExpr {
         visitor.visit(this);
     }
 
-    @Override
-    public ImmutableList<ASTNode> getChildren() {
-        return children;
-    }
 }

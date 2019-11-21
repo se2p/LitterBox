@@ -37,7 +37,6 @@ import scratch.ast.model.expression.Expression;
 import scratch.ast.model.expression.bool.BoolExpr;
 import scratch.ast.model.expression.bool.UnspecifiedBoolExpr;
 import scratch.ast.model.expression.num.NumExpr;
-import scratch.ast.model.expression.string.Str;
 import scratch.ast.model.statement.common.Broadcast;
 import scratch.ast.model.statement.common.BroadcastAndWait;
 import scratch.ast.model.statement.common.ChangeAttributeBy;

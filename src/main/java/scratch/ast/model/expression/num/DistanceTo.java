@@ -18,19 +18,19 @@
  */
 package scratch.ast.model.expression.num;
 
-import com.google.common.collect.ImmutableList;
+import scratch.ast.model.AbstractNode;
+import scratch.utils.UnmodifiableListBuilder;
 import scratch.ast.model.ASTNode;
 import scratch.ast.model.position.Position;
 import scratch.ast.visitor.ScratchVisitor;
 
-public class DistanceTo implements NumExpr {
+public class DistanceTo extends AbstractNode implements NumExpr {
 
     private final Position position;
-    private final ImmutableList<ASTNode> children;
 
     public DistanceTo(Position position) {
+        super(position);
         this.position = position;
-        children = ImmutableList.<ASTNode>builder().add(position).build();
     }
 
     public Position getPosition() {
@@ -42,8 +42,4 @@ public class DistanceTo implements NumExpr {
         visitor.visit(this);
     }
 
-    @Override
-    public ImmutableList<ASTNode> getChildren() {
-        return children;
-    }
 }

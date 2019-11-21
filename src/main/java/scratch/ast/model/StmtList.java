@@ -18,7 +18,7 @@
  */
 package scratch.ast.model;
 
-import com.google.common.collect.ImmutableList;
+import scratch.utils.UnmodifiableListBuilder;
 import com.google.common.base.Preconditions;
 import scratch.ast.model.statement.spritelook.ListOfStmt;
 import scratch.ast.model.statement.termination.TerminationStmt;

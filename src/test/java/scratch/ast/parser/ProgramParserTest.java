@@ -35,8 +35,6 @@ import scratch.ast.model.ActorDefinitionList;
 import scratch.ast.model.Program;
 import scratch.ast.model.SetStmtList;
 import scratch.ast.model.expression.list.ExpressionListPlain;
-import scratch.ast.model.expression.num.Number;
-import scratch.ast.model.expression.string.Str;
 import scratch.ast.model.resource.ImageResource;
 import scratch.ast.model.resource.SoundResource;
 import scratch.ast.model.statement.common.SetAttributeTo;

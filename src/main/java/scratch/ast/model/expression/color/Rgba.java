@@ -16,32 +16,26 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-package scratch.ast.model.color;
+package scratch.ast.model.expression.color;
 
-import com.google.common.collect.ImmutableList;
-import scratch.ast.model.ASTNode;
+import scratch.utils.Preconditions;
+import scratch.ast.model.AbstractNode;
 import scratch.ast.model.expression.num.NumExpr;
 import scratch.ast.visitor.ScratchVisitor;
 
-public class Rgba implements Color {
+public class Rgba extends AbstractNode implements ColorExpression {
 
-    private final ImmutableList<ASTNode> children;
     private NumExpr rValue;
     private NumExpr gValue;
     private NumExpr bValue;
     private NumExpr aValue;
 
     public Rgba(NumExpr rValue, NumExpr gValue, NumExpr bValue, NumExpr aValue) {
-        this.rValue = rValue;
-        this.gValue = gValue;
-        this.bValue = bValue;
-        this.aValue = aValue;
-        children = ImmutableList.<ASTNode>builder()
-            .add(rValue)
-            .add(gValue)
-            .add(bValue)
-            .add(aValue)
-            .build();
+        super(rValue, gValue, bValue, aValue);
+        this.rValue = Preconditions.checkNotNull(rValue);
+        this.gValue = Preconditions.checkNotNull(gValue);
+        this.bValue = Preconditions.checkNotNull(bValue);
+        this.aValue = Preconditions.checkNotNull(aValue);
     }
 
     public NumExpr getrValue() {
@@ -65,8 +59,4 @@ public class Rgba implements Color {
         visitor.visit(this);
     }
 
-    @Override
-    public ImmutableList<ASTNode> getChildren() {
-        return children;
-    }
 }

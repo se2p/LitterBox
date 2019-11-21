@@ -18,19 +18,17 @@
  */
 package scratch.ast.model.event;
 
-import com.google.common.collect.ImmutableList;
-import scratch.ast.model.ASTNode;
+import scratch.ast.model.AbstractNode;
 import scratch.ast.model.Message;
 import scratch.ast.visitor.ScratchVisitor;
 
-public class ReceptionOfMessage implements Event {
+public class ReceptionOfMessage extends AbstractNode implements Event {
 
     private final Message msg;
-    private final ImmutableList<ASTNode> children;
 
     public ReceptionOfMessage(Message msg) {
+        super(msg);
         this.msg = msg;
-        children = ImmutableList.<ASTNode>builder().add(msg).build();
     }
 
     public Message getMsg() {
@@ -42,8 +40,4 @@ public class ReceptionOfMessage implements Event {
         visitor.visit(this);
     }
 
-    @Override
-    public ImmutableList<ASTNode> getChildren() {
-        return children;
-    }
 }

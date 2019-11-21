@@ -18,26 +18,17 @@
  */
 package scratch.ast.model.expression.string;
 
-import com.google.common.collect.ImmutableList;
+import scratch.ast.model.AbstractNode;
+import scratch.utils.UnmodifiableListBuilder;
 import scratch.ast.model.ASTLeaf;
 import scratch.ast.model.ASTNode;
 import scratch.ast.visitor.ScratchVisitor;
 
-public class Username implements StringExpr, ASTLeaf {
-
-    private final ImmutableList<ASTNode> children;
-
-    public Username() {
-        children = ImmutableList.<ASTNode>builder().build();
-    }
+public class Username extends AbstractNode implements StringExpr, ASTLeaf {
 
     @Override
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);
     }
 
-    @Override
-    public ImmutableList<ASTNode> getChildren() {
-        return children;
-    }
 }

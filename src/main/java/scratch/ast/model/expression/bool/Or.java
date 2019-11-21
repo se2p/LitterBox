@@ -18,28 +18,13 @@
  */
 package scratch.ast.model.expression.bool;
 
-import com.google.common.collect.ImmutableList;
-import scratch.ast.model.ASTNode;
+import scratch.ast.model.expression.BinaryExpression;
 import scratch.ast.visitor.ScratchVisitor;
 
-public class Or implements BoolExpr {
+public class Or extends BinaryExpression<BoolExpr, BoolExpr> implements BoolExpr {
 
-    private final BoolExpr first;
-    private final BoolExpr second;
-    private final ImmutableList<ASTNode> children;
-
-    public Or(BoolExpr first, BoolExpr second) {
-        this.first = first;
-        this.second = second;
-        children = ImmutableList.<ASTNode>builder().add(first).add(second).build();
-    }
-
-    public BoolExpr getFirst() {
-        return first;
-    }
-
-    public BoolExpr getSecond() {
-        return second;
+    protected Or(BoolExpr operand1, BoolExpr operand2) {
+        super(operand1, operand2);
     }
 
     @Override
@@ -47,8 +32,4 @@ public class Or implements BoolExpr {
         visitor.visit(this);
     }
 
-    @Override
-    public ImmutableList<ASTNode> getChildren() {
-        return children;
-    }
 }

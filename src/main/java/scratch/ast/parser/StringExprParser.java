@@ -40,7 +40,6 @@ import scratch.ast.model.expression.string.AttributeOf;
 import scratch.ast.model.expression.string.ItemOfVariable;
 import scratch.ast.model.expression.string.Join;
 import scratch.ast.model.expression.string.LetterOf;
-import scratch.ast.model.expression.string.Str;
 import scratch.ast.model.expression.string.StringExpr;
 import scratch.ast.model.expression.string.Username;
 import scratch.ast.model.variable.Identifier;

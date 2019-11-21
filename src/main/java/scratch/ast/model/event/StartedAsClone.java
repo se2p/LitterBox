@@ -18,18 +18,14 @@
  */
 package scratch.ast.model.event;
 
-import com.google.common.collect.ImmutableList;
 import scratch.ast.model.ASTLeaf;
-import scratch.ast.model.ASTNode;
+import scratch.ast.model.AbstractNode;
 import scratch.ast.visitor.ScratchVisitor;
 
-public class StartedAsClone implements Event, ASTLeaf {
-
-    private final ImmutableList<ASTNode> children;
+public class StartedAsClone extends AbstractNode implements Event, ASTLeaf {
 
     public StartedAsClone() {
-        ImmutableList.Builder<ASTNode> builder = ImmutableList.builder();
-        children = builder.build();
+        super();
     }
 
     @Override
@@ -37,8 +33,4 @@ public class StartedAsClone implements Event, ASTLeaf {
         visitor.visit(this);
     }
 
-    @Override
-    public ImmutableList<ASTNode> getChildren() {
-        return children;
-    }
 }
