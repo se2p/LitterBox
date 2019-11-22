@@ -18,7 +18,6 @@
  */
 package scratch.structure;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import utils.Version;
 
 import java.util.List;

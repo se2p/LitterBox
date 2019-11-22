@@ -1,0 +1,413 @@
+{
+  "targets": [
+    {
+      "isStage": true,
+      "name": "Stage",
+      "variables": {
+        "`jEk@4|i[#Fk?(8x)AV.-my variable": [
+          "my variable",
+          0
+        ]
+      },
+      "lists": {},
+      "broadcasts": {
+        "YMEZ`{-_7eaHG^tcy?vP": "message1"
+      },
+      "blocks": {},
+      "comments": {},
+      "currentCostume": 0,
+      "costumes": [
+        {
+          "assetId": "cd21514d0531fdffb22204e0ec5ed84a",
+          "name": "backdrop1",
+          "md5ext": "cd21514d0531fdffb22204e0ec5ed84a.svg",
+          "dataFormat": "svg",
+          "rotationCenterX": 240,
+          "rotationCenterY": 180
+        }
+      ],
+      "sounds": [
+        {
+          "assetId": "83a9787d4cb6f3b7632b4ddfebf74367",
+          "name": "pop",
+          "dataFormat": "wav",
+          "format": "",
+          "rate": 44100,
+          "sampleCount": 1032,
+          "md5ext": "83a9787d4cb6f3b7632b4ddfebf74367.wav"
+        }
+      ],
+      "volume": 100,
+      "layerOrder": 0,
+      "tempo": 60,
+      "videoTransparency": 50,
+      "videoState": "on",
+      "textToSpeechLanguage": null
+    },
+    {
+      "isStage": false,
+      "name": "Sprite1",
+      "variables": {},
+      "lists": {},
+      "broadcasts": {},
+      "blocks": {
+        "@~m^t7U]))DD#k:sx8u:": {
+          "opcode": "motion_movesteps",
+          "next": "[QX$=/B=;gTYWQ7U]$bc",
+          "parent": null,
+          "inputs": {
+            "STEPS": [
+              1,
+              [
+                4,
+                "10"
+              ]
+            ]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": true,
+          "x": 64,
+          "y": -43
+        },
+        "[QX$=/B=;gTYWQ7U]$bc": {
+          "opcode": "motion_turnright",
+          "next": "Mv53_pi!_F-J}Ekk8cpF",
+          "parent": "@~m^t7U]))DD#k:sx8u:",
+          "inputs": {
+            "DEGREES": [
+              1,
+              [
+                4,
+                "15"
+              ]
+            ]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "Mv53_pi!_F-J}Ekk8cpF": {
+          "opcode": "motion_turnleft",
+          "next": "S``mX8_6HnH!O2~*[Wy:",
+          "parent": "[QX$=/B=;gTYWQ7U]$bc",
+          "inputs": {
+            "DEGREES": [
+              1,
+              [
+                4,
+                "15"
+              ]
+            ]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "S``mX8_6HnH!O2~*[Wy:": {
+          "opcode": "motion_goto",
+          "next": "39N]}oe_x8JB%j7NN%f-",
+          "parent": "Mv53_pi!_F-J}Ekk8cpF",
+          "inputs": {
+            "TO": [
+              1,
+              "sr(#GgRDxLG0KC0$8-8Z"
+            ]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "sr(#GgRDxLG0KC0$8-8Z": {
+          "opcode": "motion_goto_menu",
+          "next": null,
+          "parent": "S``mX8_6HnH!O2~*[Wy:",
+          "inputs": {},
+          "fields": {
+            "TO": [
+              "_random_",
+              null
+            ]
+          },
+          "shadow": true,
+          "topLevel": false
+        },
+        "39N]}oe_x8JB%j7NN%f-": {
+          "opcode": "motion_gotoxy",
+          "next": "/Y$5U:!2IHy_69xlCpeg",
+          "parent": "S``mX8_6HnH!O2~*[Wy:",
+          "inputs": {
+            "X": [
+              1,
+              [
+                4,
+                "0"
+              ]
+            ],
+            "Y": [
+              1,
+              [
+                4,
+                "0"
+              ]
+            ]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "/Y$5U:!2IHy_69xlCpeg": {
+          "opcode": "motion_glideto",
+          "next": "xkx2:IhFSHD}2=(KH%y2",
+          "parent": "39N]}oe_x8JB%j7NN%f-",
+          "inputs": {
+            "SECS": [
+              1,
+              [
+                4,
+                "1"
+              ]
+            ],
+            "TO": [
+              1,
+              "nDl@R.3}yt^Gt7avnW_?"
+            ]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "nDl@R.3}yt^Gt7avnW_?": {
+          "opcode": "motion_glideto_menu",
+          "next": null,
+          "parent": "/Y$5U:!2IHy_69xlCpeg",
+          "inputs": {},
+          "fields": {
+            "TO": [
+              "_random_",
+              null
+            ]
+          },
+          "shadow": true,
+          "topLevel": false
+        },
+        "xkx2:IhFSHD}2=(KH%y2": {
+          "opcode": "motion_glidesecstoxy",
+          "next": "%Umr9Q|+5VW_w3Z!_Ee@",
+          "parent": "/Y$5U:!2IHy_69xlCpeg",
+          "inputs": {
+            "SECS": [
+              1,
+              [
+                4,
+                "1"
+              ]
+            ],
+            "X": [
+              1,
+              [
+                4,
+                "0"
+              ]
+            ],
+            "Y": [
+              1,
+              [
+                4,
+                "0"
+              ]
+            ]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "%Umr9Q|+5VW_w3Z!_Ee@": {
+          "opcode": "motion_pointindirection",
+          "next": "etwWK#C-2|YAdp0pC2-%",
+          "parent": "xkx2:IhFSHD}2=(KH%y2",
+          "inputs": {
+            "DIRECTION": [
+              1,
+              [
+                8,
+                "90"
+              ]
+            ]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "etwWK#C-2|YAdp0pC2-%": {
+          "opcode": "motion_pointtowards",
+          "next": "uwDZH_?q.H6DuZ`iBTNg",
+          "parent": "%Umr9Q|+5VW_w3Z!_Ee@",
+          "inputs": {
+            "TOWARDS": [
+              1,
+              "4}tghcbX4k_%~I^xsjgd"
+            ]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "4}tghcbX4k_%~I^xsjgd": {
+          "opcode": "motion_pointtowards_menu",
+          "next": null,
+          "parent": "etwWK#C-2|YAdp0pC2-%",
+          "inputs": {},
+          "fields": {
+            "TOWARDS": [
+              "_mouse_",
+              null
+            ]
+          },
+          "shadow": true,
+          "topLevel": false
+        },
+        "uwDZH_?q.H6DuZ`iBTNg": {
+          "opcode": "motion_changexby",
+          "next": "g6ivGWmf-:grsbfJe$H*",
+          "parent": "etwWK#C-2|YAdp0pC2-%",
+          "inputs": {
+            "DX": [
+              1,
+              [
+                4,
+                "10"
+              ]
+            ]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "g6ivGWmf-:grsbfJe$H*": {
+          "opcode": "motion_setx",
+          "next": "h!jN~XZ7v(KwCA4]C~B(",
+          "parent": "uwDZH_?q.H6DuZ`iBTNg",
+          "inputs": {
+            "X": [
+              1,
+              [
+                4,
+                "0"
+              ]
+            ]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "h!jN~XZ7v(KwCA4]C~B(": {
+          "opcode": "motion_changeyby",
+          "next": "CaZcVqgfEfZm.0c7Kdt~",
+          "parent": "g6ivGWmf-:grsbfJe$H*",
+          "inputs": {
+            "DY": [
+              1,
+              [
+                4,
+                "10"
+              ]
+            ]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "CaZcVqgfEfZm.0c7Kdt~": {
+          "opcode": "motion_sety",
+          "next": "]I4Q!`^CAS-@~$6fGbva",
+          "parent": "h!jN~XZ7v(KwCA4]C~B(",
+          "inputs": {
+            "Y": [
+              1,
+              [
+                4,
+                "0"
+              ]
+            ]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "]I4Q!`^CAS-@~$6fGbva": {
+          "opcode": "motion_ifonedgebounce",
+          "next": "O~$YxVRb6Cu+PnG9.T{D",
+          "parent": "CaZcVqgfEfZm.0c7Kdt~",
+          "inputs": {},
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "O~$YxVRb6Cu+PnG9.T{D": {
+          "opcode": "motion_setrotationstyle",
+          "next": null,
+          "parent": "]I4Q!`^CAS-@~$6fGbva",
+          "inputs": {},
+          "fields": {
+            "STYLE": [
+              "left-right",
+              null
+            ]
+          },
+          "shadow": false,
+          "topLevel": false
+        }
+      },
+      "comments": {},
+      "currentCostume": 0,
+      "costumes": [
+        {
+          "assetId": "b7853f557e4426412e64bb3da6531a99",
+          "name": "costume1",
+          "bitmapResolution": 1,
+          "md5ext": "b7853f557e4426412e64bb3da6531a99.svg",
+          "dataFormat": "svg",
+          "rotationCenterX": 48,
+          "rotationCenterY": 50
+        },
+        {
+          "assetId": "e6ddc55a6ddd9cc9d84fe0b4c21e016f",
+          "name": "costume2",
+          "bitmapResolution": 1,
+          "md5ext": "e6ddc55a6ddd9cc9d84fe0b4c21e016f.svg",
+          "dataFormat": "svg",
+          "rotationCenterX": 46,
+          "rotationCenterY": 53
+        }
+      ],
+      "sounds": [
+        {
+          "assetId": "83c36d806dc92327b9e7049a565c6bff",
+          "name": "Meow",
+          "dataFormat": "wav",
+          "format": "",
+          "rate": 44100,
+          "sampleCount": 37376,
+          "md5ext": "83c36d806dc92327b9e7049a565c6bff.wav"
+        }
+      ],
+      "volume": 100,
+      "layerOrder": 1,
+      "visible": true,
+      "x": 0,
+      "y": 0,
+      "size": 100,
+      "direction": 90,
+      "draggable": false,
+      "rotationStyle": "all around"
+    }
+  ],
+  "monitors": [],
+  "extensions": [],
+  "meta": {
+    "semver": "3.0.0",
+    "vm": "0.2.0-prerelease.20190822194548",
+    "agent": "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:69.0) Gecko/20100101 Firefox/69.0"
+  }
+}

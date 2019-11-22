@@ -16,8 +16,12 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
+import static org.junit.Assert.assertEquals;
+
 import analytics.IssueReport;
 import analytics.finder.LaggyMovement;
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.Test;
 import scratch.data.ScBlock;
 import scratch.data.Script;
@@ -26,11 +30,6 @@ import scratch.structure.Sprite;
 import scratch.structure.Stage;
 import utils.Identifier;
 import utils.Version;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.junit.Assert.assertEquals;
 
 public class LaggyMovementTest {
 

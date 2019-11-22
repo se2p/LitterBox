@@ -19,12 +19,11 @@
 package utils.deserializer.scratch2;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import scratch.data.ScBlock;
-import scratch.data.Script;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import scratch.data.ScBlock;
+import scratch.data.Script;
 
 /**
  * More information about the JSON Scratch 2 file format and its JSON arrays and nodes:
@@ -84,7 +83,6 @@ class ScriptDeserializer {
     /**
      * Parsing a block with its nested blocks
      * Pretty dirty because of the way Scratch saves their block structure in the Version 2.0 (https://en.scratch-wiki.info/wiki/Scratch_File_Format#Block_tuples)
-     * TODO: Create new method for JSON parsing when using Scratch Version 3.0
      * In Version 3.0, you can directly access nested blocks and condition values. You do not need to check for JsonNode array content anymore.
      *
      * @param objectNode the JsonNode to deserialize

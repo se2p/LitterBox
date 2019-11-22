@@ -18,17 +18,48 @@
  */
 package analytics;
 
-import analytics.ctscore.*;
-import analytics.finder.*;
-import org.apache.commons.csv.CSVPrinter;
-import scratch.structure.Project;
-import utils.CSVWriter;
-
+import analytics.ctscore.Abstraction;
+import analytics.ctscore.DataRepresentation;
+import analytics.ctscore.FlowControl;
+import analytics.ctscore.LogicalThinking;
+import analytics.ctscore.Parallelism;
+import analytics.ctscore.Synchronization;
+import analytics.ctscore.UserInteractivity;
+import analytics.finder.AttributeModification;
+import analytics.finder.BroadcastSync;
+import analytics.finder.CloneInitialization;
+import analytics.finder.CountBlocks;
+import analytics.finder.DoubleIf;
+import analytics.finder.DuplicatedScript;
+import analytics.finder.DuplicatedSprite;
+import analytics.finder.EmptyBody;
+import analytics.finder.EmptyScript;
+import analytics.finder.GlobalStartingPoint;
+import analytics.finder.InappropriateIntimacy;
+import analytics.finder.LaggyMovement;
+import analytics.finder.LongScript;
+import analytics.finder.LooseBlocks;
+import analytics.finder.MiddleMan;
+import analytics.finder.MissingForever;
+import analytics.finder.MissingTermination;
+import analytics.finder.NestedLoops;
+import analytics.finder.NoOpProject;
+import analytics.finder.Noop;
+import analytics.finder.RaceCondition;
+import analytics.finder.SequentialActions;
+import analytics.finder.SpriteNaming;
+import analytics.finder.StartingPoint;
+import analytics.finder.TotalClones;
+import analytics.finder.UnusedVariable;
+import analytics.finder.VariableScope;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.apache.commons.csv.CSVPrinter;
+import scratch.structure.Project;
+import utils.CSVWriter;
 
 /**
  * Holds all IssueFinder and executes them.

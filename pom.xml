@@ -4,14 +4,15 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>de.uni_passau.fim.sulzmaie</groupId>
-    <artifactId>ScratchAnalytics</artifactId>
+    <groupId>de.uni_passau.fim.se2</groupId>
+    <artifactId>Litterbox</artifactId>
     <version>1.0</version>
     <build>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.1</version>
                 <configuration>
                     <source>8</source>
                     <target>8</target>
@@ -94,6 +95,7 @@
     <properties>
         <!-- Use the latest version whenever possible. -->
         <jackson.version>2.9.6</jackson.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
     <dependencies>
@@ -109,9 +111,9 @@
         </dependency>
         <!-- https://mvnrepository.com/artifact/junit/junit -->
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.13-beta-3</version>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>5.5.2</version>
             <scope>test</scope>
         </dependency>
         <!-- https://mvnrepository.com/artifact/commons-cli/commons-cli -->
@@ -120,7 +122,21 @@
             <artifactId>commons-cli</artifactId>
             <version>1.4</version>
         </dependency>
-
-
+        <dependency>
+            <artifactId>guava</artifactId>
+            <groupId>com.google.guava</groupId>
+            <version>28.1-jre</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>2.6</version>
+        </dependency>
+        <dependency>
+            <artifactId>truth</artifactId>
+            <groupId>com.google.truth</groupId>
+            <scope>test</scope>
+            <version>1.0</version>
+        </dependency>
     </dependencies>
 </project>

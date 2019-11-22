@@ -19,11 +19,10 @@
 package utils.deserializer.scratch3;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import scratch.data.Comment;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import scratch.data.Comment;
 
 class CommentDeserializer3 {
 

@@ -18,13 +18,16 @@
  */
 package analytics.finder;
 
-import analytics.IssueReport;
 import analytics.IssueFinder;
+import analytics.IssueReport;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import scratch.data.Script;
-import scratch.structure.Scriptable;
 import scratch.structure.Project;
-
-import java.util.*;
+import scratch.structure.Scriptable;
 
 /**
  * Checks for duplicated sprites.

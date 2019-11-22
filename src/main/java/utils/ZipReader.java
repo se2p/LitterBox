@@ -37,7 +37,7 @@ public class ZipReader {
      * @return the JSON as a raw String
      * @throws IOException when given a invalid file or corrupted ZIP file
      */
-    static String getJson(String path) throws IOException {
+    public static String getJsonString(String path) throws IOException {
         final ZipFile file = new ZipFile(path);
         try {
             final Enumeration<? extends ZipEntry> entries = file.entries();

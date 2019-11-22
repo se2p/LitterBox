@@ -19,11 +19,10 @@
 package utils.deserializer.scratch2;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import scratch.data.Sound;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import scratch.data.Sound;
 
 /**
  * More information about the JSON Scratch 2 file format and its JSON arrays and nodes:

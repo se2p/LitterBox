@@ -20,6 +20,15 @@ package utils;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import scratch.data.ScBlock;
 import scratch.data.Script;
 import scratch.structure.Project;
@@ -28,12 +37,6 @@ import utils.deserializer.scratch2.SpriteDeserializer;
 import utils.deserializer.scratch2.StageDeserializer;
 import utils.deserializer.scratch3.SpriteDeserializer3;
 import utils.deserializer.scratch3.StageDeserializer3;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 
 /**
  * Util class for parsing the JSON files
@@ -51,12 +54,13 @@ public class JsonParser {
     public static Project parse3(String fileName, String path) {
         ObjectMapper mapper = new ObjectMapper();
         try {
+
             Project project = new Project();
             project.setName(fileName);
             project.setFilenameExtension(".sb3");
             project.setVersion(Version.SCRATCH3);
             project.setPath(path);
-            JsonNode rootNode = mapper.readTree(ZipReader.getJson(path));
+            JsonNode rootNode = mapper.readTree(ZipReader.getJsonString(path));
             List<Sprite> sprites = new ArrayList<>();
             if (!rootNode.has("targets")) {
                 return null;
@@ -97,7 +101,7 @@ public class JsonParser {
             project.setFilenameExtension(".sb2");
             project.setVersion(Version.SCRATCH2);
             project.setPath(path);
-            JsonNode rootNode = mapper.readTree(ZipReader.getJson(path));
+            JsonNode rootNode = mapper.readTree(ZipReader.getJsonString(path));
             project.setStage(StageDeserializer.deserialize(rootNode));
             project.setSprites(SpriteDeserializer.deserialize(rootNode));
             return project;
@@ -241,5 +245,58 @@ public class JsonParser {
                 prettyBlocks2(sb, nb, x);
             }
         }
+    }
+
+    public static JsonNode getBlocksNodeFromJSON(String path) {
+        JsonNode script = null;
+        Path currentRelativePath = Paths.get("");
+        String s = currentRelativePath.toAbsolutePath().toString();
+        System.out.println("Current relative path is: " + s);
+
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+
+            BufferedReader br = new BufferedReader(new FileReader(path));
+            StringBuilder sb = new StringBuilder();
+            String line;
+            while ((line = br.readLine()) != null) {
+                sb.append(line);
+            }
+            script= buildScriptFromJSONString(sb.toString());
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return script;
+    }
+
+    private static JsonNode buildScriptFromJSONString(String json){
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode script = null;
+        try {
+        JsonNode rootNode = mapper.readTree(json);
+        Iterator<JsonNode> elements = rootNode.get("targets").elements();
+        while (elements.hasNext()) {
+            JsonNode c = elements.next();
+            if (c.has("isStage") && !c.get("isStage").asBoolean() && c.has("blocks")) {
+                script = c.get("blocks");
+                break;
+            }
+        }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return script;
+    }
+
+    public static JsonNode getTargetsNodeFromJSONString(String json){
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            JsonNode rootNode = mapper.readTree(json);
+            return rootNode;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }
