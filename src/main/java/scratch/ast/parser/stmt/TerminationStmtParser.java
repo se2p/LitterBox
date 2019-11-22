@@ -19,7 +19,7 @@
 package scratch.ast.parser.stmt;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.google.common.base.Preconditions;
+import scratch.utils.Preconditions;
 import scratch.ast.Constants;
 import scratch.ast.ParsingException;
 import scratch.ast.model.statement.termination.DeleteClone;

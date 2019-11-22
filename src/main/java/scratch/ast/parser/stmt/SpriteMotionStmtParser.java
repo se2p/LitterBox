@@ -21,7 +21,7 @@ package scratch.ast.parser.stmt;
 import static scratch.ast.Constants.OPCODE_KEY;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.google.common.base.Preconditions;
+import scratch.utils.Preconditions;
 import scratch.ast.ParsingException;
 import scratch.ast.model.expression.num.NumExpr;
 import scratch.ast.model.position.Position;

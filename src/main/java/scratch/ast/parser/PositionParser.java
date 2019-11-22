@@ -26,7 +26,7 @@ import static scratch.ast.opcodes.SpriteMotionStmtOpcode.motion_pointtowards;
 import static scratch.ast.opcodes.SpriteMotionStmtOpcode.valueOf;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.google.common.base.Preconditions;
+import scratch.utils.Preconditions;
 import java.util.ArrayList;
 import scratch.ast.Constants;
 import scratch.ast.ParsingException;

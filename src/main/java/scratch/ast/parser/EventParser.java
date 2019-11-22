@@ -30,7 +30,7 @@ import static scratch.ast.opcodes.EventOpcode.event_whenkeypressed;
 import static scratch.ast.opcodes.EventOpcode.event_whenthisspriteclicked;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.google.common.base.Preconditions;
+import scratch.utils.Preconditions;
 import scratch.ast.ParsingException;
 import scratch.ast.model.Key;
 import scratch.ast.model.Message;

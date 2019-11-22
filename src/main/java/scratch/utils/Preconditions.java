@@ -9,9 +9,15 @@ public class Preconditions {
         return o;
     }
 
-    public static void checkArgument(boolean condition, String message) {
+    public static void checkArgument(boolean condition) {
         if (!condition) {
-            throw new IllegalArgumentException(message);
+            throw new IllegalArgumentException("Invalid argument!");
+        }
+    }
+
+    public static void checkArgument(boolean condition, String message, String ... args) {
+        if (!condition) {
+            throw new IllegalArgumentException(String.format(message, args));
         }
     }
 

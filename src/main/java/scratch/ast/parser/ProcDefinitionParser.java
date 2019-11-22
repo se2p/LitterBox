@@ -27,7 +27,6 @@ import static scratch.ast.Constants.PARENT_KEY;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.google.common.base.Preconditions;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -47,6 +46,7 @@ import scratch.ast.model.type.Type;
 import scratch.ast.model.variable.Identifier;
 import scratch.ast.model.variable.StrId;
 import scratch.ast.opcodes.ProcedureOpcode;
+import scratch.utils.Preconditions;
 
 public class ProcDefinitionParser {
 
@@ -157,7 +157,7 @@ public class ProcDefinitionParser {
         Preconditions.checkArgument(values.isArray());
         ArrayNode arrayNode = (ArrayNode) values;
         String name = arrayNode.get(0).textValue();
-        result. (name);
+        result.setValue(name);
 
         return result;
     }

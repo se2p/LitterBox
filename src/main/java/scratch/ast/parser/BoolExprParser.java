@@ -29,7 +29,7 @@ import static scratch.ast.Constants.POS_INPUT_VALUE;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.TextNode;
-import com.google.common.base.Preconditions;
+import scratch.utils.Preconditions;
 
 import java.awt.*;
 import java.util.Optional;

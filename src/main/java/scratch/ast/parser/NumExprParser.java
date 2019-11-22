@@ -37,7 +37,7 @@ import static scratch.ast.parser.ExpressionParser.parseExpression;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.TextNode;
-import com.google.common.base.Preconditions;
+import scratch.utils.Preconditions;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Optional;
 import scratch.ast.ParsingException;

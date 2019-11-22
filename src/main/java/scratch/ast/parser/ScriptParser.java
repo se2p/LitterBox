@@ -22,7 +22,7 @@ import static scratch.ast.Constants.NEXT_KEY;
 import static scratch.ast.Constants.OPCODE_KEY;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.google.common.base.Preconditions;
+import scratch.utils.Preconditions;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Logger;

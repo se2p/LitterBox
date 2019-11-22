@@ -37,7 +37,6 @@ import static scratch.ast.Constants.Y_KEY;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.google.common.base.Preconditions;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -65,6 +64,7 @@ import scratch.ast.model.type.NumberType;
 import scratch.ast.model.type.StringType;
 import scratch.ast.model.variable.Qualified;
 import scratch.ast.model.variable.StrId;
+import scratch.utils.Preconditions;
 
 public class DeclarationStmtParser {
 

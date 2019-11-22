@@ -18,7 +18,7 @@
  */
 package scratch.ast.parser.symboltable;
 
-import com.google.common.base.Preconditions;
+import scratch.utils.Preconditions;
 import java.util.HashMap;
 import scratch.ast.model.type.Type;
 import scratch.ast.model.variable.Identifier;

@@ -24,7 +24,7 @@ import static scratch.ast.Constants.OPCODE_KEY;
 import static scratch.ast.opcodes.SpriteLookStmtOpcode.looks_gotofrontback;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.google.common.base.Preconditions;
+import scratch.utils.Preconditions;
 import scratch.ast.ParsingException;
 import scratch.ast.model.elementchoice.ElementChoice;
 import scratch.ast.model.expression.num.Mult;

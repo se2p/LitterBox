@@ -24,7 +24,7 @@ import static scratch.ast.Constants.OPCODE_KEY;
 import static scratch.ast.Constants.POS_INPUT_VALUE;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.google.common.base.Preconditions;
+import scratch.utils.Preconditions;
 import scratch.ast.model.touchable.Edge;
 import scratch.ast.model.touchable.MousePointer;
 import scratch.ast.model.touchable.Touchable;
