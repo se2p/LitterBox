@@ -153,12 +153,14 @@ public class ProcDefinitionParser {
             result = new Parameter(new StrId(reference), new StringType());
         }
 
-        JsonNode values = param.get(FIELDS_KEY).get(VALUE_KEY);
+/*        JsonNode values = param.get(FIELDS_KEY).get(VALUE_KEY);
         Preconditions.checkArgument(values.isArray());
         ArrayNode arrayNode = (ArrayNode) values;
         String name = arrayNode.get(0).textValue();
         result.setValue(name);
+        */
+        // FIXME!
+        throw new IllegalArgumentException("The above (uncommented) code does not make sense! Fix this.");
 
-        return result;
     }
 }
