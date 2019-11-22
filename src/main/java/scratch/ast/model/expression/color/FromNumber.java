@@ -16,26 +16,24 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-package scratch.ast.model.expression.string;
+package scratch.ast.model.expression.color;
 
-import com.google.common.collect.ImmutableList;
-import scratch.ast.model.ASTLeaf;
-import scratch.ast.model.ASTNode;
+import scratch.ast.model.AbstractNode;
+import scratch.ast.model.expression.num.NumExpr;
 import scratch.ast.visitor.ScratchVisitor;
+import scratch.utils.Preconditions;
 
-//Concrete string: StringExpr ::= String
-public class Str implements StringExpr, ASTLeaf {
+public class FromNumber extends AbstractNode implements ColorExpression {
 
-    private final ImmutableList<ASTNode> children;
-    private String str;
+    private NumExpr value;
 
-    public Str(String str) {
-        this.str = str;
-        children = ImmutableList.<ASTNode>builder().build();
+    public FromNumber(NumExpr value) {
+        super(value);
+        this.value = Preconditions.checkNotNull(value);
     }
 
-    public String getStr() {
-        return str;
+    public NumExpr getValue() {
+        return value;
     }
 
     @Override
@@ -43,14 +41,4 @@ public class Str implements StringExpr, ASTLeaf {
         visitor.visit(this);
     }
 
-    @Override
-    public ImmutableList<ASTNode> getChildren() {
-        return children;
-    }
-
-    @Override
-    public String[] toSimpleStringArray() {
-        String[] returnArray = {str};
-        return returnArray;
-    }
 }

@@ -18,20 +18,18 @@
  */
 package scratch.ast.model.statement.spritelook;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.base.Preconditions;
-import scratch.ast.model.ASTNode;
+import scratch.ast.model.AbstractNode;
 import scratch.ast.model.expression.num.NumExpr;
 import scratch.ast.visitor.ScratchVisitor;
+import scratch.utils.Preconditions;
 
-public class ChangeSizeBy implements SpriteLookStmt {
+public class ChangeSizeBy extends AbstractNode implements SpriteLookStmt {
 
     private final NumExpr num;
-    private final ImmutableList<ASTNode> children;
 
     public ChangeSizeBy(NumExpr num) {
+        super(num);
         this.num = Preconditions.checkNotNull(num);
-        this.children = ImmutableList.<ASTNode>builder().add(num).build();
     }
 
     public NumExpr getNum() {
@@ -43,8 +41,5 @@ public class ChangeSizeBy implements SpriteLookStmt {
         visitor.visit(this);
     }
 
-    @Override
-    public ImmutableList<ASTNode> getChildren() {
-        return children;
-    }
+
 }

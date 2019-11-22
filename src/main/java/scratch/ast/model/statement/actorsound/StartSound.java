@@ -18,20 +18,18 @@
  */
 package scratch.ast.model.statement.actorsound;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.base.Preconditions;
-import scratch.ast.model.ASTNode;
+import scratch.ast.model.AbstractNode;
 import scratch.ast.model.elementchoice.ElementChoice;
 import scratch.ast.visitor.ScratchVisitor;
+import scratch.utils.Preconditions;
 
-public class StartSound implements ActorSoundStmt {
+public class StartSound extends AbstractNode implements ActorSoundStmt {
 
     private final ElementChoice elementChoice;
-    private final ImmutableList<ASTNode> children;
 
     public StartSound(ElementChoice elementChoice) {
+        super(elementChoice);
         this.elementChoice = Preconditions.checkNotNull(elementChoice);
-        this.children = ImmutableList.<ASTNode>builder().add(elementChoice).build();
     }
 
     public ElementChoice getElementChoice() {
@@ -43,8 +41,5 @@ public class StartSound implements ActorSoundStmt {
         visitor.visit(this);
     }
 
-    @Override
-    public ImmutableList<ASTNode> getChildren() {
-        return children;
-    }
+
 }

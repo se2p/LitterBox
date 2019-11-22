@@ -18,20 +18,18 @@
  */
 package scratch.ast.model.event;
 
-import com.google.common.collect.ImmutableList;
-import scratch.ast.model.ASTNode;
+import scratch.ast.model.AbstractNode;
 import scratch.ast.model.Key;
 import scratch.ast.visitor.ScratchVisitor;
+import scratch.utils.Preconditions;
 
-public class KeyPressed implements Event {
+public class KeyPressed extends AbstractNode implements Event {
 
     private Key key;
-    private final ImmutableList<ASTNode> children;
 
     public KeyPressed(Key key) {
-        this.key = key;
-        ImmutableList.Builder<ASTNode> builder = ImmutableList.builder();
-        children = builder.add(key).build();
+        super(key);
+        this.key = Preconditions.checkNotNull(key);
     }
 
     public Key getKey() {
@@ -43,8 +41,4 @@ public class KeyPressed implements Event {
         visitor.visit(this);
     }
 
-    @Override
-    public ImmutableList<ASTNode> getChildren() {
-        return children;
-    }
 }

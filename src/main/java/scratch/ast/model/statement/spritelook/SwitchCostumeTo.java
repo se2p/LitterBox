@@ -18,20 +18,18 @@
  */
 package scratch.ast.model.statement.spritelook;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
-import scratch.ast.model.ASTNode;
+import scratch.ast.model.AbstractNode;
 import scratch.ast.model.elementchoice.ElementChoice;
 import scratch.ast.visitor.ScratchVisitor;
+import scratch.utils.Preconditions;
 
-public class SwitchCostumeTo implements SpriteLookStmt {
+public class SwitchCostumeTo extends AbstractNode implements SpriteLookStmt {
 
     private final ElementChoice elementChoice;
-    private final ImmutableList<ASTNode> children;
 
     public SwitchCostumeTo(ElementChoice elementChoice) {
+        super(elementChoice);
         this.elementChoice = Preconditions.checkNotNull(elementChoice);
-        this.children = ImmutableList.<ASTNode>builder().add(elementChoice).build();
     }
 
     public ElementChoice getElementChoice() {
@@ -43,8 +41,4 @@ public class SwitchCostumeTo implements SpriteLookStmt {
         visitor.visit(this);
     }
 
-    @Override
-    public ImmutableList<ASTNode> getChildren() {
-        return children;
-    }
 }

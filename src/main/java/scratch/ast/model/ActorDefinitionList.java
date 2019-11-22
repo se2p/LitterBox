@@ -18,20 +18,18 @@
  */
 package scratch.ast.model;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
+import scratch.ast.visitor.ScratchVisitor;
+import scratch.utils.Preconditions;
+
 import java.util.List;
 
-import scratch.ast.visitor.ScratchVisitor;
-
-public class ActorDefinitionList implements ASTNode {
+public class ActorDefinitionList extends AbstractNode {
 
     private final List<ActorDefinition> actorDefinitionList;
-    private final ImmutableList<ASTNode> children;
 
     public ActorDefinitionList(List<ActorDefinition> actorDefinitionList) {
+        super(actorDefinitionList);
         this.actorDefinitionList = Preconditions.checkNotNull(actorDefinitionList);
-        children = ImmutableList.<ASTNode>builder().addAll(actorDefinitionList).build();
     }
 
     public List<ActorDefinition> getDefintions() {
@@ -43,8 +41,4 @@ public class ActorDefinitionList implements ASTNode {
         visitor.visit(this);
     }
 
-    @Override
-    public ImmutableList<ASTNode> getChildren() {
-        return children;
-    }
 }

@@ -19,7 +19,6 @@
 package scratch.ast.parser.stmt;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.google.common.base.Preconditions;
 import scratch.ast.Constants;
 import scratch.ast.ParsingException;
 import scratch.ast.model.statement.termination.DeleteClone;
@@ -27,6 +26,7 @@ import scratch.ast.model.statement.termination.StopAll;
 import scratch.ast.model.statement.termination.StopThisScript;
 import scratch.ast.model.statement.termination.TerminationStmt;
 import scratch.ast.opcodes.TerminationStmtOpcode;
+import scratch.utils.Preconditions;
 
 public class TerminationStmtParser {
 

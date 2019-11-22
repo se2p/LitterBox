@@ -18,20 +18,18 @@
  */
 package scratch.ast.model.statement;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.base.Preconditions;
-import scratch.ast.model.ASTNode;
+import scratch.ast.model.AbstractNode;
 import scratch.ast.model.expression.Expression;
 import scratch.ast.visitor.ScratchVisitor;
+import scratch.utils.Preconditions;
 
-public class ExpressionStmt implements Stmt {
+public class ExpressionStmt extends AbstractNode implements Stmt {
 
     private final Expression expression;
-    private final ImmutableList<ASTNode> children;
 
     public ExpressionStmt(Expression expression) {
+        super(expression);
         this.expression = Preconditions.checkNotNull(expression);
-        children = ImmutableList.<ASTNode>builder().add(expression).build();
     }
 
     public Expression getExpression() {
@@ -43,8 +41,4 @@ public class ExpressionStmt implements Stmt {
         visitor.visit(this);
     }
 
-    @Override
-    public ImmutableList<ASTNode> getChildren() {
-        return children;
-    }
 }

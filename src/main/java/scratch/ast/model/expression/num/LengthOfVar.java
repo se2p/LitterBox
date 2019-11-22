@@ -18,19 +18,17 @@
  */
 package scratch.ast.model.expression.num;
 
-import com.google.common.collect.ImmutableList;
-import scratch.ast.model.ASTNode;
+import scratch.ast.model.AbstractNode;
 import scratch.ast.model.variable.Variable;
 import scratch.ast.visitor.ScratchVisitor;
 
-public class LengthOfVar implements NumExpr {
+public class LengthOfVar extends AbstractNode implements NumExpr {
 
     private final Variable variable;
-    private final ImmutableList<ASTNode> children;
 
     public LengthOfVar(Variable variable) {
+        super(variable);
         this.variable = variable;
-        children = ImmutableList.<ASTNode>builder().add(variable).build();
     }
 
     public Variable getVariable() {
@@ -42,8 +40,4 @@ public class LengthOfVar implements NumExpr {
         visitor.visit(this);
     }
 
-    @Override
-    public ImmutableList<ASTNode> getChildren() {
-        return children;
-    }
 }

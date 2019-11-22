@@ -18,34 +18,19 @@
  */
 package scratch.ast.parser;
 
-import static scratch.ast.Constants.FIELDS_KEY;
-import static scratch.ast.Constants.FIELD_VALUE;
-import static scratch.ast.Constants.OPCODE_KEY;
-import static scratch.ast.opcodes.EventOpcode.control_start_as_clone;
-import static scratch.ast.opcodes.EventOpcode.event_whenbackdropswitchesto;
-import static scratch.ast.opcodes.EventOpcode.event_whenbroadcastreceived;
-import static scratch.ast.opcodes.EventOpcode.event_whenflagclicked;
-import static scratch.ast.opcodes.EventOpcode.event_whengreaterthan;
-import static scratch.ast.opcodes.EventOpcode.event_whenkeypressed;
-import static scratch.ast.opcodes.EventOpcode.event_whenthisspriteclicked;
-
 import com.fasterxml.jackson.databind.JsonNode;
-import com.google.common.base.Preconditions;
 import scratch.ast.ParsingException;
 import scratch.ast.model.Key;
 import scratch.ast.model.Message;
-import scratch.ast.model.event.BackdropSwitchTo;
-import scratch.ast.model.event.Clicked;
-import scratch.ast.model.event.Event;
-import scratch.ast.model.event.GreenFlag;
-import scratch.ast.model.event.KeyPressed;
-import scratch.ast.model.event.ReceptionOfMessage;
-import scratch.ast.model.event.StartedAsClone;
-import scratch.ast.model.event.VariableAboveValue;
+import scratch.ast.model.event.*;
 import scratch.ast.model.expression.num.NumExpr;
 import scratch.ast.model.variable.Identifier;
 import scratch.ast.model.variable.StrId;
 import scratch.ast.opcodes.EventOpcode;
+import scratch.utils.Preconditions;
+
+import static scratch.ast.Constants.*;
+import static scratch.ast.opcodes.EventOpcode.*;
 
 public class EventParser {
 

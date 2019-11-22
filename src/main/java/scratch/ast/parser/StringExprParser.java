@@ -18,31 +18,14 @@
  */
 package scratch.ast.parser;
 
-import static scratch.ast.Constants.FIELDS_KEY;
-import static scratch.ast.Constants.FIELD_VALUE;
-import static scratch.ast.Constants.INPUTS_KEY;
-import static scratch.ast.Constants.OPCODE_KEY;
-import static scratch.ast.Constants.POS_BLOCK_ID;
-import static scratch.ast.Constants.POS_DATA_ARRAY;
-import static scratch.ast.Constants.POS_INPUT_ID;
-import static scratch.ast.Constants.POS_INPUT_VALUE;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.TextNode;
-import com.google.common.base.Preconditions;
-import java.util.Optional;
 import scratch.ast.ParsingException;
 import scratch.ast.model.expression.bool.BoolExpr;
 import scratch.ast.model.expression.num.NumExpr;
-import scratch.ast.model.expression.string.AsString;
-import scratch.ast.model.expression.string.AttributeOf;
-import scratch.ast.model.expression.string.ItemOfVariable;
-import scratch.ast.model.expression.string.Join;
-import scratch.ast.model.expression.string.LetterOf;
-import scratch.ast.model.expression.string.Str;
-import scratch.ast.model.expression.string.StringExpr;
-import scratch.ast.model.expression.string.Username;
+import scratch.ast.model.expression.string.*;
+import scratch.ast.model.literals.StringLiteral;
 import scratch.ast.model.variable.Identifier;
 import scratch.ast.model.variable.Qualified;
 import scratch.ast.model.variable.StrId;
@@ -50,6 +33,11 @@ import scratch.ast.model.variable.Variable;
 import scratch.ast.opcodes.StringExprOpcode;
 import scratch.ast.parser.symboltable.ExpressionListInfo;
 import scratch.ast.parser.symboltable.VariableInfo;
+import scratch.utils.Preconditions;
+
+import java.util.Optional;
+
+import static scratch.ast.Constants.*;
 
 public class StringExprParser {
 
@@ -126,14 +114,14 @@ public class StringExprParser {
             "Could not parse NumExpr for block with id " + identifier + " and opcode " + opcode);
     }
 
-    private static Str parseStr(JsonNode inputs, int pos) {
+    private static StringLiteral parseStr(JsonNode inputs, int pos) {
         String value = ExpressionParser.getDataArrayAtPos(inputs, pos).get(POS_INPUT_VALUE).asText();
-        return new Str(value);
+        return new StringLiteral(value);
     }
 
-    private static Str parseStr(JsonNode inputs, String inputName) {
+    private static StringLiteral parseStr(JsonNode inputs, String inputName) {
         String value = ExpressionParser.getDataArrayByName(inputs, inputName).get(POS_INPUT_VALUE).asText();
-        return new Str(value);
+        return new StringLiteral(value);
     }
 
     static Optional<StringExpr> maybeParseStringBoolExpr(JsonNode expressionBlock, JsonNode blocks) {
@@ -172,12 +160,12 @@ public class StringExprParser {
             case looks_backdropnumbername: // has a number_name in fields, what to do? -> num or name FIXME
             case looks_size:
             case sensing_answer:
-                StringExpr attribute = new Str(opcodeString);
+                StringExpr attribute = new StringLiteral(opcodeString);
                 return new AttributeOf(attribute,
                     ActorDefinitionParser.getCurrentActor()); // TODO introduce a mapping opcode -> nicer string
             case sensing_of:
                 String prop = expressionBlock.get(FIELDS_KEY).get("PROPERTY").get(0).asText();
-                Str property = new Str(prop);
+                StringLiteral property = new StringLiteral(prop);
                 String menuIdentifier = expressionBlock.get(INPUTS_KEY).get("OBJECT").get(1).asText();
                 JsonNode objectMenuBlock = blocks.get(menuIdentifier);
                 Identifier identifier = new StrId(

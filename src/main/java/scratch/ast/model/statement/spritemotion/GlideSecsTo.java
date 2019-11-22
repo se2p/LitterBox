@@ -18,23 +18,21 @@
  */
 package scratch.ast.model.statement.spritemotion;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.base.Preconditions;
-import scratch.ast.model.ASTNode;
+import scratch.ast.model.AbstractNode;
 import scratch.ast.model.expression.num.NumExpr;
 import scratch.ast.model.position.Position;
 import scratch.ast.visitor.ScratchVisitor;
+import scratch.utils.Preconditions;
 
-public class GlideSecsTo implements SpriteMotionStmt {
+public class GlideSecsTo extends AbstractNode implements SpriteMotionStmt {
 
     private final NumExpr secs;
     private final Position position;
-    private final ImmutableList<ASTNode> children;
 
     public GlideSecsTo(NumExpr secs, Position position) {
+        super(secs, position);
         this.secs = Preconditions.checkNotNull(secs);
         this.position = Preconditions.checkNotNull(position);
-        this.children = ImmutableList.<ASTNode>builder().add(secs).add(position).build();
     }
 
     public NumExpr getSecs() {
@@ -50,8 +48,4 @@ public class GlideSecsTo implements SpriteMotionStmt {
         visitor.visit(this);
     }
 
-    @Override
-    public ImmutableList<ASTNode> getChildren() {
-        return children;
-    }
 }

@@ -18,39 +18,23 @@
  */
 package scratch.ast.parser;
 
-import static scratch.ast.Constants.INPUTS_KEY;
-import static scratch.ast.Constants.POS_DATA_ARRAY;
-import static scratch.ast.Constants.POS_INPUT_VALUE;
-
 import com.fasterxml.jackson.databind.JsonNode;
-import scratch.ast.model.color.Color;
-import scratch.ast.model.color.Rgba;
-import scratch.ast.model.expression.num.Number;
+import scratch.ast.model.literals.ColorLiteral;
+
+import static scratch.ast.Constants.*;
 
 public class ColorParser {
 
-    public static Color parseColor(JsonNode current, int pos, JsonNode allBlocks) {
+    public static ColorLiteral parseColor(JsonNode current, int pos, JsonNode allBlocks) {
         //FIXME parse inputs that are not a text color as a "FromNumber" color
 
         String rgbCode = current.get(INPUTS_KEY).get("COLOR").get(POS_DATA_ARRAY).get(POS_INPUT_VALUE).asText();
-        long i;
-        float f;
-        i = Long.parseLong(rgbCode.substring(1, 3), 16);
-        f = Float.intBitsToFloat((int) i);
-        Number rNumber = new Number(f);
 
-        i = Long.parseLong(rgbCode.substring(3, 5), 16);
-        f = Float.intBitsToFloat((int) i);
-        Number gNumber = new Number(f);
+        long rNumber = Long.parseLong(rgbCode.substring(1, 3), 16);
+        long gNumber = Long.parseLong(rgbCode.substring(3, 5), 16);
+        long bNumber = Long.parseLong(rgbCode.substring(5, 7), 16);
 
-        i = Long.parseLong(rgbCode.substring(5, 7), 16);
-        f = Float.intBitsToFloat((int) i);
-        Number bNumber = new Number(f);
-
-        //There is no alpha value
-        Number aNumber = new Number(1);
-
-        return new Rgba(rNumber, gNumber, bNumber, aNumber);
+        return new ColorLiteral(rNumber, gNumber, bNumber);
     }
 
 }

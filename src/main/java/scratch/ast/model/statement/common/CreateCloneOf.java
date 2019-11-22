@@ -18,20 +18,18 @@
  */
 package scratch.ast.model.statement.common;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.base.Preconditions;
-import scratch.ast.model.ASTNode;
+import scratch.ast.model.AbstractNode;
 import scratch.ast.model.variable.Identifier;
 import scratch.ast.visitor.ScratchVisitor;
+import scratch.utils.Preconditions;
 
-public class CreateCloneOf implements CommonStmt {
+public class CreateCloneOf extends AbstractNode implements CommonStmt {
 
-    private Identifier identifier;
-    private final ImmutableList<ASTNode> children;
+    private final Identifier identifier;
 
     public CreateCloneOf(Identifier identifier) {
+        super(identifier);
         this.identifier = Preconditions.checkNotNull(identifier);
-        children = ImmutableList.<ASTNode>builder().add(identifier).build();
     }
 
     public Identifier getIdentifier() {
@@ -43,8 +41,4 @@ public class CreateCloneOf implements CommonStmt {
         visitor.visit(this);
     }
 
-    @Override
-    public ImmutableList<ASTNode> getChildren() {
-        return children;
-    }
 }

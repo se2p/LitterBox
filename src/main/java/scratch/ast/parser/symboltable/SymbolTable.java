@@ -18,10 +18,11 @@
  */
 package scratch.ast.parser.symboltable;
 
-import java.util.HashMap;
 import scratch.ast.model.Message;
 import scratch.ast.model.expression.list.ExpressionList;
 import scratch.ast.model.type.Type;
+
+import java.util.HashMap;
 
 public class SymbolTable {
 

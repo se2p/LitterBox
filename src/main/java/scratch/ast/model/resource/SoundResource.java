@@ -18,22 +18,20 @@
  */
 package scratch.ast.model.resource;
 
-import com.google.common.collect.ImmutableList;
-import scratch.ast.model.ASTNode;
+import scratch.ast.model.AbstractNode;
 import scratch.ast.model.URI;
 import scratch.ast.model.variable.Identifier;
 import scratch.ast.visitor.ScratchVisitor;
 
-public class SoundResource implements Resource {
+public class SoundResource extends AbstractNode implements Resource {
 
-    private Identifier ident;
-    private URI uri;
-    private final ImmutableList<ASTNode> children;
+    private final Identifier ident;
+    private final URI uri;
 
     public SoundResource(Identifier ident, URI uri) {
+        super(ident, uri);
         this.ident = ident;
         this.uri = uri;
-        children = ImmutableList.<ASTNode>builder().add(ident).add(uri).build();
     }
 
     public Identifier getIdent() {
@@ -47,11 +45,6 @@ public class SoundResource implements Resource {
     @Override
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);
-    }
-
-    @Override
-    public ImmutableList<ASTNode> getChildren() {
-        return children;
     }
 
 }

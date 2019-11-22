@@ -18,26 +18,24 @@
  */
 package scratch.ast.model.statement.declaration;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.base.Preconditions;
-import scratch.ast.model.ASTNode;
+import scratch.ast.model.AbstractNode;
 import scratch.ast.model.expression.string.StringExpr;
 import scratch.ast.model.type.Type;
 import scratch.ast.model.variable.Identifier;
 import scratch.ast.visitor.ScratchVisitor;
+import scratch.utils.Preconditions;
 
-public class DeclarationAttributeOfIdentAsTypeStmt implements DeclarationStmt {
+public class DeclarationAttributeOfIdentAsTypeStmt extends AbstractNode implements DeclarationStmt {
 
     private final StringExpr stringExpr;
     private final Identifier ident;
     private final Type type;
-    private final ImmutableList<ASTNode> children;
 
     public DeclarationAttributeOfIdentAsTypeStmt(StringExpr stringExpr, Identifier ident, Type type) {
+        super(stringExpr, ident, type);
         this.stringExpr = Preconditions.checkNotNull(stringExpr);
         this.ident = Preconditions.checkNotNull(ident);
         this.type = Preconditions.checkNotNull(type);
-        children = ImmutableList.<ASTNode>builder().add(stringExpr).add(ident).add(type).build();
     }
 
     public StringExpr getStringExpr() {
@@ -57,8 +55,5 @@ public class DeclarationAttributeOfIdentAsTypeStmt implements DeclarationStmt {
         visitor.visit(this);
     }
 
-    @Override
-    public ImmutableList<ASTNode> getChildren() {
-        return children;
-    }
+
 }

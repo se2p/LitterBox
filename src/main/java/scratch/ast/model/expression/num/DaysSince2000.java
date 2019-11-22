@@ -18,17 +18,14 @@
  */
 package scratch.ast.model.expression.num;
 
-import com.google.common.collect.ImmutableList;
 import scratch.ast.model.ASTLeaf;
-import scratch.ast.model.ASTNode;
+import scratch.ast.model.AbstractNode;
 import scratch.ast.visitor.ScratchVisitor;
 
-public class DaysSince2000 implements NumExpr, ASTLeaf {
-
-    private final ImmutableList<ASTNode> children;
+public class DaysSince2000 extends AbstractNode implements NumExpr, ASTLeaf {
 
     public DaysSince2000() {
-        children = ImmutableList.<ASTNode>builder().build();
+        super();
     }
 
     @Override
@@ -36,8 +33,4 @@ public class DaysSince2000 implements NumExpr, ASTLeaf {
         visitor.visit(this);
     }
 
-    @Override
-    public ImmutableList<ASTNode> getChildren() {
-        return children;
-    }
 }

@@ -18,21 +18,18 @@
  */
 package scratch.ast.model.position;
 
-import com.google.common.collect.ImmutableList;
-import scratch.ast.model.ASTNode;
+import scratch.ast.model.AbstractNode;
 import scratch.ast.model.expression.num.NumExpr;
 import scratch.ast.visitor.ScratchVisitor;
 
-public class CoordinatePosition implements Position {
+public class CoordinatePosition extends AbstractNode implements Position {
 
     private final NumExpr xCoord;
     private final NumExpr yCoord;
-    private final ImmutableList<ASTNode> children;
 
     public CoordinatePosition(NumExpr xCoord, NumExpr yCoord) {
         this.xCoord = xCoord;
         this.yCoord = yCoord;
-        children = ImmutableList.<ASTNode>builder().add(xCoord).add(yCoord).build();
     }
 
     public NumExpr getXCoord() {
@@ -48,8 +45,4 @@ public class CoordinatePosition implements Position {
         visitor.visit(this);
     }
 
-    @Override
-    public ImmutableList<ASTNode> getChildren() {
-        return children;
-    }
 }

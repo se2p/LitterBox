@@ -18,19 +18,17 @@
  */
 package scratch.ast.model.elementchoice;
 
-import com.google.common.collect.ImmutableList;
-import scratch.ast.model.ASTNode;
+import scratch.ast.model.AbstractNode;
 import scratch.ast.model.expression.string.StringExpr;
 import scratch.ast.visitor.ScratchVisitor;
 
-public class WithId implements ElementChoice {
+public class WithId extends AbstractNode implements ElementChoice {
 
     private final StringExpr stringExpr;
-    private final ImmutableList<ASTNode> children;
 
     public WithId(StringExpr stringExpr) {
+        super(stringExpr);
         this.stringExpr = stringExpr;
-        children = ImmutableList.<ASTNode>builder().add(stringExpr).build();
     }
 
     public StringExpr getStringExpr() {
@@ -42,8 +40,4 @@ public class WithId implements ElementChoice {
         visitor.visit(this);
     }
 
-    @Override
-    public ImmutableList<ASTNode> getChildren() {
-        return children;
-    }
 }

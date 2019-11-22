@@ -18,19 +18,17 @@
  */
 package scratch.ast.model.statement.spritemotion;
 
-import com.google.common.collect.ImmutableList;
-import scratch.ast.model.ASTNode;
+import scratch.ast.model.AbstractNode;
 import scratch.ast.model.expression.num.NumExpr;
 import scratch.ast.visitor.ScratchVisitor;
 
-public class TurnLeft implements SpriteMotionStmt {
+public class TurnLeft extends AbstractNode implements SpriteMotionStmt {
 
     private final NumExpr degrees;
-    private final ImmutableList<ASTNode> children;
 
     public TurnLeft(NumExpr degrees) {
+        super(degrees);
         this.degrees = degrees;
-        this.children = ImmutableList.<ASTNode>builder().add(degrees).build();
     }
 
     public NumExpr getDegrees() {
@@ -42,8 +40,4 @@ public class TurnLeft implements SpriteMotionStmt {
         visitor.visit(this);
     }
 
-    @Override
-    public ImmutableList<ASTNode> getChildren() {
-        return children;
-    }
 }

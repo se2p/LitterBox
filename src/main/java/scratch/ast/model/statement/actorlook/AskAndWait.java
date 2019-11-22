@@ -18,20 +18,18 @@
  */
 package scratch.ast.model.statement.actorlook;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.base.Preconditions;
-import scratch.ast.model.ASTNode;
+import scratch.ast.model.AbstractNode;
 import scratch.ast.model.expression.string.StringExpr;
 import scratch.ast.visitor.ScratchVisitor;
+import scratch.utils.Preconditions;
 
-public class AskAndWait implements ActorLookStmt {
+public class AskAndWait extends AbstractNode implements ActorLookStmt {
 
     private final StringExpr question;
-    private final ImmutableList<ASTNode> children;
 
     public AskAndWait(StringExpr question) {
+        super(question);
         this.question = Preconditions.checkNotNull(question);
-        children = ImmutableList.<ASTNode>builder().add(question).build();
     }
 
     public StringExpr getQuestion() {
@@ -43,8 +41,4 @@ public class AskAndWait implements ActorLookStmt {
         visitor.visit(this);
     }
 
-    @Override
-    public ImmutableList<ASTNode> getChildren() {
-        return children;
-    }
 }

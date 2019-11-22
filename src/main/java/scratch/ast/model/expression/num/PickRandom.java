@@ -18,22 +18,18 @@
  */
 package scratch.ast.model.expression.num;
 
-import com.google.common.collect.ImmutableList;
-import scratch.ast.model.ASTNode;
+import scratch.ast.model.AbstractNode;
 import scratch.ast.visitor.ScratchVisitor;
 
-public class PickRandom implements NumExpr {
+public class PickRandom extends AbstractNode implements NumExpr {
 
     private final NumExpr from;
     private final NumExpr to;
-    private final ImmutableList<ASTNode> children;
 
     public PickRandom(NumExpr from, NumExpr to) {
+        super(from, to);
         this.from = from;
         this.to = to;
-
-        ImmutableList.Builder<ASTNode> builder = ImmutableList.builder();
-        children = builder.add(from).add(to).build();
     }
 
     public NumExpr getFrom() {
@@ -49,8 +45,4 @@ public class PickRandom implements NumExpr {
         visitor.visit(this);
     }
 
-    @Override
-    public ImmutableList<ASTNode> getChildren() {
-        return children;
-    }
 }

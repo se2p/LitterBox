@@ -19,17 +19,18 @@
 package scratch.ast.parser;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.google.common.base.Preconditions;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.logging.Logger;
 import scratch.ast.ParsingException;
 import scratch.ast.model.URI;
 import scratch.ast.model.resource.ImageResource;
 import scratch.ast.model.resource.Resource;
 import scratch.ast.model.resource.SoundResource;
 import scratch.ast.model.variable.StrId;
+import scratch.utils.Preconditions;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.logging.Logger;
 
 public class ResourceParser {
 

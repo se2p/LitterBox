@@ -18,15 +18,11 @@
  */
 package scratch.ast.parser;
 
-import static scratch.ast.Constants.FIELDS_KEY;
-import static scratch.ast.Constants.FIELD_VALUE;
-import static scratch.ast.Constants.INPUTS_KEY;
-import static scratch.ast.Constants.OPCODE_KEY;
-import static scratch.ast.Constants.POS_INPUT_VALUE;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import scratch.ast.model.Key;
 import scratch.ast.opcodes.BoolExprOpcode;
+
+import static scratch.ast.Constants.*;
 
 public class KeyParser {
 

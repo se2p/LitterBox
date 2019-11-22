@@ -18,17 +18,14 @@
  */
 package scratch.ast.model.statement.common;
 
-import com.google.common.collect.ImmutableList;
 import scratch.ast.model.ASTLeaf;
-import scratch.ast.model.ASTNode;
+import scratch.ast.model.AbstractNode;
 import scratch.ast.visitor.ScratchVisitor;
 
-public class StopOtherScriptsInSprite implements CommonStmt, ASTLeaf {
-
-    private final ImmutableList<ASTNode> children;
+public class StopOtherScriptsInSprite extends AbstractNode implements CommonStmt, ASTLeaf {
 
     public StopOtherScriptsInSprite() {
-        children = ImmutableList.<ASTNode>builder().build();
+        super();
     }
 
     @Override
@@ -36,8 +33,4 @@ public class StopOtherScriptsInSprite implements CommonStmt, ASTLeaf {
         visitor.visit(this);
     }
 
-    @Override
-    public ImmutableList<ASTNode> getChildren() {
-        return children;
-    }
 }

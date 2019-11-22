@@ -18,16 +18,13 @@
  */
 package scratch.ast.model.statement.termination;
 
-import com.google.common.collect.ImmutableList;
-import scratch.ast.model.ASTNode;
+import scratch.ast.model.AbstractNode;
 import scratch.ast.visitor.ScratchVisitor;
 
-public class StopThisScript implements TerminationStmt {
-
-    private final ImmutableList<ASTNode> children;
+public class StopThisScript extends AbstractNode implements TerminationStmt {
 
     public StopThisScript() {
-        children = ImmutableList.<ASTNode>builder().build();
+        super();
     }
 
     @Override
@@ -35,8 +32,5 @@ public class StopThisScript implements TerminationStmt {
         visitor.visit(this);
     }
 
-    @Override
-    public ImmutableList<ASTNode> getChildren() {
-        return children;
-    }
+
 }

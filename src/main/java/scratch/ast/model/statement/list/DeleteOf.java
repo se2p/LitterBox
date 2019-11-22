@@ -18,23 +18,21 @@
  */
 package scratch.ast.model.statement.list;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.base.Preconditions;
-import scratch.ast.model.ASTNode;
+import scratch.ast.model.AbstractNode;
 import scratch.ast.model.expression.num.NumExpr;
 import scratch.ast.model.variable.Variable;
 import scratch.ast.visitor.ScratchVisitor;
+import scratch.utils.Preconditions;
 
-public class DeleteOf implements ListStmt {
+public class DeleteOf extends AbstractNode implements ListStmt {
 
     private final NumExpr num;
     private final Variable variable;
-    private final ImmutableList<ASTNode> children;
 
     public DeleteOf(NumExpr num, Variable variable) {
+        super(num, variable);
         this.num = Preconditions.checkNotNull(num);
         this.variable = Preconditions.checkNotNull(variable);
-        children = ImmutableList.<ASTNode>builder().add(num).add(variable).build();
     }
 
     public NumExpr getNum() {
@@ -50,8 +48,4 @@ public class DeleteOf implements ListStmt {
         visitor.visit(this);
     }
 
-    @Override
-    public ImmutableList<ASTNode> getChildren() {
-        return children;
-    }
 }

@@ -18,24 +18,22 @@
  */
 package scratch.ast.model.variable;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
-import scratch.ast.model.ASTLeaf;
-import scratch.ast.model.ASTNode;
+import scratch.ast.model.AbstractNode;
+import scratch.ast.model.literals.StringLiteral;
 import scratch.ast.visitor.ScratchVisitor;
+import scratch.utils.Preconditions;
 
-public abstract class Identifier implements Variable, ASTLeaf {
+public abstract class Identifier extends AbstractNode implements Variable {
 
-    private final String value;
-    private final ImmutableList<ASTNode> children;
+    private final StringLiteral name;
 
-    public Identifier(String value) {
-        this.value = Preconditions.checkNotNull(value);
-        children = ImmutableList.<ASTNode>builder().build();
+    public Identifier(StringLiteral name) {
+        super(name);
+        this.name = Preconditions.checkNotNull(name);
     }
 
-    public String getValue() {
-        return value;
+    public String getName() {
+        return name.getText();
     }
 
     @Override
@@ -43,14 +41,4 @@ public abstract class Identifier implements Variable, ASTLeaf {
         visitor.visit(this);
     }
 
-    @Override
-    public ImmutableList<ASTNode> getChildren() {
-        return children;
-    }
-
-    @Override
-    public String[] toSimpleStringArray() {
-        String[] returnArray = {value};
-        return returnArray;
-    }
 }

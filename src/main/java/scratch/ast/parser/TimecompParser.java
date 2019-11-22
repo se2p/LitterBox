@@ -18,20 +18,13 @@
  */
 package scratch.ast.parser;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import scratch.ast.ParsingException;
+import scratch.ast.model.timecomp.TimeComp;
+import scratch.utils.Preconditions;
+
 import static scratch.ast.Constants.FIELDS_KEY;
 import static scratch.ast.Constants.OPCODE_KEY;
-
-import com.fasterxml.jackson.databind.JsonNode;
-import com.google.common.base.Preconditions;
-import scratch.ast.ParsingException;
-import scratch.ast.model.timecomp.Date;
-import scratch.ast.model.timecomp.DayOfWeek;
-import scratch.ast.model.timecomp.Hour;
-import scratch.ast.model.timecomp.Minute;
-import scratch.ast.model.timecomp.Month;
-import scratch.ast.model.timecomp.Second;
-import scratch.ast.model.timecomp.TimeComp;
-import scratch.ast.model.timecomp.Year;
 
 public class TimecompParser {
 
@@ -45,23 +38,6 @@ public class TimecompParser {
             "Timecomp parsing is only allowed for opcode %s and not %s", CURRENT_OPCODE, opcodeString);
 
         final String currentString = current.get(FIELDS_KEY).get(CURRENT_MENU).get(0).asText();
-        switch (currentString) {
-            case "YEAR":
-                return new Year();
-            case "MONTH":
-                return new Month();
-            case "DATE":
-                return new Date();
-            case "DAYOFWEEK":
-                return new DayOfWeek();
-            case "HOUR":
-                return new Hour();
-            case "MINUTE":
-                return new Minute();
-            case "SECOND":
-                return new Second();
-            default:
-                throw new ParsingException("No timecomp for value " + currentString);
-        }
+        return TimeComp.fromString(currentString.toLowerCase());
     }
 }

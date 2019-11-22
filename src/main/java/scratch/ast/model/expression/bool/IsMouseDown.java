@@ -18,16 +18,13 @@
  */
 package scratch.ast.model.expression.bool;
 
-import com.google.common.collect.ImmutableList;
-import scratch.ast.model.ASTNode;
+import scratch.ast.model.AbstractNode;
 import scratch.ast.visitor.ScratchVisitor;
 
-public class IsMouseDown implements BoolExpr {
-
-    private final ImmutableList<ASTNode> children;
+public class IsMouseDown extends AbstractNode implements BoolExpr {
 
     public IsMouseDown() {
-        children = ImmutableList.<ASTNode>builder().build();
+        super();
     }
 
     @Override
@@ -35,8 +32,4 @@ public class IsMouseDown implements BoolExpr {
         visitor.visit(this);
     }
 
-    @Override
-    public ImmutableList<ASTNode> getChildren() {
-        return children;
-    }
 }

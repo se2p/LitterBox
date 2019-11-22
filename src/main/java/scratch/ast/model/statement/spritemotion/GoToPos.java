@@ -18,20 +18,18 @@
  */
 package scratch.ast.model.statement.spritemotion;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.base.Preconditions;
-import scratch.ast.model.ASTNode;
+import scratch.ast.model.AbstractNode;
 import scratch.ast.model.position.Position;
 import scratch.ast.visitor.ScratchVisitor;
+import scratch.utils.Preconditions;
 
-public class GoToPos implements SpriteMotionStmt {
+public class GoToPos extends AbstractNode implements SpriteMotionStmt {
 
     private final Position position;
-    private final ImmutableList<ASTNode> children;
 
     public GoToPos(Position position) {
+        super(position);
         this.position = Preconditions.checkNotNull(position);
-        this.children = ImmutableList.<ASTNode>builder().add(position).build();
     }
 
     public Position getPosition() {
@@ -43,8 +41,4 @@ public class GoToPos implements SpriteMotionStmt {
         visitor.visit(this);
     }
 
-    @Override
-    public ImmutableList<ASTNode> getChildren() {
-        return children;
-    }
 }

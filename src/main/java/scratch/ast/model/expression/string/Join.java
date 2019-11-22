@@ -18,28 +18,13 @@
  */
 package scratch.ast.model.expression.string;
 
-import com.google.common.collect.ImmutableList;
-import scratch.ast.model.ASTNode;
+import scratch.ast.model.expression.BinaryExpression;
 import scratch.ast.visitor.ScratchVisitor;
 
-public class Join implements StringExpr {
+public class Join extends BinaryExpression<StringExpr, StringExpr> implements StringExpr {
 
-    private final StringExpr first;
-    private final StringExpr second;
-    private final ImmutableList<ASTNode> children;
-
-    public Join(StringExpr first, StringExpr second) {
-        this.first = first;
-        this.second = second;
-        children = ImmutableList.<ASTNode>builder().add(first).add(second).build();
-    }
-
-    public StringExpr getFirst() {
-        return first;
-    }
-
-    public StringExpr getSecond() {
-        return second;
+    public Join(StringExpr operand1, StringExpr operand2) {
+        super(operand1, operand2);
     }
 
     @Override
@@ -47,8 +32,4 @@ public class Join implements StringExpr {
         visitor.visit(this);
     }
 
-    @Override
-    public ImmutableList<ASTNode> getChildren() {
-        return children;
-    }
 }

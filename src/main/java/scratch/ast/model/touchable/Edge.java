@@ -18,25 +18,14 @@
  */
 package scratch.ast.model.touchable;
 
-import com.google.common.collect.ImmutableList;
-import scratch.ast.model.ASTNode;
+import scratch.ast.model.AbstractNode;
 import scratch.ast.visitor.ScratchVisitor;
 
-public class Edge implements Touchable {
-
-    private final ImmutableList<ASTNode> children;
-
-    public Edge() {
-        children = ImmutableList.<ASTNode>builder().build();
-    }
+public class Edge extends AbstractNode implements Touchable {
 
     @Override
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);
     }
 
-    @Override
-    public ImmutableList<ASTNode> getChildren() {
-        return children;
-    }
 }

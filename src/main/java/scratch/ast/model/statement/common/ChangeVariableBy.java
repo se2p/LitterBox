@@ -18,23 +18,21 @@
  */
 package scratch.ast.model.statement.common;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.base.Preconditions;
-import scratch.ast.model.ASTNode;
+import scratch.ast.model.AbstractNode;
 import scratch.ast.model.expression.Expression;
 import scratch.ast.model.variable.Variable;
 import scratch.ast.visitor.ScratchVisitor;
+import scratch.utils.Preconditions;
 
-public class ChangeVariableBy implements CommonStmt {
+public class ChangeVariableBy extends AbstractNode implements CommonStmt {
 
     private final Variable variable;
     private final Expression expr;
-    private final ImmutableList<ASTNode> children;
 
     public ChangeVariableBy(Variable variable, Expression expr) {
+        super(variable, expr);
         this.variable = Preconditions.checkNotNull(variable);
         this.expr = Preconditions.checkNotNull(expr);
-        this.children = ImmutableList.<ASTNode>builder().add(variable).add(expr).build();
     }
 
     public Variable getVariable() {
@@ -50,8 +48,5 @@ public class ChangeVariableBy implements CommonStmt {
         visitor.visit(this);
     }
 
-    @Override
-    public ImmutableList<ASTNode> getChildren() {
-        return children;
-    }
+
 }

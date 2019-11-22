@@ -18,27 +18,19 @@
  */
 package scratch.ast.parser;
 
-import static scratch.ast.opcodes.SpriteMotionStmtOpcode.motion_glidesecstoxy;
-import static scratch.ast.opcodes.SpriteMotionStmtOpcode.motion_glideto;
-import static scratch.ast.opcodes.SpriteMotionStmtOpcode.motion_goto;
-import static scratch.ast.opcodes.SpriteMotionStmtOpcode.motion_gotoxy;
-import static scratch.ast.opcodes.SpriteMotionStmtOpcode.motion_pointtowards;
-import static scratch.ast.opcodes.SpriteMotionStmtOpcode.valueOf;
-
 import com.fasterxml.jackson.databind.JsonNode;
-import com.google.common.base.Preconditions;
-import java.util.ArrayList;
 import scratch.ast.Constants;
 import scratch.ast.ParsingException;
 import scratch.ast.model.expression.num.NumExpr;
-import scratch.ast.model.position.CoordinatePosition;
-import scratch.ast.model.position.MousePos;
-import scratch.ast.model.position.PivotOf;
-import scratch.ast.model.position.Position;
-import scratch.ast.model.position.RandomPos;
+import scratch.ast.model.position.*;
 import scratch.ast.model.variable.StrId;
 import scratch.ast.opcodes.NumExprOpcode;
 import scratch.ast.opcodes.SpriteMotionStmtOpcode;
+import scratch.utils.Preconditions;
+
+import java.util.ArrayList;
+
+import static scratch.ast.opcodes.SpriteMotionStmtOpcode.*;
 
 public class PositionParser {
 

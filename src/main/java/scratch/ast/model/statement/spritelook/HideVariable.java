@@ -18,21 +18,19 @@
  */
 package scratch.ast.model.statement.spritelook;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.base.Preconditions;
-import scratch.ast.model.ASTNode;
+import scratch.ast.model.AbstractNode;
 import scratch.ast.model.statement.actorlook.ActorLookStmt;
 import scratch.ast.model.variable.Variable;
 import scratch.ast.visitor.ScratchVisitor;
+import scratch.utils.Preconditions;
 
-public class HideVariable implements ActorLookStmt {
+public class HideVariable extends AbstractNode implements ActorLookStmt {
 
     private final Variable variable;
-    private final ImmutableList<ASTNode> children;
 
     public HideVariable(Variable variable) {
+        super(variable);
         this.variable = Preconditions.checkNotNull(variable);
-        children = ImmutableList.<ASTNode>builder().add(variable).build();
     }
 
     public Variable getVariable() {
@@ -44,8 +42,5 @@ public class HideVariable implements ActorLookStmt {
         visitor.visit(this);
     }
 
-    @Override
-    public ImmutableList<ASTNode> getChildren() {
-        return children;
-    }
+
 }

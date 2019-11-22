@@ -18,17 +18,14 @@
  */
 package scratch.ast.model.position;
 
-import com.google.common.collect.ImmutableList;
 import scratch.ast.model.ASTLeaf;
-import scratch.ast.model.ASTNode;
+import scratch.ast.model.AbstractNode;
 import scratch.ast.visitor.ScratchVisitor;
 
-public class RandomPos implements Position, ASTLeaf {
-
-    private final ImmutableList<ASTNode> children;
+public class RandomPos extends AbstractNode implements Position, ASTLeaf {
 
     public RandomPos() {
-        children = ImmutableList.<ASTNode>builder().build();
+        super();
     }
 
     @Override
@@ -36,8 +33,4 @@ public class RandomPos implements Position, ASTLeaf {
         visitor.visit(this);
     }
 
-    @Override
-    public ImmutableList<ASTNode> getChildren() {
-        return children;
-    }
 }

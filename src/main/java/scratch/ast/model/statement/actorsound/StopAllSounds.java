@@ -18,27 +18,19 @@
  */
 package scratch.ast.model.statement.actorsound;
 
-import com.google.common.collect.ImmutableList;
 import scratch.ast.model.ASTLeaf;
-import scratch.ast.model.ASTNode;
+import scratch.ast.model.AbstractNode;
 import scratch.ast.visitor.ScratchVisitor;
 
-public class StopAllSounds implements ActorSoundStmt, ASTLeaf {
-
-    private final ImmutableList<ASTNode> children;
+public class StopAllSounds extends AbstractNode implements ActorSoundStmt, ASTLeaf {
 
     public StopAllSounds() {
-        children = ImmutableList.<ASTNode>builder().build();
+        super();
     }
 
     @Override
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);
-    }
-
-    @Override
-    public ImmutableList<ASTNode> getChildren() {
-        return children;
     }
 
 }

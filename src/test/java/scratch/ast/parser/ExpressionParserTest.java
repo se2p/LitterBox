@@ -25,16 +25,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import scratch.ast.ParsingException;
-import scratch.ast.model.expression.num.Add;
-import scratch.ast.model.expression.num.Div;
-import scratch.ast.model.expression.num.Minus;
-import scratch.ast.model.expression.num.Mod;
-import scratch.ast.model.expression.num.MouseX;
-import scratch.ast.model.expression.num.Mult;
-import scratch.ast.model.expression.num.NumExpr;
-import scratch.ast.model.expression.num.Number;
-import scratch.ast.model.expression.num.PickRandom;
-import scratch.ast.model.numfunct.Pow10;
+import scratch.ast.model.expression.num.*;
+import scratch.ast.model.literals.NumberLiteral;
 import utils.JsonParser;
 
 public class ExpressionParserTest {
@@ -71,14 +63,14 @@ public class ExpressionParserTest {
     @Test
     public void testParseNumber() {
         JsonNode inputs = moveStepsScript.get("EU(l=G6)z8NGlJFcx|fS").get("inputs");
-        Number result = NumExprParser.parseNumber(inputs, 0);
+        NumberLiteral result = NumExprParser.parseNumber(inputs, 0);
         assertEquals("10.0", String.valueOf(result.getValue()));
     }
 
     @Test
     public void testParseNumExprLiteral() throws ParsingException {
         NumExpr numExpr = NumExprParser.parseNumExpr(literalBlock, 0, allExprTypesScript);
-        assertTrue(numExpr instanceof Number);
+        assertTrue(numExpr instanceof NumberLiteral);
     }
 
     @Test
@@ -91,42 +83,44 @@ public class ExpressionParserTest {
     public void testAdd() throws ParsingException {
         NumExpr add = NumExprParser.parseNumExpr(addBlock, 0, twoNumExprSlotsNumExprs);
         assertTrue(add instanceof Add);
-        assertEquals("1.0", String.valueOf(((Number) ((Add) add).getFirst()).getValue()));
-        assertEquals("2.0", String.valueOf(((Number) ((Add) add).getSecond()).getValue()));
+        assertEquals("1.0", String.valueOf(((NumberLiteral) ((Add) add).getOperand1()).getValue()));
+        assertEquals("2.0", String.valueOf(((NumberLiteral) ((Add) add).getOperand2()).getValue()));
     }
 
     @Test
     public void testMinus() throws ParsingException {
         NumExpr minus = NumExprParser.parseNumExpr(minusBlock, 0, twoNumExprSlotsNumExprs);
         assertTrue(minus instanceof Minus);
-        assertEquals("1.0", String.valueOf(((Number) ((Minus) minus).getFirst()).getValue()));
-        assertEquals("2.0", String.valueOf(((Number) ((Minus) minus).getSecond()).getValue()));
+        assertEquals("1.0", String.valueOf(((NumberLiteral) ((Minus) minus).getOperand1()).getValue()));
+        assertEquals("2.0", String.valueOf(((NumberLiteral) ((Minus) minus).getOperand2()).getValue()));
     }
 
     @Test
     public void testMult() throws ParsingException {
         NumExpr mult = NumExprParser.parseNumExpr(multBlock, 0, twoNumExprSlotsNumExprs);
         assertTrue(mult instanceof Mult);
-        assertEquals("1.0", String.valueOf(((Number) ((Mult) mult).getFirst()).getValue()));
-        assertEquals("2.0", String.valueOf(((Number) ((Mult) mult).getSecond()).getValue()));
+        assertEquals("1.0", String.valueOf(((NumberLiteral) ((Mult) mult).getOperand1()).getValue()));
+        assertEquals("2.0", String.valueOf(((NumberLiteral) ((Mult) mult).getOperand2()).getValue()));
     }
 
     @Test
     public void testDiv() throws ParsingException {
         NumExpr div = NumExprParser.parseNumExpr(divBlock, 0, twoNumExprSlotsNumExprs);
         assertTrue(div instanceof Div);
-        PickRandom pickRandom = (PickRandom) ((Div) div).getFirst();
-        assertEquals("1.0", String.valueOf(((Number) (pickRandom.getFrom())).getValue()));
-        assertEquals("2.0", String.valueOf(((Number) (pickRandom.getTo())).getValue()));
-        Mod mod = (Mod) ((Div) div).getSecond();
-        assertEquals("1.0", String.valueOf(((Number) (mod.getFirst())).getValue()));
-        assertEquals("2.0", String.valueOf(((Number) (mod.getSecond())).getValue()));
+        PickRandom pickRandom = (PickRandom) ((Div) div).getOperand1();
+        assertEquals("1.0", String.valueOf(((NumberLiteral) (pickRandom.getFrom())).getValue()));
+        assertEquals("2.0", String.valueOf(((NumberLiteral) (pickRandom.getTo())).getValue()));
+        Mod mod = (Mod) ((Div) div).getOperand2();
+        assertEquals("1.0", String.valueOf(((NumberLiteral) (mod.getOperand1())).getValue()));
+        assertEquals("2.0", String.valueOf(((NumberLiteral) (mod.getOperand2())).getValue()));
     }
 
     @Test
     public void testNumFuncts() throws ParsingException {
         JsonNode script = JsonParser.getBlocksNodeFromJSON("./src/test/fixtures/numfuncts.json");
         JsonNode pow10Block = script.get("xbBc!xS=1Yz2Yp/DF;JT");
-        assertTrue(NumExprParser.parseNumFunct(pow10Block.get("fields")) instanceof Pow10);
+        assertTrue(NumExprParser.parseNumFunct(pow10Block.get("fields")) instanceof NumFunct);
+
+        assertTrue((NumExprParser.parseNumFunct(pow10Block.get("fields"))).equals(NumFunct.POW10));
     }
 }

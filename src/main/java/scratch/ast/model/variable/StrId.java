@@ -18,40 +18,22 @@
  */
 package scratch.ast.model.variable;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
-import scratch.ast.model.ASTNode;
+import scratch.ast.model.literals.StringLiteral;
 import scratch.ast.visitor.ScratchVisitor;
 
 public class StrId extends Identifier {
 
-    private final String value;
-    private final ImmutableList<ASTNode> children;
-
     public StrId(String value) {
-        super(value);
-        this.value = Preconditions.checkNotNull(value);
-        this.children = ImmutableList.<ASTNode>builder().build();
+        this(new StringLiteral(value));
     }
 
-    public String getValue() {
-        return value;
+    public StrId(StringLiteral value) {
+        super(value);
     }
 
     @Override
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);
-    }
-
-    @Override
-    public ImmutableList<ASTNode> getChildren() {
-        return children;
-    }
-
-    @Override
-    public String[] toSimpleStringArray() {
-        String[] returnArray = {value};
-        return returnArray;
     }
 
 }

@@ -18,21 +18,9 @@
  */
 package scratch.ast.parser.stmt;
 
-import static scratch.ast.Constants.DRAGMODE_KEY;
-import static scratch.ast.Constants.DRAG_KEY;
-import static scratch.ast.Constants.EFFECT_KEY;
-import static scratch.ast.Constants.FIELDS_KEY;
-import static scratch.ast.Constants.OPCODE_KEY;
-import static scratch.ast.Constants.ROTATIONSTYLE_KEY;
-import static scratch.ast.Constants.STYLE_KEY;
-import static scratch.ast.Constants.VARIABLE_IDENTIFIER_POS;
-import static scratch.ast.Constants.VARIABLE_KEY;
-import static scratch.ast.Constants.VOLUME_KEY;
-
 import com.fasterxml.jackson.databind.JsonNode;
-import com.google.common.base.Preconditions;
 import scratch.ast.ParsingException;
-import scratch.ast.model.expression.string.Str;
+import scratch.ast.model.literals.StringLiteral;
 import scratch.ast.model.statement.Stmt;
 import scratch.ast.model.statement.common.SetAttributeTo;
 import scratch.ast.model.statement.common.SetStmt;
@@ -47,6 +35,9 @@ import scratch.ast.parser.attributes.GraphicEffect;
 import scratch.ast.parser.attributes.RotationStyle;
 import scratch.ast.parser.attributes.SoundEffect;
 import scratch.ast.parser.symboltable.VariableInfo;
+import scratch.utils.Preconditions;
+
+import static scratch.ast.Constants.*;
 
 public class SetStmtParser {
 
@@ -79,35 +70,35 @@ public class SetStmtParser {
     }
 
     private static SetStmt parseSetVolumeTo(JsonNode current, JsonNode allBlocks) throws ParsingException {
-        return new SetAttributeTo(new Str(VOLUME_KEY), ExpressionParser.parseExpression(current, 0,
+        return new SetAttributeTo(new StringLiteral(VOLUME_KEY), ExpressionParser.parseExpression(current, 0,
             allBlocks));
     }
 
     private static SetStmt parseSetSoundEffect(JsonNode current, JsonNode allBlocks) throws ParsingException {
         String effect = current.get(FIELDS_KEY).get(EFFECT_KEY).get(0).textValue();
         Preconditions.checkArgument(SoundEffect.contains(effect));
-        return new SetAttributeTo(new Str(effect), ExpressionParser.parseExpression(current, 0,
+        return new SetAttributeTo(new StringLiteral(effect), ExpressionParser.parseExpression(current, 0,
             allBlocks));
     }
 
     private static SetStmt parseSetLookEffect(JsonNode current, JsonNode allBlocks) throws ParsingException {
         String effect = current.get(FIELDS_KEY).get(EFFECT_KEY).get(0).textValue();
         Preconditions.checkArgument(GraphicEffect.contains(effect));
-        return new SetAttributeTo(new Str(effect), ExpressionParser.parseExpression(current, 0,
+        return new SetAttributeTo(new StringLiteral(effect), ExpressionParser.parseExpression(current, 0,
             allBlocks));
     }
 
     private static SetStmt parseSetRotationStyle(JsonNode current) {
         String rota = current.get(FIELDS_KEY).get(STYLE_KEY).get(0).textValue();
         Preconditions.checkArgument(RotationStyle.contains(rota));
-        return new SetAttributeTo(new Str(ROTATIONSTYLE_KEY), new Str(rota));
+        return new SetAttributeTo(new StringLiteral(ROTATIONSTYLE_KEY), new StringLiteral(rota));
 
     }
 
     private static SetStmt parseSetDragmode(JsonNode current) {
         String drag = current.get(FIELDS_KEY).get(DRAGMODE_KEY).get(0).textValue();
         Preconditions.checkArgument(DragMode.contains(drag));
-        return new SetAttributeTo(new Str(DRAG_KEY), new Str(drag));
+        return new SetAttributeTo(new StringLiteral(DRAG_KEY), new StringLiteral(drag));
     }
 
     private static SetStmt parseSetVariable(JsonNode current, JsonNode allBlocks) throws ParsingException {

@@ -18,29 +18,14 @@
  */
 package scratch.ast.model.expression.bool;
 
-import com.google.common.collect.ImmutableList;
-import scratch.ast.model.ASTNode;
+import scratch.ast.model.expression.BinaryExpression;
 import scratch.ast.model.expression.num.NumExpr;
 import scratch.ast.visitor.ScratchVisitor;
 
-public class Equals implements BoolExpr {
-
-    private final NumExpr first;
-    private final NumExpr second;
-    private final ImmutableList<ASTNode> children;
+public class Equals extends BinaryExpression<NumExpr, NumExpr> implements BoolExpr {
 
     public Equals(NumExpr first, NumExpr second) {
-        this.first = first;
-        this.second = second;
-        children = ImmutableList.<ASTNode>builder().add(first).add(second).build();
-    }
-
-    public NumExpr getFirst() {
-        return first;
-    }
-
-    public NumExpr getSecond() {
-        return second;
+        super(first, second);
     }
 
     @Override
@@ -48,8 +33,4 @@ public class Equals implements BoolExpr {
         visitor.visit(this);
     }
 
-    @Override
-    public ImmutableList<ASTNode> getChildren() {
-        return children;
-    }
 }

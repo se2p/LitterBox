@@ -18,19 +18,17 @@
  */
 package scratch.ast.model.statement.spritelook;
 
-import com.google.common.collect.ImmutableList;
-import scratch.ast.model.ASTNode;
+import scratch.ast.model.AbstractNode;
 import scratch.ast.model.expression.num.NumExpr;
 import scratch.ast.visitor.ScratchVisitor;
 
-public class SetSizeTo implements SpriteLookStmt {
+public class SetSizeTo extends AbstractNode implements SpriteLookStmt {
 
     private final NumExpr percent;
-    private final ImmutableList<ASTNode> children;
 
     public SetSizeTo(NumExpr percent) {
+        super(percent);
         this.percent = percent;
-        this.children = ImmutableList.<ASTNode>builder().add(percent).build();
     }
 
     public NumExpr getPercent() {
@@ -42,8 +40,5 @@ public class SetSizeTo implements SpriteLookStmt {
         visitor.visit(this);
     }
 
-    @Override
-    public ImmutableList<ASTNode> getChildren() {
-        return children;
-    }
+
 }

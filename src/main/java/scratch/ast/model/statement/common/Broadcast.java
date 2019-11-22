@@ -18,20 +18,18 @@
  */
 package scratch.ast.model.statement.common;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.base.Preconditions;
-import scratch.ast.model.ASTNode;
+import scratch.ast.model.AbstractNode;
 import scratch.ast.model.Message;
 import scratch.ast.visitor.ScratchVisitor;
+import scratch.utils.Preconditions;
 
-public class Broadcast implements CommonStmt {
+public class Broadcast extends AbstractNode implements CommonStmt {
 
     private final Message message;
-    private final ImmutableList<ASTNode> children;
 
     public Broadcast(Message message) {
+        super(message);
         this.message = Preconditions.checkNotNull(message);
-        this.children = ImmutableList.<ASTNode>builder().add(message).build();
     }
 
     public Message getMessage() {
@@ -43,8 +41,5 @@ public class Broadcast implements CommonStmt {
         visitor.visit(this);
     }
 
-    @Override
-    public ImmutableList<ASTNode> getChildren() {
-        return children;
-    }
+
 }

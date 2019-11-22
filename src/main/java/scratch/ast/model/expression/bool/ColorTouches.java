@@ -18,29 +18,14 @@
  */
 package scratch.ast.model.expression.bool;
 
-import com.google.common.collect.ImmutableList;
-import scratch.ast.model.ASTNode;
-import scratch.ast.model.color.Color;
+import scratch.ast.model.expression.BinaryExpression;
+import scratch.ast.model.expression.color.ColorExpression;
 import scratch.ast.visitor.ScratchVisitor;
 
-public class ColorTouches implements BoolExpr {
+public class ColorTouches extends BinaryExpression<ColorExpression, ColorExpression> implements BoolExpr {
 
-    private final Color first;
-    private final Color second;
-    private final ImmutableList<ASTNode> children;
-
-    public ColorTouches(Color first, Color second) {
-        this.first = first;
-        this.second = second;
-        children = ImmutableList.<ASTNode>builder().add(first).add(second).build();
-    }
-
-    public Color getFirst() {
-        return first;
-    }
-
-    public Color getSecond() {
-        return second;
+    public ColorTouches(ColorExpression operand1, ColorExpression operand2) {
+        super(operand1, operand2);
     }
 
     @Override
@@ -48,8 +33,4 @@ public class ColorTouches implements BoolExpr {
         visitor.visit(this);
     }
 
-    @Override
-    public ImmutableList<ASTNode> getChildren() {
-        return children;
-    }
 }

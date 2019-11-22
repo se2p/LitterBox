@@ -18,21 +18,19 @@
  */
 package scratch.ast.model.variable;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.base.Preconditions;
-import scratch.ast.model.ASTNode;
+import scratch.ast.model.AbstractNode;
 import scratch.ast.visitor.ScratchVisitor;
+import scratch.utils.Preconditions;
 
-public class Qualified implements Variable {
+public class Qualified extends AbstractNode implements Variable {
 
     private final Identifier first;
     private final Identifier second;
-    private final ImmutableList<ASTNode> children;
 
     public Qualified(Identifier first, Identifier second) {
+        super(first, second);
         this.first = Preconditions.checkNotNull(first);
         this.second = Preconditions.checkNotNull(second);
-        children =  ImmutableList.<ASTNode>builder().add(first).add(second).build();
     }
 
     public Identifier getFirst() {
@@ -48,8 +46,4 @@ public class Qualified implements Variable {
         visitor.visit(this);
     }
 
-    @Override
-    public ImmutableList<ASTNode> getChildren() {
-        return children;
-    }
 }

@@ -18,19 +18,17 @@
  */
 package scratch.ast.model.position;
 
-import com.google.common.collect.ImmutableList;
-import scratch.ast.model.ASTNode;
+import scratch.ast.model.AbstractNode;
 import scratch.ast.model.variable.Identifier;
 import scratch.ast.visitor.ScratchVisitor;
 
-public class PivotOf implements Position {
+public class PivotOf extends AbstractNode implements Position {
 
     private final Identifier identifier;
-    private final ImmutableList<ASTNode> children;
 
     public PivotOf(Identifier identifier) {
+        super(identifier);
         this.identifier = identifier;
-        children = ImmutableList.<ASTNode>builder().add(identifier).build();
     }
 
     public Identifier getIdentifier() {
@@ -42,8 +40,4 @@ public class PivotOf implements Position {
         visitor.visit(this);
     }
 
-    @Override
-    public ImmutableList<ASTNode> getChildren() {
-        return children;
-    }
 }

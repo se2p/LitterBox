@@ -18,26 +18,23 @@
  */
 package scratch.ast.model.statement.control;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.base.Preconditions;
-import scratch.ast.model.ASTNode;
+import scratch.ast.model.AbstractNode;
 import scratch.ast.model.StmtList;
 import scratch.ast.model.expression.bool.BoolExpr;
 import scratch.ast.visitor.ScratchVisitor;
+import scratch.utils.Preconditions;
 
-public class IfElseStmt implements IfStmt {
+public class IfElseStmt extends AbstractNode implements IfStmt {
 
-    private final ImmutableList<ASTNode> children;
     private final BoolExpr boolExpr;
     private final StmtList stmtList;
     private final StmtList elseStmts;
 
     public IfElseStmt(BoolExpr boolExpr, StmtList stmtList, StmtList elseStmts) {
-        super();
+        super(boolExpr, stmtList, elseStmts);
         this.boolExpr = Preconditions.checkNotNull(boolExpr);
         this.stmtList = Preconditions.checkNotNull(stmtList);
         this.elseStmts = Preconditions.checkNotNull(elseStmts);
-        this.children = ImmutableList.<ASTNode>builder().add(boolExpr).add(stmtList).add(elseStmts).build();
     }
 
     public BoolExpr getBoolExpr() {
@@ -57,8 +54,4 @@ public class IfElseStmt implements IfStmt {
         visitor.visit(this);
     }
 
-    @Override
-    public ImmutableList<ASTNode> getChildren() {
-        return children;
-    }
 }

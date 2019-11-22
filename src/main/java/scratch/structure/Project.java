@@ -18,8 +18,9 @@
  */
 package scratch.structure;
 
-import java.util.List;
 import utils.Version;
+
+import java.util.List;
 
 /**
  * The Project class holds all content of a Scratch project file

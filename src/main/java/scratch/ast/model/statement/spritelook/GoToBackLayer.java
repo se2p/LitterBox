@@ -18,16 +18,13 @@
  */
 package scratch.ast.model.statement.spritelook;
 
-import com.google.common.collect.ImmutableList;
-import scratch.ast.model.ASTNode;
+import scratch.ast.model.AbstractNode;
 import scratch.ast.visitor.ScratchVisitor;
 
-public class GoToBackLayer implements SpriteLookStmt {
-
-    private final ImmutableList<ASTNode> children;
+public class GoToBackLayer extends AbstractNode implements SpriteLookStmt {
 
     public GoToBackLayer() {
-        children = ImmutableList.<ASTNode>builder().add().build();
+        super();
     }
 
     @Override
@@ -35,8 +32,5 @@ public class GoToBackLayer implements SpriteLookStmt {
         visitor.visit(this);
     }
 
-    @Override
-    public ImmutableList<ASTNode> getChildren() {
-        return children;
-    }
+
 }

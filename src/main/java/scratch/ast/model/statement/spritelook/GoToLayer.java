@@ -18,20 +18,18 @@
  */
 package scratch.ast.model.statement.spritelook;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.base.Preconditions;
-import scratch.ast.model.ASTNode;
+import scratch.ast.model.AbstractNode;
 import scratch.ast.model.expression.num.NumExpr;
 import scratch.ast.visitor.ScratchVisitor;
+import scratch.utils.Preconditions;
 
-public class GoToLayer implements SpriteLookStmt {
+public class GoToLayer extends AbstractNode implements SpriteLookStmt {
 
     private final NumExpr layer;
-    private final ImmutableList<ASTNode> children;
 
     public GoToLayer(NumExpr layer) {
+        super(layer);
         this.layer = Preconditions.checkNotNull(layer);
-        this.children = ImmutableList.<ASTNode>builder().add(layer).build();
     }
 
     public NumExpr getLayer() {
@@ -43,8 +41,5 @@ public class GoToLayer implements SpriteLookStmt {
         visitor.visit(this);
     }
 
-    @Override
-    public ImmutableList<ASTNode> getChildren() {
-        return children;
-    }
+
 }

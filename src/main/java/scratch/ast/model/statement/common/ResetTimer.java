@@ -18,17 +18,14 @@
  */
 package scratch.ast.model.statement.common;
 
-import com.google.common.collect.ImmutableList;
 import scratch.ast.model.ASTLeaf;
-import scratch.ast.model.ASTNode;
+import scratch.ast.model.AbstractNode;
 import scratch.ast.visitor.ScratchVisitor;
 
-public class ResetTimer implements CommonStmt, ASTLeaf {
-
-    private final ImmutableList<ASTNode> children;
+public class ResetTimer extends AbstractNode implements CommonStmt, ASTLeaf {
 
     public ResetTimer() {
-        children = ImmutableList.<ASTNode>builder().build();
+        super();
     }
 
     @Override
@@ -36,8 +33,4 @@ public class ResetTimer implements CommonStmt, ASTLeaf {
         visitor.visit(this);
     }
 
-    @Override
-    public ImmutableList<ASTNode> getChildren() {
-        return children;
-    }
 }

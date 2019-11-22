@@ -18,20 +18,18 @@
  */
 package scratch.ast.model.statement.spritemotion;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.base.Preconditions;
-import scratch.ast.model.ASTNode;
+import scratch.ast.model.AbstractNode;
 import scratch.ast.model.expression.num.NumExpr;
 import scratch.ast.visitor.ScratchVisitor;
+import scratch.utils.Preconditions;
 
-public class ChangeYBy implements SpriteMotionStmt {
+public class ChangeYBy extends AbstractNode implements SpriteMotionStmt {
 
     private final NumExpr num;
-    private final ImmutableList<ASTNode> children;
 
     public ChangeYBy(NumExpr num) {
+        super(num);
         this.num = Preconditions.checkNotNull(num);
-        children = ImmutableList.<ASTNode>builder().add(num).build();
     }
 
     public NumExpr getNum() {
@@ -43,8 +41,4 @@ public class ChangeYBy implements SpriteMotionStmt {
         visitor.visit(this);
     }
 
-    @Override
-    public ImmutableList<ASTNode> getChildren() {
-        return children;
-    }
 }

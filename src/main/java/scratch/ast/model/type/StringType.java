@@ -18,26 +18,15 @@
  */
 package scratch.ast.model.type;
 
-import com.google.common.collect.ImmutableList;
-import scratch.ast.model.ASTNode;
+import scratch.ast.model.AbstractNode;
 import scratch.ast.visitor.ScratchVisitor;
 
-public class StringType implements Type{
-
-    private final ImmutableList<ASTNode> children;
-
-    public StringType() {
-        children = ImmutableList.<ASTNode>builder().build();
-    }
+public class StringType extends AbstractNode implements Type{
 
     @Override
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);
     }
 
-    @Override
-    public ImmutableList<ASTNode> getChildren() {
-        return children;
-    }
 }
 

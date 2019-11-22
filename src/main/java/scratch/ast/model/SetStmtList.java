@@ -18,21 +18,19 @@
  */
 package scratch.ast.model;
 
-import com.google.common.collect.ImmutableList;
-import java.util.List;
-
-import com.google.common.base.Preconditions;
 import scratch.ast.model.statement.common.SetStmt;
 import scratch.ast.visitor.ScratchVisitor;
+import scratch.utils.Preconditions;
 
-public class SetStmtList implements ASTNode {
+import java.util.List;
 
-    private final ImmutableList<ASTNode> children;
+public class SetStmtList extends AbstractNode implements ASTNode {
+
     private final List<SetStmt> setStmtList;
 
     public SetStmtList(List<SetStmt> setStmtList) {
+        super(setStmtList);
         this.setStmtList = Preconditions.checkNotNull(setStmtList);
-        children = ImmutableList.<ASTNode>builder().addAll(setStmtList).build();
     }
 
     public List<SetStmt> getStmts() {
@@ -42,11 +40,6 @@ public class SetStmtList implements ASTNode {
     @Override
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);
-    }
-
-    @Override
-    public ImmutableList<ASTNode> getChildren() {
-        return children;
     }
 
 }

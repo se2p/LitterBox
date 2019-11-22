@@ -18,69 +18,15 @@
  */
 package scratch.ast.parser;
 
-import static scratch.ast.Constants.FIELDS_KEY;
-import static scratch.ast.Constants.FIELD_VALUE;
-import static scratch.ast.Constants.INPUTS_KEY;
-import static scratch.ast.Constants.LIST_NAME_POS;
-import static scratch.ast.Constants.OPCODE_KEY;
-import static scratch.ast.Constants.OPERATOR_KEY;
-import static scratch.ast.Constants.POS_BLOCK_ID;
-import static scratch.ast.Constants.POS_DATA_ARRAY;
-import static scratch.ast.Constants.POS_INPUT_ID;
-import static scratch.ast.Constants.POS_INPUT_VALUE;
-import static scratch.ast.parser.ExpressionParser.getDataArrayAtPos;
-import static scratch.ast.parser.ExpressionParser.getExprArrayAtPos;
-import static scratch.ast.parser.ExpressionParser.getExprArrayByName;
-import static scratch.ast.parser.ExpressionParser.getShadowIndicator;
-import static scratch.ast.parser.ExpressionParser.parseExpression;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.TextNode;
-import com.google.common.base.Preconditions;
-import java.lang.reflect.InvocationTargetException;
-import java.util.Optional;
 import scratch.ast.ParsingException;
 import scratch.ast.model.expression.Expression;
 import scratch.ast.model.expression.bool.BoolExpr;
-import scratch.ast.model.expression.num.Add;
-import scratch.ast.model.expression.num.AsNumber;
-import scratch.ast.model.expression.num.Current;
-import scratch.ast.model.expression.num.DaysSince2000;
-import scratch.ast.model.expression.num.DistanceTo;
-import scratch.ast.model.expression.num.Div;
-import scratch.ast.model.expression.num.IndexOf;
-import scratch.ast.model.expression.num.LengthOfString;
-import scratch.ast.model.expression.num.LengthOfVar;
-import scratch.ast.model.expression.num.Loudness;
-import scratch.ast.model.expression.num.Minus;
-import scratch.ast.model.expression.num.Mod;
-import scratch.ast.model.expression.num.MouseX;
-import scratch.ast.model.expression.num.MouseY;
-import scratch.ast.model.expression.num.Mult;
-import scratch.ast.model.expression.num.NumExpr;
-import scratch.ast.model.expression.num.NumFunctOf;
-import scratch.ast.model.expression.num.Number;
-import scratch.ast.model.expression.num.PickRandom;
-import scratch.ast.model.expression.num.Round;
-import scratch.ast.model.expression.num.Timer;
-import scratch.ast.model.expression.num.UnspecifiedNumExpr;
+import scratch.ast.model.expression.num.*;
 import scratch.ast.model.expression.string.StringExpr;
-import scratch.ast.model.numfunct.Abs;
-import scratch.ast.model.numfunct.Acos;
-import scratch.ast.model.numfunct.Asin;
-import scratch.ast.model.numfunct.Atan;
-import scratch.ast.model.numfunct.Ceiling;
-import scratch.ast.model.numfunct.Cos;
-import scratch.ast.model.numfunct.Floor;
-import scratch.ast.model.numfunct.Ln;
-import scratch.ast.model.numfunct.Log;
-import scratch.ast.model.numfunct.NumFunct;
-import scratch.ast.model.numfunct.Pow10;
-import scratch.ast.model.numfunct.PowE;
-import scratch.ast.model.numfunct.Sin;
-import scratch.ast.model.numfunct.Sqrt;
-import scratch.ast.model.numfunct.Tan;
+import scratch.ast.model.literals.NumberLiteral;
 import scratch.ast.model.position.Position;
 import scratch.ast.model.timecomp.TimeComp;
 import scratch.ast.model.variable.Qualified;
@@ -89,6 +35,13 @@ import scratch.ast.model.variable.Variable;
 import scratch.ast.opcodes.NumExprOpcode;
 import scratch.ast.parser.symboltable.ExpressionListInfo;
 import scratch.ast.parser.symboltable.VariableInfo;
+import scratch.utils.Preconditions;
+
+import java.lang.reflect.InvocationTargetException;
+import java.util.Optional;
+
+import static scratch.ast.Constants.*;
+import static scratch.ast.parser.ExpressionParser.*;
 
 public class NumExprParser {
 
@@ -198,16 +151,16 @@ public class NumExprParser {
      * @param pos    The position of the number to parse in the inputs node.
      * @return A Number holding the value of the literal entered.
      */
-    static Number parseNumber(JsonNode inputs, int pos) {
+    static NumberLiteral parseNumber(JsonNode inputs, int pos) {
         String valueString = getDataArrayAtPos(inputs, pos).get(POS_INPUT_VALUE).asText();
         float value = Float.parseFloat(valueString);
-        return new Number(value);
+        return new NumberLiteral(value);
     }
 
-    static Number parseNumber(JsonNode inputs, String inputName) {
+    static NumberLiteral parseNumber(JsonNode inputs, String inputName) {
         String valueString = ExpressionParser.getDataArrayByName(inputs, inputName).get(POS_INPUT_VALUE).asText();
         float value = Float.parseFloat(valueString);
-        return new Number(value);
+        return new NumberLiteral(value);
     }
 
     static Optional<NumExpr> maybeParseBlockNumExpr(JsonNode expressionBlock, JsonNode blocks) {
@@ -300,37 +253,6 @@ public class NumExprParser {
         throws ParsingException { // TODO maybe add opcodes enum for NumFuncts
         ArrayNode operator = (ArrayNode) fields.get(OPERATOR_KEY);
         String operatorOpcode = operator.get(FIELD_VALUE).asText();
-        switch (operatorOpcode) {
-            case "abs":
-                return new Abs();
-            case "floor":
-                return new Floor();
-            case "ceiling":
-                return new Ceiling();
-            case "sqrt":
-                return new Sqrt();
-            case "sin":
-                return new Sin();
-            case "cos":
-                return new Cos();
-            case "tan":
-                return new Tan();
-            case "asin":
-                return new Asin();
-            case "acos":
-                return new Acos();
-            case "atan":
-                return new Atan();
-            case "ln":
-                return new Ln();
-            case "log":
-                return new Log();
-            case "e ^":
-                return new PowE();
-            case "10 ^":
-                return new Pow10();
-            default:
-                throw new ParsingException("There is no NumFunct with opcode " + operatorOpcode);
-        }
+        return NumFunct.fromString(operatorOpcode);
     }
 }

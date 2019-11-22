@@ -18,19 +18,17 @@
  */
 package scratch.ast.model.expression.bool;
 
-import com.google.common.collect.ImmutableList;
-import scratch.ast.model.ASTNode;
+import scratch.ast.model.AbstractNode;
 import scratch.ast.model.touchable.Touchable;
 import scratch.ast.visitor.ScratchVisitor;
 
-public class Touching implements BoolExpr {
+public class Touching extends AbstractNode implements BoolExpr {
 
     private final Touchable touchable;
-    private final ImmutableList<ASTNode> children;
 
     public Touching(Touchable touchable) {
+        super(touchable);
         this.touchable = touchable;
-        children = ImmutableList.<ASTNode>builder().add(touchable).build();
     }
 
     public Touchable getTouchable() {
@@ -42,8 +40,4 @@ public class Touching implements BoolExpr {
         visitor.visit(this);
     }
 
-    @Override
-    public ImmutableList<ASTNode> getChildren() {
-        return children;
-    }
 }

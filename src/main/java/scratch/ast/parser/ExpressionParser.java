@@ -18,14 +18,8 @@
  */
 package scratch.ast.parser;
 
-import static scratch.ast.Constants.OPCODE_KEY;
-import static scratch.ast.Constants.POS_DATA_ARRAY;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
 import scratch.ast.Constants;
 import scratch.ast.ParsingException;
 import scratch.ast.model.expression.Expression;
@@ -37,6 +31,13 @@ import scratch.ast.opcodes.NumExprOpcode;
 import scratch.ast.opcodes.StringExprOpcode;
 import scratch.ast.parser.symboltable.ExpressionListInfo;
 import scratch.ast.parser.symboltable.VariableInfo;
+
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
+import static scratch.ast.Constants.OPCODE_KEY;
+import static scratch.ast.Constants.POS_DATA_ARRAY;
 
 public class ExpressionParser {
 

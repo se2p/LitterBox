@@ -60,7 +60,7 @@ public class MissingForever implements IssueFinder {
                 List<Stmt> stmts = scripts.get(0).getStmtList().getStmts().getListOfStmt();
                 if (stmts.size() > 0 && scripts.get(0).getEvent() instanceof GreenFlag) {
 
-                    checkMissForever(stmts, actorDefs.get(i).getIdent().getValue());
+                    checkMissForever(stmts, actorDefs.get(i).getIdent().getName());
                 }
             }
         }

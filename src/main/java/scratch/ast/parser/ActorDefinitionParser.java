@@ -18,23 +18,9 @@
  */
 package scratch.ast.parser;
 
-import static scratch.ast.Constants.IS_STAGE_KEY;
-import static scratch.ast.Constants.NAME_KEY;
-
 import com.fasterxml.jackson.databind.JsonNode;
-import com.google.common.base.Preconditions;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 import scratch.ast.ParsingException;
-import scratch.ast.model.ActorDefinition;
-import scratch.ast.model.ActorType;
-import scratch.ast.model.Script;
-import scratch.ast.model.ScriptList;
-import scratch.ast.model.SetStmtList;
+import scratch.ast.model.*;
 import scratch.ast.model.procedure.ProcedureDefinitionList;
 import scratch.ast.model.resource.Resource;
 import scratch.ast.model.resource.ResourceList;
@@ -43,6 +29,17 @@ import scratch.ast.model.statement.declaration.DeclarationStmt;
 import scratch.ast.model.statement.declaration.DeclarationStmtList;
 import scratch.ast.model.variable.Identifier;
 import scratch.ast.model.variable.StrId;
+import scratch.utils.Preconditions;
+
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
+
+import static scratch.ast.Constants.IS_STAGE_KEY;
+import static scratch.ast.Constants.NAME_KEY;
 
 public class ActorDefinitionParser {
 
@@ -68,11 +65,11 @@ public class ActorDefinitionParser {
         ResourceList resources = new ResourceList(res);
 
         List<DeclarationStmt> decls = DeclarationStmtParser
-            .parseLists(actorDefinitionNode.get("lists"), identifier.getValue(),
+            .parseLists(actorDefinitionNode.get("lists"), identifier.getName(),
                 actorDefinitionNode.get(IS_STAGE_KEY).asBoolean());
-        decls.addAll(DeclarationStmtParser.parseBroadcasts(actorDefinitionNode.get("broadcasts"), identifier.getValue(),
+        decls.addAll(DeclarationStmtParser.parseBroadcasts(actorDefinitionNode.get("broadcasts"), identifier.getName(),
             actorDefinitionNode.get(IS_STAGE_KEY).asBoolean()));
-        decls.addAll(DeclarationStmtParser.parseVariables(actorDefinitionNode.get("variables"), identifier.getValue(),
+        decls.addAll(DeclarationStmtParser.parseVariables(actorDefinitionNode.get("variables"), identifier.getName(),
             actorDefinitionNode.get(IS_STAGE_KEY).asBoolean()));
         decls.addAll(DeclarationStmtParser.parseAttributeDeclarations(actorDefinitionNode));
         DeclarationStmtList declarations = new DeclarationStmtList(decls);
@@ -94,9 +91,9 @@ public class ActorDefinitionParser {
 
         List<SetStmt> setStmtList = DeclarationStmtParser.parseAttributeDeclarationSetStmts(actorDefinitionNode);
         setStmtList.addAll(DeclarationStmtParser.parseListDeclarationSetStmts(actorDefinitionNode.get("lists"),
-            identifier.getValue()));
+            identifier.getName()));
         setStmtList.addAll(DeclarationStmtParser.parseVariableDeclarationSetStmts(actorDefinitionNode.get("variables"),
-            identifier.getValue()));
+            identifier.getName()));
         return new ActorDefinition(actorType, identifier, resources, declarations, new SetStmtList(setStmtList),
             procDeclList,
             scriptList);
@@ -108,6 +105,6 @@ public class ActorDefinitionParser {
      * @return
      */
     public static Identifier getCurrentActor() {
-        return new StrId(currentActor.getValue());
+        return new StrId(currentActor.getName());
     }
 }

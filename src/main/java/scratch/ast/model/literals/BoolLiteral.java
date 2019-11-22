@@ -16,18 +16,24 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-package scratch.ast.model.numfunct;
+package scratch.ast.model.literals;
 
-import com.google.common.collect.ImmutableList;
-import scratch.ast.model.ASTNode;
+import scratch.ast.model.ASTLeaf;
+import scratch.ast.model.AbstractNode;
+import scratch.ast.model.expression.bool.BoolExpr;
 import scratch.ast.visitor.ScratchVisitor;
 
-public class Floor implements NumFunct {
+public class BoolLiteral extends AbstractNode implements BoolExpr, ASTLeaf {
 
-    private final ImmutableList<ASTNode> children;
+    private final boolean value;
 
-    public Floor() {
-        children = ImmutableList.<ASTNode>builder().build();
+    public BoolLiteral(boolean value) {
+        super();
+        this.value = value;
+    }
+
+    boolean getValue() {
+        return value;
     }
 
     @Override
@@ -36,7 +42,12 @@ public class Floor implements NumFunct {
     }
 
     @Override
-    public ImmutableList<ASTNode> getChildren() {
-        return children;
+    public String[] toSimpleStringArray() {
+        String[] returnArray = {"" + value};
+        return returnArray;
     }
+
+    public static final BoolLiteral FALSE = new BoolLiteral(false);
+
+    public static final BoolLiteral TRUE = new BoolLiteral(true);
 }

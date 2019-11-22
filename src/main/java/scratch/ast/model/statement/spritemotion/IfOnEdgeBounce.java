@@ -18,17 +18,14 @@
  */
 package scratch.ast.model.statement.spritemotion;
 
-import com.google.common.collect.ImmutableList;
 import scratch.ast.model.ASTLeaf;
-import scratch.ast.model.ASTNode;
+import scratch.ast.model.AbstractNode;
 import scratch.ast.visitor.ScratchVisitor;
 
-public class IfOnEdgeBounce implements SpriteMotionStmt, ASTLeaf {
-
-    private final ImmutableList<ASTNode> children;
+public class IfOnEdgeBounce extends AbstractNode implements SpriteMotionStmt, ASTLeaf {
 
     public IfOnEdgeBounce() {
-        children = ImmutableList.<ASTNode>builder().build();
+        super();
     }
 
     @Override
@@ -36,8 +33,4 @@ public class IfOnEdgeBounce implements SpriteMotionStmt, ASTLeaf {
         visitor.visit(this);
     }
 
-    @Override
-    public ImmutableList<ASTNode> getChildren() {
-        return children;
-    }
 }

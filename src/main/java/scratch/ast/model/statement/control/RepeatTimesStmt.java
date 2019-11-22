@@ -18,23 +18,21 @@
  */
 package scratch.ast.model.statement.control;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.base.Preconditions;
-import scratch.ast.model.ASTNode;
+import scratch.ast.model.AbstractNode;
 import scratch.ast.model.StmtList;
 import scratch.ast.model.expression.num.NumExpr;
 import scratch.ast.visitor.ScratchVisitor;
+import scratch.utils.Preconditions;
 
-public class RepeatTimesStmt implements ControlStmt {
+public class RepeatTimesStmt extends AbstractNode implements ControlStmt {
 
     private final NumExpr times;
     private final StmtList stmtList;
-    private final ImmutableList<ASTNode> children;
 
     public RepeatTimesStmt(NumExpr times, StmtList stmtList) {
+        super(times, stmtList);
         this.times = Preconditions.checkNotNull(times);
         this.stmtList = Preconditions.checkNotNull(stmtList);
-        this.children = ImmutableList.<ASTNode>builder().add(times).add(stmtList).build();
     }
 
     public NumExpr getTimes() {
@@ -48,11 +46,6 @@ public class RepeatTimesStmt implements ControlStmt {
     @Override
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);
-    }
-
-    @Override
-    public ImmutableList<ASTNode> getChildren() {
-        return children;
     }
 
 }

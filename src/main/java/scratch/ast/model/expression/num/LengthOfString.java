@@ -18,19 +18,17 @@
  */
 package scratch.ast.model.expression.num;
 
-import com.google.common.collect.ImmutableList;
-import scratch.ast.model.ASTNode;
+import scratch.ast.model.AbstractNode;
 import scratch.ast.model.expression.string.StringExpr;
 import scratch.ast.visitor.ScratchVisitor;
 
-public class LengthOfString implements NumExpr {
+public class LengthOfString extends AbstractNode implements NumExpr {
 
     private final StringExpr stringExpr;
-    private final ImmutableList<ASTNode> children;
 
     public LengthOfString(StringExpr stringExpr) {
+        super(stringExpr);
         this.stringExpr = stringExpr;
-        children = ImmutableList.<ASTNode>builder().add(stringExpr).build();
     }
 
     public StringExpr getStringExpr() {
@@ -42,8 +40,4 @@ public class LengthOfString implements NumExpr {
         visitor.visit(this);
     }
 
-    @Override
-    public ImmutableList<ASTNode> getChildren() {
-        return children;
-    }
 }

@@ -18,36 +18,22 @@
  */
 package scratch.ast.parser.stmt;
 
-import static scratch.ast.Constants.FIELDS_KEY;
-import static scratch.ast.Constants.FIELD_VALUE;
-import static scratch.ast.Constants.OPCODE_KEY;
-import static scratch.ast.opcodes.SpriteLookStmtOpcode.looks_gotofrontback;
-
 import com.fasterxml.jackson.databind.JsonNode;
-import com.google.common.base.Preconditions;
 import scratch.ast.ParsingException;
 import scratch.ast.model.elementchoice.ElementChoice;
 import scratch.ast.model.expression.num.Mult;
 import scratch.ast.model.expression.num.NumExpr;
-import scratch.ast.model.expression.num.Number;
 import scratch.ast.model.expression.string.StringExpr;
-import scratch.ast.model.statement.spritelook.ChangeLayerBy;
-import scratch.ast.model.statement.spritelook.ChangeSizeBy;
-import scratch.ast.model.statement.spritelook.GoToBackLayer;
-import scratch.ast.model.statement.spritelook.GoToFrontLayer;
-import scratch.ast.model.statement.spritelook.Hide;
-import scratch.ast.model.statement.spritelook.Say;
-import scratch.ast.model.statement.spritelook.SayForSecs;
-import scratch.ast.model.statement.spritelook.SetSizeTo;
-import scratch.ast.model.statement.spritelook.Show;
-import scratch.ast.model.statement.spritelook.SpriteLookStmt;
-import scratch.ast.model.statement.spritelook.SwitchCostumeTo;
-import scratch.ast.model.statement.spritelook.Think;
-import scratch.ast.model.statement.spritelook.ThinkForSecs;
+import scratch.ast.model.literals.NumberLiteral;
+import scratch.ast.model.statement.spritelook.*;
 import scratch.ast.opcodes.SpriteLookStmtOpcode;
 import scratch.ast.parser.ElementChoiceParser;
 import scratch.ast.parser.NumExprParser;
 import scratch.ast.parser.StringExprParser;
+import scratch.utils.Preconditions;
+
+import static scratch.ast.Constants.*;
+import static scratch.ast.opcodes.SpriteLookStmtOpcode.looks_gotofrontback;
 
 public class SpriteLookStmtParser {
 
@@ -112,7 +98,7 @@ public class SpriteLookStmtParser {
         if (layerOption.equals("forward")) {
             return new ChangeLayerBy(num);
         } else if (layerOption.equals("backward")) {
-            NumExpr negated = new Mult(new Number(-1), num);
+            NumExpr negated = new Mult(new NumberLiteral(-1), num);
             return new ChangeLayerBy(negated);
         } else {
             throw new ParsingException("Unknown option " + layerOption +

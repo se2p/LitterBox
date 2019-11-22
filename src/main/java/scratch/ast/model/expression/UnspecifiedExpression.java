@@ -18,16 +18,13 @@
  */
 package scratch.ast.model.expression;
 
-import com.google.common.collect.ImmutableList;
-import scratch.ast.model.ASTNode;
+import scratch.ast.model.AbstractNode;
 import scratch.ast.visitor.ScratchVisitor;
 
-public class UnspecifiedExpression implements Expression {
-
-    private final ImmutableList<ASTNode> children;
+public class UnspecifiedExpression extends AbstractNode implements Expression {
 
     public UnspecifiedExpression() {
-        children = ImmutableList.<ASTNode>builder().build();
+        super();
     }
 
     @Override
@@ -35,8 +32,4 @@ public class UnspecifiedExpression implements Expression {
         visitor.visit(this);
     }
 
-    @Override
-    public ImmutableList<ASTNode> getChildren() {
-        return children;
-    }
 }

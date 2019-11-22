@@ -18,28 +18,23 @@
  */
 package scratch.ast.model.procedure;
 
-import com.google.common.collect.ImmutableList;
-import java.util.List;
 import scratch.ast.model.ASTNode;
+import scratch.ast.model.AbstractNode;
 import scratch.ast.visitor.ScratchVisitor;
 
-public class ParameterListPlain implements ASTNode{
+import java.util.List;
 
-    List<Parameter> parameters;
-    private final ImmutableList<ASTNode> children;
+public class ParameterListPlain extends AbstractNode implements ASTNode{
+
+    private final List<Parameter> parameters;
 
     public ParameterListPlain(List<Parameter> parameters) {
+        super(parameters);
         this.parameters = parameters;
-        ImmutableList.Builder<ASTNode> builder = ImmutableList.builder();
-        children = builder.addAll(parameters).build();
     }
 
     public List<Parameter> getParameters() {
         return parameters;
-    }
-
-    public void setParameters(List<Parameter> parameters) {
-        this.parameters = parameters;
     }
 
     @Override
@@ -47,8 +42,4 @@ public class ParameterListPlain implements ASTNode{
         visitor.visit(this);
     }
 
-    @Override
-    public ImmutableList<ASTNode> getChildren() {
-        return children;
-    }
 }

@@ -18,10 +18,11 @@
  */
 package scratch.ast.parser.symboltable;
 
-import com.google.common.base.Preconditions;
-import java.util.HashMap;
 import scratch.ast.model.type.Type;
 import scratch.ast.model.variable.Identifier;
+import scratch.utils.Preconditions;
+
+import java.util.HashMap;
 
 public class ProcedureDefinitionNameMapping {
 

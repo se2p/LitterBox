@@ -18,20 +18,18 @@
  */
 package scratch.ast.model.statement.spritelook;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.base.Preconditions;
-import scratch.ast.model.ASTNode;
+import scratch.ast.model.AbstractNode;
 import scratch.ast.model.expression.string.StringExpr;
 import scratch.ast.visitor.ScratchVisitor;
+import scratch.utils.Preconditions;
 
-public class Think implements SpriteLookStmt {
+public class Think extends AbstractNode implements SpriteLookStmt {
 
     private final StringExpr thought;
-    private final ImmutableList<ASTNode> children;
 
     public Think(StringExpr thought) {
+        super(thought);
         this.thought = Preconditions.checkNotNull(thought);
-        this.children = ImmutableList.<ASTNode>builder().add(thought).build();
     }
 
     public StringExpr getThought() {
@@ -43,8 +41,4 @@ public class Think implements SpriteLookStmt {
         visitor.visit(this);
     }
 
-    @Override
-    public ImmutableList<ASTNode> getChildren() {
-        return children;
-    }
 }

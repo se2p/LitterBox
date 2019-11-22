@@ -18,35 +18,28 @@
  */
 package scratch.ast.parser;
 
-import static scratch.ast.Constants.FIELDS_KEY;
-import static scratch.ast.Constants.INPUTS_KEY;
-import static scratch.ast.Constants.NEXT_KEY;
-import static scratch.ast.Constants.OPCODE_KEY;
-import static scratch.ast.Constants.PARENT_KEY;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.google.common.base.Preconditions;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 import scratch.ast.Constants;
 import scratch.ast.ParsingException;
 import scratch.ast.model.StmtList;
-import scratch.ast.model.procedure.Parameter;
-import scratch.ast.model.procedure.ParameterList;
-import scratch.ast.model.procedure.ParameterListPlain;
-import scratch.ast.model.procedure.ProcedureDefinition;
-import scratch.ast.model.procedure.ProcedureDefinitionList;
+import scratch.ast.model.procedure.*;
 import scratch.ast.model.type.BooleanType;
 import scratch.ast.model.type.StringType;
 import scratch.ast.model.type.Type;
 import scratch.ast.model.variable.Identifier;
 import scratch.ast.model.variable.StrId;
 import scratch.ast.opcodes.ProcedureOpcode;
+import scratch.utils.Preconditions;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import static scratch.ast.Constants.*;
 
 public class ProcDefinitionParser {
 
@@ -145,19 +138,22 @@ public class ProcDefinitionParser {
     private static Parameter parseParameter(JsonNode blocks, String reference, String textValue) {
         JsonNode param = blocks.get(textValue);
         final String opcodeString = param.get(OPCODE_KEY).textValue();
-        final Parameter returnParam;
+
+        final Parameter result;
         if (opcodeString.equals(ProcedureOpcode.argument_reporter_boolean.name())) {
-            returnParam = new Parameter(new StrId(reference), new BooleanType());
+            result = new Parameter(new StrId(reference), new BooleanType());
         } else {
-            returnParam = new Parameter(new StrId(reference), new StringType());
+            result = new Parameter(new StrId(reference), new StringType());
         }
 
-        JsonNode values = param.get(FIELDS_KEY).get(VALUE_KEY);
+/*        JsonNode values = param.get(FIELDS_KEY).get(VALUE_KEY);
         Preconditions.checkArgument(values.isArray());
         ArrayNode arrayNode = (ArrayNode) values;
         String name = arrayNode.get(0).textValue();
-        returnParam.setValue(name);
+        result.setValue(name);
+        */
+        // FIXME!
+        throw new IllegalArgumentException("The above (uncommented) code does not make sense! Fix this.");
 
-        return returnParam;
     }
 }

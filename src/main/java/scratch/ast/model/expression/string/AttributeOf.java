@@ -18,23 +18,19 @@
  */
 package scratch.ast.model.expression.string;
 
-import com.google.common.collect.ImmutableList;
-import scratch.ast.model.ASTNode;
+import scratch.ast.model.AbstractNode;
 import scratch.ast.model.variable.Identifier;
 import scratch.ast.visitor.ScratchVisitor;
 
-public class AttributeOf implements StringExpr {
+public class AttributeOf extends AbstractNode implements StringExpr {
 
-    private final ImmutableList<ASTNode> children;
     private final StringExpr attribute;
     private final Identifier identifier;
 
     public AttributeOf(StringExpr attribute, Identifier identifier) {
+        super(attribute, identifier);
         this.attribute = attribute;
         this.identifier = identifier;
-
-        ImmutableList.Builder<ASTNode> builder = ImmutableList.builder();
-        children = builder.add(attribute).add(identifier).build();
     }
 
     public StringExpr getAttribute() {
@@ -50,8 +46,4 @@ public class AttributeOf implements StringExpr {
         visitor.visit(this);
     }
 
-    @Override
-    public ImmutableList<ASTNode> getChildren() {
-        return children;
-    }
 }

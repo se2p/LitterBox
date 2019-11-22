@@ -18,17 +18,15 @@
  */
 package scratch.ast.model;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
 import scratch.ast.model.procedure.ProcedureDefinitionList;
 import scratch.ast.model.resource.ResourceList;
 import scratch.ast.model.statement.declaration.DeclarationStmtList;
 import scratch.ast.model.variable.Identifier;
 import scratch.ast.visitor.ScratchVisitor;
+import scratch.utils.Preconditions;
 
-public class ActorDefinition implements ASTNode {
+public class ActorDefinition extends AbstractNode {
 
-    private final ImmutableList<ASTNode> children;
     private final ActorType actorType;
     private final Identifier ident;
     private final ResourceList resources;
@@ -40,6 +38,8 @@ public class ActorDefinition implements ASTNode {
     public ActorDefinition(ActorType actorType, Identifier ident, ResourceList resources, DeclarationStmtList decls,
         SetStmtList setStmtList, ProcedureDefinitionList procedureDefinitionList, ScriptList scripts) {
 
+        super(actorType, ident, resources, decls, setStmtList, procedureDefinitionList, scripts);
+
         this.actorType = Preconditions.checkNotNull(actorType);
         this.ident = Preconditions.checkNotNull(ident);
         this.resources = Preconditions.checkNotNull(resources);
@@ -47,15 +47,6 @@ public class ActorDefinition implements ASTNode {
         this.setStmtList = Preconditions.checkNotNull(setStmtList);
         this.procedureDefinitionList = Preconditions.checkNotNull(procedureDefinitionList);
         this.scripts = Preconditions.checkNotNull(scripts);
-        this.children = ImmutableList.<ASTNode>builder()
-            .add(actorType)
-            .add(ident)
-            .add(resources)
-            .add(decls)
-            .add(setStmtList)
-            .add(procedureDefinitionList)
-            .add(scripts)
-            .build();
     }
 
     public ActorType getActorType() {
@@ -91,8 +82,4 @@ public class ActorDefinition implements ASTNode {
         visitor.visit(this);
     }
 
-    @Override
-    public ImmutableList<ASTNode> getChildren() {
-        return children;
-    }
 }

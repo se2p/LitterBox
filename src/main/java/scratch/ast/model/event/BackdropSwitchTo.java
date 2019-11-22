@@ -18,19 +18,17 @@
  */
 package scratch.ast.model.event;
 
-import com.google.common.collect.ImmutableList;
-import scratch.ast.model.ASTNode;
+import scratch.ast.model.AbstractNode;
 import scratch.ast.model.variable.Identifier;
 import scratch.ast.visitor.ScratchVisitor;
 
-public class BackdropSwitchTo implements Event {
+public class BackdropSwitchTo extends AbstractNode implements Event {
 
     private final Identifier backdrop;
-    private final ImmutableList<ASTNode> children;
 
     public BackdropSwitchTo(Identifier backdrop) {
+        super(backdrop);
         this.backdrop = backdrop;
-        children = ImmutableList.<ASTNode>builder().add(backdrop).build();
     }
 
     public Identifier getBackdrop() {
@@ -40,10 +38,5 @@ public class BackdropSwitchTo implements Event {
     @Override
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);
-    }
-
-    @Override
-    public ImmutableList<ASTNode> getChildren() {
-        return children;
     }
 }

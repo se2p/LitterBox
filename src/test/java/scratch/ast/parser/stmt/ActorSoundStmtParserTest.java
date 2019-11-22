@@ -106,7 +106,7 @@ public class ActorSoundStmtParserTest {
             Truth.assertThat(listOfStmt.get(0).getClass()).isEqualTo(PlaySoundUntilDone.class);
 
             PlaySoundUntilDone playSoundUntilDone = (PlaySoundUntilDone) listOfStmt.get(0);
-            Truth.assertThat(((StrId) ((WithId) playSoundUntilDone.getElementChoice()).getStringExpr()).getValue())
+            Truth.assertThat(((StrId) ((WithId) playSoundUntilDone.getElementChoice()).getStringExpr()).getName())
                 .isEqualTo("Meow");
 
         } catch (ParsingException e) {
@@ -128,7 +128,7 @@ public class ActorSoundStmtParserTest {
             Truth.assertThat(listOfStmt.get(0).getClass()).isEqualTo(PlaySoundUntilDone.class);
 
             StartSound startSound = (StartSound) listOfStmt.get(1);
-            Truth.assertThat(((StrId) ((WithId) startSound.getElementChoice()).getStringExpr()).getValue())
+            Truth.assertThat(((StrId) ((WithId) startSound.getElementChoice()).getStringExpr()).getName())
                 .isEqualTo("Meow");
 
         } catch (ParsingException e) {

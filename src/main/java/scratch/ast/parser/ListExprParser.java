@@ -18,11 +18,6 @@
  */
 package scratch.ast.parser;
 
-import static scratch.ast.Constants.INPUTS_KEY;
-import static scratch.ast.Constants.POS_BLOCK_ID;
-import static scratch.ast.Constants.POS_DATA_ARRAY;
-import static scratch.ast.Constants.POS_INPUT_ID;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.TextNode;
@@ -32,6 +27,8 @@ import scratch.ast.model.variable.Qualified;
 import scratch.ast.model.variable.StrId;
 import scratch.ast.model.variable.Variable;
 import scratch.ast.parser.symboltable.ExpressionListInfo;
+
+import static scratch.ast.Constants.*;
 
 public class ListExprParser {
     public static ListExpr parseListExpr(JsonNode block, String inputName, JsonNode blocks) throws ParsingException {

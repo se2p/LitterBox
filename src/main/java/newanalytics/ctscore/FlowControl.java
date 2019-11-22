@@ -77,7 +77,7 @@ public class FlowControl implements IssueFinder {
                 List<Stmt> stmts = script.getStmtList().getStmts().getListOfStmt();
                 int newLevel = checkStmts(stmts, level, UNTIL);
                 if (newLevel == UNTIL) {
-                    found.add(actorDef.getIdent().getValue());
+                    found.add(actorDef.getIdent().getName());
                     return UNTIL;
                 }
             }
@@ -133,7 +133,7 @@ public class FlowControl implements IssueFinder {
                 List<Stmt> stmts = script.getStmtList().getStmts().getListOfStmt();
                 int newLevel = checkStmts(stmts, level, REPEAT_FOREVER);
                 if (newLevel == REPEAT_FOREVER) {
-                    found.add(actorDef.getIdent().getValue());
+                    found.add(actorDef.getIdent().getName());
                     return REPEAT_FOREVER;
                 }
             }
@@ -148,7 +148,7 @@ public class FlowControl implements IssueFinder {
             for (Script script : scripts) {
                 List<Stmt> stmts = script.getStmtList().getStmts().getListOfStmt();
                 if (stmts.size() >= 2 || (!(script.getEvent() instanceof Never) && stmts.size() >= 1)) {
-                    found.add(actorDef.getIdent().getValue());
+                    found.add(actorDef.getIdent().getName());
                     return SCRIPT;
                 }
             }

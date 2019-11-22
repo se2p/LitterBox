@@ -18,26 +18,15 @@
  */
 package scratch.ast.model.expression.num;
 
-import com.google.common.collect.ImmutableList;
 import scratch.ast.model.ASTLeaf;
-import scratch.ast.model.ASTNode;
+import scratch.ast.model.AbstractNode;
 import scratch.ast.visitor.ScratchVisitor;
 
-public class MouseY implements NumExpr, ASTLeaf {
-
-    private final ImmutableList<ASTNode> children;
-
-    public MouseY() {
-        children = ImmutableList.<ASTNode>builder().build();
-    }
+public class MouseY extends AbstractNode implements NumExpr, ASTLeaf {
 
     @Override
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);
     }
 
-    @Override
-    public ImmutableList<ASTNode> getChildren() {
-        return children;
-    }
 }
