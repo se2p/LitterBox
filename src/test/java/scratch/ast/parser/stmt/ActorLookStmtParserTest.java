@@ -34,6 +34,7 @@ import scratch.ast.model.ActorDefinitionList;
 import scratch.ast.model.Program;
 import scratch.ast.model.Script;
 import scratch.ast.model.elementchoice.WithId;
+import scratch.ast.model.literals.StringLiteral;
 import scratch.ast.model.statement.Stmt;
 import scratch.ast.model.statement.actorlook.AskAndWait;
 import scratch.ast.model.statement.actorlook.ClearGraphicEffects;
@@ -110,7 +111,7 @@ public class ActorLookStmtParserTest {
 
             Stmt askAndWaitStmt = listOfStmt.get(0);
             Truth.assertThat(askAndWaitStmt.getClass()).isEqualTo(AskAndWait.class);
-            Truth.assertThat(((Str) ((AskAndWait) askAndWaitStmt).getQuestion()).getStr())
+            Truth.assertThat(((StringLiteral) ((AskAndWait) askAndWaitStmt).getQuestion()).getText())
                 .isEqualTo("What's your name?");
 
         } catch (ParsingException e) {

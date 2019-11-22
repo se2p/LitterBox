@@ -18,6 +18,7 @@
  */
 package scratch.ast.model.statement.spritemotion;
 
+import scratch.ast.model.AbstractNode;
 import scratch.utils.UnmodifiableListBuilder;
 import com.google.common.base.Preconditions;
 import scratch.ast.model.ASTNode;
@@ -28,10 +29,9 @@ public class SetYTo extends AbstractNode implements SpriteMotionStmt {
 
     private final NumExpr num;
 
-
     public SetYTo(NumExpr num) {
+        super(num);
         this.num = Preconditions.checkNotNull(num);
-        this.children = ImmutableList.<ASTNode>builder().add(num).build();
     }
 
     public NumExpr getNum() {

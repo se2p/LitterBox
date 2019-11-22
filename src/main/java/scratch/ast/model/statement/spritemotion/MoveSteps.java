@@ -18,6 +18,7 @@
  */
 package scratch.ast.model.statement.spritemotion;
 
+import scratch.ast.model.AbstractNode;
 import scratch.utils.UnmodifiableListBuilder;
 import com.google.common.base.Preconditions;
 import scratch.ast.model.ASTNode;
@@ -28,10 +29,9 @@ public class MoveSteps extends AbstractNode implements SpriteMotionStmt {
 
     private final NumExpr steps;
 
-
     public MoveSteps(NumExpr steps) {
+        super(steps);
         this.steps = Preconditions.checkNotNull(steps);
-        this.children = ImmutableList.<ASTNode>builder().add(steps).build();
     }
 
     public NumExpr getSteps() {
@@ -42,6 +42,5 @@ public class MoveSteps extends AbstractNode implements SpriteMotionStmt {
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);
     }
-
 
 }

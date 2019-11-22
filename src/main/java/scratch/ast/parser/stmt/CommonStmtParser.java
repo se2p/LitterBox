@@ -29,6 +29,7 @@ import static scratch.ast.opcodes.CommonStmtOpcode.sound_changeeffectby;
 import static scratch.ast.opcodes.CommonStmtOpcode.sound_changevolumeby;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import scratch.ast.model.literals.StringLiteral;
 import scratch.utils.Preconditions;
 import scratch.ast.Constants;
 import scratch.ast.ParsingException;
@@ -113,12 +114,12 @@ public class CommonStmtParser {
             String attributeName = "VOLUME";
             NumExpr numExpr = NumExprParser.parseNumExpr(current, 0,
                 allBlocks);
-            return new ChangeAttributeBy(new Str(attributeName), numExpr);
+            return new ChangeAttributeBy(new StringLiteral(attributeName), numExpr);
 
         } else if (sound_changeeffectby.equals(opcode) || looks_changeeffectby.equals(opcode)) {
             NumExpr numExpr = NumExprParser.parseNumExpr(current, 0, allBlocks);
             String effectName = current.get(FIELDS_KEY).get("EFFECT").get(0).asText();
-            return new ChangeAttributeBy(new Str(effectName), numExpr);
+            return new ChangeAttributeBy(new StringLiteral(effectName), numExpr);
 
 //        } else if (looks_changesizeby.equals(opcode)) {
         } else {

@@ -33,4 +33,10 @@ public class Preconditions {
         }
         return args;
     }
+
+    public static void checkState(boolean condition, String msg, String ... args) {
+        if (!condition) {
+            throw new IllegalStateException(String.format(msg, args));
+        }
+    }
 }

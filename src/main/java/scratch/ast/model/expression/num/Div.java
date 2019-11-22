@@ -25,7 +25,7 @@ import scratch.ast.visitor.ScratchVisitor;
 
 public class Div extends BinaryExpression<NumExpr, NumExpr> implements NumExpr {
 
-    protected Div(NumExpr operand1, NumExpr operand2) {
+    public Div(NumExpr operand1, NumExpr operand2) {
         super(operand1, operand2);
     }
 

@@ -25,7 +25,7 @@ import scratch.ast.visitor.ScratchVisitor;
 
 public class Minus extends BinaryExpression<NumExpr, NumExpr> implements NumExpr {
 
-    protected Minus(NumExpr operand1, NumExpr operand2) {
+    public Minus(NumExpr operand1, NumExpr operand2) {
         super(operand1, operand2);
     }
 

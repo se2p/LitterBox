@@ -18,17 +18,14 @@
  */
 package scratch.ast.model.statement.spritelook;
 
-import scratch.utils.UnmodifiableListBuilder;
 import scratch.ast.model.ASTLeaf;
-import scratch.ast.model.ASTNode;
+import scratch.ast.model.AbstractNode;
 import scratch.ast.visitor.ScratchVisitor;
 
 public class Hide extends AbstractNode implements SpriteLookStmt, ASTLeaf {
 
-
-
     public Hide() {
-
+        super();
     }
 
     @Override

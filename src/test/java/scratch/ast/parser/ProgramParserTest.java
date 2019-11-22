@@ -35,6 +35,8 @@ import scratch.ast.model.ActorDefinitionList;
 import scratch.ast.model.Program;
 import scratch.ast.model.SetStmtList;
 import scratch.ast.model.expression.list.ExpressionListPlain;
+import scratch.ast.model.literals.NumberLiteral;
+import scratch.ast.model.literals.StringLiteral;
 import scratch.ast.model.resource.ImageResource;
 import scratch.ast.model.resource.SoundResource;
 import scratch.ast.model.statement.common.SetAttributeTo;
@@ -84,24 +86,24 @@ public class ProgramParserTest {
             SetStmtList setStmtList = stage.getSetStmtList();
             List<SetStmt> stmts = setStmtList.getStmts();
             SetAttributeTo setAttr = (SetAttributeTo) stmts.get(0);
-            Truth.assertThat(((Str) setAttr.getStringExpr()).getStr()).isEqualTo("volume");
-            Truth.assertThat(((Number) setAttr.getExpr()).getValue()).isEqualTo(100);
+            Truth.assertThat(((StringLiteral) setAttr.getStringExpr()).getText()).isEqualTo("volume");
+            Truth.assertThat(((NumberLiteral) setAttr.getExpr()).getValue()).isEqualTo(100);
 
             setAttr = (SetAttributeTo) stmts.get(1);
-            Truth.assertThat(((Str) setAttr.getStringExpr()).getStr()).isEqualTo("layerOrder");
-            Truth.assertThat(((Number) setAttr.getExpr()).getValue()).isEqualTo(0);
+            Truth.assertThat(((StringLiteral) setAttr.getStringExpr()).getText()).isEqualTo("layerOrder");
+            Truth.assertThat(((NumberLiteral) setAttr.getExpr()).getValue()).isEqualTo(0);
 
             setAttr = (SetAttributeTo) stmts.get(2);
-            Truth.assertThat(((Str) setAttr.getStringExpr()).getStr()).isEqualTo("tempo");
-            Truth.assertThat(((Number) setAttr.getExpr()).getValue()).isEqualTo(60);
+            Truth.assertThat(((StringLiteral) setAttr.getStringExpr()).getText()).isEqualTo("tempo");
+            Truth.assertThat(((NumberLiteral) setAttr.getExpr()).getValue()).isEqualTo(60);
 
             setAttr = (SetAttributeTo) stmts.get(3);
-            Truth.assertThat(((Str) setAttr.getStringExpr()).getStr()).isEqualTo("videoTransparency");
-            Truth.assertThat(((Number) setAttr.getExpr()).getValue()).isEqualTo(50);
+            Truth.assertThat(((StringLiteral) setAttr.getStringExpr()).getText()).isEqualTo("videoTransparency");
+            Truth.assertThat(((NumberLiteral) setAttr.getExpr()).getValue()).isEqualTo(50);
 
             setAttr = (SetAttributeTo) stmts.get(4);
-            Truth.assertThat(((Str) setAttr.getStringExpr()).getStr()).isEqualTo("videoState");
-            Truth.assertThat(((Str) setAttr.getExpr()).getStr()).isEqualTo("on");
+            Truth.assertThat(((StringLiteral) setAttr.getStringExpr()).getText()).isEqualTo("videoState");
+            Truth.assertThat(((StringLiteral) setAttr.getExpr()).getText()).isEqualTo("on");
 
         } catch (ParsingException e) {
             e.printStackTrace();
@@ -122,7 +124,7 @@ public class ProgramParserTest {
                 .filter(t -> t instanceof SetVariableTo)
                 .findFirst().get();
             Truth.assertThat(((Qualified) setStmt.getVariable()).getSecond().getName()).isEqualTo("my variable");
-            Truth.assertThat(((Number) setStmt.getExpr()).getValue()).isEqualTo(0);
+            Truth.assertThat(((NumberLiteral) setStmt.getExpr()).getValue()).isEqualTo(0);
 
             ActorDefinition sprite = program.getActorDefinitionList().getDefintions().get(1);
             List<SetStmt> spriteSetStmts = sprite.getSetStmtList().getStmts().stream()
@@ -133,10 +135,10 @@ public class ProgramParserTest {
             Qualified variable = (Qualified) setList.getVariable();
             Truth.assertThat(variable.getSecond().getName()).isEqualTo("SpriteLocalList");
             ExpressionListPlain exprListPlain = (ExpressionListPlain) setList.getExpr();
-            Truth.assertThat(((Str) exprListPlain.getExpressions().get(0)).getStr()).isEqualTo("Elem1");
-            Truth.assertThat(((Str) exprListPlain.getExpressions().get(1)).getStr()).isEqualTo("Elem2");
-            Truth.assertThat(((Str) exprListPlain.getExpressions().get(2)).getStr()).isEqualTo("1");
-            Truth.assertThat(((Str) exprListPlain.getExpressions().get(3)).getStr()).isEqualTo("2");
+            Truth.assertThat(((StringLiteral) exprListPlain.getExpressions().get(0)).getText()).isEqualTo("Elem1");
+            Truth.assertThat(((StringLiteral) exprListPlain.getExpressions().get(1)).getText()).isEqualTo("Elem2");
+            Truth.assertThat(((StringLiteral) exprListPlain.getExpressions().get(2)).getText()).isEqualTo("1");
+            Truth.assertThat(((StringLiteral) exprListPlain.getExpressions().get(3)).getText()).isEqualTo("2");
 
         } catch (ParsingException e) {
             e.printStackTrace();

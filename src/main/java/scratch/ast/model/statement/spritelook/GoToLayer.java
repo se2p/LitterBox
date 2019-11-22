@@ -18,6 +18,7 @@
  */
 package scratch.ast.model.statement.spritelook;
 
+import scratch.ast.model.AbstractNode;
 import scratch.utils.UnmodifiableListBuilder;
 import com.google.common.base.Preconditions;
 import scratch.ast.model.ASTNode;
@@ -28,10 +29,9 @@ public class GoToLayer extends AbstractNode implements SpriteLookStmt {
 
     private final NumExpr layer;
 
-
     public GoToLayer(NumExpr layer) {
+        super(layer);
         this.layer = Preconditions.checkNotNull(layer);
-        this.children = ImmutableList.<ASTNode>builder().add(layer).build();
     }
 
     public NumExpr getLayer() {

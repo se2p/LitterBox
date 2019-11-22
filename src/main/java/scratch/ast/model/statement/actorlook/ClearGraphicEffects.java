@@ -18,6 +18,7 @@
  */
 package scratch.ast.model.statement.actorlook;
 
+import scratch.ast.model.AbstractNode;
 import scratch.utils.UnmodifiableListBuilder;
 import scratch.ast.model.ASTLeaf;
 import scratch.ast.model.ASTNode;
@@ -25,16 +26,13 @@ import scratch.ast.visitor.ScratchVisitor;
 
 public class ClearGraphicEffects extends AbstractNode implements ActorLookStmt, ASTLeaf {
 
-
-
     public ClearGraphicEffects() {
-
+        super();
     }
 
     @Override
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);
     }
-
 
 }

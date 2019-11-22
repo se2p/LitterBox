@@ -19,8 +19,7 @@
 package scratch.ast.model.statement.spritemotion;
 
 import com.google.common.base.Preconditions;
-import scratch.utils.UnmodifiableListBuilder;
-import scratch.ast.model.ASTNode;
+import scratch.ast.model.AbstractNode;
 import scratch.ast.model.expression.num.NumExpr;
 import scratch.ast.visitor.ScratchVisitor;
 
@@ -31,7 +30,6 @@ public class PointInDirection extends AbstractNode implements SpriteMotionStmt {
 
     public PointInDirection(NumExpr direction) {
         this.direction = Preconditions.checkNotNull(direction);
-        this.children = ImmutableList.<ASTNode>builder().add(direction).build();
     }
 
     public NumExpr getDirection() {

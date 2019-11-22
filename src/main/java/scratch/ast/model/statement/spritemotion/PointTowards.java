@@ -18,6 +18,7 @@
  */
 package scratch.ast.model.statement.spritemotion;
 
+import scratch.ast.model.AbstractNode;
 import scratch.utils.UnmodifiableListBuilder;
 import com.google.common.base.Preconditions;
 import scratch.ast.model.ASTNode;
@@ -28,10 +29,9 @@ public class PointTowards extends AbstractNode implements SpriteMotionStmt {
 
     private final Position position;
 
-
     public PointTowards(Position position) {
+        super(position);
         this.position = Preconditions.checkNotNull(position);
-        this.children = ImmutableList.<ASTNode>builder().add(position).build();
     }
 
     public Position getPosition() {
@@ -42,6 +42,5 @@ public class PointTowards extends AbstractNode implements SpriteMotionStmt {
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);
     }
-
 
 }
