@@ -9,7 +9,7 @@ public class StringLiteral extends AbstractNode implements StringExpr, ASTLeaf {
 
     private final String text;
 
-    StringLiteral(String text) {
+    public StringLiteral(String text) {
         super();
         this.text = text;
     }

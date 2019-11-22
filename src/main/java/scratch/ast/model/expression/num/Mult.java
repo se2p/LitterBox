@@ -23,7 +23,7 @@ import scratch.ast.visitor.ScratchVisitor;
 
 public class Mult extends BinaryExpression<NumExpr, NumExpr> implements NumExpr {
 
-    protected Mult(NumExpr operand1, NumExpr operand2) {
+    public Mult(NumExpr operand1, NumExpr operand2) {
         super(operand1, operand2);
     }
 

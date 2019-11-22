@@ -24,7 +24,7 @@ import scratch.ast.visitor.ScratchVisitor;
 
 public class LessThan extends BinaryExpression<NumExpr, NumExpr> implements BoolExpr {
 
-    protected LessThan(NumExpr operand1, NumExpr operand2) {
+    public LessThan(NumExpr operand1, NumExpr operand2) {
         super(operand1, operand2);
     }
 

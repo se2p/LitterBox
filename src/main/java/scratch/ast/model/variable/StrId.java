@@ -18,13 +18,14 @@
  */
 package scratch.ast.model.variable;
 
-import com.google.common.base.Preconditions;
 import scratch.ast.model.literals.StringLiteral;
-import scratch.utils.UnmodifiableListBuilder;
-import scratch.ast.model.ASTNode;
 import scratch.ast.visitor.ScratchVisitor;
 
 public class StrId extends Identifier {
+
+    public StrId(String value) {
+        this(new StringLiteral(value));
+    }
 
     public StrId(StringLiteral value) {
         super(value);

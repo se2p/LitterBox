@@ -23,7 +23,7 @@ import scratch.ast.visitor.ScratchVisitor;
 
 public class Not extends UnaryExpression<BoolExpr> implements BoolExpr {
 
-    protected Not(BoolExpr operand1) {
+    public Not(BoolExpr operand1) {
         super(operand1);
     }
 

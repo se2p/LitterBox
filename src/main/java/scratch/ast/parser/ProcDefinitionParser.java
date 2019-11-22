@@ -145,19 +145,20 @@ public class ProcDefinitionParser {
     private static Parameter parseParameter(JsonNode blocks, String reference, String textValue) {
         JsonNode param = blocks.get(textValue);
         final String opcodeString = param.get(OPCODE_KEY).textValue();
-        final Parameter returnParam;
+
+        final Parameter result;
         if (opcodeString.equals(ProcedureOpcode.argument_reporter_boolean.name())) {
-            returnParam = new Parameter(new StrId(reference), new BooleanType());
+            result = new Parameter(new StrId(reference), new BooleanType());
         } else {
-            returnParam = new Parameter(new StrId(reference), new StringType());
+            result = new Parameter(new StrId(reference), new StringType());
         }
 
         JsonNode values = param.get(FIELDS_KEY).get(VALUE_KEY);
         Preconditions.checkArgument(values.isArray());
         ArrayNode arrayNode = (ArrayNode) values;
         String name = arrayNode.get(0).textValue();
-        returnParam.setValue(name);
+        result. (name);
 
-        return returnParam;
+        return result;
     }
 }

@@ -23,7 +23,7 @@ import scratch.ast.visitor.ScratchVisitor;
 
 public class Join extends BinaryExpression<StringExpr, StringExpr> implements StringExpr {
 
-    protected Join(StringExpr operand1, StringExpr operand2) {
+    public Join(StringExpr operand1, StringExpr operand2) {
         super(operand1, operand2);
     }
 

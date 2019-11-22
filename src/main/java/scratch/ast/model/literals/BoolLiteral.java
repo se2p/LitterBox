@@ -27,7 +27,7 @@ public class BoolLiteral extends AbstractNode implements BoolExpr, ASTLeaf {
 
     private final boolean value;
 
-    BoolLiteral(boolean value) {
+    public BoolLiteral(boolean value) {
         super();
         this.value = value;
     }

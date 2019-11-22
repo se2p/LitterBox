@@ -24,7 +24,7 @@ import scratch.ast.visitor.ScratchVisitor;
 
 public class ColorTouches extends BinaryExpression<ColorExpression, ColorExpression> implements BoolExpr {
 
-    protected ColorTouches(ColorExpression operand1, ColorExpression operand2) {
+    public ColorTouches(ColorExpression operand1, ColorExpression operand2) {
         super(operand1, operand2);
     }
 

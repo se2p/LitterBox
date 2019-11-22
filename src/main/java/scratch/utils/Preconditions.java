@@ -9,6 +9,12 @@ public class Preconditions {
         return o;
     }
 
+    public static void checkArgument(boolean condition, String message) {
+        if (!condition) {
+            throw new IllegalArgumentException(message);
+        }
+    }
+
     public static <T> T[] checkAllArgsNotNull(T ... args)
     {
         int i = 0;

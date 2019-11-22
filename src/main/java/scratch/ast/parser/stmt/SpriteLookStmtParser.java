@@ -30,6 +30,7 @@ import scratch.ast.model.elementchoice.ElementChoice;
 import scratch.ast.model.expression.num.Mult;
 import scratch.ast.model.expression.num.NumExpr;
 import scratch.ast.model.expression.string.StringExpr;
+import scratch.ast.model.literals.NumberLiteral;
 import scratch.ast.model.statement.spritelook.ChangeLayerBy;
 import scratch.ast.model.statement.spritelook.ChangeSizeBy;
 import scratch.ast.model.statement.spritelook.GoToBackLayer;
@@ -111,7 +112,7 @@ public class SpriteLookStmtParser {
         if (layerOption.equals("forward")) {
             return new ChangeLayerBy(num);
         } else if (layerOption.equals("backward")) {
-            NumExpr negated = new Mult(new Number(-1), num);
+            NumExpr negated = new Mult(new NumberLiteral(-1), num);
             return new ChangeLayerBy(negated);
         } else {
             throw new ParsingException("Unknown option " + layerOption +

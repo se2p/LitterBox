@@ -37,11 +37,12 @@ public enum NumFunct implements ASTNode, ASTLeaf {
     FLOOR("floor"),
     LN("ln"),
     LOG("log"),
-    POW10("pow10"),
-    POWE("powe"),
+    POW10("10 ^"),
+    POWE("e ^"),
     SIN("sin"),
     SQRT("sqrt"),
-    TAN("tan");
+    TAN("tan"),
+    UNKNOWN("?");
 
     private final String function;
 
@@ -66,5 +67,14 @@ public enum NumFunct implements ASTNode, ASTLeaf {
     @Override
     public String getUniqueName() {
         return this.getClass().getSimpleName();
+    }
+
+    public static NumFunct fromString(String function) {
+        for (NumFunct f: values()) {
+            if (f.getFunction().equals(function)) {
+                return f;
+            }
+        }
+        throw new IllegalArgumentException("Unknown mathematical function: " + function);
     }
 }

@@ -30,6 +30,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import com.google.common.base.Preconditions;
+
+import java.awt.*;
 import java.util.Optional;
 import scratch.ast.Constants;
 import scratch.ast.ParsingException;
@@ -48,6 +50,8 @@ import scratch.ast.model.expression.bool.Not;
 import scratch.ast.model.expression.bool.Or;
 import scratch.ast.model.expression.bool.Touching;
 import scratch.ast.model.expression.num.NumExpr;
+import scratch.ast.model.literals.BoolLiteral;
+import scratch.ast.model.literals.ColorLiteral;
 import scratch.ast.model.touchable.Touchable;
 import scratch.ast.model.variable.Qualified;
 import scratch.ast.model.variable.StrId;
@@ -109,14 +113,14 @@ public class BoolExprParser {
         return null;
     }
 
-    private static Bool parseBool(JsonNode inputs, int pos) {
+    private static BoolLiteral parseBool(JsonNode inputs, int pos) {
         boolean value = ExpressionParser.getDataArrayAtPos(inputs, pos).get(POS_INPUT_VALUE).asBoolean();
-        return new Bool(value);
+        return new BoolLiteral(value);
     }
 
-    private static Bool parseBool(JsonNode inputs, String inputName) {
+    private static BoolLiteral parseBool(JsonNode inputs, String inputName) {
         boolean value = ExpressionParser.getDataArrayByName(inputs, inputName).get(POS_INPUT_VALUE).asBoolean();
-        return new Bool(value);
+        return new BoolLiteral(value);
     }
 
     static Optional<BoolExpr> maybeParseBlockBoolExpr(JsonNode expressionBlock, JsonNode blocks) {
@@ -140,8 +144,8 @@ public class BoolExprParser {
             Touchable touchable = TouchableParser.parseTouchable(expressionBlock, blocks);
             return new Touching(touchable);
         case sensing_coloristouchingcolor:
-            Color first = ColorParser.parseColor(expressionBlock, 0, blocks);
-            Color second = ColorParser.parseColor(expressionBlock, 1, blocks);
+            ColorLiteral first = ColorParser.parseColor(expressionBlock, 0, blocks);
+            ColorLiteral second = ColorParser.parseColor(expressionBlock, 1, blocks);
             return new ColorTouches(first, second);
         case sensing_keypressed:
             Key key = KeyParser.parse(expressionBlock, blocks);

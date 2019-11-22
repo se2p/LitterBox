@@ -22,7 +22,6 @@ import static scratch.ast.Constants.IS_STAGE_KEY;
 import static scratch.ast.Constants.NAME_KEY;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.google.common.base.Preconditions;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -43,6 +42,7 @@ import scratch.ast.model.statement.declaration.DeclarationStmt;
 import scratch.ast.model.statement.declaration.DeclarationStmtList;
 import scratch.ast.model.variable.Identifier;
 import scratch.ast.model.variable.StrId;
+import scratch.utils.Preconditions;
 
 public class ActorDefinitionParser {
 

@@ -9,7 +9,7 @@ public class NumberLiteral extends AbstractNode implements NumExpr, ASTLeaf {
 
     private final double value;
 
-    NumberLiteral(double number) {
+    public NumberLiteral(double number) {
         super();
         this.value = number;
     }

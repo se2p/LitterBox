@@ -23,7 +23,7 @@ import scratch.ast.visitor.ScratchVisitor;
 
 public class Or extends BinaryExpression<BoolExpr, BoolExpr> implements BoolExpr {
 
-    protected Or(BoolExpr operand1, BoolExpr operand2) {
+    public Or(BoolExpr operand1, BoolExpr operand2) {
         super(operand1, operand2);
     }
 

@@ -62,4 +62,13 @@ public enum TimeComp implements ASTNode, ASTLeaf {
         result[0] = label;
         return result;
     }
+
+    public static TimeComp fromString(String text) {
+        for (TimeComp t: values()) {
+            if (t.equals(text)) {
+                return t;
+            }
+        }
+        throw new IllegalArgumentException("Unknown type of time component: " + text);
+    }
 }
