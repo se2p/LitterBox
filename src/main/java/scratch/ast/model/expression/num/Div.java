@@ -19,8 +19,6 @@
 package scratch.ast.model.expression.num;
 
 import scratch.ast.model.expression.BinaryExpression;
-import scratch.utils.UnmodifiableListBuilder;
-import scratch.ast.model.ASTNode;
 import scratch.ast.visitor.ScratchVisitor;
 
 public class Div extends BinaryExpression<NumExpr, NumExpr> implements NumExpr {

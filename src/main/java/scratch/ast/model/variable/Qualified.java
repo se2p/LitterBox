@@ -19,10 +19,8 @@
 package scratch.ast.model.variable;
 
 import scratch.ast.model.AbstractNode;
-import scratch.utils.UnmodifiableListBuilder;
-import com.google.common.base.Preconditions;
-import scratch.ast.model.ASTNode;
 import scratch.ast.visitor.ScratchVisitor;
+import scratch.utils.Preconditions;
 
 public class Qualified extends AbstractNode implements Variable {
 

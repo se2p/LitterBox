@@ -18,22 +18,10 @@
  */
 package scratch.ast.parser;
 
-import static scratch.ast.Constants.FIELDS_KEY;
-import static scratch.ast.Constants.OPCODE_KEY;
-import static scratch.ast.opcodes.SpriteLookStmtOpcode.looks_nextcostume;
-
 import com.fasterxml.jackson.databind.JsonNode;
-import scratch.utils.Preconditions;
-import java.util.ArrayList;
-import java.util.List;
 import scratch.ast.Constants;
 import scratch.ast.ParsingException;
-import scratch.ast.model.elementchoice.ElementChoice;
-import scratch.ast.model.elementchoice.Next;
-import scratch.ast.model.elementchoice.Prev;
-import scratch.ast.model.elementchoice.Random;
-import scratch.ast.model.elementchoice.WithId;
-import scratch.ast.model.elementchoice.WithNumber;
+import scratch.ast.model.elementchoice.*;
 import scratch.ast.model.expression.num.NumExpr;
 import scratch.ast.model.expression.num.UnspecifiedNumExpr;
 import scratch.ast.model.expression.string.StringExpr;
@@ -42,6 +30,14 @@ import scratch.ast.model.variable.StrId;
 import scratch.ast.opcodes.BoolExprOpcode;
 import scratch.ast.opcodes.NumExprOpcode;
 import scratch.ast.opcodes.StringExprOpcode;
+import scratch.utils.Preconditions;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static scratch.ast.Constants.FIELDS_KEY;
+import static scratch.ast.Constants.OPCODE_KEY;
+import static scratch.ast.opcodes.SpriteLookStmtOpcode.looks_nextcostume;
 
 public class ElementChoiceParser {
 

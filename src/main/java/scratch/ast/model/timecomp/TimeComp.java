@@ -41,6 +41,10 @@ public enum TimeComp implements ASTNode, ASTLeaf {
         this.label = label;
     }
 
+    public String getLabel() {
+        return label;
+    }
+
     @Override
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);
@@ -65,7 +69,7 @@ public enum TimeComp implements ASTNode, ASTLeaf {
 
     public static TimeComp fromString(String text) {
         for (TimeComp t: values()) {
-            if (t.equals(text)) {
+            if (t.getLabel().equals(text)) {
                 return t;
             }
         }

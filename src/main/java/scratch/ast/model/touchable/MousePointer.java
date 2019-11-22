@@ -19,8 +19,6 @@
 package scratch.ast.model.touchable;
 
 import scratch.ast.model.AbstractNode;
-import scratch.utils.UnmodifiableListBuilder;
-import scratch.ast.model.ASTNode;
 import scratch.ast.visitor.ScratchVisitor;
 
 public class MousePointer extends AbstractNode implements Touchable {

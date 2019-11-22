@@ -18,13 +18,10 @@
  */
 package scratch.ast.parser;
 
-import static scratch.ast.Constants.INPUTS_KEY;
-import static scratch.ast.Constants.POS_DATA_ARRAY;
-import static scratch.ast.Constants.POS_INPUT_VALUE;
-
 import com.fasterxml.jackson.databind.JsonNode;
-import scratch.ast.model.expression.color.Rgba;
 import scratch.ast.model.literals.ColorLiteral;
+
+import static scratch.ast.Constants.*;
 
 public class ColorParser {
 

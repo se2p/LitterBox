@@ -19,8 +19,6 @@
 package scratch.ast.model.expression.bool;
 
 import scratch.ast.model.AbstractNode;
-import scratch.utils.UnmodifiableListBuilder;
-import scratch.ast.model.ASTNode;
 import scratch.ast.model.touchable.Touchable;
 import scratch.ast.visitor.ScratchVisitor;
 

@@ -19,12 +19,10 @@
 package scratch.ast.model.statement.declaration;
 
 import scratch.ast.model.AbstractNode;
-import scratch.utils.UnmodifiableListBuilder;
-import com.google.common.base.Preconditions;
-import scratch.ast.model.ASTNode;
 import scratch.ast.model.expression.string.StringExpr;
 import scratch.ast.model.type.Type;
 import scratch.ast.visitor.ScratchVisitor;
+import scratch.utils.Preconditions;
 
 public class DeclarationAttributeAsTypeStmt extends AbstractNode implements DeclarationStmt{
 

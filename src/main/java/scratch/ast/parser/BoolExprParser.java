@@ -18,37 +18,14 @@
  */
 package scratch.ast.parser;
 
-import static scratch.ast.Constants.FIELD_VALUE;
-import static scratch.ast.Constants.INPUTS_KEY;
-import static scratch.ast.Constants.OPCODE_KEY;
-import static scratch.ast.Constants.POS_BLOCK_ID;
-import static scratch.ast.Constants.POS_DATA_ARRAY;
-import static scratch.ast.Constants.POS_INPUT_ID;
-import static scratch.ast.Constants.POS_INPUT_VALUE;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.TextNode;
-import scratch.utils.Preconditions;
-
-import java.awt.*;
-import java.util.Optional;
 import scratch.ast.Constants;
 import scratch.ast.ParsingException;
 import scratch.ast.model.Key;
 import scratch.ast.model.expression.Expression;
-import scratch.ast.model.expression.bool.And;
-import scratch.ast.model.expression.bool.BiggerThan;
-import scratch.ast.model.expression.bool.BoolExpr;
-import scratch.ast.model.expression.bool.ColorTouches;
-import scratch.ast.model.expression.bool.Equals;
-import scratch.ast.model.expression.bool.ExpressionContains;
-import scratch.ast.model.expression.bool.IsKeyPressed;
-import scratch.ast.model.expression.bool.IsMouseDown;
-import scratch.ast.model.expression.bool.LessThan;
-import scratch.ast.model.expression.bool.Not;
-import scratch.ast.model.expression.bool.Or;
-import scratch.ast.model.expression.bool.Touching;
+import scratch.ast.model.expression.bool.*;
 import scratch.ast.model.expression.num.NumExpr;
 import scratch.ast.model.literals.BoolLiteral;
 import scratch.ast.model.literals.ColorLiteral;
@@ -59,6 +36,11 @@ import scratch.ast.model.variable.Variable;
 import scratch.ast.opcodes.BoolExprOpcode;
 import scratch.ast.parser.symboltable.ExpressionListInfo;
 import scratch.ast.parser.symboltable.VariableInfo;
+import scratch.utils.Preconditions;
+
+import java.util.Optional;
+
+import static scratch.ast.Constants.*;
 
 public class BoolExprParser {
 

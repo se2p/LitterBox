@@ -69,6 +69,13 @@ public enum NumFunct implements ASTNode, ASTLeaf {
         return this.getClass().getSimpleName();
     }
 
+    @Override
+    public String[] toSimpleStringArray() {
+        String[] result = new String[1];
+        result[0] = function;
+        return result;
+    }
+
     public static NumFunct fromString(String function) {
         for (NumFunct f: values()) {
             if (f.getFunction().equals(function)) {

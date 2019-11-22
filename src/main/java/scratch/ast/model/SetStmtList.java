@@ -18,12 +18,11 @@
  */
 package scratch.ast.model;
 
-import scratch.utils.UnmodifiableListBuilder;
-import java.util.List;
-
-import com.google.common.base.Preconditions;
 import scratch.ast.model.statement.common.SetStmt;
 import scratch.ast.visitor.ScratchVisitor;
+import scratch.utils.Preconditions;
+
+import java.util.List;
 
 public class SetStmtList extends AbstractNode implements ASTNode {
 

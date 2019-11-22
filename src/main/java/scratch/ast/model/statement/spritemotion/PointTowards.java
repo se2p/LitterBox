@@ -19,11 +19,9 @@
 package scratch.ast.model.statement.spritemotion;
 
 import scratch.ast.model.AbstractNode;
-import scratch.utils.UnmodifiableListBuilder;
-import com.google.common.base.Preconditions;
-import scratch.ast.model.ASTNode;
 import scratch.ast.model.position.Position;
 import scratch.ast.visitor.ScratchVisitor;
+import scratch.utils.Preconditions;
 
 public class PointTowards extends AbstractNode implements SpriteMotionStmt {
 

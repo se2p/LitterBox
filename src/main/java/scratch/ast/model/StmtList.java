@@ -18,11 +18,9 @@
  */
 package scratch.ast.model;
 
-import scratch.utils.UnmodifiableListBuilder;
-import com.google.common.base.Preconditions;
 import scratch.ast.model.statement.spritelook.ListOfStmt;
-import scratch.ast.model.statement.termination.TerminationStmt;
 import scratch.ast.visitor.ScratchVisitor;
+import scratch.utils.Preconditions;
 
 public class StmtList extends AbstractNode implements ASTNode {
 

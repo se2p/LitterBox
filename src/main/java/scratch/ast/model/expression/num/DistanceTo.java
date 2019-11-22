@@ -19,8 +19,6 @@
 package scratch.ast.model.expression.num;
 
 import scratch.ast.model.AbstractNode;
-import scratch.utils.UnmodifiableListBuilder;
-import scratch.ast.model.ASTNode;
 import scratch.ast.model.position.Position;
 import scratch.ast.visitor.ScratchVisitor;
 

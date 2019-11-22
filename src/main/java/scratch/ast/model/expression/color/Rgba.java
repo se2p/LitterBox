@@ -18,10 +18,10 @@
  */
 package scratch.ast.model.expression.color;
 
-import scratch.utils.Preconditions;
 import scratch.ast.model.AbstractNode;
 import scratch.ast.model.expression.num.NumExpr;
 import scratch.ast.visitor.ScratchVisitor;
+import scratch.utils.Preconditions;
 
 public class Rgba extends AbstractNode implements ColorExpression {
 

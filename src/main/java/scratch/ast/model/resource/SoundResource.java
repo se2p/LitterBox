@@ -19,8 +19,6 @@
 package scratch.ast.model.resource;
 
 import scratch.ast.model.AbstractNode;
-import scratch.utils.UnmodifiableListBuilder;
-import scratch.ast.model.ASTNode;
 import scratch.ast.model.URI;
 import scratch.ast.model.variable.Identifier;
 import scratch.ast.visitor.ScratchVisitor;

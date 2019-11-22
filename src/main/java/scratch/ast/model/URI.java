@@ -18,9 +18,8 @@
  */
 package scratch.ast.model;
 
-import scratch.utils.UnmodifiableListBuilder;
-import com.google.common.base.Preconditions;
 import scratch.ast.visitor.ScratchVisitor;
+import scratch.utils.Preconditions;
 
 public class URI extends AbstractNode implements ASTLeaf {
 

@@ -18,18 +18,15 @@
  */
 package scratch.ast.parser;
 
-import static scratch.ast.Constants.FIELDS_KEY;
-import static scratch.ast.Constants.INPUTS_KEY;
-import static scratch.ast.Constants.OPCODE_KEY;
-import static scratch.ast.Constants.POS_INPUT_VALUE;
-
 import com.fasterxml.jackson.databind.JsonNode;
-import scratch.utils.Preconditions;
 import scratch.ast.model.touchable.Edge;
 import scratch.ast.model.touchable.MousePointer;
 import scratch.ast.model.touchable.Touchable;
 import scratch.ast.model.variable.StrId;
 import scratch.ast.opcodes.BoolExprOpcode;
+import scratch.utils.Preconditions;
+
+import static scratch.ast.Constants.*;
 
 public class TouchableParser {
 

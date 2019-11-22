@@ -18,30 +18,8 @@
  */
 package scratch.ast.parser;
 
-import static scratch.ast.Constants.DECLARATION_LIST_NAME_POS;
-import static scratch.ast.Constants.DECLARATION_LIST_VALUES_POS;
-import static scratch.ast.Constants.DECLARATION_VARIABLE_NAME_POS;
-import static scratch.ast.Constants.DECLARATION_VARIABLE_VALUE_POS;
-import static scratch.ast.Constants.DIRECTION_KEY;
-import static scratch.ast.Constants.DRAG_KEY;
-import static scratch.ast.Constants.LAYERORDER_KEY;
-import static scratch.ast.Constants.ROTATIONSTYLE_KEY;
-import static scratch.ast.Constants.SIZE_KEY;
-import static scratch.ast.Constants.TEMPO_KEY;
-import static scratch.ast.Constants.VIDSTATE_KEY;
-import static scratch.ast.Constants.VIDTRANSPARENCY_KEY;
-import static scratch.ast.Constants.VISIBLE_KEY;
-import static scratch.ast.Constants.VOLUME_KEY;
-import static scratch.ast.Constants.X_KEY;
-import static scratch.ast.Constants.Y_KEY;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
 import scratch.ast.model.Message;
 import scratch.ast.model.expression.Expression;
 import scratch.ast.model.expression.bool.BoolExpr;
@@ -65,6 +43,10 @@ import scratch.ast.model.type.StringType;
 import scratch.ast.model.variable.Qualified;
 import scratch.ast.model.variable.StrId;
 import scratch.utils.Preconditions;
+
+import java.util.*;
+
+import static scratch.ast.Constants.*;
 
 public class DeclarationStmtParser {
 

@@ -19,10 +19,10 @@
 package scratch.ast.model.statement.control;
 
 import scratch.ast.model.AbstractNode;
-import com.google.common.base.Preconditions;
 import scratch.ast.model.StmtList;
 import scratch.ast.model.expression.bool.BoolExpr;
 import scratch.ast.visitor.ScratchVisitor;
+import scratch.utils.Preconditions;
 
 public class IfElseStmt extends AbstractNode implements IfStmt {
 

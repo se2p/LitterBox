@@ -19,9 +19,9 @@
 package scratch.ast.model.statement.spritelook;
 
 import scratch.ast.model.AbstractNode;
-import com.google.common.base.Preconditions;
 import scratch.ast.model.expression.string.StringExpr;
 import scratch.ast.visitor.ScratchVisitor;
+import scratch.utils.Preconditions;
 
 public class Think extends AbstractNode implements SpriteLookStmt {
 

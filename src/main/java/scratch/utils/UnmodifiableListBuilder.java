@@ -1,7 +1,5 @@
 package scratch.utils;
 
-import scratch.ast.model.ASTNode;
-
 import java.util.*;
 
 public class UnmodifiableListBuilder<E> {

@@ -18,19 +18,7 @@
  */
 package scratch.ast.parser.stmt;
 
-import static scratch.ast.Constants.DRAGMODE_KEY;
-import static scratch.ast.Constants.DRAG_KEY;
-import static scratch.ast.Constants.EFFECT_KEY;
-import static scratch.ast.Constants.FIELDS_KEY;
-import static scratch.ast.Constants.OPCODE_KEY;
-import static scratch.ast.Constants.ROTATIONSTYLE_KEY;
-import static scratch.ast.Constants.STYLE_KEY;
-import static scratch.ast.Constants.VARIABLE_IDENTIFIER_POS;
-import static scratch.ast.Constants.VARIABLE_KEY;
-import static scratch.ast.Constants.VOLUME_KEY;
-
 import com.fasterxml.jackson.databind.JsonNode;
-import scratch.utils.Preconditions;
 import scratch.ast.ParsingException;
 import scratch.ast.model.literals.StringLiteral;
 import scratch.ast.model.statement.Stmt;
@@ -47,6 +35,9 @@ import scratch.ast.parser.attributes.GraphicEffect;
 import scratch.ast.parser.attributes.RotationStyle;
 import scratch.ast.parser.attributes.SoundEffect;
 import scratch.ast.parser.symboltable.VariableInfo;
+import scratch.utils.Preconditions;
+
+import static scratch.ast.Constants.*;
 
 public class SetStmtParser {
 

@@ -18,8 +18,8 @@
  */
 package scratch.ast.model.statement.spritelook;
 
-import scratch.ast.model.AbstractNode;
 import scratch.ast.model.ASTLeaf;
+import scratch.ast.model.AbstractNode;
 import scratch.ast.visitor.ScratchVisitor;
 
 public class Show extends AbstractNode implements SpriteLookStmt, ASTLeaf {

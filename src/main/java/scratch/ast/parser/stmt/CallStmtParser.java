@@ -18,11 +18,7 @@
  */
 package scratch.ast.parser.stmt;
 
-import static scratch.ast.Constants.INPUTS_KEY;
-
 import com.fasterxml.jackson.databind.JsonNode;
-import java.util.ArrayList;
-import java.util.List;
 import scratch.ast.ParsingException;
 import scratch.ast.model.expression.Expression;
 import scratch.ast.model.expression.list.ExpressionList;
@@ -31,6 +27,11 @@ import scratch.ast.model.statement.CallStmt;
 import scratch.ast.model.statement.Stmt;
 import scratch.ast.model.variable.StrId;
 import scratch.ast.parser.ExpressionParser;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static scratch.ast.Constants.INPUTS_KEY;
 
 public class CallStmtParser {
 

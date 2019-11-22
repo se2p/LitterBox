@@ -19,22 +19,17 @@
 package scratch.ast.model.statement.common;
 
 import scratch.ast.model.AbstractNode;
-import scratch.utils.UnmodifiableListBuilder;
-import com.google.common.base.Preconditions;
-import scratch.ast.model.ASTNode;
 import scratch.ast.model.expression.Expression;
 import scratch.ast.model.expression.string.StringExpr;
-import scratch.ast.model.variable.Variable;
 import scratch.ast.visitor.ScratchVisitor;
-
-import javax.annotation.Nonnull;
+import scratch.utils.Preconditions;
 
 public class ChangeAttributeBy extends AbstractNode implements CommonStmt {
 
     private final StringExpr attribute;
     private final Expression expr;
 
-    public ChangeAttributeBy(@Nonnull StringExpr attribute, @Nonnull Expression expr) {
+    public ChangeAttributeBy(StringExpr attribute, Expression expr) {
         super(attribute, expr);
         this.attribute = Preconditions.checkNotNull(attribute);
         this.expr = Preconditions.checkNotNull(expr);

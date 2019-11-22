@@ -19,14 +19,11 @@
 package scratch.ast.model.statement.list;
 
 import scratch.ast.model.AbstractNode;
-import scratch.utils.UnmodifiableListBuilder;
-import com.google.common.collect.ImmutableList.Builder;
-import com.google.common.base.Preconditions;
-import scratch.ast.model.ASTNode;
 import scratch.ast.model.expression.num.NumExpr;
 import scratch.ast.model.expression.string.StringExpr;
 import scratch.ast.model.variable.Variable;
 import scratch.ast.visitor.ScratchVisitor;
+import scratch.utils.Preconditions;
 
 public class ReplaceItem extends AbstractNode implements ListStmt {
 

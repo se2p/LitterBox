@@ -18,15 +18,12 @@
  */
 package scratch.ast.model;
 
-import com.google.common.base.Preconditions;
-import scratch.utils.UnmodifiableListBuilder;
 import scratch.ast.model.procedure.ProcedureDefinitionList;
 import scratch.ast.model.resource.ResourceList;
 import scratch.ast.model.statement.declaration.DeclarationStmtList;
 import scratch.ast.model.variable.Identifier;
 import scratch.ast.visitor.ScratchVisitor;
-
-import java.util.Collections;
+import scratch.utils.Preconditions;
 
 public class ActorDefinition extends AbstractNode {
 

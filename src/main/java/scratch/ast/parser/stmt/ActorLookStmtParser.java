@@ -18,12 +18,7 @@
  */
 package scratch.ast.parser.stmt;
 
-import static scratch.ast.Constants.FIELDS_KEY;
-import static scratch.ast.Constants.FIELD_VALUE;
-import static scratch.ast.Constants.OPCODE_KEY;
-
 import com.fasterxml.jackson.databind.JsonNode;
-import scratch.utils.Preconditions;
 import scratch.ast.ParsingException;
 import scratch.ast.model.elementchoice.ElementChoice;
 import scratch.ast.model.expression.string.StringExpr;
@@ -42,6 +37,9 @@ import scratch.ast.parser.ProgramParser;
 import scratch.ast.parser.StringExprParser;
 import scratch.ast.parser.symboltable.ExpressionListInfo;
 import scratch.ast.parser.symboltable.VariableInfo;
+import scratch.utils.Preconditions;
+
+import static scratch.ast.Constants.*;
 
 public class ActorLookStmtParser {
 

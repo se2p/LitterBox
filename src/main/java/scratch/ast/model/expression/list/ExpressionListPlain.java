@@ -18,12 +18,12 @@
  */
 package scratch.ast.model.expression.list;
 
-import scratch.ast.model.AbstractNode;
-import scratch.utils.UnmodifiableListBuilder;
-import java.util.List;
 import scratch.ast.model.ASTNode;
+import scratch.ast.model.AbstractNode;
 import scratch.ast.model.expression.Expression;
 import scratch.ast.visitor.ScratchVisitor;
+
+import java.util.List;
 
 public class ExpressionListPlain extends AbstractNode implements ASTNode, ListExpr {
 

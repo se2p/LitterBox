@@ -18,19 +18,7 @@
  */
 package scratch.ast.parser.stmt;
 
-import static scratch.ast.Constants.FIELDS_KEY;
-import static scratch.ast.Constants.FIELD_VALUE;
-import static scratch.ast.Constants.INPUTS_KEY;
-import static scratch.ast.Constants.OPCODE_KEY;
-import static scratch.ast.Constants.POS_INPUT_VALUE;
-import static scratch.ast.Constants.VARIABLE_KEY;
-import static scratch.ast.opcodes.CommonStmtOpcode.looks_changeeffectby;
-import static scratch.ast.opcodes.CommonStmtOpcode.sound_changeeffectby;
-import static scratch.ast.opcodes.CommonStmtOpcode.sound_changevolumeby;
-
 import com.fasterxml.jackson.databind.JsonNode;
-import scratch.ast.model.literals.StringLiteral;
-import scratch.utils.Preconditions;
 import scratch.ast.Constants;
 import scratch.ast.ParsingException;
 import scratch.ast.model.Message;
@@ -38,21 +26,17 @@ import scratch.ast.model.expression.Expression;
 import scratch.ast.model.expression.bool.BoolExpr;
 import scratch.ast.model.expression.bool.UnspecifiedBoolExpr;
 import scratch.ast.model.expression.num.NumExpr;
-import scratch.ast.model.statement.common.Broadcast;
-import scratch.ast.model.statement.common.BroadcastAndWait;
-import scratch.ast.model.statement.common.ChangeAttributeBy;
-import scratch.ast.model.statement.common.ChangeVariableBy;
-import scratch.ast.model.statement.common.CommonStmt;
-import scratch.ast.model.statement.common.CreateCloneOf;
-import scratch.ast.model.statement.common.ResetTimer;
-import scratch.ast.model.statement.common.StopOtherScriptsInSprite;
-import scratch.ast.model.statement.common.WaitSeconds;
-import scratch.ast.model.statement.common.WaitUntil;
+import scratch.ast.model.literals.StringLiteral;
+import scratch.ast.model.statement.common.*;
 import scratch.ast.model.variable.Identifier;
 import scratch.ast.model.variable.StrId;
 import scratch.ast.opcodes.CommonStmtOpcode;
 import scratch.ast.parser.BoolExprParser;
 import scratch.ast.parser.NumExprParser;
+import scratch.utils.Preconditions;
+
+import static scratch.ast.Constants.*;
+import static scratch.ast.opcodes.CommonStmtOpcode.*;
 
 public class CommonStmtParser {
 

@@ -18,13 +18,13 @@
  */
 package scratch.ast.parser;
 
-import static scratch.ast.Constants.FIELDS_KEY;
-import static scratch.ast.Constants.OPCODE_KEY;
-
 import com.fasterxml.jackson.databind.JsonNode;
-import scratch.utils.Preconditions;
 import scratch.ast.ParsingException;
 import scratch.ast.model.timecomp.TimeComp;
+import scratch.utils.Preconditions;
+
+import static scratch.ast.Constants.FIELDS_KEY;
+import static scratch.ast.Constants.OPCODE_KEY;
 
 public class TimecompParser {
 

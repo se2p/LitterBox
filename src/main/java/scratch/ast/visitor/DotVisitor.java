@@ -18,15 +18,12 @@
  */
 package scratch.ast.visitor;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.util.LinkedList;
-import java.util.List;
 import scratch.ast.model.ASTLeaf;
 import scratch.ast.model.ASTNode;
+
+import java.io.*;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Visitor that creates a .dot output for a Program-AST

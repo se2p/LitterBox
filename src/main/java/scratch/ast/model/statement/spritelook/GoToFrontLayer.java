@@ -19,8 +19,6 @@
 package scratch.ast.model.statement.spritelook;
 
 import scratch.ast.model.AbstractNode;
-import scratch.utils.UnmodifiableListBuilder;
-import scratch.ast.model.ASTNode;
 import scratch.ast.visitor.ScratchVisitor;
 
 public class GoToFrontLayer extends AbstractNode implements SpriteLookStmt {

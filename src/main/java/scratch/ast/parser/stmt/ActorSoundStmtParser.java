@@ -18,23 +18,16 @@
  */
 package scratch.ast.parser.stmt;
 
-import static scratch.ast.Constants.FIELDS_KEY;
-import static scratch.ast.Constants.FIELD_VALUE;
-import static scratch.ast.Constants.INPUTS_KEY;
-import static scratch.ast.Constants.OPCODE_KEY;
-
 import com.fasterxml.jackson.databind.JsonNode;
-import scratch.utils.Preconditions;
 import scratch.ast.Constants;
 import scratch.ast.model.elementchoice.ElementChoice;
 import scratch.ast.model.elementchoice.WithId;
-import scratch.ast.model.statement.actorsound.ActorSoundStmt;
-import scratch.ast.model.statement.actorsound.ClearSoundEffects;
-import scratch.ast.model.statement.actorsound.PlaySoundUntilDone;
-import scratch.ast.model.statement.actorsound.StartSound;
-import scratch.ast.model.statement.actorsound.StopAllSounds;
+import scratch.ast.model.statement.actorsound.*;
 import scratch.ast.model.variable.StrId;
 import scratch.ast.opcodes.ActorSoundStmtOpcode;
+import scratch.utils.Preconditions;
+
+import static scratch.ast.Constants.*;
 
 public class ActorSoundStmtParser {
 

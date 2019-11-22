@@ -19,11 +19,9 @@
 package scratch.ast.model.statement.spritemotion;
 
 import scratch.ast.model.AbstractNode;
-import scratch.utils.UnmodifiableListBuilder;
-import com.google.common.base.Preconditions;
-import scratch.ast.model.ASTNode;
 import scratch.ast.model.expression.num.NumExpr;
 import scratch.ast.visitor.ScratchVisitor;
+import scratch.utils.Preconditions;
 
 public class MoveSteps extends AbstractNode implements SpriteMotionStmt {
 

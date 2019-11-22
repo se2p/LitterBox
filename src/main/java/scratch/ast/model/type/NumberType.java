@@ -19,8 +19,6 @@
 package scratch.ast.model.type;
 
 import scratch.ast.model.AbstractNode;
-import scratch.utils.UnmodifiableListBuilder;
-import scratch.ast.model.ASTNode;
 import scratch.ast.visitor.ScratchVisitor;
 
 public class NumberType extends AbstractNode implements Type {

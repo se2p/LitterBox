@@ -19,12 +19,10 @@
 package scratch.ast.model.statement.spritelook;
 
 import scratch.ast.model.AbstractNode;
-import scratch.utils.UnmodifiableListBuilder;
-import com.google.common.base.Preconditions;
-import scratch.ast.model.ASTNode;
 import scratch.ast.model.statement.actorlook.ActorLookStmt;
 import scratch.ast.model.variable.Variable;
 import scratch.ast.visitor.ScratchVisitor;
+import scratch.utils.Preconditions;
 
 public class ShowVariable extends AbstractNode implements ActorLookStmt {
 

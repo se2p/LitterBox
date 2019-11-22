@@ -25,7 +25,6 @@ public class Preconditions {
     {
         int i = 0;
         for (Object o: args) {
-
             if (o == null) {
                 throw new NullPointerException(String.format("Argument %d must not be null", i));
             }

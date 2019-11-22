@@ -18,14 +18,7 @@
  */
 package scratch.ast.parser;
 
-import static scratch.ast.Constants.NEXT_KEY;
-import static scratch.ast.Constants.OPCODE_KEY;
-
 import com.fasterxml.jackson.databind.JsonNode;
-import scratch.utils.Preconditions;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.logging.Logger;
 import scratch.ast.ParsingException;
 import scratch.ast.model.ActorDefinition;
 import scratch.ast.model.Script;
@@ -34,10 +27,17 @@ import scratch.ast.model.event.Event;
 import scratch.ast.model.event.Never;
 import scratch.ast.model.statement.Stmt;
 import scratch.ast.model.statement.spritelook.ListOfStmt;
-import scratch.ast.model.statement.termination.TerminationStmt;
 import scratch.ast.opcodes.EventOpcode;
 import scratch.ast.opcodes.ProcedureOpcode;
 import scratch.ast.parser.stmt.StmtParser;
+import scratch.utils.Preconditions;
+
+import java.util.LinkedList;
+import java.util.List;
+import java.util.logging.Logger;
+
+import static scratch.ast.Constants.NEXT_KEY;
+import static scratch.ast.Constants.OPCODE_KEY;
 
 public class ScriptParser {
 

@@ -18,12 +18,10 @@
  */
 package scratch.ast.model.variable;
 
-import com.google.common.base.Preconditions;
 import scratch.ast.model.AbstractNode;
 import scratch.ast.model.literals.StringLiteral;
-import scratch.ast.model.ASTLeaf;
-import scratch.ast.model.ASTNode;
 import scratch.ast.visitor.ScratchVisitor;
+import scratch.utils.Preconditions;
 
 public abstract class Identifier extends AbstractNode implements Variable {
 

@@ -19,7 +19,6 @@
 package scratch.ast.model.expression.num;
 
 import scratch.ast.model.ASTLeaf;
-import scratch.ast.model.ASTNode;
 import scratch.ast.model.AbstractNode;
 import scratch.ast.visitor.ScratchVisitor;
 

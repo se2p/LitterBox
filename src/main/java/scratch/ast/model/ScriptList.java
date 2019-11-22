@@ -18,10 +18,10 @@
  */
 package scratch.ast.model;
 
-import java.util.List;
-
-import com.google.common.base.Preconditions;
 import scratch.ast.visitor.ScratchVisitor;
+import scratch.utils.Preconditions;
+
+import java.util.List;
 
 public class ScriptList extends AbstractNode  {
 

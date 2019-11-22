@@ -18,11 +18,11 @@
  */
 package scratch.ast.model.resource;
 
-import scratch.ast.model.AbstractNode;
-import scratch.utils.UnmodifiableListBuilder;
-import java.util.List;
 import scratch.ast.model.ASTNode;
+import scratch.ast.model.AbstractNode;
 import scratch.ast.visitor.ScratchVisitor;
+
+import java.util.List;
 
 public class ResourceList extends AbstractNode implements ASTNode {
 

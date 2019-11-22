@@ -18,9 +18,8 @@
  */
 package scratch.ast.model.procedure;
 
-import scratch.ast.model.AbstractNode;
-import scratch.utils.UnmodifiableListBuilder;
 import scratch.ast.model.ASTNode;
+import scratch.ast.model.AbstractNode;
 import scratch.ast.model.type.Type;
 import scratch.ast.model.variable.Identifier;
 import scratch.ast.visitor.ScratchVisitor;

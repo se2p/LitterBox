@@ -18,10 +18,8 @@
  */
 package scratch.ast.model.statement.common;
 
-import scratch.ast.model.AbstractNode;
-import scratch.utils.UnmodifiableListBuilder;
 import scratch.ast.model.ASTLeaf;
-import scratch.ast.model.ASTNode;
+import scratch.ast.model.AbstractNode;
 import scratch.ast.visitor.ScratchVisitor;
 
 public class StopOtherScriptsInSprite extends AbstractNode implements CommonStmt, ASTLeaf {

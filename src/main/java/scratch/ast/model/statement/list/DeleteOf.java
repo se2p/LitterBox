@@ -19,10 +19,10 @@
 package scratch.ast.model.statement.list;
 
 import scratch.ast.model.AbstractNode;
-import com.google.common.base.Preconditions;
 import scratch.ast.model.expression.num.NumExpr;
 import scratch.ast.model.variable.Variable;
 import scratch.ast.visitor.ScratchVisitor;
+import scratch.utils.Preconditions;
 
 public class DeleteOf extends AbstractNode implements ListStmt {
 

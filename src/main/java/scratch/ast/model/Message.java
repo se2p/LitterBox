@@ -18,8 +18,8 @@
  */
 package scratch.ast.model;
 
-import com.google.common.base.Preconditions;
 import scratch.ast.visitor.ScratchVisitor;
+import scratch.utils.Preconditions;
 
 public class Message extends AbstractNode implements ASTLeaf {
 

@@ -19,9 +19,9 @@
 package scratch.ast.model.statement.spritemotion;
 
 import scratch.ast.model.AbstractNode;
-import com.google.common.base.Preconditions;
 import scratch.ast.model.expression.num.NumExpr;
 import scratch.ast.visitor.ScratchVisitor;
+import scratch.utils.Preconditions;
 
 public class TurnRight extends AbstractNode implements SpriteMotionStmt {
 

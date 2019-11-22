@@ -18,12 +18,11 @@
  */
 package scratch.ast.model.statement.spritemotion;
 
-import com.google.common.base.Preconditions;
-import scratch.ast.model.ASTNode;
 import scratch.ast.model.AbstractNode;
 import scratch.ast.model.expression.num.NumExpr;
 import scratch.ast.model.position.Position;
 import scratch.ast.visitor.ScratchVisitor;
+import scratch.utils.Preconditions;
 
 public class GlideSecsTo extends AbstractNode implements SpriteMotionStmt {
 

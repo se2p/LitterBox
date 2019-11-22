@@ -19,23 +19,11 @@
 package scratch.ast.parser.stmt;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import scratch.utils.Preconditions;
 import scratch.ast.Constants;
 import scratch.ast.ParsingException;
 import scratch.ast.model.statement.Stmt;
-import scratch.ast.opcodes.ActorLookStmtOpcode;
-import scratch.ast.opcodes.ActorSoundStmtOpcode;
-import scratch.ast.opcodes.BoolExprOpcode;
-import scratch.ast.opcodes.CallStmtOpcode;
-import scratch.ast.opcodes.CommonStmtOpcode;
-import scratch.ast.opcodes.ControlStmtOpcode;
-import scratch.ast.opcodes.ListStmtOpcode;
-import scratch.ast.opcodes.NumExprOpcode;
-import scratch.ast.opcodes.SetStmtOpcode;
-import scratch.ast.opcodes.SpriteLookStmtOpcode;
-import scratch.ast.opcodes.SpriteMotionStmtOpcode;
-import scratch.ast.opcodes.StringExprOpcode;
-import scratch.ast.opcodes.TerminationStmtOpcode;
+import scratch.ast.opcodes.*;
+import scratch.utils.Preconditions;
 
 public class StmtParser {
 

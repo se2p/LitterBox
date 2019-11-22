@@ -19,11 +19,9 @@
 package scratch.ast.model.statement.actorsound;
 
 import scratch.ast.model.AbstractNode;
-import scratch.utils.UnmodifiableListBuilder;
-import com.google.common.base.Preconditions;
-import scratch.ast.model.ASTNode;
 import scratch.ast.model.elementchoice.ElementChoice;
 import scratch.ast.visitor.ScratchVisitor;
+import scratch.utils.Preconditions;
 
 public class PlaySoundUntilDone extends AbstractNode implements ActorSoundStmt {
 

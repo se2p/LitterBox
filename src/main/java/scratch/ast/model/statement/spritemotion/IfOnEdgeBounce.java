@@ -18,10 +18,8 @@
  */
 package scratch.ast.model.statement.spritemotion;
 
-import scratch.ast.model.AbstractNode;
-import scratch.utils.UnmodifiableListBuilder;
 import scratch.ast.model.ASTLeaf;
-import scratch.ast.model.ASTNode;
+import scratch.ast.model.AbstractNode;
 import scratch.ast.visitor.ScratchVisitor;
 
 public class IfOnEdgeBounce extends AbstractNode implements SpriteMotionStmt, ASTLeaf {

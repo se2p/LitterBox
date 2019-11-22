@@ -18,10 +18,10 @@
  */
 package scratch.ast.model.statement.actorlook;
 
-import com.google.common.base.Preconditions;
 import scratch.ast.model.AbstractNode;
 import scratch.ast.model.expression.string.StringExpr;
 import scratch.ast.visitor.ScratchVisitor;
+import scratch.utils.Preconditions;
 
 public class AskAndWait extends AbstractNode implements ActorLookStmt {
 

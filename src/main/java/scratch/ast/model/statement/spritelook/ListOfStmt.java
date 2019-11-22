@@ -18,13 +18,13 @@
  */
 package scratch.ast.model.statement.spritelook;
 
-import java.util.List;
-
-import com.google.common.base.Preconditions;
 import scratch.ast.model.ASTNode;
 import scratch.ast.model.AbstractNode;
 import scratch.ast.model.statement.Stmt;
 import scratch.ast.visitor.ScratchVisitor;
+import scratch.utils.Preconditions;
+
+import java.util.List;
 
 public class ListOfStmt extends AbstractNode implements ASTNode {
 

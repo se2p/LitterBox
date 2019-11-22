@@ -19,6 +19,7 @@
 package scratch.ast.model;
 
 import scratch.ast.visitor.ScratchVisitor;
+
 import java.util.List;
 
 public interface ASTNode {

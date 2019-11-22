@@ -18,29 +18,17 @@
  */
 package scratch.ast.parser.stmt;
 
-import static scratch.ast.Constants.OPCODE_KEY;
-
 import com.fasterxml.jackson.databind.JsonNode;
-import scratch.utils.Preconditions;
 import scratch.ast.ParsingException;
 import scratch.ast.model.expression.num.NumExpr;
 import scratch.ast.model.position.Position;
-import scratch.ast.model.statement.spritemotion.ChangeXBy;
-import scratch.ast.model.statement.spritemotion.ChangeYBy;
-import scratch.ast.model.statement.spritemotion.GlideSecsTo;
-import scratch.ast.model.statement.spritemotion.GoToPos;
-import scratch.ast.model.statement.spritemotion.IfOnEdgeBounce;
-import scratch.ast.model.statement.spritemotion.MoveSteps;
-import scratch.ast.model.statement.spritemotion.PointInDirection;
-import scratch.ast.model.statement.spritemotion.PointTowards;
-import scratch.ast.model.statement.spritemotion.SetXTo;
-import scratch.ast.model.statement.spritemotion.SetYTo;
-import scratch.ast.model.statement.spritemotion.SpriteMotionStmt;
-import scratch.ast.model.statement.spritemotion.TurnLeft;
-import scratch.ast.model.statement.spritemotion.TurnRight;
+import scratch.ast.model.statement.spritemotion.*;
 import scratch.ast.opcodes.SpriteMotionStmtOpcode;
 import scratch.ast.parser.NumExprParser;
 import scratch.ast.parser.PositionParser;
+import scratch.utils.Preconditions;
+
+import static scratch.ast.Constants.OPCODE_KEY;
 
 public class SpriteMotionStmtParser {
 
