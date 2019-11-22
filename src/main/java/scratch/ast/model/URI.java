@@ -22,14 +22,13 @@ import scratch.utils.UnmodifiableListBuilder;
 import com.google.common.base.Preconditions;
 import scratch.ast.visitor.ScratchVisitor;
 
-public class URI implements ASTLeaf {
+public class URI extends AbstractNode implements ASTLeaf {
 
     private final String uri;
-    private final ImmutableList<ASTNode> children;
 
     public URI(String uri) {
+        super();
         this.uri = Preconditions.checkNotNull(uri);
-        children = ImmutableList.<ASTNode>builder().build();
     }
 
     public String getUri() {
@@ -39,11 +38,6 @@ public class URI implements ASTLeaf {
     @Override
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);
-    }
-
-    @Override
-    public ImmutableList<ASTNode> getChildren() {
-        return children;
     }
 
     @Override

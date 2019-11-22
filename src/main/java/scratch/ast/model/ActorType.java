@@ -18,15 +18,18 @@
  */
 package scratch.ast.model;
 
+import com.google.common.collect.ImmutableList;
 import scratch.utils.UnmodifiableListBuilder;
 import scratch.ast.visitor.ScratchVisitor;
 
+import java.util.Collections;
+import java.util.List;
+
 public enum ActorType implements ASTLeaf {
+
     ACTOR,
     STAGE,
     SPRITE;
-
-    private final ImmutableList<ASTNode> children = ImmutableList.<ASTNode>builder().build();
 
     @Override
     public void accept(ScratchVisitor visitor) {
@@ -34,8 +37,13 @@ public enum ActorType implements ASTLeaf {
     }
 
     @Override
-    public ImmutableList<ASTNode> getChildren() {
-        return children;
+    public List<ASTNode> getChildren() {
+        return Collections.emptyList();
+    }
+
+    @Override
+    public String getUniqueName() {
+        return getClass().getSimpleName();
     }
 
     @Override

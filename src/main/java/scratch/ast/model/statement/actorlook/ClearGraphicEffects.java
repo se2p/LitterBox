@@ -23,12 +23,12 @@ import scratch.ast.model.ASTLeaf;
 import scratch.ast.model.ASTNode;
 import scratch.ast.visitor.ScratchVisitor;
 
-public class ClearGraphicEffects implements ActorLookStmt, ASTLeaf {
+public class ClearGraphicEffects extends AbstractNode implements ActorLookStmt, ASTLeaf {
 
-    private final ImmutableList<ASTNode> children;
+
 
     public ClearGraphicEffects() {
-        children = ImmutableList.<ASTNode>builder().build();
+
     }
 
     @Override
@@ -36,8 +36,5 @@ public class ClearGraphicEffects implements ActorLookStmt, ASTLeaf {
         visitor.visit(this);
     }
 
-    @Override
-    public ImmutableList<ASTNode> getChildren() {
-        return children;
-    }
+
 }

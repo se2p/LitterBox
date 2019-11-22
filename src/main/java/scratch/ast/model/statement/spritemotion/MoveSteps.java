@@ -24,10 +24,10 @@ import scratch.ast.model.ASTNode;
 import scratch.ast.model.expression.num.NumExpr;
 import scratch.ast.visitor.ScratchVisitor;
 
-public class MoveSteps implements SpriteMotionStmt {
+public class MoveSteps extends AbstractNode implements SpriteMotionStmt {
 
     private final NumExpr steps;
-    private final ImmutableList<ASTNode> children;
+
 
     public MoveSteps(NumExpr steps) {
         this.steps = Preconditions.checkNotNull(steps);
@@ -43,8 +43,5 @@ public class MoveSteps implements SpriteMotionStmt {
         visitor.visit(this);
     }
 
-    @Override
-    public ImmutableList<ASTNode> getChildren() {
-        return children;
-    }
+
 }

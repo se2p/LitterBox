@@ -68,11 +68,11 @@ public class ActorDefinitionParser {
         ResourceList resources = new ResourceList(res);
 
         List<DeclarationStmt> decls = DeclarationStmtParser
-            .parseLists(actorDefinitionNode.get("lists"), identifier.getValue(),
+            .parseLists(actorDefinitionNode.get("lists"), identifier.getName(),
                 actorDefinitionNode.get(IS_STAGE_KEY).asBoolean());
-        decls.addAll(DeclarationStmtParser.parseBroadcasts(actorDefinitionNode.get("broadcasts"), identifier.getValue(),
+        decls.addAll(DeclarationStmtParser.parseBroadcasts(actorDefinitionNode.get("broadcasts"), identifier.getName(),
             actorDefinitionNode.get(IS_STAGE_KEY).asBoolean()));
-        decls.addAll(DeclarationStmtParser.parseVariables(actorDefinitionNode.get("variables"), identifier.getValue(),
+        decls.addAll(DeclarationStmtParser.parseVariables(actorDefinitionNode.get("variables"), identifier.getName(),
             actorDefinitionNode.get(IS_STAGE_KEY).asBoolean()));
         decls.addAll(DeclarationStmtParser.parseAttributeDeclarations(actorDefinitionNode));
         DeclarationStmtList declarations = new DeclarationStmtList(decls);
@@ -94,9 +94,9 @@ public class ActorDefinitionParser {
 
         List<SetStmt> setStmtList = DeclarationStmtParser.parseAttributeDeclarationSetStmts(actorDefinitionNode);
         setStmtList.addAll(DeclarationStmtParser.parseListDeclarationSetStmts(actorDefinitionNode.get("lists"),
-            identifier.getValue()));
+            identifier.getName()));
         setStmtList.addAll(DeclarationStmtParser.parseVariableDeclarationSetStmts(actorDefinitionNode.get("variables"),
-            identifier.getValue()));
+            identifier.getName()));
         return new ActorDefinition(actorType, identifier, resources, declarations, new SetStmtList(setStmtList),
             procDeclList,
             scriptList);
@@ -108,6 +108,6 @@ public class ActorDefinitionParser {
      * @return
      */
     public static Identifier getCurrentActor() {
-        return new StrId(currentActor.getValue());
+        return new StrId(currentActor.getName());
     }
 }

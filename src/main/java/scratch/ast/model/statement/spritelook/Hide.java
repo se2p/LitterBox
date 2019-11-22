@@ -23,12 +23,12 @@ import scratch.ast.model.ASTLeaf;
 import scratch.ast.model.ASTNode;
 import scratch.ast.visitor.ScratchVisitor;
 
-public class Hide implements SpriteLookStmt, ASTLeaf {
+public class Hide extends AbstractNode implements SpriteLookStmt, ASTLeaf {
 
-    private final ImmutableList<ASTNode> children;
+
 
     public Hide() {
-        children = ImmutableList.<ASTNode>builder().build();
+
     }
 
     @Override
@@ -36,8 +36,5 @@ public class Hide implements SpriteLookStmt, ASTLeaf {
         visitor.visit(this);
     }
 
-    @Override
-    public ImmutableList<ASTNode> getChildren() {
-        return children;
-    }
+
 }

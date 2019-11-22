@@ -18,6 +18,7 @@
  */
 package scratch.ast.model.statement.spritelook;
 
+import scratch.ast.model.AbstractNode;
 import scratch.utils.UnmodifiableListBuilder;
 import com.google.common.base.Preconditions;
 import scratch.ast.model.ASTNode;
@@ -25,16 +26,15 @@ import scratch.ast.model.expression.num.NumExpr;
 import scratch.ast.model.expression.string.StringExpr;
 import scratch.ast.visitor.ScratchVisitor;
 
-public class SayForSecs implements SpriteLookStmt {
+public class SayForSecs extends AbstractNode implements SpriteLookStmt {
 
     private final StringExpr string;
     private final NumExpr secs;
-    private final ImmutableList<ASTNode> children;
 
     public SayForSecs(StringExpr string, NumExpr secs) {
+        super(string, secs);
         this.string = Preconditions.checkNotNull(string);
         this.secs = Preconditions.checkNotNull(secs);
-        this.children = ImmutableList.<ASTNode>builder().add(string).add(secs).build();
     }
 
     public StringExpr getString() {
@@ -50,9 +50,5 @@ public class SayForSecs implements SpriteLookStmt {
         visitor.visit(this);
     }
 
-    @Override
-    public ImmutableList<ASTNode> getChildren() {
-        return children;
-    }
 }
 

@@ -18,22 +18,22 @@
  */
 package scratch.ast.model.resource;
 
+import scratch.ast.model.AbstractNode;
 import scratch.utils.UnmodifiableListBuilder;
 import scratch.ast.model.ASTNode;
 import scratch.ast.model.URI;
 import scratch.ast.model.variable.Identifier;
 import scratch.ast.visitor.ScratchVisitor;
 
-public class ImageResource implements Resource {
+public class ImageResource extends AbstractNode implements Resource {
 
-    private Identifier ident;
-    private URI uri;
-    private final ImmutableList<ASTNode> children;
+    private final Identifier ident;
+    private final URI uri;
 
     public ImageResource(Identifier ident, URI uri) {
+        super(ident, uri);
         this.ident = ident;
         this.uri = uri;
-        children = ImmutableList.<ASTNode>builder().add(ident).add(uri).build();
     }
 
     public Identifier getIdent() {
@@ -49,8 +49,4 @@ public class ImageResource implements Resource {
         visitor.visit(this);
     }
 
-    @Override
-    public ImmutableList<ASTNode> getChildren() {
-        return children;
-    }
 }

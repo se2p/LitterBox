@@ -24,10 +24,10 @@ import scratch.ast.model.ASTNode;
 import scratch.ast.model.position.Position;
 import scratch.ast.visitor.ScratchVisitor;
 
-public class PointTowards implements SpriteMotionStmt {
+public class PointTowards extends AbstractNode implements SpriteMotionStmt {
 
     private final Position position;
-    private final ImmutableList<ASTNode> children;
+
 
     public PointTowards(Position position) {
         this.position = Preconditions.checkNotNull(position);
@@ -43,8 +43,5 @@ public class PointTowards implements SpriteMotionStmt {
         visitor.visit(this);
     }
 
-    @Override
-    public ImmutableList<ASTNode> getChildren() {
-        return children;
-    }
+
 }

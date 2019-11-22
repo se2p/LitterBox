@@ -24,14 +24,7 @@ import static scratch.ast.Constants.OPCODE_KEY;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.base.Preconditions;
 import scratch.ast.ParsingException;
-import scratch.ast.model.timecomp.Date;
-import scratch.ast.model.timecomp.DayOfWeek;
-import scratch.ast.model.timecomp.Hour;
-import scratch.ast.model.timecomp.Minute;
-import scratch.ast.model.timecomp.Month;
-import scratch.ast.model.timecomp.Second;
 import scratch.ast.model.timecomp.TimeComp;
-import scratch.ast.model.timecomp.Year;
 
 public class TimecompParser {
 

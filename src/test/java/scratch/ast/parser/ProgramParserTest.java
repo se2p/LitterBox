@@ -64,7 +64,7 @@ public class ProgramParserTest {
     public void testEmptyProgramStructure() {
         try {
             Program program = ProgramParser.parseProgram("Empty", project);
-            Truth.assertThat(program.getIdent().getValue()).isEqualTo("Empty");
+            Truth.assertThat(program.getIdent().getName()).isEqualTo("Empty");
             Truth.assertThat(program.getChildren().size()).isEqualTo(2);
             Truth.assertThat(program.getChildren().get(1)).isInstanceOf(ActorDefinitionList.class);
 
@@ -116,12 +116,12 @@ public class ProgramParserTest {
             ActorDefinition stage = program.getActorDefinitionList().getDefintions().get(0);
             List<DeclarationStmt> decls = stage.getDecls().getDeclarationStmtList();
             Truth.assertThat(((DeclarationIdentAsTypeStmt) decls.get(0)).getIdent()
-                .getValue()).isEqualTo("my variable");
+                .getName()).isEqualTo("my variable");
 
             SetVariableTo setStmt = (SetVariableTo) stage.getSetStmtList().getStmts().stream()
                 .filter(t -> t instanceof SetVariableTo)
                 .findFirst().get();
-            Truth.assertThat(((Qualified) setStmt.getVariable()).getSecond().getValue()).isEqualTo("my variable");
+            Truth.assertThat(((Qualified) setStmt.getVariable()).getSecond().getName()).isEqualTo("my variable");
             Truth.assertThat(((Number) setStmt.getExpr()).getValue()).isEqualTo(0);
 
             ActorDefinition sprite = program.getActorDefinitionList().getDefintions().get(1);
@@ -131,7 +131,7 @@ public class ProgramParserTest {
 
             SetVariableTo setList = (SetVariableTo) spriteSetStmts.get(0);
             Qualified variable = (Qualified) setList.getVariable();
-            Truth.assertThat(variable.getSecond().getValue()).isEqualTo("SpriteLocalList");
+            Truth.assertThat(variable.getSecond().getName()).isEqualTo("SpriteLocalList");
             ExpressionListPlain exprListPlain = (ExpressionListPlain) setList.getExpr();
             Truth.assertThat(((Str) exprListPlain.getExpressions().get(0)).getStr()).isEqualTo("Elem1");
             Truth.assertThat(((Str) exprListPlain.getExpressions().get(1)).getStr()).isEqualTo("Elem2");
@@ -151,17 +151,17 @@ public class ProgramParserTest {
             program = ProgramParser.parseProgram("Empty", project);
             ActorDefinition stage = program.getActorDefinitionList().getDefintions().get(0);
             SoundResource soundResource = (SoundResource) stage.getResources().getResourceList().get(0);
-            Truth.assertThat(soundResource.getIdent().getValue()).isEqualTo("pop");
+            Truth.assertThat(soundResource.getIdent().getName()).isEqualTo("pop");
             ImageResource imageResource = (ImageResource) stage.getResources().getResourceList().get(1);
-            Truth.assertThat(imageResource.getIdent().getValue()).isEqualTo("backdrop1");
+            Truth.assertThat(imageResource.getIdent().getName()).isEqualTo("backdrop1");
 
             ActorDefinition sprite = program.getActorDefinitionList().getDefintions().get(1);
             soundResource = (SoundResource) sprite.getResources().getResourceList().get(0);
-            Truth.assertThat(soundResource.getIdent().getValue()).isEqualTo("Meow");
+            Truth.assertThat(soundResource.getIdent().getName()).isEqualTo("Meow");
             imageResource = (ImageResource) sprite.getResources().getResourceList().get(1);
-            Truth.assertThat(imageResource.getIdent().getValue()).isEqualTo("costume1");
+            Truth.assertThat(imageResource.getIdent().getName()).isEqualTo("costume1");
             imageResource = (ImageResource) sprite.getResources().getResourceList().get(2);
-            Truth.assertThat(imageResource.getIdent().getValue()).isEqualTo("costume2");
+            Truth.assertThat(imageResource.getIdent().getName()).isEqualTo("costume2");
 
         } catch (ParsingException e) {
             e.printStackTrace();

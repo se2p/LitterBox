@@ -24,16 +24,13 @@ import scratch.ast.model.statement.spritelook.ListOfStmt;
 import scratch.ast.model.statement.termination.TerminationStmt;
 import scratch.ast.visitor.ScratchVisitor;
 
-public class StmtList implements ASTNode {
+public class StmtList extends AbstractNode implements ASTNode {
 
     private final ListOfStmt stmts;
-    private final ImmutableList<ASTNode> children;
 
     public StmtList(ListOfStmt stmts) {
+        super(stmts);
         this.stmts = Preconditions.checkNotNull(stmts);
-        ImmutableList.Builder<ASTNode> builder = ImmutableList.builder();
-        builder.add(stmts);
-        this.children = builder.build();
     }
 
     public ListOfStmt getStmts() {
@@ -45,8 +42,4 @@ public class StmtList implements ASTNode {
         visitor.visit(this);
     }
 
-    @Override
-    public ImmutableList<ASTNode> getChildren() {
-        return children;
-    }
 }

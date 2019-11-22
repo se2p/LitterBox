@@ -55,7 +55,7 @@ public class MissingTermination implements IssueFinder {
             for (int j = 0; j < scripts.size(); j++) {
                 List<Stmt> stmts = scripts.get(0).getStmtList().getStmts().getListOfStmt();
                 if (stmts.size() > 0) {
-                    checkMissTermination(stmts, actorDefs.get(i).getIdent().getValue());
+                    checkMissTermination(stmts, actorDefs.get(i).getIdent().getName());
                 }
             }
         }

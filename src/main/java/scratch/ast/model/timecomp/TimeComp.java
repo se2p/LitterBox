@@ -19,7 +19,47 @@
 package scratch.ast.model.timecomp;
 
 import scratch.ast.model.ASTLeaf;
+import scratch.ast.model.ASTNode;
+import scratch.ast.visitor.ScratchVisitor;
 
-public interface TimeComp extends ASTLeaf {
+import java.util.Collections;
+import java.util.List;
 
+public enum TimeComp implements ASTNode, ASTLeaf {
+
+    DATE("date"),
+    DAY_OF_WEEK("dayofweek"),
+    HOUR("hour"),
+    MINUTE("minute"),
+    MONTH("month"),
+    SECOND("second"),
+    YEAR("year");
+
+    private final String label;
+
+    TimeComp(String label) {
+        this.label = label;
+    }
+
+    @Override
+    public void accept(ScratchVisitor visitor) {
+        visitor.visit(this);
+    }
+
+    @Override
+    public List<? extends ASTNode> getChildren() {
+        return Collections.emptyList();
+    }
+
+    @Override
+    public String getUniqueName() {
+        return getClass().getSimpleName();
+    }
+
+    @Override
+    public String[] toSimpleStringArray() {
+        String[] result = new String[1];
+        result[0] = label;
+        return result;
+    }
 }

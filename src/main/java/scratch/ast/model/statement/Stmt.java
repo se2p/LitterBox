@@ -20,6 +20,6 @@ package scratch.ast.model.statement;
 
 import scratch.ast.model.ASTNode;
 
-public interface Stmt extends AbstractNode {
+public interface Stmt extends ASTNode {
 
 }

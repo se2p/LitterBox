@@ -18,6 +18,7 @@
  */
 package scratch.ast.model.statement.list;
 
+import scratch.ast.model.AbstractNode;
 import scratch.utils.UnmodifiableListBuilder;
 import com.google.common.collect.ImmutableList.Builder;
 import com.google.common.base.Preconditions;
@@ -27,21 +28,17 @@ import scratch.ast.model.expression.string.StringExpr;
 import scratch.ast.model.variable.Variable;
 import scratch.ast.visitor.ScratchVisitor;
 
-public class ReplaceItem implements ListStmt {
+public class ReplaceItem extends AbstractNode implements ListStmt {
 
     private final NumExpr index;
     private final Variable variable;
     private final StringExpr string;
-    private final ImmutableList<ASTNode> children;
 
     public ReplaceItem(StringExpr string, NumExpr index, Variable variable) {
+        super(index, variable, string);
         this.index = Preconditions.checkNotNull(index);
         this.variable = Preconditions.checkNotNull(variable);
         this.string = Preconditions.checkNotNull(string);
-        this.children = ImmutableList.<ASTNode>builder()
-            .add(index)
-            .add(variable)
-            .add(string).build();
     }
 
     public NumExpr getIndex() {
@@ -61,8 +58,5 @@ public class ReplaceItem implements ListStmt {
         visitor.visit(this);
     }
 
-    @Override
-    public ImmutableList<ASTNode> getChildren() {
-        return children;
-    }
+
 }

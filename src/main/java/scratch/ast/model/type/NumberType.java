@@ -18,25 +18,16 @@
  */
 package scratch.ast.model.type;
 
+import scratch.ast.model.AbstractNode;
 import scratch.utils.UnmodifiableListBuilder;
 import scratch.ast.model.ASTNode;
 import scratch.ast.visitor.ScratchVisitor;
 
-public class NumberType implements Type {
-
-    private final ImmutableList<ASTNode> children;
-
-    public NumberType() {
-        children = ImmutableList.<ASTNode>builder().build();
-    }
+public class NumberType extends AbstractNode implements Type {
 
     @Override
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);
     }
 
-    @Override
-    public ImmutableList<ASTNode> getChildren() {
-        return children;
-    }
 }

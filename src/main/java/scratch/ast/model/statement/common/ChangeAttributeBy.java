@@ -18,6 +18,7 @@
  */
 package scratch.ast.model.statement.common;
 
+import scratch.ast.model.AbstractNode;
 import scratch.utils.UnmodifiableListBuilder;
 import com.google.common.base.Preconditions;
 import scratch.ast.model.ASTNode;
@@ -28,16 +29,15 @@ import scratch.ast.visitor.ScratchVisitor;
 
 import javax.annotation.Nonnull;
 
-public class ChangeAttributeBy implements CommonStmt {
+public class ChangeAttributeBy extends AbstractNode implements CommonStmt {
 
-    private final ImmutableList<ASTNode> children;
     private final StringExpr attribute;
     private final Expression expr;
 
     public ChangeAttributeBy(@Nonnull StringExpr attribute, @Nonnull Expression expr) {
+        super(attribute, expr);
         this.attribute = Preconditions.checkNotNull(attribute);
         this.expr = Preconditions.checkNotNull(expr);
-        this.children = ImmutableList.<ASTNode>builder().add(attribute).add(expr).build();
     }
 
     public StringExpr getAttribute() {
@@ -53,8 +53,4 @@ public class ChangeAttributeBy implements CommonStmt {
         visitor.visit(this);
     }
 
-    @Override
-    public ImmutableList<ASTNode> getChildren() {
-        return children;
-    }
 }

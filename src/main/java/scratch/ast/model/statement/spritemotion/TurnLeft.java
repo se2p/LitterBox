@@ -23,10 +23,10 @@ import scratch.ast.model.ASTNode;
 import scratch.ast.model.expression.num.NumExpr;
 import scratch.ast.visitor.ScratchVisitor;
 
-public class TurnLeft implements SpriteMotionStmt {
+public class TurnLeft extends AbstractNode implements SpriteMotionStmt {
 
     private final NumExpr degrees;
-    private final ImmutableList<ASTNode> children;
+
 
     public TurnLeft(NumExpr degrees) {
         this.degrees = degrees;
@@ -42,8 +42,5 @@ public class TurnLeft implements SpriteMotionStmt {
         visitor.visit(this);
     }
 
-    @Override
-    public ImmutableList<ASTNode> getChildren() {
-        return children;
-    }
+
 }

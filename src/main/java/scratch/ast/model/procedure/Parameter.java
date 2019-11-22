@@ -18,24 +18,22 @@
  */
 package scratch.ast.model.procedure;
 
+import scratch.ast.model.AbstractNode;
 import scratch.utils.UnmodifiableListBuilder;
 import scratch.ast.model.ASTNode;
 import scratch.ast.model.type.Type;
 import scratch.ast.model.variable.Identifier;
 import scratch.ast.visitor.ScratchVisitor;
 
-public class Parameter implements ASTNode {
+public class Parameter extends AbstractNode implements ASTNode {
 
-    private Identifier ident;
-    private Type type;
-    private final ImmutableList<ASTNode> children;
-    private String value;
+    private final Identifier ident;
+    private final Type type;
 
     public Parameter(Identifier ident, Type type) {
+        super(ident, type);
         this.ident = ident;
         this.type = type;
-        ImmutableList.Builder<ASTNode> builder = ImmutableList.builder();
-        children = builder.add(ident).add(type).build();
     }
 
     public Identifier getIdent() {
@@ -51,16 +49,4 @@ public class Parameter implements ASTNode {
         visitor.visit(this);
     }
 
-    @Override
-    public ImmutableList<ASTNode> getChildren() {
-        return children;
-    }
-
-    public String getValue() {
-        return value;
-    }
-
-    public void setValue(String value) {
-        this.value = value;
-    }
 }

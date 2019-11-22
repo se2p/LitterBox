@@ -24,10 +24,10 @@ import scratch.ast.model.ASTNode;
 import scratch.ast.model.expression.num.NumExpr;
 import scratch.ast.visitor.ScratchVisitor;
 
-public class SetYTo implements SpriteMotionStmt {
+public class SetYTo extends AbstractNode implements SpriteMotionStmt {
 
     private final NumExpr num;
-    private final ImmutableList<ASTNode> children;
+
 
     public SetYTo(NumExpr num) {
         this.num = Preconditions.checkNotNull(num);
@@ -43,9 +43,6 @@ public class SetYTo implements SpriteMotionStmt {
         visitor.visit(this);
     }
 
-    @Override
-    public ImmutableList<ASTNode> getChildren() {
-        return children;
-    }
+
 }
 

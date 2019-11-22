@@ -62,7 +62,7 @@ public class CSVWriter {
      */
     public static void addData(CSVPrinter csvPrinter, List<newanalytics.IssueReport> issueReports, Program program) throws IOException {
         List<String> data = new ArrayList<>();
-        data.add(program.getIdent().getValue());
+        data.add(program.getIdent().getName());
         for (newanalytics.IssueReport is : issueReports) {
             data.add(Integer.toString(is.getCount()));
         }

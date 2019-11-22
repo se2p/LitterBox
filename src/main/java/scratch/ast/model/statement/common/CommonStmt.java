@@ -18,6 +18,7 @@
  */
 package scratch.ast.model.statement.common;
 
+import scratch.ast.model.AbstractNode;
 import scratch.ast.model.statement.Stmt;
 
 public interface CommonStmt extends Stmt {

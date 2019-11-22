@@ -18,27 +18,23 @@
  */
 package scratch.ast.model.procedure;
 
+import scratch.ast.model.AbstractNode;
 import scratch.utils.UnmodifiableListBuilder;
 import java.util.List;
 import scratch.ast.model.ASTNode;
 import scratch.ast.visitor.ScratchVisitor;
 
-public class ProcedureDefinitionList implements ASTNode {
+public class ProcedureDefinitionList extends AbstractNode implements ASTNode {
 
-    private List<ProcedureDefinition> list;
-    private final ImmutableList<ASTNode> children;
+    private final List<ProcedureDefinition> list;
 
     public ProcedureDefinitionList(List<ProcedureDefinition> list) {
+        super(list);
         this.list = list;
-        children = ImmutableList.<ASTNode>builder().addAll(list).build();
     }
 
     public List<ProcedureDefinition> getList() {
         return list;
-    }
-
-    public void setList(List<ProcedureDefinition> list) {
-        this.list = list;
     }
 
     @Override
@@ -46,8 +42,4 @@ public class ProcedureDefinitionList implements ASTNode {
         visitor.visit(this);
     }
 
-    @Override
-    public ImmutableList<ASTNode> getChildren() {
-        return children;
-    }
 }

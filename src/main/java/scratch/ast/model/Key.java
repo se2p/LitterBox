@@ -22,7 +22,7 @@ import scratch.utils.UnmodifiableListBuilder;
 import com.google.common.base.Preconditions;
 import scratch.ast.visitor.ScratchVisitor;
 
-public class Key extends AbstractNode implements ASTLeaf{
+public class Key extends AbstractNode implements ASTLeaf {
 
     private final String key;
 

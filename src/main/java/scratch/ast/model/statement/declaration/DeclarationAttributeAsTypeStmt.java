@@ -18,6 +18,7 @@
  */
 package scratch.ast.model.statement.declaration;
 
+import scratch.ast.model.AbstractNode;
 import scratch.utils.UnmodifiableListBuilder;
 import com.google.common.base.Preconditions;
 import scratch.ast.model.ASTNode;
@@ -25,16 +26,15 @@ import scratch.ast.model.expression.string.StringExpr;
 import scratch.ast.model.type.Type;
 import scratch.ast.visitor.ScratchVisitor;
 
-public class DeclarationAttributeAsTypeStmt implements DeclarationStmt{
+public class DeclarationAttributeAsTypeStmt extends AbstractNode implements DeclarationStmt{
 
     private final StringExpr stringExpr;
     private final Type type;
-    private final ImmutableList<ASTNode> children;
 
     public DeclarationAttributeAsTypeStmt(StringExpr stringExpr, Type type) {
+        super(stringExpr, type);
         this.stringExpr = Preconditions.checkNotNull(stringExpr);
         this.type = Preconditions.checkNotNull(type);
-        this.children = ImmutableList.<ASTNode>builder().add(stringExpr).add(type).build();
     }
 
     public StringExpr getStringExpr() {
@@ -50,8 +50,4 @@ public class DeclarationAttributeAsTypeStmt implements DeclarationStmt{
         visitor.visit(this);
     }
 
-    @Override
-    public ImmutableList<ASTNode> getChildren() {
-        return children;
-    }
 }

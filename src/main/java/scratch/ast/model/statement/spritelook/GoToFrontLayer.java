@@ -18,16 +18,15 @@
  */
 package scratch.ast.model.statement.spritelook;
 
+import scratch.ast.model.AbstractNode;
 import scratch.utils.UnmodifiableListBuilder;
 import scratch.ast.model.ASTNode;
 import scratch.ast.visitor.ScratchVisitor;
 
-public class GoToFrontLayer implements SpriteLookStmt {
-
-    private final ImmutableList<ASTNode> children;
+public class GoToFrontLayer extends AbstractNode implements SpriteLookStmt {
 
     public GoToFrontLayer() {
-        children = ImmutableList.<ASTNode>builder().add().build();
+        super();
     }
 
     @Override
@@ -35,8 +34,4 @@ public class GoToFrontLayer implements SpriteLookStmt {
         visitor.visit(this);
     }
 
-    @Override
-    public ImmutableList<ASTNode> getChildren() {
-        return children;
-    }
 }

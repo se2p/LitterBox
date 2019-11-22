@@ -18,17 +18,16 @@
  */
 package scratch.ast.model.statement.actorsound;
 
+import scratch.ast.model.AbstractNode;
 import scratch.utils.UnmodifiableListBuilder;
 import scratch.ast.model.ASTLeaf;
 import scratch.ast.model.ASTNode;
 import scratch.ast.visitor.ScratchVisitor;
 
-public class ClearSoundEffects implements ActorSoundStmt, ASTLeaf {
-
-    private final ImmutableList<ASTNode> children;
+public class ClearSoundEffects extends AbstractNode implements ActorSoundStmt, ASTLeaf {
 
     public ClearSoundEffects() {
-        children = ImmutableList.<ASTNode>builder().build();
+        super();
     }
 
     @Override
@@ -36,8 +35,4 @@ public class ClearSoundEffects implements ActorSoundStmt, ASTLeaf {
         visitor.visit(this);
     }
 
-    @Override
-    public ImmutableList<ASTNode> getChildren() {
-        return children;
-    }
 }

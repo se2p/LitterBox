@@ -18,20 +18,19 @@
  */
 package scratch.ast.model.statement.list;
 
-import scratch.utils.UnmodifiableListBuilder;
+import scratch.ast.model.AbstractNode;
 import com.google.common.base.Preconditions;
 import scratch.ast.model.ASTNode;
 import scratch.ast.model.variable.Variable;
 import scratch.ast.visitor.ScratchVisitor;
 
-public class DeleteAllOf implements ListStmt {
+public class DeleteAllOf extends AbstractNode implements ListStmt {
 
     private final Variable variable;
-    private final ImmutableList<ASTNode> children;
 
     public DeleteAllOf(Variable variable) {
+        super(variable);
         this.variable = Preconditions.checkNotNull(variable);
-        this.children = ImmutableList.<ASTNode>builder().add(variable).build();
     }
 
     public Variable getVariable() {
@@ -43,8 +42,5 @@ public class DeleteAllOf implements ListStmt {
         visitor.visit(this);
     }
 
-    @Override
-    public ImmutableList<ASTNode> getChildren() {
-        return children;
-    }
+
 }

@@ -18,19 +18,19 @@
  */
 package scratch.ast.model.resource;
 
+import scratch.ast.model.AbstractNode;
 import scratch.utils.UnmodifiableListBuilder;
 import java.util.List;
 import scratch.ast.model.ASTNode;
 import scratch.ast.visitor.ScratchVisitor;
 
-public class ResourceList implements ASTNode {
+public class ResourceList extends AbstractNode implements ASTNode {
 
-    List<Resource> resourceList;
-    private final ImmutableList<ASTNode> children;
+    private final List<Resource> resourceList;
 
     public ResourceList(List<Resource> resourceList) {
+        super(resourceList);
         this.resourceList = resourceList;
-        children = ImmutableList.<ASTNode>builder().addAll(resourceList).build();
     }
 
     public List<Resource> getResourceList() {
@@ -42,8 +42,4 @@ public class ResourceList implements ASTNode {
         visitor.visit(this);
     }
 
-    @Override
-    public ImmutableList<ASTNode> getChildren() {
-        return children;
-    }
 }

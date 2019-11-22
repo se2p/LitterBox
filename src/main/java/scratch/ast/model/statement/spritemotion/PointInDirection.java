@@ -24,10 +24,10 @@ import scratch.ast.model.ASTNode;
 import scratch.ast.model.expression.num.NumExpr;
 import scratch.ast.visitor.ScratchVisitor;
 
-public class PointInDirection implements SpriteMotionStmt {
+public class PointInDirection extends AbstractNode implements SpriteMotionStmt {
 
     private final NumExpr direction;
-    private final ImmutableList<ASTNode> children;
+
 
     public PointInDirection(NumExpr direction) {
         this.direction = Preconditions.checkNotNull(direction);
@@ -43,8 +43,5 @@ public class PointInDirection implements SpriteMotionStmt {
         visitor.visit(this);
     }
 
-    @Override
-    public ImmutableList<ASTNode> getChildren() {
-        return children;
-    }
+
 }

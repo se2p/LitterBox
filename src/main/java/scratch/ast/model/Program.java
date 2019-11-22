@@ -19,20 +19,20 @@
 package scratch.ast.model;
 
 import com.google.common.base.Preconditions;
+import org.graalvm.compiler.phases.graph.ScheduledNodeIterator;
 import scratch.utils.UnmodifiableListBuilder;
 import scratch.ast.model.variable.Identifier;
 import scratch.ast.visitor.ScratchVisitor;
 
-public class Program implements ASTNode {
+public class Program extends AbstractNode {
 
     private final Identifier ident;
     private final ActorDefinitionList actorDefinitionList;
-    private final ImmutableList<ASTNode> children;
 
     public Program(Identifier ident, ActorDefinitionList actorDefinitionList) {
+        super(ident, actorDefinitionList);
         this.ident = Preconditions.checkNotNull(ident);
         this.actorDefinitionList = Preconditions.checkNotNull(actorDefinitionList);
-        this.children = ImmutableList.<ASTNode>builder().add(ident).add(actorDefinitionList).build();
     }
 
     public Identifier getIdent() {
@@ -48,8 +48,4 @@ public class Program implements ASTNode {
         visitor.visit(this);
     }
 
-    @Override
-    public ImmutableList<ASTNode> getChildren() {
-        return children;
-    }
 }

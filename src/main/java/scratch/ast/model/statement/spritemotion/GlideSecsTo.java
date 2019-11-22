@@ -25,11 +25,11 @@ import scratch.ast.model.expression.num.NumExpr;
 import scratch.ast.model.position.Position;
 import scratch.ast.visitor.ScratchVisitor;
 
-public class GlideSecsTo implements SpriteMotionStmt {
+public class GlideSecsTo extends AbstractNode implements SpriteMotionStmt {
 
     private final NumExpr secs;
     private final Position position;
-    private final ImmutableList<ASTNode> children;
+
 
     public GlideSecsTo(NumExpr secs, Position position) {
         this.secs = Preconditions.checkNotNull(secs);
@@ -50,8 +50,5 @@ public class GlideSecsTo implements SpriteMotionStmt {
         visitor.visit(this);
     }
 
-    @Override
-    public ImmutableList<ASTNode> getChildren() {
-        return children;
-    }
+
 }

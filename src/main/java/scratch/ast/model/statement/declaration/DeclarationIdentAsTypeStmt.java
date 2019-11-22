@@ -18,6 +18,7 @@
  */
 package scratch.ast.model.statement.declaration;
 
+import scratch.ast.model.AbstractNode;
 import scratch.utils.UnmodifiableListBuilder;
 import com.google.common.base.Preconditions;
 import scratch.ast.model.ASTNode;
@@ -25,16 +26,15 @@ import scratch.ast.model.type.Type;
 import scratch.ast.model.variable.Identifier;
 import scratch.ast.visitor.ScratchVisitor;
 
-public class DeclarationIdentAsTypeStmt implements DeclarationStmt {
+public class DeclarationIdentAsTypeStmt extends AbstractNode implements DeclarationStmt {
 
     private final Identifier ident;
     private final Type type;
-    private final ImmutableList<ASTNode> children;
 
     public DeclarationIdentAsTypeStmt(Identifier ident, Type type) {
+        super(ident, type);
         this.ident = Preconditions.checkNotNull(ident);
         this.type = Preconditions.checkNotNull(type);
-        this.children = ImmutableList.<ASTNode>builder().add(ident).add(type).build();
     }
 
     public Identifier getIdent() {
@@ -50,8 +50,5 @@ public class DeclarationIdentAsTypeStmt implements DeclarationStmt {
         visitor.visit(this);
     }
 
-    @Override
-    public ImmutableList<ASTNode> getChildren() {
-        return children;
-    }
+
 }

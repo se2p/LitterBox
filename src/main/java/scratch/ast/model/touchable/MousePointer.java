@@ -18,25 +18,16 @@
  */
 package scratch.ast.model.touchable;
 
+import scratch.ast.model.AbstractNode;
 import scratch.utils.UnmodifiableListBuilder;
 import scratch.ast.model.ASTNode;
 import scratch.ast.visitor.ScratchVisitor;
 
-public class MousePointer implements Touchable {
-
-    private final ImmutableList<ASTNode> children;
-
-    public MousePointer() {
-        children = ImmutableList.<ASTNode>builder().build();
-    }
+public class MousePointer extends AbstractNode implements Touchable {
 
     @Override
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);
     }
 
-    @Override
-    public ImmutableList<ASTNode> getChildren() {
-        return children;
-    }
 }

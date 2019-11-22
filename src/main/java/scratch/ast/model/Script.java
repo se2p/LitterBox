@@ -23,17 +23,15 @@ import com.google.common.base.Preconditions;
 import scratch.ast.model.event.Event;
 import scratch.ast.visitor.ScratchVisitor;
 
-public class Script implements ASTNode {
+public class Script extends AbstractNode {
 
     private final Event event;
     private final StmtList stmtList;
-    private final ImmutableList<ASTNode> children;
 
     public Script(Event event, StmtList stmtList) {
+        super(event, stmtList);
         this.event = Preconditions.checkNotNull(event);
         this.stmtList = Preconditions.checkNotNull(stmtList);
-        ImmutableList.Builder<ASTNode> builder = ImmutableList.builder();
-        this.children = builder.add(this.event, this.stmtList).build();
     }
 
     public Event getEvent() {
@@ -49,8 +47,4 @@ public class Script implements ASTNode {
         visitor.visit(this);
     }
 
-    @Override
-    public ImmutableList<ASTNode> getChildren() {
-        return children;
-    }
 }

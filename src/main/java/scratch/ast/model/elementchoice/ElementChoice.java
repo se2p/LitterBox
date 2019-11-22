@@ -18,6 +18,8 @@
  */
 package scratch.ast.model.elementchoice;
 
-public interface ElementChoice  {
+import scratch.ast.model.ASTNode;
+
+public interface ElementChoice extends ASTNode {
 
 }

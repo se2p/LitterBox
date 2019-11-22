@@ -23,12 +23,12 @@ import scratch.ast.model.ASTLeaf;
 import scratch.ast.model.ASTNode;
 import scratch.ast.visitor.ScratchVisitor;
 
-public class IfOnEdgeBounce implements SpriteMotionStmt, ASTLeaf {
+public class IfOnEdgeBounce extends AbstractNode implements SpriteMotionStmt, ASTLeaf {
 
-    private final ImmutableList<ASTNode> children;
+
 
     public IfOnEdgeBounce() {
-        children = ImmutableList.<ASTNode>builder().build();
+
     }
 
     @Override
@@ -36,8 +36,5 @@ public class IfOnEdgeBounce implements SpriteMotionStmt, ASTLeaf {
         visitor.visit(this);
     }
 
-    @Override
-    public ImmutableList<ASTNode> getChildren() {
-        return children;
-    }
+
 }

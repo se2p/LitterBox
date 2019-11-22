@@ -18,26 +18,16 @@
  */
 package scratch.ast.model.type;
 
+import scratch.ast.model.AbstractNode;
 import scratch.utils.UnmodifiableListBuilder;
 import scratch.ast.model.ASTNode;
 import scratch.ast.visitor.ScratchVisitor;
 
-public class ImageType implements Type {
-
-    private final ImmutableList<ASTNode> children;
-
-    public ImageType() {
-        children = ImmutableList.<ASTNode>builder().build();
-    }
+public class ImageType extends AbstractNode implements Type {
 
     @Override
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);
-    }
-
-    @Override
-    public ImmutableList<ASTNode> getChildren() {
-        return children;
     }
 
 }

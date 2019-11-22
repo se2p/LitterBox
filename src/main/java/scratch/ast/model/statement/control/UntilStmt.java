@@ -18,6 +18,7 @@
  */
 package scratch.ast.model.statement.control;
 
+import scratch.ast.model.AbstractNode;
 import scratch.utils.UnmodifiableListBuilder;
 import com.google.common.base.Preconditions;
 import scratch.ast.model.ASTNode;
@@ -25,16 +26,14 @@ import scratch.ast.model.StmtList;
 import scratch.ast.model.expression.bool.BoolExpr;
 import scratch.ast.visitor.ScratchVisitor;
 
-public class UntilStmt implements ControlStmt {
+public class UntilStmt extends AbstractNode implements ControlStmt {
 
     private final BoolExpr boolExpr;
     private final StmtList stmtList;
-    private final ImmutableList<ASTNode> children;
 
     public UntilStmt(BoolExpr boolExpr, StmtList stmtList) {
         this.boolExpr = Preconditions.checkNotNull(boolExpr);
         this.stmtList = Preconditions.checkNotNull(stmtList);
-        this.children = ImmutableList.<ASTNode>builder().add(boolExpr).add(stmtList).build();
     }
 
     public BoolExpr getBoolExpr() {
@@ -50,9 +49,6 @@ public class UntilStmt implements ControlStmt {
         visitor.visit(this);
     }
 
-    @Override
-    public ImmutableList<ASTNode> getChildren() {
-        return children;
-    }
+
 
 }

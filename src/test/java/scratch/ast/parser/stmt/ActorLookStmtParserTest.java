@@ -132,7 +132,7 @@ public class ActorLookStmtParserTest {
             Stmt switchBackropStmt = listOfStmt.get(1);
             Truth.assertThat(switchBackropStmt.getClass()).isEqualTo(SwitchBackdrop.class);
             Truth.assertThat(
-                ((StrId) ((WithId) ((SwitchBackdrop) switchBackropStmt).getElementChoice()).getStringExpr()).getValue())
+                ((StrId) ((WithId) ((SwitchBackdrop) switchBackropStmt).getElementChoice()).getStringExpr()).getName())
                 .isEqualTo(
                     "Baseball 1");
 
@@ -154,15 +154,15 @@ public class ActorLookStmtParserTest {
 
             Stmt showVariable = listOfStmt.get(2);
             Truth.assertThat(showVariable.getClass()).isEqualTo(ShowVariable.class);
-            Truth.assertThat(((Qualified) ((ShowVariable) showVariable).getVariable()).getFirst().getValue())
+            Truth.assertThat(((Qualified) ((ShowVariable) showVariable).getVariable()).getFirst().getName())
                 .isEqualTo("Stage");
-            Truth.assertThat(((Qualified) ((ShowVariable) showVariable).getVariable()).getSecond().getValue())
+            Truth.assertThat(((Qualified) ((ShowVariable) showVariable).getVariable()).getSecond().getName())
                 .isEqualTo("my variable");
 
             Stmt hideVariable = listOfStmt.get(3);
-            Truth.assertThat(((Qualified) ((HideVariable) hideVariable).getVariable()).getFirst().getValue())
+            Truth.assertThat(((Qualified) ((HideVariable) hideVariable).getVariable()).getFirst().getName())
                 .isEqualTo("Stage");
-            Truth.assertThat(((Qualified) ((HideVariable) hideVariable).getVariable()).getSecond().getValue())
+            Truth.assertThat(((Qualified) ((HideVariable) hideVariable).getVariable()).getSecond().getName())
                 .isEqualTo("my variable");
 
         } catch (ParsingException e) {
@@ -183,15 +183,15 @@ public class ActorLookStmtParserTest {
 
             Stmt showVariable = listOfStmt.get(4);
             Truth.assertThat(showVariable.getClass()).isEqualTo(ShowVariable.class);
-            Truth.assertThat(((Qualified) ((ShowVariable) showVariable).getVariable()).getFirst().getValue())
+            Truth.assertThat(((Qualified) ((ShowVariable) showVariable).getVariable()).getFirst().getName())
                 .isEqualTo("Stage");
-            Truth.assertThat(((Qualified) ((ShowVariable) showVariable).getVariable()).getSecond().getValue())
+            Truth.assertThat(((Qualified) ((ShowVariable) showVariable).getVariable()).getSecond().getName())
                 .isEqualTo("List");
 
             Stmt hideVariable = listOfStmt.get(5);
-            Truth.assertThat(((Qualified) ((HideVariable) hideVariable).getVariable()).getFirst().getValue())
+            Truth.assertThat(((Qualified) ((HideVariable) hideVariable).getVariable()).getFirst().getName())
                 .isEqualTo("Stage");
-            Truth.assertThat(((Qualified) ((HideVariable) hideVariable).getVariable()).getSecond().getValue())
+            Truth.assertThat(((Qualified) ((HideVariable) hideVariable).getVariable()).getSecond().getName())
                 .isEqualTo("List");
 
         } catch (ParsingException e) {

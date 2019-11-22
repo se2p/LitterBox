@@ -18,26 +18,20 @@
  */
 package scratch.ast.model.statement.termination;
 
+import scratch.ast.model.AbstractNode;
 import scratch.utils.UnmodifiableListBuilder;
 import scratch.ast.model.ASTNode;
 import scratch.ast.visitor.ScratchVisitor;
 
-public class DeleteClone implements TerminationStmt {
-
-    private final ImmutableList<ASTNode> children;
+public class DeleteClone extends AbstractNode implements TerminationStmt {
 
     public DeleteClone() {
-        children = ImmutableList.<ASTNode>builder().build();
+        super();
     }
 
     @Override
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);
-    }
-
-    @Override
-    public ImmutableList<ASTNode> getChildren() {
-        return children;
     }
 
 }

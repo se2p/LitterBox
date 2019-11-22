@@ -18,6 +18,7 @@
  */
 package scratch.ast.model.statement.declaration;
 
+import scratch.ast.model.AbstractNode;
 import scratch.utils.UnmodifiableListBuilder;
 import java.util.List;
 
@@ -25,14 +26,13 @@ import com.google.common.base.Preconditions;
 import scratch.ast.model.ASTNode;
 import scratch.ast.visitor.ScratchVisitor;
 
-public class DeclarationStmtList implements ASTNode {
+public class DeclarationStmtList extends AbstractNode implements ASTNode {
 
     private final List<DeclarationStmt> declarationStmtList;
-    private final ImmutableList<ASTNode> children;
 
     public DeclarationStmtList(List<DeclarationStmt> declarationStmtList) {
+        super(declarationStmtList);
         this.declarationStmtList = Preconditions.checkNotNull(declarationStmtList);
-        this.children = ImmutableList.<ASTNode>builder().addAll(declarationStmtList).build();
     }
 
     public List<DeclarationStmt> getDeclarationStmtList() {
@@ -44,8 +44,5 @@ public class DeclarationStmtList implements ASTNode {
         visitor.visit(this);
     }
 
-    @Override
-    public ImmutableList<ASTNode> getChildren() {
-        return children;
-    }
+
 }

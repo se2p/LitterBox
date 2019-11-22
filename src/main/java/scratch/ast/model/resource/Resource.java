@@ -20,6 +20,6 @@ package scratch.ast.model.resource;
 
 import scratch.ast.model.ASTNode;
 
-public interface Resource extends AbstractNode {
+public interface Resource extends ASTNode {
 
 }

@@ -18,27 +18,17 @@
  */
 package scratch.ast.model.position;
 
+import scratch.ast.model.AbstractNode;
 import scratch.utils.UnmodifiableListBuilder;
 import scratch.ast.model.ASTLeaf;
 import scratch.ast.model.ASTNode;
 import scratch.ast.visitor.ScratchVisitor;
 
-public class MousePos implements Position, ASTLeaf {
-
-    private final ImmutableList<ASTNode> children;
-
-    public MousePos() {
-        children = ImmutableList.<ASTNode>builder().build();
-    }
+public class MousePos extends AbstractNode implements Position, ASTLeaf {
 
     @Override
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);
-    }
-
-    @Override
-    public ImmutableList<ASTNode> getChildren() {
-        return children;
     }
 
 }
