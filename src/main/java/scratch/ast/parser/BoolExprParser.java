@@ -18,17 +18,37 @@
  */
 package scratch.ast.parser;
 
+import static scratch.ast.Constants.FIELD_VALUE;
+import static scratch.ast.Constants.INPUTS_KEY;
+import static scratch.ast.Constants.OPCODE_KEY;
+import static scratch.ast.Constants.POS_BLOCK_ID;
+import static scratch.ast.Constants.POS_DATA_ARRAY;
+import static scratch.ast.Constants.POS_INPUT_ID;
+import static scratch.ast.Constants.POS_INPUT_VALUE;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.TextNode;
+import java.util.Optional;
 import scratch.ast.Constants;
 import scratch.ast.ParsingException;
 import scratch.ast.model.Key;
 import scratch.ast.model.expression.Expression;
-import scratch.ast.model.expression.bool.*;
+import scratch.ast.model.expression.bool.And;
+import scratch.ast.model.expression.bool.BiggerThan;
+import scratch.ast.model.expression.bool.BoolExpr;
+import scratch.ast.model.expression.bool.ColorTouches;
+import scratch.ast.model.expression.bool.Equals;
+import scratch.ast.model.expression.bool.ExpressionContains;
+import scratch.ast.model.expression.bool.IsKeyPressed;
+import scratch.ast.model.expression.bool.IsMouseDown;
+import scratch.ast.model.expression.bool.LessThan;
+import scratch.ast.model.expression.bool.Not;
+import scratch.ast.model.expression.bool.Or;
+import scratch.ast.model.expression.bool.Touching;
+import scratch.ast.model.expression.color.ColorExpression;
 import scratch.ast.model.expression.num.NumExpr;
 import scratch.ast.model.literals.BoolLiteral;
-import scratch.ast.model.literals.ColorLiteral;
 import scratch.ast.model.touchable.Touchable;
 import scratch.ast.model.variable.Qualified;
 import scratch.ast.model.variable.StrId;
@@ -37,10 +57,6 @@ import scratch.ast.opcodes.BoolExprOpcode;
 import scratch.ast.parser.symboltable.ExpressionListInfo;
 import scratch.ast.parser.symboltable.VariableInfo;
 import utils.Preconditions;
-
-import java.util.Optional;
-
-import static scratch.ast.Constants.*;
 
 public class BoolExprParser {
 
@@ -126,8 +142,8 @@ public class BoolExprParser {
             Touchable touchable = TouchableParser.parseTouchable(expressionBlock, blocks);
             return new Touching(touchable);
         case sensing_coloristouchingcolor:
-            ColorLiteral first = ColorParser.parseColor(expressionBlock, 0, blocks);
-            ColorLiteral second = ColorParser.parseColor(expressionBlock, 1, blocks);
+            ColorExpression first = ColorParser.parseColor(expressionBlock, 0, blocks);
+            ColorExpression second = ColorParser.parseColor(expressionBlock, 1, blocks);
             return new ColorTouches(first, second);
         case sensing_keypressed:
             Key key = KeyParser.parse(expressionBlock, blocks);

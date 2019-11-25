@@ -18,7 +18,13 @@
  */
 package scratch.ast.parser;
 
+import static scratch.ast.Constants.FIELDS_KEY;
+import static scratch.ast.Constants.INPUTS_KEY;
+import static scratch.ast.Constants.OPCODE_KEY;
+import static scratch.ast.Constants.POS_INPUT_VALUE;
+
 import com.fasterxml.jackson.databind.JsonNode;
+import scratch.ast.ParsingException;
 import scratch.ast.model.touchable.Edge;
 import scratch.ast.model.touchable.MousePointer;
 import scratch.ast.model.touchable.Touchable;
@@ -26,15 +32,13 @@ import scratch.ast.model.variable.StrId;
 import scratch.ast.opcodes.BoolExprOpcode;
 import utils.Preconditions;
 
-import static scratch.ast.Constants.*;
-
 public class TouchableParser {
 
     public static final String TOUCHINGOBJECTMENU = "TOUCHINGOBJECTMENU";
     public static final String TOUCHING_MOUSE = "_mouse_";
     public static final String TOUCHING_EDGE = "_edge_";
 
-    public static Touchable parseTouchable(JsonNode current, JsonNode allBlocks) {
+    public static Touchable parseTouchable(JsonNode current, JsonNode allBlocks) throws ParsingException {
         Preconditions.checkNotNull(current);
         Preconditions.checkNotNull(allBlocks);
         final String opcodeString = current.get(OPCODE_KEY).asText();
