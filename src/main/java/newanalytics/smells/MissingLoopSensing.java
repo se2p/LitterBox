@@ -32,21 +32,17 @@ import scratch.ast.model.expression.bool.IsKeyPressed;
 import scratch.ast.model.expression.bool.IsMouseDown;
 import scratch.ast.model.expression.bool.Touching;
 import scratch.ast.model.statement.Stmt;
-import scratch.ast.model.statement.control.IfElseStmt;
-import scratch.ast.model.statement.control.IfThenStmt;
-import scratch.ast.model.statement.control.RepeatForeverStmt;
-import scratch.ast.model.statement.control.RepeatTimesStmt;
+import scratch.ast.model.statement.control.*;
 
 /**
  * Checks for missing loops in event based actions.
  */
-public class MissingForever implements IssueFinder {
-//TODO Add check for Until loops
-    private String name = "missing_forever_loop";
+public class MissingLoopSensing implements IssueFinder {
+    private String name = "missing_loop";
     private List<String> found;
     private int counter;
 
-    public MissingForever() {
+    public MissingLoopSensing() {
         found = new ArrayList<>();
         counter = 0;
     }
@@ -60,7 +56,7 @@ public class MissingForever implements IssueFinder {
                 List<Stmt> stmts = scripts.get(0).getStmtList().getStmts().getListOfStmt();
                 if (stmts.size() > 0 && scripts.get(0).getEvent() instanceof GreenFlag) {
 
-                    checkMissForever(stmts, actorDefs.get(i).getIdent().getName());
+                    checkMissLoop(stmts, actorDefs.get(i).getIdent().getName());
                 }
             }
         }
@@ -72,9 +68,9 @@ public class MissingForever implements IssueFinder {
         return new IssueReport(name, counter, found, note);
     }
 
-    private void checkMissForever(List<Stmt> stmts, String actorName) {
+    private void checkMissLoop(List<Stmt> stmts, String actorName) {
         for (int i = 0; i < stmts.size(); i++) {
-            if (stmts.get(i) instanceof RepeatForeverStmt) {
+            if (stmts.get(i) instanceof RepeatForeverStmt || stmts.get(i) instanceof UntilStmt) {
                 return;
             } else if (stmts.get(i) instanceof IfThenStmt) {
                 BoolExpr bool = ((IfThenStmt) stmts.get(i)).getBoolExpr();
@@ -82,7 +78,7 @@ public class MissingForever implements IssueFinder {
                     found.add(actorName);
                     counter++;
                 } else {
-                    checkMissForever(((IfThenStmt) stmts.get(i)).getThenStmts().getStmts().getListOfStmt(), actorName);
+                    checkMissLoop(((IfThenStmt) stmts.get(i)).getThenStmts().getStmts().getListOfStmt(), actorName);
                 }
             } else if (stmts.get(i) instanceof IfElseStmt) {
                 BoolExpr bool = ((IfElseStmt) stmts.get(i)).getBoolExpr();
@@ -90,11 +86,11 @@ public class MissingForever implements IssueFinder {
                     found.add(actorName);
                     counter++;
                 } else {
-                    checkMissForever(((IfElseStmt) stmts.get(i)).getStmtList().getStmts().getListOfStmt(), actorName);
-                    checkMissForever(((IfElseStmt) stmts.get(i)).getElseStmts().getStmts().getListOfStmt(), actorName);
+                    checkMissLoop(((IfElseStmt) stmts.get(i)).getStmtList().getStmts().getListOfStmt(), actorName);
+                    checkMissLoop(((IfElseStmt) stmts.get(i)).getElseStmts().getStmts().getListOfStmt(), actorName);
                 }
             } else if (stmts.get(i) instanceof RepeatTimesStmt) {
-                checkMissForever(((RepeatTimesStmt) stmts.get(i)).getStmtList().getStmts().getListOfStmt(),
+                checkMissLoop(((RepeatTimesStmt) stmts.get(i)).getStmtList().getStmts().getListOfStmt(),
                         actorName);
             }
         }

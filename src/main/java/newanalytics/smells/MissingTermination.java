@@ -37,7 +37,6 @@ import scratch.ast.model.statement.control.UntilStmt;
  * Checks for missing statements in repeat-until blocks.
  */
 public class MissingTermination implements IssueFinder {
-//Todo add check for always true blocks
     private String name = "missing_termination";
     private List<String> found;
     private int counter;

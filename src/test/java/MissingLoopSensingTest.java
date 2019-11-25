@@ -31,7 +31,7 @@ import scratch.structure.Stage;
 import utils.Identifier;
 import utils.Version;
 
-public class MissingForeverTest {
+public class MissingLoopSensingTest {
 
     @Test
     public void validateCheck() {
