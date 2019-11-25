@@ -19,12 +19,12 @@
 package scratch.ast.model.expression.bool;
 
 import scratch.ast.model.expression.BinaryExpression;
-import scratch.ast.model.expression.num.NumExpr;
+import scratch.ast.model.expression.ComparableExpr;
 import scratch.ast.visitor.ScratchVisitor;
 
-public class LessThan extends BinaryExpression<NumExpr, NumExpr> implements BoolExpr {
+public class LessThan extends BinaryExpression<ComparableExpr, ComparableExpr> implements BoolExpr {
 
-    public LessThan(NumExpr operand1, NumExpr operand2) {
+    public LessThan(ComparableExpr operand1, ComparableExpr operand2) {
         super(operand1, operand2);
     }
 

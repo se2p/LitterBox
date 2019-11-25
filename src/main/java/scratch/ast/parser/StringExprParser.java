@@ -107,7 +107,7 @@ public class StringExprParser {
         String identifier = exprArray.get(POS_BLOCK_ID).asText();
         String opcode = blocks.get(identifier).get(OPCODE_KEY).asText();
 
-        final Optional<StringExpr> stringExpr = maybeParseStringBoolExpr(blocks.get(identifier), blocks);
+        final Optional<StringExpr> stringExpr = maybeParseBlockStringExpr(blocks.get(identifier), blocks);
         if (stringExpr.isPresent()) {
             return stringExpr.get();
         }
@@ -136,7 +136,7 @@ public class StringExprParser {
         return new StringLiteral(value);
     }
 
-    static Optional<StringExpr> maybeParseStringBoolExpr(JsonNode expressionBlock, JsonNode blocks) {
+    static Optional<StringExpr> maybeParseBlockStringExpr(JsonNode expressionBlock, JsonNode blocks) {
         try {
             return Optional.of(parseBlockStringExpr(expressionBlock, blocks));
         } catch (ParsingException | IllegalArgumentException e) {

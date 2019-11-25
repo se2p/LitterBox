@@ -19,12 +19,12 @@
 package scratch.ast.model.expression.bool;
 
 import scratch.ast.model.expression.BinaryExpression;
-import scratch.ast.model.expression.num.NumExpr;
+import scratch.ast.model.expression.ComparableExpr;
 import scratch.ast.visitor.ScratchVisitor;
 
-public class Equals extends BinaryExpression<NumExpr, NumExpr> implements BoolExpr {
+public class Equals extends BinaryExpression<ComparableExpr, ComparableExpr> implements BoolExpr {
 
-    public Equals(NumExpr first, NumExpr second) {
+    public Equals(ComparableExpr first, ComparableExpr second) {
         super(first, second);
     }
 

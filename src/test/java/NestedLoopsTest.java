@@ -23,7 +23,7 @@ import analytics.finder.NestedLoops;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import scratch.data.ScBlock;
 import scratch.data.Script;
 import scratch.structure.Project;
