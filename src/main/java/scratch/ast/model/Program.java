@@ -20,7 +20,7 @@ package scratch.ast.model;
 
 import scratch.ast.model.variable.Identifier;
 import scratch.ast.visitor.ScratchVisitor;
-import scratch.utils.Preconditions;
+import utils.Preconditions;
 
 public class Program extends AbstractNode {
 

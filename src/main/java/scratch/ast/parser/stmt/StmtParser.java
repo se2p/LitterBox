@@ -23,7 +23,7 @@ import scratch.ast.Constants;
 import scratch.ast.ParsingException;
 import scratch.ast.model.statement.Stmt;
 import scratch.ast.opcodes.*;
-import scratch.utils.Preconditions;
+import utils.Preconditions;
 
 public class StmtParser {
 

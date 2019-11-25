@@ -19,7 +19,7 @@
 package scratch.ast.model;
 
 import scratch.ast.visitor.ScratchVisitor;
-import scratch.utils.Preconditions;
+import utils.Preconditions;
 
 public class URI extends AbstractNode implements ASTLeaf {
 

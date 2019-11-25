@@ -42,7 +42,7 @@ import scratch.ast.model.type.NumberType;
 import scratch.ast.model.type.StringType;
 import scratch.ast.model.variable.Qualified;
 import scratch.ast.model.variable.StrId;
-import scratch.utils.Preconditions;
+import utils.Preconditions;
 
 import java.util.*;
 

@@ -20,7 +20,7 @@ package scratch.ast.model.variable;
 
 import scratch.ast.model.AbstractNode;
 import scratch.ast.visitor.ScratchVisitor;
-import scratch.utils.Preconditions;
+import utils.Preconditions;
 
 public class Qualified extends AbstractNode implements Variable {
 

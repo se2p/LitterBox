@@ -21,7 +21,7 @@ package scratch.ast.model.event;
 import scratch.ast.model.AbstractNode;
 import scratch.ast.model.Key;
 import scratch.ast.visitor.ScratchVisitor;
-import scratch.utils.Preconditions;
+import utils.Preconditions;
 
 public class KeyPressed extends AbstractNode implements Event {
 

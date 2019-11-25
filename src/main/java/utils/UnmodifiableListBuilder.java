@@ -1,4 +1,4 @@
-package scratch.utils;
+package utils;
 
 import java.util.*;
 

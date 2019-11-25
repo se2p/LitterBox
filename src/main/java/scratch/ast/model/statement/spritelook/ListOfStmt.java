@@ -22,7 +22,7 @@ import scratch.ast.model.ASTNode;
 import scratch.ast.model.AbstractNode;
 import scratch.ast.model.statement.Stmt;
 import scratch.ast.visitor.ScratchVisitor;
-import scratch.utils.Preconditions;
+import utils.Preconditions;
 
 import java.util.List;
 
