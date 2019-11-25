@@ -176,5 +176,6 @@ public class Constants {
     public static final String EFFECT_KEY = "EFFECT";
     public static final String DRAGMODE_KEY = "DRAG_MODE";
     public static final String STYLE_KEY = "STYLE";
+    public static final String PEN_SIZE_KEY = "pen_size";
 
 }

@@ -24,6 +24,7 @@ import scratch.ast.model.Key;
 import scratch.ast.model.Message;
 import scratch.ast.model.event.*;
 import scratch.ast.model.expression.num.NumExpr;
+import scratch.ast.model.literals.StringLiteral;
 import scratch.ast.model.variable.Identifier;
 import scratch.ast.model.variable.StrId;
 import scratch.ast.opcodes.EventOpcode;
@@ -64,7 +65,7 @@ public class EventParser {
         } else if (opcode.equals(event_whenbroadcastreceived)) {
             JsonNode fields = current.get(FIELDS_KEY);
             String msgValue = fields.get(BCAST_OPTION).get(FIELD_VALUE).asText();
-            Message msg = new Message(msgValue);
+            Message msg = new Message(new StringLiteral(msgValue));
             return new ReceptionOfMessage(msg);
 
         } else if (opcode.equals(control_start_as_clone)) {

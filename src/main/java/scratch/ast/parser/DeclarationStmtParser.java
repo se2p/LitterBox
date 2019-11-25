@@ -160,7 +160,7 @@ public class DeclarationStmtParser {
         while (iter.hasNext()) {
             Map.Entry<String, JsonNode> current = iter.next();
             ProgramParser.symbolTable.addMessage(current.getValue().textValue(),
-                new Message(current.getValue().textValue()), isStage, actorName);
+                new Message(new StringLiteral(current.getValue().textValue())), isStage, actorName);
             parsedBroadcasts.add(new DeclarationIdentAsTypeStmt(new StrId(current.getValue().textValue()),
                 new StringType()));
         }

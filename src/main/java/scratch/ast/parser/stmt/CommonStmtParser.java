@@ -51,7 +51,8 @@ public class CommonStmtParser {
 
         final String opcodeString = current.get(OPCODE_KEY).asText();
         Preconditions
-            .checkArgument(CommonStmtOpcode.contains(opcodeString), "Given blockID does not point to a common block.");
+                .checkArgument(CommonStmtOpcode.contains(opcodeString), "Given blockID does not point to a common " +
+                        "block.");
 
         final CommonStmtOpcode opcode = CommonStmtOpcode.valueOf(opcodeString);
 
@@ -83,6 +84,7 @@ public class CommonStmtParser {
             case sound_changevolumeby:
             case sound_changeeffectby:
             case looks_changeeffectby:
+            case pen_changePenSizeBy:
                 return parseChangeAttributeBy(current, allBlocks);
 
             default:
@@ -97,7 +99,7 @@ public class CommonStmtParser {
         if (sound_changevolumeby.equals(opcode)) {
             String attributeName = "VOLUME";
             NumExpr numExpr = NumExprParser.parseNumExpr(current, 0,
-                allBlocks);
+                    allBlocks);
             return new ChangeAttributeBy(new StringLiteral(attributeName), numExpr);
 
         } else if (sound_changeeffectby.equals(opcode) || looks_changeeffectby.equals(opcode)) {
@@ -105,7 +107,10 @@ public class CommonStmtParser {
             String effectName = current.get(FIELDS_KEY).get("EFFECT").get(0).asText();
             return new ChangeAttributeBy(new StringLiteral(effectName), numExpr);
 
-//        } else if (looks_changesizeby.equals(opcode)) {
+        } else if (pen_changePenSizeBy.equals(opcode)) {
+            return new ChangeAttributeBy(new StringLiteral(PEN_SIZE_KEY), NumExprParser.parseNumExpr(current, 0,
+                    allBlocks));
+
         } else {
             throw new ParsingException("Cannot parse block with opcode " + opcodeString + " to ChangeAttributeBy");
         }
@@ -125,10 +130,10 @@ public class CommonStmtParser {
 
         // The inputs contains array itself,
         String messageName = current.get(INPUTS_KEY).get(BROADCAST_INPUT_KEY)
-            .get(Constants.POS_INPUT_VALUE)
-            .get(POS_INPUT_VALUE).asText();
+                .get(Constants.POS_INPUT_VALUE)
+                .get(POS_INPUT_VALUE).asText();
 
-        Message message = new Message(messageName);
+        Message message = new Message(new StringLiteral(messageName));
         return new Broadcast(message);
     }
 
@@ -137,10 +142,10 @@ public class CommonStmtParser {
 
         // The inputs contains array itself,
         String messageName = current.get(INPUTS_KEY).get(BROADCAST_INPUT_KEY)
-            .get(Constants.POS_INPUT_VALUE)
-            .get(POS_INPUT_VALUE).asText();
+                .get(Constants.POS_INPUT_VALUE)
+                .get(POS_INPUT_VALUE).asText();
 
-        Message message = new Message(messageName);
+        Message message = new Message(new StringLiteral(messageName));
         BroadcastAndWait broadcast = new BroadcastAndWait(message);
         return broadcast;
     }
@@ -172,8 +177,8 @@ public class CommonStmtParser {
     private static CommonStmt parseControlStop(JsonNode current) throws ParsingException {
         CommonStmt stmt;
         String stopOptionValue =
-            current.get(Constants.FIELDS_KEY).get(STOP_OPTION).get(Constants.FIELD_VALUE)
-                .asText();
+                current.get(Constants.FIELDS_KEY).get(STOP_OPTION).get(Constants.FIELD_VALUE)
+                        .asText();
 
         if (stopOptionValue.equals(STOP_OTHER)) {
             stmt = new StopOtherScriptsInSprite();

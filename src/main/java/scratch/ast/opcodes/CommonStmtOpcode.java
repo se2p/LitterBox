@@ -31,7 +31,8 @@ public enum CommonStmtOpcode {
 
     sound_changevolumeby,
     sound_changeeffectby,
-    looks_changeeffectby;
+    looks_changeeffectby,
+    pen_changePenSizeBy;
 
     public static boolean contains(String opcode) {
         for (CommonStmtOpcode value : CommonStmtOpcode.values()) {
