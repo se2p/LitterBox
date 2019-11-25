@@ -18,10 +18,11 @@
  */
 package scratch.ast.model.touchable;
 
+import scratch.ast.model.ASTLeaf;
 import scratch.ast.model.AbstractNode;
 import scratch.ast.visitor.ScratchVisitor;
 
-public class MousePointer extends AbstractNode implements Touchable {
+public class MousePointer extends AbstractNode implements Touchable, ASTLeaf {
 
     @Override
     public void accept(ScratchVisitor visitor) {
