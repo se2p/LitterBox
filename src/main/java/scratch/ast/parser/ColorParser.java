@@ -18,23 +18,47 @@
  */
 package scratch.ast.parser;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import scratch.ast.model.literals.ColorLiteral;
+import static scratch.ast.Constants.INPUTS_KEY;
+import static scratch.ast.Constants.POS_DATA_ARRAY;
+import static scratch.ast.Constants.POS_INPUT_VALUE;
 
-import static scratch.ast.Constants.*;
+import com.fasterxml.jackson.databind.JsonNode;
+import java.util.Iterator;
+import java.util.LinkedList;
+import scratch.ast.ParsingException;
+import scratch.ast.model.expression.color.ColorExpression;
+import scratch.ast.model.expression.color.FromNumber;
+import scratch.ast.model.expression.num.NumExpr;
+import scratch.ast.model.literals.ColorLiteral;
 
 public class ColorParser {
 
-    public static ColorLiteral parseColor(JsonNode current, int pos, JsonNode allBlocks) {
+    public static ColorExpression parseColor(JsonNode current, int pos, JsonNode allBlocks) throws ParsingException {
         //FIXME parse inputs that are not a text color as a "FromNumber" color
 
-        String rgbCode = current.get(INPUTS_KEY).get("COLOR").get(POS_DATA_ARRAY).get(POS_INPUT_VALUE).asText();
+        LinkedList<JsonNode> inputs = new LinkedList<>();
+        final Iterator<JsonNode> elements = current.get(INPUTS_KEY).elements();
+        while (elements.hasNext()) {
+            JsonNode jsonNode = elements.next();
+            inputs.add(jsonNode);
+        }
 
-        long rNumber = Long.parseLong(rgbCode.substring(1, 3), 16);
-        long gNumber = Long.parseLong(rgbCode.substring(3, 5), 16);
-        long bNumber = Long.parseLong(rgbCode.substring(5, 7), 16);
+        String rgbCode = "";
+        if (inputs.get(pos).get(POS_DATA_ARRAY).isArray()) {
+            rgbCode = inputs.get(pos).get(POS_DATA_ARRAY).get(POS_INPUT_VALUE).asText();
+        }
 
-        return new ColorLiteral(rNumber, gNumber, bNumber);
+        if (rgbCode.startsWith("#")) {
+
+            long rNumber = Long.parseLong(rgbCode.substring(1, 3), 16);
+            long gNumber = Long.parseLong(rgbCode.substring(3, 5), 16);
+            long bNumber = Long.parseLong(rgbCode.substring(5, 7), 16);
+
+            return new ColorLiteral(rNumber, gNumber, bNumber);
+        } else {
+            final NumExpr numExpr = NumExprParser.parseNumExpr(current, pos, allBlocks);
+            return new FromNumber(numExpr);
+        }
     }
 
 }
