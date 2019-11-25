@@ -24,7 +24,7 @@ import scratch.ast.model.touchable.MousePointer;
 import scratch.ast.model.touchable.Touchable;
 import scratch.ast.model.variable.StrId;
 import scratch.ast.opcodes.BoolExprOpcode;
-import scratch.utils.Preconditions;
+import utils.Preconditions;
 
 import static scratch.ast.Constants.*;
 

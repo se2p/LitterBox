@@ -35,7 +35,7 @@ import scratch.ast.parser.attributes.GraphicEffect;
 import scratch.ast.parser.attributes.RotationStyle;
 import scratch.ast.parser.attributes.SoundEffect;
 import scratch.ast.parser.symboltable.VariableInfo;
-import scratch.utils.Preconditions;
+import utils.Preconditions;
 
 import static scratch.ast.Constants.*;
 

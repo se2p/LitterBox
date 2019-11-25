@@ -22,7 +22,7 @@ import scratch.ast.model.AbstractNode;
 import scratch.ast.model.expression.list.ExpressionList;
 import scratch.ast.model.variable.Identifier;
 import scratch.ast.visitor.ScratchVisitor;
-import scratch.utils.Preconditions;
+import utils.Preconditions;
 
 public class CallStmt extends AbstractNode implements Stmt {
 

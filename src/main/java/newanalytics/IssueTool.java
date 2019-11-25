@@ -24,7 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import newanalytics.ctscore.FlowControl;
-import newanalytics.smells.MissingForever;
+import newanalytics.smells.MissingLoopSensing;
 import newanalytics.smells.MissingTermination;
 import org.apache.commons.csv.CSVPrinter;
 import scratch.ast.model.Program;
@@ -44,7 +44,7 @@ public class IssueTool {
 //        finder.put("strt", new StartingPoint());
 //        finder.put("lggymve", new LaggyMovement());
 //        finder.put("dblif", new DoubleIf());
-        finder.put("mssfrev", new MissingForever());
+        finder.put("mssfrev", new MissingLoopSensing());
 //        finder.put("clninit", new CloneInitialization());
         finder.put("msstrm", new MissingTermination());
 //        finder.put("lsblck", new LooseBlocks());

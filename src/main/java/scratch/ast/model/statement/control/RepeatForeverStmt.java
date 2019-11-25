@@ -21,7 +21,7 @@ package scratch.ast.model.statement.control;
 import scratch.ast.model.AbstractNode;
 import scratch.ast.model.StmtList;
 import scratch.ast.visitor.ScratchVisitor;
-import scratch.utils.Preconditions;
+import utils.Preconditions;
 
 public class RepeatForeverStmt extends AbstractNode implements ControlStmt {
 

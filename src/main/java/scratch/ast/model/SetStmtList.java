@@ -20,7 +20,7 @@ package scratch.ast.model;
 
 import scratch.ast.model.statement.common.SetStmt;
 import scratch.ast.visitor.ScratchVisitor;
-import scratch.utils.Preconditions;
+import utils.Preconditions;
 
 import java.util.List;
 

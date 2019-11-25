@@ -31,7 +31,7 @@ import scratch.ast.model.type.Type;
 import scratch.ast.model.variable.Identifier;
 import scratch.ast.model.variable.StrId;
 import scratch.ast.opcodes.ProcedureOpcode;
-import scratch.utils.Preconditions;
+import utils.Preconditions;
 
 import java.io.IOException;
 import java.util.ArrayList;

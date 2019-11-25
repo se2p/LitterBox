@@ -27,7 +27,7 @@ import scratch.ast.model.variable.Identifier;
 import scratch.ast.model.variable.StrId;
 import scratch.ast.parser.symboltable.ProcedureDefinitionNameMapping;
 import scratch.ast.parser.symboltable.SymbolTable;
-import scratch.utils.Preconditions;
+import utils.Preconditions;
 
 import java.util.LinkedList;
 import java.util.List;

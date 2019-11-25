@@ -26,7 +26,7 @@ import scratch.ast.model.statement.spritemotion.*;
 import scratch.ast.opcodes.SpriteMotionStmtOpcode;
 import scratch.ast.parser.NumExprParser;
 import scratch.ast.parser.PositionParser;
-import scratch.utils.Preconditions;
+import utils.Preconditions;
 
 import static scratch.ast.Constants.OPCODE_KEY;
 

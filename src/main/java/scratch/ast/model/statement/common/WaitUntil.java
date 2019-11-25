@@ -21,7 +21,7 @@ package scratch.ast.model.statement.common;
 import scratch.ast.model.AbstractNode;
 import scratch.ast.model.expression.bool.BoolExpr;
 import scratch.ast.visitor.ScratchVisitor;
-import scratch.utils.Preconditions;
+import utils.Preconditions;
 
 public class WaitUntil extends AbstractNode implements CommonStmt {
 

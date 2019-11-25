@@ -30,7 +30,7 @@ import scratch.ast.opcodes.SpriteLookStmtOpcode;
 import scratch.ast.parser.ElementChoiceParser;
 import scratch.ast.parser.NumExprParser;
 import scratch.ast.parser.StringExprParser;
-import scratch.utils.Preconditions;
+import utils.Preconditions;
 
 import static scratch.ast.Constants.*;
 import static scratch.ast.opcodes.SpriteLookStmtOpcode.looks_gotofrontback;

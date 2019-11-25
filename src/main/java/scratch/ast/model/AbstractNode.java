@@ -19,8 +19,8 @@
 package scratch.ast.model;
 
 import scratch.ast.visitor.ScratchVisitor;
-import scratch.utils.Preconditions;
-import scratch.utils.UnmodifiableListBuilder;
+import utils.Preconditions;
+import utils.UnmodifiableListBuilder;
 
 import java.util.Arrays;
 import java.util.List;
