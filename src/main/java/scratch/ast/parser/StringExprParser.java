@@ -18,13 +18,29 @@
  */
 package scratch.ast.parser;
 
+import static scratch.ast.Constants.FIELDS_KEY;
+import static scratch.ast.Constants.FIELD_VALUE;
+import static scratch.ast.Constants.INPUTS_KEY;
+import static scratch.ast.Constants.OPCODE_KEY;
+import static scratch.ast.Constants.POS_BLOCK_ID;
+import static scratch.ast.Constants.POS_DATA_ARRAY;
+import static scratch.ast.Constants.POS_INPUT_ID;
+import static scratch.ast.Constants.POS_INPUT_VALUE;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.TextNode;
+import java.util.Optional;
 import scratch.ast.ParsingException;
 import scratch.ast.model.expression.bool.BoolExpr;
 import scratch.ast.model.expression.num.NumExpr;
-import scratch.ast.model.expression.string.*;
+import scratch.ast.model.expression.string.AsString;
+import scratch.ast.model.expression.string.AttributeOf;
+import scratch.ast.model.expression.string.ItemOfVariable;
+import scratch.ast.model.expression.string.Join;
+import scratch.ast.model.expression.string.LetterOf;
+import scratch.ast.model.expression.string.StringExpr;
+import scratch.ast.model.expression.string.Username;
 import scratch.ast.model.literals.StringLiteral;
 import scratch.ast.model.variable.Identifier;
 import scratch.ast.model.variable.Qualified;
@@ -34,10 +50,6 @@ import scratch.ast.opcodes.StringExprOpcode;
 import scratch.ast.parser.symboltable.ExpressionListInfo;
 import scratch.ast.parser.symboltable.VariableInfo;
 import utils.Preconditions;
-
-import java.util.Optional;
-
-import static scratch.ast.Constants.*;
 
 public class StringExprParser {
 
@@ -95,7 +107,7 @@ public class StringExprParser {
         String identifier = exprArray.get(POS_BLOCK_ID).asText();
         String opcode = blocks.get(identifier).get(OPCODE_KEY).asText();
 
-        final Optional<StringExpr> stringExpr = maybeParseStringBoolExpr(blocks.get(identifier), blocks);
+        final Optional<StringExpr> stringExpr = maybeParseBlockStringExpr(blocks.get(identifier), blocks);
         if (stringExpr.isPresent()) {
             return stringExpr.get();
         }
@@ -124,7 +136,7 @@ public class StringExprParser {
         return new StringLiteral(value);
     }
 
-    static Optional<StringExpr> maybeParseStringBoolExpr(JsonNode expressionBlock, JsonNode blocks) {
+    static Optional<StringExpr> maybeParseBlockStringExpr(JsonNode expressionBlock, JsonNode blocks) {
         try {
             return Optional.of(parseBlockStringExpr(expressionBlock, blocks));
         } catch (ParsingException | IllegalArgumentException e) {

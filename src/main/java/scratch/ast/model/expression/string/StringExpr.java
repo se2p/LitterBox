@@ -18,8 +18,8 @@
  */
 package scratch.ast.model.expression.string;
 
-import scratch.ast.model.expression.Expression;
+import scratch.ast.model.expression.ComparableExpr;
 
-public interface StringExpr extends Expression {
+public interface StringExpr extends ComparableExpr {
 
 }
