@@ -18,13 +18,29 @@
  */
 package scratch.ast.parser;
 
+import static scratch.ast.Constants.FIELDS_KEY;
+import static scratch.ast.Constants.FIELD_VALUE;
+import static scratch.ast.Constants.INPUTS_KEY;
+import static scratch.ast.Constants.OPCODE_KEY;
+import static scratch.ast.Constants.POS_BLOCK_ID;
+import static scratch.ast.Constants.POS_DATA_ARRAY;
+import static scratch.ast.Constants.POS_INPUT_ID;
+import static scratch.ast.Constants.POS_INPUT_VALUE;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.TextNode;
+import java.util.Optional;
 import scratch.ast.ParsingException;
 import scratch.ast.model.expression.bool.BoolExpr;
 import scratch.ast.model.expression.num.NumExpr;
-import scratch.ast.model.expression.string.*;
+import scratch.ast.model.expression.string.AsString;
+import scratch.ast.model.expression.string.AttributeOf;
+import scratch.ast.model.expression.string.ItemOfVariable;
+import scratch.ast.model.expression.string.Join;
+import scratch.ast.model.expression.string.LetterOf;
+import scratch.ast.model.expression.string.StringExpr;
+import scratch.ast.model.expression.string.Username;
 import scratch.ast.model.literals.StringLiteral;
 import scratch.ast.model.variable.Identifier;
 import scratch.ast.model.variable.Qualified;
@@ -34,10 +50,6 @@ import scratch.ast.opcodes.StringExprOpcode;
 import scratch.ast.parser.symboltable.ExpressionListInfo;
 import scratch.ast.parser.symboltable.VariableInfo;
 import utils.Preconditions;
-
-import java.util.Optional;
-
-import static scratch.ast.Constants.*;
 
 public class StringExprParser {
 
@@ -152,12 +164,18 @@ public class StringExprParser {
                 NumExpr index = NumExprParser.parseNumExpr(expressionBlock, 0, blocks);
                 Variable var = ListExprParser.parseVariableFromFields(expressionBlock.get(FIELDS_KEY));
                 return new ItemOfVariable(index, var);
+            case looks_costumenumbername: // todo introduce attribute name opcode mapping
+                String number_name = expressionBlock.get(FIELDS_KEY).get("NUMBER_NAME").get(0).asText();
+                StringLiteral nn_property = new StringLiteral("costume_" + number_name);
+                return new AttributeOf(nn_property, ActorDefinitionParser.getCurrentActor());
+            case looks_backdropnumbername: // todo introduce attribute name opcode mapping
+                number_name = expressionBlock.get(FIELDS_KEY).get("NUMBER_NAME").get(0).asText();
+                nn_property = new StringLiteral("backdrop_" + number_name);
+                return new AttributeOf(nn_property, ActorDefinitionParser.getCurrentActor());
             case sound_volume:
             case motion_xposition:
             case motion_yposition:
             case motion_direction:
-            case looks_costumenumbername: // has a number_name in fields, what to do? -> enter number or name FIXME
-            case looks_backdropnumbername: // has a number_name in fields, what to do? -> num or name FIXME
             case looks_size:
             case sensing_answer:
                 StringExpr attribute = new StringLiteral(opcodeString);
