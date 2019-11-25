@@ -61,7 +61,7 @@ public enum NumFunct implements ASTNode, ASTLeaf {
 
     @Override
     public List<? extends ASTNode> getChildren() {
-        return Collections.EMPTY_LIST;
+        return Collections.emptyList();
     }
 
     @Override
