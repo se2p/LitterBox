@@ -22,7 +22,7 @@ import scratch.ast.model.AbstractNode;
 import scratch.ast.model.StmtList;
 import scratch.ast.model.expression.num.NumExpr;
 import scratch.ast.visitor.ScratchVisitor;
-import scratch.utils.Preconditions;
+import utils.Preconditions;
 
 public class RepeatTimesStmt extends AbstractNode implements ControlStmt {
 

@@ -21,7 +21,7 @@ package scratch.ast.model.statement;
 import scratch.ast.model.AbstractNode;
 import scratch.ast.model.expression.Expression;
 import scratch.ast.visitor.ScratchVisitor;
-import scratch.utils.Preconditions;
+import utils.Preconditions;
 
 public class ExpressionStmt extends AbstractNode implements Stmt {
 

@@ -33,7 +33,7 @@ import scratch.ast.model.variable.StrId;
 import scratch.ast.opcodes.CommonStmtOpcode;
 import scratch.ast.parser.BoolExprParser;
 import scratch.ast.parser.NumExprParser;
-import scratch.utils.Preconditions;
+import utils.Preconditions;
 
 import static scratch.ast.Constants.*;
 import static scratch.ast.opcodes.CommonStmtOpcode.*;

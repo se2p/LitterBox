@@ -30,7 +30,7 @@ import scratch.ast.model.statement.spritelook.ListOfStmt;
 import scratch.ast.opcodes.EventOpcode;
 import scratch.ast.opcodes.ProcedureOpcode;
 import scratch.ast.parser.stmt.StmtParser;
-import scratch.utils.Preconditions;
+import utils.Preconditions;
 
 import java.util.LinkedList;
 import java.util.List;

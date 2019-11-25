@@ -27,7 +27,7 @@ import scratch.ast.model.expression.num.NumExpr;
 import scratch.ast.model.variable.Identifier;
 import scratch.ast.model.variable.StrId;
 import scratch.ast.opcodes.EventOpcode;
-import scratch.utils.Preconditions;
+import utils.Preconditions;
 
 import static scratch.ast.Constants.*;
 import static scratch.ast.opcodes.EventOpcode.*;

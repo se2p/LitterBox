@@ -30,7 +30,7 @@ import scratch.ast.model.variable.StrId;
 import scratch.ast.opcodes.BoolExprOpcode;
 import scratch.ast.opcodes.NumExprOpcode;
 import scratch.ast.opcodes.StringExprOpcode;
-import scratch.utils.Preconditions;
+import utils.Preconditions;
 
 import java.util.ArrayList;
 import java.util.List;

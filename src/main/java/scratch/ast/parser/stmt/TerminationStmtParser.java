@@ -26,7 +26,7 @@ import scratch.ast.model.statement.termination.StopAll;
 import scratch.ast.model.statement.termination.StopThisScript;
 import scratch.ast.model.statement.termination.TerminationStmt;
 import scratch.ast.opcodes.TerminationStmtOpcode;
-import scratch.utils.Preconditions;
+import utils.Preconditions;
 
 public class TerminationStmtParser {
 

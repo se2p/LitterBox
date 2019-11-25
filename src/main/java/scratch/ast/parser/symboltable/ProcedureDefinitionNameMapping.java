@@ -20,7 +20,7 @@ package scratch.ast.parser.symboltable;
 
 import scratch.ast.model.type.Type;
 import scratch.ast.model.variable.Identifier;
-import scratch.utils.Preconditions;
+import utils.Preconditions;
 
 import java.util.HashMap;
 

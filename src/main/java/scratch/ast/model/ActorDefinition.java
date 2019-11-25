@@ -23,7 +23,7 @@ import scratch.ast.model.resource.ResourceList;
 import scratch.ast.model.statement.declaration.DeclarationStmtList;
 import scratch.ast.model.variable.Identifier;
 import scratch.ast.visitor.ScratchVisitor;
-import scratch.utils.Preconditions;
+import utils.Preconditions;
 
 public class ActorDefinition extends AbstractNode {
 

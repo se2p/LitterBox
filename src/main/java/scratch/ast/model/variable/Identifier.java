@@ -21,7 +21,7 @@ package scratch.ast.model.variable;
 import scratch.ast.model.AbstractNode;
 import scratch.ast.model.literals.StringLiteral;
 import scratch.ast.visitor.ScratchVisitor;
-import scratch.utils.Preconditions;
+import utils.Preconditions;
 
 public abstract class Identifier extends AbstractNode implements Variable {
 
