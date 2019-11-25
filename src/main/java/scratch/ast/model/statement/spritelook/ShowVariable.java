@@ -22,7 +22,7 @@ import scratch.ast.model.AbstractNode;
 import scratch.ast.model.statement.actorlook.ActorLookStmt;
 import scratch.ast.model.variable.Variable;
 import scratch.ast.visitor.ScratchVisitor;
-import scratch.utils.Preconditions;
+import utils.Preconditions;
 
 public class ShowVariable extends AbstractNode implements ActorLookStmt {
 

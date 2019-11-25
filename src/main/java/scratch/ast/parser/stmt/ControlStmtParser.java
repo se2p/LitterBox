@@ -32,7 +32,7 @@ import scratch.ast.opcodes.ControlStmtOpcode;
 import scratch.ast.parser.BoolExprParser;
 import scratch.ast.parser.NumExprParser;
 import scratch.ast.parser.ScriptParser;
-import scratch.utils.Preconditions;
+import utils.Preconditions;
 
 import java.util.ArrayList;
 

@@ -25,7 +25,7 @@ import scratch.ast.model.resource.ImageResource;
 import scratch.ast.model.resource.Resource;
 import scratch.ast.model.resource.SoundResource;
 import scratch.ast.model.variable.StrId;
-import scratch.utils.Preconditions;
+import utils.Preconditions;
 
 import java.util.ArrayList;
 import java.util.Iterator;

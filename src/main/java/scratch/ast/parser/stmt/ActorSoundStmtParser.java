@@ -25,7 +25,7 @@ import scratch.ast.model.elementchoice.WithId;
 import scratch.ast.model.statement.actorsound.*;
 import scratch.ast.model.variable.StrId;
 import scratch.ast.opcodes.ActorSoundStmtOpcode;
-import scratch.utils.Preconditions;
+import utils.Preconditions;
 
 import static scratch.ast.Constants.*;
 

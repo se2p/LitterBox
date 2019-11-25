@@ -21,7 +21,7 @@ package scratch.ast.model.expression.num;
 import scratch.ast.model.ASTLeaf;
 import scratch.ast.model.ASTNode;
 import scratch.ast.visitor.ScratchVisitor;
-import scratch.utils.Preconditions;
+import utils.Preconditions;
 
 import java.util.Collections;
 import java.util.List;

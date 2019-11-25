@@ -21,7 +21,7 @@ package scratch.ast.model.statement.declaration;
 import scratch.ast.model.ASTNode;
 import scratch.ast.model.AbstractNode;
 import scratch.ast.visitor.ScratchVisitor;
-import scratch.utils.Preconditions;
+import utils.Preconditions;
 
 import java.util.List;
 

@@ -37,7 +37,7 @@ import scratch.ast.parser.ProgramParser;
 import scratch.ast.parser.StringExprParser;
 import scratch.ast.parser.symboltable.ExpressionListInfo;
 import scratch.ast.parser.symboltable.VariableInfo;
-import scratch.utils.Preconditions;
+import utils.Preconditions;
 
 import static scratch.ast.Constants.*;
 

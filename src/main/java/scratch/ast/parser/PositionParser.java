@@ -26,7 +26,7 @@ import scratch.ast.model.position.*;
 import scratch.ast.model.variable.StrId;
 import scratch.ast.opcodes.NumExprOpcode;
 import scratch.ast.opcodes.SpriteMotionStmtOpcode;
-import scratch.utils.Preconditions;
+import utils.Preconditions;
 
 import java.util.ArrayList;
 

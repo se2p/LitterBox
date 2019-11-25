@@ -21,7 +21,7 @@ package scratch.ast.model.statement.actorlook;
 import scratch.ast.model.AbstractNode;
 import scratch.ast.model.elementchoice.ElementChoice;
 import scratch.ast.visitor.ScratchVisitor;
-import scratch.utils.Preconditions;
+import utils.Preconditions;
 
 public class SwitchBackdropAndWait extends AbstractNode implements ActorLookStmt {
 

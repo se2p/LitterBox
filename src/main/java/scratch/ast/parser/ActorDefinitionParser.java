@@ -29,7 +29,7 @@ import scratch.ast.model.statement.declaration.DeclarationStmt;
 import scratch.ast.model.statement.declaration.DeclarationStmtList;
 import scratch.ast.model.variable.Identifier;
 import scratch.ast.model.variable.StrId;
-import scratch.utils.Preconditions;
+import utils.Preconditions;
 
 import java.util.Iterator;
 import java.util.LinkedList;

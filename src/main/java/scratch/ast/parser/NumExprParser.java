@@ -35,7 +35,7 @@ import scratch.ast.model.variable.Variable;
 import scratch.ast.opcodes.NumExprOpcode;
 import scratch.ast.parser.symboltable.ExpressionListInfo;
 import scratch.ast.parser.symboltable.VariableInfo;
-import scratch.utils.Preconditions;
+import utils.Preconditions;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Optional;

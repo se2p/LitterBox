@@ -22,7 +22,7 @@ import scratch.ast.model.AbstractNode;
 import scratch.ast.model.expression.num.NumExpr;
 import scratch.ast.model.expression.string.StringExpr;
 import scratch.ast.visitor.ScratchVisitor;
-import scratch.utils.Preconditions;
+import utils.Preconditions;
 
 public class SayForSecs extends AbstractNode implements SpriteLookStmt {
 
