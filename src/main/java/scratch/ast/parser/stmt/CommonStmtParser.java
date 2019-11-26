@@ -26,6 +26,7 @@ import scratch.ast.model.expression.Expression;
 import scratch.ast.model.expression.bool.BoolExpr;
 import scratch.ast.model.expression.bool.UnspecifiedBoolExpr;
 import scratch.ast.model.expression.num.NumExpr;
+import scratch.ast.model.expression.string.StringExpr;
 import scratch.ast.model.literals.StringLiteral;
 import scratch.ast.model.statement.common.*;
 import scratch.ast.model.variable.Identifier;
@@ -33,6 +34,7 @@ import scratch.ast.model.variable.StrId;
 import scratch.ast.opcodes.CommonStmtOpcode;
 import scratch.ast.parser.BoolExprParser;
 import scratch.ast.parser.NumExprParser;
+import scratch.ast.parser.StringExprParser;
 import utils.Preconditions;
 
 import static scratch.ast.Constants.*;
@@ -125,15 +127,14 @@ public class CommonStmtParser {
         return new ChangeVariableBy(ident, numExpr);
     }
 
-    private static CommonStmt parseBroadcast(JsonNode current, JsonNode allBlocks) {
+    private static CommonStmt parseBroadcast(JsonNode current, JsonNode allBlocks) throws ParsingException {
         Preconditions.checkArgument(current.get(INPUTS_KEY).get(BROADCAST_INPUT_KEY).isArray());
 
         // The inputs contains array itself,
-        String messageName = current.get(INPUTS_KEY).get(BROADCAST_INPUT_KEY)
-                .get(Constants.POS_INPUT_VALUE)
-                .get(POS_INPUT_VALUE).asText();
+        StringExpr messageName = StringExprParser.parseStringExpr(current, BROADCAST_INPUT_KEY, allBlocks);
 
-        Message message = new Message(new StringLiteral(messageName));
+
+        Message message = new Message(messageName);
         return new Broadcast(message);
     }
 
