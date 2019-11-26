@@ -178,5 +178,6 @@ public class Constants {
     public static final String DRAGMODE_KEY = "DRAG_MODE";
     public static final String STYLE_KEY = "STYLE";
     public static final String PEN_SIZE_KEY = "pen_size";
-
+    public static final String COLOR_PARAM_BIG_KEY = "COLOR_PARAM";
+    public static final String COLOR_PARAM_LITTLE_KEY = "colorParam";
 }
