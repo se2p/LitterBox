@@ -18,8 +18,8 @@
  */
 package scratch.ast.model.touchable;
 
-import scratch.ast.model.ASTLeaf;
+import scratch.ast.model.ASTNode;
 
-public interface Touchable extends ASTLeaf {
+public interface Touchable extends ASTNode {
 
 }
