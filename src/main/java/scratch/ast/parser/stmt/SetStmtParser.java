@@ -64,9 +64,16 @@ public class SetStmtParser {
                 return parseSetSoundEffect(current, allBlocks);
             case sound_setvolumeto:
                 return parseSetVolumeTo(current, allBlocks);
+            case pen_setPenSizeTo:
+                return parseSetPenSizeTo(current, allBlocks);
             default:
                 throw new RuntimeException("Not Implemented yet");
         }
+    }
+
+    private static SetStmt parseSetPenSizeTo(JsonNode current, JsonNode allBlocks) throws ParsingException {
+        return new SetAttributeTo(new StringLiteral(PEN_SIZE_KEY), ExpressionParser.parseExpression(current, 0,
+                allBlocks));
     }
 
     private static SetStmt parseSetVolumeTo(JsonNode current, JsonNode allBlocks) throws ParsingException {

@@ -20,7 +20,7 @@ package scratch.ast.opcodes;
 
 public enum SetStmtOpcode {
     data_setvariableto, sensing_setdragmode, motion_setrotationstyle, looks_seteffectto,
-    sound_seteffectto, sound_setvolumeto;
+    sound_seteffectto, sound_setvolumeto, pen_setPenSizeTo;
 
     public static boolean contains(String opcode) {
         for (SetStmtOpcode value : SetStmtOpcode.values()) {

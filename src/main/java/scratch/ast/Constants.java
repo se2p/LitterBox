@@ -132,6 +132,7 @@ public class Constants {
     public static final String OPCODE_KEY = "opcode";
     public static final String FIELDS_KEY = "fields";
     public static final String LIST_KEY = "LIST";
+    public static final String VALUE_KEY = "VALUE";
     public static final String VARIABLE_KEY = "VARIABLE";
     public static final String NEXT_KEY = "next";
     public static final String INPUTS_KEY = "inputs";
@@ -176,5 +177,7 @@ public class Constants {
     public static final String EFFECT_KEY = "EFFECT";
     public static final String DRAGMODE_KEY = "DRAG_MODE";
     public static final String STYLE_KEY = "STYLE";
-
+    public static final String PEN_SIZE_KEY = "pen_size";
+    public static final String COLOR_PARAM_BIG_KEY = "COLOR_PARAM";
+    public static final String COLOR_PARAM_LITTLE_KEY = "colorParam";
 }

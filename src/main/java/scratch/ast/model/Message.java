@@ -18,19 +18,19 @@
  */
 package scratch.ast.model;
 
+import scratch.ast.model.expression.string.StringExpr;
 import scratch.ast.visitor.ScratchVisitor;
 import utils.Preconditions;
 
-public class Message extends AbstractNode implements ASTLeaf {
+public class Message extends AbstractNode {
+    private final StringExpr message;
 
-    private final String message;
-
-    public Message(String message) {
-        super();
+    public Message(StringExpr message) {
+        super(message);
         this.message = Preconditions.checkNotNull(message);
     }
 
-    public String getMessage() {
+    public StringExpr getMessage() {
         return message;
     }
 
@@ -39,9 +39,4 @@ public class Message extends AbstractNode implements ASTLeaf {
         visitor.visit(this);
     }
 
-    @Override
-    public String[] toSimpleStringArray() {
-        String[] returnArray = {message};
-        return returnArray;
-    }
 }
