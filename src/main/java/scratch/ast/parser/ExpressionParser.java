@@ -18,12 +18,27 @@
  */
 package scratch.ast.parser;
 
+import static scratch.ast.Constants.OPCODE_KEY;
+import static scratch.ast.Constants.POS_DATA_ARRAY;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import scratch.ast.Constants;
 import scratch.ast.ParsingException;
 import scratch.ast.model.expression.Expression;
 import scratch.ast.model.expression.UnspecifiedExpression;
+import scratch.ast.model.expression.bool.BoolExpr;
+import scratch.ast.model.expression.bool.UnspecifiedBoolExpr;
+import scratch.ast.model.expression.num.AsNumber;
+import scratch.ast.model.expression.num.NumExpr;
+import scratch.ast.model.expression.num.UnspecifiedNumExpr;
+import scratch.ast.model.expression.string.AsString;
+import scratch.ast.model.expression.string.StringExpr;
+import scratch.ast.model.expression.string.UnspecifiedStringExpr;
 import scratch.ast.model.variable.Qualified;
 import scratch.ast.model.variable.StrId;
 import scratch.ast.opcodes.BoolExprOpcode;
@@ -32,33 +47,60 @@ import scratch.ast.opcodes.StringExprOpcode;
 import scratch.ast.parser.symboltable.ExpressionListInfo;
 import scratch.ast.parser.symboltable.VariableInfo;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
-import static scratch.ast.Constants.OPCODE_KEY;
-import static scratch.ast.Constants.POS_DATA_ARRAY;
-
 public class ExpressionParser {
 
     public static Expression parseExpression(JsonNode block, int pos, JsonNode blocks) throws ParsingException {
+        final Optional<NumExpr> numExpr = maybeParseNumExpr(block, pos, blocks);
+        if (numExpr.isPresent()
+            && !(numExpr.get() instanceof UnspecifiedNumExpr)
+            && !(numExpr.get() instanceof AsNumber)) {
+            return numExpr.get();
+        }
+
+        final Optional<StringExpr> stringExpr = maybeParseStringExpr(block, pos, blocks);
+        if (stringExpr.isPresent()
+            && !(stringExpr.get() instanceof UnspecifiedStringExpr)
+            && !(stringExpr.get() instanceof AsString)) {
+            return stringExpr.get();
+        }
+
+        final Optional<BoolExpr> boolExpr = maybeParseBoolExpr(block, pos, blocks);
+        if (boolExpr.isPresent() && !(boolExpr.get() instanceof UnspecifiedBoolExpr)) {
+            return boolExpr.get();
+        }
+
         try {
-            return NumExprParser.parseNumExpr(block, pos, blocks);
-        } catch (Exception e) {
-            try {
-                return StringExprParser.parseStringExpr(block, pos, blocks);
-            } catch (Exception ex) {
-                try {
-                    return BoolExprParser.parseBoolExpr(block, pos, blocks);
-                } catch (Exception exc) {
-                    try {
-                        return ListExprParser.parseListExpr(block, pos, blocks);
-                    } catch (Exception excp) {
-                        return new UnspecifiedExpression();
-                        //throw new ParsingException("This is no expression we can parse.");
-                    }
-                }
-            }
+            return ListExprParser.parseListExpr(block, pos, blocks);
+        } catch (Exception excp) {
+            return new UnspecifiedExpression();
+            //throw new ParsingException("This is no expression we can parse.");
+        }
+    }
+
+    private static Optional<BoolExpr> maybeParseBoolExpr(JsonNode block, int pos, JsonNode blocks) {
+        try {
+            final BoolExpr boolExpr = BoolExprParser.parseBoolExpr(block, pos, blocks);
+            return Optional.of(boolExpr);
+        } catch (ParsingException e) {
+            return Optional.empty();
+        }
+    }
+
+    private static Optional<StringExpr> maybeParseStringExpr(JsonNode block, int pos, JsonNode blocks) {
+        try {
+            final StringExpr stringExpr = StringExprParser.parseStringExpr(block, pos, blocks);
+            return Optional.of(stringExpr);
+        } catch (ParsingException e) {
+            return Optional.empty();
+        }
+    }
+
+    private static Optional<NumExpr> maybeParseNumExpr(JsonNode block, int pos, JsonNode blocks) {
+        try {
+            final NumExpr numExpr = NumExprParser.parseNumExpr(block, pos, blocks);
+            return Optional.of(numExpr);
+        } catch (ParsingException e) {
+            return Optional.empty();
         }
     }
 
