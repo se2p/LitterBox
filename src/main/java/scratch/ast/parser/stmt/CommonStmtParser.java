@@ -121,7 +121,8 @@ public class CommonStmtParser {
     private static CommonStmt parseChangeVariableBy(JsonNode current, JsonNode allBlocks) throws ParsingException {
         Expression numExpr = NumExprParser.parseNumExpr(current, 0, allBlocks);
 
-        String variableName = current.get(FIELDS_KEY).get(VARIABLE_KEY).get(FIELD_VALUE).asText();
+        String variableName =
+                VARIABLE_ABBREVIATION + current.get(FIELDS_KEY).get(VARIABLE_KEY).get(FIELD_VALUE).asText();
         Identifier ident = new StrId(variableName);
 
         return new ChangeVariableBy(ident, numExpr);
@@ -132,7 +133,6 @@ public class CommonStmtParser {
 
         // The inputs contains array itself,
         StringExpr messageName = StringExprParser.parseStringExpr(current, BROADCAST_INPUT_KEY, allBlocks);
-
 
         Message message = new Message(messageName);
         return new Broadcast(message);
