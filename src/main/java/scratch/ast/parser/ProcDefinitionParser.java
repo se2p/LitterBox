@@ -18,13 +18,28 @@
  */
 package scratch.ast.parser;
 
+import static scratch.ast.Constants.INPUTS_KEY;
+import static scratch.ast.Constants.NEXT_KEY;
+import static scratch.ast.Constants.OPCODE_KEY;
+import static scratch.ast.Constants.PARENT_KEY;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import scratch.ast.Constants;
 import scratch.ast.ParsingException;
 import scratch.ast.model.StmtList;
-import scratch.ast.model.procedure.*;
+import scratch.ast.model.procedure.Parameter;
+import scratch.ast.model.procedure.ParameterList;
+import scratch.ast.model.procedure.ParameterListPlain;
+import scratch.ast.model.procedure.ProcedureDefinition;
+import scratch.ast.model.procedure.ProcedureDefinitionList;
 import scratch.ast.model.type.BooleanType;
 import scratch.ast.model.type.StringType;
 import scratch.ast.model.type.Type;
@@ -32,14 +47,6 @@ import scratch.ast.model.variable.Identifier;
 import scratch.ast.model.variable.StrId;
 import scratch.ast.opcodes.ProcedureOpcode;
 import utils.Preconditions;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import static scratch.ast.Constants.*;
 
 public class ProcDefinitionParser {
 
@@ -92,11 +99,12 @@ public class ProcDefinitionParser {
 
         Iterator<Map.Entry<String, JsonNode>> iter = proto.get(INPUTS_KEY).fields();
         while (iter.hasNext()) {
-            String inputRef = iter.next().getKey();
-            JsonNode currentInput = iter.next().getValue();
+            final Entry<String, JsonNode> current = iter.next();
+            String inputRef = current.getKey();
+            JsonNode currentInput = current.getValue();
             Preconditions.checkArgument(currentInput.isArray());
-            ArrayNode current = (ArrayNode) currentInput;
-            inputs.add(parseParameter(blocks, inputRef, current.get(PARAMETER_REFERENCE_POS).textValue()));
+            ArrayNode currentAsArray = (ArrayNode) currentInput;
+            inputs.add(parseParameter(blocks, inputRef, currentAsArray.get(PARAMETER_REFERENCE_POS).textValue()));
         }
 
         ParameterListPlain parameterListPlain = new ParameterListPlain(inputs);
@@ -138,22 +146,10 @@ public class ProcDefinitionParser {
     private static Parameter parseParameter(JsonNode blocks, String reference, String textValue) {
         JsonNode param = blocks.get(textValue);
         final String opcodeString = param.get(OPCODE_KEY).textValue();
-
-        final Parameter result;
         if (opcodeString.equals(ProcedureOpcode.argument_reporter_boolean.name())) {
-            result = new Parameter(new StrId(reference), new BooleanType());
+            return new Parameter(new StrId(reference), new BooleanType());
         } else {
-            result = new Parameter(new StrId(reference), new StringType());
+            return new Parameter(new StrId(reference), new StringType());
         }
-
-/*        JsonNode values = param.get(FIELDS_KEY).get(VALUE_KEY);
-        Preconditions.checkArgument(values.isArray());
-        ArrayNode arrayNode = (ArrayNode) values;
-        String name = arrayNode.get(0).textValue();
-        result.setValue(name);
-        */
-        // FIXME!
-        throw new IllegalArgumentException("The above (uncommented) code does not make sense! Fix this.");
-
     }
 }
