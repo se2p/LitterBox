@@ -25,7 +25,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.File;
 import java.io.IOException;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 import scratch.ast.ParsingException;
 import scratch.ast.model.Program;
 import scratch.ast.visitor.DotVisitor;
@@ -50,7 +49,7 @@ public class CombinedProgramTest {
         }
     }
 
-    @Test
+    //@Test
     public void dummyParseAllBlocks() {
         try {
             Program program = ProgramParser.parseProgram("All", project);
