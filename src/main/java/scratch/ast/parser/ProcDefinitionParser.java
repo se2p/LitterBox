@@ -54,7 +54,6 @@ public class ProcDefinitionParser {
     private final static String MUTATION_KEY = "mutation";
     private final static String PROCCODE_KEY = "proccode";
     private final static String ARGUMENTNAMES_KEY = "argumentnames";
-    private final static String VALUE_KEY = "VALUE";
     private final static int PROTOTYPE_REFERENCE_POS = 1;
     private final static int PARAMETER_REFERENCE_POS = 1;
 

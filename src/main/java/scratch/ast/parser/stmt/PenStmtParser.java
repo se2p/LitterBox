@@ -9,6 +9,7 @@ import scratch.ast.model.expression.string.StringExpr;
 import scratch.ast.model.literals.StringLiteral;
 import scratch.ast.model.statement.Stmt;
 import scratch.ast.model.statement.pen.*;
+import scratch.ast.opcodes.DependentBlockOpcodes;
 import scratch.ast.opcodes.PenOpcode;
 import scratch.ast.parser.ColorParser;
 import scratch.ast.parser.NumExprParser;
@@ -21,9 +22,6 @@ import java.util.List;
 import static scratch.ast.Constants.*;
 
 public class PenStmtParser {
-
-
-    private static final String COLOR_PARAM_OPCODE = "pen_menu_colorParam";
 
     public static Stmt parse(JsonNode current, JsonNode blocks) throws ParsingException {
         Preconditions.checkNotNull(current);
@@ -68,7 +66,7 @@ public class PenStmtParser {
             String reference = current.get(INPUTS_KEY).get(COLOR_PARAM_BIG_KEY).get(POS_INPUT_VALUE).textValue();
             JsonNode referredBlock = blocks.get(reference);
             Preconditions.checkNotNull(referredBlock);
-            if (referredBlock.get(OPCODE_KEY).textValue().equals(COLOR_PARAM_OPCODE)) {
+            if (referredBlock.get(OPCODE_KEY).textValue().equals(DependentBlockOpcodes.pen_menu_colorParam.name())) {
                 JsonNode colorParamNode = referredBlock.get(FIELDS_KEY).get(COLOR_PARAM_LITTLE_KEY);
                 Preconditions.checkArgument(colorParamNode.isArray());
                 String attribute = colorParamNode.get(FIELD_VALUE).textValue();

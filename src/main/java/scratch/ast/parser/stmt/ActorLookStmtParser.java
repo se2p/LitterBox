@@ -81,7 +81,7 @@ public class ActorLookStmtParser {
                 variableID = current.get(FIELDS_KEY).get(VARIABLE).get(1).asText();
                 variableInfo = ProgramParser.symbolTable.getVariables().get(variableID);
                 actorName = variableInfo.getActor();
-                var = new Qualified(new StrId(actorName), new StrId(variableName));
+                var = new Qualified(new StrId(actorName), new StrId(VARIABLE_ABBREVIATION + variableName));
                 return new HideVariable(var);
 
             case data_showvariable:
@@ -89,7 +89,7 @@ public class ActorLookStmtParser {
                 variableID = current.get(FIELDS_KEY).get(VARIABLE).get(1).asText();
                 variableInfo = ProgramParser.symbolTable.getVariables().get(variableID);
                 actorName = variableInfo.getActor();
-                var = new Qualified(new StrId(actorName), new StrId(variableName));
+                var = new Qualified(new StrId(actorName), new StrId(VARIABLE_ABBREVIATION + variableName));
                 return new ShowVariable(var);
 
             case data_showlist:
@@ -97,7 +97,7 @@ public class ActorLookStmtParser {
                 variableID = current.get(FIELDS_KEY).get(LIST).get(1).asText();
                 expressionListInfo = ProgramParser.symbolTable.getLists().get(variableID);
                 actorName = expressionListInfo.getActor();
-                var = new Qualified(new StrId(actorName), new StrId(variableName));
+                var = new Qualified(new StrId(actorName), new StrId(LIST_ABBREVIATION + variableName));
                 return new ShowVariable(var);
 
             case data_hidelist:
@@ -105,7 +105,7 @@ public class ActorLookStmtParser {
                 variableID = current.get(FIELDS_KEY).get(LIST).get(1).asText();
                 expressionListInfo = ProgramParser.symbolTable.getLists().get(variableID);
                 actorName = expressionListInfo.getActor();
-                var = new Qualified(new StrId(actorName), new StrId(variableName));
+                var = new Qualified(new StrId(actorName), new StrId(LIST_ABBREVIATION + variableName));
                 return new HideVariable(var);
 
             default:

@@ -29,7 +29,7 @@ import scratch.ast.model.statement.declaration.DeclarationStmt;
 import scratch.ast.model.statement.declaration.DeclarationStmtList;
 import scratch.ast.model.variable.Identifier;
 import scratch.ast.model.variable.StrId;
-import scratch.ast.opcodes.MenuBlockOpcodes;
+import scratch.ast.opcodes.DependentBlockOpcodes;
 import utils.Preconditions;
 
 import java.util.Iterator;
@@ -84,7 +84,7 @@ public class ActorDefinitionParser {
         // if the menu is replaced by another expression
         List<String> topLevelNodes = stream.filter(fieldName ->
                 (allBlocks.get(fieldName).get("topLevel").asBoolean()) &&
-                        !MenuBlockOpcodes.contains(allBlocks.get(fieldName).get(OPCODE_KEY).asText()))
+                        !DependentBlockOpcodes.contains(allBlocks.get(fieldName).get(OPCODE_KEY).asText()))
             .collect(Collectors.toList());
 
         List<Script> scripts = new LinkedList<>();
