@@ -18,19 +18,23 @@
  */
 package scratch.ast.parser;
 
-import static scratch.ast.Constants.FIELDS_KEY;
-import static scratch.ast.Constants.INPUTS_KEY;
-import static scratch.ast.Constants.OPCODE_KEY;
-import static scratch.ast.Constants.POS_INPUT_VALUE;
-
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import scratch.ast.Constants;
 import scratch.ast.ParsingException;
+import scratch.ast.model.expression.string.StringExpr;
 import scratch.ast.model.touchable.Edge;
 import scratch.ast.model.touchable.MousePointer;
+import scratch.ast.model.touchable.SpriteTouchable;
 import scratch.ast.model.touchable.Touchable;
 import scratch.ast.model.variable.StrId;
 import scratch.ast.opcodes.BoolExprOpcode;
 import utils.Preconditions;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static scratch.ast.Constants.*;
 
 public class TouchableParser {
 
@@ -44,15 +48,14 @@ public class TouchableParser {
         final String opcodeString = current.get(OPCODE_KEY).asText();
 
         if (BoolExprOpcode.sensing_touchingobject.name().equals(opcodeString)) {
-            String menuID = current.get(INPUTS_KEY).get(TOUCHINGOBJECTMENU).get(POS_INPUT_VALUE).asText();
-            String touchingObject = allBlocks.get(menuID).get(FIELDS_KEY).get(TOUCHINGOBJECTMENU).get(0).asText();
+            List<JsonNode> inputsList = new ArrayList<>();
+            current.get(Constants.INPUTS_KEY).elements().forEachRemaining(inputsList::add);
 
-            if (touchingObject.equals(TOUCHING_MOUSE)) {
-                return new MousePointer();
-            } else if (touchingObject.equals(TOUCHING_EDGE)) {
-                return new Edge();
+            if (getShadowIndicator((ArrayNode) inputsList.get(0).get(POS_DATA_ARRAY)) == 1) {
+                return getTouchableMenuOption(current, allBlocks);
             } else {
-                return new StrId(touchingObject);
+                final StringExpr stringExpr = StringExprParser.parseStringExpr(current, TOUCHINGOBJECTMENU, allBlocks);
+                return new SpriteTouchable(stringExpr);
             }
 
         } else if (BoolExprOpcode.sensing_touchingcolor.name().equals(opcodeString)) {
@@ -61,4 +64,22 @@ public class TouchableParser {
             throw new RuntimeException("Not implemented yet");
         }
     }
+
+    private static Touchable getTouchableMenuOption(JsonNode current, JsonNode allBlocks) {
+        String menuID = current.get(INPUTS_KEY).get(TOUCHINGOBJECTMENU).get(POS_INPUT_VALUE).asText();
+        String touchingObject = allBlocks.get(menuID).get(FIELDS_KEY).get(TOUCHINGOBJECTMENU).get(0).asText();
+
+        if (touchingObject.equals(TOUCHING_MOUSE)) {
+            return new MousePointer();
+        } else if (touchingObject.equals(TOUCHING_EDGE)) {
+            return new Edge();
+        } else {
+            return new StrId(touchingObject);
+        }
+    }
+
+    static int getShadowIndicator(ArrayNode exprArray) {
+        return exprArray.get(Constants.POS_INPUT_SHADOW).asInt();
+    }
+
 }

@@ -19,13 +19,20 @@
 package scratch.ast.parser.stmt;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import scratch.ast.Constants;
+import scratch.ast.ParsingException;
 import scratch.ast.model.elementchoice.ElementChoice;
 import scratch.ast.model.elementchoice.WithId;
+import scratch.ast.model.expression.string.StringExpr;
 import scratch.ast.model.statement.actorsound.*;
 import scratch.ast.model.variable.StrId;
 import scratch.ast.opcodes.ActorSoundStmtOpcode;
+import scratch.ast.parser.StringExprParser;
 import utils.Preconditions;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static scratch.ast.Constants.*;
 
@@ -33,7 +40,7 @@ public class ActorSoundStmtParser {
 
     private static final String SOUND_MENU = "SOUND_MENU";
 
-    public static ActorSoundStmt parse(JsonNode current, JsonNode allBlocks) {
+    public static ActorSoundStmt parse(JsonNode current, JsonNode allBlocks) throws ParsingException {
         Preconditions.checkNotNull(current);
         Preconditions.checkNotNull(allBlocks);
 
@@ -42,26 +49,15 @@ public class ActorSoundStmtParser {
         Preconditions.checkArgument(ActorSoundStmtOpcode.contains(opCodeString), "Given block is not an "
             + "ActorStmtBlock");
 
-        JsonNode soundMenu;
-        String soundValue;
-        String soundMenuId;
         ElementChoice elementChoice;
-
         final ActorSoundStmtOpcode opcode = ActorSoundStmtOpcode.valueOf(opCodeString);
-
         switch (opcode) {
             case sound_playuntildone:
-                soundMenuId = current.get(INPUTS_KEY).get(SOUND_MENU).get(Constants.POS_INPUT_VALUE).asText();
-                soundMenu = allBlocks.get(soundMenuId);
-                soundValue = soundMenu.get(FIELDS_KEY).get(SOUND_MENU).get(FIELD_VALUE).asText();
-                elementChoice = new WithId(new StrId(soundValue));
+                elementChoice = getSoundElement(current, allBlocks);
                 return new PlaySoundUntilDone(elementChoice);
 
             case sound_play:
-                soundMenuId = current.get(INPUTS_KEY).get(SOUND_MENU).get(Constants.POS_INPUT_VALUE).asText();
-                soundMenu = allBlocks.get(soundMenuId);
-                soundValue = soundMenu.get(FIELDS_KEY).get(SOUND_MENU).get(FIELD_VALUE).asText();
-                elementChoice = new WithId(new StrId(soundValue));
+                elementChoice = getSoundElement(current, allBlocks);
                 return new StartSound(elementChoice);
 
             case sound_cleareffects:
@@ -75,4 +71,23 @@ public class ActorSoundStmtParser {
         }
     }
 
+    static ElementChoice getSoundElement(JsonNode current, JsonNode allBlocks) throws ParsingException {
+        //Make a list of all elements in inputs
+        List<JsonNode> inputsList = new ArrayList<>();
+        current.get(Constants.INPUTS_KEY).elements().forEachRemaining(inputsList::add);
+
+        if (getShadowIndicator((ArrayNode) inputsList.get(0).get(POS_DATA_ARRAY)) == 1) {
+            String soundMenuId = current.get(INPUTS_KEY).get(SOUND_MENU).get(Constants.POS_INPUT_VALUE).asText();
+            JsonNode soundMenu = allBlocks.get(soundMenuId);
+            String soundValue = soundMenu.get(FIELDS_KEY).get(SOUND_MENU).get(FIELD_VALUE).asText();
+            return new WithId(new StrId(soundValue));
+        } else {
+            final StringExpr stringExpr = StringExprParser.parseStringExpr(current, 0, allBlocks);
+            return new WithId(stringExpr);
+        }
+    }
+
+    static int getShadowIndicator(ArrayNode exprArray) {
+        return exprArray.get(Constants.POS_INPUT_SHADOW).asInt();
+    }
 }

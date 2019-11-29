@@ -19,8 +19,16 @@
 package scratch.ast.parser;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import scratch.ast.Constants;
+import scratch.ast.ParsingException;
 import scratch.ast.model.Key;
+import scratch.ast.model.expression.num.NumExpr;
+import scratch.ast.model.literals.NumberLiteral;
 import scratch.ast.opcodes.BoolExprOpcode;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static scratch.ast.Constants.*;
 
@@ -28,19 +36,33 @@ public class KeyParser {
 
     public static final String KEY_OPTION = "KEY_OPTION";
 
-    public static Key parse(JsonNode current, JsonNode allBlocks) {
+    public static Key parse(JsonNode current, JsonNode allBlocks) throws ParsingException {
 
         final JsonNode block;
         final String opcodeString = current.get(OPCODE_KEY).asText();
         if (BoolExprOpcode.sensing_keypressed.name().equals(opcodeString)) {
-            String menuBlockID = current.get(INPUTS_KEY).get(KEY_OPTION).get(POS_INPUT_VALUE).asText();
-            block = allBlocks.get(menuBlockID);
+
+            List<JsonNode> inputsList = new ArrayList<>();
+            current.get(Constants.INPUTS_KEY).elements().forEachRemaining(inputsList::add);
+            if (getShadowIndicator((ArrayNode) inputsList.get(0)) == 1) {
+                // If there is only the menu in the inputs, we evaluate the menu
+                String menuBlockID = current.get(INPUTS_KEY).get(KEY_OPTION).get(POS_INPUT_VALUE).asText();
+                block = allBlocks.get(menuBlockID);
+            } else {
+                // If there is a variable or expression we evaluate it and use it as key;
+                final NumExpr numExpr = NumExprParser.parseNumExpr(current, 0, allBlocks);
+                return new Key(numExpr);
+            }
         } else {
             block = current;
         }
 
         String keyValue = block.get(FIELDS_KEY).get(KEY_OPTION).get(FIELD_VALUE).asText();
-        return new Key(keyValue);
+        return new Key(new NumberLiteral(keyValue.charAt(0)));
+    }
+
+    static int getShadowIndicator(ArrayNode exprArray) {
+        return exprArray.get(Constants.POS_INPUT_SHADOW).asInt();
     }
 
 }

@@ -18,18 +18,20 @@
  */
 package utils;
 
-import static junit.framework.TestCase.fail;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.io.File;
-import java.io.IOException;
 import org.junit.FixMethodOrder;
+import org.junit.jupiter.api.Test;
 import org.junit.runners.MethodSorters;
 import scratch.ast.ParsingException;
 import scratch.ast.model.Program;
 import scratch.ast.parser.ProgramParser;
 import scratch.ast.visitor.DotVisitor;
+
+import java.io.File;
+import java.io.IOException;
+
+import static junit.framework.TestCase.fail;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 class DownloaderTest {
@@ -55,7 +57,7 @@ class DownloaderTest {
         }
     }
 
-    //@Test
+    @Test
     void testDownloaded() {
         String path = "/tmp/stuff.json";
         File file = new File(path);

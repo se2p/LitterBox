@@ -19,6 +19,7 @@
 package scratch.ast.parser.stmt;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import scratch.ast.Constants;
 import scratch.ast.ParsingException;
 import scratch.ast.model.Message;
@@ -36,6 +37,9 @@ import scratch.ast.parser.BoolExprParser;
 import scratch.ast.parser.NumExprParser;
 import scratch.ast.parser.StringExprParser;
 import utils.Preconditions;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static scratch.ast.Constants.*;
 import static scratch.ast.opcodes.CommonStmtOpcode.*;
@@ -151,13 +155,21 @@ public class CommonStmtParser {
         return broadcast;
     }
 
-    private static CommonStmt parseCreateCloneOf(JsonNode current, JsonNode allBlocks) {
+    private static CommonStmt parseCreateCloneOf(JsonNode current, JsonNode allBlocks) throws ParsingException {
         JsonNode inputs = current.get(INPUTS_KEY);
-        String cloneOptionMenu = inputs.get(CLONE_OPTION).get(Constants.POS_INPUT_VALUE).asText();
-        JsonNode optionBlock = allBlocks.get(cloneOptionMenu);
-        String cloneValue = optionBlock.get(FIELDS_KEY).get(CLONE_OPTION).get(FIELD_VALUE).asText();
-        Identifier ident = new StrId(cloneValue);
-        return new CreateCloneOf(ident);
+        List<JsonNode> inputsList = new ArrayList<>();
+        inputs.elements().forEachRemaining(inputsList::add);
+
+        if (getShadowIndicator((ArrayNode) inputsList.get(0)) == 1) {
+            String cloneOptionMenu = inputs.get(CLONE_OPTION).get(Constants.POS_INPUT_VALUE).asText();
+            JsonNode optionBlock = allBlocks.get(cloneOptionMenu);
+            String cloneValue = optionBlock.get(FIELDS_KEY).get(CLONE_OPTION).get(FIELD_VALUE).asText();
+            Identifier ident = new StrId(cloneValue);
+            return new CreateCloneOf(ident);
+        } else {
+            final StringExpr stringExpr = StringExprParser.parseStringExpr(current, 0, allBlocks);
+            return new CreateCloneOf(stringExpr);
+        }
     }
 
     private static WaitUntil parseWaitUntil(JsonNode current, JsonNode allBlocks) throws ParsingException {
@@ -188,5 +200,9 @@ public class CommonStmtParser {
         }
 
         return stmt;
+    }
+
+    static int getShadowIndicator(ArrayNode exprArray) {
+        return exprArray.get(Constants.POS_INPUT_SHADOW).asInt();
     }
 }

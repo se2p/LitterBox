@@ -29,6 +29,7 @@ import scratch.ast.model.statement.declaration.DeclarationStmt;
 import scratch.ast.model.statement.declaration.DeclarationStmtList;
 import scratch.ast.model.variable.Identifier;
 import scratch.ast.model.variable.StrId;
+import scratch.ast.opcodes.MenuBlockOpcodes;
 import utils.Preconditions;
 
 import java.util.Iterator;
@@ -38,8 +39,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import static scratch.ast.Constants.IS_STAGE_KEY;
-import static scratch.ast.Constants.NAME_KEY;
+import static scratch.ast.Constants.*;
 
 public class ActorDefinitionParser {
 
@@ -78,8 +78,15 @@ public class ActorDefinitionParser {
         Iterator<String> fieldIterator = allBlocks.fieldNames();
         Iterable<String> iterable = () -> fieldIterator;
         Stream<String> stream = StreamSupport.stream(iterable.spliterator(), false);
-        List<String> topLevelNodes = stream.filter(fieldName -> allBlocks.get(fieldName).get("topLevel").asBoolean())
+
+        // Get all topLevel Blocks that are not menues
+        // the reason for this is, that menues count as topLevel in the Json File
+        // if the menu is replaced by another expression
+        List<String> topLevelNodes = stream.filter(fieldName ->
+                (allBlocks.get(fieldName).get("topLevel").asBoolean()) &&
+                        !MenuBlockOpcodes.contains(allBlocks.get(fieldName).get(OPCODE_KEY).asText()))
             .collect(Collectors.toList());
+
         List<Script> scripts = new LinkedList<>();
         for (String topLevelID : topLevelNodes) {
             Script script = ScriptParser.parse(topLevelID, allBlocks);
