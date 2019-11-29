@@ -18,28 +18,13 @@
  */
 package scratch.ast.parser;
 
-import static scratch.ast.Constants.INPUTS_KEY;
-import static scratch.ast.Constants.NEXT_KEY;
-import static scratch.ast.Constants.OPCODE_KEY;
-import static scratch.ast.Constants.PARENT_KEY;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 import scratch.ast.Constants;
 import scratch.ast.ParsingException;
 import scratch.ast.model.StmtList;
-import scratch.ast.model.procedure.Parameter;
-import scratch.ast.model.procedure.ParameterList;
-import scratch.ast.model.procedure.ParameterListPlain;
-import scratch.ast.model.procedure.ProcedureDefinition;
-import scratch.ast.model.procedure.ProcedureDefinitionList;
+import scratch.ast.model.procedure.*;
 import scratch.ast.model.type.BooleanType;
 import scratch.ast.model.type.StringType;
 import scratch.ast.model.type.Type;
@@ -47,6 +32,15 @@ import scratch.ast.model.variable.Identifier;
 import scratch.ast.model.variable.StrId;
 import scratch.ast.opcodes.ProcedureOpcode;
 import utils.Preconditions;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import static scratch.ast.Constants.*;
 
 public class ProcDefinitionParser {
 
@@ -125,7 +119,7 @@ public class ProcDefinitionParser {
 
         String[] arguments = new String[argumentsArray.size()];
         for (int i = 0; i < arguments.length; i++) {
-            arguments[i] = argumentsArray.get(i).textValue();
+            arguments[i] = PARAMETER_ABBREVIATION + argumentsArray.get(i).textValue();
         }
 
         ProgramParser.procDefMap.addProcedure(ident, methodName, arguments, getTypes(inputs));
