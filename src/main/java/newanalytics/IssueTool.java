@@ -18,17 +18,19 @@
  */
 package newanalytics;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import newanalytics.bugpattern.MissingPenUp;
 import newanalytics.ctscore.FlowControl;
 import newanalytics.smells.MissingLoopSensing;
 import newanalytics.smells.MissingTermination;
 import org.apache.commons.csv.CSVPrinter;
 import scratch.ast.model.Program;
 import utils.CSVWriter;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Holds all IssueFinder and executes them.
@@ -39,6 +41,8 @@ public class IssueTool {
     private Map<String, IssueFinder> finder = new HashMap<>();
 
     public IssueTool() {
+        finder.put(MissingPenUp.SHORT_NAME, new MissingPenUp());
+
 //        finder.put("cnt", new CountBlocks());
 //        finder.put("glblstrt", new GlobalStartingPoint());
 //        finder.put("strt", new StartingPoint());
