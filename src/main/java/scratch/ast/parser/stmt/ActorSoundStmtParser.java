@@ -76,7 +76,7 @@ public class ActorSoundStmtParser {
         List<JsonNode> inputsList = new ArrayList<>();
         current.get(Constants.INPUTS_KEY).elements().forEachRemaining(inputsList::add);
 
-        if (getShadowIndicator((ArrayNode) inputsList.get(0).get(POS_DATA_ARRAY)) == 1) {
+        if (getShadowIndicator((ArrayNode) inputsList.get(0)) == 1) {
             String soundMenuId = current.get(INPUTS_KEY).get(SOUND_MENU).get(Constants.POS_INPUT_VALUE).asText();
             JsonNode soundMenu = allBlocks.get(soundMenuId);
             String soundValue = soundMenu.get(FIELDS_KEY).get(SOUND_MENU).get(FIELD_VALUE).asText();

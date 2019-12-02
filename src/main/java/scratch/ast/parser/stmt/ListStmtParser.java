@@ -18,12 +18,6 @@
  */
 package scratch.ast.parser.stmt;
 
-import static scratch.ast.Constants.FIELDS_KEY;
-import static scratch.ast.Constants.LIST_IDENTIFIER_POS;
-import static scratch.ast.Constants.LIST_KEY;
-import static scratch.ast.Constants.LIST_NAME_POS;
-import static scratch.ast.Constants.OPCODE_KEY;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import scratch.ast.ParsingException;
@@ -43,6 +37,8 @@ import scratch.ast.parser.ProgramParser;
 import scratch.ast.parser.StringExprParser;
 import scratch.ast.parser.symboltable.ExpressionListInfo;
 import utils.Preconditions;
+
+import static scratch.ast.Constants.*;
 
 public class ListStmtParser {
 
@@ -95,7 +91,7 @@ public class ListStmtParser {
         ArrayNode listArray = (ArrayNode) listNode;
         String identifier = listArray.get(LIST_IDENTIFIER_POS).textValue();
         ExpressionListInfo info = ProgramParser.symbolTable.getLists().get(identifier);
-        Preconditions.checkArgument(info.getVariableName().equals(listArray.get(LIST_NAME_POS).textValue()));
+        Preconditions.checkArgument(info.getVariableName().equals(LIST_ABBREVIATION+listArray.get(LIST_NAME_POS).textValue()));
         return info;
     }
 
