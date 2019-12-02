@@ -27,8 +27,8 @@ public class MissingPenUp implements IssueFinder {
         for (ActorDefinition defintion : defintions) {
             // Should we also check procedure definitions? Maybe they have a pen up?
             final List<Script> scriptList = defintion.getScripts().getScriptList();
+            CheckVisitor visitor = new CheckVisitor();
             for (Script script : scriptList) {
-                CheckVisitor visitor = new CheckVisitor();
                 script.getStmtList().getStmts().accept(visitor);
                 if (visitor.getResult()) {
                     System.out.println("Actor " + defintion.getIdent().getName() + "has a penDown at the end of script but no penUp");
@@ -50,12 +50,6 @@ public class MissingPenUp implements IssueFinder {
 
         @Override
         public void visit(ASTNode node) {
-            if (node instanceof PenUpStmt) {
-                visitPenUp((PenUpStmt) node);
-            } else if (node instanceof PenDownStmt) {
-                visitPenDown((PenDownStmt) node);
-            }
-
             if (!node.getChildren().isEmpty()) {
                 for (ASTNode child : node.getChildren()) {
                     child.accept(this);
@@ -63,12 +57,24 @@ public class MissingPenUp implements IssueFinder {
             }
         }
 
-        public void visitPenUp(PenUpStmt stmt) {
+        @Override
+        public void visit(PenUpStmt node) {
             penUpSet = true;
+            if (!node.getChildren().isEmpty()) {
+                for (ASTNode child : node.getChildren()) {
+                    child.accept(this);
+                }
+            }
         }
 
-        public void visitPenDown(PenDownStmt stmt) {
+        @Override
+        public void visit(PenDownStmt node) {
             penDownSet = true;
+            if (!node.getChildren().isEmpty()) {
+                for (ASTNode child : node.getChildren()) {
+                    child.accept(this);
+                }
+            }
         }
 
         public void reset() {

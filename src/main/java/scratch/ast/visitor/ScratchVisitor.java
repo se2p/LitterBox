@@ -19,8 +19,14 @@
 package scratch.ast.visitor;
 
 import scratch.ast.model.ASTNode;
+import scratch.ast.model.statement.pen.PenDownStmt;
+import scratch.ast.model.statement.pen.PenUpStmt;
 
 public interface ScratchVisitor {
 
     void visit(ASTNode node);
+
+    void visit(PenDownStmt node);
+
+    void visit(PenUpStmt node);
 }
