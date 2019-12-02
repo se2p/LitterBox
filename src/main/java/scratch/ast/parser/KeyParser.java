@@ -35,6 +35,12 @@ import static scratch.ast.Constants.*;
 public class KeyParser {
 
     public static final String KEY_OPTION = "KEY_OPTION";
+    public static final int UPARROW = 38;
+    public static final int DOWNARROW = 40;
+    public static final int RIGHTARROW = 39;
+    public static final int LEFTARROW = 37;
+    public static final int SPACE = 32;
+    public static final int ANYKEY = 0;
 
     public static Key parse(JsonNode current, JsonNode allBlocks) throws ParsingException {
 
@@ -58,7 +64,23 @@ public class KeyParser {
         }
 
         String keyValue = block.get(FIELDS_KEY).get(KEY_OPTION).get(FIELD_VALUE).asText();
-        return new Key(new NumberLiteral(keyValue.charAt(0)));
+        switch (keyValue) {
+            case "space":
+                return new Key(new NumberLiteral(SPACE));
+            case "up arrow":
+                return new Key(new NumberLiteral(UPARROW));
+            case "down arrow":
+                return new Key(new NumberLiteral(DOWNARROW));
+            case "left arrow":
+                return new Key(new NumberLiteral(LEFTARROW));
+            case "right arrow":
+                return new Key(new NumberLiteral(RIGHTARROW));
+            case "any":
+                return new Key(new NumberLiteral(ANYKEY));
+            default:
+                return new Key(new NumberLiteral(keyValue.charAt(0)));
+        }
+
     }
 
     static int getShadowIndicator(ArrayNode exprArray) {

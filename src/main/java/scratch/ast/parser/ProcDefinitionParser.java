@@ -91,17 +91,16 @@ public class ProcDefinitionParser {
         ArrayList<Parameter> inputs = new ArrayList<>();
 
         Iterator<Map.Entry<String, JsonNode>> iter = proto.get(INPUTS_KEY).fields();
+        List<Type> paraTypes = new ArrayList<>();
         while (iter.hasNext()) {
             final Entry<String, JsonNode> current = iter.next();
-            String inputRef = current.getKey();
             JsonNode currentInput = current.getValue();
             Preconditions.checkArgument(currentInput.isArray());
             ArrayNode currentAsArray = (ArrayNode) currentInput;
-            inputs.add(parseParameter(blocks, inputRef, currentAsArray.get(PARAMETER_REFERENCE_POS).textValue()));
+            paraTypes = addType(blocks, paraTypes, currentAsArray.get(PARAMETER_REFERENCE_POS).textValue());
         }
 
-        ParameterListPlain parameterListPlain = new ParameterListPlain(inputs);
-        ParameterList parameterList = new ParameterList(parameterListPlain);
+
         String methodName = proto.get(MUTATION_KEY).get(PROCCODE_KEY).textValue();
         Identifier ident = new StrId(proto.get(PARENT_KEY).textValue());
         JsonNode argumentNamesNode = proto.get(MUTATION_KEY).get(ARGUMENTNAMES_KEY);
@@ -121,28 +120,28 @@ public class ProcDefinitionParser {
         for (int i = 0; i < arguments.length; i++) {
             arguments[i] = PARAMETER_ABBREVIATION + argumentsArray.get(i).textValue();
         }
+        Preconditions.checkArgument(arguments.length == paraTypes.size());
+        Type[] typeArray = new Type[paraTypes.size()];
+        ProgramParser.procDefMap.addProcedure(ident, methodName, arguments, paraTypes.toArray(typeArray));
 
-        ProgramParser.procDefMap.addProcedure(ident, methodName, arguments, getTypes(inputs));
+        for (int i = 0; i < paraTypes.size(); i++) {
+            inputs.add(new Parameter(new StrId(arguments[i]), paraTypes.get(i)));
+        }
+        ParameterListPlain parameterListPlain = new ParameterListPlain(inputs);
+        ParameterList parameterList = new ParameterList(parameterListPlain);
         StmtList stmtList = ScriptParser.parseStmtList(def.get(NEXT_KEY).textValue(), blocks);
         return new ProcedureDefinition(ident, parameterList, stmtList);
     }
 
-    private static Type[] getTypes(ArrayList<Parameter> inputs) {
-        Type[] types = new Type[inputs.size()];
-        for (int i = 0; i < inputs.size(); i++) {
-            types[i] = inputs.get(i).getType();
-        }
-
-        return types;
-    }
-
-    private static Parameter parseParameter(JsonNode blocks, String reference, String textValue) {
+    private static List<Type> addType(JsonNode blocks, List<Type> types, String textValue) {
         JsonNode param = blocks.get(textValue);
         final String opcodeString = param.get(OPCODE_KEY).textValue();
         if (opcodeString.equals(ProcedureOpcode.argument_reporter_boolean.name())) {
-            return new Parameter(new StrId(reference), new BooleanType());
+            types.add(new BooleanType());
+
         } else {
-            return new Parameter(new StrId(reference), new StringType());
+            types.add(new StringType());
         }
+        return types;
     }
 }

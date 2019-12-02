@@ -36,7 +36,7 @@ public class ProcDefinitionParserTest {
         try {
             Program program = ProgramParser.parseProgram("CustomBlockTest", project);
             final List<ActorDefinition> defintions = program.getActorDefinitionList().getDefintions();
-            final List<ProcedureDefinition> list = defintions.get(0).getProcedureDefinitionList().getList();
+            final List<ProcedureDefinition> list = defintions.get(1).getProcedureDefinitionList().getList();
 
             Truth.assertThat(list.get(0)).isInstanceOf(ProcedureDefinition.class);
 

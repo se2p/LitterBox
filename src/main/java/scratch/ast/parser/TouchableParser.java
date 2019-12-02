@@ -50,8 +50,7 @@ public class TouchableParser {
         if (BoolExprOpcode.sensing_touchingobject.name().equals(opcodeString)) {
             List<JsonNode> inputsList = new ArrayList<>();
             current.get(Constants.INPUTS_KEY).elements().forEachRemaining(inputsList::add);
-
-            if (getShadowIndicator((ArrayNode) inputsList.get(0).get(POS_DATA_ARRAY)) == 1) {
+            if (getShadowIndicator((ArrayNode) inputsList.get(0)) == 1) {
                 return getTouchableMenuOption(current, allBlocks);
             } else {
                 final StringExpr stringExpr = StringExprParser.parseStringExpr(current, TOUCHINGOBJECTMENU, allBlocks);

@@ -101,7 +101,7 @@ public class BoolExprParserTest {
 
         WaitUntil waitUntil = (WaitUntil) stmt;
         IsKeyPressed expr = (IsKeyPressed) waitUntil.getUntil();
-        Truth.assertThat(expr.getKey().getKey()).isEqualTo("space");
+        Truth.assertThat(((NumberLiteral) expr.getKey().getKey()).getValue()).isEqualTo( 32);
     }
 
     @Test
