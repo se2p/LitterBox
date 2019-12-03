@@ -49,9 +49,9 @@ public class FlowControl implements IssueFinder {
     public FlowControl() {
         found = new ArrayList<>();
         notes[0] = "There is a sequence of blocks missing.";
-        notes[1] = "Basic Level. There is repeat or forever missing.";
-        notes[2] = "Developing Level. There is repeat until missing.";
-        notes[3] = "Proficiency Level. Good work!";
+        notes[1] = "Basic level. There is repeat or forever missing.";
+        notes[2] = "Developing level. There is repeat until missing.";
+        notes[3] = "Proficiency level. Good work!";
     }
 
     /**

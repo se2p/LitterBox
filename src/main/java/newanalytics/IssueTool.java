@@ -20,8 +20,7 @@ package newanalytics;
 
 import newanalytics.bugpattern.MissingPenUp;
 import newanalytics.ctscore.FlowControl;
-import newanalytics.smells.MissingLoopSensing;
-import newanalytics.smells.MissingTermination;
+import newanalytics.smells.*;
 import org.apache.commons.csv.CSVPrinter;
 import scratch.ast.model.Program;
 import utils.CSVWriter;
@@ -56,12 +55,13 @@ public class IssueTool {
 //        finder.put("emptybd", new EmptyBody());
 //        finder.put("squact", new SequentialActions());
 //        finder.put("sprtname", new SpriteNaming());
-//        finder.put("lngscr", new LongScript());
+        finder.put(LongScript.SHORT_NAME, new LongScript());
 //        finder.put("brdcstsync", new BroadcastSync());
 //        finder.put("nstloop", new NestedLoops());
 //        finder.put("dplscrpt", new DuplicatedScript());
 //        finder.put("racecnd", new RaceCondition());
-//        finder.put("emptyscrpt", new EmptyScript());
+        finder.put(EmptyScript.SHORT_NAME, new EmptyScript());
+        finder.put(EmptySprite.SHORT_NAME, new EmptySprite());
 //        finder.put("mdlman", new MiddleMan());
 //        finder.put("noop", new Noop());
 //        finder.put("vrblscp", new VariableScope());

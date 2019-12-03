@@ -18,62 +18,62 @@
  */
 package newanalytics.smells;
 
+import java.util.ArrayList;
 import java.util.List;
+
 import newanalytics.IssueFinder;
 import newanalytics.IssueReport;
+import scratch.ast.model.ActorDefinition;
 import scratch.ast.model.Program;
+import scratch.ast.model.Script;
+import scratch.ast.model.event.Never;
 import scratch.data.ScBlock;
+import utils.Preconditions;
 
 /**
  * Checks for scripts with more than 12 blocks.
  */
 public class LongScript implements IssueFinder {
 
-    String name = "long_script";
+    public static final String NAME = "long_script";
+    public static final String SHORT_NAME = "lngscr";
+    private static final String note1 = "There are no long scripts.";
+    private static final String note2 = "Some scripts are very long.";
+
+    public LongScript() {
+    }
 
     @Override
     public IssueReport check(Program program) {
-        /*
-        List<Scriptable> scriptables = new ArrayList<>();
-        scriptables.add(program.getStage());
-        scriptables.addAll(program.getSprites());
-        int count;
-        List<String> pos = new ArrayList<>();
-        for (Scriptable scable : scriptables) {
-            for (Script script : scable.getScripts()) {
-                int localCount = searchBlocks(script.getBlocks(), 0);
-                if (localCount >= 12) {
-                    pos.add(scable.getName() + " at " + Arrays.toString(script.getPosition()));
+
+        Preconditions.checkNotNull(program);
+
+        List<String> found = new ArrayList<>();
+        final List<ActorDefinition> defintions = program.getActorDefinitionList().getDefintions();
+
+        for (ActorDefinition actor : defintions) {
+            List<Script> scripts = actor.getScripts().getScriptList();
+            for (Script current : scripts) {
+                //if a event is used only 11 blocks have to be in the remaining script
+                //TODO should nested blocks be considered?
+                if ((!(current.getEvent() instanceof Never) && current.getStmtList().getStmts().getListOfStmt().size() >= 11)
+                        || ((current.getEvent() instanceof Never) && current.getStmtList().getStmts().getListOfStmt().size() >= 12)) {
+                    found.add(actor.getIdent().getName());
                 }
             }
         }
-        count = pos.size();
-        String notes = "There are no long scripts.";
-        if (count > 0) {
-            notes = "Some scripts are very long.";
+        String notes = note1;
+        if (found.size() > 0) {
+            notes = note2;
         }
 
-        return new IssueReport(name, count, pos, program.getPath(), notes);
+        return new IssueReport(NAME, found.size(), found, notes);
 
-         */
-        throw new RuntimeException("not implemented");
-    }
 
-    private int searchBlocks(List<ScBlock> blocks, int count) {
-        for (ScBlock b : blocks) {
-            count = count + 1;
-            if (b.getNestedBlocks() != null && b.getNestedBlocks().size() > 0) {
-                count = searchBlocks(b.getNestedBlocks(), count);
-            }
-            if (b.getElseBlocks() != null && b.getElseBlocks().size() > 0) {
-                count = searchBlocks(b.getElseBlocks(), count);
-            }
-        }
-        return count;
     }
 
     @Override
     public String getName() {
-        return name;
+        return NAME;
     }
 }
