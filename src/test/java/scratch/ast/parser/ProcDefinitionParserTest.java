@@ -18,8 +18,10 @@ import scratch.ast.ParsingException;
 import scratch.ast.model.ActorDefinition;
 import scratch.ast.model.Program;
 import scratch.ast.model.procedure.ProcedureDefinition;
+import scratch.ast.model.statement.spritemotion.MoveSteps;
 import scratch.ast.model.type.BooleanType;
 import scratch.ast.model.type.StringType;
+import scratch.ast.model.variable.Identifier;
 
 public class ProcDefinitionParserTest {
 
@@ -77,10 +79,18 @@ public class ProcDefinitionParserTest {
             Truth.assertThat(ProgramParser.procDefMap.getProcedures().get(list.get(1).getIdent()).getArguments()[0].getType()).isInstanceOf(StringType.class);
             Truth.assertThat(ProgramParser.procDefMap.getProcedures().get(list.get(1).getIdent()).getArguments()[1].getType()).isInstanceOf(BooleanType.class);
             Assertions.assertEquals(3, list.get(1).getStmtList().getStmts().getListOfStmt().size());
-            Assertions.assertEquals(ProgramParser.procDefMap.getProcedures().get(list.get(1).getIdent()).getArguments()[1].getName(), list.get(1).getParameterList().getParameterListPlain().getParameters().get(1).getIdent().getName());
-            Assertions.assertEquals(ProgramParser.procDefMap.getProcedures().get(list.get(1).getIdent()).getArguments()[0].getName(), list.get(1).getParameterList().getParameterListPlain().getParameters().get(0).getIdent().getName());
-            Assertions.assertEquals(ProgramParser.procDefMap.getProcedures().get(list.get(1).getIdent()).getArguments()[1].getType(), list.get(1).getParameterList().getParameterListPlain().getParameters().get(1).getType());
-            Assertions.assertEquals(ProgramParser.procDefMap.getProcedures().get(list.get(1).getIdent()).getArguments()[0].getType(), list.get(1).getParameterList().getParameterListPlain().getParameters().get(0).getType());
+            Assertions.assertEquals(ProgramParser.procDefMap.getProcedures().get(list.get(1).getIdent()).getArguments()[1].getName(),
+                    list.get(1).getParameterList().getParameterListPlain().getParameters().get(1).getIdent().getName());
+            Assertions.assertEquals(ProgramParser.procDefMap.getProcedures().get(list.get(1).getIdent()).getArguments()[0].getName(),
+                    list.get(1).getParameterList().getParameterListPlain().getParameters().get(0).getIdent().getName());
+            Assertions.assertEquals(ProgramParser.procDefMap.getProcedures().get(list.get(1).getIdent()).getArguments()[1].getType(),
+                    list.get(1).getParameterList().getParameterListPlain().getParameters().get(1).getType());
+            Assertions.assertEquals(ProgramParser.procDefMap.getProcedures().get(list.get(1).getIdent()).getArguments()[0].getType(),
+                    list.get(1).getParameterList().getParameterListPlain().getParameters().get(0).getType());
+            Assertions.assertTrue(list.get(1).getStmtList().getStmts().getListOfStmt().get(0) instanceof MoveSteps);
+            Truth.assertThat(((MoveSteps) list.get(1).getStmtList().getStmts().getListOfStmt().get(0)).getSteps()).isInstanceOf(Identifier.class);
+            Assertions.assertEquals(Constants.PARAMETER_ABBREVIATION + "NumInput",
+                    ((Identifier) ((MoveSteps) list.get(1).getStmtList().getStmts().getListOfStmt().get(0)).getSteps()).getName());
         } catch (ParsingException e) {
             e.printStackTrace();
             fail();

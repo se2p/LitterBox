@@ -156,7 +156,7 @@ public class NumExprParser {
     private static NumExpr parseParameter(JsonNode blocks, ArrayNode exprArray) {
         JsonNode paramBlock = blocks.get(exprArray.get(POS_BLOCK_ID).textValue());
         String name = paramBlock.get(FIELDS_KEY).get(VALUE_KEY).get(VARIABLE_NAME_POS).textValue();
-        return new AsNumber(new StrId(PARAMETER_ABBREVIATION + name));
+        return new StrId(PARAMETER_ABBREVIATION + name);
     }
 
 
