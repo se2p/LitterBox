@@ -38,7 +38,8 @@ import scratch.ast.model.statement.control.*;
  * Checks for missing loops in event based actions.
  */
 public class MissingLoopSensing implements IssueFinder {
-    private String name = "missing_loop";
+    public static final String NAME = "missing_loop";
+    public static final String SHORT_NAME = "mssfrev";
     private List<String> found;
     private int counter;
 
@@ -65,7 +66,7 @@ public class MissingLoopSensing implements IssueFinder {
             note = "The project contains some fishy touching and / or keyPressed checks without a loop.";
 
         }
-        return new IssueReport(name, counter, found, note);
+        return new IssueReport(NAME, counter, found, note);
     }
 
     private void checkMissLoop(List<Stmt> stmts, String actorName) {
@@ -98,6 +99,6 @@ public class MissingLoopSensing implements IssueFinder {
 
     @Override
     public String getName() {
-        return name;
+        return NAME;
     }
 }

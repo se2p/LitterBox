@@ -47,10 +47,10 @@ public class IssueTool {
 //        finder.put("strt", new StartingPoint());
 //        finder.put("lggymve", new LaggyMovement());
 //        finder.put("dblif", new DoubleIf());
-        finder.put("mssfrev", new MissingLoopSensing());
+        finder.put(MissingLoopSensing.SHORT_NAME, new MissingLoopSensing());
 //        finder.put("clninit", new CloneInitialization());
-        finder.put("msstrm", new MissingTermination());
-//        finder.put("lsblck", new LooseBlocks());
+        finder.put(MissingTermination.SHORT_NAME, new MissingTermination());
+        finder.put(DeadCode.SHORT_NAME, new DeadCode());
 //        finder.put("attrmod", new AttributeModification());
 //        finder.put("emptybd", new EmptyBody());
 //        finder.put("squact", new SequentialActions());
@@ -75,7 +75,7 @@ public class IssueTool {
 //        finder.put("abstr", new Abstraction());
 //        finder.put("para", new Parallelism());
 //        finder.put("synch", new Synchronization());
-        finder.put("flow", new FlowControl());
+        finder.put(FlowControl.SHORT_NAME, new FlowControl());
 //        finder.put("userint", new UserInteractivity());
 //        finder.put("datarep", new DataRepresentation());
     }

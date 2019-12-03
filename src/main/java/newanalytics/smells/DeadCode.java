@@ -27,33 +27,31 @@ import scratch.ast.model.ActorDefinition;
 import scratch.ast.model.Program;
 import scratch.ast.model.Script;
 import scratch.ast.model.event.Never;
+import utils.Identifier;
 import utils.Preconditions;
 
 /**
- * Checks if all Sprites have a starting point.
+ * Checks if the project has loose blocks without a head.
  */
-public class EmptyScript implements IssueFinder {
+public class DeadCode implements IssueFinder {
 
+    private static final String NOTE1 = "There are no loose blocks in your project.";
+    private static final String NOTE2 = "Some of the Sprites have loose blocks!";
+    public static final String NAME = "dead_code";
+    public static final String SHORT_NAME = "dcode";
 
-    private static final String NOTE1 = "There are no scripts with empty body in your project.";
-    private static final String NOTE2 = "Some of the sprites contain scripts with a empty body.";
-    public static final String NAME = "empty_script";
-    public static final String SHORT_NAME = "emptyscrpt";
-
-    public EmptyScript() {
+    public DeadCode() {
     }
 
     @Override
     public IssueReport check(Program program) {
         Preconditions.checkNotNull(program);
         List<String> found = new ArrayList<>();
-
         final List<ActorDefinition> definitions = program.getActorDefinitionList().getDefintions();
-
         for (ActorDefinition actor : definitions) {
             List<Script> scripts = actor.getScripts().getScriptList();
             for (Script current : scripts) {
-                if (!(current.getEvent() instanceof Never) && current.getStmtList().getStmts().getListOfStmt().size() == 0) {
+                if ((current.getEvent() instanceof Never) && current.getStmtList().getStmts().getListOfStmt().size() >= 1) {
                     found.add(actor.getIdent().getName());
                 }
             }

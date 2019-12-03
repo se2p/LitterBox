@@ -27,7 +27,6 @@ import scratch.ast.model.ActorDefinition;
 import scratch.ast.model.Program;
 import scratch.ast.model.Script;
 import scratch.ast.model.event.Never;
-import scratch.data.ScBlock;
 import utils.Preconditions;
 
 /**
@@ -37,8 +36,8 @@ public class LongScript implements IssueFinder {
 
     public static final String NAME = "long_script";
     public static final String SHORT_NAME = "lngscr";
-    private static final String note1 = "There are no long scripts.";
-    private static final String note2 = "Some scripts are very long.";
+    private static final String NOTE1 = "There are no long scripts.";
+    private static final String NOTE2 = "Some scripts are very long.";
 
     public LongScript() {
     }
@@ -49,22 +48,22 @@ public class LongScript implements IssueFinder {
         Preconditions.checkNotNull(program);
 
         List<String> found = new ArrayList<>();
-        final List<ActorDefinition> defintions = program.getActorDefinitionList().getDefintions();
+        final List<ActorDefinition> definitions = program.getActorDefinitionList().getDefintions();
 
-        for (ActorDefinition actor : defintions) {
+        for (ActorDefinition actor : definitions) {
             List<Script> scripts = actor.getScripts().getScriptList();
             for (Script current : scripts) {
-                //if a event is used only 11 blocks have to be in the remaining script
-                //TODO should nested blocks be considered?
+                //if a event is used only 11 blocks have to be in the remaining script, only statements are considered, expressions not
+                //TODO consider nested block
                 if ((!(current.getEvent() instanceof Never) && current.getStmtList().getStmts().getListOfStmt().size() >= 11)
                         || ((current.getEvent() instanceof Never) && current.getStmtList().getStmts().getListOfStmt().size() >= 12)) {
                     found.add(actor.getIdent().getName());
                 }
             }
         }
-        String notes = note1;
+        String notes = NOTE1;
         if (found.size() > 0) {
-            notes = note2;
+            notes = NOTE2;
         }
 
         return new IssueReport(NAME, found.size(), found, notes);

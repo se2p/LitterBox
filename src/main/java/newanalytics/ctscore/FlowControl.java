@@ -43,7 +43,8 @@ public class FlowControl implements IssueFinder {
     private final int REPEAT_FOREVER = 2;
     private final int UNTIL = 3;
     private String[] notes = new String[4];
-    private String name = "flow_control";
+    public final static String NAME = "flow_control";
+    public final static String SHORT_NAME = "flow";
     private List<String> found;
 
     public FlowControl() {
@@ -67,7 +68,7 @@ public class FlowControl implements IssueFinder {
         level = checkIfForeverOrRepeat(actorDefs, level);
         level = checkIfUntil(actorDefs, level);
 
-        return new IssueReport(name, level, found, notes[level]);
+        return new IssueReport(NAME, level, found, notes[level]);
     }
 
     private int checkIfUntil(List<ActorDefinition> actorDefs, int level) {
@@ -159,6 +160,6 @@ public class FlowControl implements IssueFinder {
 
     @Override
     public String getName() {
-        return name;
+        return NAME;
     }
 }
