@@ -19,29 +19,23 @@
 package scratch.ast.parser;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import scratch.ast.Constants;
 import scratch.ast.ParsingException;
 import scratch.ast.model.elementchoice.*;
-import scratch.ast.model.expression.num.NumExpr;
-import scratch.ast.model.expression.num.UnspecifiedNumExpr;
 import scratch.ast.model.expression.string.StringExpr;
-import scratch.ast.model.expression.string.UnspecifiedStringExpr;
 import scratch.ast.model.variable.StrId;
-import scratch.ast.opcodes.BoolExprOpcode;
-import scratch.ast.opcodes.NumExprOpcode;
-import scratch.ast.opcodes.StringExprOpcode;
 import utils.Preconditions;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static scratch.ast.Constants.FIELDS_KEY;
-import static scratch.ast.Constants.OPCODE_KEY;
 import static scratch.ast.opcodes.SpriteLookStmtOpcode.looks_nextcostume;
 
 public class ElementChoiceParser {
 
-    public static ElementChoice parse(JsonNode current, JsonNode allBlocks) {
+    public static ElementChoice parse(JsonNode current, JsonNode allBlocks) throws ParsingException {
         Preconditions.checkNotNull(current);
         Preconditions.checkNotNull(allBlocks);
 
@@ -54,35 +48,19 @@ public class ElementChoiceParser {
         List<JsonNode> inputsList = new ArrayList<>();
         current.get(Constants.INPUTS_KEY).elements().forEachRemaining(inputsList::add);
 
-        String blockMenuID = inputsList.get(0).get(Constants.POS_INPUT_VALUE).asText();
-        JsonNode menu = allBlocks.get(blockMenuID);
+        final JsonNode inputsNode = inputsList.get(0);
 
-        if (!menu.has(OPCODE_KEY)) {
-            // Variable or List?
-            throw new RuntimeException("Not implemented yet");
-        } else if (NumExprOpcode.contains(menu.get(OPCODE_KEY).asText()) ||
-            BoolExprOpcode.contains(menu.get(OPCODE_KEY).asText())) {
-
-            NumExpr numExpr;
-            try {
-                numExpr = NumExprParser.parseNumExpr(current, 0, allBlocks);
-            } catch (ParsingException e) {
-                numExpr = new UnspecifiedNumExpr();
-
-            }
-            return new WithNumber(numExpr);
-        } else if (StringExprOpcode.contains(menu.get(OPCODE_KEY).asText())) {
-            //Todo check if this case also covers variables
-            StringExpr strExpr;
-            try {
-                strExpr = StringExprParser.parseStringExpr(current, 0, allBlocks);
-            } catch (ParsingException e) {
-                strExpr = new UnspecifiedStringExpr();
-
-            }
-            return new WithId(strExpr);
+        if (getShadowIndicator((ArrayNode) inputsNode) == 1) {
+            return getElementChoiceFromMenu(allBlocks, inputsNode);
+        } else {
+            final StringExpr stringExpr = StringExprParser.parseStringExpr(current, 0, allBlocks);
+            return new WithId(stringExpr);
         }
+    }
 
+    private static ElementChoice getElementChoiceFromMenu(JsonNode allBlocks, JsonNode inputsNode) {
+        String blockMenuID = inputsNode.get(Constants.POS_INPUT_VALUE).asText();
+        JsonNode menu = allBlocks.get(blockMenuID);
 
         List<JsonNode> fieldsList = new ArrayList<>();
         menu.get(FIELDS_KEY).elements().forEachRemaining(fieldsList::add);
@@ -104,6 +82,10 @@ public class ElementChoiceParser {
             default:
                 throw new RuntimeException("No implementation for " + standardElemChoice);
         }
+    }
+
+    static int getShadowIndicator(ArrayNode exprArray) {
+        return exprArray.get(Constants.POS_INPUT_SHADOW).asInt();
     }
 
     private enum StandardElemChoice {

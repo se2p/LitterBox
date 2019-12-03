@@ -18,6 +18,11 @@
  */
 package scratch.ast.parser;
 
+import static scratch.ast.Constants.INPUTS_KEY;
+import static scratch.ast.Constants.POS_BLOCK_ID;
+import static scratch.ast.Constants.POS_DATA_ARRAY;
+import static scratch.ast.Constants.POS_INPUT_ID;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.TextNode;
@@ -28,9 +33,8 @@ import scratch.ast.model.variable.StrId;
 import scratch.ast.model.variable.Variable;
 import scratch.ast.parser.symboltable.ExpressionListInfo;
 
-import static scratch.ast.Constants.*;
-
 public class ListExprParser {
+
     public static ListExpr parseListExpr(JsonNode block, String inputName, JsonNode blocks) throws ParsingException {
         ArrayNode exprArray = ExpressionParser.getExprArrayByName(block.get(INPUTS_KEY), inputName);
 
@@ -48,6 +52,8 @@ public class ListExprParser {
     }
 
     public static ListExpr parseListExpr(JsonNode block, int pos, JsonNode blocks) throws ParsingException {
+        //In Scratch itself we can probably never get here because Lists in Scratch are always used as variables
+        //and such in every case get parsed as StringExpr first.
         ArrayNode exprArray = ExpressionParser.getExprArrayAtPos(block.get(INPUTS_KEY), pos);
 
         if (ExpressionParser.getShadowIndicator(exprArray) == 1 || exprArray.get(POS_BLOCK_ID) instanceof TextNode) {

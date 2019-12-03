@@ -60,22 +60,25 @@ public class DeclarationStmtParser {
             ArrayNode arrNode = (ArrayNode) currentEntry.getValue();
             if (arrNode.get(DECLARATION_VARIABLE_VALUE_POS).isNumber()) {
                 ProgramParser.symbolTable.addVariable(currentEntry.getKey(),
-                    arrNode.get(DECLARATION_VARIABLE_NAME_POS).textValue(),
-                    new NumberType(), isStage, actorName);
+                        VARIABLE_ABBREVIATION + arrNode.get(DECLARATION_VARIABLE_NAME_POS).textValue(),
+                        new NumberType(), isStage, actorName);
                 parsedVariables.add(new DeclarationIdentAsTypeStmt(
-                    new StrId(arrNode.get(DECLARATION_VARIABLE_NAME_POS).textValue()), new NumberType()));
+                        new StrId(VARIABLE_ABBREVIATION + arrNode.get(DECLARATION_VARIABLE_NAME_POS).textValue()),
+                        new NumberType()));
             } else if (arrNode.get(DECLARATION_VARIABLE_VALUE_POS).isBoolean()) {
                 ProgramParser.symbolTable.addVariable(currentEntry.getKey(),
-                    arrNode.get(DECLARATION_VARIABLE_NAME_POS).textValue(),
-                    new BooleanType(), isStage, actorName);
+                        VARIABLE_ABBREVIATION + arrNode.get(DECLARATION_VARIABLE_NAME_POS).textValue(),
+                        new BooleanType(), isStage, actorName);
                 parsedVariables.add(new DeclarationIdentAsTypeStmt(
-                    new StrId(arrNode.get(DECLARATION_VARIABLE_NAME_POS).textValue()), new BooleanType()));
+                        new StrId(VARIABLE_ABBREVIATION + arrNode.get(DECLARATION_VARIABLE_NAME_POS).textValue()),
+                        new BooleanType()));
             } else {
                 ProgramParser.symbolTable.addVariable(currentEntry.getKey(),
-                    arrNode.get(DECLARATION_VARIABLE_NAME_POS).textValue(),
-                    new StringType(), isStage, actorName);
+                        VARIABLE_ABBREVIATION + arrNode.get(DECLARATION_VARIABLE_NAME_POS).textValue(),
+                        new StringType(), isStage, actorName);
                 parsedVariables.add(new DeclarationIdentAsTypeStmt(
-                    new StrId(arrNode.get(DECLARATION_VARIABLE_NAME_POS).textValue()), new StringType()));
+                        new StrId(VARIABLE_ABBREVIATION + arrNode.get(DECLARATION_VARIABLE_NAME_POS).textValue()),
+                        new StringType()));
             }
         }
         return parsedVariables;
@@ -92,16 +95,16 @@ public class DeclarationStmtParser {
 
             if (arrNode.get(DECLARATION_VARIABLE_VALUE_POS).isNumber()) {
                 parsedVariables.add(new SetVariableTo(new Qualified(new StrId(actorName),
-                    new StrId(arrNode.get(DECLARATION_VARIABLE_NAME_POS).textValue())),
-                    new NumberLiteral((float) arrNode.get(DECLARATION_VARIABLE_VALUE_POS).asDouble())));
+                        new StrId(VARIABLE_ABBREVIATION + arrNode.get(DECLARATION_VARIABLE_NAME_POS).textValue())),
+                        new NumberLiteral((float) arrNode.get(DECLARATION_VARIABLE_VALUE_POS).asDouble())));
             } else if (arrNode.get(DECLARATION_VARIABLE_VALUE_POS).isBoolean()) {
                 parsedVariables.add(new SetVariableTo(new Qualified(new StrId(actorName),
-                    new StrId(arrNode.get(DECLARATION_VARIABLE_NAME_POS).textValue())),
-                    new BoolLiteral(arrNode.get(DECLARATION_VARIABLE_VALUE_POS).asBoolean())));
+                        new StrId(VARIABLE_ABBREVIATION + arrNode.get(DECLARATION_VARIABLE_NAME_POS).textValue())),
+                        new BoolLiteral(arrNode.get(DECLARATION_VARIABLE_VALUE_POS).asBoolean())));
             } else {
                 parsedVariables.add(new SetVariableTo(new Qualified(new StrId(actorName),
-                    new StrId(arrNode.get(DECLARATION_VARIABLE_NAME_POS).textValue())),
-                    new StringLiteral(arrNode.get(DECLARATION_VARIABLE_VALUE_POS).textValue())));
+                        new StrId(VARIABLE_ABBREVIATION + arrNode.get(DECLARATION_VARIABLE_NAME_POS).textValue())),
+                        new StringLiteral(arrNode.get(DECLARATION_VARIABLE_VALUE_POS).textValue())));
             }
         }
         return parsedVariables;
@@ -115,12 +118,12 @@ public class DeclarationStmtParser {
             Map.Entry<String, JsonNode> currentEntry = iter.next();
             Preconditions.checkArgument(currentEntry.getValue().isArray());
             ArrayNode arrNode = (ArrayNode) currentEntry.getValue();
-            String listName = arrNode.get(DECLARATION_LIST_NAME_POS).textValue();
+            String listName = LIST_ABBREVIATION + arrNode.get(DECLARATION_LIST_NAME_POS).textValue();
             JsonNode listValues = arrNode.get(DECLARATION_LIST_VALUES_POS);
             Preconditions.checkArgument(listValues.isArray());
             ExpressionList expressionList = new ExpressionList(makeExpressionListPlain((ArrayNode) listValues));
             ProgramParser.symbolTable.addExpressionListInfo(currentEntry.getKey(), listName, expressionList, isStage,
-                actorName);
+                    actorName);
             parsedLists.add(new DeclarationIdentAsTypeStmt(new StrId(listName), new ListType()));
         }
         return parsedLists;
@@ -143,26 +146,27 @@ public class DeclarationStmtParser {
             Map.Entry<String, JsonNode> currentEntry = iter.next();
             Preconditions.checkArgument(currentEntry.getValue().isArray());
             ArrayNode arrNode = (ArrayNode) currentEntry.getValue();
-            String listName = arrNode.get(DECLARATION_LIST_NAME_POS).textValue();
+            String listName = LIST_ABBREVIATION + arrNode.get(DECLARATION_LIST_NAME_POS).textValue();
             JsonNode listValues = arrNode.get(DECLARATION_LIST_VALUES_POS);
             Preconditions.checkArgument(listValues.isArray());
             parsedLists.add(new SetVariableTo(new Qualified(new StrId(actorName), new StrId(listName)),
-                makeExpressionListPlain((ArrayNode) listValues)));
+                    makeExpressionListPlain((ArrayNode) listValues)));
         }
         return parsedLists;
     }
 
     public static List<DeclarationStmt> parseBroadcasts(JsonNode broadcastsNode, String actorName,
-        boolean isStage) {
+                                                        boolean isStage) {
         Preconditions.checkNotNull(broadcastsNode);
         List<DeclarationStmt> parsedBroadcasts = new ArrayList<>();
         Iterator<Map.Entry<String, JsonNode>> iter = broadcastsNode.fields();
         while (iter.hasNext()) {
             Map.Entry<String, JsonNode> current = iter.next();
             ProgramParser.symbolTable.addMessage(current.getValue().textValue(),
-                new Message(new StringLiteral(current.getValue().textValue())), isStage, actorName);
+                    new Message(new StringLiteral(current.getValue().textValue())), isStage,
+                    actorName);
             parsedBroadcasts.add(new DeclarationIdentAsTypeStmt(new StrId(current.getValue().textValue()),
-                new StringType()));
+                    new StringType()));
         }
         return parsedBroadcasts;
     }

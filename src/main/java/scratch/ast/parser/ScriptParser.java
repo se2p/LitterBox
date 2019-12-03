@@ -27,6 +27,7 @@ import scratch.ast.model.event.Event;
 import scratch.ast.model.event.Never;
 import scratch.ast.model.statement.Stmt;
 import scratch.ast.model.statement.spritelook.ListOfStmt;
+import scratch.ast.opcodes.DependentBlockOpcodes;
 import scratch.ast.opcodes.EventOpcode;
 import scratch.ast.opcodes.ProcedureOpcode;
 import scratch.ast.parser.stmt.StmtParser;
@@ -82,7 +83,7 @@ public class ScriptParser {
 
         while (current != null && !current.isNull()) {
             try {
-                if (ProcedureOpcode.contains(blocks.get(blockID).get(OPCODE_KEY).asText())) {
+                if (ProcedureOpcode.contains(blocks.get(blockID).get(OPCODE_KEY).asText()) || DependentBlockOpcodes.contains(blocks.get(blockID).get(OPCODE_KEY).textValue())) {
                     //Ignore ProcedureOpcodes
                     blockID = current.get(NEXT_KEY).asText();
                     current = blocks.get(blockID);

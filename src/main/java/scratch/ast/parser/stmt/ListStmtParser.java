@@ -23,7 +23,12 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import scratch.ast.ParsingException;
 import scratch.ast.model.expression.num.NumExpr;
 import scratch.ast.model.expression.string.StringExpr;
-import scratch.ast.model.statement.list.*;
+import scratch.ast.model.statement.list.AddTo;
+import scratch.ast.model.statement.list.DeleteAllOf;
+import scratch.ast.model.statement.list.DeleteOf;
+import scratch.ast.model.statement.list.InsertAt;
+import scratch.ast.model.statement.list.ListStmt;
+import scratch.ast.model.statement.list.ReplaceItem;
 import scratch.ast.model.variable.Qualified;
 import scratch.ast.model.variable.StrId;
 import scratch.ast.opcodes.ListStmtOpcode;
@@ -75,12 +80,9 @@ public class ListStmtParser {
         StringExpr expr = StringExprParser.parseStringExpr(current, 0, allBlocks);
 
         ExpressionListInfo info = getListInfo(current);
-        if (info.isGlobal()) {
-            return new AddTo(expr, new StrId(info.getVariableName()));
-        } else {
-            return new AddTo(expr, new Qualified(new StrId(info.getActor()),
-                new StrId(info.getVariableName())));
-        }
+
+        return new AddTo(expr, new Qualified(new StrId(info.getActor()),
+            new StrId(info.getVariableName())));
     }
 
     private static ExpressionListInfo getListInfo(JsonNode current) {
@@ -89,7 +91,7 @@ public class ListStmtParser {
         ArrayNode listArray = (ArrayNode) listNode;
         String identifier = listArray.get(LIST_IDENTIFIER_POS).textValue();
         ExpressionListInfo info = ProgramParser.symbolTable.getLists().get(identifier);
-        Preconditions.checkArgument(info.getVariableName().equals(listArray.get(LIST_NAME_POS).textValue()));
+        Preconditions.checkArgument(info.getVariableName().equals(LIST_ABBREVIATION+listArray.get(LIST_NAME_POS).textValue()));
         return info;
     }
 
@@ -97,25 +99,18 @@ public class ListStmtParser {
         Preconditions.checkNotNull(current);
         Preconditions.checkNotNull(allBlocks);
         NumExpr expr = NumExprParser.parseNumExpr(current, 0, allBlocks);
+
         ExpressionListInfo info = getListInfo(current);
-        if (info.isGlobal()) {
-            return new DeleteOf(expr, new StrId(info.getVariableName()));
-        } else {
-            return new DeleteOf(expr, new Qualified(new StrId(info.getActor()),
-                new StrId(info.getVariableName())));
-        }
+        return new DeleteOf(expr, new Qualified(new StrId(info.getActor()),
+            new StrId(info.getVariableName())));
     }
 
     private static ListStmt parseDeleteAllOfList(JsonNode current) {
         Preconditions.checkNotNull(current);
 
         ExpressionListInfo info = getListInfo(current);
-        if (info.isGlobal()) {
-            return new DeleteAllOf(new StrId(info.getVariableName()));
-        } else {
-            return new DeleteAllOf(new Qualified(new StrId(info.getActor()),
-                new StrId(info.getVariableName())));
-        }
+        return new DeleteAllOf(new Qualified(new StrId(info.getActor()),
+            new StrId(info.getVariableName())));
     }
 
     private static ListStmt parseInsertAtList(JsonNode current, JsonNode allBlocks) throws ParsingException {
@@ -123,13 +118,10 @@ public class ListStmtParser {
         Preconditions.checkNotNull(allBlocks);
         StringExpr stringExpr = StringExprParser.parseStringExpr(current, 0, allBlocks);
         NumExpr numExpr = NumExprParser.parseNumExpr(current, 1, allBlocks);
+
         ExpressionListInfo info = getListInfo(current);
-        if (info.isGlobal()) {
-            return new InsertAt(stringExpr, numExpr, new StrId(info.getVariableName()));
-        } else {
-            return new InsertAt(stringExpr, numExpr, new Qualified(new StrId(info.getActor()),
-                new StrId(info.getVariableName())));
-        }
+        return new InsertAt(stringExpr, numExpr, new Qualified(new StrId(info.getActor()),
+            new StrId(info.getVariableName())));
     }
 
     private static ListStmt parseReplaceItemOfList(JsonNode current, JsonNode allBlocks) throws ParsingException {
@@ -139,11 +131,7 @@ public class ListStmtParser {
         NumExpr numExpr = NumExprParser.parseNumExpr(current, 0, allBlocks);
 
         ExpressionListInfo info = getListInfo(current);
-        if (info.isGlobal()) {
-            return new ReplaceItem(stringExpr, numExpr, new StrId(info.getVariableName()));
-        } else {
-            return new ReplaceItem(stringExpr, numExpr, new Qualified(new StrId(info.getActor()),
-                new StrId(info.getVariableName())));
-        }
+        return new ReplaceItem(stringExpr, numExpr, new Qualified(new StrId(info.getActor()),
+            new StrId(info.getVariableName())));
     }
 }

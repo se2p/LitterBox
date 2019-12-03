@@ -18,16 +18,7 @@
  */
 package scratch.ast.parser;
 
-import static scratch.ast.Constants.FIELDS_KEY;
-import static scratch.ast.Constants.FIELD_VALUE;
-import static scratch.ast.Constants.INPUTS_KEY;
-import static scratch.ast.Constants.LIST_NAME_POS;
-import static scratch.ast.Constants.OPCODE_KEY;
-import static scratch.ast.Constants.OPERATOR_KEY;
-import static scratch.ast.Constants.POS_BLOCK_ID;
-import static scratch.ast.Constants.POS_DATA_ARRAY;
-import static scratch.ast.Constants.POS_INPUT_ID;
-import static scratch.ast.Constants.POS_INPUT_VALUE;
+import static scratch.ast.Constants.*;
 import static scratch.ast.parser.ExpressionParser.getDataArrayAtPos;
 import static scratch.ast.parser.ExpressionParser.getExprArrayAtPos;
 import static scratch.ast.parser.ExpressionParser.getExprArrayByName;
@@ -37,8 +28,10 @@ import static scratch.ast.parser.ExpressionParser.parseExpression;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.TextNode;
+
 import java.lang.reflect.InvocationTargetException;
 import java.util.Optional;
+
 import scratch.ast.ParsingException;
 import scratch.ast.model.expression.Expression;
 import scratch.ast.model.expression.bool.BoolExpr;
@@ -67,11 +60,15 @@ import scratch.ast.model.expression.num.UnspecifiedNumExpr;
 import scratch.ast.model.expression.string.StringExpr;
 import scratch.ast.model.literals.NumberLiteral;
 import scratch.ast.model.position.Position;
+import scratch.ast.model.procedure.Parameter;
 import scratch.ast.model.timecomp.TimeComp;
+import scratch.ast.model.type.BooleanType;
+import scratch.ast.model.type.StringType;
 import scratch.ast.model.variable.Qualified;
 import scratch.ast.model.variable.StrId;
 import scratch.ast.model.variable.Variable;
 import scratch.ast.opcodes.NumExprOpcode;
+import scratch.ast.opcodes.ProcedureOpcode;
 import scratch.ast.parser.symboltable.ExpressionListInfo;
 import scratch.ast.parser.symboltable.VariableInfo;
 import utils.Preconditions;
@@ -79,7 +76,7 @@ import utils.Preconditions;
 public class NumExprParser {
 
     public static NumExpr parseNumExpr(JsonNode block, String inputName, JsonNode blocks)
-        throws ParsingException { // we ignored "(" NumExpr ")"
+            throws ParsingException { // we ignored "(" NumExpr ")"
         ArrayNode exprArray = getExprArrayByName(block.get(INPUTS_KEY), inputName);
         if (getShadowIndicator(exprArray) == 1) { // TODO replace magic num
             try {
@@ -109,7 +106,7 @@ public class NumExprParser {
      * @return The NumExpr at the position of the block.
      */
     public static NumExpr parseNumExpr(JsonNode block, int pos, JsonNode blocks)
-        throws ParsingException { // we ignored "(" NumExpr ")"
+            throws ParsingException { // we ignored "(" NumExpr ")"
         ArrayNode exprArray = getExprArrayAtPos(block.get(INPUTS_KEY), pos);
         if (getShadowIndicator(exprArray) == 1) { // TODO replace magic num
             try {
@@ -133,14 +130,16 @@ public class NumExprParser {
     private static NumExpr parseTextNode(JsonNode blocks, ArrayNode exprArray) throws ParsingException {
         String identifier = exprArray.get(POS_BLOCK_ID).asText();
         String opcode = blocks.get(identifier).get(OPCODE_KEY).asText();
-
+        if (opcode.equals(ProcedureOpcode.argument_reporter_string_number.name()) || opcode.equals(ProcedureOpcode.argument_reporter_boolean.name())) {
+            return parseParameter(blocks, exprArray);
+        }
         final Optional<NumExpr> optExpr = maybeParseBlockNumExpr(blocks.get(identifier), blocks);
         if (optExpr.isPresent()) {
             return optExpr.get();
         }
 
         final Optional<StringExpr> stringExpr = StringExprParser
-            .maybeParseBlockStringExpr(blocks.get(identifier), blocks);
+                .maybeParseBlockStringExpr(blocks.get(identifier), blocks);
         if (stringExpr.isPresent()) {
             return new AsNumber(stringExpr.get());
         }
@@ -151,7 +150,13 @@ public class NumExprParser {
         }
 
         throw new ParsingException(
-            "Could not parse NumExpr for block with id " + identifier + " and opcode " + opcode);
+                "Could not parse NumExpr for block with id " + identifier + " and opcode " + opcode);
+    }
+
+    private static NumExpr parseParameter(JsonNode blocks, ArrayNode exprArray) {
+        JsonNode paramBlock = blocks.get(exprArray.get(POS_BLOCK_ID).textValue());
+        String name = paramBlock.get(FIELDS_KEY).get(VALUE_KEY).get(VARIABLE_NAME_POS).textValue();
+        return new StrId(PARAMETER_ABBREVIATION + name);
     }
 
 
@@ -161,12 +166,12 @@ public class NumExprParser {
             VariableInfo variableInfo = ProgramParser.symbolTable.getVariables().get(idString);
 
             return new Qualified(new StrId(variableInfo.getActor()),
-                new StrId((variableInfo.getVariableName())));
+                    new StrId((variableInfo.getVariableName())));
 
         } else if (ProgramParser.symbolTable.getLists().containsKey(idString)) {
             ExpressionListInfo variableInfo = ProgramParser.symbolTable.getLists().get(idString);
             return new Qualified(new StrId(variableInfo.getActor()),
-                new StrId((variableInfo.getVariableName())));
+                    new StrId((variableInfo.getVariableName())));
         }
         return null;
     }
@@ -205,7 +210,7 @@ public class NumExprParser {
     }
 
     static NumExpr parseBlockNumExpr(JsonNode expressionBlock, JsonNode blocks)
-        throws ParsingException {
+            throws ParsingException {
         String opcodeString = expressionBlock.get(OPCODE_KEY).asText();
         Preconditions.checkArgument(NumExprOpcode.contains(opcodeString), opcodeString + " is not a NumExprOpcode.");
         NumExprOpcode opcode = NumExprOpcode.valueOf(opcodeString);
@@ -227,7 +232,7 @@ public class NumExprParser {
                 return new LengthOfString(StringExprParser.parseStringExpr(expressionBlock, 0, blocks));
             case data_lengthoflist:
                 return new LengthOfVar(
-                    new StrId(expressionBlock.get(FIELDS_KEY).get(LIST_NAME_POS).textValue()));
+                        new StrId(expressionBlock.get(FIELDS_KEY).get(LIST_NAME_POS).textValue()));
             case sensing_current:
                 TimeComp timeComp = TimecompParser.parse(expressionBlock);
                 return new Current(timeComp);
@@ -271,8 +276,8 @@ public class NumExprParser {
      * @throws ParsingException If creating the new T instance goes wrong
      */
     private static <T extends NumExpr> NumExpr buildNumExprWithTwoNumExprInputs(Class<T> clazz,
-        JsonNode expressionBlock,
-        JsonNode blocks) throws ParsingException {
+                                                                                JsonNode expressionBlock,
+                                                                                JsonNode blocks) throws ParsingException {
         NumExpr first = parseNumExpr(expressionBlock, 0, blocks);
         NumExpr second = parseNumExpr(expressionBlock, 1, blocks);
         try {
@@ -283,7 +288,7 @@ public class NumExprParser {
     }
 
     static NumFunct parseNumFunct(JsonNode fields)
-        throws ParsingException { // TODO maybe add opcodes enum for NumFuncts
+            throws ParsingException { // TODO maybe add opcodes enum for NumFuncts
         ArrayNode operator = (ArrayNode) fields.get(OPERATOR_KEY);
         String operatorOpcode = operator.get(FIELD_VALUE).asText();
         return NumFunct.fromString(operatorOpcode);

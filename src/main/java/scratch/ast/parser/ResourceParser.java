@@ -21,6 +21,7 @@ package scratch.ast.parser;
 import com.fasterxml.jackson.databind.JsonNode;
 import scratch.ast.ParsingException;
 import scratch.ast.model.URI;
+import scratch.ast.model.literals.StringLiteral;
 import scratch.ast.model.resource.ImageResource;
 import scratch.ast.model.resource.Resource;
 import scratch.ast.model.resource.SoundResource;
@@ -45,7 +46,7 @@ public class ResourceParser {
         while (iter.hasNext()) {
             JsonNode node = iter.next();
             SoundResource res = new SoundResource(new StrId(node.get(NAME).textValue()),
-                new URI(node.get(MD5EXT).textValue()));
+                new URI(new StringLiteral(node.get(MD5EXT).textValue())));
             parsedRessources.add(res);
         }
         return parsedRessources;
@@ -73,12 +74,12 @@ public class ResourceParser {
 
     private static URI getURI(JsonNode node) throws ParsingException {
         if (node.has(MD5EXT)) {
-            return new URI(node.get(MD5EXT).textValue());
+            return new URI(new StringLiteral(node.get(MD5EXT).textValue()));
         } else if (node.has("assetId") && node.has("dataFormat")) {
             String assetId = node.get("assetId").asText();
             String dataFormat = node.get("dataFormat").asText();
             String fileName = assetId + "." + dataFormat;
-            return new URI(fileName);
+            return new URI(new StringLiteral(fileName));
         } else {
             throw new ParsingException("Cannot parse URI of resource node " + node.textValue());
         }

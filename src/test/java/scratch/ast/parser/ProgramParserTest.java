@@ -23,12 +23,15 @@ import static junit.framework.TestCase.fail;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.truth.Truth;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
+
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import scratch.ast.Constants;
 import scratch.ast.ParsingException;
 import scratch.ast.model.ActorDefinition;
 import scratch.ast.model.ActorDefinitionList;
@@ -118,22 +121,22 @@ public class ProgramParserTest {
             ActorDefinition stage = program.getActorDefinitionList().getDefintions().get(0);
             List<DeclarationStmt> decls = stage.getDecls().getDeclarationStmtList();
             Truth.assertThat(((DeclarationIdentAsTypeStmt) decls.get(0)).getIdent()
-                .getName()).isEqualTo("my variable");
+                    .getName()).isEqualTo(Constants.VARIABLE_ABBREVIATION + "my variable");
 
             SetVariableTo setStmt = (SetVariableTo) stage.getSetStmtList().getStmts().stream()
-                .filter(t -> t instanceof SetVariableTo)
-                .findFirst().get();
-            Truth.assertThat(((Qualified) setStmt.getVariable()).getSecond().getName()).isEqualTo("my variable");
+                    .filter(t -> t instanceof SetVariableTo)
+                    .findFirst().get();
+            Truth.assertThat(((Qualified) setStmt.getVariable()).getSecond().getName()).isEqualTo(Constants.VARIABLE_ABBREVIATION + "my variable");
             Truth.assertThat(((NumberLiteral) setStmt.getExpr()).getValue()).isEqualTo(0);
 
             ActorDefinition sprite = program.getActorDefinitionList().getDefintions().get(1);
             List<SetStmt> spriteSetStmts = sprite.getSetStmtList().getStmts().stream()
-                .filter(t -> t instanceof SetVariableTo).collect(
-                    Collectors.toList());
+                    .filter(t -> t instanceof SetVariableTo).collect(
+                            Collectors.toList());
 
             SetVariableTo setList = (SetVariableTo) spriteSetStmts.get(0);
             Qualified variable = (Qualified) setList.getVariable();
-            Truth.assertThat(variable.getSecond().getName()).isEqualTo("SpriteLocalList");
+            Truth.assertThat(variable.getSecond().getName()).isEqualTo(Constants.LIST_ABBREVIATION + "SpriteLocalList");
             ExpressionListPlain exprListPlain = (ExpressionListPlain) setList.getExpr();
             Truth.assertThat(((StringLiteral) exprListPlain.getExpressions().get(0)).getText()).isEqualTo("Elem1");
             Truth.assertThat(((StringLiteral) exprListPlain.getExpressions().get(1)).getText()).isEqualTo("Elem2");

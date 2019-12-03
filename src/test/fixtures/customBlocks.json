@@ -1,0 +1,362 @@
+{
+  "targets": [
+    {
+      "isStage": true,
+      "name": "Stage",
+      "variables": {
+        "`jEk@4|i[#Fk?(8x)AV.-my variable": [
+          "my variable",
+          0
+        ]
+      },
+      "lists": {},
+      "broadcasts": {},
+      "blocks": {},
+      "comments": {},
+      "currentCostume": 0,
+      "costumes": [
+        {
+          "assetId": "cd21514d0531fdffb22204e0ec5ed84a",
+          "name": "backdrop1",
+          "md5ext": "cd21514d0531fdffb22204e0ec5ed84a.svg",
+          "dataFormat": "svg",
+          "rotationCenterX": 240,
+          "rotationCenterY": 180
+        }
+      ],
+      "sounds": [
+        {
+          "assetId": "83a9787d4cb6f3b7632b4ddfebf74367",
+          "name": "pop",
+          "dataFormat": "wav",
+          "format": "",
+          "rate": 44100,
+          "sampleCount": 1032,
+          "md5ext": "83a9787d4cb6f3b7632b4ddfebf74367.wav"
+        }
+      ],
+      "volume": 100,
+      "layerOrder": 0,
+      "tempo": 60,
+      "videoTransparency": 50,
+      "videoState": "on",
+      "textToSpeechLanguage": null
+    },
+    {
+      "isStage": false,
+      "name": "Sprite1",
+      "variables": {},
+      "lists": {},
+      "broadcasts": {},
+      "blocks": {
+        "V-ChQTp}ZbGaPT;Mu5ok": {
+          "opcode": "procedures_definition",
+          "next": "jEAhHM;$Ei_[JQ86T3/#",
+          "parent": null,
+          "inputs": {
+            "custom_block": [
+              1,
+              "u/rEUETVx:$D]kl-_^wL"
+            ]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": true,
+          "x": 92,
+          "y": 140
+        },
+        "u/rEUETVx:$D]kl-_^wL": {
+          "opcode": "procedures_prototype",
+          "next": null,
+          "parent": "V-ChQTp}ZbGaPT;Mu5ok",
+          "inputs": {},
+          "fields": {},
+          "shadow": true,
+          "topLevel": false,
+          "mutation": {
+            "tagName": "mutation",
+            "children": [],
+            "proccode": "BlockNoInputs",
+            "argumentids": "[]",
+            "argumentnames": "[]",
+            "argumentdefaults": "[\"\"]",
+            "warp": "false"
+          }
+        },
+        "jEAhHM;$Ei_[JQ86T3/#": {
+          "opcode": "looks_say",
+          "next": "_Vi+t,pQ1J:;J`dxJ]_L",
+          "parent": "V-ChQTp}ZbGaPT;Mu5ok",
+          "inputs": {
+            "MESSAGE": [
+              1,
+              [
+                10,
+                "Hello!"
+              ]
+            ]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "_Vi+t,pQ1J:;J`dxJ]_L": {
+          "opcode": "motion_movesteps",
+          "next": "?d5cP=,oHv7f[c|~uL1m",
+          "parent": "jEAhHM;$Ei_[JQ86T3/#",
+          "inputs": {
+            "STEPS": [
+              1,
+              [
+                4,
+                "10"
+              ]
+            ]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "?d5cP=,oHv7f[c|~uL1m": {
+          "opcode": "control_stop",
+          "next": null,
+          "parent": "_Vi+t,pQ1J:;J`dxJ]_L",
+          "inputs": {},
+          "fields": {
+            "STOP_OPTION": [
+              "this script",
+              null
+            ]
+          },
+          "shadow": false,
+          "topLevel": false,
+          "mutation": {
+            "tagName": "mutation",
+            "children": [],
+            "hasnext": "false"
+          }
+        },
+        "XG_.y;:jMbcqxNV0.$C`": {
+          "opcode": "procedures_definition",
+          "next": "kp4:P2|.X_ere.]ycVI2",
+          "parent": null,
+          "inputs": {
+            "custom_block": [
+              1,
+              "GSTt~SHYH9;0Hi@Z_oGB"
+            ]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": true,
+          "x": 561,
+          "y": 124
+        },
+        "GSTt~SHYH9;0Hi@Z_oGB": {
+          "opcode": "procedures_prototype",
+          "next": null,
+          "parent": "XG_.y;:jMbcqxNV0.$C`",
+          "inputs": {
+            "]jf163y5MP?gD_d:|Z=n": [
+              1,
+              "ey_^N;KlS$uZPS)@;[rn"
+            ],
+            "EBep=2e)XEu;$rln-z7c": [
+              1,
+              ".PwAnO)3Vr,jf3eM{hTl"
+            ]
+          },
+          "fields": {},
+          "shadow": true,
+          "topLevel": false,
+          "mutation": {
+            "tagName": "mutation",
+            "children": [],
+            "proccode": "BlockWithInputs %s %b",
+            "argumentids": "[\"]jf163y5MP?gD_d:|Z=n\",\"EBep=2e)XEu;$rln-z7c\"]",
+            "argumentnames": "[\"NumInput\",\"Boolean\"]",
+            "argumentdefaults": "[\"\",\"false\"]",
+            "warp": "false"
+          }
+        },
+        "ey_^N;KlS$uZPS)@;[rn": {
+          "opcode": "argument_reporter_string_number",
+          "next": null,
+          "parent": "GSTt~SHYH9;0Hi@Z_oGB",
+          "inputs": {},
+          "fields": {
+            "VALUE": [
+              "NumInput",
+              null
+            ]
+          },
+          "shadow": true,
+          "topLevel": false
+        },
+        ".PwAnO)3Vr,jf3eM{hTl": {
+          "opcode": "argument_reporter_boolean",
+          "next": null,
+          "parent": "GSTt~SHYH9;0Hi@Z_oGB",
+          "inputs": {},
+          "fields": {
+            "VALUE": [
+              "Boolean",
+              null
+            ]
+          },
+          "shadow": true,
+          "topLevel": false
+        },
+        "kp4:P2|.X_ere.]ycVI2": {
+          "opcode": "motion_movesteps",
+          "next": "izo8kxW4w,ym}kLX{NsW",
+          "parent": "XG_.y;:jMbcqxNV0.$C`",
+          "inputs": {
+            "STEPS": [
+              3,
+              "]R+B)335d7)L#6!VzO)}",
+              [
+                4,
+                "10"
+              ]
+            ]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "]R+B)335d7)L#6!VzO)}": {
+          "opcode": "argument_reporter_string_number",
+          "next": null,
+          "parent": "kp4:P2|.X_ere.]ycVI2",
+          "inputs": {},
+          "fields": {
+            "VALUE": [
+              "NumInput",
+              null
+            ]
+          },
+          "shadow": false,
+          "topLevel": false
+        },
+        "izo8kxW4w,ym}kLX{NsW": {
+          "opcode": "control_if",
+          "next": "cpYw_HqE]Asyyg-Xl]Lz",
+          "parent": "kp4:P2|.X_ere.]ycVI2",
+          "inputs": {
+            "CONDITION": [
+              2,
+              "py;{Pdd|g3]aIX4Ig_(3"
+            ],
+            "SUBSTACK": [
+              2,
+              "9TJg#jfedT(1;b%v1!jV"
+            ]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "py;{Pdd|g3]aIX4Ig_(3": {
+          "opcode": "argument_reporter_boolean",
+          "next": null,
+          "parent": "izo8kxW4w,ym}kLX{NsW",
+          "inputs": {},
+          "fields": {
+            "VALUE": [
+              "Boolean",
+              null
+            ]
+          },
+          "shadow": false,
+          "topLevel": false
+        },
+        "9TJg#jfedT(1;b%v1!jV": {
+          "opcode": "motion_movesteps",
+          "next": null,
+          "parent": "izo8kxW4w,ym}kLX{NsW",
+          "inputs": {
+            "STEPS": [
+              1,
+              [
+                4,
+                "10"
+              ]
+            ]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "cpYw_HqE]Asyyg-Xl]Lz": {
+          "opcode": "control_stop",
+          "next": null,
+          "parent": "izo8kxW4w,ym}kLX{NsW",
+          "inputs": {},
+          "fields": {
+            "STOP_OPTION": [
+              "this script",
+              null
+            ]
+          },
+          "shadow": false,
+          "topLevel": false,
+          "mutation": {
+            "tagName": "mutation",
+            "children": [],
+            "hasnext": "false"
+          }
+        }
+      },
+      "comments": {},
+      "currentCostume": 0,
+      "costumes": [
+        {
+          "assetId": "b7853f557e4426412e64bb3da6531a99",
+          "name": "costume1",
+          "bitmapResolution": 1,
+          "md5ext": "b7853f557e4426412e64bb3da6531a99.svg",
+          "dataFormat": "svg",
+          "rotationCenterX": 48,
+          "rotationCenterY": 50
+        },
+        {
+          "assetId": "e6ddc55a6ddd9cc9d84fe0b4c21e016f",
+          "name": "costume2",
+          "bitmapResolution": 1,
+          "md5ext": "e6ddc55a6ddd9cc9d84fe0b4c21e016f.svg",
+          "dataFormat": "svg",
+          "rotationCenterX": 46,
+          "rotationCenterY": 53
+        }
+      ],
+      "sounds": [
+        {
+          "assetId": "83c36d806dc92327b9e7049a565c6bff",
+          "name": "Meow",
+          "dataFormat": "wav",
+          "format": "",
+          "rate": 44100,
+          "sampleCount": 37376,
+          "md5ext": "83c36d806dc92327b9e7049a565c6bff.wav"
+        }
+      ],
+      "volume": 100,
+      "layerOrder": 1,
+      "visible": true,
+      "x": 0,
+      "y": 0,
+      "size": 100,
+      "direction": 90,
+      "draggable": false,
+      "rotationStyle": "all around"
+    }
+  ],
+  "monitors": [],
+  "extensions": [],
+  "meta": {
+    "semver": "3.0.0",
+    "vm": "0.2.0-prerelease.20191119203901",
+    "agent": "Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101 Firefox/68.0"
+  }
+}

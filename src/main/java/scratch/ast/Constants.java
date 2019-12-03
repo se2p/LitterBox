@@ -180,4 +180,7 @@ public class Constants {
     public static final String PEN_SIZE_KEY = "pen_size";
     public static final String COLOR_PARAM_BIG_KEY = "COLOR_PARAM";
     public static final String COLOR_PARAM_LITTLE_KEY = "colorParam";
+    public static final String VARIABLE_ABBREVIATION = "V";
+    public static final String LIST_ABBREVIATION = "L";
+    public static final String PARAMETER_ABBREVIATION = "P";
 }

@@ -23,11 +23,14 @@ import static junit.framework.TestCase.fail;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.truth.Truth;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import scratch.ast.Constants;
 import scratch.ast.ParsingException;
 import scratch.ast.model.ActorDefinition;
 import scratch.ast.model.ActorDefinitionList;
@@ -112,7 +115,7 @@ public class ActorLookStmtParserTest {
             Stmt askAndWaitStmt = listOfStmt.get(0);
             Truth.assertThat(askAndWaitStmt.getClass()).isEqualTo(AskAndWait.class);
             Truth.assertThat(((StringLiteral) ((AskAndWait) askAndWaitStmt).getQuestion()).getText())
-                .isEqualTo("What's your name?");
+                    .isEqualTo("What's your name?");
 
         } catch (ParsingException e) {
             e.printStackTrace();
@@ -133,9 +136,9 @@ public class ActorLookStmtParserTest {
             Stmt switchBackropStmt = listOfStmt.get(1);
             Truth.assertThat(switchBackropStmt.getClass()).isEqualTo(SwitchBackdrop.class);
             Truth.assertThat(
-                ((StrId) ((WithId) ((SwitchBackdrop) switchBackropStmt).getElementChoice()).getStringExpr()).getName())
-                .isEqualTo(
-                    "Baseball 1");
+                    ((StrId) ((WithId) ((SwitchBackdrop) switchBackropStmt).getElementChoice()).getStringExpr()).getName())
+                    .isEqualTo(
+                            "Baseball 1");
 
         } catch (ParsingException e) {
             e.printStackTrace();
@@ -156,15 +159,15 @@ public class ActorLookStmtParserTest {
             Stmt showVariable = listOfStmt.get(2);
             Truth.assertThat(showVariable.getClass()).isEqualTo(ShowVariable.class);
             Truth.assertThat(((Qualified) ((ShowVariable) showVariable).getVariable()).getFirst().getName())
-                .isEqualTo("Stage");
+                    .isEqualTo("Stage");
             Truth.assertThat(((Qualified) ((ShowVariable) showVariable).getVariable()).getSecond().getName())
-                .isEqualTo("my variable");
+                    .isEqualTo(Constants.VARIABLE_ABBREVIATION + "my variable");
 
             Stmt hideVariable = listOfStmt.get(3);
             Truth.assertThat(((Qualified) ((HideVariable) hideVariable).getVariable()).getFirst().getName())
-                .isEqualTo("Stage");
+                    .isEqualTo("Stage");
             Truth.assertThat(((Qualified) ((HideVariable) hideVariable).getVariable()).getSecond().getName())
-                .isEqualTo("my variable");
+                    .isEqualTo(Constants.VARIABLE_ABBREVIATION + "my variable");
 
         } catch (ParsingException e) {
             e.printStackTrace();
@@ -185,15 +188,15 @@ public class ActorLookStmtParserTest {
             Stmt showVariable = listOfStmt.get(4);
             Truth.assertThat(showVariable.getClass()).isEqualTo(ShowVariable.class);
             Truth.assertThat(((Qualified) ((ShowVariable) showVariable).getVariable()).getFirst().getName())
-                .isEqualTo("Stage");
+                    .isEqualTo("Stage");
             Truth.assertThat(((Qualified) ((ShowVariable) showVariable).getVariable()).getSecond().getName())
-                .isEqualTo("List");
+                    .isEqualTo(Constants.LIST_ABBREVIATION + "List");
 
             Stmt hideVariable = listOfStmt.get(5);
             Truth.assertThat(((Qualified) ((HideVariable) hideVariable).getVariable()).getFirst().getName())
-                .isEqualTo("Stage");
+                    .isEqualTo("Stage");
             Truth.assertThat(((Qualified) ((HideVariable) hideVariable).getVariable()).getSecond().getName())
-                .isEqualTo("List");
+                    .isEqualTo(Constants.LIST_ABBREVIATION + "List");
 
         } catch (ParsingException e) {
             e.printStackTrace();
