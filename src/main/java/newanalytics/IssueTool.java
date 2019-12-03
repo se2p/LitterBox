@@ -18,7 +18,10 @@
  */
 package newanalytics;
 
+import newanalytics.bugpattern.EmptyScriptAndDeadCode;
+import newanalytics.bugpattern.MissingLoopSensing;
 import newanalytics.bugpattern.MissingPenUp;
+import newanalytics.bugpattern.MissingTermination;
 import newanalytics.ctscore.FlowControl;
 import newanalytics.smells.*;
 import org.apache.commons.csv.CSVPrinter;
@@ -41,6 +44,7 @@ public class IssueTool {
 
     public IssueTool() {
         finder.put(MissingPenUp.SHORT_NAME, new MissingPenUp());
+        finder.put(EmptyScriptAndDeadCode.SHORT_NAME, new EmptyScriptAndDeadCode());
 
 //        finder.put("cnt", new CountBlocks());
 //        finder.put("glblstrt", new GlobalStartingPoint());

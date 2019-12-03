@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-package newanalytics.smells;
+package newanalytics.bugpattern;
 
 import java.util.ArrayList;
 import java.util.List;
