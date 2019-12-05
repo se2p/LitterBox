@@ -99,7 +99,6 @@ public class SetStmtParser {
         String rota = current.get(FIELDS_KEY).get(STYLE_KEY).get(0).textValue();
         Preconditions.checkArgument(RotationStyle.contains(rota));
         return new SetAttributeTo(new StringLiteral(ROTATIONSTYLE_KEY), new StringLiteral(rota));
-
     }
 
     private static SetStmt parseSetDragmode(JsonNode current) {
@@ -113,7 +112,7 @@ public class SetStmtParser {
         Preconditions.checkArgument(ProgramParser.symbolTable.getVariables().containsKey(unique));
         VariableInfo info = ProgramParser.symbolTable.getVariables().get(unique);
         return new SetVariableTo(new Qualified(new StrId(info.getActor()),
-            new StrId((info.getVariableName()))), ExpressionParser.parseExpression(current,
+            new StrId((VARIABLE_ABBREVIATION+info.getVariableName()))), ExpressionParser.parseExpression(current,
             0, allBlocks));
     }
 }

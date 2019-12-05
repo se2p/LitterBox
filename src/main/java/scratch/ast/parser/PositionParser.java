@@ -19,9 +19,11 @@
 package scratch.ast.parser;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import scratch.ast.Constants;
 import scratch.ast.ParsingException;
 import scratch.ast.model.expression.num.NumExpr;
+import scratch.ast.model.expression.string.StringExpr;
 import scratch.ast.model.position.*;
 import scratch.ast.model.variable.StrId;
 import scratch.ast.opcodes.NumExprOpcode;
@@ -55,34 +57,53 @@ public class PositionParser {
 
         JsonNode menuID;
         String opcodeString = current.get(Constants.OPCODE_KEY).asText();
+        int positionInput = 0;
         if (SpriteMotionStmtOpcode.contains(opcodeString)) {
             SpriteMotionStmtOpcode opcode = valueOf(opcodeString);
 
             if (motion_goto.equals(opcode) || motion_pointtowards.equals(opcode)) {
-                menuID = inputs.get(0).get(Constants.POS_INPUT_VALUE);
+                positionInput = 0;
+                menuID = inputs.get(positionInput).get(Constants.POS_INPUT_VALUE);
             } else if (motion_glideto.equals(opcode)) {
-                menuID = inputs.get(1).get(Constants.POS_INPUT_VALUE);
+                positionInput = 1;
+                menuID = inputs.get(positionInput).get(Constants.POS_INPUT_VALUE);
             } else {
                 throw new ParsingException(
                     "Cannot parse relative coordinates for a block with opcode " + current.get(Constants.OPCODE_KEY));
             }
         } else if (NumExprOpcode.sensing_distanceto.toString().equals(opcodeString)) {
-            menuID = inputs.get(0).get(Constants.POS_INPUT_VALUE);
+            positionInput = 0;
+            menuID = inputs.get(positionInput).get(Constants.POS_INPUT_VALUE);
         } else {
             throw new ParsingException(
                 "Cannot parse relative coordinates for a block with opcode " + current.get(Constants.OPCODE_KEY));
         }
 
-        ArrayList<JsonNode> fields = new ArrayList();
-        allBlocks.get(menuID.asText()).get(Constants.FIELDS_KEY).elements().forEachRemaining(fields::add);
-        String posString = fields.get(Constants.FIELD_VALUE).get(0).asText();
+        if (getShadowIndicator((ArrayNode) inputs.get(positionInput)) == 1) {
+            ArrayList<JsonNode> fields = new ArrayList<>();
+            allBlocks.get(menuID.asText()).get(Constants.FIELDS_KEY).elements().forEachRemaining(fields::add);
+            String posString = fields.get(Constants.FIELD_VALUE).get(0).asText();
 
-        if (posString.equals("_mouse_")) {
-            return new MousePos();
-        } else if (posString.equals("_random_")) {
-            return new RandomPos();
+            if (posString.equals("_mouse_")) {
+                return new MousePos();
+            } else if (posString.equals("_random_")) {
+                return new RandomPos();
+            } else {
+                return new PivotOf(new StrId(posString));
+            }
         } else {
-            return new PivotOf(new StrId(posString));
+            String posName = "";
+            if (motion_goto.toString().equals(opcodeString) || motion_glideto.toString().equals(opcodeString)) {
+                posName = "TO";
+            } else if (motion_pointtowards.toString().equals(opcodeString)) {
+                posName = "TOWARDS";
+            } else if (NumExprOpcode.sensing_distanceto.toString().equals(opcodeString)) {
+                posName = "DISTANCETOMENU";
+            }
+
+
+            final StringExpr stringExpr = StringExprParser.parseStringExpr(current, posName, allBlocks);
+            return new PivotOf(stringExpr);
         }
     }
 
@@ -102,5 +123,10 @@ public class PositionParser {
         }
 
     }
+
+    static int getShadowIndicator(ArrayNode exprArray) {
+        return exprArray.get(Constants.POS_INPUT_SHADOW).asInt();
+    }
+
 
 }

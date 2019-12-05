@@ -18,19 +18,20 @@
  */
 package scratch.ast.model;
 
+import scratch.ast.model.expression.num.NumExpr;
 import scratch.ast.visitor.ScratchVisitor;
 import utils.Preconditions;
 
-public class Key extends AbstractNode implements ASTLeaf {
+public class Key extends AbstractNode {
 
-    private final String key;
+    private final NumExpr key;
 
-    public Key(String key) {
-        super();
+    public Key(NumExpr key) {
+        super(key);
         this.key = Preconditions.checkNotNull(key);
     }
 
-    public String getKey() {
+    public NumExpr getKey() {
         return key;
     }
 
@@ -39,9 +40,5 @@ public class Key extends AbstractNode implements ASTLeaf {
         visitor.visit(this);
     }
 
-    @Override
-    public String[] toSimpleStringArray() {
-        return new String[]{key};
-    }
 
 }

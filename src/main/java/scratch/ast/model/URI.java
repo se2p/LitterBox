@@ -18,19 +18,20 @@
  */
 package scratch.ast.model;
 
+import scratch.ast.model.literals.StringLiteral;
 import scratch.ast.visitor.ScratchVisitor;
 import utils.Preconditions;
 
-public class URI extends AbstractNode implements ASTLeaf {
+public class URI extends AbstractNode {
 
-    private final String uri;
+    private final StringLiteral uri;
 
-    public URI(String uri) {
-        super();
+    public URI(StringLiteral uri) {
+        super(uri);
         this.uri = Preconditions.checkNotNull(uri);
     }
 
-    public String getUri() {
+    public StringLiteral getUri() {
         return uri;
     }
 
@@ -39,9 +40,4 @@ public class URI extends AbstractNode implements ASTLeaf {
         visitor.visit(this);
     }
 
-    @Override
-    public String[] toSimpleStringArray() {
-        String[] returnString = {uri};
-        return returnString;
-    }
 }

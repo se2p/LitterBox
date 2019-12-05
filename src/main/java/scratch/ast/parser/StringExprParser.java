@@ -18,43 +18,36 @@
  */
 package scratch.ast.parser;
 
-import static scratch.ast.Constants.FIELDS_KEY;
-import static scratch.ast.Constants.FIELD_VALUE;
-import static scratch.ast.Constants.INPUTS_KEY;
-import static scratch.ast.Constants.OPCODE_KEY;
-import static scratch.ast.Constants.POS_BLOCK_ID;
-import static scratch.ast.Constants.POS_DATA_ARRAY;
-import static scratch.ast.Constants.POS_INPUT_ID;
-import static scratch.ast.Constants.POS_INPUT_VALUE;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.TextNode;
-import java.util.Optional;
 import scratch.ast.ParsingException;
 import scratch.ast.model.expression.bool.BoolExpr;
+import scratch.ast.model.expression.num.AsNumber;
 import scratch.ast.model.expression.num.NumExpr;
-import scratch.ast.model.expression.string.AsString;
-import scratch.ast.model.expression.string.AttributeOf;
-import scratch.ast.model.expression.string.ItemOfVariable;
-import scratch.ast.model.expression.string.Join;
-import scratch.ast.model.expression.string.LetterOf;
-import scratch.ast.model.expression.string.StringExpr;
-import scratch.ast.model.expression.string.Username;
+import scratch.ast.model.expression.string.*;
 import scratch.ast.model.literals.StringLiteral;
+import scratch.ast.model.procedure.Parameter;
+import scratch.ast.model.type.BooleanType;
+import scratch.ast.model.type.StringType;
 import scratch.ast.model.variable.Identifier;
 import scratch.ast.model.variable.Qualified;
 import scratch.ast.model.variable.StrId;
 import scratch.ast.model.variable.Variable;
+import scratch.ast.opcodes.ProcedureOpcode;
 import scratch.ast.opcodes.StringExprOpcode;
 import scratch.ast.parser.symboltable.ExpressionListInfo;
 import scratch.ast.parser.symboltable.VariableInfo;
 import utils.Preconditions;
 
+import java.util.Optional;
+
+import static scratch.ast.Constants.*;
+
 public class StringExprParser {
 
     public static StringExpr parseStringExpr(JsonNode block, String inputName, JsonNode blocks)
-        throws ParsingException {
+            throws ParsingException {
         ArrayNode exprArray = ExpressionParser.getExprArrayByName(block.get(INPUTS_KEY), inputName);
         if (ExpressionParser.getShadowIndicator(exprArray) == 1) {
             return parseStr(block.get(INPUTS_KEY), inputName);
@@ -93,12 +86,12 @@ public class StringExprParser {
             VariableInfo variableInfo = ProgramParser.symbolTable.getVariables().get(idString);
 
             return new Qualified(new StrId(variableInfo.getActor()),
-                new StrId((variableInfo.getVariableName())));
+                    new StrId((variableInfo.getVariableName())));
 
         } else if (ProgramParser.symbolTable.getLists().containsKey(idString)) {
             ExpressionListInfo variableInfo = ProgramParser.symbolTable.getLists().get(idString);
             return new Qualified(new StrId(variableInfo.getActor()),
-                new StrId((variableInfo.getVariableName())));
+                    new StrId((variableInfo.getVariableName())));
         }
         return null;
     }
@@ -106,7 +99,9 @@ public class StringExprParser {
     private static StringExpr parseTextNode(JsonNode blocks, ArrayNode exprArray) throws ParsingException {
         String identifier = exprArray.get(POS_BLOCK_ID).asText();
         String opcode = blocks.get(identifier).get(OPCODE_KEY).asText();
-
+        if (opcode.equals(ProcedureOpcode.argument_reporter_string_number.name()) || opcode.equals(ProcedureOpcode.argument_reporter_boolean.name())) {
+            return parseParameter(blocks, exprArray);
+        }
         final Optional<StringExpr> stringExpr = maybeParseBlockStringExpr(blocks.get(identifier), blocks);
         if (stringExpr.isPresent()) {
             return stringExpr.get();
@@ -123,7 +118,14 @@ public class StringExprParser {
         }
 
         throw new ParsingException(
-            "Could not parse NumExpr for block with id " + identifier + " and opcode " + opcode);
+                "Could not parse NumExpr for block with id " + identifier + " and opcode " + opcode);
+    }
+
+    private static StringExpr parseParameter(JsonNode blocks, ArrayNode exprArray) {
+        JsonNode paramBlock = blocks.get(exprArray.get(POS_BLOCK_ID).textValue());
+        String name = paramBlock.get(FIELDS_KEY).get(VALUE_KEY).get(VARIABLE_NAME_POS).textValue();
+
+        return new StrId(PARAMETER_ABBREVIATION + name);
     }
 
     private static StringLiteral parseStr(JsonNode inputs, int pos) {
@@ -147,7 +149,7 @@ public class StringExprParser {
     static StringExpr parseBlockStringExpr(JsonNode expressionBlock, JsonNode blocks) throws ParsingException {
         String opcodeString = expressionBlock.get(OPCODE_KEY).asText();
         Preconditions
-            .checkArgument(StringExprOpcode.contains(opcodeString), opcodeString + " is not a StringExprOpcode.");
+                .checkArgument(StringExprOpcode.contains(opcodeString), opcodeString + " is not a StringExprOpcode.");
         StringExprOpcode opcode = StringExprOpcode.valueOf(opcodeString);
         switch (opcode) {
             case operator_join:
@@ -180,15 +182,23 @@ public class StringExprParser {
             case sensing_answer:
                 StringExpr attribute = new StringLiteral(opcodeString);
                 return new AttributeOf(attribute,
-                    ActorDefinitionParser.getCurrentActor()); // TODO introduce a mapping opcode -> nicer string
+                        ActorDefinitionParser.getCurrentActor()); // TODO introduce a mapping opcode -> nicer string
             case sensing_of:
                 String prop = expressionBlock.get(FIELDS_KEY).get("PROPERTY").get(0).asText();
                 StringLiteral property = new StringLiteral(prop);
                 String menuIdentifier = expressionBlock.get(INPUTS_KEY).get("OBJECT").get(1).asText();
                 JsonNode objectMenuBlock = blocks.get(menuIdentifier);
-                Identifier identifier = new StrId(
-                    objectMenuBlock.get(FIELDS_KEY).get("OBJECT").get(FIELD_VALUE)
-                        .asText()); // TODO introduce constants here
+
+                Identifier identifier;
+                if (objectMenuBlock != null) {
+                    identifier = new StrId(
+                            objectMenuBlock.get(FIELDS_KEY).get("OBJECT").get(FIELD_VALUE)
+                                    .asText()); // TODO introduce constants here
+                } else {
+                    //Technically there could be blocks in here, but we do not allow
+                    //any expressions to work as identifiers here.
+                    identifier = new StrId("");
+                }
                 return new AttributeOf(property, identifier);
             default:
                 throw new RuntimeException(opcodeString + " is not covered by parseBlockStringExpr");

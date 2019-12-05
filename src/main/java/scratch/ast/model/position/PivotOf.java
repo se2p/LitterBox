@@ -19,20 +19,20 @@
 package scratch.ast.model.position;
 
 import scratch.ast.model.AbstractNode;
-import scratch.ast.model.variable.Identifier;
+import scratch.ast.model.expression.string.StringExpr;
 import scratch.ast.visitor.ScratchVisitor;
 
 public class PivotOf extends AbstractNode implements Position {
 
-    private final Identifier identifier;
+    private final StringExpr stringExpr;
 
-    public PivotOf(Identifier identifier) {
-        super(identifier);
-        this.identifier = identifier;
+    public PivotOf(StringExpr stringExpr) {
+        super(stringExpr);
+        this.stringExpr = stringExpr;
     }
 
-    public Identifier getIdentifier() {
-        return identifier;
+    public StringExpr getStringExpr() {
+        return stringExpr;
     }
 
     @Override

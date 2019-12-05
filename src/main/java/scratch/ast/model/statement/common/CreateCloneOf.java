@@ -19,21 +19,21 @@
 package scratch.ast.model.statement.common;
 
 import scratch.ast.model.AbstractNode;
-import scratch.ast.model.variable.Identifier;
+import scratch.ast.model.expression.string.StringExpr;
 import scratch.ast.visitor.ScratchVisitor;
 import utils.Preconditions;
 
 public class CreateCloneOf extends AbstractNode implements CommonStmt {
 
-    private final Identifier identifier;
+    private final StringExpr stringExpr;
 
-    public CreateCloneOf(Identifier identifier) {
-        super(identifier);
-        this.identifier = Preconditions.checkNotNull(identifier);
+    public CreateCloneOf(StringExpr stringExpr) {
+        super(stringExpr);
+        this.stringExpr = Preconditions.checkNotNull(stringExpr);
     }
 
-    public Identifier getIdentifier() {
-        return identifier;
+    public StringExpr getStringExpr() {
+        return stringExpr;
     }
 
     @Override
