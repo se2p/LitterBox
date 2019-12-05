@@ -24,6 +24,7 @@ import utils.UnmodifiableListBuilder;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 public abstract class AbstractNode implements ASTNode {
 
@@ -50,4 +51,16 @@ public abstract class AbstractNode implements ASTNode {
                 .build();
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        AbstractNode that = (AbstractNode) o;
+        return children.equals(that.children);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(children);
+    }
 }

@@ -23,6 +23,8 @@ import scratch.ast.model.AbstractNode;
 import scratch.ast.model.expression.bool.BoolExpr;
 import scratch.ast.visitor.ScratchVisitor;
 
+import java.util.Objects;
+
 public class BoolLiteral extends AbstractNode implements BoolExpr, ASTLeaf {
 
     private final boolean value;
@@ -50,4 +52,18 @@ public class BoolLiteral extends AbstractNode implements BoolExpr, ASTLeaf {
     public static final BoolLiteral FALSE = new BoolLiteral(false);
 
     public static final BoolLiteral TRUE = new BoolLiteral(true);
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        BoolLiteral that = (BoolLiteral) o;
+        return value == that.value;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), value);
+    }
 }

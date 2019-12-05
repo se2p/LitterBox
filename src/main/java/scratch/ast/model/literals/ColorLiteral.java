@@ -23,6 +23,8 @@ import scratch.ast.model.AbstractNode;
 import scratch.ast.model.expression.color.ColorExpression;
 import scratch.ast.visitor.ScratchVisitor;
 
+import java.util.Objects;
+
 public class ColorLiteral extends AbstractNode implements ColorExpression, ASTLeaf {
 
     private final long red;
@@ -51,5 +53,21 @@ public class ColorLiteral extends AbstractNode implements ColorExpression, ASTLe
     @Override
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        ColorLiteral that = (ColorLiteral) o;
+        return red == that.red &&
+                green == that.green &&
+                blue == that.blue;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), red, green, blue);
     }
 }

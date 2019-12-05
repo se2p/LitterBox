@@ -18,10 +18,14 @@
  */
 package scratch.ast.model.type;
 
+import scratch.ast.model.ASTNode;
 import scratch.ast.model.AbstractNode;
 import scratch.ast.visitor.ScratchVisitor;
 
 public class NumberType extends AbstractNode implements Type {
+    public NumberType() {
+        super();
+    }
 
     @Override
     public void accept(ScratchVisitor visitor) {

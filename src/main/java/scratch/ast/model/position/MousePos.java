@@ -19,10 +19,15 @@
 package scratch.ast.model.position;
 
 import scratch.ast.model.ASTLeaf;
+import scratch.ast.model.ASTNode;
 import scratch.ast.model.AbstractNode;
 import scratch.ast.visitor.ScratchVisitor;
 
 public class MousePos extends AbstractNode implements Position, ASTLeaf {
+
+    public MousePos() {
+        super();
+    }
 
     @Override
     public void accept(ScratchVisitor visitor) {

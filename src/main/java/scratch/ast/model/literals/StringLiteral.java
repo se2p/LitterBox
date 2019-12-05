@@ -23,6 +23,8 @@ import scratch.ast.model.AbstractNode;
 import scratch.ast.model.expression.string.StringExpr;
 import scratch.ast.visitor.ScratchVisitor;
 
+import java.util.Objects;
+
 public class StringLiteral extends AbstractNode implements StringExpr, ASTLeaf {
 
     private final String text;
@@ -41,4 +43,17 @@ public class StringLiteral extends AbstractNode implements StringExpr, ASTLeaf {
         visitor.visit(this);
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        StringLiteral that = (StringLiteral) o;
+        return Objects.equals(text, that.text);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), text);
+    }
 }

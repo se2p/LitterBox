@@ -23,6 +23,8 @@ import scratch.ast.model.AbstractNode;
 import scratch.ast.model.expression.num.NumExpr;
 import scratch.ast.visitor.ScratchVisitor;
 
+import java.util.Objects;
+
 public class NumberLiteral extends AbstractNode implements NumExpr, ASTLeaf {
 
     private final double value;
@@ -41,4 +43,17 @@ public class NumberLiteral extends AbstractNode implements NumExpr, ASTLeaf {
         visitor.visit(this);
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        NumberLiteral that = (NumberLiteral) o;
+        return Double.compare(that.value, value) == 0;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), value);
+    }
 }
