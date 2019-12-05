@@ -18,6 +18,7 @@
  */
 package newanalytics.bugpattern;
 
+import java.util.List;
 import newanalytics.IssueFinder;
 import newanalytics.IssueReport;
 import scratch.ast.model.ASTNode;
@@ -28,8 +29,6 @@ import scratch.ast.model.statement.pen.PenDownStmt;
 import scratch.ast.model.statement.pen.PenUpStmt;
 import scratch.ast.visitor.ScratchVisitor;
 import utils.Preconditions;
-
-import java.util.List;
 
 public class MissingPenUp implements IssueFinder {
 
@@ -49,7 +48,9 @@ public class MissingPenUp implements IssueFinder {
             for (Script script : scriptList) {
                 script.getStmtList().getStmts().accept(visitor);
                 if (visitor.getResult()) {
-                    System.out.println("Actor " + defintion.getIdent().getName() + "has a penDown at the end of script but no penUp");
+                    System.out.println("Actor "
+                            + defintion.getIdent().getName()
+                            + "has a penDown at the end of script but no penUp");
                 }
             }
         }

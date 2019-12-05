@@ -27,11 +27,7 @@ import scratch.ast.model.Program;
 import scratch.ast.model.Script;
 import scratch.ast.model.expression.bool.UnspecifiedBoolExpr;
 import scratch.ast.model.statement.Stmt;
-import scratch.ast.model.statement.control.IfElseStmt;
-import scratch.ast.model.statement.control.IfThenStmt;
-import scratch.ast.model.statement.control.RepeatForeverStmt;
-import scratch.ast.model.statement.control.RepeatTimesStmt;
-import scratch.ast.model.statement.control.UntilStmt;
+import scratch.ast.model.statement.control.*;
 
 /**
  * Checks for missing statements in repeat-until blocks.
@@ -68,22 +64,22 @@ public class MissingTermination implements IssueFinder {
     }
 
     private void checkMissTermination(List<Stmt> stmts, String actorName) {
-        for (int i = 0; i < stmts.size(); i++) {
-            if (stmts.get(i) instanceof UntilStmt) {
-                if (((UntilStmt) stmts.get(i)).getBoolExpr() instanceof UnspecifiedBoolExpr) {
+        for (Stmt stmt : stmts) {
+            if (stmt instanceof UntilStmt) {
+                if (((UntilStmt) stmt).getBoolExpr() instanceof UnspecifiedBoolExpr) {
                     counter++;
                     found.add(actorName);
                 }
-            } else if (stmts.get(i) instanceof IfThenStmt) {
-                checkMissTermination(((IfThenStmt) stmts.get(i)).getThenStmts().getStmts().getListOfStmt(), actorName);
-            } else if (stmts.get(i) instanceof IfElseStmt) {
-                checkMissTermination(((IfElseStmt) stmts.get(i)).getStmtList().getStmts().getListOfStmt(), actorName);
-                checkMissTermination(((IfElseStmt) stmts.get(i)).getElseStmts().getStmts().getListOfStmt(), actorName);
-            } else if (stmts.get(i) instanceof RepeatTimesStmt) {
-                checkMissTermination(((RepeatTimesStmt) stmts.get(i)).getStmtList().getStmts().getListOfStmt(),
+            } else if (stmt instanceof IfThenStmt) {
+                checkMissTermination(((IfThenStmt) stmt).getThenStmts().getStmts().getListOfStmt(), actorName);
+            } else if (stmt instanceof IfElseStmt) {
+                checkMissTermination(((IfElseStmt) stmt).getStmtList().getStmts().getListOfStmt(), actorName);
+                checkMissTermination(((IfElseStmt) stmt).getElseStmts().getStmts().getListOfStmt(), actorName);
+            } else if (stmt instanceof RepeatTimesStmt) {
+                checkMissTermination(((RepeatTimesStmt) stmt).getStmtList().getStmts().getListOfStmt(),
                         actorName);
-            } else if (stmts.get(i) instanceof RepeatForeverStmt){
-                checkMissTermination(((RepeatForeverStmt) stmts.get(i)).getStmtList().getStmts().getListOfStmt(),
+            } else if (stmt instanceof RepeatForeverStmt) {
+                checkMissTermination(((RepeatForeverStmt) stmt).getStmtList().getStmts().getListOfStmt(),
                         actorName);
             }
         }

@@ -51,13 +51,13 @@ public class MissingLoopSensing implements IssueFinder {
     @Override
     public IssueReport check(Program program) {
         List<ActorDefinition> actorDefs = program.getActorDefinitionList().getDefintions();
-        for (int i = 0; i < actorDefs.size(); i++) {
-            List<Script> scripts = actorDefs.get(i).getScripts().getScriptList();
+        for (ActorDefinition actorDef : actorDefs) {
+            List<Script> scripts = actorDef.getScripts().getScriptList();
             for (int j = 0; j < scripts.size(); j++) {
                 List<Stmt> stmts = scripts.get(0).getStmtList().getStmts().getListOfStmt();
                 if (stmts.size() > 0 && scripts.get(0).getEvent() instanceof GreenFlag) {
 
-                    checkMissLoop(stmts, actorDefs.get(i).getIdent().getName());
+                    checkMissLoop(stmts, actorDef.getIdent().getName());
                 }
             }
         }
@@ -70,28 +70,28 @@ public class MissingLoopSensing implements IssueFinder {
     }
 
     private void checkMissLoop(List<Stmt> stmts, String actorName) {
-        for (int i = 0; i < stmts.size(); i++) {
-            if (stmts.get(i) instanceof RepeatForeverStmt || stmts.get(i) instanceof UntilStmt) {
+        for (Stmt stmt : stmts) {
+            if (stmt instanceof RepeatForeverStmt || stmt instanceof UntilStmt) {
                 return;
-            } else if (stmts.get(i) instanceof IfThenStmt) {
-                BoolExpr bool = ((IfThenStmt) stmts.get(i)).getBoolExpr();
+            } else if (stmt instanceof IfThenStmt) {
+                BoolExpr bool = ((IfThenStmt) stmt).getBoolExpr();
                 if (bool instanceof IsKeyPressed || bool instanceof Touching || bool instanceof IsMouseDown) {
                     found.add(actorName);
                     counter++;
                 } else {
-                    checkMissLoop(((IfThenStmt) stmts.get(i)).getThenStmts().getStmts().getListOfStmt(), actorName);
+                    checkMissLoop(((IfThenStmt) stmt).getThenStmts().getStmts().getListOfStmt(), actorName);
                 }
-            } else if (stmts.get(i) instanceof IfElseStmt) {
-                BoolExpr bool = ((IfElseStmt) stmts.get(i)).getBoolExpr();
+            } else if (stmt instanceof IfElseStmt) {
+                BoolExpr bool = ((IfElseStmt) stmt).getBoolExpr();
                 if (bool instanceof IsKeyPressed || bool instanceof Touching || bool instanceof IsMouseDown) {
                     found.add(actorName);
                     counter++;
                 } else {
-                    checkMissLoop(((IfElseStmt) stmts.get(i)).getStmtList().getStmts().getListOfStmt(), actorName);
-                    checkMissLoop(((IfElseStmt) stmts.get(i)).getElseStmts().getStmts().getListOfStmt(), actorName);
+                    checkMissLoop(((IfElseStmt) stmt).getStmtList().getStmts().getListOfStmt(), actorName);
+                    checkMissLoop(((IfElseStmt) stmt).getElseStmts().getStmts().getListOfStmt(), actorName);
                 }
-            } else if (stmts.get(i) instanceof RepeatTimesStmt) {
-                checkMissLoop(((RepeatTimesStmt) stmts.get(i)).getStmtList().getStmts().getListOfStmt(),
+            } else if (stmt instanceof RepeatTimesStmt) {
+                checkMissLoop(((RepeatTimesStmt) stmt).getStmtList().getStmts().getListOfStmt(),
                         actorName);
             }
         }

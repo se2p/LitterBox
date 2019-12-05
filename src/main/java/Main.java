@@ -21,12 +21,7 @@ import analytics.Scratch2Analyzer;
 import java.io.File;
 import java.io.IOException;
 import newanalytics.Scratch3Analyzer;
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.DefaultParser;
-import org.apache.commons.cli.HelpFormatter;
-import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
+import org.apache.commons.cli.*;
 import utils.Downloader;
 
 public class Main {
@@ -38,18 +33,28 @@ public class Main {
     private static final String DETECTORS = "detectors";
     private static final String VERSION = "version";
 
+    private Main() {
+
+    }
+
+    /**
+     * Entry point to Litterbox where the arguments are parsed and the selected functionality is called.
+     *
+     * @param args Arguments that are parsed as options.
+     * @throws ParseException thrown when a Scratch Project cannot be parsed.
+     */
     public static void main(String[] args) throws ParseException {
 
         Options options = new Options();
 
         options.addOption(PATH, true, "path to folder or file that should be analyzed (required)");
         options.addOption(PROJECTID, true,
-            "id of the project that should be downloaded and analysed. Only works for Scratch 3");
+                "id of the project that should be downloaded and analysed. Only works for Scratch 3");
         options.addOption(PROJECTOUT, true, "path where the downloaded project should be stored");
-        options.addOption(OUTPUT, true, "path with name of the csv file you want to save (required if path argument" +
-            " is a folder path)");
-        options.addOption(DETECTORS, true, "name all detectors you want to run separated by ',' " +
-            "\n(all detectors defined in the README)");
+        options.addOption(OUTPUT, true, "path with name of the csv file you want to save (required if path argument"
+                + " is a folder path)");
+        options.addOption(DETECTORS, true, "name all detectors you want to run separated by ',' "
+                + "\n(all detectors defined in the README)");
         options.addOption(VERSION, true, "the Scratch Version ('2' or '3') (required)");
         CommandLineParser parser = new DefaultParser();
 
@@ -61,10 +66,10 @@ public class Main {
             File folder = new File(cmd.getOptionValue(PATH));
             if (version.equals("2")) {
                 Scratch2Analyzer.analyze(cmd.getOptionValue(DETECTORS, "all"),
-                    cmd.getOptionValue(OUTPUT), folder);
+                        cmd.getOptionValue(OUTPUT), folder);
             } else {
                 Scratch3Analyzer.analyze(cmd.getOptionValue(DETECTORS, "all"),
-                    cmd.getOptionValue(OUTPUT), folder);
+                        cmd.getOptionValue(OUTPUT), folder);
             }
             return;
         } else if (cmd.hasOption(PROJECTID)) {
@@ -73,8 +78,8 @@ public class Main {
                 String json = Downloader.downloadProjectJSON(projectid);
                 Downloader.saveDownloadedProject(json, projectid, cmd.getOptionValue(PROJECTOUT));
                 Scratch3Analyzer.checkDownloaded(json, projectid, //Name ProjectID is not the same as the Projectname
-                    cmd.getOptionValue(DETECTORS, "all"),
-                    cmd.getOptionValue(OUTPUT));
+                        cmd.getOptionValue(DETECTORS, "all"),
+                        cmd.getOptionValue(OUTPUT));
             } catch (IOException e) {
                 System.err.println("Could not load project with id " + projectid);
                 return;
@@ -83,9 +88,9 @@ public class Main {
         }
         HelpFormatter formatter = new HelpFormatter();
         formatter.printHelp("LitterBox", options);
-        System.out.println("Example: " + "java -cp C:\\ScratchAnalytics-1.0.jar Main -path " +
-            "C:\\scratchprojects\\files\\ -version 3 -output C:\\scratchprojects\\files\\test.csv -detectors cnt," +
-            "glblstrt");
+        System.out.println("Example: " + "java -cp C:\\ScratchAnalytics-1.0.jar Main -path "
+                + "C:\\scratchprojects\\files\\ -version 3 -output C:\\scratchprojects\\files\\test.csv -detectors cnt,"
+                + "glblstrt");
     }
 
 }
