@@ -21,11 +21,14 @@ package newanalytics;
 import scratch.ast.model.Program;
 
 /**
- * Interface for all IssueFinders
+ * Interface for all IssueFinders.
  */
 public interface IssueFinder {
 
     /**
+     * Checks the given program for a specific issue.
+     *
+     *
      * @param program The project to check
      * @return a IssueReport object
      */

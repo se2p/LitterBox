@@ -19,14 +19,95 @@
 package scratch.ast.visitor;
 
 import scratch.ast.model.ASTNode;
+import scratch.ast.model.statement.common.SetStmt;
+import scratch.ast.model.statement.pen.PenClearStmt;
 import scratch.ast.model.statement.pen.PenDownStmt;
 import scratch.ast.model.statement.pen.PenUpStmt;
 
 public interface ScratchVisitor {
 
-    void visit(ASTNode node);
+    /**
+     * Default implementation of visit method for ASTNode.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node ASTNode of which the children will be iterated
+     */
+    default void visit(ASTNode node) {
+        if (!node.getChildren().isEmpty()) {
+            for (ASTNode child : node.getChildren()) {
+                child.accept(this);
+            }
+        }
+    }
 
-    void visit(PenDownStmt node);
+    /**
+     * Default implementation of visit method for PenDownStmt.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node PenDownStmt of which the children will be iterated
+     */
+    default void visit(PenDownStmt node) {
+        if (!node.getChildren().isEmpty()) {
+            for (ASTNode child : node.getChildren()) {
+                child.accept(this);
+            }
+        }
+    }
 
-    void visit(PenUpStmt node);
+    /**
+     * Default implementation of visit method for PenUpStmt.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node PenUpStmt of which the children will be iterated
+     */
+    default void visit(PenUpStmt node) {
+        if (!node.getChildren().isEmpty()) {
+            for (ASTNode child : node.getChildren()) {
+                child.accept(this);
+            }
+        }
+    }
+
+    /**
+     * Default implementation of visit method for PenUpStmt.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node PenUpStmt of which the children will be iterated
+     */
+    default void visit(PenClearStmt node) {
+        if (!node.getChildren().isEmpty()) {
+            for (ASTNode child : node.getChildren()) {
+                child.accept(this);
+            }
+        }
+    }
+
+    /**
+     * Default implementation of visit method for SetStmt.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node SetStmt of which the children will be iterated
+     */
+    default void visit(SetStmt node) {
+        if (!node.getChildren().isEmpty()) {
+            for (ASTNode child : node.getChildren()) {
+                child.accept(this);
+            }
+        }
+    }
 }

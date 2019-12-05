@@ -26,19 +26,20 @@ import scratch.ast.model.ASTNode;
 import scratch.ast.model.ActorDefinition;
 import scratch.ast.model.Program;
 import scratch.ast.model.Script;
-import scratch.ast.model.statement.common.SetStmt;
+import scratch.ast.model.statement.pen.PenClearStmt;
 import scratch.ast.model.statement.pen.PenDownStmt;
 import scratch.ast.visitor.ScratchVisitor;
 import utils.Preconditions;
 
-public class MissingPenUp implements IssueFinder {
+public class MissingEraseAll implements IssueFinder {
 
-    public static final String NAME = "missing_pen_up";
-    public static final String SHORT_NAME = "msspup";
+    public static final String NAME = "missing_erase_all";
+    public static final String SHORT_NAME = "msserase";
 
     @Override
     public IssueReport check(Program program) {
         Preconditions.checkNotNull(program);
+
         int count = 0;
         List<String> actors = new LinkedList<>();
 
@@ -67,17 +68,8 @@ public class MissingPenUp implements IssueFinder {
 
     private class CheckVisitor implements ScratchVisitor {
 
-        private boolean penUpSet = false;
+        private boolean penClearSet = false;
         private boolean penDownSet = false;
-
-        @Override
-        public void visit(ASTNode node) {
-            if (!node.getChildren().isEmpty()) {
-                for (ASTNode child : node.getChildren()) {
-                    child.accept(this);
-                }
-            }
-        }
 
         @Override
         public void visit(PenDownStmt node) {
@@ -89,13 +81,23 @@ public class MissingPenUp implements IssueFinder {
             }
         }
 
+        @Override
+        public void visit(PenClearStmt node) {
+            penClearSet = true;
+            if (!node.getChildren().isEmpty()) {
+                for (ASTNode child : node.getChildren()) {
+                    child.accept(this);
+                }
+            }
+        }
+
         public void reset() {
-            penUpSet = false;
+            penClearSet = false;
             penDownSet = false;
         }
 
         public boolean getResult() {
-            return penDownSet && !penUpSet;
+            return penDownSet && !penClearSet;
         }
     }
 }

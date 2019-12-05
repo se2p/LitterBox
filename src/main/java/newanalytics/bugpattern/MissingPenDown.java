@@ -26,19 +26,20 @@ import scratch.ast.model.ASTNode;
 import scratch.ast.model.ActorDefinition;
 import scratch.ast.model.Program;
 import scratch.ast.model.Script;
-import scratch.ast.model.statement.common.SetStmt;
 import scratch.ast.model.statement.pen.PenDownStmt;
+import scratch.ast.model.statement.pen.PenUpStmt;
 import scratch.ast.visitor.ScratchVisitor;
 import utils.Preconditions;
 
-public class MissingPenUp implements IssueFinder {
+public class MissingPenDown implements IssueFinder {
 
-    public static final String NAME = "missing_pen_up";
-    public static final String SHORT_NAME = "msspup";
+    public static final String NAME = "missing_pen_down";
+    public static final String SHORT_NAME = "msspdwn";
 
     @Override
     public IssueReport check(Program program) {
         Preconditions.checkNotNull(program);
+
         int count = 0;
         List<String> actors = new LinkedList<>();
 
@@ -80,6 +81,16 @@ public class MissingPenUp implements IssueFinder {
         }
 
         @Override
+        public void visit(PenUpStmt node) {
+            penUpSet = true;
+            if (!node.getChildren().isEmpty()) {
+                for (ASTNode child : node.getChildren()) {
+                    child.accept(this);
+                }
+            }
+        }
+
+        @Override
         public void visit(PenDownStmt node) {
             penDownSet = true;
             if (!node.getChildren().isEmpty()) {
@@ -95,7 +106,7 @@ public class MissingPenUp implements IssueFinder {
         }
 
         public boolean getResult() {
-            return penDownSet && !penUpSet;
+            return !penDownSet && penUpSet;
         }
     }
 }
