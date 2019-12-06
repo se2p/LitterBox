@@ -25,7 +25,6 @@ import newanalytics.IssueReport;
 import scratch.ast.model.ASTNode;
 import scratch.ast.model.ActorDefinition;
 import scratch.ast.model.Program;
-import scratch.ast.model.Script;
 import scratch.ast.model.statement.pen.PenClearStmt;
 import scratch.ast.model.statement.pen.PenDownStmt;
 import scratch.ast.visitor.ScratchVisitor;
@@ -39,26 +38,9 @@ public class MissingEraseAll implements IssueFinder {
     @Override
     public IssueReport check(Program program) {
         Preconditions.checkNotNull(program);
-
-        int count = 0;
-        List<String> actors = new LinkedList<>();
-
-        final List<ActorDefinition> defintions = program.getActorDefinitionList().getDefintions();
-        for (ActorDefinition defintion : defintions) {
-            // Should we also check procedure definitions? Maybe they have a pen up?
-            final List<Script> scriptList = defintion.getScripts().getScriptList();
-            CheckVisitor visitor = new CheckVisitor();
-            for (Script script : scriptList) {
-                script.getStmtList().getStmts().accept(visitor);
-                if (visitor.getResult()) {
-                    count++;
-                    actors.add(defintion.getIdent().getName());
-                    break;
-                }
-            }
-        }
-
-        return new IssueReport(NAME, count, actors, "");
+        CheckVisitor visitor = new CheckVisitor();
+        program.accept(visitor);
+        return new IssueReport(NAME, visitor.count, visitor.actorNames, "");
     }
 
     @Override
@@ -70,6 +52,34 @@ public class MissingEraseAll implements IssueFinder {
 
         private boolean penClearSet = false;
         private boolean penDownSet = false;
+        private int count = 0;
+        private List<String> actorNames = new LinkedList<>();
+        private ActorDefinition currentActor;
+
+        @Override
+        public void visit(ASTNode node) {
+            if (!node.getChildren().isEmpty()) {
+                for (ASTNode child : node.getChildren()) {
+                    child.accept(this);
+                }
+            }
+        }
+
+        @Override
+        public void visit(ActorDefinition actor) {
+            currentActor = actor;
+            if (!actor.getChildren().isEmpty()) {
+                for (ASTNode child : actor.getChildren()) {
+                    child.accept(this);
+                }
+            }
+
+            if (getResult()) {
+                count++;
+                actorNames.add(currentActor.getIdent().getName());
+                reset();
+            }
+        }
 
         @Override
         public void visit(PenDownStmt node) {
@@ -91,9 +101,11 @@ public class MissingEraseAll implements IssueFinder {
             }
         }
 
-        public void reset() {
+
+        void reset() {
             penClearSet = false;
             penDownSet = false;
+            currentActor = null;
         }
 
         public boolean getResult() {

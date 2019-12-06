@@ -19,6 +19,7 @@
 package scratch.ast.visitor;
 
 import scratch.ast.model.ASTNode;
+import scratch.ast.model.ActorDefinition;
 import scratch.ast.model.statement.common.SetStmt;
 import scratch.ast.model.statement.pen.PenClearStmt;
 import scratch.ast.model.statement.pen.PenDownStmt;
@@ -44,6 +45,19 @@ public interface ScratchVisitor {
     }
 
     /**
+     * Default implementation of visit method for ActorDefinition.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node ActorDefinition of which the children will be iterated
+     */
+    default void visit(ActorDefinition node) {
+        visit((ASTNode) node);
+    }
+
+    /**
      * Default implementation of visit method for PenDownStmt.
      *
      * <p>
@@ -53,11 +67,7 @@ public interface ScratchVisitor {
      * @param node PenDownStmt of which the children will be iterated
      */
     default void visit(PenDownStmt node) {
-        if (!node.getChildren().isEmpty()) {
-            for (ASTNode child : node.getChildren()) {
-                child.accept(this);
-            }
-        }
+        visit((ASTNode) node);
     }
 
     /**
@@ -70,11 +80,7 @@ public interface ScratchVisitor {
      * @param node PenUpStmt of which the children will be iterated
      */
     default void visit(PenUpStmt node) {
-        if (!node.getChildren().isEmpty()) {
-            for (ASTNode child : node.getChildren()) {
-                child.accept(this);
-            }
-        }
+        visit((ASTNode) node);
     }
 
     /**
@@ -87,11 +93,7 @@ public interface ScratchVisitor {
      * @param node PenUpStmt of which the children will be iterated
      */
     default void visit(PenClearStmt node) {
-        if (!node.getChildren().isEmpty()) {
-            for (ASTNode child : node.getChildren()) {
-                child.accept(this);
-            }
-        }
+        visit((ASTNode) node);
     }
 
     /**
@@ -104,10 +106,6 @@ public interface ScratchVisitor {
      * @param node SetStmt of which the children will be iterated
      */
     default void visit(SetStmt node) {
-        if (!node.getChildren().isEmpty()) {
-            for (ASTNode child : node.getChildren()) {
-                child.accept(this);
-            }
-        }
+        visit((ASTNode) node);
     }
 }
