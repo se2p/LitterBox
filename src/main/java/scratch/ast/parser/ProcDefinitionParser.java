@@ -51,7 +51,7 @@ public class ProcDefinitionParser {
     private final static int PROTOTYPE_REFERENCE_POS = 1;
     private final static int PARAMETER_REFERENCE_POS = 1;
 
-    public static ProcedureDefinitionList parse(JsonNode blocks) throws ParsingException {
+    public static ProcedureDefinitionList parse(JsonNode blocks, String actorName) throws ParsingException {
         Preconditions.checkNotNull(blocks);
         Iterator<JsonNode> iter = blocks.elements();
         List<JsonNode> defBlock = new ArrayList<>();
@@ -76,13 +76,13 @@ public class ProcDefinitionParser {
         List<ProcedureDefinition> procdecls = new ArrayList<>();
         for (JsonNode jsonNode : defBlock) {
 
-            procdecls.add(parseProcDecl(jsonNode, blocks));
+            procdecls.add(parseProcDecl(jsonNode, blocks, actorName));
         }
 
         return new ProcedureDefinitionList(procdecls);
     }
 
-    private static ProcedureDefinition parseProcDecl(JsonNode def, JsonNode blocks) throws ParsingException {
+    private static ProcedureDefinition parseProcDecl(JsonNode def, JsonNode blocks, String actorName) throws ParsingException {
         JsonNode input = def.get(Constants.INPUTS_KEY).get(CUSTOM_BLOCK_KEY);
         Preconditions.checkArgument(input.isArray());
         ArrayNode inputArray = (ArrayNode) input;
@@ -122,7 +122,7 @@ public class ProcDefinitionParser {
         }
         Preconditions.checkArgument(arguments.length == paraTypes.size());
         Type[] typeArray = new Type[paraTypes.size()];
-        ProgramParser.procDefMap.addProcedure(ident, methodName, arguments, paraTypes.toArray(typeArray));
+        ProgramParser.procDefMap.addProcedure(ident, actorName, methodName, arguments, paraTypes.toArray(typeArray));
 
         for (int i = 0; i < paraTypes.size(); i++) {
             inputs.add(new Parameter(new StrId(arguments[i]), paraTypes.get(i)));

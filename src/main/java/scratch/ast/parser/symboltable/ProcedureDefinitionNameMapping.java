@@ -32,10 +32,10 @@ public class ProcedureDefinitionNameMapping {
         procedures = new HashMap<>();
     }
 
-    public void addProcedure(Identifier identifier, String procedureName, String[] argumentNames,
+    public void addProcedure(Identifier identifier, String actorName, String procedureName, String[] argumentNames,
         Type[] types) {
 
-        procedures.put(identifier, new ProcedureInfo(procedureName, makeArguments(argumentNames, types)));
+        procedures.put(identifier, new ProcedureInfo(procedureName, makeArguments(argumentNames, types), actorName));
 
     }
 

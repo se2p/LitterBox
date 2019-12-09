@@ -94,7 +94,7 @@ public class ActorDefinitionParser {
         }
         ScriptList scriptList = new ScriptList(scripts);
 
-        ProcedureDefinitionList procDeclList = ProcDefinitionParser.parse(allBlocks);
+        ProcedureDefinitionList procDeclList = ProcDefinitionParser.parse(allBlocks, identifier.getName());
 
         List<SetStmt> setStmtList = DeclarationStmtParser.parseAttributeDeclarationSetStmts(actorDefinitionNode);
         setStmtList.addAll(DeclarationStmtParser.parseListDeclarationSetStmts(actorDefinitionNode.get("lists"),

@@ -30,7 +30,7 @@ public class EmptyScriptAndDeadCode implements IssueFinder {
 
         }
 
-        return null;
+        throw new RuntimeException("not implemented");
     }
 
     @Override
