@@ -97,7 +97,11 @@ public class ProcDefinitionParser {
             JsonNode currentInput = current.getValue();
             Preconditions.checkArgument(currentInput.isArray());
             ArrayNode currentAsArray = (ArrayNode) currentInput;
-            paraTypes = addType(blocks, paraTypes, currentAsArray.get(PARAMETER_REFERENCE_POS).textValue());
+
+            //TODO is this right?
+            if(!currentAsArray.get(PARAMETER_REFERENCE_POS).asText().equals("null")) {
+                paraTypes = addType(blocks, paraTypes, currentAsArray.get(PARAMETER_REFERENCE_POS).textValue());
+            }
         }
 
 

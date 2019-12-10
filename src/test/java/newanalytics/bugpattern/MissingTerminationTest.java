@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-package scratch.newAnalytics;
+package newanalytics.bugpattern;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.File;

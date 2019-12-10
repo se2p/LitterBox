@@ -42,8 +42,8 @@ public class IssueTool {
     public IssueTool() {
         finder.put(MissingPenUp.SHORT_NAME, new MissingPenUp());
         // finder.put(EmptyScriptAndDeadCode.SHORT_NAME, new EmptyScriptAndDeadCode());
-        finder.put(Ambiguous_Parameter_Name.SHORT_NAME, new Ambiguous_Parameter_Name());
-        finder.put(Ambiguous_Procedure_Signature.SHORT_NAME, new Ambiguous_Procedure_Signature());
+        finder.put(AmbiguousParameterName.SHORT_NAME, new AmbiguousParameterName());
+        finder.put(AmbiguousProcedureSignature.SHORT_NAME, new AmbiguousProcedureSignature());
         finder.put(MissingPenDown.SHORT_NAME, new MissingPenDown());
         finder.put(MissingEraseAll.SHORT_NAME, new MissingEraseAll());
         finder.put(EmptyScriptAndDeadCode.SHORT_NAME, new EmptyScriptAndDeadCode());

@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class Ambiguous_Procedure_Signature implements IssueFinder {
+public class AmbiguousProcedureSignature implements IssueFinder {
     private static final String NOTE1 = "There are no ambiguous procedure signatures in your project.";
     private static final String NOTE2 = "Some of the procedures signatures are ambiguous.";
     public static final String NAME = "ambiguous_procedure_signature";
@@ -20,7 +20,7 @@ public class Ambiguous_Procedure_Signature implements IssueFinder {
     @Override
     public IssueReport check(Program program) {
         List<String> found = new ArrayList<>();
-        HashMap<Identifier, ProcedureInfo> procs = ProgramParser.procDefMap.getProcedures();
+        HashMap<Identifier, ProcedureInfo> procs = program.getProcedureMapping().getProcedures();
         List<ProcedureInfo> procedureInfos = new ArrayList<>(procs.values());
         for (int i = 0; i < procedureInfos.size(); i++) {
             ProcedureInfo current = procedureInfos.get(i);

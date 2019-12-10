@@ -51,12 +51,12 @@ public class ProgramParser {
         Identifier ident = new StrId(programName);
 
         Preconditions.checkArgument(programNode.has("targets"),
-            "Program node has no field targets");
+                "Program node has no field targets");
 
         Iterable<JsonNode> iterable = () -> programNode.get("targets").iterator();
         Stream<JsonNode> stream = StreamSupport.stream(iterable.spliterator(), false);
         Optional<JsonNode> stageNode = stream.filter(node -> node.get("isStage").asBoolean())
-            .findFirst(); //Is it necessary to check that only one stage exists?
+                .findFirst(); //Is it necessary to check that only one stage exists?
 
         if (!stageNode.isPresent()) {
             throw new ParsingException("Program has no Stage");
@@ -67,7 +67,7 @@ public class ProgramParser {
         iterable = () -> programNode.get("targets").iterator();
         stream = StreamSupport.stream(iterable.spliterator(), false);
         List<JsonNode> nonStageNodes = stream.filter(node -> !(node.get("isStage").asBoolean()))
-            .collect(Collectors.toList());
+                .collect(Collectors.toList());
 
         List<ActorDefinition> actorDefinitions = new LinkedList<>();
         actorDefinitions.add(stage);
@@ -78,6 +78,6 @@ public class ProgramParser {
 
         ActorDefinitionList actorDefinitionList = new ActorDefinitionList(actorDefinitions);
 
-        return new Program(ident, actorDefinitionList);
+        return new Program(ident, actorDefinitionList, symbolTable, procDefMap);
     }
 }

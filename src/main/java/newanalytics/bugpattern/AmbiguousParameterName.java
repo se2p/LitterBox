@@ -10,7 +10,7 @@ import scratch.ast.parser.symboltable.ProcedureInfo;
 
 import java.util.*;
 
-public class Ambiguous_Parameter_Name implements IssueFinder {
+public class AmbiguousParameterName implements IssueFinder {
     private static final String NOTE1 = "There are no ambiguous parameter names in your project.";
     private static final String NOTE2 = "Some of the procedures contain ambiguous parameter names.";
     public static final String NAME = "ambiguous_parameter_name";
@@ -19,7 +19,7 @@ public class Ambiguous_Parameter_Name implements IssueFinder {
     @Override
     public IssueReport check(Program program) {
         List<String> found = new ArrayList<>();
-        HashMap<Identifier, ProcedureInfo> procs = ProgramParser.procDefMap.getProcedures();
+        HashMap<Identifier, ProcedureInfo> procs = program.getProcedureMapping().getProcedures();
         Set<Identifier> ids = procs.keySet();
         for (Identifier id : ids) {
             ProcedureInfo current = procs.get(id);
@@ -39,7 +39,7 @@ public class Ambiguous_Parameter_Name implements IssueFinder {
         for (int i = 0; i < arguments.length; i++) {
             ArgumentInfo current = arguments[i];
             for (int j = 0; j < arguments.length; j++) {
-                if (i != j && current.equals(arguments[j])) {
+                if (i != j && current.getName().equals(arguments[j].getName())) {
                     return true;
                 }
             }
