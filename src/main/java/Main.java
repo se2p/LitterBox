@@ -32,6 +32,7 @@ public class Main {
     private static final String OUTPUT = "output";
     private static final String DETECTORS = "detectors";
     private static final String VERSION = "version";
+    private static final String HELP = "help";
 
     private Main() {
 
@@ -56,6 +57,7 @@ public class Main {
         options.addOption(DETECTORS, true, "name all detectors you want to run separated by ',' "
                 + "\n(all detectors defined in the README)");
         options.addOption(VERSION, true, "the Scratch Version ('2' or '3') (required)");
+        options.addOption(HELP, false, "print this message");
         CommandLineParser parser = new DefaultParser();
 
         CommandLine cmd = parser.parse(options, args);
