@@ -20,6 +20,9 @@ package scratch.ast.visitor;
 
 import scratch.ast.model.ASTNode;
 import scratch.ast.model.ActorDefinition;
+import scratch.ast.model.expression.bool.BiggerThan;
+import scratch.ast.model.expression.bool.Equals;
+import scratch.ast.model.expression.bool.LessThan;
 import scratch.ast.model.statement.common.SetStmt;
 import scratch.ast.model.statement.pen.PenClearStmt;
 import scratch.ast.model.statement.pen.PenDownStmt;
@@ -108,4 +111,47 @@ public interface ScratchVisitor {
     default void visit(SetStmt node) {
         visit((ASTNode) node);
     }
+
+    /**
+     * Default implementation of visit method for {@link Equals}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node Equals Node of which the children will be iterated
+     */
+    default void visit(Equals node) {
+        visit((ASTNode) node);
+    }
+
+
+    /**
+     * Default implementation of visit method for {@link LessThan}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node LessThan Node of which the children will be iterated
+     */
+    default void visit(LessThan node) {
+        visit((ASTNode) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link BiggerThan}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node LessThan Node of which the children will be iterated
+     */
+    default void visit(BiggerThan node) {
+        visit((ASTNode) node);
+    }
+
+
+
 }

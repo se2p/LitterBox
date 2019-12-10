@@ -16,7 +16,9 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
+
 import static org.junit.Assert.assertEquals;
+
 
 import analytics.IssueReport;
 import analytics.finder.MissingTermination;
@@ -31,7 +33,7 @@ import scratch.structure.Stage;
 import utils.Identifier;
 import utils.Version;
 
-public class MissingTerminationTest {
+public class MissingTerminationConditionTest {
 
     @Test
     public void validateCheck() {

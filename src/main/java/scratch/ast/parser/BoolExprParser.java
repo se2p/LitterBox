@@ -18,38 +18,24 @@
  */
 package scratch.ast.parser;
 
+import static scratch.ast.Constants.*;
+
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.TextNode;
-
 import java.util.Optional;
-
 import scratch.ast.Constants;
 import scratch.ast.ParsingException;
 import scratch.ast.model.Key;
+import scratch.ast.model.expression.ComparableExpr;
 import scratch.ast.model.expression.Expression;
-import scratch.ast.model.expression.bool.And;
-import scratch.ast.model.expression.bool.BiggerThan;
-import scratch.ast.model.expression.bool.BoolExpr;
-import scratch.ast.model.expression.bool.ColorTouches;
-import scratch.ast.model.expression.bool.Equals;
-import scratch.ast.model.expression.bool.ExpressionContains;
-import scratch.ast.model.expression.bool.IsKeyPressed;
-import scratch.ast.model.expression.bool.IsMouseDown;
-import scratch.ast.model.expression.bool.LessThan;
-import scratch.ast.model.expression.bool.Not;
-import scratch.ast.model.expression.bool.Or;
-import scratch.ast.model.expression.bool.Touching;
+import scratch.ast.model.expression.bool.*;
 import scratch.ast.model.expression.color.ColorExpression;
 import scratch.ast.model.expression.num.AsNumber;
-import scratch.ast.model.expression.num.NumExpr;
 import scratch.ast.model.expression.num.UnspecifiedNumExpr;
-import scratch.ast.model.expression.string.StringExpr;
 import scratch.ast.model.literals.BoolLiteral;
-import scratch.ast.model.procedure.Parameter;
 import scratch.ast.model.touchable.Touchable;
-import scratch.ast.model.type.BooleanType;
-import scratch.ast.model.type.StringType;
 import scratch.ast.model.variable.Qualified;
 import scratch.ast.model.variable.StrId;
 import scratch.ast.model.variable.Variable;
@@ -58,8 +44,6 @@ import scratch.ast.opcodes.ProcedureOpcode;
 import scratch.ast.parser.symboltable.ExpressionListInfo;
 import scratch.ast.parser.symboltable.VariableInfo;
 import utils.Preconditions;
-
-import static scratch.ast.Constants.*;
 
 public class BoolExprParser {
 
@@ -148,46 +132,48 @@ public class BoolExprParser {
                 Touchable touchable = TouchableParser.parseTouchable(expressionBlock, blocks);
                 return new Touching(touchable);
             case sensing_coloristouchingcolor:
-                ColorExpression first = ColorParser.parseColor(expressionBlock, 0, blocks);
-                ColorExpression second = ColorParser.parseColor(expressionBlock, 1, blocks);
-                return new ColorTouches(first, second);
+                ColorExpression one = ColorParser.parseColor(expressionBlock, 0, blocks);
+                ColorExpression two = ColorParser.parseColor(expressionBlock, 1, blocks);
+                return new ColorTouches(one, two);
             case sensing_keypressed:
                 Key key = KeyParser.parse(expressionBlock, blocks);
                 return new IsKeyPressed(key);
             case sensing_mousedown:
                 return new IsMouseDown();
             case operator_gt:
-                NumExpr firstNum = NumExprParser.parseNumExpr(expressionBlock, 0, blocks);
-                if (!(firstNum instanceof AsNumber || firstNum instanceof UnspecifiedNumExpr)) {
-                    NumExpr secondNum = NumExprParser.parseNumExpr(expressionBlock, 1, blocks);
-                    return new BiggerThan(firstNum, secondNum);
-                } else {
-                    StringExpr firstString = StringExprParser.parseStringExpr(expressionBlock, 0, blocks);
-                    StringExpr secondString = StringExprParser.parseStringExpr(expressionBlock, 1, blocks);
-                    return new BiggerThan(firstString, secondString);
-
+                ComparableExpr first = NumExprParser.parseNumExpr(expressionBlock, 0, blocks);
+                ComparableExpr second = NumExprParser.parseNumExpr(expressionBlock, 1, blocks);
+                if ((first instanceof AsNumber || first instanceof UnspecifiedNumExpr)) {
+                    first = StringExprParser.parseStringExpr(expressionBlock, 0, blocks);
                 }
+
+                if (second instanceof AsNumber || second instanceof UnspecifiedNumExpr) {
+                    second = StringExprParser.parseStringExpr(expressionBlock, 1, blocks);
+                }
+                return new BiggerThan(first, second);
             case operator_lt:
-                firstNum = NumExprParser.parseNumExpr(expressionBlock, 0, blocks);
-                if (!(firstNum instanceof AsNumber || firstNum instanceof UnspecifiedNumExpr)) {
-                    NumExpr secondNum = NumExprParser.parseNumExpr(expressionBlock, 1, blocks);
-                    return new LessThan(firstNum, secondNum);
-                } else {
-                    StringExpr firstString = StringExprParser.parseStringExpr(expressionBlock, 0, blocks);
-                    StringExpr secondString = StringExprParser.parseStringExpr(expressionBlock, 1, blocks);
-                    return new LessThan(firstString, secondString);
+                first = NumExprParser.parseNumExpr(expressionBlock, 0, blocks);
+                second = NumExprParser.parseNumExpr(expressionBlock, 1, blocks);
+                if ((first instanceof AsNumber || first instanceof UnspecifiedNumExpr)) {
+                    first = StringExprParser.parseStringExpr(expressionBlock, 0, blocks);
                 }
 
-            case operator_equals:
-                firstNum = NumExprParser.parseNumExpr(expressionBlock, 0, blocks);
-                if (!(firstNum instanceof AsNumber || firstNum instanceof UnspecifiedNumExpr)) {
-                    NumExpr secondNum = NumExprParser.parseNumExpr(expressionBlock, 1, blocks);
-                    return new Equals(firstNum, secondNum);
-                } else {
-                    StringExpr firstString = StringExprParser.parseStringExpr(expressionBlock, 0, blocks);
-                    StringExpr secondString = StringExprParser.parseStringExpr(expressionBlock, 1, blocks);
-                    return new Equals(firstString, secondString);
+                if (second instanceof AsNumber || second instanceof UnspecifiedNumExpr) {
+                    second = StringExprParser.parseStringExpr(expressionBlock, 1, blocks);
                 }
+
+                return new LessThan(first, second);
+            case operator_equals:
+                first = NumExprParser.parseNumExpr(expressionBlock, 0, blocks);
+                second = NumExprParser.parseNumExpr(expressionBlock, 1, blocks);
+                if ((first instanceof AsNumber || first instanceof UnspecifiedNumExpr)) {
+                    first = StringExprParser.parseStringExpr(expressionBlock, 0, blocks);
+                }
+
+                if (second instanceof AsNumber || second instanceof UnspecifiedNumExpr) {
+                    second = StringExprParser.parseStringExpr(expressionBlock, 1, blocks);
+                }
+                return new Equals(first, second);
             case operator_and:
                 BoolExpr andFirst = parseBoolExpr(expressionBlock, 0, blocks);
                 BoolExpr andSecond = parseBoolExpr(expressionBlock, 1, blocks);

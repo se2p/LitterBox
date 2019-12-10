@@ -32,13 +32,13 @@ import scratch.ast.model.statement.control.*;
 /**
  * Checks for missing statements in repeat-until blocks.
  */
-public class MissingTermination implements IssueFinder {
+public class MissingTerminationCondition implements IssueFinder {
     public static final String NAME = "missing_termination";
     public static final String SHORT_NAME = "msstrm";
     private List<String> found;
     private int counter;
 
-    public MissingTermination() {
+    public MissingTerminationCondition() {
         found = new ArrayList<>();
         counter = 0;
     }

@@ -22,7 +22,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.File;
 import java.io.IOException;
 import newanalytics.IssueReport;
-import newanalytics.bugpattern.MissingTermination;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -30,7 +29,7 @@ import scratch.ast.ParsingException;
 import scratch.ast.model.Program;
 import scratch.ast.parser.ProgramParser;
 
-public class MissingTerminationTest {
+public class MissingTerminationConditionTest {
     private static ObjectMapper mapper = new ObjectMapper();
     private static Program program;
     private static Program programNested;
@@ -45,13 +44,13 @@ public class MissingTerminationTest {
 
     @Test
     public void testMissingTermination() {
-        IssueReport report = (new MissingTermination()).check(program);
+        IssueReport report = (new MissingTerminationCondition()).check(program);
         Assertions.assertEquals(1, report.getCount());
     }
 
     @Test
-    public void testMissingTerminationNested(){
-        IssueReport report = (new MissingTermination()).check(programNested);
+    public void testMissingTerminationNested() {
+        IssueReport report = (new MissingTerminationCondition()).check(programNested);
         Assertions.assertEquals(1, report.getCount());
     }
 }
