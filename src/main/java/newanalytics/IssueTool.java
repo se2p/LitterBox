@@ -55,7 +55,7 @@ public class IssueTool {
 //        finder.put("dblif", new DoubleIf());
         finder.put(MissingLoopSensing.SHORT_NAME, new MissingLoopSensing());
 //        finder.put("clninit", new CloneInitialization());
-        finder.put(MissingTermination.SHORT_NAME, new MissingTermination());
+        finder.put(MissingTerminationCondition.SHORT_NAME, new MissingTerminationCondition());
         finder.put(DeadCode.SHORT_NAME, new DeadCode());
 //        finder.put("attrmod", new AttributeModification());
 //        finder.put("emptybd", new EmptyBody());
