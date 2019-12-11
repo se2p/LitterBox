@@ -21,13 +21,11 @@ package scratch.ast.visitor;
 import scratch.ast.model.ASTNode;
 import scratch.ast.model.ActorDefinition;
 import scratch.ast.model.Script;
-import scratch.ast.model.event.Event;
+import scratch.ast.model.event.ReceptionOfMessage;
 import scratch.ast.model.event.StartedAsClone;
 import scratch.ast.model.expression.bool.*;
 import scratch.ast.model.procedure.ProcedureDefinition;
-import scratch.ast.model.statement.common.CreateCloneOf;
-import scratch.ast.model.statement.common.SetStmt;
-import scratch.ast.model.statement.common.WaitUntil;
+import scratch.ast.model.statement.common.*;
 import scratch.ast.model.statement.control.IfElseStmt;
 import scratch.ast.model.statement.control.IfThenStmt;
 import scratch.ast.model.statement.control.UntilStmt;
@@ -194,7 +192,9 @@ public interface ScratchVisitor {
      *
      * @param node Script of which the children will be iterated
      */
-    default void visit(Script node){visit((ASTNode) node);}
+    default void visit(Script node) {
+        visit((ASTNode) node);
+    }
 
     /**
      * Default implementation of visit method for {@link CreateCloneOf}.
@@ -310,6 +310,45 @@ public interface ScratchVisitor {
      * @param node And Node of which the children will be iterated
      */
     default void visit(Or node) {
+        visit((ASTNode) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link Broadcast}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node Broadcast Node of which the children will be iterated
+     */
+    default void visit(Broadcast node) {
+        visit((ASTNode) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link BroadcastAndWait}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node BroadcastAndWait Node of which the children will be iterated
+     */
+    default void visit(BroadcastAndWait node) {
+        visit((ASTNode) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link ReceptionOfMessage}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node ReceptionOfMessage Node of which the children will be iterated
+     */
+    default void visit(ReceptionOfMessage node) {
         visit((ASTNode) node);
     }
 }
