@@ -18,40 +18,75 @@
  */
 package newanalytics.bugpattern;
 
+import java.util.LinkedList;
 import java.util.List;
+
 import newanalytics.IssueFinder;
 import newanalytics.IssueReport;
 import newanalytics.smells.DeadCode;
 import newanalytics.smells.EmptyScript;
+import scratch.ast.model.ASTNode;
 import scratch.ast.model.ActorDefinition;
 import scratch.ast.model.Program;
+import scratch.ast.model.event.Event;
+import scratch.ast.model.event.Never;
+import scratch.ast.model.procedure.Parameter;
+import scratch.ast.visitor.ScratchVisitor;
 import utils.Preconditions;
 
-public class EmptyScriptAndDeadCode implements IssueFinder {
+public class NoWorkingScripts implements IssueFinder, ScratchVisitor {
     public static final String NAME = "Simultaneous_empty_sprite_and_dead_code";
     public static final String SHORT_NAME = "simemptscrptdcode";
     private static final String NOTE1 = "There are no sprites with empty scripts and simultaneously dead code in your project.";
     private static final String NOTE2 = "Some of the sprites contain empty scripts and simultaneously dead code.";
+    private boolean found = false;
+    private int count = 0;
+    private List<String> actorNames = new LinkedList<>();
+    private ActorDefinition currentActor;
+    private boolean stillFullfilled = true;
 
-    public EmptyScriptAndDeadCode() {
+    public NoWorkingScripts() {
     }
 
     @Override
     public IssueReport check(Program program) {
         Preconditions.checkNotNull(program);
-        final List<ActorDefinition> definitions = program.getActorDefinitionList().getDefintions();
-        List<String> deadCode = (new DeadCode()).check(program).getPosition();
-        List<String> EmptyScript = (new EmptyScript()).check(program).getPosition();
-        for (ActorDefinition actor : definitions) {
-            String actorName = actor.getIdent().getName();
-
+        program.accept(this);
+        String notes = NOTE1;
+        if (count > 0) {
+            notes = NOTE2;
         }
-
-        throw new RuntimeException("not implemented");
+        return new IssueReport(NAME, count, actorNames, notes);
     }
 
     @Override
     public String getName() {
         return NAME;
+    }
+
+    @Override
+    public void visit(ActorDefinition actor) {
+        currentActor = actor;
+        if (!actor.getChildren().isEmpty()) {
+            for (ASTNode child : actor.getChildren()) {
+                child.accept(this);
+            }
+        }
+
+        if (found) {
+            found = false;
+            actorNames.add(currentActor.getIdent().getName());
+        }
+    }
+
+    @Override
+    public void visit(Event node) {
+        if (stillFullfilled) {
+            if (node instanceof Never) {
+              //  if((Never) node)
+            } else {
+
+            }
+        }
     }
 }

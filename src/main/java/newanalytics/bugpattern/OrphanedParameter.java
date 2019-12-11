@@ -10,6 +10,7 @@ import scratch.ast.model.procedure.Parameter;
 import scratch.ast.model.procedure.ProcedureDefinition;
 import scratch.ast.model.variable.StrId;
 import scratch.ast.visitor.ScratchVisitor;
+import utils.Preconditions;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -28,6 +29,7 @@ public class OrphanedParameter implements IssueFinder, ScratchVisitor {
 
     @Override
     public IssueReport check(Program program) {
+        Preconditions.checkNotNull(program);
         program.accept(this);
         String notes = NOTE1;
         if (count > 0) {

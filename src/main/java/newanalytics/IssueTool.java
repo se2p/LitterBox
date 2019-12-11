@@ -49,6 +49,7 @@ public class IssueTool {
         finder.put(AmbiguousProcedureSignature.SHORT_NAME, new AmbiguousProcedureSignature());
         finder.put(MissingPenDown.SHORT_NAME, new MissingPenDown());
         finder.put(MissingEraseAll.SHORT_NAME, new MissingEraseAll());
+        finder.put(NoWorkingScripts.SHORT_NAME, new NoWorkingScripts());
         finder.put(MissingCloneInitialization.SHORT_NAME, new MissingCloneInitialization());
         finder.put(EmptyScriptAndDeadCode.SHORT_NAME, new EmptyScriptAndDeadCode());
         finder.put(OrphanedParameter.SHORT_NAME, new OrphanedParameter());

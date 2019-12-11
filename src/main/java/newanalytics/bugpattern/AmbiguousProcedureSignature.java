@@ -6,6 +6,7 @@ import newanalytics.IssueTool;
 import scratch.ast.model.Program;
 import scratch.ast.model.variable.Identifier;
 import scratch.ast.parser.symboltable.ProcedureInfo;
+import utils.Preconditions;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -19,6 +20,7 @@ public class AmbiguousProcedureSignature implements IssueFinder {
 
     @Override
     public IssueReport check(Program program) {
+        Preconditions.checkNotNull(program);
         List<String> found = new ArrayList<>();
         HashMap<Identifier, ProcedureInfo> procs = program.getProcedureMapping().getProcedures();
         List<ProcedureInfo> procedureInfos = new ArrayList<>(procs.values());
