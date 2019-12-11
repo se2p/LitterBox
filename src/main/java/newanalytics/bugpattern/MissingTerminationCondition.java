@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import newanalytics.IssueFinder;
 import newanalytics.IssueReport;
+import newanalytics.IssueTool;
 import scratch.ast.model.ActorDefinition;
 import scratch.ast.model.Program;
 import scratch.ast.model.Script;
@@ -60,7 +61,7 @@ public class MissingTerminationCondition implements IssueFinder {
         if (counter > 0) {
             notes = "Some 'repeat until' blocks have no termination statement.";
         }
-        return new IssueReport(NAME, counter, found, notes);
+        return new IssueReport(NAME, counter, IssueTool.getOnlyUniqueActorList(found), notes);
     }
 
     private void checkMissTermination(List<Stmt> stmts, String actorName) {

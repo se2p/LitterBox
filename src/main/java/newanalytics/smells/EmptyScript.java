@@ -23,6 +23,7 @@ import java.util.List;
 
 import newanalytics.IssueFinder;
 import newanalytics.IssueReport;
+import newanalytics.IssueTool;
 import scratch.ast.model.ActorDefinition;
 import scratch.ast.model.Program;
 import scratch.ast.model.Script;
@@ -63,7 +64,7 @@ public class EmptyScript implements IssueFinder {
             notes = NOTE2;
         }
 
-        return new IssueReport(NAME, found.size(), found, notes);
+        return new IssueReport(NAME, found.size(), IssueTool.getOnlyUniqueActorList(found), notes);
     }
 
     @Override

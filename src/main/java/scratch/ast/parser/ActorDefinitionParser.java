@@ -90,7 +90,9 @@ public class ActorDefinitionParser {
         List<Script> scripts = new LinkedList<>();
         for (String topLevelID : topLevelNodes) {
             Script script = ScriptParser.parse(topLevelID, allBlocks);
-            scripts.add(script);
+            if (script != null) {
+                scripts.add(script);
+            }
         }
         ScriptList scriptList = new ScriptList(scripts);
 

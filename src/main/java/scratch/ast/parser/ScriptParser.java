@@ -67,6 +67,9 @@ public class ScriptParser {
         } else {
             event = new Never();
             stmtList = parseStmtList(blockID, blocks);
+            if (stmtList == null) {
+                return null;
+            }
         }
 
         return new Script(event, stmtList);
@@ -87,7 +90,7 @@ public class ScriptParser {
                     //Ignore ProcedureOpcodes
                     blockID = current.get(NEXT_KEY).asText();
                     current = blocks.get(blockID);
-                    continue;
+                    return null;
                 }
 
                 Stmt stmt = StmtParser.parse(blockID, blocks);

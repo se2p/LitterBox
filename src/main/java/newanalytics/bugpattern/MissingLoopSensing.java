@@ -23,6 +23,7 @@ import java.util.List;
 
 import newanalytics.IssueFinder;
 import newanalytics.IssueReport;
+import newanalytics.IssueTool;
 import scratch.ast.model.ActorDefinition;
 import scratch.ast.model.Program;
 import scratch.ast.model.Script;
@@ -62,11 +63,11 @@ public class MissingLoopSensing implements IssueFinder {
             }
         }
         String note = "There is no fishy touching or keyPressed checks without a loop.";
-        if (found.size() > 0) {
+        if (counter > 0) {
             note = "The project contains some fishy touching and / or keyPressed checks without a loop.";
 
         }
-        return new IssueReport(NAME, counter, found, note);
+        return new IssueReport(NAME, counter, IssueTool.getOnlyUniqueActorList(found), note);
     }
 
     private void checkMissLoop(List<Stmt> stmts, String actorName) {

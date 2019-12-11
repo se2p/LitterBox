@@ -23,10 +23,12 @@ import scratch.ast.model.ActorDefinition;
 import scratch.ast.model.expression.bool.BiggerThan;
 import scratch.ast.model.expression.bool.Equals;
 import scratch.ast.model.expression.bool.LessThan;
+import scratch.ast.model.procedure.ProcedureDefinition;
 import scratch.ast.model.statement.common.SetStmt;
 import scratch.ast.model.statement.pen.PenClearStmt;
 import scratch.ast.model.statement.pen.PenDownStmt;
 import scratch.ast.model.statement.pen.PenUpStmt;
+import scratch.ast.model.variable.StrId;
 
 public interface ScratchVisitor {
 
@@ -146,12 +148,34 @@ public interface ScratchVisitor {
      * Iterates all children of this node without performing any action.
      * </p>
      *
-     * @param node LessThan Node of which the children will be iterated
+     * @param node BiggerThan Node of which the children will be iterated
      */
     default void visit(BiggerThan node) {
         visit((ASTNode) node);
     }
 
+    /**
+     * Default implementation of visit method for {@link ProcedureDefinition}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node ProcedureDefinition Node of which the children will be iterated
+     */
+    default void visit(ProcedureDefinition node) {
+        visit((ASTNode) node);
+    }
 
+    /**
+     * Default implementation of visit method for {@link StrId}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node StrId of which the children will be iterated
+     */
+    default void visit(StrId node){visit((ASTNode) node);}
 
 }

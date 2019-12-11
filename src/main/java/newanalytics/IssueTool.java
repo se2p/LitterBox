@@ -26,10 +26,7 @@ import scratch.ast.model.Program;
 import utils.CSVWriter;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Holds all IssueFinder and executes them.
@@ -47,7 +44,7 @@ public class IssueTool {
         finder.put(MissingPenDown.SHORT_NAME, new MissingPenDown());
         finder.put(MissingEraseAll.SHORT_NAME, new MissingEraseAll());
         finder.put(EmptyScriptAndDeadCode.SHORT_NAME, new EmptyScriptAndDeadCode());
-
+        finder.put(OrphanedParameter.SHORT_NAME, new OrphanedParameter());
 //        finder.put("cnt", new CountBlocks());
 //        finder.put("glblstrt", new GlobalStartingPoint());
 //        finder.put("strt", new StartingPoint());
@@ -147,5 +144,11 @@ public class IssueTool {
 
     public void setFinder(Map<String, IssueFinder> finder) {
         this.finder = finder;
+    }
+
+    public static List<String> getOnlyUniqueActorList(List<String> foundSpritesWithIssues){
+        Set<String> uniqueSprites = new TreeSet<>(foundSpritesWithIssues);
+        return new ArrayList<>(uniqueSprites);
+
     }
 }

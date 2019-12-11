@@ -2,9 +2,9 @@ package newanalytics.bugpattern;
 
 import newanalytics.IssueFinder;
 import newanalytics.IssueReport;
+import newanalytics.IssueTool;
 import scratch.ast.model.Program;
 import scratch.ast.model.variable.Identifier;
-import scratch.ast.parser.ProgramParser;
 import scratch.ast.parser.symboltable.ArgumentInfo;
 import scratch.ast.parser.symboltable.ProcedureInfo;
 
@@ -32,7 +32,7 @@ public class AmbiguousParameterName implements IssueFinder {
             notes = NOTE2;
         }
 
-        return new IssueReport(NAME, found.size(), found, notes);
+        return new IssueReport(NAME, found.size(), IssueTool.getOnlyUniqueActorList(found), notes);
     }
 
     private boolean checkArguments(ArgumentInfo[] arguments) {

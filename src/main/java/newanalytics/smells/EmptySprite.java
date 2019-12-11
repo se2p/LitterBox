@@ -20,6 +20,7 @@ package newanalytics.smells;
 
 import newanalytics.IssueFinder;
 import newanalytics.IssueReport;
+import newanalytics.IssueTool;
 import scratch.ast.model.ActorDefinition;
 import scratch.ast.model.Program;
 import utils.Preconditions;
@@ -54,7 +55,7 @@ public class EmptySprite implements IssueFinder {
             notes = NOTE2;
         }
 
-        return new IssueReport(NAME, found.size(), found, notes);
+        return new IssueReport(NAME, found.size(), IssueTool.getOnlyUniqueActorList(found), notes);
     }
 
     @Override
