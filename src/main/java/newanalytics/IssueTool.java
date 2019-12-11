@@ -45,6 +45,7 @@ public class IssueTool {
         finder.put(MissingEraseAll.SHORT_NAME, new MissingEraseAll());
         finder.put(EmptyScriptAndDeadCode.SHORT_NAME, new EmptyScriptAndDeadCode());
         finder.put(OrphanedParameter.SHORT_NAME, new OrphanedParameter());
+        finder.put(ParameterOutOfScope.SHORT_NAME, new ParameterOutOfScope());
 //        finder.put("cnt", new CountBlocks());
 //        finder.put("glblstrt", new GlobalStartingPoint());
 //        finder.put("strt", new StartingPoint());

@@ -12,7 +12,7 @@ import scratch.ast.parser.ProgramParser;
 import java.io.File;
 import java.io.IOException;
 
-public class OrphanedParameterTest {
+public class ParameterOutOfScopeTest {
     private static Program empty;
     private static Program orphanedParam;
     private static Program outsideParam;
@@ -31,22 +31,22 @@ public class OrphanedParameterTest {
 
     @Test
     public void testEmptyProgram() {
-        OrphanedParameter parameterName = new OrphanedParameter();
+       ParameterOutOfScope parameterName = new ParameterOutOfScope();
         IssueReport report = parameterName.check(empty);
         Assertions.assertEquals(0,report.getCount() );
     }
 
     @Test
     public void testOrphanedParameter(){
-        OrphanedParameter parameterName = new OrphanedParameter();
+        ParameterOutOfScope parameterName = new ParameterOutOfScope();
         IssueReport report = parameterName.check(orphanedParam);
-        Assertions.assertEquals(1,report.getCount() );
+        Assertions.assertEquals(0,report.getCount() );
     }
 
     @Test
     public void testOutsideParameter(){
-        OrphanedParameter parameterName = new OrphanedParameter();
+        ParameterOutOfScope parameterName = new ParameterOutOfScope();
         IssueReport report = parameterName.check(outsideParam);
-        Assertions.assertEquals(0,report.getCount() );
+        Assertions.assertEquals(1,report.getCount() );
     }
 }

@@ -14,11 +14,11 @@ import scratch.ast.visitor.ScratchVisitor;
 import java.util.LinkedList;
 import java.util.List;
 
-public class OrphanedParameter implements IssueFinder, ScratchVisitor {
-    private static final String NOTE1 = "There are no orphaned parameters in your project.";
-    private static final String NOTE2 = "Some of the procedures contain orphaned parameters.";
-    public static final String NAME = "orphaned_parameter";
-    public static final String SHORT_NAME = "orphndprmtr";
+public class ParameterOutOfScope implements IssueFinder, ScratchVisitor {
+    private static final String NOTE1 = "There are no parameters out of scope in your project.";
+    private static final String NOTE2 = "Some of the scripts contain parameters out of scope.";
+    public static final String NAME = "parameter_out_of_scope";
+    public static final String SHORT_NAME = "prmtroutofscp";
     private boolean found = false;
     private int count = 0;
     private List<String> actorNames = new LinkedList<>();
@@ -40,7 +40,6 @@ public class OrphanedParameter implements IssueFinder, ScratchVisitor {
     public String getName() {
         return NAME;
     }
-
     @Override
     public void visit(ActorDefinition actor) {
         currentActor = actor;
@@ -70,9 +69,10 @@ public class OrphanedParameter implements IssueFinder, ScratchVisitor {
 
     @Override
     public void visit(StrId node) {
-        if (insideProcedure) {
+        if (!insideProcedure) {
             if (node.getName().startsWith(Constants.PARAMETER_ABBREVIATION)) {
-                checkParameterNames(node.getName());
+                count++;
+                found = true;
             }
         }
         if (!node.getChildren().isEmpty()) {
@@ -83,16 +83,4 @@ public class OrphanedParameter implements IssueFinder, ScratchVisitor {
 
     }
 
-    private void checkParameterNames(String name) {
-        boolean validParametername = false;
-        for (int i = 0; i < currentParameters.size() && !validParametername; i++) {
-            if (name.equals(currentParameters.get(i).getIdent().getName())) {
-                validParametername = true;
-            }
-        }
-        if (!validParametername) {
-            count++;
-            found = true;
-        }
-    }
 }
