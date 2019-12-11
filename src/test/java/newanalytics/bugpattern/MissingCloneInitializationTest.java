@@ -1,5 +1,6 @@
 package newanalytics.bugpattern;
 
+
 import static junit.framework.TestCase.fail;
 
 
@@ -14,17 +15,17 @@ import scratch.ast.ParsingException;
 import scratch.ast.model.Program;
 import scratch.ast.parser.ProgramParser;
 
-class ComparingLiteralsTest {
+public class MissingCloneInitializationTest {
 
     private static Program program;
 
     @BeforeAll
     public static void setup() {
-        String path = "src/test/fixtures/bugpattern/comparingLiterals.json";
+        String path = "src/test/fixtures/bugpattern/missingCloneInitialization.json";
         File file = new File(path);
         ObjectMapper objectMapper = new ObjectMapper();
         try {
-            program = ProgramParser.parseProgram("comparing literals", objectMapper.readTree(file));
+            program = ProgramParser.parseProgram("missingCloneInit", objectMapper.readTree(file));
         } catch (IOException | ParsingException e) {
             fail();
         }
@@ -32,10 +33,11 @@ class ComparingLiteralsTest {
 
     @Test
     public void testMissingPenUp() {
-        ComparingLiterals finder = new ComparingLiterals();
+        MissingCloneInitialization finder = new MissingCloneInitialization();
         final IssueReport check = finder.check(program);
-        Truth.assertThat(check.getCount()).isEqualTo(12);
-        Truth.assertThat(check.getPosition().get(0)).isEqualTo("Sprite1");
+        Truth.assertThat(check.getCount()).isEqualTo(1);
+        Truth.assertThat(check.getPosition().get(0)).isEqualTo("Anina Dance");
     }
+
 
 }

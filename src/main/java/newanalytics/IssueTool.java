@@ -18,14 +18,20 @@
  */
 package newanalytics;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import newanalytics.bugpattern.*;
 import newanalytics.ctscore.FlowControl;
-import newanalytics.smells.*;
+import newanalytics.smells.DeadCode;
+import newanalytics.smells.EmptyScript;
+import newanalytics.smells.EmptySprite;
+import newanalytics.smells.LongScript;
 import org.apache.commons.csv.CSVPrinter;
 import scratch.ast.model.Program;
 import utils.CSVWriter;
-
-import java.io.IOException;
 import java.util.*;
 
 /**
@@ -43,6 +49,7 @@ public class IssueTool {
         finder.put(AmbiguousProcedureSignature.SHORT_NAME, new AmbiguousProcedureSignature());
         finder.put(MissingPenDown.SHORT_NAME, new MissingPenDown());
         finder.put(MissingEraseAll.SHORT_NAME, new MissingEraseAll());
+        finder.put(MissingCloneInitialization.SHORT_NAME, new MissingCloneInitialization());
         finder.put(EmptyScriptAndDeadCode.SHORT_NAME, new EmptyScriptAndDeadCode());
         finder.put(OrphanedParameter.SHORT_NAME, new OrphanedParameter());
         finder.put(ParameterOutOfScope.SHORT_NAME, new ParameterOutOfScope());

@@ -20,10 +20,12 @@ package scratch.ast.visitor;
 
 import scratch.ast.model.ASTNode;
 import scratch.ast.model.ActorDefinition;
+import scratch.ast.model.event.StartedAsClone;
 import scratch.ast.model.expression.bool.BiggerThan;
 import scratch.ast.model.expression.bool.Equals;
 import scratch.ast.model.expression.bool.LessThan;
 import scratch.ast.model.procedure.ProcedureDefinition;
+import scratch.ast.model.statement.common.CreateCloneOf;
 import scratch.ast.model.statement.common.SetStmt;
 import scratch.ast.model.statement.pen.PenClearStmt;
 import scratch.ast.model.statement.pen.PenDownStmt;
@@ -127,7 +129,6 @@ public interface ScratchVisitor {
         visit((ASTNode) node);
     }
 
-
     /**
      * Default implementation of visit method for {@link LessThan}.
      *
@@ -176,6 +177,33 @@ public interface ScratchVisitor {
      *
      * @param node StrId of which the children will be iterated
      */
-    default void visit(StrId node){visit((ASTNode) node);}
+    default void visit(StrId node) {
+        visit((ASTNode) node);
+    }
 
+    /**
+     * Default implementation of visit method for {@link CreateCloneOf}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node CreateCloneOf Node of which the children will be iterated
+     */
+    default void visit(CreateCloneOf node) {
+        visit((ASTNode) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link StartedAsClone}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node StartedAsClone Node of which the children will be iterated
+     */
+    default void visit(StartedAsClone node) {
+        visit((ASTNode) node);
+    }
 }
