@@ -23,12 +23,14 @@ import scratch.ast.model.ActorDefinition;
 import scratch.ast.model.Script;
 import scratch.ast.model.event.Event;
 import scratch.ast.model.event.StartedAsClone;
-import scratch.ast.model.expression.bool.BiggerThan;
-import scratch.ast.model.expression.bool.Equals;
-import scratch.ast.model.expression.bool.LessThan;
+import scratch.ast.model.expression.bool.*;
 import scratch.ast.model.procedure.ProcedureDefinition;
 import scratch.ast.model.statement.common.CreateCloneOf;
 import scratch.ast.model.statement.common.SetStmt;
+import scratch.ast.model.statement.common.WaitUntil;
+import scratch.ast.model.statement.control.IfElseStmt;
+import scratch.ast.model.statement.control.IfThenStmt;
+import scratch.ast.model.statement.control.UntilStmt;
 import scratch.ast.model.statement.pen.PenClearStmt;
 import scratch.ast.model.statement.pen.PenDownStmt;
 import scratch.ast.model.statement.pen.PenUpStmt;
@@ -217,6 +219,97 @@ public interface ScratchVisitor {
      * @param node StartedAsClone Node of which the children will be iterated
      */
     default void visit(StartedAsClone node) {
+        visit((ASTNode) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link IfElseStmt}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node IfElseStmt Node of which the children will be iterated
+     */
+    default void visit(IfElseStmt node) {
+        visit((ASTNode) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link IfThenStmt}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node IfThenStmt Node of which the children will be iterated
+     */
+    default void visit(IfThenStmt node) {
+        visit((ASTNode) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link WaitUntil}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node WaitUntil Node of which the children will be iterated
+     */
+    default void visit(WaitUntil node) {
+        visit((ASTNode) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link UntilStmt}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node UntilStmt Node of which the children will be iterated
+     */
+    default void visit(UntilStmt node) {
+        visit((ASTNode) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link Not}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node Not Node of which the children will be iterated
+     */
+    default void visit(Not node) {
+        visit((ASTNode) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link And}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node And Node of which the children will be iterated
+     */
+    default void visit(And node) {
+        visit((ASTNode) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link Or}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node And Node of which the children will be iterated
+     */
+    default void visit(Or node) {
         visit((ASTNode) node);
     }
 }

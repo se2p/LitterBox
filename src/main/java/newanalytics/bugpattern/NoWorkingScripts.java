@@ -32,10 +32,10 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class NoWorkingScripts implements IssueFinder, ScratchVisitor {
-    public static final String NAME = "Simultaneous_empty_sprite_and_dead_code";
-    public static final String SHORT_NAME = "simemptscrptdcode";
-    private static final String NOTE1 = "There are no sprites with empty scripts and simultaneously dead code in your project.";
-    private static final String NOTE2 = "Some of the sprites contain empty scripts and simultaneously dead code.";
+    public static final String NAME = "No_Working_Scripts";
+    public static final String SHORT_NAME = "nowrkngScrpt";
+    private static final String NOTE1 = "There are no sprites with only empty scripts and simultaneously dead code in your project.";
+    private static final String NOTE2 = "Some of the sprites contain only empty scripts and simultaneously dead code.";
     private boolean found = false;
     private int count = 0;
     private List<String> actorNames = new LinkedList<>();

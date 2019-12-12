@@ -44,7 +44,6 @@ public class IssueTool {
 
     public IssueTool() {
         finder.put(MissingPenUp.SHORT_NAME, new MissingPenUp());
-        // finder.put(EmptyScriptAndDeadCode.SHORT_NAME, new EmptyScriptAndDeadCode());
         finder.put(AmbiguousParameterName.SHORT_NAME, new AmbiguousParameterName());
         finder.put(AmbiguousProcedureSignature.SHORT_NAME, new AmbiguousProcedureSignature());
         finder.put(MissingPenDown.SHORT_NAME, new MissingPenDown());
@@ -53,6 +52,7 @@ public class IssueTool {
         finder.put(MissingCloneInitialization.SHORT_NAME, new MissingCloneInitialization());
         finder.put(OrphanedParameter.SHORT_NAME, new OrphanedParameter());
         finder.put(ParameterOutOfScope.SHORT_NAME, new ParameterOutOfScope());
+        finder.put(IllegalParameterRefactor.SHORT_NAME, new IllegalParameterRefactor());
 //        finder.put("cnt", new CountBlocks());
 //        finder.put("glblstrt", new GlobalStartingPoint());
 //        finder.put("strt", new StartingPoint());
