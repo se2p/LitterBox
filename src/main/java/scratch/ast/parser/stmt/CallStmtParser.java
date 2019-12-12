@@ -19,13 +19,17 @@
 package scratch.ast.parser.stmt;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import scratch.ast.Constants;
 import scratch.ast.ParsingException;
 import scratch.ast.model.expression.Expression;
 import scratch.ast.model.expression.list.ExpressionList;
 import scratch.ast.model.expression.list.ExpressionListPlain;
 import scratch.ast.model.statement.CallStmt;
 import scratch.ast.model.statement.Stmt;
+import scratch.ast.model.variable.Identifier;
+import scratch.ast.model.variable.Qualified;
 import scratch.ast.model.variable.StrId;
+import scratch.ast.parser.ActorDefinitionParser;
 import scratch.ast.parser.ExpressionParser;
 
 import java.util.ArrayList;
@@ -35,13 +39,13 @@ import static scratch.ast.Constants.INPUTS_KEY;
 
 public class CallStmtParser {
 
-    public static Stmt parse(JsonNode current, String blockId, JsonNode blocks) throws ParsingException {
+    public static Stmt parse(JsonNode current, JsonNode blocks) throws ParsingException {
         List<Expression> expressions = new ArrayList<>();
         JsonNode inputNode = current.get(INPUTS_KEY);
         for (int i = 0; i < inputNode.size(); i++) {
             expressions.add(ExpressionParser.parseExpression(current,i,blocks));
         }
 
-        return new CallStmt(new StrId(blockId), new ExpressionList(new ExpressionListPlain(expressions)));
+        return new CallStmt(new StrId(current.get(Constants.MUTATION_KEY).get(Constants.PROCCODE_KEY).asText()), new ExpressionList(new ExpressionListPlain(expressions)));
     }
 }

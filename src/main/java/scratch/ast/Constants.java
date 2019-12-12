@@ -183,4 +183,6 @@ public class Constants {
     public static final String VARIABLE_ABBREVIATION = "V";
     public static final String LIST_ABBREVIATION = "L";
     public static final String PARAMETER_ABBREVIATION = "P";
+    public final static String MUTATION_KEY = "mutation";
+    public final static String PROCCODE_KEY = "proccode";
 }

@@ -21,13 +21,20 @@ package scratch.ast.visitor;
 import scratch.ast.model.ASTNode;
 import scratch.ast.model.ActorDefinition;
 import scratch.ast.model.Script;
+import scratch.ast.model.StmtList;
+import scratch.ast.model.event.Event;
 import scratch.ast.model.event.ReceptionOfMessage;
 import scratch.ast.model.event.StartedAsClone;
 import scratch.ast.model.expression.bool.*;
 import scratch.ast.model.procedure.ProcedureDefinition;
+import scratch.ast.model.statement.CallStmt;
+import scratch.ast.model.statement.common.CreateCloneOf;
+import scratch.ast.model.statement.common.SetStmt;
+import scratch.ast.model.statement.common.WaitUntil;
 import scratch.ast.model.statement.common.*;
 import scratch.ast.model.statement.control.IfElseStmt;
 import scratch.ast.model.statement.control.IfThenStmt;
+import scratch.ast.model.statement.control.RepeatForeverStmt;
 import scratch.ast.model.statement.control.UntilStmt;
 import scratch.ast.model.statement.pen.PenClearStmt;
 import scratch.ast.model.statement.pen.PenDownStmt;
@@ -192,9 +199,7 @@ public interface ScratchVisitor {
      *
      * @param node Script of which the children will be iterated
      */
-    default void visit(Script node) {
-        visit((ASTNode) node);
-    }
+    default void visit(Script node){visit((ASTNode) node);}
 
     /**
      * Default implementation of visit method for {@link CreateCloneOf}.
@@ -349,6 +354,45 @@ public interface ScratchVisitor {
      * @param node ReceptionOfMessage Node of which the children will be iterated
      */
     default void visit(ReceptionOfMessage node) {
+        visit((ASTNode) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link RepeatForeverStmt}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node RepeatForeverStmt Node of which the children will be iterated
+     */
+    default void visit(RepeatForeverStmt node) {
+        visit((ASTNode) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link CallStmt}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node CallStmt Node of which the children will be iterated
+     */
+    default void visit(CallStmt node) {
+        visit((ASTNode) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link StmtList}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node StmtList Node of which the children will be iterated
+     */
+    default void visit(StmtList node) {
         visit((ASTNode) node);
     }
 }

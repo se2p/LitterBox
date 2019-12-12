@@ -66,7 +66,7 @@ public class StmtParser {
             return ActorSoundStmtParser.parse(current, blocks);
 
         } else if (CallStmtOpcode.contains(opcode)) {
-            return CallStmtParser.parse(current, blockID, blocks);
+            return CallStmtParser.parse(current, blocks);
 
         } else if (ListStmtOpcode.contains(opcode)) {
             return ListStmtParser.parse(current, blocks);
