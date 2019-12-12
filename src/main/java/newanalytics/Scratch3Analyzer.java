@@ -20,7 +20,9 @@ package newanalytics;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,6 +35,7 @@ import scratch.ast.model.Program;
 import scratch.ast.parser.ProgramParser;
 import scratch.structure.Project;
 import utils.CSVWriter;
+import utils.Downloader;
 import utils.JsonParser;
 import utils.ZipReader;
 
@@ -199,4 +202,59 @@ public class Scratch3Analyzer {
         return program;
     }
 
+    /**
+     * Downlaods and analyzes a single project with the given id
+     *
+     * @param projectid  Id of the project which should be downloaded
+     * @param outfolder  Folder in which the project file will be stored
+     * @param detectors  IssueFinders which will be run for this project
+     * @param resultpath Path where the outputfile will be stored
+     */
+    public static void downloadAndAnalyze(String projectid, String outfolder, String detectors, String resultpath) {
+        try {
+            String json = Downloader.downloadAndSaveProject(projectid, outfolder);
+            Scratch3Analyzer.checkDownloaded(json, projectid, //Name ProjectID is not the same as the Projectname
+                    detectors, resultpath);
+        } catch (IOException e) {
+            log.info("Could not load project with id " + projectid);
+        }
+    }
+
+    /**
+     * Downloads all projects with the ids in a file at the given path.
+     *
+     * <p>
+     * The file at the given path is expected to contain a list of project ids.
+     * The projects are then downloaded, stored and analyzed.
+     *
+     * @param projectListPath Path to the file with project ids.
+     * @param outfolder       Folder in which the project file will be stored
+     * @param detectors       IssueFinders which will be run for this project
+     * @param resultpath      Path where the outputfile will be stored
+     */
+    public static void downloadAndAnalyzeMultiple(String projectListPath,
+                                                  String outfolder,
+                                                  String detectors,
+                                                  String resultpath) {
+        File file = new File(projectListPath);
+
+        if (!file.exists()) {
+            log.info("File " + projectListPath + " does not exist.");
+            return;
+        } else if (file.isDirectory()) {
+            log.info("File " + projectListPath + " is a directory.");
+            return;
+        }
+
+        try {
+            BufferedReader br = new BufferedReader(new FileReader(file));
+            String line = br.readLine();
+            while (line != null) {
+                downloadAndAnalyze(line, outfolder, detectors, resultpath);
+                line = br.readLine();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }

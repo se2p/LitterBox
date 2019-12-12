@@ -19,16 +19,15 @@
 
 import analytics.Scratch2Analyzer;
 import java.io.File;
-import java.io.IOException;
 import java.util.logging.Logger;
 import newanalytics.Scratch3Analyzer;
 import org.apache.commons.cli.*;
-import utils.Downloader;
 
 public class Main {
 
     private static final String PATH = "path";
     private static final String PROJECTID = "projectid";
+    private static final String PROJECTLIST = "projectlist";
     private static final String PROJECTOUT = "projectout";
     private static final String OUTPUT = "output";
     private static final String DETECTORS = "detectors";
@@ -38,7 +37,6 @@ public class Main {
     private static final Logger log = Logger.getLogger(Main.class.getName());
 
     private Main() {
-
     }
 
     /**
@@ -54,6 +52,8 @@ public class Main {
         options.addOption(PATH, true, "path to folder or file that should be analyzed (required)");
         options.addOption(PROJECTID, true,
                 "id of the project that should be downloaded and analysed. Only works for Scratch 3");
+        options.addOption(PROJECTLIST, true, "path to a file with a list of project ids of projects"
+                + "which should be downloaded and analysed. Only works for Scratch 3");
         options.addOption(PROJECTOUT, true, "path where the downloaded project should be stored");
         options.addOption(OUTPUT, true, "path with name of the csv file you want to save (required if path argument"
                 + " is a folder path)");
@@ -77,19 +77,22 @@ public class Main {
                         cmd.getOptionValue(OUTPUT), folder);
             }
             return;
-        } else if (cmd.hasOption(PROJECTID)) {
-            String projectid = cmd.getOptionValue(PROJECTID);
-            try {
-                String json = Downloader.downloadProjectJSON(projectid);
-                Downloader.saveDownloadedProject(json, projectid, cmd.getOptionValue(PROJECTOUT));
-                Scratch3Analyzer.checkDownloaded(json, projectid, //Name ProjectID is not the same as the Projectname
+        } else if (cmd.hasOption(PROJECTID) || cmd.hasOption(PROJECTLIST)) {
+            if (cmd.hasOption(PROJECTID)) {
+                String projectid = cmd.getOptionValue(PROJECTID);
+                Scratch3Analyzer.downloadAndAnalyze(projectid, cmd.getOptionValue(PROJECTOUT),
                         cmd.getOptionValue(DETECTORS, "all"),
                         cmd.getOptionValue(OUTPUT));
-            } catch (IOException e) {
-                log.info("Could not load project with id " + projectid);
-                return;
             }
 
+            if (cmd.hasOption(PROJECTLIST)) {
+                Scratch3Analyzer.downloadAndAnalyzeMultiple(
+                        cmd.getOptionValue(PROJECTLIST),
+                        cmd.getOptionValue(PROJECTOUT),
+                        cmd.getOptionValue(DETECTORS, "all"),
+                        cmd.getOptionValue(OUTPUT));
+            }
+            return;
         }
         HelpFormatter formatter = new HelpFormatter();
         formatter.printHelp("LitterBox", options);

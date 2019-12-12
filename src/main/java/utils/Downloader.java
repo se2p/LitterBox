@@ -22,15 +22,25 @@ import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class Downloader {
+
+    public static String downloadAndSaveProject(String projectid, String projectout) throws IOException {
+        if (!isAlreadyDownloaded(projectid, projectout)) {
+            String json = downloadProjectJSON(projectid);
+            saveDownloadedProject(json, projectid, projectout);
+            return json;
+        } else {
+            Path path = Paths.get(projectout, projectid + ".json");
+            return new String(Files.readAllBytes(path), StandardCharsets.UTF_8);
+        }
+    }
 
     public static String downloadProjectJSON(String projectid) throws IOException {
         String url = "https://projects.scratch.mit.edu/" + projectid + "/all";
@@ -48,14 +58,34 @@ public class Downloader {
         }
     }
 
+    public static boolean isAlreadyDownloaded(String projectid, String projectout) throws IOException {
+        Path path = Paths.get(projectout, projectid + ".json");
+        File file = new File(path.toString());
+        return file.exists();
+    }
+
     public static void saveDownloadedProject(String json, String projectid, String projectout) throws IOException {
         if (projectout == null) {
             return;
         }
+
+        File folder = new File(projectout);
+        if (folder.exists() && !folder.isDirectory()) {
+            System.out.println("Projectout is not a folder but a file");
+        }
+
+        if (!folder.exists()) {
+            boolean success = folder.mkdir();
+            if (!success) {
+                System.out.println("Could not create projectout");
+            }
+        }
+
         ObjectMapper mapper = new ObjectMapper();
         JsonNode jsonNode = mapper.readTree(json);
         ObjectWriter writer = mapper.writer(new DefaultPrettyPrinter());
-        writer.writeValue(new File(projectout + projectid + ".json"), jsonNode);
+        Path path = Paths.get(projectout, projectid + ".json");
+        writer.writeValue(new File(path.toString()), jsonNode);
     }
 
 }
