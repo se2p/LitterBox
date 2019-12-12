@@ -18,17 +18,15 @@
  */
 package scratch.ast.parser.stmt;
 
+import static scratch.ast.Constants.*;
+
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import scratch.ast.ParsingException;
 import scratch.ast.model.expression.num.NumExpr;
 import scratch.ast.model.expression.string.StringExpr;
-import scratch.ast.model.statement.list.AddTo;
-import scratch.ast.model.statement.list.DeleteAllOf;
-import scratch.ast.model.statement.list.DeleteOf;
-import scratch.ast.model.statement.list.InsertAt;
-import scratch.ast.model.statement.list.ListStmt;
-import scratch.ast.model.statement.list.ReplaceItem;
+import scratch.ast.model.statement.list.*;
 import scratch.ast.model.variable.Qualified;
 import scratch.ast.model.variable.StrId;
 import scratch.ast.opcodes.ListStmtOpcode;
@@ -38,15 +36,13 @@ import scratch.ast.parser.StringExprParser;
 import scratch.ast.parser.symboltable.ExpressionListInfo;
 import utils.Preconditions;
 
-import static scratch.ast.Constants.*;
-
 public class ListStmtParser {
 
     public static ListStmt parse(JsonNode current, JsonNode allBlocks) throws ParsingException {
         Preconditions.checkNotNull(current);
         Preconditions.checkNotNull(allBlocks);
 
-        final String opcodeString = current.get(OPCODE_KEY).textValue();
+        final String opcodeString = current.get(OPCODE_KEY).asText();
         Preconditions
             .checkArgument(ListStmtOpcode.contains(opcodeString), "Given blockID does not point to a list " +
                 "statement block.");
@@ -89,9 +85,9 @@ public class ListStmtParser {
         JsonNode listNode = current.get(FIELDS_KEY).get(LIST_KEY);
         Preconditions.checkArgument(listNode.isArray());
         ArrayNode listArray = (ArrayNode) listNode;
-        String identifier = listArray.get(LIST_IDENTIFIER_POS).textValue();
+        String identifier = listArray.get(LIST_IDENTIFIER_POS).asText();
         ExpressionListInfo info = ProgramParser.symbolTable.getLists().get(identifier);
-        Preconditions.checkArgument(info.getVariableName().equals(LIST_ABBREVIATION+listArray.get(LIST_NAME_POS).textValue()));
+        Preconditions.checkArgument(info.getVariableName().equals(LIST_ABBREVIATION + listArray.get(LIST_NAME_POS).asText()));
         return info;
     }
 

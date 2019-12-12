@@ -19,51 +19,24 @@
 package scratch.ast.parser;
 
 import static scratch.ast.Constants.*;
-import static scratch.ast.parser.ExpressionParser.getDataArrayAtPos;
-import static scratch.ast.parser.ExpressionParser.getExprArrayAtPos;
-import static scratch.ast.parser.ExpressionParser.getExprArrayByName;
-import static scratch.ast.parser.ExpressionParser.getShadowIndicator;
-import static scratch.ast.parser.ExpressionParser.parseExpression;
+import static scratch.ast.parser.ExpressionParser.*;
+
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.TextNode;
-
 import java.lang.reflect.InvocationTargetException;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Optional;
-
 import scratch.ast.ParsingException;
 import scratch.ast.model.expression.Expression;
 import scratch.ast.model.expression.bool.BoolExpr;
-import scratch.ast.model.expression.num.Add;
-import scratch.ast.model.expression.num.AsNumber;
-import scratch.ast.model.expression.num.Current;
-import scratch.ast.model.expression.num.DaysSince2000;
-import scratch.ast.model.expression.num.DistanceTo;
-import scratch.ast.model.expression.num.Div;
-import scratch.ast.model.expression.num.IndexOf;
-import scratch.ast.model.expression.num.LengthOfString;
-import scratch.ast.model.expression.num.LengthOfVar;
-import scratch.ast.model.expression.num.Loudness;
-import scratch.ast.model.expression.num.Minus;
-import scratch.ast.model.expression.num.Mod;
-import scratch.ast.model.expression.num.MouseX;
-import scratch.ast.model.expression.num.MouseY;
-import scratch.ast.model.expression.num.Mult;
-import scratch.ast.model.expression.num.NumExpr;
-import scratch.ast.model.expression.num.NumFunct;
-import scratch.ast.model.expression.num.NumFunctOf;
-import scratch.ast.model.expression.num.PickRandom;
-import scratch.ast.model.expression.num.Round;
-import scratch.ast.model.expression.num.Timer;
-import scratch.ast.model.expression.num.UnspecifiedNumExpr;
+import scratch.ast.model.expression.num.*;
 import scratch.ast.model.expression.string.StringExpr;
 import scratch.ast.model.literals.NumberLiteral;
 import scratch.ast.model.position.Position;
-import scratch.ast.model.procedure.Parameter;
 import scratch.ast.model.timecomp.TimeComp;
-import scratch.ast.model.type.BooleanType;
-import scratch.ast.model.type.StringType;
 import scratch.ast.model.variable.Qualified;
 import scratch.ast.model.variable.StrId;
 import scratch.ast.model.variable.Variable;
@@ -154,8 +127,8 @@ public class NumExprParser {
     }
 
     private static NumExpr parseParameter(JsonNode blocks, ArrayNode exprArray) {
-        JsonNode paramBlock = blocks.get(exprArray.get(POS_BLOCK_ID).textValue());
-        String name = paramBlock.get(FIELDS_KEY).get(VALUE_KEY).get(VARIABLE_NAME_POS).textValue();
+        JsonNode paramBlock = blocks.get(exprArray.get(POS_BLOCK_ID).asText());
+        String name = paramBlock.get(FIELDS_KEY).get(VALUE_KEY).get(VARIABLE_NAME_POS).asText();
         return new StrId(PARAMETER_ABBREVIATION + name);
     }
 
@@ -231,8 +204,10 @@ public class NumExprParser {
             case operator_length:
                 return new LengthOfString(StringExprParser.parseStringExpr(expressionBlock, 0, blocks));
             case data_lengthoflist:
+                List<JsonNode> fields = new LinkedList<>();
+                expressionBlock.get(FIELDS_KEY).elements().forEachRemaining(fields::add);
                 return new LengthOfVar(
-                        new StrId(expressionBlock.get(FIELDS_KEY).get(LIST_NAME_POS).textValue()));
+                        new StrId(fields.get(LIST_NAME_POS).asText()));
             case sensing_current:
                 TimeComp timeComp = TimecompParser.parse(expressionBlock);
                 return new Current(timeComp);

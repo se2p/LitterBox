@@ -18,7 +18,14 @@
  */
 package scratch.ast.parser;
 
+import static scratch.ast.Constants.NEXT_KEY;
+import static scratch.ast.Constants.OPCODE_KEY;
+
+
 import com.fasterxml.jackson.databind.JsonNode;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.logging.Logger;
 import scratch.ast.ParsingException;
 import scratch.ast.model.ActorDefinition;
 import scratch.ast.model.Script;
@@ -32,13 +39,6 @@ import scratch.ast.opcodes.EventOpcode;
 import scratch.ast.opcodes.ProcedureOpcode;
 import scratch.ast.parser.stmt.StmtParser;
 import utils.Preconditions;
-
-import java.util.LinkedList;
-import java.util.List;
-import java.util.logging.Logger;
-
-import static scratch.ast.Constants.NEXT_KEY;
-import static scratch.ast.Constants.OPCODE_KEY;
 
 public class ScriptParser {
 
@@ -86,7 +86,7 @@ public class ScriptParser {
 
         while (current != null && !current.isNull()) {
             try {
-                if (ProcedureOpcode.contains(blocks.get(blockID).get(OPCODE_KEY).asText()) || DependentBlockOpcodes.contains(blocks.get(blockID).get(OPCODE_KEY).textValue())) {
+                if (ProcedureOpcode.contains(blocks.get(blockID).get(OPCODE_KEY).asText()) || DependentBlockOpcodes.contains(blocks.get(blockID).get(OPCODE_KEY).asText())) {
                     //Ignore ProcedureOpcodes
                     blockID = current.get(NEXT_KEY).asText();
                     current = blocks.get(blockID);

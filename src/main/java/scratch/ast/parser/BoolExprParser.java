@@ -201,7 +201,7 @@ public class BoolExprParser {
     }
 
     private static BoolExpr parseParameter(JsonNode blocks, JsonNode expressionBlock) {
-        String name = expressionBlock.get(FIELDS_KEY).get(VALUE_KEY).get(VARIABLE_NAME_POS).textValue();
+        String name = expressionBlock.get(FIELDS_KEY).get(VALUE_KEY).get(VARIABLE_NAME_POS).asText();
         return new StrId(PARAMETER_ABBREVIATION + name);
     }
 }

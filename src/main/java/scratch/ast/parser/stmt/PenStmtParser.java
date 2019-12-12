@@ -18,8 +18,13 @@
  */
 package scratch.ast.parser.stmt;
 
+import static scratch.ast.Constants.*;
+
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import java.util.ArrayList;
+import java.util.List;
 import scratch.ast.Constants;
 import scratch.ast.ParsingException;
 import scratch.ast.model.expression.num.NumExpr;
@@ -33,11 +38,6 @@ import scratch.ast.parser.ColorParser;
 import scratch.ast.parser.NumExprParser;
 import scratch.ast.parser.StringExprParser;
 import utils.Preconditions;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import static scratch.ast.Constants.*;
 
 public class PenStmtParser {
 
@@ -81,13 +81,13 @@ public class PenStmtParser {
 
         StringExpr expr;
         if (getShadowIndicator((ArrayNode) inputsList.get(0).get(POS_DATA_ARRAY)) == 1) {
-            String reference = current.get(INPUTS_KEY).get(COLOR_PARAM_BIG_KEY).get(POS_INPUT_VALUE).textValue();
+            String reference = current.get(INPUTS_KEY).get(COLOR_PARAM_BIG_KEY).get(POS_INPUT_VALUE).asText();
             JsonNode referredBlock = blocks.get(reference);
             Preconditions.checkNotNull(referredBlock);
-            if (referredBlock.get(OPCODE_KEY).textValue().equals(DependentBlockOpcodes.pen_menu_colorParam.name())) {
+            if (referredBlock.get(OPCODE_KEY).asText().equals(DependentBlockOpcodes.pen_menu_colorParam.name())) {
                 JsonNode colorParamNode = referredBlock.get(FIELDS_KEY).get(COLOR_PARAM_LITTLE_KEY);
                 Preconditions.checkArgument(colorParamNode.isArray());
-                String attribute = colorParamNode.get(FIELD_VALUE).textValue();
+                String attribute = colorParamNode.get(FIELD_VALUE).asText();
                 expr = new StringLiteral(attribute);
             } else {
                 expr = StringExprParser.parseStringExpr(current, COLOR_PARAM_BIG_KEY, blocks);

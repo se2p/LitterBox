@@ -41,7 +41,7 @@ class CommentDeserializer3 {
             JsonNode n = globalComments.get(id);
             Comment comment = new Comment();
             comment.setId(id);
-            comment.setContent(n.get("text").textValue());
+            comment.setContent(n.get("text").asText());
             double[] pos = new double[2];
             pos[0] = n.get("x").asDouble();
             pos[1] = n.get("y").asDouble();

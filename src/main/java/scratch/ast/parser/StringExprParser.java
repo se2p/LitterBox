@@ -18,18 +18,18 @@
  */
 package scratch.ast.parser;
 
+import static scratch.ast.Constants.*;
+
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.TextNode;
+import java.util.Optional;
 import scratch.ast.ParsingException;
 import scratch.ast.model.expression.bool.BoolExpr;
-import scratch.ast.model.expression.num.AsNumber;
 import scratch.ast.model.expression.num.NumExpr;
 import scratch.ast.model.expression.string.*;
 import scratch.ast.model.literals.StringLiteral;
-import scratch.ast.model.procedure.Parameter;
-import scratch.ast.model.type.BooleanType;
-import scratch.ast.model.type.StringType;
 import scratch.ast.model.variable.Identifier;
 import scratch.ast.model.variable.Qualified;
 import scratch.ast.model.variable.StrId;
@@ -39,10 +39,6 @@ import scratch.ast.opcodes.StringExprOpcode;
 import scratch.ast.parser.symboltable.ExpressionListInfo;
 import scratch.ast.parser.symboltable.VariableInfo;
 import utils.Preconditions;
-
-import java.util.Optional;
-
-import static scratch.ast.Constants.*;
 
 public class StringExprParser {
 
@@ -122,8 +118,8 @@ public class StringExprParser {
     }
 
     private static StringExpr parseParameter(JsonNode blocks, ArrayNode exprArray) {
-        JsonNode paramBlock = blocks.get(exprArray.get(POS_BLOCK_ID).textValue());
-        String name = paramBlock.get(FIELDS_KEY).get(VALUE_KEY).get(VARIABLE_NAME_POS).textValue();
+        JsonNode paramBlock = blocks.get(exprArray.get(POS_BLOCK_ID).asText());
+        String name = paramBlock.get(FIELDS_KEY).get(VALUE_KEY).get(VARIABLE_NAME_POS).asText();
 
         return new StrId(PARAMETER_ABBREVIATION + name);
     }
