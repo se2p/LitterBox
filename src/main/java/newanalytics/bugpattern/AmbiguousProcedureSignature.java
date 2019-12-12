@@ -27,7 +27,7 @@ public class AmbiguousProcedureSignature implements IssueFinder {
         for (int i = 0; i < procedureInfos.size(); i++) {
             ProcedureInfo current = procedureInfos.get(i);
             for (int j = 0; j < procedureInfos.size(); j++) {
-                if (i != j && current.equals(procedureInfos.get(j))) {
+                if (i != j && current.getName().equals(procedureInfos.get(j).getName())) {
                     found.add(current.getActorName());
                 }
             }

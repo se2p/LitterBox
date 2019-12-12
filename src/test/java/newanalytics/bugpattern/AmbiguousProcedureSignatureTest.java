@@ -15,6 +15,7 @@ import java.io.IOException;
 public class AmbiguousProcedureSignatureTest {
     private static Program empty;
     private static Program ambiguousProcedure;
+    private static Program ambiguousProcedureDiffArg;
     private static ObjectMapper mapper = new ObjectMapper();
 
     @BeforeAll
@@ -24,6 +25,8 @@ public class AmbiguousProcedureSignatureTest {
         empty = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
         f = new File("./src/test/fixtures/bugpattern/ambiguousProcedureSignature.json");
         ambiguousProcedure = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
+        f = new File("./src/test/fixtures/bugpattern/ambiguousSignatureDiffArg.json");
+        ambiguousProcedureDiffArg = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
     }
 
     @Test
@@ -34,9 +37,16 @@ public class AmbiguousProcedureSignatureTest {
     }
 
     @Test
-    public void testAmbiguousParameters() {
+    public void testAmbiguousSignatures() {
         AmbiguousProcedureSignature parameterName = new AmbiguousProcedureSignature();
         IssueReport report = parameterName.check(ambiguousProcedure);
+        Assertions.assertEquals(2, report.getCount());
+    }
+
+    @Test
+    public void testAmbiguousSigDifferentParameters() {
+        AmbiguousProcedureSignature parameterName = new AmbiguousProcedureSignature();
+        IssueReport report = parameterName.check(ambiguousProcedureDiffArg);
         Assertions.assertEquals(2, report.getCount());
     }
 }

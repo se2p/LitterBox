@@ -32,10 +32,7 @@ import scratch.ast.model.statement.common.CreateCloneOf;
 import scratch.ast.model.statement.common.SetStmt;
 import scratch.ast.model.statement.common.WaitUntil;
 import scratch.ast.model.statement.common.*;
-import scratch.ast.model.statement.control.IfElseStmt;
-import scratch.ast.model.statement.control.IfThenStmt;
-import scratch.ast.model.statement.control.RepeatForeverStmt;
-import scratch.ast.model.statement.control.UntilStmt;
+import scratch.ast.model.statement.control.*;
 import scratch.ast.model.statement.pen.PenClearStmt;
 import scratch.ast.model.statement.pen.PenDownStmt;
 import scratch.ast.model.statement.pen.PenUpStmt;
@@ -393,6 +390,19 @@ public interface ScratchVisitor {
      * @param node StmtList Node of which the children will be iterated
      */
     default void visit(StmtList node) {
+        visit((ASTNode) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link RepeatTimesStmt}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node RepeatTimesStmt Node of which the children will be iterated
+     */
+    default void visit(RepeatTimesStmt node) {
         visit((ASTNode) node);
     }
 }
