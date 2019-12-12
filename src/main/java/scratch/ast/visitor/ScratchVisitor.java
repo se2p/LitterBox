@@ -20,6 +20,7 @@ package scratch.ast.visitor;
 
 import scratch.ast.model.ASTNode;
 import scratch.ast.model.ActorDefinition;
+import scratch.ast.model.Script;
 import scratch.ast.model.event.Event;
 import scratch.ast.model.event.StartedAsClone;
 import scratch.ast.model.expression.bool.BiggerThan;
@@ -183,15 +184,15 @@ public interface ScratchVisitor {
     }
 
     /**
-     * Default implementation of visit method for {@link Event}.
+     * Default implementation of visit method for {@link Script}.
      *
      * <p>
      * Iterates all children of this node without performing any action.
      * </p>
      *
-     * @param node Event of which the children will be iterated
+     * @param node Script of which the children will be iterated
      */
-    default void visit(Event node){visit((ASTNode) node);}
+    default void visit(Script node){visit((ASTNode) node);}
 
     /**
      * Default implementation of visit method for {@link CreateCloneOf}.

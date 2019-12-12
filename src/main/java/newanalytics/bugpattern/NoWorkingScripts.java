@@ -18,21 +18,18 @@
  */
 package newanalytics.bugpattern;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import newanalytics.IssueFinder;
 import newanalytics.IssueReport;
-import newanalytics.smells.DeadCode;
-import newanalytics.smells.EmptyScript;
 import scratch.ast.model.ASTNode;
 import scratch.ast.model.ActorDefinition;
 import scratch.ast.model.Program;
-import scratch.ast.model.event.Event;
+import scratch.ast.model.Script;
 import scratch.ast.model.event.Never;
-import scratch.ast.model.procedure.Parameter;
 import scratch.ast.visitor.ScratchVisitor;
 import utils.Preconditions;
+
+import java.util.LinkedList;
+import java.util.List;
 
 public class NoWorkingScripts implements IssueFinder, ScratchVisitor {
     public static final String NAME = "Simultaneous_empty_sprite_and_dead_code";
@@ -43,7 +40,8 @@ public class NoWorkingScripts implements IssueFinder, ScratchVisitor {
     private int count = 0;
     private List<String> actorNames = new LinkedList<>();
     private ActorDefinition currentActor;
-    private boolean stillFullfilled = true;
+    private boolean stillFullfilledEmptyScript = true;
+    private boolean deadCodeFound = false;
 
     public NoWorkingScripts() {
     }
@@ -67,25 +65,31 @@ public class NoWorkingScripts implements IssueFinder, ScratchVisitor {
     @Override
     public void visit(ActorDefinition actor) {
         currentActor = actor;
+        stillFullfilledEmptyScript = true;
+        deadCodeFound = false;
         if (!actor.getChildren().isEmpty()) {
             for (ASTNode child : actor.getChildren()) {
                 child.accept(this);
             }
         }
 
-        if (found) {
-            found = false;
+        if (deadCodeFound && stillFullfilledEmptyScript) {
             actorNames.add(currentActor.getIdent().getName());
+            count++;
         }
     }
 
     @Override
-    public void visit(Event node) {
-        if (stillFullfilled) {
-            if (node instanceof Never) {
-              //  if((Never) node)
+    public void visit(Script node) {
+        if (stillFullfilledEmptyScript) {
+            if (node.getEvent() instanceof Never) {
+                if (node.getStmtList().getStmts().getListOfStmt().size() > 0) {
+                    deadCodeFound = true;
+                }
             } else {
-
+                if (node.getStmtList().getStmts().getListOfStmt().size() > 0) {
+                    stillFullfilledEmptyScript = false;
+                }
             }
         }
     }
