@@ -20,6 +20,7 @@
 import analytics.Scratch2Analyzer;
 import java.io.File;
 import java.io.IOException;
+import java.util.logging.Logger;
 import newanalytics.Scratch3Analyzer;
 import org.apache.commons.cli.*;
 import utils.Downloader;
@@ -33,6 +34,8 @@ public class Main {
     private static final String DETECTORS = "detectors";
     private static final String VERSION = "version";
     private static final String HELP = "help";
+
+    private static final Logger log = Logger.getLogger(Main.class.getName());
 
     private Main() {
 
@@ -83,7 +86,7 @@ public class Main {
                         cmd.getOptionValue(DETECTORS, "all"),
                         cmd.getOptionValue(OUTPUT));
             } catch (IOException e) {
-                System.err.println("Could not load project with id " + projectid);
+                log.info("Could not load project with id " + projectid);
                 return;
             }
 

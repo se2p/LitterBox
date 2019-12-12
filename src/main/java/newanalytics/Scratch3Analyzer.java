@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.logging.Logger;
 import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.io.FilenameUtils;
 import scratch.ast.ParsingException;
@@ -37,11 +38,15 @@ import utils.ZipReader;
 
 public class Scratch3Analyzer {
 
-    public static void analyze(String detectors, String output, File folder) {
-        if (folder.exists() && folder.isDirectory()) {
-            checkMultipleScratch3(folder, detectors, output);
-        } else if (folder.exists() && !folder.isDirectory()) {
-            checkSingleScratch3(folder, detectors, output);
+    private static final Logger log = Logger.getLogger(Scratch3Analyzer.class.getName());
+
+    public static void analyze(String detectors, String output, File file) {
+        if (file.exists() && file.isDirectory()) {
+            checkMultipleScratch3(file, detectors, output);
+        } else if (file.exists() && !file.isDirectory()) {
+            checkSingleScratch3(file, detectors, output);
+        } else {
+            log.info("Folder or file '" + file.getName() + "' does not exist");
         }
     }
 
@@ -67,7 +72,7 @@ public class Scratch3Analyzer {
             } else {
                 CSVPrinter printer = prepareCSVPrinter(detectors, iT, csv);
                 iT.check(program, printer, detectors);
-                System.out.println("Finished: " + projectName);
+                log.info("Finished: " + projectName);
                 try {
                     assert printer != null;
                     CSVWriter.flushCSV(printer);
@@ -76,7 +81,7 @@ public class Scratch3Analyzer {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            log.warning(e.getMessage());
         }
     }
 
@@ -100,7 +105,7 @@ public class Scratch3Analyzer {
                 assert printer != null;
                 CSVWriter.flushCSV(printer);
             } catch (IOException e) {
-                e.printStackTrace();
+                log.warning(e.getMessage());
             }
         }
     }
@@ -143,7 +148,7 @@ public class Scratch3Analyzer {
                     Program program = extractProgram(fileEntry);
                     //System.out.println(project.toString());
                     iT.check(program, printer, dtctrs);
-                    System.out.println("Finished: " + fileEntry.getName());
+                    log.info("Finished: " + fileEntry.getName());
                 }
             }
         } catch (Exception e) {
@@ -153,13 +158,13 @@ public class Scratch3Analyzer {
                 assert printer != null;
                 CSVWriter.flushCSV(printer);
             } catch (IOException e) {
-                e.printStackTrace();
+                log.warning(e.getMessage());
             }
         }
     }
 
     private static Project getProjectScratch3(File fileEntry) {
-        System.out.println("Starting: " + fileEntry);
+        log.info("Starting: " + fileEntry);
         Project project = null;
         try {
             project = JsonParser.parse3(fileEntry.getName(), fileEntry.getPath());
@@ -184,7 +189,7 @@ public class Scratch3Analyzer {
             try {
                 node = JsonParser.getTargetsNodeFromJSONString(ZipReader.getJsonString(fileEntry.getPath()));
                 if (node == null) {
-                    System.err.println("[Error] project json did not contain root node");
+                    log.info("[Error] project json did not contain root node");
                 }
                 program = ProgramParser.parseProgram(fileEntry.getName(), node);
             } catch (ParsingException | IOException e) {
