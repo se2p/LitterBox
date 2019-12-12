@@ -22,7 +22,7 @@ public enum RotationStyle {
 
     dont_rotate("don't rotate"),
     left_right("left-right"),
-    all_around("left-right");
+    all_around("all around");
 
     private final String token;
 
