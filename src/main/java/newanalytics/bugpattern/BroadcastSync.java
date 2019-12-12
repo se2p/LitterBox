@@ -1,10 +1,6 @@
 package newanalytics.bugpattern;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
+import java.util.*;
 import newanalytics.IssueFinder;
 import newanalytics.IssueReport;
 import scratch.ast.model.ASTNode;
@@ -28,11 +24,42 @@ public class BroadcastSync implements IssueFinder, ScratchVisitor {
     @Override
     public IssueReport check(Program program) {
         program.accept(this);
-        final List<Pair> nonSyncedPairs
-                = messageReceived.stream().filter(s -> !messageSent.contains(s)).collect(Collectors.toList());
-        nonSyncedPairs.addAll(messageReceived.stream().filter(s -> !messageSent.contains(s)).collect(Collectors.toList()));
+
+        final LinkedHashSet<Pair> nonSyncedPairs = new LinkedHashSet<>();
+        final LinkedHashSet<Pair> syncedPairs = new LinkedHashSet<>();
+        for (Pair received : messageReceived) {
+            boolean isReceived = false;
+            for (Pair sent : messageSent) {
+                if (received.msgName.equals(sent.msgName)) {
+                    isReceived = true;
+                    break;
+                }
+            }
+            if (!isReceived) {
+                nonSyncedPairs.add(received);
+            } else {
+                syncedPairs.add(received);
+            }
+        }
+
+        for (Pair sent : messageSent) {
+            boolean isSent = false;
+            for (Pair received : messageReceived) {
+                if (sent.msgName.equals(received.msgName)) {
+                    isSent = true;
+                    break;
+                }
+            }
+            if (!isSent) {
+                nonSyncedPairs.add(sent);
+            } else {
+                syncedPairs.add(sent);
+            }
+        }
+
+
         final List<String> actorNames = new LinkedList<>();
-        nonSyncedPairs.stream().forEach(p -> actorNames.add(p.getActorName()));
+        nonSyncedPairs.forEach(p -> actorNames.add(p.getActorName()));
 
         return new IssueReport(NAME, nonSyncedPairs.size(), actorNames, "");
     }
