@@ -57,6 +57,11 @@ public class ProcDefinitionParser {
 
         while (iter.hasNext()) {
             JsonNode current = iter.next();
+
+            if (!current.has(OPCODE_KEY)) {
+                throw new ParsingException("Cannot parse block without opcode");
+            }
+
             String opcodeString = current.get(OPCODE_KEY).asText();
             if (opcodeString.equals(ProcedureOpcode.procedures_definition.name())) {
                 defBlock.add(current);
@@ -104,6 +109,7 @@ public class ProcDefinitionParser {
 
 
         String methodName = proto.get(MUTATION_KEY).get(PROCCODE_KEY).asText();
+        // FIXME proto may nothave a parent_key
         Identifier ident = new StrId(proto.get(PARENT_KEY).asText());
         JsonNode argumentNamesNode = proto.get(MUTATION_KEY).get(ARGUMENTNAMES_KEY);
         ObjectMapper mapper = new ObjectMapper();

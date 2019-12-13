@@ -94,18 +94,10 @@ public class ScriptParser {
                 }
 
                 Stmt stmt = StmtParser.parse(blockID, blocks);
-//                if (stmt instanceof TerminationStmt) {
-//                    terminationStmt = (TerminationStmt) stmt;
-//                    if (current.get(NEXT_KEY) == null) {
-//                        throw new ParsingException(
-//                            "TerminationStmt found but there still is a next key for block " + blockID);
-//                    }
-//                } else {
-                    list.add(stmt);
-//                }
+                list.add(stmt);
             } catch (ParsingException | RuntimeException e) { // FIXME Runtime Exception is temporary for development and needs to be removed
                 Logger.getGlobal().warning("Could not parse block with ID " + blockID + " and opcode "
-                    + current.get(OPCODE_KEY));
+                        + current.get(OPCODE_KEY));
                 e.printStackTrace();
                 if (e instanceof NullPointerException) {
                     throw e;

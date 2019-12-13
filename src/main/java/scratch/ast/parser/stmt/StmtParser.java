@@ -77,6 +77,6 @@ public class StmtParser {
             return PenStmtParser.parse(current, blocks);
         }
 
-        throw new RuntimeException("Not implemented");
+        throw new ParsingException("Cannot parse block with opcode " + opcode);
     }
 }

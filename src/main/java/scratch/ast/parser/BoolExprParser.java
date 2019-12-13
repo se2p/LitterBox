@@ -49,6 +49,10 @@ public class BoolExprParser {
 
     public static BoolExpr parseBoolExpr(JsonNode block, String inputName, JsonNode blocks) throws ParsingException {
         ArrayNode exprArray = ExpressionParser.getExprArrayByName(block.get(INPUTS_KEY), inputName);
+        if (exprArray == null) {
+            return new UnspecifiedBoolExpr();
+        }
+
         if (ExpressionParser.getShadowIndicator(exprArray) == 1) {
             return parseBool(block.get(INPUTS_KEY), inputName);
         } else if (exprArray.get(POS_BLOCK_ID) instanceof TextNode) {

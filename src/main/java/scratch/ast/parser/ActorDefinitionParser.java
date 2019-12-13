@@ -18,7 +18,16 @@
  */
 package scratch.ast.parser;
 
+import static scratch.ast.Constants.*;
+
+
 import com.fasterxml.jackson.databind.JsonNode;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 import scratch.ast.ParsingException;
 import scratch.ast.model.*;
 import scratch.ast.model.procedure.ProcedureDefinitionList;
@@ -31,15 +40,6 @@ import scratch.ast.model.variable.Identifier;
 import scratch.ast.model.variable.StrId;
 import scratch.ast.opcodes.DependentBlockOpcodes;
 import utils.Preconditions;
-
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
-
-import static scratch.ast.Constants.*;
 
 public class ActorDefinitionParser {
 
@@ -83,7 +83,8 @@ public class ActorDefinitionParser {
         // the reason for this is, that menues count as topLevel in the Json File
         // if the menu is replaced by another expression
         List<String> topLevelNodes = stream.filter(fieldName ->
-                (allBlocks.get(fieldName).get("topLevel").asBoolean()) &&
+                (allBlocks.get(fieldName).has("topLevel") &&
+                        allBlocks.get(fieldName).get("topLevel").asBoolean()) &&
                         !DependentBlockOpcodes.contains(allBlocks.get(fieldName).get(OPCODE_KEY).asText()))
             .collect(Collectors.toList());
 
