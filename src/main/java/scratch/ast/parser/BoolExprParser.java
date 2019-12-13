@@ -164,8 +164,8 @@ public class BoolExprParser {
 
                 return new LessThan(first, second);
             case operator_equals:
-                first = NumExprParser.parseNumExpr(expressionBlock, 0, blocks);
-                second = NumExprParser.parseNumExpr(expressionBlock, 1, blocks);
+                first = NumExprParser.parseNumExpr(expressionBlock, OPERAND1_KEY, blocks);
+                second = NumExprParser.parseNumExpr(expressionBlock, OPERAND2_KEY, blocks);
                 if ((first instanceof AsNumber || first instanceof UnspecifiedNumExpr)) {
                     first = StringExprParser.parseStringExpr(expressionBlock, 0, blocks);
                 }
@@ -175,15 +175,16 @@ public class BoolExprParser {
                 }
                 return new Equals(first, second);
             case operator_and:
-                BoolExpr andFirst = parseBoolExpr(expressionBlock, 0, blocks);
-                BoolExpr andSecond = parseBoolExpr(expressionBlock, 1, blocks);
+
+                BoolExpr andFirst = parseCondition(expressionBlock,OPERAND1_KEY,blocks);
+                BoolExpr andSecond = parseCondition(expressionBlock,OPERAND2_KEY,blocks);
                 return new And(andFirst, andSecond);
             case operator_or:
-                BoolExpr orFirst = parseBoolExpr(expressionBlock, 0, blocks);
-                BoolExpr orSecond = parseBoolExpr(expressionBlock, 1, blocks);
+                BoolExpr orFirst = parseCondition(expressionBlock,OPERAND1_KEY,blocks);
+                BoolExpr orSecond = parseCondition(expressionBlock,OPERAND2_KEY,blocks);
                 return new Or(orFirst, orSecond);
             case operator_not:
-                BoolExpr notInput = parseBoolExpr(expressionBlock, 0, blocks);
+                BoolExpr notInput = parseCondition(expressionBlock,OPERAND_KEY,blocks);
                 return new Not(notInput);
             case operator_contains:
                 Expression containing = ExpressionParser.parseExpression(expressionBlock, 0, blocks);
@@ -203,5 +204,13 @@ public class BoolExprParser {
     private static BoolExpr parseParameter(JsonNode blocks, JsonNode expressionBlock) {
         String name = expressionBlock.get(FIELDS_KEY).get(VALUE_KEY).get(VARIABLE_NAME_POS).asText();
         return new StrId(PARAMETER_ABBREVIATION + name);
+    }
+
+    private static BoolExpr parseCondition(JsonNode expressionBlock, String fieldName, JsonNode blocks) throws ParsingException {
+        if(expressionBlock.get(INPUTS_KEY).has(fieldName)){
+            return parseBoolExpr(expressionBlock, fieldName, blocks);
+        }else{
+            return new UnspecifiedBoolExpr();
+        }
     }
 }

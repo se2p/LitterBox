@@ -185,4 +185,7 @@ public class Constants {
     public static final String PARAMETER_ABBREVIATION = "P";
     public final static String MUTATION_KEY = "mutation";
     public final static String PROCCODE_KEY = "proccode";
+    public final static String OPERAND1_KEY = "OPERAND1";
+    public final static String OPERAND2_KEY = "OPERAND2";
+    public final static String OPERAND_KEY = "OPERAND";
 }

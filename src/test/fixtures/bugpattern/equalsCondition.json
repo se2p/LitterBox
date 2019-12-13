@@ -1,0 +1,438 @@
+{
+  "targets": [
+    {
+      "isStage": true,
+      "name": "Stage",
+      "variables": {
+        "`jEk@4|i[#Fk?(8x)AV.-my variable": [
+          "my variable",
+          0
+        ]
+      },
+      "lists": {},
+      "broadcasts": {},
+      "blocks": {},
+      "comments": {},
+      "currentCostume": 0,
+      "costumes": [
+        {
+          "assetId": "cd21514d0531fdffb22204e0ec5ed84a",
+          "name": "backdrop1",
+          "md5ext": "cd21514d0531fdffb22204e0ec5ed84a.svg",
+          "dataFormat": "svg",
+          "rotationCenterX": 240,
+          "rotationCenterY": 180
+        }
+      ],
+      "sounds": [
+        {
+          "assetId": "83a9787d4cb6f3b7632b4ddfebf74367",
+          "name": "pop",
+          "dataFormat": "wav",
+          "format": "",
+          "rate": 48000,
+          "sampleCount": 1123,
+          "md5ext": "83a9787d4cb6f3b7632b4ddfebf74367.wav"
+        }
+      ],
+      "volume": 100,
+      "layerOrder": 0,
+      "tempo": 60,
+      "videoTransparency": 50,
+      "videoState": "on",
+      "textToSpeechLanguage": null
+    },
+    {
+      "isStage": false,
+      "name": "Sprite1",
+      "variables": {},
+      "lists": {},
+      "broadcasts": {},
+      "blocks": {
+        "{YytF$T,5LWpz$|b(6]R": {
+          "opcode": "control_if_else",
+          "next": null,
+          "parent": "Dhf}dIuU?=:q%]5W:7HB",
+          "inputs": {
+            "CONDITION": [
+              2,
+              "`:3gf4L[wXNiIfut_DU~"
+            ]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "3lBs8U.i^3ZGUUxs6Z])": {
+          "opcode": "control_if",
+          "next": null,
+          "parent": "2H?]O(}Kcp^nBxIby/0c",
+          "inputs": {
+            "CONDITION": [
+              2,
+              "{6pBB8?|)_N|[(Pq4~q."
+            ]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "X.6OY%QX*=vfs*vG4P00": {
+          "opcode": "control_wait_until",
+          "next": null,
+          "parent": "48}7nL].}6-?rWX$J3zi",
+          "inputs": {
+            "CONDITION": [
+              2,
+              "OW7,-a4MiNAhE~l2}!rt"
+            ]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "^-Biz}4*XTVKD3#jFNPF": {
+          "opcode": "control_repeat_until",
+          "next": null,
+          "parent": "4~p3*:{q+/m{=Ygf{0Z3",
+          "inputs": {
+            "CONDITION": [
+              2,
+              "Zi6:R)IOIoYy?07vTu$Y"
+            ]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "Dhf}dIuU?=:q%]5W:7HB": {
+          "opcode": "event_whenflagclicked",
+          "next": "{YytF$T,5LWpz$|b(6]R",
+          "parent": null,
+          "inputs": {},
+          "fields": {},
+          "shadow": false,
+          "topLevel": true,
+          "x": -128,
+          "y": 292
+        },
+        "4~p3*:{q+/m{=Ygf{0Z3": {
+          "opcode": "event_whenkeypressed",
+          "next": "^-Biz}4*XTVKD3#jFNPF",
+          "parent": null,
+          "inputs": {},
+          "fields": {
+            "KEY_OPTION": [
+              "space",
+              null
+            ]
+          },
+          "shadow": false,
+          "topLevel": true,
+          "x": 143,
+          "y": 352
+        },
+        "2H?]O(}Kcp^nBxIby/0c": {
+          "opcode": "event_whenthisspriteclicked",
+          "next": "3lBs8U.i^3ZGUUxs6Z])",
+          "parent": null,
+          "inputs": {},
+          "fields": {},
+          "shadow": false,
+          "topLevel": true,
+          "x": -301,
+          "y": 568
+        },
+        "48}7nL].}6-?rWX$J3zi": {
+          "opcode": "event_whengreaterthan",
+          "next": "X.6OY%QX*=vfs*vG4P00",
+          "parent": null,
+          "inputs": {
+            "VALUE": [
+              1,
+              [
+                4,
+                "10"
+              ]
+            ]
+          },
+          "fields": {
+            "WHENGREATERTHANMENU": [
+              "LOUDNESS",
+              null
+            ]
+          },
+          "shadow": false,
+          "topLevel": true,
+          "x": 73,
+          "y": 601
+        },
+        "{6pBB8?|)_N|[(Pq4~q.": {
+          "opcode": "operator_equals",
+          "next": null,
+          "parent": "3lBs8U.i^3ZGUUxs6Z])",
+          "inputs": {
+            "OPERAND1": [
+              1,
+              [
+                10,
+                ""
+              ]
+            ],
+            "OPERAND2": [
+              1,
+              [
+                10,
+                "50"
+              ]
+            ]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "`:3gf4L[wXNiIfut_DU~": {
+          "opcode": "operator_equals",
+          "next": null,
+          "parent": "{YytF$T,5LWpz$|b(6]R",
+          "inputs": {
+            "OPERAND1": [
+              1,
+              [
+                10,
+                ""
+              ]
+            ],
+            "OPERAND2": [
+              1,
+              [
+                10,
+                "50"
+              ]
+            ]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "Zi6:R)IOIoYy?07vTu$Y": {
+          "opcode": "operator_equals",
+          "next": null,
+          "parent": "^-Biz}4*XTVKD3#jFNPF",
+          "inputs": {
+            "OPERAND1": [
+              1,
+              [
+                10,
+                ""
+              ]
+            ],
+            "OPERAND2": [
+              1,
+              [
+                10,
+                "50"
+              ]
+            ]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "OW7,-a4MiNAhE~l2}!rt": {
+          "opcode": "operator_equals",
+          "next": null,
+          "parent": "X.6OY%QX*=vfs*vG4P00",
+          "inputs": {
+            "OPERAND1": [
+              1,
+              [
+                10,
+                ""
+              ]
+            ],
+            "OPERAND2": [
+              1,
+              [
+                10,
+                "50"
+              ]
+            ]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "~Ul?``L$DRamXk-70{`8": {
+          "opcode": "operator_and",
+          "next": null,
+          "parent": null,
+          "inputs": {
+            "OPERAND1": [
+              2,
+              "_fp|TN+d8[r;O?Gp7Zj,"
+            ]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": true,
+          "x": -284,
+          "y": 808
+        },
+        "_fp|TN+d8[r;O?Gp7Zj,": {
+          "opcode": "operator_equals",
+          "next": null,
+          "parent": "~Ul?``L$DRamXk-70{`8",
+          "inputs": {
+            "OPERAND1": [
+              1,
+              [
+                10,
+                ""
+              ]
+            ],
+            "OPERAND2": [
+              1,
+              [
+                10,
+                "50"
+              ]
+            ]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "JbB~R-_|sw?]nrO0IW@d": {
+          "opcode": "operator_or",
+          "next": null,
+          "parent": null,
+          "inputs": {
+            "OPERAND1": [
+              2,
+              "p)Qs~Bl/mR5I8Ci;t=U1"
+            ]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": true,
+          "x": 205,
+          "y": 887
+        },
+        "p)Qs~Bl/mR5I8Ci;t=U1": {
+          "opcode": "operator_equals",
+          "next": null,
+          "parent": "JbB~R-_|sw?]nrO0IW@d",
+          "inputs": {
+            "OPERAND1": [
+              1,
+              [
+                10,
+                ""
+              ]
+            ],
+            "OPERAND2": [
+              1,
+              [
+                10,
+                "50"
+              ]
+            ]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "lMt-5#_LfS+q{q=z`3.L": {
+          "opcode": "operator_not",
+          "next": null,
+          "parent": null,
+          "inputs": {
+            "OPERAND": [
+              2,
+              "+dYAh`l}1(Ht]FHQ6ImM"
+            ]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": true,
+          "x": 213,
+          "y": 829
+        },
+        "+dYAh`l}1(Ht]FHQ6ImM": {
+          "opcode": "operator_equals",
+          "next": null,
+          "parent": "lMt-5#_LfS+q{q=z`3.L",
+          "inputs": {
+            "OPERAND1": [
+              1,
+              [
+                10,
+                ""
+              ]
+            ],
+            "OPERAND2": [
+              1,
+              [
+                10,
+                "50"
+              ]
+            ]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        }
+      },
+      "comments": {},
+      "currentCostume": 0,
+      "costumes": [
+        {
+          "assetId": "b7853f557e4426412e64bb3da6531a99",
+          "name": "costume1",
+          "bitmapResolution": 1,
+          "md5ext": "b7853f557e4426412e64bb3da6531a99.svg",
+          "dataFormat": "svg",
+          "rotationCenterX": 48,
+          "rotationCenterY": 50
+        },
+        {
+          "assetId": "e6ddc55a6ddd9cc9d84fe0b4c21e016f",
+          "name": "costume2",
+          "bitmapResolution": 1,
+          "md5ext": "e6ddc55a6ddd9cc9d84fe0b4c21e016f.svg",
+          "dataFormat": "svg",
+          "rotationCenterX": 46,
+          "rotationCenterY": 53
+        }
+      ],
+      "sounds": [
+        {
+          "assetId": "83c36d806dc92327b9e7049a565c6bff",
+          "name": "Meow",
+          "dataFormat": "wav",
+          "format": "",
+          "rate": 48000,
+          "sampleCount": 40681,
+          "md5ext": "83c36d806dc92327b9e7049a565c6bff.wav"
+        }
+      ],
+      "volume": 100,
+      "layerOrder": 1,
+      "visible": true,
+      "x": 115.98076211353315,
+      "y": -75,
+      "size": 100,
+      "direction": 180,
+      "draggable": false,
+      "rotationStyle": "all around"
+    }
+  ],
+  "monitors": [],
+  "extensions": [],
+  "meta": {
+    "semver": "3.0.0",
+    "vm": "0.2.0-prerelease.20191119203901",
+    "agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.79 Safari/537.36"
+  }
+}

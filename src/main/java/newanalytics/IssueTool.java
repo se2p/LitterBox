@@ -55,6 +55,7 @@ public class IssueTool {
         finder.put(IllegalParameterRefactor.SHORT_NAME, new IllegalParameterRefactor());
         finder.put(ProcedureWithForever.SHORT_NAME, new ProcedureWithForever());
         finder.put(ForeverInsideLoop.SHORT_NAME, new ForeverInsideLoop());
+        finder.put(EqualsCondition.SHORT_NAME, new EqualsCondition());
 //        finder.put("cnt", new CountBlocks());
 //        finder.put("glblstrt", new GlobalStartingPoint());
 //        finder.put("strt", new StartingPoint());
