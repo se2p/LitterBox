@@ -14,7 +14,7 @@ import scratch.ast.ParsingException;
 import scratch.ast.model.Program;
 import scratch.ast.parser.ProgramParser;
 
-class BroadcastSyncTest {
+class MessageNeverReceivedTest {
     private static Program program;
 
     @BeforeAll
@@ -31,9 +31,9 @@ class BroadcastSyncTest {
 
     @Test
     public void testMissingPenUp() {
-        BroadcastSync finder = new BroadcastSync();
+        MessageNeverReceived finder = new MessageNeverReceived();
         final IssueReport check = finder.check(program);
-        Truth.assertThat(check.getCount()).isEqualTo(5);
+        Truth.assertThat(check.getCount()).isEqualTo(4);
         Truth.assertThat(check.getPosition().get(0)).isEqualTo("Apple");
         Truth.assertThat(check.getPosition().get(1)).isEqualTo("Sprite1");
         Truth.assertThat(check.getPosition().get(2)).isEqualTo("Abby");

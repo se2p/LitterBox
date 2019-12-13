@@ -19,19 +19,13 @@
 package newanalytics;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import java.util.*;
 import newanalytics.bugpattern.*;
 import newanalytics.ctscore.FlowControl;
 import newanalytics.smells.*;
 import org.apache.commons.csv.CSVPrinter;
 import scratch.ast.model.Program;
 import utils.CSVWriter;
-
-import java.util.*;
 
 /**
  * Holds all IssueFinder and executes them.
@@ -57,6 +51,8 @@ public class IssueTool {
         finder.put(EqualsCondition.SHORT_NAME, new EqualsCondition());
         finder.put(BlockCount.SHORT_NAME, new BlockCount());
         finder.put(CallWithoutDefinition.SHORT_NAME, new CallWithoutDefinition());
+        finder.put(MessageNeverReceived.SHORT_NAME, new MessageNeverReceived());
+        finder.put(MessageNeverSent.SHORT_NAME, new MessageNeverSent());
 //        finder.put("glblstrt", new GlobalStartingPoint());
 //        finder.put("strt", new StartingPoint());
 //        finder.put("lggymve", new LaggyMovement());

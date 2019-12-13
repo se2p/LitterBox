@@ -12,10 +12,10 @@ import scratch.ast.model.statement.common.Broadcast;
 import scratch.ast.model.statement.common.BroadcastAndWait;
 import scratch.ast.visitor.ScratchVisitor;
 
-public class BroadcastSync implements IssueFinder, ScratchVisitor {
+public class MessageNeverReceived implements IssueFinder, ScratchVisitor {
 
-    public static final String NAME = "missing_clone_initialization";
-    public static final String SHORT_NAME = "msscloneinit";
+    public static final String NAME = "never_receive_message";
+    public static final String SHORT_NAME = "nvrrcv";
 
     private List<Pair> messageSent = new ArrayList<>();
     private List<Pair> messageReceived = new ArrayList<>();
@@ -27,36 +27,21 @@ public class BroadcastSync implements IssueFinder, ScratchVisitor {
 
         final LinkedHashSet<Pair> nonSyncedPairs = new LinkedHashSet<>();
         final LinkedHashSet<Pair> syncedPairs = new LinkedHashSet<>();
-        for (Pair received : messageReceived) {
+
+        for (Pair sent : messageSent) {
             boolean isReceived = false;
-            for (Pair sent : messageSent) {
-                if (received.msgName.equals(sent.msgName)) {
+            for (Pair received : messageReceived) {
+                if (sent.msgName.equals(received.msgName)) {
                     isReceived = true;
                     break;
                 }
             }
             if (!isReceived) {
-                nonSyncedPairs.add(received);
-            } else {
-                syncedPairs.add(received);
-            }
-        }
-
-        for (Pair sent : messageSent) {
-            boolean isSent = false;
-            for (Pair received : messageReceived) {
-                if (sent.msgName.equals(received.msgName)) {
-                    isSent = true;
-                    break;
-                }
-            }
-            if (!isSent) {
                 nonSyncedPairs.add(sent);
             } else {
                 syncedPairs.add(sent);
             }
         }
-
 
         final List<String> actorNames = new LinkedList<>();
         nonSyncedPairs.forEach(p -> actorNames.add(p.getActorName()));
@@ -111,8 +96,8 @@ public class BroadcastSync implements IssueFinder, ScratchVisitor {
      * Helper class to map which messages are sent / received by which actor
      */
     private static class Pair {
-        private String actorName;
         String msgName;
+        private String actorName;
 
         public Pair(String actorName, String msgName) {
             this.setActorName(actorName);
