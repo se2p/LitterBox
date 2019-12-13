@@ -61,32 +61,6 @@ public class EqualsCondition implements IssueFinder, ScratchVisitor {
     }
 
     @Override
-    public void visit(IfElseStmt node) {
-        if(node.getBoolExpr() instanceof Equals){
-            found =true;
-            count++;
-        }
-        if (!node.getChildren().isEmpty()) {
-            for (ASTNode child : node.getChildren()) {
-                child.accept(this);
-            }
-        }
-    }
-
-    @Override
-    public void visit(IfThenStmt node) {
-        if(node.getBoolExpr() instanceof Equals){
-            found =true;
-            count++;
-        }
-        if (!node.getChildren().isEmpty()) {
-            for (ASTNode child : node.getChildren()) {
-                child.accept(this);
-            }
-        }
-    }
-
-    @Override
     public void visit(WaitUntil node) {
         if(node.getUntil() instanceof Equals){
             found =true;
@@ -102,53 +76,6 @@ public class EqualsCondition implements IssueFinder, ScratchVisitor {
     @Override
     public void visit(UntilStmt node) {
         if(node.getBoolExpr() instanceof Equals){
-            found =true;
-            count++;
-        }
-        if (!node.getChildren().isEmpty()) {
-            for (ASTNode child : node.getChildren()) {
-                child.accept(this);
-            }
-        }
-    }
-
-    @Override
-    public void visit(And node) {
-        if(node.getOperand1() instanceof Equals){
-            found =true;
-            count++;
-        }
-        if(node.getOperand2() instanceof Equals){
-            found =true;
-            count++;
-        }
-        if (!node.getChildren().isEmpty()) {
-            for (ASTNode child : node.getChildren()) {
-                child.accept(this);
-            }
-        }
-    }
-
-    @Override
-    public void visit(Not node) {
-        if(node.getOperand1() instanceof Equals){
-            found =true;
-            count++;
-        }
-        if (!node.getChildren().isEmpty()) {
-            for (ASTNode child : node.getChildren()) {
-                child.accept(this);
-            }
-        }
-    }
-
-    @Override
-    public void visit(Or node) {
-        if(node.getOperand1() instanceof Equals){
-            found =true;
-            count++;
-        }
-        if(node.getOperand2() instanceof Equals){
             found =true;
             count++;
         }

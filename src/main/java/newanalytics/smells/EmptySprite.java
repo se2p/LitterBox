@@ -22,6 +22,7 @@ import newanalytics.IssueFinder;
 import newanalytics.IssueReport;
 import newanalytics.IssueTool;
 import scratch.ast.model.ActorDefinition;
+import scratch.ast.model.ActorType;
 import scratch.ast.model.Program;
 import utils.Preconditions;
 
@@ -45,7 +46,7 @@ public class EmptySprite implements IssueFinder {
         final List<ActorDefinition> definitions = program.getActorDefinitionList().getDefintions();
 
         for (ActorDefinition actor : definitions) {
-            if (actor.getScripts().getScriptList().size() == 0) {
+            if (actor.getScripts().getScriptList().size() == 0 && !(actor.getActorType()== ActorType.STAGE)) {
                 found.add(actor.getIdent().getName());
             }
 
