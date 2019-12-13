@@ -20,6 +20,7 @@ package newanalytics;
 
 import java.io.IOException;
 import java.util.*;
+
 import newanalytics.bugpattern.*;
 import newanalytics.ctscore.FlowControl;
 import newanalytics.smells.*;
@@ -43,6 +44,7 @@ public class IssueTool {
         finder.put(MissingEraseAll.SHORT_NAME, new MissingEraseAll());
         finder.put(NoWorkingScripts.SHORT_NAME, new NoWorkingScripts());
         finder.put(MissingCloneInitialization.SHORT_NAME, new MissingCloneInitialization());
+        finder.put(MissingCloneCall.SHORT_NAME, new MissingCloneCall());
         finder.put(OrphanedParameter.SHORT_NAME, new OrphanedParameter());
         finder.put(ParameterOutOfScope.SHORT_NAME, new ParameterOutOfScope());
         finder.put(IllegalParameterRefactor.SHORT_NAME, new IllegalParameterRefactor());
@@ -58,7 +60,6 @@ public class IssueTool {
 //        finder.put("lggymve", new LaggyMovement());
 //        finder.put("dblif", new DoubleIf());
         finder.put(MissingLoopSensing.SHORT_NAME, new MissingLoopSensing());
-//        finder.put("clninit", new CloneInitialization());
         finder.put(MissingTerminationCondition.SHORT_NAME, new MissingTerminationCondition());
         finder.put(DeadCode.SHORT_NAME, new DeadCode());
 //        finder.put("attrmod", new AttributeModification());
@@ -66,8 +67,7 @@ public class IssueTool {
 //        finder.put("squact", new SequentialActions());
 //        finder.put("sprtname", new SpriteNaming());
         finder.put(LongScript.SHORT_NAME, new LongScript());
-//        finder.put("brdcstsync", new BroadcastSync());
-        finder.put("nstloop", new NestedLoops());
+        finder.put(NestedLoops.SHORT_NAME, new NestedLoops());
 //        finder.put("dplscrpt", new DuplicatedScript());
 //        finder.put("racecnd", new RaceCondition());
         finder.put(EmptyScript.SHORT_NAME, new EmptyScript());
