@@ -56,6 +56,7 @@ public class IssueTool {
         finder.put(ForeverInsideLoop.SHORT_NAME, new ForeverInsideLoop());
         finder.put(EqualsCondition.SHORT_NAME, new EqualsCondition());
         finder.put(BlockCount.SHORT_NAME, new BlockCount());
+        finder.put(CallWithoutDefinition.SHORT_NAME, new CallWithoutDefinition());
 //        finder.put("glblstrt", new GlobalStartingPoint());
 //        finder.put("strt", new StartingPoint());
 //        finder.put("lggymve", new LaggyMovement());
