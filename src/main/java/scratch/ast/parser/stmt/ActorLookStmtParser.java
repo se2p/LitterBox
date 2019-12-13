@@ -69,6 +69,7 @@ public class ActorLookStmtParser {
                 StringExpr question = StringExprParser.parseStringExpr(current, 0, allBlocks);
                 return new AskAndWait(question);
 
+            case looks_nextbackdrop:
             case looks_switchbackdropto:
                 ElementChoice elementChoice = ElementChoiceParser.parse(current, allBlocks);
                 return new SwitchBackdrop(elementChoice);

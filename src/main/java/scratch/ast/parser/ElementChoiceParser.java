@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static scratch.ast.Constants.FIELDS_KEY;
+import static scratch.ast.opcodes.ActorLookStmtOpcode.looks_nextbackdrop;
 import static scratch.ast.opcodes.SpriteLookStmtOpcode.looks_nextcostume;
 
 public class ElementChoiceParser {
@@ -40,7 +41,7 @@ public class ElementChoiceParser {
         Preconditions.checkNotNull(allBlocks);
 
         String opcodeString = current.get(Constants.OPCODE_KEY).asText();
-        if (opcodeString.equals(looks_nextcostume.toString())) {
+        if (opcodeString.equals(looks_nextcostume.toString())||opcodeString.equals(looks_nextbackdrop.toString())) {
             return new Next();
         }
 
