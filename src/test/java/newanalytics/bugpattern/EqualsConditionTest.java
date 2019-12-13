@@ -38,6 +38,6 @@ public class EqualsConditionTest {
     public void testEqualCond() {
         EqualsCondition parameterName = new EqualsCondition();
         IssueReport report = parameterName.check(equalCond);
-        Assertions.assertEquals(7, report.getCount());
+        Assertions.assertEquals(2, report.getCount());
     }
 }
