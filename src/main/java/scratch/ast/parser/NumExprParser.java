@@ -54,7 +54,7 @@ public class NumExprParser {
         if (getShadowIndicator(exprArray) == 1) { // TODO replace magic num
             try {
                 return parseNumber(block.get(INPUTS_KEY), inputName);
-            } catch (NumberFormatException e) { // right exception? hm.
+            } catch (NumberFormatException | ParsingException e) { // right exception? hm.
                 return new UnspecifiedNumExpr();
             }
 
@@ -84,7 +84,7 @@ public class NumExprParser {
         if (getShadowIndicator(exprArray) == 1) { // TODO replace magic num
             try {
                 return parseNumber(block.get(INPUTS_KEY), pos);
-            } catch (NumberFormatException e) {
+            } catch (NumberFormatException | ParsingException e) {
                 return new UnspecifiedNumExpr();
             }
 
@@ -162,13 +162,13 @@ public class NumExprParser {
      * @param pos    The position of the number to parse in the inputs node.
      * @return A Number holding the value of the literal entered.
      */
-    static NumberLiteral parseNumber(JsonNode inputs, int pos) {
+    static NumberLiteral parseNumber(JsonNode inputs, int pos) throws ParsingException {
         String valueString = getDataArrayAtPos(inputs, pos).get(POS_INPUT_VALUE).asText();
         float value = Float.parseFloat(valueString);
         return new NumberLiteral(value);
     }
 
-    static NumberLiteral parseNumber(JsonNode inputs, String inputName) {
+    static NumberLiteral parseNumber(JsonNode inputs, String inputName) throws ParsingException {
         String valueString = ExpressionParser.getDataArrayByName(inputs, inputName).get(POS_INPUT_VALUE).asText();
         float value = Float.parseFloat(valueString);
         return new NumberLiteral(value);

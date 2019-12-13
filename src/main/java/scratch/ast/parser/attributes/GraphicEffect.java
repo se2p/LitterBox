@@ -22,9 +22,9 @@ public enum GraphicEffect {
 
     COLOR, GHOST, BRIGHTNESS, WHIRL, FISHEYE, PIXELATE, MOSAIC;
 
-    public static boolean contains(String opcode) {
+    public static boolean contains(String effect) {
         for (GraphicEffect value : GraphicEffect.values()) {
-            if (value.name().equals(opcode)) {
+            if (value.name().equals(effect.toUpperCase())) {
                 return true;
             }
         }

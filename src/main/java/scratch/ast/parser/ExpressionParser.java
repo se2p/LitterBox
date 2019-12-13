@@ -21,8 +21,10 @@ package scratch.ast.parser;
 import static scratch.ast.Constants.OPCODE_KEY;
 import static scratch.ast.Constants.POS_DATA_ARRAY;
 
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.NullNode;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -52,15 +54,15 @@ public class ExpressionParser {
     public static Expression parseExpression(JsonNode block, int pos, JsonNode blocks) throws ParsingException {
         final Optional<NumExpr> numExpr = maybeParseNumExpr(block, pos, blocks);
         if (numExpr.isPresent()
-            && !(numExpr.get() instanceof UnspecifiedNumExpr)
-            && !(numExpr.get() instanceof AsNumber)) {
+                && !(numExpr.get() instanceof UnspecifiedNumExpr)
+                && !(numExpr.get() instanceof AsNumber)) {
             return numExpr.get();
         }
 
         final Optional<StringExpr> stringExpr = maybeParseStringExpr(block, pos, blocks);
         if (stringExpr.isPresent()
-            && !(stringExpr.get() instanceof UnspecifiedStringExpr)
-            && !(stringExpr.get() instanceof AsString)) {
+                && !(stringExpr.get() instanceof UnspecifiedStringExpr)
+                && !(stringExpr.get() instanceof AsString)) {
             return stringExpr.get();
         }
 
@@ -110,7 +112,7 @@ public class ExpressionParser {
         Map.Entry slotEntry = slotEntries.get(pos);
         ArrayNode exprArray = (ArrayNode) slotEntry.getValue();
         String numberName = (String) slotEntry
-            .getKey(); // we don't need that here but maybe later for storing additional information
+                .getKey(); // we don't need that here but maybe later for storing additional information
         return exprArray;
     }
 
@@ -122,12 +124,22 @@ public class ExpressionParser {
         return exprArray.get(Constants.POS_INPUT_SHADOW).asInt();
     }
 
-    static ArrayNode getDataArrayAtPos(JsonNode inputs, int pos) { // TODO maybe rename or comment
-        return (ArrayNode) getExprArrayAtPos(inputs, pos).get(POS_DATA_ARRAY);
+    static ArrayNode getDataArrayAtPos(JsonNode inputs, int pos) throws ParsingException { // TODO maybe rename or comment
+        JsonNode jsonNode = getExprArrayAtPos(inputs, pos).get(POS_DATA_ARRAY);
+        if (!(jsonNode instanceof NullNode)) {
+            return (ArrayNode) jsonNode;
+        } else {
+            throw new ParsingException();
+        }
     }
 
-    static ArrayNode getDataArrayByName(JsonNode inputs, String inputName) { // TODO maybe rename or comment
-        return (ArrayNode) getExprArrayByName(inputs, inputName).get(POS_DATA_ARRAY);
+    static ArrayNode getDataArrayByName(JsonNode inputs, String inputName) throws ParsingException { // TODO maybe rename or comment
+        final JsonNode jsonNode = getExprArrayByName(inputs, inputName).get(POS_DATA_ARRAY);
+        if (!(jsonNode instanceof NullNode)) {
+            return (ArrayNode) jsonNode;
+        } else {
+            throw new ParsingException("Cannot parse null node as ArrayNode");
+        }
     }
 
     public static Expression parseExpressionBlock(JsonNode current, JsonNode allBlocks) throws ParsingException {
@@ -138,12 +150,12 @@ public class ExpressionParser {
                 VariableInfo variableInfo = ProgramParser.symbolTable.getVariables().get(idString);
 
                 return new Qualified(new StrId(variableInfo.getActor()),
-                    new StrId((variableInfo.getVariableName())));
+                        new StrId((variableInfo.getVariableName())));
 
             } else if (ProgramParser.symbolTable.getLists().containsKey(idString)) {
                 ExpressionListInfo variableInfo = ProgramParser.symbolTable.getLists().get(idString);
                 return new Qualified(new StrId(variableInfo.getActor()),
-                    new StrId((variableInfo.getVariableName())));
+                        new StrId((variableInfo.getVariableName())));
             }
         } else {
             // it's a normal reporter block

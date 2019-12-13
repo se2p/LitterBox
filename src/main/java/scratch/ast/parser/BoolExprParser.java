@@ -54,7 +54,11 @@ public class BoolExprParser {
         }
 
         if (ExpressionParser.getShadowIndicator(exprArray) == 1) {
-            return parseBool(block.get(INPUTS_KEY), inputName);
+            try {
+                return parseBool(block.get(INPUTS_KEY), inputName);
+            } catch (ParsingException e) {
+                return new UnspecifiedBoolExpr();
+            }
         } else if (exprArray.get(POS_BLOCK_ID) instanceof TextNode) {
             String identifier = exprArray.get(POS_BLOCK_ID).asText();
             return parseBlockBoolExpr(blocks.get(identifier), blocks);
@@ -71,7 +75,11 @@ public class BoolExprParser {
     public static BoolExpr parseBoolExpr(JsonNode block, int pos, JsonNode blocks) throws ParsingException {
         ArrayNode exprArray = ExpressionParser.getExprArrayAtPos(block.get(INPUTS_KEY), pos);
         if (ExpressionParser.getShadowIndicator(exprArray) == 1) {
-            return parseBool(block.get(INPUTS_KEY), pos);
+            try {
+                return parseBool(block.get(INPUTS_KEY), pos);
+            } catch (ParsingException e) {
+                return new UnspecifiedBoolExpr();
+            }
         } else if (exprArray.get(POS_BLOCK_ID) instanceof TextNode) {
             String identifier = exprArray.get(POS_BLOCK_ID).asText();
             return parseBlockBoolExpr(blocks.get(identifier), blocks);
@@ -102,12 +110,12 @@ public class BoolExprParser {
         return null;
     }
 
-    private static BoolLiteral parseBool(JsonNode inputs, int pos) {
+    private static BoolLiteral parseBool(JsonNode inputs, int pos) throws ParsingException {
         boolean value = ExpressionParser.getDataArrayAtPos(inputs, pos).get(POS_INPUT_VALUE).asBoolean();
         return new BoolLiteral(value);
     }
 
-    private static BoolLiteral parseBool(JsonNode inputs, String inputName) {
+    private static BoolLiteral parseBool(JsonNode inputs, String inputName) throws ParsingException {
         boolean value = ExpressionParser.getDataArrayByName(inputs, inputName).get(POS_INPUT_VALUE).asBoolean();
         return new BoolLiteral(value);
     }
@@ -180,15 +188,15 @@ public class BoolExprParser {
                 return new Equals(first, second);
             case operator_and:
 
-                BoolExpr andFirst = parseCondition(expressionBlock,OPERAND1_KEY,blocks);
-                BoolExpr andSecond = parseCondition(expressionBlock,OPERAND2_KEY,blocks);
+                BoolExpr andFirst = parseCondition(expressionBlock, OPERAND1_KEY, blocks);
+                BoolExpr andSecond = parseCondition(expressionBlock, OPERAND2_KEY, blocks);
                 return new And(andFirst, andSecond);
             case operator_or:
-                BoolExpr orFirst = parseCondition(expressionBlock,OPERAND1_KEY,blocks);
-                BoolExpr orSecond = parseCondition(expressionBlock,OPERAND2_KEY,blocks);
+                BoolExpr orFirst = parseCondition(expressionBlock, OPERAND1_KEY, blocks);
+                BoolExpr orSecond = parseCondition(expressionBlock, OPERAND2_KEY, blocks);
                 return new Or(orFirst, orSecond);
             case operator_not:
-                BoolExpr notInput = parseCondition(expressionBlock,OPERAND_KEY,blocks);
+                BoolExpr notInput = parseCondition(expressionBlock, OPERAND_KEY, blocks);
                 return new Not(notInput);
             case operator_contains:
                 Expression containing = ExpressionParser.parseExpression(expressionBlock, 0, blocks);
@@ -211,9 +219,9 @@ public class BoolExprParser {
     }
 
     private static BoolExpr parseCondition(JsonNode expressionBlock, String fieldName, JsonNode blocks) throws ParsingException {
-        if(expressionBlock.get(INPUTS_KEY).has(fieldName)){
+        if (expressionBlock.get(INPUTS_KEY).has(fieldName)) {
             return parseBoolExpr(expressionBlock, fieldName, blocks);
-        }else{
+        } else {
             return new UnspecifiedBoolExpr();
         }
     }
