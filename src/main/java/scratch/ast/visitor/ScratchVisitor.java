@@ -22,6 +22,7 @@ import scratch.ast.model.ASTNode;
 import scratch.ast.model.ActorDefinition;
 import scratch.ast.model.Script;
 import scratch.ast.model.StmtList;
+import scratch.ast.model.event.BackdropSwitchTo;
 import scratch.ast.model.event.Never;
 import scratch.ast.model.event.ReceptionOfMessage;
 import scratch.ast.model.event.StartedAsClone;
@@ -37,6 +38,8 @@ import scratch.ast.model.procedure.ParameterList;
 import scratch.ast.model.procedure.ParameterListPlain;
 import scratch.ast.model.procedure.ProcedureDefinition;
 import scratch.ast.model.statement.CallStmt;
+import scratch.ast.model.statement.actorlook.SwitchBackdrop;
+import scratch.ast.model.statement.actorlook.SwitchBackdropAndWait;
 import scratch.ast.model.statement.common.*;
 import scratch.ast.model.statement.control.*;
 import scratch.ast.model.statement.pen.PenClearStmt;
@@ -584,6 +587,45 @@ public interface ScratchVisitor {
      * @param node Type Node of which the children will be iterated
      */
     default void visit(Type node) {
+        visit((ASTNode) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link SwitchBackdrop}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node SwitchBackdrop Node of which the children will be iterated
+     */
+    default void visit(SwitchBackdrop node) {
+        visit((ASTNode) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link SwitchBackdropAndWait}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node SwitchBackdropAndWait Node of which the children will be iterated
+     */
+    default void visit(SwitchBackdropAndWait node) {
+        visit((ASTNode) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link BackdropSwitchTo}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node BackdropSwitchTo Node of which the children will be iterated
+     */
+    default void visit(BackdropSwitchTo node) {
         visit((ASTNode) node);
     }
 }

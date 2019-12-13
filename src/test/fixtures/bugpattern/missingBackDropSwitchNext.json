@@ -1,0 +1,195 @@
+{
+  "targets": [
+    {
+      "isStage": true,
+      "name": "Stage",
+      "variables": {
+        "`jEk@4|i[#Fk?(8x)AV.-my variable": [
+          "my variable",
+          0
+        ]
+      },
+      "lists": {},
+      "broadcasts": {},
+      "blocks": {
+        "L@fv~p%v%b@@,xnV*[xO": {
+          "opcode": "event_whenflagclicked",
+          "next": "SLwKUQUTb.5b]??3~_kr",
+          "parent": null,
+          "inputs": {},
+          "fields": {},
+          "shadow": false,
+          "topLevel": true,
+          "x": -901,
+          "y": 395
+        },
+        "SLwKUQUTb.5b]??3~_kr": {
+          "opcode": "looks_switchbackdropto",
+          "next": null,
+          "parent": "L@fv~p%v%b@@,xnV*[xO",
+          "inputs": {
+            "BACKDROP": [
+              1,
+              "s5|]}OJv,Da!7u)ZY!5G"
+            ]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "s5|]}OJv,Da!7u)ZY!5G": {
+          "opcode": "looks_backdrops",
+          "next": null,
+          "parent": "SLwKUQUTb.5b]??3~_kr",
+          "inputs": {},
+          "fields": {
+            "BACKDROP": [
+              "next backdrop",
+              null
+            ]
+          },
+          "shadow": true,
+          "topLevel": false
+        }
+      },
+      "comments": {},
+      "currentCostume": 1,
+      "costumes": [
+        {
+          "assetId": "cd21514d0531fdffb22204e0ec5ed84a",
+          "name": "backdrop1",
+          "md5ext": "cd21514d0531fdffb22204e0ec5ed84a.svg",
+          "dataFormat": "svg",
+          "rotationCenterX": 240,
+          "rotationCenterY": 180
+        },
+        {
+          "assetId": "825d9b54682c406215d9d1f98a819449",
+          "name": "Baseball 1",
+          "bitmapResolution": 1,
+          "dataFormat": "svg",
+          "rotationCenterX": 240,
+          "rotationCenterY": 180
+        }
+      ],
+      "sounds": [
+        {
+          "assetId": "83a9787d4cb6f3b7632b4ddfebf74367",
+          "name": "pop",
+          "dataFormat": "wav",
+          "format": "",
+          "rate": 48000,
+          "sampleCount": 1123,
+          "md5ext": "83a9787d4cb6f3b7632b4ddfebf74367.wav"
+        }
+      ],
+      "volume": 100,
+      "layerOrder": 0,
+      "tempo": 60,
+      "videoTransparency": 50,
+      "videoState": "on",
+      "textToSpeechLanguage": null
+    },
+    {
+      "isStage": false,
+      "name": "Sprite1",
+      "variables": {},
+      "lists": {},
+      "broadcasts": {},
+      "blocks": {
+        "#DY_id~?]mt*qz}wp5#s": {
+          "opcode": "motion_movesteps",
+          "next": null,
+          "parent": "|c)tZhKvPDmr_);-Kb,n",
+          "inputs": {
+            "STEPS": [
+              1,
+              [
+                4,
+                "10"
+              ]
+            ]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "|c)tZhKvPDmr_);-Kb,n": {
+          "opcode": "event_whenbackdropswitchesto",
+          "next": "#DY_id~?]mt*qz}wp5#s",
+          "parent": null,
+          "inputs": {},
+          "fields": {
+            "BACKDROP": [
+              "Baseball 1",
+              null
+            ]
+          },
+          "shadow": false,
+          "topLevel": true,
+          "x": -1219,
+          "y": -517
+        }
+      },
+      "comments": {
+        "p%!tBMQ?Ce@nWvF.#k,^": {
+          "blockId": "x:*tY,jWr%1hB=AqHwo7",
+          "x": -600.8723836891215,
+          "y": 316.32047325102906,
+          "width": 200,
+          "height": 200,
+          "minimized": false,
+          "text": ""
+        }
+      },
+      "currentCostume": 0,
+      "costumes": [
+        {
+          "assetId": "b7853f557e4426412e64bb3da6531a99",
+          "name": "costume1",
+          "bitmapResolution": 1,
+          "md5ext": "b7853f557e4426412e64bb3da6531a99.svg",
+          "dataFormat": "svg",
+          "rotationCenterX": 48,
+          "rotationCenterY": 50
+        },
+        {
+          "assetId": "e6ddc55a6ddd9cc9d84fe0b4c21e016f",
+          "name": "costume2",
+          "bitmapResolution": 1,
+          "md5ext": "e6ddc55a6ddd9cc9d84fe0b4c21e016f.svg",
+          "dataFormat": "svg",
+          "rotationCenterX": 46,
+          "rotationCenterY": 53
+        }
+      ],
+      "sounds": [
+        {
+          "assetId": "83c36d806dc92327b9e7049a565c6bff",
+          "name": "Meow",
+          "dataFormat": "wav",
+          "format": "",
+          "rate": 48000,
+          "sampleCount": 40681,
+          "md5ext": "83c36d806dc92327b9e7049a565c6bff.wav"
+        }
+      ],
+      "volume": 100,
+      "layerOrder": 1,
+      "visible": true,
+      "x": 170,
+      "y": 0,
+      "size": 100,
+      "direction": 90,
+      "draggable": false,
+      "rotationStyle": "all around"
+    }
+  ],
+  "monitors": [],
+  "extensions": [],
+  "meta": {
+    "semver": "3.0.0",
+    "vm": "0.2.0-prerelease.20191119203901",
+    "agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.79 Safari/537.36"
+  }
+}
