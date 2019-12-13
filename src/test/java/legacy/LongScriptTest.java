@@ -1,4 +1,4 @@
-/*
+package legacy;/*
  * Copyright (C) 2019 LitterBox contributors
  *
  * This file is part of LitterBox.
@@ -19,9 +19,8 @@
 import static org.junit.Assert.assertEquals;
 
 import analytics.IssueReport;
-import analytics.finder.NestedLoops;
+import analytics.finder.LongScript;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import scratch.data.ScBlock;
@@ -32,7 +31,7 @@ import scratch.structure.Stage;
 import utils.Identifier;
 import utils.Version;
 
-public class NestedLoopsTest {
+public class LongScriptTest {
 
     @Test
     public void validateCheck() {
@@ -42,11 +41,10 @@ public class NestedLoopsTest {
         List<ScBlock> blocks = new ArrayList<>();
         Script script = new Script();
         ScBlock block1 = new ScBlock();
-        block1.setContent(Identifier.FOREVER.getValue());
-        ScBlock block2 = new ScBlock();
-        block2.setContent(Identifier.FOREVER.getValue());
-        block1.setNestedBlocks(Collections.singletonList(block2));
-        blocks.add(block1);
+        block1.setContent(Identifier.SENSE.getValue());
+        for (int i = 0; i < 12; i++) {
+            blocks.add(block1);
+        }
         script.setBlocks(blocks);
         double[] pos = {1.0, 1.0};
         script.setPosition(pos);
@@ -56,7 +54,7 @@ public class NestedLoopsTest {
         List<Sprite> sprites = new ArrayList<>();
         project.setSprites(sprites);
         project.setPath("Test");
-        NestedLoops detector = new NestedLoops();
+        LongScript detector = new LongScript();
         IssueReport iR = detector.check(project);
 
         assertEquals(1, iR.getCount());

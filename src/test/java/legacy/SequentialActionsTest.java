@@ -1,4 +1,4 @@
-/*
+package legacy;/*
  * Copyright (C) 2019 LitterBox contributors
  *
  * This file is part of LitterBox.
@@ -19,7 +19,7 @@
 import static org.junit.Assert.assertEquals;
 
 import analytics.IssueReport;
-import analytics.finder.MiddleMan;
+import analytics.finder.SequentialActions;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.Test;
@@ -31,7 +31,7 @@ import scratch.structure.Stage;
 import utils.Identifier;
 import utils.Version;
 
-public class MiddleManTest {
+public class SequentialActionsTest {
 
     @Test
     public void validateCheck() {
@@ -41,10 +41,10 @@ public class MiddleManTest {
         List<ScBlock> blocks = new ArrayList<>();
         Script script = new Script();
         ScBlock block1 = new ScBlock();
-        block1.setContent(Identifier.RECEIVE.getValue());
-        blocks.add(block1);
+        block1.setContent(Identifier.FOREVER.getValue());
         ScBlock block2 = new ScBlock();
-        block2.setContent(Identifier.BROADCAST.getValue());
+        block2.setContent(Identifier.FOREVER.getValue());
+        blocks.add(block1);
         blocks.add(block2);
         script.setBlocks(blocks);
         double[] pos = {1.0, 1.0};
@@ -55,7 +55,7 @@ public class MiddleManTest {
         List<Sprite> sprites = new ArrayList<>();
         project.setSprites(sprites);
         project.setPath("Test");
-        MiddleMan detector = new MiddleMan();
+        SequentialActions detector = new SequentialActions();
         IssueReport iR = detector.check(project);
 
         assertEquals(1, iR.getCount());

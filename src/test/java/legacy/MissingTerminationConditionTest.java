@@ -1,4 +1,4 @@
-/*
+package legacy;/*
  * Copyright (C) 2019 LitterBox contributors
  *
  * This file is part of LitterBox.
@@ -16,10 +16,12 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
+
 import static org.junit.Assert.assertEquals;
 
+
 import analytics.IssueReport;
-import analytics.finder.StartingPoint;
+import analytics.finder.MissingTermination;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.Test;
@@ -31,7 +33,7 @@ import scratch.structure.Stage;
 import utils.Identifier;
 import utils.Version;
 
-public class StartingPointTest {
+public class MissingTerminationConditionTest {
 
     @Test
     public void validateCheck() {
@@ -41,8 +43,7 @@ public class StartingPointTest {
         List<ScBlock> blocks = new ArrayList<>();
         Script script = new Script();
         ScBlock block1 = new ScBlock();
-        block1.setContent(Identifier.SET_VAR.getValue());
-        blocks.add(block1);
+        block1.setContent(Identifier.REPEAT_UNTIL.getValue());
         blocks.add(block1);
         script.setBlocks(blocks);
         double[] pos = {1.0, 1.0};
@@ -53,7 +54,7 @@ public class StartingPointTest {
         List<Sprite> sprites = new ArrayList<>();
         project.setSprites(sprites);
         project.setPath("Test");
-        StartingPoint detector = new StartingPoint();
+        MissingTermination detector = new MissingTermination();
         IssueReport iR = detector.check(project);
 
         assertEquals(1, iR.getCount());

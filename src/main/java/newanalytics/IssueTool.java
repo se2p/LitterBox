@@ -23,12 +23,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import newanalytics.bugpattern.*;
 import newanalytics.ctscore.FlowControl;
 import newanalytics.smells.*;
 import org.apache.commons.csv.CSVPrinter;
 import scratch.ast.model.Program;
 import utils.CSVWriter;
+
 import java.util.*;
 
 /**
@@ -53,7 +55,7 @@ public class IssueTool {
         finder.put(ProcedureWithForever.SHORT_NAME, new ProcedureWithForever());
         finder.put(ForeverInsideLoop.SHORT_NAME, new ForeverInsideLoop());
         finder.put(EqualsCondition.SHORT_NAME, new EqualsCondition());
-//        finder.put("cnt", new CountBlocks());
+        finder.put(BlockCount.SHORT_NAME, new BlockCount());
 //        finder.put("glblstrt", new GlobalStartingPoint());
 //        finder.put("strt", new StartingPoint());
 //        finder.put("lggymve", new LaggyMovement());
@@ -68,7 +70,7 @@ public class IssueTool {
 //        finder.put("sprtname", new SpriteNaming());
         finder.put(LongScript.SHORT_NAME, new LongScript());
 //        finder.put("brdcstsync", new BroadcastSync());
-       finder.put("nstloop", new NestedLoops());
+        finder.put("nstloop", new NestedLoops());
 //        finder.put("dplscrpt", new DuplicatedScript());
 //        finder.put("racecnd", new RaceCondition());
         finder.put(EmptyScript.SHORT_NAME, new EmptyScript());
@@ -154,7 +156,7 @@ public class IssueTool {
         this.finder = finder;
     }
 
-    public static List<String> getOnlyUniqueActorList(List<String> foundSpritesWithIssues){
+    public static List<String> getOnlyUniqueActorList(List<String> foundSpritesWithIssues) {
         Set<String> uniqueSprites = new TreeSet<>(foundSpritesWithIssues);
         return new ArrayList<>(uniqueSprites);
 

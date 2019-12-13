@@ -22,20 +22,30 @@ import scratch.ast.model.ASTNode;
 import scratch.ast.model.ActorDefinition;
 import scratch.ast.model.Script;
 import scratch.ast.model.StmtList;
-import scratch.ast.model.event.Event;
+import scratch.ast.model.event.Never;
 import scratch.ast.model.event.ReceptionOfMessage;
 import scratch.ast.model.event.StartedAsClone;
 import scratch.ast.model.expression.bool.*;
+import scratch.ast.model.expression.list.ExpressionList;
+import scratch.ast.model.expression.list.ExpressionListPlain;
+import scratch.ast.model.literals.BoolLiteral;
+import scratch.ast.model.literals.ColorLiteral;
+import scratch.ast.model.literals.NumberLiteral;
+import scratch.ast.model.literals.StringLiteral;
+import scratch.ast.model.procedure.Parameter;
+import scratch.ast.model.procedure.ParameterList;
+import scratch.ast.model.procedure.ParameterListPlain;
 import scratch.ast.model.procedure.ProcedureDefinition;
 import scratch.ast.model.statement.CallStmt;
-import scratch.ast.model.statement.common.CreateCloneOf;
-import scratch.ast.model.statement.common.SetStmt;
-import scratch.ast.model.statement.common.WaitUntil;
 import scratch.ast.model.statement.common.*;
 import scratch.ast.model.statement.control.*;
 import scratch.ast.model.statement.pen.PenClearStmt;
 import scratch.ast.model.statement.pen.PenDownStmt;
 import scratch.ast.model.statement.pen.PenUpStmt;
+import scratch.ast.model.statement.spritelook.ListOfStmt;
+import scratch.ast.model.statement.spritemotion.MoveSteps;
+import scratch.ast.model.type.Type;
+import scratch.ast.model.variable.Identifier;
 import scratch.ast.model.variable.StrId;
 
 public interface ScratchVisitor {
@@ -196,7 +206,9 @@ public interface ScratchVisitor {
      *
      * @param node Script of which the children will be iterated
      */
-    default void visit(Script node){visit((ASTNode) node);}
+    default void visit(Script node) {
+        visit((ASTNode) node);
+    }
 
     /**
      * Default implementation of visit method for {@link CreateCloneOf}.
@@ -403,6 +415,175 @@ public interface ScratchVisitor {
      * @param node RepeatTimesStmt Node of which the children will be iterated
      */
     default void visit(RepeatTimesStmt node) {
+        visit((ASTNode) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link StringLiteral}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node StringLiteral Node of which the children will be iterated
+     */
+    default void visit(StringLiteral node) {
+        visit((ASTNode) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link BoolLiteral}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node BoolLiteral Node of which the children will be iterated
+     */
+    default void visit(BoolLiteral node) {
+        visit((ASTNode) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link NumberLiteral}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node NumberLiteral Node of which the children will be iterated
+     */
+    default void visit(NumberLiteral node) {
+        visit((ASTNode) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link ColorLiteral}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node ColorLiteral Node of which the children will be iterated
+     */
+    default void visit(ColorLiteral node) {
+        visit((ASTNode) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link Identifier}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node Identifier Node of which the children will be iterated
+     */
+    default void visit(Identifier node) {
+        visit((ASTNode) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link Never}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node Never Node of which the children will be iterated
+     */
+    default void visit(Never node) {
+        visit((ASTNode) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link ListOfStmt}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node ListOfStmt Node of which the children will be iterated
+     */
+    default void visit(ListOfStmt node) {
+        visit((ASTNode) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link ParameterList}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node ParameterList Node of which the children will be iterated
+     */
+    default void visit(ParameterList node) {
+        visit((ASTNode) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link ParameterListPlain}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node ParameterListPlain Node of which the children will be iterated
+     */
+    default void visit(ParameterListPlain node) {
+        visit((ASTNode) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link Parameter}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node Parameter Node of which the children will be iterated
+     */
+    default void visit(Parameter node) {
+        visit((ASTNode) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link ExpressionList}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node ExpressionList Node of which the children will be iterated
+     */
+    default void visit(ExpressionList node) {
+        visit((ASTNode) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link ExpressionListPlain}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node ExpressionListPlain Node of which the children will be iterated
+     */
+    default void visit(ExpressionListPlain node) {
+        visit((ASTNode) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link Type}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node Type Node of which the children will be iterated
+     */
+    default void visit(Type node) {
         visit((ASTNode) node);
     }
 }

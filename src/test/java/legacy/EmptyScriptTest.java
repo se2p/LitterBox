@@ -1,4 +1,4 @@
-/*
+package legacy;/*
  * Copyright (C) 2019 LitterBox contributors
  *
  * This file is part of LitterBox.
@@ -19,18 +19,19 @@
 import static org.junit.Assert.assertEquals;
 
 import analytics.IssueReport;
-import analytics.finder.CloneInitialization;
+import analytics.finder.EmptyScript;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import scratch.data.ScBlock;
 import scratch.data.Script;
 import scratch.structure.Project;
+import scratch.structure.Sprite;
 import scratch.structure.Stage;
 import utils.Identifier;
 import utils.Version;
 
-public class CloneInitializationTest {
+public class EmptyScriptTest {
 
     @Test
     public void validateCheck() {
@@ -40,8 +41,7 @@ public class CloneInitializationTest {
         List<ScBlock> blocks = new ArrayList<>();
         Script script = new Script();
         ScBlock block1 = new ScBlock();
-        block1.setContent(Identifier.CREATE_CLONE.getValue());
-        block1.setCreatedClone(Identifier.MYSELF.getValue());
+        block1.setContent(Identifier.GREEN_FLAG.getValue());
         blocks.add(block1);
         script.setBlocks(blocks);
         double[] pos = {1.0, 1.0};
@@ -49,12 +49,12 @@ public class CloneInitializationTest {
         scripts.add(script);
         Stage stage = new Stage("Stage", scripts, new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), 0, null);
         project.setStage(stage);
-        project.setSprites(new ArrayList<>());
+        List<Sprite> sprites = new ArrayList<>();
+        project.setSprites(sprites);
         project.setPath("Test");
-        CloneInitialization detector = new CloneInitialization();
+        EmptyScript detector = new EmptyScript();
         IssueReport iR = detector.check(project);
 
         assertEquals(1, iR.getCount());
-        assertEquals("Stage at [1.0, 1.0]", iR.getPosition().get(0));
     }
 }
