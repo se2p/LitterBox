@@ -30,12 +30,10 @@ class MessageNeverSentTest {
     }
 
     @Test
-    public void testMissingPenUp() {
+    public void testMessageNeverSent() {
         MessageNeverSent finder = new MessageNeverSent();
         final IssueReport check = finder.check(program);
         Truth.assertThat(check.getCount()).isEqualTo(1);
         Truth.assertThat(check.getPosition().get(0)).isEqualTo("Apple");
-        Truth.assertThat(check.getPosition().get(1)).isEqualTo("Sprite1");
-        Truth.assertThat(check.getPosition().get(2)).isEqualTo("Abby");
     }
 }

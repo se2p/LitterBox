@@ -30,12 +30,12 @@ class MessageNeverReceivedTest {
     }
 
     @Test
-    public void testMissingPenUp() {
+    public void testMessageNeverReceived() {
         MessageNeverReceived finder = new MessageNeverReceived();
         final IssueReport check = finder.check(program);
         Truth.assertThat(check.getCount()).isEqualTo(4);
-        Truth.assertThat(check.getPosition().get(0)).isEqualTo("Apple");
-        Truth.assertThat(check.getPosition().get(1)).isEqualTo("Sprite1");
-        Truth.assertThat(check.getPosition().get(2)).isEqualTo("Abby");
+        Truth.assertThat(check.getPosition().get(2)).isEqualTo("Apple");
+        Truth.assertThat(check.getPosition().get(0)).isEqualTo("Sprite1");
+        Truth.assertThat(check.getPosition().get(1)).isEqualTo("Abby");
     }
 }

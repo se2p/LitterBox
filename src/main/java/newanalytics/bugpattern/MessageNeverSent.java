@@ -26,7 +26,6 @@ public class MessageNeverSent implements IssueFinder, ScratchVisitor {
         program.accept(this);
 
         final LinkedHashSet<Pair> nonSyncedPairs = new LinkedHashSet<>();
-        final LinkedHashSet<Pair> syncedPairs = new LinkedHashSet<>();
         for (Pair received : messageReceived) {
             boolean isReceived = false;
             for (Pair sent : messageSent) {
@@ -37,15 +36,13 @@ public class MessageNeverSent implements IssueFinder, ScratchVisitor {
             }
             if (!isReceived) {
                 nonSyncedPairs.add(received);
-            } else {
-                syncedPairs.add(received);
             }
         }
 
-        final List<String> actorNames = new LinkedList<>();
+        final Set<String> actorNames = new LinkedHashSet<>();
         nonSyncedPairs.forEach(p -> actorNames.add(p.getActorName()));
 
-        return new IssueReport(NAME, nonSyncedPairs.size(), actorNames, "");
+        return new IssueReport(NAME, nonSyncedPairs.size(), new LinkedList<>(actorNames), "");
     }
 
     @Override
