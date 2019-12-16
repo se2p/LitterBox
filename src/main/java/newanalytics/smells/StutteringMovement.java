@@ -23,6 +23,7 @@ import java.util.List;
 import newanalytics.IssueFinder;
 import newanalytics.IssueReport;
 import scratch.ast.model.Program;
+import scratch.ast.visitor.ScratchVisitor;
 import scratch.data.ScBlock;
 import scratch.data.Script;
 import scratch.structure.Sprite;
@@ -30,43 +31,15 @@ import scratch.structure.Sprite;
 /**
  * Checks for missing for-loops in movement scripts.
  */
-public class LaggyMovement implements IssueFinder {
+public class LaggyMovement implements IssueFinder, ScratchVisitor {
 
-    String name = "laggy_movement";
+    public static final String name = "stuttering_movement";
+    private boolean found = false;
+    private int count = 0;
+
 
     @Override
     public IssueReport check(Program program) {
-        /*
-        List<Sprite> sprites = program.getSprites();
-        int count = 0;
-        List<String> pos = new ArrayList<>();
-        for (Sprite sprite : sprites) {
-            for (Script script : sprite.getScripts()) {
-                if (program.getVersion().equals(Version.SCRATCH2)) {
-                    List<String> idfs = new ArrayList<>();
-                    idfs.add(Identifier.LEGACY_KEYPRESS.getValue());
-                    idfs.add(Identifier.LEGACY_FORWARD.getValue());
-                    idfs.add(Identifier.LEGACY_CHANGEX.getValue());
-                    idfs.add(Identifier.LEGACY_CHANGEY.getValue());
-                    count = getCount(count, pos, sprite, script, idfs);
-                } else if (program.getVersion().equals(Version.SCRATCH3)) {
-                    List<String> idfs = new ArrayList<>();
-                    idfs.add(Identifier.KEYPRESS.getValue());
-                    idfs.add(Identifier.FORWARD.getValue());
-                    idfs.add(Identifier.CHANGE_X.getValue());
-                    idfs.add(Identifier.CHANGE_Y.getValue());
-                    count = getCount(count, pos, sprite, script, idfs);
-                }
-            }
-        }
-        String notes = "All movement scripts work fine or there is no \"whenKeyPressed\" movement in the project.";
-        if (count > 0) {
-            notes = "Some of your user input movement scripts are laggy. Try using a forever loop!";
-        }
-
-        return new IssueReport(name, count, pos, program.getPath(), notes);
-
-         */
         throw new RuntimeException("not implemented");
     }
 
