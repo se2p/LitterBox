@@ -69,6 +69,7 @@ import scratch.ast.model.statement.spritemotion.SetYTo;
 import scratch.ast.model.statement.termination.TerminationStmt;
 import scratch.ast.model.type.Type;
 import scratch.ast.model.variable.Identifier;
+import scratch.ast.model.variable.Qualified;
 import scratch.ast.model.variable.StrId;
 
 public interface ScratchVisitor {
@@ -750,6 +751,19 @@ public interface ScratchVisitor {
      * @param node TerminationStmt Node of which the children will be iterated
      */
     default void visit(TerminationStmt node) {
+        visit((ASTNode) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link Qualified}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node Qualified Node of which the children will be iterated
+     */
+    default void visit(Qualified node) {
         visit((ASTNode) node);
     }
 }
