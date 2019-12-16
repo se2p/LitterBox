@@ -19,8 +19,6 @@
 package newanalytics.bugpattern;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.io.File;
-import java.io.IOException;
 import newanalytics.IssueReport;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -28,6 +26,9 @@ import org.junit.jupiter.api.Test;
 import scratch.ast.ParsingException;
 import scratch.ast.model.Program;
 import scratch.ast.parser.ProgramParser;
+
+import java.io.File;
+import java.io.IOException;
 
 public class MissingTerminationConditionTest {
     private static ObjectMapper mapper = new ObjectMapper();

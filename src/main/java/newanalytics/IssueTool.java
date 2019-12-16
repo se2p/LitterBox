@@ -55,6 +55,7 @@ public class IssueTool {
         finder.put(CallWithoutDefinition.SHORT_NAME, new CallWithoutDefinition());
         finder.put(MessageNeverReceived.SHORT_NAME, new MessageNeverReceived());
         finder.put(MessageNeverSent.SHORT_NAME, new MessageNeverSent());
+        finder.put(EndlessRecursion.SHORT_NAME, new EndlessRecursion());
 //        finder.put("glblstrt", new GlobalStartingPoint());
 //        finder.put("strt", new StartingPoint());
 //        finder.put("lggymve", new LaggyMovement());
