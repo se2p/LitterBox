@@ -15,6 +15,7 @@ import java.io.IOException;
 public class EndlessRecursionTest {
     private static Program empty;
     private static Program endlessRecursion;
+    private static Program recursion;
     private static ObjectMapper mapper = new ObjectMapper();
 
     @BeforeAll
@@ -24,7 +25,8 @@ public class EndlessRecursionTest {
         empty = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
         f = new File("./src/test/fixtures/bugpattern/recursiveProcedure.json");
         endlessRecursion = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
-
+        f = new File("./src/test/fixtures/bugpattern/recursion.json");
+        recursion = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
     }
 
     @Test
@@ -37,7 +39,14 @@ public class EndlessRecursionTest {
     @Test
     public void testEndlessRecursion() {
         EndlessRecursion parameterName = new EndlessRecursion();
-        IssueReport report = parameterName.check( endlessRecursion);
+        IssueReport report = parameterName.check(endlessRecursion);
         Assertions.assertEquals(1, report.getCount());
+    }
+
+    @Test
+    public void testRecursion() {
+        EndlessRecursion parameterName = new EndlessRecursion();
+        IssueReport report = parameterName.check(recursion);
+        Assertions.assertEquals(0, report.getCount());
     }
 }

@@ -7,6 +7,8 @@ import scratch.ast.model.ActorDefinition;
 import scratch.ast.model.Program;
 import scratch.ast.model.procedure.ProcedureDefinition;
 import scratch.ast.model.statement.CallStmt;
+import scratch.ast.model.statement.control.IfElseStmt;
+import scratch.ast.model.statement.control.IfThenStmt;
 import scratch.ast.model.variable.Identifier;
 import scratch.ast.parser.symboltable.ProcedureInfo;
 import scratch.ast.visitor.ScratchVisitor;
@@ -28,6 +30,7 @@ public class EndlessRecursion implements IssueFinder, ScratchVisitor {
     private Map<Identifier, ProcedureInfo> procMap;
     private String currentProcedureName;
     private boolean insideProcedure;
+    private int loopIfCounter;
 
     @Override
     public IssueReport check(Program program) {
@@ -49,6 +52,7 @@ public class EndlessRecursion implements IssueFinder, ScratchVisitor {
     @Override
     public void visit(ActorDefinition actor) {
         currentActor = actor;
+        loopIfCounter = 0;
         if (!actor.getChildren().isEmpty()) {
             for (ASTNode child : actor.getChildren()) {
                 child.accept(this);
@@ -75,12 +79,34 @@ public class EndlessRecursion implements IssueFinder, ScratchVisitor {
 
     @Override
     public void visit(CallStmt node) {
-        if (insideProcedure) {
+        if (insideProcedure && loopIfCounter == 0) {
             String call = node.getIdent().getName();
-            if(call.equals(currentProcedureName)){
-                found=true;
+            if (call.equals(currentProcedureName)) {
+                found = true;
                 count++;
             }
         }
+    }
+
+    @Override
+    public void visit(IfElseStmt node) {
+        loopIfCounter++;
+        if (!node.getChildren().isEmpty()) {
+            for (ASTNode child : node.getChildren()) {
+                child.accept(this);
+            }
+        }
+        loopIfCounter--;
+    }
+
+    @Override
+    public void visit(IfThenStmt node) {
+        loopIfCounter++;
+        if (!node.getChildren().isEmpty()) {
+            for (ASTNode child : node.getChildren()) {
+                child.accept(this);
+            }
+        }
+        loopIfCounter--;
     }
 }
