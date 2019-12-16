@@ -69,6 +69,7 @@ public class IssueTool {
 //        finder.put("sprtname", new SpriteNaming());
         finder.put(LongScript.SHORT_NAME, new LongScript());
         finder.put(NestedLoops.SHORT_NAME, new NestedLoops());
+        finder.put(UnusedVariable.SHORT_NAME,new UnusedVariable());
 //        finder.put("dplscrpt", new DuplicatedScript());
 //        finder.put("racecnd", new RaceCondition());
         finder.put(EmptyScript.SHORT_NAME, new EmptyScript());

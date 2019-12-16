@@ -23,6 +23,7 @@ import scratch.ast.model.expression.list.ExpressionList;
 import scratch.ast.model.type.Type;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public class SymbolTable {
 
@@ -36,15 +37,15 @@ public class SymbolTable {
         this.lists = new HashMap<>();
     }
 
-    public HashMap<String, VariableInfo> getVariables() {
+    public Map<String, VariableInfo> getVariables() {
         return variables;
     }
 
-    public HashMap<String, MessageInfo> getMessages() {
+    public Map<String, MessageInfo> getMessages() {
         return messages;
     }
 
-    public HashMap<String, ExpressionListInfo> getLists() {
+    public Map<String, ExpressionListInfo> getLists() {
         return lists;
     }
 
