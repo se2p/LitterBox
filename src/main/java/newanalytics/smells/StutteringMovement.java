@@ -101,7 +101,6 @@ public class StutteringMovement implements IssueFinder, ScratchVisitor {
                 child.accept(this);
             }
         }
-        followsKeyPressed = false;
     }
 
 
