@@ -22,6 +22,7 @@ public enum ActorLookStmtOpcode {
 
     sensing_askandwait, //  "ask"  StringExpr  "and" "wait"
     looks_nextbackdrop,
+    looks_switchbackdroptoandwait,
     looks_switchbackdropto, // "switch" "backdrop" "to"  Backdrop
     looks_cleargraphiceffects, // "clear" "graphic" "effects"
     data_showvariable,
