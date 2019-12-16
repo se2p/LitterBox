@@ -1,8 +1,5 @@
 package newanalytics.bugpattern;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
 import newanalytics.IssueFinder;
 import newanalytics.IssueReport;
 import scratch.ast.model.ASTNode;
@@ -12,6 +9,10 @@ import scratch.ast.model.event.StartedAsClone;
 import scratch.ast.model.statement.common.CreateCloneOf;
 import scratch.ast.model.variable.StrId;
 import scratch.ast.visitor.ScratchVisitor;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class MissingCloneInitialization implements IssueFinder, ScratchVisitor {
 

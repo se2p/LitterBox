@@ -1,7 +1,5 @@
 package newanalytics.bugpattern;
 
-import java.util.LinkedList;
-import java.util.List;
 import newanalytics.IssueFinder;
 import newanalytics.IssueReport;
 import scratch.ast.model.ASTNode;
@@ -13,6 +11,9 @@ import scratch.ast.model.expression.bool.LessThan;
 import scratch.ast.model.literals.NumberLiteral;
 import scratch.ast.model.literals.StringLiteral;
 import scratch.ast.visitor.ScratchVisitor;
+
+import java.util.LinkedList;
+import java.util.List;
 
 public class ComparingLiterals implements IssueFinder, ScratchVisitor {
 

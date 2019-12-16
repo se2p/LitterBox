@@ -18,9 +18,6 @@
  */
 package newanalytics.bugpattern;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import newanalytics.IssueFinder;
 import newanalytics.IssueReport;
 import newanalytics.IssueTool;
@@ -34,6 +31,9 @@ import scratch.ast.model.expression.bool.IsMouseDown;
 import scratch.ast.model.expression.bool.Touching;
 import scratch.ast.model.statement.Stmt;
 import scratch.ast.model.statement.control.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Checks for missing loops in event based actions.

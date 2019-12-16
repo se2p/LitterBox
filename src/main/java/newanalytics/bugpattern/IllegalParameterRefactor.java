@@ -22,7 +22,6 @@ import scratch.ast.parser.symboltable.ProcedureInfo;
 import scratch.ast.visitor.ScratchVisitor;
 import utils.Preconditions;
 
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;

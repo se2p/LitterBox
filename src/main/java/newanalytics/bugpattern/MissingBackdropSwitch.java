@@ -7,14 +7,10 @@ import scratch.ast.model.ActorDefinition;
 import scratch.ast.model.Program;
 import scratch.ast.model.elementchoice.ElementChoice;
 import scratch.ast.model.elementchoice.WithId;
-import scratch.ast.model.elementchoice.WithNumber;
 import scratch.ast.model.event.BackdropSwitchTo;
-import scratch.ast.model.event.ReceptionOfMessage;
 import scratch.ast.model.literals.StringLiteral;
 import scratch.ast.model.statement.actorlook.SwitchBackdrop;
 import scratch.ast.model.statement.actorlook.SwitchBackdropAndWait;
-import scratch.ast.model.statement.common.BroadcastAndWait;
-import scratch.ast.model.variable.StrId;
 import scratch.ast.visitor.ScratchVisitor;
 
 import java.util.*;

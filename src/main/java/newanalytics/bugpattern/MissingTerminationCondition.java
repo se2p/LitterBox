@@ -18,8 +18,6 @@
  */
 package newanalytics.bugpattern;
 
-import java.util.ArrayList;
-import java.util.List;
 import newanalytics.IssueFinder;
 import newanalytics.IssueReport;
 import newanalytics.IssueTool;
@@ -29,6 +27,9 @@ import scratch.ast.model.Script;
 import scratch.ast.model.expression.bool.UnspecifiedBoolExpr;
 import scratch.ast.model.statement.Stmt;
 import scratch.ast.model.statement.control.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Checks for missing statements in repeat-until blocks.

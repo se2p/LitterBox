@@ -1,6 +1,5 @@
 package newanalytics.bugpattern;
 
-import java.util.*;
 import newanalytics.IssueFinder;
 import newanalytics.IssueReport;
 import scratch.ast.model.ASTNode;
@@ -11,6 +10,8 @@ import scratch.ast.model.literals.StringLiteral;
 import scratch.ast.model.statement.common.Broadcast;
 import scratch.ast.model.statement.common.BroadcastAndWait;
 import scratch.ast.visitor.ScratchVisitor;
+
+import java.util.*;
 
 public class MessageNeverReceived implements IssueFinder, ScratchVisitor {
 

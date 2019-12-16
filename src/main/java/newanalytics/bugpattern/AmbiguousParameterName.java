@@ -9,7 +9,10 @@ import scratch.ast.parser.symboltable.ArgumentInfo;
 import scratch.ast.parser.symboltable.ProcedureInfo;
 import utils.Preconditions;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Set;
 
 public class AmbiguousParameterName implements IssueFinder {
     private static final String NOTE1 = "There are no ambiguous parameter names in your project.";

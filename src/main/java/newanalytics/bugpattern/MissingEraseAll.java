@@ -18,8 +18,6 @@
  */
 package newanalytics.bugpattern;
 
-import java.util.LinkedList;
-import java.util.List;
 import newanalytics.IssueFinder;
 import newanalytics.IssueReport;
 import scratch.ast.model.ASTNode;
@@ -29,6 +27,9 @@ import scratch.ast.model.statement.pen.PenClearStmt;
 import scratch.ast.model.statement.pen.PenDownStmt;
 import scratch.ast.visitor.ScratchVisitor;
 import utils.Preconditions;
+
+import java.util.LinkedList;
+import java.util.List;
 
 public class MissingEraseAll implements IssueFinder {
 
