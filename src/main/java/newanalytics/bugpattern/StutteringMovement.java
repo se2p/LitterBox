@@ -16,10 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-package newanalytics.smells;
-
-import java.util.LinkedList;
-import java.util.List;
+package newanalytics.bugpattern;
 
 import newanalytics.IssueFinder;
 import newanalytics.IssueReport;
@@ -36,6 +33,9 @@ import scratch.ast.model.statement.spritemotion.SetXTo;
 import scratch.ast.model.statement.spritemotion.SetYTo;
 import scratch.ast.visitor.ScratchVisitor;
 import utils.Preconditions;
+
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Checks for missing for-loops in movement scripts.
@@ -155,6 +155,7 @@ public class StutteringMovement implements IssueFinder, ScratchVisitor {
             }
         }
     }
+
     @Override
     public void visit(SetYTo setYTo) {
         if (followsKeyPressed) {
