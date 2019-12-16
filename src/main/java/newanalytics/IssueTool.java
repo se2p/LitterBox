@@ -51,7 +51,6 @@ public class IssueTool {
         finder.put(ProcedureWithForever.SHORT_NAME, new ProcedureWithForever());
         finder.put(ForeverInsideLoop.SHORT_NAME, new ForeverInsideLoop());
         finder.put(EqualsCondition.SHORT_NAME, new EqualsCondition());
-        finder.put(BlockCount.SHORT_NAME, new BlockCount());
         finder.put(CallWithoutDefinition.SHORT_NAME, new CallWithoutDefinition());
         finder.put(MessageNeverReceived.SHORT_NAME, new MessageNeverReceived());
         finder.put(MessageNeverSent.SHORT_NAME, new MessageNeverSent());
@@ -73,6 +72,7 @@ public class IssueTool {
 //        finder.put("racecnd", new RaceCondition());
         finder.put(EmptyScript.SHORT_NAME, new EmptyScript());
         finder.put(EmptySprite.SHORT_NAME, new EmptySprite());
+        finder.put(EmptyProject.SHORT_NAME, new EmptyProject());
 //        finder.put("mdlman", new MiddleMan());
 //        finder.put("noop", new Noop());
 //        finder.put("vrblscp", new VariableScope());
@@ -80,6 +80,10 @@ public class IssueTool {
 //        finder.put("dplsprt", new DuplicatedSprite());
 //        finder.put("inappint", new InappropriateIntimacy());
 //        finder.put("noopprjct", new NoOpProject());
+
+        //UtilFinder
+        finder.put(BlockCount.SHORT_NAME, new BlockCount());
+        finder.put(SpriteCount.SHORT_NAME, new SpriteCount());
 //
 //        // To evaluate the CT score
 //        finder.put("logthink", new LogicalThinking());
