@@ -47,6 +47,7 @@ import scratch.ast.model.statement.pen.PenDownStmt;
 import scratch.ast.model.statement.pen.PenUpStmt;
 import scratch.ast.model.statement.spritelook.ListOfStmt;
 import scratch.ast.model.statement.spritemotion.MoveSteps;
+import scratch.ast.model.statement.termination.TerminationStmt;
 import scratch.ast.model.type.Type;
 import scratch.ast.model.variable.Identifier;
 import scratch.ast.model.variable.StrId;
@@ -626,6 +627,19 @@ public interface ScratchVisitor {
      * @param node BackdropSwitchTo Node of which the children will be iterated
      */
     default void visit(BackdropSwitchTo node) {
+        visit((ASTNode) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link TerminationStmt}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node TerminationStmt Node of which the children will be iterated
+     */
+    default void visit(TerminationStmt node) {
         visit((ASTNode) node);
     }
 }
