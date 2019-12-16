@@ -57,7 +57,7 @@ public class IssueTool {
         finder.put(EndlessRecursion.SHORT_NAME, new EndlessRecursion());
 //        finder.put("glblstrt", new GlobalStartingPoint());
 //        finder.put("strt", new StartingPoint());
-//        finder.put("lggymve", new LaggyMovement());
+        finder.put(StutteringMovement.SHORT_NAME, new StutteringMovement());
 //        finder.put("dblif", new DoubleIf());
         finder.put(MissingLoopSensing.SHORT_NAME, new MissingLoopSensing());
         finder.put(MissingTerminationCondition.SHORT_NAME, new MissingTerminationCondition());

@@ -23,6 +23,7 @@ import scratch.ast.model.ActorDefinition;
 import scratch.ast.model.Script;
 import scratch.ast.model.StmtList;
 import scratch.ast.model.event.BackdropSwitchTo;
+import scratch.ast.model.event.KeyPressed;
 import scratch.ast.model.event.Never;
 import scratch.ast.model.event.ReceptionOfMessage;
 import scratch.ast.model.event.StartedAsClone;
@@ -46,7 +47,12 @@ import scratch.ast.model.statement.pen.PenClearStmt;
 import scratch.ast.model.statement.pen.PenDownStmt;
 import scratch.ast.model.statement.pen.PenUpStmt;
 import scratch.ast.model.statement.spritelook.ListOfStmt;
+import scratch.ast.model.statement.spritemotion.ChangeXBy;
+import scratch.ast.model.statement.spritemotion.ChangeYBy;
+import scratch.ast.model.statement.spritemotion.GoToPos;
 import scratch.ast.model.statement.spritemotion.MoveSteps;
+import scratch.ast.model.statement.spritemotion.SetXTo;
+import scratch.ast.model.statement.spritemotion.SetYTo;
 import scratch.ast.model.type.Type;
 import scratch.ast.model.variable.Identifier;
 import scratch.ast.model.variable.StrId;
@@ -626,6 +632,97 @@ public interface ScratchVisitor {
      * @param node BackdropSwitchTo Node of which the children will be iterated
      */
     default void visit(BackdropSwitchTo node) {
+        visit((ASTNode) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link KeyPressed}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node KeyPressed Node of which the children will be iterated
+     */
+    default void visit(KeyPressed node) {
+        visit((ASTNode) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link MoveSteps}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node MoveSteps Node of which the children will be iterated
+     */
+    default void visit(MoveSteps node) {
+        visit((ASTNode) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link ChangeXBy}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node ChangeXBy Node of which the children will be iterated
+     */
+    default void visit(ChangeXBy node) {
+        visit((ASTNode) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link ChangeYBy}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node ChangeYBy Node of which the children will be iterated
+     */
+    default void visit(ChangeYBy node) {
+        visit((ASTNode) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link SetXTo}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node SetXTo Node of which the children will be iterated
+     */
+    default void visit(SetXTo node) {
+        visit((ASTNode) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link SetYTo}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node SetYTo Node of which the children will be iterated
+     */
+    default void visit(SetYTo node) {
+        visit((ASTNode) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link GoToPos}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node GoToPos Node of which the children will be iterated
+     */
+    default void visit(GoToPos node) {
         visit((ASTNode) node);
     }
 }

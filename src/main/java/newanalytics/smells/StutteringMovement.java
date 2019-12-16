@@ -18,47 +18,167 @@
  */
 package newanalytics.smells;
 
-import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
+
 import newanalytics.IssueFinder;
 import newanalytics.IssueReport;
+import scratch.ast.model.ASTNode;
+import scratch.ast.model.ActorDefinition;
 import scratch.ast.model.Program;
+import scratch.ast.model.Script;
+import scratch.ast.model.event.KeyPressed;
+import scratch.ast.model.statement.spritemotion.ChangeXBy;
+import scratch.ast.model.statement.spritemotion.ChangeYBy;
+import scratch.ast.model.statement.spritemotion.GoToPos;
+import scratch.ast.model.statement.spritemotion.MoveSteps;
+import scratch.ast.model.statement.spritemotion.SetXTo;
+import scratch.ast.model.statement.spritemotion.SetYTo;
 import scratch.ast.visitor.ScratchVisitor;
-import scratch.data.ScBlock;
-import scratch.data.Script;
-import scratch.structure.Sprite;
+import utils.Preconditions;
 
 /**
  * Checks for missing for-loops in movement scripts.
  */
-public class LaggyMovement implements IssueFinder, ScratchVisitor {
+public class StutteringMovement implements IssueFinder, ScratchVisitor {
 
-    public static final String name = "stuttering_movement";
+    private static final String NOTE1 = "There are no scripts causing stuttering movement in your project.";
+    private static final String NOTE2 = "There are some scripts causing stuttering movement in your project.";
+    public static final String NAME = "stuttering_movement";
+    public static final String SHORT_NAME = "stuttmvmnt";
     private boolean found = false;
     private int count = 0;
-
+    private List<String> actorNames = new LinkedList<>();
+    private ActorDefinition currentActor;
+    private boolean followsKeyPressed = false;
 
     @Override
     public IssueReport check(Program program) {
-        throw new RuntimeException("not implemented");
-    }
-
-    private int getCount(int count, List<String> pos, Sprite sprite, Script script, List<String> idfs) {
-        if (script.getBlocks().size() > 1 && script.getBlocks().get(0).getContent().startsWith(idfs.get(0))) {
-            for (ScBlock b : script.getBlocks()) {
-                if (b.getContent().startsWith(idfs.get(1))
-                    || b.getContent().startsWith(idfs.get(2))
-                    || b.getContent().startsWith(idfs.get(3))) {
-                    pos.add(sprite.getName() + " at " + Arrays.toString(sprite.getPosition()));
-                    count++;
-                }
-            }
+        Preconditions.checkNotNull(program);
+        program.accept(this);
+        String notes = NOTE1;
+        if (count > 0) {
+            notes = NOTE2;
         }
-        return count;
+        return new IssueReport(NAME, count, actorNames, notes);
     }
 
     @Override
     public String getName() {
-        return name;
+        return NAME;
+    }
+
+    @Override
+    public void visit(ActorDefinition actor) {
+        currentActor = actor;
+        if (!actor.getChildren().isEmpty()) {
+            for (ASTNode child : actor.getChildren()) {
+                child.accept(this);
+            }
+        }
+
+        if (found) {
+            found = false;
+            actorNames.add(currentActor.getIdent().getName());
+        }
+    }
+
+    @Override
+    public void visit(Script script) {
+        followsKeyPressed = false;
+        if (!script.getChildren().isEmpty()) {
+            for (ASTNode child : script.getChildren()) {
+                child.accept(this);
+            }
+        }
+    }
+
+    @Override
+    public void visit(KeyPressed keyPressed) {
+        followsKeyPressed = true;
+        if (!keyPressed.getChildren().isEmpty()) {
+            for (ASTNode child : keyPressed.getChildren()) {
+                child.accept(this);
+            }
+        }
+        followsKeyPressed = false;
+    }
+
+
+    @Override
+    public void visit(MoveSteps moveSteps) {
+        if (followsKeyPressed) {
+            count++;
+            found = true;
+        }
+        if (!moveSteps.getChildren().isEmpty()) {
+            for (ASTNode child : moveSteps.getChildren()) {
+                child.accept(this);
+            }
+        }
+    }
+
+    @Override
+    public void visit(ChangeXBy changeXBy) {
+        if (followsKeyPressed) {
+            count++;
+            found = true;
+        }
+        if (!changeXBy.getChildren().isEmpty()) {
+            for (ASTNode child : changeXBy.getChildren()) {
+                child.accept(this);
+            }
+        }
+    }
+
+    @Override
+    public void visit(ChangeYBy changeYBy) {
+        if (followsKeyPressed) {
+            count++;
+            found = true;
+        }
+        if (!changeYBy.getChildren().isEmpty()) {
+            for (ASTNode child : changeYBy.getChildren()) {
+                child.accept(this);
+            }
+        }
+    }
+
+    @Override
+    public void visit(SetXTo setXTo) {
+        if (followsKeyPressed) {
+            count++;
+            found = true;
+        }
+        if (!setXTo.getChildren().isEmpty()) {
+            for (ASTNode child : setXTo.getChildren()) {
+                child.accept(this);
+            }
+        }
+    }
+    @Override
+    public void visit(SetYTo setYTo) {
+        if (followsKeyPressed) {
+            count++;
+            found = true;
+        }
+        if (!setYTo.getChildren().isEmpty()) {
+            for (ASTNode child : setYTo.getChildren()) {
+                child.accept(this);
+            }
+        }
+    }
+
+    @Override
+    public void visit(GoToPos goToPos) {
+        if (followsKeyPressed) {
+            count++;
+            found = true;
+        }
+        if (!goToPos.getChildren().isEmpty()) {
+            for (ASTNode child : goToPos.getChildren()) {
+                child.accept(this);
+            }
+        }
     }
 }
