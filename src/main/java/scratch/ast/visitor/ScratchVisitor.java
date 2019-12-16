@@ -27,7 +27,12 @@ import scratch.ast.model.event.KeyPressed;
 import scratch.ast.model.event.Never;
 import scratch.ast.model.event.ReceptionOfMessage;
 import scratch.ast.model.event.StartedAsClone;
-import scratch.ast.model.expression.bool.*;
+import scratch.ast.model.expression.bool.And;
+import scratch.ast.model.expression.bool.BiggerThan;
+import scratch.ast.model.expression.bool.Equals;
+import scratch.ast.model.expression.bool.LessThan;
+import scratch.ast.model.expression.bool.Not;
+import scratch.ast.model.expression.bool.Or;
 import scratch.ast.model.expression.list.ExpressionList;
 import scratch.ast.model.expression.list.ExpressionListPlain;
 import scratch.ast.model.literals.BoolLiteral;
@@ -41,8 +46,16 @@ import scratch.ast.model.procedure.ProcedureDefinition;
 import scratch.ast.model.statement.CallStmt;
 import scratch.ast.model.statement.actorlook.SwitchBackdrop;
 import scratch.ast.model.statement.actorlook.SwitchBackdropAndWait;
-import scratch.ast.model.statement.common.*;
-import scratch.ast.model.statement.control.*;
+import scratch.ast.model.statement.common.Broadcast;
+import scratch.ast.model.statement.common.BroadcastAndWait;
+import scratch.ast.model.statement.common.CreateCloneOf;
+import scratch.ast.model.statement.common.SetStmt;
+import scratch.ast.model.statement.common.WaitUntil;
+import scratch.ast.model.statement.control.IfElseStmt;
+import scratch.ast.model.statement.control.IfThenStmt;
+import scratch.ast.model.statement.control.RepeatForeverStmt;
+import scratch.ast.model.statement.control.RepeatTimesStmt;
+import scratch.ast.model.statement.control.UntilStmt;
 import scratch.ast.model.statement.pen.PenClearStmt;
 import scratch.ast.model.statement.pen.PenDownStmt;
 import scratch.ast.model.statement.pen.PenUpStmt;
@@ -53,6 +66,7 @@ import scratch.ast.model.statement.spritemotion.GoToPos;
 import scratch.ast.model.statement.spritemotion.MoveSteps;
 import scratch.ast.model.statement.spritemotion.SetXTo;
 import scratch.ast.model.statement.spritemotion.SetYTo;
+import scratch.ast.model.statement.termination.TerminationStmt;
 import scratch.ast.model.type.Type;
 import scratch.ast.model.variable.Identifier;
 import scratch.ast.model.variable.StrId;
@@ -723,6 +737,19 @@ public interface ScratchVisitor {
      * @param node GoToPos Node of which the children will be iterated
      */
     default void visit(GoToPos node) {
+
+    }
+
+    /**
+     * Default implementation of visit method for {@link TerminationStmt}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node TerminationStmt Node of which the children will be iterated
+     */
+    default void visit(TerminationStmt node) {
         visit((ASTNode) node);
     }
 }

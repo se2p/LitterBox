@@ -49,6 +49,7 @@ public class IssueTool {
         finder.put(ParameterOutOfScope.SHORT_NAME, new ParameterOutOfScope());
         finder.put(IllegalParameterRefactor.SHORT_NAME, new IllegalParameterRefactor());
         finder.put(ProcedureWithForever.SHORT_NAME, new ProcedureWithForever());
+        finder.put(ProcedureWithTermination.SHORT_NAME, new ProcedureWithTermination());
         finder.put(ForeverInsideLoop.SHORT_NAME, new ForeverInsideLoop());
         finder.put(EqualsCondition.SHORT_NAME, new EqualsCondition());
         finder.put(CallWithoutDefinition.SHORT_NAME, new CallWithoutDefinition());
