@@ -24,6 +24,9 @@ import java.util.*;
 import newanalytics.bugpattern.*;
 import newanalytics.ctscore.FlowControl;
 import newanalytics.smells.*;
+import newanalytics.utils.BlockCount;
+import newanalytics.utils.ProcedureCount;
+import newanalytics.utils.SpriteCount;
 import org.apache.commons.csv.CSVPrinter;
 import scratch.ast.model.Program;
 import utils.CSVWriter;
@@ -65,28 +68,29 @@ public class IssueTool {
         finder.put(ExpressionAsColor.SHORT_NAME, new ExpressionAsColor());
         finder.put(DeadCode.SHORT_NAME, new DeadCode());
 //        finder.put("attrmod", new AttributeModification());
-//        finder.put("emptybd", new EmptyBody());
+
 //        finder.put("squact", new SequentialActions());
 //        finder.put("sprtname", new SpriteNaming());
         finder.put(LongScript.SHORT_NAME, new LongScript());
         finder.put(NestedLoops.SHORT_NAME, new NestedLoops());
-        finder.put(UnusedVariable.SHORT_NAME,new UnusedVariable());
+        finder.put(UnusedVariable.SHORT_NAME, new UnusedVariable());
+        finder.put(UnusedProcedure.SHORT_NAME, new UnusedProcedure());
 //        finder.put("dplscrpt", new DuplicatedScript());
 //        finder.put("racecnd", new RaceCondition());
+        finder.put(EmptyControlBody.SHORT_NAME, new EmptyControlBody());
         finder.put(EmptyScript.SHORT_NAME, new EmptyScript());
         finder.put(EmptySprite.SHORT_NAME, new EmptySprite());
         finder.put(EmptyProject.SHORT_NAME, new EmptyProject());
+        finder.put(EmptyProcedure.SHORT_NAME, new EmptyProcedure());
 //        finder.put("mdlman", new MiddleMan());
-//        finder.put("noop", new Noop());
 //        finder.put("vrblscp", new VariableScope());
-//        finder.put("unusedvar", new UnusedVariable());
 //        finder.put("dplsprt", new DuplicatedSprite());
 //        finder.put("inappint", new InappropriateIntimacy());
-//        finder.put("noopprjct", new NoOpProject());
 
         //UtilFinder
         finder.put(BlockCount.SHORT_NAME, new BlockCount());
         finder.put(SpriteCount.SHORT_NAME, new SpriteCount());
+        finder.put(ProcedureCount.SHORT_NAME, new ProcedureCount());
 //
 //        // To evaluate the CT score
 //        finder.put("logthink", new LogicalThinking());

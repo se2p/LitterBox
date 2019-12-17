@@ -1,6 +1,7 @@
 package newanalytics;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import newanalytics.utils.BlockCount;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;

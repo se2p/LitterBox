@@ -18,34 +18,44 @@
  */
 package newanalytics.smells;
 
+import java.util.*;
+
 import newanalytics.IssueFinder;
 import newanalytics.IssueReport;
 import scratch.ast.model.ASTNode;
 import scratch.ast.model.ActorDefinition;
 import scratch.ast.model.Program;
-import scratch.ast.model.statement.control.*;
+import scratch.ast.model.procedure.ProcedureDefinition;
+import scratch.ast.model.statement.CallStmt;
+import scratch.ast.model.variable.Identifier;
+import scratch.ast.parser.symboltable.ProcedureInfo;
 import scratch.ast.visitor.ScratchVisitor;
+import scratch.data.ScBlock;
+import scratch.data.Script;
+import scratch.structure.Scriptable;
 import utils.Preconditions;
 
-import java.util.LinkedList;
-import java.util.List;
-
 /**
- * Checks for empty if or else bodies.
+ * Checks if there are unused custom blocks in the project.
  */
-public class EmptyBody implements IssueFinder, ScratchVisitor {
-    private static final String NOTE1 = "There are no condition blocks with empty body in your project.";
-    private static final String NOTE2 = "Some of condition blocks have an empty body.";
-    public static final String NAME = "empty_body";
-    public static final String SHORT_NAME = "emptybdy";
+public class UnusedProcedure implements IssueFinder, ScratchVisitor {
+
+    private static final String NOTE1 = "There are no uncalled procedures in your project.";
+    private static final String NOTE2 = "Some of the procedures are never used.";
+    public static final String NAME = "unused_procedure";
+    public static final String SHORT_NAME = "unsdprcdr";
     private boolean found = false;
     private int count = 0;
     private List<String> actorNames = new LinkedList<>();
     private ActorDefinition currentActor;
+    private List<String> proceduresDef;
+    private List<String> calledProcedures;
+    private Map<Identifier, ProcedureInfo> procMap;
 
     @Override
     public IssueReport check(Program program) {
         Preconditions.checkNotNull(program);
+        procMap = program.getProcedureMapping().getProcedures();
         program.accept(this);
         String notes = NOTE1;
         if (count > 0) {
@@ -62,28 +72,34 @@ public class EmptyBody implements IssueFinder, ScratchVisitor {
     @Override
     public void visit(ActorDefinition actor) {
         currentActor = actor;
+        calledProcedures = new ArrayList<>();
+        proceduresDef = new ArrayList<>();
         if (!actor.getChildren().isEmpty()) {
             for (ASTNode child : actor.getChildren()) {
                 child.accept(this);
             }
         }
-
+        checkCalls();
         if (found) {
             found = false;
             actorNames.add(currentActor.getIdent().getName());
         }
     }
 
+    private void checkCalls() {
+        for (String procedureDef : proceduresDef) {
+            if (!calledProcedures.contains(procedureDef)) {
+                found = true;
+                count++;
+            }
+        }
+    }
+
     @Override
-    public void visit(IfElseStmt node) {
-        if (node.getStmtList().getStmts().getListOfStmt().isEmpty()) {
-            found = true;
-            count++;
-        }
-        if (node.getElseStmts().getStmts().getListOfStmt().isEmpty()) {
-            found = true;
-            count++;
-        }
+    public void visit(ProcedureDefinition node) {
+
+        proceduresDef.add(procMap.get(node.getIdent()).getName());
+
         if (!node.getChildren().isEmpty()) {
             for (ASTNode child : node.getChildren()) {
                 child.accept(this);
@@ -92,50 +108,8 @@ public class EmptyBody implements IssueFinder, ScratchVisitor {
     }
 
     @Override
-    public void visit(IfThenStmt node) {
-        if (node.getThenStmts().getStmts().getListOfStmt().isEmpty()) {
-            found = true;
-            count++;
-        }
-        if (!node.getChildren().isEmpty()) {
-            for (ASTNode child : node.getChildren()) {
-                child.accept(this);
-            }
-        }
-    }
-
-    @Override
-    public void visit(UntilStmt node) {
-        if (node.getStmtList().getStmts().getListOfStmt().isEmpty()) {
-            found = true;
-            count++;
-        }
-        if (!node.getChildren().isEmpty()) {
-            for (ASTNode child : node.getChildren()) {
-                child.accept(this);
-            }
-        }
-    }
-
-    @Override
-    public void visit(RepeatForeverStmt node) {
-        if (node.getStmtList().getStmts().getListOfStmt().isEmpty()) {
-            found = true;
-            count++;
-        }
-        if (!node.getChildren().isEmpty()) {
-            for (ASTNode child : node.getChildren()) {
-                child.accept(this);
-            }
-        }
-    }
-
-    @Override
-    public void visit(RepeatTimesStmt node) {
-        if (node.getStmtList().getStmts().getListOfStmt().isEmpty()) {
-            found = true;
-            count++;
-        }
+    public void visit(CallStmt node) {
+        calledProcedures.add(node.getIdent().getName());
         if (!node.getChildren().isEmpty()) {
             for (ASTNode child : node.getChildren()) {
                 child.accept(this);

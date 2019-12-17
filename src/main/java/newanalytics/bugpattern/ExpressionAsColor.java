@@ -19,8 +19,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class ExpressionAsColor implements IssueFinder, ScratchVisitor {
-    public static final String NAME = "xprssnsclr";
-    public static final String SHORT_NAME = "unsdvrbls";
+    public static final String NAME = "expression_as_color";
+    public static final String SHORT_NAME = "xprssnsclr";
     private static final String NOTE1 = "There are no expressions used as colors in your project.";
     private static final String NOTE2 = "Some of the sprites use expressions as colors.";
     private boolean found = false;

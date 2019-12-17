@@ -12,7 +12,7 @@ import scratch.ast.parser.ProgramParser;
 import java.io.File;
 import java.io.IOException;
 
-public class EmptyBodyTest {
+public class EmptyControlBodyTest {
     private static Program empty;
     private static Program emptyBodies;
     private static ObjectMapper mapper = new ObjectMapper();
@@ -29,14 +29,14 @@ public class EmptyBodyTest {
 
     @Test
     public void testEmptyProgram() {
-        EmptyBody parameterName = new EmptyBody();
+        EmptyControlBody parameterName = new EmptyControlBody();
         IssueReport report = parameterName.check(empty);
         Assertions.assertEquals(0, report.getCount());
     }
 
     @Test
     public void testEmptyBodies() {
-        EmptyBody parameterName = new EmptyBody();
+        EmptyControlBody parameterName = new EmptyControlBody();
         IssueReport report = parameterName.check(emptyBodies);
         Assertions.assertEquals(6, report.getCount());
     }

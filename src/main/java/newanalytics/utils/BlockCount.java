@@ -1,5 +1,7 @@
-package newanalytics;
+package newanalytics.utils;
 
+import newanalytics.IssueFinder;
+import newanalytics.IssueReport;
 import scratch.ast.model.ASTNode;
 import scratch.ast.model.Program;
 import scratch.ast.model.Script;
