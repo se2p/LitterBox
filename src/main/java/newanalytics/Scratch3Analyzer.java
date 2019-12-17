@@ -34,10 +34,10 @@ import scratch.ast.ParsingException;
 import scratch.ast.model.Program;
 import scratch.ast.parser.ProgramParser;
 import scratch.structure.Project;
-import utils.CSVWriter;
-import utils.Downloader;
-import utils.JsonParser;
-import utils.ZipReader;
+import utils.*;
+
+import static utils.GroupConstants.*;
+
 
 public class Scratch3Analyzer {
 
@@ -117,14 +117,26 @@ public class Scratch3Analyzer {
         List<String> heads = new ArrayList<>();
         heads.add("project");
         String[] detectors;
-        if (dtctrs.equals("all")) {
-            detectors = iT.getFinder().keySet().toArray(new String[0]);
-        } else {
-            detectors = dtctrs.split(",");
+        switch (dtctrs) {
+            case ALL:
+                detectors = iT.getAllFinder().keySet().toArray(new String[0]);
+                break;
+            case BUGS:
+                detectors = iT.getBugFinder().keySet().toArray(new String[0]);
+                break;
+            case SMELLS:
+                detectors = iT.getSmellFinder().keySet().toArray(new String[0]);
+                break;
+            case CTSCORE:
+                detectors = iT.getCTScoreFinder().keySet().toArray(new String[0]);
+                break;
+            default:
+                detectors = dtctrs.split(",");
+                break;
         }
         for (String s : detectors) {
-            if (iT.getFinder().containsKey(s)) {
-                IssueFinder iF = iT.getFinder().get(s);
+            if (iT.getAllFinder().containsKey(s)) {
+                IssueFinder iF = iT.getAllFinder().get(s);
                 heads.add(iF.getName());
             }
         }

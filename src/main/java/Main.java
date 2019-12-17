@@ -18,10 +18,15 @@
  */
 
 import analytics.Scratch2Analyzer;
+
 import java.io.File;
 import java.util.logging.Logger;
+
 import newanalytics.Scratch3Analyzer;
 import org.apache.commons.cli.*;
+import utils.GroupConstants;
+
+import static utils.GroupConstants.ALL;
 
 public class Main {
 
@@ -31,8 +36,10 @@ public class Main {
     private static final String PROJECTOUT = "projectout";
     private static final String OUTPUT = "output";
     private static final String DETECTORS = "detectors";
+    private static final String GROUP = "detectors";
     private static final String VERSION = "version";
     private static final String HELP = "help";
+
 
     private static final Logger log = Logger.getLogger(Main.class.getName());
 
@@ -59,6 +66,8 @@ public class Main {
                 + " is a folder path)");
         options.addOption(DETECTORS, true, "name all detectors you want to run separated by ',' "
                 + "\n(all detectors defined in the README)");
+        options.addOption(GROUP, true, "choose a group of detectors to run smells, ctscore or bugs"
+                + "\n(all detectors defined in the README)");
         options.addOption(VERSION, true, "the Scratch Version ('2' or '3') (required)");
         options.addOption(HELP, false, "print this message");
         CommandLineParser parser = new DefaultParser();
@@ -70,27 +79,46 @@ public class Main {
         if (cmd.hasOption(PATH)) {
             File folder = new File(cmd.getOptionValue(PATH));
             if (version.equals("2")) {
-                Scratch2Analyzer.analyze(cmd.getOptionValue(DETECTORS, "all"),
+                Scratch2Analyzer.analyze(cmd.getOptionValue(DETECTORS, ALL),
                         cmd.getOptionValue(OUTPUT), folder);
             } else {
-                Scratch3Analyzer.analyze(cmd.getOptionValue(DETECTORS, "all"),
-                        cmd.getOptionValue(OUTPUT), folder);
+                if (cmd.hasOption(GROUP)) {
+                    Scratch3Analyzer.analyze(cmd.getOptionValue(GROUP),
+                            cmd.getOptionValue(OUTPUT), folder);
+                } else {
+                    Scratch3Analyzer.analyze(cmd.getOptionValue(DETECTORS, ALL),
+                            cmd.getOptionValue(OUTPUT), folder);
+                }
             }
             return;
         } else if (cmd.hasOption(PROJECTID) || cmd.hasOption(PROJECTLIST)) {
             if (cmd.hasOption(PROJECTID)) {
                 String projectid = cmd.getOptionValue(PROJECTID);
-                Scratch3Analyzer.downloadAndAnalyze(projectid, cmd.getOptionValue(PROJECTOUT),
-                        cmd.getOptionValue(DETECTORS, "all"),
-                        cmd.getOptionValue(OUTPUT));
+                if (cmd.hasOption(GROUP)) {
+                    Scratch3Analyzer.downloadAndAnalyze(projectid, cmd.getOptionValue(PROJECTOUT),
+                            cmd.getOptionValue(GROUP),
+                            cmd.getOptionValue(OUTPUT));
+                } else {
+                    Scratch3Analyzer.downloadAndAnalyze(projectid, cmd.getOptionValue(PROJECTOUT),
+                            cmd.getOptionValue(DETECTORS, ALL),
+                            cmd.getOptionValue(OUTPUT));
+                }
             }
 
             if (cmd.hasOption(PROJECTLIST)) {
-                Scratch3Analyzer.downloadAndAnalyzeMultiple(
-                        cmd.getOptionValue(PROJECTLIST),
-                        cmd.getOptionValue(PROJECTOUT),
-                        cmd.getOptionValue(DETECTORS, "all"),
-                        cmd.getOptionValue(OUTPUT));
+                if (cmd.hasOption(GROUP)) {
+                    Scratch3Analyzer.downloadAndAnalyzeMultiple(
+                            cmd.getOptionValue(PROJECTLIST),
+                            cmd.getOptionValue(PROJECTOUT),
+                            cmd.getOptionValue(GROUP),
+                            cmd.getOptionValue(OUTPUT));
+                } else {
+                    Scratch3Analyzer.downloadAndAnalyzeMultiple(
+                            cmd.getOptionValue(PROJECTLIST),
+                            cmd.getOptionValue(PROJECTOUT),
+                            cmd.getOptionValue(DETECTORS, ALL),
+                            cmd.getOptionValue(OUTPUT));
+                }
             }
             return;
         }

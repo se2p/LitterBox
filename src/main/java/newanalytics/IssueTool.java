@@ -31,73 +31,79 @@ import org.apache.commons.csv.CSVPrinter;
 import scratch.ast.model.Program;
 import utils.CSVWriter;
 
+import static utils.GroupConstants.*;
+import static utils.GroupConstants.CTSCORE;
+
 /**
  * Holds all IssueFinder and executes them.
  * Register new implemented checks here.
  */
 public class IssueTool {
 
-    private Map<String, IssueFinder> finder = new HashMap<>();
+    private Map<String, IssueFinder> utilFinder = new HashMap<>();
+    private Map<String, IssueFinder> bugFinder = new HashMap<>();
+    private Map<String, IssueFinder> smellFinder = new HashMap<>();
+    private Map<String, IssueFinder> ctScoreFinder = new HashMap<>();
 
     public IssueTool() {
-        finder.put(MissingPenUp.SHORT_NAME, new MissingPenUp());
-        finder.put(AmbiguousParameterName.SHORT_NAME, new AmbiguousParameterName());
-        finder.put(AmbiguousProcedureSignature.SHORT_NAME, new AmbiguousProcedureSignature());
-        finder.put(MissingPenDown.SHORT_NAME, new MissingPenDown());
-        finder.put(MissingEraseAll.SHORT_NAME, new MissingEraseAll());
-        finder.put(NoWorkingScripts.SHORT_NAME, new NoWorkingScripts());
-        finder.put(MissingCloneInitialization.SHORT_NAME, new MissingCloneInitialization());
-        finder.put(MissingCloneCall.SHORT_NAME, new MissingCloneCall());
-        finder.put(OrphanedParameter.SHORT_NAME, new OrphanedParameter());
-        finder.put(ParameterOutOfScope.SHORT_NAME, new ParameterOutOfScope());
-        finder.put(IllegalParameterRefactor.SHORT_NAME, new IllegalParameterRefactor());
-        finder.put(ProcedureWithForever.SHORT_NAME, new ProcedureWithForever());
-        finder.put(ProcedureWithTermination.SHORT_NAME, new ProcedureWithTermination());
-        finder.put(ForeverInsideLoop.SHORT_NAME, new ForeverInsideLoop());
-        finder.put(EqualsCondition.SHORT_NAME, new EqualsCondition());
-        finder.put(CallWithoutDefinition.SHORT_NAME, new CallWithoutDefinition());
-        finder.put(MessageNeverReceived.SHORT_NAME, new MessageNeverReceived());
-        finder.put(MessageNeverSent.SHORT_NAME, new MessageNeverSent());
-        finder.put(EndlessRecursion.SHORT_NAME, new EndlessRecursion());
+        bugFinder.put(MissingPenUp.SHORT_NAME, new MissingPenUp());
+        bugFinder.put(AmbiguousParameterName.SHORT_NAME, new AmbiguousParameterName());
+        bugFinder.put(AmbiguousProcedureSignature.SHORT_NAME, new AmbiguousProcedureSignature());
+        bugFinder.put(MissingPenDown.SHORT_NAME, new MissingPenDown());
+        bugFinder.put(MissingEraseAll.SHORT_NAME, new MissingEraseAll());
+        bugFinder.put(NoWorkingScripts.SHORT_NAME, new NoWorkingScripts());
+        bugFinder.put(MissingCloneInitialization.SHORT_NAME, new MissingCloneInitialization());
+        bugFinder.put(MissingCloneCall.SHORT_NAME, new MissingCloneCall());
+        bugFinder.put(OrphanedParameter.SHORT_NAME, new OrphanedParameter());
+        bugFinder.put(ParameterOutOfScope.SHORT_NAME, new ParameterOutOfScope());
+        bugFinder.put(IllegalParameterRefactor.SHORT_NAME, new IllegalParameterRefactor());
+        bugFinder.put(ProcedureWithForever.SHORT_NAME, new ProcedureWithForever());
+        bugFinder.put(ProcedureWithTermination.SHORT_NAME, new ProcedureWithTermination());
+        bugFinder.put(ForeverInsideLoop.SHORT_NAME, new ForeverInsideLoop());
+        bugFinder.put(EqualsCondition.SHORT_NAME, new EqualsCondition());
+        bugFinder.put(CallWithoutDefinition.SHORT_NAME, new CallWithoutDefinition());
+        bugFinder.put(MessageNeverReceived.SHORT_NAME, new MessageNeverReceived());
+        bugFinder.put(MessageNeverSent.SHORT_NAME, new MessageNeverSent());
+        bugFinder.put(EndlessRecursion.SHORT_NAME, new EndlessRecursion());
 //        finder.put("glblstrt", new GlobalStartingPoint());
 //        finder.put("strt", new StartingPoint());
-        finder.put(StutteringMovement.SHORT_NAME, new StutteringMovement());
+        bugFinder.put(StutteringMovement.SHORT_NAME, new StutteringMovement());
 //        finder.put("dblif", new DoubleIf());
-        finder.put(MissingLoopSensing.SHORT_NAME, new MissingLoopSensing());
-        finder.put(MissingTerminationCondition.SHORT_NAME, new MissingTerminationCondition());
-        finder.put(ExpressionAsColor.SHORT_NAME, new ExpressionAsColor());
-        finder.put(DeadCode.SHORT_NAME, new DeadCode());
+        bugFinder.put(MissingLoopSensing.SHORT_NAME, new MissingLoopSensing());
+        bugFinder.put(MissingTerminationCondition.SHORT_NAME, new MissingTerminationCondition());
+        bugFinder.put(ExpressionAsColor.SHORT_NAME, new ExpressionAsColor());
+        smellFinder.put(DeadCode.SHORT_NAME, new DeadCode());
 //        finder.put("attrmod", new AttributeModification());
 
 //        finder.put("squact", new SequentialActions());
 //        finder.put("sprtname", new SpriteNaming());
-        finder.put(LongScript.SHORT_NAME, new LongScript());
-        finder.put(NestedLoops.SHORT_NAME, new NestedLoops());
-        finder.put(UnusedVariable.SHORT_NAME, new UnusedVariable());
-        finder.put(UnusedProcedure.SHORT_NAME, new UnusedProcedure());
+        smellFinder.put(LongScript.SHORT_NAME, new LongScript());
+        smellFinder.put(NestedLoops.SHORT_NAME, new NestedLoops());
+        smellFinder.put(UnusedVariable.SHORT_NAME, new UnusedVariable());
+        smellFinder.put(UnusedProcedure.SHORT_NAME, new UnusedProcedure());
 //        finder.put("dplscrpt", new DuplicatedScript());
 //        finder.put("racecnd", new RaceCondition());
-        finder.put(EmptyControlBody.SHORT_NAME, new EmptyControlBody());
-        finder.put(EmptyScript.SHORT_NAME, new EmptyScript());
-        finder.put(EmptySprite.SHORT_NAME, new EmptySprite());
-        finder.put(EmptyProject.SHORT_NAME, new EmptyProject());
-        finder.put(EmptyProcedure.SHORT_NAME, new EmptyProcedure());
+        smellFinder.put(EmptyControlBody.SHORT_NAME, new EmptyControlBody());
+        smellFinder.put(EmptyScript.SHORT_NAME, new EmptyScript());
+        smellFinder.put(EmptySprite.SHORT_NAME, new EmptySprite());
+        smellFinder.put(EmptyProject.SHORT_NAME, new EmptyProject());
+        smellFinder.put(EmptyProcedure.SHORT_NAME, new EmptyProcedure());
 //        finder.put("mdlman", new MiddleMan());
 //        finder.put("vrblscp", new VariableScope());
 //        finder.put("dplsprt", new DuplicatedSprite());
 //        finder.put("inappint", new InappropriateIntimacy());
 
         //UtilFinder
-        finder.put(BlockCount.SHORT_NAME, new BlockCount());
-        finder.put(SpriteCount.SHORT_NAME, new SpriteCount());
-        finder.put(ProcedureCount.SHORT_NAME, new ProcedureCount());
+        utilFinder.put(BlockCount.SHORT_NAME, new BlockCount());
+        utilFinder.put(SpriteCount.SHORT_NAME, new SpriteCount());
+        utilFinder.put(ProcedureCount.SHORT_NAME, new ProcedureCount());
 //
 //        // To evaluate the CT score
 //        finder.put("logthink", new LogicalThinking());
 //        finder.put("abstr", new Abstraction());
 //        finder.put("para", new Parallelism());
 //        finder.put("synch", new Synchronization());
-        finder.put(FlowControl.SHORT_NAME, new FlowControl());
+        ctScoreFinder.put(FlowControl.SHORT_NAME, new FlowControl());
 //        finder.put("userint", new UserInteractivity());
 //        finder.put("datarep", new DataRepresentation());
     }
@@ -109,14 +115,26 @@ public class IssueTool {
      */
     public void checkRaw(Program program, String dtctrs) {
         String[] detectors;
-        if (dtctrs.equals("all")) {
-            detectors = finder.keySet().toArray(new String[0]);
-        } else {
-            detectors = dtctrs.split(",");
+        switch (dtctrs) {
+            case ALL:
+                detectors = getAllFinder().keySet().toArray(new String[0]);
+                break;
+            case BUGS:
+                detectors = getBugFinder().keySet().toArray(new String[0]);
+                break;
+            case SMELLS:
+                detectors = getSmellFinder().keySet().toArray(new String[0]);
+                break;
+            case CTSCORE:
+                detectors = getCTScoreFinder().keySet().toArray(new String[0]);
+                break;
+            default:
+                detectors = dtctrs.split(",");
+                break;
         }
         for (String s : detectors) {
-            if (finder.containsKey(s)) {
-                IssueFinder iF = finder.get(s);
+            if (getAllFinder().containsKey(s)) {
+                IssueFinder iF = getAllFinder().get(s);
                 if (program != null) {
                     IssueReport issueReport = iF.check(program);
                     System.out.println(issueReport);
@@ -133,14 +151,26 @@ public class IssueTool {
     public void check(Program program, CSVPrinter printer, String dtctrs) {
         List<IssueReport> issueReports = new ArrayList<>();
         String[] detectors;
-        if (dtctrs.equals("all")) {
-            detectors = finder.keySet().toArray(new String[0]);
-        } else {
-            detectors = dtctrs.split(",");
+        switch (dtctrs) {
+            case ALL:
+                detectors = getAllFinder().keySet().toArray(new String[0]);
+                break;
+            case BUGS:
+                detectors = getBugFinder().keySet().toArray(new String[0]);
+                break;
+            case SMELLS:
+                detectors = getSmellFinder().keySet().toArray(new String[0]);
+                break;
+            case CTSCORE:
+                detectors = getCTScoreFinder().keySet().toArray(new String[0]);
+                break;
+            default:
+                detectors = dtctrs.split(",");
+                break;
         }
         for (String s : detectors) {
-            if (finder.containsKey(s)) {
-                IssueFinder iF = finder.get(s);
+            if (getAllFinder().containsKey(s)) {
+                IssueFinder iF = getAllFinder().get(s);
                 if (program != null) {
                     IssueReport issueReport = iF.check(program);
                     issueReports.add(issueReport);
@@ -157,12 +187,30 @@ public class IssueTool {
         }
     }
 
-    public Map<String, IssueFinder> getFinder() {
-        return finder;
+    public Map<String, IssueFinder> getAllFinder() {
+        Map<String, IssueFinder> returnMap = new HashMap<>(smellFinder);
+        returnMap.putAll(utilFinder);
+        returnMap.putAll(bugFinder);
+        returnMap.putAll(ctScoreFinder);
+        return returnMap;
     }
 
-    public void setFinder(Map<String, IssueFinder> finder) {
-        this.finder = finder;
+    public Map<String, IssueFinder> getSmellFinder() {
+        Map<String, IssueFinder> returnMap = new HashMap<>(smellFinder);
+        returnMap.putAll(utilFinder);
+        return returnMap;
+    }
+
+    public Map<String, IssueFinder> getBugFinder() {
+        Map<String, IssueFinder> returnMap = new HashMap<>(bugFinder);
+        returnMap.putAll(utilFinder);
+        return returnMap;
+    }
+
+    public Map<String, IssueFinder> getCTScoreFinder() {
+        Map<String, IssueFinder> returnMap = new HashMap<>(ctScoreFinder);
+        returnMap.putAll(utilFinder);
+        return returnMap;
     }
 
     public static List<String> getOnlyUniqueActorList(List<String> foundSpritesWithIssues) {
