@@ -22,6 +22,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import scratch.ast.Constants;
 import scratch.ast.ParsingException;
 import scratch.ast.model.statement.Stmt;
+import scratch.ast.model.statement.UnspecifiedStmt;
 import scratch.ast.opcodes.*;
 import utils.Preconditions;
 
@@ -75,8 +76,8 @@ public class StmtParser {
             return SetStmtParser.parse(current, blocks);
         } else if (PenOpcode.contains(opcode)) {
             return PenStmtParser.parse(current, blocks);
+        }else{
+            return new UnspecifiedStmt();
         }
-
-        throw new ParsingException("Cannot parse block with opcode " + opcode);
     }
 }
