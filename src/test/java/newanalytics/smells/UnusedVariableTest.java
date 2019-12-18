@@ -33,14 +33,14 @@ public class UnusedVariableTest {
     public void testEmptyProgram() {
         UnusedVariable parameterName = new UnusedVariable();
         IssueReport report = parameterName.check(empty);
-        Assertions.assertEquals(1, report.getCount());
+        Assertions.assertEquals(0, report.getCount());
     }
 
     @Test
     public void testUnusedVariable() {
         UnusedVariable parameterName = new UnusedVariable();
         IssueReport report = parameterName.check(unusedVariables);
-        Assertions.assertEquals(3, report.getCount());
+        Assertions.assertEquals(2, report.getCount());
     }
 
     @Test
