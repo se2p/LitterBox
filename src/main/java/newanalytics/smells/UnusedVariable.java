@@ -41,7 +41,6 @@ public class UnusedVariable implements IssueFinder, ScratchVisitor {
     public static final String SHORT_NAME = "unsdvrbls";
     private static final String NOTE1 = "There are no unused variables in your project.";
     private static final String NOTE2 = "Some of the sprites contain unused variables.";
-    private boolean found = false;
     private int count = 0;
     private List<String> actorNames = new LinkedList<>();
     private List<Qualified> variableCalls;
@@ -53,6 +52,9 @@ public class UnusedVariable implements IssueFinder, ScratchVisitor {
     @Override
     public IssueReport check(Program program) {
         Preconditions.checkNotNull(program);
+
+        count = 0;
+        actorNames = new LinkedList<>();
         varMap = program.getSymbolTable().getVariables();
         listMap = program.getSymbolTable().getLists();
         variableCalls = new ArrayList<>();
@@ -87,7 +89,7 @@ public class UnusedVariable implements IssueFinder, ScratchVisitor {
             }
             if (!currFound) {
                 count++;
-                found = true;
+
             }
         }
         ids = listMap.keySet();
@@ -104,7 +106,6 @@ public class UnusedVariable implements IssueFinder, ScratchVisitor {
             }
             if (!currFound) {
                 count++;
-                found = true;
             }
         }
     }
