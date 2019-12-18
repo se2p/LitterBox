@@ -160,10 +160,14 @@ public class Scratch3Analyzer {
             printer = prepareCSVPrinter(dtctrs, iT, csv);
             for (final File fileEntry : Objects.requireNonNull(folder.listFiles())) {
                 if (!fileEntry.isDirectory()) {
-                    Program program = extractProgram(fileEntry);
-                    //System.out.println(project.toString());
-                    iT.check(program, printer, dtctrs);
-                    log.info("Finished: " + fileEntry.getName());
+                    try {
+                        Program program = extractProgram(fileEntry);
+                        //System.out.println(project.toString());
+                        iT.check(program, printer, dtctrs);
+                        log.info("Finished: " + fileEntry.getName());
+                    } catch (NullPointerException e) {
+                        log.info("Ignore due to NullPointerException: " + fileEntry.getName());
+                    }
                 }
             }
         } catch (Exception e) {
