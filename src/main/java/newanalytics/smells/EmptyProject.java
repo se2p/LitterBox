@@ -19,6 +19,8 @@ public class EmptyProject implements ScratchVisitor, IssueFinder {
     @Override
     public IssueReport check(Program program) {
         Preconditions.checkNotNull(program);
+        count = 0;
+        foundScript = false;
         program.accept(this);
         if (!foundScript) {
             count++;

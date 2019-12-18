@@ -55,6 +55,9 @@ public class UnusedProcedure implements IssueFinder, ScratchVisitor {
     @Override
     public IssueReport check(Program program) {
         Preconditions.checkNotNull(program);
+        found = false;
+        count = 0;
+        actorNames = new LinkedList<>();
         procMap = program.getProcedureMapping().getProcedures();
         program.accept(this);
         String notes = NOTE1;
