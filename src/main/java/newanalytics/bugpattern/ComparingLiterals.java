@@ -11,6 +11,7 @@ import scratch.ast.model.expression.bool.LessThan;
 import scratch.ast.model.literals.NumberLiteral;
 import scratch.ast.model.literals.StringLiteral;
 import scratch.ast.visitor.ScratchVisitor;
+import utils.Preconditions;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -27,6 +28,10 @@ public class ComparingLiterals implements IssueFinder, ScratchVisitor {
 
     @Override
     public IssueReport check(Program program) {
+        Preconditions.checkNotNull(program);
+        found = false;
+        count = 0;
+        actorNames = new LinkedList<>();
         program.accept(this);
         return new IssueReport(NAME, count, actorNames, "");
     }

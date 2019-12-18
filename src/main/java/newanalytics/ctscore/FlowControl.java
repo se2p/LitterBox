@@ -63,6 +63,7 @@ public class FlowControl implements IssueFinder {
     @Override
     public IssueReport check(Program program) {
         int level = 0;
+        found = new ArrayList<>();
         List<ActorDefinition> actorDefs = program.getActorDefinitionList().getDefintions();
         level = checkIfScriptsUsed(actorDefs, level);
         level = checkIfForeverOrRepeat(actorDefs, level);

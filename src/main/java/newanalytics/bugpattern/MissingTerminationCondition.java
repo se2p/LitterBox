@@ -27,6 +27,7 @@ import scratch.ast.model.Script;
 import scratch.ast.model.expression.bool.UnspecifiedBoolExpr;
 import scratch.ast.model.statement.Stmt;
 import scratch.ast.model.statement.control.*;
+import utils.Preconditions;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,20 +41,18 @@ public class MissingTerminationCondition implements IssueFinder {
     private List<String> found;
     private int counter;
 
-    public MissingTerminationCondition() {
-        found = new ArrayList<>();
-        counter = 0;
-    }
-
     @Override
     public IssueReport check(Program program) {
+        Preconditions.checkNotNull(program);
+        found = new ArrayList<>();
+        counter = 0;
         List<ActorDefinition> actorDefs = program.getActorDefinitionList().getDefintions();
-        for (int i = 0; i < actorDefs.size(); i++) {
-            List<Script> scripts = actorDefs.get(i).getScripts().getScriptList();
+        for (ActorDefinition actorDef : actorDefs) {
+            List<Script> scripts = actorDef.getScripts().getScriptList();
             for (int j = 0; j < scripts.size(); j++) {
                 List<Stmt> stmts = scripts.get(0).getStmtList().getStmts().getListOfStmt();
                 if (stmts.size() > 0) {
-                    checkMissTermination(stmts, actorDefs.get(i).getIdent().getName());
+                    checkMissTermination(stmts, actorDef.getIdent().getName());
                 }
             }
         }

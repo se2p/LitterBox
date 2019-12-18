@@ -38,6 +38,9 @@ public class ProcedureWithForever implements IssueFinder, ScratchVisitor {
     @Override
     public IssueReport check(Program program) {
         Preconditions.checkNotNull(program);
+        found = false;
+        count = 0;
+        actorNames = new LinkedList<>();
         procMap = program.getProcedureMapping().getProcedures();
         program.accept(this);
         String notes = NOTE1;
@@ -106,8 +109,8 @@ public class ProcedureWithForever implements IssueFinder, ScratchVisitor {
     @Override
     public void visit(StmtList node) {
         List<Stmt> stmts = node.getStmts().getListOfStmt();
-        for (int i = 0; i < stmts.size()-1; i++) {
-            if(stmts.get(i) instanceof CallStmt){
+        for (int i = 0; i < stmts.size() - 1; i++) {
+            if (stmts.get(i) instanceof CallStmt) {
                 calledProcedures.add(((CallStmt) stmts.get(i)).getIdent().getName());
             }
         }

@@ -31,6 +31,9 @@ public class ExpressionAsColor implements IssueFinder, ScratchVisitor {
     @Override
     public IssueReport check(Program program) {
         Preconditions.checkNotNull(program);
+        found = false;
+        count = 0;
+        actorNames = new LinkedList<>();
         program.accept(this);
         String notes = NOTE1;
         if (count > 0) {

@@ -27,6 +27,9 @@ public class EqualsCondition implements IssueFinder, ScratchVisitor {
     @Override
     public IssueReport check(Program program) {
         Preconditions.checkNotNull(program);
+        found = false;
+        count = 0;
+        actorNames = new LinkedList<>();
         program.accept(this);
         String notes = NOTE1;
         if (count > 0) {
@@ -57,8 +60,8 @@ public class EqualsCondition implements IssueFinder, ScratchVisitor {
 
     @Override
     public void visit(WaitUntil node) {
-        if(node.getUntil() instanceof Equals){
-            found =true;
+        if (node.getUntil() instanceof Equals) {
+            found = true;
             count++;
         }
         if (!node.getChildren().isEmpty()) {
@@ -70,8 +73,8 @@ public class EqualsCondition implements IssueFinder, ScratchVisitor {
 
     @Override
     public void visit(UntilStmt node) {
-        if(node.getBoolExpr() instanceof Equals){
-            found =true;
+        if (node.getBoolExpr() instanceof Equals) {
+            found = true;
             count++;
         }
         if (!node.getChildren().isEmpty()) {

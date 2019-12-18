@@ -10,6 +10,7 @@ import scratch.ast.model.literals.StringLiteral;
 import scratch.ast.model.statement.common.Broadcast;
 import scratch.ast.model.statement.common.BroadcastAndWait;
 import scratch.ast.visitor.ScratchVisitor;
+import utils.Preconditions;
 
 import java.util.*;
 
@@ -24,6 +25,9 @@ public class MessageNeverSent implements IssueFinder, ScratchVisitor {
 
     @Override
     public IssueReport check(Program program) {
+        Preconditions.checkNotNull(program);
+        messageSent = new ArrayList<>();
+        messageReceived = new ArrayList<>();
         program.accept(this);
 
         final LinkedHashSet<Pair> nonSyncedPairs = new LinkedHashSet<>();

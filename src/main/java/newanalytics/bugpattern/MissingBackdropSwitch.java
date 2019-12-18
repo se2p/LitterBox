@@ -12,6 +12,7 @@ import scratch.ast.model.literals.StringLiteral;
 import scratch.ast.model.statement.actorlook.SwitchBackdrop;
 import scratch.ast.model.statement.actorlook.SwitchBackdropAndWait;
 import scratch.ast.visitor.ScratchVisitor;
+import utils.Preconditions;
 
 import java.util.*;
 
@@ -26,6 +27,9 @@ public class MissingBackdropSwitch implements IssueFinder, ScratchVisitor {
 
     @Override
     public IssueReport check(Program program) {
+        Preconditions.checkNotNull(program);
+        switched = new ArrayList<>();
+        switchReceived = new ArrayList<>();
         program.accept(this);
 
         final LinkedHashSet<Pair> nonSyncedPairs = new LinkedHashSet<>();
@@ -69,8 +73,8 @@ public class MissingBackdropSwitch implements IssueFinder, ScratchVisitor {
         final String actorName = currentActor.getIdent().getName();
         final ElementChoice msgName = node.getElementChoice();
         if (msgName instanceof WithId) {
-            if(((WithId) msgName).getStringExpr() instanceof StringLiteral)
-            switched.add(new Pair(actorName, ((StringLiteral) ((WithId) msgName).getStringExpr()).getText()));
+            if (((WithId) msgName).getStringExpr() instanceof StringLiteral)
+                switched.add(new Pair(actorName, ((StringLiteral) ((WithId) msgName).getStringExpr()).getText()));
         }
     }
 
@@ -79,7 +83,7 @@ public class MissingBackdropSwitch implements IssueFinder, ScratchVisitor {
         final String actorName = currentActor.getIdent().getName();
         final ElementChoice msgName = node.getElementChoice();
         if (msgName instanceof WithId) {
-            if(((WithId) msgName).getStringExpr() instanceof StringLiteral)
+            if (((WithId) msgName).getStringExpr() instanceof StringLiteral)
                 switched.add(new Pair(actorName, ((StringLiteral) ((WithId) msgName).getStringExpr()).getText()));
         }
     }
@@ -87,9 +91,9 @@ public class MissingBackdropSwitch implements IssueFinder, ScratchVisitor {
 
     @Override
     public void visit(BackdropSwitchTo node) {
-            final String actorName = currentActor.getIdent().getName();
-            final String msgName = node.getBackdrop().getName();
-            switchReceived.add(new Pair(actorName, msgName));
+        final String actorName = currentActor.getIdent().getName();
+        final String msgName = node.getBackdrop().getName();
+        switchReceived.add(new Pair(actorName, msgName));
     }
 
     /**

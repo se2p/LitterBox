@@ -38,6 +38,9 @@ public class BlockCount implements IssueFinder, ScratchVisitor {
     @Override
     public IssueReport check(Program program) {
         Preconditions.checkNotNull(program);
+        count = 0;
+        insideScript = false;
+        insideProcedure = false;
         program.accept(this);
         return new IssueReport(NAME, count, new LinkedList<>(), "");
     }

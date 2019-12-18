@@ -42,12 +42,14 @@ public class NoWorkingScripts implements IssueFinder, ScratchVisitor {
     private boolean stillFullfilledEmptyScript = true;
     private boolean deadCodeFound = false;
 
-    public NoWorkingScripts() {
-    }
-
     @Override
     public IssueReport check(Program program) {
         Preconditions.checkNotNull(program);
+        count = 0;
+        actorNames = new LinkedList<>();
+
+        stillFullfilledEmptyScript = true;
+        deadCodeFound = false;
         program.accept(this);
         String notes = NOTE1;
         if (count > 0) {

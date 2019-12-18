@@ -9,6 +9,7 @@ import scratch.ast.model.event.StartedAsClone;
 import scratch.ast.model.statement.common.CreateCloneOf;
 import scratch.ast.model.variable.StrId;
 import scratch.ast.visitor.ScratchVisitor;
+import utils.Preconditions;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +26,9 @@ public class MissingCloneInitialization implements IssueFinder, ScratchVisitor {
 
     @Override
     public IssueReport check(Program program) {
+        Preconditions.checkNotNull(program);
+        whenStartsAsCloneActors = new ArrayList<>();
+        clonedActors = new ArrayList<>();
         program.accept(this);
         final List<String> uninitializingActors
                 = clonedActors.stream().filter(s -> !whenStartsAsCloneActors.contains(s)).collect(Collectors.toList());

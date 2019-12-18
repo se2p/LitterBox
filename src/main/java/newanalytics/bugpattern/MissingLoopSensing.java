@@ -31,6 +31,7 @@ import scratch.ast.model.expression.bool.IsMouseDown;
 import scratch.ast.model.expression.bool.Touching;
 import scratch.ast.model.statement.Stmt;
 import scratch.ast.model.statement.control.*;
+import utils.Preconditions;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,13 +45,11 @@ public class MissingLoopSensing implements IssueFinder {
     private List<String> found;
     private int counter;
 
-    public MissingLoopSensing() {
-        found = new ArrayList<>();
-        counter = 0;
-    }
-
     @Override
     public IssueReport check(Program program) {
+        Preconditions.checkNotNull(program);
+        found = new ArrayList<>();
+        counter = 0;
         List<ActorDefinition> actorDefs = program.getActorDefinitionList().getDefintions();
         for (ActorDefinition actorDef : actorDefs) {
             List<Script> scripts = actorDef.getScripts().getScriptList();

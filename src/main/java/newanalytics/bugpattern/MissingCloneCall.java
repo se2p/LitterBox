@@ -27,6 +27,10 @@ public class MissingCloneCall implements IssueFinder, ScratchVisitor {
     @Override
     public IssueReport check(Program program) {
         Preconditions.checkNotNull(program);
+        count = 0;
+        actorNames = new LinkedList<>();
+        foundCall = false;
+        foundInit = false;
         program.accept(this);
         String notes = NOTE1;
         if (count > 0) {
@@ -59,7 +63,7 @@ public class MissingCloneCall implements IssueFinder, ScratchVisitor {
 
     @Override
     public void visit(CreateCloneOf node) {
-        foundCall=true;
+        foundCall = true;
         if (!node.getChildren().isEmpty()) {
             for (ASTNode child : node.getChildren()) {
                 child.accept(this);
@@ -69,7 +73,7 @@ public class MissingCloneCall implements IssueFinder, ScratchVisitor {
 
     @Override
     public void visit(StartedAsClone node) {
-        foundInit=true;
+        foundInit = true;
         if (!node.getChildren().isEmpty()) {
             for (ASTNode child : node.getChildren()) {
                 child.accept(this);

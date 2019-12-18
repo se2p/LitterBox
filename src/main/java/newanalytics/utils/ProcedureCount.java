@@ -17,11 +17,10 @@ public class ProcedureCount implements IssueFinder, ScratchVisitor {
 
     private int count = 0;
 
-    private ActorDefinition currentActor;
-
     @Override
     public IssueReport check(Program program) {
         Preconditions.checkNotNull(program);
+        count = 0;
         program.accept(this);
 
         return new IssueReport(NAME, count, new ArrayList<>(), "");
