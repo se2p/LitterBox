@@ -19,11 +19,13 @@
 package scratch.ast.model.expression.string;
 
 import scratch.ast.model.AbstractNode;
+import scratch.ast.model.expression.bool.BoolExpr;
 import scratch.ast.model.expression.num.NumExpr;
+import scratch.ast.model.literals.BoolLiteral;
 import scratch.ast.model.variable.Variable;
 import scratch.ast.visitor.ScratchVisitor;
 
-public class ItemOfVariable extends AbstractNode implements StringExpr {
+public class ItemOfVariable extends AbstractNode implements StringExpr, BoolExpr {
 
     private final NumExpr num;
     private final Variable variable;

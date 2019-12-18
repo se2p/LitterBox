@@ -19,12 +19,15 @@
 package scratch.ast.parser;
 
 import static scratch.ast.Constants.*;
+import static scratch.ast.parser.ExpressionParser.parseExpression;
 
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.TextNode;
+
 import java.util.Optional;
+
 import scratch.ast.Constants;
 import scratch.ast.ParsingException;
 import scratch.ast.model.Key;
@@ -33,14 +36,19 @@ import scratch.ast.model.expression.Expression;
 import scratch.ast.model.expression.bool.*;
 import scratch.ast.model.expression.color.ColorExpression;
 import scratch.ast.model.expression.num.AsNumber;
+import scratch.ast.model.expression.num.IndexOf;
+import scratch.ast.model.expression.num.NumExpr;
 import scratch.ast.model.expression.num.UnspecifiedNumExpr;
+import scratch.ast.model.expression.string.ItemOfVariable;
 import scratch.ast.model.literals.BoolLiteral;
 import scratch.ast.model.touchable.Touchable;
 import scratch.ast.model.variable.Qualified;
 import scratch.ast.model.variable.StrId;
 import scratch.ast.model.variable.Variable;
 import scratch.ast.opcodes.BoolExprOpcode;
+import scratch.ast.opcodes.NumExprOpcode;
 import scratch.ast.opcodes.ProcedureOpcode;
+import scratch.ast.opcodes.StringExprOpcode;
 import scratch.ast.parser.symboltable.ExpressionListInfo;
 import scratch.ast.parser.symboltable.VariableInfo;
 import utils.Preconditions;
@@ -135,10 +143,21 @@ public class BoolExprParser {
             return parseParameter(blocks, expressionBlock);
         }
         Preconditions
-                .checkArgument(BoolExprOpcode.contains(opcodeString), opcodeString + " is not a BoolExprOpcode.");
+                .checkArgument(BoolExprOpcode.contains(opcodeString) || opcodeString.equals(StringExprOpcode.data_itemoflist.name()) || opcodeString.equals(NumExprOpcode.data_itemnumoflist.name()), opcodeString + " is not a BoolExprOpcode.");
+        if (opcodeString.equals(StringExprOpcode.data_itemoflist.name())) {
+            NumExpr index = NumExprParser.parseNumExpr(expressionBlock, 0, blocks);
+            Variable var = ListExprParser.parseVariableFromFields(expressionBlock.get(FIELDS_KEY));
+            return new ItemOfVariable(index, var);
+        } else if (opcodeString.equals(NumExprOpcode.data_itemnumoflist.name())) {
+            Expression item = parseExpression(expressionBlock, 0, blocks);
+            Variable list = ListExprParser.parseVariableFromFields(expressionBlock.get(FIELDS_KEY));
+            return new IndexOf(item, list);
+        }
+
         final BoolExprOpcode opcode = BoolExprOpcode.valueOf(opcodeString);
 
         switch (opcode) {
+
             case sensing_touchingcolor:
             case sensing_touchingobject:
                 Touchable touchable = TouchableParser.parseTouchable(expressionBlock, blocks);

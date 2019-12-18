@@ -20,10 +20,11 @@ package scratch.ast.model.expression.num;
 
 import scratch.ast.model.AbstractNode;
 import scratch.ast.model.expression.Expression;
+import scratch.ast.model.expression.bool.BoolExpr;
 import scratch.ast.model.variable.Variable;
 import scratch.ast.visitor.ScratchVisitor;
 
-public class IndexOf extends AbstractNode implements NumExpr {
+public class IndexOf extends AbstractNode implements NumExpr, BoolExpr {
 
     private final Expression expr;
     private final Variable variable;
