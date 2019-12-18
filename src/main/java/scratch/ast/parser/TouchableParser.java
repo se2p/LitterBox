@@ -22,11 +22,15 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import scratch.ast.Constants;
 import scratch.ast.ParsingException;
+import scratch.ast.model.expression.color.FromNumber;
+import scratch.ast.model.expression.num.NumExpr;
 import scratch.ast.model.expression.string.StringExpr;
+import scratch.ast.model.literals.StringLiteral;
 import scratch.ast.model.touchable.Edge;
 import scratch.ast.model.touchable.MousePointer;
 import scratch.ast.model.touchable.SpriteTouchable;
 import scratch.ast.model.touchable.Touchable;
+import scratch.ast.model.variable.Qualified;
 import scratch.ast.model.variable.StrId;
 import scratch.ast.opcodes.BoolExprOpcode;
 import utils.Preconditions;
@@ -53,8 +57,15 @@ public class TouchableParser {
             if (getShadowIndicator((ArrayNode) inputsList.get(0)) == 1) {
                 return getTouchableMenuOption(current, allBlocks);
             } else {
-                final StringExpr stringExpr = StringExprParser.parseStringExpr(current, TOUCHINGOBJECTMENU, allBlocks);
-                return new SpriteTouchable(stringExpr);
+                NumExpr expr=NumExprParser.parseNumExpr(current,TOUCHINGOBJECTMENU,allBlocks);
+                if(expr instanceof StrId ){
+                    return (StrId) expr;
+                }else if(expr instanceof Qualified){
+                    return (Qualified) expr;
+                }else {
+                    //FIXME is this right?
+                    return new FromNumber(expr);
+                }
             }
 
         } else if (BoolExprOpcode.sensing_touchingcolor.name().equals(opcodeString)) {
@@ -64,7 +75,7 @@ public class TouchableParser {
         }
     }
 
-    private static Touchable getTouchableMenuOption(JsonNode current, JsonNode allBlocks) {
+    private static Touchable getTouchableMenuOption(JsonNode current, JsonNode allBlocks) throws ParsingException {
         String menuID = current.get(INPUTS_KEY).get(TOUCHINGOBJECTMENU).get(POS_INPUT_VALUE).asText();
         String touchingObject = allBlocks.get(menuID).get(FIELDS_KEY).get(TOUCHINGOBJECTMENU).get(0).asText();
 
@@ -73,7 +84,7 @@ public class TouchableParser {
         } else if (touchingObject.equals(TOUCHING_EDGE)) {
             return new Edge();
         } else {
-            return new StrId(touchingObject);
+            return new SpriteTouchable( new StringLiteral(touchingObject));
         }
     }
 

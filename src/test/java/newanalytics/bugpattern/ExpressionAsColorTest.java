@@ -15,6 +15,8 @@ import java.io.IOException;
 public class ExpressionAsColorTest {
     private static Program empty;
     private static Program expressionColor;
+    private static Program giant;
+    private static Program two;
     private static ObjectMapper mapper = new ObjectMapper();
 
     @BeforeAll
@@ -24,7 +26,10 @@ public class ExpressionAsColorTest {
         empty = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
         f = new File("./src/test/fixtures/bugpattern/touchingExpressions.json");
         expressionColor = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
-
+        f = new File("./src/test/fixtures/bugpattern/exprLit.json");
+        giant = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
+        f = new File("./src/test/fixtures/bugpattern/twoNotColo.json");
+        two = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
     }
 
     @Test
@@ -39,5 +44,19 @@ public class ExpressionAsColorTest {
         ExpressionAsColor parameterName = new ExpressionAsColor();
         IssueReport report = parameterName.check(expressionColor);
         Assertions.assertEquals(3, report.getCount());
+    }
+
+    @Test
+    public void testGiant() {
+        ExpressionAsColor parameterName = new ExpressionAsColor();
+        IssueReport report = parameterName.check(giant);
+        Assertions.assertEquals(0, report.getCount());
+    }
+
+    @Test
+    public void testTwo() {
+        ExpressionAsColor parameterName = new ExpressionAsColor();
+        IssueReport report = parameterName.check(two);
+        Assertions.assertEquals(2, report.getCount());
     }
 }
