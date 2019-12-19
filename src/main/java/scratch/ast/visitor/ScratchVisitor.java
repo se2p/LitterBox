@@ -801,4 +801,5 @@ public interface ScratchVisitor {
     default void visit(Touching node) {
         visit((ASTNode) node);
     }
+
 }
