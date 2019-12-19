@@ -78,7 +78,12 @@ public class KeyParser {
             case "any":
                 return new Key(new NumberLiteral(ANYKEY));
             default:
-                return new Key(new NumberLiteral(keyValue.charAt(0)));
+                if (keyValue.length() > 0) {
+                    return new Key(new NumberLiteral(keyValue.charAt(0)));
+                } else {
+                    // It is not clear how this can happen, but it happens sometimtes.
+                    return new Key(new NumberLiteral(0));
+                }
         }
 
     }
@@ -86,5 +91,4 @@ public class KeyParser {
     static int getShadowIndicator(ArrayNode exprArray) {
         return exprArray.get(Constants.POS_INPUT_SHADOW).asInt();
     }
-
 }

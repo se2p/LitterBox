@@ -161,6 +161,7 @@ public class Scratch3Analyzer {
             for (final File fileEntry : Objects.requireNonNull(folder.listFiles())) {
                 if (!fileEntry.isDirectory()) {
                     try {
+                        log.info("Start: " + fileEntry.getName());
                         Program program = extractProgram(fileEntry);
                         //System.out.println(project.toString());
                         iT.check(program, printer, dtctrs);
@@ -266,6 +267,7 @@ public class Scratch3Analyzer {
             BufferedReader br = new BufferedReader(new FileReader(file));
             String line = br.readLine();
             while (line != null) {
+                line = line.trim();
                 downloadAndAnalyze(line, outfolder, detectors, resultpath);
                 line = br.readLine();
             }

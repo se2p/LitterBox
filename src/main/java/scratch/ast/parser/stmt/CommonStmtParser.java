@@ -49,6 +49,7 @@ public class CommonStmtParser {
     private static final String CLONE_OPTION = "CLONE_OPTION";
     private static final String STOP_OPTION = "STOP_OPTION";
     private static final String STOP_OTHER = "other scripts in sprite";
+    private static final String STOP_OTHER_IN_STAGE = "other scripts in stage";
     private static final String BROADCAST_INPUT_KEY = "BROADCAST_INPUT";
 
     public static CommonStmt parse(JsonNode current, JsonNode allBlocks) throws ParsingException {
@@ -193,7 +194,7 @@ public class CommonStmtParser {
                 current.get(Constants.FIELDS_KEY).get(STOP_OPTION).get(Constants.FIELD_VALUE)
                         .asText();
 
-        if (stopOptionValue.equals(STOP_OTHER)) {
+        if (stopOptionValue.equals(STOP_OTHER) || stopOptionValue.equals(STOP_OTHER_IN_STAGE)) {
             stmt = new StopOtherScriptsInSprite();
         } else {
             throw new RuntimeException();

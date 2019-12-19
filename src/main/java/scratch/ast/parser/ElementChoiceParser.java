@@ -67,7 +67,14 @@ public class ElementChoiceParser {
         menu.get(FIELDS_KEY).elements().forEachRemaining(fieldsList::add);
         String elementName = fieldsList.get(0).get(0).asText();
 
-        String elemKey = elementName.split(" ")[0];
+        String[] split = elementName.split(" ");
+        String elemKey;
+        if (split.length > 0) {
+            elemKey = split[0];
+        } else {
+            elemKey = "";
+        }
+
         if (!StandardElemChoice.contains(elemKey)) {
             return new WithId(new StrId(elementName));
         }

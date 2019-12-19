@@ -23,6 +23,7 @@ import static scratch.ast.Constants.*;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.TextNode;
 import java.util.ArrayList;
 import java.util.List;
 import scratch.ast.Constants;
@@ -80,7 +81,7 @@ public class PenStmtParser {
         current.get(Constants.INPUTS_KEY).elements().forEachRemaining(inputsList::add);
 
         StringExpr expr;
-        if (getShadowIndicator((ArrayNode) inputsList.get(0).get(POS_DATA_ARRAY)) == 1) {
+        if (getShadowIndicator((ArrayNode) inputsList.get(0)) == 1) {
             String reference = current.get(INPUTS_KEY).get(COLOR_PARAM_BIG_KEY).get(POS_INPUT_VALUE).asText();
             JsonNode referredBlock = blocks.get(reference);
             Preconditions.checkNotNull(referredBlock);

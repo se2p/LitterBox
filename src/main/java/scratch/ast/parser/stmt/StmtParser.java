@@ -38,8 +38,10 @@ public class StmtParser {
 
         if (TerminationStmtOpcode.contains(opcode)) {
             if (!(current.get(Constants.FIELDS_KEY).has("STOP_OPTION")
-                    && current.get(Constants.FIELDS_KEY).get("STOP_OPTION").get(Constants.FIELD_VALUE).asText()
-                    .equals("other scripts in sprite"))) {
+                    && (current.get(Constants.FIELDS_KEY).get("STOP_OPTION").get(Constants.FIELD_VALUE).asText()
+                    .equals("other scripts in sprite")
+                    || current.get(Constants.FIELDS_KEY).get("STOP_OPTION").get(Constants.FIELD_VALUE).asText()
+                    .equals("other scripts in stage")))) {
                 return TerminationStmtParser.parseTerminationStmt(current, blocks);
             }
         }
@@ -76,7 +78,7 @@ public class StmtParser {
             return SetStmtParser.parse(current, blocks);
         } else if (PenOpcode.contains(opcode)) {
             return PenStmtParser.parse(current, blocks);
-        }else{
+        } else {
             return new UnspecifiedStmt();
         }
     }

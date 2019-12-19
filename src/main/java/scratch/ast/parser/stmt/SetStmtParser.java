@@ -110,7 +110,9 @@ public class SetStmtParser {
 
     private static SetStmt parseSetVariable(JsonNode current, JsonNode allBlocks) throws ParsingException {
         String unique = current.get(FIELDS_KEY).get(VARIABLE_KEY).get(VARIABLE_IDENTIFIER_POS).asText();
-        Preconditions.checkArgument(ProgramParser.symbolTable.getVariables().containsKey(unique));
+        if (!ProgramParser.symbolTable.getVariables().containsKey(unique)) {
+            throw new ParsingException("Cannot parse unknown variable");
+        }
         VariableInfo info = ProgramParser.symbolTable.getVariables().get(unique);
         return new SetVariableTo(new Qualified(new StrId(info.getActor()),
             new StrId((VARIABLE_ABBREVIATION+info.getVariableName()))), ExpressionParser.parseExpression(current,
