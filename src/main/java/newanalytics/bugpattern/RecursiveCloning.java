@@ -7,7 +7,9 @@ import scratch.ast.model.ActorDefinition;
 import scratch.ast.model.Program;
 import scratch.ast.model.Script;
 import scratch.ast.model.event.StartedAsClone;
+import scratch.ast.model.literals.StringLiteral;
 import scratch.ast.model.statement.common.CreateCloneOf;
+import scratch.ast.model.variable.StrId;
 import scratch.ast.visitor.ScratchVisitor;
 import utils.Preconditions;
 
@@ -76,8 +78,14 @@ public class RecursiveCloning implements ScratchVisitor, IssueFinder {
     @Override
     public void visit(CreateCloneOf node) {
         if (startAsClone) {
-            count++;
-            found = true;
+            if (node.getStringExpr() instanceof StrId) {
+
+                if (((StrId) node.getStringExpr()).getName().equals("_myself_")) {
+                    count++;
+                    found = true;
+                }
+            }
+
         }
         if (!node.getChildren().isEmpty()) {
             for (ASTNode child : node.getChildren()) {
