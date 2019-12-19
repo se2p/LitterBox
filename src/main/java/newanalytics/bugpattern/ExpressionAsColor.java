@@ -7,6 +7,7 @@ import scratch.ast.model.ActorDefinition;
 import scratch.ast.model.Program;
 import scratch.ast.model.expression.bool.ColorTouches;
 import scratch.ast.model.expression.bool.Touching;
+import scratch.ast.model.expression.color.FromNumber;
 import scratch.ast.model.literals.ColorLiteral;
 import scratch.ast.model.statement.pen.SetPenColorToColorStmt;
 import scratch.ast.model.touchable.Edge;
@@ -96,6 +97,11 @@ public class ExpressionAsColor implements IssueFinder, ScratchVisitor {
     public void visit(Touching node) {
         if (!(node.getTouchable() instanceof MousePointer) && !(node.getTouchable() instanceof Edge) && !(node.getTouchable() instanceof SpriteTouchable)) {
             if (!(node.getTouchable() instanceof ColorLiteral)) {
+                System.out.println(node.getTouchable().getClass());
+                System.out.println(currentActor.getIdent().getName());
+                if(node.getTouchable() instanceof FromNumber){
+                    System.out.println(((FromNumber) node.getTouchable()).getValue().getClass());
+                }
                 count++;
                 found = true;
             }

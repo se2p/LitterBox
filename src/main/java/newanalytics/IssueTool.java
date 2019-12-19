@@ -72,6 +72,8 @@ public class IssueTool {
         bugFinder.put(MissingLoopSensing.SHORT_NAME, new MissingLoopSensing());
         bugFinder.put(MissingTerminationCondition.SHORT_NAME, new MissingTerminationCondition());
         bugFinder.put(ExpressionAsColor.SHORT_NAME, new ExpressionAsColor());
+        bugFinder.put(RecursiveCloning.SHORT_NAME, new RecursiveCloning());
+        bugFinder.put(SameVariableDifferentSprite.SHORT_NAME, new SameVariableDifferentSprite());
         smellFinder.put(DeadCode.SHORT_NAME, new DeadCode());
 //        finder.put("attrmod", new AttributeModification());
 

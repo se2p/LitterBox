@@ -49,19 +49,19 @@ public class SymbolTable {
         return lists;
     }
 
-    public void addVariable(String ident, String variableName, Type type, boolean global, String scriptGroupName) {
-        VariableInfo info = new VariableInfo(global, scriptGroupName, ident, type, variableName);
+    public void addVariable(String ident, String variableName, Type type, boolean global, String actorName) {
+        VariableInfo info = new VariableInfo(global, actorName, ident, type, variableName);
         variables.put(ident, info);
     }
 
     public void addExpressionListInfo(String ident, String listName, ExpressionList expressionList, boolean global,
-        String scriptGroupName) {
-        ExpressionListInfo info = new ExpressionListInfo(global, scriptGroupName, ident, expressionList, listName);
+        String actorName) {
+        ExpressionListInfo info = new ExpressionListInfo(global, actorName, ident, expressionList, listName);
         lists.put(ident, info);
     }
 
-    public void addMessage(String ident, Message message, boolean global, String scriptGroupName) {
-        MessageInfo info = new MessageInfo(global, scriptGroupName, ident, message);
+    public void addMessage(String ident, Message message, boolean global, String actorName) {
+        MessageInfo info = new MessageInfo(global, actorName, ident, message);
         messages.put(ident, info);
     }
 
