@@ -34,7 +34,7 @@ public class MessageNeverSent implements IssueFinder, ScratchVisitor {
         for (Pair received : messageReceived) {
             boolean isReceived = false;
             for (Pair sent : messageSent) {
-                if (received.msgName.equals(sent.msgName)) {
+                if (received.msgName.toLowerCase().equals(sent.msgName.toLowerCase())) {
                     isReceived = true;
                     break;
                 }
