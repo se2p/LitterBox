@@ -7,36 +7,33 @@ import scratch.ast.model.ActorDefinition;
 import scratch.ast.model.Program;
 import scratch.ast.model.event.StartedAsClone;
 import scratch.ast.model.statement.common.CreateCloneOf;
+import scratch.ast.model.variable.StrId;
 import scratch.ast.visitor.ScratchVisitor;
 import utils.Preconditions;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class MissingCloneCall implements IssueFinder, ScratchVisitor {
     public static final String NAME = "missing_clone_call";
     public static final String SHORT_NAME = "mssngclncll";
     private static final String NOTE1 = "There are no sprites with missing clone calls in your project.";
     private static final String NOTE2 = "Some of the sprites contain missing clone calls.";
-    private int count = 0;
-    private List<String> actorNames = new LinkedList<>();
+    private List<String> whenStartsAsCloneActors = new ArrayList<>();
+    private List<String> clonedActors = new ArrayList<>();
     private ActorDefinition currentActor;
-    private boolean foundCall = false;
-    private boolean foundInit = false;
 
     @Override
     public IssueReport check(Program program) {
         Preconditions.checkNotNull(program);
-        count = 0;
-        actorNames = new LinkedList<>();
-        foundCall = false;
-        foundInit = false;
+        whenStartsAsCloneActors = new ArrayList<>();
+        clonedActors = new ArrayList<>();
         program.accept(this);
-        String notes = NOTE1;
-        if (count > 0) {
-            notes = NOTE2;
-        }
-        return new IssueReport(NAME, count, actorNames, notes);
+        final List<String> uninitializingActors
+                = whenStartsAsCloneActors.stream().filter(s -> !clonedActors.contains(s)).collect(Collectors.toList());
+
+        return new IssueReport(NAME, uninitializingActors.size(), uninitializingActors, "");
     }
 
     @Override
@@ -47,38 +44,27 @@ public class MissingCloneCall implements IssueFinder, ScratchVisitor {
     @Override
     public void visit(ActorDefinition actor) {
         currentActor = actor;
-        foundCall = false;
-        foundInit = false;
         if (!actor.getChildren().isEmpty()) {
             for (ASTNode child : actor.getChildren()) {
                 child.accept(this);
             }
         }
-
-        if (!foundCall && foundInit) {
-            count++;
-            actorNames.add(currentActor.getIdent().getName());
-        }
     }
 
     @Override
     public void visit(CreateCloneOf node) {
-        foundCall = true;
-        if (!node.getChildren().isEmpty()) {
-            for (ASTNode child : node.getChildren()) {
-                child.accept(this);
+        if (node.getStringExpr() instanceof StrId) {
+            final String spriteName = ((StrId) node.getStringExpr()).getName();
+            if (spriteName.equals("_myself_")) {
+                clonedActors.add(currentActor.getIdent().getName());
+            } else {
+                clonedActors.add(spriteName);
             }
         }
     }
 
     @Override
     public void visit(StartedAsClone node) {
-        foundInit = true;
-        if (!node.getChildren().isEmpty()) {
-            for (ASTNode child : node.getChildren()) {
-                child.accept(this);
-            }
-        }
-
+        whenStartsAsCloneActors.add(currentActor.getIdent().getName());
     }
 }

@@ -15,6 +15,7 @@ import java.io.IOException;
 public class MissingCloneCallTest {
     private static Program empty;
     private static Program missingCloneCall;
+    private static Program cloneInOtherSprite;
     private static ObjectMapper mapper = new ObjectMapper();
 
     @BeforeAll
@@ -24,7 +25,8 @@ public class MissingCloneCallTest {
         empty = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
         f = new File("./src/test/fixtures/bugpattern/missingCloneCall.json");
         missingCloneCall = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
-
+        f = new File("./src/test/fixtures/bugpattern/cloneInOtherSprite.json");
+        cloneInOtherSprite = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
     }
 
     @Test
@@ -39,5 +41,12 @@ public class MissingCloneCallTest {
         MissingCloneCall parameterName = new MissingCloneCall();
         IssueReport report = parameterName.check(missingCloneCall);
         Assertions.assertEquals(1, report.getCount());
+    }
+
+    @Test
+    public void testCloneInOtherSprite() {
+        MissingCloneCall parameterName = new MissingCloneCall();
+        IssueReport report = parameterName.check(cloneInOtherSprite);
+        Assertions.assertEquals(0, report.getCount());
     }
 }
