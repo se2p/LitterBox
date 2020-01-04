@@ -27,6 +27,7 @@ import newanalytics.smells.*;
 import newanalytics.utils.BlockCount;
 import newanalytics.utils.ProcedureCount;
 import newanalytics.utils.SpriteCount;
+import newanalytics.utils.WeightedMethodCount;
 import org.apache.commons.csv.CSVPrinter;
 import scratch.ast.model.Program;
 import utils.CSVWriter;
@@ -99,6 +100,7 @@ public class IssueTool {
         utilFinder.put(BlockCount.SHORT_NAME, new BlockCount());
         utilFinder.put(SpriteCount.SHORT_NAME, new SpriteCount());
         utilFinder.put(ProcedureCount.SHORT_NAME, new ProcedureCount());
+        utilFinder.put(WeightedMethodCount.SHORT_NAME, new WeightedMethodCount());
 //
 //        // To evaluate the CT score
 //        finder.put("logthink", new LogicalThinking());
