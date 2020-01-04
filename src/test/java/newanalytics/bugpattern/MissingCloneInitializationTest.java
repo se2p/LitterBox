@@ -18,6 +18,7 @@ import static junit.framework.TestCase.fail;
 public class MissingCloneInitializationTest {
 
     private static Program program;
+    private static Program clicked;
 
     @BeforeAll
     public static void setup() {
@@ -26,6 +27,8 @@ public class MissingCloneInitializationTest {
         ObjectMapper objectMapper = new ObjectMapper();
         try {
             program = ProgramParser.parseProgram("missingCloneInit", objectMapper.readTree(file));
+            file = new File("src/test/fixtures/bugpattern/cloningWithClicked.json");
+            clicked = ProgramParser.parseProgram("cloningWithClicked", objectMapper.readTree(file));
         } catch (IOException | ParsingException e) {
             fail();
         }
@@ -39,5 +42,10 @@ public class MissingCloneInitializationTest {
         Truth.assertThat(check.getPosition().get(0)).isEqualTo("Anina Dance");
     }
 
-
+    @Test
+    public void testCloningWithClicked() {
+        MissingCloneInitialization finder = new MissingCloneInitialization();
+        final IssueReport check = finder.check(clicked);
+        Truth.assertThat(check.getCount()).isEqualTo(0);
+    }
 }

@@ -5,6 +5,7 @@ import newanalytics.IssueReport;
 import scratch.ast.model.ASTNode;
 import scratch.ast.model.ActorDefinition;
 import scratch.ast.model.Program;
+import scratch.ast.model.event.Clicked;
 import scratch.ast.model.event.StartedAsClone;
 import scratch.ast.model.statement.common.CreateCloneOf;
 import scratch.ast.model.variable.StrId;
@@ -65,6 +66,11 @@ public class MissingCloneInitialization implements IssueFinder, ScratchVisitor {
 
     @Override
     public void visit(StartedAsClone node) {
+        whenStartsAsCloneActors.add(currentActor.getIdent().getName());
+    }
+
+    @Override
+    public void visit(Clicked node) {
         whenStartsAsCloneActors.add(currentActor.getIdent().getName());
     }
 }

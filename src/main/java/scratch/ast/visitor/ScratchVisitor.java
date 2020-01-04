@@ -22,11 +22,7 @@ import scratch.ast.model.ASTNode;
 import scratch.ast.model.ActorDefinition;
 import scratch.ast.model.Script;
 import scratch.ast.model.StmtList;
-import scratch.ast.model.event.BackdropSwitchTo;
-import scratch.ast.model.event.KeyPressed;
-import scratch.ast.model.event.Never;
-import scratch.ast.model.event.ReceptionOfMessage;
-import scratch.ast.model.event.StartedAsClone;
+import scratch.ast.model.event.*;
 import scratch.ast.model.expression.bool.*;
 import scratch.ast.model.expression.list.ExpressionList;
 import scratch.ast.model.expression.list.ExpressionListPlain;
@@ -799,6 +795,19 @@ public interface ScratchVisitor {
      * @param node Touching  Node of which the children will be iterated
      */
     default void visit(Touching node) {
+        visit((ASTNode) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link Clicked }.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node Clicked  Node of which the children will be iterated
+     */
+    default void visit(Clicked node) {
         visit((ASTNode) node);
     }
 
