@@ -15,14 +15,12 @@ import java.util.List;
 public class WeightedMethodCount implements IssueFinder, ScratchVisitor {
     public static final String NAME = "weighted_method_count";
     public static final String SHORT_NAME = "wghtdmthdcnt";
-    private boolean found = false;
     private int count = 0;
     private List<String> actorNames = new LinkedList<>();
 
     @Override
     public IssueReport check(Program program) {
         Preconditions.checkNotNull(program);
-        found = false;
         count = 1;
         actorNames = new LinkedList<>();
 
@@ -38,7 +36,7 @@ public class WeightedMethodCount implements IssueFinder, ScratchVisitor {
 
     @Override
     public void visit(IfElseStmt node) {
-        System.out.println("ifelse");
+        count++;
         if (!node.getChildren().isEmpty()) {
             for (ASTNode child : node.getChildren()) {
                 child.accept(this);
