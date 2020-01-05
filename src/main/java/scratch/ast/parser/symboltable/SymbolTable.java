@@ -22,19 +22,19 @@ import scratch.ast.model.Message;
 import scratch.ast.model.expression.list.ExpressionList;
 import scratch.ast.model.type.Type;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class SymbolTable {
 
-    private HashMap<String, VariableInfo> variables;
-    private HashMap<String, MessageInfo> messages;
-    private HashMap<String, ExpressionListInfo> lists;
+    private LinkedHashMap<String, VariableInfo> variables;
+    private LinkedHashMap<String, MessageInfo> messages;
+    private LinkedHashMap<String, ExpressionListInfo> lists;
 
     public SymbolTable() {
-        this.variables = new HashMap<>();
-        this.messages = new HashMap<>();
-        this.lists = new HashMap<>();
+        this.variables = new LinkedHashMap<>();
+        this.messages = new LinkedHashMap<>();
+        this.lists = new LinkedHashMap<>();
     }
 
     public Map<String, VariableInfo> getVariables() {

@@ -21,7 +21,7 @@ public class AmbiguousParameterName implements IssueFinder {
     public IssueReport check(Program program) {
         Preconditions.checkNotNull(program);
         List<String> found = new ArrayList<>();
-        HashMap<String, Map<Identifier, ProcedureInfo>> procs = program.getProcedureMapping().getProcedures();
+        Map<String, Map<Identifier, ProcedureInfo>> procs = program.getProcedureMapping().getProcedures();
         Set<String> actors = procs.keySet();
         for (String actor : actors) {
             Map<Identifier, ProcedureInfo> current = procs.get(actor);

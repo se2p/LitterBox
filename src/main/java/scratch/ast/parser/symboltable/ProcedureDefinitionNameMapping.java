@@ -22,15 +22,15 @@ import scratch.ast.model.type.Type;
 import scratch.ast.model.variable.Identifier;
 import utils.Preconditions;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class ProcedureDefinitionNameMapping {
 
-    private HashMap<String, Map<Identifier, ProcedureInfo>> procedures;
+    private Map<String, Map<Identifier, ProcedureInfo>> procedures;
 
     public ProcedureDefinitionNameMapping() {
-        procedures = new HashMap<>();
+        procedures = new LinkedHashMap<>();
     }
 
     public void addProcedure(Identifier identifier, String actorName, String procedureName, String[] argumentNames,
@@ -39,7 +39,7 @@ public class ProcedureDefinitionNameMapping {
         if(procedures.containsKey(actorName)){
             currentMap=procedures.get(actorName);
         }else{
-            currentMap= new HashMap<>();
+            currentMap= new LinkedHashMap<>();
             procedures.put(actorName,currentMap);
         }
         currentMap.put(identifier, new ProcedureInfo(procedureName, makeArguments(argumentNames, types), actorName));
@@ -55,7 +55,7 @@ public class ProcedureDefinitionNameMapping {
         return arguments;
     }
 
-    public HashMap<String, Map<Identifier, ProcedureInfo>> getProcedures() {
+    public Map<String, Map<Identifier, ProcedureInfo>> getProcedures() {
         return procedures;
     }
 }
