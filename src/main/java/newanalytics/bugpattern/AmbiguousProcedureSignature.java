@@ -8,9 +8,7 @@ import scratch.ast.model.variable.Identifier;
 import scratch.ast.parser.symboltable.ProcedureInfo;
 import utils.Preconditions;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 public class AmbiguousProcedureSignature implements IssueFinder {
     private static final String NOTE1 = "There are no ambiguous procedure signatures in your project.";
@@ -22,8 +20,11 @@ public class AmbiguousProcedureSignature implements IssueFinder {
     public IssueReport check(Program program) {
         Preconditions.checkNotNull(program);
         List<String> found = new ArrayList<>();
-        HashMap<Identifier, ProcedureInfo> procs = program.getProcedureMapping().getProcedures();
-        List<ProcedureInfo> procedureInfos = new ArrayList<>(procs.values());
+        HashMap<String, Map<Identifier, ProcedureInfo>> procs = program.getProcedureMapping().getProcedures();
+        Set<String> actors = procs.keySet();
+        for (String actor : actors){
+            Map<Identifier, ProcedureInfo> currentMap = procs.get(actor);
+        List<ProcedureInfo> procedureInfos = new ArrayList<>(currentMap.values());
         for (int i = 0; i < procedureInfos.size(); i++) {
             ProcedureInfo current = procedureInfos.get(i);
             for (int j = 0; j < procedureInfos.size(); j++) {
@@ -32,7 +33,7 @@ public class AmbiguousProcedureSignature implements IssueFinder {
                     found.add(current.getActorName());
                 }
             }
-        }
+        }}
         String notes = NOTE1;
         if (found.size() > 0) {
             notes = NOTE2;

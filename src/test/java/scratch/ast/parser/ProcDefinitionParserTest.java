@@ -62,12 +62,12 @@ public class ProcDefinitionParserTest {
             Program program = ProgramParser.parseProgram("CustomBlockTest", project);
             final List<ActorDefinition> defintions = program.getActorDefinitionList().getDefintions();
             final List<ProcedureDefinition> list = defintions.get(1).getProcedureDefinitionList().getList();
-
+            final String actorName = defintions.get(1).getIdent().getName();
             Truth.assertThat(list.get(0)).isInstanceOf(ProcedureDefinition.class);
             Assertions.assertEquals("BlockNoInputs",
-                    ProgramParser.procDefMap.getProcedures().get(list.get(0).getIdent()).getName());
+                    ProgramParser.procDefMap.getProcedures().get(actorName).get(list.get(0).getIdent()).getName());
             Assertions.assertEquals(0,
-                    ProgramParser.procDefMap.getProcedures().get(list.get(0).getIdent()).getArguments().length);
+                    ProgramParser.procDefMap.getProcedures().get(actorName).get(list.get(0).getIdent()).getArguments().length);
             Assertions.assertEquals(0, list.get(0).getParameterList().getParameterListPlain().getParameters().size());
             Assertions.assertEquals(3, list.get(0).getStmtList().getStmts().getListOfStmt().size());
 
@@ -83,26 +83,26 @@ public class ProcDefinitionParserTest {
             Program program = ProgramParser.parseProgram("CustomBlockTest", project);
             final List<ActorDefinition> defintions = program.getActorDefinitionList().getDefintions();
             final List<ProcedureDefinition> list = defintions.get(1).getProcedureDefinitionList().getList();
-
+            final String actorName = defintions.get(1).getIdent().getName();
             Truth.assertThat(list.get(1)).isInstanceOf(ProcedureDefinition.class);
             Assertions.assertEquals("BlockWithInputs %s %b",
-                    ProgramParser.procDefMap.getProcedures().get(list.get(1).getIdent()).getName());
+                    ProgramParser.procDefMap.getProcedures().get(actorName).get(list.get(1).getIdent()).getName());
             Assertions.assertEquals(2,
-                    ProgramParser.procDefMap.getProcedures().get(list.get(1).getIdent()).getArguments().length);
+                    ProgramParser.procDefMap.getProcedures().get(actorName).get(list.get(1).getIdent()).getArguments().length);
             Assertions.assertEquals(Constants.PARAMETER_ABBREVIATION + "NumInput",
-                    ProgramParser.procDefMap.getProcedures().get(list.get(1).getIdent()).getArguments()[0].getName());
+                    ProgramParser.procDefMap.getProcedures().get(actorName).get(list.get(1).getIdent()).getArguments()[0].getName());
             Assertions.assertEquals(Constants.PARAMETER_ABBREVIATION + "Boolean",
-                    ProgramParser.procDefMap.getProcedures().get(list.get(1).getIdent()).getArguments()[1].getName());
-            Truth.assertThat(ProgramParser.procDefMap.getProcedures().get(list.get(1).getIdent()).getArguments()[0].getType()).isInstanceOf(StringType.class);
-            Truth.assertThat(ProgramParser.procDefMap.getProcedures().get(list.get(1).getIdent()).getArguments()[1].getType()).isInstanceOf(BooleanType.class);
+                    ProgramParser.procDefMap.getProcedures().get(actorName).get(list.get(1).getIdent()).getArguments()[1].getName());
+            Truth.assertThat(ProgramParser.procDefMap.getProcedures().get(actorName).get(list.get(1).getIdent()).getArguments()[0].getType()).isInstanceOf(StringType.class);
+            Truth.assertThat(ProgramParser.procDefMap.getProcedures().get(actorName).get(list.get(1).getIdent()).getArguments()[1].getType()).isInstanceOf(BooleanType.class);
             Assertions.assertEquals(3, list.get(1).getStmtList().getStmts().getListOfStmt().size());
-            Assertions.assertEquals(ProgramParser.procDefMap.getProcedures().get(list.get(1).getIdent()).getArguments()[1].getName(),
+            Assertions.assertEquals(ProgramParser.procDefMap.getProcedures().get(actorName).get(list.get(1).getIdent()).getArguments()[1].getName(),
                     list.get(1).getParameterList().getParameterListPlain().getParameters().get(1).getIdent().getName());
-            Assertions.assertEquals(ProgramParser.procDefMap.getProcedures().get(list.get(1).getIdent()).getArguments()[0].getName(),
+            Assertions.assertEquals(ProgramParser.procDefMap.getProcedures().get(actorName).get(list.get(1).getIdent()).getArguments()[0].getName(),
                     list.get(1).getParameterList().getParameterListPlain().getParameters().get(0).getIdent().getName());
-            Assertions.assertEquals(ProgramParser.procDefMap.getProcedures().get(list.get(1).getIdent()).getArguments()[1].getType(),
+            Assertions.assertEquals(ProgramParser.procDefMap.getProcedures().get(actorName).get(list.get(1).getIdent()).getArguments()[1].getType(),
                     list.get(1).getParameterList().getParameterListPlain().getParameters().get(1).getType());
-            Assertions.assertEquals(ProgramParser.procDefMap.getProcedures().get(list.get(1).getIdent()).getArguments()[0].getType(),
+            Assertions.assertEquals(ProgramParser.procDefMap.getProcedures().get(actorName).get(list.get(1).getIdent()).getArguments()[0].getType(),
                     list.get(1).getParameterList().getParameterListPlain().getParameters().get(0).getType());
             Assertions.assertTrue(list.get(1).getStmtList().getStmts().getListOfStmt().get(0) instanceof MoveSteps);
             Truth.assertThat(((MoveSteps) list.get(1).getStmtList().getStmts().getListOfStmt().get(0)).getSteps()).isInstanceOf(Identifier.class);

@@ -29,14 +29,15 @@ public class CallWithoutDefinition implements IssueFinder, ScratchVisitor {
     private List<String> proceduresDef;
     private List<String> calledProcedures;
     private Map<Identifier, ProcedureInfo> procMap;
+    private Program program;
 
     @Override
     public IssueReport check(Program program) {
         Preconditions.checkNotNull(program);
+        this.program=program;
         found = false;
         count = 0;
         actorNames = new LinkedList<>();
-        procMap = program.getProcedureMapping().getProcedures();
         program.accept(this);
         String notes = NOTE1;
         if (count > 0) {
@@ -55,6 +56,7 @@ public class CallWithoutDefinition implements IssueFinder, ScratchVisitor {
         currentActor = actor;
         calledProcedures = new ArrayList<>();
         proceduresDef = new ArrayList<>();
+        procMap = program.getProcedureMapping().getProcedures().get(currentActor.getIdent().getName());
         if (!actor.getChildren().isEmpty()) {
             for (ASTNode child : actor.getChildren()) {
                 child.accept(this);
@@ -70,6 +72,9 @@ public class CallWithoutDefinition implements IssueFinder, ScratchVisitor {
     private void checkCalls() {
         for (String calledProcedure : calledProcedures) {
             if (!proceduresDef.contains(calledProcedure)) {
+                System.out.println(calledProcedures);
+                System.out.println(proceduresDef);
+                System.out.println(currentActor.getIdent().getName());
                 found = true;
                 count++;
             }

@@ -38,14 +38,15 @@ public class IllegalParameterRefactor implements IssueFinder, ScratchVisitor {
     private Map<Identifier, ProcedureInfo> procedureMap;
     private ArgumentInfo[] currentArguments;
     private boolean insideProcedure;
+    private Program program;
 
     @Override
     public IssueReport check(Program program) {
         Preconditions.checkNotNull(program);
+        this.program = program;
         found = false;
         count = 0;
         actorNames = new LinkedList<>();
-        procedureMap = program.getProcedureMapping().getProcedures();
         program.accept(this);
         String notes = NOTE1;
         if (count > 0) {
@@ -62,6 +63,7 @@ public class IllegalParameterRefactor implements IssueFinder, ScratchVisitor {
     @Override
     public void visit(ActorDefinition actor) {
         currentActor = actor;
+        procedureMap=program.getProcedureMapping().getProcedures().get(currentActor.getIdent().getName());
         if (!actor.getChildren().isEmpty()) {
             for (ASTNode child : actor.getChildren()) {
                 child.accept(this);

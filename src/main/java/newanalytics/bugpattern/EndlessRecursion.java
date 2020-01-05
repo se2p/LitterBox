@@ -31,6 +31,7 @@ public class EndlessRecursion implements IssueFinder, ScratchVisitor {
     private String currentProcedureName;
     private boolean insideProcedure;
     private int loopIfCounter;
+    private Program program;
 
     @Override
     public IssueReport check(Program program) {
@@ -38,7 +39,7 @@ public class EndlessRecursion implements IssueFinder, ScratchVisitor {
         found = false;
         count = 0;
         actorNames = new LinkedList<>();
-        procMap = program.getProcedureMapping().getProcedures();
+        this.program=program;
         program.accept(this);
         String notes = NOTE1;
         if (count > 0) {
@@ -55,6 +56,7 @@ public class EndlessRecursion implements IssueFinder, ScratchVisitor {
     @Override
     public void visit(ActorDefinition actor) {
         currentActor = actor;
+        procMap=program.getProcedureMapping().getProcedures().get(currentActor.getIdent().getName());
         loopIfCounter = 0;
         if (!actor.getChildren().isEmpty()) {
             for (ASTNode child : actor.getChildren()) {

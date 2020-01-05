@@ -9,10 +9,7 @@ import scratch.ast.parser.symboltable.ArgumentInfo;
 import scratch.ast.parser.symboltable.ProcedureInfo;
 import utils.Preconditions;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class AmbiguousParameterName implements IssueFinder {
     private static final String NOTE1 = "There are no ambiguous parameter names in your project.";
@@ -24,12 +21,16 @@ public class AmbiguousParameterName implements IssueFinder {
     public IssueReport check(Program program) {
         Preconditions.checkNotNull(program);
         List<String> found = new ArrayList<>();
-        HashMap<Identifier, ProcedureInfo> procs = program.getProcedureMapping().getProcedures();
-        Set<Identifier> ids = procs.keySet();
-        for (Identifier id : ids) {
-            ProcedureInfo current = procs.get(id);
-            if (checkArguments(current.getArguments())) {
-                found.add(current.getActorName());
+        HashMap<String, Map<Identifier, ProcedureInfo>> procs = program.getProcedureMapping().getProcedures();
+        Set<String> actors = procs.keySet();
+        for (String actor : actors) {
+            Map<Identifier, ProcedureInfo> current = procs.get(actor);
+            Set<Identifier> ids = current.keySet();
+            for (Identifier id : ids) {
+                ProcedureInfo currentProc = current.get(id);
+                if (checkArguments(currentProc.getArguments())) {
+                    found.add(currentProc.getActorName());
+                }
             }
         }
         String notes = NOTE1;

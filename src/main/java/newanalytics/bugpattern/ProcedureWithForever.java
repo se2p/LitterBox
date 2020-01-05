@@ -34,6 +34,7 @@ public class ProcedureWithForever implements IssueFinder, ScratchVisitor {
     private List<String> calledProcedures;
     private boolean insideProcedure;
     private Map<Identifier, ProcedureInfo> procMap;
+    private Program program;
 
     @Override
     public IssueReport check(Program program) {
@@ -41,7 +42,7 @@ public class ProcedureWithForever implements IssueFinder, ScratchVisitor {
         found = false;
         count = 0;
         actorNames = new LinkedList<>();
-        procMap = program.getProcedureMapping().getProcedures();
+       this.program=program;
         program.accept(this);
         String notes = NOTE1;
         if (count > 0) {
@@ -58,6 +59,7 @@ public class ProcedureWithForever implements IssueFinder, ScratchVisitor {
     @Override
     public void visit(ActorDefinition actor) {
         currentActor = actor;
+        procMap=program.getProcedureMapping().getProcedures().get(currentActor.getIdent().getName());
         calledProcedures = new ArrayList<>();
         proceduresWithForever = new ArrayList<>();
         if (!actor.getChildren().isEmpty()) {
