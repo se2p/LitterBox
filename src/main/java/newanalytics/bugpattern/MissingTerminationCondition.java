@@ -49,8 +49,8 @@ public class MissingTerminationCondition implements IssueFinder {
         List<ActorDefinition> actorDefs = program.getActorDefinitionList().getDefintions();
         for (ActorDefinition actorDef : actorDefs) {
             List<Script> scripts = actorDef.getScripts().getScriptList();
-            for (int j = 0; j < scripts.size(); j++) {
-                List<Stmt> stmts = scripts.get(0).getStmtList().getStmts().getListOfStmt();
+            for (Script script : scripts) {
+                List<Stmt> stmts = script.getStmtList().getStmts().getListOfStmt();
                 if (stmts.size() > 0) {
                     checkMissTermination(stmts, actorDef.getIdent().getName());
                 }
