@@ -18,6 +18,7 @@ public class CallWithoutDefinitionTest  {
     private static Program sportPong;
     private static Program writeTheDraw;
     private static Program scratchHomeVideo;
+    private static Program derpyAnimal;
     private static ObjectMapper mapper = new ObjectMapper();
 
     @BeforeAll
@@ -33,6 +34,8 @@ public class CallWithoutDefinitionTest  {
         writeTheDraw = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
         f = new File("./src/test/fixtures/bugpattern/scratchHomeVideo.json");
         scratchHomeVideo = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
+         f = new File("./src/test/fixtures/bugpattern/derpyAnimal.json");
+        derpyAnimal = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
     }
 
     @Test
@@ -67,7 +70,13 @@ public class CallWithoutDefinitionTest  {
     public void testHomeVideo() {
         CallWithoutDefinition parameterName = new CallWithoutDefinition();
         IssueReport report = parameterName.check(scratchHomeVideo);
-        System.out.println(report.getPosition());
+        Assertions.assertEquals(0, report.getCount());
+    }
+
+    @Test
+    public void testDerpyAnimal() {
+        CallWithoutDefinition parameterName = new CallWithoutDefinition();
+        IssueReport report = parameterName.check(derpyAnimal);
         Assertions.assertEquals(0, report.getCount());
     }
 }
