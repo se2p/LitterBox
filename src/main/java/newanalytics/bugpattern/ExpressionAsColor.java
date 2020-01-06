@@ -97,11 +97,6 @@ public class ExpressionAsColor implements IssueFinder, ScratchVisitor {
     public void visit(Touching node) {
         if (!(node.getTouchable() instanceof MousePointer) && !(node.getTouchable() instanceof Edge) && !(node.getTouchable() instanceof SpriteTouchable)) {
             if (!(node.getTouchable() instanceof ColorLiteral)) {
-                System.out.println(node.getTouchable().getClass());
-                System.out.println(currentActor.getIdent().getName());
-                if(node.getTouchable() instanceof FromNumber){
-                    System.out.println(((FromNumber) node.getTouchable()).getValue().getClass());
-                }
                 count++;
                 found = true;
             }

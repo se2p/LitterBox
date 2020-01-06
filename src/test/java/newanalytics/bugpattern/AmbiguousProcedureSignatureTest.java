@@ -49,4 +49,5 @@ public class AmbiguousProcedureSignatureTest {
         IssueReport report = parameterName.check(ambiguousProcedureDiffArg);
         Assertions.assertEquals(2, report.getCount());
     }
+
 }
