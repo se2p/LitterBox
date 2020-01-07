@@ -32,7 +32,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class NoWorkingScripts implements IssueFinder, ScratchVisitor {
-    public static final String NAME = "No_Working_Scripts";
+    public static final String NAME = "no_working_scripts";
     public static final String SHORT_NAME = "noWorkScript";
     private static final String NOTE1 = "There are no sprites with only empty scripts and simultaneously dead code in your project.";
     private static final String NOTE2 = "Some of the sprites contain only empty scripts and simultaneously dead code.";
