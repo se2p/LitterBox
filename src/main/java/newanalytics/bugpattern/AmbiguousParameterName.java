@@ -15,7 +15,7 @@ public class AmbiguousParameterName implements IssueFinder {
     private static final String NOTE1 = "There are no ambiguous parameter names in your project.";
     private static final String NOTE2 = "Some of the procedures contain ambiguous parameter names.";
     public static final String NAME = "ambiguous_parameter_name";
-    public static final String SHORT_NAME = "ambgsprmtrname";
+    public static final String SHORT_NAME = "ambParamName";
 
     @Override
     public IssueReport check(Program program) {

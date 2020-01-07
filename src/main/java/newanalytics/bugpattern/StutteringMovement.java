@@ -45,7 +45,7 @@ public class StutteringMovement implements IssueFinder, ScratchVisitor {
     private static final String NOTE1 = "There are no scripts causing stuttering movement in your project.";
     private static final String NOTE2 = "There are some scripts causing stuttering movement in your project.";
     public static final String NAME = "stuttering_movement";
-    public static final String SHORT_NAME = "stuttmvmnt";
+    public static final String SHORT_NAME = "stuttMove";
     private boolean found = false;
     private int count = 0;
     private List<String> actorNames = new LinkedList<>();

@@ -38,7 +38,7 @@ import utils.Preconditions;
 public class LongScript implements IssueFinder {
 
     public static final String NAME = "long_script";
-    public static final String SHORT_NAME = "lngscr";
+    public static final String SHORT_NAME = "longScript";
     private static final String NOTE1 = "There are no long scripts.";
     private static final String NOTE2 = "Some scripts are very long.";
     private static final int NUMBER_TOO_LONG = 12;

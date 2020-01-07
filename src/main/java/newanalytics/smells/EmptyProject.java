@@ -12,7 +12,7 @@ import java.util.ArrayList;
 
 public class EmptyProject implements ScratchVisitor, IssueFinder {
     public static final String NAME = "empty_project";
-    public static final String SHORT_NAME = "emptyprjct";
+    public static final String SHORT_NAME = "empProj";
     private int count = 0;
     private boolean foundScript = false;
 

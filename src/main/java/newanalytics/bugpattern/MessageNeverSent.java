@@ -16,8 +16,8 @@ import java.util.*;
 
 public class MessageNeverSent implements IssueFinder, ScratchVisitor {
 
-    public static final String NAME = "never_sent_message";
-    public static final String SHORT_NAME = "nvrsent";
+    public static final String NAME = "message_Never_Sent";
+    public static final String SHORT_NAME = "messNeverSent";
 
     private List<Pair> messageSent = new ArrayList<>();
     private List<Pair> messageReceived = new ArrayList<>();

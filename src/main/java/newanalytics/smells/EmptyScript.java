@@ -39,7 +39,7 @@ public class EmptyScript implements IssueFinder {
     private static final String NOTE1 = "There are no scripts with empty body in your project.";
     private static final String NOTE2 = "Some of the sprites contain scripts with a empty body.";
     public static final String NAME = "empty_script";
-    public static final String SHORT_NAME = "emptyscrpt";
+    public static final String SHORT_NAME = "empScript";
 
     public EmptyScript() {
     }

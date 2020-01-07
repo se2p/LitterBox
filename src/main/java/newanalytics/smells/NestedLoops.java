@@ -45,7 +45,7 @@ import utils.Preconditions;
 public class NestedLoops implements IssueFinder, ScratchVisitor {
 
     public static final String NAME = "nested_loops";
-    public static final String SHORT_NAME = "nstloop";
+    public static final String SHORT_NAME = "nestLoop";
     private static final String NOTE1 = "There are no loops inside other loops in your project.";
     private static final String NOTE2 = "Some of the sprites contain forever loops inside other loops.";
     private boolean found = false;

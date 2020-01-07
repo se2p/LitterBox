@@ -19,7 +19,7 @@ public class ParameterOutOfScope implements IssueFinder, ScratchVisitor {
     private static final String NOTE1 = "There are no parameters out of scope in your project.";
     private static final String NOTE2 = "Some of the scripts contain parameters out of scope.";
     public static final String NAME = "parameter_out_of_scope";
-    public static final String SHORT_NAME = "prmtroutofscp";
+    public static final String SHORT_NAME = "paramOutScope";
     private boolean found = false;
     private int count = 0;
     private List<String> actorNames = new LinkedList<>();

@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 
 public class MissingCloneCall implements IssueFinder, ScratchVisitor {
     public static final String NAME = "missing_clone_call";
-    public static final String SHORT_NAME = "mssngclncll";
+    public static final String SHORT_NAME = "mssCloneCll";
     private static final String NOTE1 = "There are no sprites with missing clone calls in your project.";
     private static final String NOTE2 = "Some of the sprites contain missing clone calls.";
     private List<String> whenStartsAsCloneActors = new ArrayList<>();

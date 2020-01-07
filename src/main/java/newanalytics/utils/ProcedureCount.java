@@ -13,7 +13,7 @@ import java.util.ArrayList;
 
 public class ProcedureCount implements IssueFinder, ScratchVisitor {
     public static final String NAME = "procedure_count";
-    public static final String SHORT_NAME = "prcdrcnt";
+    public static final String SHORT_NAME = "procCnt";
 
     private int count = 0;
 

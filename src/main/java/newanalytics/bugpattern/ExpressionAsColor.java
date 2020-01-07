@@ -7,7 +7,6 @@ import scratch.ast.model.ActorDefinition;
 import scratch.ast.model.Program;
 import scratch.ast.model.expression.bool.ColorTouches;
 import scratch.ast.model.expression.bool.Touching;
-import scratch.ast.model.expression.color.FromNumber;
 import scratch.ast.model.literals.ColorLiteral;
 import scratch.ast.model.statement.pen.SetPenColorToColorStmt;
 import scratch.ast.model.touchable.Edge;
@@ -21,7 +20,7 @@ import java.util.List;
 
 public class ExpressionAsColor implements IssueFinder, ScratchVisitor {
     public static final String NAME = "expression_as_color";
-    public static final String SHORT_NAME = "xprssnsclr";
+    public static final String SHORT_NAME = "exprColor";
     private static final String NOTE1 = "There are no expressions used as colors in your project.";
     private static final String NOTE2 = "Some of the sprites use expressions as colors.";
     private boolean found = false;

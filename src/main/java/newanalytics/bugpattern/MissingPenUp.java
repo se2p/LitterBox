@@ -33,7 +33,7 @@ import java.util.List;
 public class MissingPenUp implements IssueFinder {
 
     public static final String NAME = "missing_pen_up";
-    public static final String SHORT_NAME = "msspup";
+    public static final String SHORT_NAME = "mssPenUp";
 
     @Override
     public IssueReport check(Program program) {

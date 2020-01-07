@@ -9,7 +9,7 @@ import java.util.ArrayList;
 
 public class SpriteCount implements ScratchVisitor, IssueFinder {
     public static final String NAME = "sprite_count";
-    public static final String SHORT_NAME = "sprtcnt";
+    public static final String SHORT_NAME = "spriteCnt";
 
     @Override
     public IssueReport check(Program program) {

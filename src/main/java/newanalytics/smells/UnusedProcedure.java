@@ -43,7 +43,7 @@ public class UnusedProcedure implements IssueFinder, ScratchVisitor {
     private static final String NOTE1 = "There are no uncalled procedures in your project.";
     private static final String NOTE2 = "Some of the procedures are never used.";
     public static final String NAME = "unused_procedure";
-    public static final String SHORT_NAME = "unsdprcdr";
+    public static final String SHORT_NAME = "unusedProc";
     private boolean found = false;
     private int count = 0;
     private List<String> actorNames = new LinkedList<>();

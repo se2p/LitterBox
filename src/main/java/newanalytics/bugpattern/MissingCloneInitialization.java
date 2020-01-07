@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 public class MissingCloneInitialization implements IssueFinder, ScratchVisitor {
 
     public static final String NAME = "missing_clone_initialization";
-    public static final String SHORT_NAME = "msscloneinit";
+    public static final String SHORT_NAME = "mssCloneInit";
 
     private List<String> whenStartsAsCloneActors = new ArrayList<>();
     private List<String> clonedActors = new ArrayList<>();

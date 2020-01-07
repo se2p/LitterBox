@@ -37,7 +37,7 @@ public class EmptyControlBody implements IssueFinder, ScratchVisitor {
     private static final String NOTE1 = "There are no condition blocks with empty body in your project.";
     private static final String NOTE2 = "Some of condition blocks have an empty body.";
     public static final String NAME = "empty_body";
-    public static final String SHORT_NAME = "emptybdy";
+    public static final String SHORT_NAME = "empBody";
     private boolean found = false;
     private int count = 0;
     private List<String> actorNames = new LinkedList<>();

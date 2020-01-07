@@ -22,7 +22,7 @@ import java.util.Map;
 
 public class ProcedureWithTermination implements ScratchVisitor, IssueFinder {
     public static final String NAME = "procedure_with_termination";
-    public static final String SHORT_NAME = "prcdrwthtrmntn";
+    public static final String SHORT_NAME = "procWithTerm";
     private static final String NOTE1 = "There are no procedures with termination where the call is followed by statements in your project.";
     private static final String NOTE2 = "Some of the sprites contain procedures with forever where the call is followed by statements.";
     private boolean found = false;

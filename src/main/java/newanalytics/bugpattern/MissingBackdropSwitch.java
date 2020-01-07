@@ -19,7 +19,7 @@ import java.util.*;
 public class MissingBackdropSwitch implements IssueFinder, ScratchVisitor {
 
     public static final String NAME = "missing_backdrop_switch";
-    public static final String SHORT_NAME = "mssngbckdrpswtch";
+    public static final String SHORT_NAME = "mssBackdrSwitch";
 
     private List<Pair> switched = new ArrayList<>();
     private List<Pair> switchReceived = new ArrayList<>();

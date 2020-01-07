@@ -14,7 +14,7 @@ import java.util.List;
 
 public class WeightedMethodCount implements IssueFinder, ScratchVisitor {
     public static final String NAME = "weighted_method_count";
-    public static final String SHORT_NAME = "wghtdmthdcnt";
+    public static final String SHORT_NAME = "weightedMethCnt";
     private int count = 0;
     private List<String> actorNames = new LinkedList<>();
 

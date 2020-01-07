@@ -7,7 +7,6 @@ import scratch.ast.model.ActorDefinition;
 import scratch.ast.model.Program;
 import scratch.ast.model.Script;
 import scratch.ast.model.event.StartedAsClone;
-import scratch.ast.model.literals.StringLiteral;
 import scratch.ast.model.statement.common.CreateCloneOf;
 import scratch.ast.model.variable.StrId;
 import scratch.ast.visitor.ScratchVisitor;
@@ -20,7 +19,7 @@ public class RecursiveCloning implements ScratchVisitor, IssueFinder {
     private static final String NOTE1 = "There are no recursive cloning calls in your project.";
     private static final String NOTE2 = "Some of the sprites contain recursive cloning calls.";
     public static final String NAME = "recursive_cloning";
-    public static final String SHORT_NAME = "rcrsvclnng";
+    public static final String SHORT_NAME = "recClone";
     private boolean found = false;
     private boolean startAsClone = false;
     private int count = 0;

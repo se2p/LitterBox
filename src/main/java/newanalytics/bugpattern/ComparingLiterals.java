@@ -19,7 +19,7 @@ import java.util.List;
 public class ComparingLiterals implements IssueFinder, ScratchVisitor {
 
     public static final String NAME = "comparing_literals";
-    public static final String SHORT_NAME = "cmplit";
+    public static final String SHORT_NAME = "compLit";
 
     private boolean found = false;
     private int count = 0;

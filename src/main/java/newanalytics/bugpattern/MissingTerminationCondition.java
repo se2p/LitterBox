@@ -37,7 +37,7 @@ import java.util.List;
  */
 public class MissingTerminationCondition implements IssueFinder {
     public static final String NAME = "missing_termination";
-    public static final String SHORT_NAME = "msstrm";
+    public static final String SHORT_NAME = "mssTerm";
     private List<String> found;
     private int counter;
 

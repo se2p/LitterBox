@@ -22,7 +22,7 @@ import java.util.Map;
 
 public class ProcedureWithForever implements IssueFinder, ScratchVisitor {
     public static final String NAME = "procedure_with_forever";
-    public static final String SHORT_NAME = "prcdrwthfrvr";
+    public static final String SHORT_NAME = "procWithForever";
     private static final String NOTE1 = "There are no procedures with forever where the call is followed by statements in your project.";
     private static final String NOTE2 = "Some of the sprites contain procedures with forever where the call is followed by statements.";
     private boolean found = false;

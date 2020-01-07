@@ -31,7 +31,7 @@ import java.util.List;
 
 public class EmptySprite implements IssueFinder {
     public static final String NAME = "empty_sprite";
-    public static final String SHORT_NAME = "emptysprt";
+    public static final String SHORT_NAME = "empSprite";
     private static final String NOTE1 = "There are no sprites without scripts in your project.";
     private static final String NOTE2 = "Some of the sprites contain no scripts.";
 

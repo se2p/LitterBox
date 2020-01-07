@@ -34,7 +34,7 @@ import java.util.List;
 public class MissingEraseAll implements IssueFinder {
 
     public static final String NAME = "missing_erase_all";
-    public static final String SHORT_NAME = "msserase";
+    public static final String SHORT_NAME = "mssEraseAll";
 
     @Override
     public IssueReport check(Program program) {

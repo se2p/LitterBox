@@ -14,7 +14,7 @@ public class AmbiguousProcedureSignature implements IssueFinder {
     private static final String NOTE1 = "There are no ambiguous procedure signatures in your project.";
     private static final String NOTE2 = "Some of the procedures signatures are ambiguous.";
     public static final String NAME = "ambiguous_procedure_signature";
-    public static final String SHORT_NAME = "ambgsprcdrsgntr";
+    public static final String SHORT_NAME = "ambProcSign";
 
     @Override
     public IssueReport check(Program program) {

@@ -21,7 +21,7 @@ public class CallWithoutDefinition implements IssueFinder, ScratchVisitor {
     private static final String NOTE1 = "There are no calls without definitions in your project.";
     private static final String NOTE2 = "Some of the sprites contain calls without definitions.";
     public static final String NAME = "call_without_definition";
-    public static final String SHORT_NAME = "cllwthoutdf";
+    public static final String SHORT_NAME = "cllWithoutDef";
     private boolean found = false;
     private int count = 0;
     private List<String> actorNames = new LinkedList<>();

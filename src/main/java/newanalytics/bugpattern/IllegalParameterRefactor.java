@@ -28,7 +28,7 @@ import java.util.Map;
 
 public class IllegalParameterRefactor implements IssueFinder, ScratchVisitor {
     public static final String NAME = "Illegal_Parameter_Refactor";
-    public static final String SHORT_NAME = "illglprmtrrfctr";
+    public static final String SHORT_NAME = "illParamRefac";
     private static final String NOTE1 = "There are no procedures with illegally refactored parameters in your project.";
     private static final String NOTE2 = "Some of the sprites contain procedures with illegally refactored parameters.";
     private boolean found = false;

@@ -3,7 +3,6 @@ package newanalytics.bugpattern;
 import newanalytics.IssueFinder;
 import newanalytics.IssueReport;
 import newanalytics.IssueTool;
-import scratch.ast.model.ActorDefinition;
 import scratch.ast.model.Program;
 import scratch.ast.parser.symboltable.ExpressionListInfo;
 import scratch.ast.parser.symboltable.VariableInfo;
@@ -18,7 +17,7 @@ public class SameVariableDifferentSprite implements IssueFinder {
     private static final String NOTE1 = "There are no variables with the same name in your project.";
     private static final String NOTE2 = "Some of the variables have the same name but are in different sprites.";
     public static final String NAME = "same_variable_different_sprite";
-    public static final String SHORT_NAME = "smvrbldffrntsprt";
+    public static final String SHORT_NAME = "sameVarDiffSprite";
     private boolean found = false;
     private int count = 0;
     private List<String> actorNames = new LinkedList<>();

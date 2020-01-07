@@ -19,7 +19,7 @@ public class OrphanedParameter implements IssueFinder, ScratchVisitor {
     private static final String NOTE1 = "There are no orphaned parameters in your project.";
     private static final String NOTE2 = "Some of the procedures contain orphaned parameters.";
     public static final String NAME = "orphaned_parameter";
-    public static final String SHORT_NAME = "orphndprmtr";
+    public static final String SHORT_NAME = "OrphParam";
     private boolean found = false;
     private int count = 0;
     private List<String> actorNames = new LinkedList<>();

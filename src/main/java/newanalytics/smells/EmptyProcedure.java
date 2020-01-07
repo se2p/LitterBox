@@ -14,7 +14,7 @@ import java.util.List;
 
 public class EmptyProcedure implements IssueFinder, ScratchVisitor {
     public static final String NAME = "empty_procedure";
-    public static final String SHORT_NAME = "emptyprcdr";
+    public static final String SHORT_NAME = "empProc";
     private static final String NOTE1 = "There are no empty procedures in your project.";
     private static final String NOTE2 = "Some of the procedures are empty.";
     private boolean found = false;

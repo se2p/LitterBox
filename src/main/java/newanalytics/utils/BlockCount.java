@@ -30,7 +30,7 @@ import static scratch.ast.Constants.*;
 
 public class BlockCount implements IssueFinder, ScratchVisitor {
     public static final String NAME = "block_count";
-    public static final String SHORT_NAME = "blckcnt";
+    public static final String SHORT_NAME = "blockCnt";
     private int count = 0;
     private boolean insideScript = false;
     private boolean insideProcedure = false;
