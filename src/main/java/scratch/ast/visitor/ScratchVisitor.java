@@ -22,8 +22,20 @@ import scratch.ast.model.ASTNode;
 import scratch.ast.model.ActorDefinition;
 import scratch.ast.model.Script;
 import scratch.ast.model.StmtList;
-import scratch.ast.model.event.*;
-import scratch.ast.model.expression.bool.*;
+import scratch.ast.model.event.BackdropSwitchTo;
+import scratch.ast.model.event.Clicked;
+import scratch.ast.model.event.KeyPressed;
+import scratch.ast.model.event.Never;
+import scratch.ast.model.event.ReceptionOfMessage;
+import scratch.ast.model.event.StartedAsClone;
+import scratch.ast.model.expression.bool.And;
+import scratch.ast.model.expression.bool.BiggerThan;
+import scratch.ast.model.expression.bool.ColorTouches;
+import scratch.ast.model.expression.bool.Equals;
+import scratch.ast.model.expression.bool.LessThan;
+import scratch.ast.model.expression.bool.Not;
+import scratch.ast.model.expression.bool.Or;
+import scratch.ast.model.expression.bool.Touching;
 import scratch.ast.model.expression.list.ExpressionList;
 import scratch.ast.model.expression.list.ExpressionListPlain;
 import scratch.ast.model.literals.BoolLiteral;
@@ -58,6 +70,8 @@ import scratch.ast.model.statement.spritemotion.GoToPos;
 import scratch.ast.model.statement.spritemotion.MoveSteps;
 import scratch.ast.model.statement.spritemotion.SetXTo;
 import scratch.ast.model.statement.spritemotion.SetYTo;
+import scratch.ast.model.statement.termination.DeleteClone;
+import scratch.ast.model.statement.termination.StopAll;
 import scratch.ast.model.statement.termination.TerminationStmt;
 import scratch.ast.model.type.Type;
 import scratch.ast.model.variable.Identifier;
@@ -409,6 +423,32 @@ public interface ScratchVisitor {
     }
 
     /**
+     * Default implementation of visit method for {@link DeleteClone}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node DeleteClone Node of which the children will be iterated
+     */
+    default void visit(DeleteClone node) {
+        visit((ASTNode) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link StopAll}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node StopAll Node of which the children will be iterated
+     */
+    default void visit(StopAll node) {
+        visit((ASTNode) node);
+    }
+
+    /**
      * Default implementation of visit method for {@link StmtList}.
      *
      * <p>
@@ -730,7 +770,7 @@ public interface ScratchVisitor {
      * @param node GoToPos Node of which the children will be iterated
      */
     default void visit(GoToPos node) {
-
+        visit((ASTNode) node);
     }
 
     /**

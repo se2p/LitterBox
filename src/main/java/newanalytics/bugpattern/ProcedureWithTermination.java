@@ -9,7 +9,8 @@ import scratch.ast.model.StmtList;
 import scratch.ast.model.procedure.ProcedureDefinition;
 import scratch.ast.model.statement.CallStmt;
 import scratch.ast.model.statement.Stmt;
-import scratch.ast.model.statement.termination.TerminationStmt;
+import scratch.ast.model.statement.termination.DeleteClone;
+import scratch.ast.model.statement.termination.StopAll;
 import scratch.ast.model.variable.Identifier;
 import scratch.ast.parser.symboltable.ProcedureInfo;
 import scratch.ast.visitor.ScratchVisitor;
@@ -42,7 +43,7 @@ public class ProcedureWithTermination implements ScratchVisitor, IssueFinder {
         found = false;
         count = 0;
         actorNames = new LinkedList<>();
-        this.program=program;
+        this.program = program;
         program.accept(this);
         String notes = NOTE1;
         if (count > 0) {
@@ -61,7 +62,7 @@ public class ProcedureWithTermination implements ScratchVisitor, IssueFinder {
         currentActor = actor;
         calledProcedures = new ArrayList<>();
         proceduresWithForever = new ArrayList<>();
-        procMap=program.getProcedureMapping().getProcedures().get(currentActor.getIdent().getName());
+        procMap = program.getProcedureMapping().getProcedures().get(currentActor.getIdent().getName());
         if (!actor.getChildren().isEmpty()) {
             for (ASTNode child : actor.getChildren()) {
                 child.accept(this);
@@ -97,7 +98,19 @@ public class ProcedureWithTermination implements ScratchVisitor, IssueFinder {
     }
 
     @Override
-    public void visit(TerminationStmt node) {
+    public void visit(DeleteClone node) {
+        if (insideProcedure) {
+            proceduresWithForever.add(currentProcedureName);
+        }
+        if (!node.getChildren().isEmpty()) {
+            for (ASTNode child : node.getChildren()) {
+                child.accept(this);
+            }
+        }
+    }
+
+    @Override
+    public void visit(StopAll node) {
         if (insideProcedure) {
             proceduresWithForever.add(currentProcedureName);
         }
