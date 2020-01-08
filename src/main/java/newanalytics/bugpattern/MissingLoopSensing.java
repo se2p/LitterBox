@@ -54,9 +54,8 @@ public class MissingLoopSensing implements IssueFinder {
         for (ActorDefinition actorDef : actorDefs) {
             List<Script> scripts = actorDef.getScripts().getScriptList();
             for (int j = 0; j < scripts.size(); j++) {
-                List<Stmt> stmts = scripts.get(0).getStmtList().getStmts().getListOfStmt();
-                if (stmts.size() > 0 && scripts.get(0).getEvent() instanceof GreenFlag) {
-
+                List<Stmt> stmts = scripts.get(j).getStmtList().getStmts().getListOfStmt();
+                if (stmts.size() > 0 && scripts.get(j).getEvent() instanceof GreenFlag) {
                     checkMissLoop(stmts, actorDef.getIdent().getName());
                 }
             }
