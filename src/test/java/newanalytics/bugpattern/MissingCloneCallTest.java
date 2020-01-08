@@ -16,6 +16,7 @@ public class MissingCloneCallTest {
     private static Program empty;
     private static Program missingCloneCall;
     private static Program cloneInOtherSprite;
+    private static Program rainbowSix;
     private static ObjectMapper mapper = new ObjectMapper();
 
     @BeforeAll
@@ -27,6 +28,8 @@ public class MissingCloneCallTest {
         missingCloneCall = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
         f = new File("./src/test/fixtures/bugpattern/cloneInOtherSprite.json");
         cloneInOtherSprite = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
+        f = new File("./src/test/fixtures/bugpattern/rainbowSix.json");
+        rainbowSix = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
     }
 
     @Test
@@ -47,6 +50,13 @@ public class MissingCloneCallTest {
     public void testCloneInOtherSprite() {
         MissingCloneCall parameterName = new MissingCloneCall();
         IssueReport report = parameterName.check(cloneInOtherSprite);
+        Assertions.assertEquals(0, report.getCount());
+    }
+
+    @Test
+    public void testRainbowSix() {
+        MissingCloneCall parameterName = new MissingCloneCall();
+        IssueReport report = parameterName.check(rainbowSix);
         Assertions.assertEquals(0, report.getCount());
     }
 }

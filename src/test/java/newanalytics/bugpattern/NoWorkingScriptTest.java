@@ -16,6 +16,7 @@ public class NoWorkingScriptTest {
     private static Program empty;
     private static Program noWorkingScript;
     private static Program workingScript;
+    private static Program myWarrior;
     private static ObjectMapper mapper = new ObjectMapper();
 
     @BeforeAll
@@ -27,6 +28,8 @@ public class NoWorkingScriptTest {
         noWorkingScript = ProgramParser.parseProgram(f.getName(),mapper.readTree(f));
         f = new File("./src/test/fixtures/bugpattern/missingPenUp.json");
         workingScript = ProgramParser.parseProgram(f.getName(),mapper.readTree(f));
+        f = new File("./src/test/fixtures/bugpattern/myWarrior.json");
+       myWarrior = ProgramParser.parseProgram(f.getName(),mapper.readTree(f));
     }
 
     @Test
@@ -47,6 +50,13 @@ public class NoWorkingScriptTest {
     public void testWorkingScript(){
         NoWorkingScripts parameterName = new NoWorkingScripts();
         IssueReport report = parameterName.check(workingScript);
+        Assertions.assertEquals(0,report.getCount() );
+    }
+
+    @Test
+    public void testMyWarrior(){
+        NoWorkingScripts parameterName = new NoWorkingScripts();
+        IssueReport report = parameterName.check(myWarrior);
         Assertions.assertEquals(0,report.getCount() );
     }
 }

@@ -39,8 +39,9 @@ public class NoWorkingScripts implements IssueFinder, ScratchVisitor {
     private int count = 0;
     private List<String> actorNames = new LinkedList<>();
     private ActorDefinition currentActor;
-    private boolean stillFullfilledEmptyScript = true;
+    private boolean stillFullfilledEmptyScript = false;
     private boolean deadCodeFound = false;
+    private boolean foundEvent = false;
 
     @Override
     public IssueReport check(Program program) {
@@ -48,8 +49,6 @@ public class NoWorkingScripts implements IssueFinder, ScratchVisitor {
         count = 0;
         actorNames = new LinkedList<>();
 
-        stillFullfilledEmptyScript = true;
-        deadCodeFound = false;
         program.accept(this);
         String notes = NOTE1;
         if (count > 0) {
@@ -68,13 +67,14 @@ public class NoWorkingScripts implements IssueFinder, ScratchVisitor {
         currentActor = actor;
         stillFullfilledEmptyScript = true;
         deadCodeFound = false;
+        foundEvent = false;
         if (!actor.getChildren().isEmpty()) {
             for (ASTNode child : actor.getChildren()) {
                 child.accept(this);
             }
         }
 
-        if (deadCodeFound && stillFullfilledEmptyScript) {
+        if (deadCodeFound && stillFullfilledEmptyScript && foundEvent) {
             actorNames.add(currentActor.getIdent().getName());
             count++;
         }
@@ -88,6 +88,7 @@ public class NoWorkingScripts implements IssueFinder, ScratchVisitor {
                     deadCodeFound = true;
                 }
             } else {
+                foundEvent = true;
                 if (node.getStmtList().getStmts().getListOfStmt().size() > 0) {
                     stillFullfilledEmptyScript = false;
                 }

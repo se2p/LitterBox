@@ -15,6 +15,7 @@ import java.io.IOException;
 public class AmbiguousParameterNameTest {
     private static Program empty;
     private static Program ambiguousParams;
+    private static Program clans;
     private static ObjectMapper mapper = new ObjectMapper();
 
     @BeforeAll
@@ -24,6 +25,8 @@ public class AmbiguousParameterNameTest {
         empty = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
         f = new File("./src/test/fixtures/bugpattern/ambiguousParameters.json");
         ambiguousParams= ProgramParser.parseProgram(f.getName(),mapper.readTree(f));
+        f = new File("./src/test/fixtures/bugpattern/clans.json");
+        clans= ProgramParser.parseProgram(f.getName(),mapper.readTree(f));
     }
 
     @Test
@@ -38,5 +41,12 @@ public class AmbiguousParameterNameTest {
         AmbiguousParameterName parameterName = new AmbiguousParameterName();
         IssueReport report = parameterName.check(ambiguousParams);
         Assertions.assertEquals(2,report.getCount() );
+    }
+
+    @Test
+    public void testClans(){
+        AmbiguousParameterName parameterName = new AmbiguousParameterName();
+        IssueReport report = parameterName.check(clans);
+        Assertions.assertEquals(0,report.getCount() );
     }
 }
