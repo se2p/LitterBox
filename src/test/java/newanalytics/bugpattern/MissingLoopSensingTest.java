@@ -38,7 +38,6 @@ public class MissingLoopSensingTest {
     public void testMissingLoopSensing() {
         MissingLoopSensing parameterName = new MissingLoopSensing();
         IssueReport report = parameterName.check(codeHero);
-        System.out.println(report.getPosition());
         Assertions.assertEquals(2, report.getCount());
     }
 
