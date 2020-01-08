@@ -167,7 +167,7 @@
       "blocks": {
         "47kCM{!EWBd5o|dWM!U.": {
           "opcode": "event_whenflagclicked",
-          "next": "shYz8CyE$tr9~f-{,rv4",
+          "next": "Ehpb07_CkC~}_$YlmO,z",
           "parent": null,
           "inputs": {},
           "fields": {},
@@ -176,19 +176,10 @@
           "x": 455,
           "y": -30
         },
-        "w+RPw}y[#T)0w,b+x(:#": {
-          "opcode": "pen_penDown",
-          "next": "g}6BtsdiWPNY-nR;*5j5",
-          "parent": "shYz8CyE$tr9~f-{,rv4",
-          "inputs": {},
-          "fields": {},
-          "shadow": false,
-          "topLevel": false
-        },
         "g}6BtsdiWPNY-nR;*5j5": {
           "opcode": "looks_say",
           "next": "cDJFs3SZs=!2+Yk-=E7f",
-          "parent": "w+RPw}y[#T)0w,b+x(:#",
+          "parent": "shYz8CyE$tr9~f-{,rv4",
           "inputs": {
             "MESSAGE": [
               1,
@@ -231,8 +222,8 @@
         },
         "shYz8CyE$tr9~f-{,rv4": {
           "opcode": "pen_setPenColorToColor",
-          "next": "w+RPw}y[#T)0w,b+x(:#",
-          "parent": "47kCM{!EWBd5o|dWM!U.",
+          "next": "g}6BtsdiWPNY-nR;*5j5",
+          "parent": "Ehpb07_CkC~}_$YlmO,z",
           "inputs": {
             "COLOR": [
               1,
@@ -242,6 +233,15 @@
               ]
             ]
           },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "Ehpb07_CkC~}_$YlmO,z": {
+          "opcode": "pen_penUp",
+          "next": "shYz8CyE$tr9~f-{,rv4",
+          "parent": "47kCM{!EWBd5o|dWM!U.",
+          "inputs": {},
           "fields": {},
           "shadow": false,
           "topLevel": false
@@ -274,8 +274,8 @@
       "volume": 100,
       "layerOrder": 2,
       "visible": true,
-      "x": 26,
-      "y": -95,
+      "x": -168,
+      "y": -92,
       "size": 100,
       "direction": 90,
       "draggable": false,

@@ -18,9 +18,13 @@
  */
 package newanalytics.bugpattern;
 
+import static junit.framework.TestCase.fail;
+
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.truth.Truth;
-import javax.crypto.spec.PSource;
+import java.io.File;
+import java.io.IOException;
 import newanalytics.IssueReport;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -28,34 +32,28 @@ import scratch.ast.ParsingException;
 import scratch.ast.model.Program;
 import scratch.ast.parser.ProgramParser;
 
-import java.io.File;
-import java.io.IOException;
-
-import static junit.framework.TestCase.fail;
-
-class MissingPenUpTest {
+class MissingPenDownTest {
 
     private static Program program;
 
     @BeforeAll
     public static void setup() {
-        String path = "src/test/fixtures/bugpattern/missingPenUp.json";
+        String path = "src/test/fixtures/bugpattern/missingPenDown.json";
         File file = new File(path);
         ObjectMapper objectMapper = new ObjectMapper();
         try {
-            program = ProgramParser.parseProgram("missingPenUp", objectMapper.readTree(file));
+            program = ProgramParser.parseProgram("missingPenDown", objectMapper.readTree(file));
         } catch (IOException | ParsingException e) {
             fail();
         }
     }
 
     @Test
-    public void testMissingPenUp() {
-        MissingPenUp finder = new MissingPenUp();
+    public void testMissingPenDown() {
+        MissingPenDown finder = new MissingPenDown();
         final IssueReport result = finder.check(program);
-        Truth.assertThat(result.getCount()).isEqualTo(2);
-        Truth.assertThat(result.getPosition().get(0)).isEqualTo("Sprite1");
-        Truth.assertThat(result.getPosition().get(1)).isEqualTo("Apple");
+        Truth.assertThat(result.getCount()).isEqualTo(1);
+        Truth.assertThat(result.getPosition().get(0)).isEqualTo("Apple");
         System.out.println(result);
     }
 }

@@ -24,6 +24,7 @@ import scratch.ast.model.ASTNode;
 import scratch.ast.model.ActorDefinition;
 import scratch.ast.model.Program;
 import scratch.ast.model.statement.pen.PenDownStmt;
+import scratch.ast.model.statement.pen.PenUpStmt;
 import scratch.ast.visitor.ScratchVisitor;
 import utils.Preconditions;
 
@@ -67,6 +68,8 @@ public class MissingPenDown implements IssueFinder {
         @Override
         public void visit(ActorDefinition actor) {
             currentActor = actor;
+            penUpSet = false;
+            penDownSet = false;
             if (!actor.getChildren().isEmpty()) {
                 for (ASTNode child : actor.getChildren()) {
                     child.accept(this);
@@ -83,6 +86,16 @@ public class MissingPenDown implements IssueFinder {
         @Override
         public void visit(PenDownStmt node) {
             penDownSet = true;
+            if (!node.getChildren().isEmpty()) {
+                for (ASTNode child : node.getChildren()) {
+                    child.accept(this);
+                }
+            }
+        }
+
+        @Override
+        public void visit(PenUpStmt node) {
+            penUpSet = true;
             if (!node.getChildren().isEmpty()) {
                 for (ASTNode child : node.getChildren()) {
                     child.accept(this);
