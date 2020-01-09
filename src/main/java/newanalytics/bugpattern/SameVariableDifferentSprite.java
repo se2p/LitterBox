@@ -38,7 +38,7 @@ public class SameVariableDifferentSprite implements IssueFinder {
             String currentName = varInfos.get(i).getVariableName();
             String currentActor = varInfos.get(i).getActor();
             for (int j = 0; j < varInfos.size(); j++) {
-                if (i != j && currentName.equals(varInfos.get(j).getVariableName()) && currentActor.equals(varInfos.get(j).getActor())) {
+                if (i != j && currentName.equals(varInfos.get(j).getVariableName()) && !currentActor.equals(varInfos.get(j).getActor())) {
                     found = true;
                     break;
                 }
