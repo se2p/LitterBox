@@ -37,7 +37,7 @@ public class SameVariableDifferentSpriteTest {
     public void testProcedureWithTermination() {
         SameVariableDifferentSprite parameterName = new SameVariableDifferentSprite();
         IssueReport report = parameterName.check(variableDifferentSprite);
-        Assertions.assertEquals(2, report.getCount());
+        Assertions.assertEquals(4, report.getCount());
     }
 
 }
