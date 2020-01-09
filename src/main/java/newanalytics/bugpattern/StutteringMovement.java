@@ -48,7 +48,6 @@ public class StutteringMovement implements IssueFinder, ScratchVisitor {
     private int count = 0;
     private List<String> actorNames = new LinkedList<>();
     private ActorDefinition currentActor;
-    private boolean followsKeyPressed = false;
 
     @Override
     public IssueReport check(Program program) {
