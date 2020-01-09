@@ -45,6 +45,6 @@ public class StutteringMovementTest {
     public void testStutteringMovement() {
         StutteringMovement finder = new StutteringMovement();
         IssueReport report = finder.check(stutteringMovement);
-        Assertions.assertEquals(7, report.getCount());
+        Assertions.assertEquals(3, report.getCount());
     }
 }

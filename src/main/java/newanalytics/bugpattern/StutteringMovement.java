@@ -25,12 +25,10 @@ import scratch.ast.model.ActorDefinition;
 import scratch.ast.model.Program;
 import scratch.ast.model.Script;
 import scratch.ast.model.event.KeyPressed;
+import scratch.ast.model.statement.Stmt;
 import scratch.ast.model.statement.spritemotion.ChangeXBy;
 import scratch.ast.model.statement.spritemotion.ChangeYBy;
-import scratch.ast.model.statement.spritemotion.GoToPos;
 import scratch.ast.model.statement.spritemotion.MoveSteps;
-import scratch.ast.model.statement.spritemotion.SetXTo;
-import scratch.ast.model.statement.spritemotion.SetYTo;
 import scratch.ast.visitor.ScratchVisitor;
 import utils.Preconditions;
 
@@ -88,100 +86,19 @@ public class StutteringMovement implements IssueFinder, ScratchVisitor {
 
     @Override
     public void visit(Script script) {
-        followsKeyPressed = false;
+        if (script.getEvent() instanceof KeyPressed) {
+            List<Stmt> listOfStmt = script.getStmtList().getStmts().getListOfStmt();
+            if (listOfStmt.size() == 1) {
+                Stmt stmt = listOfStmt.get(0);
+                if (stmt instanceof MoveSteps || stmt instanceof ChangeXBy || stmt instanceof ChangeYBy) {
+                    found = true;
+                    count++;
+                }
+            }
+        }
+
         if (!script.getChildren().isEmpty()) {
             for (ASTNode child : script.getChildren()) {
-                child.accept(this);
-            }
-        }
-        // reset as otherwise for procedure definitions wrong outcomes are possible
-        followsKeyPressed = false;
-    }
-
-    @Override
-    public void visit(KeyPressed keyPressed) {
-        followsKeyPressed = true;
-        if (!keyPressed.getChildren().isEmpty()) {
-            for (ASTNode child : keyPressed.getChildren()) {
-                child.accept(this);
-            }
-        }
-    }
-
-
-    @Override
-    public void visit(MoveSteps moveSteps) {
-        if (followsKeyPressed) {
-            count++;
-            found = true;
-        }
-        if (!moveSteps.getChildren().isEmpty()) {
-            for (ASTNode child : moveSteps.getChildren()) {
-                child.accept(this);
-            }
-        }
-    }
-
-    @Override
-    public void visit(ChangeXBy changeXBy) {
-        if (followsKeyPressed) {
-            count++;
-            found = true;
-        }
-        if (!changeXBy.getChildren().isEmpty()) {
-            for (ASTNode child : changeXBy.getChildren()) {
-                child.accept(this);
-            }
-        }
-    }
-
-    @Override
-    public void visit(ChangeYBy changeYBy) {
-        if (followsKeyPressed) {
-            count++;
-            found = true;
-        }
-        if (!changeYBy.getChildren().isEmpty()) {
-            for (ASTNode child : changeYBy.getChildren()) {
-                child.accept(this);
-            }
-        }
-    }
-
-    @Override
-    public void visit(SetXTo setXTo) {
-        if (followsKeyPressed) {
-            count++;
-            found = true;
-        }
-        if (!setXTo.getChildren().isEmpty()) {
-            for (ASTNode child : setXTo.getChildren()) {
-                child.accept(this);
-            }
-        }
-    }
-
-    @Override
-    public void visit(SetYTo setYTo) {
-        if (followsKeyPressed) {
-            count++;
-            found = true;
-        }
-        if (!setYTo.getChildren().isEmpty()) {
-            for (ASTNode child : setYTo.getChildren()) {
-                child.accept(this);
-            }
-        }
-    }
-
-    @Override
-    public void visit(GoToPos goToPos) {
-        if (followsKeyPressed) {
-            count++;
-            found = true;
-        }
-        if (!goToPos.getChildren().isEmpty()) {
-            for (ASTNode child : goToPos.getChildren()) {
                 child.accept(this);
             }
         }
