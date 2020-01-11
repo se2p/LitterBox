@@ -35,7 +35,7 @@ public class MissingCloneCallTest {
     private static Program cloneInOtherSprite;
     private static Program rainbowSix;
     private static Program jumper;
-    private static Program superMario;
+    private static Program emptyCloneCall;
     private static ObjectMapper mapper = new ObjectMapper();
 
     @BeforeAll
@@ -51,14 +51,21 @@ public class MissingCloneCallTest {
         rainbowSix = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
         f = new File("./src/test/fixtures/bugpattern/jumper.json");
         jumper = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
-        f = new File("./src/test/fixtures/bugpattern/superMario.json");
-        superMario = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
+        f = new File("./src/test/fixtures/bugpattern/emptyCloneCall.json");
+        emptyCloneCall = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
     }
 
     @Test
     public void testEmptyProgram() {
         MissingCloneCall parameterName = new MissingCloneCall();
         IssueReport report = parameterName.check(empty);
+        Assertions.assertEquals(0, report.getCount());
+    }
+
+    @Test
+    public void testClone() {
+        MissingCloneCall parameterName = new MissingCloneCall();
+        IssueReport report = parameterName.check(emptyCloneCall);
         Assertions.assertEquals(0, report.getCount());
     }
 
@@ -87,13 +94,6 @@ public class MissingCloneCallTest {
     public void testJumper() {
         MissingCloneCall parameterName = new MissingCloneCall();
         IssueReport report = parameterName.check(jumper);
-        Assertions.assertEquals(1, report.getCount());
-    }
-
-    @Test
-    public void testSuperMario() {
-        MissingCloneCall parameterName = new MissingCloneCall();
-        IssueReport report = parameterName.check(superMario);
         Assertions.assertEquals(1, report.getCount());
     }
 }

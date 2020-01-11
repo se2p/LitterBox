@@ -18,19 +18,21 @@
  */
 package newanalytics.bugpattern;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
 import newanalytics.IssueFinder;
 import newanalytics.IssueReport;
 import scratch.ast.model.ASTNode;
 import scratch.ast.model.ActorDefinition;
 import scratch.ast.model.Program;
+import scratch.ast.model.Script;
 import scratch.ast.model.event.StartedAsClone;
 import scratch.ast.model.statement.common.CreateCloneOf;
 import scratch.ast.model.variable.StrId;
 import scratch.ast.visitor.ScratchVisitor;
 import utils.Preconditions;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class MissingCloneCall implements IssueFinder, ScratchVisitor {
     public static final String NAME = "missing_clone_call";
@@ -81,7 +83,14 @@ public class MissingCloneCall implements IssueFinder, ScratchVisitor {
     }
 
     @Override
-    public void visit(StartedAsClone node) {
-        whenStartsAsCloneActors.add(currentActor.getIdent().getName());
+    public void visit(Script node) {
+        if(node.getStmtList().getStmts().getListOfStmt().size()>0 && node.getEvent() instanceof StartedAsClone){
+            whenStartsAsCloneActors.add(currentActor.getIdent().getName());
+        }
+        if (!node.getChildren().isEmpty()) {
+            for (ASTNode child : node.getChildren()) {
+                child.accept(this);
+            }
+        }
     }
 }
