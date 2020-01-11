@@ -18,59 +18,91 @@
  */
 package newanalytics.bugpattern;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import newanalytics.IssueFinder;
 import newanalytics.IssueReport;
-import newanalytics.IssueTool;
+import scratch.ast.model.ASTNode;
+import scratch.ast.model.ActorDefinition;
 import scratch.ast.model.Program;
+import scratch.ast.model.procedure.ProcedureDefinition;
 import scratch.ast.model.variable.Identifier;
 import scratch.ast.parser.symboltable.ArgumentInfo;
 import scratch.ast.parser.symboltable.ProcedureInfo;
+import scratch.ast.visitor.ScratchVisitor;
 import utils.Preconditions;
 
-public class AmbiguousParameterName implements IssueFinder {
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
+public class AmbiguousParameterName implements IssueFinder, ScratchVisitor {
     private static final String NOTE1 = "There are no ambiguous parameter names in your project.";
     private static final String NOTE2 = "Some of the procedures contain ambiguous parameter names.";
     public static final String NAME = "ambiguous_parameter_name";
     public static final String SHORT_NAME = "ambParamName";
+    private boolean found = false;
+    private int count = 0;
+    private List<String> actorNames = new LinkedList<>();
+    private ActorDefinition currentActor;
+
+    private Map<Identifier, ProcedureInfo> procMap;
+    private Program program;
 
     @Override
     public IssueReport check(Program program) {
         Preconditions.checkNotNull(program);
-        List<String> found = new ArrayList<>();
-        Map<String, Map<Identifier, ProcedureInfo>> procs = program.getProcedureMapping().getProcedures();
-        Set<String> actors = procs.keySet();
-        for (String actor : actors) {
-            Map<Identifier, ProcedureInfo> current = procs.get(actor);
-            Set<Identifier> ids = current.keySet();
-            for (Identifier id : ids) {
-                ProcedureInfo currentProc = current.get(id);
-                if (checkArguments(currentProc.getArguments())) {
-                    found.add(currentProc.getActorName());
-                }
-            }
-        }
+        this.program = program;
+        found = false;
+        count = 0;
+        actorNames = new LinkedList<>();
+        program.accept(this);
         String notes = NOTE1;
-        if (found.size() > 0) {
+        if (count > 0) {
             notes = NOTE2;
         }
-
-        return new IssueReport(NAME, found.size(), IssueTool.getOnlyUniqueActorList(found), notes);
+        return new IssueReport(NAME, count, actorNames, notes);
     }
 
-    private boolean checkArguments(ArgumentInfo[] arguments) {
+    @Override
+    public void visit(ActorDefinition actor) {
+        currentActor = actor;
+        procMap = program.getProcedureMapping().getProcedures().get(currentActor.getIdent().getName());
+        if (!actor.getChildren().isEmpty()) {
+            for (ASTNode child : actor.getChildren()) {
+                child.accept(this);
+            }
+        }
+
+        if (found) {
+            found = false;
+            actorNames.add(currentActor.getIdent().getName());
+        }
+    }
+
+    private void checkArguments(ArgumentInfo[] arguments) {
         for (int i = 0; i < arguments.length; i++) {
             ArgumentInfo current = arguments[i];
             for (int j = 0; j < arguments.length; j++) {
                 if (i != j && current.getName().equals(arguments[j].getName())) {
-                    return true;
+                    found = true;
+                    count++;
                 }
             }
         }
-        return false;
+    }
+
+    @Override
+    public void visit(ProcedureDefinition node) {
+
+        if (node.getStmtList().getStmts().getListOfStmt().size() > 0) {
+            checkArguments(procMap.get(node.getIdent()).getArguments());
+
+        }
+
+        if (!node.getChildren().isEmpty()) {
+            for (ASTNode child : node.getChildren()) {
+                child.accept(this);
+            }
+        }
     }
 
     @Override

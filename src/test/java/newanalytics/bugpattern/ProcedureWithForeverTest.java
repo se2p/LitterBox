@@ -33,6 +33,7 @@ public class ProcedureWithForeverTest {
     private static Program empty;
     private static Program procedureWithNoForever;
     private static Program procedureWithForever;
+    private static Program lastCall;
     private static ObjectMapper mapper = new ObjectMapper();
 
     @BeforeAll
@@ -44,6 +45,8 @@ public class ProcedureWithForeverTest {
         procedureWithNoForever = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
         f = new File("./src/test/fixtures/bugpattern/procedureWithForever.json");
         procedureWithForever = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
+        f = new File("./src/test/fixtures/bugpattern/callLast.json");
+        lastCall = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
     }
 
     @Test
@@ -65,5 +68,12 @@ public class ProcedureWithForeverTest {
         ProcedureWithForever parameterName = new ProcedureWithForever();
         IssueReport report = parameterName.check(procedureWithForever);
         Assertions.assertEquals(1, report.getCount());
+    }
+
+    @Test
+    public void testlastCall() {
+        ProcedureWithForever parameterName = new ProcedureWithForever();
+        IssueReport report = parameterName.check(lastCall);
+        Assertions.assertEquals(0, report.getCount());
     }
 }
