@@ -18,48 +18,92 @@
  */
 package newanalytics.bugpattern;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import newanalytics.IssueFinder;
 import newanalytics.IssueReport;
-import newanalytics.IssueTool;
+import scratch.ast.model.ASTNode;
+import scratch.ast.model.ActorDefinition;
 import scratch.ast.model.Program;
+import scratch.ast.model.procedure.ProcedureDefinition;
 import scratch.ast.model.variable.Identifier;
 import scratch.ast.parser.symboltable.ProcedureInfo;
+import scratch.ast.visitor.ScratchVisitor;
 import utils.Preconditions;
 
-public class AmbiguousProcedureSignature implements IssueFinder {
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
+public class AmbiguousProcedureSignature implements IssueFinder, ScratchVisitor {
     private static final String NOTE1 = "There are no ambiguous procedure signatures in your project.";
     private static final String NOTE2 = "Some of the procedures signatures are ambiguous.";
     public static final String NAME = "ambiguous_procedure_signature";
     public static final String SHORT_NAME = "ambProcSign";
+    private boolean found = false;
+    private int count = 0;
+    private List<String> actorNames = new LinkedList<>();
+    private ActorDefinition currentActor;
+    private List<String> procNames;
+    private Map<Identifier, ProcedureInfo> procMap;
+    private Program program;
+
 
     @Override
     public IssueReport check(Program program) {
         Preconditions.checkNotNull(program);
-        List<String> found = new ArrayList<>();
-        Map<String, Map<Identifier, ProcedureInfo>> procs = program.getProcedureMapping().getProcedures();
-        Set<String> actors = procs.keySet();
-        for (String actor : actors){
-            Map<Identifier, ProcedureInfo> currentMap = procs.get(actor);
-            List<ProcedureInfo> procedureInfos = new ArrayList<>(currentMap.values());
-            for (int i = 0; i < procedureInfos.size(); i++) {
-                ProcedureInfo current = procedureInfos.get(i);
-                for (int j = 0; j < procedureInfos.size(); j++) {
-                    if (i != j && current.getName().equals(procedureInfos.get(j).getName())
-                            && current.getActorName().equals(procedureInfos.get(j).getActorName())) {
-                        found.add(current.getActorName());
-                    }
-                }
-            }}
+        this.program = program;
+        found = false;
+        count = 0;
+        actorNames = new LinkedList<>();
+        procNames = new LinkedList<>();
+        program.accept(this);
         String notes = NOTE1;
-        if (found.size() > 0) {
+        if (count > 0) {
             notes = NOTE2;
         }
+        return new IssueReport(NAME, count, actorNames, notes);
+    }
 
-        return new IssueReport(NAME, found.size(), IssueTool.getOnlyUniqueActorList(found), notes);
+    @Override
+    public void visit(ActorDefinition actor) {
+        currentActor = actor;
+        procNames = new LinkedList<>();
+        procMap = program.getProcedureMapping().getProcedures().get(currentActor.getIdent().getName());
+        if (!actor.getChildren().isEmpty()) {
+            for (ASTNode child : actor.getChildren()) {
+                child.accept(this);
+            }
+        }
+
+        if (found) {
+            found = false;
+            actorNames.add(currentActor.getIdent().getName());
+        }
+    }
+
+    @Override
+    public void visit(ProcedureDefinition node) {
+        if (node.getStmtList().getStmts().getListOfStmt().size() > 0) {
+            checkProc(node.getIdent());
+        }
+
+        if (!node.getChildren().isEmpty()) {
+            for (ASTNode child : node.getChildren()) {
+                child.accept(this);
+            }
+        }
+    }
+
+    private void checkProc(Identifier ident) {
+        List<ProcedureInfo> procedureInfos = new ArrayList<>(procMap.values());
+        ProcedureInfo current = procMap.get(ident);
+        for (ProcedureInfo procedureInfo : procedureInfos) {
+            if (procedureInfo != current && current.getName().equals(procedureInfo.getName())
+                    && current.getActorName().equals(procedureInfo.getActorName())) {
+                found = true;
+                count++;
+            }
+        }
     }
 
     @Override

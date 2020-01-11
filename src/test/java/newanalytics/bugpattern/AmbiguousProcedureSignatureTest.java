@@ -33,6 +33,7 @@ public class AmbiguousProcedureSignatureTest {
     private static Program empty;
     private static Program ambiguousProcedure;
     private static Program ambiguousProcedureDiffArg;
+    private static Program emptySign;
     private static ObjectMapper mapper = new ObjectMapper();
 
     @BeforeAll
@@ -44,6 +45,8 @@ public class AmbiguousProcedureSignatureTest {
         ambiguousProcedure = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
         f = new File("./src/test/fixtures/bugpattern/ambiguousSignatureDiffArg.json");
         ambiguousProcedureDiffArg = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
+        f = new File("./src/test/fixtures/bugpattern/emptyAmbiguousSign.json");
+       emptySign = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
     }
 
     @Test
@@ -67,4 +70,10 @@ public class AmbiguousProcedureSignatureTest {
         Assertions.assertEquals(2, report.getCount());
     }
 
+    @Test
+    public void testAmbiguousEmpty() {
+        AmbiguousProcedureSignature parameterName = new AmbiguousProcedureSignature();
+        IssueReport report = parameterName.check(emptySign);
+        Assertions.assertEquals(0, report.getCount());
+    }
 }
