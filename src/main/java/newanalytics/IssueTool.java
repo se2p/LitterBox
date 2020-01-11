@@ -61,7 +61,7 @@ public class IssueTool {
         bugFinder.put(ProcedureWithForever.SHORT_NAME, new ProcedureWithForever());
         bugFinder.put(ProcedureWithTermination.SHORT_NAME, new ProcedureWithTermination());
         bugFinder.put(ForeverInsideLoop.SHORT_NAME, new ForeverInsideLoop());
-        bugFinder.put(EqualsCondition.SHORT_NAME, new EqualsCondition());
+        bugFinder.put(PositionEqualsCheck.SHORT_NAME, new PositionEqualsCheck());
         bugFinder.put(CallWithoutDefinition.SHORT_NAME, new CallWithoutDefinition());
         bugFinder.put(MessageNeverReceived.SHORT_NAME, new MessageNeverReceived());
         bugFinder.put(MessageNeverSent.SHORT_NAME, new MessageNeverSent());

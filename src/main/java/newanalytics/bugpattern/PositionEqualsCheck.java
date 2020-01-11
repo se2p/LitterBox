@@ -18,20 +18,28 @@
  */
 package newanalytics.bugpattern;
 
-import java.util.LinkedList;
-import java.util.List;
 import newanalytics.IssueFinder;
 import newanalytics.IssueReport;
 import scratch.ast.model.ASTNode;
 import scratch.ast.model.ActorDefinition;
 import scratch.ast.model.Program;
+import scratch.ast.model.expression.ComparableExpr;
 import scratch.ast.model.expression.bool.Equals;
+import scratch.ast.model.expression.num.DistanceTo;
+import scratch.ast.model.expression.num.MouseX;
+import scratch.ast.model.expression.num.MouseY;
+import scratch.ast.model.expression.string.AttributeOf;
+import scratch.ast.model.literals.StringLiteral;
 import scratch.ast.model.statement.common.WaitUntil;
 import scratch.ast.model.statement.control.UntilStmt;
+import scratch.ast.opcodes.StringExprOpcode;
 import scratch.ast.visitor.ScratchVisitor;
 import utils.Preconditions;
 
-public class EqualsCondition implements IssueFinder, ScratchVisitor {
+import java.util.LinkedList;
+import java.util.List;
+
+public class PositionEqualsCheck implements IssueFinder, ScratchVisitor {
     private static final String NOTE1 = "There are equals checks in conditions in your project.";
     private static final String NOTE2 = "Some of the conditions contain equals checks.";
     public static final String NAME = "equals_condition";
@@ -78,8 +86,7 @@ public class EqualsCondition implements IssueFinder, ScratchVisitor {
     @Override
     public void visit(WaitUntil node) {
         if (node.getUntil() instanceof Equals) {
-            found = true;
-            count++;
+            checkEquals((Equals) node.getUntil());
         }
         if (!node.getChildren().isEmpty()) {
             for (ASTNode child : node.getChildren()) {
@@ -88,11 +95,28 @@ public class EqualsCondition implements IssueFinder, ScratchVisitor {
         }
     }
 
+    private void checkEquals(Equals equals) {
+        checkOptions(equals.getOperand1());
+        checkOptions(equals.getOperand2());
+    }
+
+    private void checkOptions(ComparableExpr operand) {
+        if (operand instanceof MouseX || operand instanceof MouseY || operand instanceof DistanceTo) {
+            count++;
+            found = true;
+        } else if (operand instanceof AttributeOf) {
+            if (((AttributeOf) operand).getAttribute().equals(new StringLiteral(StringExprOpcode.motion_xposition.name())) ||
+                    ((AttributeOf) operand).getAttribute().equals(new StringLiteral(StringExprOpcode.motion_yposition.name()))) {
+                count++;
+                found = true;
+            }
+        }
+    }
+
     @Override
     public void visit(UntilStmt node) {
         if (node.getBoolExpr() instanceof Equals) {
-            found = true;
-            count++;
+            checkEquals((Equals) node.getBoolExpr());
         }
         if (!node.getChildren().isEmpty()) {
             for (ASTNode child : node.getChildren()) {
