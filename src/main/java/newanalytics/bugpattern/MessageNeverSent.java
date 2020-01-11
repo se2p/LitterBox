@@ -18,18 +18,20 @@
  */
 package newanalytics.bugpattern;
 
-import java.util.*;
 import newanalytics.IssueFinder;
 import newanalytics.IssueReport;
 import scratch.ast.model.ASTNode;
 import scratch.ast.model.ActorDefinition;
 import scratch.ast.model.Program;
+import scratch.ast.model.Script;
 import scratch.ast.model.event.ReceptionOfMessage;
 import scratch.ast.model.literals.StringLiteral;
 import scratch.ast.model.statement.common.Broadcast;
 import scratch.ast.model.statement.common.BroadcastAndWait;
 import scratch.ast.visitor.ScratchVisitor;
 import utils.Preconditions;
+
+import java.util.*;
 
 public class MessageNeverSent implements IssueFinder, ScratchVisitor {
 
@@ -102,11 +104,19 @@ public class MessageNeverSent implements IssueFinder, ScratchVisitor {
 
 
     @Override
-    public void visit(ReceptionOfMessage node) {
-        if (node.getMsg().getMessage() instanceof StringLiteral) {
-            final String actorName = currentActor.getIdent().getName();
-            final String msgName = ((StringLiteral) node.getMsg().getMessage()).getText();
-            messageReceived.add(new Pair(actorName, msgName));
+    public void visit(Script node) {
+        if (node.getStmtList().getStmts().getListOfStmt().size() > 0 && node.getEvent() instanceof ReceptionOfMessage) {
+            ReceptionOfMessage event = (ReceptionOfMessage) node.getEvent();
+            if (event.getMsg().getMessage() instanceof StringLiteral) {
+                final String actorName = currentActor.getIdent().getName();
+                final String msgName = ((StringLiteral) event.getMsg().getMessage()).getText();
+                messageReceived.add(new Pair(actorName, msgName));
+            }
+        }
+        if (!node.getChildren().isEmpty()) {
+            for (ASTNode child : node.getChildren()) {
+                child.accept(this);
+            }
         }
     }
 

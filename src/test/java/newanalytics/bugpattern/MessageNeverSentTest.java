@@ -34,6 +34,7 @@ import scratch.ast.parser.ProgramParser;
 
 class MessageNeverSentTest {
     private static Program program;
+    private static Program messageRec;
 
     @BeforeAll
     public static void setup() {
@@ -42,6 +43,8 @@ class MessageNeverSentTest {
         ObjectMapper objectMapper = new ObjectMapper();
         try {
             program = ProgramParser.parseProgram("broadcastSync", objectMapper.readTree(file));
+            messageRec = ProgramParser.parseProgram("messageRec", objectMapper.readTree(new File("src/test/fixtures" +
+                    "/bugpattern/messageRec.json")));
         } catch (IOException | ParsingException e) {
             fail();
         }
@@ -51,7 +54,13 @@ class MessageNeverSentTest {
     public void testMessageNeverSent() {
         MessageNeverSent finder = new MessageNeverSent();
         final IssueReport check = finder.check(program);
+        Truth.assertThat(check.getCount()).isEqualTo(0);
+    }
+
+    @Test
+    public void testMessageRec() {
+        MessageNeverSent finder = new MessageNeverSent();
+        final IssueReport check = finder.check(messageRec);
         Truth.assertThat(check.getCount()).isEqualTo(1);
-        Truth.assertThat(check.getPosition().get(0)).isEqualTo("Apple");
     }
 }
