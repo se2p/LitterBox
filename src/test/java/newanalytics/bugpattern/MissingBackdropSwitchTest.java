@@ -19,8 +19,6 @@
 package newanalytics.bugpattern;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.io.File;
-import java.io.IOException;
 import newanalytics.IssueReport;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -29,9 +27,14 @@ import scratch.ast.ParsingException;
 import scratch.ast.model.Program;
 import scratch.ast.parser.ProgramParser;
 
+import java.io.File;
+import java.io.IOException;
+
 public class MissingBackdropSwitchTest {
     private static Program empty;
     private static Program missingBackdropSwitchNext;
+    private static Program missingBack;
+    private static Program random;
     private static ObjectMapper mapper = new ObjectMapper();
 
     @BeforeAll
@@ -41,7 +44,10 @@ public class MissingBackdropSwitchTest {
         empty = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
         f = new File("./src/test/fixtures/bugpattern/missingBackDropSwitchNext.json");
         missingBackdropSwitchNext = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
-
+        f = new File("./src/test/fixtures/bugpattern/missBackdrop.json");
+        missingBack = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
+        f = new File("./src/test/fixtures/bugpattern/randomBackdrop.json");
+        random = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
     }
 
     @Test
@@ -52,9 +58,23 @@ public class MissingBackdropSwitchTest {
     }
 
     @Test
-    public void testMissingCloneCall() {
+    public void testMissingBackdropSwitchNext() {
         MissingBackdropSwitch parameterName = new MissingBackdropSwitch();
         IssueReport report = parameterName.check(missingBackdropSwitchNext);
+        Assertions.assertEquals(0, report.getCount());
+    }
+
+    @Test
+    public void testMissBackdrop() {
+        MissingBackdropSwitch parameterName = new MissingBackdropSwitch();
+        IssueReport report = parameterName.check(missingBack);
         Assertions.assertEquals(1, report.getCount());
+    }
+
+    @Test
+    public void testRandomBack() {
+        MissingBackdropSwitch parameterName = new MissingBackdropSwitch();
+        IssueReport report = parameterName.check(random);
+        Assertions.assertEquals(0, report.getCount());
     }
 }

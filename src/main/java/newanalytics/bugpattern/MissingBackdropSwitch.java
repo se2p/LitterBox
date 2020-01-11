@@ -18,20 +18,22 @@
  */
 package newanalytics.bugpattern;
 
-import java.util.*;
 import newanalytics.IssueFinder;
 import newanalytics.IssueReport;
 import scratch.ast.model.ASTNode;
 import scratch.ast.model.ActorDefinition;
 import scratch.ast.model.Program;
-import scratch.ast.model.elementchoice.ElementChoice;
-import scratch.ast.model.elementchoice.WithId;
+import scratch.ast.model.Script;
+import scratch.ast.model.elementchoice.Random;
+import scratch.ast.model.elementchoice.*;
 import scratch.ast.model.event.BackdropSwitchTo;
 import scratch.ast.model.literals.StringLiteral;
 import scratch.ast.model.statement.actorlook.SwitchBackdrop;
 import scratch.ast.model.statement.actorlook.SwitchBackdropAndWait;
 import scratch.ast.visitor.ScratchVisitor;
 import utils.Preconditions;
+
+import java.util.*;
 
 public class MissingBackdropSwitch implements IssueFinder, ScratchVisitor {
 
@@ -41,28 +43,31 @@ public class MissingBackdropSwitch implements IssueFinder, ScratchVisitor {
     private List<Pair> switched = new ArrayList<>();
     private List<Pair> switchReceived = new ArrayList<>();
     private ActorDefinition currentActor;
+    private boolean nextRandPrev = false;
 
     @Override
     public IssueReport check(Program program) {
         Preconditions.checkNotNull(program);
         switched = new ArrayList<>();
         switchReceived = new ArrayList<>();
+        nextRandPrev = false;
         program.accept(this);
 
         final LinkedHashSet<Pair> nonSyncedPairs = new LinkedHashSet<>();
-        for (Pair received : switchReceived) {
-            boolean isReceived = false;
-            for (Pair sent : switched) {
-                if (received.msgName.equals(sent.msgName)) {
-                    isReceived = true;
-                    break;
+        if(!nextRandPrev) {
+            for (Pair received : switchReceived) {
+                boolean isReceived = false;
+                for (Pair sent : switched) {
+                    if (received.msgName.equals(sent.msgName)) {
+                        isReceived = true;
+                        break;
+                    }
+                }
+                if (!isReceived) {
+                    nonSyncedPairs.add(received);
                 }
             }
-            if (!isReceived) {
-                nonSyncedPairs.add(received);
-            }
         }
-
         final Set<String> actorNames = new LinkedHashSet<>();
         nonSyncedPairs.forEach(p -> actorNames.add(p.getActorName()));
 
@@ -89,7 +94,9 @@ public class MissingBackdropSwitch implements IssueFinder, ScratchVisitor {
 
         final String actorName = currentActor.getIdent().getName();
         final ElementChoice msgName = node.getElementChoice();
-        if (msgName instanceof WithId) {
+        if (msgName instanceof Next || msgName instanceof Prev || msgName instanceof Random) {
+            nextRandPrev = true;
+        } else if (msgName instanceof WithId) {
             if (((WithId) msgName).getStringExpr() instanceof StringLiteral)
                 switched.add(new Pair(actorName, ((StringLiteral) ((WithId) msgName).getStringExpr()).getText()));
         }
@@ -99,18 +106,29 @@ public class MissingBackdropSwitch implements IssueFinder, ScratchVisitor {
     public void visit(SwitchBackdropAndWait node) {
         final String actorName = currentActor.getIdent().getName();
         final ElementChoice msgName = node.getElementChoice();
-        if (msgName instanceof WithId) {
+        if (msgName instanceof Next || msgName instanceof Prev || msgName instanceof Random) {
+            nextRandPrev = true;
+        } else if (msgName instanceof WithId) {
             if (((WithId) msgName).getStringExpr() instanceof StringLiteral)
                 switched.add(new Pair(actorName, ((StringLiteral) ((WithId) msgName).getStringExpr()).getText()));
         }
     }
 
-
     @Override
-    public void visit(BackdropSwitchTo node) {
-        final String actorName = currentActor.getIdent().getName();
-        final String msgName = node.getBackdrop().getName();
-        switchReceived.add(new Pair(actorName, msgName));
+    public void visit(Script node) {
+        if (node.getStmtList().getStmts().getListOfStmt().size() > 0 && node.getEvent() instanceof BackdropSwitchTo) {
+            BackdropSwitchTo event = (BackdropSwitchTo) node.getEvent();
+
+            final String actorName = currentActor.getIdent().getName();
+            final String msgName = event.getBackdrop().getName();
+            switchReceived.add(new Pair(actorName, msgName));
+
+        }
+        if (!node.getChildren().isEmpty()) {
+            for (ASTNode child : node.getChildren()) {
+                child.accept(this);
+            }
+        }
     }
 
     /**
