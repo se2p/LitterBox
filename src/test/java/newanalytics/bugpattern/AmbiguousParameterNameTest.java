@@ -75,6 +75,6 @@ public class AmbiguousParameterNameTest {
     public void testReal() {
         AmbiguousParameterName parameterName = new AmbiguousParameterName();
         IssueReport report = parameterName.check(realAmbiguousParam);
-        Assertions.assertEquals(2, report.getCount());
+        Assertions.assertEquals(1, report.getCount());
     }
 }
