@@ -23,8 +23,10 @@ import newanalytics.IssueReport;
 import scratch.ast.model.ASTNode;
 import scratch.ast.model.ActorDefinition;
 import scratch.ast.model.Program;
+import scratch.ast.model.StmtList;
 import scratch.ast.model.procedure.ProcedureDefinition;
 import scratch.ast.model.variable.Identifier;
+import scratch.ast.model.variable.StrId;
 import scratch.ast.parser.symboltable.ArgumentInfo;
 import scratch.ast.parser.symboltable.ProcedureInfo;
 import scratch.ast.visitor.ScratchVisitor;
@@ -39,13 +41,17 @@ public class AmbiguousParameterName implements IssueFinder, ScratchVisitor {
     private static final String NOTE2 = "Some of the procedures contain ambiguous parameter names.";
     public static final String NAME = "ambiguous_parameter_name";
     public static final String SHORT_NAME = "ambParamName";
+    private boolean inStmtList = false;
     private boolean found = false;
+    private boolean used = false;
     private int count = 0;
+    private LinkedList<String> paraNames = new LinkedList<>();
     private List<String> actorNames = new LinkedList<>();
     private ActorDefinition currentActor;
 
     private Map<Identifier, ProcedureInfo> procMap;
     private Program program;
+
 
     @Override
     public IssueReport check(Program program) {
@@ -79,23 +85,57 @@ public class AmbiguousParameterName implements IssueFinder, ScratchVisitor {
     }
 
     private void checkArguments(ArgumentInfo[] arguments) {
+        paraNames = new LinkedList<>();
+
         for (int i = 0; i < arguments.length; i++) {
             ArgumentInfo current = arguments[i];
             for (int j = 0; j < arguments.length; j++) {
                 if (i != j && current.getName().equals(arguments[j].getName())) {
+                    if (!paraNames.contains(current.getName())) {
+                        paraNames.add(current.getName());
+                    }
                     found = true;
-                    count++;
                 }
             }
         }
     }
 
     @Override
-    public void visit(ProcedureDefinition node) {
+    public void visit(StmtList node) {
+        inStmtList = true;
+        if (!node.getChildren().isEmpty()) {
+            for (ASTNode child : node.getChildren()) {
+                child.accept(this);
+            }
+        }
+        inStmtList = false;
+    }
 
+    @Override
+    public void visit(ProcedureDefinition node) {
         if (node.getStmtList().getStmts().getListOfStmt().size() > 0) {
             checkArguments(procMap.get(node.getIdent()).getArguments());
+        }
 
+        if (!node.getChildren().isEmpty()) {
+            for (ASTNode child : node.getChildren()) {
+                child.accept(this);
+            }
+        }
+
+        if (used) {
+            count++;
+        }
+
+        used = false;
+        found = false;
+        paraNames.clear();
+    }
+
+    @Override
+    public void visit(StrId node) {
+        if (inStmtList && found && paraNames.contains(node.getName())) {
+            used = true;
         }
 
         if (!node.getChildren().isEmpty()) {
