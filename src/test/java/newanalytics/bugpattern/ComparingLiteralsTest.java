@@ -35,7 +35,6 @@ import scratch.ast.parser.ProgramParser;
 class ComparingLiteralsTest {
 
     private static Program program;
-    private static Program emptyFields;
 
     @BeforeAll
     public static void setup() {
@@ -44,8 +43,6 @@ class ComparingLiteralsTest {
         ObjectMapper objectMapper = new ObjectMapper();
         try {
             program = ProgramParser.parseProgram("comparing literals", objectMapper.readTree(file));
-            file = new File("./src/test/fixtures/bugpattern/twoNotColo.json");
-            emptyFields =ProgramParser.parseProgram("comparing empty literals", objectMapper.readTree(file));
         } catch (IOException | ParsingException e) {
             fail();
         }
@@ -55,14 +52,9 @@ class ComparingLiteralsTest {
     public void testMissingPenUp() {
         ComparingLiterals finder = new ComparingLiterals();
         final IssueReport check = finder.check(program);
-        Truth.assertThat(check.getCount()).isEqualTo(12);
-        Truth.assertThat(check.getPosition().get(0)).isEqualTo("Sprite1");
+        Truth.assertThat(check.getCount()).isEqualTo(2);
+
     }
 
-    @Test
-    public void testEmptyCompare() {
-        ComparingLiterals finder = new ComparingLiterals();
-        final IssueReport check = finder.check(emptyFields);
-        Truth.assertThat(check.getCount()).isEqualTo(1);
-    }
+
 }

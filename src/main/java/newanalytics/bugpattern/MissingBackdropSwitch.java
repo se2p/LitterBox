@@ -30,6 +30,7 @@ import scratch.ast.model.event.BackdropSwitchTo;
 import scratch.ast.model.literals.StringLiteral;
 import scratch.ast.model.statement.actorlook.SwitchBackdrop;
 import scratch.ast.model.statement.actorlook.SwitchBackdropAndWait;
+import scratch.ast.model.variable.StrId;
 import scratch.ast.visitor.ScratchVisitor;
 import utils.Preconditions;
 
@@ -97,6 +98,8 @@ public class MissingBackdropSwitch implements IssueFinder, ScratchVisitor {
         if (msgName instanceof Next || msgName instanceof Prev || msgName instanceof Random) {
             nextRandPrev = true;
         } else if (msgName instanceof WithId) {
+            if (((WithId) msgName).getStringExpr() instanceof StrId)
+                switched.add(new Pair(actorName, ((StrId) ((WithId) msgName).getStringExpr()).getName()));
             if (((WithId) msgName).getStringExpr() instanceof StringLiteral)
                 switched.add(new Pair(actorName, ((StringLiteral) ((WithId) msgName).getStringExpr()).getText()));
         }
@@ -111,6 +114,8 @@ public class MissingBackdropSwitch implements IssueFinder, ScratchVisitor {
         } else if (msgName instanceof WithId) {
             if (((WithId) msgName).getStringExpr() instanceof StringLiteral)
                 switched.add(new Pair(actorName, ((StringLiteral) ((WithId) msgName).getStringExpr()).getText()));
+            if (((WithId) msgName).getStringExpr() instanceof StrId)
+                switched.add(new Pair(actorName, ((StrId) ((WithId) msgName).getStringExpr()).getName()));
         }
     }
 

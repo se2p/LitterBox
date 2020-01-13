@@ -18,13 +18,13 @@
  */
 package newanalytics.bugpattern;
 
-import java.util.LinkedList;
-import java.util.List;
 import newanalytics.IssueFinder;
 import newanalytics.IssueReport;
 import scratch.ast.model.ASTNode;
 import scratch.ast.model.ActorDefinition;
 import scratch.ast.model.Program;
+import scratch.ast.model.Script;
+import scratch.ast.model.event.Never;
 import scratch.ast.model.expression.bool.BiggerThan;
 import scratch.ast.model.expression.bool.Equals;
 import scratch.ast.model.expression.bool.LessThan;
@@ -33,11 +33,14 @@ import scratch.ast.model.literals.StringLiteral;
 import scratch.ast.visitor.ScratchVisitor;
 import utils.Preconditions;
 
+import java.util.LinkedList;
+import java.util.List;
+
 public class ComparingLiterals implements IssueFinder, ScratchVisitor {
 
     public static final String NAME = "comparing_literals";
     public static final String SHORT_NAME = "compLit";
-
+    private boolean inDeadCode;
     private boolean found = false;
     private int count = 0;
     private List<String> actorNames = new LinkedList<>();
@@ -47,6 +50,7 @@ public class ComparingLiterals implements IssueFinder, ScratchVisitor {
     public IssueReport check(Program program) {
         Preconditions.checkNotNull(program);
         found = false;
+        inDeadCode = false;
         count = 0;
         actorNames = new LinkedList<>();
         program.accept(this);
@@ -74,29 +78,63 @@ public class ComparingLiterals implements IssueFinder, ScratchVisitor {
     }
 
     @Override
+    public void visit(Script node) {
+        if (node.getEvent() instanceof Never) {
+            inDeadCode = true;
+        }
+        if (!node.getChildren().isEmpty()) {
+            for (ASTNode child : node.getChildren()) {
+                child.accept(this);
+            }
+        }
+        inDeadCode = false;
+    }
+
+    @Override
     public void visit(Equals node) {
-        if ((node.getOperand1() instanceof StringLiteral || node.getOperand1() instanceof NumberLiteral)
-                && (node.getOperand2() instanceof StringLiteral || node.getOperand2() instanceof NumberLiteral)) {
-            count++;
-            found = true;
+        if (!inDeadCode) {
+            if ((node.getOperand1() instanceof StringLiteral || node.getOperand1() instanceof NumberLiteral)
+                    && (node.getOperand2() instanceof StringLiteral || node.getOperand2() instanceof NumberLiteral)) {
+                count++;
+                found = true;
+            }
+        }
+        if (!node.getChildren().isEmpty()) {
+            for (ASTNode child : node.getChildren()) {
+                child.accept(this);
+            }
         }
     }
 
     @Override
     public void visit(LessThan node) {
-        if ((node.getOperand1() instanceof StringLiteral || node.getOperand1() instanceof NumberLiteral)
-                && (node.getOperand2() instanceof StringLiteral || node.getOperand2() instanceof NumberLiteral)) {
-            count++;
-            found = true;
+        if (!inDeadCode) {
+            if ((node.getOperand1() instanceof StringLiteral || node.getOperand1() instanceof NumberLiteral)
+                    && (node.getOperand2() instanceof StringLiteral || node.getOperand2() instanceof NumberLiteral)) {
+                count++;
+                found = true;
+            }
+        }
+        if (!node.getChildren().isEmpty()) {
+            for (ASTNode child : node.getChildren()) {
+                child.accept(this);
+            }
         }
     }
 
     @Override
     public void visit(BiggerThan node) {
-        if ((node.getOperand1() instanceof StringLiteral || node.getOperand1() instanceof NumberLiteral)
-                && (node.getOperand2() instanceof StringLiteral || node.getOperand2() instanceof NumberLiteral)) {
-            count++;
-            found = true;
+        if (!inDeadCode) {
+            if ((node.getOperand1() instanceof StringLiteral || node.getOperand1() instanceof NumberLiteral)
+                    && (node.getOperand2() instanceof StringLiteral || node.getOperand2() instanceof NumberLiteral)) {
+                count++;
+                found = true;
+            }
+        }
+        if (!node.getChildren().isEmpty()) {
+            for (ASTNode child : node.getChildren()) {
+                child.accept(this);
+            }
         }
     }
 }
