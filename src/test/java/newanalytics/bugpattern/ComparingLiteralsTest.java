@@ -18,19 +18,19 @@
  */
 package newanalytics.bugpattern;
 
-import static junit.framework.TestCase.fail;
-
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.truth.Truth;
-import java.io.File;
-import java.io.IOException;
 import newanalytics.IssueReport;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import scratch.ast.ParsingException;
 import scratch.ast.model.Program;
 import scratch.ast.parser.ProgramParser;
+
+import java.io.File;
+import java.io.IOException;
+
+import static junit.framework.TestCase.fail;
 
 class ComparingLiteralsTest {
 
@@ -49,7 +49,7 @@ class ComparingLiteralsTest {
     }
 
     @Test
-    public void testMissingPenUp() {
+    public void testComparingLiterals() {
         ComparingLiterals finder = new ComparingLiterals();
         final IssueReport check = finder.check(program);
         Truth.assertThat(check.getCount()).isEqualTo(2);

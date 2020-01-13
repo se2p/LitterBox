@@ -63,9 +63,8 @@ public class ParameterOutOfScopeTest {
 
     @Test
     public void testOutsideParameter(){
-        //FIXME create a better test fixute
         ParameterOutOfScope parameterName = new ParameterOutOfScope();
         IssueReport report = parameterName.check(outsideParam);
-        Assertions.assertEquals(0, report.getCount());
+        Assertions.assertEquals(1, report.getCount());
     }
 }

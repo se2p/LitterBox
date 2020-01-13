@@ -24,8 +24,6 @@ import scratch.ast.Constants;
 import scratch.ast.model.ASTNode;
 import scratch.ast.model.ActorDefinition;
 import scratch.ast.model.Program;
-import scratch.ast.model.Script;
-import scratch.ast.model.event.Never;
 import scratch.ast.model.procedure.Parameter;
 import scratch.ast.model.procedure.ProcedureDefinition;
 import scratch.ast.model.variable.StrId;
@@ -64,17 +62,6 @@ public class ParameterOutOfScope implements IssueFinder, ScratchVisitor {
     @Override
     public String getName() {
         return NAME;
-    }
-
-    @Override
-    public void visit(Script node) {
-        if (!(node.getEvent() instanceof Never)) {
-            if (!node.getChildren().isEmpty()) {
-                for (ASTNode child : node.getChildren()) {
-                    child.accept(this);
-                }
-            }
-        }
     }
 
     @Override
