@@ -49,20 +49,13 @@ import scratch.ast.model.procedure.ProcedureDefinition;
 import scratch.ast.model.statement.CallStmt;
 import scratch.ast.model.statement.actorlook.SwitchBackdrop;
 import scratch.ast.model.statement.actorlook.SwitchBackdropAndWait;
-import scratch.ast.model.statement.common.Broadcast;
-import scratch.ast.model.statement.common.BroadcastAndWait;
-import scratch.ast.model.statement.common.CreateCloneOf;
-import scratch.ast.model.statement.common.SetStmt;
-import scratch.ast.model.statement.common.WaitUntil;
+import scratch.ast.model.statement.common.*;
 import scratch.ast.model.statement.control.IfElseStmt;
 import scratch.ast.model.statement.control.IfThenStmt;
 import scratch.ast.model.statement.control.RepeatForeverStmt;
 import scratch.ast.model.statement.control.RepeatTimesStmt;
 import scratch.ast.model.statement.control.UntilStmt;
-import scratch.ast.model.statement.pen.PenClearStmt;
-import scratch.ast.model.statement.pen.PenDownStmt;
-import scratch.ast.model.statement.pen.PenUpStmt;
-import scratch.ast.model.statement.pen.SetPenColorToColorStmt;
+import scratch.ast.model.statement.pen.*;
 import scratch.ast.model.statement.spritelook.ListOfStmt;
 import scratch.ast.model.statement.spritemotion.ChangeXBy;
 import scratch.ast.model.statement.spritemotion.ChangeYBy;
@@ -851,4 +844,68 @@ public interface ScratchVisitor {
         visit((ASTNode) node);
     }
 
+    /**
+     * Default implementation of visit method for {@link PenStampStmt}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node PenStampStmt  Node of which the children will be iterated
+     */
+    default void visit(PenStampStmt node) {
+        visit((ASTNode) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link ChangePenColorParamBy}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node ChangePenColorParamBy  Node of which the children will be iterated
+     */
+    default void visit(ChangePenColorParamBy node) {
+        visit((ASTNode) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link SetPenColorParamTo}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node SetPenColorParamTo Node of which the children will be iterated
+     */
+    default void visit(SetPenColorParamTo node) {
+        visit((ASTNode) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link ChangeAttributeBy }.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node ChangeAttributeBy  Node of which the children will be iterated
+     */
+    default void visit(ChangeAttributeBy node) {
+        visit((ASTNode) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link SetAttributeTo }.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node SetAttributeTo  Node of which the children will be iterated
+     */
+    default void visit(SetAttributeTo node) {
+        visit((ASTNode) node);
+    }
 }

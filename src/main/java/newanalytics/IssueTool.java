@@ -26,6 +26,7 @@ import newanalytics.ctscore.FlowControl;
 import newanalytics.smells.*;
 import newanalytics.utils.BlockCount;
 import newanalytics.utils.ProcedureCount;
+import newanalytics.utils.ProgramUsingPen;
 import newanalytics.utils.SpriteCount;
 import newanalytics.utils.WeightedMethodCount;
 import org.apache.commons.csv.CSVPrinter;
@@ -103,6 +104,7 @@ public class IssueTool {
         utilFinder.put(SpriteCount.SHORT_NAME, new SpriteCount());
         utilFinder.put(ProcedureCount.SHORT_NAME, new ProcedureCount());
         utilFinder.put(WeightedMethodCount.SHORT_NAME, new WeightedMethodCount());
+        utilFinder.put(ProgramUsingPen.SHORT_NAME, new ProgramUsingPen());
 //
 //        // To evaluate the CT score
 //        finder.put("logthink", new LogicalThinking());
