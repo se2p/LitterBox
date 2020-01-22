@@ -25,9 +25,9 @@ import analytics.IssueReport;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import scratch.ast.ParsingException;
-import scratch.ast.model.Program;
-import scratch.ast.parser.ProgramParser;
+import ast.ParsingException;
+import ast.model.Program;
+import ast.parser.ProgramParser;
 
 public class IllegalParameterRefactorTest {
     private static Program empty;

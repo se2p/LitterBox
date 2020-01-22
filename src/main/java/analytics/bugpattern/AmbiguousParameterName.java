@@ -20,16 +20,16 @@ package analytics.bugpattern;
 
 import analytics.IssueFinder;
 import analytics.IssueReport;
-import scratch.ast.model.ASTNode;
-import scratch.ast.model.ActorDefinition;
-import scratch.ast.model.Program;
-import scratch.ast.model.StmtList;
-import scratch.ast.model.procedure.ProcedureDefinition;
-import scratch.ast.model.variable.Identifier;
-import scratch.ast.model.variable.StrId;
-import scratch.ast.parser.symboltable.ArgumentInfo;
-import scratch.ast.parser.symboltable.ProcedureInfo;
-import scratch.ast.visitor.ScratchVisitor;
+import ast.model.ASTNode;
+import ast.model.ActorDefinition;
+import ast.model.Program;
+import ast.model.StmtList;
+import ast.model.procedure.ProcedureDefinition;
+import ast.model.variable.Identifier;
+import ast.model.variable.StrId;
+import ast.parser.symboltable.ArgumentInfo;
+import ast.parser.symboltable.ProcedureInfo;
+import ast.visitor.ScratchVisitor;
 import utils.Preconditions;
 
 import java.util.LinkedList;

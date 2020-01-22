@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import analytics.IssueFinder;
 import analytics.IssueReport;
-import scratch.ast.model.Program;
+import ast.model.Program;
 import utils.Identifier;
 
 /**

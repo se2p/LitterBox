@@ -28,7 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
-import scratch.ast.model.Program;
+import ast.model.Program;
 
 /**
  * Util class for writing and saving the csv

@@ -20,7 +20,7 @@ package analytics.smells;
 
 import analytics.IssueFinder;
 import analytics.IssueReport;
-import scratch.ast.model.Program;
+import ast.model.Program;
 
 /**
  * Checks for multiple access of private Sprite variables.

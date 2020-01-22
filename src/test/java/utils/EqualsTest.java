@@ -20,12 +20,12 @@ package utils;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import scratch.ast.model.StmtList;
-import scratch.ast.model.literals.NumberLiteral;
-import scratch.ast.model.statement.Stmt;
-import scratch.ast.model.statement.control.RepeatTimesStmt;
-import scratch.ast.model.statement.spritelook.ListOfStmt;
-import scratch.ast.model.statement.spritemotion.MoveSteps;
+import ast.model.StmtList;
+import ast.model.literals.NumberLiteral;
+import ast.model.statement.Stmt;
+import ast.model.statement.control.RepeatTimesStmt;
+import ast.model.statement.spritelook.ListOfStmt;
+import ast.model.statement.spritemotion.MoveSteps;
 
 import java.util.ArrayList;
 import java.util.List;

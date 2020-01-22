@@ -20,15 +20,15 @@ package analytics.bugpattern;
 
 import analytics.IssueFinder;
 import analytics.IssueReport;
-import scratch.ast.model.ASTNode;
-import scratch.ast.model.ActorDefinition;
-import scratch.ast.model.Program;
-import scratch.ast.model.expression.bool.BiggerThan;
-import scratch.ast.model.expression.bool.Equals;
-import scratch.ast.model.expression.bool.LessThan;
-import scratch.ast.model.literals.NumberLiteral;
-import scratch.ast.model.literals.StringLiteral;
-import scratch.ast.visitor.ScratchVisitor;
+import ast.model.ASTNode;
+import ast.model.ActorDefinition;
+import ast.model.Program;
+import ast.model.expression.bool.BiggerThan;
+import ast.model.expression.bool.Equals;
+import ast.model.expression.bool.LessThan;
+import ast.model.literals.NumberLiteral;
+import ast.model.literals.StringLiteral;
+import ast.visitor.ScratchVisitor;
 import utils.Preconditions;
 
 import java.util.LinkedList;

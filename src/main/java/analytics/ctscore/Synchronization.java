@@ -20,7 +20,7 @@ package analytics.ctscore;
 
 import analytics.IssueFinder;
 import analytics.IssueReport;
-import scratch.ast.model.Program;
+import ast.model.Program;
 
 /**
  * Evaluates the synchronization level of the Scratch program.

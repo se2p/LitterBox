@@ -20,19 +20,19 @@ package analytics.utils;
 
 import analytics.IssueFinder;
 import analytics.IssueReport;
-import scratch.ast.model.ASTNode;
-import scratch.ast.model.Program;
-import scratch.ast.model.literals.StringLiteral;
-import scratch.ast.model.statement.common.ChangeAttributeBy;
-import scratch.ast.model.statement.common.SetAttributeTo;
-import scratch.ast.model.statement.pen.*;
-import scratch.ast.visitor.ScratchVisitor;
+import ast.model.ASTNode;
+import ast.model.Program;
+import ast.model.literals.StringLiteral;
+import ast.model.statement.common.ChangeAttributeBy;
+import ast.model.statement.common.SetAttributeTo;
+import ast.model.statement.pen.*;
+import ast.visitor.ScratchVisitor;
 import utils.Preconditions;
 
 import java.util.LinkedList;
 import java.util.List;
 
-import static scratch.ast.Constants.PEN_SIZE_KEY;
+import static ast.Constants.PEN_SIZE_KEY;
 
 public class ProgramUsingPen implements IssueFinder, ScratchVisitor {
     public static final String NAME = "using_pen";

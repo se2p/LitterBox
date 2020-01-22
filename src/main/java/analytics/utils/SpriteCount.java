@@ -21,8 +21,8 @@ package analytics.utils;
 import java.util.ArrayList;
 import analytics.IssueFinder;
 import analytics.IssueReport;
-import scratch.ast.model.Program;
-import scratch.ast.visitor.ScratchVisitor;
+import ast.model.Program;
+import ast.visitor.ScratchVisitor;
 
 public class SpriteCount implements ScratchVisitor, IssueFinder {
     public static final String NAME = "sprite_count";

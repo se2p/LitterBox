@@ -20,12 +20,12 @@ package analytics.bugpattern;
 
 import analytics.IssueFinder;
 import analytics.IssueReport;
-import scratch.ast.model.ASTNode;
-import scratch.ast.model.ActorDefinition;
-import scratch.ast.model.Program;
-import scratch.ast.model.statement.pen.PenDownStmt;
-import scratch.ast.model.statement.pen.PenUpStmt;
-import scratch.ast.visitor.ScratchVisitor;
+import ast.model.ASTNode;
+import ast.model.ActorDefinition;
+import ast.model.Program;
+import ast.model.statement.pen.PenDownStmt;
+import ast.model.statement.pen.PenUpStmt;
+import ast.visitor.ScratchVisitor;
 import utils.Preconditions;
 
 import java.util.LinkedList;

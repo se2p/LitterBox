@@ -22,17 +22,17 @@ import java.util.LinkedList;
 import java.util.List;
 import analytics.IssueFinder;
 import analytics.IssueReport;
-import scratch.ast.model.ASTNode;
-import scratch.ast.model.ActorDefinition;
-import scratch.ast.model.Program;
-import scratch.ast.model.expression.bool.ColorTouches;
-import scratch.ast.model.expression.bool.Touching;
-import scratch.ast.model.literals.ColorLiteral;
-import scratch.ast.model.statement.pen.SetPenColorToColorStmt;
-import scratch.ast.model.touchable.Edge;
-import scratch.ast.model.touchable.MousePointer;
-import scratch.ast.model.touchable.SpriteTouchable;
-import scratch.ast.visitor.ScratchVisitor;
+import ast.model.ASTNode;
+import ast.model.ActorDefinition;
+import ast.model.Program;
+import ast.model.expression.bool.ColorTouches;
+import ast.model.expression.bool.Touching;
+import ast.model.literals.ColorLiteral;
+import ast.model.statement.pen.SetPenColorToColorStmt;
+import ast.model.touchable.Edge;
+import ast.model.touchable.MousePointer;
+import ast.model.touchable.SpriteTouchable;
+import ast.visitor.ScratchVisitor;
 import utils.Preconditions;
 
 public class ExpressionAsColor implements IssueFinder, ScratchVisitor {

@@ -24,12 +24,12 @@ import java.util.List;
 import analytics.IssueFinder;
 import analytics.IssueReport;
 import analytics.IssueTool;
-import scratch.ast.model.ActorDefinition;
-import scratch.ast.model.Program;
-import scratch.ast.model.Script;
-import scratch.ast.model.event.Never;
-import scratch.ast.model.statement.Stmt;
-import scratch.ast.model.statement.control.*;
+import ast.model.ActorDefinition;
+import ast.model.Program;
+import ast.model.Script;
+import ast.model.event.Never;
+import ast.model.statement.Stmt;
+import ast.model.statement.control.*;
 import utils.Preconditions;
 
 /**

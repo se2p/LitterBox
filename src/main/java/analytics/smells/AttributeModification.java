@@ -20,7 +20,7 @@ package analytics.smells;
 
 import analytics.IssueFinder;
 import analytics.IssueReport;
-import scratch.ast.model.Program;
+import ast.model.Program;
 
 /**
  * Checks if attributes get modified multiple times in a row.

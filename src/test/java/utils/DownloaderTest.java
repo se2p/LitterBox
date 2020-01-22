@@ -21,12 +21,11 @@ package utils;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.FixMethodOrder;
-import org.junit.jupiter.api.Test;
 import org.junit.runners.MethodSorters;
-import scratch.ast.ParsingException;
-import scratch.ast.model.Program;
-import scratch.ast.parser.ProgramParser;
-import scratch.ast.visitor.DotVisitor;
+import ast.ParsingException;
+import ast.model.Program;
+import ast.parser.ProgramParser;
+import ast.visitor.DotVisitor;
 
 import java.io.File;
 import java.io.IOException;

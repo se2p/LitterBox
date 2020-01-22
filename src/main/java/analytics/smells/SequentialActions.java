@@ -20,7 +20,7 @@ package analytics.smells;
 
 import analytics.IssueFinder;
 import analytics.IssueReport;
-import scratch.ast.model.Program;
+import ast.model.Program;
 
 /**
  * Checks for sequential actions that can be replaced by (do x times).

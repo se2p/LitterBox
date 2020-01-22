@@ -21,10 +21,10 @@ package analytics.utils;
 import java.util.ArrayList;
 import analytics.IssueFinder;
 import analytics.IssueReport;
-import scratch.ast.model.ASTNode;
-import scratch.ast.model.Program;
-import scratch.ast.model.procedure.ProcedureDefinition;
-import scratch.ast.visitor.ScratchVisitor;
+import ast.model.ASTNode;
+import ast.model.Program;
+import ast.model.procedure.ProcedureDefinition;
+import ast.visitor.ScratchVisitor;
 import utils.Preconditions;
 
 public class ProcedureCount implements IssueFinder, ScratchVisitor {

@@ -25,9 +25,9 @@ import java.util.Map;
 import analytics.IssueFinder;
 import analytics.IssueReport;
 import analytics.IssueTool;
-import scratch.ast.model.Program;
-import scratch.ast.parser.symboltable.ExpressionListInfo;
-import scratch.ast.parser.symboltable.VariableInfo;
+import ast.model.Program;
+import ast.parser.symboltable.ExpressionListInfo;
+import ast.parser.symboltable.VariableInfo;
 import utils.Preconditions;
 
 public class SameVariableDifferentSprite implements IssueFinder {

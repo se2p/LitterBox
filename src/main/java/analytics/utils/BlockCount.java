@@ -18,32 +18,32 @@
  */
 package analytics.utils;
 
-import static scratch.ast.Constants.*;
+import static ast.Constants.*;
 
 
 import java.util.LinkedList;
 import analytics.IssueFinder;
 import analytics.IssueReport;
-import scratch.ast.model.ASTNode;
-import scratch.ast.model.Program;
-import scratch.ast.model.Script;
-import scratch.ast.model.StmtList;
-import scratch.ast.model.event.Never;
-import scratch.ast.model.expression.list.ExpressionList;
-import scratch.ast.model.expression.list.ExpressionListPlain;
-import scratch.ast.model.literals.BoolLiteral;
-import scratch.ast.model.literals.ColorLiteral;
-import scratch.ast.model.literals.NumberLiteral;
-import scratch.ast.model.literals.StringLiteral;
-import scratch.ast.model.procedure.Parameter;
-import scratch.ast.model.procedure.ParameterList;
-import scratch.ast.model.procedure.ParameterListPlain;
-import scratch.ast.model.procedure.ProcedureDefinition;
-import scratch.ast.model.statement.CallStmt;
-import scratch.ast.model.statement.spritelook.ListOfStmt;
-import scratch.ast.model.type.Type;
-import scratch.ast.model.variable.Identifier;
-import scratch.ast.visitor.ScratchVisitor;
+import ast.model.ASTNode;
+import ast.model.Program;
+import ast.model.Script;
+import ast.model.StmtList;
+import ast.model.event.Never;
+import ast.model.expression.list.ExpressionList;
+import ast.model.expression.list.ExpressionListPlain;
+import ast.model.literals.BoolLiteral;
+import ast.model.literals.ColorLiteral;
+import ast.model.literals.NumberLiteral;
+import ast.model.literals.StringLiteral;
+import ast.model.procedure.Parameter;
+import ast.model.procedure.ParameterList;
+import ast.model.procedure.ParameterListPlain;
+import ast.model.procedure.ProcedureDefinition;
+import ast.model.statement.CallStmt;
+import ast.model.statement.spritelook.ListOfStmt;
+import ast.model.type.Type;
+import ast.model.variable.Identifier;
+import ast.visitor.ScratchVisitor;
 import utils.Preconditions;
 
 public class BlockCount implements IssueFinder, ScratchVisitor {

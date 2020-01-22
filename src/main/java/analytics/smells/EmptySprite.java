@@ -21,9 +21,9 @@ package analytics.smells;
 import analytics.IssueFinder;
 import analytics.IssueReport;
 import analytics.IssueTool;
-import scratch.ast.model.ActorDefinition;
-import scratch.ast.model.ActorType;
-import scratch.ast.model.Program;
+import ast.model.ActorDefinition;
+import ast.model.ActorType;
+import ast.model.Program;
 import utils.Preconditions;
 
 import java.util.ArrayList;

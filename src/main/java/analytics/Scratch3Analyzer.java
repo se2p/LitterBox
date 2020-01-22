@@ -30,9 +30,9 @@ import java.util.Objects;
 import java.util.logging.Logger;
 import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.io.FilenameUtils;
-import scratch.ast.ParsingException;
-import scratch.ast.model.Program;
-import scratch.ast.parser.ProgramParser;
+import ast.ParsingException;
+import ast.model.Program;
+import ast.parser.ProgramParser;
 import utils.*;
 
 import static utils.GroupConstants.*;

@@ -20,14 +20,14 @@ package analytics.bugpattern;
 
 import analytics.IssueFinder;
 import analytics.IssueReport;
-import scratch.ast.Constants;
-import scratch.ast.model.ASTNode;
-import scratch.ast.model.ActorDefinition;
-import scratch.ast.model.Program;
-import scratch.ast.model.procedure.Parameter;
-import scratch.ast.model.procedure.ProcedureDefinition;
-import scratch.ast.model.variable.StrId;
-import scratch.ast.visitor.ScratchVisitor;
+import ast.Constants;
+import ast.model.ASTNode;
+import ast.model.ActorDefinition;
+import ast.model.Program;
+import ast.model.procedure.Parameter;
+import ast.model.procedure.ProcedureDefinition;
+import ast.model.variable.StrId;
+import ast.visitor.ScratchVisitor;
 import utils.Preconditions;
 
 import java.util.LinkedList;

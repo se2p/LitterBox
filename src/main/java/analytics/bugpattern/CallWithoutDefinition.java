@@ -24,14 +24,14 @@ import java.util.List;
 import java.util.Map;
 import analytics.IssueFinder;
 import analytics.IssueReport;
-import scratch.ast.model.ASTNode;
-import scratch.ast.model.ActorDefinition;
-import scratch.ast.model.Program;
-import scratch.ast.model.procedure.ProcedureDefinition;
-import scratch.ast.model.statement.CallStmt;
-import scratch.ast.model.variable.Identifier;
-import scratch.ast.parser.symboltable.ProcedureInfo;
-import scratch.ast.visitor.ScratchVisitor;
+import ast.model.ASTNode;
+import ast.model.ActorDefinition;
+import ast.model.Program;
+import ast.model.procedure.ProcedureDefinition;
+import ast.model.statement.CallStmt;
+import ast.model.variable.Identifier;
+import ast.parser.symboltable.ProcedureInfo;
+import ast.visitor.ScratchVisitor;
 import utils.Preconditions;
 
 public class CallWithoutDefinition implements IssueFinder, ScratchVisitor {

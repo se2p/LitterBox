@@ -23,14 +23,14 @@ import java.util.List;
 import java.util.stream.Collectors;
 import analytics.IssueFinder;
 import analytics.IssueReport;
-import scratch.ast.model.ASTNode;
-import scratch.ast.model.ActorDefinition;
-import scratch.ast.model.Program;
-import scratch.ast.model.event.Clicked;
-import scratch.ast.model.event.StartedAsClone;
-import scratch.ast.model.statement.common.CreateCloneOf;
-import scratch.ast.model.variable.StrId;
-import scratch.ast.visitor.ScratchVisitor;
+import ast.model.ASTNode;
+import ast.model.ActorDefinition;
+import ast.model.Program;
+import ast.model.event.Clicked;
+import ast.model.event.StartedAsClone;
+import ast.model.statement.common.CreateCloneOf;
+import ast.model.variable.StrId;
+import ast.visitor.ScratchVisitor;
 import utils.Preconditions;
 
 public class MissingCloneInitialization implements IssueFinder, ScratchVisitor {

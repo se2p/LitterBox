@@ -18,7 +18,7 @@
  */
 package analytics;
 
-import scratch.ast.model.Program;
+import ast.model.Program;
 
 /**
  * Interface for all IssueFinders.

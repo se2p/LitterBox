@@ -21,14 +21,14 @@ package analytics.bugpattern;
 import java.util.*;
 import analytics.IssueFinder;
 import analytics.IssueReport;
-import scratch.ast.model.ASTNode;
-import scratch.ast.model.ActorDefinition;
-import scratch.ast.model.Program;
-import scratch.ast.model.event.ReceptionOfMessage;
-import scratch.ast.model.literals.StringLiteral;
-import scratch.ast.model.statement.common.Broadcast;
-import scratch.ast.model.statement.common.BroadcastAndWait;
-import scratch.ast.visitor.ScratchVisitor;
+import ast.model.ASTNode;
+import ast.model.ActorDefinition;
+import ast.model.Program;
+import ast.model.event.ReceptionOfMessage;
+import ast.model.literals.StringLiteral;
+import ast.model.statement.common.Broadcast;
+import ast.model.statement.common.BroadcastAndWait;
+import ast.visitor.ScratchVisitor;
 import utils.Preconditions;
 
 public class MessageNeverReceived implements IssueFinder, ScratchVisitor {

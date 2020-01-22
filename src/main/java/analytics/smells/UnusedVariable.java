@@ -20,15 +20,15 @@ package analytics.smells;
 
 import analytics.IssueFinder;
 import analytics.IssueReport;
-import scratch.ast.Constants;
-import scratch.ast.model.ASTNode;
-import scratch.ast.model.Program;
-import scratch.ast.model.Script;
-import scratch.ast.model.procedure.ProcedureDefinition;
-import scratch.ast.model.variable.Qualified;
-import scratch.ast.parser.symboltable.ExpressionListInfo;
-import scratch.ast.parser.symboltable.VariableInfo;
-import scratch.ast.visitor.ScratchVisitor;
+import ast.Constants;
+import ast.model.ASTNode;
+import ast.model.Program;
+import ast.model.Script;
+import ast.model.procedure.ProcedureDefinition;
+import ast.model.variable.Qualified;
+import ast.parser.symboltable.ExpressionListInfo;
+import ast.parser.symboltable.VariableInfo;
+import ast.visitor.ScratchVisitor;
 import utils.Preconditions;
 
 import java.util.*;

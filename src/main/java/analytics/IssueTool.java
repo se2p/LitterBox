@@ -30,7 +30,7 @@ import analytics.utils.ProgramUsingPen;
 import analytics.utils.SpriteCount;
 import analytics.utils.WeightedMethodCount;
 import org.apache.commons.csv.CSVPrinter;
-import scratch.ast.model.Program;
+import ast.model.Program;
 import utils.CSVWriter;
 
 import static utils.GroupConstants.*;
