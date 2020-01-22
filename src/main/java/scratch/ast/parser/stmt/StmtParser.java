@@ -22,6 +22,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import scratch.ast.Constants;
 import scratch.ast.ParsingException;
 import scratch.ast.model.statement.Stmt;
+import scratch.ast.model.statement.UnspecifiedStmt;
 import scratch.ast.opcodes.*;
 import utils.Preconditions;
 
@@ -37,8 +38,10 @@ public class StmtParser {
 
         if (TerminationStmtOpcode.contains(opcode)) {
             if (!(current.get(Constants.FIELDS_KEY).has("STOP_OPTION")
-                    && current.get(Constants.FIELDS_KEY).get("STOP_OPTION").get(Constants.FIELD_VALUE).asText()
-                    .equals("other scripts in sprite"))) {
+                    && (current.get(Constants.FIELDS_KEY).get("STOP_OPTION").get(Constants.FIELD_VALUE).asText()
+                    .equals("other scripts in sprite")
+                    || current.get(Constants.FIELDS_KEY).get("STOP_OPTION").get(Constants.FIELD_VALUE).asText()
+                    .equals("other scripts in stage")))) {
                 return TerminationStmtParser.parseTerminationStmt(current, blocks);
             }
         }
@@ -66,7 +69,7 @@ public class StmtParser {
             return ActorSoundStmtParser.parse(current, blocks);
 
         } else if (CallStmtOpcode.contains(opcode)) {
-            return CallStmtParser.parse(current, blockID, blocks);
+            return CallStmtParser.parse(current, blocks);
 
         } else if (ListStmtOpcode.contains(opcode)) {
             return ListStmtParser.parse(current, blocks);
@@ -75,8 +78,8 @@ public class StmtParser {
             return SetStmtParser.parse(current, blocks);
         } else if (PenOpcode.contains(opcode)) {
             return PenStmtParser.parse(current, blocks);
+        } else {
+            return new UnspecifiedStmt();
         }
-
-        throw new RuntimeException("Not implemented");
     }
 }

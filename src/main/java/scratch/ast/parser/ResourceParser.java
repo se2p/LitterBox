@@ -19,6 +19,10 @@
 package scratch.ast.parser;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.logging.Logger;
 import scratch.ast.ParsingException;
 import scratch.ast.model.URI;
 import scratch.ast.model.literals.StringLiteral;
@@ -27,11 +31,6 @@ import scratch.ast.model.resource.Resource;
 import scratch.ast.model.resource.SoundResource;
 import scratch.ast.model.variable.StrId;
 import utils.Preconditions;
-
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.logging.Logger;
 
 public class ResourceParser {
 
@@ -45,8 +44,8 @@ public class ResourceParser {
         Iterator<JsonNode> iter = resourceNode.elements();
         while (iter.hasNext()) {
             JsonNode node = iter.next();
-            SoundResource res = new SoundResource(new StrId(node.get(NAME).textValue()),
-                new URI(new StringLiteral(node.get(MD5EXT).textValue())));
+            SoundResource res = new SoundResource(new StrId(node.get(NAME).asText()),
+                    new URI(new StringLiteral(node.get(MD5EXT).asText())));
             parsedRessources.add(res);
         }
         return parsedRessources;
@@ -61,7 +60,7 @@ public class ResourceParser {
             JsonNode node = iter.next();
             ImageResource res = null;
             try {
-                res = new ImageResource(new StrId(node.get(NAME).textValue()),
+                res = new ImageResource(new StrId(node.get(NAME).asText()),
                     getURI(node));
             } catch (ParsingException e) {
                 Logger.getGlobal().warning(e.getMessage());
@@ -74,14 +73,14 @@ public class ResourceParser {
 
     private static URI getURI(JsonNode node) throws ParsingException {
         if (node.has(MD5EXT)) {
-            return new URI(new StringLiteral(node.get(MD5EXT).textValue()));
+            return new URI(new StringLiteral(node.get(MD5EXT).asText()));
         } else if (node.has("assetId") && node.has("dataFormat")) {
             String assetId = node.get("assetId").asText();
             String dataFormat = node.get("dataFormat").asText();
             String fileName = assetId + "." + dataFormat;
             return new URI(new StringLiteral(fileName));
         } else {
-            throw new ParsingException("Cannot parse URI of resource node " + node.textValue());
+            throw new ParsingException("Cannot parse URI of resource node " + node.asText());
         }
     }
 }

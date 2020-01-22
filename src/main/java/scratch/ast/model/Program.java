@@ -19,6 +19,8 @@
 package scratch.ast.model;
 
 import scratch.ast.model.variable.Identifier;
+import scratch.ast.parser.symboltable.ProcedureDefinitionNameMapping;
+import scratch.ast.parser.symboltable.SymbolTable;
 import scratch.ast.visitor.ScratchVisitor;
 import utils.Preconditions;
 
@@ -26,11 +28,15 @@ public class Program extends AbstractNode {
 
     private final Identifier ident;
     private final ActorDefinitionList actorDefinitionList;
+    private final SymbolTable symbolTable;
+    private final ProcedureDefinitionNameMapping procedureMapping;
 
-    public Program(Identifier ident, ActorDefinitionList actorDefinitionList) {
+    public Program(Identifier ident, ActorDefinitionList actorDefinitionList, SymbolTable symbolTable, ProcedureDefinitionNameMapping procedureMapping) {
         super(ident, actorDefinitionList);
         this.ident = Preconditions.checkNotNull(ident);
         this.actorDefinitionList = Preconditions.checkNotNull(actorDefinitionList);
+        this.procedureMapping = procedureMapping;
+        this.symbolTable=symbolTable;
     }
 
     public Identifier getIdent() {
@@ -46,4 +52,11 @@ public class Program extends AbstractNode {
         visitor.visit(this);
     }
 
+    public SymbolTable getSymbolTable() {
+        return symbolTable;
+    }
+
+    public ProcedureDefinitionNameMapping getProcedureMapping() {
+        return procedureMapping;
+    }
 }

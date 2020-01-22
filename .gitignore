@@ -1,3 +1,4 @@
 .idea/
 target/
-ScratchAnalytics.iml
+*.iml
+dependency-reduced-pom.xml

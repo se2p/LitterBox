@@ -18,86 +18,133 @@
  */
 package newanalytics.smells;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 import newanalytics.IssueFinder;
 import newanalytics.IssueReport;
+import scratch.ast.Constants;
+import scratch.ast.model.ASTNode;
 import scratch.ast.model.Program;
-import scratch.data.ScBlock;
-import scratch.structure.Scriptable;
-import utils.Identifier;
+import scratch.ast.model.Script;
+import scratch.ast.model.procedure.ProcedureDefinition;
+import scratch.ast.model.variable.Qualified;
+import scratch.ast.parser.symboltable.ExpressionListInfo;
+import scratch.ast.parser.symboltable.VariableInfo;
+import scratch.ast.visitor.ScratchVisitor;
+import utils.Preconditions;
+
+import java.util.*;
 
 /**
  * Checks if there are unused variables.
  */
-public class UnusedVariable implements IssueFinder {
+public class UnusedVariable implements IssueFinder, ScratchVisitor {
 
-    String name = "unused_variable";
+    public static final String NAME = "unused_variables";
+    public static final String SHORT_NAME = "unusedVar";
+    private static final String NOTE1 = "There are no unused variables in your project.";
+    private static final String NOTE2 = "Some of the sprites contain unused variables.";
+    public static final String[] MY_VARIABLE_LANGUAGES = {"meine Variable", "исхатәу аҽеиҭак", "my variable", "متغيري", "мая зменная", "моята променлива", "la meva variable", "گۆڕاوەکەم", "moje proměnná", "fy newidyn", "min variabel", "η μεταβλητή μου", "mi variable", "minu muutuja", "nire aldagaia", "متغیر من", "muuttujani", "ma variable", "m'athróg", "an caochladair agam", "a miña variábel", "המשתנה שלי", "moja varijabla", "az én változóm", "variabel saya", "la mia variabile", "へんすう", "変数", "ჩემი ცვლადი", "អថេរខ្ញុំ", "나의 변수", "mano kintamasis", "mans mainīgais", "taku taurangi", "min variabel", "mijn variabele", "min variabel", "moja zmienna", "minha variável", "a minha variável", "toʾoku variable", "variabila mea", "моя переменная", "premenná", "moja spremenljivka", "моја променљива", "min variabel", "kibadilika changu", "ตัวแปรของฉัน", "değişkenim", "моя змінна", "mening o'zgaruvchim", "biến của tôi", "我的变量", "i-variable yami"};
+    private int count = 0;
+    private List<String> actorNames = new LinkedList<>();
+    private List<Qualified> variableCalls;
+    private boolean insideProcedure;
+    private boolean insideScript;
+    private Map<String, VariableInfo> varMap;
+    private Map<String, ExpressionListInfo> listMap;
 
     @Override
     public IssueReport check(Program program) {
-        /*
-        List<Scriptable> scriptables = new ArrayList<>(program.getSprites());
-        scriptables.add(program.getStage());
-        int count;
-        List<String> pos = new ArrayList<>();
-        Map<String, List<String>> variableScope = new HashMap<>();
-        List<ScVariable> vars = new ArrayList<>();
-        for (Scriptable scable : scriptables) {
-            vars.addAll(scable.getVariables());
-            for (Script script : scable.getScripts()) {
-                if (program.getVersion().equals(Version.SCRATCH2)) {
-                    searchBlocks2(script.getBlocks(), scable, variableScope);
-                } else if (program.getVersion().equals(Version.SCRATCH3)) {
-                    searchBlocks3(script.getBlocks(), scable, variableScope);
-                }
-            }
-        }
-        for (ScVariable scv : vars) {
-            if (!variableScope.containsKey(scv.getName())) {
-                pos.add(scv.getName());
-            }
-        }
+        Preconditions.checkNotNull(program);
 
-        count = pos.size();
-        String notes = "There are no unused variables in your project.";
+        count = 0;
+        actorNames = new LinkedList<>();
+        varMap = program.getSymbolTable().getVariables();
+        listMap = program.getSymbolTable().getLists();
+        variableCalls = new ArrayList<>();
+        program.accept(this);
+        String notes = NOTE1;
+        checkVariables();
         if (count > 0) {
-            notes = "There are unused variables in your project.";
+            notes = NOTE2;
         }
-
-        return new IssueReport(name, count, pos, program.getPath(), notes);
-
-         */
-        throw new RuntimeException("not implemented");
-    }
-
-    private void searchBlocks3(List<ScBlock> blocks, Scriptable scable, Map<String, List<String>> variableScope) {
-        if (blocks != null) {
-            for (ScBlock block : blocks) {
-                if (block.getFields() != null && block.getFields().containsKey(Identifier.FIELD_VARIABLE.getValue())) {
-                    String var = block.getFields().get(Identifier.FIELD_VARIABLE.getValue()).get(0);
-                    if (variableScope.containsKey(var)) {
-                        if (!variableScope.get(var).contains(scable.getName())) {
-                            variableScope.get(var).add(scable.getName());
-                        }
-                    } else {
-                        variableScope.put(var, new ArrayList<>());
-                        variableScope.get(var).add(scable.getName());
-                    }
-                }
-                if (block.getNestedBlocks() != null && block.getNestedBlocks().size() > 0) {
-                    searchBlocks3(block.getNestedBlocks(), scable, variableScope);
-                }
-                if (block.getElseBlocks() != null && block.getElseBlocks().size() > 0) {
-                    searchBlocks3(block.getElseBlocks(), scable, variableScope);
-                }
-            }
-        }
+        return new IssueReport(NAME, count, actorNames, notes);
     }
 
     @Override
     public String getName() {
-        return name;
+        return NAME;
+    }
+
+
+    private void checkVariables() {
+
+        Set<String> ids = varMap.keySet();
+        for (String id : ids) {
+            VariableInfo curr = varMap.get(id);
+            String actorName = curr.getActor();
+            String name = curr.getVariableName();
+            boolean currFound = false;
+            for (int i = 0; i < variableCalls.size() && !currFound; i++) {
+                if (variableCalls.get(i).getFirst().getName().equals(actorName)
+                        && variableCalls.get(i).getSecond().getName().equals(name)) {
+                    currFound = true;
+                }
+            }
+
+            if (!currFound && !Arrays.asList(MY_VARIABLE_LANGUAGES).contains(name.substring(Constants.VARIABLE_ABBREVIATION.length()))) {
+                count++;
+
+            }
+        }
+        ids = listMap.keySet();
+        for (String id : ids) {
+            ExpressionListInfo curr = listMap.get(id);
+            String actorName = curr.getActor();
+            String name = curr.getVariableName();
+            boolean currFound = false;
+            for (int i = 0; i < variableCalls.size() && !currFound; i++) {
+                if (variableCalls.get(i).getFirst().getName().equals(actorName)
+                        && variableCalls.get(i).getSecond().getName().equals(name)) {
+                    currFound = true;
+                }
+            }
+            if (!currFound) {
+                count++;
+            }
+        }
+    }
+
+    @Override
+    public void visit(ProcedureDefinition node) {
+        insideProcedure = true;
+        if (!node.getChildren().isEmpty()) {
+            for (ASTNode child : node.getChildren()) {
+                child.accept(this);
+            }
+        }
+        insideProcedure = false;
+    }
+
+    @Override
+    public void visit(Script node) {
+        insideScript = true;
+        if (!node.getChildren().isEmpty()) {
+            for (ASTNode child : node.getChildren()) {
+                child.accept(this);
+            }
+        }
+        insideScript = false;
+
+    }
+
+    @Override
+    public void visit(Qualified node) {
+        if (insideProcedure || insideScript) {
+            variableCalls.add(node);
+        }
+        if (!node.getChildren().isEmpty()) {
+            for (ASTNode child : node.getChildren()) {
+                child.accept(this);
+            }
+        }
     }
 }

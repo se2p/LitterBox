@@ -18,6 +18,10 @@
  */
 package scratch.ast.parser;
 
+import static scratch.ast.Constants.*;
+import static scratch.ast.parser.ExpressionParser.parseExpression;
+
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.TextNode;
@@ -27,46 +31,42 @@ import java.util.Optional;
 import scratch.ast.Constants;
 import scratch.ast.ParsingException;
 import scratch.ast.model.Key;
+import scratch.ast.model.expression.ComparableExpr;
 import scratch.ast.model.expression.Expression;
-import scratch.ast.model.expression.bool.And;
-import scratch.ast.model.expression.bool.BiggerThan;
-import scratch.ast.model.expression.bool.BoolExpr;
-import scratch.ast.model.expression.bool.ColorTouches;
-import scratch.ast.model.expression.bool.Equals;
-import scratch.ast.model.expression.bool.ExpressionContains;
-import scratch.ast.model.expression.bool.IsKeyPressed;
-import scratch.ast.model.expression.bool.IsMouseDown;
-import scratch.ast.model.expression.bool.LessThan;
-import scratch.ast.model.expression.bool.Not;
-import scratch.ast.model.expression.bool.Or;
-import scratch.ast.model.expression.bool.Touching;
+import scratch.ast.model.expression.bool.*;
 import scratch.ast.model.expression.color.ColorExpression;
 import scratch.ast.model.expression.num.AsNumber;
+import scratch.ast.model.expression.num.IndexOf;
 import scratch.ast.model.expression.num.NumExpr;
 import scratch.ast.model.expression.num.UnspecifiedNumExpr;
-import scratch.ast.model.expression.string.StringExpr;
+import scratch.ast.model.expression.string.ItemOfVariable;
 import scratch.ast.model.literals.BoolLiteral;
-import scratch.ast.model.procedure.Parameter;
 import scratch.ast.model.touchable.Touchable;
-import scratch.ast.model.type.BooleanType;
-import scratch.ast.model.type.StringType;
 import scratch.ast.model.variable.Qualified;
 import scratch.ast.model.variable.StrId;
 import scratch.ast.model.variable.Variable;
 import scratch.ast.opcodes.BoolExprOpcode;
+import scratch.ast.opcodes.NumExprOpcode;
 import scratch.ast.opcodes.ProcedureOpcode;
+import scratch.ast.opcodes.StringExprOpcode;
 import scratch.ast.parser.symboltable.ExpressionListInfo;
 import scratch.ast.parser.symboltable.VariableInfo;
 import utils.Preconditions;
-
-import static scratch.ast.Constants.*;
 
 public class BoolExprParser {
 
     public static BoolExpr parseBoolExpr(JsonNode block, String inputName, JsonNode blocks) throws ParsingException {
         ArrayNode exprArray = ExpressionParser.getExprArrayByName(block.get(INPUTS_KEY), inputName);
+        if (exprArray == null) {
+            return new UnspecifiedBoolExpr();
+        }
+
         if (ExpressionParser.getShadowIndicator(exprArray) == 1) {
-            return parseBool(block.get(INPUTS_KEY), inputName);
+            try {
+                return parseBool(block.get(INPUTS_KEY), inputName);
+            } catch (ParsingException e) {
+                return new UnspecifiedBoolExpr();
+            }
         } else if (exprArray.get(POS_BLOCK_ID) instanceof TextNode) {
             String identifier = exprArray.get(POS_BLOCK_ID).asText();
             return parseBlockBoolExpr(blocks.get(identifier), blocks);
@@ -83,7 +83,11 @@ public class BoolExprParser {
     public static BoolExpr parseBoolExpr(JsonNode block, int pos, JsonNode blocks) throws ParsingException {
         ArrayNode exprArray = ExpressionParser.getExprArrayAtPos(block.get(INPUTS_KEY), pos);
         if (ExpressionParser.getShadowIndicator(exprArray) == 1) {
-            return parseBool(block.get(INPUTS_KEY), pos);
+            try {
+                return parseBool(block.get(INPUTS_KEY), pos);
+            } catch (ParsingException e) {
+                return new UnspecifiedBoolExpr();
+            }
         } else if (exprArray.get(POS_BLOCK_ID) instanceof TextNode) {
             String identifier = exprArray.get(POS_BLOCK_ID).asText();
             return parseBlockBoolExpr(blocks.get(identifier), blocks);
@@ -114,12 +118,12 @@ public class BoolExprParser {
         return null;
     }
 
-    private static BoolLiteral parseBool(JsonNode inputs, int pos) {
+    private static BoolLiteral parseBool(JsonNode inputs, int pos) throws ParsingException {
         boolean value = ExpressionParser.getDataArrayAtPos(inputs, pos).get(POS_INPUT_VALUE).asBoolean();
         return new BoolLiteral(value);
     }
 
-    private static BoolLiteral parseBool(JsonNode inputs, String inputName) {
+    private static BoolLiteral parseBool(JsonNode inputs, String inputName) throws ParsingException {
         boolean value = ExpressionParser.getDataArrayByName(inputs, inputName).get(POS_INPUT_VALUE).asBoolean();
         return new BoolLiteral(value);
     }
@@ -139,65 +143,79 @@ public class BoolExprParser {
             return parseParameter(blocks, expressionBlock);
         }
         Preconditions
-                .checkArgument(BoolExprOpcode.contains(opcodeString), opcodeString + " is not a BoolExprOpcode.");
+                .checkArgument(BoolExprOpcode.contains(opcodeString) || opcodeString.equals(StringExprOpcode.data_itemoflist.name()) || opcodeString.equals(NumExprOpcode.data_itemnumoflist.name()), opcodeString + " is not a BoolExprOpcode.");
+        if (opcodeString.equals(StringExprOpcode.data_itemoflist.name())) {
+            NumExpr index = NumExprParser.parseNumExpr(expressionBlock, 0, blocks);
+            Variable var = ListExprParser.parseVariableFromFields(expressionBlock.get(FIELDS_KEY));
+            return new ItemOfVariable(index, var);
+        } else if (opcodeString.equals(NumExprOpcode.data_itemnumoflist.name())) {
+            Expression item = parseExpression(expressionBlock, 0, blocks);
+            Variable list = ListExprParser.parseVariableFromFields(expressionBlock.get(FIELDS_KEY));
+            return new IndexOf(item, list);
+        }
+
         final BoolExprOpcode opcode = BoolExprOpcode.valueOf(opcodeString);
 
         switch (opcode) {
+
             case sensing_touchingcolor:
             case sensing_touchingobject:
                 Touchable touchable = TouchableParser.parseTouchable(expressionBlock, blocks);
                 return new Touching(touchable);
             case sensing_coloristouchingcolor:
-                ColorExpression first = ColorParser.parseColor(expressionBlock, 0, blocks);
-                ColorExpression second = ColorParser.parseColor(expressionBlock, 1, blocks);
-                return new ColorTouches(first, second);
+                ColorExpression one = ColorParser.parseColor(expressionBlock, 0, blocks);
+                ColorExpression two = ColorParser.parseColor(expressionBlock, 1, blocks);
+                return new ColorTouches(one, two);
             case sensing_keypressed:
                 Key key = KeyParser.parse(expressionBlock, blocks);
                 return new IsKeyPressed(key);
             case sensing_mousedown:
                 return new IsMouseDown();
             case operator_gt:
-                NumExpr firstNum = NumExprParser.parseNumExpr(expressionBlock, 0, blocks);
-                if (!(firstNum instanceof AsNumber || firstNum instanceof UnspecifiedNumExpr)) {
-                    NumExpr secondNum = NumExprParser.parseNumExpr(expressionBlock, 1, blocks);
-                    return new BiggerThan(firstNum, secondNum);
-                } else {
-                    StringExpr firstString = StringExprParser.parseStringExpr(expressionBlock, 0, blocks);
-                    StringExpr secondString = StringExprParser.parseStringExpr(expressionBlock, 1, blocks);
-                    return new BiggerThan(firstString, secondString);
-
+                ComparableExpr first = NumExprParser.parseNumExpr(expressionBlock, 0, blocks);
+                ComparableExpr second = NumExprParser.parseNumExpr(expressionBlock, 1, blocks);
+                if ((first instanceof AsNumber || first instanceof UnspecifiedNumExpr)) {
+                    first = StringExprParser.parseStringExpr(expressionBlock, 0, blocks);
                 }
+
+                if (second instanceof AsNumber || second instanceof UnspecifiedNumExpr) {
+                    second = StringExprParser.parseStringExpr(expressionBlock, 1, blocks);
+                }
+                return new BiggerThan(first, second);
             case operator_lt:
-                firstNum = NumExprParser.parseNumExpr(expressionBlock, 0, blocks);
-                if (!(firstNum instanceof AsNumber || firstNum instanceof UnspecifiedNumExpr)) {
-                    NumExpr secondNum = NumExprParser.parseNumExpr(expressionBlock, 1, blocks);
-                    return new LessThan(firstNum, secondNum);
-                } else {
-                    StringExpr firstString = StringExprParser.parseStringExpr(expressionBlock, 0, blocks);
-                    StringExpr secondString = StringExprParser.parseStringExpr(expressionBlock, 1, blocks);
-                    return new LessThan(firstString, secondString);
+                first = NumExprParser.parseNumExpr(expressionBlock, 0, blocks);
+                second = NumExprParser.parseNumExpr(expressionBlock, 1, blocks);
+                if ((first instanceof AsNumber || first instanceof UnspecifiedNumExpr)) {
+                    first = StringExprParser.parseStringExpr(expressionBlock, 0, blocks);
                 }
 
-            case operator_equals:
-                firstNum = NumExprParser.parseNumExpr(expressionBlock, 0, blocks);
-                if (!(firstNum instanceof AsNumber || firstNum instanceof UnspecifiedNumExpr)) {
-                    NumExpr secondNum = NumExprParser.parseNumExpr(expressionBlock, 1, blocks);
-                    return new Equals(firstNum, secondNum);
-                } else {
-                    StringExpr firstString = StringExprParser.parseStringExpr(expressionBlock, 0, blocks);
-                    StringExpr secondString = StringExprParser.parseStringExpr(expressionBlock, 1, blocks);
-                    return new Equals(firstString, secondString);
+                if (second instanceof AsNumber || second instanceof UnspecifiedNumExpr) {
+                    second = StringExprParser.parseStringExpr(expressionBlock, 1, blocks);
                 }
+
+                return new LessThan(first, second);
+            case operator_equals:
+                first = NumExprParser.parseNumExpr(expressionBlock, OPERAND1_KEY, blocks);
+                second = NumExprParser.parseNumExpr(expressionBlock, OPERAND2_KEY, blocks);
+                if ((first instanceof AsNumber || first instanceof UnspecifiedNumExpr)) {
+                    first = StringExprParser.parseStringExpr(expressionBlock, 0, blocks);
+                }
+
+                if (second instanceof AsNumber || second instanceof UnspecifiedNumExpr) {
+                    second = StringExprParser.parseStringExpr(expressionBlock, 1, blocks);
+                }
+                return new Equals(first, second);
             case operator_and:
-                BoolExpr andFirst = parseBoolExpr(expressionBlock, 0, blocks);
-                BoolExpr andSecond = parseBoolExpr(expressionBlock, 1, blocks);
+
+                BoolExpr andFirst = parseCondition(expressionBlock, OPERAND1_KEY, blocks);
+                BoolExpr andSecond = parseCondition(expressionBlock, OPERAND2_KEY, blocks);
                 return new And(andFirst, andSecond);
             case operator_or:
-                BoolExpr orFirst = parseBoolExpr(expressionBlock, 0, blocks);
-                BoolExpr orSecond = parseBoolExpr(expressionBlock, 1, blocks);
+                BoolExpr orFirst = parseCondition(expressionBlock, OPERAND1_KEY, blocks);
+                BoolExpr orSecond = parseCondition(expressionBlock, OPERAND2_KEY, blocks);
                 return new Or(orFirst, orSecond);
             case operator_not:
-                BoolExpr notInput = parseBoolExpr(expressionBlock, 0, blocks);
+                BoolExpr notInput = parseCondition(expressionBlock, OPERAND_KEY, blocks);
                 return new Not(notInput);
             case operator_contains:
                 Expression containing = ExpressionParser.parseExpression(expressionBlock, 0, blocks);
@@ -215,7 +233,15 @@ public class BoolExprParser {
     }
 
     private static BoolExpr parseParameter(JsonNode blocks, JsonNode expressionBlock) {
-        String name = expressionBlock.get(FIELDS_KEY).get(VALUE_KEY).get(VARIABLE_NAME_POS).textValue();
+        String name = expressionBlock.get(FIELDS_KEY).get(VALUE_KEY).get(VARIABLE_NAME_POS).asText();
         return new StrId(PARAMETER_ABBREVIATION + name);
+    }
+
+    private static BoolExpr parseCondition(JsonNode expressionBlock, String fieldName, JsonNode blocks) throws ParsingException {
+        if (expressionBlock.get(INPUTS_KEY).has(fieldName)) {
+            return parseBoolExpr(expressionBlock, fieldName, blocks);
+        } else {
+            return new UnspecifiedBoolExpr();
+        }
     }
 }

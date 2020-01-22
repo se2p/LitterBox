@@ -1,0 +1,193 @@
+{
+  "targets": [
+    {
+      "isStage": true,
+      "name": "Stage",
+      "variables": {
+        "`jEk@4|i[#Fk?(8x)AV.-my variable": [
+          "my variable",
+          0
+        ]
+      },
+      "lists": {},
+      "broadcasts": {},
+      "blocks": {
+        "udchYK2yg:o$HC-sX?ME": {
+          "opcode": "event_whenbackdropswitchesto",
+          "next": null,
+          "parent": null,
+          "inputs": {},
+          "fields": {
+            "BACKDROP": [
+              "backdrop1",
+              null
+            ]
+          },
+          "shadow": false,
+          "topLevel": true,
+          "x": 447,
+          "y": 302
+        },
+        "/m`Vz/N}j`6XoT_kacbg": {
+          "opcode": "looks_switchbackdroptoandwait",
+          "next": null,
+          "parent": null,
+          "inputs": {
+            "BACKDROP": [
+              1,
+              "ws@D{$S9=ZpRm^N$l~%8"
+            ]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": true,
+          "x": 284,
+          "y": 586
+        },
+        "ws@D{$S9=ZpRm^N$l~%8": {
+          "opcode": "looks_backdrops",
+          "next": null,
+          "parent": "/m`Vz/N}j`6XoT_kacbg",
+          "inputs": {},
+          "fields": {
+            "BACKDROP": [
+              "random backdrop",
+              null
+            ]
+          },
+          "shadow": true,
+          "topLevel": false
+        }
+      },
+      "comments": {},
+      "currentCostume": 1,
+      "costumes": [
+        {
+          "assetId": "cd21514d0531fdffb22204e0ec5ed84a",
+          "name": "backdrop1",
+          "md5ext": "cd21514d0531fdffb22204e0ec5ed84a.svg",
+          "dataFormat": "svg",
+          "rotationCenterX": 240,
+          "rotationCenterY": 180
+        },
+        {
+          "assetId": "84208d9a3718ec3c9fc5a32a792fa1d0",
+          "name": "Space",
+          "bitmapResolution": 2,
+          "md5ext": "84208d9a3718ec3c9fc5a32a792fa1d0.png",
+          "dataFormat": "png",
+          "rotationCenterX": 480,
+          "rotationCenterY": 360
+        }
+      ],
+      "sounds": [
+        {
+          "assetId": "83a9787d4cb6f3b7632b4ddfebf74367",
+          "name": "pop",
+          "dataFormat": "wav",
+          "format": "",
+          "rate": 48000,
+          "sampleCount": 1124,
+          "md5ext": "83a9787d4cb6f3b7632b4ddfebf74367.wav"
+        }
+      ],
+      "volume": 100,
+      "layerOrder": 0,
+      "tempo": 60,
+      "videoTransparency": 50,
+      "videoState": "on",
+      "textToSpeechLanguage": null
+    },
+    {
+      "isStage": false,
+      "name": "Sprite1",
+      "variables": {},
+      "lists": {},
+      "broadcasts": {},
+      "blocks": {
+        "flA`hd6F`-YK#flmT1C=": {
+          "opcode": "event_whenbackdropswitchesto",
+          "next": "/xxqZI|g!]~#3SjTl|x}",
+          "parent": null,
+          "inputs": {},
+          "fields": {
+            "BACKDROP": [
+              "backdrop1",
+              null
+            ]
+          },
+          "shadow": false,
+          "topLevel": true,
+          "x": 509,
+          "y": 281
+        },
+        "/xxqZI|g!]~#3SjTl|x}": {
+          "opcode": "sensing_askandwait",
+          "next": null,
+          "parent": "flA`hd6F`-YK#flmT1C=",
+          "inputs": {
+            "QUESTION": [
+              1,
+              [
+                10,
+                "What's your name?"
+              ]
+            ]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        }
+      },
+      "comments": {},
+      "currentCostume": 0,
+      "costumes": [
+        {
+          "assetId": "b7853f557e4426412e64bb3da6531a99",
+          "name": "costume1",
+          "bitmapResolution": 1,
+          "md5ext": "b7853f557e4426412e64bb3da6531a99.svg",
+          "dataFormat": "svg",
+          "rotationCenterX": 48,
+          "rotationCenterY": 50
+        },
+        {
+          "assetId": "e6ddc55a6ddd9cc9d84fe0b4c21e016f",
+          "name": "costume2",
+          "bitmapResolution": 1,
+          "md5ext": "e6ddc55a6ddd9cc9d84fe0b4c21e016f.svg",
+          "dataFormat": "svg",
+          "rotationCenterX": 46,
+          "rotationCenterY": 53
+        }
+      ],
+      "sounds": [
+        {
+          "assetId": "83c36d806dc92327b9e7049a565c6bff",
+          "name": "Meow",
+          "dataFormat": "wav",
+          "format": "",
+          "rate": 48000,
+          "sampleCount": 40682,
+          "md5ext": "83c36d806dc92327b9e7049a565c6bff.wav"
+        }
+      ],
+      "volume": 100,
+      "layerOrder": 1,
+      "visible": true,
+      "x": 0,
+      "y": 0,
+      "size": 100,
+      "direction": 90,
+      "draggable": false,
+      "rotationStyle": "all around"
+    }
+  ],
+  "monitors": [],
+  "extensions": [],
+  "meta": {
+    "semver": "3.0.0",
+    "vm": "0.2.0-prerelease.20191227164934",
+    "agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:72.0) Gecko/20100101 Firefox/72.0"
+  }
+}

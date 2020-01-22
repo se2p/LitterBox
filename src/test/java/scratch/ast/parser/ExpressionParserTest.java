@@ -21,6 +21,7 @@ package scratch.ast.parser;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+
 import com.fasterxml.jackson.databind.JsonNode;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -61,7 +62,7 @@ public class ExpressionParserTest {
     }
 
     @Test
-    public void testParseNumber() {
+    public void testParseNumber() throws ParsingException {
         JsonNode inputs = moveStepsScript.get("EU(l=G6)z8NGlJFcx|fS").get("inputs");
         NumberLiteral result = NumExprParser.parseNumber(inputs, 0);
         assertEquals("10.0", String.valueOf(result.getValue()));

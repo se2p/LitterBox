@@ -20,6 +20,8 @@ package scratch.ast.visitor;
 
 import scratch.ast.model.ASTLeaf;
 import scratch.ast.model.ASTNode;
+import scratch.ast.model.statement.pen.PenDownStmt;
+import scratch.ast.model.statement.pen.PenUpStmt;
 
 import java.io.*;
 import java.util.LinkedList;
@@ -49,6 +51,20 @@ public class DotVisitor implements ScratchVisitor {
             for (ASTNode child : node.getChildren()) {
                 child.accept(this);
             }
+        }
+    }
+
+    @Override
+    public void visit(PenDownStmt node) {
+        if (node != null) {
+            recordLeaf(node);
+        }
+    }
+
+    @Override
+    public void visit(PenUpStmt node) {
+        if (node != null) {
+            recordLeaf(node);
         }
     }
 

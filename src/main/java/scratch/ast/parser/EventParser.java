@@ -59,7 +59,7 @@ public class EventParser {
             Key key = KeyParser.parse(current, allBlocks);
             return new KeyPressed(key);
 
-        } else if (opcode.equals(event_whenthisspriteclicked)) {
+        } else if (opcode.equals(event_whenthisspriteclicked)||opcode.equals(event_whenstageclicked)) {
             return new Clicked();
 
         } else if (opcode.equals(event_whenbroadcastreceived)) {

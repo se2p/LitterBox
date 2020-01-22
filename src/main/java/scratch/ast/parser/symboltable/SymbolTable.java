@@ -22,45 +22,46 @@ import scratch.ast.model.Message;
 import scratch.ast.model.expression.list.ExpressionList;
 import scratch.ast.model.type.Type;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 public class SymbolTable {
 
-    private HashMap<String, VariableInfo> variables;
-    private HashMap<String, MessageInfo> messages;
-    private HashMap<String, ExpressionListInfo> lists;
+    private LinkedHashMap<String, VariableInfo> variables;
+    private LinkedHashMap<String, MessageInfo> messages;
+    private LinkedHashMap<String, ExpressionListInfo> lists;
 
     public SymbolTable() {
-        this.variables = new HashMap<>();
-        this.messages = new HashMap<>();
-        this.lists = new HashMap<>();
+        this.variables = new LinkedHashMap<>();
+        this.messages = new LinkedHashMap<>();
+        this.lists = new LinkedHashMap<>();
     }
 
-    public HashMap<String, VariableInfo> getVariables() {
+    public Map<String, VariableInfo> getVariables() {
         return variables;
     }
 
-    public HashMap<String, MessageInfo> getMessages() {
+    public Map<String, MessageInfo> getMessages() {
         return messages;
     }
 
-    public HashMap<String, ExpressionListInfo> getLists() {
+    public Map<String, ExpressionListInfo> getLists() {
         return lists;
     }
 
-    public void addVariable(String ident, String variableName, Type type, boolean global, String scriptGroupName) {
-        VariableInfo info = new VariableInfo(global, scriptGroupName, ident, type, variableName);
+    public void addVariable(String ident, String variableName, Type type, boolean global, String actorName) {
+        VariableInfo info = new VariableInfo(global, actorName, ident, type, variableName);
         variables.put(ident, info);
     }
 
     public void addExpressionListInfo(String ident, String listName, ExpressionList expressionList, boolean global,
-        String scriptGroupName) {
-        ExpressionListInfo info = new ExpressionListInfo(global, scriptGroupName, ident, expressionList, listName);
+        String actorName) {
+        ExpressionListInfo info = new ExpressionListInfo(global, actorName, ident, expressionList, listName);
         lists.put(ident, info);
     }
 
-    public void addMessage(String ident, Message message, boolean global, String scriptGroupName) {
-        MessageInfo info = new MessageInfo(global, scriptGroupName, ident, message);
+    public void addMessage(String ident, Message message, boolean global, String actorName) {
+        MessageInfo info = new MessageInfo(global, actorName, ident, message);
         messages.put(ident, info);
     }
 

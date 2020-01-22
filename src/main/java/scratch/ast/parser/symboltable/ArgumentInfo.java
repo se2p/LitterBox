@@ -20,6 +20,8 @@ package scratch.ast.parser.symboltable;
 
 import scratch.ast.model.type.Type;
 
+import java.util.Objects;
+
 public class ArgumentInfo {
 
     String name;
@@ -36,5 +38,19 @@ public class ArgumentInfo {
 
     public Type getType() {
         return type;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ArgumentInfo that = (ArgumentInfo) o;
+        return Objects.equals(name, that.name) &&
+                Objects.equals(type, that.type);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, type);
     }
 }

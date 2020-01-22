@@ -18,18 +18,18 @@
  */
 package scratch.ast.parser;
 
+import static scratch.ast.Constants.*;
+
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.TextNode;
+import java.util.Optional;
 import scratch.ast.ParsingException;
 import scratch.ast.model.expression.bool.BoolExpr;
-import scratch.ast.model.expression.num.AsNumber;
 import scratch.ast.model.expression.num.NumExpr;
 import scratch.ast.model.expression.string.*;
 import scratch.ast.model.literals.StringLiteral;
-import scratch.ast.model.procedure.Parameter;
-import scratch.ast.model.type.BooleanType;
-import scratch.ast.model.type.StringType;
 import scratch.ast.model.variable.Identifier;
 import scratch.ast.model.variable.Qualified;
 import scratch.ast.model.variable.StrId;
@@ -40,17 +40,17 @@ import scratch.ast.parser.symboltable.ExpressionListInfo;
 import scratch.ast.parser.symboltable.VariableInfo;
 import utils.Preconditions;
 
-import java.util.Optional;
-
-import static scratch.ast.Constants.*;
-
 public class StringExprParser {
 
     public static StringExpr parseStringExpr(JsonNode block, String inputName, JsonNode blocks)
             throws ParsingException {
         ArrayNode exprArray = ExpressionParser.getExprArrayByName(block.get(INPUTS_KEY), inputName);
         if (ExpressionParser.getShadowIndicator(exprArray) == 1) {
-            return parseStr(block.get(INPUTS_KEY), inputName);
+            try {
+                return parseStr(block.get(INPUTS_KEY), inputName);
+            } catch (ParsingException e) {
+                return new UnspecifiedStringExpr();
+            }
         } else if (exprArray.get(POS_BLOCK_ID) instanceof TextNode) {
             return parseTextNode(blocks, exprArray);
 
@@ -66,7 +66,11 @@ public class StringExprParser {
     public static StringExpr parseStringExpr(JsonNode block, int pos, JsonNode blocks) throws ParsingException {
         ArrayNode exprArray = ExpressionParser.getExprArrayAtPos(block.get(INPUTS_KEY), pos);
         if (ExpressionParser.getShadowIndicator(exprArray) == 1) {
-            return parseStr(block.get(INPUTS_KEY), pos);
+            try {
+                return parseStr(block.get(INPUTS_KEY), pos);
+            } catch (ParsingException e) {
+                return new UnspecifiedStringExpr();
+            }
         } else if (exprArray.get(POS_BLOCK_ID) instanceof TextNode) {
             return parseTextNode(blocks, exprArray);
 
@@ -122,18 +126,18 @@ public class StringExprParser {
     }
 
     private static StringExpr parseParameter(JsonNode blocks, ArrayNode exprArray) {
-        JsonNode paramBlock = blocks.get(exprArray.get(POS_BLOCK_ID).textValue());
-        String name = paramBlock.get(FIELDS_KEY).get(VALUE_KEY).get(VARIABLE_NAME_POS).textValue();
+        JsonNode paramBlock = blocks.get(exprArray.get(POS_BLOCK_ID).asText());
+        String name = paramBlock.get(FIELDS_KEY).get(VALUE_KEY).get(VARIABLE_NAME_POS).asText();
 
         return new StrId(PARAMETER_ABBREVIATION + name);
     }
 
-    private static StringLiteral parseStr(JsonNode inputs, int pos) {
+    private static StringLiteral parseStr(JsonNode inputs, int pos) throws ParsingException {
         String value = ExpressionParser.getDataArrayAtPos(inputs, pos).get(POS_INPUT_VALUE).asText();
         return new StringLiteral(value);
     }
 
-    private static StringLiteral parseStr(JsonNode inputs, String inputName) {
+    private static StringLiteral parseStr(JsonNode inputs, String inputName) throws ParsingException {
         String value = ExpressionParser.getDataArrayByName(inputs, inputName).get(POS_INPUT_VALUE).asText();
         return new StringLiteral(value);
     }

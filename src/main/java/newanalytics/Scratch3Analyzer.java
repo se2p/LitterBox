@@ -20,28 +20,36 @@ package newanalytics;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.logging.Logger;
 import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.io.FilenameUtils;
 import scratch.ast.ParsingException;
 import scratch.ast.model.Program;
 import scratch.ast.parser.ProgramParser;
 import scratch.structure.Project;
-import utils.CSVWriter;
-import utils.JsonParser;
-import utils.ZipReader;
+import utils.*;
+
+import static utils.GroupConstants.*;
+
 
 public class Scratch3Analyzer {
 
-    public static void analyze(String detectors, String output, File folder) {
-        if (folder.exists() && folder.isDirectory()) {
-            checkMultipleScratch3(folder, detectors, output);
-        } else if (folder.exists() && !folder.isDirectory()) {
-            checkSingleScratch3(folder, detectors, output);
+    private static final Logger log = Logger.getLogger(Scratch3Analyzer.class.getName());
+
+    public static void analyze(String detectors, String output, File file) {
+        if (file.exists() && file.isDirectory()) {
+            checkMultipleScratch3(file, detectors, output);
+        } else if (file.exists() && !file.isDirectory()) {
+            checkSingleScratch3(file, detectors, output);
+        } else {
+            log.info("Folder or file '" + file.getName() + "' does not exist");
         }
     }
 
@@ -67,7 +75,7 @@ public class Scratch3Analyzer {
             } else {
                 CSVPrinter printer = prepareCSVPrinter(detectors, iT, csv);
                 iT.check(program, printer, detectors);
-                System.out.println("Finished: " + projectName);
+                log.info("Finished: " + projectName);
                 try {
                     assert printer != null;
                     CSVWriter.flushCSV(printer);
@@ -76,7 +84,7 @@ public class Scratch3Analyzer {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            log.warning(e.getMessage());
         }
     }
 
@@ -100,7 +108,7 @@ public class Scratch3Analyzer {
                 assert printer != null;
                 CSVWriter.flushCSV(printer);
             } catch (IOException e) {
-                e.printStackTrace();
+                log.warning(e.getMessage());
             }
         }
     }
@@ -109,14 +117,26 @@ public class Scratch3Analyzer {
         List<String> heads = new ArrayList<>();
         heads.add("project");
         String[] detectors;
-        if (dtctrs.equals("all")) {
-            detectors = iT.getFinder().keySet().toArray(new String[0]);
-        } else {
-            detectors = dtctrs.split(",");
+        switch (dtctrs) {
+            case ALL:
+                detectors = iT.getAllFinder().keySet().toArray(new String[0]);
+                break;
+            case BUGS:
+                detectors = iT.getBugFinder().keySet().toArray(new String[0]);
+                break;
+            case SMELLS:
+                detectors = iT.getSmellFinder().keySet().toArray(new String[0]);
+                break;
+            case CTSCORE:
+                detectors = iT.getCTScoreFinder().keySet().toArray(new String[0]);
+                break;
+            default:
+                detectors = dtctrs.split(",");
+                break;
         }
         for (String s : detectors) {
-            if (iT.getFinder().containsKey(s)) {
-                IssueFinder iF = iT.getFinder().get(s);
+            if (iT.getAllFinder().containsKey(s)) {
+                IssueFinder iF = iT.getAllFinder().get(s);
                 heads.add(iF.getName());
             }
         }
@@ -140,10 +160,15 @@ public class Scratch3Analyzer {
             printer = prepareCSVPrinter(dtctrs, iT, csv);
             for (final File fileEntry : Objects.requireNonNull(folder.listFiles())) {
                 if (!fileEntry.isDirectory()) {
-                    Program program = extractProgram(fileEntry);
-                    //System.out.println(project.toString());
-                    iT.check(program, printer, dtctrs);
-                    System.out.println("Finished: " + fileEntry.getName());
+                    try {
+                        log.info("Start: " + fileEntry.getName());
+                        Program program = extractProgram(fileEntry);
+                        //System.out.println(project.toString());
+                        iT.check(program, printer, dtctrs);
+                        log.info("Finished: " + fileEntry.getName());
+                    } catch (NullPointerException e) {
+                        log.info("Ignore due to NullPointerException: " + fileEntry.getName());
+                    }
                 }
             }
         } catch (Exception e) {
@@ -153,13 +178,13 @@ public class Scratch3Analyzer {
                 assert printer != null;
                 CSVWriter.flushCSV(printer);
             } catch (IOException e) {
-                e.printStackTrace();
+                log.warning(e.getMessage());
             }
         }
     }
 
     private static Project getProjectScratch3(File fileEntry) {
-        System.out.println("Starting: " + fileEntry);
+        log.info("Starting: " + fileEntry);
         Project project = null;
         try {
             project = JsonParser.parse3(fileEntry.getName(), fileEntry.getPath());
@@ -184,7 +209,7 @@ public class Scratch3Analyzer {
             try {
                 node = JsonParser.getTargetsNodeFromJSONString(ZipReader.getJsonString(fileEntry.getPath()));
                 if (node == null) {
-                    System.err.println("[Error] project json did not contain root node");
+                    log.info("[Error] project json did not contain root node");
                 }
                 program = ProgramParser.parseProgram(fileEntry.getName(), node);
             } catch (ParsingException | IOException e) {
@@ -194,4 +219,60 @@ public class Scratch3Analyzer {
         return program;
     }
 
+    /**
+     * Downlaods and analyzes a single project with the given id
+     *
+     * @param projectid  Id of the project which should be downloaded
+     * @param outfolder  Folder in which the project file will be stored
+     * @param detectors  IssueFinders which will be run for this project
+     * @param resultpath Path where the outputfile will be stored
+     */
+    public static void downloadAndAnalyze(String projectid, String outfolder, String detectors, String resultpath) {
+        try {
+            String json = Downloader.downloadAndSaveProject(projectid, outfolder);
+            Scratch3Analyzer.checkDownloaded(json, projectid, //Name ProjectID is not the same as the Projectname
+                    detectors, resultpath);
+        } catch (IOException e) {
+            log.info("Could not load project with id " + projectid);
+        }
+    }
+
+    /**
+     * Downloads all projects with the ids in a file at the given path.
+     *
+     * <p>
+     * The file at the given path is expected to contain a list of project ids.
+     * The projects are then downloaded, stored and analyzed.
+     *
+     * @param projectListPath Path to the file with project ids.
+     * @param outfolder       Folder in which the project file will be stored
+     * @param detectors       IssueFinders which will be run for this project
+     * @param resultpath      Path where the outputfile will be stored
+     */
+    public static void downloadAndAnalyzeMultiple(String projectListPath,
+                                                  String outfolder,
+                                                  String detectors,
+                                                  String resultpath) {
+        File file = new File(projectListPath);
+
+        if (!file.exists()) {
+            log.info("File " + projectListPath + " does not exist.");
+            return;
+        } else if (file.isDirectory()) {
+            log.info("File " + projectListPath + " is a directory.");
+            return;
+        }
+
+        try {
+            BufferedReader br = new BufferedReader(new FileReader(file));
+            String line = br.readLine();
+            while (line != null) {
+                line = line.trim();
+                downloadAndAnalyze(line, outfolder, detectors, resultpath);
+                line = br.readLine();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }

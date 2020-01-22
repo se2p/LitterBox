@@ -18,55 +18,110 @@
  */
 package newanalytics.smells;
 
+import java.util.ArrayList;
 import java.util.List;
+
 import newanalytics.IssueFinder;
 import newanalytics.IssueReport;
+import newanalytics.IssueTool;
+import scratch.ast.model.ActorDefinition;
 import scratch.ast.model.Program;
-import scratch.data.ScBlock;
+import scratch.ast.model.Script;
+import scratch.ast.model.event.Never;
+import scratch.ast.model.statement.Stmt;
+import scratch.ast.model.statement.control.*;
+import utils.Preconditions;
 
 /**
  * Checks for scripts with more than 12 blocks.
  */
 public class LongScript implements IssueFinder {
 
-    String name = "long_script";
+    public static final String NAME = "long_script";
+    public static final String SHORT_NAME = "longScript";
+    private static final String NOTE1 = "There are no long scripts.";
+    private static final String NOTE2 = "Some scripts are very long.";
+    private static final int NUMBER_TOO_LONG = 12;
+
+    public LongScript() {
+    }
 
     @Override
     public IssueReport check(Program program) {
-        /*
-        List<Scriptable> scriptables = new ArrayList<>();
-        scriptables.add(program.getStage());
-        scriptables.addAll(program.getSprites());
-        int count;
-        List<String> pos = new ArrayList<>();
-        for (Scriptable scable : scriptables) {
-            for (Script script : scable.getScripts()) {
-                int localCount = searchBlocks(script.getBlocks(), 0);
-                if (localCount >= 12) {
-                    pos.add(scable.getName() + " at " + Arrays.toString(script.getPosition()));
+
+        Preconditions.checkNotNull(program);
+
+        List<String> found = new ArrayList<>();
+        final List<ActorDefinition> definitions = program.getActorDefinitionList().getDefintions();
+
+        for (ActorDefinition actor : definitions) {
+            List<Script> scripts = actor.getScripts().getScriptList();
+            for (Script current : scripts) {
+                //if a event is used only 11 blocks have to be in the remaining script, only statements are considered, expressions not
+                if ((!(current.getEvent() instanceof Never) && current.getStmtList().getStmts().getListOfStmt().size() >= NUMBER_TOO_LONG - 1)
+                        || ((current.getEvent() instanceof Never) && current.getStmtList().getStmts().getListOfStmt().size() >= NUMBER_TOO_LONG)) {
+                    found.add(actor.getIdent().getName());
+                } else {
+                    int count;
+                    if (!(current.getEvent() instanceof Never)) {
+                        count = 1;
+                    } else {
+                        count = 0;
+                    }
+                    if (lookAtStmts(current.getStmtList().getStmts().getListOfStmt(), count) >= NUMBER_TOO_LONG) {
+                        found.add(actor.getIdent().getName());
+                    }
                 }
             }
         }
-        count = pos.size();
-        String notes = "There are no long scripts.";
-        if (count > 0) {
-            notes = "Some scripts are very long.";
+        String notes = NOTE1;
+        if (found.size() > 0) {
+            notes = NOTE2;
         }
 
-        return new IssueReport(name, count, pos, program.getPath(), notes);
+        return new IssueReport(NAME, found.size(), IssueTool.getOnlyUniqueActorList(found), notes);
 
-         */
-        throw new RuntimeException("not implemented");
+
     }
 
-    private int searchBlocks(List<ScBlock> blocks, int count) {
-        for (ScBlock b : blocks) {
-            count = count + 1;
-            if (b.getNestedBlocks() != null && b.getNestedBlocks().size() > 0) {
-                count = searchBlocks(b.getNestedBlocks(), count);
+    private int lookAtStmts(List<Stmt> listOfStmt, int count) {
+        for (Stmt stmt : listOfStmt) {
+            count++;
+            if (count >= NUMBER_TOO_LONG) {
+                return count;
             }
-            if (b.getElseBlocks() != null && b.getElseBlocks().size() > 0) {
-                count = searchBlocks(b.getElseBlocks(), count);
+            if (stmt instanceof RepeatForeverStmt) {
+                if (count + ((RepeatForeverStmt) stmt).getStmtList().getStmts().getListOfStmt().size() >= NUMBER_TOO_LONG) {
+                    return count + ((RepeatForeverStmt) stmt).getStmtList().getStmts().getListOfStmt().size();
+                }
+                count = lookAtStmts(((RepeatForeverStmt) stmt).getStmtList().getStmts().getListOfStmt(), count);
+            } else if (stmt instanceof RepeatTimesStmt) {
+                if (count + ((RepeatTimesStmt) stmt).getStmtList().getStmts().getListOfStmt().size() >= NUMBER_TOO_LONG) {
+                    return count + ((RepeatTimesStmt) stmt).getStmtList().getStmts().getListOfStmt().size();
+                }
+                count = lookAtStmts(((RepeatTimesStmt) stmt).getStmtList().getStmts().getListOfStmt(), count);
+            } else if (stmt instanceof IfElseStmt) {
+                if (count + ((IfElseStmt) stmt).getStmtList().getStmts().getListOfStmt().size() >= NUMBER_TOO_LONG) {
+                    return count + ((IfElseStmt) stmt).getStmtList().getStmts().getListOfStmt().size();
+                }
+                if (count + ((IfElseStmt) stmt).getElseStmts().getStmts().getListOfStmt().size() >= NUMBER_TOO_LONG) {
+                    return count + ((IfElseStmt) stmt).getStmtList().getStmts().getListOfStmt().size();
+                }
+                count = lookAtStmts(((IfElseStmt) stmt).getStmtList().getStmts().getListOfStmt(), count);
+                count = lookAtStmts(((IfElseStmt) stmt).getElseStmts().getStmts().getListOfStmt(), count);
+            } else if (stmt instanceof UntilStmt) {
+                if (count + ((UntilStmt) stmt).getStmtList().getStmts().getListOfStmt().size() >= NUMBER_TOO_LONG) {
+                    return count + ((UntilStmt) stmt).getStmtList().getStmts().getListOfStmt().size();
+                }
+                count = lookAtStmts(((UntilStmt) stmt).getStmtList().getStmts().getListOfStmt(), count);
+            } else if (stmt instanceof IfThenStmt) {
+                if (count + ((IfThenStmt) stmt).getThenStmts().getStmts().getListOfStmt().size() >= NUMBER_TOO_LONG) {
+                    return count + ((IfThenStmt) stmt).getThenStmts().getStmts().getListOfStmt().size();
+                }
+                count = lookAtStmts(((IfThenStmt) stmt).getThenStmts().getStmts().getListOfStmt(), count);
+            }
+            if (count >= NUMBER_TOO_LONG) {
+                return count;
             }
         }
         return count;
@@ -74,6 +129,6 @@ public class LongScript implements IssueFinder {
 
     @Override
     public String getName() {
-        return name;
+        return NAME;
     }
 }

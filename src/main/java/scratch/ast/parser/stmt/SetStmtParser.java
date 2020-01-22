@@ -18,6 +18,9 @@
  */
 package scratch.ast.parser.stmt;
 
+import static scratch.ast.Constants.*;
+
+
 import com.fasterxml.jackson.databind.JsonNode;
 import scratch.ast.ParsingException;
 import scratch.ast.model.literals.StringLiteral;
@@ -36,8 +39,6 @@ import scratch.ast.parser.attributes.RotationStyle;
 import scratch.ast.parser.attributes.SoundEffect;
 import scratch.ast.parser.symboltable.VariableInfo;
 import utils.Preconditions;
-
-import static scratch.ast.Constants.*;
 
 public class SetStmtParser {
 
@@ -82,34 +83,36 @@ public class SetStmtParser {
     }
 
     private static SetStmt parseSetSoundEffect(JsonNode current, JsonNode allBlocks) throws ParsingException {
-        String effect = current.get(FIELDS_KEY).get(EFFECT_KEY).get(0).textValue();
+        String effect = current.get(FIELDS_KEY).get(EFFECT_KEY).get(0).asText();
         Preconditions.checkArgument(SoundEffect.contains(effect));
         return new SetAttributeTo(new StringLiteral(effect), ExpressionParser.parseExpression(current, 0,
             allBlocks));
     }
 
     private static SetStmt parseSetLookEffect(JsonNode current, JsonNode allBlocks) throws ParsingException {
-        String effect = current.get(FIELDS_KEY).get(EFFECT_KEY).get(0).textValue();
+        String effect = current.get(FIELDS_KEY).get(EFFECT_KEY).get(0).asText();
         Preconditions.checkArgument(GraphicEffect.contains(effect));
         return new SetAttributeTo(new StringLiteral(effect), ExpressionParser.parseExpression(current, 0,
             allBlocks));
     }
 
     private static SetStmt parseSetRotationStyle(JsonNode current) {
-        String rota = current.get(FIELDS_KEY).get(STYLE_KEY).get(0).textValue();
+        String rota = current.get(FIELDS_KEY).get(STYLE_KEY).get(0).asText();
         Preconditions.checkArgument(RotationStyle.contains(rota));
         return new SetAttributeTo(new StringLiteral(ROTATIONSTYLE_KEY), new StringLiteral(rota));
     }
 
     private static SetStmt parseSetDragmode(JsonNode current) {
-        String drag = current.get(FIELDS_KEY).get(DRAGMODE_KEY).get(0).textValue();
+        String drag = current.get(FIELDS_KEY).get(DRAGMODE_KEY).get(0).asText();
         Preconditions.checkArgument(DragMode.contains(drag));
         return new SetAttributeTo(new StringLiteral(DRAG_KEY), new StringLiteral(drag));
     }
 
     private static SetStmt parseSetVariable(JsonNode current, JsonNode allBlocks) throws ParsingException {
-        String unique = current.get(FIELDS_KEY).get(VARIABLE_KEY).get(VARIABLE_IDENTIFIER_POS).textValue();
-        Preconditions.checkArgument(ProgramParser.symbolTable.getVariables().containsKey(unique));
+        String unique = current.get(FIELDS_KEY).get(VARIABLE_KEY).get(VARIABLE_IDENTIFIER_POS).asText();
+        if (!ProgramParser.symbolTable.getVariables().containsKey(unique)) {
+            throw new ParsingException("Cannot parse unknown variable");
+        }
         VariableInfo info = ProgramParser.symbolTable.getVariables().get(unique);
         return new SetVariableTo(new Qualified(new StrId(info.getActor()),
             new StrId((VARIABLE_ABBREVIATION+info.getVariableName()))), ExpressionParser.parseExpression(current,

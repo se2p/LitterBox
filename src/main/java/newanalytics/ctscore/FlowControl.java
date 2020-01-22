@@ -43,15 +43,16 @@ public class FlowControl implements IssueFinder {
     private final int REPEAT_FOREVER = 2;
     private final int UNTIL = 3;
     private String[] notes = new String[4];
-    private String name = "flow_control";
+    public final static String NAME = "flow_control";
+    public final static String SHORT_NAME = "flow";
     private List<String> found;
 
     public FlowControl() {
         found = new ArrayList<>();
         notes[0] = "There is a sequence of blocks missing.";
-        notes[1] = "Basic Level. There is repeat or forever missing.";
-        notes[2] = "Developing Level. There is repeat until missing.";
-        notes[3] = "Proficiency Level. Good work!";
+        notes[1] = "Basic level. There is repeat or forever missing.";
+        notes[2] = "Developing level. There is repeat until missing.";
+        notes[3] = "Proficiency level. Good work!";
     }
 
     /**
@@ -62,12 +63,13 @@ public class FlowControl implements IssueFinder {
     @Override
     public IssueReport check(Program program) {
         int level = 0;
+        found = new ArrayList<>();
         List<ActorDefinition> actorDefs = program.getActorDefinitionList().getDefintions();
         level = checkIfScriptsUsed(actorDefs, level);
         level = checkIfForeverOrRepeat(actorDefs, level);
         level = checkIfUntil(actorDefs, level);
 
-        return new IssueReport(name, level, found, notes[level]);
+        return new IssueReport(NAME, level, found, notes[level]);
     }
 
     private int checkIfUntil(List<ActorDefinition> actorDefs, int level) {
@@ -159,6 +161,6 @@ public class FlowControl implements IssueFinder {
 
     @Override
     public String getName() {
-        return name;
+        return NAME;
     }
 }

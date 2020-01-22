@@ -1,9 +1,29 @@
+/*
+ * Copyright (C) 2019 LitterBox contributors
+ *
+ * This file is part of LitterBox.
+ *
+ * LitterBox is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or (at
+ * your option) any later version.
+ *
+ * LitterBox is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
+ */
 package scratch.ast.model.literals;
 
 import scratch.ast.model.ASTLeaf;
 import scratch.ast.model.AbstractNode;
 import scratch.ast.model.expression.color.ColorExpression;
 import scratch.ast.visitor.ScratchVisitor;
+
+import java.util.Objects;
 
 public class ColorLiteral extends AbstractNode implements ColorExpression, ASTLeaf {
 
@@ -33,5 +53,21 @@ public class ColorLiteral extends AbstractNode implements ColorExpression, ASTLe
     @Override
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        ColorLiteral that = (ColorLiteral) o;
+        return red == that.red &&
+                green == that.green &&
+                blue == that.blue;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), red, green, blue);
     }
 }

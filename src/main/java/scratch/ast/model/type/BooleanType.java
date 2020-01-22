@@ -18,10 +18,14 @@
  */
 package scratch.ast.model.type;
 
+import scratch.ast.model.ASTNode;
 import scratch.ast.model.AbstractNode;
 import scratch.ast.visitor.ScratchVisitor;
 
 public class BooleanType extends AbstractNode implements Type {
+    public BooleanType(ASTNode... children) {
+        super();
+    }
 
     @Override
     public void accept(ScratchVisitor visitor) {

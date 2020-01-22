@@ -19,10 +19,14 @@
 package scratch.ast.model.expression.num;
 
 import scratch.ast.model.ASTLeaf;
+import scratch.ast.model.ASTNode;
 import scratch.ast.model.AbstractNode;
 import scratch.ast.visitor.ScratchVisitor;
 
 public class Timer extends AbstractNode implements NumExpr, ASTLeaf {
+    public Timer() {
+        super();
+    }
 
     @Override
     public void accept(ScratchVisitor visitor) {

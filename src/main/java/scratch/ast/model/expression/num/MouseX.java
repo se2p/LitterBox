@@ -19,10 +19,16 @@
 package scratch.ast.model.expression.num;
 
 import scratch.ast.model.ASTLeaf;
+import scratch.ast.model.ASTNode;
 import scratch.ast.model.AbstractNode;
 import scratch.ast.visitor.ScratchVisitor;
 
+import java.util.List;
+
 public class MouseX extends AbstractNode implements NumExpr, ASTLeaf {
+    public MouseX() {
+        super();
+    }
 
     @Override
     public void accept(ScratchVisitor visitor) {

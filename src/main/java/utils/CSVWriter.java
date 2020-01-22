@@ -23,6 +23,7 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.csv.CSVFormat;
@@ -76,8 +77,16 @@ public class CSVWriter {
      * @throws IOException corrupt file path
      */
     public static CSVPrinter getNewPrinter(String name, List<String> heads) throws IOException {
-            BufferedWriter writer = Files.newBufferedWriter(Paths.get(name));
+
+        if (Files.exists(Paths.get(name))) {
+            BufferedWriter writer = Files.newBufferedWriter(
+                    Paths.get(name), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+            return new CSVPrinter(writer, CSVFormat.DEFAULT.withSkipHeaderRecord());
+        } else {
+            BufferedWriter writer = Files.newBufferedWriter(
+                    Paths.get(name), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
             return new CSVPrinter(writer, CSVFormat.DEFAULT.withHeader(heads.toArray(new String[0])));
+        }
     }
 
 

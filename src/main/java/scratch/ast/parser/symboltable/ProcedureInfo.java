@@ -18,14 +18,19 @@
  */
 package scratch.ast.parser.symboltable;
 
+import java.util.Arrays;
+import java.util.Objects;
+
 public class ProcedureInfo {
 
     private String name;
+    private String actorName;
     private ArgumentInfo[] arguments;
 
-    public ProcedureInfo(String name, ArgumentInfo[] arguments) {
+    public ProcedureInfo(String name, ArgumentInfo[] arguments, String actorName) {
         this.name = name;
         this.arguments = arguments;
+        this.actorName=actorName;
     }
 
     public String getName() {
@@ -34,5 +39,26 @@ public class ProcedureInfo {
 
     public ArgumentInfo[] getArguments() {
         return arguments;
+    }
+
+    public String getActorName() {
+        return actorName;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ProcedureInfo that = (ProcedureInfo) o;
+        return Objects.equals(name, that.name) &&
+                Objects.equals(actorName, that.actorName) &&
+                Arrays.equals(arguments, that.arguments);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Objects.hash(name, actorName);
+        result = 31 * result + Arrays.hashCode(arguments);
+        return result;
     }
 }

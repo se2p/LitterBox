@@ -1,0 +1,253 @@
+{
+  "targets": [
+    {
+      "isStage": true,
+      "name": "Stage",
+      "variables": {
+        "`jEk@4|i[#Fk?(8x)AV.-my variable": [
+          "my variable",
+          0
+        ]
+      },
+      "lists": {},
+      "broadcasts": {},
+      "blocks": {
+        "u(.tD,]^yo1^B?8TSwez": {
+          "opcode": "procedures_definition",
+          "next": "4ARGRYV3B{wjLBxRpG?D",
+          "parent": null,
+          "inputs": {
+            "custom_block": [
+              1,
+              "x!Ru9FB^)9%D9fBhIOlz"
+            ]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": true,
+          "x": 212,
+          "y": 166
+        },
+        "x!Ru9FB^)9%D9fBhIOlz": {
+          "opcode": "procedures_prototype",
+          "next": null,
+          "parent": "u(.tD,]^yo1^B?8TSwez",
+          "inputs": {
+            "%UYco3gEg/dH.guOIa2{": [
+              1,
+              "m[I3x+zX/n5z#sa,)2/)"
+            ]
+          },
+          "fields": {},
+          "shadow": true,
+          "topLevel": false,
+          "mutation": {
+            "tagName": "mutation",
+            "children": [],
+            "proccode": "block name %s",
+            "argumentids": "[\"%UYco3gEg/dH.guOIa2{\"]",
+            "argumentnames": "[\"number or text\"]",
+            "argumentdefaults": "[\"\"]",
+            "warp": "false"
+          }
+        },
+        "m[I3x+zX/n5z#sa,)2/)": {
+          "opcode": "argument_reporter_string_number",
+          "next": null,
+          "parent": "x!Ru9FB^)9%D9fBhIOlz",
+          "inputs": {},
+          "fields": {
+            "VALUE": [
+              "number or text",
+              null
+            ]
+          },
+          "shadow": true,
+          "topLevel": false
+        },
+        "4ARGRYV3B{wjLBxRpG?D": {
+          "opcode": "data_showvariable",
+          "next": "u,+[n)5;+$I-Sw2=zKxt",
+          "parent": "u(.tD,]^yo1^B?8TSwez",
+          "inputs": {},
+          "fields": {
+            "VARIABLE": [
+              "my variable",
+              "`jEk@4|i[#Fk?(8x)AV.-my variable"
+            ]
+          },
+          "shadow": false,
+          "topLevel": false
+        },
+        "u,+[n)5;+$I-Sw2=zKxt": {
+          "opcode": "procedures_call",
+          "next": null,
+          "parent": "4ARGRYV3B{wjLBxRpG?D",
+          "inputs": {
+            "%UYco3gEg/dH.guOIa2{": [
+              1,
+              [
+                10,
+                "text"
+              ]
+            ]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false,
+          "mutation": {
+            "tagName": "mutation",
+            "children": [],
+            "proccode": "block name %s",
+            "argumentids": "[\"%UYco3gEg/dH.guOIa2{\"]",
+            "warp": "false"
+          }
+        },
+        "c?,$9TFhr5ZkMN${;zuB": {
+          "opcode": "procedures_definition",
+          "next": "Y%Cm!`B_8uI}Gu|-AOe@",
+          "parent": null,
+          "inputs": {
+            "custom_block": [
+              1,
+              "xujX`I[4sz0nOb+|O~VC"
+            ]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": true,
+          "x": 726,
+          "y": 390
+        },
+        "xujX`I[4sz0nOb+|O~VC": {
+          "opcode": "procedures_prototype",
+          "next": null,
+          "parent": "c?,$9TFhr5ZkMN${;zuB",
+          "inputs": {},
+          "fields": {},
+          "shadow": true,
+          "topLevel": false,
+          "mutation": {
+            "tagName": "mutation",
+            "children": [],
+            "proccode": "block name",
+            "argumentids": "[]",
+            "argumentnames": "[]",
+            "argumentdefaults": "[]",
+            "warp": "false"
+          }
+        },
+        "Y%Cm!`B_8uI}Gu|-AOe@": {
+          "opcode": "procedures_call",
+          "next": null,
+          "parent": "c?,$9TFhr5ZkMN${;zuB",
+          "inputs": {
+            "%UYco3gEg/dH.guOIa2{": [
+              1,
+              [
+                10,
+                "text"
+              ]
+            ]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false,
+          "mutation": {
+            "tagName": "mutation",
+            "children": [],
+            "proccode": "block name %s",
+            "argumentids": "[\"%UYco3gEg/dH.guOIa2{\"]",
+            "warp": "false"
+          }
+        }
+      },
+      "comments": {},
+      "currentCostume": 0,
+      "costumes": [
+        {
+          "assetId": "cd21514d0531fdffb22204e0ec5ed84a",
+          "name": "backdrop1",
+          "md5ext": "cd21514d0531fdffb22204e0ec5ed84a.svg",
+          "dataFormat": "svg",
+          "rotationCenterX": 240,
+          "rotationCenterY": 180
+        }
+      ],
+      "sounds": [
+        {
+          "assetId": "83a9787d4cb6f3b7632b4ddfebf74367",
+          "name": "pop",
+          "dataFormat": "wav",
+          "format": "",
+          "rate": 48000,
+          "sampleCount": 1123,
+          "md5ext": "83a9787d4cb6f3b7632b4ddfebf74367.wav"
+        }
+      ],
+      "volume": 100,
+      "layerOrder": 0,
+      "tempo": 60,
+      "videoTransparency": 50,
+      "videoState": "on",
+      "textToSpeechLanguage": null
+    },
+    {
+      "isStage": false,
+      "name": "Sprite1",
+      "variables": {},
+      "lists": {},
+      "broadcasts": {},
+      "blocks": {},
+      "comments": {},
+      "currentCostume": 0,
+      "costumes": [
+        {
+          "assetId": "b7853f557e4426412e64bb3da6531a99",
+          "name": "costume1",
+          "bitmapResolution": 1,
+          "md5ext": "b7853f557e4426412e64bb3da6531a99.svg",
+          "dataFormat": "svg",
+          "rotationCenterX": 48,
+          "rotationCenterY": 50
+        },
+        {
+          "assetId": "e6ddc55a6ddd9cc9d84fe0b4c21e016f",
+          "name": "costume2",
+          "bitmapResolution": 1,
+          "md5ext": "e6ddc55a6ddd9cc9d84fe0b4c21e016f.svg",
+          "dataFormat": "svg",
+          "rotationCenterX": 46,
+          "rotationCenterY": 53
+        }
+      ],
+      "sounds": [
+        {
+          "assetId": "83c36d806dc92327b9e7049a565c6bff",
+          "name": "Meow",
+          "dataFormat": "wav",
+          "format": "",
+          "rate": 48000,
+          "sampleCount": 40681,
+          "md5ext": "83c36d806dc92327b9e7049a565c6bff.wav"
+        }
+      ],
+      "volume": 100,
+      "layerOrder": 1,
+      "visible": true,
+      "x": 0,
+      "y": 0,
+      "size": 100,
+      "direction": 90,
+      "draggable": false,
+      "rotationStyle": "all around"
+    }
+  ],
+  "monitors": [],
+  "extensions": [],
+  "meta": {
+    "semver": "3.0.0",
+    "vm": "0.2.0-prerelease.20191119203901",
+    "agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.79 Safari/537.36"
+  }
+}

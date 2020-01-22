@@ -19,76 +19,111 @@
 package newanalytics.smells;
 
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
+
 import newanalytics.IssueFinder;
 import newanalytics.IssueReport;
+import scratch.ast.model.ASTNode;
+import scratch.ast.model.ActorDefinition;
 import scratch.ast.model.Program;
+import scratch.ast.model.statement.Stmt;
+import scratch.ast.model.statement.control.ControlStmt;
+import scratch.ast.model.statement.control.RepeatForeverStmt;
+import scratch.ast.model.statement.control.RepeatTimesStmt;
+import scratch.ast.model.statement.control.UntilStmt;
+import scratch.ast.visitor.ScratchVisitor;
 import scratch.data.ScBlock;
 import scratch.data.Script;
 import scratch.structure.Scriptable;
 import utils.Identifier;
+import utils.Preconditions;
 
 /**
  * Checks for nested loops.
  */
-public class NestedLoops implements IssueFinder {
+public class NestedLoops implements IssueFinder, ScratchVisitor {
 
-    String name = "nested_loops";
+    public static final String NAME = "nested_loops";
+    public static final String SHORT_NAME = "nestLoop";
+    private static final String NOTE1 = "There are no loops inside other loops in your project.";
+    private static final String NOTE2 = "Some of the sprites contain forever loops inside other loops.";
+    private boolean found = false;
+    private int count = 0;
+    private List<String> actorNames = new LinkedList<>();
+    private ActorDefinition currentActor;
 
     @Override
     public IssueReport check(Program program) {
-        /*
-        List<Scriptable> scriptables = new ArrayList<>();
-        scriptables.add(program.getStage());
-        scriptables.addAll(program.getSprites());
-        int count;
-        List<String> pos = new ArrayList<>();
-        for (Scriptable scable : scriptables) {
-            for (Script script : scable.getScripts()) {
-                if (program.getVersion().equals(Version.SCRATCH2)) {
-                    searchBlocks(scable, script, script.getBlocks(), pos);
-                } else if (program.getVersion().equals(Version.SCRATCH3)) {
-                    searchBlocks3(scable, script, script.getBlocks(), pos);
-                }
-            }
-        }
-        count = pos.size();
-        String notes = "There are no nested loops in your scripts.";
+        Preconditions.checkNotNull(program);
+        found = false;
+        count = 0;
+        actorNames = new LinkedList<>();
+        program.accept(this);
+        String notes = NOTE1;
         if (count > 0) {
-            notes = "Some scripts have nested loops.";
+            notes = NOTE2;
         }
-
-        return new IssueReport(name, count, pos, program.getPath(), notes);
-
-         */
-        throw new RuntimeException("not implemented");
-    }
-
-    private void searchBlocks3(Scriptable scable, Script sc, List<ScBlock> blocks, List<String> pos) {
-        for (ScBlock b : blocks) {
-            if (b.getContent().startsWith(Identifier.FOREVER.getValue())
-                || b.getContent().startsWith(Identifier.REPEAT.getValue())
-                || b.getContent().startsWith(Identifier.REPEAT_UNTIL.getValue())) {
-                if (b.getNestedBlocks() != null && b.getNestedBlocks().size() == 1) {
-                    ScBlock nested = b.getNestedBlocks().get(0);
-                    if (nested.getContent().startsWith(Identifier.FOREVER.getValue())
-                        || nested.getContent().startsWith(Identifier.REPEAT.getValue())
-                        || nested.getContent().startsWith(Identifier.REPEAT_UNTIL.getValue())) {
-                        pos.add(scable.getName() + " at " + Arrays.toString(sc.getPosition()));
-                    }
-                }
-            }
-            if (b.getNestedBlocks() != null && b.getNestedBlocks().size() > 0) {
-                searchBlocks3(scable, sc, b.getNestedBlocks(), pos);
-            }
-            if (b.getElseBlocks() != null && b.getElseBlocks().size() > 0) {
-                searchBlocks3(scable, sc, b.getElseBlocks(), pos);
-            }
-        }
+        return new IssueReport(NAME, count, actorNames, notes);
     }
 
     @Override
     public String getName() {
-        return name;
+        return NAME;
+    }
+
+    @Override
+    public void visit(ActorDefinition actor) {
+        currentActor = actor;
+        if (!actor.getChildren().isEmpty()) {
+            for (ASTNode child : actor.getChildren()) {
+                child.accept(this);
+            }
+        }
+
+        if (found) {
+            found = false;
+            actorNames.add(currentActor.getIdent().getName());
+        }
+    }
+
+    @Override
+    public void visit(UntilStmt node) {
+        checkNested(node.getStmtList().getStmts().getListOfStmt());
+        if (!node.getChildren().isEmpty()) {
+            for (ASTNode child : node.getChildren()) {
+                child.accept(this);
+
+            }
+        }
+    }
+
+    @Override
+    public void visit(RepeatForeverStmt node) {
+        checkNested(node.getStmtList().getStmts().getListOfStmt());
+        if (!node.getChildren().isEmpty()) {
+            for (ASTNode child : node.getChildren()) {
+                child.accept(this);
+
+            }
+        }
+    }
+
+    private void checkNested( List<Stmt> stmts){
+        if (stmts.size() == 1 && ((stmts.get(0) instanceof UntilStmt) || (stmts.get(0) instanceof RepeatTimesStmt) || (stmts.get(0) instanceof RepeatForeverStmt))) {
+            found = true;
+            count++;
+        }
+    }
+
+    @Override
+    public void visit(RepeatTimesStmt node) {
+        checkNested(node.getStmtList().getStmts().getListOfStmt());
+        if (!node.getChildren().isEmpty()) {
+            for (ASTNode child : node.getChildren()) {
+                child.accept(this);
+
+            }
+        }
     }
 }

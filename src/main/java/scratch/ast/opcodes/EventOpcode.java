@@ -24,6 +24,7 @@ public enum EventOpcode {
     event_whenthisspriteclicked,
     event_whenbroadcastreceived,
     event_whenbackdropswitchesto,
+    event_whenstageclicked,
     control_start_as_clone,
     event_whengreaterthan;
 

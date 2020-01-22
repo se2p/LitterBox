@@ -30,6 +30,7 @@ public class UntilStmt extends AbstractNode implements ControlStmt {
     private final StmtList stmtList;
 
     public UntilStmt(BoolExpr boolExpr, StmtList stmtList) {
+        super(boolExpr, stmtList);
         this.boolExpr = Preconditions.checkNotNull(boolExpr);
         this.stmtList = Preconditions.checkNotNull(stmtList);
     }
@@ -46,7 +47,6 @@ public class UntilStmt extends AbstractNode implements ControlStmt {
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);
     }
-
 
 
 }

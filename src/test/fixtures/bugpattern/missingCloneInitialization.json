@@ -1,0 +1,349 @@
+{
+  "targets": [
+    {
+      "isStage": true,
+      "name": "Stage",
+      "variables": {
+        "`jEk@4|i[#Fk?(8x)AV.-my variable": [
+          "my variable",
+          0
+        ]
+      },
+      "lists": {},
+      "broadcasts": {},
+      "blocks": {},
+      "comments": {},
+      "currentCostume": 0,
+      "costumes": [
+        {
+          "assetId": "cd21514d0531fdffb22204e0ec5ed84a",
+          "name": "backdrop1",
+          "md5ext": "cd21514d0531fdffb22204e0ec5ed84a.svg",
+          "dataFormat": "svg",
+          "rotationCenterX": 240,
+          "rotationCenterY": 180
+        }
+      ],
+      "sounds": [
+        {
+          "assetId": "83a9787d4cb6f3b7632b4ddfebf74367",
+          "name": "pop",
+          "dataFormat": "wav",
+          "format": "",
+          "rate": 44100,
+          "sampleCount": 1032,
+          "md5ext": "83a9787d4cb6f3b7632b4ddfebf74367.wav"
+        }
+      ],
+      "volume": 100,
+      "layerOrder": 0,
+      "tempo": 60,
+      "videoTransparency": 50,
+      "videoState": "on",
+      "textToSpeechLanguage": null
+    },
+    {
+      "isStage": false,
+      "name": "Sprite1",
+      "variables": {},
+      "lists": {},
+      "broadcasts": {},
+      "blocks": {
+        "Vn1lEZd1_:RgRMl?DSnh": {
+          "opcode": "control_create_clone_of",
+          "next": "^UzzvQbgCbcXgUau=U8x",
+          "parent": "d=$vNEeG.NJ1`dv~H6M$",
+          "inputs": {
+            "CLONE_OPTION": [
+              1,
+              "ptJw_vy|Xk,$SG`3D!6Z"
+            ]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "ptJw_vy|Xk,$SG`3D!6Z": {
+          "opcode": "control_create_clone_of_menu",
+          "next": null,
+          "parent": "Vn1lEZd1_:RgRMl?DSnh",
+          "inputs": {},
+          "fields": {
+            "CLONE_OPTION": [
+              "_myself_",
+              null
+            ]
+          },
+          "shadow": true,
+          "topLevel": false
+        },
+        "d=$vNEeG.NJ1`dv~H6M$": {
+          "opcode": "event_whenflagclicked",
+          "next": "Vn1lEZd1_:RgRMl?DSnh",
+          "parent": null,
+          "inputs": {},
+          "fields": {},
+          "shadow": false,
+          "topLevel": true,
+          "x": 207,
+          "y": 334
+        },
+        "K.ikJ4xd5-Y-o8nO$d9Q": {
+          "opcode": "control_start_as_clone",
+          "next": "S{r!L4xrR`$!b6n(49/F",
+          "parent": null,
+          "inputs": {},
+          "fields": {},
+          "shadow": false,
+          "topLevel": true,
+          "x": 589,
+          "y": 306
+        },
+        "^UzzvQbgCbcXgUau=U8x": {
+          "opcode": "control_create_clone_of",
+          "next": null,
+          "parent": "Vn1lEZd1_:RgRMl?DSnh",
+          "inputs": {
+            "CLONE_OPTION": [
+              1,
+              "_NCMUN,$J9kt|3n=d:?P"
+            ]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "_NCMUN,$J9kt|3n=d:?P": {
+          "opcode": "control_create_clone_of_menu",
+          "next": null,
+          "parent": "^UzzvQbgCbcXgUau=U8x",
+          "inputs": {},
+          "fields": {
+            "CLONE_OPTION": [
+              "Anina Dance",
+              null
+            ]
+          },
+          "shadow": true,
+          "topLevel": false
+        },
+        "S{r!L4xrR`$!b6n(49/F": {
+          "opcode": "control_delete_this_clone",
+          "next": null,
+          "parent": "K.ikJ4xd5-Y-o8nO$d9Q",
+          "inputs": {},
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        }
+      },
+      "comments": {},
+      "currentCostume": 0,
+      "costumes": [
+        {
+          "assetId": "b7853f557e4426412e64bb3da6531a99",
+          "name": "costume1",
+          "bitmapResolution": 1,
+          "md5ext": "b7853f557e4426412e64bb3da6531a99.svg",
+          "dataFormat": "svg",
+          "rotationCenterX": 48,
+          "rotationCenterY": 50
+        },
+        {
+          "assetId": "e6ddc55a6ddd9cc9d84fe0b4c21e016f",
+          "name": "costume2",
+          "bitmapResolution": 1,
+          "md5ext": "e6ddc55a6ddd9cc9d84fe0b4c21e016f.svg",
+          "dataFormat": "svg",
+          "rotationCenterX": 46,
+          "rotationCenterY": 53
+        }
+      ],
+      "sounds": [
+        {
+          "assetId": "83c36d806dc92327b9e7049a565c6bff",
+          "name": "Meow",
+          "dataFormat": "wav",
+          "format": "",
+          "rate": 44100,
+          "sampleCount": 37376,
+          "md5ext": "83c36d806dc92327b9e7049a565c6bff.wav"
+        }
+      ],
+      "volume": 100,
+      "layerOrder": 1,
+      "visible": true,
+      "x": -163,
+      "y": 73,
+      "size": 100,
+      "direction": 90,
+      "draggable": false,
+      "rotationStyle": "all around"
+    },
+    {
+      "isStage": false,
+      "name": "Anina Dance",
+      "variables": {},
+      "lists": {},
+      "broadcasts": {},
+      "blocks": {},
+      "comments": {},
+      "currentCostume": 0,
+      "costumes": [
+        {
+          "assetId": "84c5e22b4303c7c1fb707125706c9aaa",
+          "name": "anina stance",
+          "bitmapResolution": 2,
+          "md5ext": "84c5e22b4303c7c1fb707125706c9aaa.png",
+          "dataFormat": "png",
+          "rotationCenterX": 76,
+          "rotationCenterY": 252
+        },
+        {
+          "assetId": "db6c03113f71b91f22a9f3351f90e5bf",
+          "name": "anina top stand",
+          "bitmapResolution": 2,
+          "md5ext": "db6c03113f71b91f22a9f3351f90e5bf.png",
+          "dataFormat": "png",
+          "rotationCenterX": 74,
+          "rotationCenterY": 280
+        },
+        {
+          "assetId": "2d208a34e74fdce9dab9d4c585dcfa2b",
+          "name": "anina top R step",
+          "bitmapResolution": 2,
+          "md5ext": "2d208a34e74fdce9dab9d4c585dcfa2b.png",
+          "dataFormat": "png",
+          "rotationCenterX": 248,
+          "rotationCenterY": 272
+        },
+        {
+          "assetId": "ed90e8b7a05c1552194af597ac0637cd",
+          "name": "anina top L step",
+          "bitmapResolution": 2,
+          "md5ext": "ed90e8b7a05c1552194af597ac0637cd.png",
+          "dataFormat": "png",
+          "rotationCenterX": 228,
+          "rotationCenterY": 274
+        },
+        {
+          "assetId": "b7693bd6250d4411ee622b67f8025924",
+          "name": "anina top freeze",
+          "bitmapResolution": 2,
+          "md5ext": "b7693bd6250d4411ee622b67f8025924.png",
+          "dataFormat": "png",
+          "rotationCenterX": 110,
+          "rotationCenterY": 268
+        },
+        {
+          "assetId": "3948aad16f8169c013c956dd152a09a6",
+          "name": "anina R cross",
+          "bitmapResolution": 2,
+          "md5ext": "3948aad16f8169c013c956dd152a09a6.png",
+          "dataFormat": "png",
+          "rotationCenterX": 126,
+          "rotationCenterY": 268
+        },
+        {
+          "assetId": "4931a363e3e4efa20230f6ff2991c6b4",
+          "name": "anina pop front",
+          "bitmapResolution": 2,
+          "md5ext": "4931a363e3e4efa20230f6ff2991c6b4.png",
+          "dataFormat": "png",
+          "rotationCenterX": 68,
+          "rotationCenterY": 270
+        },
+        {
+          "assetId": "e3698b76cb0864df2fbaba80e6bd8067",
+          "name": "anina pop down",
+          "bitmapResolution": 2,
+          "md5ext": "e3698b76cb0864df2fbaba80e6bd8067.png",
+          "dataFormat": "png",
+          "rotationCenterX": 74,
+          "rotationCenterY": 156
+        },
+        {
+          "assetId": "d86bb27b4f8d7b70c39c96f29c6943b4",
+          "name": "anina pop left",
+          "bitmapResolution": 2,
+          "md5ext": "d86bb27b4f8d7b70c39c96f29c6943b4.png",
+          "dataFormat": "png",
+          "rotationCenterX": 238,
+          "rotationCenterY": 266
+        },
+        {
+          "assetId": "7bb9c790b02231e1272701167c26b17a",
+          "name": "anina pop right",
+          "bitmapResolution": 2,
+          "md5ext": "7bb9c790b02231e1272701167c26b17a.png",
+          "dataFormat": "png",
+          "rotationCenterX": 66,
+          "rotationCenterY": 268
+        },
+        {
+          "assetId": "62c50c90535b64f2ae130a5c680ddcb4",
+          "name": "anina pop L arm",
+          "bitmapResolution": 2,
+          "md5ext": "62c50c90535b64f2ae130a5c680ddcb4.png",
+          "dataFormat": "png",
+          "rotationCenterX": 68,
+          "rotationCenterY": 274
+        },
+        {
+          "assetId": "105f4f3d260dcb8bea02ea9ee5d18cf4",
+          "name": "anina pop stand",
+          "bitmapResolution": 2,
+          "md5ext": "105f4f3d260dcb8bea02ea9ee5d18cf4.png",
+          "dataFormat": "png",
+          "rotationCenterX": 76,
+          "rotationCenterY": 276
+        },
+        {
+          "assetId": "ca27e001a263ee6b5852508f39d021db",
+          "name": "anina pop R arm",
+          "bitmapResolution": 2,
+          "md5ext": "ca27e001a263ee6b5852508f39d021db.png",
+          "dataFormat": "png",
+          "rotationCenterX": 88,
+          "rotationCenterY": 272
+        }
+      ],
+      "sounds": [
+        {
+          "assetId": "0edb8fb88af19e6e17d0f8cf64c1d136",
+          "name": "dance celebrate",
+          "dataFormat": "wav",
+          "format": "adpcm",
+          "rate": 22050,
+          "sampleCount": 176785,
+          "md5ext": "0edb8fb88af19e6e17d0f8cf64c1d136.wav"
+        },
+        {
+          "assetId": "042309f190183383c0b1c1fc3edc2e84",
+          "name": "dance magic",
+          "dataFormat": "wav",
+          "format": "adpcm",
+          "rate": 22050,
+          "sampleCount": 187961,
+          "md5ext": "042309f190183383c0b1c1fc3edc2e84.wav"
+        }
+      ],
+      "volume": 100,
+      "layerOrder": 2,
+      "visible": true,
+      "x": -133.00000000000003,
+      "y": 20.999999999999986,
+      "size": 100,
+      "direction": 90,
+      "draggable": false,
+      "rotationStyle": "all around"
+    }
+  ],
+  "monitors": [],
+  "extensions": [],
+  "meta": {
+    "semver": "3.0.0",
+    "vm": "0.2.0-prerelease.20191119203901",
+    "agent": "Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101 Firefox/68.0"
+  }
+}

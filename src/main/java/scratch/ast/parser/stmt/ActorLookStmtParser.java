@@ -22,10 +22,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import scratch.ast.ParsingException;
 import scratch.ast.model.elementchoice.ElementChoice;
 import scratch.ast.model.expression.string.StringExpr;
-import scratch.ast.model.statement.actorlook.ActorLookStmt;
-import scratch.ast.model.statement.actorlook.AskAndWait;
-import scratch.ast.model.statement.actorlook.ClearGraphicEffects;
-import scratch.ast.model.statement.actorlook.SwitchBackdrop;
+import scratch.ast.model.statement.actorlook.*;
 import scratch.ast.model.statement.spritelook.HideVariable;
 import scratch.ast.model.statement.spritelook.ShowVariable;
 import scratch.ast.model.variable.Qualified;
@@ -53,7 +50,7 @@ public class ActorLookStmtParser {
 
         final String opcodeString = current.get(OPCODE_KEY).asText();
         Preconditions
-            .checkArgument(ActorLookStmtOpcode.contains(opcodeString), "Given blockID does not point to an event block.");
+                .checkArgument(ActorLookStmtOpcode.contains(opcodeString), "Given blockID does not point to an event block.");
 
         final ActorLookStmtOpcode opcode = ActorLookStmtOpcode.valueOf(opcodeString);
 
@@ -69,9 +66,14 @@ public class ActorLookStmtParser {
                 StringExpr question = StringExprParser.parseStringExpr(current, 0, allBlocks);
                 return new AskAndWait(question);
 
+            case looks_nextbackdrop:
             case looks_switchbackdropto:
                 ElementChoice elementChoice = ElementChoiceParser.parse(current, allBlocks);
                 return new SwitchBackdrop(elementChoice);
+
+            case looks_switchbackdroptoandwait:
+                elementChoice = ElementChoiceParser.parse(current, allBlocks);
+                return new SwitchBackdropAndWait(elementChoice);
 
             case looks_cleargraphiceffects:
                 return new ClearGraphicEffects();

@@ -18,8 +18,12 @@
  */
 package scratch.ast.parser;
 
+import static scratch.ast.Constants.*;
+
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import java.util.*;
 import scratch.ast.model.Message;
 import scratch.ast.model.expression.Expression;
 import scratch.ast.model.expression.bool.BoolExpr;
@@ -44,10 +48,6 @@ import scratch.ast.model.variable.Qualified;
 import scratch.ast.model.variable.StrId;
 import utils.Preconditions;
 
-import java.util.*;
-
-import static scratch.ast.Constants.*;
-
 public class DeclarationStmtParser {
 
     public static List<DeclarationStmt> parseVariables(JsonNode variableNode, String actorName, boolean isStage) {
@@ -60,24 +60,24 @@ public class DeclarationStmtParser {
             ArrayNode arrNode = (ArrayNode) currentEntry.getValue();
             if (arrNode.get(DECLARATION_VARIABLE_VALUE_POS).isNumber()) {
                 ProgramParser.symbolTable.addVariable(currentEntry.getKey(),
-                        VARIABLE_ABBREVIATION + arrNode.get(DECLARATION_VARIABLE_NAME_POS).textValue(),
+                        VARIABLE_ABBREVIATION + arrNode.get(DECLARATION_VARIABLE_NAME_POS).asText(),
                         new NumberType(), isStage, actorName);
                 parsedVariables.add(new DeclarationIdentAsTypeStmt(
-                        new StrId(VARIABLE_ABBREVIATION + arrNode.get(DECLARATION_VARIABLE_NAME_POS).textValue()),
+                        new StrId(VARIABLE_ABBREVIATION + arrNode.get(DECLARATION_VARIABLE_NAME_POS).asText()),
                         new NumberType()));
             } else if (arrNode.get(DECLARATION_VARIABLE_VALUE_POS).isBoolean()) {
                 ProgramParser.symbolTable.addVariable(currentEntry.getKey(),
-                        VARIABLE_ABBREVIATION + arrNode.get(DECLARATION_VARIABLE_NAME_POS).textValue(),
+                        VARIABLE_ABBREVIATION + arrNode.get(DECLARATION_VARIABLE_NAME_POS).asText(),
                         new BooleanType(), isStage, actorName);
                 parsedVariables.add(new DeclarationIdentAsTypeStmt(
-                        new StrId(VARIABLE_ABBREVIATION + arrNode.get(DECLARATION_VARIABLE_NAME_POS).textValue()),
+                        new StrId(VARIABLE_ABBREVIATION + arrNode.get(DECLARATION_VARIABLE_NAME_POS).asText()),
                         new BooleanType()));
             } else {
                 ProgramParser.symbolTable.addVariable(currentEntry.getKey(),
-                        VARIABLE_ABBREVIATION + arrNode.get(DECLARATION_VARIABLE_NAME_POS).textValue(),
+                        VARIABLE_ABBREVIATION + arrNode.get(DECLARATION_VARIABLE_NAME_POS).asText(),
                         new StringType(), isStage, actorName);
                 parsedVariables.add(new DeclarationIdentAsTypeStmt(
-                        new StrId(VARIABLE_ABBREVIATION + arrNode.get(DECLARATION_VARIABLE_NAME_POS).textValue()),
+                        new StrId(VARIABLE_ABBREVIATION + arrNode.get(DECLARATION_VARIABLE_NAME_POS).asText()),
                         new StringType()));
             }
         }
@@ -95,16 +95,16 @@ public class DeclarationStmtParser {
 
             if (arrNode.get(DECLARATION_VARIABLE_VALUE_POS).isNumber()) {
                 parsedVariables.add(new SetVariableTo(new Qualified(new StrId(actorName),
-                        new StrId(VARIABLE_ABBREVIATION + arrNode.get(DECLARATION_VARIABLE_NAME_POS).textValue())),
+                        new StrId(VARIABLE_ABBREVIATION + arrNode.get(DECLARATION_VARIABLE_NAME_POS).asText())),
                         new NumberLiteral((float) arrNode.get(DECLARATION_VARIABLE_VALUE_POS).asDouble())));
             } else if (arrNode.get(DECLARATION_VARIABLE_VALUE_POS).isBoolean()) {
                 parsedVariables.add(new SetVariableTo(new Qualified(new StrId(actorName),
-                        new StrId(VARIABLE_ABBREVIATION + arrNode.get(DECLARATION_VARIABLE_NAME_POS).textValue())),
+                        new StrId(VARIABLE_ABBREVIATION + arrNode.get(DECLARATION_VARIABLE_NAME_POS).asText())),
                         new BoolLiteral(arrNode.get(DECLARATION_VARIABLE_VALUE_POS).asBoolean())));
             } else {
                 parsedVariables.add(new SetVariableTo(new Qualified(new StrId(actorName),
-                        new StrId(VARIABLE_ABBREVIATION + arrNode.get(DECLARATION_VARIABLE_NAME_POS).textValue())),
-                        new StringLiteral(arrNode.get(DECLARATION_VARIABLE_VALUE_POS).textValue())));
+                        new StrId(VARIABLE_ABBREVIATION + arrNode.get(DECLARATION_VARIABLE_NAME_POS).asText())),
+                        new StringLiteral(arrNode.get(DECLARATION_VARIABLE_VALUE_POS).asText())));
             }
         }
         return parsedVariables;
@@ -118,7 +118,7 @@ public class DeclarationStmtParser {
             Map.Entry<String, JsonNode> currentEntry = iter.next();
             Preconditions.checkArgument(currentEntry.getValue().isArray());
             ArrayNode arrNode = (ArrayNode) currentEntry.getValue();
-            String listName = LIST_ABBREVIATION + arrNode.get(DECLARATION_LIST_NAME_POS).textValue();
+            String listName = LIST_ABBREVIATION + arrNode.get(DECLARATION_LIST_NAME_POS).asText();
             JsonNode listValues = arrNode.get(DECLARATION_LIST_VALUES_POS);
             Preconditions.checkArgument(listValues.isArray());
             ExpressionList expressionList = new ExpressionList(makeExpressionListPlain((ArrayNode) listValues));
@@ -133,7 +133,7 @@ public class DeclarationStmtParser {
         List<Expression> expressions = new ArrayList<>();
         for (int i = 0; i < valuesArray.size(); i++) {
             //TODO  check if expressionParser should be used
-            expressions.add(new StringLiteral(valuesArray.get(i).textValue()));
+            expressions.add(new StringLiteral(valuesArray.get(i).asText()));
         }
         return new ExpressionListPlain(expressions);
     }
@@ -146,7 +146,7 @@ public class DeclarationStmtParser {
             Map.Entry<String, JsonNode> currentEntry = iter.next();
             Preconditions.checkArgument(currentEntry.getValue().isArray());
             ArrayNode arrNode = (ArrayNode) currentEntry.getValue();
-            String listName = LIST_ABBREVIATION + arrNode.get(DECLARATION_LIST_NAME_POS).textValue();
+            String listName = LIST_ABBREVIATION + arrNode.get(DECLARATION_LIST_NAME_POS).asText();
             JsonNode listValues = arrNode.get(DECLARATION_LIST_VALUES_POS);
             Preconditions.checkArgument(listValues.isArray());
             parsedLists.add(new SetVariableTo(new Qualified(new StrId(actorName), new StrId(listName)),
@@ -162,10 +162,10 @@ public class DeclarationStmtParser {
         Iterator<Map.Entry<String, JsonNode>> iter = broadcastsNode.fields();
         while (iter.hasNext()) {
             Map.Entry<String, JsonNode> current = iter.next();
-            ProgramParser.symbolTable.addMessage(current.getValue().textValue(),
-                    new Message(new StringLiteral(current.getValue().textValue())), isStage,
+            ProgramParser.symbolTable.addMessage(current.getValue().asText(),
+                    new Message(new StringLiteral(current.getValue().asText())), isStage,
                     actorName);
-            parsedBroadcasts.add(new DeclarationIdentAsTypeStmt(new StrId(current.getValue().textValue()),
+            parsedBroadcasts.add(new DeclarationIdentAsTypeStmt(new StrId(current.getValue().asText()),
                     new StringType()));
         }
         return parsedBroadcasts;
@@ -328,7 +328,7 @@ public class DeclarationStmtParser {
 
             keyExpr = new StringLiteral(ROTATIONSTYLE_KEY);
             Preconditions.checkArgument(actorDefinitionNode.get(ROTATIONSTYLE_KEY).isTextual());
-            jsonString = actorDefinitionNode.get(ROTATIONSTYLE_KEY).textValue();
+            jsonString = actorDefinitionNode.get(ROTATIONSTYLE_KEY).asText();
             stringExpr = new StringLiteral(jsonString);
             setStmt = new SetAttributeTo(keyExpr, stringExpr);
             list.add(setStmt);
