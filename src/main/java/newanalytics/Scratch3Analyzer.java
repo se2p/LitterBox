@@ -33,7 +33,6 @@ import org.apache.commons.io.FilenameUtils;
 import scratch.ast.ParsingException;
 import scratch.ast.model.Program;
 import scratch.ast.parser.ProgramParser;
-import scratch.structure.Project;
 import utils.*;
 
 import static utils.GroupConstants.*;
@@ -181,18 +180,6 @@ public class Scratch3Analyzer {
                 log.warning(e.getMessage());
             }
         }
-    }
-
-    private static Project getProjectScratch3(File fileEntry) {
-        log.info("Starting: " + fileEntry);
-        Project project = null;
-        try {
-            project = JsonParser.parse3(fileEntry.getName(), fileEntry.getPath());
-            assert project != null;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return project;
     }
 
     private static Program extractProgram(File fileEntry) {

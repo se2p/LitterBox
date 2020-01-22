@@ -23,9 +23,6 @@ import java.util.List;
 import newanalytics.IssueFinder;
 import newanalytics.IssueReport;
 import scratch.ast.model.Program;
-import scratch.data.ScBlock;
-import scratch.data.Script;
-import scratch.structure.Scriptable;
 
 /**
  * Evaluates the level of parallelism in the Scratch program.
@@ -93,6 +90,7 @@ public class Parallelism implements IssueFinder {
      * @param ids    The identifiers for the current version of the project.
      * @param flag   Shows if a identifier was found.
      */
+    /*
     private int search(Scriptable scable, Script sc,
         List<ScBlock> blocks, List<String> pos,
         List<String> found,
@@ -118,6 +116,8 @@ public class Parallelism implements IssueFinder {
         }
         return flag;
     }
+
+     */
 
     @Override
     public String getName() {

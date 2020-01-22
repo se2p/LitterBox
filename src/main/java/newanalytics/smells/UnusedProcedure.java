@@ -30,9 +30,6 @@ import scratch.ast.model.statement.CallStmt;
 import scratch.ast.model.variable.Identifier;
 import scratch.ast.parser.symboltable.ProcedureInfo;
 import scratch.ast.visitor.ScratchVisitor;
-import scratch.data.ScBlock;
-import scratch.data.Script;
-import scratch.structure.Scriptable;
 import utils.Preconditions;
 
 /**

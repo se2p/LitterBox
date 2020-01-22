@@ -18,25 +18,18 @@
  */
 package newanalytics.smells;
 
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
-
 import newanalytics.IssueFinder;
 import newanalytics.IssueReport;
 import scratch.ast.model.ASTNode;
 import scratch.ast.model.ActorDefinition;
 import scratch.ast.model.Program;
 import scratch.ast.model.statement.Stmt;
-import scratch.ast.model.statement.control.ControlStmt;
 import scratch.ast.model.statement.control.RepeatForeverStmt;
 import scratch.ast.model.statement.control.RepeatTimesStmt;
 import scratch.ast.model.statement.control.UntilStmt;
 import scratch.ast.visitor.ScratchVisitor;
-import scratch.data.ScBlock;
-import scratch.data.Script;
-import scratch.structure.Scriptable;
-import utils.Identifier;
 import utils.Preconditions;
 
 /**

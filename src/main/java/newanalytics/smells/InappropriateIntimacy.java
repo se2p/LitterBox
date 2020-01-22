@@ -22,7 +22,6 @@ import java.util.List;
 import newanalytics.IssueFinder;
 import newanalytics.IssueReport;
 import scratch.ast.model.Program;
-import scratch.data.ScBlock;
 
 /**
  * Checks for multiple access of private Sprite variables.
@@ -63,7 +62,7 @@ public class InappropriateIntimacy implements IssueFinder {
          */
         throw new RuntimeException("not implemented");
     }
-
+/*
     private void searchBlocks(List<ScBlock> blocks, List<String> count, String idf) {
         for (ScBlock b : blocks) {
             if (b.getCondition() != null) {
@@ -81,6 +80,8 @@ public class InappropriateIntimacy implements IssueFinder {
             }
         }
     }
+
+ */
 
     @Override
     public String getName() {

@@ -24,8 +24,6 @@ import java.util.Map;
 import newanalytics.IssueFinder;
 import newanalytics.IssueReport;
 import scratch.ast.model.Program;
-import scratch.data.ScBlock;
-import scratch.structure.Scriptable;
 import utils.Identifier;
 
 /**
@@ -76,7 +74,7 @@ public class VariableScope implements IssueFinder {
          */
         throw new RuntimeException("not implemented");
     }
-
+/*
     private void searchBlocks3(List<ScBlock> blocks, Scriptable scable, Map<String, List<String>> variableScope) {
         if (blocks != null) {
             for (ScBlock block : blocks) {
@@ -100,6 +98,8 @@ public class VariableScope implements IssueFinder {
             }
         }
     }
+
+ */
 
     @Override
     public String getName() {

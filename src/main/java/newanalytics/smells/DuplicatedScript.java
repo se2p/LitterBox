@@ -23,8 +23,6 @@ import java.util.List;
 import newanalytics.IssueFinder;
 import newanalytics.IssueReport;
 import scratch.ast.model.Program;
-import scratch.data.Script;
-import scratch.structure.Scriptable;
 
 /**
  * Checks for duplicated scripts. Only uses full String representation comparison.
@@ -60,7 +58,7 @@ public class DuplicatedScript implements IssueFinder {
          */
         throw new RuntimeException("not implemented");
     }
-
+/*
     private void searchBlocks(List<Scriptable> scriptables, Scriptable currentSc, Script sc, List<String> pos, List<String> duplicated) {
         String toSearch = sc.getBlocks().toString();
         for (Scriptable scable : scriptables) {
@@ -74,6 +72,8 @@ public class DuplicatedScript implements IssueFinder {
             }
         }
     }
+
+ */
 
     @Override
     public String getName() {

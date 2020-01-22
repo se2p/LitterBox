@@ -17,14 +17,12 @@
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import analytics.Scratch2Analyzer;
 
 import java.io.File;
 import java.util.logging.Logger;
 
 import newanalytics.Scratch3Analyzer;
 import org.apache.commons.cli.*;
-import utils.GroupConstants;
 
 import static utils.GroupConstants.ALL;
 
@@ -37,9 +35,7 @@ public class Main {
     private static final String OUTPUT = "output";
     private static final String DETECTORS = "detectors";
     private static final String GROUP = "detectors";
-    private static final String VERSION = "version";
     private static final String HELP = "help";
-
 
     private static final Logger log = Logger.getLogger(Main.class.getName());
 
@@ -68,20 +64,13 @@ public class Main {
                 + "\n(all detectors defined in the README)");
         options.addOption(GROUP, true, "choose a group of detectors to run smells, ctscore or bugs"
                 + "\n(all detectors defined in the README)");
-        options.addOption(VERSION, true, "the Scratch Version ('2' or '3') (required)");
         options.addOption(HELP, false, "print this message");
         CommandLineParser parser = new DefaultParser();
 
         CommandLine cmd = parser.parse(options, args);
 
-        final String version = cmd.getOptionValue(VERSION, "2");
-
         if (cmd.hasOption(PATH)) {
             File folder = new File(cmd.getOptionValue(PATH));
-            if (version.equals("2")) {
-                Scratch2Analyzer.analyze(cmd.getOptionValue(DETECTORS, ALL),
-                        cmd.getOptionValue(OUTPUT), folder);
-            } else {
                 if (cmd.hasOption(GROUP)) {
                     Scratch3Analyzer.analyze(cmd.getOptionValue(GROUP),
                             cmd.getOptionValue(OUTPUT), folder);
@@ -89,7 +78,6 @@ public class Main {
                     Scratch3Analyzer.analyze(cmd.getOptionValue(DETECTORS, ALL),
                             cmd.getOptionValue(OUTPUT), folder);
                 }
-            }
             return;
         } else if (cmd.hasOption(PROJECTID) || cmd.hasOption(PROJECTLIST)) {
             if (cmd.hasOption(PROJECTID)) {
@@ -125,7 +113,7 @@ public class Main {
         HelpFormatter formatter = new HelpFormatter();
         formatter.printHelp("LitterBox", options);
         System.out.println("Example: " + "java -cp C:\\ScratchAnalytics-1.0.jar Main -path "
-                + "C:\\scratchprojects\\files\\ -version 3 -output C:\\scratchprojects\\files\\test.csv -detectors cnt,"
+                + "C:\\scratchprojects\\files\\ -output C:\\scratchprojects\\files\\test.csv -detectors cnt,"
                 + "glblstrt");
     }
 

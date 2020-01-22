@@ -22,9 +22,6 @@ import java.util.List;
 import newanalytics.IssueFinder;
 import newanalytics.IssueReport;
 import scratch.ast.model.Program;
-import scratch.data.ScBlock;
-import scratch.data.Script;
-import utils.Identifier;
 
 /**
  * Checks for race conditions.
@@ -68,7 +65,7 @@ public class RaceCondition implements IssueFinder {
          */
         throw new RuntimeException("not implemented");
     }
-
+/*
     private void checkVariables3(Script script, List<String> temp) {
         if (script.getBlocks().size() > 1 && script.getBlocks().get(0).getContent().startsWith(Identifier.GREEN_FLAG.getValue())) {
             for (ScBlock b : script.getBlocks()) {
@@ -80,6 +77,8 @@ public class RaceCondition implements IssueFinder {
 
         }
     }
+
+ */
 
     @Override
     public String getName() {

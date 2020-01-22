@@ -23,9 +23,6 @@ import java.util.List;
 import newanalytics.IssueFinder;
 import newanalytics.IssueReport;
 import scratch.ast.model.Program;
-import scratch.data.ScBlock;
-import scratch.data.Script;
-import scratch.structure.Scriptable;
 
 /**
  * Evaluates the abstraction level of the Scratch program.
@@ -89,6 +86,7 @@ public class Abstraction implements IssueFinder {
      * @param found  The identifiers that were found.
      * @param ids    The identifiers for the current version of the project.
      */
+    /*
     private void search(Scriptable scable, Script sc,
         List<ScBlock> blocks, List<String> found,
         List<String> ids) {
@@ -108,6 +106,8 @@ public class Abstraction implements IssueFinder {
         }
     }
 
+     */
+
     /**
      * Counts the amount of scripts of the project.
      *
@@ -115,6 +115,7 @@ public class Abstraction implements IssueFinder {
      * @param level       The current level of abstraction.
      * @return            The updated level.
      */
+    /*
     private int countScripts(List scriptables, int level) {
         if (scriptables.size() == 0) {
             return 0;
@@ -123,6 +124,8 @@ public class Abstraction implements IssueFinder {
         }
     }
 
+
+     */
     @Override
     public String getName() {
         return name;

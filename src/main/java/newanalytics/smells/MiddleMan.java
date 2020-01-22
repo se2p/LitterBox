@@ -23,9 +23,6 @@ import java.util.List;
 import newanalytics.IssueFinder;
 import newanalytics.IssueReport;
 import scratch.ast.model.Program;
-import scratch.data.ScBlock;
-import scratch.data.Script;
-import scratch.structure.Scriptable;
 import utils.Identifier;
 
 /**
@@ -67,7 +64,7 @@ public class MiddleMan implements IssueFinder {
          */
         throw new RuntimeException("not implemented");
     }
-
+/*
     private void searchBlocks3(List<ScBlock> blocks, Scriptable scable, Script script, List<String> pos) {
         if (blocks != null) {
             for (ScBlock block : blocks) {
@@ -84,6 +81,8 @@ public class MiddleMan implements IssueFinder {
             }
         }
     }
+
+ */
 
     @Override
     public String getName() {

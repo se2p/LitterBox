@@ -23,9 +23,6 @@ import java.util.List;
 import newanalytics.IssueFinder;
 import newanalytics.IssueReport;
 import scratch.ast.model.Program;
-import scratch.data.Script;
-import scratch.structure.Project;
-import scratch.structure.Scriptable;
 
 /**
  * Checks if the project has a starting point / 'GreenFlag'.
@@ -49,7 +46,7 @@ public class GlobalStartingPoint implements IssueFinder {
          */
         throw new RuntimeException("not implemented");
     }
-
+/*
     private IssueReport runCheck(Project project, String idf) {
         List<Scriptable> scriptables = new ArrayList<>();
         scriptables.add(project.getStage());
@@ -80,6 +77,8 @@ public class GlobalStartingPoint implements IssueFinder {
         }
         return new IssueReport(name, count, pos, notes);
     }
+
+ */
 
     @Override
     public String getName() {

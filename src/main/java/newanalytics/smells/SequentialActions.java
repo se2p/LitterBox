@@ -23,10 +23,6 @@ import java.util.List;
 import newanalytics.IssueFinder;
 import newanalytics.IssueReport;
 import scratch.ast.model.Program;
-import scratch.data.ScBlock;
-import scratch.data.Script;
-import scratch.structure.Project;
-import scratch.structure.Scriptable;
 import utils.Identifier;
 import utils.Version;
 
@@ -63,7 +59,7 @@ public class SequentialActions implements IssueFinder {
          */
         throw new RuntimeException("not implemented");
     }
-
+/*
     private void searchVariableModification(Scriptable scable, Script sc, List<ScBlock> blocks, List<String> pos, Project project) {
         String content1 = "";
         for (ScBlock b : blocks) {
@@ -96,6 +92,8 @@ public class SequentialActions implements IssueFinder {
             }
         }
     }
+
+ */
 
     @Override
     public String getName() {

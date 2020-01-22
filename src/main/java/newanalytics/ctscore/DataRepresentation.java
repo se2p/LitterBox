@@ -23,9 +23,6 @@ import java.util.List;
 import newanalytics.IssueFinder;
 import newanalytics.IssueReport;
 import scratch.ast.model.Program;
-import scratch.data.ScBlock;
-import scratch.data.Script;
-import scratch.structure.Scriptable;
 
 /**
  * Evaluates the level of data representation of the Scratch program.
@@ -91,7 +88,9 @@ public class DataRepresentation implements IssueFinder {
      * @param ids    The identifiers for the current version of the project.
      * @param level  The current level of data representation.
      */
+    /*
     private int search(Scriptable scable, Script sc,
+
         List<ScBlock> blocks, List<String> found,
         List<List<String>> ids, int level) {
 
@@ -117,12 +116,15 @@ public class DataRepresentation implements IssueFinder {
         return level;
     }
 
+     */
+
     /**
      * Checks if the project uses lists.
      *
      * @param scriptables Scriptable objects.
      * @return            {@code 1} if lists were found, {@code 0} otherwise.
      */
+    /*
     private int checkLists(List<Scriptable> scriptables) {
         int foundList = 0;
         for (Scriptable scable : scriptables) {
@@ -135,6 +137,9 @@ public class DataRepresentation implements IssueFinder {
         }
         return foundList;
     }
+
+     */
+
 
     @Override
     public String getName() {
