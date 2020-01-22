@@ -16,35 +16,44 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-package scratch.ast.parser;
+package analytics.smells;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.File;
 import java.io.IOException;
 import analytics.IssueReport;
-import analytics.utils.SpriteCount;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import scratch.ast.ParsingException;
 import scratch.ast.model.Program;
+import scratch.ast.parser.ProgramParser;
 
-public class ListAsBooleanTest {
+public class UnusedProcedureTest {
     private static Program empty;
+    private static Program unusedProc;
     private static ObjectMapper mapper = new ObjectMapper();
 
     @BeforeAll
     public static void setUp() throws IOException, ParsingException {
 
-        File f = new File("./src/test/fixtures/stmtParser/listElementsBoolean.json");
+        File f = new File("./src/test/fixtures/emptyProject.json");
         empty = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
-
+        f = new File("./src/test/fixtures/smells/unusedEmptyProcedure.json");
+        unusedProc = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
     }
 
     @Test
     public void testEmptyProgram() {
-        SpriteCount sp = new SpriteCount();
-        IssueReport rep = sp.check(empty);
-        Assertions.assertEquals(1,rep.getCount());
+        UnusedProcedure parameterName = new UnusedProcedure();
+        IssueReport report = parameterName.check(empty);
+        Assertions.assertEquals(0, report.getCount());
+    }
+
+    @Test
+    public void testUnusedProcedure() {
+        UnusedProcedure parameterName = new UnusedProcedure();
+        IssueReport report = parameterName.check(unusedProc);
+        Assertions.assertEquals(1, report.getCount());
     }
 }

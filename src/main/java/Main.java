@@ -21,7 +21,7 @@
 import java.io.File;
 import java.util.logging.Logger;
 
-import newanalytics.Scratch3Analyzer;
+import analytics.Scratch3Analyzer;
 import org.apache.commons.cli.*;
 
 import static utils.GroupConstants.ALL;

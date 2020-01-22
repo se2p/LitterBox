@@ -18,6 +18,7 @@
  */
 package utils;
 
+import analytics.IssueReport;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -25,7 +26,6 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
-import newanalytics.IssueReport;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 import scratch.ast.model.Program;
@@ -43,10 +43,10 @@ public class CSVWriter {
      * @param program      the project with the information
      * @throws IOException corrupt file path
      */
-    public static void addData(CSVPrinter csvPrinter, List<newanalytics.IssueReport> issueReports, Program program) throws IOException {
+    public static void addData(CSVPrinter csvPrinter, List<IssueReport> issueReports, Program program) throws IOException {
         List<String> data = new ArrayList<>();
         data.add(program.getIdent().getName());
-        for (newanalytics.IssueReport is : issueReports) {
+        for (IssueReport is : issueReports) {
             data.add(Integer.toString(is.getCount()));
         }
         csvPrinter.printRecord(data);

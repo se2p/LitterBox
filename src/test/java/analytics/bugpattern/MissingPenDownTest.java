@@ -16,35 +16,44 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-package scratch.ast.parser;
+package analytics.bugpattern;
+
+import static junit.framework.TestCase.fail;
+
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.truth.Truth;
 import java.io.File;
 import java.io.IOException;
 import analytics.IssueReport;
-import analytics.utils.SpriteCount;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import scratch.ast.ParsingException;
 import scratch.ast.model.Program;
+import scratch.ast.parser.ProgramParser;
 
-public class ListAsBooleanTest {
-    private static Program empty;
-    private static ObjectMapper mapper = new ObjectMapper();
+class MissingPenDownTest {
+
+    private static Program program;
 
     @BeforeAll
-    public static void setUp() throws IOException, ParsingException {
-
-        File f = new File("./src/test/fixtures/stmtParser/listElementsBoolean.json");
-        empty = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
-
+    public static void setup() {
+        String path = "src/test/fixtures/bugpattern/missingPenDown.json";
+        File file = new File(path);
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            program = ProgramParser.parseProgram("missingPenDown", objectMapper.readTree(file));
+        } catch (IOException | ParsingException e) {
+            fail();
+        }
     }
 
     @Test
-    public void testEmptyProgram() {
-        SpriteCount sp = new SpriteCount();
-        IssueReport rep = sp.check(empty);
-        Assertions.assertEquals(1,rep.getCount());
+    public void testMissingPenDown() {
+        MissingPenDown finder = new MissingPenDown();
+        final IssueReport result = finder.check(program);
+        Truth.assertThat(result.getCount()).isEqualTo(1);
+        Truth.assertThat(result.getPosition().get(0)).isEqualTo("Apple");
+        System.out.println(result);
     }
 }

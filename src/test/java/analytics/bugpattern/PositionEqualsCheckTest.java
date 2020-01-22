@@ -16,35 +16,57 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-package scratch.ast.parser;
+package analytics.bugpattern;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.io.File;
-import java.io.IOException;
 import analytics.IssueReport;
-import analytics.utils.SpriteCount;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import scratch.ast.ParsingException;
 import scratch.ast.model.Program;
+import scratch.ast.parser.ProgramParser;
 
-public class ListAsBooleanTest {
+import java.io.File;
+import java.io.IOException;
+
+public class PositionEqualsCheckTest {
     private static Program empty;
+    private static Program equalX;
+    private static Program equalPos;
     private static ObjectMapper mapper = new ObjectMapper();
 
     @BeforeAll
     public static void setUp() throws IOException, ParsingException {
 
-        File f = new File("./src/test/fixtures/stmtParser/listElementsBoolean.json");
+        File f = new File("./src/test/fixtures/emptyProject.json");
         empty = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
 
+        f = new File("./src/test/fixtures/bugpattern/xPosEqual.json");
+        equalX = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
+
+        f = new File("./src/test/fixtures/bugpattern/posEqual.json");
+        equalPos = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
     }
 
     @Test
     public void testEmptyProgram() {
-        SpriteCount sp = new SpriteCount();
-        IssueReport rep = sp.check(empty);
-        Assertions.assertEquals(1,rep.getCount());
+        PositionEqualsCheck parameterName = new PositionEqualsCheck();
+        IssueReport report = parameterName.check(empty);
+        Assertions.assertEquals(0, report.getCount());
+    }
+
+    @Test
+    public void testEqualCond() {
+        PositionEqualsCheck parameterName = new PositionEqualsCheck();
+        IssueReport report = parameterName.check(equalX);
+        Assertions.assertEquals(1, report.getCount());
+    }
+
+    @Test
+    public void testEqualDir() {
+        PositionEqualsCheck parameterName = new PositionEqualsCheck();
+        IssueReport report = parameterName.check(equalPos);
+        Assertions.assertEquals(0, report.getCount());
     }
 }
