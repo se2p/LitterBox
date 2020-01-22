@@ -18,6 +18,9 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.utils;
 
+import static de.uni_passau.fim.se2.litterbox.ast.Constants.PEN_SIZE_KEY;
+
+
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueReport;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
@@ -28,11 +31,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetAttributeTo
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.pen.*;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
-
 import java.util.LinkedList;
 import java.util.List;
-
-import static de.uni_passau.fim.se2.litterbox.ast.Constants.PEN_SIZE_KEY;
 
 public class ProgramUsingPen implements IssueFinder, ScratchVisitor {
     public static final String NAME = "using_pen";
@@ -60,24 +60,24 @@ public class ProgramUsingPen implements IssueFinder, ScratchVisitor {
 
     @Override
     public void visit(PenDownStmt node) {
-        found=true;
+        found = true;
     }
 
     @Override
     public void visit(PenUpStmt node) {
-        found=true;
+        found = true;
     }
 
     @Override
     public void visit(PenClearStmt node) {
-        found=true;
+        found = true;
     }
 
     @Override
     public void visit(SetAttributeTo node) {
-        if(node.getStringExpr().equals(new StringLiteral(PEN_SIZE_KEY))){
-            found=true;
-        }else{
+        if (node.getStringExpr().equals(new StringLiteral(PEN_SIZE_KEY))) {
+            found = true;
+        } else {
             if (!node.getChildren().isEmpty()) {
                 for (ASTNode child : node.getChildren()) {
                     child.accept(this);
@@ -88,29 +88,29 @@ public class ProgramUsingPen implements IssueFinder, ScratchVisitor {
 
     @Override
     public void visit(SetPenColorToColorStmt node) {
-        found=true;
+        found = true;
     }
 
     @Override
     public void visit(PenStampStmt node) {
-        found=true;
+        found = true;
     }
 
     @Override
     public void visit(ChangePenColorParamBy node) {
-        found=true;
+        found = true;
     }
 
     @Override
     public void visit(SetPenColorParamTo node) {
-        found=true;
+        found = true;
     }
 
     @Override
     public void visit(ChangeAttributeBy node) {
-        if(node.getAttribute().equals(new StringLiteral(PEN_SIZE_KEY))){
-            found=true;
-        }else{
+        if (node.getAttribute().equals(new StringLiteral(PEN_SIZE_KEY))) {
+            found = true;
+        } else {
             if (!node.getChildren().isEmpty()) {
                 for (ASTNode child : node.getChildren()) {
                     child.accept(this);

@@ -18,8 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
-import java.util.LinkedList;
-import java.util.List;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueReport;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
@@ -30,6 +28,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatTimesSt
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
+import java.util.LinkedList;
+import java.util.List;
 
 public class ForeverInsideLoop implements IssueFinder, ScratchVisitor {
     public static final String NAME = "forever_inside_loop";
@@ -64,7 +64,7 @@ public class ForeverInsideLoop implements IssueFinder, ScratchVisitor {
     @Override
     public void visit(ActorDefinition actor) {
         currentActor = actor;
-        loopcounter=0;
+        loopcounter = 0;
         if (!actor.getChildren().isEmpty()) {
             for (ASTNode child : actor.getChildren()) {
                 child.accept(this);
@@ -91,7 +91,7 @@ public class ForeverInsideLoop implements IssueFinder, ScratchVisitor {
 
     @Override
     public void visit(RepeatForeverStmt node) {
-        if(loopcounter>0) {
+        if (loopcounter > 0) {
             found = true;
             count++;
         }
@@ -106,7 +106,7 @@ public class ForeverInsideLoop implements IssueFinder, ScratchVisitor {
     }
 
     @Override
-    public void visit(RepeatTimesStmt node){
+    public void visit(RepeatTimesStmt node) {
         loopcounter++;
         if (!node.getChildren().isEmpty()) {
             for (ASTNode child : node.getChildren()) {

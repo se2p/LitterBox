@@ -18,6 +18,9 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.parser.stmt;
 
+import static de.uni_passau.fim.se2.litterbox.ast.Constants.OPCODE_KEY;
+
+
 import com.fasterxml.jackson.databind.JsonNode;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
@@ -28,8 +31,6 @@ import de.uni_passau.fim.se2.litterbox.ast.parser.NumExprParser;
 import de.uni_passau.fim.se2.litterbox.ast.parser.PositionParser;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-import static de.uni_passau.fim.se2.litterbox.ast.Constants.OPCODE_KEY;
-
 public class SpriteMotionStmtParser {
 
     public static SpriteMotionStmt parse(JsonNode current, JsonNode allBlocks) throws ParsingException {
@@ -38,8 +39,8 @@ public class SpriteMotionStmtParser {
 
         final String opcodeString = current.get(OPCODE_KEY).asText();
         Preconditions
-            .checkArgument(SpriteMotionStmtOpcode.contains(opcodeString),
-                "Given blockID does not point to a sprite motion block.");
+                .checkArgument(SpriteMotionStmtOpcode.contains(opcodeString),
+                        "Given blockID does not point to a sprite motion block.");
 
         final SpriteMotionStmtOpcode opcode = SpriteMotionStmtOpcode.valueOf(opcodeString);
         NumExpr numExpr;

@@ -19,15 +19,15 @@
 package de.uni_passau.fim.se2.litterbox.analytics;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.io.File;
-import java.io.IOException;
 import de.uni_passau.fim.se2.litterbox.analytics.utils.ProcedureCount;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
+import java.io.File;
+import java.io.IOException;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 public class ProcedureCountTest {
     private static Program empty;
@@ -45,14 +45,14 @@ public class ProcedureCountTest {
 
     @Test
     public void testEmptyProgram() {
-        ProcedureCount parameterName = new  ProcedureCount();
+        ProcedureCount parameterName = new ProcedureCount();
         IssueReport report = parameterName.check(empty);
         Assertions.assertEquals(0, report.getCount());
     }
 
     @Test
     public void testProcCount() {
-        ProcedureCount parameterName = new  ProcedureCount();
+        ProcedureCount parameterName = new ProcedureCount();
         IssueReport report = parameterName.check(unusedProc);
         Assertions.assertEquals(2, report.getCount());
     }

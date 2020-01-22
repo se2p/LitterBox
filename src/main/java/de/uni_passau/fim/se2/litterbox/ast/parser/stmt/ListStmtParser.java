@@ -44,8 +44,8 @@ public class ListStmtParser {
 
         final String opcodeString = current.get(OPCODE_KEY).asText();
         Preconditions
-            .checkArgument(ListStmtOpcode.contains(opcodeString), "Given blockID does not point to a list " +
-                "statement block.");
+                .checkArgument(ListStmtOpcode.contains(opcodeString), "Given blockID does not point to a list " +
+                        "statement block.");
 
         final ListStmtOpcode opcode = ListStmtOpcode.valueOf(opcodeString);
 
@@ -78,7 +78,7 @@ public class ListStmtParser {
         ExpressionListInfo info = getListInfo(current);
 
         return new AddTo(expr, new Qualified(new StrId(info.getActor()),
-            new StrId(info.getVariableName())));
+                new StrId(info.getVariableName())));
     }
 
     private static ExpressionListInfo getListInfo(JsonNode current) {
@@ -98,7 +98,7 @@ public class ListStmtParser {
 
         ExpressionListInfo info = getListInfo(current);
         return new DeleteOf(expr, new Qualified(new StrId(info.getActor()),
-            new StrId(info.getVariableName())));
+                new StrId(info.getVariableName())));
     }
 
     private static ListStmt parseDeleteAllOfList(JsonNode current) {
@@ -106,7 +106,7 @@ public class ListStmtParser {
 
         ExpressionListInfo info = getListInfo(current);
         return new DeleteAllOf(new Qualified(new StrId(info.getActor()),
-            new StrId(info.getVariableName())));
+                new StrId(info.getVariableName())));
     }
 
     private static ListStmt parseInsertAtList(JsonNode current, JsonNode allBlocks) throws ParsingException {
@@ -117,7 +117,7 @@ public class ListStmtParser {
 
         ExpressionListInfo info = getListInfo(current);
         return new InsertAt(stringExpr, numExpr, new Qualified(new StrId(info.getActor()),
-            new StrId(info.getVariableName())));
+                new StrId(info.getVariableName())));
     }
 
     private static ListStmt parseReplaceItemOfList(JsonNode current, JsonNode allBlocks) throws ParsingException {
@@ -128,6 +128,6 @@ public class ListStmtParser {
 
         ExpressionListInfo info = getListInfo(current);
         return new ReplaceItem(stringExpr, numExpr, new Qualified(new StrId(info.getActor()),
-            new StrId(info.getVariableName())));
+                new StrId(info.getVariableName())));
     }
 }

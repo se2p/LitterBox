@@ -20,15 +20,14 @@ package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueReport;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
-
 import java.io.File;
 import java.io.IOException;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 public class AmbiguousParameterNameTest {
     private static Program empty;
@@ -54,11 +53,11 @@ public class AmbiguousParameterNameTest {
     public void testEmptyProgram() {
         AmbiguousParameterName parameterName = new AmbiguousParameterName();
         IssueReport report = parameterName.check(empty);
-        Assertions.assertEquals(0,report.getCount() );
+        Assertions.assertEquals(0, report.getCount());
     }
 
     @Test
-    public void testAmbiguousParameters(){
+    public void testAmbiguousParameters() {
         AmbiguousParameterName parameterName = new AmbiguousParameterName();
         IssueReport report = parameterName.check(ambiguousParams);
         Assertions.assertEquals(0, report.getCount());

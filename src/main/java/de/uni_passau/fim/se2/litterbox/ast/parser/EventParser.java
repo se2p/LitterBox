@@ -18,6 +18,10 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.parser;
 
+import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
+import static de.uni_passau.fim.se2.litterbox.ast.opcodes.EventOpcode.*;
+
+
 import com.fasterxml.jackson.databind.JsonNode;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Key;
@@ -29,9 +33,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.variable.Identifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.EventOpcode;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
-
-import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
-import static de.uni_passau.fim.se2.litterbox.ast.opcodes.EventOpcode.*;
 
 public class EventParser {
 
@@ -48,7 +49,7 @@ public class EventParser {
         JsonNode current = allBlocks.get(blockID);
         String opcodeString = current.get(OPCODE_KEY).asText();
         Preconditions
-            .checkArgument(EventOpcode.contains(opcodeString), "Given blockID does not point to an event block.");
+                .checkArgument(EventOpcode.contains(opcodeString), "Given blockID does not point to an event block.");
 
 
         EventOpcode opcode = EventOpcode.valueOf(opcodeString);
@@ -59,7 +60,7 @@ public class EventParser {
             Key key = KeyParser.parse(current, allBlocks);
             return new KeyPressed(key);
 
-        } else if (opcode.equals(event_whenthisspriteclicked)||opcode.equals(event_whenstageclicked)) {
+        } else if (opcode.equals(event_whenthisspriteclicked) || opcode.equals(event_whenstageclicked)) {
             return new Clicked();
 
         } else if (opcode.equals(event_whenbroadcastreceived)) {

@@ -29,7 +29,7 @@ public class ExpressionListInfo {
     private String ident;
 
     public ExpressionListInfo(boolean global, String actor, String ident,
-        ExpressionList expressionList, String variableName) {
+                              ExpressionList expressionList, String variableName) {
         this.global = global;
         this.actor = actor;
         this.ident = ident;

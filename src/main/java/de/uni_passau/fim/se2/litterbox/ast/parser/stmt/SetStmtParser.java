@@ -48,7 +48,7 @@ public class SetStmtParser {
 
         final String opcodeString = current.get(OPCODE_KEY).asText();
         Preconditions
-            .checkArgument(SetStmtOpcode.contains(opcodeString), "Given blockID does not point to a set block.");
+                .checkArgument(SetStmtOpcode.contains(opcodeString), "Given blockID does not point to a set block.");
 
         final SetStmtOpcode opcode = SetStmtOpcode.valueOf(opcodeString);
 
@@ -79,21 +79,21 @@ public class SetStmtParser {
 
     private static SetStmt parseSetVolumeTo(JsonNode current, JsonNode allBlocks) throws ParsingException {
         return new SetAttributeTo(new StringLiteral(VOLUME_KEY), ExpressionParser.parseExpression(current, 0,
-            allBlocks));
+                allBlocks));
     }
 
     private static SetStmt parseSetSoundEffect(JsonNode current, JsonNode allBlocks) throws ParsingException {
         String effect = current.get(FIELDS_KEY).get(EFFECT_KEY).get(0).asText();
         Preconditions.checkArgument(SoundEffect.contains(effect));
         return new SetAttributeTo(new StringLiteral(effect), ExpressionParser.parseExpression(current, 0,
-            allBlocks));
+                allBlocks));
     }
 
     private static SetStmt parseSetLookEffect(JsonNode current, JsonNode allBlocks) throws ParsingException {
         String effect = current.get(FIELDS_KEY).get(EFFECT_KEY).get(0).asText();
         Preconditions.checkArgument(GraphicEffect.contains(effect));
         return new SetAttributeTo(new StringLiteral(effect), ExpressionParser.parseExpression(current, 0,
-            allBlocks));
+                allBlocks));
     }
 
     private static SetStmt parseSetRotationStyle(JsonNode current) {
@@ -115,7 +115,7 @@ public class SetStmtParser {
         }
         VariableInfo info = ProgramParser.symbolTable.getVariables().get(unique);
         return new SetVariableTo(new Qualified(new StrId(info.getActor()),
-            new StrId((VARIABLE_ABBREVIATION+info.getVariableName()))), ExpressionParser.parseExpression(current,
-            0, allBlocks));
+                new StrId((VARIABLE_ABBREVIATION + info.getVariableName()))), ExpressionParser.parseExpression(current,
+                0, allBlocks));
     }
 }

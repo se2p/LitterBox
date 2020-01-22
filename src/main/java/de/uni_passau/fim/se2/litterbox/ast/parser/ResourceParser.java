@@ -19,10 +19,6 @@
 package de.uni_passau.fim.se2.litterbox.ast.parser;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.logging.Logger;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.URI;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
@@ -31,6 +27,10 @@ import de.uni_passau.fim.se2.litterbox.ast.model.resource.Resource;
 import de.uni_passau.fim.se2.litterbox.ast.model.resource.SoundResource;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.StrId;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.logging.Logger;
 
 public class ResourceParser {
 
@@ -61,7 +61,7 @@ public class ResourceParser {
             ImageResource res = null;
             try {
                 res = new ImageResource(new StrId(node.get(NAME).asText()),
-                    getURI(node));
+                        getURI(node));
             } catch (ParsingException e) {
                 Logger.getGlobal().warning(e.getMessage());
                 continue;

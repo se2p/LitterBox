@@ -22,7 +22,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ASTLeaf;
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BoolExpr;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
-
 import java.util.Objects;
 
 public class BoolLiteral extends AbstractNode implements BoolExpr, ASTLeaf {
@@ -55,9 +54,15 @@ public class BoolLiteral extends AbstractNode implements BoolExpr, ASTLeaf {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        if (!super.equals(o)) {
+            return false;
+        }
         BoolLiteral that = (BoolLiteral) o;
         return value == that.value;
     }

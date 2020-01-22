@@ -19,15 +19,15 @@
 package de.uni_passau.fim.se2.litterbox.analytics.ctscore;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.io.File;
-import java.io.IOException;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueReport;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
+import java.io.File;
+import java.io.IOException;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 public class FlowControlTest {
 
@@ -46,47 +46,47 @@ public class FlowControlTest {
         f = new File("./src/test/fixtures/flowControl/flowControlTopNestedInsideMiddle.json");
         programTopNested = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
         f = new File("./src/test/fixtures/emptyProject.json");
-        empty =ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
+        empty = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
         f = new File("./src/test/fixtures/flowControl/flowControlMiddle.json");
-        programMiddle =ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
+        programMiddle = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
         f = new File("./src/test/fixtures/flowControl/flowControlTopNestedElse.json");
-        programTopNestedElse =ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
+        programTopNestedElse = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
         f = new File("./src/test/fixtures/flowControl/flowControlZero.json");
-        programZero =ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
+        programZero = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
     }
 
     @Test
-    public void testFlowControlTopNested(){
+    public void testFlowControlTopNested() {
         IssueReport report = (new FlowControl()).check(programTopNested);
         Assertions.assertEquals(3, report.getCount());
     }
 
     @Test
-    public void testFlowControlMiddleNested(){
+    public void testFlowControlMiddleNested() {
         IssueReport report = (new FlowControl()).check(programMiddleNested);
         Assertions.assertEquals(2, report.getCount());
     }
 
     @Test
-    public void testFlowControlMiddle(){
+    public void testFlowControlMiddle() {
         IssueReport report = (new FlowControl()).check(programMiddle);
         Assertions.assertEquals(2, report.getCount());
     }
 
     @Test
-    public void testFlowControlEmpty(){
+    public void testFlowControlEmpty() {
         IssueReport report = (new FlowControl()).check(empty);
         Assertions.assertEquals(0, report.getCount());
     }
 
     @Test
-    public void testFlowControlTopNestedElse(){
+    public void testFlowControlTopNestedElse() {
         IssueReport report = (new FlowControl()).check(programTopNestedElse);
         Assertions.assertEquals(3, report.getCount());
     }
 
     @Test
-    public void testFlowControlZero(){
+    public void testFlowControlZero() {
         IssueReport report = (new FlowControl()).check(programZero);
         Assertions.assertEquals(0, report.getCount());
     }

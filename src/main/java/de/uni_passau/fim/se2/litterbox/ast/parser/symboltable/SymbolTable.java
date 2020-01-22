@@ -21,7 +21,6 @@ package de.uni_passau.fim.se2.litterbox.ast.parser.symboltable;
 import de.uni_passau.fim.se2.litterbox.ast.model.Message;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.ExpressionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.Type;
-
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -55,7 +54,7 @@ public class SymbolTable {
     }
 
     public void addExpressionListInfo(String ident, String listName, ExpressionList expressionList, boolean global,
-        String actorName) {
+                                      String actorName) {
         ExpressionListInfo info = new ExpressionListInfo(global, actorName, ident, expressionList, listName);
         lists.put(ident, info);
     }

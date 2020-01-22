@@ -46,7 +46,7 @@ public class JsonParser {
             while ((line = br.readLine()) != null) {
                 sb.append(line);
             }
-            script= buildScriptFromJSONString(sb.toString());
+            script = buildScriptFromJSONString(sb.toString());
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -54,26 +54,26 @@ public class JsonParser {
         return script;
     }
 
-    private static JsonNode buildScriptFromJSONString(String json){
+    private static JsonNode buildScriptFromJSONString(String json) {
         ObjectMapper mapper = new ObjectMapper();
         JsonNode script = null;
         try {
-        JsonNode rootNode = mapper.readTree(json);
-        Iterator<JsonNode> elements = rootNode.get("targets").elements();
-        while (elements.hasNext()) {
-            JsonNode c = elements.next();
-            if (c.has("isStage") && !c.get("isStage").asBoolean() && c.has("blocks")) {
-                script = c.get("blocks");
-                break;
+            JsonNode rootNode = mapper.readTree(json);
+            Iterator<JsonNode> elements = rootNode.get("targets").elements();
+            while (elements.hasNext()) {
+                JsonNode c = elements.next();
+                if (c.has("isStage") && !c.get("isStage").asBoolean() && c.has("blocks")) {
+                    script = c.get("blocks");
+                    break;
+                }
             }
-        }
         } catch (Exception e) {
             e.printStackTrace();
         }
         return script;
     }
 
-    public static JsonNode getTargetsNodeFromJSONString(String json){
+    public static JsonNode getTargetsNodeFromJSONString(String json) {
         ObjectMapper mapper = new ObjectMapper();
         try {
             JsonNode rootNode = mapper.readTree(json);

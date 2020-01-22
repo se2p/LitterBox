@@ -22,12 +22,6 @@ import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 
 
 import com.fasterxml.jackson.databind.JsonNode;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinitionList;
@@ -40,6 +34,12 @@ import de.uni_passau.fim.se2.litterbox.ast.model.variable.Identifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.DependentBlockOpcodes;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 public class ActorDefinitionParser {
 
@@ -65,12 +65,12 @@ public class ActorDefinitionParser {
         ResourceList resources = new ResourceList(res);
 
         List<DeclarationStmt> decls = DeclarationStmtParser
-            .parseLists(actorDefinitionNode.get("lists"), identifier.getName(),
-                actorDefinitionNode.get(IS_STAGE_KEY).asBoolean());
+                .parseLists(actorDefinitionNode.get("lists"), identifier.getName(),
+                        actorDefinitionNode.get(IS_STAGE_KEY).asBoolean());
         decls.addAll(DeclarationStmtParser.parseBroadcasts(actorDefinitionNode.get("broadcasts"), identifier.getName(),
-            actorDefinitionNode.get(IS_STAGE_KEY).asBoolean()));
+                actorDefinitionNode.get(IS_STAGE_KEY).asBoolean()));
         decls.addAll(DeclarationStmtParser.parseVariables(actorDefinitionNode.get("variables"), identifier.getName(),
-            actorDefinitionNode.get(IS_STAGE_KEY).asBoolean()));
+                actorDefinitionNode.get(IS_STAGE_KEY).asBoolean()));
         decls.addAll(DeclarationStmtParser.parseAttributeDeclarations(actorDefinitionNode));
         DeclarationStmtList declarations = new DeclarationStmtList(decls);
 
@@ -86,7 +86,7 @@ public class ActorDefinitionParser {
                 (allBlocks.get(fieldName).has("topLevel") &&
                         allBlocks.get(fieldName).get("topLevel").asBoolean()) &&
                         !DependentBlockOpcodes.contains(allBlocks.get(fieldName).get(OPCODE_KEY).asText()))
-            .collect(Collectors.toList());
+                .collect(Collectors.toList());
 
         List<Script> scripts = new LinkedList<>();
         for (String topLevelID : topLevelNodes) {
@@ -101,12 +101,12 @@ public class ActorDefinitionParser {
 
         List<SetStmt> setStmtList = DeclarationStmtParser.parseAttributeDeclarationSetStmts(actorDefinitionNode);
         setStmtList.addAll(DeclarationStmtParser.parseListDeclarationSetStmts(actorDefinitionNode.get("lists"),
-            identifier.getName()));
+                identifier.getName()));
         setStmtList.addAll(DeclarationStmtParser.parseVariableDeclarationSetStmts(actorDefinitionNode.get("variables"),
-            identifier.getName()));
+                identifier.getName()));
         return new ActorDefinition(actorType, identifier, resources, declarations, new SetStmtList(setStmtList),
-            procDeclList,
-            scriptList);
+                procDeclList,
+                scriptList);
     }
 
     /**

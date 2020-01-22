@@ -31,10 +31,9 @@ public class IssueReport {
     private String notes;
 
     /**
-     *
-     * @param count How often the IssueReport appears
+     * @param count    How often the IssueReport appears
      * @param position [0] = stage, [1],[2],... = sprites
-     * @param notes Notes defined by each IssueFinder
+     * @param notes    Notes defined by each IssueFinder
      */
     public IssueReport(String name, int count, List<String> position, String notes) {
         this.name = name;
@@ -48,7 +47,7 @@ public class IssueReport {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("Issue ").append(name).append(" was found ").append(count).append(" time(s).");
-        if(position != null && position.size() > 0) {
+        if (position != null && position.size() > 0) {
             sb.append("\nPosition: ").append(position);
         }
         sb.append("\nNotes: ").append(notes);

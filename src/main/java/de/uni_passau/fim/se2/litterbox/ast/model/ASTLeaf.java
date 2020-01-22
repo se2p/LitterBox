@@ -20,7 +20,8 @@ package de.uni_passau.fim.se2.litterbox.ast.model;
 
 public interface ASTLeaf extends ASTNode {
 
-    default String[] toSimpleStringArray(){
+    default String[] toSimpleStringArray() {
         return new String[0];
-    };
+    }
+
 }

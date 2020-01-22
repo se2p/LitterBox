@@ -32,7 +32,7 @@ public class InsertAt extends AbstractNode implements ListStmt {
     private final Variable variable;
 
     public InsertAt(StringExpr string, NumExpr index, Variable variable) {
-        super(string, index , variable);
+        super(string, index, variable);
         this.string = Preconditions.checkNotNull(string);
         this.index = Preconditions.checkNotNull(index);
         this.variable = Preconditions.checkNotNull(variable);

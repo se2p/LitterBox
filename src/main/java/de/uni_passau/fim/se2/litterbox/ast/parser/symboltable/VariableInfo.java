@@ -29,7 +29,7 @@ public class VariableInfo {
     private Type type;
 
     public VariableInfo(boolean global, String actor, String ident,
-        Type type, String variableName) {
+                        Type type, String variableName) {
         this.global = global;
         this.actor = actor;
         this.ident = ident;

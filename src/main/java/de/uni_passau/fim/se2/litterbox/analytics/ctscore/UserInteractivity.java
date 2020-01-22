@@ -34,14 +34,15 @@ public class UserInteractivity implements IssueFinder {
 
         notes[0] = "There is a green flag missing.";
         notes[1] = "Basic Level. There is key pressed, sprite clicked, ask "
-            + "and wait or mouse blocks missing.";
+                + "and wait or mouse blocks missing.";
         notes[2] = "Developing Level. There is %s is > %s, video or audio "
-            + "missing.";
+                + "missing.";
         notes[3] = "Proficiency Level. Good work!";
     }
 
     /**
      * {@inheritDoc}
+     *
      * @param program
      */
     @Override
@@ -107,7 +108,6 @@ public class UserInteractivity implements IssueFinder {
     }
 
      */
-
     @Override
     public String getName() {
         return name;

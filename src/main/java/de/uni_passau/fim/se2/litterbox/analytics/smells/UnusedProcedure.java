@@ -18,8 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.smells;
 
-import java.util.*;
-
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueReport;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
@@ -31,6 +29,10 @@ import de.uni_passau.fim.se2.litterbox.ast.model.variable.Identifier;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ProcedureInfo;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Checks if there are unused custom blocks in the project.
@@ -56,7 +58,7 @@ public class UnusedProcedure implements IssueFinder, ScratchVisitor {
         found = false;
         count = 0;
         actorNames = new LinkedList<>();
-        this.program=program;
+        this.program = program;
         program.accept(this);
         String notes = NOTE1;
         if (count > 0) {
@@ -73,7 +75,7 @@ public class UnusedProcedure implements IssueFinder, ScratchVisitor {
     @Override
     public void visit(ActorDefinition actor) {
         currentActor = actor;
-        procMap=program.getProcedureMapping().getProcedures().get(currentActor.getIdent().getName());
+        procMap = program.getProcedureMapping().getProcedures().get(currentActor.getIdent().getName());
         calledProcedures = new ArrayList<>();
         proceduresDef = new ArrayList<>();
         if (!actor.getChildren().isEmpty()) {

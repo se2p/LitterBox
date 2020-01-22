@@ -22,7 +22,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
-
 import java.util.List;
 
 public class ExpressionListPlain extends AbstractNode implements ASTNode, ListExpr {

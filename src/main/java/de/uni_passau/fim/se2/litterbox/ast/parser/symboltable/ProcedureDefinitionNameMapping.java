@@ -21,7 +21,6 @@ package de.uni_passau.fim.se2.litterbox.ast.parser.symboltable;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.Type;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Identifier;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
-
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -34,13 +33,13 @@ public class ProcedureDefinitionNameMapping {
     }
 
     public void addProcedure(Identifier identifier, String actorName, String procedureName, String[] argumentNames,
-        Type[] types) {
+                             Type[] types) {
         Map<Identifier, ProcedureInfo> currentMap;
-        if(procedures.containsKey(actorName)){
-            currentMap=procedures.get(actorName);
-        }else{
-            currentMap= new LinkedHashMap<>();
-            procedures.put(actorName,currentMap);
+        if (procedures.containsKey(actorName)) {
+            currentMap = procedures.get(actorName);
+        } else {
+            currentMap = new LinkedHashMap<>();
+            procedures.put(actorName, currentMap);
         }
         currentMap.put(identifier, new ProcedureInfo(procedureName, makeArguments(argumentNames, types), actorName));
 

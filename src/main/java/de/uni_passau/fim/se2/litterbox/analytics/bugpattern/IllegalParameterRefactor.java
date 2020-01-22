@@ -18,9 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueReport;
 import de.uni_passau.fim.se2.litterbox.ast.Constants;
@@ -42,6 +39,9 @@ import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ArgumentInfo;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ProcedureInfo;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 public class IllegalParameterRefactor implements IssueFinder, ScratchVisitor {
     public static final String NAME = "illegal_parameter_refactor";
@@ -80,7 +80,7 @@ public class IllegalParameterRefactor implements IssueFinder, ScratchVisitor {
     @Override
     public void visit(ActorDefinition actor) {
         currentActor = actor;
-        procedureMap=program.getProcedureMapping().getProcedures().get(currentActor.getIdent().getName());
+        procedureMap = program.getProcedureMapping().getProcedures().get(currentActor.getIdent().getName());
         if (!actor.getChildren().isEmpty()) {
             for (ASTNode child : actor.getChildren()) {
                 child.accept(this);

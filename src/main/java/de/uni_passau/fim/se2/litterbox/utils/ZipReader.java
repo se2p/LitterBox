@@ -33,6 +33,7 @@ public class ZipReader {
 
     /**
      * A method to extract the project.json file from a Scratch project (ZIP file)
+     *
      * @param path the file path
      * @return the JSON as a raw String
      * @throws IOException when given a invalid file or corrupted ZIP file
@@ -62,6 +63,7 @@ public class ZipReader {
 
     /**
      * A method returning the filename for a given filepath
+     *
      * @param path the file path
      * @return the filename
      * @throws IOException

@@ -22,7 +22,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ASTLeaf;
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
-
 import java.util.Objects;
 
 public class NumberLiteral extends AbstractNode implements NumExpr, ASTLeaf {
@@ -45,9 +44,15 @@ public class NumberLiteral extends AbstractNode implements NumExpr, ASTLeaf {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        if (!super.equals(o)) {
+            return false;
+        }
         NumberLiteral that = (NumberLiteral) o;
         return Double.compare(that.value, value) == 0;
     }

@@ -29,7 +29,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.CreateCloneOf;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -84,7 +83,7 @@ public class MissingCloneCall implements IssueFinder, ScratchVisitor {
 
     @Override
     public void visit(Script node) {
-        if(node.getStmtList().getStmts().getListOfStmt().size()>0 && node.getEvent() instanceof StartedAsClone){
+        if (node.getStmtList().getStmts().getListOfStmt().size() > 0 && node.getEvent() instanceof StartedAsClone) {
             whenStartsAsCloneActors.add(currentActor.getIdent().getName());
         }
         if (!node.getChildren().isEmpty()) {

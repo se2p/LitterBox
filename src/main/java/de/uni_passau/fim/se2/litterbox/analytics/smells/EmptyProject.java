@@ -18,13 +18,13 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.smells;
 
-import java.util.ArrayList;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueReport;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
+import java.util.ArrayList;
 
 
 public class EmptyProject implements ScratchVisitor, IssueFinder {

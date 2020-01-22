@@ -21,7 +21,6 @@ package de.uni_passau.fim.se2.litterbox.ast.model.timecomp;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTLeaf;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
-
 import java.util.Collections;
 import java.util.List;
 
@@ -68,7 +67,7 @@ public enum TimeComp implements ASTNode, ASTLeaf {
     }
 
     public static TimeComp fromString(String text) {
-        for (TimeComp t: values()) {
+        for (TimeComp t : values()) {
             if (t.getLabel().equals(text)) {
                 return t;
             }

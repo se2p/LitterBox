@@ -25,7 +25,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorType;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,7 +45,7 @@ public class EmptySprite implements IssueFinder {
         final List<ActorDefinition> definitions = program.getActorDefinitionList().getDefintions();
 
         for (ActorDefinition actor : definitions) {
-            if (actor.getScripts().getScriptList().size() == 0 && !(actor.getActorType()== ActorType.STAGE)) {
+            if (actor.getScripts().getScriptList().size() == 0 && !(actor.getActorType() == ActorType.STAGE)) {
                 found.add(actor.getIdent().getName());
             }
 

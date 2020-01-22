@@ -33,7 +33,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.SwitchBackd
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
-
 import java.util.*;
 
 public class MissingBackdropSwitch implements IssueFinder, ScratchVisitor {
@@ -55,7 +54,7 @@ public class MissingBackdropSwitch implements IssueFinder, ScratchVisitor {
         program.accept(this);
 
         final LinkedHashSet<Pair> nonSyncedPairs = new LinkedHashSet<>();
-        if(!nextRandPrev) {
+        if (!nextRandPrev) {
             for (Pair received : switchReceived) {
                 boolean isReceived = false;
                 for (Pair sent : switched) {
@@ -98,10 +97,12 @@ public class MissingBackdropSwitch implements IssueFinder, ScratchVisitor {
         if (msgName instanceof Next || msgName instanceof Prev || msgName instanceof Random) {
             nextRandPrev = true;
         } else if (msgName instanceof WithId) {
-            if (((WithId) msgName).getStringExpr() instanceof StrId)
+            if (((WithId) msgName).getStringExpr() instanceof StrId) {
                 switched.add(new Pair(actorName, ((StrId) ((WithId) msgName).getStringExpr()).getName()));
-            if (((WithId) msgName).getStringExpr() instanceof StringLiteral)
+            }
+            if (((WithId) msgName).getStringExpr() instanceof StringLiteral) {
                 switched.add(new Pair(actorName, ((StringLiteral) ((WithId) msgName).getStringExpr()).getText()));
+            }
         }
     }
 
@@ -112,10 +113,12 @@ public class MissingBackdropSwitch implements IssueFinder, ScratchVisitor {
         if (msgName instanceof Next || msgName instanceof Prev || msgName instanceof Random) {
             nextRandPrev = true;
         } else if (msgName instanceof WithId) {
-            if (((WithId) msgName).getStringExpr() instanceof StringLiteral)
+            if (((WithId) msgName).getStringExpr() instanceof StringLiteral) {
                 switched.add(new Pair(actorName, ((StringLiteral) ((WithId) msgName).getStringExpr()).getText()));
-            if (((WithId) msgName).getStringExpr() instanceof StrId)
+            }
+            if (((WithId) msgName).getStringExpr() instanceof StrId) {
                 switched.add(new Pair(actorName, ((StrId) ((WithId) msgName).getStringExpr()).getName()));
+            }
         }
     }
 

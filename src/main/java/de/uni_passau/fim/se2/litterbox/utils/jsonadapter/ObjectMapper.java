@@ -25,7 +25,7 @@ public interface ObjectMapper {
      * tree of JsonNode objects.
      *
      * @param content
-     * @return  the tree of JsonNode objects
+     * @return the tree of JsonNode objects
      */
     JsonNode readTree(String content);
 

@@ -21,10 +21,9 @@ package de.uni_passau.fim.se2.litterbox.ast.model.procedure;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
-
 import java.util.List;
 
-public class ParameterListPlain extends AbstractNode implements ASTNode{
+public class ParameterListPlain extends AbstractNode implements ASTNode {
 
     private final List<Parameter> parameters;
 

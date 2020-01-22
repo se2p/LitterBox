@@ -18,19 +18,19 @@
  */
 package de.uni_passau.fim.se2.litterbox.utils;
 
+import static junit.framework.TestCase.fail;
+
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.FixMethodOrder;
-import org.junit.runners.MethodSorters;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.DotVisitor;
-
 import java.io.File;
 import java.io.IOException;
-
-import static junit.framework.TestCase.fail;
+import org.junit.FixMethodOrder;
+import org.junit.runners.MethodSorters;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 class DownloaderTest {

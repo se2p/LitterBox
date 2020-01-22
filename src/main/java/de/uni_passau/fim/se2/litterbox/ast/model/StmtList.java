@@ -35,7 +35,7 @@ public class StmtList extends AbstractNode implements ASTNode {
         return stmts;
     }
 
-   @Override
+    @Override
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);
     }

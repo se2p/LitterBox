@@ -21,7 +21,7 @@ package de.uni_passau.fim.se2.litterbox.ast.model.type;
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
-public class StringType extends AbstractNode implements Type{
+public class StringType extends AbstractNode implements Type {
     public StringType() {
         super();
     }

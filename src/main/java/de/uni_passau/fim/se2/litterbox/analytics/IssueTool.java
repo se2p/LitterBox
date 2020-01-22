@@ -18,23 +18,18 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics;
 
-import java.io.IOException;
-import java.util.*;
+import static de.uni_passau.fim.se2.litterbox.utils.GroupConstants.*;
+
 
 import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.*;
 import de.uni_passau.fim.se2.litterbox.analytics.ctscore.FlowControl;
 import de.uni_passau.fim.se2.litterbox.analytics.smells.*;
-import de.uni_passau.fim.se2.litterbox.analytics.utils.BlockCount;
-import de.uni_passau.fim.se2.litterbox.analytics.utils.ProcedureCount;
-import de.uni_passau.fim.se2.litterbox.analytics.utils.ProgramUsingPen;
-import de.uni_passau.fim.se2.litterbox.analytics.utils.SpriteCount;
-import de.uni_passau.fim.se2.litterbox.analytics.utils.WeightedMethodCount;
-import org.apache.commons.csv.CSVPrinter;
+import de.uni_passau.fim.se2.litterbox.analytics.utils.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.utils.CSVWriter;
-
-import static de.uni_passau.fim.se2.litterbox.utils.GroupConstants.*;
-import static de.uni_passau.fim.se2.litterbox.utils.GroupConstants.CTSCORE;
+import java.io.IOException;
+import java.util.*;
+import org.apache.commons.csv.CSVPrinter;
 
 /**
  * Holds all IssueFinder and executes them.

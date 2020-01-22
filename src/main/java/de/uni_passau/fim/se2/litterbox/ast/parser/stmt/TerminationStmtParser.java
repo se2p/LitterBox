@@ -35,15 +35,15 @@ public class TerminationStmtParser {
     private static final String STOP_THIS = "this script";
 
     public static TerminationStmt parseTerminationStmt(JsonNode current, JsonNode blocks)
-        throws ParsingException {
+            throws ParsingException {
         Preconditions.checkNotNull(current);
         Preconditions.checkNotNull(blocks);
 
         final String opCodeString = current.get(Constants.OPCODE_KEY).asText();
         if (!TerminationStmtOpcode.contains(opCodeString)) {
             throw new ParsingException(
-                "Called parseTerminationStmt with a block that does not qualify as such"
-                    + " a statement. Opcode is " + opCodeString);
+                    "Called parseTerminationStmt with a block that does not qualify as such"
+                            + " a statement. Opcode is " + opCodeString);
         }
 
         final TerminationStmtOpcode opcode = TerminationStmtOpcode.valueOf(opCodeString);
@@ -72,10 +72,10 @@ public class TerminationStmtParser {
 
         } else {
             throw new ParsingException(
-                "Unknown Stop Option Value "
-                    + stopOptionValue
-                    + " for TerminationStmt "
-                    + TerminationStmtOpcode.control_stop.name());
+                    "Unknown Stop Option Value "
+                            + stopOptionValue
+                            + " for TerminationStmt "
+                            + TerminationStmtOpcode.control_stop.name());
         }
     }
 }

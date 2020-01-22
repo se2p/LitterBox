@@ -23,9 +23,6 @@ import static de.uni_passau.fim.se2.litterbox.ast.Constants.OPCODE_KEY;
 
 
 import com.fasterxml.jackson.databind.JsonNode;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.logging.Logger;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
@@ -39,6 +36,9 @@ import de.uni_passau.fim.se2.litterbox.ast.opcodes.EventOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.ProcedureOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.parser.stmt.StmtParser;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.logging.Logger;
 
 public class ScriptParser {
 

@@ -30,7 +30,7 @@ public class ProcedureInfo {
     public ProcedureInfo(String name, ArgumentInfo[] arguments, String actorName) {
         this.name = name;
         this.arguments = arguments;
-        this.actorName=actorName;
+        this.actorName = actorName;
     }
 
     public String getName() {
@@ -47,8 +47,12 @@ public class ProcedureInfo {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         ProcedureInfo that = (ProcedureInfo) o;
         return Objects.equals(name, that.name) &&
                 Objects.equals(actorName, that.actorName) &&

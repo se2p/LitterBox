@@ -20,14 +20,10 @@ package de.uni_passau.fim.se2.litterbox.ast.parser.stmt;
 
 import static junit.framework.TestCase.fail;
 
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.truth.Truth;
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinitionList;
@@ -42,6 +38,11 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.StopAllSou
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopAll;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 public class ActorSoundStmtParserTest {
 
@@ -107,7 +108,7 @@ public class ActorSoundStmtParserTest {
 
             PlaySoundUntilDone playSoundUntilDone = (PlaySoundUntilDone) listOfStmt.get(0);
             Truth.assertThat(((StrId) ((WithId) playSoundUntilDone.getElementChoice()).getStringExpr()).getName())
-                .isEqualTo("Meow");
+                    .isEqualTo("Meow");
 
         } catch (ParsingException e) {
             e.printStackTrace();
@@ -129,7 +130,7 @@ public class ActorSoundStmtParserTest {
 
             StartSound startSound = (StartSound) listOfStmt.get(1);
             Truth.assertThat(((StrId) ((WithId) startSound.getElementChoice()).getStringExpr()).getName())
-                .isEqualTo("Meow");
+                    .isEqualTo("Meow");
 
         } catch (ParsingException e) {
             e.printStackTrace();

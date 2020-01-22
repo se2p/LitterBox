@@ -21,7 +21,6 @@ package de.uni_passau.fim.se2.litterbox.ast.model.resource;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
-
 import java.util.List;
 
 public class ResourceList extends AbstractNode implements ASTNode {

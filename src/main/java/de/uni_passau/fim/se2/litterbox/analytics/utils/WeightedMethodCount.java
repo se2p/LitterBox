@@ -18,8 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.utils;
 
-import java.util.LinkedList;
-import java.util.List;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueReport;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
@@ -28,6 +26,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitUntil;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.*;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
+import java.util.LinkedList;
+import java.util.List;
 
 public class WeightedMethodCount implements IssueFinder, ScratchVisitor {
     public static final String NAME = "weighted_method_count";

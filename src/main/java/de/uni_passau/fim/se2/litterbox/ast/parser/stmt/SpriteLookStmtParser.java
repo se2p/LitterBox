@@ -18,6 +18,10 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.parser.stmt;
 
+import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
+import static de.uni_passau.fim.se2.litterbox.ast.opcodes.SpriteLookStmtOpcode.looks_gotofrontback;
+
+
 import com.fasterxml.jackson.databind.JsonNode;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.ElementChoice;
@@ -32,9 +36,6 @@ import de.uni_passau.fim.se2.litterbox.ast.parser.NumExprParser;
 import de.uni_passau.fim.se2.litterbox.ast.parser.StringExprParser;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
-import static de.uni_passau.fim.se2.litterbox.ast.opcodes.SpriteLookStmtOpcode.looks_gotofrontback;
-
 public class SpriteLookStmtParser {
 
     public static SpriteLookStmt parse(JsonNode current, JsonNode allBlocks) throws ParsingException {
@@ -43,8 +44,8 @@ public class SpriteLookStmtParser {
 
         final String opcodeString = current.get(OPCODE_KEY).asText();
         Preconditions
-            .checkArgument(SpriteLookStmtOpcode.contains(opcodeString),
-                "Given blockID does not point to a sprite look block. Opcode is " + opcodeString);
+                .checkArgument(SpriteLookStmtOpcode.contains(opcodeString),
+                        "Given blockID does not point to a sprite look block. Opcode is " + opcodeString);
 
         final SpriteLookStmtOpcode opcode = SpriteLookStmtOpcode.valueOf(opcodeString);
         StringExpr stringExpr;
@@ -89,7 +90,7 @@ public class SpriteLookStmtParser {
     }
 
     private static SpriteLookStmt parseGoForwardBackwardLayer(JsonNode current, JsonNode allBlocks)
-        throws ParsingException {
+            throws ParsingException {
         JsonNode front_back = current.get(FIELDS_KEY).get("FORWARD_BACKWARD").get(FIELD_VALUE);
 
         NumExpr num = NumExprParser.parseNumExpr(current, 0, allBlocks);
@@ -102,7 +103,7 @@ public class SpriteLookStmtParser {
             return new ChangeLayerBy(negated);
         } else {
             throw new ParsingException("Unknown option " + layerOption +
-                "+ when parsing block with opcode " + current.get(OPCODE_KEY));
+                    "+ when parsing block with opcode " + current.get(OPCODE_KEY));
         }
     }
 
@@ -117,7 +118,7 @@ public class SpriteLookStmtParser {
             return new GoToBackLayer();
         } else {
             throw new ParsingException("Unknown option " + layerOption +
-                "+ when parsing block with opcode " + current.get(OPCODE_KEY));
+                    "+ when parsing block with opcode " + current.get(OPCODE_KEY));
         }
     }
 }

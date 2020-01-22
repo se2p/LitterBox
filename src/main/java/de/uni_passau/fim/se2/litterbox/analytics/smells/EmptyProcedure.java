@@ -18,8 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.smells;
 
-import java.util.LinkedList;
-import java.util.List;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueReport;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
@@ -28,6 +26,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
+import java.util.LinkedList;
+import java.util.List;
 
 public class EmptyProcedure implements IssueFinder, ScratchVisitor {
     public static final String NAME = "empty_procedure";
@@ -75,8 +75,8 @@ public class EmptyProcedure implements IssueFinder, ScratchVisitor {
 
     @Override
     public void visit(ProcedureDefinition node) {
-        if(node.getStmtList().getStmts().getListOfStmt().isEmpty()){
-            found=true;
+        if (node.getStmtList().getStmts().getListOfStmt().isEmpty()) {
+            found = true;
             count++;
         }
         if (!node.getChildren().isEmpty()) {

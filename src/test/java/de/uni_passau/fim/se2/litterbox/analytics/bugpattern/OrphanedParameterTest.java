@@ -19,15 +19,15 @@
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.io.File;
-import java.io.IOException;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueReport;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
+import java.io.File;
+import java.io.IOException;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 public class OrphanedParameterTest {
     private static Program empty;
@@ -41,29 +41,29 @@ public class OrphanedParameterTest {
         File f = new File("./src/test/fixtures/emptyProject.json");
         empty = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
         f = new File("./src/test/fixtures/bugpattern/orphanedParameter.json");
-        orphanedParam = ProgramParser.parseProgram(f.getName(),mapper.readTree(f));
+        orphanedParam = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
         f = new File("./src/test/fixtures/bugpattern/parameterOutsideScope.json");
-        outsideParam = ProgramParser.parseProgram(f.getName(),mapper.readTree(f));
+        outsideParam = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
     }
 
     @Test
     public void testEmptyProgram() {
         OrphanedParameter parameterName = new OrphanedParameter();
         IssueReport report = parameterName.check(empty);
-        Assertions.assertEquals(0,report.getCount() );
+        Assertions.assertEquals(0, report.getCount());
     }
 
     @Test
-    public void testOrphanedParameter(){
+    public void testOrphanedParameter() {
         OrphanedParameter parameterName = new OrphanedParameter();
         IssueReport report = parameterName.check(orphanedParam);
-        Assertions.assertEquals(1,report.getCount() );
+        Assertions.assertEquals(1, report.getCount());
     }
 
     @Test
-    public void testOutsideParameter(){
+    public void testOutsideParameter() {
         OrphanedParameter parameterName = new OrphanedParameter();
         IssueReport report = parameterName.check(outsideParam);
-        Assertions.assertEquals(0,report.getCount() );
+        Assertions.assertEquals(0, report.getCount());
     }
 }

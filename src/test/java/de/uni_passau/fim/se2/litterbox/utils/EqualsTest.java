@@ -18,22 +18,21 @@
  */
 package de.uni_passau.fim.se2.litterbox.utils;
 
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatTimesStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.ListOfStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.MoveSteps;
-
 import java.util.ArrayList;
 import java.util.List;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class EqualsTest {
 
     @Test
-    public void testScriptEquals(){
+    public void testScriptEquals() {
         NumberLiteral num = new NumberLiteral(2);
         MoveSteps goTo = new MoveSteps(new NumberLiteral(12));
         List<Stmt> list = new ArrayList<>();

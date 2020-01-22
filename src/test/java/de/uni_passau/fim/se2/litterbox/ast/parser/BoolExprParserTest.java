@@ -24,10 +24,6 @@ import static junit.framework.TestCase.fail;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.truth.Truth;
-import java.io.File;
-import java.io.IOException;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
@@ -46,6 +42,10 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfElseStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatTimesStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.Edge;
+import java.io.File;
+import java.io.IOException;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 public class BoolExprParserTest {
 
@@ -110,7 +110,7 @@ public class BoolExprParserTest {
 
         WaitUntil waitUntil = (WaitUntil) stmt;
         IsKeyPressed expr = (IsKeyPressed) waitUntil.getUntil();
-        Truth.assertThat(((NumberLiteral) expr.getKey().getKey()).getValue()).isEqualTo( 32);
+        Truth.assertThat(((NumberLiteral) expr.getKey().getKey()).getValue()).isEqualTo(32);
     }
 
     @Test

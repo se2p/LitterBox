@@ -1,4 +1,4 @@
-package de.uni_passau.fim.se2.litterbox;/*
+/*
  * Copyright (C) 2019 LitterBox contributors
  *
  * This file is part of LitterBox.
@@ -16,15 +16,15 @@ package de.uni_passau.fim.se2.litterbox;/*
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-
-
-import java.io.File;
-import java.util.logging.Logger;
-
-import de.uni_passau.fim.se2.litterbox.analytics.Scratch3Analyzer;
-import org.apache.commons.cli.*;
+package de.uni_passau.fim.se2.litterbox;
 
 import static de.uni_passau.fim.se2.litterbox.utils.GroupConstants.ALL;
+
+
+import de.uni_passau.fim.se2.litterbox.analytics.Scratch3Analyzer;
+import java.io.File;
+import java.util.logging.Logger;
+import org.apache.commons.cli.*;
 
 public class Main {
 
@@ -71,13 +71,13 @@ public class Main {
 
         if (cmd.hasOption(PATH)) {
             File folder = new File(cmd.getOptionValue(PATH));
-                if (cmd.hasOption(GROUP)) {
-                    Scratch3Analyzer.analyze(cmd.getOptionValue(GROUP),
-                            cmd.getOptionValue(OUTPUT), folder);
-                } else {
-                    Scratch3Analyzer.analyze(cmd.getOptionValue(DETECTORS, ALL),
-                            cmd.getOptionValue(OUTPUT), folder);
-                }
+            if (cmd.hasOption(GROUP)) {
+                Scratch3Analyzer.analyze(cmd.getOptionValue(GROUP),
+                        cmd.getOptionValue(OUTPUT), folder);
+            } else {
+                Scratch3Analyzer.analyze(cmd.getOptionValue(DETECTORS, ALL),
+                        cmd.getOptionValue(OUTPUT), folder);
+            }
             return;
         } else if (cmd.hasOption(PROJECTID) || cmd.hasOption(PROJECTLIST)) {
             if (cmd.hasOption(PROJECTID)) {
@@ -116,5 +116,4 @@ public class Main {
                 + "C:\\scratchprojects\\files\\ -output C:\\scratchprojects\\files\\test.csv -detectors cnt,"
                 + "glblstrt");
     }
-
 }

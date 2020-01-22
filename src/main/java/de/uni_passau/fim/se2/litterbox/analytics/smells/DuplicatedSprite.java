@@ -18,12 +18,12 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.smells;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueReport;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Checks for duplicated sprites.

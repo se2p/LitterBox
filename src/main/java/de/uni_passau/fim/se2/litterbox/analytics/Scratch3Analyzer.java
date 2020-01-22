@@ -18,8 +18,18 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics;
 
+import static de.uni_passau.fim.se2.litterbox.utils.GroupConstants.*;
+
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
+import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
+import de.uni_passau.fim.se2.litterbox.utils.CSVWriter;
+import de.uni_passau.fim.se2.litterbox.utils.Downloader;
+import de.uni_passau.fim.se2.litterbox.utils.JsonParser;
+import de.uni_passau.fim.se2.litterbox.utils.ZipReader;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -30,12 +40,6 @@ import java.util.Objects;
 import java.util.logging.Logger;
 import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.io.FilenameUtils;
-import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
-import de.uni_passau.fim.se2.litterbox.utils.*;
-
-import static de.uni_passau.fim.se2.litterbox.utils.GroupConstants.*;
 
 
 public class Scratch3Analyzer {

@@ -34,14 +34,15 @@ public class Parallelism implements IssueFinder {
 
         notes[0] = "There are not two scripts with a green flag.";
         notes[1] = "Basic Level. There are missing scripts on key pressed or "
-            + "sprite clicked.";
+                + "sprite clicked.";
         notes[2] = "Developing Level. There are missing scripts on receive "
-            + "message, create clone, %s is > %s or backdrop change.";
+                + "message, create clone, %s is > %s or backdrop change.";
         notes[3] = "Proficiency Level. Good work!";
     }
 
     /**
      * {@inheritDoc}
+     *
      * @param program
      */
     @Override
@@ -116,7 +117,6 @@ public class Parallelism implements IssueFinder {
     }
 
      */
-
     @Override
     public String getName() {
         return name;

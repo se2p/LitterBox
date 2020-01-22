@@ -40,6 +40,7 @@ public class LogicalThinking implements IssueFinder {
 
     /**
      * {@inheritDoc}
+     *
      * @param program
      */
     @Override

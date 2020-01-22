@@ -31,7 +31,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.ChangeYB
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.MoveSteps;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
-
 import java.util.LinkedList;
 import java.util.List;
 

@@ -18,6 +18,9 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.parser;
 
+import static de.uni_passau.fim.se2.litterbox.ast.opcodes.SpriteMotionStmtOpcode.*;
+
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import de.uni_passau.fim.se2.litterbox.ast.Constants;
@@ -29,10 +32,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.variable.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.NumExprOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.SpriteMotionStmtOpcode;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
-
 import java.util.ArrayList;
-
-import static de.uni_passau.fim.se2.litterbox.ast.opcodes.SpriteMotionStmtOpcode.*;
 
 public class PositionParser {
 
@@ -43,8 +43,8 @@ public class PositionParser {
         if (current.get(Constants.INPUTS_KEY).has("X") && current.get(Constants.INPUTS_KEY).has("Y")) {
             return parseCoordinate(current, allBlocks);
         } else if (current.get(Constants.INPUTS_KEY).has("TO") ||
-            current.get(Constants.INPUTS_KEY).has("TOWARDS") ||
-            current.get(Constants.INPUTS_KEY).has("DISTANCETOMENU")) {
+                current.get(Constants.INPUTS_KEY).has("TOWARDS") ||
+                current.get(Constants.INPUTS_KEY).has("DISTANCETOMENU")) {
             return parseRelativePos(current, allBlocks);
         } else {
             throw new ParsingException("Could not parse block " + current.toString());
@@ -69,14 +69,14 @@ public class PositionParser {
                 menuID = inputs.get(positionInput).get(Constants.POS_INPUT_VALUE);
             } else {
                 throw new ParsingException(
-                    "Cannot parse relative coordinates for a block with opcode " + current.get(Constants.OPCODE_KEY));
+                        "Cannot parse relative coordinates for a block with opcode " + current.get(Constants.OPCODE_KEY));
             }
         } else if (NumExprOpcode.sensing_distanceto.toString().equals(opcodeString)) {
             positionInput = 0;
             menuID = inputs.get(positionInput).get(Constants.POS_INPUT_VALUE);
         } else {
             throw new ParsingException(
-                "Cannot parse relative coordinates for a block with opcode " + current.get(Constants.OPCODE_KEY));
+                    "Cannot parse relative coordinates for a block with opcode " + current.get(Constants.OPCODE_KEY));
         }
 
         if (getShadowIndicator((ArrayNode) inputs.get(positionInput)) == 1) {
@@ -119,7 +119,7 @@ public class PositionParser {
             return new CoordinatePosition(xExpr, yExpr);
         } else {
             throw new ParsingException(
-                "Cannot parse x and y coordinates for a block with opcode " + current.get(Constants.OPCODE_KEY));
+                    "Cannot parse x and y coordinates for a block with opcode " + current.get(Constants.OPCODE_KEY));
         }
 
     }

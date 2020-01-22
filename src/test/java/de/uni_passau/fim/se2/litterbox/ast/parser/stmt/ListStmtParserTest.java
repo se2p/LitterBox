@@ -24,10 +24,6 @@ import static junit.framework.TestCase.fail;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.truth.Truth;
-import java.io.File;
-import java.io.IOException;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 import de.uni_passau.fim.se2.litterbox.ast.Constants;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
@@ -39,6 +35,10 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.list.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
+import java.io.File;
+import java.io.IOException;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 class ListStmtParserTest {
 
@@ -69,7 +69,7 @@ class ListStmtParserTest {
             final AddTo addTo = (AddTo) stmt;
             Truth.assertThat(((StringLiteral) addTo.getString()).getText()).isEqualTo("thing");
             Truth.assertThat(((Qualified) addTo.getVariable()).getFirst().getName()).isEqualTo("Stage");
-            Truth.assertThat(((Qualified) addTo.getVariable()).getSecond().getName()).isEqualTo(Constants.LIST_ABBREVIATION+"TestList");
+            Truth.assertThat(((Qualified) addTo.getVariable()).getSecond().getName()).isEqualTo(Constants.LIST_ABBREVIATION + "TestList");
         } catch (ParsingException e) {
             fail();
         }
@@ -88,7 +88,7 @@ class ListStmtParserTest {
             final AddTo addTo = (AddTo) stmt;
             Truth.assertThat(((StringLiteral) addTo.getString()).getText()).isEqualTo("localThing");
             Truth.assertThat(((Qualified) addTo.getVariable()).getFirst().getName()).isEqualTo("Sprite1");
-            Truth.assertThat(((Qualified) addTo.getVariable()).getSecond().getName()).isEqualTo(Constants.LIST_ABBREVIATION+"TestListLocal");
+            Truth.assertThat(((Qualified) addTo.getVariable()).getSecond().getName()).isEqualTo(Constants.LIST_ABBREVIATION + "TestListLocal");
         } catch (ParsingException e) {
             fail();
         }
@@ -107,7 +107,7 @@ class ListStmtParserTest {
             final InsertAt insertAt = (InsertAt) stmt;
             Truth.assertThat(((StringLiteral) insertAt.getString()).getText()).isEqualTo("thing");
             Truth.assertThat(((Qualified) insertAt.getVariable()).getFirst().getName()).isEqualTo("Stage");
-            Truth.assertThat(((Qualified) insertAt.getVariable()).getSecond().getName()).isEqualTo(Constants.LIST_ABBREVIATION+"TestList");
+            Truth.assertThat(((Qualified) insertAt.getVariable()).getSecond().getName()).isEqualTo(Constants.LIST_ABBREVIATION + "TestList");
         } catch (ParsingException e) {
             fail();
         }
@@ -127,7 +127,7 @@ class ListStmtParserTest {
             Truth.assertThat(((StringLiteral) insertAt.getString()).getText()).isEqualTo("thing2");
             Truth.assertThat(((NumberLiteral) insertAt.getIndex()).getValue()).isEqualTo(1);
             Truth.assertThat(((Qualified) insertAt.getVariable()).getFirst().getName()).isEqualTo("Stage");
-            Truth.assertThat(((Qualified) insertAt.getVariable()).getSecond().getName()).isEqualTo(Constants.LIST_ABBREVIATION+"TestList");
+            Truth.assertThat(((Qualified) insertAt.getVariable()).getSecond().getName()).isEqualTo(Constants.LIST_ABBREVIATION + "TestList");
         } catch (ParsingException e) {
             fail();
         }
@@ -146,7 +146,7 @@ class ListStmtParserTest {
             final DeleteOf deleteOf = (DeleteOf) stmt;
             Truth.assertThat(((NumberLiteral) deleteOf.getNum()).getValue()).isEqualTo(1);
             Truth.assertThat(((Qualified) deleteOf.getVariable()).getFirst().getName()).isEqualTo("Stage");
-            Truth.assertThat(((Qualified) deleteOf.getVariable()).getSecond().getName()).isEqualTo(Constants.LIST_ABBREVIATION+"TestList");
+            Truth.assertThat(((Qualified) deleteOf.getVariable()).getSecond().getName()).isEqualTo(Constants.LIST_ABBREVIATION + "TestList");
         } catch (ParsingException e) {
             fail();
         }
@@ -164,7 +164,7 @@ class ListStmtParserTest {
 
             final DeleteAllOf deleteAllOf = (DeleteAllOf) stmt;
             Truth.assertThat(((Qualified) deleteAllOf.getVariable()).getFirst().getName()).isEqualTo("Stage");
-            Truth.assertThat(((Qualified) deleteAllOf.getVariable()).getSecond().getName()).isEqualTo(Constants.LIST_ABBREVIATION+"TestList");
+            Truth.assertThat(((Qualified) deleteAllOf.getVariable()).getSecond().getName()).isEqualTo(Constants.LIST_ABBREVIATION + "TestList");
         } catch (ParsingException e) {
             fail();
         }

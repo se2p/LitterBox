@@ -24,12 +24,6 @@ import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 import de.uni_passau.fim.se2.litterbox.ast.Constants;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
@@ -41,6 +35,12 @@ import de.uni_passau.fim.se2.litterbox.ast.model.variable.Identifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.ProcedureOpcode;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 public class ProcDefinitionParser {
 
@@ -102,7 +102,7 @@ public class ProcDefinitionParser {
             ArrayNode currentAsArray = (ArrayNode) currentInput;
 
             //TODO is this right?
-            if(!currentAsArray.get(PARAMETER_REFERENCE_POS).asText().equals("null")) {
+            if (!currentAsArray.get(PARAMETER_REFERENCE_POS).asText().equals("null")) {
                 paraTypes = addType(blocks, paraTypes, currentAsArray.get(PARAMETER_REFERENCE_POS).asText());
             }
         }

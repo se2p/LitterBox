@@ -18,6 +18,11 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.parser;
 
+import static de.uni_passau.fim.se2.litterbox.ast.Constants.FIELDS_KEY;
+import static de.uni_passau.fim.se2.litterbox.ast.opcodes.ActorLookStmtOpcode.looks_nextbackdrop;
+import static de.uni_passau.fim.se2.litterbox.ast.opcodes.SpriteLookStmtOpcode.looks_nextcostume;
+
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import de.uni_passau.fim.se2.litterbox.ast.Constants;
@@ -26,13 +31,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.StrId;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
-
 import java.util.ArrayList;
 import java.util.List;
-
-import static de.uni_passau.fim.se2.litterbox.ast.Constants.FIELDS_KEY;
-import static de.uni_passau.fim.se2.litterbox.ast.opcodes.ActorLookStmtOpcode.looks_nextbackdrop;
-import static de.uni_passau.fim.se2.litterbox.ast.opcodes.SpriteLookStmtOpcode.looks_nextcostume;
 
 public class ElementChoiceParser {
 
@@ -41,7 +41,7 @@ public class ElementChoiceParser {
         Preconditions.checkNotNull(allBlocks);
 
         String opcodeString = current.get(Constants.OPCODE_KEY).asText();
-        if (opcodeString.equals(looks_nextcostume.toString())||opcodeString.equals(looks_nextbackdrop.toString())) {
+        if (opcodeString.equals(looks_nextcostume.toString()) || opcodeString.equals(looks_nextbackdrop.toString())) {
             return new Next();
         }
 

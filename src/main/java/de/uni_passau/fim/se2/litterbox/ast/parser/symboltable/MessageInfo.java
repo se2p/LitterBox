@@ -28,7 +28,7 @@ public class MessageInfo {
     Message message;
 
     public MessageInfo(boolean global, String scriptGroup, String ident,
-        Message message) {
+                       Message message) {
         this.global = global;
         this.scriptGroup = scriptGroup;
         this.variableName = ident;

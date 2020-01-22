@@ -18,10 +18,8 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.parser;
 
-import static de.uni_passau.fim.se2.litterbox.ast.Constants.INPUTS_KEY;
-import static de.uni_passau.fim.se2.litterbox.ast.Constants.POS_BLOCK_ID;
-import static de.uni_passau.fim.se2.litterbox.ast.Constants.POS_DATA_ARRAY;
-import static de.uni_passau.fim.se2.litterbox.ast.Constants.POS_INPUT_ID;
+import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
+
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -64,7 +62,7 @@ public class ListExprParser {
         if (ProgramParser.symbolTable.getLists().containsKey(idString)) {
             ExpressionListInfo variableInfo = ProgramParser.symbolTable.getLists().get(idString);
             return new Qualified(new StrId(variableInfo.getActor()),
-                new StrId((variableInfo.getVariableName())));
+                    new StrId((variableInfo.getVariableName())));
         }
         throw new ParsingException("Block does not contain a list"); //Todo improve message
     }
@@ -74,7 +72,7 @@ public class ListExprParser {
         if (ProgramParser.symbolTable.getLists().containsKey(identifier)) {
             ExpressionListInfo variableInfo = ProgramParser.symbolTable.getLists().get(identifier);
             return new Qualified(new StrId(variableInfo.getActor()),
-                new StrId((variableInfo.getVariableName())));
+                    new StrId((variableInfo.getVariableName())));
         } else {
             throw new ParsingException("No list to parse found in fields.");
         }

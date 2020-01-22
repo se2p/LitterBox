@@ -40,6 +40,7 @@ public class DataRepresentation implements IssueFinder {
 
     /**
      * {@inheritDoc}
+     *
      * @param program
      */
     @Override
@@ -120,7 +121,7 @@ public class DataRepresentation implements IssueFinder {
      * Checks if the project uses lists.
      *
      * @param scriptables Scriptable objects.
-     * @return            {@code 1} if lists were found, {@code 0} otherwise.
+     * @return {@code 1} if lists were found, {@code 0} otherwise.
      */
     /*
     private int checkLists(List<Scriptable> scriptables) {
@@ -137,8 +138,6 @@ public class DataRepresentation implements IssueFinder {
     }
 
      */
-
-
     @Override
     public String getName() {
         return name;

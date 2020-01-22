@@ -36,7 +36,7 @@ public class Program extends AbstractNode {
         this.ident = Preconditions.checkNotNull(ident);
         this.actorDefinitionList = Preconditions.checkNotNull(actorDefinitionList);
         this.procedureMapping = procedureMapping;
-        this.symbolTable=symbolTable;
+        this.symbolTable = symbolTable;
     }
 
     public Identifier getIdent() {

@@ -33,7 +33,6 @@ import de.uni_passau.fim.se2.litterbox.ast.parser.BoolExprParser;
 import de.uni_passau.fim.se2.litterbox.ast.parser.NumExprParser;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ScriptParser;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
-
 import java.util.ArrayList;
 
 public class ControlStmtParser {
@@ -86,7 +85,7 @@ public class ControlStmtParser {
     }
 
     private static BoolExpr getCondition(JsonNode current, JsonNode allBlocks, JsonNode inputs)
-        throws ParsingException {
+            throws ParsingException {
 
         if (inputs.has(INPUT_CONDITION)) {
             return BoolExprParser.parseBoolExpr(current, INPUT_CONDITION, allBlocks);
@@ -96,7 +95,7 @@ public class ControlStmtParser {
     }
 
     private static StmtList getSubstackStmtList(JsonNode allBlocks, JsonNode inputs, String inputSubstack)
-        throws ParsingException {
+            throws ParsingException {
         JsonNode substackNode;
 
         if (inputs.has(inputSubstack)) {

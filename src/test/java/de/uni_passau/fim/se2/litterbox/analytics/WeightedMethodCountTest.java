@@ -19,15 +19,15 @@
 package de.uni_passau.fim.se2.litterbox.analytics;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.io.File;
-import java.io.IOException;
 import de.uni_passau.fim.se2.litterbox.analytics.utils.WeightedMethodCount;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
+import java.io.File;
+import java.io.IOException;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 public class WeightedMethodCountTest {
 
@@ -53,7 +53,7 @@ public class WeightedMethodCountTest {
 
     @Test
     public void testMethodCount() {
-        WeightedMethodCount parameterName = new  WeightedMethodCount();
+        WeightedMethodCount parameterName = new WeightedMethodCount();
         IssueReport report = parameterName.check(unusedProc);
         Assertions.assertEquals(5, report.getCount());
     }

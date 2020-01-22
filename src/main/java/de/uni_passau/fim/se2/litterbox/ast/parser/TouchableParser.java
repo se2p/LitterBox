@@ -18,6 +18,9 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.parser;
 
+import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
+
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import de.uni_passau.fim.se2.litterbox.ast.Constants;
@@ -33,11 +36,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.variable.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.BoolExprOpcode;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
-
 import java.util.ArrayList;
 import java.util.List;
-
-import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 
 public class TouchableParser {
 
@@ -56,12 +56,12 @@ public class TouchableParser {
             if (getShadowIndicator((ArrayNode) inputsList.get(0)) == 1) {
                 return getTouchableMenuOption(current, allBlocks);
             } else {
-                NumExpr expr=NumExprParser.parseNumExpr(current,TOUCHINGOBJECTMENU,allBlocks);
-                if(expr instanceof StrId ){
+                NumExpr expr = NumExprParser.parseNumExpr(current, TOUCHINGOBJECTMENU, allBlocks);
+                if (expr instanceof StrId) {
                     return (StrId) expr;
-                }else if(expr instanceof Qualified){
+                } else if (expr instanceof Qualified) {
                     return (Qualified) expr;
-                }else {
+                } else {
                     //FIXME is this right?
                     return new FromNumber(expr);
                 }
@@ -83,7 +83,7 @@ public class TouchableParser {
         } else if (touchingObject.equals(TOUCHING_EDGE)) {
             return new Edge();
         } else {
-            return new SpriteTouchable( new StringLiteral(touchingObject));
+            return new SpriteTouchable(new StringLiteral(touchingObject));
         }
     }
 

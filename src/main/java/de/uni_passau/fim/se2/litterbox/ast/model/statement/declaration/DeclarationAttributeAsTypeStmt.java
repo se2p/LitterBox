@@ -24,7 +24,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.type.Type;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-public class DeclarationAttributeAsTypeStmt extends AbstractNode implements DeclarationStmt{
+public class DeclarationAttributeAsTypeStmt extends AbstractNode implements DeclarationStmt {
 
     private final StringExpr stringExpr;
     private final Type type;

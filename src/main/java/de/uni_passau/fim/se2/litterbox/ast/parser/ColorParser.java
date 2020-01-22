@@ -18,17 +18,17 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.parser;
 
+import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
+
+
 import com.fasterxml.jackson.databind.JsonNode;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.color.ColorExpression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.color.FromNumber;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.ColorLiteral;
-
 import java.util.Iterator;
 import java.util.LinkedList;
-
-import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 
 public class ColorParser {
 

@@ -34,14 +34,15 @@ public class Synchronization implements IssueFinder {
 
         notes[0] = "There is a wait block missing.";
         notes[1] = "Basic Level. There is broadcast, receive message, stop "
-            + "all or stop program sprite missing.";
+                + "all or stop program sprite missing.";
         notes[2] = "Developing Level. There is wait until, backdrop change or"
-            + " broadcast and wait missing.";
+                + " broadcast and wait missing.";
         notes[3] = "Proficiency Level. Good work!";
     }
 
     /**
      * {@inheritDoc}
+     *
      * @param program
      */
     @Override
@@ -107,7 +108,6 @@ public class Synchronization implements IssueFinder {
     }
 
      */
-
     @Override
     public String getName() {
         return name;

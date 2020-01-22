@@ -21,7 +21,6 @@ package de.uni_passau.fim.se2.litterbox.analytics.utils;
 import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 
 
-import java.util.LinkedList;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueReport;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
@@ -45,6 +44,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.type.Type;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Identifier;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
+import java.util.LinkedList;
 
 public class BlockCount implements IssueFinder, ScratchVisitor {
     public static final String NAME = "block_count";

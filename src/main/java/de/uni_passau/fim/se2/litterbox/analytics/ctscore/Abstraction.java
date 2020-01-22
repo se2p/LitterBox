@@ -40,6 +40,7 @@ public class Abstraction implements IssueFinder {
 
     /**
      * {@inheritDoc}
+     *
      * @param program
      */
     @Override
@@ -111,7 +112,7 @@ public class Abstraction implements IssueFinder {
      *
      * @param scriptables Scriptable objects.
      * @param level       The current level of abstraction.
-     * @return            The updated level.
+     * @return The updated level.
      */
     /*
     private int countScripts(List scriptables, int level) {
