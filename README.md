@@ -12,11 +12,13 @@ See [Contributors](https://gitlab.infosun.fim.uni-passau.de/se2/litterbox/-/grap
 
 ## Usage
 
-LitterBox can analyze a single project (checkSingle()) and produce console output 
-for every single Issue.
+LitterBox can analyze a single project and produce console output for every single Issue.
 
-Also, there is a method (checkMultiple()) that takes a folder path as an input and analyzes all zip files within the directory. 
+Also, there is a method that takes a folder path as an input and analyzes all Json files in the directory. 
 This method produces a csv file with all issue counts for every project.
+
+Finally it is possible to download one or multiple projects and analyze those.
+
 ##
 To use LitterBox with the command line, build the Jar with mvn clean and mvn package.
 
@@ -32,55 +34,55 @@ To use LitterBox with the command line, build the Jar with mvn clean and mvn pac
 
 
 Detectors:
-	all                  All issue finders             
-	bugs                 All issue finders for bugs    
-	smells               All issue finders for smells  
-	ctscore              All issue finders for ct scores
-	mssCloneInit         Missing Clone Initialization  
-	ambProcSign          Ambiguous Procedure Signature 
-	unusedProc           Unused Procedure              
-	recClone             Recursive Cloning             
-	nestLoop             Nested Loops                  
-	foreverInLoop        Forever inside a Loop         
-	paramOutScope        Parameter out of Scope        
-	unusedVar            Unused Variable               
-	mssBackdrSwitch      Missing Backdrop Switch       
-	ambParamName         Ambiguous Parameter Name      
-	mssEraseAll          Missing Erase All             
-	empBody              Empty Body                    
-	empScript            Empty Script                  
-	mssTerm              Missing Termination           
-	empProc              Empty Procedure               
-	messNeverSent        Message Never Sent            
-	stuttMove            Stuttering Movement           
-	exprColor            Expression as Color           
-	sameVarDiffSprite    Same Variable used in Different Sprite
-	flow                 Not implemented               
-	eqCond               Equals implemented            
-	empProj              Empty Project                 
-	cllWithoutDef        Call Without Definition       
-	weightedMethCnt      Weighted Method Count         
-	mssCloneCll          Missing Clone Call            
-	spriteCnt            Sprite Count                  
-	endlRec              Endless Recursion             
-	neverRecMess         Never Received Message        
-	procWithForever      Procedure With Forever        
-	mssPenUp             Missing Pen Up                
-	mssPenDown           Missing Pen Down              
-	mssLoop              Missing Loop                  
-	procWithTerm         Procedure with Termination    
-	compLit              Comparing Literals            
-	illParamRefac        Illegal Parameter Refactor    
-	longScript           Long Script                   
-	usingPen             Using Pen                     
-	empSprite            Empty Sprite                  
-	noWorkScript         No Working Script             
-	OrphParam            Orphaned Parameter            
-	dcode                Dead Code                     
-	blockCnt             Block Count                   
-	procCnt              Procedure Count               
+  
+	all                  All issue finders               
+	bugs                 All issue finders for bugs      
+	smells               All issue finders for smells    
+	ctscore              All issue finders for ct scores  
+	mssCloneInit         Missing Clone Initialization    
+	ambProcSign          Ambiguous Procedure Signature   
+	unusedProc           Unused Procedure                
+	recClone             Recursive Cloning               
+	nestLoop             Nested Loops                    
+	foreverInLoop        Forever inside a Loop           
+	paramOutScope        Parameter out of Scope          
+	unusedVar            Unused Variable                 
+	mssBackdrSwitch      Missing Backdrop Switch         
+	ambParamName         Ambiguous Parameter Name        
+	mssEraseAll          Missing Erase All               
+	empBody              Empty Body                      
+	empScript            Empty Script                    
+	mssTerm              Missing Termination             
+	empProc              Empty Procedure                 
+	messNeverSent        Message Never Sent              
+	stuttMove            Stuttering Movement             
+	exprColor            Expression as Color             
+	sameVarDiffSprite    Same Variable used in Different Sprite  
+	flow                 Not implemented                 
+	eqCond               Equals implemented              
+	empProj              Empty Project                   
+	cllWithoutDef        Call Without Definition         
+	weightedMethCnt      Weighted Method Count           
+	mssCloneCll          Missing Clone Call              
+	spriteCnt            Sprite Count                    
+	endlRec              Endless Recursion               
+	neverRecMess         Never Received Message          
+	procWithForever      Procedure With Forever          
+	mssPenUp             Missing Pen Up                  
+	mssPenDown           Missing Pen Down                
+	mssLoop              Missing Loop                    
+	procWithTerm         Procedure with Termination      
+	compLit              Comparing Literals              
+	illParamRefac        Illegal Parameter Refactor      
+	longScript           Long Script                     
+	usingPen             Using Pen                       
+	empSprite            Empty Sprite                    
+	noWorkScript         No Working Script               
+	OrphParam            Orphaned Parameter              
+	dcode                Dead Code                       
+	blockCnt             Block Count                     
+	procCnt              Procedure Count                 
 
-Process finished with exit code 0
 
 #### Example:
 
@@ -98,4 +100,4 @@ The finder name will automatically be added to the printed csv file.
 
 ## Publications
 
-* **Bachelor Thesis: Florian Sulzmaier** - [Olf96](https://github.com/Olf96)
+[1] Florian Sulzmeier, “Identification and Automated Analysis of Common Bug Pattern in Scratch Programs,” Bachelor Thesis, Passau, Passau, 2019. - [Olf96](https://github.com/Olf96)
