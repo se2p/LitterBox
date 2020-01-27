@@ -5,104 +5,88 @@
 
 
 Static code analysis tool for detecting recurring bug patterns in Scratch projects. 
-Currently holding 25 different detectors.
 
-## Author
+## Authors
 
-* **Florian Sulzmaier** - [Olf96](https://github.com/Olf96)
+See [Contributors](https://gitlab.infosun.fim.uni-passau.de/se2/litterbox/-/graphs/master)
 
 ## Usage
 
-LitterBox can analyze a single project (checkSingle()) and produce console output 
-for every single Issue.
+LitterBox can analyze a single project and produce console output for every single Issue.
 
-Also, there is a method (checkMultiple()) that takes a folder path as an input and analyzes all zip files within the directory. 
+Also, there is a method that takes a folder path as an input and analyzes all Json files in the directory. 
 This method produces a csv file with all issue counts for every project.
+
+Finally it is possible to download one or multiple projects and analyze those.
+
 ##
 To use LitterBox with the command line, build the Jar with mvn clean and mvn package.
 
 ### Command Line Options:
 
-1. path (required) - the Scratch projects path or a folder path with multiple Scratch projects
-2. folder - if you want to analyze multiple projects give a output path for the csv file
-3. detectors - all the detectors you want to run (short names seperated by ","), if not set, all will be used
-4. version (required) - the Scratch Version ('2' or '3')
+1. path - the Scratch projects path or a folder path with multiple Scratch projects
+2. projectid - id of the project that should be downloaded and analysed
+3. projectlist - path to a file with a list of project ids of projects which should be downloaded and analysed.
+4. projectout - path where downloaded projects should stored
+5. detectors - all the detectors you want to run (short names seperated by ","), if not set, all will be used
 
 #### Detectors short names:
 
-mssfrev->missing_forever_loop
 
-racecnd->race_condition
+Detectors:
+  
+	all                  All issue finders               
+	bugs                 All issue finders for bugs      
+	smells               All issue finders for smells    
+	ctscore              All issue finders for ct scores  
+	mssCloneInit         Missing Clone Initialization    
+	ambProcSign          Ambiguous Procedure Signature   
+	unusedProc           Unused Procedure                
+	recClone             Recursive Cloning               
+	nestLoop             Nested Loops                    
+	foreverInLoop        Forever inside a Loop           
+	paramOutScope        Parameter out of Scope          
+	unusedVar            Unused Variable                 
+	mssBackdrSwitch      Missing Backdrop Switch         
+	ambParamName         Ambiguous Parameter Name        
+	mssEraseAll          Missing Erase All               
+	empBody              Empty Body                      
+	empScript            Empty Script                    
+	mssTerm              Missing Termination             
+	empProc              Empty Procedure                 
+	messNeverSent        Message Never Sent              
+	stuttMove            Stuttering Movement             
+	exprColor            Expression as Color             
+	sameVarDiffSprite    Same Variable used in Different Sprite  
+	flow                 Not implemented                 
+	eqCond               Equals implemented              
+	empProj              Empty Project                   
+	cllWithoutDef        Call Without Definition         
+	weightedMethCnt      Weighted Method Count           
+	mssCloneCll          Missing Clone Call              
+	spriteCnt            Sprite Count                    
+	endlRec              Endless Recursion               
+	neverRecMess         Never Received Message          
+	procWithForever      Procedure With Forever          
+	mssPenUp             Missing Pen Up                  
+	mssPenDown           Missing Pen Down                
+	mssLoop              Missing Loop                    
+	procWithTerm         Procedure with Termination      
+	compLit              Comparing Literals              
+	illParamRefac        Illegal Parameter Refactor      
+	longScript           Long Script                     
+	usingPen             Using Pen                       
+	empSprite            Empty Sprite                    
+	noWorkScript         No Working Script               
+	OrphParam            Orphaned Parameter              
+	dcode                Dead Code                       
+	blockCnt             Block Count                     
+	procCnt              Procedure Count                 
 
-lggymve->laggy_movement
-
-msstrm->missing_termination
-
-emptyscrpt->empty_script
-
-dplsprt->duplicated_sprite
-
-glblstrt->has_global_start
-
-noop->no_op
-
-strt->sprite_starting_point
-
-sprtname->sprite_naming
-
-lngscr->long_script
-
-brdcstsync->broadcast_sync
-
-dblif->double_condition
-
-vrblscp->variable_scope
-
-clninit->clone_initialization
-
-cnt->block_count
-
-noopprjct->noop_project
-
-unusedvar->unused_variable
-
-mdlman->middle_man
-
-nstloop->nested_loops
-
-lsblck->loose_blocks
-
-attrmod->multiple_attribute_modification
-
-squact->sequential_actions
-
-dplscrpt->duplicated_script
-
-emptybd->empty_body
-
-inappint->inappropriate_intimacy
-
-clone->total_clones
-
-#### CT Score Evaluation
-
-logthink->logical_thinking
-
-abstr->abstraction
-
-para->parallelism
-
-synch->synchronization
-
-flow->flow_control
-
-userint->user_interactivity
-
-datarep->data_representation
 
 #### Example:
 
-java -cp C:\ScratchAnalytics-1.0.jar Main -path C:\scratchprojects\files\ -version 3 -folder C:\scratchprojects\files\test.csv -detectors cnt,glblstrt
+java -cp C:\ScratchAnalytics-1.0.jar de.uni_passau.fim.se2.litterbox.Main -path C:\scratchprojects\files\ -version 3 -folder C:\scratchprojects\files\test.csv -detectors cnt,glblstrt
 
 This will run only BlockCount and GlobalStartingpoint on all projects in C:\scratchprojects\files\; and it will also save the test.csv file in the same location.
 
@@ -113,3 +97,7 @@ The check() method must return a IssueReport with the issue name, count for the 
 the position of all issue occurrences, the project path and notes about the issue.
 Then, register the newly created IssueFinder in the IssueTool constructor ( finder.add(new NewFinder()) ).
 The finder name will automatically be added to the printed csv file.
+
+## Publications
+
+[1] Florian Sulzmeier, “Identification and Automated Analysis of Common Bug Pattern in Scratch Programs,” Bachelor Thesis, Passau, Passau, 2019. - [Olf96](https://github.com/Olf96)
