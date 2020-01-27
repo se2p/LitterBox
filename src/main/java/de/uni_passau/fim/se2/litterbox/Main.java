@@ -18,11 +18,16 @@
  */
 package de.uni_passau.fim.se2.litterbox;
 
-import static de.uni_passau.fim.se2.litterbox.utils.GroupConstants.ALL;
+
+import static de.uni_passau.fim.se2.litterbox.utils.GroupConstants.*;
 
 
+import de.uni_passau.fim.se2.litterbox.analytics.IssueTool;
 import de.uni_passau.fim.se2.litterbox.analytics.Scratch3Analyzer;
+import de.uni_passau.fim.se2.litterbox.utils.GroupConstants;
 import java.io.File;
+import java.util.Locale;
+import java.util.ResourceBundle;
 import java.util.logging.Logger;
 import org.apache.commons.cli.*;
 
@@ -54,9 +59,9 @@ public class Main {
 
         options.addOption(PATH, true, "path to folder or file that should be analyzed (required)");
         options.addOption(PROJECTID, true,
-                "id of the project that should be downloaded and analysed. Only works for Scratch 3");
+                "id of the project that should be downloaded and analysed.");
         options.addOption(PROJECTLIST, true, "path to a file with a list of project ids of projects"
-                + "which should be downloaded and analysed. Only works for Scratch 3");
+                + " which should be downloaded and analysed.");
         options.addOption(PROJECTOUT, true, "path where the downloaded project should be stored");
         options.addOption(OUTPUT, true, "path with name of the csv file you want to save (required if path argument"
                 + " is a folder path)");
@@ -110,10 +115,23 @@ public class Main {
             }
             return;
         }
+
         HelpFormatter formatter = new HelpFormatter();
         formatter.printHelp("LitterBox", options);
-        System.out.println("Example: " + "java -cp C:\\ScratchAnalytics-1.0.jar de.uni_passau.fim.se2.litterbox.Main -path "
-                + "C:\\scratchprojects\\files\\ -output C:\\scratchprojects\\files\\test.csv -detectors cnt,"
-                + "glblstrt");
+        System.out.println("Example: " + "java -jar Litterbox.jar -path "
+                + "C:\\scratchprojects\\files\\ -output C:\\scratchprojects\\files\\test.csv -detectors bugs\n");
+
+        System.out.println("Detectors:");
+        ResourceBundle messages = ResourceBundle.getBundle("IssueDescriptions", Locale.ENGLISH);
+        IssueTool iT = new IssueTool();
+        System.out.printf("\t%-20s %-30s\n", ALL, messages.getString(ALL));
+        System.out.printf("\t%-20s %-30s\n", BUGS, messages.getString(BUGS));
+        System.out.printf("\t%-20s %-30s\n", SMELLS, messages.getString(SMELLS));
+        System.out.printf("\t%-20s %-30s\n", CTSCORE, messages.getString(CTSCORE));
+        iT.getAllFinder().keySet().forEach(finder -> System.out.printf(
+                "\t%-20s %-30s\n",
+                finder,
+                messages.getString(finder)
+        ));
     }
 }

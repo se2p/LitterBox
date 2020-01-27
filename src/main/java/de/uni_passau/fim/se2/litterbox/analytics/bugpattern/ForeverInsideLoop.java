@@ -33,7 +33,7 @@ import java.util.List;
 
 public class ForeverInsideLoop implements IssueFinder, ScratchVisitor {
     public static final String NAME = "forever_inside_loop";
-    public static final String SHORT_NAME = "ForeverInLoop";
+    public static final String SHORT_NAME = "foreverInLoop";
     private static final String NOTE1 = "There are no forever loops inside other loops in your project.";
     private static final String NOTE2 = "Some of the sprites contain forever loops inside other loops.";
     private boolean found = false;
