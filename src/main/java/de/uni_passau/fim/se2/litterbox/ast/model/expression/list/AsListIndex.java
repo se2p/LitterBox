@@ -16,15 +16,23 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.uni_passau.fim.se2.litterbox.ast.model.variable;
+package de.uni_passau.fim.se2.litterbox.ast.model.expression.list;
 
+import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BoolExpr;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.ListExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.UnaryExpression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
-import de.uni_passau.fim.se2.litterbox.ast.model.touchable.Touchable;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
-public interface Variable extends Expression {
+public class AsListIndex extends UnaryExpression<Expression> implements ListExpr {
+
+    public AsListIndex(Expression expr) {
+        super(expr);
+    }
+
+    @Override
+    public void accept(ScratchVisitor visitor) {
+        visitor.visit(this);
+    }
 
 }

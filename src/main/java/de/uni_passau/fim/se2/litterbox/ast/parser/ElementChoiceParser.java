@@ -28,6 +28,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import de.uni_passau.fim.se2.litterbox.ast.Constants;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.StrId;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
@@ -76,7 +77,7 @@ public class ElementChoiceParser {
         }
 
         if (!StandardElemChoice.contains(elemKey)) {
-            return new WithId(new StrId(elementName));
+            return new WithId(new AsString(new StrId(elementName)));
         }
 
         StandardElemChoice standardElemChoice = StandardElemChoice.valueOf(elemKey);

@@ -123,7 +123,7 @@ public class BoolExprParserTest {
         Truth.assertThat(stmt).isInstanceOf(WaitSeconds.class);
 
         WaitSeconds wait = (WaitSeconds) stmt;
-        And andExpr = (And) ((AsNumber) wait.getSeconds()).getExpr();
+        And andExpr = (And) ((AsNumber) wait.getSeconds()).getOperand1();
         Truth.assertThat(andExpr.getOperand1()).isInstanceOf(IsMouseDown.class);
         Truth.assertThat(andExpr.getOperand2()).isInstanceOf(IsMouseDown.class);
     }

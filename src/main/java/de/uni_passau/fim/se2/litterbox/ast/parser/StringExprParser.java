@@ -38,6 +38,7 @@ import de.uni_passau.fim.se2.litterbox.ast.opcodes.StringExprOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ExpressionListInfo;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.VariableInfo;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
+
 import java.util.Optional;
 
 public class StringExprParser {
@@ -89,13 +90,19 @@ public class StringExprParser {
         if (ProgramParser.symbolTable.getVariables().containsKey(idString)) {
             VariableInfo variableInfo = ProgramParser.symbolTable.getVariables().get(idString);
 
-            return new Qualified(new StrId(variableInfo.getActor()),
-                    new StrId((variableInfo.getVariableName())));
+            return new AsString(
+                    new Qualified(
+                            new StrId(variableInfo.getActor()),
+                            new StrId((variableInfo.getVariableName()))
+                    ));
 
         } else if (ProgramParser.symbolTable.getLists().containsKey(idString)) {
             ExpressionListInfo variableInfo = ProgramParser.symbolTable.getLists().get(idString);
-            return new Qualified(new StrId(variableInfo.getActor()),
-                    new StrId((variableInfo.getVariableName())));
+            return new AsString(
+                    new Qualified(
+                            new StrId(variableInfo.getActor()),
+                            new StrId((variableInfo.getVariableName()))
+                    ));
         }
         return null;
     }
@@ -129,7 +136,7 @@ public class StringExprParser {
         JsonNode paramBlock = blocks.get(exprArray.get(POS_BLOCK_ID).asText());
         String name = paramBlock.get(FIELDS_KEY).get(VALUE_KEY).get(VARIABLE_NAME_POS).asText();
 
-        return new StrId(PARAMETER_ABBREVIATION + name);
+        return new AsString(new StrId(PARAMETER_ABBREVIATION + name));
     }
 
     private static StringLiteral parseStr(JsonNode inputs, int pos) throws ParsingException {

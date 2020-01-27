@@ -25,6 +25,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.AsListIndex;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.ListExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.StrId;
@@ -43,8 +44,8 @@ public class ListExprParser {
         String idString = exprArray.get(POS_DATA_ARRAY).get(POS_INPUT_ID).asText();
         if (ProgramParser.symbolTable.getLists().containsKey(idString)) {
             ExpressionListInfo variableInfo = ProgramParser.symbolTable.getLists().get(idString);
-            return new Qualified(new StrId(variableInfo.getActor()),
-                    new StrId((variableInfo.getVariableName())));
+            return new AsListIndex(new Qualified(new StrId(variableInfo.getActor()),
+                    new StrId((variableInfo.getVariableName()))));
         }
         throw new ParsingException("Block does not contain a list"); //Todo improve message
     }
@@ -61,8 +62,11 @@ public class ListExprParser {
         String idString = exprArray.get(POS_DATA_ARRAY).get(POS_INPUT_ID).asText();
         if (ProgramParser.symbolTable.getLists().containsKey(idString)) {
             ExpressionListInfo variableInfo = ProgramParser.symbolTable.getLists().get(idString);
-            return new Qualified(new StrId(variableInfo.getActor()),
-                    new StrId((variableInfo.getVariableName())));
+            return new AsListIndex(
+                    new Qualified(
+                            new StrId(variableInfo.getActor()),
+                            new StrId((variableInfo.getVariableName()))
+                    ));
         }
         throw new ParsingException("Block does not contain a list"); //Todo improve message
     }

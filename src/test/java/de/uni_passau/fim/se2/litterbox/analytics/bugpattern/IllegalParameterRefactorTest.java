@@ -51,7 +51,7 @@ public class IllegalParameterRefactorTest {
     }
 
     @Test
-    public void testAmbiguousParameters() {
+    public void testIllegalParameterRefactorTest() {
         IllegalParameterRefactor parameterName = new IllegalParameterRefactor();
         IssueReport report = parameterName.check(illegalParameter);
         Assertions.assertEquals(1, report.getCount());

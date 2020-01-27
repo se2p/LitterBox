@@ -28,8 +28,12 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.AsBool;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.AsListIndex;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.ExpressionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.ExpressionListPlain;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.AsNumber;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.BoolLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.ColorLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
@@ -40,6 +44,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterListPlain;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.ListOfStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.touchable.AsTouchable;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.Type;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Identifier;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
@@ -236,6 +241,51 @@ public class BlockCount implements IssueFinder, ScratchVisitor {
 
     @Override
     public void visit(Parameter node) {
+        if (!node.getChildren().isEmpty()) {
+            for (ASTNode child : node.getChildren()) {
+                child.accept(this);
+            }
+        }
+    }
+
+    @Override
+    public void visit(AsNumber node) {
+        if (!node.getChildren().isEmpty()) {
+            for (ASTNode child : node.getChildren()) {
+                child.accept(this);
+            }
+        }
+    }
+
+    @Override
+    public void visit(AsString node) {
+        if (!node.getChildren().isEmpty()) {
+            for (ASTNode child : node.getChildren()) {
+                child.accept(this);
+            }
+        }
+    }
+
+    @Override
+    public void visit(AsBool node) {
+        if (!node.getChildren().isEmpty()) {
+            for (ASTNode child : node.getChildren()) {
+                child.accept(this);
+            }
+        }
+    }
+
+    @Override
+    public void visit(AsTouchable node) {
+        if (!node.getChildren().isEmpty()) {
+            for (ASTNode child : node.getChildren()) {
+                child.accept(this);
+            }
+        }
+    }
+
+    @Override
+    public void visit(AsListIndex node) {
         if (!node.getChildren().isEmpty()) {
             for (ASTNode child : node.getChildren()) {
                 child.accept(this);

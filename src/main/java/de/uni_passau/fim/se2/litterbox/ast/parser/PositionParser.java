@@ -26,6 +26,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import de.uni_passau.fim.se2.litterbox.ast.Constants;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.StrId;
@@ -89,7 +90,7 @@ public class PositionParser {
             } else if (posString.equals("_random_")) {
                 return new RandomPos();
             } else {
-                return new PivotOf(new StrId(posString));
+                return new PivotOf(new AsString(new StrId(posString)));
             }
         } else {
             String posName = "";

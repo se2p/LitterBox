@@ -25,6 +25,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.StartedAsClone;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.CreateCloneOf;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
@@ -71,8 +72,10 @@ public class MissingCloneCall implements IssueFinder, ScratchVisitor {
 
     @Override
     public void visit(CreateCloneOf node) {
-        if (node.getStringExpr() instanceof StrId) {
-            final String spriteName = ((StrId) node.getStringExpr()).getName();
+        if (node.getStringExpr() instanceof AsString
+                && ((AsString) node.getStringExpr()).getOperand1() instanceof StrId) {
+
+            final String spriteName = ((StrId) ((AsString) node.getStringExpr()).getOperand1()).getName();
             if (spriteName.equals("_myself_")) {
                 clonedActors.add(currentActor.getIdent().getName());
             } else {
