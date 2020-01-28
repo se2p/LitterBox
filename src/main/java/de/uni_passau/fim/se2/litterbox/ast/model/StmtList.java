@@ -18,7 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.model;
 
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.ListOfStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.ListOfStmt;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 

@@ -16,42 +16,26 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.uni_passau.fim.se2.litterbox.ast.model.expression.color;
+package de.uni_passau.fim.se2.litterbox.ast.model.statement;
 
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
+import java.util.List;
 
-public class Rgba extends AbstractNode implements ColorExpression {
+public class ListOfStmt extends AbstractNode implements ASTNode {
 
-    private NumExpr rValue;
-    private NumExpr gValue;
-    private NumExpr bValue;
-    private NumExpr aValue;
+    private final List<Stmt> listOfStmt;
 
-    public Rgba(NumExpr rValue, NumExpr gValue, NumExpr bValue, NumExpr aValue) {
-        super(rValue, gValue, bValue, aValue);
-        this.rValue = Preconditions.checkNotNull(rValue);
-        this.gValue = Preconditions.checkNotNull(gValue);
-        this.bValue = Preconditions.checkNotNull(bValue);
-        this.aValue = Preconditions.checkNotNull(aValue);
+    public ListOfStmt(List<Stmt> listOfStmt) {
+        super(listOfStmt);
+        this.listOfStmt = Preconditions.checkNotNull(listOfStmt);
     }
 
-    public NumExpr getrValue() {
-        return rValue;
-    }
-
-    public NumExpr getgValue() {
-        return gValue;
-    }
-
-    public NumExpr getbValue() {
-        return bValue;
-    }
-
-    public NumExpr getaValue() {
-        return aValue;
+    public List<Stmt> getListOfStmt() {
+        return listOfStmt;
     }
 
     @Override
