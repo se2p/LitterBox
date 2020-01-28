@@ -19,20 +19,20 @@
 package de.uni_passau.fim.se2.litterbox.ast.model.statement.pen;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
-import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.ColorExpression;
+import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.Color;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 public class SetPenColorToColorStmt extends AbstractNode implements PenStmt {
-    private ColorExpression colorExpression;
+    private Color color;
 
-    public SetPenColorToColorStmt(ColorExpression colorExpression) {
-        super(colorExpression);
-        this.colorExpression = Preconditions.checkNotNull(colorExpression);
+    public SetPenColorToColorStmt(Color color) {
+        super(color);
+        this.color = Preconditions.checkNotNull(color);
     }
 
-    public ColorExpression getColorExpr() {
-        return colorExpression;
+    public Color getColorExpr() {
+        return color;
     }
 
 

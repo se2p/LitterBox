@@ -62,7 +62,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Not;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Or;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Touching;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.UnspecifiedBoolExpr;
-import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.ColorExpression;
+import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.Color;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.FromNumber;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.Rgba;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.AsListIndex;
@@ -669,7 +669,7 @@ public interface ScratchVisitor {
      * @param node ColorLiteral Node of which the children will be iterated
      */
     default void visit(ColorLiteral node) {
-        visit((ColorExpression) node);
+        visit((Color) node);
     }
 
     /**
@@ -1375,15 +1375,15 @@ public interface ScratchVisitor {
     }
 
     /**
-     * Default implementation of visit method for {@link ColorExpression}.
+     * Default implementation of visit method for {@link Color}.
      *
      * <p>
      * Iterates all children of this node without performing any action.
      * </p>
      *
-     * @param node ColorExpression  Node of which the children will be iterated
+     * @param node Color  Node of which the children will be iterated
      */
-    default void visit(ColorExpression node) {
+    default void visit(Color node) {
         visit((Touchable) node);
     }
 
@@ -1397,7 +1397,7 @@ public interface ScratchVisitor {
      * @param node FromNumber  Node of which the children will be iterated
      */
     default void visit(FromNumber node) {
-        visit((ColorExpression) node);
+        visit((Color) node);
     }
 
     /**
@@ -1410,7 +1410,7 @@ public interface ScratchVisitor {
      * @param node Rgba  Node of which the children will be iterated
      */
     default void visit(Rgba node) {
-        visit((ColorExpression) node);
+        visit((Color) node);
     }
 
     /**

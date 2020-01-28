@@ -31,7 +31,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Key;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.ComparableExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.*;
-import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.ColorExpression;
+import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.Color;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.AsNumber;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.IndexOf;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
@@ -168,8 +168,8 @@ public class BoolExprParser {
                 Touchable touchable = TouchableParser.parseTouchable(expressionBlock, blocks);
                 return new Touching(touchable);
             case sensing_coloristouchingcolor:
-                ColorExpression one = ColorParser.parseColor(expressionBlock, 0, blocks);
-                ColorExpression two = ColorParser.parseColor(expressionBlock, 1, blocks);
+                Color one = ColorParser.parseColor(expressionBlock, 0, blocks);
+                Color two = ColorParser.parseColor(expressionBlock, 1, blocks);
                 return new ColorTouches(one, two);
             case sensing_keypressed:
                 Key key = KeyParser.parse(expressionBlock, blocks);

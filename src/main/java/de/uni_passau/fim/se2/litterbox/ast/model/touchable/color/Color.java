@@ -21,5 +21,5 @@ package de.uni_passau.fim.se2.litterbox.ast.model.touchable.color;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.Touchable;
 
-public interface ColorExpression extends ASTNode, Touchable {
+public interface Color extends ASTNode, Touchable {
 }
