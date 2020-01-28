@@ -19,7 +19,7 @@
 package de.uni_passau.fim.se2.litterbox.ast.model.expression.bool;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.BinaryExpression;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.color.ColorExpression;
+import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.ColorExpression;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 public class ColorTouches extends BinaryExpression<ColorExpression, ColorExpression> implements BoolExpr {
