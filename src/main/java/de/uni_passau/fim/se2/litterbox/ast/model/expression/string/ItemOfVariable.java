@@ -24,7 +24,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
-public class ItemOfVariable extends AbstractNode implements StringExpr, BoolExpr {
+public class ItemOfVariable extends AbstractNode implements StringExpr {
 
     private final NumExpr num;
     private final Variable variable;

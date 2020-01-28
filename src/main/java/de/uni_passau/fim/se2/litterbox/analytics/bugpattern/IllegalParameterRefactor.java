@@ -24,10 +24,7 @@ import de.uni_passau.fim.se2.litterbox.ast.Constants;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.And;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BoolExpr;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Not;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Or;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitUntil;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfElseStmt;
@@ -39,6 +36,7 @@ import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ArgumentInfo;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ProcedureInfo;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
+
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -118,8 +116,8 @@ public class IllegalParameterRefactor implements IssueFinder, ScratchVisitor {
     }
 
     private void checkBool(BoolExpr boolExpr) {
-        if (boolExpr instanceof Identifier) {
-            Identifier ident = (Identifier) boolExpr;
+        if (boolExpr instanceof AsBool && ((AsBool) boolExpr).getOperand1() instanceof Identifier) {
+            Identifier ident = (Identifier) ((AsBool) boolExpr).getOperand1();
             if (ident.getName().startsWith(Constants.PARAMETER_ABBREVIATION)) {
                 for (ArgumentInfo currentArgument : currentArguments) {
                     if (currentArgument.getName().equals(ident.getName()) && !(currentArgument.getType() instanceof BooleanType)) {

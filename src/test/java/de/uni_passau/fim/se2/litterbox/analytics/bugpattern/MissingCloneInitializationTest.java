@@ -53,7 +53,7 @@ public class MissingCloneInitializationTest {
     }
 
     @Test
-    public void testMissingPenUp() {
+    public void testCloneInit() {
         MissingCloneInitialization finder = new MissingCloneInitialization();
         final IssueReport check = finder.check(program);
         Truth.assertThat(check.getCount()).isEqualTo(1);

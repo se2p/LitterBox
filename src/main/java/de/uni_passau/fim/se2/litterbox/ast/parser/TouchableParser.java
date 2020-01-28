@@ -28,10 +28,7 @@ import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.color.FromNumber;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
-import de.uni_passau.fim.se2.litterbox.ast.model.touchable.Edge;
-import de.uni_passau.fim.se2.litterbox.ast.model.touchable.MousePointer;
-import de.uni_passau.fim.se2.litterbox.ast.model.touchable.SpriteTouchable;
-import de.uni_passau.fim.se2.litterbox.ast.model.touchable.Touchable;
+import de.uni_passau.fim.se2.litterbox.ast.model.touchable.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.BoolExprOpcode;
@@ -58,9 +55,9 @@ public class TouchableParser {
             } else {
                 NumExpr expr = NumExprParser.parseNumExpr(current, TOUCHINGOBJECTMENU, allBlocks);
                 if (expr instanceof StrId) {
-                    return (StrId) expr;
+                    return new AsTouchable(expr);
                 } else if (expr instanceof Qualified) {
-                    return (Qualified) expr;
+                    return new AsTouchable(expr);
                 } else {
                     //FIXME is this right?
                     return new FromNumber(expr);

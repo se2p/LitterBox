@@ -25,6 +25,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.StartedAsClone;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.CreateCloneOf;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
@@ -94,9 +95,12 @@ public class RecursiveCloning implements ScratchVisitor, IssueFinder {
     @Override
     public void visit(CreateCloneOf node) {
         if (startAsClone) {
-            if (node.getStringExpr() instanceof StrId) {
+            if (node.getStringExpr() instanceof AsString
+                    && ((AsString) node.getStringExpr()).getOperand1() instanceof StrId) {
 
-                if (((StrId) node.getStringExpr()).getName().equals("_myself_")) {
+                final String spriteName = ((StrId) ((AsString) node.getStringExpr()).getOperand1()).getName();
+
+                if (spriteName.equals("_myself_")) {
                     count++;
                     found = true;
                 }

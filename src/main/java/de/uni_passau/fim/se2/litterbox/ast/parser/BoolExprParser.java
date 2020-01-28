@@ -49,6 +49,7 @@ import de.uni_passau.fim.se2.litterbox.ast.opcodes.StringExprOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ExpressionListInfo;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.VariableInfo;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
+
 import java.util.Optional;
 
 public class BoolExprParser {
@@ -105,13 +106,19 @@ public class BoolExprParser {
         if (ProgramParser.symbolTable.getVariables().containsKey(idString)) {
             VariableInfo variableInfo = ProgramParser.symbolTable.getVariables().get(idString);
 
-            return new Qualified(new StrId(variableInfo.getActor()),
-                    new StrId((variableInfo.getVariableName())));
+            return new AsBool(
+                    new Qualified(
+                            new StrId(variableInfo.getActor()),
+                            new StrId((variableInfo.getVariableName()))
+                    ));
 
         } else if (ProgramParser.symbolTable.getLists().containsKey(idString)) {
             ExpressionListInfo variableInfo = ProgramParser.symbolTable.getLists().get(idString);
-            return new Qualified(new StrId(variableInfo.getActor()),
-                    new StrId((variableInfo.getVariableName())));
+            return new AsBool(
+                    new Qualified(
+                            new StrId(variableInfo.getActor()),
+                            new StrId((variableInfo.getVariableName()))
+                    ));
         }
         return null;
     }
@@ -145,11 +152,11 @@ public class BoolExprParser {
         if (opcodeString.equals(StringExprOpcode.data_itemoflist.name())) {
             NumExpr index = NumExprParser.parseNumExpr(expressionBlock, 0, blocks);
             Variable var = ListExprParser.parseVariableFromFields(expressionBlock.get(FIELDS_KEY));
-            return new ItemOfVariable(index, var);
+            return new AsBool(new ItemOfVariable(index, var));
         } else if (opcodeString.equals(NumExprOpcode.data_itemnumoflist.name())) {
             Expression item = parseExpression(expressionBlock, 0, blocks);
             Variable list = ListExprParser.parseVariableFromFields(expressionBlock.get(FIELDS_KEY));
-            return new IndexOf(item, list);
+            return new AsBool(new IndexOf(item, list));
         }
 
         final BoolExprOpcode opcode = BoolExprOpcode.valueOf(opcodeString);
@@ -232,7 +239,7 @@ public class BoolExprParser {
 
     private static BoolExpr parseParameter(JsonNode blocks, JsonNode expressionBlock) {
         String name = expressionBlock.get(FIELDS_KEY).get(VALUE_KEY).get(VARIABLE_NAME_POS).asText();
-        return new StrId(PARAMETER_ABBREVIATION + name);
+        return new AsBool(new StrId(PARAMETER_ABBREVIATION + name));
     }
 
     private static BoolExpr parseCondition(JsonNode expressionBlock, String fieldName, JsonNode blocks) throws ParsingException {

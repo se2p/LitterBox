@@ -41,6 +41,7 @@ import de.uni_passau.fim.se2.litterbox.ast.opcodes.ProcedureOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ExpressionListInfo;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.VariableInfo;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
+
 import java.lang.reflect.InvocationTargetException;
 import java.util.LinkedList;
 import java.util.List;
@@ -129,7 +130,7 @@ public class NumExprParser {
     private static NumExpr parseParameter(JsonNode blocks, ArrayNode exprArray) {
         JsonNode paramBlock = blocks.get(exprArray.get(POS_BLOCK_ID).asText());
         String name = paramBlock.get(FIELDS_KEY).get(VALUE_KEY).get(VARIABLE_NAME_POS).asText();
-        return new StrId(PARAMETER_ABBREVIATION + name);
+        return new AsNumber(new StrId(PARAMETER_ABBREVIATION + name));
     }
 
 
@@ -138,13 +139,21 @@ public class NumExprParser {
         if (ProgramParser.symbolTable.getVariables().containsKey(idString)) {
             VariableInfo variableInfo = ProgramParser.symbolTable.getVariables().get(idString);
 
-            return new Qualified(new StrId(variableInfo.getActor()),
-                    new StrId((variableInfo.getVariableName())));
+            return new AsNumber(
+                    new Qualified(
+                            new StrId(variableInfo.getActor()),
+                            new StrId((variableInfo.getVariableName())
+                            )
+                    ));
 
         } else if (ProgramParser.symbolTable.getLists().containsKey(idString)) {
             ExpressionListInfo variableInfo = ProgramParser.symbolTable.getLists().get(idString);
-            return new Qualified(new StrId(variableInfo.getActor()),
-                    new StrId((variableInfo.getVariableName())));
+            return new AsNumber(
+                    new Qualified(
+                            new StrId(variableInfo.getActor()),
+                            new StrId((variableInfo.getVariableName()
+                            ))
+                    ));
         }
         return null;
     }

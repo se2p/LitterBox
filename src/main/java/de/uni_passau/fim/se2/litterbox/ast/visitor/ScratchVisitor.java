@@ -24,8 +24,14 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.AsListIndex;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.ExpressionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.ExpressionListPlain;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.ListExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.AsNumber;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.BoolLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.ColorLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
@@ -45,6 +51,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.DeleteClone;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopAll;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.TerminationStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.touchable.AsTouchable;
+import de.uni_passau.fim.se2.litterbox.ast.model.touchable.Touchable;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.Type;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Identifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Qualified;
@@ -886,5 +894,70 @@ public interface ScratchVisitor {
      */
     default void visit(SetAttributeTo node) {
         visit((ASTNode) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link AsString}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node AsString Node of which the children will be iterated
+     */
+    default void visit(AsString node) {
+        visit((StringExpr) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link AsBool}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node AsBool Node of which the children will be iterated
+     */
+    default void visit(AsBool node) {
+        visit((BoolExpr) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link AsNumber}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node AsNumber Node of which the children will be iterated
+     */
+    default void visit(AsNumber node) {
+        visit((NumExpr) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link AsListIndex}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node AsListIndex Node of which the children will be iterated
+     */
+    default void visit(AsListIndex node) {
+        visit((ListExpr) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link AsTouchable}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node AsTouchable Node of which the children will be iterated
+     */
+    default void visit(AsTouchable node) {
+        visit((Touchable) node);
     }
 }

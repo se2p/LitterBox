@@ -31,6 +31,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BoolExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.UnspecifiedBoolExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.*;
@@ -166,7 +167,7 @@ public class CommonStmtParser {
             JsonNode optionBlock = allBlocks.get(cloneOptionMenu);
             String cloneValue = optionBlock.get(FIELDS_KEY).get(CLONE_OPTION).get(FIELD_VALUE).asText();
             Identifier ident = new StrId(cloneValue);
-            return new CreateCloneOf(ident);
+            return new CreateCloneOf(new AsString(ident));
         } else {
             final StringExpr stringExpr = StringExprParser.parseStringExpr(current, 0, allBlocks);
             return new CreateCloneOf(stringExpr);
