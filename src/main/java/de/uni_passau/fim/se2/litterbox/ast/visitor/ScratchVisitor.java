@@ -682,7 +682,7 @@ public interface ScratchVisitor {
      * @param node Identifier Node of which the children will be iterated
      */
     default void visit(Identifier node) {
-        visit((ASTNode) node);
+        visit((Variable) node);
     }
 
     /**
