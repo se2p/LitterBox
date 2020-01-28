@@ -57,13 +57,13 @@ public class BlockCountTest {
     public void testBlockCountNested() {
         BlockCount parameterName = new BlockCount();
         IssueReport report = parameterName.check(nestedLoops);
-        Assertions.assertEquals(16, report.getCount());
+        Assertions.assertEquals(15, report.getCount());
     }
 
     @Test
     public void testBlockproc() {
         BlockCount parameterName = new BlockCount();
         IssueReport report = parameterName.check(withproc);
-        Assertions.assertEquals(23, report.getCount());
+        Assertions.assertEquals(19, report.getCount());
     }
 }

@@ -57,6 +57,7 @@ public class BlockCount implements IssueFinder, ScratchVisitor {
     private int count = 0;
     private boolean insideScript = false;
     private boolean insideProcedure = false;
+    private boolean insideParameterList = false;
 
     @Override
     public IssueReport check(Program program) {
@@ -64,6 +65,7 @@ public class BlockCount implements IssueFinder, ScratchVisitor {
         count = 0;
         insideScript = false;
         insideProcedure = false;
+        insideParameterList = false;
         program.accept(this);
         return new IssueReport(NAME, count, new LinkedList<>(), "");
     }
@@ -76,6 +78,7 @@ public class BlockCount implements IssueFinder, ScratchVisitor {
     @Override
     public void visit(ProcedureDefinition node) {
         insideProcedure = true;
+        count++;
         if (!node.getChildren().isEmpty()) {
             for (ASTNode child : node.getChildren()) {
                 child.accept(this);
@@ -146,7 +149,7 @@ public class BlockCount implements IssueFinder, ScratchVisitor {
 
     @Override
     public void visit(Identifier node) {
-        if (insideProcedure || insideScript) {
+        if ((insideProcedure || insideScript) && !insideParameterList) {
             if (node.getName().startsWith(PARAMETER_ABBREVIATION) || node.getName().startsWith(VARIABLE_ABBREVIATION) || node.getName().startsWith(LIST_ABBREVIATION)) {
                 count++;
             }
@@ -187,11 +190,13 @@ public class BlockCount implements IssueFinder, ScratchVisitor {
 
     @Override
     public void visit(ParameterList node) {
+        insideParameterList = true;
         if (!node.getChildren().isEmpty()) {
             for (ASTNode child : node.getChildren()) {
                 child.accept(this);
             }
         }
+        insideParameterList = false;
     }
 
     @Override
@@ -223,15 +228,6 @@ public class BlockCount implements IssueFinder, ScratchVisitor {
 
     @Override
     public void visit(Type node) {
-        if (!node.getChildren().isEmpty()) {
-            for (ASTNode child : node.getChildren()) {
-                child.accept(this);
-            }
-        }
-    }
-
-    @Override
-    public void visit(CallStmt node) {
         if (!node.getChildren().isEmpty()) {
             for (ASTNode child : node.getChildren()) {
                 child.accept(this);
