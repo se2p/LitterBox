@@ -20,11 +20,11 @@ package de.uni_passau.fim.se2.litterbox.ast.model.literals;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTLeaf;
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
-import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.ColorExpression;
+import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.Color;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import java.util.Objects;
 
-public class ColorLiteral extends AbstractNode implements ColorExpression, ASTLeaf {
+public class ColorLiteral extends AbstractNode implements Color, ASTLeaf {
 
     private final long red;
     private final long green;

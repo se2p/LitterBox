@@ -23,7 +23,7 @@ import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
-import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.ColorExpression;
+import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.Color;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.FromNumber;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.ColorLiteral;
@@ -32,7 +32,7 @@ import java.util.LinkedList;
 
 public class ColorParser {
 
-    public static ColorExpression parseColor(JsonNode current, int pos, JsonNode allBlocks) throws ParsingException {
+    public static Color parseColor(JsonNode current, int pos, JsonNode allBlocks) throws ParsingException {
         //FIXME parse inputs that are not a text color as a "FromNumber" color
 
         LinkedList<JsonNode> inputs = new LinkedList<>();

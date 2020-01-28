@@ -23,7 +23,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-public class Rgba extends AbstractNode implements ColorExpression {
+public class Rgba extends AbstractNode implements Color {
 
     private NumExpr rValue;
     private NumExpr gValue;
