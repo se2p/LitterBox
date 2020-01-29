@@ -33,7 +33,7 @@ public class BoolLiteral extends AbstractNode implements BoolExpr, ASTLeaf {
         this.value = value;
     }
 
-    boolean getValue() {
+    public boolean getValue() {
         return value;
     }
 
