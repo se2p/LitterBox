@@ -277,6 +277,7 @@ public class Scratch3Analyzer {
      * @param outputFile The path to the output file.
      */
     public static void printSingleIntermediate(String path, String outputFile) {
+        log.info("Starting to print " + path + " to file " + outputFile);
         File file = new File(path);
         if (!file.exists()) {
             log.info("File " + path + " does not exist.");
@@ -295,5 +296,7 @@ public class Scratch3Analyzer {
         }
         GrammarPrintVisitor visitor = new GrammarPrintVisitor(stream);
         visitor.visit(program);
+        stream.close();
+        log.info("Finished printing.");
     }
 }

@@ -82,6 +82,7 @@ public class Main {
 
         if (cmd.hasOption(INTERMEDIATE)) {
             Scratch3Analyzer.printSingleIntermediate(cmd.getOptionValue(PATH), cmd.getOptionValue(INTERMEDIATE));
+            return;
         }
 
         if (cmd.hasOption(PATH)) {
