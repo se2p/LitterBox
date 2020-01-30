@@ -19,21 +19,26 @@
 package de.uni_passau.fim.se2.litterbox;
 
 
-import static de.uni_passau.fim.se2.litterbox.utils.GroupConstants.*;
-
-
 import de.uni_passau.fim.se2.litterbox.analytics.IssueTool;
 import de.uni_passau.fim.se2.litterbox.analytics.Scratch3Analyzer;
-import de.uni_passau.fim.se2.litterbox.utils.GroupConstants;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
+
 import java.io.File;
 import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.logging.Logger;
-import org.apache.commons.cli.*;
+
+import static de.uni_passau.fim.se2.litterbox.utils.GroupConstants.*;
 
 public class Main {
 
     private static final String PATH = "path";
+    private static final String INTERMEDIATE = "intermediate";
     private static final String PROJECTID = "projectid";
     private static final String PROJECTLIST = "projectlist";
     private static final String PROJECTOUT = "projectout";
@@ -58,6 +63,7 @@ public class Main {
         Options options = new Options();
 
         options.addOption(PATH, true, "path to folder or file that should be analyzed (required)");
+        options.addOption(INTERMEDIATE, true, "path to a file to which the project will be printed in the intermediate language");
         options.addOption(PROJECTID, true,
                 "id of the project that should be downloaded and analysed.");
         options.addOption(PROJECTLIST, true, "path to a file with a list of project ids of projects"
@@ -73,6 +79,10 @@ public class Main {
         CommandLineParser parser = new DefaultParser();
 
         CommandLine cmd = parser.parse(options, args);
+
+        if (cmd.hasOption(INTERMEDIATE)) {
+            Scratch3Analyzer.printSingleIntermediate(cmd.getOptionValue(PATH), cmd.getOptionValue(INTERMEDIATE));
+        }
 
         if (cmd.hasOption(PATH)) {
             File folder = new File(cmd.getOptionValue(PATH));

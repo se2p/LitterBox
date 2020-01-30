@@ -18,28 +18,31 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics;
 
-import static de.uni_passau.fim.se2.litterbox.utils.GroupConstants.*;
-
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.GrammarPrintVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.CSVWriter;
 import de.uni_passau.fim.se2.litterbox.utils.Downloader;
 import de.uni_passau.fim.se2.litterbox.utils.JsonParser;
 import de.uni_passau.fim.se2.litterbox.utils.ZipReader;
+import org.apache.commons.csv.CSVPrinter;
+import org.apache.commons.io.FilenameUtils;
+
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.logging.Logger;
-import org.apache.commons.csv.CSVPrinter;
-import org.apache.commons.io.FilenameUtils;
+
+import static de.uni_passau.fim.se2.litterbox.utils.GroupConstants.*;
 
 
 public class Scratch3Analyzer {
@@ -265,5 +268,32 @@ public class Scratch3Analyzer {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * Prints the project given at {@code path} in the intermediate language.
+     *
+     * @param path       The path of the project.
+     * @param outputFile The path to the output file.
+     */
+    public static void printSingleIntermediate(String path, String outputFile) {
+        File file = new File(path);
+        if (!file.exists()) {
+            log.info("File " + path + " does not exist.");
+            return;
+        } else if (file.isDirectory()) {
+            log.info("File " + path + " is a directory.");
+            return;
+        }
+        Program program = extractProgram(file);
+        PrintStream stream;
+        try {
+            stream = new PrintStream(new File(outputFile));
+        } catch (FileNotFoundException e) {
+            log.info("Creation of output stream not possible.");
+            return;
+        }
+        GrammarPrintVisitor visitor = new GrammarPrintVisitor(stream);
+        visitor.visit(program);
     }
 }
