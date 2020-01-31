@@ -81,11 +81,18 @@ public class Main {
         CommandLine cmd = parser.parse(options, args);
 
         if (cmd.hasOption(INTERMEDIATE)) {
-            Scratch3Analyzer.printSingleIntermediate(cmd.getOptionValue(PATH), cmd.getOptionValue(INTERMEDIATE));
+            if (cmd.hasOption(PROJECTID) && cmd.hasOption(PROJECTOUT)) {
+                String projectid = cmd.getOptionValue(PROJECTID);
+                Scratch3Analyzer.downloadAndPrint(projectid, cmd.getOptionValue(PROJECTOUT),
+                        cmd.getOptionValue(INTERMEDIATE));
+            } else if (cmd.hasOption(PROJECTLIST) && cmd.hasOption(PROJECTOUT)) {
+                Scratch3Analyzer.downloadAndPrintMultiple(cmd.getOptionValue(PROJECTLIST),
+                        cmd.getOptionValue(PROJECTOUT), cmd.getOptionValue(INTERMEDIATE));
+            } else {
+                Scratch3Analyzer.printIntermediate(cmd.getOptionValue(PATH), cmd.getOptionValue(INTERMEDIATE));
+            }
             return;
-        }
-
-        if (cmd.hasOption(PATH)) {
+        } else if (cmd.hasOption(PATH)) {
             File folder = new File(cmd.getOptionValue(PATH));
             if (cmd.hasOption(GROUP)) {
                 Scratch3Analyzer.analyze(cmd.getOptionValue(GROUP),
