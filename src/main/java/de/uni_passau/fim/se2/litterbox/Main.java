@@ -33,6 +33,7 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.logging.Logger;
 
+import static de.uni_passau.fim.se2.litterbox.analytics.Scratch3Analyzer.removeEndSeparator;
 import static de.uni_passau.fim.se2.litterbox.utils.GroupConstants.*;
 
 public class Main {
@@ -81,13 +82,17 @@ public class Main {
         CommandLine cmd = parser.parse(options, args);
 
         if (cmd.hasOption(INTERMEDIATE)) {
-            if (cmd.hasOption(PROJECTID) && cmd.hasOption(PROJECTOUT)) {
-                String projectid = cmd.getOptionValue(PROJECTID);
-                Scratch3Analyzer.downloadAndPrint(projectid, cmd.getOptionValue(PROJECTOUT),
-                        cmd.getOptionValue(INTERMEDIATE));
-            } else if (cmd.hasOption(PROJECTLIST) && cmd.hasOption(PROJECTOUT)) {
-                Scratch3Analyzer.downloadAndPrintMultiple(cmd.getOptionValue(PROJECTLIST),
-                        cmd.getOptionValue(PROJECTOUT), cmd.getOptionValue(INTERMEDIATE));
+            if (cmd.hasOption(PROJECTOUT)) {
+                String projectOut = removeEndSeparator(cmd.getOptionValue(PROJECTOUT));
+                if (cmd.hasOption(PROJECTID)) {
+                    String projectId = cmd.getOptionValue(PROJECTID);
+                    Scratch3Analyzer.downloadAndPrint(projectId, projectOut,
+                            cmd.getOptionValue(INTERMEDIATE));
+                } else if (cmd.hasOption(PROJECTLIST)) {
+                    String printPath = removeEndSeparator(cmd.getOptionValue(INTERMEDIATE));
+                    Scratch3Analyzer.downloadAndPrintMultiple(
+                            cmd.getOptionValue(PROJECTLIST), projectOut, printPath);
+                }
             } else {
                 Scratch3Analyzer.printIntermediate(cmd.getOptionValue(PATH), cmd.getOptionValue(INTERMEDIATE));
             }

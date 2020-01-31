@@ -277,10 +277,10 @@ public class Scratch3Analyzer {
      * Prints the project given at {@code path} in the intermediate language.
      *
      * @param path       The path of the project.
-     * @param outputFile The path to the output file.
+     * @param outputFilePath The path to the output file.
      */
-    public static void printSingleIntermediate(String path, String outputFile) {
-        log.info("Starting to print " + path + " to file " + outputFile);
+    public static void printSingleIntermediate(String path, String outputFilePath) {
+        log.info("Starting to print " + path + " to file " + outputFilePath);
         File file = new File(path);
         if (!file.exists()) {
             log.info("File " + path + " does not exist.");
@@ -291,18 +291,18 @@ public class Scratch3Analyzer {
         }
         Program program = extractProgram(file);
 
-        File output = new File(outputFile);
+        File outputFile = new File(outputFilePath);
         try {
-            boolean success = output.createNewFile();
+            boolean success = outputFile.createNewFile();
         } catch (IOException e) {
-            log.info("Could not create file at path " + outputFile);
+            log.info("Could not create file at path " + outputFilePath);
             return;
         }
         PrintStream stream;
         try {
-            stream = new PrintStream(output);
+            stream = new PrintStream(outputFile);
         } catch (FileNotFoundException e) {
-            log.info("Creation of output stream not possible.");
+            log.info("Creation of output stream not possible with output file " + outputFilePath);
             return;
         }
         GrammarPrintVisitor visitor = new GrammarPrintVisitor(stream);
@@ -330,16 +330,16 @@ public class Scratch3Analyzer {
 
     /**
      * Downloads all projects in the list and prints their intermediate language
-     * version to files in the {@code projectsFolderPath}.
+     * version to files in the {@code projectPath}.
      *
-     * @param projectListPath    The path to the list of ids.
-     * @param projectsFolderPath The path to the folder in which the downloaded
-     *                           projects will be stored.
-     * @param printPath          The path to the folder in which the .sc files
-     *                           will be stored.
+     * @param projectListPath The path to the list of ids.
+     * @param projectPath     The path to the folder in which the downloaded
+     *                        projects will be stored.
+     * @param printPath       The path to the folder in which the .sc files
+     *                        will be stored.
      */
     public static void downloadAndPrintMultiple(String projectListPath,
-                                                String projectsFolderPath,
+                                                String projectPath,
                                                 String printPath) {
         File file = new File(projectListPath);
 
@@ -356,7 +356,7 @@ public class Scratch3Analyzer {
             String line = br.readLine();
             while (line != null) {
                 line = line.trim();
-                downloadAndPrint(line, projectsFolderPath, printPath + File.separator + line + SCRATCH_EXTENSION);
+                downloadAndPrint(line, projectPath, printPath + File.separator + line + SCRATCH_EXTENSION);
                 line = br.readLine();
             }
         } catch (IOException e) {
@@ -368,28 +368,59 @@ public class Scratch3Analyzer {
     /**
      * Prints the file or content of the folder in the intermediate language.
      *
-     * @param path      The path to the file or folder to be printed.
-     * @param printPath The path to the file or folder for the .sc output.
+     * @param projectPath The projectPath to the file or folder to be printed.
+     * @param printPath   The projectPath to the file or folder for the .sc output.
      */
-    public static void printIntermediate(String path, String printPath) {
-        File file = new File(path);
+    public static void printIntermediate(String projectPath, String printPath) {
+        File file = new File(projectPath);
         if (file.exists() && file.isDirectory()) {
-            printMultiple(file, printPath);
+            printMultiple(file, removeEndSeparator(printPath));
         } else if (file.exists() && !file.isDirectory()) {
-            printSingleIntermediate(path, printPath);
+            printSingleIntermediate(projectPath, printPath);
         } else {
             log.info("Folder or file '" + file.getName() + "' does not exist");
         }
     }
 
+    /**
+     * Prints every project in the {@code folder} to a separate file in the
+     * {@code printPath}.
+     *
+     * @param folder    The folder containing scratch projects.
+     * @param printPath The directory to save the .sc files to (without end separator).
+     */
     private static void printMultiple(File folder, String printPath) {
         for (final File fileEntry : Objects.requireNonNull(folder.listFiles())) {
             if (!fileEntry.isDirectory()) {
                 String name = fileEntry.getName();
                 String rawName = FilenameUtils.removeExtension(name);
-                printSingleIntermediate(fileEntry.getName(),
-                        printPath + File.separator + rawName + SCRATCH_EXTENSION);
+                String outputFilePath = printPath + File.separator + rawName + SCRATCH_EXTENSION;
+                File outputFile = new File(outputFilePath);
+                try {
+                    boolean success = outputFile.createNewFile();
+                } catch (IOException e) {
+                    log.info("Creating a file at " + outputFilePath + " failed.");
+                    continue;
+                }
+                printSingleIntermediate(fileEntry.getPath(),
+                        outputFilePath);
             }
+        }
+    }
+
+    /**
+     * Removes the end separator of the path if present.
+     *
+     * @param path The path.
+     * @return The path without its end separator.
+     */
+    public static String removeEndSeparator(String path) {
+        if (path == null) {
+            return null;
+        } else if (path.endsWith("/") || path.endsWith("\\")) {
+            return path.substring(0, path.length() - 1);
+        } else {
+            return path;
         }
     }
 }
