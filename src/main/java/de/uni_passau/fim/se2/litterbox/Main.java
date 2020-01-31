@@ -64,12 +64,13 @@ public class Main {
         Options options = new Options();
 
         options.addOption(PATH, true, "path to folder or file that should be analyzed (required)");
-        options.addOption(INTERMEDIATE, true, "path to a file to which the project will be printed in the intermediate language");
+        options.addOption(INTERMEDIATE, true, "path to a file or folder to which "
+                + "the project(s) will be printed in the intermediate language");
         options.addOption(PROJECTID, true,
                 "id of the project that should be downloaded and analysed.");
         options.addOption(PROJECTLIST, true, "path to a file with a list of project ids of projects"
                 + " which should be downloaded and analysed.");
-        options.addOption(PROJECTOUT, true, "path where the downloaded project should be stored");
+        options.addOption(PROJECTOUT, true, "path where the downloaded project(s) should be stored");
         options.addOption(OUTPUT, true, "path with name of the csv file you want to save (required if path argument"
                 + " is a folder path)");
         options.addOption(DETECTORS, true, "name all detectors you want to run separated by ',' "
