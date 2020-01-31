@@ -44,7 +44,11 @@ import java.util.List;
 import java.util.Objects;
 import java.util.logging.Logger;
 
-import static de.uni_passau.fim.se2.litterbox.utils.GroupConstants.*;
+import static de.uni_passau.fim.se2.litterbox.utils.GroupConstants.ALL;
+import static de.uni_passau.fim.se2.litterbox.utils.GroupConstants.BUGS;
+import static de.uni_passau.fim.se2.litterbox.utils.GroupConstants.CTSCORE;
+import static de.uni_passau.fim.se2.litterbox.utils.GroupConstants.SMELLS;
+import static org.apache.commons.io.FilenameUtils.removeExtension;
 
 
 public class Scratch3Analyzer {
@@ -280,7 +284,6 @@ public class Scratch3Analyzer {
      * @param outputFilePath The path to the output file.
      */
     public static void printSingleIntermediate(String path, String outputFilePath) {
-        log.info("Starting to print " + path + " to file " + outputFilePath);
         File file = new File(path);
         if (!file.exists()) {
             log.info("File " + path + " does not exist.");
@@ -298,6 +301,18 @@ public class Scratch3Analyzer {
             log.info("Could not create file at path " + outputFilePath);
             return;
         }
+
+        if (outputFile.isDirectory()) {
+            outputFilePath = removeEndSeparator(outputFilePath) + File.separator +
+                    removeExtension(file.getName()) + SCRATCH_EXTENSION;
+            outputFile = new File(outputFilePath);
+            try {
+                boolean success = outputFile.createNewFile();
+            } catch (IOException e) {
+                log.info("Creating file " + outputFilePath + " failed.");
+            }
+        }
+
         PrintStream stream;
         try {
             stream = new PrintStream(outputFile);
@@ -305,6 +320,7 @@ public class Scratch3Analyzer {
             log.info("Creation of output stream not possible with output file " + outputFilePath);
             return;
         }
+        log.info("Starting to print " + path + " to file " + outputFilePath);
         GrammarPrintVisitor visitor = new GrammarPrintVisitor(stream);
         visitor.visit(program);
         stream.close();
@@ -393,7 +409,7 @@ public class Scratch3Analyzer {
         for (final File fileEntry : Objects.requireNonNull(folder.listFiles())) {
             if (!fileEntry.isDirectory()) {
                 String name = fileEntry.getName();
-                String rawName = FilenameUtils.removeExtension(name);
+                String rawName = removeExtension(name);
                 String outputFilePath = printPath + File.separator + rawName + SCRATCH_EXTENSION;
                 File outputFile = new File(outputFilePath);
                 try {
