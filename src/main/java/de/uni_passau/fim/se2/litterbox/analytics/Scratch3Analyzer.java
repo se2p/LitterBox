@@ -54,7 +54,7 @@ import static org.apache.commons.io.FilenameUtils.removeExtension;
 public class Scratch3Analyzer {
 
     private static final Logger log = Logger.getLogger(Scratch3Analyzer.class.getName());
-    private static final String SCRATCH_EXTENSION = ".sc";
+    private static final String INTERMEDIATE_EXTENSION = ".sc";
 
     public static void analyze(String detectors, String output, File file) {
         if (file.exists() && file.isDirectory()) {
@@ -280,9 +280,10 @@ public class Scratch3Analyzer {
     /**
      * Prints the project given at {@code path} in the intermediate language.
      *
-     * @param path       The path of the project.
+     * @param path           The path of the project.
      * @param outputFilePath The path to the output file.
      */
+    @SuppressWarnings("ResultOfMethodCallIgnored")
     public static void printSingleIntermediate(String path, String outputFilePath) {
         File file = new File(path);
         if (!file.exists()) {
@@ -296,7 +297,7 @@ public class Scratch3Analyzer {
 
         File outputFile = new File(outputFilePath);
         try {
-            boolean success = outputFile.createNewFile();
+            outputFile.createNewFile();
         } catch (IOException e) {
             log.info("Could not create file at path " + outputFilePath);
             return;
@@ -304,10 +305,10 @@ public class Scratch3Analyzer {
 
         if (outputFile.isDirectory()) {
             outputFilePath = removeEndSeparator(outputFilePath) + File.separator +
-                    removeExtension(file.getName()) + SCRATCH_EXTENSION;
+                    removeExtension(file.getName()) + INTERMEDIATE_EXTENSION;
             outputFile = new File(outputFilePath);
             try {
-                boolean success = outputFile.createNewFile();
+                outputFile.createNewFile();
             } catch (IOException e) {
                 log.info("Creating file " + outputFilePath + " failed.");
             }
@@ -372,7 +373,7 @@ public class Scratch3Analyzer {
             String line = br.readLine();
             while (line != null) {
                 line = line.trim();
-                downloadAndPrint(line, projectPath, printPath + File.separator + line + SCRATCH_EXTENSION);
+                downloadAndPrint(line, projectPath, printPath + File.separator + line + INTERMEDIATE_EXTENSION);
                 line = br.readLine();
             }
         } catch (IOException e) {
@@ -405,15 +406,16 @@ public class Scratch3Analyzer {
      * @param folder    The folder containing scratch projects.
      * @param printPath The directory to save the .sc files to (without end separator).
      */
+    @SuppressWarnings("ResultOfMethodCallIgnored")
     private static void printMultiple(File folder, String printPath) {
         for (final File fileEntry : Objects.requireNonNull(folder.listFiles())) {
             if (!fileEntry.isDirectory()) {
                 String name = fileEntry.getName();
                 String rawName = removeExtension(name);
-                String outputFilePath = printPath + File.separator + rawName + SCRATCH_EXTENSION;
+                String outputFilePath = printPath + File.separator + rawName + INTERMEDIATE_EXTENSION;
                 File outputFile = new File(outputFilePath);
                 try {
-                    boolean success = outputFile.createNewFile();
+                    outputFile.createNewFile();
                 } catch (IOException e) {
                     log.info("Creating a file at " + outputFilePath + " failed.");
                     continue;
