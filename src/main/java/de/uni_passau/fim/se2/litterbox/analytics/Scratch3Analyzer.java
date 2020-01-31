@@ -356,8 +356,7 @@ public class Scratch3Analyzer {
             String line = br.readLine();
             while (line != null) {
                 line = line.trim();
-                downloadAndPrint(line, projectsFolderPath + File.separator
-                        + line, printPath + File.separator + line + SCRATCH_EXTENSION);
+                downloadAndPrint(line, projectsFolderPath, printPath + File.separator + line + SCRATCH_EXTENSION);
                 line = br.readLine();
             }
         } catch (IOException e) {
