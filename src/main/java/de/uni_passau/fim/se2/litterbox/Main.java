@@ -147,8 +147,8 @@ public class Main {
 
         HelpFormatter formatter = new HelpFormatter();
         formatter.printHelp("LitterBox", options);
-        System.out.println("Example: " + "java -jar Litterbox.jar -path "
-                + "C:\\scratchprojects\\files\\ -output C:\\scratchprojects\\files\\test.csv -detectors bugs\n");
+        System.out.println("Example: " + "java -jar Litterbox.jar --path "
+                + "C:\\scratchprojects\\files\\ --output C:\\scratchprojects\\files\\test.csv --detectors bugs\n");
 
         System.out.println("Detectors:");
         ResourceBundle messages = ResourceBundle.getBundle("IssueDescriptions", Locale.ENGLISH);
