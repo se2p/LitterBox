@@ -18,33 +18,43 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics;
 
-import static de.uni_passau.fim.se2.litterbox.utils.GroupConstants.*;
-
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.GrammarPrintVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.CSVWriter;
 import de.uni_passau.fim.se2.litterbox.utils.Downloader;
 import de.uni_passau.fim.se2.litterbox.utils.JsonParser;
 import de.uni_passau.fim.se2.litterbox.utils.ZipReader;
+import org.apache.commons.csv.CSVPrinter;
+import org.apache.commons.io.FilenameUtils;
+
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.PrintStream;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.logging.Logger;
-import org.apache.commons.csv.CSVPrinter;
-import org.apache.commons.io.FilenameUtils;
+
+import static de.uni_passau.fim.se2.litterbox.utils.GroupConstants.ALL;
+import static de.uni_passau.fim.se2.litterbox.utils.GroupConstants.BUGS;
+import static de.uni_passau.fim.se2.litterbox.utils.GroupConstants.CTSCORE;
+import static de.uni_passau.fim.se2.litterbox.utils.GroupConstants.SMELLS;
+import static org.apache.commons.io.FilenameUtils.removeExtension;
 
 
 public class Scratch3Analyzer {
 
     private static final Logger log = Logger.getLogger(Scratch3Analyzer.class.getName());
+    private static final String INTERMEDIATE_EXTENSION = ".sc";
 
     public static void analyze(String detectors, String output, File file) {
         if (file.exists() && file.isDirectory()) {
@@ -121,21 +131,21 @@ public class Scratch3Analyzer {
         heads.add("project");
         String[] detectors;
         switch (dtctrs) {
-            case ALL:
-                detectors = iT.getAllFinder().keySet().toArray(new String[0]);
-                break;
-            case BUGS:
-                detectors = iT.getBugFinder().keySet().toArray(new String[0]);
-                break;
-            case SMELLS:
-                detectors = iT.getSmellFinder().keySet().toArray(new String[0]);
-                break;
-            case CTSCORE:
-                detectors = iT.getCTScoreFinder().keySet().toArray(new String[0]);
-                break;
-            default:
-                detectors = dtctrs.split(",");
-                break;
+        case ALL:
+            detectors = iT.getAllFinder().keySet().toArray(new String[0]);
+            break;
+        case BUGS:
+            detectors = iT.getBugFinder().keySet().toArray(new String[0]);
+            break;
+        case SMELLS:
+            detectors = iT.getSmellFinder().keySet().toArray(new String[0]);
+            break;
+        case CTSCORE:
+            detectors = iT.getCTScoreFinder().keySet().toArray(new String[0]);
+            break;
+        default:
+            detectors = dtctrs.split(",");
+            break;
         }
         for (String s : detectors) {
             if (iT.getAllFinder().containsKey(s)) {
@@ -211,7 +221,7 @@ public class Scratch3Analyzer {
     }
 
     /**
-     * Downlaods and analyzes a single project with the given id
+     * Downloads and analyzes a single project with the given id
      *
      * @param projectid  Id of the project which should be downloaded
      * @param outfolder  Folder in which the project file will be stored
@@ -264,6 +274,171 @@ public class Scratch3Analyzer {
             }
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    /**
+     * Prints the project given at {@code path} in the intermediate language.
+     *
+     * @param path           The path of the project.
+     * @param outputFilePath The path to the output file.
+     */
+    @SuppressWarnings("ResultOfMethodCallIgnored")
+    public static void printSingleIntermediate(String path, String outputFilePath) {
+        File file = new File(path);
+        if (!file.exists()) {
+            log.info("File " + path + " does not exist.");
+            return;
+        } else if (file.isDirectory()) {
+            log.info("File " + path + " is a directory.");
+            return;
+        }
+        Program program = extractProgram(file);
+
+        File outputFile = new File(outputFilePath);
+        try {
+            outputFile.createNewFile();
+        } catch (IOException e) {
+            log.info("Could not create file at path " + outputFilePath);
+            return;
+        }
+
+        if (outputFile.isDirectory()) {
+            outputFilePath = removeEndSeparator(outputFilePath) + File.separator +
+                    removeExtension(file.getName()) + INTERMEDIATE_EXTENSION;
+            outputFile = new File(outputFilePath);
+            try {
+                outputFile.createNewFile();
+            } catch (IOException e) {
+                log.info("Creating file " + outputFilePath + " failed.");
+            }
+        }
+
+        PrintStream stream;
+        try {
+            stream = new PrintStream(outputFile);
+        } catch (FileNotFoundException e) {
+            log.info("Creation of output stream not possible with output file " + outputFilePath);
+            return;
+        }
+        log.info("Starting to print " + path + " to file " + outputFilePath);
+        GrammarPrintVisitor visitor = new GrammarPrintVisitor(stream);
+        visitor.visit(program);
+        stream.close();
+        log.info("Finished printing.");
+    }
+
+    /**
+     * Downloads the project and prints its intermediate language version.
+     *
+     * @param projectId   Id of the project.
+     * @param projectPath The path to where the downloaded project will be stored.
+     * @param printPath   The path to where the .sc file will be stored.
+     */
+    public static void downloadAndPrint(String projectId, String projectPath, String printPath) {
+        try {
+            Downloader.downloadAndSaveProject(projectId, projectPath);
+        } catch (IOException e) {
+            log.info("Could not load project with id " + projectId);
+        }
+        Path path = Paths.get(projectPath, projectId + ".json");
+        printSingleIntermediate(path.toString(), printPath);
+    }
+
+    /**
+     * Downloads all projects in the list and prints their intermediate language
+     * version to files in the {@code projectPath}.
+     *
+     * @param projectListPath The path to the list of ids.
+     * @param projectPath     The path to the folder in which the downloaded
+     *                        projects will be stored.
+     * @param printPath       The path to the folder in which the .sc files
+     *                        will be stored.
+     */
+    public static void downloadAndPrintMultiple(String projectListPath,
+                                                String projectPath,
+                                                String printPath) {
+        File file = new File(projectListPath);
+
+        if (!file.exists()) {
+            log.info("File " + projectListPath + " does not exist.");
+            return;
+        } else if (file.isDirectory()) {
+            log.info("File " + projectListPath + " is a directory.");
+            return;
+        }
+
+        try {
+            BufferedReader br = new BufferedReader(new FileReader(file));
+            String line = br.readLine();
+            while (line != null) {
+                line = line.trim();
+                downloadAndPrint(line, projectPath, printPath + File.separator + line + INTERMEDIATE_EXTENSION);
+                line = br.readLine();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    /**
+     * Prints the file or content of the folder in the intermediate language.
+     *
+     * @param projectPath The projectPath to the file or folder to be printed.
+     * @param printPath   The projectPath to the file or folder for the .sc output.
+     */
+    public static void printIntermediate(String projectPath, String printPath) {
+        File file = new File(projectPath);
+        if (file.exists() && file.isDirectory()) {
+            printMultiple(file, removeEndSeparator(printPath));
+        } else if (file.exists() && !file.isDirectory()) {
+            printSingleIntermediate(projectPath, printPath);
+        } else {
+            log.info("Folder or file '" + file.getName() + "' does not exist");
+        }
+    }
+
+    /**
+     * Prints every project in the {@code folder} to a separate file in the
+     * {@code printPath}.
+     *
+     * @param folder    The folder containing scratch projects.
+     * @param printPath The directory to save the .sc files to (without end separator).
+     */
+    @SuppressWarnings("ResultOfMethodCallIgnored")
+    private static void printMultiple(File folder, String printPath) {
+        for (final File fileEntry : Objects.requireNonNull(folder.listFiles())) {
+            if (!fileEntry.isDirectory()) {
+                String name = fileEntry.getName();
+                String rawName = removeExtension(name);
+                String outputFilePath = printPath + File.separator + rawName + INTERMEDIATE_EXTENSION;
+                File outputFile = new File(outputFilePath);
+                try {
+                    outputFile.createNewFile();
+                } catch (IOException e) {
+                    log.info("Creating a file at " + outputFilePath + " failed.");
+                    continue;
+                }
+                printSingleIntermediate(fileEntry.getPath(),
+                        outputFilePath);
+            }
+        }
+    }
+
+    /**
+     * Removes the end separator of the path if present.
+     *
+     * @param path The path.
+     * @return The path without its end separator.
+     */
+    public static String removeEndSeparator(String path) {
+        if (path == null) {
+            return null;
+        } else if (path.endsWith("/") || path.endsWith("\\")) {
+            return path.substring(0, path.length() - 1);
+        } else {
+            return path;
         }
     }
 }

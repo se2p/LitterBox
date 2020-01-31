@@ -19,28 +19,41 @@
 package de.uni_passau.fim.se2.litterbox;
 
 
-import static de.uni_passau.fim.se2.litterbox.utils.GroupConstants.*;
-
-
 import de.uni_passau.fim.se2.litterbox.analytics.IssueTool;
 import de.uni_passau.fim.se2.litterbox.analytics.Scratch3Analyzer;
-import de.uni_passau.fim.se2.litterbox.utils.GroupConstants;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
+
 import java.io.File;
 import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.logging.Logger;
-import org.apache.commons.cli.*;
+
+import static de.uni_passau.fim.se2.litterbox.analytics.Scratch3Analyzer.removeEndSeparator;
+import static de.uni_passau.fim.se2.litterbox.utils.GroupConstants.*;
 
 public class Main {
 
     private static final String PATH = "path";
+    private static final String PATH_SHORT = "p";
+    private static final String INTERMEDIATE = "intermediate";
+    private static final String INTERMEDIATE_SHORT = "u"; // for *u*nicorn. didn't find a better char
     private static final String PROJECTID = "projectid";
+    private static final String PROJECTID_SHORT = "i";
     private static final String PROJECTLIST = "projectlist";
+    private static final String PROJECTLIST_SHORT = "l";
     private static final String PROJECTOUT = "projectout";
+    private static final String PROJECTOUT_SHORT = "s"; //*s*ave to
     private static final String OUTPUT = "output";
+    private static final String OUTPUT_SHORT = "o";
     private static final String DETECTORS = "detectors";
-    private static final String GROUP = "detectors";
+    private static final String DETECTORS_SHORT = "d";
     private static final String HELP = "help";
+    private static final String HELP_SHORT = "h";
 
     private static final Logger log = Logger.getLogger(Main.class.getName());
 
@@ -57,27 +70,43 @@ public class Main {
 
         Options options = new Options();
 
-        options.addOption(PATH, true, "path to folder or file that should be analyzed (required)");
-        options.addOption(PROJECTID, true,
+        options.addOption(PATH_SHORT, PATH, true, "path to folder or file that should be analyzed (required)");
+        options.addOption(INTERMEDIATE_SHORT, INTERMEDIATE, true, "path to a file or folder to which "
+                + "the project(s) will be printed in the intermediate language");
+        options.addOption(PROJECTID_SHORT, PROJECTID, true,
                 "id of the project that should be downloaded and analysed.");
-        options.addOption(PROJECTLIST, true, "path to a file with a list of project ids of projects"
+        options.addOption(PROJECTLIST_SHORT, PROJECTLIST, true, "path to a file with a list of project ids of projects"
                 + " which should be downloaded and analysed.");
-        options.addOption(PROJECTOUT, true, "path where the downloaded project should be stored");
-        options.addOption(OUTPUT, true, "path with name of the csv file you want to save (required if path argument"
+        options.addOption(PROJECTOUT_SHORT, PROJECTOUT, true, "path where the downloaded project(s) should be stored");
+        options.addOption(OUTPUT_SHORT, OUTPUT, true, "path with name of the csv file you want to save (required if path argument"
                 + " is a folder path)");
-        options.addOption(DETECTORS, true, "name all detectors you want to run separated by ',' "
+        options.addOption(DETECTORS_SHORT, DETECTORS, true, "name all detectors you want to run separated by ',' "
                 + "\n(all detectors defined in the README)");
-        options.addOption(GROUP, true, "choose a group of detectors to run smells, ctscore or bugs"
-                + "\n(all detectors defined in the README)");
-        options.addOption(HELP, false, "print this message");
+        options.addOption(HELP_SHORT, HELP, false, "print this message");
         CommandLineParser parser = new DefaultParser();
 
         CommandLine cmd = parser.parse(options, args);
 
-        if (cmd.hasOption(PATH)) {
+        if (cmd.hasOption(INTERMEDIATE)) {
+            if (cmd.hasOption(PROJECTOUT)) {
+                String projectOut = removeEndSeparator(cmd.getOptionValue(PROJECTOUT));
+                if (cmd.hasOption(PROJECTID)) {
+                    String projectId = cmd.getOptionValue(PROJECTID);
+                    Scratch3Analyzer.downloadAndPrint(projectId, projectOut,
+                            cmd.getOptionValue(INTERMEDIATE));
+                } else if (cmd.hasOption(PROJECTLIST)) {
+                    String printPath = removeEndSeparator(cmd.getOptionValue(INTERMEDIATE));
+                    Scratch3Analyzer.downloadAndPrintMultiple(
+                            cmd.getOptionValue(PROJECTLIST), projectOut, printPath);
+                }
+            } else {
+                Scratch3Analyzer.printIntermediate(cmd.getOptionValue(PATH), cmd.getOptionValue(INTERMEDIATE));
+            }
+            return;
+        } else if (cmd.hasOption(PATH)) {
             File folder = new File(cmd.getOptionValue(PATH));
-            if (cmd.hasOption(GROUP)) {
-                Scratch3Analyzer.analyze(cmd.getOptionValue(GROUP),
+            if (cmd.hasOption(DETECTORS)) {
+                Scratch3Analyzer.analyze(cmd.getOptionValue(DETECTORS),
                         cmd.getOptionValue(OUTPUT), folder);
             } else {
                 Scratch3Analyzer.analyze(cmd.getOptionValue(DETECTORS, ALL),
@@ -87,9 +116,9 @@ public class Main {
         } else if (cmd.hasOption(PROJECTID) || cmd.hasOption(PROJECTLIST)) {
             if (cmd.hasOption(PROJECTID)) {
                 String projectid = cmd.getOptionValue(PROJECTID);
-                if (cmd.hasOption(GROUP)) {
+                if (cmd.hasOption(DETECTORS)) {
                     Scratch3Analyzer.downloadAndAnalyze(projectid, cmd.getOptionValue(PROJECTOUT),
-                            cmd.getOptionValue(GROUP),
+                            cmd.getOptionValue(DETECTORS),
                             cmd.getOptionValue(OUTPUT));
                 } else {
                     Scratch3Analyzer.downloadAndAnalyze(projectid, cmd.getOptionValue(PROJECTOUT),
@@ -99,11 +128,11 @@ public class Main {
             }
 
             if (cmd.hasOption(PROJECTLIST)) {
-                if (cmd.hasOption(GROUP)) {
+                if (cmd.hasOption(DETECTORS)) {
                     Scratch3Analyzer.downloadAndAnalyzeMultiple(
                             cmd.getOptionValue(PROJECTLIST),
                             cmd.getOptionValue(PROJECTOUT),
-                            cmd.getOptionValue(GROUP),
+                            cmd.getOptionValue(DETECTORS),
                             cmd.getOptionValue(OUTPUT));
                 } else {
                     Scratch3Analyzer.downloadAndAnalyzeMultiple(
@@ -118,8 +147,8 @@ public class Main {
 
         HelpFormatter formatter = new HelpFormatter();
         formatter.printHelp("LitterBox", options);
-        System.out.println("Example: " + "java -jar Litterbox.jar -path "
-                + "C:\\scratchprojects\\files\\ -output C:\\scratchprojects\\files\\test.csv -detectors bugs\n");
+        System.out.println("Example: " + "java -jar Litterbox.jar --path "
+                + "C:\\scratchprojects\\files\\ --output C:\\scratchprojects\\files\\test.csv --detectors bugs\n");
 
         System.out.println("Detectors:");
         ResourceBundle messages = ResourceBundle.getBundle("IssueDescriptions", Locale.ENGLISH);
