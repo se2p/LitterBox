@@ -288,45 +288,44 @@ public class Scratch3Analyzer {
         File file = new File(path);
         if (!file.exists()) {
             log.info("File " + path + " does not exist.");
-            return;
         } else if (file.isDirectory()) {
             log.info("File " + path + " is a directory.");
-            return;
-        }
-        Program program = extractProgram(file);
-
-        File outputFile = new File(outputFilePath);
-        try {
-            outputFile.createNewFile();
-        } catch (IOException e) {
-            log.info("Could not create file at path " + outputFilePath);
-            return;
-        }
-
-        if (outputFile.isDirectory()) {
-            outputFilePath = removeEndSeparator(outputFilePath) + File.separator +
-                    removeExtension(file.getName()) + INTERMEDIATE_EXTENSION;
-            outputFile = new File(outputFilePath);
-            try {
-                outputFile.createNewFile();
-            } catch (IOException e) {
-                log.info("Creating file " + outputFilePath + " failed.");
+        } else {
+            File outputFile = new File(outputFilePath);
+            if (outputFile.isDirectory() && !outputFile.exists()) {
+                log.info("The path " + outputFilePath + " does not exist."
+                        + "Please enter an existing path.");
+            } else {
+                if (outputFile.isDirectory()) {
+                    outputFilePath = removeEndSeparator(outputFilePath) + File.separator +
+                            removeExtension(file.getName()) + INTERMEDIATE_EXTENSION;
+                    outputFile = new File(outputFilePath);
+                }
+                try {
+                    outputFile.createNewFile();
+                } catch (IOException e) {
+                    log.info("Creating file " + outputFilePath + " failed. "
+                            + "Please make sure all the directories in the path exist.");
+                    return;
+                }
             }
-        }
 
-        PrintStream stream;
-        try {
-            stream = new PrintStream(outputFile);
-        } catch (FileNotFoundException e) {
-            log.info("Creation of output stream not possible with output file " + outputFilePath);
-            return;
+            PrintStream stream;
+            try {
+                stream = new PrintStream(outputFile);
+            } catch (FileNotFoundException e) {
+                log.info("Creation of output stream not possible with output file " + outputFilePath);
+                return;
+            }
+            log.info("Starting to print " + path + " to file " + outputFilePath);
+            GrammarPrintVisitor visitor = new GrammarPrintVisitor(stream);
+            Program program = extractProgram(file);
+            visitor.visit(program);
+            stream.close();
+            log.info("Finished printing.");
         }
-        log.info("Starting to print " + path + " to file " + outputFilePath);
-        GrammarPrintVisitor visitor = new GrammarPrintVisitor(stream);
-        visitor.visit(program);
-        stream.close();
-        log.info("Finished printing.");
     }
+
 
     /**
      * Downloads the project and prints its intermediate language version.

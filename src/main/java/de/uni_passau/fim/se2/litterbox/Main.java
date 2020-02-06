@@ -71,15 +71,16 @@ public class Main {
         Options options = new Options();
 
         options.addOption(PATH_SHORT, PATH, true, "path to folder or file that should be analyzed (required)");
-        options.addOption(INTERMEDIATE_SHORT, INTERMEDIATE, true, "path to a file or folder to which "
-                + "the project(s) will be printed in the intermediate language");
+        options.addOption(INTERMEDIATE_SHORT, INTERMEDIATE, false, "print json project files in the intermediate language");
         options.addOption(PROJECTID_SHORT, PROJECTID, true,
                 "id of the project that should be downloaded and analysed.");
         options.addOption(PROJECTLIST_SHORT, PROJECTLIST, true, "path to a file with a list of project ids of projects"
                 + " which should be downloaded and analysed.");
         options.addOption(PROJECTOUT_SHORT, PROJECTOUT, true, "path where the downloaded project(s) should be stored");
         options.addOption(OUTPUT_SHORT, OUTPUT, true, "path with name of the csv file you want to save (required if path argument"
-                + " is a folder path)");
+                + " is a folder path)\nusage with --intermediate: Path to file or folder for the resulting .sc file(s);"
+                + "\nhas to be a folder if multiple projects are analysed"
+                + "\n(file will be created if not existing yet,\npath has to exist)");
         options.addOption(DETECTORS_SHORT, DETECTORS, true, "name all detectors you want to run separated by ',' "
                 + "\n(all detectors defined in the README)");
         options.addOption(HELP_SHORT, HELP, false, "print this message");
@@ -87,20 +88,20 @@ public class Main {
 
         CommandLine cmd = parser.parse(options, args);
 
-        if (cmd.hasOption(INTERMEDIATE)) {
+        if (cmd.hasOption(INTERMEDIATE) && cmd.hasOption(OUTPUT)) {
             if (cmd.hasOption(PROJECTOUT)) {
                 String projectOut = removeEndSeparator(cmd.getOptionValue(PROJECTOUT));
                 if (cmd.hasOption(PROJECTID)) {
                     String projectId = cmd.getOptionValue(PROJECTID);
                     Scratch3Analyzer.downloadAndPrint(projectId, projectOut,
-                            cmd.getOptionValue(INTERMEDIATE));
+                            cmd.getOptionValue(OUTPUT));
                 } else if (cmd.hasOption(PROJECTLIST)) {
-                    String printPath = removeEndSeparator(cmd.getOptionValue(INTERMEDIATE));
+                    String printPath = removeEndSeparator(cmd.getOptionValue(OUTPUT));
                     Scratch3Analyzer.downloadAndPrintMultiple(
                             cmd.getOptionValue(PROJECTLIST), projectOut, printPath);
                 }
-            } else {
-                Scratch3Analyzer.printIntermediate(cmd.getOptionValue(PATH), cmd.getOptionValue(INTERMEDIATE));
+            } else if (cmd.hasOption(PATH)){
+                Scratch3Analyzer.printIntermediate(cmd.getOptionValue(PATH), cmd.getOptionValue(OUTPUT));
             }
             return;
         } else if (cmd.hasOption(PATH)) {
@@ -149,6 +150,8 @@ public class Main {
         formatter.printHelp("LitterBox", options);
         System.out.println("Example: " + "java -jar Litterbox.jar --path "
                 + "C:\\scratchprojects\\files\\ --output C:\\scratchprojects\\files\\test.csv --detectors bugs\n");
+        System.out.println("Example for intermediate language output: "
+                + "java -jar Litterbox-1.0.jar --intermediate -o ~/path/to/folder/or/file/for/the/output --path ~/path/to/json/project/or/folder/with/projects \n");
 
         System.out.println("Detectors:");
         ResourceBundle messages = ResourceBundle.getBundle("IssueDescriptions", Locale.ENGLISH);
