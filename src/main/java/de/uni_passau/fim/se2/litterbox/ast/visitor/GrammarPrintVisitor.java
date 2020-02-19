@@ -989,10 +989,10 @@ public class GrammarPrintVisitor implements ScratchVisitor {
 
     @Override
     public void visit(SetAttributeTo setAttributeTo) {
-        set();
+        emitToken("define");
         attribute();
         setAttributeTo.getStringExpr().accept(this);
-        to();
+        as();
         setAttributeTo.getExpr().accept(this);
     }
 
