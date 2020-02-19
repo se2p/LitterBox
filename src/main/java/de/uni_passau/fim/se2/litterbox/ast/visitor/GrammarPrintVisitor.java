@@ -1038,7 +1038,7 @@ public class GrammarPrintVisitor implements ScratchVisitor {
 
     @Override
     public void visit(Id id) {
-        emitToken(id.getName());
+        emitToken("\"" + id.getName() + "\"");
     }
 
     @Override
@@ -1049,7 +1049,7 @@ public class GrammarPrintVisitor implements ScratchVisitor {
     @Override
     public void visit(StrId strId) {
         emitToken("strid");
-        emitToken(strId.getName());
+        emitToken("\"" + strId.getName() + "\"");
     }
 
     @Override
