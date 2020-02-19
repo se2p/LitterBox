@@ -207,8 +207,10 @@ public class GrammarPrintVisitor implements ScratchVisitor {
     public void visit(ActorDefinition def) {
         newLine();
         appendIndentation();
-        def.getActorType().accept(this);
+        emitToken("actor");
         def.getIdent().accept(this);
+        emitToken("is");
+        def.getActorType().accept(this);
         begin();
         beginIndentation();
         ResourceList resources = def.getResources();
@@ -1033,7 +1035,13 @@ public class GrammarPrintVisitor implements ScratchVisitor {
 
     @Override
     public void visit(ActorType actorType) {
-        emitToken(actorType.name().toLowerCase());
+        if (actorType.equals(ActorType.STAGE)) {
+            emitToken("ScratchStage");
+        } else if (actorType.equals(ActorType.SPRITE)) {
+            emitToken("ScratchSprite");
+        } else {
+            emitToken("ScratchActor");
+        }
     }
 
     @Override
