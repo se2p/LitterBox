@@ -1043,7 +1043,7 @@ public class GrammarPrintVisitor implements ScratchVisitor {
 
     @Override
     public void visit(StringLiteral stringLiteral) {
-        emitToken("“" + stringLiteral.getText() + "”");
+        emitToken("\"" + stringLiteral.getText() + "\"");
     }
 
     @Override
