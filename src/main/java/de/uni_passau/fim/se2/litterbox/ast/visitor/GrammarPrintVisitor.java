@@ -173,6 +173,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.type.StringType;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Id;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.StrId;
+import de.uni_passau.fim.se2.litterbox.ast.parser.attributes.GraphicEffect;
+import de.uni_passau.fim.se2.litterbox.ast.parser.attributes.SoundEffect;
 
 import java.io.PrintStream;
 import java.util.List;
@@ -182,6 +184,9 @@ public class GrammarPrintVisitor implements ScratchVisitor {
     private static final String INDENT = "    ";
     private PrintStream printStream;
     private int level;
+    private boolean emitAttributeType = false;
+    private boolean volume = false;
+    private boolean emitSpace = true;
 
     public GrammarPrintVisitor(PrintStream printStream) {
         this.printStream = printStream;
@@ -393,7 +398,7 @@ public class GrammarPrintVisitor implements ScratchVisitor {
 
     @Override
     public void visit(ClearGraphicEffects clearGraphicEffects) {
-        emitToken("clear graphic effects");
+        emitToken("clearGraphicEffects()");
     }
 
     @Override
@@ -711,11 +716,22 @@ public class GrammarPrintVisitor implements ScratchVisitor {
     }
 
     @Override
-    public void visit(ChangeAttributeBy changeAttributeBy) {
-        emitToken("change attribute");
+    public void visit(ChangeAttributeBy changeAttributeBy) { //FIXME this won't work that way
+        volume = false;
+        emitNoSpace("change");
+        emitAttributeType = true;
         changeAttributeBy.getAttribute().accept(this);
-        emitToken("by");
+        emitNoSpace("By(");
+        emitAttributeType = false;
+        if (!volume) {
+            emitSpace = false;
+            changeAttributeBy.getAttribute().accept(this);
+            comma();
+        }
+        //emitSpace = false; FIXME
         changeAttributeBy.getExpr().accept(this);
+        closeParentheses();
+        volume = false;
     }
 
     @Override
@@ -1051,7 +1067,19 @@ public class GrammarPrintVisitor implements ScratchVisitor {
 
     @Override
     public void visit(StringLiteral stringLiteral) {
-        emitToken("\"" + stringLiteral.getText() + "\"");
+        if (!emitAttributeType) {
+            emitToken("\"" + stringLiteral.getText() + "\"");
+        } else {
+            String text = stringLiteral.getText();
+            if (GraphicEffect.contains(text)) {
+                emitNoSpace("GraphicEffect");
+            } else if (SoundEffect.contains(text)) {
+                emitNoSpace("SoundEffect");
+            } else if (text.equalsIgnoreCase("VOLUME")) {
+                emitNoSpace("Volume");
+                volume = true;
+            }
+        }
     }
 
     @Override
@@ -1277,8 +1305,9 @@ public class GrammarPrintVisitor implements ScratchVisitor {
     @Override
     public void visit(NumFunctOf numFunctOf) {
         numFunctOf.getFunct().accept(this);
-        of();
+        openParentheses();
         numFunctOf.getNum().accept(this);
+        closeParentheses();
     }
 
     @Override
@@ -1327,7 +1356,7 @@ public class GrammarPrintVisitor implements ScratchVisitor {
     }
 
     private void openParentheses() {
-        emitToken("(");
+        emitNoSpace("(");
     }
 
     private void closeParentheses() {
@@ -1341,7 +1370,7 @@ public class GrammarPrintVisitor implements ScratchVisitor {
 
     @Override
     public void visit(NumFunct numFunct) {
-        emitToken(numFunct.getFunction());
+        emitNoSpace(numFunct.getFunction());
     }
 
     @Override
@@ -1357,8 +1386,15 @@ public class GrammarPrintVisitor implements ScratchVisitor {
     }
 
     private void emitToken(String string) {
+        emitNoSpace(string);
+        if (emitSpace) {
+            emitNoSpace(" ");
+        }
+        emitSpace = true;
+    }
+
+    private void emitNoSpace(String string) {
         printStream.append(string);
-        printStream.append(" ");
     }
 
     private void endIndentation() {
