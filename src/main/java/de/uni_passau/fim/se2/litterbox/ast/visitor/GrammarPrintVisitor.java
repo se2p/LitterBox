@@ -69,6 +69,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AttributeOf;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.ItemOfVariable;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.Join;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.LetterOf;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.UnspecifiedStringExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.Username;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.BoolLiteral;
@@ -945,10 +946,24 @@ public class GrammarPrintVisitor implements ScratchVisitor {
 
     @Override
     public void visit(AttributeOf attributeOf) {
-        emitToken("attribute");
-        attributeOf.getAttribute().accept(this);
-        of();
-        attributeOf.getIdentifier().accept(this);
+        StringExpr attribute = attributeOf.getAttribute();
+        boolean done = false;
+        if (attribute instanceof StringLiteral) {
+            String attributeText = ((StringLiteral) attribute).getText();
+            if (attributeText.equalsIgnoreCase("backdrop_number")) {
+                emitToken("backdropNumber()");
+                done = true;
+            } else if (attributeText.equalsIgnoreCase("backdrop_name")) {
+                emitToken("backdropName()");
+                done = true;
+            }
+        }
+        if (!done) {
+            emitToken("attribute");
+            attributeOf.getAttribute().accept(this);
+            of();
+            attributeOf.getIdentifier().accept(this);
+        }
     }
 
     @Override
