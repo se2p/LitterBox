@@ -1,5 +1,22 @@
+/*
+ * Copyright (C) 2019 LitterBox contributors
+ *
+ * This file is part of LitterBox.
+ *
+ * LitterBox is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or (at
+ * your option) any later version.
+ *
+ * LitterBox is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
+ */
 package de.uni_passau.fim.se2.litterbox.ast.visitor;
-
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
@@ -69,6 +86,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AttributeOf;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.ItemOfVariable;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.Join;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.LetterOf;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.UnspecifiedStringExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.Username;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.BoolLiteral;
@@ -161,6 +179,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.timecomp.TimeComp;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.Edge;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.MousePointer;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.SpriteTouchable;
+import de.uni_passau.fim.se2.litterbox.ast.model.touchable.Touchable;
+import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.Color;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.FromNumber;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.Rgba;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.BooleanType;
@@ -173,6 +193,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.type.StringType;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Id;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.StrId;
+import de.uni_passau.fim.se2.litterbox.ast.parser.attributes.GraphicEffect;
+import de.uni_passau.fim.se2.litterbox.ast.parser.attributes.SoundEffect;
 
 import java.io.PrintStream;
 import java.util.List;
@@ -182,6 +204,8 @@ public class GrammarPrintVisitor implements ScratchVisitor {
     private static final String INDENT = "    ";
     private PrintStream printStream;
     private int level;
+    private boolean emitAttributeType = false;
+    private boolean volume = false;
 
     public GrammarPrintVisitor(PrintStream printStream) {
         this.printStream = printStream;
@@ -198,8 +222,12 @@ public class GrammarPrintVisitor implements ScratchVisitor {
         appendIndentation();
         emitToken("program");
         program.getIdent().accept(this);
-        for (ActorDefinition child : program.getActorDefinitionList().getDefintions()) {
-            child.accept(this);
+        List<ActorDefinition> definitions = program.getActorDefinitionList().getDefintions();
+        for (int i = 0; i < definitions.size(); i++) {
+            definitions.get(i).accept(this);
+            if (i < definitions.size() - 1) {
+                newLine();
+            }
         }
     }
 
@@ -207,8 +235,10 @@ public class GrammarPrintVisitor implements ScratchVisitor {
     public void visit(ActorDefinition def) {
         newLine();
         appendIndentation();
-        def.getActorType().accept(this);
+        emitToken("actor");
         def.getIdent().accept(this);
+        emitToken(" is");
+        def.getActorType().accept(this);
         begin();
         beginIndentation();
         ResourceList resources = def.getResources();
@@ -220,8 +250,11 @@ public class GrammarPrintVisitor implements ScratchVisitor {
         }
 
         DeclarationStmtList declarations = def.getDecls();
-        List<DeclarationStmt> declarationStmtList1 = declarations.getDeclarationStmtList();
-        for (DeclarationStmt declarationStmt : declarationStmtList1) {
+        List<DeclarationStmt> declarationStmtList = declarations.getDeclarationStmtList();
+        if (declarationStmtList.size() > 0) {
+            newLine();
+        }
+        for (DeclarationStmt declarationStmt : declarationStmtList) {
             newLine();
             appendIndentation();
             declarationStmt.accept(this);
@@ -229,6 +262,9 @@ public class GrammarPrintVisitor implements ScratchVisitor {
 
         SetStmtList setStmtList = def.getSetStmtList();
         List<SetStmt> stmts = setStmtList.getStmts();
+        if (stmts.size() > 0) {
+            newLine();
+        }
         for (SetStmt stmt : stmts) {
             newLine();
             appendIndentation();
@@ -237,6 +273,9 @@ public class GrammarPrintVisitor implements ScratchVisitor {
 
         ProcedureDefinitionList procDefList = def.getProcedureDefinitionList();
         List<ProcedureDefinition> procDefs = procDefList.getList();
+        if (procDefs.size() > 0) {
+            newLine();
+        }
         for (ProcedureDefinition procDef : procDefs) {
             newLine();
             appendIndentation();
@@ -245,6 +284,9 @@ public class GrammarPrintVisitor implements ScratchVisitor {
 
         ScriptList scripts = def.getScripts();
         List<Script> scriptList = scripts.getScriptList();
+        if (scriptList.size() > 0) {
+            newLine();
+        }
         for (Script script : scriptList) {
             newLine();
             appendIndentation();
@@ -259,7 +301,7 @@ public class GrammarPrintVisitor implements ScratchVisitor {
         emitToken("script");
         emitToken("on");
         script.getEvent().accept(this);
-        emitToken("do");
+        emitNoSpace(" do");
         script.getStmtList().accept(this);
     }
 
@@ -273,19 +315,18 @@ public class GrammarPrintVisitor implements ScratchVisitor {
 
     @Override
     public void visit(Clicked clicked) {
-        emitToken("clicked");
+        emitNoSpace("clicked");
     }
 
     @Override
     public void visit(GreenFlag greenFlag) {
-        emitToken("green");
-        emitToken("flag");
+        emitNoSpace("green flag");
     }
 
     @Override
     public void visit(KeyPressed keyPressed) {
         keyPressed.getKey().accept(this);
-        emitToken("pressed");
+        emitNoSpace("pressed");
     }
 
     @Override
@@ -296,13 +337,12 @@ public class GrammarPrintVisitor implements ScratchVisitor {
 
     @Override
     public void visit(Never never) {
-        emitToken("never");
+        emitNoSpace("never");
     }
 
     @Override
     public void visit(ReceptionOfMessage receptionOfMessage) {
-        emitToken("received");
-        emitToken("message");
+        emitToken("received message");
         receptionOfMessage.getMsg().accept(this);
     }
 
@@ -313,20 +353,16 @@ public class GrammarPrintVisitor implements ScratchVisitor {
 
     @Override
     public void visit(StartedAsClone startedAsClone) {
-        emitToken("started");
-        emitToken("as");
-        emitToken("clone");
+        emitNoSpace("started as clone");
     }
 
     @Override
     public void visit(VariableAboveValue variableAboveValue) {
-        emitToken("value");
-        emitToken("of");
+        emitToken("value of");
         variableAboveValue.getVariable().accept(this);
-        emitToken("above");
+        emitToken(" above");
         variableAboveValue.getValue().accept(this);
     }
-
 
     @Override
     public void visit(StmtList stmtList) {
@@ -348,50 +384,52 @@ public class GrammarPrintVisitor implements ScratchVisitor {
 
     @Override
     public void visit(PlaySoundUntilDone playSoundUntilDone) {
-        emitToken("play sound");
+        emitNoSpace("playUntilDone(");
         playSoundUntilDone.getElementChoice().accept(this);
-        emitToken("until done");
+        closeParentheses();
     }
 
     @Override
     public void visit(StartSound startSound) {
-        emitToken("start sound");
+        emitNoSpace("startSound(");
         startSound.getElementChoice().accept(this);
+        closeParentheses();
     }
 
     @Override
     public void visit(ClearSoundEffects clearSoundEffects) {
-        emitToken("clear sound effects");
+        emitNoSpace("clearSoundEffects()");
     }
 
     @Override
     public void visit(StopAllSounds stopAllSounds) {
-        emitToken("stop all sounds");
+        emitNoSpace("stopAllSounds()");
     }
 
     @Override
     public void visit(AskAndWait askAndWait) {
         emitToken("ask");
         askAndWait.getQuestion().accept(this);
-        emitToken("and wait");
+        emitToken(" and wait");
     }
 
     @Override
     public void visit(SwitchBackdrop switchBackdrop) {
-        emitToken("switch backdrop to");
+        emitNoSpace("switchBackdropTo(");
         switchBackdrop.getElementChoice().accept(this);
+        closeParentheses();
     }
 
     @Override
     public void visit(SwitchBackdropAndWait switchBackdropAndWait) {
-        emitToken("switch backdrop to");
+        emitNoSpace("switchBackdropToAndWait(");
         switchBackdropAndWait.getElementChoice().accept(this);
-        emitToken("and wait");
+        closeParentheses();
     }
 
     @Override
     public void visit(ClearGraphicEffects clearGraphicEffects) {
-        emitToken("clear graphic effects");
+        emitNoSpace("clearGraphicEffects()");
     }
 
     @Override
@@ -408,36 +446,37 @@ public class GrammarPrintVisitor implements ScratchVisitor {
 
     @Override
     public void visit(Show show) {
-        emitToken("show");
+        emitNoSpace("show");
     }
 
     @Override
     public void visit(Hide hide) {
-        emitToken("hide");
+        emitNoSpace("hide");
     }
 
     @Override
     public void visit(SayForSecs sayForSecs) {
-        emitToken("say");
+        emitNoSpace("sayTextFor(");
         sayForSecs.getString().accept(this);
-        emitToken("for");
+        comma();
         sayForSecs.getSecs().accept(this);
-        emitToken("secs");
+        closeParentheses();
     }
 
     @Override
     public void visit(Say say) {
-        emitToken("say");
+        emitNoSpace("sayText(");
         say.getString().accept(this);
+        closeParentheses();
     }
 
     @Override
     public void visit(ThinkForSecs thinkForSecs) {
         emitToken("think");
         thinkForSecs.getThought().accept(this);
-        emitToken("for");
+        emitToken(" for");
         thinkForSecs.getSecs().accept(this);
-        emitToken("secs");
+        emitToken(" secs");
     }
 
     @Override
@@ -448,8 +487,9 @@ public class GrammarPrintVisitor implements ScratchVisitor {
 
     @Override
     public void visit(SwitchCostumeTo switchCostumeTo) {
-        emitToken("switch costume to");
+        emitNoSpace("changeCostumeTo(");
         switchCostumeTo.getElementChoice().accept(this);
+        closeParentheses();
     }
 
     @Override
@@ -462,7 +502,7 @@ public class GrammarPrintVisitor implements ScratchVisitor {
     public void visit(SetSizeTo setSizeTo) {
         emitToken("set size to");
         setSizeTo.getPercent().accept(this);
-        emitToken("percent");
+        emitToken(" percent");
     }
 
     @Override
@@ -489,17 +529,17 @@ public class GrammarPrintVisitor implements ScratchVisitor {
 
     @Override
     public void visit(Next next) {
-        emitToken("next");
+        emitNoSpace("next");
     }
 
     @Override
     public void visit(Prev prev) {
-        emitToken("prev");
+        emitNoSpace("prev");
     }
 
     @Override
     public void visit(Random random) {
-        emitToken("random");
+        emitNoSpace("random");
     }
 
     @Override
@@ -516,23 +556,23 @@ public class GrammarPrintVisitor implements ScratchVisitor {
 
     @Override
     public void visit(MoveSteps moveSteps) {
-        emitToken("move");
+        emitToken("moveSteps(");
         moveSteps.getSteps().accept(this);
-        emitToken("steps");
+        closeParentheses();
     }
 
     @Override
     public void visit(TurnRight turnRight) {
-        emitToken("turn right");
+        emitNoSpace("turnRight(");
         turnRight.getDegrees().accept(this);
-        emitToken("degrees");
+        closeParentheses();
     }
 
     @Override
     public void visit(TurnLeft turnLeft) {
-        emitToken("turn left");
+        emitNoSpace("turnLeft(");
         turnLeft.getDegrees().accept(this);
-        emitToken("degrees");
+        closeParentheses();
     }
 
     @Override
@@ -549,28 +589,28 @@ public class GrammarPrintVisitor implements ScratchVisitor {
 
     @Override
     public void visit(RandomPos randomPos) {
-        emitToken("random_pos");
+        emitNoSpace("random_pos");
     }
 
     @Override
     public void visit(MousePos mousePos) {
-        emitToken("mouse_pos");
+        emitNoSpace("mouse_pos");
     }
 
     @Override
     public void visit(CoordinatePosition coordinatePosition) {
-        emitToken("(");
+        openParentheses();
         coordinatePosition.getXCoord().accept(this);
-        emitToken(",");
+        comma();
         coordinatePosition.getYCoord().accept(this);
-        emitToken(")");
+        closeParentheses();
     }
 
     @Override
     public void visit(GlideSecsTo glideSecsTo) {
         emitToken("glide");
         glideSecsTo.getSecs().accept(this);
-        emitToken("secs to");
+        emitToken(" secs to");
         glideSecsTo.getPosition().accept(this);
     }
 
@@ -582,14 +622,16 @@ public class GrammarPrintVisitor implements ScratchVisitor {
 
     @Override
     public void visit(PointTowards pointTowards) {
-        emitToken("point towards");
+        emitToken("pointTowards(");
         pointTowards.getPosition().accept(this);
+        closeParentheses();
     }
 
     @Override
     public void visit(ChangeXBy changeXBy) {
-        emitToken("change x by");
+        emitToken("changeXBy(");
         changeXBy.getNum().accept(this);
+        closeParentheses();
     }
 
     @Override
@@ -625,7 +667,7 @@ public class GrammarPrintVisitor implements ScratchVisitor {
     public void visit(DeleteOf deleteOf) {
         emitToken("delete");
         deleteOf.getNum().accept(this);
-        emitToken("of");
+        emitToken(" of");
         deleteOf.getVariable().accept(this);
     }
 
@@ -633,7 +675,7 @@ public class GrammarPrintVisitor implements ScratchVisitor {
     public void visit(AddTo addTo) {
         emitToken("add");
         addTo.getString().accept(this);
-        emitToken("to");
+        emitToken(" to");
         addTo.getVariable().accept(this);
     }
 
@@ -641,9 +683,9 @@ public class GrammarPrintVisitor implements ScratchVisitor {
     public void visit(InsertAt insertAt) {
         emitToken("insert");
         insertAt.getString().accept(this);
-        emitToken("at");
+        emitToken(" at");
         insertAt.getIndex().accept(this);
-        emitToken("of");
+        emitToken(" of");
         insertAt.getVariable().accept(this);
     }
 
@@ -651,9 +693,9 @@ public class GrammarPrintVisitor implements ScratchVisitor {
     public void visit(ReplaceItem replaceItem) {
         emitToken("replace item");
         replaceItem.getIndex().accept(this);
-        emitToken("of");
+        emitToken(" of");
         replaceItem.getVariable().accept(this);
-        emitToken("by");
+        emitToken(" by");
         replaceItem.getString().accept(this);
     }
 
@@ -661,13 +703,12 @@ public class GrammarPrintVisitor implements ScratchVisitor {
     public void visit(WaitSeconds waitSeconds) {
         emitToken("wait");
         waitSeconds.getSeconds().accept(this);
-        emitToken("seconds");
+        emitToken(" seconds");
     }
 
     @Override
     public void visit(WaitUntil waitUntil) {
-        emitToken("wait");
-        emitToken("until");
+        emitToken("wait until");
         waitUntil.getUntil().accept(this);
     }
 
@@ -692,7 +733,7 @@ public class GrammarPrintVisitor implements ScratchVisitor {
     public void visit(BroadcastAndWait broadcastAndWait) {
         emitToken("broadcast");
         broadcastAndWait.getMessage().accept(this);
-        emitToken("and wait");
+        emitToken(" and wait");
     }
 
     @Override
@@ -704,16 +745,25 @@ public class GrammarPrintVisitor implements ScratchVisitor {
     public void visit(ChangeVariableBy changeVariableBy) {
         emitToken("change");
         changeVariableBy.getVariable().accept(this);
-        emitToken("by");
+        emitToken(" by");
         changeVariableBy.getExpr().accept(this);
     }
 
     @Override
     public void visit(ChangeAttributeBy changeAttributeBy) {
-        emitToken("change attribute");
+        volume = false;
+        emitNoSpace("change");
+        emitAttributeType = true;
         changeAttributeBy.getAttribute().accept(this);
-        emitToken("by");
+        emitNoSpace("By(");
+        emitAttributeType = false;
+        if (!volume) {
+            changeAttributeBy.getAttribute().accept(this);
+            comma();
+        }
         changeAttributeBy.getExpr().accept(this);
+        closeParentheses();
+        volume = false;
     }
 
     @Override
@@ -730,9 +780,9 @@ public class GrammarPrintVisitor implements ScratchVisitor {
 
     @Override
     public void visit(ExpressionList expressionList) {
-        emitToken("(");
+        openParentheses();
         expressionList.getExpressionListPlain().accept(this);
-        emitToken(")");
+        closeParentheses();
     }
 
     @Override
@@ -751,7 +801,7 @@ public class GrammarPrintVisitor implements ScratchVisitor {
     public void visit(IfThenStmt ifThenStmt) { // FIXME format?
         emitToken("if");
         ifThenStmt.getBoolExpr().accept(this);
-        emitToken("then");
+        emitNoSpace(" then");
         ifThenStmt.getThenStmts().accept(this);
     }
 
@@ -759,15 +809,14 @@ public class GrammarPrintVisitor implements ScratchVisitor {
     public void visit(IfElseStmt ifElseStmt) { //FIXME format?
         emitToken("if");
         ifElseStmt.getBoolExpr().accept(this);
-
-        emitToken("then");
+        emitNoSpace(" then");
         beginIndentation();
         ifElseStmt.getStmtList().accept(this);
         endIndentation();
 
         newLine();
         appendIndentation();
-        emitToken("else");
+        emitNoSpace("else");
         beginIndentation();
         ifElseStmt.getElseStmts().accept(this);
         endIndentation();
@@ -777,7 +826,7 @@ public class GrammarPrintVisitor implements ScratchVisitor {
     public void visit(UntilStmt untilStmt) {
         emitToken("until");
         untilStmt.getBoolExpr().accept(this);
-        emitToken("repeat");
+        emitNoSpace(" repeat");
         untilStmt.getStmtList().accept(this);
     }
 
@@ -785,14 +834,13 @@ public class GrammarPrintVisitor implements ScratchVisitor {
     public void visit(RepeatTimesStmt repeatTimesStmt) {
         emitToken("repeat");
         repeatTimesStmt.getTimes().accept(this);
-        emitToken("times");
+        emitNoSpace(" times");
         repeatTimesStmt.getStmtList().accept(this);
     }
 
     @Override
     public void visit(RepeatForeverStmt repeatForeverStmt) {
-        emitToken("repeat");
-        emitToken("forever");
+        emitNoSpace("repeat forever");
         repeatForeverStmt.getStmtList().accept(this);
     }
 
@@ -818,14 +866,14 @@ public class GrammarPrintVisitor implements ScratchVisitor {
 
     @Override
     public void visit(DeleteClone deleteClone) {
-        emitToken("delete this clone");
+        emitNoSpace("delete this clone");
     }
 
     @Override
     public void visit(ParameterList parameterList) {
-        emitToken("(");
+        openParentheses();
         parameterList.getParameterListPlain().accept(this);
-        emitToken(")");
+        closeParentheses();
     }
 
     @Override
@@ -859,6 +907,7 @@ public class GrammarPrintVisitor implements ScratchVisitor {
     public void visit(ImageResource imageResource) {
         emitToken("image");
         imageResource.getIdent().accept(this);
+        emitNoSpace(" ");
         imageResource.getUri().accept(this);
     }
 
@@ -866,6 +915,7 @@ public class GrammarPrintVisitor implements ScratchVisitor {
     public void visit(SoundResource soundResource) {
         emitToken("sound");
         soundResource.getIdent().accept(this);
+        emitNoSpace(" ");
         soundResource.getUri().accept(this);
     }
 
@@ -880,37 +930,37 @@ public class GrammarPrintVisitor implements ScratchVisitor {
 
     @Override
     public void visit(BooleanType booleanType) {
-        emitToken("boolean");
+        emitNoSpace("boolean");
     }
 
     @Override
     public void visit(ImageType imageType) {
-        emitToken("image");
+        emitNoSpace("image");
     }
 
     @Override
     public void visit(ListType listType) {
-        emitToken("list string"); // TODO is this correct
+        emitNoSpace("list string"); // TODO is this correct
     }
 
     @Override
     public void visit(MapType mapType) {
-        emitToken("map string");
+        emitNoSpace("map string");
     }
 
     @Override
     public void visit(NumberType numberType) {
-        emitToken("number");
+        emitNoSpace("number");
     }
 
     @Override
     public void visit(SoundType soundType) {
-        emitToken("sound");
+        emitNoSpace("sound");
     }
 
     @Override
     public void visit(StringType stringType) {
-        emitToken("string");
+        emitNoSpace("string");
     }
 
     @Override
@@ -927,10 +977,27 @@ public class GrammarPrintVisitor implements ScratchVisitor {
 
     @Override
     public void visit(AttributeOf attributeOf) {
-        emitToken("attribute");
-        attributeOf.getAttribute().accept(this);
-        of();
-        attributeOf.getIdentifier().accept(this);
+        StringExpr attribute = attributeOf.getAttribute();
+        boolean done = false;
+        if (attribute instanceof StringLiteral) {
+            String attributeText = ((StringLiteral) attribute).getText();
+            if (attributeText.equalsIgnoreCase("backdrop_number")) {
+                emitNoSpace("backdropNumber()");
+                done = true;
+            } else if (attributeText.equalsIgnoreCase("backdrop_name")) {
+                emitNoSpace("backdropName()");
+                done = true;
+            } else if (attributeText.equalsIgnoreCase("sound_volume")) {
+                emitNoSpace("volume()");
+                done = true;
+            }
+        }
+        if (!done) {
+            emitToken("attribute");
+            attributeOf.getAttribute().accept(this);
+            of();
+            attributeOf.getIdentifier().accept(this);
+        }
     }
 
     @Override
@@ -950,7 +1017,7 @@ public class GrammarPrintVisitor implements ScratchVisitor {
 
     @Override
     public void visit(Username username) {
-        emitToken("username");
+        emitNoSpace("username");
     }
 
     @Override
@@ -963,7 +1030,7 @@ public class GrammarPrintVisitor implements ScratchVisitor {
 
     @Override
     public void visit(UnspecifiedStringExpr unspecifiedStringExpr) {
-        emitToken("?string");
+        emitNoSpace("?string");
     }
 
     @Override
@@ -987,15 +1054,15 @@ public class GrammarPrintVisitor implements ScratchVisitor {
 
     @Override
     public void visit(SetAttributeTo setAttributeTo) {
-        set();
+        emitToken("define");
         attribute();
         setAttributeTo.getStringExpr().accept(this);
-        to();
+        as();
         setAttributeTo.getExpr().accept(this);
     }
 
     private void to() {
-        emitToken("to");
+        emitToken(" to");
     }
 
     private void attribute() {
@@ -1019,37 +1086,55 @@ public class GrammarPrintVisitor implements ScratchVisitor {
     }
 
     private void of() {
-        emitToken("of");
+        emitToken(" of");
     }
 
     private void as() {
-        emitToken("as");
+        emitToken(" as");
     }
 
     @Override
     public void visit(URI uri) {
-        emitToken(uri.getUri().getText());
+        emitNoSpace(uri.getUri().getText());
     }
 
     @Override
     public void visit(ActorType actorType) {
-        emitToken(actorType.name().toLowerCase());
+        if (actorType.equals(ActorType.STAGE)) {
+            emitNoSpace("ScratchStage");
+        } else if (actorType.equals(ActorType.SPRITE)) {
+            emitNoSpace("ScratchSprite");
+        } else {
+            emitNoSpace("ScratchActor");
+        }
     }
 
     @Override
     public void visit(Id id) {
-        emitToken(id.getName());
+        emitNoSpace("\"" + id.getName() + "\"");
     }
 
     @Override
     public void visit(StringLiteral stringLiteral) {
-        emitToken("“" + stringLiteral.getText() + "”");
+        if (!emitAttributeType) {
+            emitNoSpace("\"" + stringLiteral.getText() + "\"");
+        } else {
+            String text = stringLiteral.getText();
+            if (GraphicEffect.contains(text)) {
+                emitNoSpace("GraphicEffect");
+            } else if (SoundEffect.contains(text)) {
+                emitNoSpace("SoundEffect");
+            } else if (text.equalsIgnoreCase("VOLUME")) {
+                emitNoSpace("Volume");
+                volume = true;
+            }
+        }
     }
 
     @Override
     public void visit(StrId strId) {
         emitToken("strid");
-        emitToken(strId.getName());
+        emitNoSpace("\"" + strId.getName() + "\"");
     }
 
     @Override
@@ -1060,65 +1145,91 @@ public class GrammarPrintVisitor implements ScratchVisitor {
     @Override
     public void visit(Not not) {
         emitToken("not");
+        openParentheses();
         not.getOperand1().accept(this);
+        closeParentheses();
     }
 
     @Override
     public void visit(And and) {
+        openParentheses();
         and.getOperand1().accept(this);
-        emitToken("and");
+        emitToken(" and");
         and.getOperand2().accept(this);
+        closeParentheses();
     }
 
     @Override
     public void visit(Or or) {
+        openParentheses();
         or.getOperand1().accept(this);
-        emitToken("or");
+        emitToken(" or");
         or.getOperand2().accept(this);
+        closeParentheses();
     }
 
     @Override
     public void visit(BiggerThan biggerThan) {
+        openParentheses();
         biggerThan.getOperand1().accept(this);
-        emitToken(">");
+        emitToken(" >");
         biggerThan.getOperand2().accept(this);
+        closeParentheses();
     }
 
     @Override
     public void visit(LessThan lessThan) {
+        openParentheses();
         lessThan.getOperand1().accept(this);
-        emitToken("<");
+        emitToken(" <");
         lessThan.getOperand1().accept(this);
+        closeParentheses();
     }
 
     @Override
     public void visit(Equals equals) {
+        openParentheses();
         equals.getOperand1().accept(this);
-        emitToken("=");
+        emitToken(" =");
         equals.getOperand2().accept(this);
+        closeParentheses();
     }
 
     @Override
     public void visit(ExpressionContains expressionContains) {
         expressionContains.getContaining().accept(this);
-        emitToken("contains");
+        emitToken(" contains");
         expressionContains.getContained().accept(this);
     }
 
     @Override
     public void visit(Touching touching) {
-        emitToken("touching");
-        touching.getTouchable().accept(this);
+        boolean done = false;
+        Touchable touchable = touching.getTouchable();
+        if (touchable instanceof Edge) {
+            emitNoSpace("touchingEdge(");
+        } else if (touchable instanceof MousePointer) {
+            emitNoSpace("touchingMousePointer()");
+            done = true;
+        } else if (touchable instanceof Color) {
+            emitNoSpace("touchingColor(");
+        } else {
+            emitNoSpace("touchingObject(");
+        }
+        if (!done) {
+            touching.getTouchable().accept(this);
+        }
+        closeParentheses();
     }
 
     @Override
     public void visit(MousePointer mousePointer) {
-        emitToken("mousepointer");
+        emitNoSpace("mousepointer");
     }
 
     @Override
     public void visit(Edge edge) {
-        emitToken("edge");
+        emitNoSpace("edge");
     }
 
     @Override
@@ -1132,21 +1243,23 @@ public class GrammarPrintVisitor implements ScratchVisitor {
         emitToken("rgb");
         emitToken(String.valueOf(colorLiteral.getRed()));
         emitToken(String.valueOf(colorLiteral.getGreen()));
-        emitToken(String.valueOf(colorLiteral.getBlue()));
+        emitNoSpace(String.valueOf(colorLiteral.getBlue()));
     }
 
     @Override
     public void visit(ColorTouches colorTouches) {
+        emitNoSpace("colorIsTouchingColor(");
         colorTouches.getOperand1().accept(this);
-        emitToken("touches");
+        comma();
         colorTouches.getOperand2().accept(this);
+        closeParentheses();
     }
 
     @Override
     public void visit(IsKeyPressed isKeyPressed) {
         emitToken("key");
         isKeyPressed.getKey().accept(this);
-        emitToken("pressed");
+        emitNoSpace(" pressed");
     }
 
     @Override
@@ -1166,12 +1279,12 @@ public class GrammarPrintVisitor implements ScratchVisitor {
 
     @Override
     public void visit(IsMouseDown isMouseDown) {
-        emitToken("mouse down");
+        emitNoSpace("mouse down");
     }
 
     @Override
     public void visit(UnspecifiedBoolExpr unspecifiedBoolExpr) {
-        emitToken("?bool");
+        emitNoSpace("?bool");
     }
 
     @Override
@@ -1182,12 +1295,12 @@ public class GrammarPrintVisitor implements ScratchVisitor {
 
     @Override
     public void visit(Timer timer) {
-        emitToken("timer");
+        emitNoSpace("timer");
     }
 
     @Override
     public void visit(DaysSince2000 daysSince2000) {
-        emitToken("days since millennium");
+        emitNoSpace("days since millennium");
     }
 
     @Override
@@ -1198,28 +1311,32 @@ public class GrammarPrintVisitor implements ScratchVisitor {
 
     @Override
     public void visit(TimeComp timeComp) {
-        emitToken(timeComp.getLabel());
+        emitNoSpace(timeComp.getLabel());
     }
 
     @Override
     public void visit(DistanceTo distanceTo) {
-        emitToken("distanceto");
-        distanceTo.getPosition().accept(this);
+        if (distanceTo.getPosition() instanceof MousePos) {
+            emitNoSpace("distanceToMousePointer()");
+        } else {
+            emitToken("distanceto");
+            distanceTo.getPosition().accept(this);
+        }
     }
 
     @Override
     public void visit(MouseX mouseX) {
-        emitToken("mousex");
+        emitNoSpace("mousex");
     }
 
     @Override
     public void visit(MouseY mouseY) {
-        emitToken("mousey");
+        emitNoSpace("mousey");
     }
 
     @Override
     public void visit(Loudness loudness) {
-        emitToken("loudness");
+        emitNoSpace("loudness");
     }
 
     @Override
@@ -1238,7 +1355,7 @@ public class GrammarPrintVisitor implements ScratchVisitor {
     public void visit(IndexOf indexOf) {
         emitToken("index of");
         indexOf.getExpr().accept(this);
-        emitToken("in");
+        emitToken(" in");
         indexOf.getVariable().accept(this);
     }
 
@@ -1246,7 +1363,7 @@ public class GrammarPrintVisitor implements ScratchVisitor {
     public void visit(PickRandom pickRandom) {
         emitToken("pick random");
         pickRandom.getFrom().accept(this);
-        emitToken("of");
+        emitToken(" of");
         pickRandom.getTo().accept(this);
     }
 
@@ -1258,7 +1375,7 @@ public class GrammarPrintVisitor implements ScratchVisitor {
 
     @Override
     public void visit(NumberLiteral number) {
-        emitToken(String.valueOf(number.getValue()));
+        emitNoSpace(String.valueOf(number.getValue()));
     }
 
     @Override
@@ -1269,7 +1386,6 @@ public class GrammarPrintVisitor implements ScratchVisitor {
     @Override
     public void visit(NumFunctOf numFunctOf) {
         numFunctOf.getFunct().accept(this);
-        of();
         numFunctOf.getNum().accept(this);
     }
 
@@ -1277,7 +1393,7 @@ public class GrammarPrintVisitor implements ScratchVisitor {
     public void visit(Mult mult) {
         openParentheses();
         mult.getOperand1().accept(this);
-        emitToken("*");
+        emitToken(" *");
         mult.getOperand2().accept(this);
         closeParentheses();
     }
@@ -1286,7 +1402,7 @@ public class GrammarPrintVisitor implements ScratchVisitor {
     public void visit(Div div) {
         openParentheses();
         div.getOperand1().accept(this);
-        emitToken("/");
+        emitToken(" /");
         div.getOperand2().accept(this);
         closeParentheses();
     }
@@ -1295,7 +1411,7 @@ public class GrammarPrintVisitor implements ScratchVisitor {
     public void visit(Mod mod) {
         openParentheses();
         mod.getOperand1().accept(this);
-        emitToken("mod");
+        emitToken(" mod");
         mod.getOperand2().accept(this);
         closeParentheses();
     }
@@ -1304,7 +1420,7 @@ public class GrammarPrintVisitor implements ScratchVisitor {
     public void visit(Add add) {
         openParentheses();
         add.getOperand1().accept(this);
-        emitToken("+");
+        emitToken(" +");
         add.getOperand2().accept(this);
         closeParentheses();
     }
@@ -1313,44 +1429,48 @@ public class GrammarPrintVisitor implements ScratchVisitor {
     public void visit(Minus minus) {
         openParentheses();
         minus.getOperand1().accept(this);
-        emitToken("-");
+        emitToken(" -");
         minus.getOperand2().accept(this);
         closeParentheses();
     }
 
     private void openParentheses() {
-        emitToken("(");
+        emitNoSpace("(");
     }
 
     private void closeParentheses() {
-        emitToken(")");
+        emitNoSpace(")");
     }
 
     @Override
     public void visit(UnspecifiedNumExpr unspecifiedNumExpr) {
-        emitToken("?number");
+        emitNoSpace("?number");
     }
 
     @Override
     public void visit(NumFunct numFunct) {
-        emitToken(numFunct.getFunction());
+        emitNoSpace(numFunct.getFunction());
     }
 
     @Override
     public void visit(UnspecifiedExpression unspecifiedExpression) {
-        emitToken("?expr");
+        emitNoSpace("?expr");
     }
 
     @Override
     public void visit(Qualified qualified) {
         qualified.getFirst().accept(this);
-        emitToken(".");
+        emitNoSpace(".");
         qualified.getSecond().accept(this);
     }
 
     private void emitToken(String string) {
+        emitNoSpace(string);
+        emitNoSpace(" ");
+    }
+
+    private void emitNoSpace(String string) {
         printStream.append(string);
-        printStream.append(" ");
     }
 
     private void endIndentation() {
@@ -1367,7 +1487,7 @@ public class GrammarPrintVisitor implements ScratchVisitor {
     }
 
     private void begin() {
-        emitToken("begin");
+        emitToken(" begin");
     }
 
     private void end() {
