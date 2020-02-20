@@ -356,25 +356,26 @@ public class GrammarPrintVisitor implements ScratchVisitor {
 
     @Override
     public void visit(PlaySoundUntilDone playSoundUntilDone) {
-        emitToken("play sound");
+        emitNoSpace("playUntilDone(");
         playSoundUntilDone.getElementChoice().accept(this);
-        emitToken("until done");
+        closeParentheses();
     }
 
     @Override
     public void visit(StartSound startSound) {
-        emitToken("start sound");
+        emitToken("startSound(");
         startSound.getElementChoice().accept(this);
+        closeParentheses();
     }
 
     @Override
     public void visit(ClearSoundEffects clearSoundEffects) {
-        emitToken("clear sound effects");
+        emitToken("clearSoundEffects()");
     }
 
     @Override
     public void visit(StopAllSounds stopAllSounds) {
-        emitToken("stop all sounds");
+        emitToken("stopAllSounds()");
     }
 
     @Override
@@ -956,6 +957,9 @@ public class GrammarPrintVisitor implements ScratchVisitor {
             } else if (attributeText.equalsIgnoreCase("backdrop_name")) {
                 emitToken("backdropName()");
                 done = true;
+            } else if (attributeText.equalsIgnoreCase("sound_volume")) {
+                emitToken("volume()");
+                done = true;
             }
         }
         if (!done) {
@@ -1020,11 +1024,23 @@ public class GrammarPrintVisitor implements ScratchVisitor {
 
     @Override
     public void visit(SetAttributeTo setAttributeTo) {
-        emitToken("define");
-        attribute();
-        setAttributeTo.getStringExpr().accept(this);
-        as();
-        setAttributeTo.getExpr().accept(this);
+        boolean done = false;
+        StringExpr attribute = setAttributeTo.getStringExpr();
+        if (attribute instanceof StringLiteral) {
+            if (((StringLiteral) attribute).getText().equalsIgnoreCase("volume")) {
+                emitNoSpace("setVolumeTo(");
+                setAttributeTo.getExpr().accept(this);
+                closeParentheses();
+                done = true;
+            }
+        }
+        if (!done) {
+            emitToken("define");
+            attribute();
+            setAttributeTo.getStringExpr().accept(this);
+            as();
+            setAttributeTo.getExpr().accept(this);
+        }
     }
 
     private void to() {
