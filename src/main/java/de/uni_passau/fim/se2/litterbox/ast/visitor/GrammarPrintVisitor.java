@@ -206,8 +206,12 @@ public class GrammarPrintVisitor implements ScratchVisitor {
         appendIndentation();
         emitToken("program");
         program.getIdent().accept(this);
-        for (ActorDefinition child : program.getActorDefinitionList().getDefintions()) {
-            child.accept(this);
+        List<ActorDefinition> definitions = program.getActorDefinitionList().getDefintions();
+        for (int i = 0; i < definitions.size(); i++) {
+            definitions.get(i).accept(this);
+            if (i < definitions.size() - 1) {
+                newLine();
+            }
         }
     }
 
@@ -228,10 +232,13 @@ public class GrammarPrintVisitor implements ScratchVisitor {
             appendIndentation();
             resource.accept(this);
         }
-        newLine();
+
         DeclarationStmtList declarations = def.getDecls();
-        List<DeclarationStmt> declarationStmtList1 = declarations.getDeclarationStmtList();
-        for (DeclarationStmt declarationStmt : declarationStmtList1) {
+        List<DeclarationStmt> declarationStmtList = declarations.getDeclarationStmtList();
+        if (declarationStmtList.size() > 0) {
+            newLine();
+        }
+        for (DeclarationStmt declarationStmt : declarationStmtList) {
             newLine();
             appendIndentation();
             declarationStmt.accept(this);
@@ -239,6 +246,9 @@ public class GrammarPrintVisitor implements ScratchVisitor {
 
         SetStmtList setStmtList = def.getSetStmtList();
         List<SetStmt> stmts = setStmtList.getStmts();
+        if (stmts.size() > 0) {
+            newLine();
+        }
         for (SetStmt stmt : stmts) {
             newLine();
             appendIndentation();
@@ -247,6 +257,9 @@ public class GrammarPrintVisitor implements ScratchVisitor {
 
         ProcedureDefinitionList procDefList = def.getProcedureDefinitionList();
         List<ProcedureDefinition> procDefs = procDefList.getList();
+        if (procDefs.size() > 0) {
+            newLine();
+        }
         for (ProcedureDefinition procDef : procDefs) {
             newLine();
             appendIndentation();
@@ -255,6 +268,9 @@ public class GrammarPrintVisitor implements ScratchVisitor {
 
         ScriptList scripts = def.getScripts();
         List<Script> scriptList = scripts.getScriptList();
+        if (scriptList.size() > 0) {
+            newLine();
+        }
         for (Script script : scriptList) {
             newLine();
             appendIndentation();
