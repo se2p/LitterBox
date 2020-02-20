@@ -162,6 +162,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.timecomp.TimeComp;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.Edge;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.MousePointer;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.SpriteTouchable;
+import de.uni_passau.fim.se2.litterbox.ast.model.touchable.Touchable;
+import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.Color;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.FromNumber;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.Rgba;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.BooleanType;
@@ -387,15 +389,16 @@ public class GrammarPrintVisitor implements ScratchVisitor {
 
     @Override
     public void visit(SwitchBackdrop switchBackdrop) {
-        emitToken("switch backdrop to");
+        emitNoSpace("switchBackdropTo(");
         switchBackdrop.getElementChoice().accept(this);
+        closeParentheses();
     }
 
     @Override
     public void visit(SwitchBackdropAndWait switchBackdropAndWait) {
-        emitToken("switch backdrop to");
+        emitNoSpace("switchBackdropToAndWait(");
         switchBackdropAndWait.getElementChoice().accept(this);
-        emitToken("and wait");
+        closeParentheses();
     }
 
     @Override
@@ -427,17 +430,18 @@ public class GrammarPrintVisitor implements ScratchVisitor {
 
     @Override
     public void visit(SayForSecs sayForSecs) {
-        emitToken("say");
+        emitNoSpace("sayTextFor(");
         sayForSecs.getString().accept(this);
-        emitToken("for");
+        comma();
         sayForSecs.getSecs().accept(this);
-        emitToken("secs");
+        closeParentheses();
     }
 
     @Override
     public void visit(Say say) {
-        emitToken("say");
+        emitNoSpace("sayText(");
         say.getString().accept(this);
+        closeParentheses();
     }
 
     @Override
@@ -457,8 +461,9 @@ public class GrammarPrintVisitor implements ScratchVisitor {
 
     @Override
     public void visit(SwitchCostumeTo switchCostumeTo) {
-        emitToken("switch costume to");
+        emitToken("changeCostumeTo(");
         switchCostumeTo.getElementChoice().accept(this);
+        closeParentheses();
     }
 
     @Override
@@ -525,23 +530,23 @@ public class GrammarPrintVisitor implements ScratchVisitor {
 
     @Override
     public void visit(MoveSteps moveSteps) {
-        emitToken("move");
+        emitToken("moveSteps(");
         moveSteps.getSteps().accept(this);
-        emitToken("steps");
+        closeParentheses();
     }
 
     @Override
     public void visit(TurnRight turnRight) {
-        emitToken("turn right");
+        emitNoSpace("turnRight(");
         turnRight.getDegrees().accept(this);
-        emitToken("degrees");
+        closeParentheses();
     }
 
     @Override
     public void visit(TurnLeft turnLeft) {
-        emitToken("turn left");
+        emitNoSpace("turnLeft(");
         turnLeft.getDegrees().accept(this);
-        emitToken("degrees");
+        closeParentheses();
     }
 
     @Override
@@ -591,14 +596,16 @@ public class GrammarPrintVisitor implements ScratchVisitor {
 
     @Override
     public void visit(PointTowards pointTowards) {
-        emitToken("point towards");
+        emitToken("pointTowards(");
         pointTowards.getPosition().accept(this);
+        closeParentheses();
     }
 
     @Override
     public void visit(ChangeXBy changeXBy) {
-        emitToken("change x by");
+        emitToken("changeXBy(");
         changeXBy.getNum().accept(this);
+        closeParentheses();
     }
 
     @Override
@@ -1174,8 +1181,18 @@ public class GrammarPrintVisitor implements ScratchVisitor {
 
     @Override
     public void visit(Touching touching) {
-        emitToken("touching");
+        Touchable touchable = touching.getTouchable();
+        if (touchable instanceof Edge) {
+            emitNoSpace("touchingEdge(");
+        } else if (touchable instanceof MousePointer) {
+            emitNoSpace("touchingMousePointer(");
+        } else if (touchable instanceof Color) {
+            emitNoSpace("touchingColor(");
+        } else {
+            emitNoSpace("touchingObject(");
+        }
         touching.getTouchable().accept(this);
+        closeParentheses();
     }
 
     @Override
@@ -1204,9 +1221,11 @@ public class GrammarPrintVisitor implements ScratchVisitor {
 
     @Override
     public void visit(ColorTouches colorTouches) {
+        emitNoSpace("colorIsTouchingColor(");
         colorTouches.getOperand1().accept(this);
-        emitToken("touches");
+        comma();
         colorTouches.getOperand2().accept(this);
+        closeParentheses();
     }
 
     @Override
@@ -1270,8 +1289,12 @@ public class GrammarPrintVisitor implements ScratchVisitor {
 
     @Override
     public void visit(DistanceTo distanceTo) {
-        emitToken("distanceto");
-        distanceTo.getPosition().accept(this);
+        if (distanceTo.getPosition() instanceof MousePos) {
+            emitToken("distanceToMousePointer()");
+        } else {
+            emitToken("distanceto");
+            distanceTo.getPosition().accept(this);
+        }
     }
 
     @Override
