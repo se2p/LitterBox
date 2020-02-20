@@ -228,7 +228,7 @@ public class GrammarPrintVisitor implements ScratchVisitor {
             appendIndentation();
             resource.accept(this);
         }
-
+        newLine();
         DeclarationStmtList declarations = def.getDecls();
         List<DeclarationStmt> declarationStmtList1 = declarations.getDeclarationStmtList();
         for (DeclarationStmt declarationStmt : declarationStmtList1) {
