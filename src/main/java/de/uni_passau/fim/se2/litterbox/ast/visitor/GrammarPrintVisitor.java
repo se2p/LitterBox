@@ -288,8 +288,7 @@ public class GrammarPrintVisitor implements ScratchVisitor {
 
     @Override
     public void visit(GreenFlag greenFlag) {
-        emitToken("green");
-        emitToken("flag");
+        emitToken("startup");
     }
 
     @Override
