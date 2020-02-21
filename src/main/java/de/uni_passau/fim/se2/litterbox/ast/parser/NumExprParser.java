@@ -30,6 +30,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BoolExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.UnspecifiedStringExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.Position;
 import de.uni_passau.fim.se2.litterbox.ast.model.timecomp.TimeComp;
@@ -123,8 +124,7 @@ public class NumExprParser {
             return new AsNumber(boolExpr.get());
         }
 
-        throw new ParsingException(
-                "Could not parse NumExpr for block with id " + identifier + " and opcode " + opcode);
+        return new UnspecifiedNumExpr();
     }
 
     private static NumExpr parseParameter(JsonNode blocks, ArrayNode exprArray) {

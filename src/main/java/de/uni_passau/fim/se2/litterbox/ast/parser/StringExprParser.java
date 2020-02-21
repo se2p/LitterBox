@@ -128,8 +128,7 @@ public class StringExprParser {
             return new AsString(boolExpr.get());
         }
 
-        throw new ParsingException(
-                "Could not parse NumExpr for block with id " + identifier + " and opcode " + opcode);
+        return new UnspecifiedStringExpr();
     }
 
     private static StringExpr parseParameter(JsonNode blocks, ArrayNode exprArray) {
