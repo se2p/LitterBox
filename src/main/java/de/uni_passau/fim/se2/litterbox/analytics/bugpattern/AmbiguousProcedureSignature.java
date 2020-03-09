@@ -42,7 +42,6 @@ public class AmbiguousProcedureSignature implements IssueFinder, ScratchVisitor 
     private int count = 0;
     private List<String> actorNames = new LinkedList<>();
     private ActorDefinition currentActor;
-    private List<String> procNames;
     private Map<Identifier, ProcedureInfo> procMap;
     private Program program;
 
@@ -54,7 +53,6 @@ public class AmbiguousProcedureSignature implements IssueFinder, ScratchVisitor 
         found = false;
         count = 0;
         actorNames = new LinkedList<>();
-        procNames = new LinkedList<>();
         program.accept(this);
         String notes = NOTE1;
         if (count > 0) {
@@ -66,7 +64,6 @@ public class AmbiguousProcedureSignature implements IssueFinder, ScratchVisitor 
     @Override
     public void visit(ActorDefinition actor) {
         currentActor = actor;
-        procNames = new LinkedList<>();
         procMap = program.getProcedureMapping().getProcedures().get(currentActor.getIdent().getName());
         if (!actor.getChildren().isEmpty()) {
             for (ASTNode child : actor.getChildren()) {

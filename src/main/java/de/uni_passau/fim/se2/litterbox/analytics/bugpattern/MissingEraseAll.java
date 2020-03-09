@@ -48,7 +48,7 @@ public class MissingEraseAll implements IssueFinder {
         return NAME;
     }
 
-    private class CheckVisitor implements ScratchVisitor {
+    private static class CheckVisitor implements ScratchVisitor {
 
         private boolean penClearSet = false;
         private boolean penDownSet = false;

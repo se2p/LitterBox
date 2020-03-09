@@ -48,7 +48,7 @@ public class MissingPenDown implements IssueFinder {
         return NAME;
     }
 
-    private class CheckVisitor implements ScratchVisitor {
+    private static class CheckVisitor implements ScratchVisitor {
         private int count = 0;
         private List<String> actorNames = new LinkedList<>();
         private ActorDefinition currentActor;

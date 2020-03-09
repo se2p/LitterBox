@@ -19,22 +19,17 @@
 package de.uni_passau.fim.se2.litterbox;
 
 
+import static de.uni_passau.fim.se2.litterbox.analytics.Scratch3Analyzer.removeEndSeparator;
+import static de.uni_passau.fim.se2.litterbox.utils.GroupConstants.*;
+
+
 import de.uni_passau.fim.se2.litterbox.analytics.IssueTool;
 import de.uni_passau.fim.se2.litterbox.analytics.Scratch3Analyzer;
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.DefaultParser;
-import org.apache.commons.cli.HelpFormatter;
-import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
-
 import java.io.File;
 import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.logging.Logger;
-
-import static de.uni_passau.fim.se2.litterbox.analytics.Scratch3Analyzer.removeEndSeparator;
-import static de.uni_passau.fim.se2.litterbox.utils.GroupConstants.*;
+import org.apache.commons.cli.*;
 
 public class Main {
 
@@ -156,12 +151,12 @@ public class Main {
         System.out.println("Detectors:");
         ResourceBundle messages = ResourceBundle.getBundle("IssueDescriptions", Locale.ENGLISH);
         IssueTool iT = new IssueTool();
-        System.out.printf("\t%-20s %-30s\n", ALL, messages.getString(ALL));
-        System.out.printf("\t%-20s %-30s\n", BUGS, messages.getString(BUGS));
-        System.out.printf("\t%-20s %-30s\n", SMELLS, messages.getString(SMELLS));
-        System.out.printf("\t%-20s %-30s\n", CTSCORE, messages.getString(CTSCORE));
+        System.out.printf("\t%-20s %-30s%n", ALL, messages.getString(ALL));
+        System.out.printf("\t%-20s %-30s%n", BUGS, messages.getString(BUGS));
+        System.out.printf("\t%-20s %-30s%n", SMELLS, messages.getString(SMELLS));
+        System.out.printf("\t%-20s %-30s%n", CTSCORE, messages.getString(CTSCORE));
         iT.getAllFinder().keySet().forEach(finder -> System.out.printf(
-                "\t%-20s %-30s\n",
+                "\t%-20s %-30s%n",
                 finder,
                 messages.getString(finder)
         ));

@@ -18,6 +18,10 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics;
 
+import static de.uni_passau.fim.se2.litterbox.utils.GroupConstants.*;
+import static org.apache.commons.io.FilenameUtils.removeExtension;
+
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
@@ -28,27 +32,16 @@ import de.uni_passau.fim.se2.litterbox.utils.CSVWriter;
 import de.uni_passau.fim.se2.litterbox.utils.Downloader;
 import de.uni_passau.fim.se2.litterbox.utils.JsonParser;
 import de.uni_passau.fim.se2.litterbox.utils.ZipReader;
-import org.apache.commons.csv.CSVPrinter;
-import org.apache.commons.io.FilenameUtils;
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.PrintStream;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.logging.Logger;
-
-import static de.uni_passau.fim.se2.litterbox.utils.GroupConstants.ALL;
-import static de.uni_passau.fim.se2.litterbox.utils.GroupConstants.BUGS;
-import static de.uni_passau.fim.se2.litterbox.utils.GroupConstants.CTSCORE;
-import static de.uni_passau.fim.se2.litterbox.utils.GroupConstants.SMELLS;
-import static org.apache.commons.io.FilenameUtils.removeExtension;
+import org.apache.commons.csv.CSVPrinter;
+import org.apache.commons.io.FilenameUtils;
 
 
 public class Scratch3Analyzer {
@@ -206,11 +199,12 @@ public class Scratch3Analyzer {
                 e.printStackTrace();
             }
         } else {
-            JsonNode node = null;
+            JsonNode node;
             try {
                 node = JsonParser.getTargetsNodeFromJSONString(ZipReader.getJsonString(fileEntry.getPath()));
                 if (node == null) {
                     log.info("[Error] project json did not contain root node");
+                    return null;
                 }
                 program = ProgramParser.parseProgram(fileEntry.getName(), node);
             } catch (ParsingException | IOException e) {
@@ -265,13 +259,14 @@ public class Scratch3Analyzer {
         }
 
         try {
-            BufferedReader br = new BufferedReader(new FileReader(file));
+            BufferedReader br = new BufferedReader(new FileReader(file, StandardCharsets.UTF_8));
             String line = br.readLine();
             while (line != null) {
                 line = line.trim();
                 downloadAndAnalyze(line, outfolder, detectors, resultpath);
                 line = br.readLine();
             }
+            br.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -312,8 +307,8 @@ public class Scratch3Analyzer {
 
             PrintStream stream;
             try {
-                stream = new PrintStream(outputFile);
-            } catch (FileNotFoundException e) {
+                stream = new PrintStream(outputFile, StandardCharsets.UTF_8);
+            } catch (IOException e) {
                 log.info("Creation of output stream not possible with output file " + outputFilePath);
                 return;
             }
@@ -368,13 +363,14 @@ public class Scratch3Analyzer {
         }
 
         try {
-            BufferedReader br = new BufferedReader(new FileReader(file));
+            BufferedReader br = new BufferedReader(new FileReader(file, StandardCharsets.UTF_8));
             String line = br.readLine();
             while (line != null) {
                 line = line.trim();
                 downloadAndPrint(line, projectPath, printPath + File.separator + line + INTERMEDIATE_EXTENSION);
                 line = br.readLine();
             }
+            br.close();
         } catch (IOException e) {
             e.printStackTrace();
         }

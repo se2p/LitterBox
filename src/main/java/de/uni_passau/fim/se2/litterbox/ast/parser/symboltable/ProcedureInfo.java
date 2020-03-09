@@ -29,7 +29,7 @@ public class ProcedureInfo {
 
     public ProcedureInfo(String name, ArgumentInfo[] arguments, String actorName) {
         this.name = name;
-        this.arguments = arguments;
+        this.arguments = Arrays.copyOf(arguments, arguments.length);
         this.actorName = actorName;
     }
 
@@ -38,7 +38,7 @@ public class ProcedureInfo {
     }
 
     public ArgumentInfo[] getArguments() {
-        return arguments;
+        return Arrays.copyOf(arguments, arguments.length);
     }
 
     public String getActorName() {

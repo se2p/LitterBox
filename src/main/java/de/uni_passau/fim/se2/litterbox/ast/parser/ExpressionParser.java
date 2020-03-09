@@ -111,8 +111,7 @@ public class ExpressionParser {
         inputs.fields().forEachRemaining(slotEntries::add);
         Map.Entry slotEntry = slotEntries.get(pos);
         ArrayNode exprArray = (ArrayNode) slotEntry.getValue();
-        String numberName = (String) slotEntry
-                .getKey(); // we don't need that here but maybe later for storing additional information
+//        String numberName = (String) slotEntry.getKey(); // we don't need that here but maybe later for storing additional information
         return exprArray;
     }
 

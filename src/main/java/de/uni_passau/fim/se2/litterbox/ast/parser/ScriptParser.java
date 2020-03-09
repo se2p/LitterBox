@@ -29,8 +29,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Event;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.ListOfStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.DependentBlockOpcodes;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.EventOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.ProcedureOpcode;
@@ -42,8 +42,8 @@ import java.util.logging.Logger;
 
 public class ScriptParser {
 
-    public static String TOP_LEVEL = "topLevel";
-    public static String OPCODE = "opcode";
+    public static final String TOP_LEVEL = "topLevel";
+    public static final String OPCODE = "opcode";
 
     /**
      * Returns a script where blockID is the ID of the first block in this script. It is expected that blockID points to
@@ -88,8 +88,8 @@ public class ScriptParser {
             try {
                 if (ProcedureOpcode.contains(blocks.get(blockID).get(OPCODE_KEY).asText()) || DependentBlockOpcodes.contains(blocks.get(blockID).get(OPCODE_KEY).asText())) {
                     //Ignore ProcedureOpcodes
-                    blockID = current.get(NEXT_KEY).asText();
-                    current = blocks.get(blockID);
+//                    blockID = current.get(NEXT_KEY).asText();
+//                    current = blocks.get(blockID);
                     return null;
                 }
 
