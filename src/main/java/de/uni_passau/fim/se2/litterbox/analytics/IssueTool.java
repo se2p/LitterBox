@@ -73,6 +73,7 @@ public class IssueTool {
         bugFinder.put(SameVariableDifferentSprite.SHORT_NAME, new SameVariableDifferentSprite());
         bugFinder.put(MissingBackdropSwitch.SHORT_NAME, new MissingBackdropSwitch());
         bugFinder.put(ComparingLiterals.SHORT_NAME, new ComparingLiterals());
+        bugFinder.put(MissingWaitUntilCondition.SHORT_NAME, new MissingWaitUntilCondition());
         smellFinder.put(DeadCode.SHORT_NAME, new DeadCode());
 //        finder.put("attrmod", new AttributeModification());
 
