@@ -31,14 +31,15 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Key;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.ComparableExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.*;
-import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.Color;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.AsNumber;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.IndexOf;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.UnspecifiedNumExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.ItemOfVariable;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.BoolLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.Touchable;
+import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.Color;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
@@ -49,7 +50,6 @@ import de.uni_passau.fim.se2.litterbox.ast.opcodes.StringExprOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ExpressionListInfo;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.VariableInfo;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
-
 import java.util.Optional;
 
 public class BoolExprParser {
@@ -179,22 +179,31 @@ public class BoolExprParser {
             case operator_gt:
                 ComparableExpr first = NumExprParser.parseNumExpr(expressionBlock, 0, blocks);
                 ComparableExpr second = NumExprParser.parseNumExpr(expressionBlock, 1, blocks);
-                if ((first instanceof AsNumber || first instanceof UnspecifiedNumExpr)) {
+                if (first instanceof AsNumber) {
+                    first = new AsString(((AsNumber) first).getOperand1());
+                } else if (first instanceof UnspecifiedNumExpr) {
                     first = StringExprParser.parseStringExpr(expressionBlock, 0, blocks);
                 }
 
-                if (second instanceof AsNumber || second instanceof UnspecifiedNumExpr) {
+                if (second instanceof AsNumber) {
+                    second = new AsString(((AsNumber) second).getOperand1());
+                } else if (second instanceof UnspecifiedNumExpr) {
                     second = StringExprParser.parseStringExpr(expressionBlock, 1, blocks);
                 }
+
                 return new BiggerThan(first, second);
             case operator_lt:
                 first = NumExprParser.parseNumExpr(expressionBlock, 0, blocks);
                 second = NumExprParser.parseNumExpr(expressionBlock, 1, blocks);
-                if ((first instanceof AsNumber || first instanceof UnspecifiedNumExpr)) {
+                if (first instanceof AsNumber) {
+                    first = new AsString(((AsNumber) first).getOperand1());
+                } else if (first instanceof UnspecifiedNumExpr) {
                     first = StringExprParser.parseStringExpr(expressionBlock, 0, blocks);
                 }
 
-                if (second instanceof AsNumber || second instanceof UnspecifiedNumExpr) {
+                if (second instanceof AsNumber) {
+                    second = new AsString(((AsNumber) second).getOperand1());
+                } else if (second instanceof UnspecifiedNumExpr) {
                     second = StringExprParser.parseStringExpr(expressionBlock, 1, blocks);
                 }
 
@@ -202,13 +211,18 @@ public class BoolExprParser {
             case operator_equals:
                 first = NumExprParser.parseNumExpr(expressionBlock, OPERAND1_KEY, blocks);
                 second = NumExprParser.parseNumExpr(expressionBlock, OPERAND2_KEY, blocks);
-                if ((first instanceof AsNumber || first instanceof UnspecifiedNumExpr)) {
+                if (first instanceof AsNumber) {
+                    first = new AsString(((AsNumber) first).getOperand1());
+                } else if (first instanceof UnspecifiedNumExpr) {
                     first = StringExprParser.parseStringExpr(expressionBlock, 0, blocks);
                 }
 
-                if (second instanceof AsNumber || second instanceof UnspecifiedNumExpr) {
+                if (second instanceof AsNumber) {
+                    second = new AsString(((AsNumber) second).getOperand1());
+                } else if (second instanceof UnspecifiedNumExpr) {
                     second = StringExprParser.parseStringExpr(expressionBlock, 1, blocks);
                 }
+
                 return new Equals(first, second);
             case operator_and:
 
