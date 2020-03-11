@@ -18,21 +18,19 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.utils;
 
-import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
-
-
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueReport;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
-import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
+import de.uni_passau.fim.se2.litterbox.ast.model.event.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.AsBool;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.AsListIndex;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.ExpressionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.ExpressionListPlain;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.AsNumber;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.Current;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.BoolLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.ColorLiteral;
@@ -42,14 +40,20 @@ import de.uni_passau.fim.se2.litterbox.ast.model.procedure.Parameter;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterList;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterListPlain;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.ListOfStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.ShowVariable;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetAttributeTo;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.HideVariable;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.AsTouchable;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.Type;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Identifier;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
+
 import java.util.LinkedList;
+
+import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 
 public class BlockCount implements IssueFinder, ScratchVisitor {
     public static final String NAME = "block_count";
@@ -58,6 +62,7 @@ public class BlockCount implements IssueFinder, ScratchVisitor {
     private boolean insideScript = false;
     private boolean insideProcedure = false;
     private boolean insideParameterList = false;
+    private boolean fixedBlock = false;
 
     @Override
     public IssueReport check(Program program) {
@@ -66,6 +71,7 @@ public class BlockCount implements IssueFinder, ScratchVisitor {
         insideScript = false;
         insideProcedure = false;
         insideParameterList = false;
+        fixedBlock = false;
         program.accept(this);
         return new IssueReport(NAME, count, new LinkedList<>(), "");
     }
@@ -100,7 +106,7 @@ public class BlockCount implements IssueFinder, ScratchVisitor {
 
     @Override
     public void visit(ASTNode node) {
-        if (insideScript || insideProcedure) {
+        if ((insideScript || insideProcedure) && !fixedBlock) {
             count++;
         }
         if (!node.getChildren().isEmpty()) {
@@ -149,7 +155,7 @@ public class BlockCount implements IssueFinder, ScratchVisitor {
 
     @Override
     public void visit(Identifier node) {
-        if ((insideProcedure || insideScript) && !insideParameterList) {
+        if ((insideProcedure || insideScript) && !insideParameterList && !fixedBlock) {
             if (node.getName().startsWith(PARAMETER_ABBREVIATION) || node.getName().startsWith(VARIABLE_ABBREVIATION) || node.getName().startsWith(LIST_ABBREVIATION)) {
                 count++;
             }
@@ -287,5 +293,119 @@ public class BlockCount implements IssueFinder, ScratchVisitor {
                 child.accept(this);
             }
         }
+    }
+
+    @Override
+    public void visit(KeyPressed node) {
+        if (insideScript || insideProcedure) {
+            count++;
+        }
+        fixedBlock = true;
+        if (!node.getChildren().isEmpty()) {
+            for (ASTNode child : node.getChildren()) {
+                child.accept(this);
+            }
+        }
+        fixedBlock = false;
+    }
+
+    @Override
+    public void visit(SetAttributeTo node){
+        if (insideScript || insideProcedure) {
+            count++;
+        }
+        if(node.getStringExpr().equals(new StringLiteral(ROTATIONSTYLE_KEY)) || node.getStringExpr().equals(new StringLiteral(DRAG_KEY))){
+            fixedBlock = true;
+        }
+        if (!node.getChildren().isEmpty()) {
+            for (ASTNode child : node.getChildren()) {
+                child.accept(this);
+            }
+        }
+        fixedBlock = false;
+    }
+
+    @Override
+    public void visit(ReceptionOfMessage node){
+        if (insideScript || insideProcedure) {
+            count++;
+        }
+        fixedBlock = true;
+        if (!node.getChildren().isEmpty()) {
+            for (ASTNode child : node.getChildren()) {
+                child.accept(this);
+            }
+        }
+        fixedBlock = false;
+    }
+
+    @Override
+    public void visit(BackdropSwitchTo node){
+        if (insideScript || insideProcedure) {
+            count++;
+        }
+        fixedBlock = true;
+        if (!node.getChildren().isEmpty()) {
+            for (ASTNode child : node.getChildren()) {
+                child.accept(this);
+            }
+        }
+        fixedBlock = false;
+    }
+
+    @Override
+    public void visit(Current node){
+        if (insideScript || insideProcedure) {
+            count++;
+        }
+        fixedBlock = true;
+        if (!node.getChildren().isEmpty()) {
+            for (ASTNode child : node.getChildren()) {
+                child.accept(this);
+            }
+        }
+        fixedBlock = false;
+    }
+
+    @Override
+    public void visit(VariableAboveValue node){
+        if (insideScript || insideProcedure) {
+            count++;
+        }
+        fixedBlock = true;
+        if (!node.getChildren().isEmpty()) {
+            for (ASTNode child : node.getChildren()) {
+                child.accept(this);
+            }
+        }
+        fixedBlock = false;
+    }
+
+    @Override
+    public void visit(HideVariable node){
+        if (insideScript || insideProcedure) {
+            count++;
+        }
+        fixedBlock = true;
+        if (!node.getChildren().isEmpty()) {
+            for (ASTNode child : node.getChildren()) {
+                child.accept(this);
+            }
+        }
+        fixedBlock = false;
+    }
+
+    @Override
+    public void visit(ShowVariable node){
+        if (insideScript || insideProcedure) {
+            count++;
+        }
+        fixedBlock = true;
+        if (!node.getChildren().isEmpty()) {
+            for (ASTNode child : node.getChildren()) {
+                child.accept(this);
+            }
+        }
+        fixedBlock = false;
     }
 }
