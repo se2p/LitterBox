@@ -31,6 +31,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.ExpressionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.ExpressionListPlain;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.AsNumber;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.Current;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.LengthOfVar;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.BoolLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.ColorLiteral;
@@ -44,6 +45,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.ListOfStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.ShowVariable;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetAttributeTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.list.DeleteAllOf;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.HideVariable;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.AsTouchable;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.Type;
@@ -397,6 +399,34 @@ public class BlockCount implements IssueFinder, ScratchVisitor {
 
     @Override
     public void visit(ShowVariable node){
+        if (insideScript || insideProcedure) {
+            count++;
+        }
+        fixedBlock = true;
+        if (!node.getChildren().isEmpty()) {
+            for (ASTNode child : node.getChildren()) {
+                child.accept(this);
+            }
+        }
+        fixedBlock = false;
+    }
+
+    @Override
+    public void visit(DeleteAllOf node){
+        if (insideScript || insideProcedure) {
+            count++;
+        }
+        fixedBlock = true;
+        if (!node.getChildren().isEmpty()) {
+            for (ASTNode child : node.getChildren()) {
+                child.accept(this);
+            }
+        }
+        fixedBlock = false;
+    }
+
+    @Override
+    public void visit(LengthOfVar node){
         if (insideScript || insideProcedure) {
             count++;
         }
