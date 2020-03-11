@@ -27,7 +27,7 @@ To use LitterBox with the command line, build the Jar with mvn clean and mvn pac
 1. path - the Scratch projects path or a folder path with multiple Scratch projects
 2. projectid - id of the project that should be downloaded and analysed
 3. projectlist - path to a file with a list of project ids of projects which should be downloaded and analysed.
-4. projectout - path where downloaded projects should stored
+4. projectout - path where downloaded projects should be stored
 5. detectors - all the detectors you want to run (short names seperated by ","), if not set, all will be used
 
 #### Detectors short names:
@@ -36,7 +36,7 @@ To use LitterBox with the command line, build the Jar with mvn clean and mvn pac
 Detectors:
   
 	all                  All issue finders               
-	bugs                 All issue finders for bugs      
+	bugs                 All issue finders for bug patterns      
 	smells               All issue finders for smells    
 	ctscore              All issue finders for ct scores  
 	mssCloneInit         Missing Clone Initialization    
@@ -58,8 +58,8 @@ Detectors:
 	stuttMove            Stuttering Movement             
 	exprColor            Expression as Color             
 	sameVarDiffSprite    Same Variable used in Different Sprite  
-	flow                 Not implemented                 
-	eqCond               Equals implemented              
+	flow                 Flow Control                
+	eqCond               Position Equals Checks        
 	empProj              Empty Project                   
 	cllWithoutDef        Call Without Definition         
 	weightedMethCnt      Weighted Method Count           
@@ -77,8 +77,9 @@ Detectors:
 	longScript           Long Script                     
 	usingPen             Using Pen                       
 	empSprite            Empty Sprite                    
-	noWorkScript         No Working Script               
-	OrphParam            Orphaned Parameter              
+	noWorkScript         No Working Script 
+	mssWaitCond          Missing Wait Until Condition
+	orphParam            Orphaned Parameter              
 	dcode                Dead Code                       
 	blockCnt             Block Count                     
 	procCnt              Procedure Count                 
