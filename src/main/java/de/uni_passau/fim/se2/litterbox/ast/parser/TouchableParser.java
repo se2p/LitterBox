@@ -25,12 +25,9 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import de.uni_passau.fim.se2.litterbox.ast.Constants;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
-import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.FromNumber;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.*;
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.Qualified;
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.BoolExprOpcode;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 import java.util.ArrayList;
@@ -53,15 +50,8 @@ public class TouchableParser {
             if (getShadowIndicator((ArrayNode) inputsList.get(0)) == 1) {
                 return getTouchableMenuOption(current, allBlocks);
             } else {
-                NumExpr expr = NumExprParser.parseNumExpr(current, TOUCHINGOBJECTMENU, allBlocks);
-                if (expr instanceof StrId) {
-                    return new AsTouchable(expr);
-                } else if (expr instanceof Qualified) {
-                    return new AsTouchable(expr);
-                } else {
-                    //FIXME is this right?
-                    return new FromNumber(expr);
-                }
+                Expression expr = ExpressionParser.parseExpression(current, TOUCHINGOBJECTMENU, allBlocks);
+                return new AsTouchable(expr);
             }
 
         } else if (BoolExprOpcode.sensing_touchingcolor.name().equals(opcodeString)) {
