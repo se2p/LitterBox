@@ -33,7 +33,7 @@ public class BlockCountTest {
     private static Program empty;
     private static Program nestedLoops;
     private static Program withproc;
-    private static Program rotStyle;
+    private static Program fixedStatements;
     private static ObjectMapper mapper = new ObjectMapper();
 
     @BeforeAll
@@ -45,8 +45,8 @@ public class BlockCountTest {
         nestedLoops = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
         f = new File("./src/test/fixtures/blockCountWithProc.json");
         withproc = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
-        f = new File("./src/test/fixtures/rotationStyleCount.json");
-        rotStyle = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
+        f = new File("./src/test/fixtures/stmtParser/allFixedStatements.json");
+        fixedStatements = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
     }
 
     @Test
@@ -71,9 +71,9 @@ public class BlockCountTest {
     }
 
     @Test
-    public void testRotStyle() {
+    public void testFixedStatements() {
         BlockCount parameterName = new BlockCount();
-        IssueReport report = parameterName.check(rotStyle);
-        Assertions.assertEquals(1, report.getCount());
+        IssueReport report = parameterName.check(fixedStatements);
+        Assertions.assertEquals(26, report.getCount());
     }
 }

@@ -43,10 +43,12 @@ import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterListPlain;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.ListOfStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.ShowVariable;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.ChangeAttributeBy;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.ChangeVariableBy;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetAttributeTo;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.list.DeleteAllOf;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.HideVariable;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetVariableTo;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.list.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.HideVariable;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.AsTouchable;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.Type;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Identifier;
@@ -316,15 +318,21 @@ public class BlockCount implements IssueFinder, ScratchVisitor {
         if (insideScript || insideProcedure) {
             count++;
         }
-        if(node.getStringExpr().equals(new StringLiteral(ROTATIONSTYLE_KEY)) || node.getStringExpr().equals(new StringLiteral(DRAG_KEY))){
-            fixedBlock = true;
+        if (!node.getChildren().isEmpty()) {
+            //only expression has to be counted since the attributes are fixed in the blocks
+            node.getExpr().accept(this);
+        }
+    }
+
+    @Override
+    public void visit(ChangeAttributeBy node){
+        if (insideScript || insideProcedure) {
+            count++;
         }
         if (!node.getChildren().isEmpty()) {
-            for (ASTNode child : node.getChildren()) {
-                child.accept(this);
-            }
+            //only expression has to be counted since the attributes are fixed in the blocks
+            node.getExpr().accept(this);
         }
-        fixedBlock = false;
     }
 
     @Override
@@ -374,13 +382,11 @@ public class BlockCount implements IssueFinder, ScratchVisitor {
         if (insideScript || insideProcedure) {
             count++;
         }
-        fixedBlock = true;
+
         if (!node.getChildren().isEmpty()) {
-            for (ASTNode child : node.getChildren()) {
-                child.accept(this);
-            }
+            node.getValue().accept(this);
         }
-        fixedBlock = false;
+
     }
 
     @Override
@@ -438,4 +444,73 @@ public class BlockCount implements IssueFinder, ScratchVisitor {
         }
         fixedBlock = false;
     }
+
+    @Override
+    public void visit(SetVariableTo node){
+        if (insideScript || insideProcedure) {
+            count++;
+        }
+        if (!node.getChildren().isEmpty()) {
+            //only expression has to be counted since the attributes are fixed in the blocks
+            node.getExpr().accept(this);
+        }
+    }
+
+    @Override
+    public void visit(ChangeVariableBy node){
+        if (insideScript || insideProcedure) {
+            count++;
+        }
+        if (!node.getChildren().isEmpty()) {
+            //only expression has to be counted since the attributes are fixed in the blocks
+            node.getExpr().accept(this);
+        }
+    }
+
+    @Override
+    public void visit(AddTo node){
+        if (insideScript || insideProcedure) {
+            count++;
+        }
+        if (!node.getChildren().isEmpty()) {
+            //only expression has to be counted since the attributes are fixed in the blocks
+            node.getString().accept(this);
+        }
+    }
+
+    @Override
+    public void visit(DeleteOf node){
+        if (insideScript || insideProcedure) {
+            count++;
+        }
+        if (!node.getChildren().isEmpty()) {
+            //only expression has to be counted since the attributes are fixed in the blocks
+            node.getNum().accept(this);
+        }
+    }
+
+    @Override
+    public void visit(InsertAt node){
+        if (insideScript || insideProcedure) {
+            count++;
+        }
+        if (!node.getChildren().isEmpty()) {
+            //only expression has to be counted since the attributes are fixed in the blocks
+            node.getString().accept(this);
+            node.getIndex().accept(this);
+        }
+    }
+
+    @Override
+    public void visit(ReplaceItem node){
+        if (insideScript || insideProcedure) {
+            count++;
+        }
+        if (!node.getChildren().isEmpty()) {
+            //only expression has to be counted since the attributes are fixed in the blocks
+            node.getString().accept(this);
+            node.getIndex().accept(this);
+        }
+    }
 }
+
