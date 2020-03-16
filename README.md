@@ -81,7 +81,6 @@ Detectors:
 	nestLoop             Nested Loops
 	unusedCustBl         Unused Custom Block               
 	unusedVar            Unused Variable 
-	usingPen             Using Pen
                   
 	CT-Score:  
 	flow                 Flow Control                
@@ -90,6 +89,7 @@ Detectors:
 	blockCnt             Block Count
 	procCnt              Procedure Count
 	spriteCnt            Sprite Count 
+	usingPen             Using Pen
 	weightedMethCnt      Weighted Method Count           
 
 
