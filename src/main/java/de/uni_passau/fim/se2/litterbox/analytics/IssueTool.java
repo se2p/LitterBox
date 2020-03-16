@@ -18,18 +18,18 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics;
 
-import static de.uni_passau.fim.se2.litterbox.utils.GroupConstants.*;
-
-
 import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.*;
 import de.uni_passau.fim.se2.litterbox.analytics.ctscore.FlowControl;
 import de.uni_passau.fim.se2.litterbox.analytics.smells.*;
 import de.uni_passau.fim.se2.litterbox.analytics.utils.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.utils.CSVWriter;
+import org.apache.commons.csv.CSVPrinter;
+
 import java.io.IOException;
 import java.util.*;
-import org.apache.commons.csv.CSVPrinter;
+
+import static de.uni_passau.fim.se2.litterbox.utils.GroupConstants.*;
 
 /**
  * Holds all IssueFinder and executes them.
@@ -43,53 +43,54 @@ public class IssueTool {
     private Map<String, IssueFinder> ctScoreFinder = new HashMap<>();
 
     public IssueTool() {
-        bugFinder.put(MissingPenUp.SHORT_NAME, new MissingPenUp());
-        bugFinder.put(AmbiguousParameterName.SHORT_NAME, new AmbiguousParameterName());
         bugFinder.put(AmbiguousCustomBlockSignature.SHORT_NAME, new AmbiguousCustomBlockSignature());
-        bugFinder.put(MissingPenDown.SHORT_NAME, new MissingPenDown());
-        bugFinder.put(MissingEraseAll.SHORT_NAME, new MissingEraseAll());
-        bugFinder.put(NoWorkingScripts.SHORT_NAME, new NoWorkingScripts());
-        bugFinder.put(MissingCloneInitialization.SHORT_NAME, new MissingCloneInitialization());
-        bugFinder.put(MissingCloneCall.SHORT_NAME, new MissingCloneCall());
-        bugFinder.put(OrphanedParameter.SHORT_NAME, new OrphanedParameter());
-        bugFinder.put(ParameterOutOfScope.SHORT_NAME, new ParameterOutOfScope());
-        bugFinder.put(IllegalParameterRefactor.SHORT_NAME, new IllegalParameterRefactor());
+        bugFinder.put(AmbiguousParameterName.SHORT_NAME, new AmbiguousParameterName());
+        bugFinder.put(CallWithoutDefinition.SHORT_NAME, new CallWithoutDefinition());
+        bugFinder.put(ComparingLiterals.SHORT_NAME, new ComparingLiterals());
         bugFinder.put(CustomBlockWithForever.SHORT_NAME, new CustomBlockWithForever());
         bugFinder.put(CustomBlockWithTermination.SHORT_NAME, new CustomBlockWithTermination());
+        bugFinder.put(EndlessRecursion.SHORT_NAME, new EndlessRecursion());
+        bugFinder.put(ExpressionAsTouchingOrColor.SHORT_NAME, new ExpressionAsTouchingOrColor());
         bugFinder.put(ForeverInsideLoop.SHORT_NAME, new ForeverInsideLoop());
-        bugFinder.put(PositionEqualsCheck.SHORT_NAME, new PositionEqualsCheck());
-        bugFinder.put(CallWithoutDefinition.SHORT_NAME, new CallWithoutDefinition());
+        bugFinder.put(IllegalParameterRefactor.SHORT_NAME, new IllegalParameterRefactor());
         bugFinder.put(MessageNeverReceived.SHORT_NAME, new MessageNeverReceived());
         bugFinder.put(MessageNeverSent.SHORT_NAME, new MessageNeverSent());
-        bugFinder.put(EndlessRecursion.SHORT_NAME, new EndlessRecursion());
-//        finder.put("glblstrt", new GlobalStartingPoint());
-//        finder.put("strt", new StartingPoint());
-        bugFinder.put(StutteringMovement.SHORT_NAME, new StutteringMovement());
-//        finder.put("dblif", new DoubleIf());
+        bugFinder.put(MissingBackdropSwitch.SHORT_NAME, new MissingBackdropSwitch());
+        bugFinder.put(MissingCloneCall.SHORT_NAME, new MissingCloneCall());
+        bugFinder.put(MissingCloneInitialization.SHORT_NAME, new MissingCloneInitialization());
+        bugFinder.put(MissingEraseAll.SHORT_NAME, new MissingEraseAll());
         bugFinder.put(MissingLoopSensing.SHORT_NAME, new MissingLoopSensing());
+        bugFinder.put(MissingPenDown.SHORT_NAME, new MissingPenDown());
+        bugFinder.put(MissingPenUp.SHORT_NAME, new MissingPenUp());
         bugFinder.put(MissingTerminationCondition.SHORT_NAME, new MissingTerminationCondition());
-        bugFinder.put(ExpressionAsTouchingOrColor.SHORT_NAME, new ExpressionAsTouchingOrColor());
+        bugFinder.put(MissingWaitUntilCondition.SHORT_NAME, new MissingWaitUntilCondition());
+        bugFinder.put(NoWorkingScripts.SHORT_NAME, new NoWorkingScripts());
+        bugFinder.put(OrphanedParameter.SHORT_NAME, new OrphanedParameter());
+        bugFinder.put(ParameterOutOfScope.SHORT_NAME, new ParameterOutOfScope());
+        bugFinder.put(PositionEqualsCheck.SHORT_NAME, new PositionEqualsCheck());
         bugFinder.put(RecursiveCloning.SHORT_NAME, new RecursiveCloning());
         bugFinder.put(SameVariableDifferentSprite.SHORT_NAME, new SameVariableDifferentSprite());
-        bugFinder.put(MissingBackdropSwitch.SHORT_NAME, new MissingBackdropSwitch());
-        bugFinder.put(ComparingLiterals.SHORT_NAME, new ComparingLiterals());
-        bugFinder.put(MissingWaitUntilCondition.SHORT_NAME, new MissingWaitUntilCondition());
-        smellFinder.put(DeadCode.SHORT_NAME, new DeadCode());
+        bugFinder.put(StutteringMovement.SHORT_NAME, new StutteringMovement());
+//        finder.put("glblstrt", new GlobalStartingPoint());
+//        finder.put("strt", new StartingPoint());
+//        finder.put("dblif", new DoubleIf());
 //        finder.put("attrmod", new AttributeModification());
-
 //        finder.put("squact", new SequentialActions());
 //        finder.put("sprtname", new SpriteNaming());
+
+        //Smells
+        smellFinder.put(EmptyControlBody.SHORT_NAME, new EmptyControlBody());
+        smellFinder.put(EmptyCustomBlock.SHORT_NAME, new EmptyCustomBlock());
+        smellFinder.put(EmptyProject.SHORT_NAME, new EmptyProject());
+        smellFinder.put(EmptyScript.SHORT_NAME, new EmptyScript());
+        smellFinder.put(EmptySprite.SHORT_NAME, new EmptySprite());
+        smellFinder.put(DeadCode.SHORT_NAME, new DeadCode());
         smellFinder.put(LongScript.SHORT_NAME, new LongScript());
         smellFinder.put(NestedLoops.SHORT_NAME, new NestedLoops());
         smellFinder.put(UnusedVariable.SHORT_NAME, new UnusedVariable());
         smellFinder.put(UnusedCustomBlock.SHORT_NAME, new UnusedCustomBlock());
 //        finder.put("dplscrpt", new DuplicatedScript());
 //        finder.put("racecnd", new RaceCondition());
-        smellFinder.put(EmptyControlBody.SHORT_NAME, new EmptyControlBody());
-        smellFinder.put(EmptyScript.SHORT_NAME, new EmptyScript());
-        smellFinder.put(EmptySprite.SHORT_NAME, new EmptySprite());
-        smellFinder.put(EmptyProject.SHORT_NAME, new EmptyProject());
-        smellFinder.put(EmptyCustomBlock.SHORT_NAME, new EmptyCustomBlock());
 //        finder.put("mdlman", new MiddleMan());
 //        finder.put("vrblscp", new VariableScope());
 //        finder.put("dplsprt", new DuplicatedSprite());
@@ -99,8 +100,9 @@ public class IssueTool {
         utilFinder.put(BlockCount.SHORT_NAME, new BlockCount());
         utilFinder.put(SpriteCount.SHORT_NAME, new SpriteCount());
         utilFinder.put(ProcedureCount.SHORT_NAME, new ProcedureCount());
-        utilFinder.put(WeightedMethodCount.SHORT_NAME, new WeightedMethodCount());
         utilFinder.put(ProgramUsingPen.SHORT_NAME, new ProgramUsingPen());
+        utilFinder.put(WeightedMethodCount.SHORT_NAME, new WeightedMethodCount());
+
 //
 //        // To evaluate the CT score
 //        finder.put("logthink", new LogicalThinking());

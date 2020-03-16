@@ -53,9 +53,9 @@ Detectors:
 	illParamRefac        Illegal Parameter Refactor
 	messNeverSent        Message Never Sent
 	messNeverRec         Message Never Received  
+	mssBackdrSwitch      Missing Backdrop Switch
 	mssCloneCll          Missing Clone Call
 	mssCloneInit         Missing Clone Initialization
-	mssBackdrSwitch      Missing Backdrop Switch
 	mssEraseAll          Missing Erase All
 	mssLoopSens          Missing Loop Sensing
 	mssPenDown           Missing Pen Down	
