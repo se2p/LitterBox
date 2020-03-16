@@ -29,11 +29,11 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-public class ProcedureWithForeverTest {
+public class AmbiguousCustomBlockSignatureTest {
     private static Program empty;
-    private static Program procedureWithNoForever;
-    private static Program procedureWithForever;
-    private static Program lastCall;
+    private static Program ambiguousProcedure;
+    private static Program ambiguousProcedureDiffArg;
+    private static Program emptySign;
     private static ObjectMapper mapper = new ObjectMapper();
 
     @BeforeAll
@@ -41,39 +41,39 @@ public class ProcedureWithForeverTest {
 
         File f = new File("./src/test/fixtures/emptyProject.json");
         empty = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
-        f = new File("./src/test/fixtures/bugpattern/procedureWithNoForever.json");
-        procedureWithNoForever = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
-        f = new File("./src/test/fixtures/bugpattern/procedureWithForever.json");
-        procedureWithForever = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
-        f = new File("./src/test/fixtures/bugpattern/callLast.json");
-        lastCall = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
+        f = new File("./src/test/fixtures/bugpattern/ambiguousProcedureSignature.json");
+        ambiguousProcedure = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
+        f = new File("./src/test/fixtures/bugpattern/ambiguousSignatureDiffArg.json");
+        ambiguousProcedureDiffArg = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
+        f = new File("./src/test/fixtures/bugpattern/emptyAmbiguousSign.json");
+        emptySign = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
     }
 
     @Test
     public void testEmptyProgram() {
-        ProcedureWithForever parameterName = new ProcedureWithForever();
+        AmbiguousCustomBlockSignature parameterName = new AmbiguousCustomBlockSignature();
         IssueReport report = parameterName.check(empty);
         Assertions.assertEquals(0, report.getCount());
     }
 
     @Test
-    public void testProcedureWithNoForever() {
-        ProcedureWithForever parameterName = new ProcedureWithForever();
-        IssueReport report = parameterName.check(procedureWithNoForever);
-        Assertions.assertEquals(0, report.getCount());
+    public void testAmbiguousSignatures() {
+        AmbiguousCustomBlockSignature parameterName = new AmbiguousCustomBlockSignature();
+        IssueReport report = parameterName.check(ambiguousProcedure);
+        Assertions.assertEquals(2, report.getCount());
     }
 
     @Test
-    public void testProcedureWithForever() {
-        ProcedureWithForever parameterName = new ProcedureWithForever();
-        IssueReport report = parameterName.check(procedureWithForever);
-        Assertions.assertEquals(1, report.getCount());
+    public void testAmbiguousSigDifferentParameters() {
+        AmbiguousCustomBlockSignature parameterName = new AmbiguousCustomBlockSignature();
+        IssueReport report = parameterName.check(ambiguousProcedureDiffArg);
+        Assertions.assertEquals(2, report.getCount());
     }
 
     @Test
-    public void testlastCall() {
-        ProcedureWithForever parameterName = new ProcedureWithForever();
-        IssueReport report = parameterName.check(lastCall);
+    public void testAmbiguousEmpty() {
+        AmbiguousCustomBlockSignature parameterName = new AmbiguousCustomBlockSignature();
+        IssueReport report = parameterName.check(emptySign);
         Assertions.assertEquals(0, report.getCount());
     }
 }

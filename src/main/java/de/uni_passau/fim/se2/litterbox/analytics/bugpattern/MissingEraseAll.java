@@ -27,9 +27,15 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.pen.PenClearStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.pen.PenDownStmt;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
+
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * If a sprite uses a pen down block but never an erase all block, then all drawings from a
+ * previous execution might remain, making it impossible to get a blank background without reloading the scratch
+ * project.
+ */
 public class MissingEraseAll implements IssueFinder {
 
     public static final String NAME = "missing_erase_all";

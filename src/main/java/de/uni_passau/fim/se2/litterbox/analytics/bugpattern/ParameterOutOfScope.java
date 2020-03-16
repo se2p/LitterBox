@@ -31,6 +31,10 @@ import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * The parameters of a custom block can be used anywhere inside the sprite that defines the custom block.
+ * However, they will never be initialised outside the custom block, and will always have the default value.
+ */
 public class ParameterOutOfScope implements IssueFinder, ScratchVisitor {
     private static final String NOTE1 = "There are no parameters out of scope in your project.";
     private static final String NOTE2 = "Some of the scripts contain parameters out of scope.";

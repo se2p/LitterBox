@@ -23,35 +23,32 @@ import de.uni_passau.fim.se2.litterbox.analytics.IssueReport;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
-import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.Identifier;
-import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ProcedureInfo;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.ColorTouches;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Touching;
+import de.uni_passau.fim.se2.litterbox.ast.model.literals.ColorLiteral;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.pen.SetPenColorToColorStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.touchable.Edge;
+import de.uni_passau.fim.se2.litterbox.ast.model.touchable.MousePointer;
+import de.uni_passau.fim.se2.litterbox.ast.model.touchable.SpriteTouchable;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
-import java.util.ArrayList;
+
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
-public class ProcedureWithForever implements IssueFinder, ScratchVisitor {
-    public static final String NAME = "procedure_with_forever";
-    public static final String SHORT_NAME = "procWithForever";
-    private static final String NOTE1 = "There are no procedures with forever where the call is followed by statements in your project.";
-    private static final String NOTE2 = "Some of the sprites contain procedures with forever where the call is followed by statements.";
+/**
+ * This happens when inside a block that expects a colour or sprite as parameter (e.g., set pen color to or
+ * touching mouse-pointer?) a reporter block, or an expression with a string or number value is used.
+ */
+public class ExpressionAsTouchingOrColor implements IssueFinder, ScratchVisitor {
+    public static final String NAME = "expression_as_touching_or_color";
+    public static final String SHORT_NAME = "exprTouchColor";
+    private static final String NOTE1 = "There are no expressions used as touching or colors in your project.";
+    private static final String NOTE2 = "Some of the sprites use expressions as touching or colors.";
     private boolean found = false;
     private int count = 0;
     private List<String> actorNames = new LinkedList<>();
     private ActorDefinition currentActor;
-    private String currentProcedureName;
-    private List<String> proceduresWithForever;
-    private List<String> calledProcedures;
-    private boolean insideProcedure;
-    private Map<Identifier, ProcedureInfo> procMap;
-    private Program program;
 
     @Override
     public IssueReport check(Program program) {
@@ -59,7 +56,6 @@ public class ProcedureWithForever implements IssueFinder, ScratchVisitor {
         found = false;
         count = 0;
         actorNames = new LinkedList<>();
-        this.program = program;
         program.accept(this);
         String notes = NOTE1;
         if (count > 0) {
@@ -76,61 +72,54 @@ public class ProcedureWithForever implements IssueFinder, ScratchVisitor {
     @Override
     public void visit(ActorDefinition actor) {
         currentActor = actor;
-        procMap = program.getProcedureMapping().getProcedures().get(currentActor.getIdent().getName());
-        calledProcedures = new ArrayList<>();
-        proceduresWithForever = new ArrayList<>();
         if (!actor.getChildren().isEmpty()) {
             for (ASTNode child : actor.getChildren()) {
                 child.accept(this);
             }
         }
-        checkCalls();
+
         if (found) {
             found = false;
             actorNames.add(currentActor.getIdent().getName());
         }
     }
 
-    private void checkCalls() {
-        for (String calledProcedure : calledProcedures) {
-            if (proceduresWithForever.contains(calledProcedure)) {
-                found = true;
+    @Override
+    public void visit(SetPenColorToColorStmt node) {
+        if (!(node.getColorExpr() instanceof ColorLiteral)) {
+            count++;
+            found = true;
+        }
+        if (!node.getChildren().isEmpty()) {
+            for (ASTNode child : node.getChildren()) {
+                child.accept(this);
+            }
+        }
+    }
+
+    @Override
+    public void visit(ColorTouches node) {
+        if (!(node.getOperand1() instanceof ColorLiteral)) {
+            count++;
+            found = true;
+        }
+        if (!(node.getOperand2() instanceof ColorLiteral)) {
+            count++;
+            found = true;
+        }
+        if (!node.getChildren().isEmpty()) {
+            for (ASTNode child : node.getChildren()) {
+                child.accept(this);
+            }
+        }
+    }
+
+    @Override
+    public void visit(Touching node) {
+        if (!(node.getTouchable() instanceof MousePointer) && !(node.getTouchable() instanceof Edge) && !(node.getTouchable() instanceof SpriteTouchable)) {
+            if (!(node.getTouchable() instanceof ColorLiteral)) {
                 count++;
-            }
-        }
-    }
-
-    @Override
-    public void visit(ProcedureDefinition node) {
-        insideProcedure = true;
-        currentProcedureName = procMap.get(node.getIdent()).getName();
-
-        if (!node.getChildren().isEmpty()) {
-            for (ASTNode child : node.getChildren()) {
-                child.accept(this);
-            }
-        }
-        insideProcedure = false;
-    }
-
-    @Override
-    public void visit(RepeatForeverStmt node) {
-        if (insideProcedure) {
-            proceduresWithForever.add(currentProcedureName);
-        }
-        if (!node.getChildren().isEmpty()) {
-            for (ASTNode child : node.getChildren()) {
-                child.accept(this);
-            }
-        }
-    }
-
-    @Override
-    public void visit(StmtList node) {
-        List<Stmt> stmts = node.getStmts().getListOfStmt();
-        for (int i = 0; i < stmts.size() - 1; i++) {
-            if (stmts.get(i) instanceof CallStmt) {
-                calledProcedures.add(((CallStmt) stmts.get(i)).getIdent().getName());
+                found = true;
             }
         }
         if (!node.getChildren().isEmpty()) {

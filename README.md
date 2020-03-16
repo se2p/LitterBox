@@ -40,11 +40,11 @@ Detectors:
 	smells               All issue finders for smells    
 	ctscore              All issue finders for ct scores  
 	mssCloneInit         Missing Clone Initialization    
-	ambProcSign          Ambiguous Procedure Signature   
+	ambCustBlSign        Ambiguous Custom Block Signature  
 	unusedProc           Unused Procedure                
 	recClone             Recursive Cloning               
 	nestLoop             Nested Loops                    
-	foreverInLoop        Forever inside a Loop           
+	foreverInLoop        Forever inside Loop           
 	paramOutScope        Parameter out of Scope          
 	unusedVar            Unused Variable                 
 	mssBackdrSwitch      Missing Backdrop Switch         
@@ -56,7 +56,7 @@ Detectors:
 	empProc              Empty Procedure                 
 	messNeverSent        Message Never Sent              
 	stuttMove            Stuttering Movement             
-	exprColor            Expression as Color             
+	exprTouchColor       Expression As Touching Or Color             
 	sameVarDiffSprite    Same Variable used in Different Sprite  
 	flow                 Flow Control                
 	eqCond               Position Equals Checks        
@@ -67,11 +67,11 @@ Detectors:
 	spriteCnt            Sprite Count                    
 	endlRec              Endless Recursion               
 	neverRecMess         Never Received Message          
-	procWithForever      Procedure With Forever          
+	custBlWithForever    Custom Block With Forever          
 	mssPenUp             Missing Pen Up                  
 	mssPenDown           Missing Pen Down                
 	mssLoop              Missing Loop                    
-	procWithTerm         Procedure with Termination      
+	custBlWithTerm       Custom Block With Termination      
 	compLit              Comparing Literals              
 	illParamRefac        Illegal Parameter Refactor      
 	longScript           Long Script                     

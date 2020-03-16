@@ -31,10 +31,15 @@ import de.uni_passau.fim.se2.litterbox.ast.model.variable.Identifier;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ProcedureInfo;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
+
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * If a custom block calls itself inside its body and has no condition to stop the recursion, it will run for an
+ * indefinite amount of time.
+ */
 public class EndlessRecursion implements IssueFinder, ScratchVisitor {
     private static final String NOTE1 = "There are no endless recursions in your project.";
     private static final String NOTE2 = "Some of the sprites can contain endless recursions.";

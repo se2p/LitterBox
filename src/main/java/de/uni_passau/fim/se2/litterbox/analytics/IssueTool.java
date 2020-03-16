@@ -45,7 +45,7 @@ public class IssueTool {
     public IssueTool() {
         bugFinder.put(MissingPenUp.SHORT_NAME, new MissingPenUp());
         bugFinder.put(AmbiguousParameterName.SHORT_NAME, new AmbiguousParameterName());
-        bugFinder.put(AmbiguousProcedureSignature.SHORT_NAME, new AmbiguousProcedureSignature());
+        bugFinder.put(AmbiguousCustomBlockSignature.SHORT_NAME, new AmbiguousCustomBlockSignature());
         bugFinder.put(MissingPenDown.SHORT_NAME, new MissingPenDown());
         bugFinder.put(MissingEraseAll.SHORT_NAME, new MissingEraseAll());
         bugFinder.put(NoWorkingScripts.SHORT_NAME, new NoWorkingScripts());
@@ -54,8 +54,8 @@ public class IssueTool {
         bugFinder.put(OrphanedParameter.SHORT_NAME, new OrphanedParameter());
         bugFinder.put(ParameterOutOfScope.SHORT_NAME, new ParameterOutOfScope());
         bugFinder.put(IllegalParameterRefactor.SHORT_NAME, new IllegalParameterRefactor());
-        bugFinder.put(ProcedureWithForever.SHORT_NAME, new ProcedureWithForever());
-        bugFinder.put(ProcedureWithTermination.SHORT_NAME, new ProcedureWithTermination());
+        bugFinder.put(CustomBlockWithForever.SHORT_NAME, new CustomBlockWithForever());
+        bugFinder.put(CustomBlockWithTermination.SHORT_NAME, new CustomBlockWithTermination());
         bugFinder.put(ForeverInsideLoop.SHORT_NAME, new ForeverInsideLoop());
         bugFinder.put(PositionEqualsCheck.SHORT_NAME, new PositionEqualsCheck());
         bugFinder.put(CallWithoutDefinition.SHORT_NAME, new CallWithoutDefinition());
@@ -68,7 +68,7 @@ public class IssueTool {
 //        finder.put("dblif", new DoubleIf());
         bugFinder.put(MissingLoopSensing.SHORT_NAME, new MissingLoopSensing());
         bugFinder.put(MissingTerminationCondition.SHORT_NAME, new MissingTerminationCondition());
-        bugFinder.put(ExpressionAsColor.SHORT_NAME, new ExpressionAsColor());
+        bugFinder.put(ExpressionAsTouchingOrColor.SHORT_NAME, new ExpressionAsTouchingOrColor());
         bugFinder.put(RecursiveCloning.SHORT_NAME, new RecursiveCloning());
         bugFinder.put(SameVariableDifferentSprite.SHORT_NAME, new SameVariableDifferentSprite());
         bugFinder.put(MissingBackdropSwitch.SHORT_NAME, new MissingBackdropSwitch());

@@ -30,9 +30,17 @@ import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
+
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * Reporter blocks are used to evaluate the truth value of certain expressions.
+ * Not only is it possible to compare literals to variables or the results of other reporter blocks, literals can
+ * also be compared to literals.
+ * Since this will lead to the same result in each execution this construct is unnecessary and can obscure the fact
+ * that certain blocks will never or always be executed.
+ */
 public class ComparingLiterals implements IssueFinder, ScratchVisitor {
 
     public static final String NAME = "comparing_literals";

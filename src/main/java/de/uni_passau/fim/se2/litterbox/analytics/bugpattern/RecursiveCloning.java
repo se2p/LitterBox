@@ -30,9 +30,14 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.CreateCloneOf;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
+
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * Script starting with a When I start as a clone event handler that contain a create clone of
+ * myself block may result in an infinite recursion.
+ */
 public class RecursiveCloning implements ScratchVisitor, IssueFinder {
     private static final String NOTE1 = "There are no recursive cloning calls in your project.";
     private static final String NOTE2 = "Some of the sprites contain recursive cloning calls.";

@@ -27,9 +27,14 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.pen.PenDownStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.pen.PenUpStmt;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
+
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * A sprite that uses pen down blocks but never a pen up may draw right away, when the project is
+ * restarted. This might not be intended.
+ */
 public class MissingPenUp implements IssueFinder {
 
     public static final String NAME = "missing_pen_up";

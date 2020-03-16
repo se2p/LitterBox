@@ -32,6 +32,13 @@ import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * When custom blocks are created the user can define parameters, which can then be used in the body of the custom
+ * block.
+ * However, the block definition can be altered, including removal of parameters even if they are in use.
+ * Any instances of deleted parameters are retained, and then evaluated with the standard value for the type of
+ * parameter, since they are never initialised.
+ */
 public class OrphanedParameter implements IssueFinder, ScratchVisitor {
     private static final String NOTE1 = "There are no orphaned parameters in your project.";
     private static final String NOTE2 = "Some of the procedures contain orphaned parameters.";

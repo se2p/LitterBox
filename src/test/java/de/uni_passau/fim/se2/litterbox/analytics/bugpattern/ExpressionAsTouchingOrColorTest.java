@@ -29,10 +29,11 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-public class ProcedureWithTerminationTest {
+public class ExpressionAsTouchingOrColorTest {
     private static Program empty;
-    private static Program procedureWithTermination;
-    private static Program procedureWithForever;
+    private static Program expressionColor;
+    private static Program giant;
+    private static Program two;
     private static ObjectMapper mapper = new ObjectMapper();
 
     @BeforeAll
@@ -40,30 +41,39 @@ public class ProcedureWithTerminationTest {
 
         File f = new File("./src/test/fixtures/emptyProject.json");
         empty = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
-        f = new File("./src/test/fixtures/bugpattern/procedureWithTermination.json");
-        procedureWithTermination = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
-        f = new File("./src/test/fixtures/bugpattern/procedureWithForever.json");
-        procedureWithForever = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
+        f = new File("./src/test/fixtures/bugpattern/touchingExpressions.json");
+        expressionColor = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
+        f = new File("./src/test/fixtures/bugpattern/exprLit.json");
+        giant = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
+        f = new File("./src/test/fixtures/bugpattern/twoNotColo.json");
+        two = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
     }
 
     @Test
     public void testEmptyProgram() {
-        ProcedureWithTermination parameterName = new ProcedureWithTermination();
+        ExpressionAsTouchingOrColor parameterName = new ExpressionAsTouchingOrColor();
         IssueReport report = parameterName.check(empty);
         Assertions.assertEquals(0, report.getCount());
     }
 
     @Test
-    public void testProcedureWithTermination() {
-        ProcedureWithTermination parameterName = new ProcedureWithTermination();
-        IssueReport report = parameterName.check(procedureWithTermination);
-        Assertions.assertEquals(1, report.getCount());
+    public void testExpressionAsColor() {
+        ExpressionAsTouchingOrColor parameterName = new ExpressionAsTouchingOrColor();
+        IssueReport report = parameterName.check(expressionColor);
+        Assertions.assertEquals(3, report.getCount());
     }
 
     @Test
-    public void testProcedureWithForever() {
-        ProcedureWithTermination parameterName = new ProcedureWithTermination();
-        IssueReport report = parameterName.check(procedureWithForever);
+    public void testGiant() {
+        ExpressionAsTouchingOrColor parameterName = new ExpressionAsTouchingOrColor();
+        IssueReport report = parameterName.check(giant);
         Assertions.assertEquals(0, report.getCount());
+    }
+
+    @Test
+    public void testTwo() {
+        ExpressionAsTouchingOrColor parameterName = new ExpressionAsTouchingOrColor();
+        IssueReport report = parameterName.check(two);
+        Assertions.assertEquals(2, report.getCount());
     }
 }

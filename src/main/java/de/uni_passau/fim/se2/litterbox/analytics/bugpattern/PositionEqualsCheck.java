@@ -35,9 +35,17 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.StringExprOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
+
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * When an equals comparison is used as check for an until loop or a wait until, it can occur that
+ * the condition is never met exactly since scratch allows floating point values. Distances to other sprites or
+ * mouse positions have to match exactly the value in the comparison, otherwise the loop will run endlessly. This is
+ * considered a bug since the blocks following the until / wait until will never be reached and
+ * executed.
+ */
 public class PositionEqualsCheck implements IssueFinder, ScratchVisitor {
     private static final String NOTE1 = "There are equals checks in conditions in your project.";
     private static final String NOTE2 = "Some of the conditions contain equals checks.";

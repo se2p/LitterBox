@@ -33,16 +33,23 @@ import de.uni_passau.fim.se2.litterbox.ast.model.variable.Identifier;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ProcedureInfo;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
+
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-public class ProcedureWithTermination implements ScratchVisitor, IssueFinder {
-    public static final String NAME = "procedure_with_termination";
-    public static final String SHORT_NAME = "procWithTerm";
-    private static final String NOTE1 = "There are no procedures with termination where the call is followed by statements in your project.";
-    private static final String NOTE2 = "Some of the sprites contain procedures with forever where the call is followed by statements.";
+/**
+ * If a custom block contains a Stop all or Delete this clone and the custom block is called in the
+ * middle of another script, the script will never reach the blocks following the call.
+ */
+public class CustomBlockWithTermination implements ScratchVisitor, IssueFinder {
+    public static final String NAME = "custom_block_with_termination";
+    public static final String SHORT_NAME = "custBlWithTerm";
+    private static final String NOTE1 = "There are no custom blocks with termination where the call is followed by " +
+            "statements in your project.";
+    private static final String NOTE2 = "Some of the sprites contain custom blocks with forever where the call is " +
+            "followed by statements.";
     private boolean found = false;
     private int count = 0;
     private List<String> actorNames = new LinkedList<>();

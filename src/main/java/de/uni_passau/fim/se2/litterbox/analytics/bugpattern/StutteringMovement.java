@@ -35,7 +35,10 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * Checks for missing for-loops in movement scripts.
+ * A common way to move sprites in response to keyboard input is to use the specific event handler When key
+ * pressed followed by a move steps, change x by or change y by statement.
+ * Compared to the alternative to use a forever loop with a conditional containing a key pressed?
+ * expression, the first approach results in noticeably slower reaction and stuttering movement of the sprite moved.
  */
 public class StutteringMovement implements IssueFinder, ScratchVisitor {
 
