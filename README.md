@@ -38,51 +38,59 @@ Detectors:
 	all                  All issue finders               
 	bugs                 All issue finders for bug patterns      
 	smells               All issue finders for smells    
-	ctscore              All issue finders for ct scores  
-	mssCloneInit         Missing Clone Initialization    
-	ambCustBlSign        Ambiguous Custom Block Signature  
-	unusedProc           Unused Procedure                
-	recClone             Recursive Cloning               
-	nestLoop             Nested Loops                    
-	foreverInLoop        Forever inside Loop           
-	paramOutScope        Parameter out of Scope          
-	unusedVar            Unused Variable                 
-	mssBackdrSwitch      Missing Backdrop Switch         
-	ambParamName         Ambiguous Parameter Name        
-	mssEraseAll          Missing Erase All               
-	empBody              Empty Body                      
-	empScript            Empty Script                    
-	mssTerm              Missing Termination             
-	empProc              Empty Procedure                 
-	messNeverSent        Message Never Sent              
-	stuttMove            Stuttering Movement             
-	exprTouchColor       Expression As Touching Or Color             
-	sameVarDiffSprite    Same Variable used in Different Sprite  
-	flow                 Flow Control                
-	eqCond               Position Equals Checks        
-	empProj              Empty Project                   
-	cllWithoutDef        Call Without Definition         
-	weightedMethCnt      Weighted Method Count           
-	mssCloneCll          Missing Clone Call              
-	spriteCnt            Sprite Count                    
-	endlRec              Endless Recursion               
-	neverRecMess         Never Received Message          
-	custBlWithForever    Custom Block With Forever          
-	mssPenUp             Missing Pen Up                  
-	mssPenDown           Missing Pen Down                
-	mssLoop              Missing Loop                    
-	custBlWithTerm       Custom Block With Termination      
-	compLit              Comparing Literals              
-	illParamRefac        Illegal Parameter Refactor      
-	longScript           Long Script                     
-	usingPen             Using Pen                       
-	empSprite            Empty Sprite                    
-	noWorkScript         No Working Script 
+	ctscore              All issue finders for ct scores
+	
+	Bugpatterns:
+	ambCustBlSign        Ambiguous Custom Block Signature 
+	ambParamName         Ambiguous Parameter Name
+	cllWithoutDef        Call Without Definition
+	compLit              Comparing Literals
+	custBlWithForever    Custom Block With Forever
+	custBlWithTerm       Custom Block With Termination  
+	endlRec              Endless Recursion
+	exprTouchColor       Expression As Touching Or Color
+	foreverInLoop        Forever inside Loop
+	illParamRefac        Illegal Parameter Refactor
+	messNeverSent        Message Never Sent
+	messNeverRec         Message Never Received  
+	mssCloneCll          Missing Clone Call
+	mssCloneInit         Missing Clone Initialization
+	mssBackdrSwitch      Missing Backdrop Switch
+	mssEraseAll          Missing Erase All
+	mssLoopSens          Missing Loop Sensing
+	mssPenDown           Missing Pen Down	
+	mssPenUp             Missing Pen Up
+	mssTerm              Missing Termination 
 	mssWaitCond          Missing Wait Until Condition
-	orphParam            Orphaned Parameter              
-	dcode                Dead Code                       
-	blockCnt             Block Count                     
-	procCnt              Procedure Count                 
+	noWorkScript         No Working Script
+	orphParam            Orphaned Parameter
+	paramOutScope        Parameter out of Scope
+	posEqCheck           PositionEqualsCheck 
+	recClone             Recursive Cloning
+	sameVarDiffSprite    Same Variable used in Different Sprite    
+	stuttMove            Stuttering Movement	
+	
+	Smells:
+	empCtrlBody          Empty Control Body  
+	empCustBl            Empty Custom Block
+	empProj              Empty Project	
+	empScript            Empty Script
+	empSprite            Empty Sprite
+	dcode                Dead Code	
+	longScript           Long Script 
+	nestLoop             Nested Loops
+	unusedCustBl         Unused Custom Block               
+	unusedVar            Unused Variable 
+	usingPen             Using Pen
+                  
+	CT-Score:  
+	flow                 Flow Control                
+	                          
+	Utils:   
+	blockCnt             Block Count
+	procCnt              Procedure Count
+	spriteCnt            Sprite Count 
+	weightedMethCnt      Weighted Method Count           
 
 
 #### Example:

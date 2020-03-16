@@ -49,8 +49,8 @@ import java.util.List;
 public class PositionEqualsCheck implements IssueFinder, ScratchVisitor {
     private static final String NOTE1 = "There are equals checks in conditions in your project.";
     private static final String NOTE2 = "Some of the conditions contain equals checks.";
-    public static final String NAME = "equals_condition";
-    public static final String SHORT_NAME = "eqCond";
+    public static final String NAME = "position_equals_check";
+    public static final String SHORT_NAME = "posEqCheck";
     private boolean found = false;
     private int count = 0;
     private List<String> actorNames = new LinkedList<>();

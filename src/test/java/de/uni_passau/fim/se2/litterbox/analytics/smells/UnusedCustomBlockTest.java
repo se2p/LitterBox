@@ -29,7 +29,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-public class EmptyProcedureTest {
+public class UnusedCustomBlockTest {
     private static Program empty;
     private static Program unusedProc;
     private static ObjectMapper mapper = new ObjectMapper();
@@ -45,14 +45,14 @@ public class EmptyProcedureTest {
 
     @Test
     public void testEmptyProgram() {
-        EmptyProcedure parameterName = new EmptyProcedure();
+        UnusedCustomBlock parameterName = new UnusedCustomBlock();
         IssueReport report = parameterName.check(empty);
         Assertions.assertEquals(0, report.getCount());
     }
 
     @Test
-    public void testEmptyProcedure() {
-        EmptyProcedure parameterName = new EmptyProcedure();
+    public void testUnusedProcedure() {
+        UnusedCustomBlock parameterName = new UnusedCustomBlock();
         IssueReport report = parameterName.check(unusedProc);
         Assertions.assertEquals(1, report.getCount());
     }

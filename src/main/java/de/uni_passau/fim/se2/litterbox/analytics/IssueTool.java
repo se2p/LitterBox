@@ -82,14 +82,14 @@ public class IssueTool {
         smellFinder.put(LongScript.SHORT_NAME, new LongScript());
         smellFinder.put(NestedLoops.SHORT_NAME, new NestedLoops());
         smellFinder.put(UnusedVariable.SHORT_NAME, new UnusedVariable());
-        smellFinder.put(UnusedProcedure.SHORT_NAME, new UnusedProcedure());
+        smellFinder.put(UnusedCustomBlock.SHORT_NAME, new UnusedCustomBlock());
 //        finder.put("dplscrpt", new DuplicatedScript());
 //        finder.put("racecnd", new RaceCondition());
         smellFinder.put(EmptyControlBody.SHORT_NAME, new EmptyControlBody());
         smellFinder.put(EmptyScript.SHORT_NAME, new EmptyScript());
         smellFinder.put(EmptySprite.SHORT_NAME, new EmptySprite());
         smellFinder.put(EmptyProject.SHORT_NAME, new EmptyProject());
-        smellFinder.put(EmptyProcedure.SHORT_NAME, new EmptyProcedure());
+        smellFinder.put(EmptyCustomBlock.SHORT_NAME, new EmptyCustomBlock());
 //        finder.put("mdlman", new MiddleMan());
 //        finder.put("vrblscp", new VariableScope());
 //        finder.put("dplsprt", new DuplicatedSprite());

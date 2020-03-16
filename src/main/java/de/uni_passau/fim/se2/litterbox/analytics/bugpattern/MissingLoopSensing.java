@@ -42,8 +42,8 @@ import java.util.List;
  * unlikely that the timing is correct.
  */
 public class MissingLoopSensing implements IssueFinder {
-    public static final String NAME = "missing_loop";
-    public static final String SHORT_NAME = "mssLoop";
+    public static final String NAME = "missing_loop_sensing";
+    public static final String SHORT_NAME = "mssLoopSens";
     private List<String> found;
     private int counter;
 
