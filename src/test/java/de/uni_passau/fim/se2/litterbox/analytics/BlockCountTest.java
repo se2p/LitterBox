@@ -34,6 +34,8 @@ public class BlockCountTest {
     private static Program nestedLoops;
     private static Program withproc;
     private static Program fixedStatements;
+    private static Program fixedExpressions;
+    private static Program  halfFixedExpr;
     private static ObjectMapper mapper = new ObjectMapper();
 
     @BeforeAll
@@ -45,8 +47,12 @@ public class BlockCountTest {
         nestedLoops = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
         f = new File("./src/test/fixtures/blockCountWithProc.json");
         withproc = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
+        f = new File("./src/test/fixtures/fixedExpressions.json");
+        fixedExpressions = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
         f = new File("./src/test/fixtures/stmtParser/allFixedStatements.json");
         fixedStatements = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
+        f = new File("./src/test/fixtures/halfFixedExpressions.json");
+        halfFixedExpr = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
     }
 
     @Test
@@ -75,5 +81,19 @@ public class BlockCountTest {
         BlockCount parameterName = new BlockCount();
         IssueReport report = parameterName.check(fixedStatements);
         Assertions.assertEquals(26, report.getCount());
+    }
+
+    @Test
+    public void testFixedExpr() {
+        BlockCount parameterName = new BlockCount();
+        IssueReport report = parameterName.check(fixedExpressions);
+        Assertions.assertEquals(4, report.getCount());
+    }
+
+    @Test
+    public void testHalfFixedExpr() {
+        BlockCount parameterName = new BlockCount();
+        IssueReport report = parameterName.check( halfFixedExpr);
+        Assertions.assertEquals(6, report.getCount());
     }
 }

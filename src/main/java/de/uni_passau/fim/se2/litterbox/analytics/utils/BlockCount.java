@@ -26,13 +26,14 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.AsBool;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.ExpressionContains;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.AsListIndex;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.ExpressionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.ExpressionListPlain;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.AsNumber;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.Current;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.LengthOfVar;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AttributeOf;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.ItemOfVariable;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.BoolLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.ColorLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
@@ -41,6 +42,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.procedure.Parameter;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterList;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterListPlain;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.ExpressionStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.ListOfStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.ShowVariable;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.ChangeAttributeBy;
@@ -300,6 +302,24 @@ public class BlockCount implements IssueFinder, ScratchVisitor {
     }
 
     @Override
+    public void visit(ExpressionStmt node) {
+        if (!node.getChildren().isEmpty()) {
+            for (ASTNode child : node.getChildren()) {
+                child.accept(this);
+            }
+        }
+    }
+
+    @Override
+    public void visit(NumFunct node) {
+        if (!node.getChildren().isEmpty()) {
+            for (ASTNode child : node.getChildren()) {
+                child.accept(this);
+            }
+        }
+    }
+
+    @Override
     public void visit(KeyPressed node) {
         if (insideScript || insideProcedure) {
             count++;
@@ -512,5 +532,40 @@ public class BlockCount implements IssueFinder, ScratchVisitor {
             node.getIndex().accept(this);
         }
     }
+
+    @Override
+    public void visit(ItemOfVariable node){
+        if (insideScript || insideProcedure) {
+            count++;
+        }
+        if (!node.getChildren().isEmpty()) {
+            //only expression has to be counted since the attributes are fixed in the blocks
+            node.getNum().accept(this);
+        }
+    }
+
+    @Override
+    public void visit(IndexOf node){
+        if (insideScript || insideProcedure) {
+            count++;
+        }
+        if (!node.getChildren().isEmpty()) {
+            //only expression has to be counted since the attributes are fixed in the blocks
+            node.getExpr().accept(this);
+        }
+    }
+
+    @Override
+    public void visit(ExpressionContains node){
+        if (insideScript || insideProcedure) {
+            count++;
+        }
+        if (!node.getChildren().isEmpty()) {
+            //only expression has to be counted since the attributes are fixed in the blocks
+            node.getContained().accept(this);
+        }
+    }
+
+
 }
 
