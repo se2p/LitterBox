@@ -54,6 +54,7 @@ public class Downloader {
                 sb.append(((char) cp));
                 cp = br.read();
             }
+            br.close();
             return sb.toString();
         }
     }

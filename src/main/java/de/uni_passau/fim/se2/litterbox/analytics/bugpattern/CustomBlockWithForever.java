@@ -27,8 +27,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.DeleteClone;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopAll;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Identifier;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ProcedureInfo;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
@@ -38,11 +37,20 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-public class ProcedureWithTermination implements ScratchVisitor, IssueFinder {
-    public static final String NAME = "procedure_with_termination";
-    public static final String SHORT_NAME = "procWithTerm";
-    private static final String NOTE1 = "There are no procedures with termination where the call is followed by statements in your project.";
-    private static final String NOTE2 = "Some of the sprites contain procedures with forever where the call is followed by statements.";
+/**
+ * If a custom block contains a forever loop and the custom block is used in the middle of another script,
+ * the script will never be able to finish.
+ * The forever loop in the custom block cannot be left, resulting in the calling script never being able to
+ * proceed.
+ */
+public class CustomBlockWithForever implements IssueFinder, ScratchVisitor {
+    public static final String NAME = "custom_block_with_forever";
+    public static final String SHORT_NAME = "custBlWithForever";
+    private static final String NOTE1 = "There are no custom blocks with forever where the call is followed by " +
+            "statements in your project.";
+    private static final String NOTE2 = "Some of the sprites contain custom blocks with forever where the call is " +
+            "followed by " +
+            "statements.";
     private boolean found = false;
     private int count = 0;
     private List<String> actorNames = new LinkedList<>();
@@ -77,9 +85,9 @@ public class ProcedureWithTermination implements ScratchVisitor, IssueFinder {
     @Override
     public void visit(ActorDefinition actor) {
         currentActor = actor;
+        procMap = program.getProcedureMapping().getProcedures().get(currentActor.getIdent().getName());
         calledProcedures = new ArrayList<>();
         proceduresWithForever = new ArrayList<>();
-        procMap = program.getProcedureMapping().getProcedures().get(currentActor.getIdent().getName());
         if (!actor.getChildren().isEmpty()) {
             for (ASTNode child : actor.getChildren()) {
                 child.accept(this);
@@ -115,19 +123,7 @@ public class ProcedureWithTermination implements ScratchVisitor, IssueFinder {
     }
 
     @Override
-    public void visit(DeleteClone node) {
-        if (insideProcedure) {
-            proceduresWithForever.add(currentProcedureName);
-        }
-        if (!node.getChildren().isEmpty()) {
-            for (ASTNode child : node.getChildren()) {
-                child.accept(this);
-            }
-        }
-    }
-
-    @Override
-    public void visit(StopAll node) {
+    public void visit(RepeatForeverStmt node) {
         if (insideProcedure) {
             proceduresWithForever.add(currentProcedureName);
         }

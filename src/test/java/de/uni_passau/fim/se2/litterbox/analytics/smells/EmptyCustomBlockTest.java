@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
+package de.uni_passau.fim.se2.litterbox.analytics.smells;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueReport;
@@ -29,11 +29,9 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-public class ProcedureWithForeverTest {
+public class EmptyCustomBlockTest {
     private static Program empty;
-    private static Program procedureWithNoForever;
-    private static Program procedureWithForever;
-    private static Program lastCall;
+    private static Program unusedProc;
     private static ObjectMapper mapper = new ObjectMapper();
 
     @BeforeAll
@@ -41,39 +39,21 @@ public class ProcedureWithForeverTest {
 
         File f = new File("./src/test/fixtures/emptyProject.json");
         empty = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
-        f = new File("./src/test/fixtures/bugpattern/procedureWithNoForever.json");
-        procedureWithNoForever = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
-        f = new File("./src/test/fixtures/bugpattern/procedureWithForever.json");
-        procedureWithForever = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
-        f = new File("./src/test/fixtures/bugpattern/callLast.json");
-        lastCall = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
+        f = new File("./src/test/fixtures/smells/unusedEmptyProcedure.json");
+        unusedProc = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
     }
 
     @Test
     public void testEmptyProgram() {
-        ProcedureWithForever parameterName = new ProcedureWithForever();
+        EmptyCustomBlock parameterName = new EmptyCustomBlock();
         IssueReport report = parameterName.check(empty);
         Assertions.assertEquals(0, report.getCount());
     }
 
     @Test
-    public void testProcedureWithNoForever() {
-        ProcedureWithForever parameterName = new ProcedureWithForever();
-        IssueReport report = parameterName.check(procedureWithNoForever);
-        Assertions.assertEquals(0, report.getCount());
-    }
-
-    @Test
-    public void testProcedureWithForever() {
-        ProcedureWithForever parameterName = new ProcedureWithForever();
-        IssueReport report = parameterName.check(procedureWithForever);
+    public void testEmptyProcedure() {
+        EmptyCustomBlock parameterName = new EmptyCustomBlock();
+        IssueReport report = parameterName.check(unusedProc);
         Assertions.assertEquals(1, report.getCount());
-    }
-
-    @Test
-    public void testlastCall() {
-        ProcedureWithForever parameterName = new ProcedureWithForever();
-        IssueReport report = parameterName.check(lastCall);
-        Assertions.assertEquals(0, report.getCount());
     }
 }

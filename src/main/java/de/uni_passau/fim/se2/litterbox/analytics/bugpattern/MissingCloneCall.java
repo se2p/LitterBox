@@ -30,10 +30,15 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.CreateCloneOf;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * If the When I start as a clone event handler is used to start a script, but the sprite is never cloned,
+ * the event will never be triggered and the script is dead.
+ */
 public class MissingCloneCall implements IssueFinder, ScratchVisitor {
     public static final String NAME = "missing_clone_call";
     public static final String SHORT_NAME = "mssCloneCll";

@@ -28,9 +28,15 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatTimesSt
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
+
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * If two loops are nested and the inner loop is a forever loop, the inner loop will never terminate. Thus
+ * the statements preceeding the inner loop are only executed once. Furthermore, the statements following the outer
+ * loop can never be reached.
+ */
 public class ForeverInsideLoop implements IssueFinder, ScratchVisitor {
     public static final String NAME = "forever_inside_loop";
     public static final String SHORT_NAME = "foreverInLoop";

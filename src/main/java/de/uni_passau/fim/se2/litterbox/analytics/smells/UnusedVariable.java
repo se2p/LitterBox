@@ -41,7 +41,7 @@ public class UnusedVariable implements IssueFinder, ScratchVisitor {
     public static final String SHORT_NAME = "unusedVar";
     private static final String NOTE1 = "There are no unused variables in your project.";
     private static final String NOTE2 = "Some of the sprites contain unused variables.";
-    public static final String[] MY_VARIABLE_LANGUAGES = {"meine Variable", "исхатәу аҽеиҭак", "my variable", "متغيري", "мая зменная", "моята променлива", "la meva variable", "گۆڕاوەکەم", "moje proměnná", "fy newidyn", "min variabel", "η μεταβλητή μου", "mi variable", "minu muutuja", "nire aldagaia", "متغیر من", "muuttujani", "ma variable", "m'athróg", "an caochladair agam", "a miña variábel", "המשתנה שלי", "moja varijabla", "az én változóm", "variabel saya", "la mia variabile", "へんすう", "変数", "ჩემი ცვლადი", "អថេរខ្ញុំ", "나의 변수", "mano kintamasis", "mans mainīgais", "taku taurangi", "min variabel", "mijn variabele", "min variabel", "moja zmienna", "minha variável", "a minha variável", "toʾoku variable", "variabila mea", "моя переменная", "premenná", "moja spremenljivka", "моја променљива", "min variabel", "kibadilika changu", "ตัวแปรของฉัน", "değişkenim", "моя змінна", "mening o'zgaruvchim", "biến của tôi", "我的变量", "i-variable yami"};
+    private static final String[] MY_VARIABLE_LANGUAGES = {"meine Variable", "исхатәу аҽеиҭак", "my variable", "متغيري", "мая зменная", "моята променлива", "la meva variable", "گۆڕاوەکەم", "moje proměnná", "fy newidyn", "min variabel", "η μεταβλητή μου", "mi variable", "minu muutuja", "nire aldagaia", "متغیر من", "muuttujani", "ma variable", "m'athróg", "an caochladair agam", "a miña variábel", "המשתנה שלי", "moja varijabla", "az én változóm", "variabel saya", "la mia variabile", "へんすう", "変数", "ჩემი ცვლადი", "អថេរខ្ញុំ", "나의 변수", "mano kintamasis", "mans mainīgais", "taku taurangi", "min variabel", "mijn variabele", "min variabel", "moja zmienna", "minha variável", "a minha variável", "toʾoku variable", "variabila mea", "моя переменная", "premenná", "moja spremenljivka", "моја променљива", "min variabel", "kibadilika changu", "ตัวแปรของฉัน", "değişkenim", "моя змінна", "mening o'zgaruvchim", "biến của tôi", "我的变量", "i-variable yami"};
     private int count = 0;
     private List<String> actorNames = new LinkedList<>();
     private List<Qualified> variableCalls;
@@ -76,9 +76,8 @@ public class UnusedVariable implements IssueFinder, ScratchVisitor {
 
     private void checkVariables() {
 
-        Set<String> ids = varMap.keySet();
-        for (String id : ids) {
-            VariableInfo curr = varMap.get(id);
+        for (Map.Entry<String, VariableInfo> entry : varMap.entrySet()) {
+            VariableInfo curr = entry.getValue();
             String actorName = curr.getActor();
             String name = curr.getVariableName();
             boolean currFound = false;
@@ -94,9 +93,9 @@ public class UnusedVariable implements IssueFinder, ScratchVisitor {
 
             }
         }
-        ids = listMap.keySet();
-        for (String id : ids) {
-            ExpressionListInfo curr = listMap.get(id);
+
+        for (Map.Entry<String, ExpressionListInfo> entry : listMap.entrySet()) {
+            ExpressionListInfo curr = entry.getValue();
             String actorName = curr.getActor();
             String name = curr.getVariableName();
             boolean currFound = false;

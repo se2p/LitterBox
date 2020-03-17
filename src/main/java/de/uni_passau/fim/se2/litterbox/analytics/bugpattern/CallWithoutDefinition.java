@@ -29,11 +29,18 @@ import de.uni_passau.fim.se2.litterbox.ast.model.variable.Identifier;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ProcedureInfo;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
+
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * When a custom block is called without being defined nothing happens. This can occur in two different situations:
+ * 1) When the definition of a custom block is deleted in the editor, the call block remains in the code column and
+ * can still be used. 2) A script using a call to a custom block can be dragged and copied to another sprite,
+ * probably no custom block with the same signature as the call exists here and thus the call has no definition.
+ */
 public class CallWithoutDefinition implements IssueFinder, ScratchVisitor {
     private static final String NOTE1 = "There are no calls without definitions in your project.";
     private static final String NOTE2 = "Some of the sprites contain calls without definitions.";

@@ -152,7 +152,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.GoToBackLa
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.GoToFrontLayer;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.GoToLayer;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Hide;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.HideVariable;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.HideVariable;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Say;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SayForSecs;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SetSizeTo;

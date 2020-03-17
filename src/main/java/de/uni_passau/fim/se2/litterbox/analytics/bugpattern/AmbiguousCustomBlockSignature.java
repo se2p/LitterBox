@@ -33,16 +33,21 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-public class AmbiguousProcedureSignature implements IssueFinder, ScratchVisitor {
-    private static final String NOTE1 = "There are no ambiguous procedure signatures in your project.";
-    private static final String NOTE2 = "Some of the procedures signatures are ambiguous.";
-    public static final String NAME = "ambiguous_procedure_signature";
-    public static final String SHORT_NAME = "ambProcSign";
+/**
+ * Names for custom blocks are non-unique. Two custom blocks with the same name can only be distinguished if they have a
+ * different number or order of parameters.
+ * When two blocks have the same name and parameter order, no matter which call block is used, the program will
+ * always call the matching custom block which was defined earlier.
+ */
+public class AmbiguousCustomBlockSignature implements IssueFinder, ScratchVisitor {
+    private static final String NOTE1 = "There are no ambiguous custom block signatures in your project.";
+    private static final String NOTE2 = "Some of the custom block signatures are ambiguous.";
+    public static final String NAME = "ambiguous_custom_block_signature";
+    public static final String SHORT_NAME = "ambCustBlSign";
     private boolean found = false;
     private int count = 0;
     private List<String> actorNames = new LinkedList<>();
     private ActorDefinition currentActor;
-    private List<String> procNames;
     private Map<Identifier, ProcedureInfo> procMap;
     private Program program;
 
@@ -54,7 +59,6 @@ public class AmbiguousProcedureSignature implements IssueFinder, ScratchVisitor 
         found = false;
         count = 0;
         actorNames = new LinkedList<>();
-        procNames = new LinkedList<>();
         program.accept(this);
         String notes = NOTE1;
         if (count > 0) {
@@ -66,7 +70,6 @@ public class AmbiguousProcedureSignature implements IssueFinder, ScratchVisitor 
     @Override
     public void visit(ActorDefinition actor) {
         currentActor = actor;
-        procNames = new LinkedList<>();
         procMap = program.getProcedureMapping().getProcedures().get(currentActor.getIdent().getName());
         if (!actor.getChildren().isEmpty()) {
             for (ASTNode child : actor.getChildren()) {

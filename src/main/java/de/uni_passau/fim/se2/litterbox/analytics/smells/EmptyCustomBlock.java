@@ -16,30 +16,24 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
+package de.uni_passau.fim.se2.litterbox.analytics.smells;
 
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueReport;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.ColorTouches;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Touching;
-import de.uni_passau.fim.se2.litterbox.ast.model.literals.ColorLiteral;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.pen.SetPenColorToColorStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.touchable.Edge;
-import de.uni_passau.fim.se2.litterbox.ast.model.touchable.MousePointer;
-import de.uni_passau.fim.se2.litterbox.ast.model.touchable.SpriteTouchable;
+import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 import java.util.LinkedList;
 import java.util.List;
 
-public class ExpressionAsColor implements IssueFinder, ScratchVisitor {
-    public static final String NAME = "expression_as_color";
-    public static final String SHORT_NAME = "exprColor";
-    private static final String NOTE1 = "There are no expressions used as colors in your project.";
-    private static final String NOTE2 = "Some of the sprites use expressions as colors.";
+public class EmptyCustomBlock implements IssueFinder, ScratchVisitor {
+    public static final String NAME = "empty_custom_block";
+    public static final String SHORT_NAME = "empCustBl";
+    private static final String NOTE1 = "There are no empty custom blocks in your project.";
+    private static final String NOTE2 = "Some of the custom blocks are empty.";
     private boolean found = false;
     private int count = 0;
     private List<String> actorNames = new LinkedList<>();
@@ -80,42 +74,10 @@ public class ExpressionAsColor implements IssueFinder, ScratchVisitor {
     }
 
     @Override
-    public void visit(SetPenColorToColorStmt node) {
-        if (!(node.getColorExpr() instanceof ColorLiteral)) {
-            count++;
+    public void visit(ProcedureDefinition node) {
+        if (node.getStmtList().getStmts().getListOfStmt().isEmpty()) {
             found = true;
-        }
-        if (!node.getChildren().isEmpty()) {
-            for (ASTNode child : node.getChildren()) {
-                child.accept(this);
-            }
-        }
-    }
-
-    @Override
-    public void visit(ColorTouches node) {
-        if (!(node.getOperand1() instanceof ColorLiteral)) {
             count++;
-            found = true;
-        }
-        if (!(node.getOperand2() instanceof ColorLiteral)) {
-            count++;
-            found = true;
-        }
-        if (!node.getChildren().isEmpty()) {
-            for (ASTNode child : node.getChildren()) {
-                child.accept(this);
-            }
-        }
-    }
-
-    @Override
-    public void visit(Touching node) {
-        if (!(node.getTouchable() instanceof MousePointer) && !(node.getTouchable() instanceof Edge) && !(node.getTouchable() instanceof SpriteTouchable)) {
-            if (!(node.getTouchable() instanceof ColorLiteral)) {
-                count++;
-                found = true;
-            }
         }
         if (!node.getChildren().isEmpty()) {
             for (ASTNode child : node.getChildren()) {

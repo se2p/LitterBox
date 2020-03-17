@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.uni_passau.fim.se2.litterbox.analytics.smells;
+package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueReport;
@@ -29,9 +29,11 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-public class UnusedProcedureTest {
+public class AmbiguousCustomBlockSignatureTest {
     private static Program empty;
-    private static Program unusedProc;
+    private static Program ambiguousProcedure;
+    private static Program ambiguousProcedureDiffArg;
+    private static Program emptySign;
     private static ObjectMapper mapper = new ObjectMapper();
 
     @BeforeAll
@@ -39,21 +41,39 @@ public class UnusedProcedureTest {
 
         File f = new File("./src/test/fixtures/emptyProject.json");
         empty = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
-        f = new File("./src/test/fixtures/smells/unusedEmptyProcedure.json");
-        unusedProc = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
+        f = new File("./src/test/fixtures/bugpattern/ambiguousProcedureSignature.json");
+        ambiguousProcedure = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
+        f = new File("./src/test/fixtures/bugpattern/ambiguousSignatureDiffArg.json");
+        ambiguousProcedureDiffArg = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
+        f = new File("./src/test/fixtures/bugpattern/emptyAmbiguousSign.json");
+        emptySign = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
     }
 
     @Test
     public void testEmptyProgram() {
-        UnusedProcedure parameterName = new UnusedProcedure();
+        AmbiguousCustomBlockSignature parameterName = new AmbiguousCustomBlockSignature();
         IssueReport report = parameterName.check(empty);
         Assertions.assertEquals(0, report.getCount());
     }
 
     @Test
-    public void testUnusedProcedure() {
-        UnusedProcedure parameterName = new UnusedProcedure();
-        IssueReport report = parameterName.check(unusedProc);
-        Assertions.assertEquals(1, report.getCount());
+    public void testAmbiguousSignatures() {
+        AmbiguousCustomBlockSignature parameterName = new AmbiguousCustomBlockSignature();
+        IssueReport report = parameterName.check(ambiguousProcedure);
+        Assertions.assertEquals(2, report.getCount());
+    }
+
+    @Test
+    public void testAmbiguousSigDifferentParameters() {
+        AmbiguousCustomBlockSignature parameterName = new AmbiguousCustomBlockSignature();
+        IssueReport report = parameterName.check(ambiguousProcedureDiffArg);
+        Assertions.assertEquals(2, report.getCount());
+    }
+
+    @Test
+    public void testAmbiguousEmpty() {
+        AmbiguousCustomBlockSignature parameterName = new AmbiguousCustomBlockSignature();
+        IssueReport report = parameterName.check(emptySign);
+        Assertions.assertEquals(0, report.getCount());
     }
 }

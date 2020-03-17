@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.uni_passau.fim.se2.litterbox.analytics.smells;
+package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueReport;
@@ -29,9 +29,11 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-public class EmptyProcedureTest {
+public class ExpressionAsTouchingOrColorTest {
     private static Program empty;
-    private static Program unusedProc;
+    private static Program expressionColor;
+    private static Program giant;
+    private static Program two;
     private static ObjectMapper mapper = new ObjectMapper();
 
     @BeforeAll
@@ -39,21 +41,39 @@ public class EmptyProcedureTest {
 
         File f = new File("./src/test/fixtures/emptyProject.json");
         empty = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
-        f = new File("./src/test/fixtures/smells/unusedEmptyProcedure.json");
-        unusedProc = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
+        f = new File("./src/test/fixtures/bugpattern/touchingExpressions.json");
+        expressionColor = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
+        f = new File("./src/test/fixtures/bugpattern/exprLit.json");
+        giant = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
+        f = new File("./src/test/fixtures/bugpattern/twoNotColo.json");
+        two = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
     }
 
     @Test
     public void testEmptyProgram() {
-        EmptyProcedure parameterName = new EmptyProcedure();
+        ExpressionAsTouchingOrColor parameterName = new ExpressionAsTouchingOrColor();
         IssueReport report = parameterName.check(empty);
         Assertions.assertEquals(0, report.getCount());
     }
 
     @Test
-    public void testEmptyProcedure() {
-        EmptyProcedure parameterName = new EmptyProcedure();
-        IssueReport report = parameterName.check(unusedProc);
-        Assertions.assertEquals(1, report.getCount());
+    public void testExpressionAsColor() {
+        ExpressionAsTouchingOrColor parameterName = new ExpressionAsTouchingOrColor();
+        IssueReport report = parameterName.check(expressionColor);
+        Assertions.assertEquals(3, report.getCount());
+    }
+
+    @Test
+    public void testGiant() {
+        ExpressionAsTouchingOrColor parameterName = new ExpressionAsTouchingOrColor();
+        IssueReport report = parameterName.check(giant);
+        Assertions.assertEquals(0, report.getCount());
+    }
+
+    @Test
+    public void testTwo() {
+        ExpressionAsTouchingOrColor parameterName = new ExpressionAsTouchingOrColor();
+        IssueReport report = parameterName.check(two);
+        Assertions.assertEquals(2, report.getCount());
     }
 }

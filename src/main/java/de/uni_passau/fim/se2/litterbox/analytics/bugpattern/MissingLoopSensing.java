@@ -32,15 +32,18 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Touching;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.*;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
+
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Checks for missing loops in event based actions.
+ * A script should execute actions when an event occurs. Instead of continuously checking for the event to occur
+ * inside a forever or until loop it is only checked once in a conditional construct, making it
+ * unlikely that the timing is correct.
  */
 public class MissingLoopSensing implements IssueFinder {
-    public static final String NAME = "missing_loop";
-    public static final String SHORT_NAME = "mssLoop";
+    public static final String NAME = "missing_loop_sensing";
+    public static final String SHORT_NAME = "mssLoopSens";
     private List<String> found;
     private int counter;
 

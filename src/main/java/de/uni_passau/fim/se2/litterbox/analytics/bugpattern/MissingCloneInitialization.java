@@ -35,6 +35,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * When a sprite creates a
+ * clone of itself but has no scripts started by When I start as
+ * a clone or When this sprite clicked events, clones will not
+ * perform any actions. The clones remain frozen until they
+ * are deleted by delete this clone blocks or the program is
+ * restarted.
+ */
 public class MissingCloneInitialization implements IssueFinder, ScratchVisitor {
 
     public static final String NAME = "missing_clone_initialization";

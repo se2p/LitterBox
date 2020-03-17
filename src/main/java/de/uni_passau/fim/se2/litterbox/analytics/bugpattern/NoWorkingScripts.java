@@ -30,6 +30,13 @@ import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * The empty script smell occurs if an event handler has no other blocks attached to it.
+ * The dead code smell occurs when a script has no event handler to start it, so it can never be
+ * executed automatically.
+ * If both smells occur simultaneously without any other scripts in a sprite we consider it a bug.
+ * We suppose that the complete script should consist of the event handler attached to the dead code.
+ */
 public class NoWorkingScripts implements IssueFinder, ScratchVisitor {
     public static final String NAME = "no_working_scripts";
     public static final String SHORT_NAME = "noWorkScript";

@@ -30,6 +30,12 @@ import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * Scripts of a sprite using a pen up block but never a pen down block fall in this category.
+ * We assume that this is a bug, because either the sprite is supposed to draw
+ * something and does not, or later additions of pen down blocks may not lead to the desired results since remaining
+ * pen up blocks could disrupt the project.
+ */
 public class MissingPenDown implements IssueFinder {
 
     public static final String NAME = "missing_pen_down";
@@ -48,7 +54,7 @@ public class MissingPenDown implements IssueFinder {
         return NAME;
     }
 
-    private class CheckVisitor implements ScratchVisitor {
+    private static class CheckVisitor implements ScratchVisitor {
         private int count = 0;
         private List<String> actorNames = new LinkedList<>();
         private ActorDefinition currentActor;

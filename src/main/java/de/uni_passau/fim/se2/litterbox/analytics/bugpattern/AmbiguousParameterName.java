@@ -35,6 +35,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * The parameter names in custom blocks do not have to be unique.
+ * Therefore, when two parameters have the same name, no matter the type or which one is used inside the custom
+ * block, it will always be evaluated as the last input to the block.
+ */
 public class AmbiguousParameterName implements IssueFinder, ScratchVisitor {
     private static final String NOTE1 = "There are no ambiguous parameter names in your project.";
     private static final String NOTE2 = "Some of the procedures contain ambiguous parameter names.";

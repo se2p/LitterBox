@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
+package de.uni_passau.fim.se2.litterbox.analytics.smells;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueReport;
@@ -29,10 +29,9 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-public class ProcedureWithTerminationTest {
+public class UnusedCustomBlockTest {
     private static Program empty;
-    private static Program procedureWithTermination;
-    private static Program procedureWithForever;
+    private static Program unusedProc;
     private static ObjectMapper mapper = new ObjectMapper();
 
     @BeforeAll
@@ -40,30 +39,21 @@ public class ProcedureWithTerminationTest {
 
         File f = new File("./src/test/fixtures/emptyProject.json");
         empty = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
-        f = new File("./src/test/fixtures/bugpattern/procedureWithTermination.json");
-        procedureWithTermination = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
-        f = new File("./src/test/fixtures/bugpattern/procedureWithForever.json");
-        procedureWithForever = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
+        f = new File("./src/test/fixtures/smells/unusedEmptyProcedure.json");
+        unusedProc = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
     }
 
     @Test
     public void testEmptyProgram() {
-        ProcedureWithTermination parameterName = new ProcedureWithTermination();
+        UnusedCustomBlock parameterName = new UnusedCustomBlock();
         IssueReport report = parameterName.check(empty);
         Assertions.assertEquals(0, report.getCount());
     }
 
     @Test
-    public void testProcedureWithTermination() {
-        ProcedureWithTermination parameterName = new ProcedureWithTermination();
-        IssueReport report = parameterName.check(procedureWithTermination);
+    public void testUnusedProcedure() {
+        UnusedCustomBlock parameterName = new UnusedCustomBlock();
+        IssueReport report = parameterName.check(unusedProc);
         Assertions.assertEquals(1, report.getCount());
-    }
-
-    @Test
-    public void testProcedureWithForever() {
-        ProcedureWithTermination parameterName = new ProcedureWithTermination();
-        IssueReport report = parameterName.check(procedureWithForever);
-        Assertions.assertEquals(0, report.getCount());
     }
 }

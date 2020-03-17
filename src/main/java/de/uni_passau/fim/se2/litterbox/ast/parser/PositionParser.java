@@ -58,7 +58,7 @@ public class PositionParser {
 
         JsonNode menuID;
         String opcodeString = current.get(Constants.OPCODE_KEY).asText();
-        int positionInput = 0;
+        int positionInput;
         if (SpriteMotionStmtOpcode.contains(opcodeString)) {
             SpriteMotionStmtOpcode opcode = valueOf(opcodeString);
 

@@ -16,39 +16,48 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.uni_passau.fim.se2.litterbox.analytics.smells;
+package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueReport;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.DeleteClone;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopAll;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Identifier;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ProcedureInfo;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
+
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 /**
- * Checks if there are unused custom blocks in the project.
+ * If a custom block contains a Stop all or Delete this clone and the custom block is called in the
+ * middle of another script, the script will never reach the blocks following the call.
  */
-public class UnusedProcedure implements IssueFinder, ScratchVisitor {
-
-    private static final String NOTE1 = "There are no uncalled procedures in your project.";
-    private static final String NOTE2 = "Some of the procedures are never used.";
-    public static final String NAME = "unused_procedure";
-    public static final String SHORT_NAME = "unusedProc";
+public class CustomBlockWithTermination implements ScratchVisitor, IssueFinder {
+    public static final String NAME = "custom_block_with_termination";
+    public static final String SHORT_NAME = "custBlWithTerm";
+    private static final String NOTE1 = "There are no custom blocks with termination where the call is followed by " +
+            "statements in your project.";
+    private static final String NOTE2 = "Some of the sprites contain custom blocks with forever where the call is " +
+            "followed by statements.";
     private boolean found = false;
     private int count = 0;
     private List<String> actorNames = new LinkedList<>();
     private ActorDefinition currentActor;
-    private List<String> proceduresDef;
+    private String currentProcedureName;
+    private List<String> proceduresWithForever;
     private List<String> calledProcedures;
+    private boolean insideProcedure;
     private Map<Identifier, ProcedureInfo> procMap;
     private Program program;
 
@@ -75,9 +84,9 @@ public class UnusedProcedure implements IssueFinder, ScratchVisitor {
     @Override
     public void visit(ActorDefinition actor) {
         currentActor = actor;
-        procMap = program.getProcedureMapping().getProcedures().get(currentActor.getIdent().getName());
         calledProcedures = new ArrayList<>();
-        proceduresDef = new ArrayList<>();
+        proceduresWithForever = new ArrayList<>();
+        procMap = program.getProcedureMapping().getProcedures().get(currentActor.getIdent().getName());
         if (!actor.getChildren().isEmpty()) {
             for (ASTNode child : actor.getChildren()) {
                 child.accept(this);
@@ -91,8 +100,8 @@ public class UnusedProcedure implements IssueFinder, ScratchVisitor {
     }
 
     private void checkCalls() {
-        for (String procedureDef : proceduresDef) {
-            if (!calledProcedures.contains(procedureDef)) {
+        for (String calledProcedure : calledProcedures) {
+            if (proceduresWithForever.contains(calledProcedure)) {
                 found = true;
                 count++;
             }
@@ -101,9 +110,22 @@ public class UnusedProcedure implements IssueFinder, ScratchVisitor {
 
     @Override
     public void visit(ProcedureDefinition node) {
+        insideProcedure = true;
+        currentProcedureName = procMap.get(node.getIdent()).getName();
 
-        proceduresDef.add(procMap.get(node.getIdent()).getName());
+        if (!node.getChildren().isEmpty()) {
+            for (ASTNode child : node.getChildren()) {
+                child.accept(this);
+            }
+        }
+        insideProcedure = false;
+    }
 
+    @Override
+    public void visit(DeleteClone node) {
+        if (insideProcedure) {
+            proceduresWithForever.add(currentProcedureName);
+        }
         if (!node.getChildren().isEmpty()) {
             for (ASTNode child : node.getChildren()) {
                 child.accept(this);
@@ -112,8 +134,25 @@ public class UnusedProcedure implements IssueFinder, ScratchVisitor {
     }
 
     @Override
-    public void visit(CallStmt node) {
-        calledProcedures.add(node.getIdent().getName());
+    public void visit(StopAll node) {
+        if (insideProcedure) {
+            proceduresWithForever.add(currentProcedureName);
+        }
+        if (!node.getChildren().isEmpty()) {
+            for (ASTNode child : node.getChildren()) {
+                child.accept(this);
+            }
+        }
+    }
+
+    @Override
+    public void visit(StmtList node) {
+        List<Stmt> stmts = node.getStmts().getListOfStmt();
+        for (int i = 0; i < stmts.size() - 1; i++) {
+            if (stmts.get(i) instanceof CallStmt) {
+                calledProcedures.add(((CallStmt) stmts.get(i)).getIdent().getName());
+            }
+        }
         if (!node.getChildren().isEmpty()) {
             for (ASTNode child : node.getChildren()) {
                 child.accept(this);

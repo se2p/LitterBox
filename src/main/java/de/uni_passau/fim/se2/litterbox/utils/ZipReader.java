@@ -22,6 +22,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -46,12 +47,13 @@ public class ZipReader {
                 final ZipEntry entry = entries.nextElement();
                 if (entry.getName().equals("project.json")) {
                     InputStream is = file.getInputStream(entry);
-                    BufferedReader br = new BufferedReader(new InputStreamReader(is));
+                    BufferedReader br = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
                     StringBuilder sb = new StringBuilder();
                     String line;
                     while ((line = br.readLine()) != null) {
                         sb.append(line);        //.append('\n');
                     }
+                    br.close();
                     return sb.toString();
                 }
             }
@@ -70,7 +72,9 @@ public class ZipReader {
      */
     public static String getName(String path) throws IOException {
         final ZipFile file = new ZipFile(path);
-        return file.getName();
+        String name = file.getName();
+        file.close();
+        return name;
     }
 
 }

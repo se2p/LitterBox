@@ -32,7 +32,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Checks for missing statements in repeat-until blocks.
+ * The repeat until blocks require a stopping condition.
+ * If the condition is missing, the result is an infinite loop.
+ * This will then prevent the execution of blocks following the loop in the script.
  */
 public class MissingTerminationCondition implements IssueFinder {
     public static final String NAME = "missing_termination";

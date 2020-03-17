@@ -29,12 +29,18 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.Broadcast;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.BroadcastAndWait;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
+
 import java.util.*;
 
+/**
+ * This pattern is a specialised version of unmatched broadcast and receive blocks. It occurs
+ * when there are blocks to send messages, but the When I receive message event handler is missing. Since no
+ * handler reacts to this event, the message stays unnoticed.
+ */
 public class MessageNeverReceived implements IssueFinder, ScratchVisitor {
 
-    public static final String NAME = "never_receive_message";
-    public static final String SHORT_NAME = "neverRecMess";
+    public static final String NAME = "message_never_received";
+    public static final String SHORT_NAME = "messNeverRec";
 
     private List<Pair> messageSent = new ArrayList<>();
     private List<Pair> messageReceived = new ArrayList<>();

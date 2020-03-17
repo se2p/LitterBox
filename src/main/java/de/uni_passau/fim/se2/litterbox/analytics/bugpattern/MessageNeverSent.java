@@ -30,8 +30,14 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.Broadcast;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.BroadcastAndWait;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
+
 import java.util.*;
 
+/**
+ * This pattern is a specialised version of unmatched broadcast and receive blocks. When
+ * there are blocks to receive messages but the corresponding broadcast message block is missing, that
+ * script will never be executed.
+ */
 public class MessageNeverSent implements IssueFinder, ScratchVisitor {
 
     public static final String NAME = "message_Never_Sent";

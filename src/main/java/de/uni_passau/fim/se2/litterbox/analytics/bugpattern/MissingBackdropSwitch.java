@@ -33,8 +33,14 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.SwitchBackd
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
+
 import java.util.*;
 
+/**
+ * If the When backdrop switches to event handler is used to start a script and the backdrop never switches
+ * to the selected one,  the script is never executed. This does not apply to programs including at least one of the
+ * switch options next, previous}or random.
+ */
 public class MissingBackdropSwitch implements IssueFinder, ScratchVisitor {
 
     public static final String NAME = "missing_backdrop_switch";

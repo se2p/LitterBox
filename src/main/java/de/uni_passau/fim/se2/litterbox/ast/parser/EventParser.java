@@ -36,11 +36,11 @@ import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 public class EventParser {
 
-    public static String INPUTS = "WHENGREATERTHANMENU";
-    public static String KEY_OPTION = "KEY_OPTION";
-    public static String BCAST_OPTION = "BROADCAST_OPTION";
-    public static String VARIABLE_MENU = "WHENGREATERTHANMENU";
-    public static String BACKDROP = "BACKDROP";
+    public static final String INPUTS = "WHENGREATERTHANMENU";
+    public static final String KEY_OPTION = "KEY_OPTION";
+    public static final String BCAST_OPTION = "BROADCAST_OPTION";
+    public static final String VARIABLE_MENU = "WHENGREATERTHANMENU";
+    public static final String BACKDROP = "BACKDROP";
 
     public static Event parse(String blockID, JsonNode allBlocks) throws ParsingException {
         Preconditions.checkNotNull(blockID);

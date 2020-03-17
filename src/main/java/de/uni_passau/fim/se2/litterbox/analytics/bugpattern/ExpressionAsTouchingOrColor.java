@@ -16,24 +16,35 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.uni_passau.fim.se2.litterbox.analytics.smells;
+package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueReport;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.ColorTouches;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Touching;
+import de.uni_passau.fim.se2.litterbox.ast.model.literals.ColorLiteral;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.pen.SetPenColorToColorStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.touchable.Edge;
+import de.uni_passau.fim.se2.litterbox.ast.model.touchable.MousePointer;
+import de.uni_passau.fim.se2.litterbox.ast.model.touchable.SpriteTouchable;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
+
 import java.util.LinkedList;
 import java.util.List;
 
-public class EmptyProcedure implements IssueFinder, ScratchVisitor {
-    public static final String NAME = "empty_procedure";
-    public static final String SHORT_NAME = "empProc";
-    private static final String NOTE1 = "There are no empty procedures in your project.";
-    private static final String NOTE2 = "Some of the procedures are empty.";
+/**
+ * This happens when inside a block that expects a colour or sprite as parameter (e.g., set pen color to or
+ * touching mouse-pointer?) a reporter block, or an expression with a string or number value is used.
+ */
+public class ExpressionAsTouchingOrColor implements IssueFinder, ScratchVisitor {
+    public static final String NAME = "expression_as_touching_or_color";
+    public static final String SHORT_NAME = "exprTouchColor";
+    private static final String NOTE1 = "There are no expressions used as touching or colors in your project.";
+    private static final String NOTE2 = "Some of the sprites use expressions as touching or colors.";
     private boolean found = false;
     private int count = 0;
     private List<String> actorNames = new LinkedList<>();
@@ -74,10 +85,42 @@ public class EmptyProcedure implements IssueFinder, ScratchVisitor {
     }
 
     @Override
-    public void visit(ProcedureDefinition node) {
-        if (node.getStmtList().getStmts().getListOfStmt().isEmpty()) {
-            found = true;
+    public void visit(SetPenColorToColorStmt node) {
+        if (!(node.getColorExpr() instanceof ColorLiteral)) {
             count++;
+            found = true;
+        }
+        if (!node.getChildren().isEmpty()) {
+            for (ASTNode child : node.getChildren()) {
+                child.accept(this);
+            }
+        }
+    }
+
+    @Override
+    public void visit(ColorTouches node) {
+        if (!(node.getOperand1() instanceof ColorLiteral)) {
+            count++;
+            found = true;
+        }
+        if (!(node.getOperand2() instanceof ColorLiteral)) {
+            count++;
+            found = true;
+        }
+        if (!node.getChildren().isEmpty()) {
+            for (ASTNode child : node.getChildren()) {
+                child.accept(this);
+            }
+        }
+    }
+
+    @Override
+    public void visit(Touching node) {
+        if (!(node.getTouchable() instanceof MousePointer) && !(node.getTouchable() instanceof Edge) && !(node.getTouchable() instanceof SpriteTouchable)) {
+            if (!(node.getTouchable() instanceof ColorLiteral)) {
+                count++;
+                found = true;
+            }
         }
         if (!node.getChildren().isEmpty()) {
             for (ASTNode child : node.getChildren()) {
