@@ -34,11 +34,13 @@ import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ExpressionListInfo
 
 public class ListExprParser {
 
+    private static final String LIST = "LIST";
+
     public static ListExpr parseListExpr(JsonNode block, String inputName, JsonNode blocks) throws ParsingException {
         ArrayNode exprArray = ExpressionParser.getExprArrayByName(block.get(INPUTS_KEY), inputName);
 
         if (ExpressionParser.getShadowIndicator(exprArray) == 1 || exprArray.get(POS_BLOCK_ID) instanceof TextNode) {
-            throw new ParsingException("Block does not contain a list"); //Todo improve message
+            throw new ParsingException("Block does not contain a list");
         }
 
         String idString = exprArray.get(POS_DATA_ARRAY).get(POS_INPUT_ID).asText();
@@ -47,7 +49,7 @@ public class ListExprParser {
             return new AsListIndex(new Qualified(new StrId(variableInfo.getActor()),
                     new StrId((variableInfo.getVariableName()))));
         }
-        throw new ParsingException("Block does not contain a list"); //Todo improve message
+        throw new ParsingException("Block does not contain a list");
     }
 
     public static ListExpr parseListExpr(JsonNode block, int pos, JsonNode blocks) throws ParsingException {
@@ -56,7 +58,7 @@ public class ListExprParser {
         ArrayNode exprArray = ExpressionParser.getExprArrayAtPos(block.get(INPUTS_KEY), pos);
 
         if (ExpressionParser.getShadowIndicator(exprArray) == 1 || exprArray.get(POS_BLOCK_ID) instanceof TextNode) {
-            throw new ParsingException("Block does not contain a list"); //Todo improve message
+            throw new ParsingException("Block does not contain a list");
         }
 
         String idString = exprArray.get(POS_DATA_ARRAY).get(POS_INPUT_ID).asText();
@@ -68,11 +70,11 @@ public class ListExprParser {
                             new StrId((variableInfo.getVariableName()))
                     ));
         }
-        throw new ParsingException("Block does not contain a list"); //Todo improve message
+        throw new ParsingException("Block does not contain a list");
     }
 
     static Variable parseVariableFromFields(JsonNode fields) throws ParsingException {
-        String identifier = fields.get("LIST").get(1).asText(); // TODO add some constants
+        String identifier = fields.get(LIST).get(1).asText();
         if (ProgramParser.symbolTable.getLists().containsKey(identifier)) {
             ExpressionListInfo variableInfo = ProgramParser.symbolTable.getLists().get(identifier);
             return new Qualified(new StrId(variableInfo.getActor()),
