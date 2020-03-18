@@ -33,6 +33,7 @@ public class PositionEqualsCheckTest {
     private static Program empty;
     private static Program equalX;
     private static Program equalPos;
+    private static Program allChecks;
     private static ObjectMapper mapper = new ObjectMapper();
 
     @BeforeAll
@@ -46,6 +47,9 @@ public class PositionEqualsCheckTest {
 
         f = new File("./src/test/fixtures/bugpattern/posEqual.json");
         equalPos = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
+
+        f = new File("./src/test/fixtures/bugpattern/positionEqualsCheck.json");
+        allChecks = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
     }
 
     @Test
@@ -55,12 +59,11 @@ public class PositionEqualsCheckTest {
         Assertions.assertEquals(0, report.getCount());
     }
 
-    // @Test Temporarily Disabled
+    @Test
     public void testEqualCond() {
-        // FIXME
         PositionEqualsCheck parameterName = new PositionEqualsCheck();
         IssueReport report = parameterName.check(equalX);
-        Assertions.assertEquals(1, report.getCount());
+        Assertions.assertEquals(0, report.getCount());
     }
 
     @Test
@@ -68,5 +71,12 @@ public class PositionEqualsCheckTest {
         PositionEqualsCheck parameterName = new PositionEqualsCheck();
         IssueReport report = parameterName.check(equalPos);
         Assertions.assertEquals(0, report.getCount());
+    }
+
+    @Test
+    public void testAll() {
+        PositionEqualsCheck parameterName = new PositionEqualsCheck();
+        IssueReport report = parameterName.check(allChecks);
+        Assertions.assertEquals(2, report.getCount());
     }
 }
