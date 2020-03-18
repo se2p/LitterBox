@@ -18,9 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.parser;
 
-import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
-
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -35,12 +32,15 @@ import de.uni_passau.fim.se2.litterbox.ast.model.variable.Identifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.ProcedureOpcode;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 
 public class ProcDefinitionParser {
 
@@ -58,15 +58,14 @@ public class ProcDefinitionParser {
         while (iter.hasNext()) {
             JsonNode current = iter.next();
 
-            if (!current.has(OPCODE_KEY)) {
-                throw new ParsingException("Cannot parse block without opcode");
-            }
-
-            String opcodeString = current.get(OPCODE_KEY).asText();
-            if (opcodeString.equals(ProcedureOpcode.procedures_definition.name())) {
-                defBlock.add(current);
-            } else if (opcodeString.equals(ProcedureOpcode.procedures_prototype.name())) {
-                protoBlock.add(current);
+            //we ignore blocks without opcode, because these are always variables or lists
+            if (current.has(OPCODE_KEY)) {
+                String opcodeString = current.get(OPCODE_KEY).asText();
+                if (opcodeString.equals(ProcedureOpcode.procedures_definition.name())) {
+                    defBlock.add(current);
+                } else if (opcodeString.equals(ProcedureOpcode.procedures_prototype.name())) {
+                    protoBlock.add(current);
+                }
             }
         }
 
@@ -101,7 +100,6 @@ public class ProcDefinitionParser {
             Preconditions.checkArgument(currentInput.isArray());
             ArrayNode currentAsArray = (ArrayNode) currentInput;
 
-            //TODO is this right?
             if (!currentAsArray.get(PARAMETER_REFERENCE_POS).asText().equals("null")) {
                 paraTypes = addType(blocks, paraTypes, currentAsArray.get(PARAMETER_REFERENCE_POS).asText());
             }
@@ -109,7 +107,6 @@ public class ProcDefinitionParser {
 
 
         String methodName = proto.get(MUTATION_KEY).get(PROCCODE_KEY).asText();
-        // FIXME proto may not have a parent_key
         Identifier ident = new StrId(proto.get(PARENT_KEY).asText());
         JsonNode argumentNamesNode = proto.get(MUTATION_KEY).get(ARGUMENTNAMES_KEY);
         ObjectMapper mapper = new ObjectMapper();
