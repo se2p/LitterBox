@@ -180,7 +180,7 @@ public class ExpressionParser {
         return exprArray.get(Constants.POS_INPUT_SHADOW).asInt();
     }
 
-    static ArrayNode getDataArrayAtPos(JsonNode inputs, int pos) throws ParsingException { // TODO maybe rename or comment
+    static ArrayNode getDataArrayAtPos(JsonNode inputs, int pos) throws ParsingException {
         JsonNode jsonNode = getExprArrayAtPos(inputs, pos).get(POS_DATA_ARRAY);
         if (!(jsonNode instanceof NullNode)) {
             return (ArrayNode) jsonNode;
@@ -189,7 +189,7 @@ public class ExpressionParser {
         }
     }
 
-    static ArrayNode getDataArrayByName(JsonNode inputs, String inputName) throws ParsingException { // TODO maybe rename or comment
+    static ArrayNode getDataArrayByName(JsonNode inputs, String inputName) throws ParsingException {
         final JsonNode jsonNode = getExprArrayByName(inputs, inputName).get(POS_DATA_ARRAY);
         if (!(jsonNode instanceof NullNode)) {
             return (ArrayNode) jsonNode;

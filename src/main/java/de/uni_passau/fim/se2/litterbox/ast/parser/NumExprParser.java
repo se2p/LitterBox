@@ -53,7 +53,7 @@ public class NumExprParser {
     public static NumExpr parseNumExpr(JsonNode block, String inputName, JsonNode blocks)
             throws ParsingException { // we ignored "(" NumExpr ")"
         ArrayNode exprArray = getExprArrayByName(block.get(INPUTS_KEY), inputName);
-        if (getShadowIndicator(exprArray) == 1) { // TODO replace magic num
+        if (getShadowIndicator(exprArray) == 1) {
             try {
                 return parseNumber(block.get(INPUTS_KEY), inputName);
             } catch (NumberFormatException | ParsingException e) { // right exception? hm.
@@ -83,7 +83,7 @@ public class NumExprParser {
     public static NumExpr parseNumExpr(JsonNode block, int pos, JsonNode blocks)
             throws ParsingException { // we ignored "(" NumExpr ")"
         ArrayNode exprArray = getExprArrayAtPos(block.get(INPUTS_KEY), pos);
-        if (getShadowIndicator(exprArray) == 1) { // TODO replace magic num
+        if (getShadowIndicator(exprArray) == 1) {
             try {
                 return parseNumber(block.get(INPUTS_KEY), pos);
             } catch (NumberFormatException | ParsingException e) {
@@ -272,7 +272,7 @@ public class NumExprParser {
     }
 
     static NumFunct parseNumFunct(JsonNode fields)
-            throws ParsingException { // TODO maybe add opcodes enum for NumFuncts
+            throws ParsingException {
         ArrayNode operator = (ArrayNode) fields.get(OPERATOR_KEY);
         String operatorOpcode = operator.get(FIELD_VALUE).asText();
         return NumFunct.fromString(operatorOpcode);
