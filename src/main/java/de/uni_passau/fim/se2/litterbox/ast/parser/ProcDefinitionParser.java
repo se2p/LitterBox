@@ -107,7 +107,19 @@ public class ProcDefinitionParser {
 
 
         String methodName = proto.get(MUTATION_KEY).get(PROCCODE_KEY).asText();
-        Identifier ident = new StrId(proto.get(PARENT_KEY).asText());
+        Identifier ident = null;
+        if(proto.has(PARENT_KEY)) {
+            ident = new StrId(proto.get(PARENT_KEY).asText());
+        }else{
+            Iterator<Entry<String,JsonNode>> entries = blocks.fields();
+            while(entries.hasNext()){
+                Entry<String,JsonNode> currentEntry = entries.next();
+                if (currentEntry.getValue().equals(def)){
+                    ident = new StrId(currentEntry.getKey());
+                    break;
+                }
+            }
+        }
         JsonNode argumentNamesNode = proto.get(MUTATION_KEY).get(ARGUMENTNAMES_KEY);
         ObjectMapper mapper = new ObjectMapper();
 
