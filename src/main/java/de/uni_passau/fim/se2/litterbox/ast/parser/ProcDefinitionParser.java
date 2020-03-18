@@ -109,7 +109,7 @@ public class ProcDefinitionParser {
 
 
         String methodName = proto.get(MUTATION_KEY).get(PROCCODE_KEY).asText();
-        // FIXME proto may nothave a parent_key
+        // FIXME proto may not have a parent_key
         Identifier ident = new StrId(proto.get(PARENT_KEY).asText());
         JsonNode argumentNamesNode = proto.get(MUTATION_KEY).get(ARGUMENTNAMES_KEY);
         ObjectMapper mapper = new ObjectMapper();
