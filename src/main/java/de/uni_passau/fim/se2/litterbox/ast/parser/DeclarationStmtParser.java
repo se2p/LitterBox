@@ -18,9 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.parser;
 
-import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
-
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Message;
@@ -46,7 +43,10 @@ import de.uni_passau.fim.se2.litterbox.ast.model.type.StringType;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.StrId;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
+
 import java.util.*;
+
+import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 
 public class DeclarationStmtParser {
 
@@ -132,7 +132,6 @@ public class DeclarationStmtParser {
     private static ExpressionListPlain makeExpressionListPlain(ArrayNode valuesArray) {
         List<Expression> expressions = new ArrayList<>();
         for (int i = 0; i < valuesArray.size(); i++) {
-            //TODO  check if expressionParser should be used
             expressions.add(new StringLiteral(valuesArray.get(i).asText()));
         }
         return new ExpressionListPlain(expressions);
