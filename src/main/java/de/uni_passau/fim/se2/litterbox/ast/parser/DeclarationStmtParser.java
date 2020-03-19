@@ -175,57 +175,81 @@ public class DeclarationStmtParser {
 
         List<DeclarationStmt> list = new LinkedList<>();
 
-        keyExpr = new StringLiteral(VOLUME_KEY);
-        Preconditions.checkArgument(actorDefinitionNode.get(VOLUME_KEY).isNumber());
-        list.add(new DeclarationAttributeAsTypeStmt(keyExpr, new NumberType()));
+        if (actorDefinitionNode.has(VOLUME_KEY)) {
+            keyExpr = new StringLiteral(VOLUME_KEY);
+            Preconditions.checkArgument(actorDefinitionNode.get(VOLUME_KEY).isNumber());
+            list.add(new DeclarationAttributeAsTypeStmt(keyExpr, new NumberType()));
+        }
 
-        keyExpr = new StringLiteral(LAYERORDER_KEY);
-        Preconditions.checkArgument(actorDefinitionNode.get(LAYERORDER_KEY).isNumber());
-        list.add(new DeclarationAttributeAsTypeStmt(keyExpr, new NumberType()));
+        if (actorDefinitionNode.has(LAYERORDER_KEY)) {
+            keyExpr = new StringLiteral(LAYERORDER_KEY);
+            Preconditions.checkArgument(actorDefinitionNode.get(LAYERORDER_KEY).isNumber());
+            list.add(new DeclarationAttributeAsTypeStmt(keyExpr, new NumberType()));
+        }
 
         if (actorDefinitionNode.get("isStage").asBoolean()) {
 
-            keyExpr = new StringLiteral(TEMPO_KEY);
-            Preconditions.checkArgument(actorDefinitionNode.get(TEMPO_KEY).isNumber());
-            list.add(new DeclarationAttributeAsTypeStmt(keyExpr, new NumberType()));
+            if (actorDefinitionNode.has(TEMPO_KEY)) {
+                keyExpr = new StringLiteral(TEMPO_KEY);
+                Preconditions.checkArgument(actorDefinitionNode.get(TEMPO_KEY).isNumber());
+                list.add(new DeclarationAttributeAsTypeStmt(keyExpr, new NumberType()));
+            }
 
-            keyExpr = new StringLiteral(VIDTRANSPARENCY_KEY);
-            Preconditions.checkArgument(actorDefinitionNode.get(TEMPO_KEY).isNumber());
-            list.add(new DeclarationAttributeAsTypeStmt(keyExpr, new NumberType()));
+            if (actorDefinitionNode.has(VIDTRANSPARENCY_KEY)) {
+                keyExpr = new StringLiteral(VIDTRANSPARENCY_KEY);
+                Preconditions.checkArgument(actorDefinitionNode.get(TEMPO_KEY).isNumber());
+                list.add(new DeclarationAttributeAsTypeStmt(keyExpr, new NumberType()));
+            }
 
-            keyExpr = new StringLiteral(VIDSTATE_KEY);
-            Preconditions.checkArgument(actorDefinitionNode.get(VIDSTATE_KEY).isTextual());
-            list.add(new DeclarationAttributeAsTypeStmt(keyExpr, new StringType()));
+            if (actorDefinitionNode.has(VIDSTATE_KEY)) {
+                keyExpr = new StringLiteral(VIDSTATE_KEY);
+                Preconditions.checkArgument(actorDefinitionNode.get(VIDSTATE_KEY).isTextual());
+                list.add(new DeclarationAttributeAsTypeStmt(keyExpr, new StringType()));
+            }
 
         } else {
 
-            keyExpr = new StringLiteral(VISIBLE_KEY);
-            Preconditions.checkArgument(actorDefinitionNode.get(VISIBLE_KEY).isBoolean());
-            list.add(new DeclarationAttributeAsTypeStmt(keyExpr, new BooleanType()));
+            if (actorDefinitionNode.has(VISIBLE_KEY)) {
+                keyExpr = new StringLiteral(VISIBLE_KEY);
+                Preconditions.checkArgument(actorDefinitionNode.get(VISIBLE_KEY).isBoolean());
+                list.add(new DeclarationAttributeAsTypeStmt(keyExpr, new BooleanType()));
+            }
 
-            keyExpr = new StringLiteral(X_KEY);
-            Preconditions.checkArgument(actorDefinitionNode.get(X_KEY).isNumber());
-            list.add(new DeclarationAttributeAsTypeStmt(keyExpr, new NumberType()));
+            if (actorDefinitionNode.has(X_KEY)) {
+                keyExpr = new StringLiteral(X_KEY);
+                Preconditions.checkArgument(actorDefinitionNode.get(X_KEY).isNumber());
+                list.add(new DeclarationAttributeAsTypeStmt(keyExpr, new NumberType()));
+            }
 
-            keyExpr = new StringLiteral(Y_KEY);
-            Preconditions.checkArgument(actorDefinitionNode.get(Y_KEY).isNumber());
-            list.add(new DeclarationAttributeAsTypeStmt(keyExpr, new NumberType()));
+            if (actorDefinitionNode.has(Y_KEY)) {
+                keyExpr = new StringLiteral(Y_KEY);
+                Preconditions.checkArgument(actorDefinitionNode.get(Y_KEY).isNumber());
+                list.add(new DeclarationAttributeAsTypeStmt(keyExpr, new NumberType()));
+            }
 
-            keyExpr = new StringLiteral(SIZE_KEY);
-            Preconditions.checkArgument(actorDefinitionNode.get(SIZE_KEY).isNumber());
-            list.add(new DeclarationAttributeAsTypeStmt(keyExpr, new NumberType()));
+            if (actorDefinitionNode.has(SIZE_KEY)) {
+                keyExpr = new StringLiteral(SIZE_KEY);
+                Preconditions.checkArgument(actorDefinitionNode.get(SIZE_KEY).isNumber());
+                list.add(new DeclarationAttributeAsTypeStmt(keyExpr, new NumberType()));
+            }
 
-            keyExpr = new StringLiteral(DIRECTION_KEY);
-            Preconditions.checkArgument(actorDefinitionNode.get(DIRECTION_KEY).isNumber());
-            list.add(new DeclarationAttributeAsTypeStmt(keyExpr, new NumberType()));
+            if (actorDefinitionNode.has(DIRECTION_KEY)) {
+                keyExpr = new StringLiteral(DIRECTION_KEY);
+                Preconditions.checkArgument(actorDefinitionNode.get(DIRECTION_KEY).isNumber());
+                list.add(new DeclarationAttributeAsTypeStmt(keyExpr, new NumberType()));
+            }
 
-            keyExpr = new StringLiteral(DRAG_KEY);
-            Preconditions.checkArgument(actorDefinitionNode.get(DRAG_KEY).isBoolean());
-            list.add(new DeclarationAttributeAsTypeStmt(keyExpr, new BooleanType()));
+            if (actorDefinitionNode.has(DRAG_KEY)) {
+                keyExpr = new StringLiteral(DRAG_KEY);
+                Preconditions.checkArgument(actorDefinitionNode.get(DRAG_KEY).isBoolean());
+                list.add(new DeclarationAttributeAsTypeStmt(keyExpr, new BooleanType()));
+            }
 
-            keyExpr = new StringLiteral(ROTATIONSTYLE_KEY);
-            Preconditions.checkArgument(actorDefinitionNode.get(ROTATIONSTYLE_KEY).isTextual());
-            list.add(new DeclarationAttributeAsTypeStmt(keyExpr, new StringType()));
+            if (actorDefinitionNode.has(ROTATIONSTYLE_KEY)) {
+                keyExpr = new StringLiteral(ROTATIONSTYLE_KEY);
+                Preconditions.checkArgument(actorDefinitionNode.get(ROTATIONSTYLE_KEY).isTextual());
+                list.add(new DeclarationAttributeAsTypeStmt(keyExpr, new StringType()));
+            }
         }
         return list;
     }
@@ -244,93 +268,117 @@ public class DeclarationStmtParser {
 
         List<SetStmt> list = new LinkedList<>();
 
-        keyExpr = new StringLiteral(VOLUME_KEY);
-        Preconditions.checkArgument(actorDefinitionNode.get(VOLUME_KEY).isNumber());
-        jsonDouble = actorDefinitionNode.get(VOLUME_KEY).asDouble();
-        numExpr = new NumberLiteral((float) jsonDouble);
-        setStmt = new SetAttributeTo(keyExpr, numExpr);
-        list.add(setStmt);
+        if (actorDefinitionNode.has(VOLUME_KEY)) {
+            keyExpr = new StringLiteral(VOLUME_KEY);
+            Preconditions.checkArgument(actorDefinitionNode.get(VOLUME_KEY).isNumber());
+            jsonDouble = actorDefinitionNode.get(VOLUME_KEY).asDouble();
+            numExpr = new NumberLiteral((float) jsonDouble);
+            setStmt = new SetAttributeTo(keyExpr, numExpr);
+            list.add(setStmt);
+        }
 
-        keyExpr = new StringLiteral(LAYERORDER_KEY);
-        Preconditions.checkArgument(actorDefinitionNode.get(LAYERORDER_KEY).isNumber());
-        jsonDouble = actorDefinitionNode.get(LAYERORDER_KEY).asDouble();
-        numExpr = new NumberLiteral((float) jsonDouble);
-        setStmt = new SetAttributeTo(keyExpr, numExpr);
-        list.add(setStmt);
+        if (actorDefinitionNode.has(LAYERORDER_KEY)) {
+            keyExpr = new StringLiteral(LAYERORDER_KEY);
+            Preconditions.checkArgument(actorDefinitionNode.get(LAYERORDER_KEY).isNumber());
+            jsonDouble = actorDefinitionNode.get(LAYERORDER_KEY).asDouble();
+            numExpr = new NumberLiteral((float) jsonDouble);
+            setStmt = new SetAttributeTo(keyExpr, numExpr);
+            list.add(setStmt);
+        }
 
         if (actorDefinitionNode.get("isStage").asBoolean()) {
 
-            keyExpr = new StringLiteral(TEMPO_KEY);
-            jsonDouble = actorDefinitionNode.get(TEMPO_KEY).asDouble();
-            Preconditions.checkArgument(actorDefinitionNode.get(TEMPO_KEY).isNumber());
-            numExpr = new NumberLiteral((float) jsonDouble);
-            setStmt = new SetAttributeTo(keyExpr, numExpr);
-            list.add(setStmt);
+            if (actorDefinitionNode.has(TEMPO_KEY)) {
+                keyExpr = new StringLiteral(TEMPO_KEY);
+                jsonDouble = actorDefinitionNode.get(TEMPO_KEY).asDouble();
+                Preconditions.checkArgument(actorDefinitionNode.get(TEMPO_KEY).isNumber());
+                numExpr = new NumberLiteral((float) jsonDouble);
+                setStmt = new SetAttributeTo(keyExpr, numExpr);
+                list.add(setStmt);
+            }
 
-            keyExpr = new StringLiteral(VIDTRANSPARENCY_KEY);
-            Preconditions.checkArgument(actorDefinitionNode.get(VIDTRANSPARENCY_KEY).isNumber());
-            jsonDouble = actorDefinitionNode.get(VIDTRANSPARENCY_KEY).asDouble();
-            numExpr = new NumberLiteral((float) jsonDouble);
-            setStmt = new SetAttributeTo(keyExpr, numExpr);
-            list.add(setStmt);
+            if (actorDefinitionNode.has(VIDTRANSPARENCY_KEY)) {
+                keyExpr = new StringLiteral(VIDTRANSPARENCY_KEY);
+                Preconditions.checkArgument(actorDefinitionNode.get(VIDTRANSPARENCY_KEY).isNumber());
+                jsonDouble = actorDefinitionNode.get(VIDTRANSPARENCY_KEY).asDouble();
+                numExpr = new NumberLiteral((float) jsonDouble);
+                setStmt = new SetAttributeTo(keyExpr, numExpr);
+                list.add(setStmt);
+            }
 
-            keyExpr = new StringLiteral(VIDSTATE_KEY);
-            Preconditions.checkArgument(actorDefinitionNode.get(VIDSTATE_KEY).isTextual());
-            jsonString = actorDefinitionNode.get(VIDSTATE_KEY).asText();
-            stringExpr = new StringLiteral(jsonString);
-            setStmt = new SetAttributeTo(keyExpr, stringExpr);
-            list.add(setStmt);
+            if (actorDefinitionNode.has(VIDSTATE_KEY)) {
+                keyExpr = new StringLiteral(VIDSTATE_KEY);
+                Preconditions.checkArgument(actorDefinitionNode.get(VIDSTATE_KEY).isTextual());
+                jsonString = actorDefinitionNode.get(VIDSTATE_KEY).asText();
+                stringExpr = new StringLiteral(jsonString);
+                setStmt = new SetAttributeTo(keyExpr, stringExpr);
+                list.add(setStmt);
+            }
 
         } else {
 
-            keyExpr = new StringLiteral(VISIBLE_KEY);
-            Preconditions.checkArgument(actorDefinitionNode.get(VISIBLE_KEY).isBoolean());
-            jsonBool = actorDefinitionNode.get(VISIBLE_KEY).asBoolean();
-            boolExpr = new BoolLiteral(jsonBool);
-            setStmt = new SetAttributeTo(keyExpr, boolExpr);
-            list.add(setStmt);
+            if (actorDefinitionNode.has(VISIBLE_KEY)) {
+                keyExpr = new StringLiteral(VISIBLE_KEY);
+                Preconditions.checkArgument(actorDefinitionNode.get(VISIBLE_KEY).isBoolean());
+                jsonBool = actorDefinitionNode.get(VISIBLE_KEY).asBoolean();
+                boolExpr = new BoolLiteral(jsonBool);
+                setStmt = new SetAttributeTo(keyExpr, boolExpr);
+                list.add(setStmt);
+            }
 
-            keyExpr = new StringLiteral(X_KEY);
-            Preconditions.checkArgument(actorDefinitionNode.get(X_KEY).isNumber());
-            jsonDouble = actorDefinitionNode.get(X_KEY).asDouble();
-            numExpr = new NumberLiteral((float) jsonDouble);
-            setStmt = new SetAttributeTo(keyExpr, numExpr);
-            list.add(setStmt);
+            if (actorDefinitionNode.has(X_KEY)) {
+                keyExpr = new StringLiteral(X_KEY);
+                Preconditions.checkArgument(actorDefinitionNode.get(X_KEY).isNumber());
+                jsonDouble = actorDefinitionNode.get(X_KEY).asDouble();
+                numExpr = new NumberLiteral((float) jsonDouble);
+                setStmt = new SetAttributeTo(keyExpr, numExpr);
+                list.add(setStmt);
+            }
 
-            keyExpr = new StringLiteral(Y_KEY);
-            Preconditions.checkArgument(actorDefinitionNode.get(Y_KEY).isNumber());
-            jsonDouble = actorDefinitionNode.get(Y_KEY).asDouble();
-            numExpr = new NumberLiteral((float) jsonDouble);
-            setStmt = new SetAttributeTo(keyExpr, numExpr);
-            list.add(setStmt);
+            if (actorDefinitionNode.has(Y_KEY)) {
+                keyExpr = new StringLiteral(Y_KEY);
+                Preconditions.checkArgument(actorDefinitionNode.get(Y_KEY).isNumber());
+                jsonDouble = actorDefinitionNode.get(Y_KEY).asDouble();
+                numExpr = new NumberLiteral((float) jsonDouble);
+                setStmt = new SetAttributeTo(keyExpr, numExpr);
+                list.add(setStmt);
+            }
 
-            keyExpr = new StringLiteral(SIZE_KEY);
-            Preconditions.checkArgument(actorDefinitionNode.get(SIZE_KEY).isNumber());
-            jsonDouble = actorDefinitionNode.get(SIZE_KEY).asDouble();
-            numExpr = new NumberLiteral((float) jsonDouble);
-            setStmt = new SetAttributeTo(keyExpr, numExpr);
-            list.add(setStmt);
+            if (actorDefinitionNode.has(SIZE_KEY)) {
+                keyExpr = new StringLiteral(SIZE_KEY);
+                Preconditions.checkArgument(actorDefinitionNode.get(SIZE_KEY).isNumber());
+                jsonDouble = actorDefinitionNode.get(SIZE_KEY).asDouble();
+                numExpr = new NumberLiteral((float) jsonDouble);
+                setStmt = new SetAttributeTo(keyExpr, numExpr);
+                list.add(setStmt);
+            }
 
-            keyExpr = new StringLiteral(DIRECTION_KEY);
-            Preconditions.checkArgument(actorDefinitionNode.get(DIRECTION_KEY).isNumber());
-            jsonDouble = actorDefinitionNode.get(DIRECTION_KEY).asDouble();
-            numExpr = new NumberLiteral((float) jsonDouble);
-            setStmt = new SetAttributeTo(keyExpr, numExpr);
-            list.add(setStmt);
+            if (actorDefinitionNode.has(DIRECTION_KEY)) {
+                keyExpr = new StringLiteral(DIRECTION_KEY);
+                Preconditions.checkArgument(actorDefinitionNode.get(DIRECTION_KEY).isNumber());
+                jsonDouble = actorDefinitionNode.get(DIRECTION_KEY).asDouble();
+                numExpr = new NumberLiteral((float) jsonDouble);
+                setStmt = new SetAttributeTo(keyExpr, numExpr);
+                list.add(setStmt);
+            }
 
-            keyExpr = new StringLiteral(DRAG_KEY);
-            Preconditions.checkArgument(actorDefinitionNode.get(DRAG_KEY).isBoolean());
-            jsonBool = actorDefinitionNode.get(DRAG_KEY).asBoolean();
-            boolExpr = new BoolLiteral(jsonBool);
-            setStmt = new SetAttributeTo(keyExpr, boolExpr);
-            list.add(setStmt);
+            if (actorDefinitionNode.has(DRAG_KEY)) {
+                keyExpr = new StringLiteral(DRAG_KEY);
+                Preconditions.checkArgument(actorDefinitionNode.get(DRAG_KEY).isBoolean());
+                jsonBool = actorDefinitionNode.get(DRAG_KEY).asBoolean();
+                boolExpr = new BoolLiteral(jsonBool);
+                setStmt = new SetAttributeTo(keyExpr, boolExpr);
+                list.add(setStmt);
+            }
 
-            keyExpr = new StringLiteral(ROTATIONSTYLE_KEY);
-            Preconditions.checkArgument(actorDefinitionNode.get(ROTATIONSTYLE_KEY).isTextual());
-            jsonString = actorDefinitionNode.get(ROTATIONSTYLE_KEY).asText();
-            stringExpr = new StringLiteral(jsonString);
-            setStmt = new SetAttributeTo(keyExpr, stringExpr);
-            list.add(setStmt);
+            if (actorDefinitionNode.has(ROTATIONSTYLE_KEY)) {
+                keyExpr = new StringLiteral(ROTATIONSTYLE_KEY);
+                Preconditions.checkArgument(actorDefinitionNode.get(ROTATIONSTYLE_KEY).isTextual());
+                jsonString = actorDefinitionNode.get(ROTATIONSTYLE_KEY).asText();
+                stringExpr = new StringLiteral(jsonString);
+                setStmt = new SetAttributeTo(keyExpr, stringExpr);
+                list.add(setStmt);
+            }
         }
         return list;
     }
