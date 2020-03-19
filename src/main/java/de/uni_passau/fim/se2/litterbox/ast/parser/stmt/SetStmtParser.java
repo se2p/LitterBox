@@ -30,6 +30,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetVariableTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.StrId;
+import de.uni_passau.fim.se2.litterbox.ast.model.variable.UnspecifiedId;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.SetStmtOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ExpressionParser;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
@@ -111,7 +112,8 @@ public class SetStmtParser {
     private static SetStmt parseSetVariable(JsonNode current, JsonNode allBlocks) throws ParsingException {
         String unique = current.get(FIELDS_KEY).get(VARIABLE_KEY).get(VARIABLE_IDENTIFIER_POS).asText();
         if (!ProgramParser.symbolTable.getVariables().containsKey(unique)) {
-            throw new ParsingException("Cannot parse unknown variable");
+            return new SetVariableTo(new UnspecifiedId(), ExpressionParser.parseExpression(current,
+                    0, allBlocks));
         }
         VariableInfo info = ProgramParser.symbolTable.getVariables().get(unique);
         return new SetVariableTo(new Qualified(new StrId(info.getActor()),

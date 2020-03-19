@@ -42,6 +42,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.touchable.Touchable;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.Color;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.StrId;
+import de.uni_passau.fim.se2.litterbox.ast.model.variable.UnspecifiedId;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.BoolExprOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.NumExprOpcode;
@@ -241,8 +242,16 @@ public class BoolExprParser {
                 Expression contained = ExpressionParser.parseExpression(expressionBlock, 1, blocks);
                 return new ExpressionContains(containing, contained);
             case data_listcontainsitem:
-                String listName = expressionBlock.get(Constants.FIELDS_KEY).get("LIST").get(FIELD_VALUE).asText();
-                Variable containingVar = new StrId(listName);// Variable as a ListExpr
+                String identifier =
+                        expressionBlock.get(FIELDS_KEY).get(LIST_KEY).get(LIST_IDENTIFIER_POS).asText();
+                Variable containingVar;
+                if (ProgramParser.symbolTable.getLists().containsKey(identifier)) {
+                    ExpressionListInfo variableInfo = ProgramParser.symbolTable.getLists().get(identifier);
+                    containingVar = new Qualified(new StrId(variableInfo.getActor()),
+                            new StrId((variableInfo.getVariableName())));
+                } else {
+                    containingVar = new UnspecifiedId();
+                }
                 contained = ExpressionParser.parseExpression(expressionBlock, 0, blocks);
                 return new ExpressionContains(containingVar, contained);
             default:

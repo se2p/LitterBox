@@ -25,6 +25,7 @@ import static de.uni_passau.fim.se2.litterbox.ast.parser.ExpressionParser.*;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.TextNode;
+import de.uni_passau.fim.se2.litterbox.ast.Constants;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BoolExpr;
@@ -36,6 +37,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.position.Position;
 import de.uni_passau.fim.se2.litterbox.ast.model.timecomp.TimeComp;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.StrId;
+import de.uni_passau.fim.se2.litterbox.ast.model.variable.UnspecifiedId;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.NumExprOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.ProcedureOpcode;
@@ -213,10 +215,17 @@ public class NumExprParser {
             case operator_length:
                 return new LengthOfString(StringExprParser.parseStringExpr(expressionBlock, 0, blocks));
             case data_lengthoflist:
-                List<JsonNode> fields = new LinkedList<>();
-                expressionBlock.get(FIELDS_KEY).elements().forEachRemaining(fields::add);
-                return new LengthOfVar(
-                        new StrId(fields.get(LIST_NAME_POS).asText()));
+                String identifier =
+                        expressionBlock.get(FIELDS_KEY).get(LIST_KEY).get(LIST_IDENTIFIER_POS).asText();
+                Variable var;
+                if (ProgramParser.symbolTable.getLists().containsKey(identifier)) {
+                    ExpressionListInfo variableInfo = ProgramParser.symbolTable.getLists().get(identifier);
+                    var = new Qualified(new StrId(variableInfo.getActor()),
+                            new StrId((variableInfo.getVariableName())));
+                } else {
+                    var = new UnspecifiedId();
+                }
+                return new LengthOfVar(var);
             case sensing_current:
                 TimeComp timeComp = TimecompParser.parse(expressionBlock);
                 return new Current(timeComp);
@@ -241,8 +250,16 @@ public class NumExprParser {
                 return new NumFunctOf(funct, numExpr);
             case data_itemnumoflist:
                 Expression item = parseExpression(expressionBlock, 0, blocks);
-                Variable list = ListExprParser.parseVariableFromFields(expressionBlock.get(FIELDS_KEY));
-                return new IndexOf(item, list);
+                identifier =
+                        expressionBlock.get(FIELDS_KEY).get(LIST_KEY).get(LIST_IDENTIFIER_POS).asText();
+                if (ProgramParser.symbolTable.getLists().containsKey(identifier)) {
+                    ExpressionListInfo variableInfo = ProgramParser.symbolTable.getLists().get(identifier);
+                    var = new Qualified(new StrId(variableInfo.getActor()),
+                            new StrId((variableInfo.getVariableName())));
+                } else {
+                    var = new UnspecifiedId();
+                }
+                return new IndexOf(item, var);
             default:
                 throw new ParsingException(opcodeString + " is not covered by parseBlockNumExpr");
         }

@@ -29,10 +29,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BoolExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.Identifier;
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.Qualified;
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.StrId;
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
+import de.uni_passau.fim.se2.litterbox.ast.model.variable.*;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.ProcedureOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.StringExprOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ExpressionListInfo;
@@ -174,7 +171,16 @@ public class StringExprParser {
                 return new Username();
             case data_itemoflist:
                 NumExpr index = NumExprParser.parseNumExpr(expressionBlock, 0, blocks);
-                Variable var = ListExprParser.parseVariableFromFields(expressionBlock.get(FIELDS_KEY));
+                String id =
+                        expressionBlock.get(FIELDS_KEY).get(LIST_KEY).get(LIST_IDENTIFIER_POS).asText();
+                Variable var;
+                if (ProgramParser.symbolTable.getLists().containsKey(id)) {
+                    ExpressionListInfo variableInfo = ProgramParser.symbolTable.getLists().get(id);
+                    var = new Qualified(new StrId(variableInfo.getActor()),
+                            new StrId((variableInfo.getVariableName())));
+                } else {
+                    var = new UnspecifiedId();
+                }
                 return new ItemOfVariable(index, var);
             case looks_costumenumbername: // todo introduce attribute name opcode mapping
                 String number_name = expressionBlock.get(FIELDS_KEY).get("NUMBER_NAME").get(0).asText();

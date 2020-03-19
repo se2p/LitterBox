@@ -29,6 +29,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.list.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.StrId;
+import de.uni_passau.fim.se2.litterbox.ast.model.variable.UnspecifiedId;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.ListStmtOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.parser.NumExprParser;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
@@ -76,7 +77,9 @@ public class ListStmtParser {
         StringExpr expr = StringExprParser.parseStringExpr(current, 0, allBlocks);
 
         ExpressionListInfo info = getListInfo(current);
-
+        if (info == null) {
+            return new AddTo(expr, new UnspecifiedId());
+        }
         return new AddTo(expr, new Qualified(new StrId(info.getActor()),
                 new StrId(info.getVariableName())));
     }
@@ -86,6 +89,9 @@ public class ListStmtParser {
         Preconditions.checkArgument(listNode.isArray());
         ArrayNode listArray = (ArrayNode) listNode;
         String identifier = listArray.get(LIST_IDENTIFIER_POS).asText();
+        if (!ProgramParser.symbolTable.getLists().containsKey(identifier)) {
+            return null;
+        }
         ExpressionListInfo info = ProgramParser.symbolTable.getLists().get(identifier);
         Preconditions.checkArgument(info.getVariableName().equals(LIST_ABBREVIATION + listArray.get(LIST_NAME_POS).asText()));
         return info;
@@ -97,6 +103,9 @@ public class ListStmtParser {
         NumExpr expr = NumExprParser.parseNumExpr(current, 0, allBlocks);
 
         ExpressionListInfo info = getListInfo(current);
+        if (info == null) {
+            return new DeleteOf(expr, new UnspecifiedId());
+        }
         return new DeleteOf(expr, new Qualified(new StrId(info.getActor()),
                 new StrId(info.getVariableName())));
     }
@@ -105,6 +114,9 @@ public class ListStmtParser {
         Preconditions.checkNotNull(current);
 
         ExpressionListInfo info = getListInfo(current);
+        if (info == null) {
+            return new DeleteAllOf(new UnspecifiedId());
+        }
         return new DeleteAllOf(new Qualified(new StrId(info.getActor()),
                 new StrId(info.getVariableName())));
     }
@@ -116,6 +128,9 @@ public class ListStmtParser {
         NumExpr numExpr = NumExprParser.parseNumExpr(current, 1, allBlocks);
 
         ExpressionListInfo info = getListInfo(current);
+        if (info == null) {
+            return new InsertAt(stringExpr, numExpr, new UnspecifiedId());
+        }
         return new InsertAt(stringExpr, numExpr, new Qualified(new StrId(info.getActor()),
                 new StrId(info.getVariableName())));
     }
@@ -127,6 +142,9 @@ public class ListStmtParser {
         NumExpr numExpr = NumExprParser.parseNumExpr(current, 0, allBlocks);
 
         ExpressionListInfo info = getListInfo(current);
+        if (info == null) {
+            return new ReplaceItem(stringExpr, numExpr, new UnspecifiedId());
+        }
         return new ReplaceItem(stringExpr, numExpr, new Qualified(new StrId(info.getActor()),
                 new StrId(info.getVariableName())));
     }
