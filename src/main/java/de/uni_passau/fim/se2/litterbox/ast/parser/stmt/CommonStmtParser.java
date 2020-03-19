@@ -151,15 +151,13 @@ public class CommonStmtParser {
         return new Broadcast(message);
     }
 
-    private static CommonStmt parseBroadcastAndWait(JsonNode current, JsonNode allBlocks) {
+    private static CommonStmt parseBroadcastAndWait(JsonNode current, JsonNode allBlocks) throws ParsingException {
         Preconditions.checkArgument(current.get(INPUTS_KEY).get(BROADCAST_INPUT_KEY).isArray());
 
         // The inputs contains array itself,
-        String messageName = current.get(INPUTS_KEY).get(BROADCAST_INPUT_KEY)
-                .get(Constants.POS_INPUT_VALUE)
-                .get(POS_INPUT_VALUE).asText();
+        StringExpr messageName = StringExprParser.parseStringExpr(current, BROADCAST_INPUT_KEY, allBlocks);
 
-        Message message = new Message(new StringLiteral(messageName));
+        Message message = new Message(messageName);
         BroadcastAndWait broadcast = new BroadcastAndWait(message);
         return broadcast;
     }

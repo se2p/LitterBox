@@ -19,10 +19,6 @@
 package de.uni_passau.fim.se2.litterbox.ast.parser;
 
 
-import static de.uni_passau.fim.se2.litterbox.ast.Constants.OPCODE_KEY;
-import static de.uni_passau.fim.se2.litterbox.ast.Constants.POS_DATA_ARRAY;
-
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.NullNode;
@@ -42,6 +38,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.variable.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.BoolExprOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.NumExprOpcode;
+import de.uni_passau.fim.se2.litterbox.ast.opcodes.ProcedureOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.StringExprOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ExpressionListInfo;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.VariableInfo;
@@ -50,10 +47,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
+
 public class ExpressionParser {
 
     public static Expression parseExpression(JsonNode block, String inputName, JsonNode blocks) throws ParsingException {
         final Optional<NumExpr> numExpr = maybeParseNumExpr(block, inputName, blocks);
+        if (numExpr.isPresent() && numExpr.get() instanceof AsString ){
+            AsNumber stmt = ((AsNumber) numExpr.get());
+            if(stmt.getOperand1() instanceof StrId){
+                return stmt;
+            }
+        }
         if (numExpr.isPresent()
                 && !(numExpr.get() instanceof UnspecifiedNumExpr)
                 && !(numExpr.get() instanceof AsNumber)) {
@@ -61,6 +66,12 @@ public class ExpressionParser {
         }
 
         final Optional<StringExpr> stringExpr = maybeParseStringExpr(block, inputName, blocks);
+        if (stringExpr.isPresent() && stringExpr.get() instanceof AsString ){
+           AsString stmt = ((AsString) stringExpr.get());
+           if(stmt.getOperand1() instanceof StrId){
+               return stmt;
+           }
+        }
         if (stringExpr.isPresent()
                 && !(stringExpr.get() instanceof UnspecifiedStringExpr)
                 && !(stringExpr.get() instanceof AsString)) {
@@ -82,6 +93,12 @@ public class ExpressionParser {
 
     public static Expression parseExpression(JsonNode block, int pos, JsonNode blocks) throws ParsingException {
         final Optional<NumExpr> numExpr = maybeParseNumExpr(block, pos, blocks);
+        if (numExpr.isPresent() && numExpr.get() instanceof AsString ){
+            AsNumber stmt = ((AsNumber) numExpr.get());
+            if(stmt.getOperand1() instanceof StrId){
+                return stmt;
+            }
+        }
         if (numExpr.isPresent()
                 && !(numExpr.get() instanceof UnspecifiedNumExpr)
                 && !(numExpr.get() instanceof AsNumber)) {
@@ -89,6 +106,12 @@ public class ExpressionParser {
         }
 
         final Optional<StringExpr> stringExpr = maybeParseStringExpr(block, pos, blocks);
+        if (stringExpr.isPresent() && stringExpr.get() instanceof AsString ){
+            AsString stmt = ((AsString) stringExpr.get());
+            if(stmt.getOperand1() instanceof StrId){
+                return stmt;
+            }
+        }
         if (stringExpr.isPresent()
                 && !(stringExpr.get() instanceof UnspecifiedStringExpr)
                 && !(stringExpr.get() instanceof AsString)) {
