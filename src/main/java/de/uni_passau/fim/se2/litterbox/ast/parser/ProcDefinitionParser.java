@@ -34,11 +34,9 @@ import de.uni_passau.fim.se2.litterbox.ast.opcodes.ProcedureOpcode;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
+import java.util.logging.Logger;
 
 import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 
@@ -77,8 +75,11 @@ public class ProcDefinitionParser {
 
         List<ProcedureDefinition> procdecls = new ArrayList<>();
         for (JsonNode jsonNode : defBlock) {
-
-            procdecls.add(parseProcDecl(jsonNode, blocks, actorName));
+            try {
+                procdecls.add(parseProcDecl(jsonNode, blocks, actorName));
+            } catch (ParsingException e) {
+                Logger.getGlobal().warning(e.getMessage());
+            }
         }
 
         return new ProcedureDefinitionList(procdecls);
@@ -137,7 +138,11 @@ public class ProcDefinitionParser {
         for (int i = 0; i < arguments.length; i++) {
             arguments[i] = PARAMETER_ABBREVIATION + argumentsArray.get(i).asText();
         }
-        Preconditions.checkArgument(arguments.length == paraTypes.size());
+
+        if (!(arguments.length == paraTypes.size())) {
+            throw new ParsingException("A procedure in this project does have malformated code, where inputs or " +
+                    "parameternames are missing.");
+        }
         Type[] typeArray = new Type[paraTypes.size()];
         ProgramParser.procDefMap.addProcedure(ident, actorName, methodName, arguments, paraTypes.toArray(typeArray));
 
