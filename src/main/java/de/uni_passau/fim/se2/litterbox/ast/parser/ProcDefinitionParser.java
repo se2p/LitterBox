@@ -121,6 +121,9 @@ public class ProcDefinitionParser {
                 }
             }
         }
+        if(ident == null){
+            throw new ParsingException("Procedure prototype is missing its parent identifier and could not be parsed.");
+        }
         JsonNode argumentNamesNode = proto.get(MUTATION_KEY).get(ARGUMENTNAMES_KEY);
         ObjectMapper mapper = new ObjectMapper();
 
