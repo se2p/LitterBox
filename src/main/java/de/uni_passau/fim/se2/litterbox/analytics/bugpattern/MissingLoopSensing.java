@@ -20,20 +20,20 @@ package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueReport;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueTool;
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.GreenFlag;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BoolExpr;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.IsKeyPressed;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.IsMouseDown;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Touching;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfElseStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -41,59 +41,108 @@ import java.util.List;
  * inside a forever or until loop it is only checked once in a conditional construct, making it
  * unlikely that the timing is correct.
  */
-public class MissingLoopSensing implements IssueFinder {
+public class MissingLoopSensing implements IssueFinder, ScratchVisitor {
     public static final String NAME = "missing_loop_sensing";
     public static final String SHORT_NAME = "mssLoopSens";
-    private List<String> found;
-    private int counter;
+    private static final String NOTE1 = "There is no fishy touching or keyPressed checks without a loop.";
+    private static final String NOTE2 = "The project contains some fishy touching and / or keyPressed checks without " +
+            "a loop.";
+    private boolean found = false;
+    private int count = 0;
+    private List<String> actorNames = new LinkedList<>();
+    private boolean insideGreenFlag = false;
+    private boolean insideLoop = false;
 
     @Override
     public IssueReport check(Program program) {
         Preconditions.checkNotNull(program);
-        found = new ArrayList<>();
-        counter = 0;
-        List<ActorDefinition> actorDefs = program.getActorDefinitionList().getDefintions();
-        for (ActorDefinition actorDef : actorDefs) {
-            List<Script> scripts = actorDef.getScripts().getScriptList();
-            for (int j = 0; j < scripts.size(); j++) {
-                List<Stmt> stmts = scripts.get(j).getStmtList().getStmts().getListOfStmt();
-                if (stmts.size() > 0 && scripts.get(j).getEvent() instanceof GreenFlag) {
-                    checkMissLoop(stmts, actorDef.getIdent().getName());
-                }
-            }
+        found = false;
+        count = 0;
+        actorNames = new LinkedList<>();
+        program.accept(this);
+        String notes = NOTE1;
+        if (count > 0) {
+            notes = NOTE2;
         }
-        String note = "There is no fishy touching or keyPressed checks without a loop.";
-        if (counter > 0) {
-            note = "The project contains some fishy touching and / or keyPressed checks without a loop.";
-
-        }
-        return new IssueReport(NAME, counter, IssueTool.getOnlyUniqueActorList(found), note);
+        return new IssueReport(NAME, count, actorNames, notes);
     }
 
-    private void checkMissLoop(List<Stmt> stmts, String actorName) {
-        for (Stmt stmt : stmts) {
-            if (stmt instanceof RepeatForeverStmt || stmt instanceof UntilStmt) {
-                return;
-            } else if (stmt instanceof IfThenStmt) {
-                BoolExpr bool = ((IfThenStmt) stmt).getBoolExpr();
-                if (bool instanceof IsKeyPressed || bool instanceof Touching || bool instanceof IsMouseDown) {
-                    found.add(actorName);
-                    counter++;
-                } else {
-                    checkMissLoop(((IfThenStmt) stmt).getThenStmts().getStmts().getListOfStmt(), actorName);
-                }
-            } else if (stmt instanceof IfElseStmt) {
-                BoolExpr bool = ((IfElseStmt) stmt).getBoolExpr();
-                if (bool instanceof IsKeyPressed || bool instanceof Touching || bool instanceof IsMouseDown) {
-                    found.add(actorName);
-                    counter++;
-                } else {
-                    checkMissLoop(((IfElseStmt) stmt).getStmtList().getStmts().getListOfStmt(), actorName);
-                    checkMissLoop(((IfElseStmt) stmt).getElseStmts().getStmts().getListOfStmt(), actorName);
-                }
-            } else if (stmt instanceof RepeatTimesStmt) {
-                checkMissLoop(((RepeatTimesStmt) stmt).getStmtList().getStmts().getListOfStmt(),
-                        actorName);
+    @Override
+    public void visit(ActorDefinition actor) {
+        if (!actor.getChildren().isEmpty()) {
+            for (ASTNode child : actor.getChildren()) {
+                child.accept(this);
+            }
+        }
+        if (found) {
+            found = false;
+            actorNames.add(actor.getIdent().getName());
+        }
+    }
+
+    @Override
+    public void visit(Script node) {
+        if (node.getEvent() instanceof GreenFlag) {
+            insideGreenFlag = true;
+        }
+        if (!node.getChildren().isEmpty()) {
+            for (ASTNode child : node.getChildren()) {
+                child.accept(this);
+            }
+        }
+        insideGreenFlag = false;
+    }
+
+    @Override
+    public void visit(RepeatForeverStmt node) {
+        insideLoop = true;
+        if (!node.getChildren().isEmpty()) {
+            for (ASTNode child : node.getChildren()) {
+                child.accept(this);
+            }
+        }
+        insideLoop = false;
+    }
+
+    @Override
+    public void visit(UntilStmt node) {
+        insideLoop = true;
+        if (!node.getChildren().isEmpty()) {
+            for (ASTNode child : node.getChildren()) {
+                child.accept(this);
+            }
+        }
+        insideLoop = false;
+    }
+
+    @Override
+    public void visit(IfThenStmt node) {
+        if (insideGreenFlag && !insideLoop) {
+            BoolExpr boolExpr = node.getBoolExpr();
+            if (boolExpr instanceof IsKeyPressed || boolExpr instanceof Touching || boolExpr instanceof IsMouseDown || boolExpr instanceof ColorTouches) {
+                count++;
+                found = true;
+            }
+        }
+        if (!node.getChildren().isEmpty()) {
+            for (ASTNode child : node.getChildren()) {
+                child.accept(this);
+            }
+        }
+    }
+
+    @Override
+    public void visit(IfElseStmt node) {
+        if (insideGreenFlag && !insideLoop) {
+            BoolExpr boolExpr = node.getBoolExpr();
+            if (boolExpr instanceof IsKeyPressed || boolExpr instanceof Touching || boolExpr instanceof IsMouseDown || boolExpr instanceof ColorTouches) {
+                count++;
+                found = true;
+            }
+        }
+        if (!node.getChildren().isEmpty()) {
+            for (ASTNode child : node.getChildren()) {
+                child.accept(this);
             }
         }
     }
