@@ -30,9 +30,9 @@ import org.junit.jupiter.api.Test;
 import java.io.File;
 import java.io.IOException;
 
-public class EmptyScriptTest {
+public class LongScriptTest {
     private static Program empty;
-    private static Program emptyScript;
+    private static Program longScript;
     private static ObjectMapper mapper = new ObjectMapper();
 
     @BeforeAll
@@ -40,22 +40,22 @@ public class EmptyScriptTest {
 
         File f = new File("./src/test/fixtures/emptyProject.json");
         empty = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
-        f = new File("./src/test/fixtures/smells/emptyScript.json");
-        emptyScript = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
+        f = new File("./src/test/fixtures/smells/longScript.json");
+        longScript = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
 
     }
 
     @Test
     public void testEmptyProgram() {
-        EmptyScript parameterName = new EmptyScript();
+        LongScript parameterName = new LongScript();
         IssueReport report = parameterName.check(empty);
         Assertions.assertEquals(0, report.getCount());
     }
 
     @Test
-    public void testEmptyScript() {
-        EmptyScript parameterName = new EmptyScript();
-        IssueReport report = parameterName.check(emptyScript);
+    public void testLongScript() {
+        LongScript parameterName = new LongScript();
+        IssueReport report = parameterName.check(longScript);
         Assertions.assertEquals(2, report.getCount());
     }
 }

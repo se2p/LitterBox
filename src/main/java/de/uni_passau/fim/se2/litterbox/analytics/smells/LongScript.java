@@ -21,109 +21,85 @@ package de.uni_passau.fim.se2.litterbox.analytics.smells;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueReport;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueTool;
-import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.model.Script;
+import de.uni_passau.fim.se2.litterbox.ast.model.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.*;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
+
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
  * Checks for scripts with more than 12 blocks.
  */
-public class LongScript implements IssueFinder {
+public class LongScript implements IssueFinder, ScratchVisitor {
 
     public static final String NAME = "long_script";
     public static final String SHORT_NAME = "longScript";
     private static final String NOTE1 = "There are no long scripts.";
     private static final String NOTE2 = "Some scripts are very long.";
     private static final int NUMBER_TOO_LONG = 12;
+    private boolean found = false;
+    private int count = 0;
+    private int localCount = 0;
+    private List<String> actorNames = new LinkedList<>();
 
-    public LongScript() {
-    }
 
     @Override
     public IssueReport check(Program program) {
-
         Preconditions.checkNotNull(program);
-
-        List<String> found = new ArrayList<>();
-        final List<ActorDefinition> definitions = program.getActorDefinitionList().getDefintions();
-
-        for (ActorDefinition actor : definitions) {
-            List<Script> scripts = actor.getScripts().getScriptList();
-            for (Script current : scripts) {
-                //if a event is used only 11 blocks have to be in the remaining script, only statements are considered, expressions not
-                if ((!(current.getEvent() instanceof Never) && current.getStmtList().getStmts().getListOfStmt().size() >= NUMBER_TOO_LONG - 1)
-                        || ((current.getEvent() instanceof Never) && current.getStmtList().getStmts().getListOfStmt().size() >= NUMBER_TOO_LONG)) {
-                    found.add(actor.getIdent().getName());
-                } else {
-                    int count;
-                    if (!(current.getEvent() instanceof Never)) {
-                        count = 1;
-                    } else {
-                        count = 0;
-                    }
-                    if (lookAtStmts(current.getStmtList().getStmts().getListOfStmt(), count) >= NUMBER_TOO_LONG) {
-                        found.add(actor.getIdent().getName());
-                    }
-                }
-            }
-        }
+        found = false;
+        count = 0;
+        actorNames = new LinkedList<>();
+        program.accept(this);
         String notes = NOTE1;
-        if (found.size() > 0) {
+        if (count > 0) {
             notes = NOTE2;
         }
-
-        return new IssueReport(NAME, found.size(), IssueTool.getOnlyUniqueActorList(found), notes);
-
-
+        return new IssueReport(NAME, count, actorNames, notes);
     }
 
-    private int lookAtStmts(List<Stmt> listOfStmt, int count) {
-        for (Stmt stmt : listOfStmt) {
-            count++;
-            if (count >= NUMBER_TOO_LONG) {
-                return count;
-            }
-            if (stmt instanceof RepeatForeverStmt) {
-                if (count + ((RepeatForeverStmt) stmt).getStmtList().getStmts().getListOfStmt().size() >= NUMBER_TOO_LONG) {
-                    return count + ((RepeatForeverStmt) stmt).getStmtList().getStmts().getListOfStmt().size();
-                }
-                count = lookAtStmts(((RepeatForeverStmt) stmt).getStmtList().getStmts().getListOfStmt(), count);
-            } else if (stmt instanceof RepeatTimesStmt) {
-                if (count + ((RepeatTimesStmt) stmt).getStmtList().getStmts().getListOfStmt().size() >= NUMBER_TOO_LONG) {
-                    return count + ((RepeatTimesStmt) stmt).getStmtList().getStmts().getListOfStmt().size();
-                }
-                count = lookAtStmts(((RepeatTimesStmt) stmt).getStmtList().getStmts().getListOfStmt(), count);
-            } else if (stmt instanceof IfElseStmt) {
-                if (count + ((IfElseStmt) stmt).getStmtList().getStmts().getListOfStmt().size() >= NUMBER_TOO_LONG) {
-                    return count + ((IfElseStmt) stmt).getStmtList().getStmts().getListOfStmt().size();
-                }
-                if (count + ((IfElseStmt) stmt).getElseStmts().getStmts().getListOfStmt().size() >= NUMBER_TOO_LONG) {
-                    return count + ((IfElseStmt) stmt).getStmtList().getStmts().getListOfStmt().size();
-                }
-                count = lookAtStmts(((IfElseStmt) stmt).getStmtList().getStmts().getListOfStmt(), count);
-                count = lookAtStmts(((IfElseStmt) stmt).getElseStmts().getStmts().getListOfStmt(), count);
-            } else if (stmt instanceof UntilStmt) {
-                if (count + ((UntilStmt) stmt).getStmtList().getStmts().getListOfStmt().size() >= NUMBER_TOO_LONG) {
-                    return count + ((UntilStmt) stmt).getStmtList().getStmts().getListOfStmt().size();
-                }
-                count = lookAtStmts(((UntilStmt) stmt).getStmtList().getStmts().getListOfStmt(), count);
-            } else if (stmt instanceof IfThenStmt) {
-                if (count + ((IfThenStmt) stmt).getThenStmts().getStmts().getListOfStmt().size() >= NUMBER_TOO_LONG) {
-                    return count + ((IfThenStmt) stmt).getThenStmts().getStmts().getListOfStmt().size();
-                }
-                count = lookAtStmts(((IfThenStmt) stmt).getThenStmts().getStmts().getListOfStmt(), count);
-            }
-            if (count >= NUMBER_TOO_LONG) {
-                return count;
+    @Override
+    public void visit(ActorDefinition actor) {
+        if (!actor.getChildren().isEmpty()) {
+            for (ASTNode child : actor.getChildren()) {
+                child.accept(this);
             }
         }
-        return count;
+        if (found) {
+            found = false;
+            actorNames.add(actor.getIdent().getName());
+        }
+    }
+
+    @Override
+    public void visit(Script node) {
+        localCount = 0;
+        if (!(node.getEvent() instanceof Never)) {
+            localCount++;
+        }
+        if (!node.getChildren().isEmpty()) {
+            for (ASTNode child : node.getChildren()) {
+                child.accept(this);
+            }
+        }
+        if (localCount > NUMBER_TOO_LONG) {
+            count++;
+            found = true;
+        }
+    }
+
+    @Override
+    public void visit(StmtList node){
+        localCount= localCount+node.getStmts().getListOfStmt().size();
+        if (!node.getChildren().isEmpty()) {
+            for (ASTNode child : node.getChildren()) {
+                child.accept(this);
+            }
+        }
     }
 
     @Override
