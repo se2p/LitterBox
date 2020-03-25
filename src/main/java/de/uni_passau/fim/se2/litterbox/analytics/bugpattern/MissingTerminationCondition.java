@@ -21,14 +21,17 @@ package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueReport;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueTool;
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.UnspecifiedBoolExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.*;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -36,53 +39,54 @@ import java.util.List;
  * If the condition is missing, the result is an infinite loop.
  * This will then prevent the execution of blocks following the loop in the script.
  */
-public class MissingTerminationCondition implements IssueFinder {
+public class MissingTerminationCondition implements IssueFinder, ScratchVisitor {
     public static final String NAME = "missing_termination";
     public static final String SHORT_NAME = "mssTerm";
-    private List<String> found;
-    private int counter;
+    private static final String NOTE1 = "All 'repeat until' blocks terminating correctly.";
+    private static final String NOTE2 = "Some 'repeat until' blocks have no termination statement.";
+    private boolean found;
+    private int count;
+    private Program program;
+    private List<String> actorNames = new LinkedList<>();
+    private ActorDefinition currentActor;
 
     @Override
     public IssueReport check(Program program) {
         Preconditions.checkNotNull(program);
-        found = new ArrayList<>();
-        counter = 0;
-        List<ActorDefinition> actorDefs = program.getActorDefinitionList().getDefintions();
-        for (ActorDefinition actorDef : actorDefs) {
-            List<Script> scripts = actorDef.getScripts().getScriptList();
-            for (Script script : scripts) {
-                List<Stmt> stmts = script.getStmtList().getStmts().getListOfStmt();
-                if (stmts.size() > 0) {
-                    checkMissTermination(stmts, actorDef.getIdent().getName());
-                }
-            }
+        found = false;
+        count = 0;
+        actorNames = new LinkedList<>();
+        this.program = program;
+        program.accept(this);
+        String notes = NOTE1;
+        if (count > 0) {
+            notes = NOTE2;
         }
-
-        String notes = "All 'repeat until' blocks terminating correctly.";
-        if (counter > 0) {
-            notes = "Some 'repeat until' blocks have no termination statement.";
-        }
-        return new IssueReport(NAME, counter, IssueTool.getOnlyUniqueActorList(found), notes);
+        return new IssueReport(NAME, count, actorNames, notes);
     }
 
-    private void checkMissTermination(List<Stmt> stmts, String actorName) {
-        for (Stmt stmt : stmts) {
-            if (stmt instanceof UntilStmt) {
-                if (((UntilStmt) stmt).getBoolExpr() instanceof UnspecifiedBoolExpr) {
-                    counter++;
-                    found.add(actorName);
-                }
-            } else if (stmt instanceof IfThenStmt) {
-                checkMissTermination(((IfThenStmt) stmt).getThenStmts().getStmts().getListOfStmt(), actorName);
-            } else if (stmt instanceof IfElseStmt) {
-                checkMissTermination(((IfElseStmt) stmt).getStmtList().getStmts().getListOfStmt(), actorName);
-                checkMissTermination(((IfElseStmt) stmt).getElseStmts().getStmts().getListOfStmt(), actorName);
-            } else if (stmt instanceof RepeatTimesStmt) {
-                checkMissTermination(((RepeatTimesStmt) stmt).getStmtList().getStmts().getListOfStmt(),
-                        actorName);
-            } else if (stmt instanceof RepeatForeverStmt) {
-                checkMissTermination(((RepeatForeverStmt) stmt).getStmtList().getStmts().getListOfStmt(),
-                        actorName);
+    @Override
+    public void visit(ActorDefinition actor) {
+        currentActor = actor;
+        if (!actor.getChildren().isEmpty()) {
+            for (ASTNode child : actor.getChildren()) {
+                child.accept(this);
+            }
+        }
+        if (found) {
+            found = false;
+            actorNames.add(currentActor.getIdent().getName());
+        }
+    }
+
+    @Override
+    public void visit(UntilStmt node){
+        if(node.getBoolExpr() instanceof UnspecifiedBoolExpr){
+            count++;
+        }
+        if (!node.getChildren().isEmpty()) {
+            for (ASTNode child : node.getChildren()) {
+                child.accept(this);
             }
         }
     }
