@@ -25,6 +25,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.GreenFlag;
+import de.uni_passau.fim.se2.litterbox.ast.model.event.StartedAsClone;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfElseStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
@@ -50,7 +51,7 @@ public class MissingLoopSensing implements IssueFinder, ScratchVisitor {
     private boolean found = false;
     private int count = 0;
     private List<String> actorNames = new LinkedList<>();
-    private boolean insideGreenFlag = false;
+    private boolean insideGreenFlagClone = false;
     private boolean insideLoop = false;
 
     @Override
@@ -82,15 +83,15 @@ public class MissingLoopSensing implements IssueFinder, ScratchVisitor {
 
     @Override
     public void visit(Script node) {
-        if (node.getEvent() instanceof GreenFlag) {
-            insideGreenFlag = true;
+        if (node.getEvent() instanceof GreenFlag || node.getEvent() instanceof StartedAsClone) {
+            insideGreenFlagClone = true;
         }
         if (!node.getChildren().isEmpty()) {
             for (ASTNode child : node.getChildren()) {
                 child.accept(this);
             }
         }
-        insideGreenFlag = false;
+        insideGreenFlagClone = false;
     }
 
     @Override
@@ -117,7 +118,7 @@ public class MissingLoopSensing implements IssueFinder, ScratchVisitor {
 
     @Override
     public void visit(IfThenStmt node) {
-        if (insideGreenFlag && !insideLoop) {
+        if (insideGreenFlagClone && !insideLoop) {
             BoolExpr boolExpr = node.getBoolExpr();
             if (boolExpr instanceof IsKeyPressed || boolExpr instanceof Touching || boolExpr instanceof IsMouseDown || boolExpr instanceof ColorTouches) {
                 count++;
@@ -133,7 +134,7 @@ public class MissingLoopSensing implements IssueFinder, ScratchVisitor {
 
     @Override
     public void visit(IfElseStmt node) {
-        if (insideGreenFlag && !insideLoop) {
+        if (insideGreenFlagClone && !insideLoop) {
             BoolExpr boolExpr = node.getBoolExpr();
             if (boolExpr instanceof IsKeyPressed || boolExpr instanceof Touching || boolExpr instanceof IsMouseDown || boolExpr instanceof ColorTouches) {
                 count++;
