@@ -35,12 +35,13 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.*;
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.Identifier;
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.StrId;
+import de.uni_passau.fim.se2.litterbox.ast.model.variable.*;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.CommonStmtOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.parser.BoolExprParser;
 import de.uni_passau.fim.se2.litterbox.ast.parser.NumExprParser;
+import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
 import de.uni_passau.fim.se2.litterbox.ast.parser.StringExprParser;
+import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.VariableInfo;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 import java.util.ArrayList;
 import java.util.List;
@@ -126,12 +127,18 @@ public class CommonStmtParser {
 
     private static CommonStmt parseChangeVariableBy(JsonNode current, JsonNode allBlocks) throws ParsingException {
         Expression numExpr = NumExprParser.parseNumExpr(current, 0, allBlocks);
+        Variable var;
+        String variableName = current.get(FIELDS_KEY).get(VARIABLE_KEY).get(VARIABLE_NAME_POS).asText();
+        String variableID = current.get(FIELDS_KEY).get(VARIABLE_KEY).get(VARIABLE_IDENTIFIER_POS).asText();
+        if (!ProgramParser.symbolTable.getVariables().containsKey(variableID)) {
+            var = new UnspecifiedId();
+        } else {
+            VariableInfo variableInfo = ProgramParser.symbolTable.getVariables().get(variableID);
+            String actorName = variableInfo.getActor();
+            var = new Qualified(new StrId(actorName), new StrId(VARIABLE_ABBREVIATION + variableName));
+        }
 
-        String variableName =
-                VARIABLE_ABBREVIATION + current.get(FIELDS_KEY).get(VARIABLE_KEY).get(FIELD_VALUE).asText();
-        Identifier ident = new StrId(variableName);
-
-        return new ChangeVariableBy(ident, numExpr);
+        return new ChangeVariableBy(var, numExpr);
     }
 
     private static CommonStmt parseBroadcast(JsonNode current, JsonNode allBlocks) throws ParsingException {
@@ -144,15 +151,13 @@ public class CommonStmtParser {
         return new Broadcast(message);
     }
 
-    private static CommonStmt parseBroadcastAndWait(JsonNode current, JsonNode allBlocks) {
+    private static CommonStmt parseBroadcastAndWait(JsonNode current, JsonNode allBlocks) throws ParsingException {
         Preconditions.checkArgument(current.get(INPUTS_KEY).get(BROADCAST_INPUT_KEY).isArray());
 
         // The inputs contains array itself,
-        String messageName = current.get(INPUTS_KEY).get(BROADCAST_INPUT_KEY)
-                .get(Constants.POS_INPUT_VALUE)
-                .get(POS_INPUT_VALUE).asText();
+        StringExpr messageName = StringExprParser.parseStringExpr(current, BROADCAST_INPUT_KEY, allBlocks);
 
-        Message message = new Message(new StringLiteral(messageName));
+        Message message = new Message(messageName);
         BroadcastAndWait broadcast = new BroadcastAndWait(message);
         return broadcast;
     }

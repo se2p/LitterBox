@@ -16,24 +16,23 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
+package de.uni_passau.fim.se2.litterbox.analytics.smells;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueReport;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
-import java.io.File;
-import java.io.IOException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-public class PositionEqualsCheckTest {
+import java.io.File;
+import java.io.IOException;
+
+public class DeadCodeTest {
     private static Program empty;
-    private static Program equalX;
-    private static Program equalPos;
-    private static Program allChecks;
+    private static Program deadCode;
     private static ObjectMapper mapper = new ObjectMapper();
 
     @BeforeAll
@@ -41,42 +40,22 @@ public class PositionEqualsCheckTest {
 
         File f = new File("./src/test/fixtures/emptyProject.json");
         empty = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
+        f = new File("./src/test/fixtures/smells/deadCode.json");
+        deadCode = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
 
-        f = new File("./src/test/fixtures/bugpattern/xPosEqual.json");
-        equalX = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
-
-        f = new File("./src/test/fixtures/bugpattern/posEqual.json");
-        equalPos = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
-
-        f = new File("./src/test/fixtures/bugpattern/positionEqualsCheck.json");
-        allChecks = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
     }
 
     @Test
     public void testEmptyProgram() {
-        PositionEqualsCheck parameterName = new PositionEqualsCheck();
+        DeadCode parameterName = new DeadCode();
         IssueReport report = parameterName.check(empty);
         Assertions.assertEquals(0, report.getCount());
     }
 
     @Test
-    public void testEqualCond() {
-        PositionEqualsCheck parameterName = new PositionEqualsCheck();
-        IssueReport report = parameterName.check(equalX);
-        Assertions.assertEquals(0, report.getCount());
-    }
-
-    @Test
-    public void testEqualDir() {
-        PositionEqualsCheck parameterName = new PositionEqualsCheck();
-        IssueReport report = parameterName.check(equalPos);
-        Assertions.assertEquals(0, report.getCount());
-    }
-
-    @Test
-    public void testAll() {
-        PositionEqualsCheck parameterName = new PositionEqualsCheck();
-        IssueReport report = parameterName.check(allChecks);
-        Assertions.assertEquals(2, report.getCount());
+    public void testDeadCode() {
+        DeadCode parameterName = new DeadCode();
+        IssueReport report = parameterName.check(deadCode);
+        Assertions.assertEquals(3, report.getCount());
     }
 }

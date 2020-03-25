@@ -30,6 +30,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.HideVariabl
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.ShowVariable;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.StrId;
+import de.uni_passau.fim.se2.litterbox.ast.model.variable.UnspecifiedId;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.ActorLookStmtOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ElementChoiceParser;
@@ -42,8 +43,6 @@ import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 public class ActorLookStmtParser {
 
     private static final String CHANGE_BACKDROP_TO = "BACKDROP";
-    private static final String VARIABLE = "VARIABLE";
-    private static final String LIST = "LIST";
 
     public static ActorLookStmt parse(JsonNode current, JsonNode allBlocks) throws ParsingException {
         Preconditions.checkNotNull(current);
@@ -80,35 +79,51 @@ public class ActorLookStmtParser {
                 return new ClearGraphicEffects();
 
             case data_hidevariable:
-                variableName = current.get(FIELDS_KEY).get(VARIABLE).get(FIELD_VALUE).asText();
-                variableID = current.get(FIELDS_KEY).get(VARIABLE).get(1).asText();
-                variableInfo = ProgramParser.symbolTable.getVariables().get(variableID);
-                actorName = variableInfo.getActor();
-                var = new Qualified(new StrId(actorName), new StrId(VARIABLE_ABBREVIATION + variableName));
+                variableName = current.get(FIELDS_KEY).get(VARIABLE_KEY).get(VARIABLE_NAME_POS).asText();
+                variableID = current.get(FIELDS_KEY).get(VARIABLE_KEY).get(VARIABLE_IDENTIFIER_POS).asText();
+                if (!ProgramParser.symbolTable.getVariables().containsKey(variableID)) {
+                    var = new UnspecifiedId();
+                } else {
+                    variableInfo = ProgramParser.symbolTable.getVariables().get(variableID);
+                    actorName = variableInfo.getActor();
+                    var = new Qualified(new StrId(actorName), new StrId(VARIABLE_ABBREVIATION + variableName));
+                }
                 return new HideVariable(var);
 
             case data_showvariable:
-                variableName = current.get(FIELDS_KEY).get(VARIABLE).get(FIELD_VALUE).asText();
-                variableID = current.get(FIELDS_KEY).get(VARIABLE).get(1).asText();
-                variableInfo = ProgramParser.symbolTable.getVariables().get(variableID);
-                actorName = variableInfo.getActor();
-                var = new Qualified(new StrId(actorName), new StrId(VARIABLE_ABBREVIATION + variableName));
+                variableName = current.get(FIELDS_KEY).get(VARIABLE_KEY).get(VARIABLE_NAME_POS).asText();
+                variableID = current.get(FIELDS_KEY).get(VARIABLE_KEY).get(VARIABLE_IDENTIFIER_POS).asText();
+                if (!ProgramParser.symbolTable.getVariables().containsKey(variableID)) {
+                    var = new UnspecifiedId();
+                } else {
+                    variableInfo = ProgramParser.symbolTable.getVariables().get(variableID);
+                    actorName = variableInfo.getActor();
+                    var = new Qualified(new StrId(actorName), new StrId(VARIABLE_ABBREVIATION + variableName));
+                }
                 return new ShowVariable(var);
 
             case data_showlist:
-                variableName = current.get(FIELDS_KEY).get(LIST).get(FIELD_VALUE).asText();
-                variableID = current.get(FIELDS_KEY).get(LIST).get(1).asText();
-                expressionListInfo = ProgramParser.symbolTable.getLists().get(variableID);
-                actorName = expressionListInfo.getActor();
-                var = new Qualified(new StrId(actorName), new StrId(LIST_ABBREVIATION + variableName));
+                variableName = current.get(FIELDS_KEY).get(LIST_KEY).get(LIST_NAME_POS).asText();
+                variableID = current.get(FIELDS_KEY).get(LIST_KEY).get(LIST_IDENTIFIER_POS).asText();
+                if (!ProgramParser.symbolTable.getLists().containsKey(variableID)) {
+                    var = new UnspecifiedId();
+                } else {
+                    expressionListInfo = ProgramParser.symbolTable.getLists().get(variableID);
+                    actorName = expressionListInfo.getActor();
+                    var = new Qualified(new StrId(actorName), new StrId(LIST_ABBREVIATION + variableName));
+                }
                 return new ShowVariable(var);
 
             case data_hidelist:
-                variableName = current.get(FIELDS_KEY).get(LIST).get(FIELD_VALUE).asText();
-                variableID = current.get(FIELDS_KEY).get(LIST).get(1).asText();
-                expressionListInfo = ProgramParser.symbolTable.getLists().get(variableID);
-                actorName = expressionListInfo.getActor();
-                var = new Qualified(new StrId(actorName), new StrId(LIST_ABBREVIATION + variableName));
+                variableName = current.get(FIELDS_KEY).get(LIST_KEY).get(LIST_NAME_POS).asText();
+                variableID = current.get(FIELDS_KEY).get(LIST_KEY).get(LIST_IDENTIFIER_POS).asText();
+                if (!ProgramParser.symbolTable.getLists().containsKey(variableID)) {
+                    var = new UnspecifiedId();
+                } else {
+                    expressionListInfo = ProgramParser.symbolTable.getLists().get(variableID);
+                    actorName = expressionListInfo.getActor();
+                    var = new Qualified(new StrId(actorName), new StrId(LIST_ABBREVIATION + variableName));
+                }
                 return new HideVariable(var);
 
             default:

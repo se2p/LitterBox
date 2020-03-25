@@ -29,12 +29,11 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.AsListIndex;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.ListExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.StrId;
+import de.uni_passau.fim.se2.litterbox.ast.model.variable.UnspecifiedId;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ExpressionListInfo;
 
 public class ListExprParser {
-
-    private static final String LIST = "LIST";
 
     public static ListExpr parseListExpr(JsonNode block, String inputName, JsonNode blocks) throws ParsingException {
         ArrayNode exprArray = ExpressionParser.getExprArrayByName(block.get(INPUTS_KEY), inputName);
@@ -74,13 +73,13 @@ public class ListExprParser {
     }
 
     static Variable parseVariableFromFields(JsonNode fields) throws ParsingException {
-        String identifier = fields.get(LIST).get(1).asText();
+        String identifier = fields.get(LIST_KEY).get(LIST_IDENTIFIER_POS).asText();
         if (ProgramParser.symbolTable.getLists().containsKey(identifier)) {
             ExpressionListInfo variableInfo = ProgramParser.symbolTable.getLists().get(identifier);
             return new Qualified(new StrId(variableInfo.getActor()),
                     new StrId((variableInfo.getVariableName())));
         } else {
-            throw new ParsingException("No list to parse found in fields.");
+            return new UnspecifiedId();
         }
 
     }

@@ -20,19 +20,24 @@ package de.uni_passau.fim.se2.litterbox.analytics.ctscore;
 
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueReport;
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.*;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
+import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
+
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
  * Evaluates the level of flow control of the Scratch program.
  */
-public class FlowControl implements IssueFinder {
+public class FlowControl implements IssueFinder, ScratchVisitor {
 
     private final int SCRIPT = 1;
     private final int REPEAT_FOREVER = 2;
@@ -40,118 +45,90 @@ public class FlowControl implements IssueFinder {
     private String[] notes = new String[4];
     public final static String NAME = "flow_control";
     public final static String SHORT_NAME = "flow";
-    private List<String> found;
+    private List<String> actorNames = new LinkedList<>();
+    private boolean script = false;
+    private boolean repeat_forever = false;
+    private boolean until = false;
+
 
     public FlowControl() {
-        found = new ArrayList<>();
         notes[0] = "There is a sequence of blocks missing.";
         notes[1] = "Basic level. There is repeat or forever missing.";
         notes[2] = "Developing level. There is repeat until missing.";
         notes[3] = "Proficiency level. Good work!";
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * @param program
-     */
+
     @Override
     public IssueReport check(Program program) {
+        Preconditions.checkNotNull(program);
+        actorNames = new LinkedList<>();
+        script = false;
+        repeat_forever = false;
+        until = false;
+        program.accept(this);
         int level = 0;
-        found = new ArrayList<>();
-        List<ActorDefinition> actorDefs = program.getActorDefinitionList().getDefintions();
-        level = checkIfScriptsUsed(actorDefs, level);
-        level = checkIfForeverOrRepeat(actorDefs, level);
-        level = checkIfUntil(actorDefs, level);
-
-        return new IssueReport(NAME, level, found, notes[level]);
+        if (until) {
+            level = UNTIL;
+        } else if (repeat_forever) {
+            level = REPEAT_FOREVER;
+        } else if (script) {
+            level = SCRIPT;
+        }
+        return new IssueReport(NAME, level, actorNames, notes[level]);
     }
 
-    private int checkIfUntil(List<ActorDefinition> actorDefs, int level) {
-        for (ActorDefinition actorDef : actorDefs) {
-            List<Script> scripts = actorDef.getScripts().getScriptList();
-            for (Script script : scripts) {
-                List<Stmt> stmts = script.getStmtList().getStmts().getListOfStmt();
-                int newLevel = checkStmts(stmts, level, UNTIL);
-                if (newLevel == UNTIL) {
-                    found.add(actorDef.getIdent().getName());
-                    return UNTIL;
-                }
+    @Override
+    public void visit(ActorDefinition actor) {
+        if (!actor.getChildren().isEmpty()) {
+            for (ASTNode child : actor.getChildren()) {
+                child.accept(this);
             }
-
         }
-        return level;
     }
 
-    private int checkStmts(List<Stmt> stmts, int level, int rewardLevel) {
-        for (Stmt stmt : stmts) {
-            if ((stmt instanceof RepeatTimesStmt || stmt instanceof RepeatForeverStmt) && rewardLevel == REPEAT_FOREVER) {
-                return rewardLevel;
-            } else if (stmt instanceof UntilStmt && rewardLevel == UNTIL) {
-                return rewardLevel;
-            } else if (stmt instanceof RepeatTimesStmt && rewardLevel == UNTIL) {
-                int internalLevel = checkStmts(((RepeatTimesStmt) stmt).getStmtList().getStmts().getListOfStmt(),
-                        level, rewardLevel);
-                if (internalLevel == rewardLevel) {
-                    return rewardLevel;
-                }
-            } else if (stmt instanceof RepeatForeverStmt && rewardLevel == UNTIL) {
-                int internalLevel = checkStmts(((RepeatForeverStmt) stmt).getStmtList().getStmts().getListOfStmt(),
-                        level, rewardLevel);
-                if (internalLevel == rewardLevel) {
-                    return rewardLevel;
-                }
-            } else if (stmt instanceof IfElseStmt) {
-                int internLevel =
-                        checkStmts(((IfElseStmt) stmt).getStmtList().getStmts().getListOfStmt(),
-                                level, rewardLevel);
-                int internLevel2 =
-                        checkStmts(((IfElseStmt) stmt).getElseStmts().getStmts().getListOfStmt(),
-                                level, rewardLevel);
-                if (internLevel == rewardLevel || internLevel2 == rewardLevel) {
-                    return rewardLevel;
-                }
-            } else if (stmt instanceof IfThenStmt) {
-                int internLevel =
-                        checkStmts((((IfThenStmt) stmt).getThenStmts().getStmts().getListOfStmt()),
-                                level, rewardLevel);
-                if (internLevel == rewardLevel) {
-                    return rewardLevel;
-                }
+    @Override
+    public void visit(Script node) {
+        if ((!(node.getEvent() instanceof Never) && node.getStmtList().getStmts().getListOfStmt().size() > 0)
+                || ((node.getEvent() instanceof Never) && node.getStmtList().getStmts().getListOfStmt().size() > 1)) {
+            script = true;
+        }
+        if (!node.getChildren().isEmpty()) {
+            for (ASTNode child : node.getChildren()) {
+                child.accept(this);
             }
         }
-        return level;
     }
 
-    private int checkIfForeverOrRepeat(List<ActorDefinition> actorDefs, int level) {
-        for (ActorDefinition actorDef : actorDefs) {
-            List<Script> scripts = actorDef.getScripts().getScriptList();
-            for (Script script : scripts) {
-                List<Stmt> stmts = script.getStmtList().getStmts().getListOfStmt();
-                int newLevel = checkStmts(stmts, level, REPEAT_FOREVER);
-                if (newLevel == REPEAT_FOREVER) {
-                    found.add(actorDef.getIdent().getName());
-                    return REPEAT_FOREVER;
-                }
+    @Override
+    public void visit(RepeatForeverStmt node) {
+        repeat_forever = true;
+        if (!node.getChildren().isEmpty()) {
+            for (ASTNode child : node.getChildren()) {
+                child.accept(this);
             }
-
         }
-        return level;
+
     }
 
-    private int checkIfScriptsUsed(List<ActorDefinition> actorDefs, int level) {
-        for (ActorDefinition actorDef : actorDefs) {
-            List<Script> scripts = actorDef.getScripts().getScriptList();
-            for (Script script : scripts) {
-                List<Stmt> stmts = script.getStmtList().getStmts().getListOfStmt();
-                if (stmts.size() >= 2 || (!(script.getEvent() instanceof Never) && stmts.size() >= 1)) {
-                    found.add(actorDef.getIdent().getName());
-                    return SCRIPT;
-                }
+    @Override
+    public void visit(UntilStmt node) {
+        until = true;
+        if (!node.getChildren().isEmpty()) {
+            for (ASTNode child : node.getChildren()) {
+                child.accept(this);
             }
-
         }
-        return level;
+    }
+
+    @Override
+    public void visit(RepeatTimesStmt node) {
+        repeat_forever = true;
+        if (!node.getChildren().isEmpty()) {
+            for (ASTNode child : node.getChildren()) {
+                child.accept(this);
+            }
+        }
     }
 
     @Override

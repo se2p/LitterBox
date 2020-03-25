@@ -5,58 +5,23 @@
       "name": "Stage",
       "variables": {
         "`jEk@4|i[#Fk?(8x)AV.-my variable": [
-          "my variable",
+          "meine Variable",
           0
         ]
       },
       "lists": {},
       "broadcasts": {},
       "blocks": {
-        "udchYK2yg:o$HC-sX?ME": {
-          "opcode": "event_whenbackdropswitchesto",
+        "kVGgwVHU2.t[,,;eX162": {
+          "opcode": "sound_stopallsounds",
           "next": null,
           "parent": null,
           "inputs": {},
-          "fields": {
-            "BACKDROP": [
-              "backdrop1",
-              null
-            ]
-          },
-          "shadow": false,
-          "topLevel": true,
-          "x": 447,
-          "y": 302
-        },
-        "/m`Vz/N}j`6XoT_kacbg": {
-          "opcode": "looks_switchbackdroptoandwait",
-          "next": null,
-          "parent": null,
-          "inputs": {
-            "BACKDROP": [
-              1,
-              "ws@D{$S9=ZpRm^N$l~%8"
-            ]
-          },
           "fields": {},
           "shadow": false,
           "topLevel": true,
-          "x": 284,
-          "y": 586
-        },
-        "ws@D{$S9=ZpRm^N$l~%8": {
-          "opcode": "looks_backdrops",
-          "next": null,
-          "parent": "/m`Vz/N}j`6XoT_kacbg",
-          "inputs": {},
-          "fields": {
-            "BACKDROP": [
-              "random backdrop",
-              null
-            ]
-          },
-          "shadow": true,
-          "topLevel": false
+          "x": 277,
+          "y": 247
         }
       },
       "comments": {},
@@ -64,17 +29,17 @@
       "costumes": [
         {
           "assetId": "cd21514d0531fdffb22204e0ec5ed84a",
-          "name": "backdrop1",
+          "name": "Bühnenbild1",
           "md5ext": "cd21514d0531fdffb22204e0ec5ed84a.svg",
           "dataFormat": "svg",
           "rotationCenterX": 240,
           "rotationCenterY": 180
         },
         {
-          "assetId": "84208d9a3718ec3c9fc5a32a792fa1d0",
-          "name": "Space",
+          "assetId": "1517c21786d2d0edc2f3037408d850bd",
+          "name": "Underwater 2",
           "bitmapResolution": 2,
-          "md5ext": "84208d9a3718ec3c9fc5a32a792fa1d0.png",
+          "md5ext": "1517c21786d2d0edc2f3037408d850bd.png",
           "dataFormat": "png",
           "rotationCenterX": 480,
           "rotationCenterY": 360
@@ -83,7 +48,7 @@
       "sounds": [
         {
           "assetId": "83a9787d4cb6f3b7632b4ddfebf74367",
-          "name": "pop",
+          "name": "Plopp",
           "dataFormat": "wav",
           "format": "",
           "rate": 48000,
@@ -100,45 +65,40 @@
     },
     {
       "isStage": false,
-      "name": "Sprite1",
+      "name": "Figur1",
       "variables": {},
       "lists": {},
       "broadcasts": {},
       "blocks": {
-        "m~/i0p00QsSKDb#^[MeW": {
-          "opcode": "control_repeat_until",
-          "next": null,
+        "GPhV,91v9;nS|Tg$8!:*": {
+          "opcode": "motion_movesteps",
+          "next": "$GFLCb.YlAqt[+cjz/#|",
           "parent": null,
           "inputs": {
-            "CONDITION": [
-              2,
-              "6UgA0Kl-S0+-1rap,~YG"
+            "STEPS": [
+              1,
+              [
+                4,
+                "10"
+              ]
             ]
           },
           "fields": {},
           "shadow": false,
           "topLevel": true,
-          "x": 473,
-          "y": 361
+          "x": 381,
+          "y": 270
         },
-        "6UgA0Kl-S0+-1rap,~YG": {
-          "opcode": "operator_equals",
-          "next": null,
-          "parent": "m~/i0p00QsSKDb#^[MeW",
+        "$GFLCb.YlAqt[+cjz/#|": {
+          "opcode": "motion_turnleft",
+          "next": "oSnq|]#{tMLv9]M(%UHq",
+          "parent": "GPhV,91v9;nS|Tg$8!:*",
           "inputs": {
-            "OPERAND1": [
-              3,
-              "=B!5KQ|}N7$X4hr2$/N+",
-              [
-                10,
-                ""
-              ]
-            ],
-            "OPERAND2": [
+            "DEGREES": [
               1,
               [
-                10,
-                "50"
+                4,
+                "15"
               ]
             ]
           },
@@ -146,13 +106,58 @@
           "shadow": false,
           "topLevel": false
         },
-        "=B!5KQ|}N7$X4hr2$/N+": {
-          "opcode": "motion_xposition",
+        "oSnq|]#{tMLv9]M(%UHq": {
+          "opcode": "motion_gotoxy",
           "next": null,
-          "parent": "6UgA0Kl-S0+-1rap,~YG",
-          "inputs": {},
+          "parent": "$GFLCb.YlAqt[+cjz/#|",
+          "inputs": {
+            "X": [
+              1,
+              [
+                4,
+                "0"
+              ]
+            ],
+            "Y": [
+              1,
+              [
+                4,
+                "0"
+              ]
+            ]
+          },
           "fields": {},
           "shadow": false,
+          "topLevel": false
+        },
+        "y)2!z4#0k-t!-zq$lHSy": {
+          "opcode": "motion_goto",
+          "next": null,
+          "parent": null,
+          "inputs": {
+            "TO": [
+              1,
+              "6:VJ4.*ap]lSppqvIr9`"
+            ]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": true,
+          "x": 799,
+          "y": 279
+        },
+        "6:VJ4.*ap]lSppqvIr9`": {
+          "opcode": "motion_goto_menu",
+          "next": null,
+          "parent": "y)2!z4#0k-t!-zq$lHSy",
+          "inputs": {},
+          "fields": {
+            "TO": [
+              "_random_",
+              null
+            ]
+          },
+          "shadow": true,
           "topLevel": false
         }
       },
@@ -161,7 +166,7 @@
       "costumes": [
         {
           "assetId": "b7853f557e4426412e64bb3da6531a99",
-          "name": "costume1",
+          "name": "Kostüm1",
           "bitmapResolution": 1,
           "md5ext": "b7853f557e4426412e64bb3da6531a99.svg",
           "dataFormat": "svg",
@@ -170,7 +175,7 @@
         },
         {
           "assetId": "e6ddc55a6ddd9cc9d84fe0b4c21e016f",
-          "name": "costume2",
+          "name": "Kostüm2",
           "bitmapResolution": 1,
           "md5ext": "e6ddc55a6ddd9cc9d84fe0b4c21e016f.svg",
           "dataFormat": "svg",
@@ -181,7 +186,7 @@
       "sounds": [
         {
           "assetId": "83c36d806dc92327b9e7049a565c6bff",
-          "name": "Meow",
+          "name": "Miau",
           "dataFormat": "wav",
           "format": "",
           "rate": 48000,
@@ -204,7 +209,7 @@
   "extensions": [],
   "meta": {
     "semver": "3.0.0",
-    "vm": "0.2.0-prerelease.20191227164934",
-    "agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:72.0) Gecko/20100101 Firefox/72.0"
+    "vm": "0.2.0-prerelease.20200319175700",
+    "agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:74.0) Gecko/20100101 Firefox/74.0"
   }
 }

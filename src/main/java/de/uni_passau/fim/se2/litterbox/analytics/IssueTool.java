@@ -71,12 +71,6 @@ public class IssueTool {
         bugFinder.put(RecursiveCloning.SHORT_NAME, new RecursiveCloning());
         bugFinder.put(SameVariableDifferentSprite.SHORT_NAME, new SameVariableDifferentSprite());
         bugFinder.put(StutteringMovement.SHORT_NAME, new StutteringMovement());
-//        finder.put("glblstrt", new GlobalStartingPoint());
-//        finder.put("strt", new StartingPoint());
-//        finder.put("dblif", new DoubleIf());
-//        finder.put("attrmod", new AttributeModification());
-//        finder.put("squact", new SequentialActions());
-//        finder.put("sprtname", new SpriteNaming());
 
         //Smells
         smellFinder.put(EmptyControlBody.SHORT_NAME, new EmptyControlBody());
@@ -89,12 +83,6 @@ public class IssueTool {
         smellFinder.put(NestedLoops.SHORT_NAME, new NestedLoops());
         smellFinder.put(UnusedVariable.SHORT_NAME, new UnusedVariable());
         smellFinder.put(UnusedCustomBlock.SHORT_NAME, new UnusedCustomBlock());
-//        finder.put("dplscrpt", new DuplicatedScript());
-//        finder.put("racecnd", new RaceCondition());
-//        finder.put("mdlman", new MiddleMan());
-//        finder.put("vrblscp", new VariableScope());
-//        finder.put("dplsprt", new DuplicatedSprite());
-//        finder.put("inappint", new InappropriateIntimacy());
 
         //UtilFinder
         utilFinder.put(BlockCount.SHORT_NAME, new BlockCount());
@@ -103,15 +91,8 @@ public class IssueTool {
         utilFinder.put(ProgramUsingPen.SHORT_NAME, new ProgramUsingPen());
         utilFinder.put(WeightedMethodCount.SHORT_NAME, new WeightedMethodCount());
 
-//
-//        // To evaluate the CT score
-//        finder.put("logthink", new LogicalThinking());
-//        finder.put("abstr", new Abstraction());
-//        finder.put("para", new Parallelism());
-//        finder.put("synch", new Synchronization());
+        // To evaluate the CT score
         ctScoreFinder.put(FlowControl.SHORT_NAME, new FlowControl());
-//        finder.put("userint", new UserInteractivity());
-//        finder.put("datarep", new DataRepresentation());
     }
 
     /**

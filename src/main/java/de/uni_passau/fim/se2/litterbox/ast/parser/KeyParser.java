@@ -27,6 +27,7 @@ import de.uni_passau.fim.se2.litterbox.ast.Constants;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Key;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.UnspecifiedNumExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.BoolExprOpcode;
 import java.util.ArrayList;
@@ -44,7 +45,7 @@ public class KeyParser {
 
     public static Key parse(JsonNode current, JsonNode allBlocks) throws ParsingException {
 
-        final JsonNode block;
+        JsonNode block;
         final String opcodeString = current.get(OPCODE_KEY).asText();
         if (BoolExprOpcode.sensing_keypressed.name().equals(opcodeString)) {
 
@@ -62,7 +63,9 @@ public class KeyParser {
         } else {
             block = current;
         }
-
+        if (block == null) {
+            return new Key(new UnspecifiedNumExpr());
+        }
         String keyValue = block.get(FIELDS_KEY).get(KEY_OPTION).get(FIELD_VALUE).asText();
         switch (keyValue) {
             case "space":
