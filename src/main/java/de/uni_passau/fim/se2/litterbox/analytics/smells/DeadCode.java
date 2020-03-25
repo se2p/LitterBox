@@ -44,8 +44,6 @@ public class DeadCode implements IssueFinder, ScratchVisitor {
     private boolean found = false;
     private int count = 0;
     private List<String> actorNames = new LinkedList<>();
-    private ActorDefinition currentActor;
-    private Program program;
 
     public DeadCode() {
     }
@@ -56,7 +54,6 @@ public class DeadCode implements IssueFinder, ScratchVisitor {
         found = false;
         count = 0;
         actorNames = new LinkedList<>();
-        this.program = program;
         program.accept(this);
         String notes = NOTE1;
         if (count > 0) {
@@ -67,7 +64,6 @@ public class DeadCode implements IssueFinder, ScratchVisitor {
 
     @Override
     public void visit(ActorDefinition actor) {
-        currentActor = actor;
         if (!actor.getChildren().isEmpty()) {
             for (ASTNode child : actor.getChildren()) {
                 child.accept(this);
@@ -75,7 +71,7 @@ public class DeadCode implements IssueFinder, ScratchVisitor {
         }
         if (found) {
             found = false;
-            actorNames.add(currentActor.getIdent().getName());
+            actorNames.add(actor.getIdent().getName());
         }
     }
 
