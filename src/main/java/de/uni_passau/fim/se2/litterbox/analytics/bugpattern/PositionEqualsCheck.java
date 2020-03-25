@@ -31,6 +31,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.MouseY;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AttributeOf;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitUntil;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfElseStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.StringExprOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
@@ -122,6 +124,30 @@ public class PositionEqualsCheck implements IssueFinder, ScratchVisitor {
 
     @Override
     public void visit(UntilStmt node) {
+        if (node.getBoolExpr() instanceof Equals) {
+            checkEquals((Equals) node.getBoolExpr());
+        }
+        if (!node.getChildren().isEmpty()) {
+            for (ASTNode child : node.getChildren()) {
+                child.accept(this);
+            }
+        }
+    }
+
+    @Override
+    public void visit(IfThenStmt node) {
+        if (node.getBoolExpr() instanceof Equals) {
+            checkEquals((Equals) node.getBoolExpr());
+        }
+        if (!node.getChildren().isEmpty()) {
+            for (ASTNode child : node.getChildren()) {
+                child.accept(this);
+            }
+        }
+    }
+
+    @Override
+    public void visit(IfElseStmt node) {
         if (node.getBoolExpr() instanceof Equals) {
             checkEquals((Equals) node.getBoolExpr());
         }
