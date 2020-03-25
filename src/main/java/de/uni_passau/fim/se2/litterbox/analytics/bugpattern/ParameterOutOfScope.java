@@ -28,6 +28,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
+
 import java.util.LinkedList;
 import java.util.List;
 
@@ -36,10 +37,10 @@ import java.util.List;
  * However, they will never be initialised outside the custom block, and will always have the default value.
  */
 public class ParameterOutOfScope implements IssueFinder, ScratchVisitor {
-    private static final String NOTE1 = "There are no parameters out of scope in your project.";
-    private static final String NOTE2 = "Some of the scripts contain parameters out of scope.";
     public static final String NAME = "parameter_out_of_scope";
     public static final String SHORT_NAME = "paramOutScope";
+    private static final String NOTE1 = "There are no parameters out of scope in your project.";
+    private static final String NOTE2 = "Some of the scripts contain parameters out of scope.";
     private boolean found = false;
     private int count = 0;
     private List<String> actorNames = new LinkedList<>();

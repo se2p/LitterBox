@@ -22,6 +22,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ASTLeaf;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
+
 import java.util.Collections;
 import java.util.List;
 
@@ -49,6 +50,15 @@ public enum NumFunct implements ASTNode, ASTLeaf {
         this.function = Preconditions.checkNotNull(function);
     }
 
+    public static NumFunct fromString(String function) {
+        for (NumFunct f : values()) {
+            if (f.getFunction().equals(function)) {
+                return f;
+            }
+        }
+        throw new IllegalArgumentException("Unknown mathematical function: " + function);
+    }
+
     public String getFunction() {
         return function;
     }
@@ -73,14 +83,5 @@ public enum NumFunct implements ASTNode, ASTLeaf {
         String[] result = new String[1];
         result[0] = function;
         return result;
-    }
-
-    public static NumFunct fromString(String function) {
-        for (NumFunct f : values()) {
-            if (f.getFunction().equals(function)) {
-                return f;
-            }
-        }
-        throw new IllegalArgumentException("Unknown mathematical function: " + function);
     }
 }

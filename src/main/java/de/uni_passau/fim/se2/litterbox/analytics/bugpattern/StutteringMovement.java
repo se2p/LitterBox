@@ -31,6 +31,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.ChangeYB
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.MoveSteps;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
+
 import java.util.LinkedList;
 import java.util.List;
 
@@ -42,10 +43,10 @@ import java.util.List;
  */
 public class StutteringMovement implements IssueFinder, ScratchVisitor {
 
-    private static final String NOTE1 = "There are no scripts causing stuttering movement in your project.";
-    private static final String NOTE2 = "There are some scripts causing stuttering movement in your project.";
     public static final String NAME = "stuttering_movement";
     public static final String SHORT_NAME = "stuttMove";
+    private static final String NOTE1 = "There are no scripts causing stuttering movement in your project.";
+    private static final String NOTE2 = "There are some scripts causing stuttering movement in your project.";
     private boolean found = false;
     private int count = 0;
     private List<String> actorNames = new LinkedList<>();

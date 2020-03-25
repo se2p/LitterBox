@@ -31,7 +31,8 @@ public class Program extends AbstractNode {
     private final SymbolTable symbolTable;
     private final ProcedureDefinitionNameMapping procedureMapping;
 
-    public Program(Identifier ident, ActorDefinitionList actorDefinitionList, SymbolTable symbolTable, ProcedureDefinitionNameMapping procedureMapping) {
+    public Program(Identifier ident, ActorDefinitionList actorDefinitionList, SymbolTable symbolTable,
+                   ProcedureDefinitionNameMapping procedureMapping) {
         super(ident, actorDefinitionList);
         this.ident = Preconditions.checkNotNull(ident);
         this.actorDefinitionList = Preconditions.checkNotNull(actorDefinitionList);

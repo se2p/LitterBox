@@ -29,6 +29,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.variable.Identifier;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ProcedureInfo;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
+
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -39,10 +40,10 @@ import java.util.Map;
  */
 public class UnusedCustomBlock implements IssueFinder, ScratchVisitor {
 
-    private static final String NOTE1 = "There are no uncalled custom blocks in your project.";
-    private static final String NOTE2 = "Some of the custom blocks are never used.";
     public static final String NAME = "unused_custom_block";
     public static final String SHORT_NAME = "unusedCustBl";
+    private static final String NOTE1 = "There are no uncalled custom blocks in your project.";
+    private static final String NOTE2 = "Some of the custom blocks are never used.";
     private boolean found = false;
     private int count = 0;
     private List<String> actorNames = new LinkedList<>();

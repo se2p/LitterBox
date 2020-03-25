@@ -34,7 +34,10 @@ import de.uni_passau.fim.se2.litterbox.ast.opcodes.ProcedureOpcode;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.logging.Logger;
 
@@ -109,19 +112,19 @@ public class ProcDefinitionParser {
 
         String methodName = proto.get(MUTATION_KEY).get(PROCCODE_KEY).asText();
         Identifier ident = null;
-        if(proto.has(PARENT_KEY)) {
+        if (proto.has(PARENT_KEY)) {
             ident = new StrId(proto.get(PARENT_KEY).asText());
-        }else{
-            Iterator<Entry<String,JsonNode>> entries = blocks.fields();
-            while(entries.hasNext()){
-                Entry<String,JsonNode> currentEntry = entries.next();
-                if (currentEntry.getValue().equals(def)){
+        } else {
+            Iterator<Entry<String, JsonNode>> entries = blocks.fields();
+            while (entries.hasNext()) {
+                Entry<String, JsonNode> currentEntry = entries.next();
+                if (currentEntry.getValue().equals(def)) {
                     ident = new StrId(currentEntry.getKey());
                     break;
                 }
             }
         }
-        if(ident == null){
+        if (ident == null) {
             throw new ParsingException("Procedure prototype is missing its parent identifier and could not be parsed.");
         }
         JsonNode argumentNamesNode = proto.get(MUTATION_KEY).get(ARGUMENTNAMES_KEY);

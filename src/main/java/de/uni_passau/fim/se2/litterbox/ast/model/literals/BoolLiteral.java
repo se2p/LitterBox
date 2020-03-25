@@ -22,10 +22,13 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ASTLeaf;
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BoolExpr;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
+
 import java.util.Objects;
 
 public class BoolLiteral extends AbstractNode implements BoolExpr, ASTLeaf {
 
+    public static final BoolLiteral FALSE = new BoolLiteral(false);
+    public static final BoolLiteral TRUE = new BoolLiteral(true);
     private final boolean value;
 
     public BoolLiteral(boolean value) {
@@ -47,10 +50,6 @@ public class BoolLiteral extends AbstractNode implements BoolExpr, ASTLeaf {
         String[] returnArray = {"" + value};
         return returnArray;
     }
-
-    public static final BoolLiteral FALSE = new BoolLiteral(false);
-
-    public static final BoolLiteral TRUE = new BoolLiteral(true);
 
     @Override
     public boolean equals(Object o) {

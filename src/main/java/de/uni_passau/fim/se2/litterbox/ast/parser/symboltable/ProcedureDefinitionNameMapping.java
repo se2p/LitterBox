@@ -21,6 +21,7 @@ package de.uni_passau.fim.se2.litterbox.ast.parser.symboltable;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.Type;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Identifier;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
+
 import java.util.LinkedHashMap;
 import java.util.Map;
 

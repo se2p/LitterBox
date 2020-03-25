@@ -32,7 +32,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.ExpressionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.ExpressionListPlain;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AttributeOf;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.ItemOfVariable;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.BoolLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.ColorLiteral;
@@ -44,13 +43,13 @@ import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterListPlain;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.ExpressionStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.ListOfStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.HideVariable;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.ShowVariable;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.ChangeAttributeBy;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.ChangeVariableBy;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetAttributeTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetVariableTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.list.*;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.HideVariable;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.AsTouchable;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.Type;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Identifier;
@@ -334,7 +333,7 @@ public class BlockCount implements IssueFinder, ScratchVisitor {
     }
 
     @Override
-    public void visit(SetAttributeTo node){
+    public void visit(SetAttributeTo node) {
         if (insideScript || insideProcedure) {
             count++;
         }
@@ -345,7 +344,7 @@ public class BlockCount implements IssueFinder, ScratchVisitor {
     }
 
     @Override
-    public void visit(ChangeAttributeBy node){
+    public void visit(ChangeAttributeBy node) {
         if (insideScript || insideProcedure) {
             count++;
         }
@@ -356,7 +355,7 @@ public class BlockCount implements IssueFinder, ScratchVisitor {
     }
 
     @Override
-    public void visit(ReceptionOfMessage node){
+    public void visit(ReceptionOfMessage node) {
         if (insideScript || insideProcedure) {
             count++;
         }
@@ -370,7 +369,7 @@ public class BlockCount implements IssueFinder, ScratchVisitor {
     }
 
     @Override
-    public void visit(BackdropSwitchTo node){
+    public void visit(BackdropSwitchTo node) {
         if (insideScript || insideProcedure) {
             count++;
         }
@@ -384,7 +383,7 @@ public class BlockCount implements IssueFinder, ScratchVisitor {
     }
 
     @Override
-    public void visit(Current node){
+    public void visit(Current node) {
         if (insideScript || insideProcedure) {
             count++;
         }
@@ -398,7 +397,7 @@ public class BlockCount implements IssueFinder, ScratchVisitor {
     }
 
     @Override
-    public void visit(VariableAboveValue node){
+    public void visit(VariableAboveValue node) {
         if (insideScript || insideProcedure) {
             count++;
         }
@@ -410,7 +409,7 @@ public class BlockCount implements IssueFinder, ScratchVisitor {
     }
 
     @Override
-    public void visit(HideVariable node){
+    public void visit(HideVariable node) {
         if (insideScript || insideProcedure) {
             count++;
         }
@@ -424,7 +423,7 @@ public class BlockCount implements IssueFinder, ScratchVisitor {
     }
 
     @Override
-    public void visit(ShowVariable node){
+    public void visit(ShowVariable node) {
         if (insideScript || insideProcedure) {
             count++;
         }
@@ -438,7 +437,7 @@ public class BlockCount implements IssueFinder, ScratchVisitor {
     }
 
     @Override
-    public void visit(DeleteAllOf node){
+    public void visit(DeleteAllOf node) {
         if (insideScript || insideProcedure) {
             count++;
         }
@@ -452,7 +451,7 @@ public class BlockCount implements IssueFinder, ScratchVisitor {
     }
 
     @Override
-    public void visit(LengthOfVar node){
+    public void visit(LengthOfVar node) {
         if (insideScript || insideProcedure) {
             count++;
         }
@@ -466,7 +465,7 @@ public class BlockCount implements IssueFinder, ScratchVisitor {
     }
 
     @Override
-    public void visit(SetVariableTo node){
+    public void visit(SetVariableTo node) {
         if (insideScript || insideProcedure) {
             count++;
         }
@@ -477,7 +476,7 @@ public class BlockCount implements IssueFinder, ScratchVisitor {
     }
 
     @Override
-    public void visit(ChangeVariableBy node){
+    public void visit(ChangeVariableBy node) {
         if (insideScript || insideProcedure) {
             count++;
         }
@@ -488,7 +487,7 @@ public class BlockCount implements IssueFinder, ScratchVisitor {
     }
 
     @Override
-    public void visit(AddTo node){
+    public void visit(AddTo node) {
         if (insideScript || insideProcedure) {
             count++;
         }
@@ -499,7 +498,7 @@ public class BlockCount implements IssueFinder, ScratchVisitor {
     }
 
     @Override
-    public void visit(DeleteOf node){
+    public void visit(DeleteOf node) {
         if (insideScript || insideProcedure) {
             count++;
         }
@@ -510,7 +509,7 @@ public class BlockCount implements IssueFinder, ScratchVisitor {
     }
 
     @Override
-    public void visit(InsertAt node){
+    public void visit(InsertAt node) {
         if (insideScript || insideProcedure) {
             count++;
         }
@@ -522,7 +521,7 @@ public class BlockCount implements IssueFinder, ScratchVisitor {
     }
 
     @Override
-    public void visit(ReplaceItem node){
+    public void visit(ReplaceItem node) {
         if (insideScript || insideProcedure) {
             count++;
         }
@@ -534,7 +533,7 @@ public class BlockCount implements IssueFinder, ScratchVisitor {
     }
 
     @Override
-    public void visit(ItemOfVariable node){
+    public void visit(ItemOfVariable node) {
         if (insideScript || insideProcedure) {
             count++;
         }
@@ -545,7 +544,7 @@ public class BlockCount implements IssueFinder, ScratchVisitor {
     }
 
     @Override
-    public void visit(IndexOf node){
+    public void visit(IndexOf node) {
         if (insideScript || insideProcedure) {
             count++;
         }
@@ -556,7 +555,7 @@ public class BlockCount implements IssueFinder, ScratchVisitor {
     }
 
     @Override
-    public void visit(ExpressionContains node){
+    public void visit(ExpressionContains node) {
         if (insideScript || insideProcedure) {
             count++;
         }

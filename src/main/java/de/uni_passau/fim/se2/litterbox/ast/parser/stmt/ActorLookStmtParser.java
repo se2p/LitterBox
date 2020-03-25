@@ -18,16 +18,11 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.parser.stmt;
 
-import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
-
-
 import com.fasterxml.jackson.databind.JsonNode;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.ElementChoice;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.*;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.HideVariable;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.ShowVariable;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.UnspecifiedId;
@@ -40,6 +35,8 @@ import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ExpressionListInfo
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.VariableInfo;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
+import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
+
 public class ActorLookStmtParser {
 
     private static final String CHANGE_BACKDROP_TO = "BACKDROP";
@@ -50,7 +47,8 @@ public class ActorLookStmtParser {
 
         final String opcodeString = current.get(OPCODE_KEY).asText();
         Preconditions
-                .checkArgument(ActorLookStmtOpcode.contains(opcodeString), "Given blockID does not point to an event block.");
+                .checkArgument(ActorLookStmtOpcode.contains(opcodeString), "Given blockID does not point to an event " +
+                        "block.");
 
         final ActorLookStmtOpcode opcode = ActorLookStmtOpcode.valueOf(opcodeString);
 

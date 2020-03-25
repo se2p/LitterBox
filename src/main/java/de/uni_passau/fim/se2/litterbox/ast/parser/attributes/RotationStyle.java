@@ -30,11 +30,6 @@ public enum RotationStyle {
         this.token = token;
     }
 
-    @Override
-    public String toString() {
-        return token;
-    }
-
     public static boolean contains(String opcode) {
         for (RotationStyle value : RotationStyle.values()) {
             if (value.toString().equals(opcode)) {
@@ -42,5 +37,10 @@ public enum RotationStyle {
             }
         }
         return false;
+    }
+
+    @Override
+    public String toString() {
+        return token;
     }
 }

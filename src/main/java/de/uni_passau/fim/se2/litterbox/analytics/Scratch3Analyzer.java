@@ -18,10 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics;
 
-import static de.uni_passau.fim.se2.litterbox.utils.GroupConstants.*;
-import static org.apache.commons.io.FilenameUtils.removeExtension;
-
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
@@ -32,6 +28,9 @@ import de.uni_passau.fim.se2.litterbox.utils.CSVWriter;
 import de.uni_passau.fim.se2.litterbox.utils.Downloader;
 import de.uni_passau.fim.se2.litterbox.utils.JsonParser;
 import de.uni_passau.fim.se2.litterbox.utils.ZipReader;
+import org.apache.commons.csv.CSVPrinter;
+import org.apache.commons.io.FilenameUtils;
+
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
@@ -40,8 +39,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.logging.Logger;
-import org.apache.commons.csv.CSVPrinter;
-import org.apache.commons.io.FilenameUtils;
+
+import static de.uni_passau.fim.se2.litterbox.utils.GroupConstants.*;
+import static org.apache.commons.io.FilenameUtils.removeExtension;
 
 
 public class Scratch3Analyzer {
@@ -124,21 +124,21 @@ public class Scratch3Analyzer {
         heads.add("project");
         String[] detectors;
         switch (dtctrs) {
-        case ALL:
-            detectors = iT.getAllFinder().keySet().toArray(new String[0]);
-            break;
-        case BUGS:
-            detectors = iT.getBugFinder().keySet().toArray(new String[0]);
-            break;
-        case SMELLS:
-            detectors = iT.getSmellFinder().keySet().toArray(new String[0]);
-            break;
-        case CTSCORE:
-            detectors = iT.getCTScoreFinder().keySet().toArray(new String[0]);
-            break;
-        default:
-            detectors = dtctrs.split(",");
-            break;
+            case ALL:
+                detectors = iT.getAllFinder().keySet().toArray(new String[0]);
+                break;
+            case BUGS:
+                detectors = iT.getBugFinder().keySet().toArray(new String[0]);
+                break;
+            case SMELLS:
+                detectors = iT.getSmellFinder().keySet().toArray(new String[0]);
+                break;
+            case CTSCORE:
+                detectors = iT.getCTScoreFinder().keySet().toArray(new String[0]);
+                break;
+            default:
+                detectors = dtctrs.split(",");
+                break;
         }
         for (String s : detectors) {
             if (iT.getAllFinder().containsKey(s)) {

@@ -28,7 +28,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -37,10 +36,10 @@ import java.util.List;
  */
 public class DeadCode implements IssueFinder, ScratchVisitor {
 
-    private static final String NOTE1 = "There are no loose blocks in your project.";
-    private static final String NOTE2 = "Some of the Sprites have loose blocks!";
     public static final String NAME = "dead_code";
     public static final String SHORT_NAME = "dcode";
+    private static final String NOTE1 = "There are no loose blocks in your project.";
+    private static final String NOTE2 = "Some of the Sprites have loose blocks!";
     private boolean found = false;
     private int count = 0;
     private List<String> actorNames = new LinkedList<>();

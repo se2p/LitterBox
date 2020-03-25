@@ -95,6 +95,12 @@ public class IssueTool {
         ctScoreFinder.put(FlowControl.SHORT_NAME, new FlowControl());
     }
 
+    public static List<String> getOnlyUniqueActorList(List<String> foundSpritesWithIssues) {
+        Set<String> uniqueSprites = new TreeSet<>(foundSpritesWithIssues);
+        return new ArrayList<>(uniqueSprites);
+
+    }
+
     /**
      * Executes all checks. Only creates console output for a single project.
      *
@@ -198,11 +204,5 @@ public class IssueTool {
         Map<String, IssueFinder> returnMap = new HashMap<>(ctScoreFinder);
         returnMap.putAll(utilFinder);
         return returnMap;
-    }
-
-    public static List<String> getOnlyUniqueActorList(List<String> foundSpritesWithIssues) {
-        Set<String> uniqueSprites = new TreeSet<>(foundSpritesWithIssues);
-        return new ArrayList<>(uniqueSprites);
-
     }
 }

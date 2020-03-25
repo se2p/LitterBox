@@ -121,11 +121,11 @@ public enum Identifier {
     DATA("data_");
 
 
+    private String value;
+
     Identifier(String value) {
         this.value = value;
     }
-
-    private String value;
 
     public String getValue() {
         return value;

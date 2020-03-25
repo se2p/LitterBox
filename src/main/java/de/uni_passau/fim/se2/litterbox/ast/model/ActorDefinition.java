@@ -36,7 +36,8 @@ public class ActorDefinition extends AbstractNode {
     private final ScriptList scripts;
 
     public ActorDefinition(ActorType actorType, Identifier ident, ResourceList resources, DeclarationStmtList decls,
-                           SetStmtList setStmtList, ProcedureDefinitionList procedureDefinitionList, ScriptList scripts) {
+                           SetStmtList setStmtList, ProcedureDefinitionList procedureDefinitionList,
+                           ScriptList scripts) {
 
         super(actorType, ident, resources, decls, setStmtList, procedureDefinitionList, scripts);
 

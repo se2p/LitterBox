@@ -24,6 +24,10 @@ public class UnmodifiableListBuilder<E> {
 
     private List<E> list = new ArrayList<>();
 
+    public static <E> UnmodifiableListBuilder<E> builder() {
+        return new UnmodifiableListBuilder<>();
+    }
+
     public UnmodifiableListBuilder<E> add(E e) {
         list.add(e);
         return this;
@@ -41,10 +45,6 @@ public class UnmodifiableListBuilder<E> {
 
     public List<E> build() {
         return Collections.unmodifiableList(list);
-    }
-
-    public static <E> UnmodifiableListBuilder<E> builder() {
-        return new UnmodifiableListBuilder<>();
     }
 
 }

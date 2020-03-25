@@ -28,6 +28,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.variable.Identifier;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ProcedureInfo;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
+
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -40,10 +41,10 @@ import java.util.Map;
  * always call the matching custom block which was defined earlier.
  */
 public class AmbiguousCustomBlockSignature implements IssueFinder, ScratchVisitor {
-    private static final String NOTE1 = "There are no ambiguous custom block signatures in your project.";
-    private static final String NOTE2 = "Some of the custom block signatures are ambiguous.";
     public static final String NAME = "ambiguous_custom_block_signature";
     public static final String SHORT_NAME = "ambCustBlSign";
+    private static final String NOTE1 = "There are no ambiguous custom block signatures in your project.";
+    private static final String NOTE2 = "Some of the custom block signatures are ambiguous.";
     private boolean found = false;
     private int count = 0;
     private List<String> actorNames = new LinkedList<>();

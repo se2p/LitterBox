@@ -31,6 +31,7 @@ import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ArgumentInfo;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ProcedureInfo;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
+
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -41,10 +42,10 @@ import java.util.Map;
  * block, it will always be evaluated as the last input to the block.
  */
 public class AmbiguousParameterName implements IssueFinder, ScratchVisitor {
-    private static final String NOTE1 = "There are no ambiguous parameter names in your project.";
-    private static final String NOTE2 = "Some of the procedures contain ambiguous parameter names.";
     public static final String NAME = "ambiguous_parameter_name";
     public static final String SHORT_NAME = "ambParamName";
+    private static final String NOTE1 = "There are no ambiguous parameter names in your project.";
+    private static final String NOTE2 = "Some of the procedures contain ambiguous parameter names.";
     private boolean inStmtList = false;
     private boolean found = false;
     private boolean used = false;

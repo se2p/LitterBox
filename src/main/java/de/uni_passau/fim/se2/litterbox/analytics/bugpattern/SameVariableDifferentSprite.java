@@ -25,16 +25,17 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ExpressionListInfo;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.VariableInfo;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
+
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 public class SameVariableDifferentSprite implements IssueFinder {
-    private static final String NOTE1 = "There are no variables with the same name in your project.";
-    private static final String NOTE2 = "Some of the variables have the same name but are in different sprites.";
     public static final String NAME = "same_variable_different_sprite";
     public static final String SHORT_NAME = "sameVarDiffSprite";
+    private static final String NOTE1 = "There are no variables with the same name in your project.";
+    private static final String NOTE2 = "Some of the variables have the same name but are in different sprites.";
     private boolean found = false;
     private int count = 0;
     private List<String> actorNames = new LinkedList<>();

@@ -49,10 +49,10 @@ import java.util.List;
  * executed.
  */
 public class PositionEqualsCheck implements IssueFinder, ScratchVisitor {
-    private static final String NOTE1 = "There are equals checks in conditions in your project.";
-    private static final String NOTE2 = "Some of the conditions contain equals checks.";
     public static final String NAME = "position_equals_check";
     public static final String SHORT_NAME = "posEqCheck";
+    private static final String NOTE1 = "There are equals checks in conditions in your project.";
+    private static final String NOTE2 = "Some of the conditions contain equals checks.";
     private boolean found = false;
     private int count = 0;
     private List<String> actorNames = new LinkedList<>();

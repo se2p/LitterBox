@@ -39,10 +39,10 @@ import java.util.List;
  * myself block may result in an infinite recursion.
  */
 public class RecursiveCloning implements ScratchVisitor, IssueFinder {
-    private static final String NOTE1 = "There are no recursive cloning calls in your project.";
-    private static final String NOTE2 = "Some of the sprites contain recursive cloning calls.";
     public static final String NAME = "recursive_cloning";
     public static final String SHORT_NAME = "recClone";
+    private static final String NOTE1 = "There are no recursive cloning calls in your project.";
+    private static final String NOTE2 = "Some of the sprites contain recursive cloning calls.";
     private boolean found = false;
     private boolean startAsClone = false;
     private int count = 0;

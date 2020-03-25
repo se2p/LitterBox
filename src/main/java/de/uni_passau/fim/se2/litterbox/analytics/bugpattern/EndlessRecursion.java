@@ -41,10 +41,10 @@ import java.util.Map;
  * indefinite amount of time.
  */
 public class EndlessRecursion implements IssueFinder, ScratchVisitor {
-    private static final String NOTE1 = "There are no endless recursions in your project.";
-    private static final String NOTE2 = "Some of the sprites can contain endless recursions.";
     public static final String NAME = "endless_recursion";
     public static final String SHORT_NAME = "endlRec";
+    private static final String NOTE1 = "There are no endless recursions in your project.";
+    private static final String NOTE2 = "Some of the sprites can contain endless recursions.";
     private boolean found = false;
     private int count = 0;
     private List<String> actorNames = new LinkedList<>();
