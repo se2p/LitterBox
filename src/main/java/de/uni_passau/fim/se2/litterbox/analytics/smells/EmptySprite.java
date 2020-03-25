@@ -21,41 +21,45 @@ package de.uni_passau.fim.se2.litterbox.analytics.smells;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueReport;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueTool;
-import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
-import de.uni_passau.fim.se2.litterbox.ast.model.ActorType;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.model.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
+
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
-public class EmptySprite implements IssueFinder {
+public class EmptySprite implements IssueFinder, ScratchVisitor {
     public static final String NAME = "empty_sprite";
     public static final String SHORT_NAME = "empSprite";
     private static final String NOTE1 = "There are no sprites without scripts in your project.";
     private static final String NOTE2 = "Some of the sprites contain no scripts.";
-
-    public EmptySprite() {
-    }
+    private boolean found = false;
+    private int count = 0;
+    private List<String> actorNames = new LinkedList<>();
 
     @Override
     public IssueReport check(Program program) {
         Preconditions.checkNotNull(program);
-        List<String> found = new ArrayList<>();
-
-        final List<ActorDefinition> definitions = program.getActorDefinitionList().getDefintions();
-
-        for (ActorDefinition actor : definitions) {
-            if (actor.getScripts().getScriptList().size() == 0 && !(actor.getActorType() == ActorType.STAGE)) {
-                found.add(actor.getIdent().getName());
-            }
-
-        }
+        found = false;
+        count = 0;
+        actorNames = new LinkedList<>();
+        program.accept(this);
         String notes = NOTE1;
-        if (found.size() > 0) {
+        if (count > 0) {
             notes = NOTE2;
         }
+        return new IssueReport(NAME, count, actorNames, notes);
+    }
 
-        return new IssueReport(NAME, found.size(), IssueTool.getOnlyUniqueActorList(found), notes);
+    @Override
+    public void visit(ActorDefinition actor) {
+        if (actor.getProcedureDefinitionList().getList().size() == 0 && actor.getScripts().getScriptList().size() == 0
+                && !actor.getActorType().equals(ActorType.STAGE)) {
+            actorNames.add(actor.getIdent().getName());
+            count++;
+        }
     }
 
     @Override
