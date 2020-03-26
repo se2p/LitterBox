@@ -34,6 +34,7 @@ public class MissingBackdropSwitchTest {
     private static Program missingBackdropSwitchNext;
     private static Program missingBack;
     private static Program random;
+    private static Program fischmampfer;
     private static ObjectMapper mapper = new ObjectMapper();
 
     @BeforeAll
@@ -47,6 +48,8 @@ public class MissingBackdropSwitchTest {
         missingBack = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
         f = new File("./src/test/fixtures/bugpattern/randomBackdrop.json");
         random = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
+        f = new File("./src/test/fixtures/bugpattern/missingBackdropSwitchAsString.json");
+        fischmampfer = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
     }
 
     @Test
@@ -74,6 +77,13 @@ public class MissingBackdropSwitchTest {
     public void testRandomBack() {
         MissingBackdropSwitch parameterName = new MissingBackdropSwitch();
         IssueReport report = parameterName.check(random);
+        Assertions.assertEquals(0, report.getCount());
+    }
+
+    @Test
+    public void testFischmampfer() {
+        MissingBackdropSwitch parameterName = new MissingBackdropSwitch();
+        IssueReport report = parameterName.check(fischmampfer);
         Assertions.assertEquals(0, report.getCount());
     }
 }
