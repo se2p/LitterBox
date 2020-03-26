@@ -27,6 +27,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.Random;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.BackdropSwitchTo;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.SwitchBackdrop;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.SwitchBackdropAndWait;
@@ -109,6 +111,15 @@ public class MissingBackdropSwitch implements IssueFinder, ScratchVisitor {
             if (((WithId) msgName).getStringExpr() instanceof StringLiteral) {
                 switched.add(new Pair(actorName, ((StringLiteral) ((WithId) msgName).getStringExpr()).getText()));
             }
+            if(((WithId) msgName).getStringExpr() instanceof AsString) {
+                AsString expr = (AsString) ((WithId) msgName).getStringExpr();
+                if (expr.getOperand1() instanceof StrId) {
+                    switched.add(new Pair(actorName, ((StrId) expr.getOperand1()).getName()));
+                }
+                if (expr.getOperand1() instanceof StringLiteral) {
+                    switched.add(new Pair(actorName, ((StringLiteral) expr.getOperand1()).getText()));
+                }
+            }
         }
     }
 
@@ -124,6 +135,15 @@ public class MissingBackdropSwitch implements IssueFinder, ScratchVisitor {
             }
             if (((WithId) msgName).getStringExpr() instanceof StrId) {
                 switched.add(new Pair(actorName, ((StrId) ((WithId) msgName).getStringExpr()).getName()));
+            }
+            if(((WithId) msgName).getStringExpr() instanceof AsString) {
+                AsString expr = (AsString) ((WithId) msgName).getStringExpr();
+                if (expr.getOperand1() instanceof StrId) {
+                    switched.add(new Pair(actorName, ((StrId) expr.getOperand1()).getName()));
+                }
+                if (expr.getOperand1() instanceof StringLiteral) {
+                    switched.add(new Pair(actorName, ((StringLiteral) expr.getOperand1()).getText()));
+                }
             }
         }
     }
