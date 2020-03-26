@@ -48,7 +48,7 @@ public class MissingBackdropSwitchTest {
         missingBack = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
         f = new File("./src/test/fixtures/bugpattern/randomBackdrop.json");
         random = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
-        f = new File("./src/test/fixtures/bugpattern/fischmampfer.json");
+        f = new File("./src/test/fixtures/bugpattern/missingBackdropSwitchAsString.json");
         fischmampfer = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
     }
 
