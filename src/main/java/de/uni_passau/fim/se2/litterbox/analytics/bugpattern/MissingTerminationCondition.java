@@ -20,17 +20,14 @@ package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueReport;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueTool;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.UnspecifiedBoolExpr;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
-import java.util.ArrayList;
+
 import java.util.LinkedList;
 import java.util.List;
 
@@ -80,8 +77,8 @@ public class MissingTerminationCondition implements IssueFinder, ScratchVisitor 
     }
 
     @Override
-    public void visit(UntilStmt node){
-        if(node.getBoolExpr() instanceof UnspecifiedBoolExpr){
+    public void visit(UntilStmt node) {
+        if (node.getBoolExpr() instanceof UnspecifiedBoolExpr) {
             count++;
         }
         if (!node.getChildren().isEmpty()) {

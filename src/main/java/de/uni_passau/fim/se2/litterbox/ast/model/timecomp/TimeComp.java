@@ -21,6 +21,7 @@ package de.uni_passau.fim.se2.litterbox.ast.model.timecomp;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTLeaf;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
+
 import java.util.Collections;
 import java.util.List;
 
@@ -38,6 +39,15 @@ public enum TimeComp implements ASTNode, ASTLeaf {
 
     TimeComp(String label) {
         this.label = label;
+    }
+
+    public static TimeComp fromString(String text) {
+        for (TimeComp t : values()) {
+            if (t.getLabel().equals(text)) {
+                return t;
+            }
+        }
+        throw new IllegalArgumentException("Unknown type of time component: " + text);
     }
 
     public String getLabel() {
@@ -64,14 +74,5 @@ public enum TimeComp implements ASTNode, ASTLeaf {
         String[] result = new String[1];
         result[0] = label;
         return result;
-    }
-
-    public static TimeComp fromString(String text) {
-        for (TimeComp t : values()) {
-            if (t.getLabel().equals(text)) {
-                return t;
-            }
-        }
-        throw new IllegalArgumentException("Unknown type of time component: " + text);
     }
 }

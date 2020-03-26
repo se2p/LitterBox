@@ -149,8 +149,8 @@ public class MissingBackdropSwitch implements IssueFinder, ScratchVisitor {
      * Helper class to map which messages are sent / received by which actor
      */
     private static class Pair {
-        private String actorName;
         String msgName;
+        private String actorName;
 
         public Pair(String actorName, String msgName) {
             this.setActorName(actorName);

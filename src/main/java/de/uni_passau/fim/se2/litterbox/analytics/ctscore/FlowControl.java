@@ -25,12 +25,12 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatTimesStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -39,12 +39,12 @@ import java.util.List;
  */
 public class FlowControl implements IssueFinder, ScratchVisitor {
 
+    public final static String NAME = "flow_control";
+    public final static String SHORT_NAME = "flow";
     private final int SCRIPT = 1;
     private final int REPEAT_FOREVER = 2;
     private final int UNTIL = 3;
     private String[] notes = new String[4];
-    public final static String NAME = "flow_control";
-    public final static String SHORT_NAME = "flow";
     private List<String> actorNames = new LinkedList<>();
     private boolean script = false;
     private boolean repeat_forever = false;

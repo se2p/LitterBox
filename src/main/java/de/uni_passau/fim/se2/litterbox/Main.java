@@ -19,17 +19,17 @@
 package de.uni_passau.fim.se2.litterbox;
 
 
-import static de.uni_passau.fim.se2.litterbox.analytics.Scratch3Analyzer.removeEndSeparator;
-import static de.uni_passau.fim.se2.litterbox.utils.GroupConstants.*;
-
-
 import de.uni_passau.fim.se2.litterbox.analytics.IssueTool;
 import de.uni_passau.fim.se2.litterbox.analytics.Scratch3Analyzer;
+import org.apache.commons.cli.*;
+
 import java.io.File;
 import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.logging.Logger;
-import org.apache.commons.cli.*;
+
+import static de.uni_passau.fim.se2.litterbox.analytics.Scratch3Analyzer.removeEndSeparator;
+import static de.uni_passau.fim.se2.litterbox.utils.GroupConstants.*;
 
 public class Main {
 
@@ -66,13 +66,15 @@ public class Main {
         Options options = new Options();
 
         options.addOption(PATH_SHORT, PATH, true, "path to folder or file that should be analyzed (required)");
-        options.addOption(INTERMEDIATE_SHORT, INTERMEDIATE, false, "print json project files in the intermediate language");
+        options.addOption(INTERMEDIATE_SHORT, INTERMEDIATE, false, "print json project files in the intermediate " +
+                "language");
         options.addOption(PROJECTID_SHORT, PROJECTID, true,
                 "id of the project that should be downloaded and analysed.");
         options.addOption(PROJECTLIST_SHORT, PROJECTLIST, true, "path to a file with a list of project ids of projects"
                 + " which should be downloaded and analysed.");
         options.addOption(PROJECTOUT_SHORT, PROJECTOUT, true, "path where the downloaded project(s) should be stored");
-        options.addOption(OUTPUT_SHORT, OUTPUT, true, "path with name of the csv file you want to save (required if path argument"
+        options.addOption(OUTPUT_SHORT, OUTPUT, true, "path with name of the csv file you want to save (required if " +
+                "path argument"
                 + " is a folder path)\nusage with --intermediate: Path to file or folder for the resulting .sc file(s);"
                 + "\nhas to be a folder if multiple projects are analysed"
                 + "\n(file will be created if not existing yet,\npath has to exist)");
@@ -95,7 +97,7 @@ public class Main {
                     Scratch3Analyzer.downloadAndPrintMultiple(
                             cmd.getOptionValue(PROJECTLIST), projectOut, printPath);
                 }
-            } else if (cmd.hasOption(PATH)){
+            } else if (cmd.hasOption(PATH)) {
                 Scratch3Analyzer.printIntermediate(cmd.getOptionValue(PATH), cmd.getOptionValue(OUTPUT));
             }
             return;
@@ -146,7 +148,8 @@ public class Main {
         System.out.println("Example: " + "java -jar Litterbox.jar --path "
                 + "C:\\scratchprojects\\files\\ --output C:\\scratchprojects\\files\\test.csv --detectors bugs\n");
         System.out.println("Example for intermediate language output: "
-                + "java -jar Litterbox-1.0.jar --intermediate -o ~/path/to/folder/or/file/for/the/output --path ~/path/to/json/project/or/folder/with/projects \n");
+                + "java -jar Litterbox-1.0.jar --intermediate -o ~/path/to/folder/or/file/for/the/output --path " +
+                "~/path/to/json/project/or/folder/with/projects \n");
 
         System.out.println("Detectors:");
         ResourceBundle messages = ResourceBundle.getBundle("IssueDescriptions", Locale.ENGLISH);

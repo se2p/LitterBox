@@ -27,6 +27,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.resource.Resource;
 import de.uni_passau.fim.se2.litterbox.ast.model.resource.SoundResource;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.StrId;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;

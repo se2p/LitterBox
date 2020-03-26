@@ -77,6 +77,6 @@ public class PositionEqualsCheckTest {
     public void testAll() {
         PositionEqualsCheck parameterName = new PositionEqualsCheck();
         IssueReport report = parameterName.check(allChecks);
-        Assertions.assertEquals(2, report.getCount());
+        Assertions.assertEquals(4, report.getCount());
     }
 }

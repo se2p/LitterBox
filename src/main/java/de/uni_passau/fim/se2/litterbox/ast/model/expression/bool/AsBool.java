@@ -18,10 +18,8 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.model.expression.bool;
 
-import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.UnaryExpression;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 public class AsBool extends UnaryExpression<Expression> implements BoolExpr {

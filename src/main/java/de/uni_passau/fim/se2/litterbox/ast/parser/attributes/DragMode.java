@@ -29,11 +29,6 @@ public enum DragMode {
         this.token = token;
     }
 
-    @Override
-    public String toString() {
-        return token;
-    }
-
     public static boolean contains(String opcode) {
         for (DragMode value : DragMode.values()) {
             if (value.toString().equals(opcode)) {
@@ -41,5 +36,10 @@ public enum DragMode {
             }
         }
         return false;
+    }
+
+    @Override
+    public String toString() {
+        return token;
     }
 }

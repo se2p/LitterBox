@@ -18,10 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.parser;
 
-import static de.uni_passau.fim.se2.litterbox.ast.Constants.NEXT_KEY;
-import static de.uni_passau.fim.se2.litterbox.ast.Constants.OPCODE_KEY;
-
-
 import com.fasterxml.jackson.databind.JsonNode;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
@@ -36,9 +32,13 @@ import de.uni_passau.fim.se2.litterbox.ast.opcodes.EventOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.ProcedureOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.parser.stmt.StmtParser;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
+
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Logger;
+
+import static de.uni_passau.fim.se2.litterbox.ast.Constants.NEXT_KEY;
+import static de.uni_passau.fim.se2.litterbox.ast.Constants.OPCODE_KEY;
 
 public class ScriptParser {
 
@@ -50,7 +50,8 @@ public class ScriptParser {
      * a topLevel block.
      *
      * @param blockID of the first block in this script
-     * @param blocks  all blocks in the {@link ActorDefinition} of this {@link de.uni_passau.fim.se2.litterbox.ast.model.Script}
+     * @param blocks  all blocks in the {@link ActorDefinition} of this
+     * {@link de.uni_passau.fim.se2.litterbox.ast.model.Script}
      * @return Script that was parsed
      */
     public static Script parse(String blockID, JsonNode blocks) throws ParsingException {
@@ -95,10 +96,11 @@ public class ScriptParser {
 
                 Stmt stmt = StmtParser.parse(blockID, blocks);
                 list.add(stmt);
-            } catch (ParsingException | RuntimeException e) { // FIXME Runtime Exception is temporary for development and needs to be removed
+            } catch (ParsingException | RuntimeException e) { // FIXME Runtime Exception is temporary for development
+                // and needs to be removed
                 Logger.getGlobal().warning("Could not parse block with ID " + blockID + " and opcode "
                         + current.get(OPCODE_KEY));
-               // e.printStackTrace();
+                // e.printStackTrace();
                 if (e instanceof NullPointerException) {
                     throw e;
                 }

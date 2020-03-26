@@ -27,6 +27,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
+
 import java.util.LinkedList;
 import java.util.List;
 
@@ -40,7 +41,8 @@ import java.util.List;
 public class NoWorkingScripts implements IssueFinder, ScratchVisitor {
     public static final String NAME = "no_working_scripts";
     public static final String SHORT_NAME = "noWorkScript";
-    private static final String NOTE1 = "There are no sprites with only empty scripts and simultaneously dead code in your project.";
+    private static final String NOTE1 = "There are no sprites with only empty scripts and simultaneously dead code in" +
+            " your project.";
     private static final String NOTE2 = "Some of the sprites contain only empty scripts and simultaneously dead code.";
     private int count = 0;
     private List<String> actorNames = new LinkedList<>();

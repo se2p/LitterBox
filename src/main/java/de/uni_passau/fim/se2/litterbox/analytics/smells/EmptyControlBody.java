@@ -26,6 +26,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.*;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
+
 import java.util.LinkedList;
 import java.util.List;
 
@@ -33,10 +34,10 @@ import java.util.List;
  * Checks for empty if or else bodies.
  */
 public class EmptyControlBody implements IssueFinder, ScratchVisitor {
-    private static final String NOTE1 = "There are no condition blocks with empty body in your project.";
-    private static final String NOTE2 = "Some of condition blocks have an empty body.";
     public static final String NAME = "empty_control_body";
     public static final String SHORT_NAME = "empCtrlBody";
+    private static final String NOTE1 = "There are no condition blocks with empty body in your project.";
+    private static final String NOTE2 = "Some of condition blocks have an empty body.";
     private boolean found = false;
     private int count = 0;
     private List<String> actorNames = new LinkedList<>();
