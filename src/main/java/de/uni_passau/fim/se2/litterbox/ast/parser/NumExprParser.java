@@ -19,9 +19,11 @@
 package de.uni_passau.fim.se2.litterbox.ast.parser;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
+import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BoolExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
@@ -37,8 +39,12 @@ import de.uni_passau.fim.se2.litterbox.ast.opcodes.NumExprOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.ProcedureOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ExpressionListInfo;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.VariableInfo;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.GrammarPrintVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Optional;
 
@@ -50,7 +56,9 @@ public class NumExprParser {
     public static NumExpr parseNumExpr(JsonNode block, String inputName, JsonNode blocks)
             throws ParsingException { // we ignored "(" NumExpr ")"
         ArrayNode exprArray = getExprArrayByName(block.get(INPUTS_KEY), inputName);
-        if (getShadowIndicator(exprArray) == 1) {
+        int shadowIndicator = getShadowIndicator(exprArray);
+        if (shadowIndicator == INPUT_SAME_BLOCK_SHADOW ||
+                (shadowIndicator == INPUT_BLOCK_NO_SHADOW && !(exprArray.get(POS_BLOCK_ID) instanceof TextNode))) {
             try {
                 return parseNumber(block.get(INPUTS_KEY), inputName);
             } catch (NumberFormatException | ParsingException e) { // right exception? hm.
@@ -80,7 +88,9 @@ public class NumExprParser {
     public static NumExpr parseNumExpr(JsonNode block, int pos, JsonNode blocks)
             throws ParsingException { // we ignored "(" NumExpr ")"
         ArrayNode exprArray = getExprArrayAtPos(block.get(INPUTS_KEY), pos);
-        if (getShadowIndicator(exprArray) == 1) {
+        int shadowIndicator = getShadowIndicator(exprArray);
+        if (shadowIndicator == INPUT_SAME_BLOCK_SHADOW ||
+                (shadowIndicator == INPUT_BLOCK_NO_SHADOW && !(exprArray.get(POS_BLOCK_ID) instanceof TextNode))) {
             try {
                 return parseNumber(block.get(INPUTS_KEY), pos);
             } catch (NumberFormatException | ParsingException e) {

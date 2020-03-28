@@ -54,7 +54,9 @@ public class StringExprParser {
     public static StringExpr parseStringExpr(JsonNode block, String inputName, JsonNode blocks)
             throws ParsingException {
         ArrayNode exprArray = ExpressionParser.getExprArrayByName(block.get(INPUTS_KEY), inputName);
-        if (ExpressionParser.getShadowIndicator(exprArray) == 1) {
+        int shadowIndicator = ExpressionParser.getShadowIndicator(exprArray);
+        if (shadowIndicator == INPUT_SAME_BLOCK_SHADOW
+                || (shadowIndicator == INPUT_BLOCK_NO_SHADOW && !(exprArray.get(POS_BLOCK_ID) instanceof TextNode))) {
             try {
                 return parseStr(block.get(INPUTS_KEY), inputName);
             } catch (ParsingException e) {
@@ -74,7 +76,9 @@ public class StringExprParser {
 
     public static StringExpr parseStringExpr(JsonNode block, int pos, JsonNode blocks) throws ParsingException {
         ArrayNode exprArray = ExpressionParser.getExprArrayAtPos(block.get(INPUTS_KEY), pos);
-        if (ExpressionParser.getShadowIndicator(exprArray) == 1) {
+        int shadowIndicator = ExpressionParser.getShadowIndicator(exprArray);
+        if (shadowIndicator == INPUT_SAME_BLOCK_SHADOW ||
+                (shadowIndicator == INPUT_BLOCK_NO_SHADOW && !(exprArray.get(POS_BLOCK_ID) instanceof TextNode))) {
             try {
                 return parseStr(block.get(INPUTS_KEY), pos);
             } catch (ParsingException e) {

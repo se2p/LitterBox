@@ -74,7 +74,9 @@ public class BoolExprParser {
             return new UnspecifiedBoolExpr();
         }
 
-        if (ExpressionParser.getShadowIndicator(exprArray) == 1) {
+        int shadowIndicator = ExpressionParser.getShadowIndicator(exprArray);
+        if (shadowIndicator == INPUT_SAME_BLOCK_SHADOW
+        || (shadowIndicator == INPUT_BLOCK_NO_SHADOW && !(exprArray.get(POS_BLOCK_ID) instanceof TextNode))) {
             try {
                 return parseBool(block.get(INPUTS_KEY), inputName);
             } catch (ParsingException e) {
@@ -83,7 +85,7 @@ public class BoolExprParser {
         } else if (exprArray.get(POS_BLOCK_ID) instanceof TextNode) {
             String identifier = exprArray.get(POS_BLOCK_ID).asText();
             return parseBlockBoolExpr(blocks.get(identifier), blocks);
-        } else if (ExpressionParser.getShadowIndicator(exprArray) == 3
+        } else if (shadowIndicator == INPUT_DIFF_BLOCK_SHADOW
                 && exprArray.get(POS_DATA_ARRAY) instanceof NullNode) {
             return new UnspecifiedBoolExpr();
         } else {
@@ -98,7 +100,9 @@ public class BoolExprParser {
 
     public static BoolExpr parseBoolExpr(JsonNode block, int pos, JsonNode blocks) throws ParsingException {
         ArrayNode exprArray = ExpressionParser.getExprArrayAtPos(block.get(INPUTS_KEY), pos);
-        if (ExpressionParser.getShadowIndicator(exprArray) == 1) {
+        int shadowIndicator = ExpressionParser.getShadowIndicator(exprArray);
+        if (shadowIndicator == INPUT_SAME_BLOCK_SHADOW
+        || (shadowIndicator == INPUT_BLOCK_NO_SHADOW && !(exprArray.get(POS_BLOCK_ID) instanceof TextNode))) {
             try {
                 return parseBool(block.get(INPUTS_KEY), pos);
             } catch (ParsingException e) {
@@ -107,6 +111,9 @@ public class BoolExprParser {
         } else if (exprArray.get(POS_BLOCK_ID) instanceof TextNode) {
             String identifier = exprArray.get(POS_BLOCK_ID).asText();
             return parseBlockBoolExpr(blocks.get(identifier), blocks);
+        } else if (shadowIndicator == INPUT_DIFF_BLOCK_SHADOW
+                && exprArray.get(POS_DATA_ARRAY) instanceof NullNode) {
+            return new UnspecifiedBoolExpr();
         } else {
             BoolExpr variableInfo = parseVariable(exprArray);
             if (variableInfo != null) {
