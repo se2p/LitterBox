@@ -162,6 +162,9 @@ public class Constants {
      */
     public static final int DECLARATION_LIST_VALUES_POS = 1;
 
+    public static final String ARGUMENTNAMES_KEY = "argumentnames";
+    public static final String ARGUMENTIDS_KEY = "argumentids";
+
     public static final String VOLUME_KEY = "volume";
     public static final String LAYERORDER_KEY = "layerOrder";
     public static final String TEMPO_KEY = "tempo";

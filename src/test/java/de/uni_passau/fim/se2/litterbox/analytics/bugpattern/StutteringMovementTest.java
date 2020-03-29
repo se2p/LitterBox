@@ -31,6 +31,7 @@ import org.junit.jupiter.api.Test;
 
 public class StutteringMovementTest {
     private static Program stutteringMovement;
+    private static Program deleteParam;
     private static ObjectMapper mapper = new ObjectMapper();
 
     @BeforeAll
@@ -38,6 +39,8 @@ public class StutteringMovementTest {
 
         File f = new File("./src/test/fixtures/bugpattern/stutteringMovement.json");
         stutteringMovement = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
+        f = new File("./src/test/fixtures/stmtParser/deleteParam.json");
+        deleteParam = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
     }
 
     @Test
@@ -45,5 +48,12 @@ public class StutteringMovementTest {
         StutteringMovement finder = new StutteringMovement();
         IssueReport report = finder.check(stutteringMovement);
         Assertions.assertEquals(3, report.getCount());
+    }
+
+    @Test
+    public void testdeleteParam() {
+        StutteringMovement finder = new StutteringMovement();
+        IssueReport report = finder.check(deleteParam);
+        Assertions.assertEquals(0, report.getCount());
     }
 }
