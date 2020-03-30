@@ -163,7 +163,6 @@ public class MissingBackdropSwitch implements IssueFinder, ScratchVisitor {
             final String actorName = currentActor.getIdent().getName();
             final String msgName = event.getBackdrop().getName();
             switchReceived.add(new Pair(actorName, msgName));
-
         }
         if (!node.getChildren().isEmpty()) {
             for (ASTNode child : node.getChildren()) {

@@ -24,7 +24,6 @@ import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 public class AsTouchable extends UnaryExpression<Expression> implements Touchable {
 
-
     public AsTouchable(Expression expr) {
         super(expr);
     }
@@ -33,5 +32,4 @@ public class AsTouchable extends UnaryExpression<Expression> implements Touchabl
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);
     }
-
 }

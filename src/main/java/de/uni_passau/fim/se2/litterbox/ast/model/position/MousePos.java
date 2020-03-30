@@ -32,5 +32,4 @@ public class MousePos extends AbstractNode implements Position, ASTLeaf {
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);
     }
-
 }

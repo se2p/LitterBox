@@ -93,5 +93,4 @@ public class Downloader {
         Path path = Paths.get(projectout, projectid + ".json");
         writer.writeValue(new File(path.toString()), jsonNode);
     }
-
 }

@@ -88,7 +88,6 @@ public class KeyParser {
                 return new Key(new NumberLiteral(0));
             }
         }
-
     }
 
     static int getShadowIndicator(ArrayNode exprArray) {

@@ -47,6 +47,4 @@ public class ThinkForSecs extends AbstractNode implements SpriteLookStmt {
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);
     }
-
-
 }

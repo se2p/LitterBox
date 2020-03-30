@@ -47,7 +47,6 @@ public class LongScript implements IssueFinder, ScratchVisitor {
     private int localCount = 0;
     private List<String> actorNames = new LinkedList<>();
 
-
     @Override
     public IssueReport check(Program program) {
         Preconditions.checkNotNull(program);

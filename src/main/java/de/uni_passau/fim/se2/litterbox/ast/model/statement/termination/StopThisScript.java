@@ -31,6 +31,4 @@ public class StopThisScript extends AbstractNode implements TerminationStmt {
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);
     }
-
-
 }

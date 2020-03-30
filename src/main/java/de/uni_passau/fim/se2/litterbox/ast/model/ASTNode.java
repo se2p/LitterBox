@@ -29,5 +29,4 @@ public interface ASTNode {
     List<? extends ASTNode> getChildren();
 
     String getUniqueName();
-
 }

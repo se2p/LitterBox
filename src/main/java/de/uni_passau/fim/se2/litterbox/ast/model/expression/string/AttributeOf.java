@@ -45,5 +45,4 @@ public class AttributeOf extends AbstractNode implements StringExpr {
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);
     }
-
 }

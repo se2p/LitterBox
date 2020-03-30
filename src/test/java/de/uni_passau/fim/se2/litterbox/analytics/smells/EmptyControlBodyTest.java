@@ -42,7 +42,6 @@ public class EmptyControlBodyTest {
         empty = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
         f = new File("./src/test/fixtures/smells/emptyBodies.json");
         emptyBodies = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
-
     }
 
     @Test

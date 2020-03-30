@@ -20,5 +20,4 @@ package de.uni_passau.fim.se2.litterbox.utils.jsonadapter;
 
 public interface ArrayNode extends JsonNode {
 
-
 }

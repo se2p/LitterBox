@@ -40,6 +40,4 @@ public class DeleteAllOf extends AbstractNode implements ListStmt {
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);
     }
-
-
 }

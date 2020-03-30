@@ -97,7 +97,6 @@ public class ActorLookStmtParserTest {
             Truth.assertThat(listOfStmt.get(5).getClass()).isEqualTo(HideVariable.class);
             Truth.assertThat(listOfStmt.get(6).getClass()).isEqualTo(ClearGraphicEffects.class);
             Truth.assertThat(listOfStmt.get(7).getClass()).isEqualTo(StopAll.class);
-
         } catch (ParsingException e) {
             e.printStackTrace();
             fail();
@@ -118,7 +117,6 @@ public class ActorLookStmtParserTest {
             Truth.assertThat(askAndWaitStmt.getClass()).isEqualTo(AskAndWait.class);
             Truth.assertThat(((StringLiteral) ((AskAndWait) askAndWaitStmt).getQuestion()).getText())
                     .isEqualTo("What's your name?");
-
         } catch (ParsingException e) {
             e.printStackTrace();
             fail();
@@ -143,7 +141,6 @@ public class ActorLookStmtParserTest {
             AsString strid = (AsString) stringExpr;
 
             Truth.assertThat(((StrId) strid.getOperand1()).getName()).isEqualTo("Baseball 1");
-
         } catch (ParsingException e) {
             e.printStackTrace();
             fail();
@@ -172,7 +169,6 @@ public class ActorLookStmtParserTest {
                     .isEqualTo("Stage");
             Truth.assertThat(((Qualified) ((HideVariable) hideVariable).getVariable()).getSecond().getName())
                     .isEqualTo(Constants.VARIABLE_ABBREVIATION + "my variable");
-
         } catch (ParsingException e) {
             e.printStackTrace();
             fail();
@@ -201,7 +197,6 @@ public class ActorLookStmtParserTest {
                     .isEqualTo("Stage");
             Truth.assertThat(((Qualified) ((HideVariable) hideVariable).getVariable()).getSecond().getName())
                     .isEqualTo(Constants.LIST_ABBREVIATION + "List");
-
         } catch (ParsingException e) {
             e.printStackTrace();
             fail();

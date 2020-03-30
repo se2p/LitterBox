@@ -46,5 +46,4 @@ public class SoundResource extends AbstractNode implements Resource {
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);
     }
-
 }

@@ -72,7 +72,6 @@ public class CSVWriter {
         }
     }
 
-
     /**
      * Saves the file
      *

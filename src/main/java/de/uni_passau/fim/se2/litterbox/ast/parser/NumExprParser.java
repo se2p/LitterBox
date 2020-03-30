@@ -79,10 +79,8 @@ public class NumExprParser {
             } catch (NumberFormatException | ParsingException e) { // right exception? hm.
                 return new UnspecifiedNumExpr();
             }
-
         } else if (exprArray.get(POS_BLOCK_ID) instanceof TextNode) {
             return parseTextNode(blocks, exprArray);
-
         } else {
             NumExpr variableInfo = parseVariable(exprArray);
             if (variableInfo != null) {
@@ -111,10 +109,8 @@ public class NumExprParser {
             } catch (NumberFormatException | ParsingException e) {
                 return new UnspecifiedNumExpr();
             }
-
         } else if (exprArray.get(POS_BLOCK_ID) instanceof TextNode) {
             return parseTextNode(blocks, exprArray);
-
         } else {
             NumExpr variableInfo = parseVariable(exprArray);
             if (variableInfo != null) {
@@ -155,7 +151,6 @@ public class NumExprParser {
         return new AsNumber(new StrId(PARAMETER_ABBREVIATION + name));
     }
 
-
     private static NumExpr parseVariable(ArrayNode exprArray) {
         String idString = exprArray.get(POS_DATA_ARRAY).get(POS_INPUT_ID).asText();
         if (ProgramParser.symbolTable.getVariables().containsKey(idString)) {
@@ -167,7 +162,6 @@ public class NumExprParser {
                             new StrId((variableInfo.getVariableName())
                             )
                     ));
-
         } else if (ProgramParser.symbolTable.getLists().containsKey(idString)) {
             ExpressionListInfo variableInfo = ProgramParser.symbolTable.getLists().get(idString);
             return new AsNumber(

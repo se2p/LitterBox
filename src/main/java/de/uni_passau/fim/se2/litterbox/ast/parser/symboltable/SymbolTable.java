@@ -64,5 +64,4 @@ public class SymbolTable {
         MessageInfo info = new MessageInfo(global, actorName, ident, message);
         messages.put(ident, info);
     }
-
 }

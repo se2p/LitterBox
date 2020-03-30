@@ -32,6 +32,4 @@ public class Show extends AbstractNode implements SpriteLookStmt, ASTLeaf {
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);
     }
-
-
 }

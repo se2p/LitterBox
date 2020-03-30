@@ -112,7 +112,6 @@ public class MessageNeverReceived implements IssueFinder, ScratchVisitor {
         }
     }
 
-
     @Override
     public void visit(ReceptionOfMessage node) {
         if (node.getMsg().getMessage() instanceof StringLiteral) {

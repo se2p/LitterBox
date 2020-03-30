@@ -57,7 +57,6 @@ public class TouchableParser {
                 Expression expr = ExpressionParser.parseExpression(current, TOUCHINGOBJECTMENU, allBlocks);
                 return new AsTouchable(expr);
             }
-
         } else if (BoolExprOpcode.sensing_touchingcolor.name().equals(opcodeString)) {
             return ColorParser.parseColor(current, 0, allBlocks);
         } else {
@@ -81,5 +80,4 @@ public class TouchableParser {
     static int getShadowIndicator(ArrayNode exprArray) {
         return exprArray.get(Constants.POS_INPUT_SHADOW).asInt();
     }
-
 }

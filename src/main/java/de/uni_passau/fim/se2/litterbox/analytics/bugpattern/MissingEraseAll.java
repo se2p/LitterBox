@@ -107,7 +107,6 @@ public class MissingEraseAll implements IssueFinder {
             }
         }
 
-
         void reset() {
             penClearSet = false;
             penDownSet = false;

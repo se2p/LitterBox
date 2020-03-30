@@ -28,5 +28,4 @@ public interface ObjectMapper {
      * @return the tree of JsonNode objects
      */
     JsonNode readTree(String content);
-
 }

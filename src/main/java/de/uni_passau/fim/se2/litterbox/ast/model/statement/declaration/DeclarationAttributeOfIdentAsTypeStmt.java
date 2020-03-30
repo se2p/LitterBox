@@ -54,6 +54,4 @@ public class DeclarationAttributeOfIdentAsTypeStmt extends AbstractNode implemen
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);
     }
-
-
 }

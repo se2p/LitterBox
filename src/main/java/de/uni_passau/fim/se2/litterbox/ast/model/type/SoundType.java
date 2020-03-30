@@ -30,5 +30,4 @@ public class SoundType extends AbstractNode implements Type {
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);
     }
-
 }

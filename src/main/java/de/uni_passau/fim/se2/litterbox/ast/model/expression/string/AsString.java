@@ -32,5 +32,4 @@ public class AsString extends UnaryExpression<Expression> implements StringExpr 
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);
     }
-
 }

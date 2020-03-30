@@ -106,7 +106,6 @@ public class ProgramParserTest {
             setAttr = (SetAttributeTo) stmts.get(4);
             Truth.assertThat(((StringLiteral) setAttr.getStringExpr()).getText()).isEqualTo("videoState");
             Truth.assertThat(((StringLiteral) setAttr.getExpr()).getText()).isEqualTo("on");
-
         } catch (ParsingException e) {
             e.printStackTrace();
             fail();
@@ -141,7 +140,6 @@ public class ProgramParserTest {
             Truth.assertThat(((StringLiteral) exprListPlain.getExpressions().get(1)).getText()).isEqualTo("Elem2");
             Truth.assertThat(((StringLiteral) exprListPlain.getExpressions().get(2)).getText()).isEqualTo("1");
             Truth.assertThat(((StringLiteral) exprListPlain.getExpressions().get(3)).getText()).isEqualTo("2");
-
         } catch (ParsingException e) {
             e.printStackTrace();
             fail();
@@ -166,7 +164,6 @@ public class ProgramParserTest {
             Truth.assertThat(imageResource.getIdent().getName()).isEqualTo("costume1");
             imageResource = (ImageResource) sprite.getResources().getResourceList().get(2);
             Truth.assertThat(imageResource.getIdent().getName()).isEqualTo("costume2");
-
         } catch (ParsingException e) {
             e.printStackTrace();
             fail();

@@ -96,6 +96,5 @@ class ColorParserTest {
             e.printStackTrace();
             fail();
         }
-
     }
 }

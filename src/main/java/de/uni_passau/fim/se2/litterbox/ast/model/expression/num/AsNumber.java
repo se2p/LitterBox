@@ -32,5 +32,4 @@ public class AsNumber extends UnaryExpression<Expression> implements NumExpr {
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);
     }
-
 }

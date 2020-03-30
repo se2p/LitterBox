@@ -112,7 +112,6 @@ public class ProcDefinitionParser {
             }
         }
 
-
         String methodName = proto.get(MUTATION_KEY).get(PROCCODE_KEY).asText();
         Identifier ident = null;
         if (proto.has(PARENT_KEY)) {
@@ -169,7 +168,6 @@ public class ProcDefinitionParser {
         final String opcodeString = param.get(OPCODE_KEY).asText();
         if (opcodeString.equals(ProcedureOpcode.argument_reporter_boolean.name())) {
             types.add(new BooleanType());
-
         } else {
             types.add(new StringType());
         }

@@ -57,5 +57,4 @@ public class SameVariableDifferentSpriteTest {
         IssueReport report = parameterName.check(variableDifferentSprite);
         Assertions.assertEquals(4, report.getCount());
     }
-
 }

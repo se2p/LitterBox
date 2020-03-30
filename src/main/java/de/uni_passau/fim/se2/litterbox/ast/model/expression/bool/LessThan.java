@@ -32,5 +32,4 @@ public class LessThan extends BinaryExpression<ComparableExpr, ComparableExpr> i
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);
     }
-
 }

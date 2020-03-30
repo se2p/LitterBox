@@ -57,27 +57,21 @@ public class EventParser {
         Preconditions
                 .checkArgument(EventOpcode.contains(opcodeString), "Given blockID does not point to an event block.");
 
-
         EventOpcode opcode = EventOpcode.valueOf(opcodeString);
         if (opcode.equals(event_whenflagclicked)) {
             return new GreenFlag();
-
         } else if (opcode.equals(event_whenkeypressed)) {
             Key key = KeyParser.parse(current, allBlocks);
             return new KeyPressed(key);
-
         } else if (opcode.equals(event_whenthisspriteclicked) || opcode.equals(event_whenstageclicked)) {
             return new Clicked();
-
         } else if (opcode.equals(event_whenbroadcastreceived)) {
             JsonNode fields = current.get(FIELDS_KEY);
             String msgValue = fields.get(BCAST_OPTION).get(FIELD_VALUE).asText();
             Message msg = new Message(new StringLiteral(msgValue));
             return new ReceptionOfMessage(msg);
-
         } else if (opcode.equals(control_start_as_clone)) {
             return new StartedAsClone();
-
         } else if (opcode.equals(event_whengreaterthan)) {
 
             String variableValue = current.get(FIELDS_KEY).get(VARIABLE_MENU).get(0).asText();
@@ -86,14 +80,12 @@ public class EventParser {
             NumExpr fieldValue = NumExprParser.parseNumExpr(current, 0, allBlocks);
 
             return new VariableAboveValue(var, fieldValue);
-
         } else if (opcode.equals(event_whenbackdropswitchesto)) {
             JsonNode fields = current.get(FIELDS_KEY);
             JsonNode backdropArray = fields.get(BACKDROP);
             String backdropName = backdropArray.get(FIELD_VALUE).asText();
             Identifier id = new StrId(backdropName);
             return new BackdropSwitchTo(id);
-
         } else {
             throw new IllegalStateException("EventBlock with opcode " + opcode + " was not parsed");
         }

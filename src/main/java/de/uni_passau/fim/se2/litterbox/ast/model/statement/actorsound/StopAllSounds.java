@@ -32,5 +32,4 @@ public class StopAllSounds extends AbstractNode implements ActorSoundStmt, ASTLe
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);
     }
-
 }

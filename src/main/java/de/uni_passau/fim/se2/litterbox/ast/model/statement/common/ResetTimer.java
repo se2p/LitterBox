@@ -32,5 +32,4 @@ public class ResetTimer extends AbstractNode implements CommonStmt, ASTLeaf {
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);
     }
-
 }

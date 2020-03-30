@@ -64,7 +64,6 @@ public class StringExprParser {
             }
         } else if (exprArray.get(POS_BLOCK_ID) instanceof TextNode) {
             return parseTextNode(blocks, exprArray);
-
         } else {
             StringExpr variableInfo = parseVariable(exprArray);
             if (variableInfo != null) {
@@ -86,7 +85,6 @@ public class StringExprParser {
             }
         } else if (exprArray.get(POS_BLOCK_ID) instanceof TextNode) {
             return parseTextNode(blocks, exprArray);
-
         } else {
             StringExpr variableInfo = parseVariable(exprArray);
             if (variableInfo != null) {
@@ -95,7 +93,6 @@ public class StringExprParser {
         }
         throw new ParsingException("Could not parse StringExpr");
     }
-
 
     private static StringExpr parseVariable(ArrayNode exprArray) {
         String idString = exprArray.get(POS_DATA_ARRAY).get(POS_INPUT_ID).asText();
@@ -107,7 +104,6 @@ public class StringExprParser {
                             new StrId(variableInfo.getActor()),
                             new StrId((variableInfo.getVariableName()))
                     ));
-
         } else if (ProgramParser.symbolTable.getLists().containsKey(idString)) {
             ExpressionListInfo variableInfo = ProgramParser.symbolTable.getLists().get(idString);
             return new AsString(

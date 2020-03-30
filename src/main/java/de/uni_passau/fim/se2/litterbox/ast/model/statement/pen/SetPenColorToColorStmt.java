@@ -35,7 +35,6 @@ public class SetPenColorToColorStmt extends AbstractNode implements PenStmt {
         return color;
     }
 
-
     @Override
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);

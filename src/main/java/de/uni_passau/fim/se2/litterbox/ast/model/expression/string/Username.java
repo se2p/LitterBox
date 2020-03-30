@@ -31,5 +31,4 @@ public class Username extends AbstractNode implements StringExpr, ASTLeaf {
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);
     }
-
 }

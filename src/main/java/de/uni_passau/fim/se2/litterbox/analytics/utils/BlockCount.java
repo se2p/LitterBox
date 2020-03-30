@@ -133,7 +133,6 @@ public class BlockCount implements IssueFinder, ScratchVisitor {
         }
     }
 
-
     @Override
     public void visit(StringLiteral node) {
         if (!node.getChildren().isEmpty()) {
@@ -417,7 +416,6 @@ public class BlockCount implements IssueFinder, ScratchVisitor {
         if (!node.getChildren().isEmpty()) {
             node.getValue().accept(this);
         }
-
     }
 
     @Override
@@ -576,7 +574,5 @@ public class BlockCount implements IssueFinder, ScratchVisitor {
             node.getContained().accept(this);
         }
     }
-
-
 }
 

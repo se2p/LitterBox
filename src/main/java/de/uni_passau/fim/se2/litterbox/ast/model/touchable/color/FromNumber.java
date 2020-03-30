@@ -40,5 +40,4 @@ public class FromNumber extends AbstractNode implements Color {
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);
     }
-
 }

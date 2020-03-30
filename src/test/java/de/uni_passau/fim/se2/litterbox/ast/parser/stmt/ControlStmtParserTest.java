@@ -85,11 +85,9 @@ public class ControlStmtParserTest {
             Truth.assertThat(listOfStmt.get(2).getClass()).isEqualTo(RepeatTimesStmt.class);
             Truth.assertThat(listOfStmt.get(3).getClass()).isEqualTo(UntilStmt.class);
             Truth.assertThat(listOfStmt.get(4).getClass()).isEqualTo(RepeatForeverStmt.class);
-
         } catch (ParsingException e) {
             e.printStackTrace();
             fail();
         }
     }
-
 }

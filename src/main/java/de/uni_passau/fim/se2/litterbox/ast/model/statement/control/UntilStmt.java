@@ -47,6 +47,4 @@ public class UntilStmt extends AbstractNode implements ControlStmt {
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);
     }
-
-
 }

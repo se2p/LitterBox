@@ -35,5 +35,4 @@ public class StrId extends Identifier {
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);
     }
-
 }

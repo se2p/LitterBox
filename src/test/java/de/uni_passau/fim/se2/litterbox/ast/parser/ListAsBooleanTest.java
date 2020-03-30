@@ -39,7 +39,6 @@ public class ListAsBooleanTest {
 
         File f = new File("./src/test/fixtures/stmtParser/listElementsBoolean.json");
         empty = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
-
     }
 
     @Test

@@ -47,6 +47,4 @@ public class DeclarationIdentAsTypeStmt extends AbstractNode implements Declarat
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);
     }
-
-
 }

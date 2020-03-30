@@ -43,7 +43,6 @@ public class RecursiveCloningTest {
         empty = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
         f = new File("./src/test/fixtures/bugpattern/recursiveCloning.json");
         recursiveClones = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
-
     }
 
     @Test
@@ -59,5 +58,4 @@ public class RecursiveCloningTest {
         IssueReport report = parameterName.check(recursiveClones);
         Assertions.assertEquals(1, report.getCount());
     }
-
 }

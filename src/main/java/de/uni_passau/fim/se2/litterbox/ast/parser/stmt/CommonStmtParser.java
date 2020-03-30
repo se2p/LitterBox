@@ -123,16 +123,13 @@ public class CommonStmtParser {
             NumExpr numExpr = NumExprParser.parseNumExpr(current, 0,
                     allBlocks);
             return new ChangeAttributeBy(new StringLiteral(attributeName), numExpr);
-
         } else if (sound_changeeffectby.equals(opcode) || looks_changeeffectby.equals(opcode)) {
             NumExpr numExpr = NumExprParser.parseNumExpr(current, 0, allBlocks);
             String effectName = current.get(FIELDS_KEY).get("EFFECT").get(0).asText();
             return new ChangeAttributeBy(new StringLiteral(effectName), numExpr);
-
         } else if (pen_changePenSizeBy.equals(opcode)) {
             return new ChangeAttributeBy(new StringLiteral(PEN_SIZE_KEY), NumExprParser.parseNumExpr(current, 0,
                     allBlocks));
-
         } else {
             throw new ParsingException("Cannot parse block with opcode " + opcodeString + " to ChangeAttributeBy");
         }

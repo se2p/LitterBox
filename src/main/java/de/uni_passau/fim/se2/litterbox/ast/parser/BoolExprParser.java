@@ -124,7 +124,6 @@ public class BoolExprParser {
         throw new ParsingException("Could not parse BoolExpr");
     }
 
-
     private static BoolExpr parseVariable(ArrayNode exprArray) {
         String idString = exprArray.get(POS_DATA_ARRAY).get(POS_INPUT_ID).asText();
         if (ProgramParser.symbolTable.getVariables().containsKey(idString)) {
@@ -135,7 +134,6 @@ public class BoolExprParser {
                             new StrId(variableInfo.getActor()),
                             new StrId((variableInfo.getVariableName()))
                     ));
-
         } else if (ProgramParser.symbolTable.getLists().containsKey(idString)) {
             ExpressionListInfo variableInfo = ProgramParser.symbolTable.getLists().get(idString);
             return new AsBool(

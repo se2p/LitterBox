@@ -87,7 +87,6 @@ public class UnusedVariable implements IssueFinder, ScratchVisitor {
         return NAME;
     }
 
-
     private void checkVariables() {
 
         for (Map.Entry<String, VariableInfo> entry : varMap.entrySet()) {
@@ -104,7 +103,6 @@ public class UnusedVariable implements IssueFinder, ScratchVisitor {
 
             if (!currFound && !Arrays.asList(MY_VARIABLE_LANGUAGES).contains(name.substring(Constants.VARIABLE_ABBREVIATION.length()))) {
                 count++;
-
             }
         }
 
@@ -145,7 +143,6 @@ public class UnusedVariable implements IssueFinder, ScratchVisitor {
             }
         }
         insideScript = false;
-
     }
 
     @Override

@@ -39,6 +39,4 @@ public class SpriteTouchable extends AbstractNode implements Touchable {
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);
     }
-
-
 }

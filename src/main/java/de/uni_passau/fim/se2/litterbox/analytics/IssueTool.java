@@ -143,7 +143,6 @@ public class IssueTool {
     public static List<String> getOnlyUniqueActorList(List<String> foundSpritesWithIssues) {
         Set<String> uniqueSprites = new TreeSet<>(foundSpritesWithIssues);
         return new ArrayList<>(uniqueSprites);
-
     }
 
     /**

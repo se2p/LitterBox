@@ -48,7 +48,6 @@ public class ProcedureCount implements IssueFinder, ScratchVisitor {
         return NAME;
     }
 
-
     @Override
     public void visit(ProcedureDefinition node) {
         count++;

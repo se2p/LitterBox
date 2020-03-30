@@ -210,7 +210,6 @@ public class DeclarationStmtParser {
                 Preconditions.checkArgument(actorDefinitionNode.get(VIDSTATE_KEY).isTextual());
                 list.add(new DeclarationAttributeAsTypeStmt(keyExpr, new StringType()));
             }
-
         } else {
 
             if (actorDefinitionNode.has(VISIBLE_KEY)) {
@@ -318,7 +317,6 @@ public class DeclarationStmtParser {
                 setStmt = new SetAttributeTo(keyExpr, stringExpr);
                 list.add(setStmt);
             }
-
         } else {
 
             if (actorDefinitionNode.has(VISIBLE_KEY)) {

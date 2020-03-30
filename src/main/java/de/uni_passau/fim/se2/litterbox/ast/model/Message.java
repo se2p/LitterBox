@@ -38,5 +38,4 @@ public class Message extends AbstractNode {
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);
     }
-
 }

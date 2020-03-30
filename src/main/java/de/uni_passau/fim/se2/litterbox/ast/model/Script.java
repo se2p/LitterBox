@@ -45,5 +45,4 @@ public class Script extends AbstractNode {
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);
     }
-
 }

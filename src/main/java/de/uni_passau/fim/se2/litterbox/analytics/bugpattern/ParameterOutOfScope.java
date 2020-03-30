@@ -105,7 +105,5 @@ public class ParameterOutOfScope implements IssueFinder, ScratchVisitor {
                 child.accept(this);
             }
         }
-
     }
-
 }

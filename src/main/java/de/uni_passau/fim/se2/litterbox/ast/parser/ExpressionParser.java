@@ -18,7 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.parser;
 
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.NullNode;
@@ -132,7 +131,6 @@ public class ExpressionParser {
         }
     }
 
-
     private static Optional<BoolExpr> maybeParseBoolExpr(JsonNode block, String inputName, JsonNode blocks) {
         try {
             final BoolExpr boolExpr = BoolExprParser.parseBoolExpr(block, inputName, blocks);
@@ -232,7 +230,6 @@ public class ExpressionParser {
 
                 return new Qualified(new StrId(variableInfo.getActor()),
                         new StrId((variableInfo.getVariableName())));
-
             } else if (ProgramParser.symbolTable.getLists().containsKey(idString)) {
                 ExpressionListInfo variableInfo = ProgramParser.symbolTable.getLists().get(idString);
                 return new Qualified(new StrId(variableInfo.getActor()),

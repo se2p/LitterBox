@@ -72,7 +72,6 @@ public class ProcDefinitionParserTest {
                     ProgramParser.procDefMap.getProcedures().get(actorName).get(list.get(0).getIdent()).getArguments().length);
             Assertions.assertEquals(0, list.get(0).getParameterList().getParameterListPlain().getParameters().size());
             Assertions.assertEquals(3, list.get(0).getStmtList().getStmts().getListOfStmt().size());
-
         } catch (ParsingException e) {
             e.printStackTrace();
             fail();

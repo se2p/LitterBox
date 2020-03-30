@@ -108,5 +108,4 @@ public class PenStmtParser {
     static int getShadowIndicator(ArrayNode exprArray) {
         return exprArray.get(Constants.POS_INPUT_SHADOW).asInt();
     }
-
 }

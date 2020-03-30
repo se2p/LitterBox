@@ -50,5 +50,4 @@ public class UnmodifiableListBuilder<E> {
     public List<E> build() {
         return Collections.unmodifiableList(list);
     }
-
 }

@@ -18,7 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox;
 
-
 import de.uni_passau.fim.se2.litterbox.analytics.IssueTool;
 import de.uni_passau.fim.se2.litterbox.analytics.Scratch3Analyzer;
 import org.apache.commons.cli.CommandLine;

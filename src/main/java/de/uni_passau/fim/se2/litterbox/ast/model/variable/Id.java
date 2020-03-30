@@ -31,5 +31,4 @@ public class Id extends Identifier {
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);
     }
-
 }

@@ -45,5 +45,4 @@ public class LetterOf extends AbstractNode implements StringExpr {
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);
     }
-
 }

@@ -110,7 +110,6 @@ public class OrphanedParameter implements IssueFinder, ScratchVisitor {
                 child.accept(this);
             }
         }
-
     }
 
     private void checkParameterNames(String name) {

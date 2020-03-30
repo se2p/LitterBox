@@ -47,5 +47,4 @@ public class GlideSecsTo extends AbstractNode implements SpriteMotionStmt {
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);
     }
-
 }

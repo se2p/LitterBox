@@ -40,5 +40,4 @@ public class AskAndWait extends AbstractNode implements ActorLookStmt {
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);
     }
-
 }

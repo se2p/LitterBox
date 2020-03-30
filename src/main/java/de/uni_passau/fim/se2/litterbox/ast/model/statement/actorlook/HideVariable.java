@@ -40,6 +40,4 @@ public class HideVariable extends AbstractNode implements ActorLookStmt {
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);
     }
-
-
 }

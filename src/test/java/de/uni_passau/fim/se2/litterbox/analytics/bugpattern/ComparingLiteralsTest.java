@@ -53,8 +53,5 @@ class ComparingLiteralsTest {
         ComparingLiterals finder = new ComparingLiterals();
         final IssueReport check = finder.check(program);
         Truth.assertThat(check.getCount()).isEqualTo(2);
-
     }
-
-
 }

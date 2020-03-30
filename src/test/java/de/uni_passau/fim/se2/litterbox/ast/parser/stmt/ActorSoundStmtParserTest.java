@@ -88,7 +88,6 @@ public class ActorSoundStmtParserTest {
             Truth.assertThat(listOfStmt.get(2).getClass()).isEqualTo(ClearSoundEffects.class);
             Truth.assertThat(listOfStmt.get(3).getClass()).isEqualTo(StopAllSounds.class);
             Truth.assertThat(listOfStmt.get(4).getClass()).isEqualTo(StopAll.class);
-
         } catch (ParsingException e) {
             e.printStackTrace();
             fail();
@@ -112,7 +111,6 @@ public class ActorSoundStmtParserTest {
             AsString stringExpr = (AsString) elementChoice.getStringExpr();
             StrId strid = (StrId) stringExpr.getOperand1();
             Truth.assertThat(strid.getName()).isEqualTo("Meow");
-
         } catch (ParsingException e) {
             e.printStackTrace();
             fail();
@@ -136,11 +134,9 @@ public class ActorSoundStmtParserTest {
             AsString stringExpr = (AsString) elementChoice.getStringExpr();
             StrId strid = (StrId) stringExpr.getOperand1();
             Truth.assertThat(strid.getName()).isEqualTo("Meow");
-
         } catch (ParsingException e) {
             e.printStackTrace();
             fail();
         }
     }
-
 }

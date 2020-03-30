@@ -44,5 +44,4 @@ public class CoordinatePosition extends AbstractNode implements Position {
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);
     }
-
 }

@@ -47,6 +47,4 @@ public class SetAttributeTo extends AbstractNode implements SetStmt {
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);
     }
-
-
 }

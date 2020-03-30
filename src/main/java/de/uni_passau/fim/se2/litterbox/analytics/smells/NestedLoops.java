@@ -87,7 +87,6 @@ public class NestedLoops implements IssueFinder, ScratchVisitor {
         if (!node.getChildren().isEmpty()) {
             for (ASTNode child : node.getChildren()) {
                 child.accept(this);
-
             }
         }
     }
@@ -98,7 +97,6 @@ public class NestedLoops implements IssueFinder, ScratchVisitor {
         if (!node.getChildren().isEmpty()) {
             for (ASTNode child : node.getChildren()) {
                 child.accept(this);
-
             }
         }
     }
@@ -116,7 +114,6 @@ public class NestedLoops implements IssueFinder, ScratchVisitor {
         if (!node.getChildren().isEmpty()) {
             for (ASTNode child : node.getChildren()) {
                 child.accept(this);
-
             }
         }
     }

@@ -42,7 +42,6 @@ public class NestedLoopTest {
         empty = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
         f = new File("./src/test/fixtures/smells/nestedLoops.json");
         nestedLoops = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
-
     }
 
     @Test

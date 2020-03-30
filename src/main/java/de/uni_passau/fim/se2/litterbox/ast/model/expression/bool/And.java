@@ -31,5 +31,4 @@ public class And extends BinaryExpression<BoolExpr, BoolExpr> implements BoolExp
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);
     }
-
 }

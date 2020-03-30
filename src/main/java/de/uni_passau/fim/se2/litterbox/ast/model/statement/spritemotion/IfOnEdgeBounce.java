@@ -32,5 +32,4 @@ public class IfOnEdgeBounce extends AbstractNode implements SpriteMotionStmt, AS
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);
     }
-
 }

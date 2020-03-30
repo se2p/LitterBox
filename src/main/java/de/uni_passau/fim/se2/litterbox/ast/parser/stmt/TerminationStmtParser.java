@@ -66,10 +66,8 @@ public class TerminationStmtParser {
 
         if (stopOptionValue.equals(STOP_ALL)) {
             return new StopAll();
-
         } else if (stopOptionValue.equals(STOP_THIS)) {
             return new StopThisScript();
-
         } else {
             throw new ParsingException(
                     "Unknown Stop Option Value "

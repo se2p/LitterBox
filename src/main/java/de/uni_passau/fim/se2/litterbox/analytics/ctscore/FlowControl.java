@@ -50,14 +50,12 @@ public class FlowControl implements IssueFinder, ScratchVisitor {
     private boolean repeat_forever = false;
     private boolean until = false;
 
-
     public FlowControl() {
         notes[0] = "There is a sequence of blocks missing.";
         notes[1] = "Basic level. There is repeat or forever missing.";
         notes[2] = "Developing level. There is repeat until missing.";
         notes[3] = "Proficiency level. Good work!";
     }
-
 
     @Override
     public IssueReport check(Program program) {
@@ -108,7 +106,6 @@ public class FlowControl implements IssueFinder, ScratchVisitor {
                 child.accept(this);
             }
         }
-
     }
 
     @Override

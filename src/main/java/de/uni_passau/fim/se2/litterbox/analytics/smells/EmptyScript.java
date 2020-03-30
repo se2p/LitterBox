@@ -36,7 +36,6 @@ import java.util.List;
  */
 public class EmptyScript implements IssueFinder, ScratchVisitor {
 
-
     public static final String NAME = "empty_script";
     public static final String SHORT_NAME = "empScript";
     private static final String NOTE1 = "There are no scripts with empty body in your project.";

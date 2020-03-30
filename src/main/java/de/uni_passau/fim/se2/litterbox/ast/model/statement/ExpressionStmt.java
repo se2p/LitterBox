@@ -40,5 +40,4 @@ public class ExpressionStmt extends AbstractNode implements Stmt {
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);
     }
-
 }

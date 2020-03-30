@@ -32,5 +32,4 @@ public class Equals extends BinaryExpression<ComparableExpr, ComparableExpr> imp
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);
     }
-
 }

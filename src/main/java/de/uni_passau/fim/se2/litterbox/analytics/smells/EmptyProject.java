@@ -27,7 +27,6 @@ import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import java.util.ArrayList;
 
-
 public class EmptyProject implements ScratchVisitor, IssueFinder {
     public static final String NAME = "empty_project";
     public static final String SHORT_NAME = "empProj";

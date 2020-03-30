@@ -106,7 +106,6 @@ public class PositionParser {
                 posName = "DISTANCETOMENU";
             }
 
-
             final StringExpr stringExpr = StringExprParser.parseStringExpr(current, posName, allBlocks);
             return new PivotOf(stringExpr);
         }
@@ -126,12 +125,9 @@ public class PositionParser {
             throw new ParsingException(
                     "Cannot parse x and y coordinates for a block with opcode " + current.get(Constants.OPCODE_KEY));
         }
-
     }
 
     static int getShadowIndicator(ArrayNode exprArray) {
         return exprArray.get(Constants.POS_INPUT_SHADOW).asInt();
     }
-
-
 }

@@ -76,5 +76,4 @@ public class ZipReader {
         file.close();
         return name;
     }
-
 }

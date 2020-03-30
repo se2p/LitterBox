@@ -31,5 +31,4 @@ public class Join extends BinaryExpression<StringExpr, StringExpr> implements St
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);
     }
-
 }

@@ -47,7 +47,6 @@ import java.util.logging.Logger;
 import static de.uni_passau.fim.se2.litterbox.utils.GroupConstants.*;
 import static org.apache.commons.io.FilenameUtils.removeExtension;
 
-
 public class Scratch3Analyzer {
 
     private static final Logger log = Logger.getLogger(Scratch3Analyzer.class.getName());
@@ -325,7 +324,6 @@ public class Scratch3Analyzer {
         }
     }
 
-
     /**
      * Downloads the project and prints its intermediate language version.
      *
@@ -379,7 +377,6 @@ public class Scratch3Analyzer {
             e.printStackTrace();
         }
     }
-
 
     /**
      * Prints the file or content of the folder in the intermediate language.

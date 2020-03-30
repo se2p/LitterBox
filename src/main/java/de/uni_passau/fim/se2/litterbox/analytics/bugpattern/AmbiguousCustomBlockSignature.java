@@ -52,7 +52,6 @@ public class AmbiguousCustomBlockSignature implements IssueFinder, ScratchVisito
     private Map<Identifier, ProcedureInfo> procMap;
     private Program program;
 
-
     @Override
     public IssueReport check(Program program) {
         Preconditions.checkNotNull(program);

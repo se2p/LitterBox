@@ -32,5 +32,4 @@ public class ClearSoundEffects extends AbstractNode implements ActorSoundStmt, A
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);
     }
-
 }

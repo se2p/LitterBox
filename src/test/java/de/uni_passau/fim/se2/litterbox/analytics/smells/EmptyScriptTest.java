@@ -42,7 +42,6 @@ public class EmptyScriptTest {
         empty = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
         f = new File("./src/test/fixtures/smells/emptyScript.json");
         emptyScript = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
-
     }
 
     @Test

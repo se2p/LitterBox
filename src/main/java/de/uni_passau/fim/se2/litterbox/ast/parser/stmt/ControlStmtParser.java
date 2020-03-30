@@ -106,7 +106,6 @@ public class ControlStmtParser {
         if (inputs.has(inputSubstack)) {
             substackNode = inputs.get(inputSubstack).get(Constants.POS_INPUT_VALUE);
             return ScriptParser.parseStmtList(substackNode.asText(), allBlocks);
-
         } else {
             return new StmtList(new ListOfStmt(new ArrayList<Stmt>()));
         }

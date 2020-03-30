@@ -27,7 +27,6 @@ public class PointInDirection extends AbstractNode implements SpriteMotionStmt {
 
     private final NumExpr direction;
 
-
     public PointInDirection(NumExpr direction) {
         this.direction = Preconditions.checkNotNull(direction);
     }
@@ -40,6 +39,4 @@ public class PointInDirection extends AbstractNode implements SpriteMotionStmt {
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);
     }
-
-
 }

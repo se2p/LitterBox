@@ -152,7 +152,6 @@ public class BoolExprParserTest {
         Truth.assertThat(ifElseStmt.getBoolExpr()).isInstanceOf(Not.class);
         Not boolExpr = (Not) ifElseStmt.getBoolExpr();
         Truth.assertThat(boolExpr.getOperand1()).isInstanceOf(BiggerThan.class);
-
     }
 
     @Test
@@ -168,7 +167,6 @@ public class BoolExprParserTest {
         Truth.assertThat(ifThenStmt.getBoolExpr()).isInstanceOf(BiggerThan.class);
         Truth.assertThat(((BiggerThan) ifThenStmt.getBoolExpr()).getOperand1()).isInstanceOf(NumberLiteral.class);
         Truth.assertThat(((BiggerThan) ifThenStmt.getBoolExpr()).getOperand2()).isInstanceOf(NumberLiteral.class);
-
     }
 
     @Test
@@ -184,7 +182,6 @@ public class BoolExprParserTest {
         Truth.assertThat(ifThenStmt.getBoolExpr()).isInstanceOf(LessThan.class);
         Truth.assertThat(((LessThan) ifThenStmt.getBoolExpr()).getOperand1()).isInstanceOf(NumberLiteral.class);
         Truth.assertThat(((LessThan) ifThenStmt.getBoolExpr()).getOperand2()).isInstanceOf(NumberLiteral.class);
-
     }
 
     @Test
@@ -200,7 +197,6 @@ public class BoolExprParserTest {
         Truth.assertThat(ifThenStmt.getBoolExpr()).isInstanceOf(Equals.class);
         Truth.assertThat(((Equals) ifThenStmt.getBoolExpr()).getOperand1()).isInstanceOf(NumberLiteral.class);
         Truth.assertThat(((Equals) ifThenStmt.getBoolExpr()).getOperand2()).isInstanceOf(NumberLiteral.class);
-
     }
 
     @Test
@@ -215,7 +211,6 @@ public class BoolExprParserTest {
         IfThenStmt ifThenStmt = (IfThenStmt) stmt;
         Truth.assertThat(ifThenStmt.getBoolExpr()).isInstanceOf(Touching.class);
         Truth.assertThat(((Touching) ifThenStmt.getBoolExpr()).getTouchable()).isInstanceOf(Edge.class);
-
     }
 
     @Test
@@ -231,7 +226,6 @@ public class BoolExprParserTest {
         Truth.assertThat(ifThenStmt.getBoolExpr()).isInstanceOf(ColorTouches.class);
         Truth.assertThat(((ColorTouches) ifThenStmt.getBoolExpr()).getOperand1()).isInstanceOf(ColorLiteral.class);
         Truth.assertThat(((ColorTouches) ifThenStmt.getBoolExpr()).getOperand2()).isInstanceOf(ColorLiteral.class);
-
     }
 
     @Test
@@ -246,7 +240,5 @@ public class BoolExprParserTest {
         IfThenStmt ifThenStmt = (IfThenStmt) stmt;
         Truth.assertThat(ifThenStmt.getBoolExpr()).isInstanceOf(Touching.class);
         Truth.assertThat(((Touching) ifThenStmt.getBoolExpr()).getTouchable()).isInstanceOf(ColorLiteral.class);
-
     }
-
 }
