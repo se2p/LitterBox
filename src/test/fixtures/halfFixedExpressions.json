@@ -1,1 +1,256 @@
-{"targets":[{"isStage":true,"name":"Stage","variables":{"`jEk@4|i[#Fk?(8x)AV.-my variable":["meine Variable",0]},"lists":{"1%^()lRQQp#^0esZps8o":["test",[]]},"broadcasts":{},"blocks":{},"comments":{},"currentCostume":0,"costumes":[{"assetId":"cd21514d0531fdffb22204e0ec5ed84a","name":"Bühnenbild1","md5ext":"cd21514d0531fdffb22204e0ec5ed84a.svg","dataFormat":"svg","rotationCenterX":240,"rotationCenterY":180}],"sounds":[{"assetId":"83a9787d4cb6f3b7632b4ddfebf74367","name":"Plopp","dataFormat":"wav","format":"","rate":48000,"sampleCount":1124,"md5ext":"83a9787d4cb6f3b7632b4ddfebf74367.wav"}],"volume":100,"layerOrder":0,"tempo":60,"videoTransparency":50,"videoState":"on","textToSpeechLanguage":null},{"isStage":false,"name":"Figur1","variables":{},"lists":{},"broadcasts":{},"blocks":{"q.@.M|_K}_gZTd~?F`Z6":{"opcode":"sensing_of","next":null,"parent":null,"inputs":{"OBJECT":[1,"23julbcn44SQ}_iM/fil"]},"fields":{"PROPERTY":["backdrop #",null]},"shadow":false,"topLevel":true,"x":439,"y":414},"23julbcn44SQ}_iM/fil":{"opcode":"sensing_of_object_menu","next":null,"parent":"q.@.M|_K}_gZTd~?F`Z6","inputs":{},"fields":{"OBJECT":["_stage_",null]},"shadow":true,"topLevel":false},"Q*LK35XP]50;h#oV{W6Q":{"opcode":"operator_mathop","next":null,"parent":null,"inputs":{"NUM":[1,[4,""]]},"fields":{"OPERATOR":["abs",null]},"shadow":false,"topLevel":true,"x":342,"y":586},"`lo;P/-]IR[8E,hRmR5^":{"opcode":"data_itemoflist","next":null,"parent":null,"inputs":{"INDEX":[1,[7,"1"]]},"fields":{"LIST":["test","1%^()lRQQp#^0esZps8o"]},"shadow":false,"topLevel":true,"x":304,"y":731},"l?-L8pkMUdb:T?j|QK@~":{"opcode":"data_itemnumoflist","next":null,"parent":null,"inputs":{"ITEM":[1,[10,"Ding"]]},"fields":{"LIST":["test","1%^()lRQQp#^0esZps8o"]},"shadow":false,"topLevel":true,"x":674,"y":657},"6@TpN.jf};Ivrx@0_F~A":{"opcode":"data_listcontainsitem","next":null,"parent":null,"inputs":{"ITEM":[1,[10,"Ding"]]},"fields":{"LIST":["test","1%^()lRQQp#^0esZps8o"]},"shadow":false,"topLevel":true,"x":599,"y":547}},"comments":{},"currentCostume":0,"costumes":[{"assetId":"b7853f557e4426412e64bb3da6531a99","name":"Kostüm1","bitmapResolution":1,"md5ext":"b7853f557e4426412e64bb3da6531a99.svg","dataFormat":"svg","rotationCenterX":48,"rotationCenterY":50},{"assetId":"e6ddc55a6ddd9cc9d84fe0b4c21e016f","name":"Kostüm2","bitmapResolution":1,"md5ext":"e6ddc55a6ddd9cc9d84fe0b4c21e016f.svg","dataFormat":"svg","rotationCenterX":46,"rotationCenterY":53}],"sounds":[{"assetId":"83c36d806dc92327b9e7049a565c6bff","name":"Miau","dataFormat":"wav","format":"","rate":48000,"sampleCount":40682,"md5ext":"83c36d806dc92327b9e7049a565c6bff.wav"}],"volume":100,"layerOrder":1,"visible":true,"x":0,"y":0,"size":100,"direction":90,"draggable":false,"rotationStyle":"all around"}],"monitors":[{"id":"1%^()lRQQp#^0esZps8o","mode":"list","opcode":"data_listcontents","params":{"LIST":"test"},"spriteName":null,"value":[],"width":0,"height":0,"x":5,"y":5,"visible":true}],"extensions":[],"meta":{"semver":"3.0.0","vm":"0.2.0-prerelease.20200227204654","agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:74.0) Gecko/20100101 Firefox/74.0"}}
+{
+  "targets": [
+    {
+      "isStage": true,
+      "name": "Stage",
+      "variables": {
+        "`jEk@4|i[#Fk?(8x)AV.-my variable": [
+          "meine Variable",
+          0
+        ]
+      },
+      "lists": {
+        "1%^()lRQQp#^0esZps8o": [
+          "test",
+          []
+        ]
+      },
+      "broadcasts": {},
+      "blocks": {},
+      "comments": {},
+      "currentCostume": 0,
+      "costumes": [
+        {
+          "assetId": "cd21514d0531fdffb22204e0ec5ed84a",
+          "name": "Bühnenbild1",
+          "md5ext": "cd21514d0531fdffb22204e0ec5ed84a.svg",
+          "dataFormat": "svg",
+          "rotationCenterX": 240,
+          "rotationCenterY": 180
+        }
+      ],
+      "sounds": [
+        {
+          "assetId": "83a9787d4cb6f3b7632b4ddfebf74367",
+          "name": "Plopp",
+          "dataFormat": "wav",
+          "format": "",
+          "rate": 48000,
+          "sampleCount": 1124,
+          "md5ext": "83a9787d4cb6f3b7632b4ddfebf74367.wav"
+        }
+      ],
+      "volume": 100,
+      "layerOrder": 0,
+      "tempo": 60,
+      "videoTransparency": 50,
+      "videoState": "on",
+      "textToSpeechLanguage": null
+    },
+    {
+      "isStage": false,
+      "name": "Figur1",
+      "variables": {},
+      "lists": {},
+      "broadcasts": {},
+      "blocks": {
+        "q.@.M|_K}_gZTd~?F`Z6": {
+          "opcode": "sensing_of",
+          "next": null,
+          "parent": null,
+          "inputs": {
+            "OBJECT": [
+              1,
+              "23julbcn44SQ}_iM/fil"
+            ]
+          },
+          "fields": {
+            "PROPERTY": [
+              "backdrop #",
+              null
+            ]
+          },
+          "shadow": false,
+          "topLevel": true,
+          "x": 439,
+          "y": 414
+        },
+        "23julbcn44SQ}_iM/fil": {
+          "opcode": "sensing_of_object_menu",
+          "next": null,
+          "parent": "q.@.M|_K}_gZTd~?F`Z6",
+          "inputs": {},
+          "fields": {
+            "OBJECT": [
+              "_stage_",
+              null
+            ]
+          },
+          "shadow": true,
+          "topLevel": false
+        },
+        "Q*LK35XP]50;h#oV{W6Q": {
+          "opcode": "operator_mathop",
+          "next": null,
+          "parent": null,
+          "inputs": {
+            "NUM": [
+              1,
+              [
+                4,
+                ""
+              ]
+            ]
+          },
+          "fields": {
+            "OPERATOR": [
+              "abs",
+              null
+            ]
+          },
+          "shadow": false,
+          "topLevel": true,
+          "x": 342,
+          "y": 586
+        },
+        "`lo;P/-]IR[8E,hRmR5^": {
+          "opcode": "data_itemoflist",
+          "next": null,
+          "parent": null,
+          "inputs": {
+            "INDEX": [
+              1,
+              [
+                7,
+                "1"
+              ]
+            ]
+          },
+          "fields": {
+            "LIST": [
+              "test",
+              "1%^()lRQQp#^0esZps8o"
+            ]
+          },
+          "shadow": false,
+          "topLevel": true,
+          "x": 304,
+          "y": 731
+        },
+        "l?-L8pkMUdb:T?j|QK@~": {
+          "opcode": "data_itemnumoflist",
+          "next": null,
+          "parent": null,
+          "inputs": {
+            "ITEM": [
+              1,
+              [
+                10,
+                "Ding"
+              ]
+            ]
+          },
+          "fields": {
+            "LIST": [
+              "test",
+              "1%^()lRQQp#^0esZps8o"
+            ]
+          },
+          "shadow": false,
+          "topLevel": true,
+          "x": 674,
+          "y": 657
+        },
+        "6@TpN.jf};Ivrx@0_F~A": {
+          "opcode": "data_listcontainsitem",
+          "next": null,
+          "parent": null,
+          "inputs": {
+            "ITEM": [
+              1,
+              [
+                10,
+                "Ding"
+              ]
+            ]
+          },
+          "fields": {
+            "LIST": [
+              "test",
+              "1%^()lRQQp#^0esZps8o"
+            ]
+          },
+          "shadow": false,
+          "topLevel": true,
+          "x": 599,
+          "y": 547
+        }
+      },
+      "comments": {},
+      "currentCostume": 0,
+      "costumes": [
+        {
+          "assetId": "b7853f557e4426412e64bb3da6531a99",
+          "name": "Kostüm1",
+          "bitmapResolution": 1,
+          "md5ext": "b7853f557e4426412e64bb3da6531a99.svg",
+          "dataFormat": "svg",
+          "rotationCenterX": 48,
+          "rotationCenterY": 50
+        },
+        {
+          "assetId": "e6ddc55a6ddd9cc9d84fe0b4c21e016f",
+          "name": "Kostüm2",
+          "bitmapResolution": 1,
+          "md5ext": "e6ddc55a6ddd9cc9d84fe0b4c21e016f.svg",
+          "dataFormat": "svg",
+          "rotationCenterX": 46,
+          "rotationCenterY": 53
+        }
+      ],
+      "sounds": [
+        {
+          "assetId": "83c36d806dc92327b9e7049a565c6bff",
+          "name": "Miau",
+          "dataFormat": "wav",
+          "format": "",
+          "rate": 48000,
+          "sampleCount": 40682,
+          "md5ext": "83c36d806dc92327b9e7049a565c6bff.wav"
+        }
+      ],
+      "volume": 100,
+      "layerOrder": 1,
+      "visible": true,
+      "x": 0,
+      "y": 0,
+      "size": 100,
+      "direction": 90,
+      "draggable": false,
+      "rotationStyle": "all around"
+    }
+  ],
+  "monitors": [
+    {
+      "id": "1%^()lRQQp#^0esZps8o",
+      "mode": "list",
+      "opcode": "data_listcontents",
+      "params": {
+        "LIST": "test"
+      },
+      "spriteName": null,
+      "value": [],
+      "width": 0,
+      "height": 0,
+      "x": 5,
+      "y": 5,
+      "visible": true
+    }
+  ],
+  "extensions": [],
+  "meta": {
+    "semver": "3.0.0",
+    "vm": "0.2.0-prerelease.20200227204654",
+    "agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:74.0) Gecko/20100101 Firefox/74.0"
+  }
+}

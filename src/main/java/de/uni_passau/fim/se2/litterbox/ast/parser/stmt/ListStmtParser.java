@@ -55,23 +55,23 @@ public class ListStmtParser {
         final ListStmtOpcode opcode = ListStmtOpcode.valueOf(opcodeString);
 
         switch (opcode) {
-            case data_replaceitemoflist:
-                return parseReplaceItemOfList(current, allBlocks);
+        case data_replaceitemoflist:
+            return parseReplaceItemOfList(current, allBlocks);
 
-            case data_insertatlist:
-                return parseInsertAtList(current, allBlocks);
+        case data_insertatlist:
+            return parseInsertAtList(current, allBlocks);
 
-            case data_deletealloflist:
-                return parseDeleteAllOfList(current);
+        case data_deletealloflist:
+            return parseDeleteAllOfList(current);
 
-            case data_deleteoflist:
-                return parseDeleteOfList(current, allBlocks);
+        case data_deleteoflist:
+            return parseDeleteOfList(current, allBlocks);
 
-            case data_addtolist:
-                return parseAddToList(current, allBlocks);
+        case data_addtolist:
+            return parseAddToList(current, allBlocks);
 
-            default:
-                throw new RuntimeException("Not Implemented yet");
+        default:
+            throw new RuntimeException("Not Implemented yet");
         }
     }
 

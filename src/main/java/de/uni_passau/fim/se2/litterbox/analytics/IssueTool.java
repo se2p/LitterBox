@@ -154,21 +154,21 @@ public class IssueTool {
     public void checkRaw(Program program, String dtctrs) {
         String[] detectors;
         switch (dtctrs) {
-            case ALL:
-                detectors = getAllFinder().keySet().toArray(new String[0]);
-                break;
-            case BUGS:
-                detectors = getBugFinder().keySet().toArray(new String[0]);
-                break;
-            case SMELLS:
-                detectors = getSmellFinder().keySet().toArray(new String[0]);
-                break;
-            case CTSCORE:
-                detectors = getCTScoreFinder().keySet().toArray(new String[0]);
-                break;
-            default:
-                detectors = dtctrs.split(",");
-                break;
+        case ALL:
+            detectors = getAllFinder().keySet().toArray(new String[0]);
+            break;
+        case BUGS:
+            detectors = getBugFinder().keySet().toArray(new String[0]);
+            break;
+        case SMELLS:
+            detectors = getSmellFinder().keySet().toArray(new String[0]);
+            break;
+        case CTSCORE:
+            detectors = getCTScoreFinder().keySet().toArray(new String[0]);
+            break;
+        default:
+            detectors = dtctrs.split(",");
+            break;
         }
         for (String s : detectors) {
             if (getAllFinder().containsKey(s)) {
@@ -190,21 +190,21 @@ public class IssueTool {
         List<IssueReport> issueReports = new ArrayList<>();
         String[] detectors;
         switch (dtctrs) {
-            case ALL:
-                detectors = getAllFinder().keySet().toArray(new String[0]);
-                break;
-            case BUGS:
-                detectors = getBugFinder().keySet().toArray(new String[0]);
-                break;
-            case SMELLS:
-                detectors = getSmellFinder().keySet().toArray(new String[0]);
-                break;
-            case CTSCORE:
-                detectors = getCTScoreFinder().keySet().toArray(new String[0]);
-                break;
-            default:
-                detectors = dtctrs.split(",");
-                break;
+        case ALL:
+            detectors = getAllFinder().keySet().toArray(new String[0]);
+            break;
+        case BUGS:
+            detectors = getBugFinder().keySet().toArray(new String[0]);
+            break;
+        case SMELLS:
+            detectors = getSmellFinder().keySet().toArray(new String[0]);
+            break;
+        case CTSCORE:
+            detectors = getCTScoreFinder().keySet().toArray(new String[0]);
+            break;
+        default:
+            detectors = dtctrs.split(",");
+            break;
         }
         for (String s : detectors) {
             if (getAllFinder().containsKey(s)) {

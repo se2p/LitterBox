@@ -79,38 +79,38 @@ public class CommonStmtParser {
         final CommonStmtOpcode opcode = CommonStmtOpcode.valueOf(opcodeString);
 
         switch (opcode) {
-            case control_wait:
-                return parseWaitSeconds(current, allBlocks);
+        case control_wait:
+            return parseWaitSeconds(current, allBlocks);
 
-            case control_wait_until:
-                return parseWaitUntil(current, allBlocks);
+        case control_wait_until:
+            return parseWaitUntil(current, allBlocks);
 
-            case control_stop:
-                return parseControlStop(current);
+        case control_stop:
+            return parseControlStop(current);
 
-            case control_create_clone_of:
-                return parseCreateCloneOf(current, allBlocks);
+        case control_create_clone_of:
+            return parseCreateCloneOf(current, allBlocks);
 
-            case event_broadcast:
-                return parseBroadcast(current, allBlocks);
+        case event_broadcast:
+            return parseBroadcast(current, allBlocks);
 
-            case event_broadcastandwait:
-                return parseBroadcastAndWait(current, allBlocks);
+        case event_broadcastandwait:
+            return parseBroadcastAndWait(current, allBlocks);
 
-            case sensing_resettimer:
-                return new ResetTimer();
+        case sensing_resettimer:
+            return new ResetTimer();
 
-            case data_changevariableby:
-                return parseChangeVariableBy(current, allBlocks);
+        case data_changevariableby:
+            return parseChangeVariableBy(current, allBlocks);
 
-            case sound_changevolumeby:
-            case sound_changeeffectby:
-            case looks_changeeffectby:
-            case pen_changePenSizeBy:
-                return parseChangeAttributeBy(current, allBlocks);
+        case sound_changevolumeby:
+        case sound_changeeffectby:
+        case looks_changeeffectby:
+        case pen_changePenSizeBy:
+            return parseChangeAttributeBy(current, allBlocks);
 
-            default:
-                throw new RuntimeException("Not Implemented yet");
+        default:
+            throw new RuntimeException("Not Implemented yet");
         }
     }
 

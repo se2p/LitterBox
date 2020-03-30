@@ -1,1 +1,893 @@
-{"targets":[{"isStage":true,"name":"Stage","variables":{"`jEk@4|i[#Fk?(8x)AV.-my variable":["my variable",0]},"lists":{},"broadcasts":{},"blocks":{},"comments":{},"currentCostume":1,"costumes":[{"assetId":"cd21514d0531fdffb22204e0ec5ed84a","name":"backdrop1","bitmapResolution":1,"md5ext":"cd21514d0531fdffb22204e0ec5ed84a.svg","dataFormat":"svg","rotationCenterX":0,"rotationCenterY":0},{"assetId":"35a3ee5665721f7d6da902d5cfbd59b2","name":"Blue Sky 2 ","bitmapResolution":1,"md5ext":"35a3ee5665721f7d6da902d5cfbd59b2.svg","dataFormat":"svg","rotationCenterX":239.89172496795658,"rotationCenterY":180}],"sounds":[{"assetId":"83a9787d4cb6f3b7632b4ddfebf74367","name":"pop","dataFormat":"wav","format":"","rate":48000,"sampleCount":1123,"md5ext":"83a9787d4cb6f3b7632b4ddfebf74367.wav"}],"volume":100,"layerOrder":0,"tempo":60,"videoTransparency":50,"videoState":"on","textToSpeechLanguage":null},{"isStage":false,"name":"Buildings","variables":{},"lists":{},"broadcasts":{},"blocks":{"gvQ)n]#oXV$_UJuH%4$g":{"opcode":"control_if","next":null,"parent":"I^#NU}EzO*e(Np3muqG/","inputs":{"CONDITION":[2,"Nhlk^,+!P}K%^O(JtI6C"],"SUBSTACK":[2,")fwgCZoNf0uoQa6%=o~1"]},"fields":{},"shadow":false,"topLevel":false},"Nhlk^,+!P}K%^O(JtI6C":{"opcode":"sensing_touchingobject","next":null,"parent":"gvQ)n]#oXV$_UJuH%4$g","inputs":{"TOUCHINGOBJECTMENU":[1,"4OMnT$UPMeXKK8QRPHy^"]},"fields":{},"shadow":false,"topLevel":false},"4OMnT$UPMeXKK8QRPHy^":{"opcode":"sensing_touchingobjectmenu","next":null,"parent":"Nhlk^,+!P}K%^O(JtI6C","inputs":{},"fields":{"TOUCHINGOBJECTMENU":["https___dynaimage",null]},"shadow":true,"topLevel":false},"L9wzvj07eAb;8D{*OyyY":{"opcode":"sound_setvolumeto","next":"3[gS*V_*CG39AZXm)^MJ","parent":")fwgCZoNf0uoQa6%=o~1","inputs":{"VOLUME":[1,[4,"150"]]},"fields":{},"shadow":false,"topLevel":false},"3[gS*V_*CG39AZXm)^MJ":{"opcode":"sound_playuntildone","next":null,"parent":"L9wzvj07eAb;8D{*OyyY","inputs":{"SOUND_MENU":[1,";=01F%b*r%6k-lW?hY+O"]},"fields":{},"shadow":false,"topLevel":false},";=01F%b*r%6k-lW?hY+O":{"opcode":"sound_sounds_menu","next":null,"parent":"3[gS*V_*CG39AZXm)^MJ","inputs":{},"fields":{"SOUND_MENU":["recording1",null]},"shadow":true,"topLevel":false},"I^#NU}EzO*e(Np3muqG/":{"opcode":"event_whenflagclicked","next":"gvQ)n]#oXV$_UJuH%4$g","parent":null,"inputs":{},"fields":{},"shadow":false,"topLevel":true,"x":0,"y":0},"~wjhtd:+xM1J@V[4L^WR":{"opcode":"looks_switchcostumeto","next":null,"parent":null,"inputs":{"COSTUME":[3,"%ECXSGZBf8d/^*s!bcMn","~va@754,T6td@]LDqPz}"]},"fields":{},"shadow":false,"topLevel":true,"x":0,"y":328},"~va@754,T6td@]LDqPz}":{"opcode":"looks_costume","next":null,"parent":null,"inputs":{},"fields":{"COSTUME":["Tower",null]},"shadow":true,"topLevel":true,"x":382,"y":490},")fwgCZoNf0uoQa6%=o~1":{"opcode":"looks_switchcostumeto","next":"L9wzvj07eAb;8D{*OyyY","parent":"gvQ)n]#oXV$_UJuH%4$g","inputs":{"COSTUME":[1,"ZL;qq^~0y;q|;2c?an2y"]},"fields":{},"shadow":false,"topLevel":false},"ZL;qq^~0y;q|;2c?an2y":{"opcode":"looks_costume","next":null,"parent":")fwgCZoNf0uoQa6%=o~1","inputs":{},"fields":{"COSTUME":["explosion",null]},"shadow":true,"topLevel":false},"%ECXSGZBf8d/^*s!bcMn":{"opcode":"operator_divide","next":null,"parent":"~wjhtd:+xM1J@V[4L^WR","inputs":{"NUM1":[1,[4,""]],"NUM2":[1,[4,""]]},"fields":{},"shadow":false,"topLevel":false}},"comments":{},"currentCostume":0,"costumes":[{"assetId":"2de84e732e567b46fc3e865a8a2b50ac","name":"Tower","bitmapResolution":1,"md5ext":"2de84e732e567b46fc3e865a8a2b50ac.svg","dataFormat":"svg","rotationCenterX":56.44583710896194,"rotationCenterY":34.5143936516765},{"assetId":"50914375768423c4654472a7010605fc","name":"Townhouse","bitmapResolution":1,"md5ext":"50914375768423c4654472a7010605fc.svg","dataFormat":"svg","rotationCenterX":89.77457716796866,"rotationCenterY":4.754319915550468},{"assetId":"1a9201758432f07c62c492bca2526017","name":"Apartment Building","bitmapResolution":1,"md5ext":"1a9201758432f07c62c492bca2526017.svg","dataFormat":"svg","rotationCenterX":66.05266447589051,"rotationCenterY":14.778593098833994},{"assetId":"f8057d0f2b9281c7e0d07ac2a76ff58c","name":"Barn","bitmapResolution":1,"md5ext":"f8057d0f2b9281c7e0d07ac2a76ff58c.svg","dataFormat":"svg","rotationCenterX":82.99979999999991,"rotationCenterY":-16.50060000000005},{"assetId":"2f86069adc1f0015de3c3c30718c913d","name":"Bridge","bitmapResolution":1,"md5ext":"2f86069adc1f0015de3c3c30718c913d.svg","dataFormat":"svg","rotationCenterX":105.9999,"rotationCenterY":-50.49970000000005},{"assetId":"d86c0b39dd42145cefc87ebd12f3d633","name":"Castle","bitmapResolution":1,"md5ext":"d86c0b39dd42145cefc87ebd12f3d633.svg","dataFormat":"svg","rotationCenterX":90.00030999999998,"rotationCenterY":22.38948531357346},{"assetId":"49b51ed597867f9d57ec9189c7460d01","name":"Corner Store","bitmapResolution":1,"md5ext":"49b51ed597867f9d57ec9189c7460d01.svg","dataFormat":"svg","rotationCenterX":109.99592248520841,"rotationCenterY":-30.072372105465803},{"assetId":"21c0142a60ef3c231b3bfc8f1ea353c9","name":"Firestation","bitmapResolution":1,"md5ext":"21c0142a60ef3c231b3bfc8f1ea353c9.svg","dataFormat":"svg","rotationCenterX":89.99988406150541,"rotationCenterY":2.747785775588852},{"assetId":"44441880efaab69c00b705ef2ab56bbb","name":"House","bitmapResolution":1,"md5ext":"44441880efaab69c00b705ef2ab56bbb.svg","dataFormat":"svg","rotationCenterX":118.99985276168071,"rotationCenterY":-15.224897651832094},{"assetId":"e43984e9933800386a2b8fc10affa7ef","name":"Lighthouse","bitmapResolution":1,"md5ext":"e43984e9933800386a2b8fc10affa7ef.svg","dataFormat":"svg","rotationCenterX":79.3748307654935,"rotationCenterY":25.59036214411887},{"assetId":"41be2f0510ccb8921e050df5ec701bc2","name":"School","bitmapResolution":1,"md5ext":"41be2f0510ccb8921e050df5ec701bc2.svg","dataFormat":"svg","rotationCenterX":84.54998999999992,"rotationCenterY":35.71185480371133},{"assetId":"debb22886bce0cd794eee9b11aaa4b44","name":"Theatre","bitmapResolution":1,"md5ext":"debb22886bce0cd794eee9b11aaa4b44.svg","dataFormat":"svg","rotationCenterX":99.4993,"rotationCenterY":-21.219607568351478},{"assetId":"a267329a9ae93e4671696c93089bffe9","name":"Windmill","bitmapResolution":1,"md5ext":"a267329a9ae93e4671696c93089bffe9.svg","dataFormat":"svg","rotationCenterX":73.49987940088744,"rotationCenterY":14.134023232515347},{"assetId":"69b064107998088c01eb77d3b2015184","name":"Building","bitmapResolution":1,"md5ext":"69b064107998088c01eb77d3b2015184.svg","dataFormat":"svg","rotationCenterX":49.7000000000001,"rotationCenterY":16.599999999999994},{"assetId":"6e9886bbd9114eb45420ec91a89712f8","name":"Trees","bitmapResolution":1,"md5ext":"6e9886bbd9114eb45420ec91a89712f8.svg","dataFormat":"svg","rotationCenterX":165.5966033935547,"rotationCenterY":-11.400001525878906},{"assetId":"518ad2d5890194a09ae5164851da210d","name":"BarberSalon","bitmapResolution":1,"md5ext":"518ad2d5890194a09ae5164851da210d.svg","dataFormat":"svg","rotationCenterX":87.50040000000001,"rotationCenterY":-15.499600000000072},{"assetId":"fd3d14491aa7faef348ed08cf08771ed","name":"Pillowfort","bitmapResolution":1,"md5ext":"fd3d14491aa7faef348ed08cf08771ed.svg","dataFormat":"svg","rotationCenterX":87.63141558150753,"rotationCenterY":-9.461708684446648},{"assetId":"fb090a6ccfdd2f58867cfff0d7972b25","name":"explosion","bitmapResolution":1,"md5ext":"fb090a6ccfdd2f58867cfff0d7972b25.svg","dataFormat":"svg","rotationCenterX":160.60505507001926,"rotationCenterY":129.14392929680116}],"sounds":[{"assetId":"2939de70fcafc7b7a3f53a1c20f15291","name":"recording1","dataFormat":"wav","format":"","rate":48000,"sampleCount":79694,"md5ext":"2939de70fcafc7b7a3f53a1c20f15291.wav"}],"volume":100,"layerOrder":2,"visible":true,"x":148,"y":-3,"size":100,"direction":90,"draggable":false,"rotationStyle":"all around"},{"isStage":false,"name":"Objects","variables":{},"lists":{},"broadcasts":{},"blocks":{},"comments":{"~n0NVTNQKI#nKVwDLCBP":{"blockId":"wnE!F]83-4rKUq==xizv","x":257.4799690246582,"y":101,"width":272.59259033203125,"height":106.66667175292969,"minimized":false,"text":"Delete from Starter Project and just hide by itself"}},"currentCostume":0,"costumes":[{"assetId":"551629f2a64c1f3703e57aaa133effa6","name":"Star","bitmapResolution":1,"md5ext":"551629f2a64c1f3703e57aaa133effa6.svg","dataFormat":"svg","rotationCenterX":22,"rotationCenterY":23},{"assetId":"bf32f151fb55c34ac92cf420f6d9a19f","name":"Clouds","bitmapResolution":1,"md5ext":"bf32f151fb55c34ac92cf420f6d9a19f.svg","dataFormat":"svg","rotationCenterX":91.50003021883217,"rotationCenterY":42.499914371864634},{"assetId":"db46d16f1a1cca7172684d77bd9b5bec","name":"Hot Air Balloon","bitmapResolution":1,"md5ext":"db46d16f1a1cca7172684d77bd9b5bec.svg","dataFormat":"svg","rotationCenterX":40.85673342698345,"rotationCenterY":44.455490528490685},{"assetId":"7facc2df9992a9271a71418033bd7960","name":"Lightning Bolt","bitmapResolution":1,"md5ext":"7facc2df9992a9271a71418033bd7960.svg","dataFormat":"svg","rotationCenterX":85.4564593620797,"rotationCenterY":46.50007733395918},{"assetId":"62c08eca899f437803430306137fcc63","name":"Plane","bitmapResolution":1,"md5ext":"62c08eca899f437803430306137fcc63.svg","dataFormat":"svg","rotationCenterX":107.00012394517111,"rotationCenterY":44.16617366650013},{"assetId":"f84b38788c0c796bb83396b6b78605ee","name":"Planet","bitmapResolution":1,"md5ext":"f84b38788c0c796bb83396b6b78605ee.svg","dataFormat":"svg","rotationCenterX":72,"rotationCenterY":72},{"assetId":"3abfc584e9e6c3e0ec5112fa25b73b1d","name":"Donut","bitmapResolution":1,"md5ext":"3abfc584e9e6c3e0ec5112fa25b73b1d.svg","dataFormat":"svg","rotationCenterX":73,"rotationCenterY":15},{"assetId":"a416dc84b94b079435ad79cfd48706ce","name":"Bird","bitmapResolution":1,"md5ext":"a416dc84b94b079435ad79cfd48706ce.svg","dataFormat":"svg","rotationCenterX":53.8449504101994,"rotationCenterY":41.48638967143319},{"assetId":"6f1a832f96cbd700e1c104bd74000e4e","name":"Kite","bitmapResolution":1,"md5ext":"6f1a832f96cbd700e1c104bd74000e4e.svg","dataFormat":"svg","rotationCenterX":71.4998,"rotationCenterY":42.00040000000001}],"sounds":[{"assetId":"32514c51e03db680e9c63857b840ae78","name":"collect","dataFormat":"wav","format":"adpcm","rate":22050,"sampleCount":14225,"md5ext":"32514c51e03db680e9c63857b840ae78.wav"}],"volume":100,"layerOrder":1,"visible":false,"x":184,"y":129,"size":100,"direction":90,"draggable":false,"rotationStyle":"all around"},{"isStage":false,"name":"https___dynaimage","variables":{},"lists":{},"broadcasts":{},"blocks":{"an$ksu3Q_O5Ly/}x?6Q[":{"opcode":"event_whenflagclicked","next":"4Atc3e3h:!a+oh[(db)2","parent":null,"inputs":{},"fields":{},"shadow":false,"topLevel":true,"x":139,"y":19},"4Atc3e3h:!a+oh[(db)2":{"opcode":"motion_gotoxy","next":"-QYEI.Dy;mbP}#-GtwVs","parent":"an$ksu3Q_O5Ly/}x?6Q[","inputs":{"X":[1,[4,"-120"]],"Y":[1,[4,"70"]]},"fields":{},"shadow":false,"topLevel":false},"m|j{s_TVxDT!_0G20I(1":{"opcode":"control_repeat","next":"#_/fIF!Lr%=(8{`es#?!","parent":"-QYEI.Dy;mbP}#-GtwVs","inputs":{"TIMES":[1,[6,"10"]],"SUBSTACK":[2,"RR7h*^?Z]C87y[;2;j[R"]},"fields":{},"shadow":false,"topLevel":false},"RR7h*^?Z]C87y[;2;j[R":{"opcode":"control_wait","next":"A{|F=,l-[OF$D4)2W01.","parent":"m|j{s_TVxDT!_0G20I(1","inputs":{"DURATION":[1,[5,"0.1"]]},"fields":{},"shadow":false,"topLevel":false},"A{|F=,l-[OF$D4)2W01.":{"opcode":"motion_turnright","next":null,"parent":"RR7h*^?Z]C87y[;2;j[R","inputs":{"DEGREES":[1,[4,"135"]]},"fields":{},"shadow":false,"topLevel":false},"Mfo`/q.^va~{Wb9yn.)j":{"opcode":"event_whenflagclicked","next":"2Yb%Z^OqC}SDu`bx]4$v","parent":null,"inputs":{},"fields":{},"shadow":false,"topLevel":true,"x":409,"y":453},"2Yb%Z^OqC}SDu`bx]4$v":{"opcode":"control_forever","next":null,"parent":"Mfo`/q.^va~{Wb9yn.)j","inputs":{"SUBSTACK":[2,"YR1%*t-8S0#.hT/*ahou"]},"fields":{},"shadow":false,"topLevel":false},"YR1%*t-8S0#.hT/*ahou":{"opcode":"looks_setsizeto","next":null,"parent":"2Yb%Z^OqC}SDu`bx]4$v","inputs":{"SIZE":[1,[4,"50"]]},"fields":{},"shadow":false,"topLevel":false},"+s9{_]$15Jc*R*bdm{1;":{"opcode":"motion_glidesecstoxy","next":null,"parent":"#_/fIF!Lr%=(8{`es#?!","inputs":{"SECS":[1,[4,"1"]],"X":[1,[4,"140"]],"Y":[1,[4,"-50"]]},"fields":{},"shadow":false,"topLevel":false},"-QYEI.Dy;mbP}#-GtwVs":{"opcode":"motion_pointindirection","next":"m|j{s_TVxDT!_0G20I(1","parent":"4Atc3e3h:!a+oh[(db)2","inputs":{"DIRECTION":[1,[8,"90"]]},"fields":{},"shadow":false,"topLevel":false},"#_/fIF!Lr%=(8{`es#?!":{"opcode":"sound_playuntildone","next":"+s9{_]$15Jc*R*bdm{1;","parent":"m|j{s_TVxDT!_0G20I(1","inputs":{"SOUND_MENU":[1,",9gTQYDcNZf56wqB2,Mu"]},"fields":{},"shadow":false,"topLevel":false},",9gTQYDcNZf56wqB2,Mu":{"opcode":"sound_sounds_menu","next":null,"parent":"#_/fIF!Lr%=(8{`es#?!","inputs":{},"fields":{"SOUND_MENU":["recording1",null]},"shadow":true,"topLevel":false},"?`rncHmjBTSZac}o=|XF":{"opcode":"control_if","next":null,"parent":"/eS~E;}?T`k,9NawXZ2y","inputs":{"CONDITION":[2,"4~64q3o~2@d~VPybJ1,."],"SUBSTACK":[2,"a.XrkFI?e=Iy)Y,.M.Ap"]},"fields":{},"shadow":false,"topLevel":false},"/eS~E;}?T`k,9NawXZ2y":{"opcode":"event_whenflagclicked","next":"?`rncHmjBTSZac}o=|XF","parent":null,"inputs":{},"fields":{},"shadow":false,"topLevel":true,"x":22,"y":487},"4~64q3o~2@d~VPybJ1,.":{"opcode":"sensing_touchingobject","next":null,"parent":"?`rncHmjBTSZac}o=|XF","inputs":{"TOUCHINGOBJECTMENU":[1,"AV1_5kGaExaR/86GX]q["]},"fields":{},"shadow":false,"topLevel":false},"AV1_5kGaExaR/86GX]q[":{"opcode":"sensing_touchingobjectmenu","next":null,"parent":"4~64q3o~2@d~VPybJ1,.","inputs":{},"fields":{"TOUCHINGOBJECTMENU":["Buildings",null]},"shadow":true,"topLevel":false},"a.XrkFI?e=Iy)Y,.M.Ap":{"opcode":"looks_hide","next":null,"parent":"?`rncHmjBTSZac}o=|XF","inputs":{},"fields":{},"shadow":false,"topLevel":false}},"comments":{},"currentCostume":0,"costumes":[{"assetId":"657b305d868f4642a2156f74c9230d63","name":"https___dynaimage","bitmapResolution":2,"md5ext":"657b305d868f4642a2156f74c9230d63.png","dataFormat":"png","rotationCenterX":216,"rotationCenterY":330}],"sounds":[{"assetId":"7bda70ae695ad0c5e6b4e03705659c00","name":"recording1","dataFormat":"wav","format":"","rate":48000,"sampleCount":149545,"md5ext":"7bda70ae695ad0c5e6b4e03705659c00.wav"},{"assetId":"3beffe8479c3a3a9f3f5c0ef0a0fe13b","name":"recording2","dataFormat":"wav","format":"","rate":48000,"sampleCount":89614,"md5ext":"3beffe8479c3a3a9f3f5c0ef0a0fe13b.wav"}],"volume":100,"layerOrder":3,"visible":true,"x":140,"y":-50,"size":50,"direction":0,"draggable":false,"rotationStyle":"all around"}],"monitors":[],"extensions":[],"meta":{"semver":"3.0.0","vm":"0.2.0-prerelease.20191119203901","agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.88 Safari/537.36"}}
+{
+  "targets": [
+    {
+      "isStage": true,
+      "name": "Stage",
+      "variables": {
+        "`jEk@4|i[#Fk?(8x)AV.-my variable": [
+          "my variable",
+          0
+        ]
+      },
+      "lists": {},
+      "broadcasts": {},
+      "blocks": {},
+      "comments": {},
+      "currentCostume": 1,
+      "costumes": [
+        {
+          "assetId": "cd21514d0531fdffb22204e0ec5ed84a",
+          "name": "backdrop1",
+          "bitmapResolution": 1,
+          "md5ext": "cd21514d0531fdffb22204e0ec5ed84a.svg",
+          "dataFormat": "svg",
+          "rotationCenterX": 0,
+          "rotationCenterY": 0
+        },
+        {
+          "assetId": "35a3ee5665721f7d6da902d5cfbd59b2",
+          "name": "Blue Sky 2 ",
+          "bitmapResolution": 1,
+          "md5ext": "35a3ee5665721f7d6da902d5cfbd59b2.svg",
+          "dataFormat": "svg",
+          "rotationCenterX": 239.89172496795658,
+          "rotationCenterY": 180
+        }
+      ],
+      "sounds": [
+        {
+          "assetId": "83a9787d4cb6f3b7632b4ddfebf74367",
+          "name": "pop",
+          "dataFormat": "wav",
+          "format": "",
+          "rate": 48000,
+          "sampleCount": 1123,
+          "md5ext": "83a9787d4cb6f3b7632b4ddfebf74367.wav"
+        }
+      ],
+      "volume": 100,
+      "layerOrder": 0,
+      "tempo": 60,
+      "videoTransparency": 50,
+      "videoState": "on",
+      "textToSpeechLanguage": null
+    },
+    {
+      "isStage": false,
+      "name": "Buildings",
+      "variables": {},
+      "lists": {},
+      "broadcasts": {},
+      "blocks": {
+        "gvQ)n]#oXV$_UJuH%4$g": {
+          "opcode": "control_if",
+          "next": null,
+          "parent": "I^#NU}EzO*e(Np3muqG/",
+          "inputs": {
+            "CONDITION": [
+              2,
+              "Nhlk^,+!P}K%^O(JtI6C"
+            ],
+            "SUBSTACK": [
+              2,
+              ")fwgCZoNf0uoQa6%=o~1"
+            ]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "Nhlk^,+!P}K%^O(JtI6C": {
+          "opcode": "sensing_touchingobject",
+          "next": null,
+          "parent": "gvQ)n]#oXV$_UJuH%4$g",
+          "inputs": {
+            "TOUCHINGOBJECTMENU": [
+              1,
+              "4OMnT$UPMeXKK8QRPHy^"
+            ]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "4OMnT$UPMeXKK8QRPHy^": {
+          "opcode": "sensing_touchingobjectmenu",
+          "next": null,
+          "parent": "Nhlk^,+!P}K%^O(JtI6C",
+          "inputs": {},
+          "fields": {
+            "TOUCHINGOBJECTMENU": [
+              "https___dynaimage",
+              null
+            ]
+          },
+          "shadow": true,
+          "topLevel": false
+        },
+        "L9wzvj07eAb;8D{*OyyY": {
+          "opcode": "sound_setvolumeto",
+          "next": "3[gS*V_*CG39AZXm)^MJ",
+          "parent": ")fwgCZoNf0uoQa6%=o~1",
+          "inputs": {
+            "VOLUME": [
+              1,
+              [
+                4,
+                "150"
+              ]
+            ]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "3[gS*V_*CG39AZXm)^MJ": {
+          "opcode": "sound_playuntildone",
+          "next": null,
+          "parent": "L9wzvj07eAb;8D{*OyyY",
+          "inputs": {
+            "SOUND_MENU": [
+              1,
+              ";=01F%b*r%6k-lW?hY+O"
+            ]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        ";=01F%b*r%6k-lW?hY+O": {
+          "opcode": "sound_sounds_menu",
+          "next": null,
+          "parent": "3[gS*V_*CG39AZXm)^MJ",
+          "inputs": {},
+          "fields": {
+            "SOUND_MENU": [
+              "recording1",
+              null
+            ]
+          },
+          "shadow": true,
+          "topLevel": false
+        },
+        "I^#NU}EzO*e(Np3muqG/": {
+          "opcode": "event_whenflagclicked",
+          "next": "gvQ)n]#oXV$_UJuH%4$g",
+          "parent": null,
+          "inputs": {},
+          "fields": {},
+          "shadow": false,
+          "topLevel": true,
+          "x": 0,
+          "y": 0
+        },
+        "~wjhtd:+xM1J@V[4L^WR": {
+          "opcode": "looks_switchcostumeto",
+          "next": null,
+          "parent": null,
+          "inputs": {
+            "COSTUME": [
+              3,
+              "%ECXSGZBf8d/^*s!bcMn",
+              "~va@754,T6td@]LDqPz}"
+            ]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": true,
+          "x": 0,
+          "y": 328
+        },
+        "~va@754,T6td@]LDqPz}": {
+          "opcode": "looks_costume",
+          "next": null,
+          "parent": null,
+          "inputs": {},
+          "fields": {
+            "COSTUME": [
+              "Tower",
+              null
+            ]
+          },
+          "shadow": true,
+          "topLevel": true,
+          "x": 382,
+          "y": 490
+        },
+        ")fwgCZoNf0uoQa6%=o~1": {
+          "opcode": "looks_switchcostumeto",
+          "next": "L9wzvj07eAb;8D{*OyyY",
+          "parent": "gvQ)n]#oXV$_UJuH%4$g",
+          "inputs": {
+            "COSTUME": [
+              1,
+              "ZL;qq^~0y;q|;2c?an2y"
+            ]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "ZL;qq^~0y;q|;2c?an2y": {
+          "opcode": "looks_costume",
+          "next": null,
+          "parent": ")fwgCZoNf0uoQa6%=o~1",
+          "inputs": {},
+          "fields": {
+            "COSTUME": [
+              "explosion",
+              null
+            ]
+          },
+          "shadow": true,
+          "topLevel": false
+        },
+        "%ECXSGZBf8d/^*s!bcMn": {
+          "opcode": "operator_divide",
+          "next": null,
+          "parent": "~wjhtd:+xM1J@V[4L^WR",
+          "inputs": {
+            "NUM1": [
+              1,
+              [
+                4,
+                ""
+              ]
+            ],
+            "NUM2": [
+              1,
+              [
+                4,
+                ""
+              ]
+            ]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        }
+      },
+      "comments": {},
+      "currentCostume": 0,
+      "costumes": [
+        {
+          "assetId": "2de84e732e567b46fc3e865a8a2b50ac",
+          "name": "Tower",
+          "bitmapResolution": 1,
+          "md5ext": "2de84e732e567b46fc3e865a8a2b50ac.svg",
+          "dataFormat": "svg",
+          "rotationCenterX": 56.44583710896194,
+          "rotationCenterY": 34.5143936516765
+        },
+        {
+          "assetId": "50914375768423c4654472a7010605fc",
+          "name": "Townhouse",
+          "bitmapResolution": 1,
+          "md5ext": "50914375768423c4654472a7010605fc.svg",
+          "dataFormat": "svg",
+          "rotationCenterX": 89.77457716796866,
+          "rotationCenterY": 4.754319915550468
+        },
+        {
+          "assetId": "1a9201758432f07c62c492bca2526017",
+          "name": "Apartment Building",
+          "bitmapResolution": 1,
+          "md5ext": "1a9201758432f07c62c492bca2526017.svg",
+          "dataFormat": "svg",
+          "rotationCenterX": 66.05266447589051,
+          "rotationCenterY": 14.778593098833994
+        },
+        {
+          "assetId": "f8057d0f2b9281c7e0d07ac2a76ff58c",
+          "name": "Barn",
+          "bitmapResolution": 1,
+          "md5ext": "f8057d0f2b9281c7e0d07ac2a76ff58c.svg",
+          "dataFormat": "svg",
+          "rotationCenterX": 82.99979999999991,
+          "rotationCenterY": -16.50060000000005
+        },
+        {
+          "assetId": "2f86069adc1f0015de3c3c30718c913d",
+          "name": "Bridge",
+          "bitmapResolution": 1,
+          "md5ext": "2f86069adc1f0015de3c3c30718c913d.svg",
+          "dataFormat": "svg",
+          "rotationCenterX": 105.9999,
+          "rotationCenterY": -50.49970000000005
+        },
+        {
+          "assetId": "d86c0b39dd42145cefc87ebd12f3d633",
+          "name": "Castle",
+          "bitmapResolution": 1,
+          "md5ext": "d86c0b39dd42145cefc87ebd12f3d633.svg",
+          "dataFormat": "svg",
+          "rotationCenterX": 90.00030999999998,
+          "rotationCenterY": 22.38948531357346
+        },
+        {
+          "assetId": "49b51ed597867f9d57ec9189c7460d01",
+          "name": "Corner Store",
+          "bitmapResolution": 1,
+          "md5ext": "49b51ed597867f9d57ec9189c7460d01.svg",
+          "dataFormat": "svg",
+          "rotationCenterX": 109.99592248520841,
+          "rotationCenterY": -30.072372105465803
+        },
+        {
+          "assetId": "21c0142a60ef3c231b3bfc8f1ea353c9",
+          "name": "Firestation",
+          "bitmapResolution": 1,
+          "md5ext": "21c0142a60ef3c231b3bfc8f1ea353c9.svg",
+          "dataFormat": "svg",
+          "rotationCenterX": 89.99988406150541,
+          "rotationCenterY": 2.747785775588852
+        },
+        {
+          "assetId": "44441880efaab69c00b705ef2ab56bbb",
+          "name": "House",
+          "bitmapResolution": 1,
+          "md5ext": "44441880efaab69c00b705ef2ab56bbb.svg",
+          "dataFormat": "svg",
+          "rotationCenterX": 118.99985276168071,
+          "rotationCenterY": -15.224897651832094
+        },
+        {
+          "assetId": "e43984e9933800386a2b8fc10affa7ef",
+          "name": "Lighthouse",
+          "bitmapResolution": 1,
+          "md5ext": "e43984e9933800386a2b8fc10affa7ef.svg",
+          "dataFormat": "svg",
+          "rotationCenterX": 79.3748307654935,
+          "rotationCenterY": 25.59036214411887
+        },
+        {
+          "assetId": "41be2f0510ccb8921e050df5ec701bc2",
+          "name": "School",
+          "bitmapResolution": 1,
+          "md5ext": "41be2f0510ccb8921e050df5ec701bc2.svg",
+          "dataFormat": "svg",
+          "rotationCenterX": 84.54998999999992,
+          "rotationCenterY": 35.71185480371133
+        },
+        {
+          "assetId": "debb22886bce0cd794eee9b11aaa4b44",
+          "name": "Theatre",
+          "bitmapResolution": 1,
+          "md5ext": "debb22886bce0cd794eee9b11aaa4b44.svg",
+          "dataFormat": "svg",
+          "rotationCenterX": 99.4993,
+          "rotationCenterY": -21.219607568351478
+        },
+        {
+          "assetId": "a267329a9ae93e4671696c93089bffe9",
+          "name": "Windmill",
+          "bitmapResolution": 1,
+          "md5ext": "a267329a9ae93e4671696c93089bffe9.svg",
+          "dataFormat": "svg",
+          "rotationCenterX": 73.49987940088744,
+          "rotationCenterY": 14.134023232515347
+        },
+        {
+          "assetId": "69b064107998088c01eb77d3b2015184",
+          "name": "Building",
+          "bitmapResolution": 1,
+          "md5ext": "69b064107998088c01eb77d3b2015184.svg",
+          "dataFormat": "svg",
+          "rotationCenterX": 49.7000000000001,
+          "rotationCenterY": 16.599999999999994
+        },
+        {
+          "assetId": "6e9886bbd9114eb45420ec91a89712f8",
+          "name": "Trees",
+          "bitmapResolution": 1,
+          "md5ext": "6e9886bbd9114eb45420ec91a89712f8.svg",
+          "dataFormat": "svg",
+          "rotationCenterX": 165.5966033935547,
+          "rotationCenterY": -11.400001525878906
+        },
+        {
+          "assetId": "518ad2d5890194a09ae5164851da210d",
+          "name": "BarberSalon",
+          "bitmapResolution": 1,
+          "md5ext": "518ad2d5890194a09ae5164851da210d.svg",
+          "dataFormat": "svg",
+          "rotationCenterX": 87.50040000000001,
+          "rotationCenterY": -15.499600000000072
+        },
+        {
+          "assetId": "fd3d14491aa7faef348ed08cf08771ed",
+          "name": "Pillowfort",
+          "bitmapResolution": 1,
+          "md5ext": "fd3d14491aa7faef348ed08cf08771ed.svg",
+          "dataFormat": "svg",
+          "rotationCenterX": 87.63141558150753,
+          "rotationCenterY": -9.461708684446648
+        },
+        {
+          "assetId": "fb090a6ccfdd2f58867cfff0d7972b25",
+          "name": "explosion",
+          "bitmapResolution": 1,
+          "md5ext": "fb090a6ccfdd2f58867cfff0d7972b25.svg",
+          "dataFormat": "svg",
+          "rotationCenterX": 160.60505507001926,
+          "rotationCenterY": 129.14392929680116
+        }
+      ],
+      "sounds": [
+        {
+          "assetId": "2939de70fcafc7b7a3f53a1c20f15291",
+          "name": "recording1",
+          "dataFormat": "wav",
+          "format": "",
+          "rate": 48000,
+          "sampleCount": 79694,
+          "md5ext": "2939de70fcafc7b7a3f53a1c20f15291.wav"
+        }
+      ],
+      "volume": 100,
+      "layerOrder": 2,
+      "visible": true,
+      "x": 148,
+      "y": -3,
+      "size": 100,
+      "direction": 90,
+      "draggable": false,
+      "rotationStyle": "all around"
+    },
+    {
+      "isStage": false,
+      "name": "Objects",
+      "variables": {},
+      "lists": {},
+      "broadcasts": {},
+      "blocks": {},
+      "comments": {
+        "~n0NVTNQKI#nKVwDLCBP": {
+          "blockId": "wnE!F]83-4rKUq==xizv",
+          "x": 257.4799690246582,
+          "y": 101,
+          "width": 272.59259033203125,
+          "height": 106.66667175292969,
+          "minimized": false,
+          "text": "Delete from Starter Project and just hide by itself"
+        }
+      },
+      "currentCostume": 0,
+      "costumes": [
+        {
+          "assetId": "551629f2a64c1f3703e57aaa133effa6",
+          "name": "Star",
+          "bitmapResolution": 1,
+          "md5ext": "551629f2a64c1f3703e57aaa133effa6.svg",
+          "dataFormat": "svg",
+          "rotationCenterX": 22,
+          "rotationCenterY": 23
+        },
+        {
+          "assetId": "bf32f151fb55c34ac92cf420f6d9a19f",
+          "name": "Clouds",
+          "bitmapResolution": 1,
+          "md5ext": "bf32f151fb55c34ac92cf420f6d9a19f.svg",
+          "dataFormat": "svg",
+          "rotationCenterX": 91.50003021883217,
+          "rotationCenterY": 42.499914371864634
+        },
+        {
+          "assetId": "db46d16f1a1cca7172684d77bd9b5bec",
+          "name": "Hot Air Balloon",
+          "bitmapResolution": 1,
+          "md5ext": "db46d16f1a1cca7172684d77bd9b5bec.svg",
+          "dataFormat": "svg",
+          "rotationCenterX": 40.85673342698345,
+          "rotationCenterY": 44.455490528490685
+        },
+        {
+          "assetId": "7facc2df9992a9271a71418033bd7960",
+          "name": "Lightning Bolt",
+          "bitmapResolution": 1,
+          "md5ext": "7facc2df9992a9271a71418033bd7960.svg",
+          "dataFormat": "svg",
+          "rotationCenterX": 85.4564593620797,
+          "rotationCenterY": 46.50007733395918
+        },
+        {
+          "assetId": "62c08eca899f437803430306137fcc63",
+          "name": "Plane",
+          "bitmapResolution": 1,
+          "md5ext": "62c08eca899f437803430306137fcc63.svg",
+          "dataFormat": "svg",
+          "rotationCenterX": 107.00012394517111,
+          "rotationCenterY": 44.16617366650013
+        },
+        {
+          "assetId": "f84b38788c0c796bb83396b6b78605ee",
+          "name": "Planet",
+          "bitmapResolution": 1,
+          "md5ext": "f84b38788c0c796bb83396b6b78605ee.svg",
+          "dataFormat": "svg",
+          "rotationCenterX": 72,
+          "rotationCenterY": 72
+        },
+        {
+          "assetId": "3abfc584e9e6c3e0ec5112fa25b73b1d",
+          "name": "Donut",
+          "bitmapResolution": 1,
+          "md5ext": "3abfc584e9e6c3e0ec5112fa25b73b1d.svg",
+          "dataFormat": "svg",
+          "rotationCenterX": 73,
+          "rotationCenterY": 15
+        },
+        {
+          "assetId": "a416dc84b94b079435ad79cfd48706ce",
+          "name": "Bird",
+          "bitmapResolution": 1,
+          "md5ext": "a416dc84b94b079435ad79cfd48706ce.svg",
+          "dataFormat": "svg",
+          "rotationCenterX": 53.8449504101994,
+          "rotationCenterY": 41.48638967143319
+        },
+        {
+          "assetId": "6f1a832f96cbd700e1c104bd74000e4e",
+          "name": "Kite",
+          "bitmapResolution": 1,
+          "md5ext": "6f1a832f96cbd700e1c104bd74000e4e.svg",
+          "dataFormat": "svg",
+          "rotationCenterX": 71.4998,
+          "rotationCenterY": 42.00040000000001
+        }
+      ],
+      "sounds": [
+        {
+          "assetId": "32514c51e03db680e9c63857b840ae78",
+          "name": "collect",
+          "dataFormat": "wav",
+          "format": "adpcm",
+          "rate": 22050,
+          "sampleCount": 14225,
+          "md5ext": "32514c51e03db680e9c63857b840ae78.wav"
+        }
+      ],
+      "volume": 100,
+      "layerOrder": 1,
+      "visible": false,
+      "x": 184,
+      "y": 129,
+      "size": 100,
+      "direction": 90,
+      "draggable": false,
+      "rotationStyle": "all around"
+    },
+    {
+      "isStage": false,
+      "name": "https___dynaimage",
+      "variables": {},
+      "lists": {},
+      "broadcasts": {},
+      "blocks": {
+        "an$ksu3Q_O5Ly/}x?6Q[": {
+          "opcode": "event_whenflagclicked",
+          "next": "4Atc3e3h:!a+oh[(db)2",
+          "parent": null,
+          "inputs": {},
+          "fields": {},
+          "shadow": false,
+          "topLevel": true,
+          "x": 139,
+          "y": 19
+        },
+        "4Atc3e3h:!a+oh[(db)2": {
+          "opcode": "motion_gotoxy",
+          "next": "-QYEI.Dy;mbP}#-GtwVs",
+          "parent": "an$ksu3Q_O5Ly/}x?6Q[",
+          "inputs": {
+            "X": [
+              1,
+              [
+                4,
+                "-120"
+              ]
+            ],
+            "Y": [
+              1,
+              [
+                4,
+                "70"
+              ]
+            ]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "m|j{s_TVxDT!_0G20I(1": {
+          "opcode": "control_repeat",
+          "next": "#_/fIF!Lr%=(8{`es#?!",
+          "parent": "-QYEI.Dy;mbP}#-GtwVs",
+          "inputs": {
+            "TIMES": [
+              1,
+              [
+                6,
+                "10"
+              ]
+            ],
+            "SUBSTACK": [
+              2,
+              "RR7h*^?Z]C87y[;2;j[R"
+            ]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "RR7h*^?Z]C87y[;2;j[R": {
+          "opcode": "control_wait",
+          "next": "A{|F=,l-[OF$D4)2W01.",
+          "parent": "m|j{s_TVxDT!_0G20I(1",
+          "inputs": {
+            "DURATION": [
+              1,
+              [
+                5,
+                "0.1"
+              ]
+            ]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "A{|F=,l-[OF$D4)2W01.": {
+          "opcode": "motion_turnright",
+          "next": null,
+          "parent": "RR7h*^?Z]C87y[;2;j[R",
+          "inputs": {
+            "DEGREES": [
+              1,
+              [
+                4,
+                "135"
+              ]
+            ]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "Mfo`/q.^va~{Wb9yn.)j": {
+          "opcode": "event_whenflagclicked",
+          "next": "2Yb%Z^OqC}SDu`bx]4$v",
+          "parent": null,
+          "inputs": {},
+          "fields": {},
+          "shadow": false,
+          "topLevel": true,
+          "x": 409,
+          "y": 453
+        },
+        "2Yb%Z^OqC}SDu`bx]4$v": {
+          "opcode": "control_forever",
+          "next": null,
+          "parent": "Mfo`/q.^va~{Wb9yn.)j",
+          "inputs": {
+            "SUBSTACK": [
+              2,
+              "YR1%*t-8S0#.hT/*ahou"
+            ]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "YR1%*t-8S0#.hT/*ahou": {
+          "opcode": "looks_setsizeto",
+          "next": null,
+          "parent": "2Yb%Z^OqC}SDu`bx]4$v",
+          "inputs": {
+            "SIZE": [
+              1,
+              [
+                4,
+                "50"
+              ]
+            ]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "+s9{_]$15Jc*R*bdm{1;": {
+          "opcode": "motion_glidesecstoxy",
+          "next": null,
+          "parent": "#_/fIF!Lr%=(8{`es#?!",
+          "inputs": {
+            "SECS": [
+              1,
+              [
+                4,
+                "1"
+              ]
+            ],
+            "X": [
+              1,
+              [
+                4,
+                "140"
+              ]
+            ],
+            "Y": [
+              1,
+              [
+                4,
+                "-50"
+              ]
+            ]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "-QYEI.Dy;mbP}#-GtwVs": {
+          "opcode": "motion_pointindirection",
+          "next": "m|j{s_TVxDT!_0G20I(1",
+          "parent": "4Atc3e3h:!a+oh[(db)2",
+          "inputs": {
+            "DIRECTION": [
+              1,
+              [
+                8,
+                "90"
+              ]
+            ]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "#_/fIF!Lr%=(8{`es#?!": {
+          "opcode": "sound_playuntildone",
+          "next": "+s9{_]$15Jc*R*bdm{1;",
+          "parent": "m|j{s_TVxDT!_0G20I(1",
+          "inputs": {
+            "SOUND_MENU": [
+              1,
+              ",9gTQYDcNZf56wqB2,Mu"
+            ]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        ",9gTQYDcNZf56wqB2,Mu": {
+          "opcode": "sound_sounds_menu",
+          "next": null,
+          "parent": "#_/fIF!Lr%=(8{`es#?!",
+          "inputs": {},
+          "fields": {
+            "SOUND_MENU": [
+              "recording1",
+              null
+            ]
+          },
+          "shadow": true,
+          "topLevel": false
+        },
+        "?`rncHmjBTSZac}o=|XF": {
+          "opcode": "control_if",
+          "next": null,
+          "parent": "/eS~E;}?T`k,9NawXZ2y",
+          "inputs": {
+            "CONDITION": [
+              2,
+              "4~64q3o~2@d~VPybJ1,."
+            ],
+            "SUBSTACK": [
+              2,
+              "a.XrkFI?e=Iy)Y,.M.Ap"
+            ]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "/eS~E;}?T`k,9NawXZ2y": {
+          "opcode": "event_whenflagclicked",
+          "next": "?`rncHmjBTSZac}o=|XF",
+          "parent": null,
+          "inputs": {},
+          "fields": {},
+          "shadow": false,
+          "topLevel": true,
+          "x": 22,
+          "y": 487
+        },
+        "4~64q3o~2@d~VPybJ1,.": {
+          "opcode": "sensing_touchingobject",
+          "next": null,
+          "parent": "?`rncHmjBTSZac}o=|XF",
+          "inputs": {
+            "TOUCHINGOBJECTMENU": [
+              1,
+              "AV1_5kGaExaR/86GX]q["
+            ]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "AV1_5kGaExaR/86GX]q[": {
+          "opcode": "sensing_touchingobjectmenu",
+          "next": null,
+          "parent": "4~64q3o~2@d~VPybJ1,.",
+          "inputs": {},
+          "fields": {
+            "TOUCHINGOBJECTMENU": [
+              "Buildings",
+              null
+            ]
+          },
+          "shadow": true,
+          "topLevel": false
+        },
+        "a.XrkFI?e=Iy)Y,.M.Ap": {
+          "opcode": "looks_hide",
+          "next": null,
+          "parent": "?`rncHmjBTSZac}o=|XF",
+          "inputs": {},
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        }
+      },
+      "comments": {},
+      "currentCostume": 0,
+      "costumes": [
+        {
+          "assetId": "657b305d868f4642a2156f74c9230d63",
+          "name": "https___dynaimage",
+          "bitmapResolution": 2,
+          "md5ext": "657b305d868f4642a2156f74c9230d63.png",
+          "dataFormat": "png",
+          "rotationCenterX": 216,
+          "rotationCenterY": 330
+        }
+      ],
+      "sounds": [
+        {
+          "assetId": "7bda70ae695ad0c5e6b4e03705659c00",
+          "name": "recording1",
+          "dataFormat": "wav",
+          "format": "",
+          "rate": 48000,
+          "sampleCount": 149545,
+          "md5ext": "7bda70ae695ad0c5e6b4e03705659c00.wav"
+        },
+        {
+          "assetId": "3beffe8479c3a3a9f3f5c0ef0a0fe13b",
+          "name": "recording2",
+          "dataFormat": "wav",
+          "format": "",
+          "rate": 48000,
+          "sampleCount": 89614,
+          "md5ext": "3beffe8479c3a3a9f3f5c0ef0a0fe13b.wav"
+        }
+      ],
+      "volume": 100,
+      "layerOrder": 3,
+      "visible": true,
+      "x": 140,
+      "y": -50,
+      "size": 50,
+      "direction": 0,
+      "draggable": false,
+      "rotationStyle": "all around"
+    }
+  ],
+  "monitors": [],
+  "extensions": [],
+  "meta": {
+    "semver": "3.0.0",
+    "vm": "0.2.0-prerelease.20191119203901",
+    "agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.88 Safari/537.36"
+  }
+}

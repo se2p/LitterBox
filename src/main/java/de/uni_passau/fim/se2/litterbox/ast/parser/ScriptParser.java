@@ -51,7 +51,7 @@ public class ScriptParser {
      *
      * @param blockID of the first block in this script
      * @param blocks  all blocks in the {@link ActorDefinition} of this
-     * {@link de.uni_passau.fim.se2.litterbox.ast.model.Script}
+     *                {@link de.uni_passau.fim.se2.litterbox.ast.model.Script}
      * @return Script that was parsed
      */
     public static Script parse(String blockID, JsonNode blocks) throws ParsingException {

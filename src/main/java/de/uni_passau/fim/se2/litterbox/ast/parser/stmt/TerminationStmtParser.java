@@ -48,12 +48,12 @@ public class TerminationStmtParser {
 
         final TerminationStmtOpcode opcode = TerminationStmtOpcode.valueOf(opCodeString);
         switch (opcode) {
-            case control_stop:
-                return parseControlStop(current);
-            case control_delete_this_clone:
-                return new DeleteClone();
-            default:
-                throw new RuntimeException("Not implemented yet for opcode " + opcode);
+        case control_stop:
+            return parseControlStop(current);
+        case control_delete_this_clone:
+            return new DeleteClone();
+        default:
+            throw new RuntimeException("Not implemented yet for opcode " + opcode);
         }
     }
 

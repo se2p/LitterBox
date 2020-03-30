@@ -76,7 +76,7 @@ public class BoolExprParser {
 
         int shadowIndicator = ExpressionParser.getShadowIndicator(exprArray);
         if (shadowIndicator == INPUT_SAME_BLOCK_SHADOW
-        || (shadowIndicator == INPUT_BLOCK_NO_SHADOW && !(exprArray.get(POS_BLOCK_ID) instanceof TextNode))) {
+                || (shadowIndicator == INPUT_BLOCK_NO_SHADOW && !(exprArray.get(POS_BLOCK_ID) instanceof TextNode))) {
             try {
                 return parseBool(block.get(INPUTS_KEY), inputName);
             } catch (ParsingException e) {
@@ -102,7 +102,7 @@ public class BoolExprParser {
         ArrayNode exprArray = ExpressionParser.getExprArrayAtPos(block.get(INPUTS_KEY), pos);
         int shadowIndicator = ExpressionParser.getShadowIndicator(exprArray);
         if (shadowIndicator == INPUT_SAME_BLOCK_SHADOW
-        || (shadowIndicator == INPUT_BLOCK_NO_SHADOW && !(exprArray.get(POS_BLOCK_ID) instanceof TextNode))) {
+                || (shadowIndicator == INPUT_BLOCK_NO_SHADOW && !(exprArray.get(POS_BLOCK_ID) instanceof TextNode))) {
             try {
                 return parseBool(block.get(INPUTS_KEY), pos);
             } catch (ParsingException e) {

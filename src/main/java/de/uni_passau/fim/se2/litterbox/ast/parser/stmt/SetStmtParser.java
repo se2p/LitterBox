@@ -53,22 +53,22 @@ public class SetStmtParser {
         final SetStmtOpcode opcode = SetStmtOpcode.valueOf(opcodeString);
 
         switch (opcode) {
-            case data_setvariableto:
-                return parseSetVariable(current, allBlocks);
-            case sensing_setdragmode:
-                return parseSetDragmode(current);
-            case motion_setrotationstyle:
-                return parseSetRotationStyle(current);
-            case looks_seteffectto:
-                return parseSetLookEffect(current, allBlocks);
-            case sound_seteffectto:
-                return parseSetSoundEffect(current, allBlocks);
-            case sound_setvolumeto:
-                return parseSetVolumeTo(current, allBlocks);
-            case pen_setPenSizeTo:
-                return parseSetPenSizeTo(current, allBlocks);
-            default:
-                throw new RuntimeException("Not Implemented yet");
+        case data_setvariableto:
+            return parseSetVariable(current, allBlocks);
+        case sensing_setdragmode:
+            return parseSetDragmode(current);
+        case motion_setrotationstyle:
+            return parseSetRotationStyle(current);
+        case looks_seteffectto:
+            return parseSetLookEffect(current, allBlocks);
+        case sound_seteffectto:
+            return parseSetSoundEffect(current, allBlocks);
+        case sound_setvolumeto:
+            return parseSetVolumeTo(current, allBlocks);
+        case pen_setPenSizeTo:
+            return parseSetPenSizeTo(current, allBlocks);
+        default:
+            throw new RuntimeException("Not Implemented yet");
         }
     }
 

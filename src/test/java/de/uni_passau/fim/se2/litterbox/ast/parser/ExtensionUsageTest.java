@@ -32,19 +32,20 @@ import static junit.framework.TestCase.fail;
 
 public class ExtensionUsageTest {
 
-        private static JsonNode project;
+    private static JsonNode project;
 
-        @BeforeAll
-        public static void setup() {
-            String path = "src/test/fixtures/testExtension.json";
-            File file = new File(path);
-            ObjectMapper objectMapper = new ObjectMapper();
-            try {
-                project = objectMapper.readTree(file);
-            } catch (IOException e) {
-                fail();
-            }
+    @BeforeAll
+    public static void setup() {
+        String path = "src/test/fixtures/testExtension.json";
+        File file = new File(path);
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            project = objectMapper.readTree(file);
+        } catch (IOException e) {
+            fail();
         }
+    }
+
     @Test
     public void testContains() throws ParsingException {
         Program program = ProgramParser.parseProgram("Extension", project);

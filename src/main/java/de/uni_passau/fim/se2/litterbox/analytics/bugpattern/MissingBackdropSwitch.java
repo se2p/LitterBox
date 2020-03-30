@@ -118,7 +118,7 @@ public class MissingBackdropSwitch implements IssueFinder, ScratchVisitor {
             if (((WithId) msgName).getStringExpr() instanceof StringLiteral) {
                 switched.add(new Pair(actorName, ((StringLiteral) ((WithId) msgName).getStringExpr()).getText()));
             }
-            if(((WithId) msgName).getStringExpr() instanceof AsString) {
+            if (((WithId) msgName).getStringExpr() instanceof AsString) {
                 AsString expr = (AsString) ((WithId) msgName).getStringExpr();
                 if (expr.getOperand1() instanceof StrId) {
                     switched.add(new Pair(actorName, ((StrId) expr.getOperand1()).getName()));
@@ -143,7 +143,7 @@ public class MissingBackdropSwitch implements IssueFinder, ScratchVisitor {
             if (((WithId) msgName).getStringExpr() instanceof StrId) {
                 switched.add(new Pair(actorName, ((StrId) ((WithId) msgName).getStringExpr()).getName()));
             }
-            if(((WithId) msgName).getStringExpr() instanceof AsString) {
+            if (((WithId) msgName).getStringExpr() instanceof AsString) {
                 AsString expr = (AsString) ((WithId) msgName).getStringExpr();
                 if (expr.getOperand1() instanceof StrId) {
                     switched.add(new Pair(actorName, ((StrId) expr.getOperand1()).getName()));

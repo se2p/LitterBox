@@ -57,22 +57,22 @@ public class ActorSoundStmtParser {
         ElementChoice elementChoice;
         final ActorSoundStmtOpcode opcode = ActorSoundStmtOpcode.valueOf(opCodeString);
         switch (opcode) {
-            case sound_playuntildone:
-                elementChoice = getSoundElement(current, allBlocks);
-                return new PlaySoundUntilDone(elementChoice);
+        case sound_playuntildone:
+            elementChoice = getSoundElement(current, allBlocks);
+            return new PlaySoundUntilDone(elementChoice);
 
-            case sound_play:
-                elementChoice = getSoundElement(current, allBlocks);
-                return new StartSound(elementChoice);
+        case sound_play:
+            elementChoice = getSoundElement(current, allBlocks);
+            return new StartSound(elementChoice);
 
-            case sound_cleareffects:
-                return new ClearSoundEffects();
+        case sound_cleareffects:
+            return new ClearSoundEffects();
 
-            case sound_stopallsounds:
-                return new StopAllSounds();
+        case sound_stopallsounds:
+            return new StopAllSounds();
 
-            default:
-                throw new RuntimeException("Not implemented yet for opcode " + opCodeString);
+        default:
+            throw new RuntimeException("Not implemented yet for opcode " + opCodeString);
         }
     }
 

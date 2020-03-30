@@ -86,14 +86,14 @@ public class ElementChoiceParser {
 
         StandardElemChoice standardElemChoice = StandardElemChoice.valueOf(elemKey);
         switch (standardElemChoice) {
-            case random:
-                return new Random();
-            case next:
-                return new Next();
-            case previous:
-                return new Prev();
-            default:
-                throw new RuntimeException("No implementation for " + standardElemChoice);
+        case random:
+            return new Random();
+        case next:
+            return new Next();
+        case previous:
+            return new Prev();
+        default:
+            throw new RuntimeException("No implementation for " + standardElemChoice);
         }
     }
 

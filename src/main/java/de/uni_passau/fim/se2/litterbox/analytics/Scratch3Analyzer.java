@@ -128,21 +128,21 @@ public class Scratch3Analyzer {
         heads.add("project");
         String[] detectors;
         switch (dtctrs) {
-            case ALL:
-                detectors = iT.getAllFinder().keySet().toArray(new String[0]);
-                break;
-            case BUGS:
-                detectors = iT.getBugFinder().keySet().toArray(new String[0]);
-                break;
-            case SMELLS:
-                detectors = iT.getSmellFinder().keySet().toArray(new String[0]);
-                break;
-            case CTSCORE:
-                detectors = iT.getCTScoreFinder().keySet().toArray(new String[0]);
-                break;
-            default:
-                detectors = dtctrs.split(",");
-                break;
+        case ALL:
+            detectors = iT.getAllFinder().keySet().toArray(new String[0]);
+            break;
+        case BUGS:
+            detectors = iT.getBugFinder().keySet().toArray(new String[0]);
+            break;
+        case SMELLS:
+            detectors = iT.getSmellFinder().keySet().toArray(new String[0]);
+            break;
+        case CTSCORE:
+            detectors = iT.getCTScoreFinder().keySet().toArray(new String[0]);
+            break;
+        default:
+            detectors = dtctrs.split(",");
+            break;
         }
         for (String s : detectors) {
             if (iT.getAllFinder().containsKey(s)) {

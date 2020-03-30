@@ -63,40 +63,40 @@ public class SpriteLookStmtParser {
         NumExpr numExpr;
 
         switch (opcode) {
-            case looks_show:
-                return new Show();
-            case looks_hide:
-                return new Hide();
-            case looks_sayforsecs:
-                stringExpr = StringExprParser.parseStringExpr(current, 0, allBlocks);
-                numExpr = NumExprParser.parseNumExpr(current, 1, allBlocks);
-                return new SayForSecs(stringExpr, numExpr);
-            case looks_say:
-                stringExpr = StringExprParser.parseStringExpr(current, 0, allBlocks);
-                return new Say(stringExpr);
-            case looks_thinkforsecs:
-                stringExpr = StringExprParser.parseStringExpr(current, 0, allBlocks);
-                numExpr = NumExprParser.parseNumExpr(current, 1, allBlocks);
-                return new ThinkForSecs(stringExpr, numExpr);
-            case looks_think:
-                stringExpr = StringExprParser.parseStringExpr(current, 0, allBlocks);
-                return new Think(stringExpr);
-            case looks_nextcostume:
-            case looks_switchcostumeto:
-                ElementChoice choice = ElementChoiceParser.parse(current, allBlocks);
-                return new SwitchCostumeTo(choice);
-            case looks_changesizeby:
-                numExpr = NumExprParser.parseNumExpr(current, 0, allBlocks);
-                return new ChangeSizeBy(numExpr);
-            case looks_setsizeto:
-                numExpr = NumExprParser.parseNumExpr(current, 0, allBlocks);
-                return new SetSizeTo(numExpr);
-            case looks_gotofrontback:
-                return parseGoToLayer(current, allBlocks);
-            case looks_goforwardbackwardlayers:
-                return parseGoForwardBackwardLayer(current, allBlocks);
-            default:
-                throw new RuntimeException("Not implemented for opcode " + opcodeString);
+        case looks_show:
+            return new Show();
+        case looks_hide:
+            return new Hide();
+        case looks_sayforsecs:
+            stringExpr = StringExprParser.parseStringExpr(current, 0, allBlocks);
+            numExpr = NumExprParser.parseNumExpr(current, 1, allBlocks);
+            return new SayForSecs(stringExpr, numExpr);
+        case looks_say:
+            stringExpr = StringExprParser.parseStringExpr(current, 0, allBlocks);
+            return new Say(stringExpr);
+        case looks_thinkforsecs:
+            stringExpr = StringExprParser.parseStringExpr(current, 0, allBlocks);
+            numExpr = NumExprParser.parseNumExpr(current, 1, allBlocks);
+            return new ThinkForSecs(stringExpr, numExpr);
+        case looks_think:
+            stringExpr = StringExprParser.parseStringExpr(current, 0, allBlocks);
+            return new Think(stringExpr);
+        case looks_nextcostume:
+        case looks_switchcostumeto:
+            ElementChoice choice = ElementChoiceParser.parse(current, allBlocks);
+            return new SwitchCostumeTo(choice);
+        case looks_changesizeby:
+            numExpr = NumExprParser.parseNumExpr(current, 0, allBlocks);
+            return new ChangeSizeBy(numExpr);
+        case looks_setsizeto:
+            numExpr = NumExprParser.parseNumExpr(current, 0, allBlocks);
+            return new SetSizeTo(numExpr);
+        case looks_gotofrontback:
+            return parseGoToLayer(current, allBlocks);
+        case looks_goforwardbackwardlayers:
+            return parseGoForwardBackwardLayer(current, allBlocks);
+        default:
+            throw new RuntimeException("Not implemented for opcode " + opcodeString);
         }
     }
 

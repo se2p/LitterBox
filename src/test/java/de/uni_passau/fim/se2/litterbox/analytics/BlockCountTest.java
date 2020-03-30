@@ -36,7 +36,7 @@ public class BlockCountTest {
     private static Program withproc;
     private static Program fixedStatements;
     private static Program fixedExpressions;
-    private static Program  halfFixedExpr;
+    private static Program halfFixedExpr;
     private static ObjectMapper mapper = new ObjectMapper();
 
     @BeforeAll
@@ -94,7 +94,7 @@ public class BlockCountTest {
     @Test
     public void testHalfFixedExpr() {
         BlockCount parameterName = new BlockCount();
-        IssueReport report = parameterName.check( halfFixedExpr);
+        IssueReport report = parameterName.check(halfFixedExpr);
         Assertions.assertEquals(6, report.getCount());
     }
 }
