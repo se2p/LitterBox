@@ -104,3 +104,8 @@ The check() method must return a IssueReport with the issue name, count for the 
 the sprites of all issue occurrences and notes about the issue.
 Then, register the newly created IssueFinder in the IssueTool constructor ( finder.add(new NewFinder()) ).
 The finder name will automatically be added to the printed csv file.
+
+
+## Publications
+C. Frädrich, F. Obermüller, N. Körber, U. Heuer, and G. Fraser, “Common bugs in scratch programs,” in Proceedings of
+ the 25th Annual Conference on Innovation and Technology in Computer Science Education (ITiCSE), 2020, to appear.
