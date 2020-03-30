@@ -18,16 +18,61 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics;
 
-import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.*;
+import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.AmbiguousCustomBlockSignature;
+import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.AmbiguousParameterName;
+import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.CallWithoutDefinition;
+import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.ComparingLiterals;
+import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.CustomBlockWithForever;
+import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.CustomBlockWithTermination;
+import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.EndlessRecursion;
+import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.ExpressionAsTouchingOrColor;
+import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.ForeverInsideLoop;
+import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.IllegalParameterRefactor;
+import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.MessageNeverReceived;
+import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.MessageNeverSent;
+import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.MissingBackdropSwitch;
+import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.MissingCloneCall;
+import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.MissingCloneInitialization;
+import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.MissingEraseAll;
+import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.MissingLoopSensing;
+import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.MissingPenDown;
+import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.MissingPenUp;
+import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.MissingTerminationCondition;
+import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.MissingWaitUntilCondition;
+import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.NoWorkingScripts;
+import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.OrphanedParameter;
+import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.ParameterOutOfScope;
+import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.PositionEqualsCheck;
+import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.RecursiveCloning;
+import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.SameVariableDifferentSprite;
+import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.StutteringMovement;
 import de.uni_passau.fim.se2.litterbox.analytics.ctscore.FlowControl;
-import de.uni_passau.fim.se2.litterbox.analytics.smells.*;
-import de.uni_passau.fim.se2.litterbox.analytics.utils.*;
+import de.uni_passau.fim.se2.litterbox.analytics.smells.DeadCode;
+import de.uni_passau.fim.se2.litterbox.analytics.smells.EmptyControlBody;
+import de.uni_passau.fim.se2.litterbox.analytics.smells.EmptyCustomBlock;
+import de.uni_passau.fim.se2.litterbox.analytics.smells.EmptyProject;
+import de.uni_passau.fim.se2.litterbox.analytics.smells.EmptyScript;
+import de.uni_passau.fim.se2.litterbox.analytics.smells.EmptySprite;
+import de.uni_passau.fim.se2.litterbox.analytics.smells.LongScript;
+import de.uni_passau.fim.se2.litterbox.analytics.smells.NestedLoops;
+import de.uni_passau.fim.se2.litterbox.analytics.smells.UnusedCustomBlock;
+import de.uni_passau.fim.se2.litterbox.analytics.smells.UnusedVariable;
+import de.uni_passau.fim.se2.litterbox.analytics.utils.BlockCount;
+import de.uni_passau.fim.se2.litterbox.analytics.utils.ProcedureCount;
+import de.uni_passau.fim.se2.litterbox.analytics.utils.ProgramUsingPen;
+import de.uni_passau.fim.se2.litterbox.analytics.utils.SpriteCount;
+import de.uni_passau.fim.se2.litterbox.analytics.utils.WeightedMethodCount;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.utils.CSVWriter;
 import org.apache.commons.csv.CSVPrinter;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 import static de.uni_passau.fim.se2.litterbox.utils.GroupConstants.*;
 

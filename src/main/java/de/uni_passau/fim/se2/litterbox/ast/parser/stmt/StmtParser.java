@@ -23,7 +23,20 @@ import de.uni_passau.fim.se2.litterbox.ast.Constants;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.UnspecifiedStmt;
-import de.uni_passau.fim.se2.litterbox.ast.opcodes.*;
+import de.uni_passau.fim.se2.litterbox.ast.opcodes.ActorLookStmtOpcode;
+import de.uni_passau.fim.se2.litterbox.ast.opcodes.ActorSoundStmtOpcode;
+import de.uni_passau.fim.se2.litterbox.ast.opcodes.BoolExprOpcode;
+import de.uni_passau.fim.se2.litterbox.ast.opcodes.CallStmtOpcode;
+import de.uni_passau.fim.se2.litterbox.ast.opcodes.CommonStmtOpcode;
+import de.uni_passau.fim.se2.litterbox.ast.opcodes.ControlStmtOpcode;
+import de.uni_passau.fim.se2.litterbox.ast.opcodes.ListStmtOpcode;
+import de.uni_passau.fim.se2.litterbox.ast.opcodes.NumExprOpcode;
+import de.uni_passau.fim.se2.litterbox.ast.opcodes.PenOpcode;
+import de.uni_passau.fim.se2.litterbox.ast.opcodes.SetStmtOpcode;
+import de.uni_passau.fim.se2.litterbox.ast.opcodes.SpriteLookStmtOpcode;
+import de.uni_passau.fim.se2.litterbox.ast.opcodes.SpriteMotionStmtOpcode;
+import de.uni_passau.fim.se2.litterbox.ast.opcodes.StringExprOpcode;
+import de.uni_passau.fim.se2.litterbox.ast.opcodes.TerminationStmtOpcode;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 public class StmtParser {
