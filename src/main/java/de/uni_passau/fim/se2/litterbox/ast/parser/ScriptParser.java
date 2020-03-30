@@ -96,14 +96,10 @@ public class ScriptParser {
 
                 Stmt stmt = StmtParser.parse(blockID, blocks);
                 list.add(stmt);
-            } catch (ParsingException | RuntimeException e) { // FIXME Runtime Exception is temporary for development
+            } catch (ParsingException e) {
                 // and needs to be removed
                 Logger.getGlobal().warning("Could not parse block with ID " + blockID + " and opcode "
                         + current.get(OPCODE_KEY));
-                // e.printStackTrace();
-                if (e instanceof NullPointerException) {
-                    throw e;
-                }
             }
             blockID = current.get(NEXT_KEY).asText();
             current = blocks.get(blockID);

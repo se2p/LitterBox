@@ -46,7 +46,6 @@ import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 public class ProcDefinitionParser {
 
     private final static String CUSTOM_BLOCK_KEY = "custom_block";
-    private final static String ARGUMENTNAMES_KEY = "argumentnames";
     private final static int PROTOTYPE_REFERENCE_POS = 1;
     private final static int PARAMETER_REFERENCE_POS = 1;
 

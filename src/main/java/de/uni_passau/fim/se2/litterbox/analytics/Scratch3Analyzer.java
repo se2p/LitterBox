@@ -195,7 +195,7 @@ public class Scratch3Analyzer {
         if ((FilenameUtils.getExtension(fileEntry.getPath())).toLowerCase().equals("json")) {
             try {
                 program = ProgramParser.parseProgram(fileEntry.getName(), mapper.readTree(fileEntry));
-            } catch (ParsingException | IOException e) {
+            } catch (ParsingException | IOException | RuntimeException e) {
                 e.printStackTrace();
             }
         } else {
@@ -207,7 +207,7 @@ public class Scratch3Analyzer {
                     return null;
                 }
                 program = ProgramParser.parseProgram(fileEntry.getName(), node);
-            } catch (ParsingException | IOException e) {
+            } catch (ParsingException | IOException | RuntimeException e) {
                 e.printStackTrace();
             }
         }

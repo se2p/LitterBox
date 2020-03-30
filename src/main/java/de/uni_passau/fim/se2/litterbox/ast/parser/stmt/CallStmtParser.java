@@ -19,6 +19,8 @@
 package de.uni_passau.fim.se2.litterbox.ast.parser.stmt;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import de.uni_passau.fim.se2.litterbox.ast.Constants;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
@@ -28,19 +30,42 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ExpressionParser;
+import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map.Entry;
 
-import static de.uni_passau.fim.se2.litterbox.ast.Constants.INPUTS_KEY;
+import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 
 public class CallStmtParser {
 
     public static Stmt parse(JsonNode current, JsonNode blocks) throws ParsingException {
         List<Expression> expressions = new ArrayList<>();
+        JsonNode argumentIds = current.get(MUTATION_KEY).get(ARGUMENTIDS_KEY);
+        ObjectMapper mapper = new ObjectMapper();
+
+        final JsonNode argumentsNode;
+        try {
+            argumentsNode = mapper.readTree(argumentIds.asText());
+        } catch (IOException e) {
+            throw new ParsingException("Could not read argument names of a procedure");
+        }
+
+        Preconditions.checkArgument(argumentsNode.isArray());
+        ArrayNode argumentsArray = (ArrayNode) argumentsNode;
+
         JsonNode inputNode = current.get(INPUTS_KEY);
-        for (int i = 0; i < inputNode.size(); i++) {
-            expressions.add(ExpressionParser.parseExpression(current, i, blocks));
+        Iterator<Entry<String, JsonNode>> entries = inputNode.fields();
+        int i = 0;
+        while (entries.hasNext()) {
+            Entry<String, JsonNode> currentEntry = entries.next();
+            if (argumentsArray.has(currentEntry.getKey())) {
+                expressions.add(ExpressionParser.parseExpression(current, i, blocks));
+            }
+            i++;
         }
 
         return new CallStmt(new StrId(current.get(Constants.MUTATION_KEY).get(Constants.PROCCODE_KEY).asText()),
