@@ -31,5 +31,4 @@ public class Div extends BinaryExpression<NumExpr, NumExpr> implements NumExpr {
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);
     }
-
 }

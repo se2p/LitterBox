@@ -53,5 +53,4 @@ public class IfElseStmt extends AbstractNode implements IfStmt {
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);
     }
-
 }

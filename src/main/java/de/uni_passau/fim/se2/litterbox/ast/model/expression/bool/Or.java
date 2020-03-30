@@ -31,5 +31,4 @@ public class Or extends BinaryExpression<BoolExpr, BoolExpr> implements BoolExpr
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);
     }
-
 }

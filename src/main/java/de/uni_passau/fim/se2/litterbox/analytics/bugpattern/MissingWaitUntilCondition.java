@@ -60,7 +60,6 @@ public class MissingWaitUntilCondition implements IssueFinder {
         return NAME;
     }
 
-
     private static class CheckVisitor implements ScratchVisitor {
 
         private int count = 0;

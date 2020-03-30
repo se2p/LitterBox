@@ -22,7 +22,11 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import de.uni_passau.fim.se2.litterbox.ast.Constants;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
-import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.ElementChoice;
+import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.Next;
+import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.Prev;
+import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.Random;
+import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.WithId;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.StrId;
@@ -82,14 +86,14 @@ public class ElementChoiceParser {
 
         StandardElemChoice standardElemChoice = StandardElemChoice.valueOf(elemKey);
         switch (standardElemChoice) {
-            case random:
-                return new Random();
-            case next:
-                return new Next();
-            case previous:
-                return new Prev();
-            default:
-                throw new RuntimeException("No implementation for " + standardElemChoice);
+        case random:
+            return new Random();
+        case next:
+            return new Next();
+        case previous:
+            return new Prev();
+        default:
+            throw new RuntimeException("No implementation for " + standardElemChoice);
         }
     }
 

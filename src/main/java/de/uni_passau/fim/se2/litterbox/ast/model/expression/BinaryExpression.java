@@ -39,5 +39,4 @@ public abstract class BinaryExpression<A extends ASTNode, B extends ASTNode> ext
     public B getOperand2() {
         return operand2;
     }
-
 }

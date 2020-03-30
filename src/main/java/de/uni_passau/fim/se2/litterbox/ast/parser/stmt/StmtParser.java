@@ -23,7 +23,20 @@ import de.uni_passau.fim.se2.litterbox.ast.Constants;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.UnspecifiedStmt;
-import de.uni_passau.fim.se2.litterbox.ast.opcodes.*;
+import de.uni_passau.fim.se2.litterbox.ast.opcodes.ActorLookStmtOpcode;
+import de.uni_passau.fim.se2.litterbox.ast.opcodes.ActorSoundStmtOpcode;
+import de.uni_passau.fim.se2.litterbox.ast.opcodes.BoolExprOpcode;
+import de.uni_passau.fim.se2.litterbox.ast.opcodes.CallStmtOpcode;
+import de.uni_passau.fim.se2.litterbox.ast.opcodes.CommonStmtOpcode;
+import de.uni_passau.fim.se2.litterbox.ast.opcodes.ControlStmtOpcode;
+import de.uni_passau.fim.se2.litterbox.ast.opcodes.ListStmtOpcode;
+import de.uni_passau.fim.se2.litterbox.ast.opcodes.NumExprOpcode;
+import de.uni_passau.fim.se2.litterbox.ast.opcodes.PenOpcode;
+import de.uni_passau.fim.se2.litterbox.ast.opcodes.SetStmtOpcode;
+import de.uni_passau.fim.se2.litterbox.ast.opcodes.SpriteLookStmtOpcode;
+import de.uni_passau.fim.se2.litterbox.ast.opcodes.SpriteMotionStmtOpcode;
+import de.uni_passau.fim.se2.litterbox.ast.opcodes.StringExprOpcode;
+import de.uni_passau.fim.se2.litterbox.ast.opcodes.TerminationStmtOpcode;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 public class StmtParser {
@@ -48,32 +61,23 @@ public class StmtParser {
 
         if (ActorLookStmtOpcode.contains(opcode)) {
             return ActorLookStmtParser.parse(current, blocks);
-
         } else if (ControlStmtOpcode.contains(opcode)) {
             return ControlStmtParser.parse(current, blocks);
-
         } else if (BoolExprOpcode.contains(opcode) || NumExprOpcode.contains(opcode) || StringExprOpcode
                 .contains(opcode)) {
             return ExpressionStmtParser.parse(current, blocks);
-
         } else if (CommonStmtOpcode.contains(opcode)) {
             return CommonStmtParser.parse(current, blocks);
-
         } else if (SpriteMotionStmtOpcode.contains(opcode)) {
             return SpriteMotionStmtParser.parse(current, blocks);
-
         } else if (SpriteLookStmtOpcode.contains(opcode)) {
             return SpriteLookStmtParser.parse(current, blocks);
-
         } else if (ActorSoundStmtOpcode.contains(opcode)) {
             return ActorSoundStmtParser.parse(current, blocks);
-
         } else if (CallStmtOpcode.contains(opcode)) {
             return CallStmtParser.parse(current, blocks);
-
         } else if (ListStmtOpcode.contains(opcode)) {
             return ListStmtParser.parse(current, blocks);
-
         } else if (SetStmtOpcode.contains(opcode)) {
             return SetStmtParser.parse(current, blocks);
         } else if (PenOpcode.contains(opcode)) {

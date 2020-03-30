@@ -47,6 +47,4 @@ public class ChangeVariableBy extends AbstractNode implements CommonStmt {
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);
     }
-
-
 }

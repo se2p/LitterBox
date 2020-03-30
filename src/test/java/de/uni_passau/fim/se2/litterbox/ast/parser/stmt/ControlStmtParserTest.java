@@ -18,9 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.parser.stmt;
 
-import static junit.framework.TestCase.fail;
-
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.truth.Truth;
@@ -30,13 +27,20 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinitionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfElseStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatTimesStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
+
+import static junit.framework.TestCase.fail;
 
 public class ControlStmtParserTest {
 
@@ -81,11 +85,9 @@ public class ControlStmtParserTest {
             Truth.assertThat(listOfStmt.get(2).getClass()).isEqualTo(RepeatTimesStmt.class);
             Truth.assertThat(listOfStmt.get(3).getClass()).isEqualTo(UntilStmt.class);
             Truth.assertThat(listOfStmt.get(4).getClass()).isEqualTo(RepeatForeverStmt.class);
-
         } catch (ParsingException e) {
             e.printStackTrace();
             fail();
         }
     }
-
 }

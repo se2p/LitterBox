@@ -35,5 +35,4 @@ public interface IssueFinder {
     IssueReport check(Program program);
 
     String getName();
-
 }

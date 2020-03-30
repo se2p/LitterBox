@@ -31,5 +31,4 @@ public class UnspecifiedExpression extends AbstractNode implements Expression {
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);
     }
-
 }

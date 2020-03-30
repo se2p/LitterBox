@@ -18,9 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.parser;
 
-import static junit.framework.TestCase.fail;
-
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.truth.Truth;
@@ -31,13 +28,16 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.ColorTouches;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Touching;
-import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.FromNumber;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.ColorLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.ExpressionStmt;
-import java.io.File;
-import java.io.IOException;
+import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.FromNumber;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+
+import java.io.File;
+import java.io.IOException;
+
+import static junit.framework.TestCase.fail;
 
 class ColorParserTest {
 
@@ -96,6 +96,5 @@ class ColorParserTest {
             e.printStackTrace();
             fail();
         }
-
     }
 }

@@ -23,7 +23,12 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.list.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.list.AddTo;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.list.DeleteAllOf;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.list.DeleteOf;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.list.InsertAt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.list.ListStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.list.ReplaceItem;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.UnspecifiedId;
@@ -50,23 +55,23 @@ public class ListStmtParser {
         final ListStmtOpcode opcode = ListStmtOpcode.valueOf(opcodeString);
 
         switch (opcode) {
-            case data_replaceitemoflist:
-                return parseReplaceItemOfList(current, allBlocks);
+        case data_replaceitemoflist:
+            return parseReplaceItemOfList(current, allBlocks);
 
-            case data_insertatlist:
-                return parseInsertAtList(current, allBlocks);
+        case data_insertatlist:
+            return parseInsertAtList(current, allBlocks);
 
-            case data_deletealloflist:
-                return parseDeleteAllOfList(current);
+        case data_deletealloflist:
+            return parseDeleteAllOfList(current);
 
-            case data_deleteoflist:
-                return parseDeleteOfList(current, allBlocks);
+        case data_deleteoflist:
+            return parseDeleteOfList(current, allBlocks);
 
-            case data_addtolist:
-                return parseAddToList(current, allBlocks);
+        case data_addtolist:
+            return parseAddToList(current, allBlocks);
 
-            default:
-                throw new RuntimeException("Not Implemented yet");
+        default:
+            throw new RuntimeException("Not Implemented yet");
         }
     }
 

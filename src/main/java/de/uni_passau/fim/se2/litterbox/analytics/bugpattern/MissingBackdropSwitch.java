@@ -24,11 +24,13 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
+import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.ElementChoice;
+import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.Next;
+import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.Prev;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.Random;
-import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.WithId;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.BackdropSwitchTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.SwitchBackdrop;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.SwitchBackdropAndWait;
@@ -36,7 +38,12 @@ import de.uni_passau.fim.se2.litterbox.ast.model.variable.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 
 /**
  * If the When backdrop switches to event handler is used to start a script and the backdrop never switches
@@ -111,7 +118,7 @@ public class MissingBackdropSwitch implements IssueFinder, ScratchVisitor {
             if (((WithId) msgName).getStringExpr() instanceof StringLiteral) {
                 switched.add(new Pair(actorName, ((StringLiteral) ((WithId) msgName).getStringExpr()).getText()));
             }
-            if(((WithId) msgName).getStringExpr() instanceof AsString) {
+            if (((WithId) msgName).getStringExpr() instanceof AsString) {
                 AsString expr = (AsString) ((WithId) msgName).getStringExpr();
                 if (expr.getOperand1() instanceof StrId) {
                     switched.add(new Pair(actorName, ((StrId) expr.getOperand1()).getName()));
@@ -136,7 +143,7 @@ public class MissingBackdropSwitch implements IssueFinder, ScratchVisitor {
             if (((WithId) msgName).getStringExpr() instanceof StrId) {
                 switched.add(new Pair(actorName, ((StrId) ((WithId) msgName).getStringExpr()).getName()));
             }
-            if(((WithId) msgName).getStringExpr() instanceof AsString) {
+            if (((WithId) msgName).getStringExpr() instanceof AsString) {
                 AsString expr = (AsString) ((WithId) msgName).getStringExpr();
                 if (expr.getOperand1() instanceof StrId) {
                     switched.add(new Pair(actorName, ((StrId) expr.getOperand1()).getName()));
@@ -156,7 +163,6 @@ public class MissingBackdropSwitch implements IssueFinder, ScratchVisitor {
             final String actorName = currentActor.getIdent().getName();
             final String msgName = event.getBackdrop().getName();
             switchReceived.add(new Pair(actorName, msgName));
-
         }
         if (!node.getChildren().isEmpty()) {
             for (ASTNode child : node.getChildren()) {

@@ -39,5 +39,4 @@ public class LengthOfString extends AbstractNode implements NumExpr {
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);
     }
-
 }

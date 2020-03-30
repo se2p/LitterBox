@@ -20,7 +20,11 @@ package de.uni_passau.fim.se2.litterbox.ast.parser;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
-import de.uni_passau.fim.se2.litterbox.ast.model.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
+import de.uni_passau.fim.se2.litterbox.ast.model.ActorType;
+import de.uni_passau.fim.se2.litterbox.ast.model.Script;
+import de.uni_passau.fim.se2.litterbox.ast.model.ScriptList;
+import de.uni_passau.fim.se2.litterbox.ast.model.SetStmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinitionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.resource.Resource;
 import de.uni_passau.fim.se2.litterbox.ast.model.resource.ResourceList;

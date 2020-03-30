@@ -24,7 +24,11 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import de.uni_passau.fim.se2.litterbox.ast.Constants;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
-import de.uni_passau.fim.se2.litterbox.ast.model.procedure.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.procedure.Parameter;
+import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterList;
+import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterListPlain;
+import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
+import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinitionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.BooleanType;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.StringType;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.Type;
@@ -108,7 +112,6 @@ public class ProcDefinitionParser {
             }
         }
 
-
         String methodName = proto.get(MUTATION_KEY).get(PROCCODE_KEY).asText();
         Identifier ident = null;
         if (proto.has(PARENT_KEY)) {
@@ -165,7 +168,6 @@ public class ProcDefinitionParser {
         final String opcodeString = param.get(OPCODE_KEY).asText();
         if (opcodeString.equals(ProcedureOpcode.argument_reporter_boolean.name())) {
             types.add(new BooleanType());
-
         } else {
             types.add(new StringType());
         }

@@ -32,5 +32,4 @@ public class Clicked extends AbstractNode implements Event, ASTLeaf {
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);
     }
-
 }

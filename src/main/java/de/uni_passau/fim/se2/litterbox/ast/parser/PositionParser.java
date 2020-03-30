@@ -25,7 +25,11 @@ import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
-import de.uni_passau.fim.se2.litterbox.ast.model.position.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.position.CoordinatePosition;
+import de.uni_passau.fim.se2.litterbox.ast.model.position.MousePos;
+import de.uni_passau.fim.se2.litterbox.ast.model.position.PivotOf;
+import de.uni_passau.fim.se2.litterbox.ast.model.position.Position;
+import de.uni_passau.fim.se2.litterbox.ast.model.position.RandomPos;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.NumExprOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.SpriteMotionStmtOpcode;
@@ -102,7 +106,6 @@ public class PositionParser {
                 posName = "DISTANCETOMENU";
             }
 
-
             final StringExpr stringExpr = StringExprParser.parseStringExpr(current, posName, allBlocks);
             return new PivotOf(stringExpr);
         }
@@ -122,12 +125,9 @@ public class PositionParser {
             throw new ParsingException(
                     "Cannot parse x and y coordinates for a block with opcode " + current.get(Constants.OPCODE_KEY));
         }
-
     }
 
     static int getShadowIndicator(ArrayNode exprArray) {
         return exprArray.get(Constants.POS_INPUT_SHADOW).asInt();
     }
-
-
 }

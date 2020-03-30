@@ -24,7 +24,11 @@ import de.uni_passau.fim.se2.litterbox.ast.Constants;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
-import de.uni_passau.fim.se2.litterbox.ast.model.touchable.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.touchable.AsTouchable;
+import de.uni_passau.fim.se2.litterbox.ast.model.touchable.Edge;
+import de.uni_passau.fim.se2.litterbox.ast.model.touchable.MousePointer;
+import de.uni_passau.fim.se2.litterbox.ast.model.touchable.SpriteTouchable;
+import de.uni_passau.fim.se2.litterbox.ast.model.touchable.Touchable;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.BoolExprOpcode;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
@@ -53,7 +57,6 @@ public class TouchableParser {
                 Expression expr = ExpressionParser.parseExpression(current, TOUCHINGOBJECTMENU, allBlocks);
                 return new AsTouchable(expr);
             }
-
         } else if (BoolExprOpcode.sensing_touchingcolor.name().equals(opcodeString)) {
             return ColorParser.parseColor(current, 0, allBlocks);
         } else {
@@ -77,5 +80,4 @@ public class TouchableParser {
     static int getShadowIndicator(ArrayNode exprArray) {
         return exprArray.get(Constants.POS_INPUT_SHADOW).asInt();
     }
-
 }

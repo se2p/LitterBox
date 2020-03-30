@@ -26,7 +26,6 @@ public class UnspecifiedStmt extends AbstractNode implements ASTLeaf, Stmt {
 
     public UnspecifiedStmt() {
         super();
-
     }
 
     @Override

@@ -32,5 +32,4 @@ public class ColorTouches extends BinaryExpression<Color, Color> implements Bool
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);
     }
-
 }

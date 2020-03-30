@@ -18,9 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.parser.stmt;
 
-import static junit.framework.TestCase.fail;
-
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.truth.Truth;
@@ -30,14 +27,26 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinitionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.Broadcast;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.BroadcastAndWait;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.ChangeAttributeBy;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.ChangeVariableBy;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.CreateCloneOf;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.ResetTimer;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetAttributeTo;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.StopOtherScriptsInSprite;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitSeconds;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitUntil;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.DeleteClone;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
+
+import static junit.framework.TestCase.fail;
 
 public class CommonStmtParserTest {
 
@@ -89,11 +98,9 @@ public class CommonStmtParserTest {
             Truth.assertThat(listOfStmt.get(9).getClass()).isEqualTo(SetAttributeTo.class);
             Truth.assertThat(listOfStmt.get(10).getClass()).isEqualTo(ChangeAttributeBy.class);
             Truth.assertThat(listOfStmt.get(11).getClass()).isEqualTo(DeleteClone.class);
-
         } catch (ParsingException e) {
             e.printStackTrace();
             fail();
         }
     }
-
 }

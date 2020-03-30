@@ -1,1 +1,245 @@
-{"targets":[{"isStage":true,"name":"Stage","variables":{"`jEk@4|i[#Fk?(8x)AV.-my variable":["my variable",0]},"lists":{},"broadcasts":{},"blocks":{},"comments":{},"currentCostume":0,"costumes":[{"assetId":"cd21514d0531fdffb22204e0ec5ed84a","name":"backdrop1","md5ext":"cd21514d0531fdffb22204e0ec5ed84a.svg","dataFormat":"svg","rotationCenterX":240,"rotationCenterY":180}],"sounds":[{"assetId":"83a9787d4cb6f3b7632b4ddfebf74367","name":"pop","dataFormat":"wav","format":"","rate":48000,"sampleCount":1124,"md5ext":"83a9787d4cb6f3b7632b4ddfebf74367.wav"}],"volume":100,"layerOrder":0,"tempo":60,"videoTransparency":50,"videoState":"on","textToSpeechLanguage":null},{"isStage":false,"name":"Sprite1","variables":{},"lists":{},"broadcasts":{},"blocks":{"H)74$|7V+|8}o0p@G#5J":{"opcode":"procedures_definition","next":")M=|*yF~@@T3dhe)4PC.","parent":null,"inputs":{"custom_block":[1,"[J?o$l#NA-z?1z8cm9?1"]},"fields":{},"shadow":false,"topLevel":true,"x":55,"y":139},"[J?o$l#NA-z?1z8cm9?1":{"opcode":"procedures_prototype","next":null,"parent":"H)74$|7V+|8}o0p@G#5J","inputs":{},"fields":{},"shadow":true,"topLevel":false,"mutation":{"tagName":"mutation","children":[],"proccode":"block name","argumentids":"[]","argumentnames":"[]","argumentdefaults":"[]","warp":"false"}},")M=|*yF~@@T3dhe)4PC.":{"opcode":"looks_sayforsecs","next":"ToKya^X?CkBgX]3$H|FI","parent":"H)74$|7V+|8}o0p@G#5J","inputs":{"MESSAGE":[1,[10,"Hello!"]],"SECS":[1,[4,"2"]]},"fields":{},"shadow":false,"topLevel":false},"ToKya^X?CkBgX]3$H|FI":{"opcode":"control_forever","next":null,"parent":")M=|*yF~@@T3dhe)4PC.","inputs":{"SUBSTACK":[2,"bX^Pad_JNEN8)8~F4MT6"]},"fields":{},"shadow":false,"topLevel":false},"bX^Pad_JNEN8)8~F4MT6":{"opcode":"sensing_setdragmode","next":null,"parent":"ToKya^X?CkBgX]3$H|FI","inputs":{},"fields":{"DRAG_MODE":["draggable",null]},"shadow":false,"topLevel":false},"E7P#+%7QZ|5Y34)!MNxj":{"opcode":"event_whenflagclicked","next":"]L.0XJPM0d(sEGFM7L.,","parent":null,"inputs":{},"fields":{},"shadow":false,"topLevel":true,"x":1028,"y":361},"]L.0XJPM0d(sEGFM7L.,":{"opcode":"sound_playuntildone","next":"TwNUq^55e#cFHnn_eBtT","parent":"E7P#+%7QZ|5Y34)!MNxj","inputs":{"SOUND_MENU":[1,",3hh{kR*)zgxd$*lc^Sd"]},"fields":{},"shadow":false,"topLevel":false},",3hh{kR*)zgxd$*lc^Sd":{"opcode":"sound_sounds_menu","next":null,"parent":"]L.0XJPM0d(sEGFM7L.,","inputs":{},"fields":{"SOUND_MENU":["Meow",null]},"shadow":true,"topLevel":false},"TwNUq^55e#cFHnn_eBtT":{"opcode":"procedures_call","next":null,"parent":"]L.0XJPM0d(sEGFM7L.,","inputs":{},"fields":{},"shadow":false,"topLevel":false,"mutation":{"tagName":"mutation","children":[],"proccode":"block name","argumentids":"[]","warp":"false"}}},"comments":{},"currentCostume":0,"costumes":[{"assetId":"b7853f557e4426412e64bb3da6531a99","name":"costume1","bitmapResolution":1,"md5ext":"b7853f557e4426412e64bb3da6531a99.svg","dataFormat":"svg","rotationCenterX":48,"rotationCenterY":50},{"assetId":"e6ddc55a6ddd9cc9d84fe0b4c21e016f","name":"costume2","bitmapResolution":1,"md5ext":"e6ddc55a6ddd9cc9d84fe0b4c21e016f.svg","dataFormat":"svg","rotationCenterX":46,"rotationCenterY":53}],"sounds":[{"assetId":"83c36d806dc92327b9e7049a565c6bff","name":"Meow","dataFormat":"wav","format":"","rate":48000,"sampleCount":40682,"md5ext":"83c36d806dc92327b9e7049a565c6bff.wav"}],"volume":100,"layerOrder":1,"visible":true,"x":0,"y":0,"size":100,"direction":90,"draggable":true,"rotationStyle":"all around"}],"monitors":[],"extensions":[],"meta":{"semver":"3.0.0","vm":"0.2.0-prerelease.20191227164934","agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:72.0) Gecko/20100101 Firefox/72.0"}}
+{
+  "targets": [
+    {
+      "isStage": true,
+      "name": "Stage",
+      "variables": {
+        "`jEk@4|i[#Fk?(8x)AV.-my variable": [
+          "my variable",
+          0
+        ]
+      },
+      "lists": {},
+      "broadcasts": {},
+      "blocks": {},
+      "comments": {},
+      "currentCostume": 0,
+      "costumes": [
+        {
+          "assetId": "cd21514d0531fdffb22204e0ec5ed84a",
+          "name": "backdrop1",
+          "md5ext": "cd21514d0531fdffb22204e0ec5ed84a.svg",
+          "dataFormat": "svg",
+          "rotationCenterX": 240,
+          "rotationCenterY": 180
+        }
+      ],
+      "sounds": [
+        {
+          "assetId": "83a9787d4cb6f3b7632b4ddfebf74367",
+          "name": "pop",
+          "dataFormat": "wav",
+          "format": "",
+          "rate": 48000,
+          "sampleCount": 1124,
+          "md5ext": "83a9787d4cb6f3b7632b4ddfebf74367.wav"
+        }
+      ],
+      "volume": 100,
+      "layerOrder": 0,
+      "tempo": 60,
+      "videoTransparency": 50,
+      "videoState": "on",
+      "textToSpeechLanguage": null
+    },
+    {
+      "isStage": false,
+      "name": "Sprite1",
+      "variables": {},
+      "lists": {},
+      "broadcasts": {},
+      "blocks": {
+        "H)74$|7V+|8}o0p@G#5J": {
+          "opcode": "procedures_definition",
+          "next": ")M=|*yF~@@T3dhe)4PC.",
+          "parent": null,
+          "inputs": {
+            "custom_block": [
+              1,
+              "[J?o$l#NA-z?1z8cm9?1"
+            ]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": true,
+          "x": 55,
+          "y": 139
+        },
+        "[J?o$l#NA-z?1z8cm9?1": {
+          "opcode": "procedures_prototype",
+          "next": null,
+          "parent": "H)74$|7V+|8}o0p@G#5J",
+          "inputs": {},
+          "fields": {},
+          "shadow": true,
+          "topLevel": false,
+          "mutation": {
+            "tagName": "mutation",
+            "children": [],
+            "proccode": "block name",
+            "argumentids": "[]",
+            "argumentnames": "[]",
+            "argumentdefaults": "[]",
+            "warp": "false"
+          }
+        },
+        ")M=|*yF~@@T3dhe)4PC.": {
+          "opcode": "looks_sayforsecs",
+          "next": "ToKya^X?CkBgX]3$H|FI",
+          "parent": "H)74$|7V+|8}o0p@G#5J",
+          "inputs": {
+            "MESSAGE": [
+              1,
+              [
+                10,
+                "Hello!"
+              ]
+            ],
+            "SECS": [
+              1,
+              [
+                4,
+                "2"
+              ]
+            ]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "ToKya^X?CkBgX]3$H|FI": {
+          "opcode": "control_forever",
+          "next": null,
+          "parent": ")M=|*yF~@@T3dhe)4PC.",
+          "inputs": {
+            "SUBSTACK": [
+              2,
+              "bX^Pad_JNEN8)8~F4MT6"
+            ]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "bX^Pad_JNEN8)8~F4MT6": {
+          "opcode": "sensing_setdragmode",
+          "next": null,
+          "parent": "ToKya^X?CkBgX]3$H|FI",
+          "inputs": {},
+          "fields": {
+            "DRAG_MODE": [
+              "draggable",
+              null
+            ]
+          },
+          "shadow": false,
+          "topLevel": false
+        },
+        "E7P#+%7QZ|5Y34)!MNxj": {
+          "opcode": "event_whenflagclicked",
+          "next": "]L.0XJPM0d(sEGFM7L.,",
+          "parent": null,
+          "inputs": {},
+          "fields": {},
+          "shadow": false,
+          "topLevel": true,
+          "x": 1028,
+          "y": 361
+        },
+        "]L.0XJPM0d(sEGFM7L.,": {
+          "opcode": "sound_playuntildone",
+          "next": "TwNUq^55e#cFHnn_eBtT",
+          "parent": "E7P#+%7QZ|5Y34)!MNxj",
+          "inputs": {
+            "SOUND_MENU": [
+              1,
+              ",3hh{kR*)zgxd$*lc^Sd"
+            ]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        ",3hh{kR*)zgxd$*lc^Sd": {
+          "opcode": "sound_sounds_menu",
+          "next": null,
+          "parent": "]L.0XJPM0d(sEGFM7L.,",
+          "inputs": {},
+          "fields": {
+            "SOUND_MENU": [
+              "Meow",
+              null
+            ]
+          },
+          "shadow": true,
+          "topLevel": false
+        },
+        "TwNUq^55e#cFHnn_eBtT": {
+          "opcode": "procedures_call",
+          "next": null,
+          "parent": "]L.0XJPM0d(sEGFM7L.,",
+          "inputs": {},
+          "fields": {},
+          "shadow": false,
+          "topLevel": false,
+          "mutation": {
+            "tagName": "mutation",
+            "children": [],
+            "proccode": "block name",
+            "argumentids": "[]",
+            "warp": "false"
+          }
+        }
+      },
+      "comments": {},
+      "currentCostume": 0,
+      "costumes": [
+        {
+          "assetId": "b7853f557e4426412e64bb3da6531a99",
+          "name": "costume1",
+          "bitmapResolution": 1,
+          "md5ext": "b7853f557e4426412e64bb3da6531a99.svg",
+          "dataFormat": "svg",
+          "rotationCenterX": 48,
+          "rotationCenterY": 50
+        },
+        {
+          "assetId": "e6ddc55a6ddd9cc9d84fe0b4c21e016f",
+          "name": "costume2",
+          "bitmapResolution": 1,
+          "md5ext": "e6ddc55a6ddd9cc9d84fe0b4c21e016f.svg",
+          "dataFormat": "svg",
+          "rotationCenterX": 46,
+          "rotationCenterY": 53
+        }
+      ],
+      "sounds": [
+        {
+          "assetId": "83c36d806dc92327b9e7049a565c6bff",
+          "name": "Meow",
+          "dataFormat": "wav",
+          "format": "",
+          "rate": 48000,
+          "sampleCount": 40682,
+          "md5ext": "83c36d806dc92327b9e7049a565c6bff.wav"
+        }
+      ],
+      "volume": 100,
+      "layerOrder": 1,
+      "visible": true,
+      "x": 0,
+      "y": 0,
+      "size": 100,
+      "direction": 90,
+      "draggable": true,
+      "rotationStyle": "all around"
+    }
+  ],
+  "monitors": [],
+  "extensions": [],
+  "meta": {
+    "semver": "3.0.0",
+    "vm": "0.2.0-prerelease.20191227164934",
+    "agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:72.0) Gecko/20100101 Firefox/72.0"
+  }
+}

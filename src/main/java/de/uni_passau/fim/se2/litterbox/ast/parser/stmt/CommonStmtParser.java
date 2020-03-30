@@ -30,8 +30,21 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.*;
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.Broadcast;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.BroadcastAndWait;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.ChangeAttributeBy;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.ChangeVariableBy;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.CommonStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.CreateCloneOf;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.ResetTimer;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.StopOtherScriptsInSprite;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitSeconds;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitUntil;
+import de.uni_passau.fim.se2.litterbox.ast.model.variable.Identifier;
+import de.uni_passau.fim.se2.litterbox.ast.model.variable.Qualified;
+import de.uni_passau.fim.se2.litterbox.ast.model.variable.StrId;
+import de.uni_passau.fim.se2.litterbox.ast.model.variable.UnspecifiedId;
+import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.CommonStmtOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.parser.BoolExprParser;
 import de.uni_passau.fim.se2.litterbox.ast.parser.NumExprParser;
@@ -66,38 +79,38 @@ public class CommonStmtParser {
         final CommonStmtOpcode opcode = CommonStmtOpcode.valueOf(opcodeString);
 
         switch (opcode) {
-            case control_wait:
-                return parseWaitSeconds(current, allBlocks);
+        case control_wait:
+            return parseWaitSeconds(current, allBlocks);
 
-            case control_wait_until:
-                return parseWaitUntil(current, allBlocks);
+        case control_wait_until:
+            return parseWaitUntil(current, allBlocks);
 
-            case control_stop:
-                return parseControlStop(current);
+        case control_stop:
+            return parseControlStop(current);
 
-            case control_create_clone_of:
-                return parseCreateCloneOf(current, allBlocks);
+        case control_create_clone_of:
+            return parseCreateCloneOf(current, allBlocks);
 
-            case event_broadcast:
-                return parseBroadcast(current, allBlocks);
+        case event_broadcast:
+            return parseBroadcast(current, allBlocks);
 
-            case event_broadcastandwait:
-                return parseBroadcastAndWait(current, allBlocks);
+        case event_broadcastandwait:
+            return parseBroadcastAndWait(current, allBlocks);
 
-            case sensing_resettimer:
-                return new ResetTimer();
+        case sensing_resettimer:
+            return new ResetTimer();
 
-            case data_changevariableby:
-                return parseChangeVariableBy(current, allBlocks);
+        case data_changevariableby:
+            return parseChangeVariableBy(current, allBlocks);
 
-            case sound_changevolumeby:
-            case sound_changeeffectby:
-            case looks_changeeffectby:
-            case pen_changePenSizeBy:
-                return parseChangeAttributeBy(current, allBlocks);
+        case sound_changevolumeby:
+        case sound_changeeffectby:
+        case looks_changeeffectby:
+        case pen_changePenSizeBy:
+            return parseChangeAttributeBy(current, allBlocks);
 
-            default:
-                throw new RuntimeException("Not Implemented yet");
+        default:
+            throw new RuntimeException("Not Implemented yet");
         }
     }
 
@@ -110,16 +123,13 @@ public class CommonStmtParser {
             NumExpr numExpr = NumExprParser.parseNumExpr(current, 0,
                     allBlocks);
             return new ChangeAttributeBy(new StringLiteral(attributeName), numExpr);
-
         } else if (sound_changeeffectby.equals(opcode) || looks_changeeffectby.equals(opcode)) {
             NumExpr numExpr = NumExprParser.parseNumExpr(current, 0, allBlocks);
             String effectName = current.get(FIELDS_KEY).get("EFFECT").get(0).asText();
             return new ChangeAttributeBy(new StringLiteral(effectName), numExpr);
-
         } else if (pen_changePenSizeBy.equals(opcode)) {
             return new ChangeAttributeBy(new StringLiteral(PEN_SIZE_KEY), NumExprParser.parseNumExpr(current, 0,
                     allBlocks));
-
         } else {
             throw new ParsingException("Cannot parse block with opcode " + opcodeString + " to ChangeAttributeBy");
         }

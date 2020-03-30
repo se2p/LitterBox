@@ -30,6 +30,5 @@ public class StringType extends AbstractNode implements Type {
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);
     }
-
 }
 

@@ -40,5 +40,4 @@ public class KeyPressed extends AbstractNode implements Event {
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);
     }
-
 }

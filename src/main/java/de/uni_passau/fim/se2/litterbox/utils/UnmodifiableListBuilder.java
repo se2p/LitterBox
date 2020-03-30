@@ -18,7 +18,11 @@
  */
 package de.uni_passau.fim.se2.litterbox.utils;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 
 public class UnmodifiableListBuilder<E> {
 
@@ -46,5 +50,4 @@ public class UnmodifiableListBuilder<E> {
     public List<E> build() {
         return Collections.unmodifiableList(list);
     }
-
 }

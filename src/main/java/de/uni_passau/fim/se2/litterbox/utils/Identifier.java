@@ -120,7 +120,6 @@ public enum Identifier {
     VIDEO("videoSensing_"),
     DATA("data_");
 
-
     private String value;
 
     Identifier(String value) {

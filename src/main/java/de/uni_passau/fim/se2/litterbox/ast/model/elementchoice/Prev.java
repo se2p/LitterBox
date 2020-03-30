@@ -32,5 +32,4 @@ public class Prev extends AbstractNode implements ElementChoice, ASTLeaf {
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);
     }
-
 }

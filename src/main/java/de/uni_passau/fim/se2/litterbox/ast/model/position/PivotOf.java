@@ -39,5 +39,4 @@ public class PivotOf extends AbstractNode implements Position {
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);
     }
-
 }

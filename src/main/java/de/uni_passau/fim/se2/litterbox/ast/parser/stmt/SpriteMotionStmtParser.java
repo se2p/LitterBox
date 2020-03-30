@@ -22,7 +22,19 @@ import com.fasterxml.jackson.databind.JsonNode;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.Position;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.ChangeXBy;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.ChangeYBy;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.GlideSecsTo;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.GoToPos;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.IfOnEdgeBounce;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.MoveSteps;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.PointInDirection;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.PointTowards;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SetXTo;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SetYTo;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SpriteMotionStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.TurnLeft;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.TurnRight;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.SpriteMotionStmtOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.parser.NumExprParser;
 import de.uni_passau.fim.se2.litterbox.ast.parser.PositionParser;
@@ -46,46 +58,46 @@ public class SpriteMotionStmtParser {
         Position position;
 
         switch (opcode) {
-            case motion_movesteps:
-                numExpr = NumExprParser.parseNumExpr(current, 0, allBlocks);
-                return new MoveSteps(numExpr);
-            case motion_turnright:
-                numExpr = NumExprParser.parseNumExpr(current, 0, allBlocks);
-                return new TurnRight(numExpr);
-            case motion_turnleft:
-                numExpr = NumExprParser.parseNumExpr(current, 0, allBlocks);
-                return new TurnLeft(numExpr);
-            case motion_gotoxy:
-            case motion_goto:
-                position = PositionParser.parse(current, allBlocks);
-                return new GoToPos(position);
-            case motion_glideto:
-            case motion_glidesecstoxy:
-                numExpr = NumExprParser.parseNumExpr(current, 0, allBlocks);
-                position = PositionParser.parse(current, allBlocks);
-                return new GlideSecsTo(numExpr, position);
-            case motion_pointindirection:
-                numExpr = NumExprParser.parseNumExpr(current, 0, allBlocks);
-                return new PointInDirection(numExpr);
-            case motion_pointtowards:
-                position = PositionParser.parse(current, allBlocks);
-                return new PointTowards(position);
-            case motion_changexby:
-                numExpr = NumExprParser.parseNumExpr(current, 0, allBlocks);
-                return new ChangeXBy(numExpr);
-            case motion_changeyby:
-                numExpr = NumExprParser.parseNumExpr(current, 0, allBlocks);
-                return new ChangeYBy(numExpr);
-            case motion_setx:
-                numExpr = NumExprParser.parseNumExpr(current, 0, allBlocks);
-                return new SetXTo(numExpr);
-            case motion_sety:
-                numExpr = NumExprParser.parseNumExpr(current, 0, allBlocks);
-                return new SetYTo(numExpr);
-            case motion_ifonedgebounce:
-                return new IfOnEdgeBounce();
-            default:
-                throw new RuntimeException("Parsing not implemented yet for opcode " + opcodeString);
+        case motion_movesteps:
+            numExpr = NumExprParser.parseNumExpr(current, 0, allBlocks);
+            return new MoveSteps(numExpr);
+        case motion_turnright:
+            numExpr = NumExprParser.parseNumExpr(current, 0, allBlocks);
+            return new TurnRight(numExpr);
+        case motion_turnleft:
+            numExpr = NumExprParser.parseNumExpr(current, 0, allBlocks);
+            return new TurnLeft(numExpr);
+        case motion_gotoxy:
+        case motion_goto:
+            position = PositionParser.parse(current, allBlocks);
+            return new GoToPos(position);
+        case motion_glideto:
+        case motion_glidesecstoxy:
+            numExpr = NumExprParser.parseNumExpr(current, 0, allBlocks);
+            position = PositionParser.parse(current, allBlocks);
+            return new GlideSecsTo(numExpr, position);
+        case motion_pointindirection:
+            numExpr = NumExprParser.parseNumExpr(current, 0, allBlocks);
+            return new PointInDirection(numExpr);
+        case motion_pointtowards:
+            position = PositionParser.parse(current, allBlocks);
+            return new PointTowards(position);
+        case motion_changexby:
+            numExpr = NumExprParser.parseNumExpr(current, 0, allBlocks);
+            return new ChangeXBy(numExpr);
+        case motion_changeyby:
+            numExpr = NumExprParser.parseNumExpr(current, 0, allBlocks);
+            return new ChangeYBy(numExpr);
+        case motion_setx:
+            numExpr = NumExprParser.parseNumExpr(current, 0, allBlocks);
+            return new SetXTo(numExpr);
+        case motion_sety:
+            numExpr = NumExprParser.parseNumExpr(current, 0, allBlocks);
+            return new SetYTo(numExpr);
+        case motion_ifonedgebounce:
+            return new IfOnEdgeBounce();
+        default:
+            throw new RuntimeException("Parsing not implemented yet for opcode " + opcodeString);
         }
     }
 }

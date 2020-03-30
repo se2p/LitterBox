@@ -42,6 +42,4 @@ public class DeclarationStmtList extends AbstractNode implements ASTNode {
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);
     }
-
-
 }

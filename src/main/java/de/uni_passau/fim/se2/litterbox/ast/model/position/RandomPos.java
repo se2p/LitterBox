@@ -32,5 +32,4 @@ public class RandomPos extends AbstractNode implements Position, ASTLeaf {
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);
     }
-
 }

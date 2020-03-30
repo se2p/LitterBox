@@ -39,5 +39,4 @@ public class IsKeyPressed extends AbstractNode implements BoolExpr {
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);
     }
-
 }

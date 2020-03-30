@@ -18,9 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.parser.stmt;
 
-import static junit.framework.TestCase.fail;
-
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.truth.Truth;
@@ -39,13 +36,14 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.StopAllSou
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopAll;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
+import static junit.framework.TestCase.fail;
 
 public class ActorSoundStmtParserTest {
 
@@ -90,7 +88,6 @@ public class ActorSoundStmtParserTest {
             Truth.assertThat(listOfStmt.get(2).getClass()).isEqualTo(ClearSoundEffects.class);
             Truth.assertThat(listOfStmt.get(3).getClass()).isEqualTo(StopAllSounds.class);
             Truth.assertThat(listOfStmt.get(4).getClass()).isEqualTo(StopAll.class);
-
         } catch (ParsingException e) {
             e.printStackTrace();
             fail();
@@ -114,7 +111,6 @@ public class ActorSoundStmtParserTest {
             AsString stringExpr = (AsString) elementChoice.getStringExpr();
             StrId strid = (StrId) stringExpr.getOperand1();
             Truth.assertThat(strid.getName()).isEqualTo("Meow");
-
         } catch (ParsingException e) {
             e.printStackTrace();
             fail();
@@ -138,11 +134,9 @@ public class ActorSoundStmtParserTest {
             AsString stringExpr = (AsString) elementChoice.getStringExpr();
             StrId strid = (StrId) stringExpr.getOperand1();
             Truth.assertThat(strid.getName()).isEqualTo("Meow");
-
         } catch (ParsingException e) {
             e.printStackTrace();
             fail();
         }
     }
-
 }

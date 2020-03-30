@@ -31,7 +31,11 @@ import de.uni_passau.fim.se2.litterbox.utils.ZipReader;
 import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.io.FilenameUtils;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -42,7 +46,6 @@ import java.util.logging.Logger;
 
 import static de.uni_passau.fim.se2.litterbox.utils.GroupConstants.*;
 import static org.apache.commons.io.FilenameUtils.removeExtension;
-
 
 public class Scratch3Analyzer {
 
@@ -124,21 +127,21 @@ public class Scratch3Analyzer {
         heads.add("project");
         String[] detectors;
         switch (dtctrs) {
-            case ALL:
-                detectors = iT.getAllFinder().keySet().toArray(new String[0]);
-                break;
-            case BUGS:
-                detectors = iT.getBugFinder().keySet().toArray(new String[0]);
-                break;
-            case SMELLS:
-                detectors = iT.getSmellFinder().keySet().toArray(new String[0]);
-                break;
-            case CTSCORE:
-                detectors = iT.getCTScoreFinder().keySet().toArray(new String[0]);
-                break;
-            default:
-                detectors = dtctrs.split(",");
-                break;
+        case ALL:
+            detectors = iT.getAllFinder().keySet().toArray(new String[0]);
+            break;
+        case BUGS:
+            detectors = iT.getBugFinder().keySet().toArray(new String[0]);
+            break;
+        case SMELLS:
+            detectors = iT.getSmellFinder().keySet().toArray(new String[0]);
+            break;
+        case CTSCORE:
+            detectors = iT.getCTScoreFinder().keySet().toArray(new String[0]);
+            break;
+        default:
+            detectors = dtctrs.split(",");
+            break;
         }
         for (String s : detectors) {
             if (iT.getAllFinder().containsKey(s)) {
@@ -321,7 +324,6 @@ public class Scratch3Analyzer {
         }
     }
 
-
     /**
      * Downloads the project and prints its intermediate language version.
      *
@@ -375,7 +377,6 @@ public class Scratch3Analyzer {
             e.printStackTrace();
         }
     }
-
 
     /**
      * Prints the file or content of the folder in the intermediate language.

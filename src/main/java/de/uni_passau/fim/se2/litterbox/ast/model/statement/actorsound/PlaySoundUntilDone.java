@@ -40,6 +40,4 @@ public class PlaySoundUntilDone extends AbstractNode implements ActorSoundStmt {
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);
     }
-
-
 }

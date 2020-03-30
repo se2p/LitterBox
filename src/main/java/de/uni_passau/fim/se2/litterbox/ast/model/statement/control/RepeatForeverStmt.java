@@ -40,6 +40,4 @@ public class RepeatForeverStmt extends AbstractNode implements ControlStmt {
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);
     }
-
-
 }

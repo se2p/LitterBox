@@ -32,5 +32,4 @@ public class AsListIndex extends UnaryExpression<Expression> implements ListExpr
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);
     }
-
 }

@@ -18,9 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.parser;
 
-import static junit.framework.TestCase.fail;
-
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.truth.Truth;
@@ -41,12 +38,15 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetVariableTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.declaration.DeclarationIdentAsTypeStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.declaration.DeclarationStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Qualified;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
+
+import static junit.framework.TestCase.fail;
 
 public class ProgramParserTest {
 
@@ -106,7 +106,6 @@ public class ProgramParserTest {
             setAttr = (SetAttributeTo) stmts.get(4);
             Truth.assertThat(((StringLiteral) setAttr.getStringExpr()).getText()).isEqualTo("videoState");
             Truth.assertThat(((StringLiteral) setAttr.getExpr()).getText()).isEqualTo("on");
-
         } catch (ParsingException e) {
             e.printStackTrace();
             fail();
@@ -141,7 +140,6 @@ public class ProgramParserTest {
             Truth.assertThat(((StringLiteral) exprListPlain.getExpressions().get(1)).getText()).isEqualTo("Elem2");
             Truth.assertThat(((StringLiteral) exprListPlain.getExpressions().get(2)).getText()).isEqualTo("1");
             Truth.assertThat(((StringLiteral) exprListPlain.getExpressions().get(3)).getText()).isEqualTo("2");
-
         } catch (ParsingException e) {
             e.printStackTrace();
             fail();
@@ -166,7 +164,6 @@ public class ProgramParserTest {
             Truth.assertThat(imageResource.getIdent().getName()).isEqualTo("costume1");
             imageResource = (ImageResource) sprite.getResources().getResourceList().get(2);
             Truth.assertThat(imageResource.getIdent().getName()).isEqualTo("costume2");
-
         } catch (ParsingException e) {
             e.printStackTrace();
             fail();

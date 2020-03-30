@@ -31,5 +31,4 @@ public class MousePointer extends AbstractNode implements Touchable, ASTLeaf {
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);
     }
-
 }

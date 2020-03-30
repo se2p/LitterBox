@@ -26,7 +26,11 @@ import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.ElementChoice;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.WithId;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.ActorSoundStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.ClearSoundEffects;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.PlaySoundUntilDone;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.StartSound;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.StopAllSounds;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.ActorSoundStmtOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.parser.StringExprParser;
@@ -53,22 +57,22 @@ public class ActorSoundStmtParser {
         ElementChoice elementChoice;
         final ActorSoundStmtOpcode opcode = ActorSoundStmtOpcode.valueOf(opCodeString);
         switch (opcode) {
-            case sound_playuntildone:
-                elementChoice = getSoundElement(current, allBlocks);
-                return new PlaySoundUntilDone(elementChoice);
+        case sound_playuntildone:
+            elementChoice = getSoundElement(current, allBlocks);
+            return new PlaySoundUntilDone(elementChoice);
 
-            case sound_play:
-                elementChoice = getSoundElement(current, allBlocks);
-                return new StartSound(elementChoice);
+        case sound_play:
+            elementChoice = getSoundElement(current, allBlocks);
+            return new StartSound(elementChoice);
 
-            case sound_cleareffects:
-                return new ClearSoundEffects();
+        case sound_cleareffects:
+            return new ClearSoundEffects();
 
-            case sound_stopallsounds:
-                return new StopAllSounds();
+        case sound_stopallsounds:
+            return new StopAllSounds();
 
-            default:
-                throw new RuntimeException("Not implemented yet for opcode " + opCodeString);
+        default:
+            throw new RuntimeException("Not implemented yet for opcode " + opCodeString);
         }
     }
 

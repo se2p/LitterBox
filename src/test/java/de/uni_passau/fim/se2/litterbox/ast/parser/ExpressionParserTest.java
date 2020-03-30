@@ -18,17 +18,24 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.parser;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
-
 import com.fasterxml.jackson.databind.JsonNode;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.Add;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.Div;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.Minus;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.Mod;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.MouseX;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.Mult;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumFunct;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.PickRandom;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.utils.JsonParser;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class ExpressionParserTest {
 

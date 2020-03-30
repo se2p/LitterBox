@@ -39,6 +39,4 @@ public class SwitchBackdrop extends AbstractNode implements ActorLookStmt {
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);
     }
-
-
 }

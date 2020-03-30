@@ -58,5 +58,4 @@ public class Rgba extends AbstractNode implements Color {
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);
     }
-
 }

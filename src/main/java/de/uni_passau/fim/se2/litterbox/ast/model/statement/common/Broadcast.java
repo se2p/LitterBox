@@ -40,6 +40,4 @@ public class Broadcast extends AbstractNode implements CommonStmt {
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);
     }
-
-
 }

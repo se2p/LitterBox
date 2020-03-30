@@ -40,6 +40,4 @@ public class StartSound extends AbstractNode implements ActorSoundStmt {
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);
     }
-
-
 }

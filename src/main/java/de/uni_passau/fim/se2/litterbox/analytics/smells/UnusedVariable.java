@@ -31,7 +31,11 @@ import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.VariableInfo;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Checks if there are unused variables.
@@ -83,7 +87,6 @@ public class UnusedVariable implements IssueFinder, ScratchVisitor {
         return NAME;
     }
 
-
     private void checkVariables() {
 
         for (Map.Entry<String, VariableInfo> entry : varMap.entrySet()) {
@@ -100,7 +103,6 @@ public class UnusedVariable implements IssueFinder, ScratchVisitor {
 
             if (!currFound && !Arrays.asList(MY_VARIABLE_LANGUAGES).contains(name.substring(Constants.VARIABLE_ABBREVIATION.length()))) {
                 count++;
-
             }
         }
 
@@ -141,7 +143,6 @@ public class UnusedVariable implements IssueFinder, ScratchVisitor {
             }
         }
         insideScript = false;
-
     }
 
     @Override

@@ -45,5 +45,4 @@ public class Qualified extends AbstractNode implements Variable {
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);
     }
-
 }

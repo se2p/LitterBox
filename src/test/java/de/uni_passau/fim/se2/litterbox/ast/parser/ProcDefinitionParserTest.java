@@ -18,9 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.parser;
 
-import static junit.framework.TestCase.fail;
-
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.truth.Truth;
@@ -28,22 +25,22 @@ import de.uni_passau.fim.se2.litterbox.ast.Constants;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.AsBool;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.AsNumber;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.MoveSteps;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.BooleanType;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.StringType;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Identifier;
+import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ProcedureInfo;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
-import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ProcedureInfo;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
+import static junit.framework.TestCase.fail;
 
 public class ProcDefinitionParserTest {
 
@@ -75,7 +72,6 @@ public class ProcDefinitionParserTest {
                     ProgramParser.procDefMap.getProcedures().get(actorName).get(list.get(0).getIdent()).getArguments().length);
             Assertions.assertEquals(0, list.get(0).getParameterList().getParameterListPlain().getParameters().size());
             Assertions.assertEquals(3, list.get(0).getStmtList().getStmts().getListOfStmt().size());
-
         } catch (ParsingException e) {
             e.printStackTrace();
             fail();

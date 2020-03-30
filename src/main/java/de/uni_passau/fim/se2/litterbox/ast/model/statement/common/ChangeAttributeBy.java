@@ -47,5 +47,4 @@ public class ChangeAttributeBy extends AbstractNode implements CommonStmt {
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);
     }
-
 }

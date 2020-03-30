@@ -33,5 +33,4 @@ public abstract class UnaryExpression<A extends ASTNode> extends AbstractNode {
     public A getOperand1() {
         return operand1;
     }
-
 }

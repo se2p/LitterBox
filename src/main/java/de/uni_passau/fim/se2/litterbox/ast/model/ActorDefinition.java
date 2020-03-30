@@ -82,5 +82,4 @@ public class ActorDefinition extends AbstractNode {
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);
     }
-
 }

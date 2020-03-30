@@ -39,5 +39,4 @@ public class WithNumber extends AbstractNode implements ElementChoice {
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);
     }
-
 }

@@ -40,5 +40,4 @@ public class WaitUntil extends AbstractNode implements CommonStmt {
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);
     }
-
 }

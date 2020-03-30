@@ -42,5 +42,4 @@ public class ExpressionListPlain extends AbstractNode implements ASTNode, ListEx
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);
     }
-
 }

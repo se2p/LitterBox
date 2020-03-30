@@ -43,7 +43,6 @@ public class ProcedureDefinitionNameMapping {
             procedures.put(actorName, currentMap);
         }
         currentMap.put(identifier, new ProcedureInfo(procedureName, makeArguments(argumentNames, types), actorName));
-
     }
 
     private ArgumentInfo[] makeArguments(String[] argumentNames, Type[] types) {

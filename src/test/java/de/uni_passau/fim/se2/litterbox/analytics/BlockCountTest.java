@@ -23,11 +23,12 @@ import de.uni_passau.fim.se2.litterbox.analytics.utils.BlockCount;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
-import java.io.File;
-import java.io.IOException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+
+import java.io.File;
+import java.io.IOException;
 
 public class BlockCountTest {
     private static Program empty;
@@ -35,7 +36,7 @@ public class BlockCountTest {
     private static Program withproc;
     private static Program fixedStatements;
     private static Program fixedExpressions;
-    private static Program  halfFixedExpr;
+    private static Program halfFixedExpr;
     private static ObjectMapper mapper = new ObjectMapper();
 
     @BeforeAll
@@ -93,7 +94,7 @@ public class BlockCountTest {
     @Test
     public void testHalfFixedExpr() {
         BlockCount parameterName = new BlockCount();
-        IssueReport report = parameterName.check( halfFixedExpr);
+        IssueReport report = parameterName.check(halfFixedExpr);
         Assertions.assertEquals(6, report.getCount());
     }
 }

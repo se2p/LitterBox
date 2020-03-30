@@ -31,5 +31,4 @@ public class DeleteClone extends AbstractNode implements TerminationStmt {
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);
     }
-
 }

@@ -110,7 +110,6 @@ public class RecursiveCloning implements ScratchVisitor, IssueFinder {
                     found = true;
                 }
             }
-
         }
         if (!node.getChildren().isEmpty()) {
             for (ASTNode child : node.getChildren()) {

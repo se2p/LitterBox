@@ -44,7 +44,11 @@ import de.uni_passau.fim.se2.litterbox.ast.model.variable.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.StrId;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 
@@ -206,7 +210,6 @@ public class DeclarationStmtParser {
                 Preconditions.checkArgument(actorDefinitionNode.get(VIDSTATE_KEY).isTextual());
                 list.add(new DeclarationAttributeAsTypeStmt(keyExpr, new StringType()));
             }
-
         } else {
 
             if (actorDefinitionNode.has(VISIBLE_KEY)) {
@@ -314,7 +317,6 @@ public class DeclarationStmtParser {
                 setStmt = new SetAttributeTo(keyExpr, stringExpr);
                 list.add(setStmt);
             }
-
         } else {
 
             if (actorDefinitionNode.has(VISIBLE_KEY)) {

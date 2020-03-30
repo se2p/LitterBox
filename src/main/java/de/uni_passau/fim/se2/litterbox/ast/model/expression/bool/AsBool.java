@@ -24,7 +24,6 @@ import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 public class AsBool extends UnaryExpression<Expression> implements BoolExpr {
 
-
     public AsBool(Expression expr) {
         super(expr);
     }
@@ -33,5 +32,4 @@ public class AsBool extends UnaryExpression<Expression> implements BoolExpr {
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);
     }
-
 }

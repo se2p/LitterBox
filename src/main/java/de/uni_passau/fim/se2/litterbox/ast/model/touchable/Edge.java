@@ -31,5 +31,4 @@ public class Edge extends AbstractNode implements Touchable, ASTLeaf {
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);
     }
-
 }

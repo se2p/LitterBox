@@ -89,7 +89,6 @@ public class ForeverInsideLoop implements IssueFinder, ScratchVisitor {
         if (!node.getChildren().isEmpty()) {
             for (ASTNode child : node.getChildren()) {
                 child.accept(this);
-
             }
         }
         loopcounter--;
@@ -117,7 +116,6 @@ public class ForeverInsideLoop implements IssueFinder, ScratchVisitor {
         if (!node.getChildren().isEmpty()) {
             for (ASTNode child : node.getChildren()) {
                 child.accept(this);
-
             }
         }
         loopcounter--;

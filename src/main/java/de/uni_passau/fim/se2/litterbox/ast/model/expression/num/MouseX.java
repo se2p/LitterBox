@@ -31,5 +31,4 @@ public class MouseX extends AbstractNode implements NumExpr, ASTLeaf {
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);
     }
-
 }
