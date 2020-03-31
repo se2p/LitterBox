@@ -1,14 +1,10 @@
 # LitterBox
 
-[![pipeline status](https://gitlab.infosun.fim.uni-passau.de/se2/litterbox/badges/master/pipeline.svg)](https://gitlab.infosun.fim.uni-passau.de/se2/litterbox/pipelines)
-[![coverage report](https://gitlab.infosun.fim.uni-passau.de/se2/litterbox/badges/master/coverage.svg)](https://gitlab.infosun.fim.uni-passau.de/se2/litterbox/commits/master)
-
-
 Static code analysis tool for detecting recurring bug patterns in Scratch projects. 
 
 ## Authors
 
-See [Contributors](https://gitlab.infosun.fim.uni-passau.de/se2/litterbox/-/graphs/master)
+See [Contributors](https://github.com/se2p/LitterBox/graphs/contributors)
 
 ## Usage
 
@@ -28,7 +24,8 @@ To use LitterBox with the command line, build the Jar with mvn clean and mvn pac
 2. projectid - id of the project that should be downloaded and analysed
 3. projectlist - path to a file with a list of project ids of projects which should be downloaded and analysed.
 4. projectout - path where downloaded projects should be stored
-5. detectors - all the detectors you want to run (short names seperated by ","), if not set, all will be used
+5. output - path to the csv file where the results of the analysis should be stored
+6. detectors - all the detectors you want to run (short names separated by ","), if not set, all will be used
 
 #### Detectors short names:
 
@@ -95,18 +92,20 @@ Detectors:
 
 #### Example:
 
-java -cp C:\ScratchAnalytics-1.0.jar de.uni_passau.fim.se2.litterbox.Main -path C:\scratchprojects\files\ -version 3 -folder C:\scratchprojects\files\test.csv -detectors cnt,glblstrt
+java -cp C:\ScratchAnalytics-1.0.jar de.uni_passau.fim.se2.litterbox.Main -path C:\scratchprojects\files\ -output C:\scratchprojects\files\test.csv -detectors mssLoopSens,blockCnt
 
-This will run only BlockCount and GlobalStartingpoint on all projects in C:\scratchprojects\files\; and it will also save the test.csv file in the same location.
+This will run only Missing Loop Sensing and Block Count on all projects in C:\scratchprojects\files\; and it will also
+ save the test.csv file in the same location.
 
 ## Extendability
 
 First of all, create a new IssueFinder and implement the corresponding interface. 
 The check() method must return a IssueReport with the issue name, count for the current project, 
-the position of all issue occurrences, the project path and notes about the issue.
+the sprites of all issue occurrences and notes about the issue.
 Then, register the newly created IssueFinder in the IssueTool constructor ( finder.add(new NewFinder()) ).
 The finder name will automatically be added to the printed csv file.
 
-## Publications
 
-[1] Florian Sulzmeier, “Identification and Automated Analysis of Common Bug Pattern in Scratch Programs,” Bachelor Thesis, Passau, Passau, 2019. - [Olf96](https://github.com/Olf96)
+## Publications
+C. Frädrich, F. Obermüller, N. Körber, U. Heuer, and G. Fraser, “Common bugs in scratch programs,” in Proceedings of
+ the 25th Annual Conference on Innovation and Technology in Computer Science Education (ITiCSE), 2020, to appear.
