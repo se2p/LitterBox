@@ -33,8 +33,9 @@ import java.io.IOException;
 public class PositionEqualsCheckTest {
     private static Program empty;
     private static Program equalX;
-    private static Program equalPos;
+    private static Program equalDirection;
     private static Program allChecks;
+    private static Program xPositionEquals;
     private static ObjectMapper mapper = new ObjectMapper();
 
     @BeforeAll
@@ -46,11 +47,14 @@ public class PositionEqualsCheckTest {
         f = new File("./src/test/fixtures/bugpattern/xPosEqual.json");
         equalX = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
 
-        f = new File("./src/test/fixtures/bugpattern/posEqual.json");
-        equalPos = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
+        f = new File("./src/test/fixtures/bugpattern/posEqualDirection.json");
+        equalDirection = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
 
         f = new File("./src/test/fixtures/bugpattern/positionEqualsCheck.json");
         allChecks = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
+
+        f = new File("./src/test/fixtures/bugpattern/xPositionEquals.json");
+        xPositionEquals = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
     }
 
     @Test
@@ -64,14 +68,21 @@ public class PositionEqualsCheckTest {
     public void testEqualCond() {
         PositionEqualsCheck parameterName = new PositionEqualsCheck();
         IssueReport report = parameterName.check(equalX);
-        Assertions.assertEquals(0, report.getCount());
+        Assertions.assertEquals(1, report.getCount());
     }
 
     @Test
     public void testEqualDir() {
         PositionEqualsCheck parameterName = new PositionEqualsCheck();
-        IssueReport report = parameterName.check(equalPos);
+        IssueReport report = parameterName.check(equalDirection);
         Assertions.assertEquals(0, report.getCount());
+    }
+
+    @Test
+    public void testXPositionEquals() {
+        PositionEqualsCheck parameterName = new PositionEqualsCheck();
+        IssueReport report = parameterName.check(xPositionEquals);
+        Assertions.assertEquals(1, report.getCount());
     }
 
     @Test
