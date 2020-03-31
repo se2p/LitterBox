@@ -22,15 +22,19 @@ import de.uni_passau.fim.se2.litterbox.ast.model.type.Type;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Identifier;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 public class ProcedureDefinitionNameMapping {
 
     private Map<String, Map<Identifier, ProcedureInfo>> procedures;
+    private List<String> malformatedProcedures;
 
     public ProcedureDefinitionNameMapping() {
         procedures = new LinkedHashMap<>();
+        malformatedProcedures = new ArrayList<>();
     }
 
     public void addProcedure(Identifier identifier, String actorName, String procedureName, String[] argumentNames,
@@ -56,5 +60,13 @@ public class ProcedureDefinitionNameMapping {
 
     public Map<String, Map<Identifier, ProcedureInfo>> getProcedures() {
         return procedures;
+    }
+
+    public void addMalformated(String malformated){
+        malformatedProcedures.add(malformated);
+    }
+
+    public boolean checkIfMalformated(String toCheck){
+        return malformatedProcedures.contains(toCheck);
     }
 }

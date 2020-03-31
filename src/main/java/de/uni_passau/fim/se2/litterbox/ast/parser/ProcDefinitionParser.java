@@ -23,6 +23,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import de.uni_passau.fim.se2.litterbox.ast.Constants;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
+import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.Parameter;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterList;
@@ -108,7 +109,7 @@ public class ProcDefinitionParser {
             ArrayNode currentAsArray = (ArrayNode) currentInput;
 
             if (!currentAsArray.get(PARAMETER_REFERENCE_POS).asText().equals("null")) {
-                paraTypes = addType(blocks, paraTypes, currentAsArray.get(PARAMETER_REFERENCE_POS).asText());
+                addType(blocks, paraTypes, currentAsArray.get(PARAMETER_REFERENCE_POS).asText());
             }
         }
 
@@ -127,6 +128,7 @@ public class ProcDefinitionParser {
             }
         }
         if (ident == null) {
+            ProgramParser.procDefMap.addMalformated(actorName+methodName);
             throw new ParsingException("Procedure prototype is missing its parent identifier and could not be parsed.");
         }
         JsonNode argumentNamesNode = proto.get(MUTATION_KEY).get(ARGUMENTNAMES_KEY);
@@ -136,6 +138,7 @@ public class ProcDefinitionParser {
         try {
             argumentsNode = mapper.readTree(argumentNamesNode.asText());
         } catch (IOException e) {
+            ProgramParser.procDefMap.addMalformated(actorName+methodName);
             throw new ParsingException("Could not read argument names of a procedure");
         }
 
@@ -148,6 +151,7 @@ public class ProcDefinitionParser {
         }
 
         if (!(arguments.length == paraTypes.size())) {
+            ProgramParser.procDefMap.addMalformated(actorName+methodName);
             throw new ParsingException("A procedure in this project does have malformated code, where inputs or " +
                     "parameternames are missing.");
         }
