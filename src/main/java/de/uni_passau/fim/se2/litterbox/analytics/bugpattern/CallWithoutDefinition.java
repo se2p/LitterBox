@@ -95,7 +95,7 @@ public class CallWithoutDefinition implements IssueFinder, ScratchVisitor {
 
     private void checkCalls() {
         for (String calledProcedure : calledProcedures) {
-            if (!proceduresDef.contains(calledProcedure)) {
+            if (!proceduresDef.contains(calledProcedure) && !program.getProcedureMapping().checkIfMalformated(currentActor.getIdent().getName()+calledProcedure)) {
                 found = true;
                 count++;
             }
