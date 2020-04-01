@@ -30,7 +30,7 @@ import org.junit.jupiter.api.Test;
 import java.io.File;
 import java.io.IOException;
 
-public class AmbiguousParameterNameTest {
+public class AmbiguousParameterNameStrictTest {
     private static Program empty;
     private static Program ambiguousParams;
     private static Program clans;
@@ -52,29 +52,29 @@ public class AmbiguousParameterNameTest {
 
     @Test
     public void testEmptyProgram() {
-        AmbiguousParameterName parameterName = new AmbiguousParameterName();
+        AmbiguousParameterNameStrict parameterName = new AmbiguousParameterNameStrict();
         IssueReport report = parameterName.check(empty);
         Assertions.assertEquals(0, report.getCount());
     }
 
     @Test
     public void testAmbiguousParameters() {
-        AmbiguousParameterName parameterName = new AmbiguousParameterName();
+        AmbiguousParameterNameStrict parameterName = new AmbiguousParameterNameStrict();
         IssueReport report = parameterName.check(ambiguousParams);
         Assertions.assertEquals(0, report.getCount());
     }
 
     @Test
     public void testClans() {
-        AmbiguousParameterName parameterName = new AmbiguousParameterName();
+        AmbiguousParameterNameStrict parameterName = new AmbiguousParameterNameStrict();
         IssueReport report = parameterName.check(clans);
         Assertions.assertEquals(0, report.getCount());
     }
 
     @Test
     public void testReal() {
-        AmbiguousParameterName parameterName = new AmbiguousParameterName();
+        AmbiguousParameterNameStrict parameterName = new AmbiguousParameterNameStrict();
         IssueReport report = parameterName.check(realAmbiguousParam);
-        Assertions.assertEquals(2, report.getCount());
+        Assertions.assertEquals(1, report.getCount());
     }
 }

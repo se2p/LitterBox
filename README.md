@@ -40,6 +40,7 @@ Detectors:
 	Bugpatterns:
 	ambCustBlSign        Ambiguous Custom Block Signature 
 	ambParamName         Ambiguous Parameter Name
+	ambParamNameStrct    Ambiguous Parameter Name Strict
 	cllWithoutDef        Call Without Definition
 	compLit              Comparing Literals
 	custBlWithForever    Custom Block With Forever

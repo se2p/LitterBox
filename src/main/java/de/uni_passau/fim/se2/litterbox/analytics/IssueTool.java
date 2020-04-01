@@ -18,34 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics;
 
-import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.AmbiguousCustomBlockSignature;
-import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.AmbiguousParameterName;
-import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.CallWithoutDefinition;
-import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.ComparingLiterals;
-import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.CustomBlockWithForever;
-import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.CustomBlockWithTermination;
-import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.EndlessRecursion;
-import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.ExpressionAsTouchingOrColor;
-import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.ForeverInsideLoop;
-import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.IllegalParameterRefactor;
-import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.MessageNeverReceived;
-import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.MessageNeverSent;
-import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.MissingBackdropSwitch;
-import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.MissingCloneCall;
-import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.MissingCloneInitialization;
-import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.MissingEraseAll;
-import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.MissingLoopSensing;
-import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.MissingPenDown;
-import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.MissingPenUp;
-import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.MissingTerminationCondition;
-import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.MissingWaitUntilCondition;
-import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.NoWorkingScripts;
-import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.OrphanedParameter;
-import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.ParameterOutOfScope;
-import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.PositionEqualsCheck;
-import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.RecursiveCloning;
-import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.SameVariableDifferentSprite;
-import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.StutteringMovement;
+import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.*;
 import de.uni_passau.fim.se2.litterbox.analytics.ctscore.FlowControl;
 import de.uni_passau.fim.se2.litterbox.analytics.smells.DeadCode;
 import de.uni_passau.fim.se2.litterbox.analytics.smells.EmptyControlBody;
@@ -90,6 +63,7 @@ public class IssueTool {
     public IssueTool() {
         bugFinder.put(AmbiguousCustomBlockSignature.SHORT_NAME, new AmbiguousCustomBlockSignature());
         bugFinder.put(AmbiguousParameterName.SHORT_NAME, new AmbiguousParameterName());
+        bugFinder.put(AmbiguousParameterNameStrict.SHORT_NAME, new AmbiguousParameterNameStrict());
         bugFinder.put(CallWithoutDefinition.SHORT_NAME, new CallWithoutDefinition());
         bugFinder.put(ComparingLiterals.SHORT_NAME, new ComparingLiterals());
         bugFinder.put(CustomBlockWithForever.SHORT_NAME, new CustomBlockWithForever());
