@@ -57,7 +57,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Or;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Touching;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.UnspecifiedBoolExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.ExpressionList;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.ExpressionListPlain;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.ListExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.Add;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.AsNumber;
@@ -764,13 +763,7 @@ public class GrammarPrintVisitor implements ScratchVisitor {
     @Override
     public void visit(ExpressionList expressionList) {
         openParentheses();
-        expressionList.getExpressionListPlain().accept(this);
-        closeParentheses();
-    }
-
-    @Override
-    public void visit(ExpressionListPlain expressionListPlain) {
-        List<Expression> expressions = expressionListPlain.getExpressions();
+        List<Expression> expressions = expressionList.getExpressions();
         if (expressions.size() > 0) {
             for (int i = 0; i < expressions.size() - 1; i++) {
                 expressions.get(i).accept(this);
@@ -778,6 +771,7 @@ public class GrammarPrintVisitor implements ScratchVisitor {
             }
             expressions.get(expressions.size() - 1).accept(this);
         }
+        closeParentheses();
     }
 
     @Override

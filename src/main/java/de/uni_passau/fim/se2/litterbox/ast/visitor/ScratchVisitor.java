@@ -65,7 +65,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Touching;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.UnspecifiedBoolExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.AsListIndex;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.ExpressionList;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.ExpressionListPlain;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.ListExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.Add;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.AsNumber;
@@ -734,19 +733,6 @@ public interface ScratchVisitor {
      * @param node ExpressionList Node of which the children will be iterated
      */
     default void visit(ExpressionList node) {
-        visit((ASTNode) node);
-    }
-
-    /**
-     * Default implementation of visit method for {@link ExpressionListPlain}.
-     *
-     * <p>
-     * Iterates all children of this node without performing any action.
-     * </p>
-     *
-     * @param node ExpressionListPlain Node of which the children will be iterated
-     */
-    default void visit(ExpressionListPlain node) {
         visit((ListExpr) node);
     }
 

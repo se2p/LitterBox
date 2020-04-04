@@ -24,7 +24,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Message;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BoolExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.ExpressionList;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.ExpressionListPlain;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.BoolLiteral;
@@ -125,7 +124,7 @@ public class DeclarationStmtParser {
             String listName = LIST_ABBREVIATION + arrNode.get(DECLARATION_LIST_NAME_POS).asText();
             JsonNode listValues = arrNode.get(DECLARATION_LIST_VALUES_POS);
             Preconditions.checkArgument(listValues.isArray());
-            ExpressionList expressionList = new ExpressionList(makeExpressionListPlain((ArrayNode) listValues));
+            ExpressionList expressionList = new ExpressionList(makeExpressionList((ArrayNode) listValues));
             ProgramParser.symbolTable.addExpressionListInfo(currentEntry.getKey(), listName, expressionList, isStage,
                     actorName);
             parsedLists.add(new DeclarationIdentAsTypeStmt(new StrId(listName), new ListType()));
@@ -133,12 +132,12 @@ public class DeclarationStmtParser {
         return parsedLists;
     }
 
-    private static ExpressionListPlain makeExpressionListPlain(ArrayNode valuesArray) {
+    private static List<Expression> makeExpressionList(ArrayNode valuesArray) {
         List<Expression> expressions = new ArrayList<>();
         for (int i = 0; i < valuesArray.size(); i++) {
             expressions.add(new StringLiteral(valuesArray.get(i).asText()));
         }
-        return new ExpressionListPlain(expressions);
+        return expressions;
     }
 
     public static List<SetStmt> parseListDeclarationSetStmts(JsonNode listNode, String actorName) {
@@ -153,7 +152,7 @@ public class DeclarationStmtParser {
             JsonNode listValues = arrNode.get(DECLARATION_LIST_VALUES_POS);
             Preconditions.checkArgument(listValues.isArray());
             parsedLists.add(new SetVariableTo(new Qualified(new StrId(actorName), new StrId(listName)),
-                    makeExpressionListPlain((ArrayNode) listValues)));
+                    new ExpressionList(makeExpressionList((ArrayNode) listValues))));
         }
         return parsedLists;
     }

@@ -27,7 +27,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinitionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.SetStmtList;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.ExpressionListPlain;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.ExpressionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.resource.ImageResource;
@@ -135,7 +135,7 @@ public class ProgramParserTest {
             SetVariableTo setList = (SetVariableTo) spriteSetStmts.get(0);
             Qualified variable = (Qualified) setList.getVariable();
             Truth.assertThat(variable.getSecond().getName()).isEqualTo(Constants.LIST_ABBREVIATION + "SpriteLocalList");
-            ExpressionListPlain exprListPlain = (ExpressionListPlain) setList.getExpr();
+            ExpressionList exprListPlain = (ExpressionList) setList.getExpr();
             Truth.assertThat(((StringLiteral) exprListPlain.getExpressions().get(0)).getText()).isEqualTo("Elem1");
             Truth.assertThat(((StringLiteral) exprListPlain.getExpressions().get(1)).getText()).isEqualTo("Elem2");
             Truth.assertThat(((StringLiteral) exprListPlain.getExpressions().get(2)).getText()).isEqualTo("1");
