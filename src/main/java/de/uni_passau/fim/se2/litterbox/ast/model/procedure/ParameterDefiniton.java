@@ -24,12 +24,12 @@ import de.uni_passau.fim.se2.litterbox.ast.model.type.Type;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Identifier;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
-public class Parameter extends AbstractNode implements ASTNode {
+public class ParameterDefiniton extends AbstractNode implements ASTNode {
 
     private final Identifier ident;
     private final Type type;
 
-    public Parameter(Identifier ident, Type type) {
+    public ParameterDefiniton(Identifier ident, Type type) {
         super(ident, type);
         this.ident = ident;
         this.type = type;

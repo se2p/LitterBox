@@ -24,17 +24,17 @@ import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 import java.util.List;
 
-public class ParameterList extends AbstractNode implements ASTNode {
+public class ParameterDefinitionList extends AbstractNode implements ASTNode {
 
-    private final List<Parameter> parameters;
+    private final List<ParameterDefiniton> parameterDefinitons;
 
-    public ParameterList(List<Parameter> parameters) {
-        super(parameters);
-        this.parameters = parameters;
+    public ParameterDefinitionList(List<ParameterDefiniton> parameterDefinitons) {
+        super(parameterDefinitons);
+        this.parameterDefinitons = parameterDefinitons;
     }
 
-    public List<Parameter> getParameters() {
-        return parameters;
+    public List<ParameterDefiniton> getParameterDefinitons() {
+        return parameterDefinitons;
     }
 
     @Override

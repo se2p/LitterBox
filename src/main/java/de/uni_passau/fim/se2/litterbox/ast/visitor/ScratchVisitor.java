@@ -105,8 +105,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.position.MousePos;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.PivotOf;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.Position;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.RandomPos;
-import de.uni_passau.fim.se2.litterbox.ast.model.procedure.Parameter;
-import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterList;
+import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterDefinitionList;
+import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterDefiniton;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinitionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.resource.ImageResource;
@@ -698,28 +698,28 @@ public interface ScratchVisitor {
     }
 
     /**
-     * Default implementation of visit method for {@link ParameterList}.
+     * Default implementation of visit method for {@link ParameterDefinitionList}.
      *
      * <p>
      * Iterates all children of this node without performing any action.
      * </p>
      *
-     * @param node ParameterList Node of which the children will be iterated
+     * @param node ParameterDefinitionList Node of which the children will be iterated
      */
-    default void visit(ParameterList node) {
+    default void visit(ParameterDefinitionList node) {
         visit((ASTNode) node);
     }
 
     /**
-     * Default implementation of visit method for {@link Parameter}.
+     * Default implementation of visit method for {@link ParameterDefiniton}.
      *
      * <p>
      * Iterates all children of this node without performing any action.
      * </p>
      *
-     * @param node Parameter Node of which the children will be iterated
+     * @param node ParameterDefiniton Node of which the children will be iterated
      */
-    default void visit(Parameter node) {
+    default void visit(ParameterDefiniton node) {
         visit((ASTNode) node);
     }
 

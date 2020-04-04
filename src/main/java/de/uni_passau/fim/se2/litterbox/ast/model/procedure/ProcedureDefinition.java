@@ -27,13 +27,13 @@ import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 public class ProcedureDefinition extends AbstractNode implements ASTNode {
 
     private final Identifier ident;
-    private final ParameterList parameterList;
+    private final ParameterDefinitionList parameterDefinitionList;
     private final StmtList stmtList;
 
-    public ProcedureDefinition(Identifier ident, ParameterList parameterList, StmtList stmtList) {
-        super(ident, parameterList, stmtList);
+    public ProcedureDefinition(Identifier ident, ParameterDefinitionList parameterDefinitionList, StmtList stmtList) {
+        super(ident, parameterDefinitionList, stmtList);
         this.ident = ident;
-        this.parameterList = parameterList;
+        this.parameterDefinitionList = parameterDefinitionList;
         this.stmtList = stmtList;
     }
 
@@ -41,8 +41,8 @@ public class ProcedureDefinition extends AbstractNode implements ASTNode {
         return ident;
     }
 
-    public ParameterList getParameterList() {
-        return parameterList;
+    public ParameterDefinitionList getParameterDefinitionList() {
+        return parameterDefinitionList;
     }
 
     public StmtList getStmtList() {

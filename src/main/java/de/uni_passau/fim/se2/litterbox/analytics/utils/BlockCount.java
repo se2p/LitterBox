@@ -44,8 +44,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.literals.BoolLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.ColorLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
-import de.uni_passau.fim.se2.litterbox.ast.model.procedure.Parameter;
-import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterList;
+import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterDefiniton;
+import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterDefinitionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.ExpressionStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.HideVariable;
@@ -199,7 +199,7 @@ public class BlockCount implements IssueFinder, ScratchVisitor {
     }
 
     @Override
-    public void visit(ParameterList node) {
+    public void visit(ParameterDefinitionList node) {
         insideParameterList = true;
         if (!node.getChildren().isEmpty()) {
             for (ASTNode child : node.getChildren()) {
@@ -228,7 +228,7 @@ public class BlockCount implements IssueFinder, ScratchVisitor {
     }
 
     @Override
-    public void visit(Parameter node) {
+    public void visit(ParameterDefiniton node) {
         if (!node.getChildren().isEmpty()) {
             for (ASTNode child : node.getChildren()) {
                 child.accept(this);

@@ -24,7 +24,7 @@ import de.uni_passau.fim.se2.litterbox.ast.Constants;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.model.procedure.Parameter;
+import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterDefiniton;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
@@ -49,7 +49,7 @@ public class OrphanedParameter implements IssueFinder, ScratchVisitor {
     private int count = 0;
     private List<String> actorNames = new LinkedList<>();
     private ActorDefinition currentActor;
-    private List<Parameter> currentParameters;
+    private List<ParameterDefiniton> currentParameterDefinitons;
     private boolean insideProcedure;
 
     @Override
@@ -89,7 +89,7 @@ public class OrphanedParameter implements IssueFinder, ScratchVisitor {
     @Override
     public void visit(ProcedureDefinition node) {
         insideProcedure = true;
-        currentParameters = node.getParameterList().getParameters();
+        currentParameterDefinitons = node.getParameterDefinitionList().getParameterDefinitons();
         if (!node.getChildren().isEmpty()) {
             for (ASTNode child : node.getChildren()) {
                 child.accept(this);
@@ -114,8 +114,8 @@ public class OrphanedParameter implements IssueFinder, ScratchVisitor {
 
     private void checkParameterNames(String name) {
         boolean validParametername = false;
-        for (int i = 0; i < currentParameters.size() && !validParametername; i++) {
-            if (name.equals(currentParameters.get(i).getIdent().getName())) {
+        for (int i = 0; i < currentParameterDefinitons.size() && !validParametername; i++) {
+            if (name.equals(currentParameterDefinitons.get(i).getIdent().getName())) {
                 validParametername = true;
             }
         }

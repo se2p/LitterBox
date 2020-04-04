@@ -95,8 +95,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.position.CoordinatePosition;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.MousePos;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.PivotOf;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.RandomPos;
-import de.uni_passau.fim.se2.litterbox.ast.model.procedure.Parameter;
-import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterList;
+import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterDefinitionList;
+import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterDefiniton;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinitionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.resource.ImageResource;
@@ -827,7 +827,7 @@ public class GrammarPrintVisitor implements ScratchVisitor {
     public void visit(ProcedureDefinition procedureDefinition) {
         emitToken("procedure");
         procedureDefinition.getIdent().accept(this);
-        procedureDefinition.getParameterList().accept(this);
+        procedureDefinition.getParameterDefinitionList().accept(this);
         procedureDefinition.getStmtList().accept(this);
     }
 
@@ -847,15 +847,15 @@ public class GrammarPrintVisitor implements ScratchVisitor {
     }
 
     @Override
-    public void visit(ParameterList parameterList) {
+    public void visit(ParameterDefinitionList parameterDefinitionList) {
         openParentheses();
-        List<Parameter> parameters = parameterList.getParameters();
-        if (parameters.size() > 0) {
-            for (int i = 0; i < parameters.size() - 1; i++) {
-                parameters.get(i).accept(this);
+        List<ParameterDefiniton> parameterDefinitons = parameterDefinitionList.getParameterDefinitons();
+        if (parameterDefinitons.size() > 0) {
+            for (int i = 0; i < parameterDefinitons.size() - 1; i++) {
+                parameterDefinitons.get(i).accept(this);
                 comma();
             }
-            parameters.get(parameters.size() - 1).accept(this);
+            parameterDefinitons.get(parameterDefinitons.size() - 1).accept(this);
         }
         closeParentheses();
     }
@@ -865,10 +865,10 @@ public class GrammarPrintVisitor implements ScratchVisitor {
     }
 
     @Override
-    public void visit(Parameter parameter) {
-        parameter.getIdent().accept(this);
+    public void visit(ParameterDefiniton parameterDefiniton) {
+        parameterDefiniton.getIdent().accept(this);
         colon();
-        parameter.getType().accept(this);
+        parameterDefiniton.getType().accept(this);
     }
 
     private void colon() {

@@ -24,8 +24,8 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import de.uni_passau.fim.se2.litterbox.ast.Constants;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
-import de.uni_passau.fim.se2.litterbox.ast.model.procedure.Parameter;
-import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterList;
+import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterDefinitionList;
+import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterDefiniton;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinitionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.BooleanType;
@@ -96,7 +96,7 @@ public class ProcDefinitionParser {
         ArrayNode inputArray = (ArrayNode) input;
         String protoReference = inputArray.get(PROTOTYPE_REFERENCE_POS).asText();
         JsonNode proto = blocks.get(protoReference);
-        ArrayList<Parameter> inputs = new ArrayList<>();
+        ArrayList<ParameterDefiniton> inputs = new ArrayList<>();
 
         Iterator<Map.Entry<String, JsonNode>> iter = proto.get(INPUTS_KEY).fields();
         List<Type> paraTypes = new ArrayList<>();
@@ -157,11 +157,11 @@ public class ProcDefinitionParser {
         ProgramParser.procDefMap.addProcedure(ident, actorName, methodName, arguments, paraTypes.toArray(typeArray));
 
         for (int i = 0; i < paraTypes.size(); i++) {
-            inputs.add(new Parameter(new StrId(arguments[i]), paraTypes.get(i)));
+            inputs.add(new ParameterDefiniton(new StrId(arguments[i]), paraTypes.get(i)));
         }
-        ParameterList parameterList = new ParameterList(inputs);
+        ParameterDefinitionList parameterDefinitionList = new ParameterDefinitionList(inputs);
         StmtList stmtList = ScriptParser.parseStmtList(def.get(NEXT_KEY).asText(), blocks);
-        return new ProcedureDefinition(ident, parameterList, stmtList);
+        return new ProcedureDefinition(ident, parameterDefinitionList, stmtList);
     }
 
     private static List<Type> addType(JsonNode blocks, List<Type> types, String textValue) {
