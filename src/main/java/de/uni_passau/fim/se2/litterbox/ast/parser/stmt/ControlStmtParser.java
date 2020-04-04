@@ -25,7 +25,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BoolExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.UnspecifiedBoolExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.ListOfStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfElseStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
@@ -107,7 +106,7 @@ public class ControlStmtParser {
             substackNode = inputs.get(inputSubstack).get(Constants.POS_INPUT_VALUE);
             return ScriptParser.parseStmtList(substackNode.asText(), allBlocks);
         } else {
-            return new StmtList(new ListOfStmt(new ArrayList<Stmt>()));
+            return new StmtList(new ArrayList<Stmt>());
         }
     }
 }

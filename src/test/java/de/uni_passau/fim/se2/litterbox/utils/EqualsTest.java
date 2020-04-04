@@ -20,7 +20,6 @@ package de.uni_passau.fim.se2.litterbox.utils;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.ListOfStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatTimesStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.MoveSteps;
@@ -38,7 +37,7 @@ public class EqualsTest {
         MoveSteps goTo = new MoveSteps(new NumberLiteral(12));
         List<Stmt> list = new ArrayList<>();
         list.add(goTo);
-        RepeatTimesStmt repeat = new RepeatTimesStmt(num, new StmtList(new ListOfStmt(list)));
+        RepeatTimesStmt repeat = new RepeatTimesStmt(num, new StmtList(list));
         NumberLiteral num2 = new NumberLiteral(2);
         Assertions.assertTrue(num.equals(num2));
         MoveSteps goTo2 = new MoveSteps(new NumberLiteral(12));
@@ -46,7 +45,7 @@ public class EqualsTest {
         List<Stmt> list2 = new ArrayList<>();
         list2.add(goTo2);
 
-        RepeatTimesStmt repeat2 = new RepeatTimesStmt(num2, new StmtList(new ListOfStmt(list2)));
+        RepeatTimesStmt repeat2 = new RepeatTimesStmt(num2, new StmtList(list2));
         Assertions.assertTrue(repeat.equals(repeat2));
     }
 }

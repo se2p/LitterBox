@@ -87,8 +87,8 @@ public class FlowControl implements IssueFinder, ScratchVisitor {
 
     @Override
     public void visit(Script node) {
-        if ((!(node.getEvent() instanceof Never) && node.getStmtList().getStmts().getListOfStmt().size() > 0)
-                || ((node.getEvent() instanceof Never) && node.getStmtList().getStmts().getListOfStmt().size() > 1)) {
+        if ((!(node.getEvent() instanceof Never) && node.getStmtList().getStmts().size() > 0)
+                || ((node.getEvent() instanceof Never) && node.getStmtList().getStmts().size() > 1)) {
             script = true;
         }
         if (!node.getChildren().isEmpty()) {

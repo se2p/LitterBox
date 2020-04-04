@@ -107,7 +107,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.resource.ResourceList;
 import de.uni_passau.fim.se2.litterbox.ast.model.resource.SoundResource;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.ExpressionStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.ListOfStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.AskAndWait;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.ClearGraphicEffects;
@@ -366,18 +365,11 @@ public class GrammarPrintVisitor implements ScratchVisitor {
     public void visit(StmtList stmtList) {
         begin();
         beginIndentation();
-        stmtList.getStmts().accept(this);
-        endIndentation();
-        end();
-    }
-
-    @Override
-    public void visit(ListOfStmt listOfStmt) {
-        for (Stmt stmt : listOfStmt.getListOfStmt()) {
-            newLine();
-            appendIndentation();
+        for (Stmt stmt : stmtList.getStmts()) {
             stmt.accept(this);
         }
+        endIndentation();
+        end();
     }
 
     @Override

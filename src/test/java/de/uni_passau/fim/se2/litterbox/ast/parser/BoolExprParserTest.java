@@ -79,7 +79,7 @@ public class BoolExprParserTest {
         final ActorDefinition sprite = program.getActorDefinitionList().getDefintions().get(1);
         final Script script = sprite.getScripts().getScriptList().get(0);
 
-        final Stmt stmt = script.getStmtList().getStmts().getListOfStmt().get(1);
+        final Stmt stmt = script.getStmtList().getStmts().get(1);
         Truth.assertThat(stmt).isInstanceOf(IfThenStmt.class);
 
         IfThenStmt ifThenStmt = (IfThenStmt) stmt;
@@ -94,13 +94,13 @@ public class BoolExprParserTest {
         final ActorDefinition sprite = program.getActorDefinitionList().getDefintions().get(1);
         final Script script = sprite.getScripts().getScriptList().get(0);
 
-        final Stmt stmt = script.getStmtList().getStmts().getListOfStmt().get(2);
+        final Stmt stmt = script.getStmtList().getStmts().get(2);
         Truth.assertThat(stmt).isInstanceOf(RepeatTimesStmt.class);
 
         RepeatTimesStmt repeatTimesStmt = (RepeatTimesStmt) stmt;
         StmtList substack = repeatTimesStmt.getStmtList();
 
-        final Stmt subStackStmt = substack.getStmts().getListOfStmt().get(0);
+        final Stmt subStackStmt = substack.getStmts().get(0);
         Truth.assertThat(subStackStmt).isInstanceOf(IfElseStmt.class);
 
         IfElseStmt ifThenStmt = (IfElseStmt) subStackStmt;
@@ -115,7 +115,7 @@ public class BoolExprParserTest {
         final ActorDefinition sprite = program.getActorDefinitionList().getDefintions().get(1);
         final Script script = sprite.getScripts().getScriptList().get(0);
 
-        final Stmt stmt = script.getStmtList().getStmts().getListOfStmt().get(3);
+        final Stmt stmt = script.getStmtList().getStmts().get(3);
         Truth.assertThat(stmt).isInstanceOf(WaitUntil.class);
 
         WaitUntil waitUntil = (WaitUntil) stmt;
@@ -129,7 +129,7 @@ public class BoolExprParserTest {
         final ActorDefinition sprite = program.getActorDefinitionList().getDefintions().get(1);
         final Script script = sprite.getScripts().getScriptList().get(0);
 
-        final Stmt stmt = script.getStmtList().getStmts().getListOfStmt().get(4);
+        final Stmt stmt = script.getStmtList().getStmts().get(4);
         Truth.assertThat(stmt).isInstanceOf(WaitSeconds.class);
 
         WaitSeconds wait = (WaitSeconds) stmt;
@@ -144,11 +144,11 @@ public class BoolExprParserTest {
         final ActorDefinition sprite = program.getActorDefinitionList().getDefintions().get(1);
         final Script script = sprite.getScripts().getScriptList().get(0);
 
-        final Stmt stmt = script.getStmtList().getStmts().getListOfStmt().get(5);
+        final Stmt stmt = script.getStmtList().getStmts().get(5);
         Truth.assertThat(stmt).isInstanceOf(RepeatTimesStmt.class);
 
         RepeatTimesStmt repeatTimesStmt = (RepeatTimesStmt) stmt;
-        IfElseStmt ifElseStmt = (IfElseStmt) repeatTimesStmt.getStmtList().getStmts().getListOfStmt().get(0);
+        IfElseStmt ifElseStmt = (IfElseStmt) repeatTimesStmt.getStmtList().getStmts().get(0);
         Truth.assertThat(ifElseStmt.getBoolExpr()).isInstanceOf(Not.class);
         Not boolExpr = (Not) ifElseStmt.getBoolExpr();
         Truth.assertThat(boolExpr.getOperand1()).isInstanceOf(BiggerThan.class);
@@ -160,7 +160,7 @@ public class BoolExprParserTest {
         final ActorDefinition sprite = program.getActorDefinitionList().getDefintions().get(1);
         final Script script = sprite.getScripts().getScriptList().get(1);
 
-        final Stmt stmt = script.getStmtList().getStmts().getListOfStmt().get(0);
+        final Stmt stmt = script.getStmtList().getStmts().get(0);
         Truth.assertThat(stmt).isInstanceOf(IfThenStmt.class);
 
         IfThenStmt ifThenStmt = (IfThenStmt) stmt;
@@ -175,7 +175,7 @@ public class BoolExprParserTest {
         final ActorDefinition sprite = program.getActorDefinitionList().getDefintions().get(1);
         final Script script = sprite.getScripts().getScriptList().get(1);
 
-        final Stmt stmt = script.getStmtList().getStmts().getListOfStmt().get(1);
+        final Stmt stmt = script.getStmtList().getStmts().get(1);
         Truth.assertThat(stmt).isInstanceOf(IfThenStmt.class);
 
         IfThenStmt ifThenStmt = (IfThenStmt) stmt;
@@ -190,7 +190,7 @@ public class BoolExprParserTest {
         final ActorDefinition sprite = program.getActorDefinitionList().getDefintions().get(1);
         final Script script = sprite.getScripts().getScriptList().get(1);
 
-        final Stmt stmt = script.getStmtList().getStmts().getListOfStmt().get(2);
+        final Stmt stmt = script.getStmtList().getStmts().get(2);
         Truth.assertThat(stmt).isInstanceOf(IfThenStmt.class);
 
         IfThenStmt ifThenStmt = (IfThenStmt) stmt;
@@ -205,7 +205,7 @@ public class BoolExprParserTest {
         final ActorDefinition sprite = program.getActorDefinitionList().getDefintions().get(1);
         final Script script = sprite.getScripts().getScriptList().get(1);
 
-        final Stmt stmt = script.getStmtList().getStmts().getListOfStmt().get(3);
+        final Stmt stmt = script.getStmtList().getStmts().get(3);
         Truth.assertThat(stmt).isInstanceOf(IfThenStmt.class);
 
         IfThenStmt ifThenStmt = (IfThenStmt) stmt;
@@ -219,7 +219,7 @@ public class BoolExprParserTest {
         final ActorDefinition sprite = program.getActorDefinitionList().getDefintions().get(1);
         final Script script = sprite.getScripts().getScriptList().get(1);
 
-        final Stmt stmt = script.getStmtList().getStmts().getListOfStmt().get(4);
+        final Stmt stmt = script.getStmtList().getStmts().get(4);
         Truth.assertThat(stmt).isInstanceOf(IfThenStmt.class);
 
         IfThenStmt ifThenStmt = (IfThenStmt) stmt;
@@ -234,7 +234,7 @@ public class BoolExprParserTest {
         final ActorDefinition sprite = program.getActorDefinitionList().getDefintions().get(1);
         final Script script = sprite.getScripts().getScriptList().get(1);
 
-        final Stmt stmt = script.getStmtList().getStmts().getListOfStmt().get(5);
+        final Stmt stmt = script.getStmtList().getStmts().get(5);
         Truth.assertThat(stmt).isInstanceOf(IfThenStmt.class);
 
         IfThenStmt ifThenStmt = (IfThenStmt) stmt;

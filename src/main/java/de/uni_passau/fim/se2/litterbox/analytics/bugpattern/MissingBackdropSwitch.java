@@ -163,7 +163,7 @@ public class MissingBackdropSwitch implements IssueFinder, ScratchVisitor {
 
     @Override
     public void visit(Script node) {
-        if (node.getStmtList().getStmts().getListOfStmt().size() > 0 && node.getEvent() instanceof BackdropSwitchTo) {
+        if (node.getStmtList().getStmts().size() > 0 && node.getEvent() instanceof BackdropSwitchTo) {
             BackdropSwitchTo event = (BackdropSwitchTo) node.getEvent();
 
             final String actorName = currentActor.getIdent().getName();

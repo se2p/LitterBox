@@ -88,7 +88,7 @@ public class ActorLookStmtParserTest {
             ActorDefinition sprite = list.getDefintions().get(1);
 
             Script script = sprite.getScripts().getScriptList().get(0);
-            List<Stmt> listOfStmt = script.getStmtList().getStmts().getListOfStmt();
+            List<Stmt> listOfStmt = script.getStmtList().getStmts();
 
             Truth.assertThat(listOfStmt.get(0).getClass()).isEqualTo(AskAndWait.class);
             Truth.assertThat(listOfStmt.get(1).getClass()).isEqualTo(SwitchBackdrop.class);
@@ -112,7 +112,7 @@ public class ActorLookStmtParserTest {
             ActorDefinition sprite = list.getDefintions().get(1);
 
             Script script = sprite.getScripts().getScriptList().get(0);
-            List<Stmt> listOfStmt = script.getStmtList().getStmts().getListOfStmt();
+            List<Stmt> listOfStmt = script.getStmtList().getStmts();
 
             Stmt askAndWaitStmt = listOfStmt.get(0);
             Truth.assertThat(askAndWaitStmt.getClass()).isEqualTo(AskAndWait.class);
@@ -132,7 +132,7 @@ public class ActorLookStmtParserTest {
             ActorDefinition sprite = list.getDefintions().get(1);
 
             Script script = sprite.getScripts().getScriptList().get(0);
-            List<Stmt> listOfStmt = script.getStmtList().getStmts().getListOfStmt();
+            List<Stmt> listOfStmt = script.getStmtList().getStmts();
 
             Stmt switchBackropStmt = listOfStmt.get(1);
             Truth.assertThat(switchBackropStmt.getClass()).isEqualTo(SwitchBackdrop.class);
@@ -157,7 +157,7 @@ public class ActorLookStmtParserTest {
             ActorDefinition sprite = list.getDefintions().get(1);
 
             Script script = sprite.getScripts().getScriptList().get(0);
-            List<Stmt> listOfStmt = script.getStmtList().getStmts().getListOfStmt();
+            List<Stmt> listOfStmt = script.getStmtList().getStmts();
 
             Stmt showVariable = listOfStmt.get(2);
             Truth.assertThat(showVariable.getClass()).isEqualTo(ShowVariable.class);
@@ -185,7 +185,7 @@ public class ActorLookStmtParserTest {
             ActorDefinition sprite = list.getDefintions().get(1);
 
             Script script = sprite.getScripts().getScriptList().get(0);
-            List<Stmt> listOfStmt = script.getStmtList().getStmts().getListOfStmt();
+            List<Stmt> listOfStmt = script.getStmtList().getStmts();
 
             Stmt showVariable = listOfStmt.get(4);
             Truth.assertThat(showVariable.getClass()).isEqualTo(ShowVariable.class);

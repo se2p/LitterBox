@@ -93,7 +93,7 @@ public class LongScript implements IssueFinder, ScratchVisitor {
 
     @Override
     public void visit(StmtList node) {
-        localCount = localCount + node.getStmts().getListOfStmt().size();
+        localCount = localCount + node.getStmts().size();
         if (!node.getChildren().isEmpty()) {
             for (ASTNode child : node.getChildren()) {
                 child.accept(this);

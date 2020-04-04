@@ -99,7 +99,7 @@ public class AmbiguousParameterName implements IssueFinder, ScratchVisitor {
     @Override
     public void visit(ProcedureDefinition node) {
 
-        if (node.getStmtList().getStmts().getListOfStmt().size() > 0) {
+        if (node.getStmtList().getStmts().size() > 0) {
             checkArguments(procMap.get(node.getIdent()).getArguments());
 
         }

@@ -71,7 +71,7 @@ public class ProcDefinitionParserTest {
             Assertions.assertEquals(0,
                     ProgramParser.procDefMap.getProcedures().get(actorName).get(list.get(0).getIdent()).getArguments().length);
             Assertions.assertEquals(0, list.get(0).getParameterList().getParameterListPlain().getParameters().size());
-            Assertions.assertEquals(3, list.get(0).getStmtList().getStmts().getListOfStmt().size());
+            Assertions.assertEquals(3, list.get(0).getStmtList().getStmts().size());
         } catch (ParsingException e) {
             e.printStackTrace();
             fail();
@@ -99,7 +99,7 @@ public class ProcDefinitionParserTest {
 
             Truth.assertThat(procedureInfo.getArguments()[0].getType()).isInstanceOf(StringType.class);
             Truth.assertThat(procedureInfo.getArguments()[1].getType()).isInstanceOf(BooleanType.class);
-            Assertions.assertEquals(3, list.get(1).getStmtList().getStmts().getListOfStmt().size());
+            Assertions.assertEquals(3, list.get(1).getStmtList().getStmts().size());
             Assertions.assertEquals(procedureInfo.getArguments()[1].getName(),
                     list.get(1).getParameterList().getParameterListPlain().getParameters().get(1).getIdent().getName());
             Assertions.assertEquals(procedureInfo.getArguments()[0].getName(),
@@ -108,10 +108,10 @@ public class ProcDefinitionParserTest {
                     list.get(1).getParameterList().getParameterListPlain().getParameters().get(1).getType());
             Assertions.assertEquals(procedureInfo.getArguments()[0].getType(),
                     list.get(1).getParameterList().getParameterListPlain().getParameters().get(0).getType());
-            Assertions.assertTrue(list.get(1).getStmtList().getStmts().getListOfStmt().get(0) instanceof MoveSteps);
-            Truth.assertThat(((MoveSteps) list.get(1).getStmtList().getStmts().getListOfStmt().get(0)).getSteps()).isInstanceOf(AsNumber.class);
+            Assertions.assertTrue(list.get(1).getStmtList().getStmts().get(0) instanceof MoveSteps);
+            Truth.assertThat(((MoveSteps) list.get(1).getStmtList().getStmts().get(0)).getSteps()).isInstanceOf(AsNumber.class);
             Assertions.assertEquals(Constants.PARAMETER_ABBREVIATION + "NumInput",
-                    ((Identifier) ((AsNumber) ((MoveSteps) list.get(1).getStmtList().getStmts().getListOfStmt().get(0)).getSteps()).getOperand1()).getName());
+                    ((Identifier) ((AsNumber) ((MoveSteps) list.get(1).getStmtList().getStmts().get(0)).getSteps()).getOperand1()).getName());
         } catch (ParsingException e) {
             e.printStackTrace();
             fail();

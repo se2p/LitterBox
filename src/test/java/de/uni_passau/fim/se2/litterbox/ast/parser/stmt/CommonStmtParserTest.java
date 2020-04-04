@@ -84,7 +84,7 @@ public class CommonStmtParserTest {
             ActorDefinition sprite = list.getDefintions().get(1);
 
             Script script = sprite.getScripts().getScriptList().get(0);
-            List<Stmt> listOfStmt = script.getStmtList().getStmts().getListOfStmt();
+            List<Stmt> listOfStmt = script.getStmtList().getStmts();
 
             Truth.assertThat(listOfStmt.get(0).getClass()).isEqualTo(WaitSeconds.class);
             Truth.assertThat(listOfStmt.get(1).getClass()).isEqualTo(WaitUntil.class);

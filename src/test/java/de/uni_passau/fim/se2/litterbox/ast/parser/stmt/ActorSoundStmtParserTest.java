@@ -81,7 +81,7 @@ public class ActorSoundStmtParserTest {
             ActorDefinition sprite = list.getDefintions().get(1);
 
             Script script = sprite.getScripts().getScriptList().get(0);
-            List<Stmt> listOfStmt = script.getStmtList().getStmts().getListOfStmt();
+            List<Stmt> listOfStmt = script.getStmtList().getStmts();
 
             Truth.assertThat(listOfStmt.get(0).getClass()).isEqualTo(PlaySoundUntilDone.class);
             Truth.assertThat(listOfStmt.get(1).getClass()).isEqualTo(StartSound.class);
@@ -102,7 +102,7 @@ public class ActorSoundStmtParserTest {
             ActorDefinition sprite = list.getDefintions().get(1);
 
             Script script = sprite.getScripts().getScriptList().get(0);
-            List<Stmt> listOfStmt = script.getStmtList().getStmts().getListOfStmt();
+            List<Stmt> listOfStmt = script.getStmtList().getStmts();
 
             Truth.assertThat(listOfStmt.get(0).getClass()).isEqualTo(PlaySoundUntilDone.class);
 
@@ -125,7 +125,7 @@ public class ActorSoundStmtParserTest {
             ActorDefinition sprite = list.getDefintions().get(1);
 
             Script script = sprite.getScripts().getScriptList().get(0);
-            List<Stmt> listOfStmt = script.getStmtList().getStmts().getListOfStmt();
+            List<Stmt> listOfStmt = script.getStmtList().getStmts();
 
             Truth.assertThat(listOfStmt.get(0).getClass()).isEqualTo(PlaySoundUntilDone.class);
 

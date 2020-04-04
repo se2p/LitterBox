@@ -64,7 +64,7 @@ class ColorParserTest {
 
             final ActorDefinition first = list.getDefintions().get(1);
             final Script script = first.getScripts().getScriptList().get(0);
-            final ExpressionStmt expressionStmt = (ExpressionStmt) script.getStmtList().getStmts().getListOfStmt()
+            final ExpressionStmt expressionStmt = (ExpressionStmt) script.getStmtList().getStmts()
                     .get(0);
             Truth.assertThat(expressionStmt.getExpression()).isInstanceOf(ColorTouches.class);
             ColorTouches expression = (ColorTouches) expressionStmt.getExpression();
@@ -86,7 +86,7 @@ class ColorParserTest {
 
             final ActorDefinition first = list.getDefintions().get(1);
             final Script script = first.getScripts().getScriptList().get(1);
-            final ExpressionStmt expressionStmt = (ExpressionStmt) script.getStmtList().getStmts().getListOfStmt()
+            final ExpressionStmt expressionStmt = (ExpressionStmt) script.getStmtList().getStmts()
                     .get(0);
             Truth.assertThat(expressionStmt.getExpression()).isInstanceOf(Touching.class);
             Touching expression = (Touching) expressionStmt.getExpression();

@@ -91,7 +91,7 @@ public class MissingCloneCall implements IssueFinder, ScratchVisitor {
 
     @Override
     public void visit(Script node) {
-        if (node.getStmtList().getStmts().getListOfStmt().size() > 0 && node.getEvent() instanceof StartedAsClone) {
+        if (node.getStmtList().getStmts().size() > 0 && node.getEvent() instanceof StartedAsClone) {
             whenStartsAsCloneActors.add(currentActor.getIdent().getName());
         }
         if (!node.getChildren().isEmpty()) {

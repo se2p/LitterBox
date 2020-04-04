@@ -114,7 +114,7 @@ public class MessageNeverSent implements IssueFinder, ScratchVisitor {
 
     @Override
     public void visit(Script node) {
-        if (node.getStmtList().getStmts().getListOfStmt().size() > 0 && node.getEvent() instanceof ReceptionOfMessage) {
+        if (node.getStmtList().getStmts().size() > 0 && node.getEvent() instanceof ReceptionOfMessage) {
             ReceptionOfMessage event = (ReceptionOfMessage) node.getEvent();
             if (event.getMsg().getMessage() instanceof StringLiteral) {
                 final String actorName = currentActor.getIdent().getName();

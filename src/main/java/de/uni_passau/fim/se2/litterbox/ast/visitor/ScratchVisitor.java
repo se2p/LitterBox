@@ -117,7 +117,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.resource.ResourceList;
 import de.uni_passau.fim.se2.litterbox.ast.model.resource.SoundResource;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.ExpressionStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.ListOfStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.UnspecifiedStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.ActorLookStmt;
@@ -698,19 +697,6 @@ public interface ScratchVisitor {
      */
     default void visit(Never node) {
         visit((Event) node);
-    }
-
-    /**
-     * Default implementation of visit method for {@link ListOfStmt}.
-     *
-     * <p>
-     * Iterates all children of this node without performing any action.
-     * </p>
-     *
-     * @param node ListOfStmt Node of which the children will be iterated
-     */
-    default void visit(ListOfStmt node) {
-        visit((ASTNode) node);
     }
 
     /**

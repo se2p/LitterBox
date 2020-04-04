@@ -85,7 +85,7 @@ public class AmbiguousCustomBlockSignature implements IssueFinder, ScratchVisito
 
     @Override
     public void visit(ProcedureDefinition node) {
-        if (node.getStmtList().getStmts().getListOfStmt().size() > 0) {
+        if (node.getStmtList().getStmts().size() > 0) {
             checkProc(node.getIdent());
         }
 

@@ -67,7 +67,7 @@ class ListStmtParserTest {
             final ActorDefinition sprite = program.getActorDefinitionList().getDefintions().get(1);
             final Script script = sprite.getScripts().getScriptList().get(0);
 
-            final Stmt stmt = script.getStmtList().getStmts().getListOfStmt().get(0);
+            final Stmt stmt = script.getStmtList().getStmts().get(0);
             Truth.assertThat(stmt).isInstanceOf(AddTo.class);
 
             final AddTo addTo = (AddTo) stmt;
@@ -86,7 +86,7 @@ class ListStmtParserTest {
             final ActorDefinition sprite = program.getActorDefinitionList().getDefintions().get(1);
             final Script script = sprite.getScripts().getScriptList().get(1);
 
-            final Stmt stmt = script.getStmtList().getStmts().getListOfStmt().get(1);
+            final Stmt stmt = script.getStmtList().getStmts().get(1);
             Truth.assertThat(stmt).isInstanceOf(AddTo.class);
 
             final AddTo addTo = (AddTo) stmt;
@@ -105,7 +105,7 @@ class ListStmtParserTest {
             final ActorDefinition sprite = program.getActorDefinitionList().getDefintions().get(1);
             final Script script = sprite.getScripts().getScriptList().get(0);
 
-            final Stmt stmt = script.getStmtList().getStmts().getListOfStmt().get(3);
+            final Stmt stmt = script.getStmtList().getStmts().get(3);
             Truth.assertThat(stmt).isInstanceOf(InsertAt.class);
 
             final InsertAt insertAt = (InsertAt) stmt;
@@ -124,7 +124,7 @@ class ListStmtParserTest {
             final ActorDefinition sprite = program.getActorDefinitionList().getDefintions().get(1);
             final Script script = sprite.getScripts().getScriptList().get(0);
 
-            final Stmt stmt = script.getStmtList().getStmts().getListOfStmt().get(4);
+            final Stmt stmt = script.getStmtList().getStmts().get(4);
             Truth.assertThat(stmt).isInstanceOf(ReplaceItem.class);
 
             final ReplaceItem insertAt = (ReplaceItem) stmt;
@@ -144,7 +144,7 @@ class ListStmtParserTest {
             final ActorDefinition sprite = program.getActorDefinitionList().getDefintions().get(1);
             final Script script = sprite.getScripts().getScriptList().get(0);
 
-            final Stmt stmt = script.getStmtList().getStmts().getListOfStmt().get(5);
+            final Stmt stmt = script.getStmtList().getStmts().get(5);
             Truth.assertThat(stmt).isInstanceOf(DeleteOf.class);
 
             final DeleteOf deleteOf = (DeleteOf) stmt;
@@ -163,7 +163,7 @@ class ListStmtParserTest {
             final ActorDefinition sprite = program.getActorDefinitionList().getDefintions().get(1);
             final Script script = sprite.getScripts().getScriptList().get(0);
 
-            final Stmt stmt = script.getStmtList().getStmts().getListOfStmt().get(6);
+            final Stmt stmt = script.getStmtList().getStmts().get(6);
             Truth.assertThat(stmt).isInstanceOf(DeleteAllOf.class);
 
             final DeleteAllOf deleteAllOf = (DeleteAllOf) stmt;

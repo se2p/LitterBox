@@ -76,7 +76,7 @@ public class EmptyCustomBlock implements IssueFinder, ScratchVisitor {
 
     @Override
     public void visit(ProcedureDefinition node) {
-        if (node.getStmtList().getStmts().getListOfStmt().isEmpty()) {
+        if (node.getStmtList().getStmts().isEmpty()) {
             found = true;
             count++;
         }

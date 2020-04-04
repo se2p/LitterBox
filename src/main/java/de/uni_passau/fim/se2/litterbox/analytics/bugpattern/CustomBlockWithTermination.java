@@ -147,7 +147,7 @@ public class CustomBlockWithTermination implements ScratchVisitor, IssueFinder {
 
     @Override
     public void visit(StmtList node) {
-        List<Stmt> stmts = node.getStmts().getListOfStmt();
+        List<Stmt> stmts = node.getStmts();
         for (int i = 0; i < stmts.size() - 1; i++) {
             if (stmts.get(i) instanceof CallStmt) {
                 calledProcedures.add(((CallStmt) stmts.get(i)).getIdent().getName());
