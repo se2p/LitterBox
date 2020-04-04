@@ -178,6 +178,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.GoToBackLa
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.GoToFrontLayer;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.GoToLayer;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Hide;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.NextCostume;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Say;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SayForSecs;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SetSizeTo;
@@ -2530,6 +2531,19 @@ public interface ScratchVisitor {
      * @param node SwitchCostumeTo  Node of which the children will be iterated
      */
     default void visit(SwitchCostumeTo node) {
+        visit((SpriteLookStmt) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link NextCostume}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node NextCostume  Node of which the children will be iterated
+     */
+    default void visit(NextCostume node) {
         visit((SpriteLookStmt) node);
     }
 

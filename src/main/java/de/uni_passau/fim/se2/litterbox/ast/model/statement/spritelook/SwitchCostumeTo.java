@@ -19,21 +19,21 @@
 package de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
-import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.ElementChoice;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 public class SwitchCostumeTo extends AbstractNode implements SpriteLookStmt {
 
-    private final ElementChoice elementChoice;
+    private final Expression costumeChoice;
 
-    public SwitchCostumeTo(ElementChoice elementChoice) {
-        super(elementChoice);
-        this.elementChoice = Preconditions.checkNotNull(elementChoice);
+    public SwitchCostumeTo(Expression costumeChoice) {
+        super(costumeChoice);
+        this.costumeChoice = Preconditions.checkNotNull(costumeChoice);
     }
 
-    public ElementChoice getElementChoice() {
-        return elementChoice;
+    public Expression getCostumeChoice() {
+        return costumeChoice;
     }
 
     @Override

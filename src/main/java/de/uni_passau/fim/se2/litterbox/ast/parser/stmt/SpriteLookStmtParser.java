@@ -20,7 +20,7 @@ package de.uni_passau.fim.se2.litterbox.ast.parser.stmt;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
-import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.ElementChoice;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.Mult;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
@@ -30,6 +30,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.ChangeSize
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.GoToBackLayer;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.GoToFrontLayer;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Hide;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.NextCostume;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Say;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SayForSecs;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SetSizeTo;
@@ -39,7 +40,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SwitchCost
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Think;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.ThinkForSecs;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.SpriteLookStmtOpcode;
-import de.uni_passau.fim.se2.litterbox.ast.parser.ElementChoiceParser;
+import de.uni_passau.fim.se2.litterbox.ast.parser.CostumeChoiceParser;
 import de.uni_passau.fim.se2.litterbox.ast.parser.NumExprParser;
 import de.uni_passau.fim.se2.litterbox.ast.parser.StringExprParser;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
@@ -82,9 +83,10 @@ public class SpriteLookStmtParser {
             stringExpr = StringExprParser.parseStringExpr(current, 0, allBlocks);
             return new Think(stringExpr);
         case looks_nextcostume:
+            return new NextCostume();
         case looks_switchcostumeto:
-            ElementChoice choice = ElementChoiceParser.parse(current, allBlocks);
-            return new SwitchCostumeTo(choice);
+            Expression costumeChoice = CostumeChoiceParser.parse(current, allBlocks);
+            return new SwitchCostumeTo(costumeChoice);
         case looks_changesizeby:
             numExpr = NumExprParser.parseNumExpr(current, 0, allBlocks);
             return new ChangeSizeBy(numExpr);

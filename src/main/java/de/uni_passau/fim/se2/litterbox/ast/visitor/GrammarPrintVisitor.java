@@ -488,7 +488,7 @@ public class GrammarPrintVisitor implements ScratchVisitor {
     @Override
     public void visit(SwitchCostumeTo switchCostumeTo) {
         emitNoSpace("changeCostumeTo(");
-        switchCostumeTo.getElementChoice().accept(this);
+        switchCostumeTo.getCostumeChoice().accept(this);
         closeParentheses();
     }
 
