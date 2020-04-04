@@ -125,6 +125,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.ActorLookSt
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.AskAndWait;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.ClearGraphicEffects;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.HideVariable;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.NextBackdrop;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.ShowVariable;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.SwitchBackdrop;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.SwitchBackdropAndWait;
@@ -802,6 +803,19 @@ public interface ScratchVisitor {
      * @param node SwitchBackdrop Node of which the children will be iterated
      */
     default void visit(SwitchBackdrop node) {
+        visit((ActorLookStmt) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link NextBackdrop}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node NextBackdrop Node of which the children will be iterated
+     */
+    default void visit(NextBackdrop node) {
         visit((ActorLookStmt) node);
     }
 
