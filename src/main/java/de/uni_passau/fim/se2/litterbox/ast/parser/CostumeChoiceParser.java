@@ -44,9 +44,6 @@ public class CostumeChoiceParser {
         current.get(Constants.INPUTS_KEY).elements().forEachRemaining(inputsList::add);
 
         final JsonNode inputsNode = inputsList.get(0);
-        if (getShadowIndicator((ArrayNode) inputsNode) == 2) {
-            System.out.println("here");
-        }
         if (getShadowIndicator((ArrayNode) inputsNode) == 1) {
             return getCostumeChoiceFromMenu(allBlocks, inputsNode);
         } else {
