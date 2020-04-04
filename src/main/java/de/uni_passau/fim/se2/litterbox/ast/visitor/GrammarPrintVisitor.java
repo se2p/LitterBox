@@ -942,30 +942,6 @@ public class GrammarPrintVisitor implements ScratchVisitor {
         asString.getOperand1().accept(this);
     }
 
-    @Override
-    public void visit(AttributeOf attributeOf) {
-        StringExpr attribute = attributeOf.getAttribute();
-        boolean done = false;
-        if (attribute instanceof StringLiteral) {
-            String attributeText = ((StringLiteral) attribute).getText();
-            if (attributeText.equalsIgnoreCase("backdrop_number")) {
-                emitNoSpace("backdropNumber()");
-                done = true;
-            } else if (attributeText.equalsIgnoreCase("backdrop_name")) {
-                emitNoSpace("backdropName()");
-                done = true;
-            } else if (attributeText.equalsIgnoreCase("sound_volume")) {
-                emitNoSpace("volume()");
-                done = true;
-            }
-        }
-        if (!done) {
-            emitToken("attribute");
-            attributeOf.getAttribute().accept(this);
-            of();
-            attributeOf.getIdentifier().accept(this);
-        }
-    }
 
     @Override
     public void visit(Join join) {

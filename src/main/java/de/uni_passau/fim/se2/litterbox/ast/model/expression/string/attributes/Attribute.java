@@ -16,19 +16,9 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.uni_passau.fim.se2.litterbox.ast.opcodes;
+package de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes;
 
-public enum StringExprOpcode {
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 
-    operator_join, operator_letter_of, sensing_username, data_itemoflist,
-    looks_costumenumbername, looks_backdropnumbername, sensing_answer, sensing_of;
-
-    public static boolean contains(String opcode) {
-        for (StringExprOpcode value : StringExprOpcode.values()) {
-            if (value.name().equals(opcode)) {
-                return true;
-            }
-        }
-        return false;
-    }
+public interface Attribute extends ASTNode {
 }

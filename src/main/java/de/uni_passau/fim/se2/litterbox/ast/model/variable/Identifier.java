@@ -19,11 +19,12 @@
 package de.uni_passau.fim.se2.litterbox.ast.model.variable;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-public abstract class Identifier extends AbstractNode implements Variable {
+public abstract class Identifier extends AbstractNode implements Variable, Expression {
 
     private final StringLiteral name;
 

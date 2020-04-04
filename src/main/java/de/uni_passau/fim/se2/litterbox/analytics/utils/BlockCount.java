@@ -24,11 +24,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
-import de.uni_passau.fim.se2.litterbox.ast.model.event.BackdropSwitchTo;
-import de.uni_passau.fim.se2.litterbox.ast.model.event.KeyPressed;
-import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
-import de.uni_passau.fim.se2.litterbox.ast.model.event.ReceptionOfMessage;
-import de.uni_passau.fim.se2.litterbox.ast.model.event.VariableAboveValue;
+import de.uni_passau.fim.se2.litterbox.ast.model.event.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.AsBool;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.ExpressionContains;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.AsListIndex;
@@ -40,6 +36,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.LengthOfVar;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumFunct;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.ItemOfVariable;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.ExpressionListPlain;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.BoolLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.ColorLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
@@ -54,11 +51,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.ChangeAttribut
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.ChangeVariableBy;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetAttributeTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetVariableTo;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.list.AddTo;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.list.DeleteAllOf;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.list.DeleteOf;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.list.InsertAt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.list.ReplaceItem;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.list.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.AsTouchable;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.Type;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Identifier;
@@ -128,6 +121,42 @@ public class BlockCount implements IssueFinder, ScratchVisitor {
                 child.accept(this);
             }
         }
+    }
+
+    @Override
+    public void visit(Costume node) {
+        if (insideScript || insideProcedure) {
+            count++;
+        }
+        fixedBlock = true;
+        if (!node.getChildren().isEmpty()) {
+            for (ASTNode child : node.getChildren()) {
+                child.accept(this);
+            }
+        }
+        fixedBlock = false;
+    }
+
+    @Override
+    public void visit(Backdrop node) {
+        if (insideScript || insideProcedure) {
+            count++;
+        }
+        fixedBlock = true;
+        if (!node.getChildren().isEmpty()) {
+            for (ASTNode child : node.getChildren()) {
+                child.accept(this);
+            }
+        }
+        fixedBlock = false;
+    }
+
+    @Override
+    public void visit(AttributeOf node) {
+        if (insideScript || insideProcedure) {
+            count++;
+        }
+        node.getIdentifier().accept(this);
     }
 
     @Override

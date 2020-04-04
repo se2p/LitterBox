@@ -25,16 +25,14 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.ComparableExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Equals;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.DistanceTo;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.MouseX;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.MouseY;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.AttributeFromFixed;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AttributeOf;
-import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.FixedAttribute;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitUntil;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfElseStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
-import de.uni_passau.fim.se2.litterbox.ast.opcodes.StringExprOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
@@ -110,14 +108,17 @@ public class PositionEqualsCheck implements IssueFinder, ScratchVisitor {
     }
 
     private void checkOptions(ComparableExpr operand) {
-        if (operand instanceof MouseX || operand instanceof MouseY || operand instanceof DistanceTo) {
+        if (operand instanceof MouseX || operand instanceof MouseY || operand instanceof DistanceTo
+                || operand instanceof PositionX || operand instanceof PositionY) {
             count++;
             found = true;
         } else if (operand instanceof AttributeOf) {
-            if (((AttributeOf) operand).getAttribute().equals(new StringLiteral(StringExprOpcode.motion_xposition.name())) ||
-                    ((AttributeOf) operand).getAttribute().equals(new StringLiteral(StringExprOpcode.motion_yposition.name()))) {
-                count++;
-                found = true;
+            if (((AttributeOf) operand).getAttribute() instanceof AttributeFromFixed) {
+                if (((AttributeFromFixed) ((AttributeOf) operand).getAttribute()).getAttribute() == FixedAttribute.X_POSITION
+                        || ((AttributeFromFixed) ((AttributeOf) operand).getAttribute()).getAttribute() == FixedAttribute.Y_POSITION) {
+                    count++;
+                    found = true;
+                }
             }
         }
     }

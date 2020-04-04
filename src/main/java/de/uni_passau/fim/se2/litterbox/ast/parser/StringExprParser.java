@@ -24,20 +24,13 @@ import com.fasterxml.jackson.databind.node.TextNode;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BoolExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AttributeOf;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.ItemOfVariable;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.Join;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.LetterOf;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.UnspecifiedStringExpr;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.Username;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.Attribute;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.AttributeFromFixed;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.AttributeFromVariable;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.FixedAttribute;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.Identifier;
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.Qualified;
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.StrId;
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.UnspecifiedId;
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
+import de.uni_passau.fim.se2.litterbox.ast.model.variable.*;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.ProcedureOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.StringExprOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ExpressionListInfo;
@@ -170,72 +163,78 @@ public class StringExprParser {
                 .checkArgument(StringExprOpcode.contains(opcodeString), opcodeString + " is not a StringExprOpcode.");
         StringExprOpcode opcode = StringExprOpcode.valueOf(opcodeString);
         switch (opcode) {
-        case operator_join:
-            StringExpr first = parseStringExpr(expressionBlock, 0, blocks);
-            StringExpr second = parseStringExpr(expressionBlock, 1, blocks);
-            return new Join(first, second);
-        case operator_letter_of:
-            NumExpr num = NumExprParser.parseNumExpr(expressionBlock, 0, blocks);
-            StringExpr word = parseStringExpr(expressionBlock, 1, blocks);
-            return new LetterOf(num, word);
-        case sensing_username:
-            return new Username();
-        case data_itemoflist:
-            NumExpr index = NumExprParser.parseNumExpr(expressionBlock, 0, blocks);
-            String id =
-                    expressionBlock.get(FIELDS_KEY).get(LIST_KEY).get(LIST_IDENTIFIER_POS).asText();
-            Variable var;
-            if (ProgramParser.symbolTable.getLists().containsKey(id)) {
-                ExpressionListInfo variableInfo = ProgramParser.symbolTable.getLists().get(id);
-                var = new Qualified(new StrId(variableInfo.getActor()),
-                        new StrId((variableInfo.getVariableName())));
-            } else {
-                var = new UnspecifiedId();
-            }
-            return new ItemOfVariable(index, var);
-        case looks_costumenumbername: // todo introduce attribute name opcode mapping
-            String number_name = expressionBlock.get(FIELDS_KEY).get("NUMBER_NAME").get(0).asText();
-            StringLiteral nn_property = new StringLiteral("costume_" + number_name);
-            return new AttributeOf(nn_property, ActorDefinitionParser.getCurrentActor());
-        case looks_backdropnumbername: // todo introduce attribute name opcode mapping
-            number_name = expressionBlock.get(FIELDS_KEY).get("NUMBER_NAME").get(0).asText();
-            nn_property = new StringLiteral("backdrop_" + number_name);
-            return new AttributeOf(nn_property, ActorDefinitionParser.getCurrentActor());
-        case sound_volume:
-        case motion_xposition:
-        case motion_yposition:
-        case motion_direction:
-        case looks_size:
-        case sensing_answer:
-            StringExpr attribute = new StringLiteral(opcodeString);
-            return new AttributeOf(attribute,
-                    ActorDefinitionParser.getCurrentActor()); // TODO introduce a mapping opcode -> nicer string
-        case sensing_of:
-            String prop = expressionBlock.get(FIELDS_KEY).get("PROPERTY").get(0).asText();
-            StringLiteral property = new StringLiteral(prop);
-            String menuIdentifier = expressionBlock.get(INPUTS_KEY).get("OBJECT").get(1).asText();
-            JsonNode objectMenuBlock = blocks.get(menuIdentifier);
+            case operator_join:
+                StringExpr first = parseStringExpr(expressionBlock, 0, blocks);
+                StringExpr second = parseStringExpr(expressionBlock, 1, blocks);
+                return new Join(first, second);
+            case operator_letter_of:
+                NumExpr num = NumExprParser.parseNumExpr(expressionBlock, 0, blocks);
+                StringExpr word = parseStringExpr(expressionBlock, 1, blocks);
+                return new LetterOf(num, word);
+            case sensing_username:
+                return new Username();
+            case data_itemoflist:
+                NumExpr index = NumExprParser.parseNumExpr(expressionBlock, 0, blocks);
+                String id =
+                        expressionBlock.get(FIELDS_KEY).get(LIST_KEY).get(LIST_IDENTIFIER_POS).asText();
+                Variable var;
+                if (ProgramParser.symbolTable.getLists().containsKey(id)) {
+                    ExpressionListInfo variableInfo = ProgramParser.symbolTable.getLists().get(id);
+                    var = new Qualified(new StrId(variableInfo.getActor()),
+                            new StrId((variableInfo.getVariableName())));
+                } else {
+                    var = new UnspecifiedId();
+                }
+                return new ItemOfVariable(index, var);
+            case looks_costumenumbername:
+                String number_name = expressionBlock.get(FIELDS_KEY).get(NUMBER_NAME_KEY).get(0).asText();
+                return new Costume(NameNum.fromString(number_name));
+            case looks_backdropnumbername:
+                number_name = expressionBlock.get(FIELDS_KEY).get(NUMBER_NAME_KEY).get(0).asText();
+                return new Backdrop(NameNum.fromString(number_name));
+            case sensing_answer:
+                return new Answer();
+            case sensing_of:
+                String menuIdentifier = expressionBlock.get(INPUTS_KEY).get(OBJECT_KEY).get(1).asText();
+                JsonNode objectMenuBlock = blocks.get(menuIdentifier);
 
-            Identifier identifier;
-            if (objectMenuBlock != null) {
-                JsonNode menuOpcode = objectMenuBlock.get(OPCODE_KEY);
-                if (menuOpcode.asText().equalsIgnoreCase(sensing_of_object_menu.name())) {
-                    identifier = new StrId(
-                            objectMenuBlock.get(FIELDS_KEY).get("OBJECT").get(FIELD_VALUE)
-                                    .asText()); // TODO introduce constants here
+                Identifier identifier;
+                if (objectMenuBlock != null) {
+                    JsonNode menuOpcode = objectMenuBlock.get(OPCODE_KEY);
+                    if (menuOpcode.asText().equalsIgnoreCase(sensing_of_object_menu.name())) {
+                        identifier = new StrId(
+                                objectMenuBlock.get(FIELDS_KEY).get(OBJECT_KEY).get(FIELD_VALUE)
+                                        .asText());
+                    } else {
+                        //Technically there could be blocks in here, but we do not allow
+                        //any expressions to work as identifiers here.
+                        identifier = new StrId("");
+                    }
                 } else {
                     //Technically there could be blocks in here, but we do not allow
                     //any expressions to work as identifiers here.
                     identifier = new StrId("");
                 }
-            } else {
-                //Technically there could be blocks in here, but we do not allow
-                //any expressions to work as identifiers here.
-                identifier = new StrId("");
-            }
-            return new AttributeOf(property, identifier);
-        default:
-            throw new RuntimeException(opcodeString + " is not covered by parseBlockStringExpr");
+                String prop = expressionBlock.get(FIELDS_KEY).get("PROPERTY").get(0).asText();
+                Attribute property;
+                switch (prop) {
+                    case "y position":
+                    case "x position":
+                    case "direction":
+                    case "costume #":
+                    case "costume name":
+                    case "size":
+                    case "volume":
+                    case "backdrop name":
+                    case "backdrop #":
+                        property = new AttributeFromFixed(FixedAttribute.fromString(prop));
+                        break;
+                    default:
+                        property = new AttributeFromVariable(new StrId(prop));
+                }
+                return new AttributeOf(property, identifier);
+            default:
+                throw new RuntimeException(opcodeString + " is not covered by parseBlockStringExpr");
         }
     }
 }

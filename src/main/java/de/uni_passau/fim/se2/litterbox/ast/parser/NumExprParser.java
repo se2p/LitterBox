@@ -24,28 +24,7 @@ import com.fasterxml.jackson.databind.node.TextNode;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BoolExpr;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.Add;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.AsNumber;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.Current;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.DaysSince2000;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.DistanceTo;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.Div;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.IndexOf;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.LengthOfString;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.LengthOfVar;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.Loudness;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.Minus;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.Mod;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.MouseX;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.MouseY;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.Mult;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumFunct;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumFunctOf;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.PickRandom;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.Round;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.Timer;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.UnspecifiedNumExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.Position;
@@ -213,69 +192,79 @@ public class NumExprParser {
         Preconditions.checkArgument(NumExprOpcode.contains(opcodeString), opcodeString + " is not a NumExprOpcode.");
         NumExprOpcode opcode = NumExprOpcode.valueOf(opcodeString);
         switch (opcode) {
-        case sensing_timer:
-            return new Timer();
-        case sensing_dayssince2000:
-            return new DaysSince2000();
-        case sensing_mousex:
-            return new MouseX();
-        case sensing_mousey:
-            return new MouseY();
-        case sensing_loudness:
-            return new Loudness();
-        case operator_round:
-            NumExpr num = parseNumExpr(expressionBlock, 0, blocks);
-            return new Round(num);
-        case operator_length:
-            return new LengthOfString(StringExprParser.parseStringExpr(expressionBlock, 0, blocks));
-        case data_lengthoflist:
-            String identifier =
-                    expressionBlock.get(FIELDS_KEY).get(LIST_KEY).get(LIST_IDENTIFIER_POS).asText();
-            Variable var;
-            if (ProgramParser.symbolTable.getLists().containsKey(identifier)) {
-                ExpressionListInfo variableInfo = ProgramParser.symbolTable.getLists().get(identifier);
-                var = new Qualified(new StrId(variableInfo.getActor()),
-                        new StrId((variableInfo.getVariableName())));
-            } else {
-                var = new UnspecifiedId();
-            }
-            return new LengthOfVar(var);
-        case sensing_current:
-            TimeComp timeComp = TimecompParser.parse(expressionBlock);
-            return new Current(timeComp);
-        case sensing_distanceto:
-            Position pos = PositionParser.parse(expressionBlock, blocks);
-            return new DistanceTo(pos);
-        case operator_add:
-            return buildNumExprWithTwoNumExprInputs(Add.class, expressionBlock, blocks);
-        case operator_subtract:
-            return buildNumExprWithTwoNumExprInputs(Minus.class, expressionBlock, blocks);
-        case operator_multiply:
-            return buildNumExprWithTwoNumExprInputs(Mult.class, expressionBlock, blocks);
-        case operator_divide:
-            return buildNumExprWithTwoNumExprInputs(Div.class, expressionBlock, blocks);
-        case operator_mod:
-            return buildNumExprWithTwoNumExprInputs(Mod.class, expressionBlock, blocks);
-        case operator_random:
-            return buildNumExprWithTwoNumExprInputs(PickRandom.class, expressionBlock, blocks);
-        case operator_mathop:
-            NumFunct funct = parseNumFunct(expressionBlock.get(FIELDS_KEY));
-            NumExpr numExpr = parseNumExpr(expressionBlock, 0, blocks);
-            return new NumFunctOf(funct, numExpr);
-        case data_itemnumoflist:
-            Expression item = parseExpression(expressionBlock, 0, blocks);
-            identifier =
-                    expressionBlock.get(FIELDS_KEY).get(LIST_KEY).get(LIST_IDENTIFIER_POS).asText();
-            if (ProgramParser.symbolTable.getLists().containsKey(identifier)) {
-                ExpressionListInfo variableInfo = ProgramParser.symbolTable.getLists().get(identifier);
-                var = new Qualified(new StrId(variableInfo.getActor()),
-                        new StrId((variableInfo.getVariableName())));
-            } else {
-                var = new UnspecifiedId();
-            }
-            return new IndexOf(item, var);
-        default:
-            throw new ParsingException(opcodeString + " is not covered by parseBlockNumExpr");
+            case sound_volume:
+                return new Volume();
+            case motion_xposition:
+                return new PositionX();
+            case motion_yposition:
+                return new PositionY();
+            case motion_direction:
+                return new Direction();
+            case looks_size:
+                return new Size();
+            case sensing_timer:
+                return new Timer();
+            case sensing_dayssince2000:
+                return new DaysSince2000();
+            case sensing_mousex:
+                return new MouseX();
+            case sensing_mousey:
+                return new MouseY();
+            case sensing_loudness:
+                return new Loudness();
+            case operator_round:
+                NumExpr num = parseNumExpr(expressionBlock, 0, blocks);
+                return new Round(num);
+            case operator_length:
+                return new LengthOfString(StringExprParser.parseStringExpr(expressionBlock, 0, blocks));
+            case data_lengthoflist:
+                String identifier =
+                        expressionBlock.get(FIELDS_KEY).get(LIST_KEY).get(LIST_IDENTIFIER_POS).asText();
+                Variable var;
+                if (ProgramParser.symbolTable.getLists().containsKey(identifier)) {
+                    ExpressionListInfo variableInfo = ProgramParser.symbolTable.getLists().get(identifier);
+                    var = new Qualified(new StrId(variableInfo.getActor()),
+                            new StrId((variableInfo.getVariableName())));
+                } else {
+                    var = new UnspecifiedId();
+                }
+                return new LengthOfVar(var);
+            case sensing_current:
+                TimeComp timeComp = TimecompParser.parse(expressionBlock);
+                return new Current(timeComp);
+            case sensing_distanceto:
+                Position pos = PositionParser.parse(expressionBlock, blocks);
+                return new DistanceTo(pos);
+            case operator_add:
+                return buildNumExprWithTwoNumExprInputs(Add.class, expressionBlock, blocks);
+            case operator_subtract:
+                return buildNumExprWithTwoNumExprInputs(Minus.class, expressionBlock, blocks);
+            case operator_multiply:
+                return buildNumExprWithTwoNumExprInputs(Mult.class, expressionBlock, blocks);
+            case operator_divide:
+                return buildNumExprWithTwoNumExprInputs(Div.class, expressionBlock, blocks);
+            case operator_mod:
+                return buildNumExprWithTwoNumExprInputs(Mod.class, expressionBlock, blocks);
+            case operator_random:
+                return buildNumExprWithTwoNumExprInputs(PickRandom.class, expressionBlock, blocks);
+            case operator_mathop:
+                NumFunct funct = parseNumFunct(expressionBlock.get(FIELDS_KEY));
+                NumExpr numExpr = parseNumExpr(expressionBlock, 0, blocks);
+                return new NumFunctOf(funct, numExpr);
+            case data_itemnumoflist:
+                Expression item = parseExpression(expressionBlock, 0, blocks);
+                identifier =
+                        expressionBlock.get(FIELDS_KEY).get(LIST_KEY).get(LIST_IDENTIFIER_POS).asText();
+                if (ProgramParser.symbolTable.getLists().containsKey(identifier)) {
+                    ExpressionListInfo variableInfo = ProgramParser.symbolTable.getLists().get(identifier);
+                    var = new Qualified(new StrId(variableInfo.getActor()),
+                            new StrId((variableInfo.getVariableName())));
+                } else {
+                    var = new UnspecifiedId();
+                }
+                return new IndexOf(item, var);
+            default:
+                throw new ParsingException(opcodeString + " is not covered by parseBlockNumExpr");
         }
     }
 

@@ -16,21 +16,27 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.uni_passau.fim.se2.litterbox.ast.opcodes;
+package de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes;
 
-public enum NumExprOpcode {
-    operator_add, operator_subtract, operator_multiply, operator_divide,
-    operator_mod, operator_random, operator_round, operator_length,
-    data_lengthoflist, data_itemnumoflist, sensing_timer, sensing_dayssince2000,
-    sensing_current, sensing_distanceto, sensing_mousex, sensing_mousey,
-    sensing_loudness, operator_mathop, sound_volume, motion_xposition, motion_yposition, motion_direction, looks_size;
+import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 
-    public static boolean contains(String opcode) {
-        for (NumExprOpcode value : NumExprOpcode.values()) {
-            if (value.name().equals(opcode)) {
-                return true;
-            }
-        }
-        return false;
+
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
+
+public class AttributeFromFixed extends AbstractNode implements Attribute {
+    FixedAttribute attribute;
+
+    public AttributeFromFixed(FixedAttribute attribute) {
+        super(attribute);
+        this.attribute = attribute;
+    }
+
+    public FixedAttribute getAttribute() {
+        return attribute;
+    }
+
+    @Override
+    public void accept(ScratchVisitor visitor) {
+        visitor.visit(this);
     }
 }

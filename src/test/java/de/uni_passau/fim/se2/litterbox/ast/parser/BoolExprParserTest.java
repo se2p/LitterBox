@@ -38,6 +38,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Not;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Or;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Touching;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.AsNumber;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.PositionX;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.Answer;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AttributeOf;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.ColorLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
@@ -84,7 +86,7 @@ public class BoolExprParserTest {
 
         IfThenStmt ifThenStmt = (IfThenStmt) stmt;
         ExpressionContains containsExpr = (ExpressionContains) ifThenStmt.getBoolExpr();
-        Truth.assertThat(containsExpr.getContaining()).isInstanceOf(AttributeOf.class);
+        Truth.assertThat(containsExpr.getContaining()).isInstanceOf(Answer.class);
         Truth.assertThat(containsExpr.getContained()).isInstanceOf(StringLiteral.class);
     }
 

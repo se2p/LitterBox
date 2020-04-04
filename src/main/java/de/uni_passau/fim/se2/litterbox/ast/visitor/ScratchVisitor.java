@@ -66,36 +66,12 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.UnspecifiedBool
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.AsListIndex;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.ExpressionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.ListExpr;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.Add;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.AsNumber;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.Current;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.DaysSince2000;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.DistanceTo;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.Div;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.IndexOf;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.LengthOfString;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.LengthOfVar;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.Loudness;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.Minus;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.Mod;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.MouseX;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.MouseY;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.Mult;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumFunct;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumFunctOf;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.PickRandom;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.Round;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.Timer;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.UnspecifiedNumExpr;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AttributeOf;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.ItemOfVariable;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.Join;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.LetterOf;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.UnspecifiedStringExpr;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.Username;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.Attribute;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.AttributeFromFixed;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.AttributeFromVariable;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.FixedAttribute;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.BoolLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.ColorLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
@@ -2879,5 +2855,174 @@ public interface ScratchVisitor {
      */
     default void visit(StageClicked node) {
         visit((Clicked) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link Costume}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node Costume Node of which the children will be iterated
+     */
+    default void visit(Costume node){
+        visit((StringExpr) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link Backdrop}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node Backdrop Node of which the children will be iterated
+     */
+    default void visit(Backdrop node){
+        visit((StringExpr) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link Direction}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node Direction Node of which the children will be iterated
+     */
+    default void visit(Direction node){
+        visit((NumExpr) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link PositionX}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node PositionX Node of which the children will be iterated
+     */
+    default void visit(PositionX node){
+        visit((NumExpr) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link PositionY}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node PositionY Node of which the children will be iterated
+     */
+    default void visit(PositionY node){
+        visit((NumExpr) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link Size}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node Size Node of which the children will be iterated
+     */
+    default void visit(Size node){
+        visit((NumExpr) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link Volume}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node Volume Node of which the children will be iterated
+     */
+    default void visit(Volume node){
+        visit((NumExpr) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link Answer}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node Answer Node of which the children will be iterated
+     */
+    default void visit(Answer node){
+        visit((StringExpr) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link NameNum}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node NameNum Node of which the children will be iterated
+     */
+    default void visit(NameNum node){
+        visit((ASTNode) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link FixedAttribute}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node FixedAttribute Node of which the children will be iterated
+     */
+    default void visit(FixedAttribute node){
+        visit((ASTNode) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link Attribute}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node Attribute Node of which the children will be iterated
+     */
+    default void visit(Attribute node){
+        visit((ASTNode) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link AttributeFromFixed}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node AttributeFromFixed Node of which the children will be iterated
+     */
+    default void visit(AttributeFromFixed node){
+        visit((Attribute) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link AttributeFromVariable}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node AttributeFromVariable Node of which the children will be iterated
+     */
+    default void visit(AttributeFromVariable node){
+        visit((Attribute) node);
     }
 }

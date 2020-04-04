@@ -191,4 +191,6 @@ public class Constants {
     public final static String OPERAND1_KEY = "OPERAND1";
     public final static String OPERAND2_KEY = "OPERAND2";
     public final static String OPERAND_KEY = "OPERAND";
+    public final static String NUMBER_NAME_KEY = "NUMBER_NAME";
+    public final static String OBJECT_KEY = "OBJECT";
 }
