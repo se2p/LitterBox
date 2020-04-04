@@ -18,6 +18,18 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.model.event;
 
-public interface Clicked extends Event {
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTLeaf;
+import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
+public class SpriteClicked extends AbstractNode implements Clicked, ASTLeaf {
+
+    public SpriteClicked() {
+        super();
+    }
+
+    @Override
+    public void accept(ScratchVisitor visitor) {
+        visitor.visit(this);
+    }
 }

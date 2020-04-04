@@ -23,11 +23,12 @@ import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Key;
 import de.uni_passau.fim.se2.litterbox.ast.model.Message;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.BackdropSwitchTo;
-import de.uni_passau.fim.se2.litterbox.ast.model.event.Clicked;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Event;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.GreenFlag;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.KeyPressed;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.ReceptionOfMessage;
+import de.uni_passau.fim.se2.litterbox.ast.model.event.SpriteClicked;
+import de.uni_passau.fim.se2.litterbox.ast.model.event.StageClicked;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.StartedAsClone;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.VariableAboveValue;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
@@ -63,8 +64,10 @@ public class EventParser {
         } else if (opcode.equals(event_whenkeypressed)) {
             Key key = KeyParser.parse(current, allBlocks);
             return new KeyPressed(key);
-        } else if (opcode.equals(event_whenthisspriteclicked) || opcode.equals(event_whenstageclicked)) {
-            return new Clicked();
+        } else if (opcode.equals(event_whenthisspriteclicked)) {
+            return new SpriteClicked();
+        } else if (opcode.equals(event_whenstageclicked)) {
+            return new StageClicked();
         } else if (opcode.equals(event_whenbroadcastreceived)) {
             JsonNode fields = current.get(FIELDS_KEY);
             String msgValue = fields.get(BCAST_OPTION).get(FIELD_VALUE).asText();

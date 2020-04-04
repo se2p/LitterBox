@@ -43,6 +43,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.event.GreenFlag;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.KeyPressed;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.ReceptionOfMessage;
+import de.uni_passau.fim.se2.litterbox.ast.model.event.SpriteClicked;
+import de.uni_passau.fim.se2.litterbox.ast.model.event.StageClicked;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.StartedAsClone;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.VariableAboveValue;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.ComparableExpr;
@@ -2893,5 +2895,31 @@ public interface ScratchVisitor {
      */
     default void visit(ScriptList node) {
         visit((ASTNode) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link SpriteClicked}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node SpriteClicked Node of which the children will be iterated
+     */
+    default void visit(SpriteClicked node) {
+        visit((Clicked) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link StageClicked}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node StageClicked Node of which the children will be iterated
+     */
+    default void visit(StageClicked node) {
+        visit((Clicked) node);
     }
 }
