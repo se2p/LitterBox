@@ -66,8 +66,45 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.UnspecifiedBool
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.AsListIndex;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.ExpressionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.ListExpr;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.Add;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.AsNumber;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.Current;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.DaysSince2000;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.Direction;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.DistanceTo;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.Div;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.IndexOf;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.LengthOfString;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.LengthOfVar;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.Loudness;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.Minus;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.Mod;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.MouseX;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.MouseY;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.Mult;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumFunct;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumFunctOf;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.PickRandom;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.PositionX;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.PositionY;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.Round;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.Size;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.Timer;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.UnspecifiedNumExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.Volume;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.Answer;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AttributeOf;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.Backdrop;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.Costume;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.ItemOfVariable;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.Join;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.LetterOf;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.NameNum;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.UnspecifiedStringExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.Username;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.Attribute;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.AttributeFromFixed;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.AttributeFromVariable;
@@ -147,10 +184,9 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.pen.SetPenColorParamT
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.pen.SetPenColorToColorStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.ChangeLayerBy;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.ChangeSizeBy;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.GoToBackLayer;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.GoToFrontLayer;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.GoToLayer;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Hide;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.LayerChoice;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.NextCostume;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Say;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SayForSecs;
@@ -2325,32 +2361,6 @@ public interface ScratchVisitor {
     }
 
     /**
-     * Default implementation of visit method for {@link GoToBackLayer}.
-     *
-     * <p>
-     * Iterates all children of this node without performing any action.
-     * </p>
-     *
-     * @param node GoToBackLayer  Node of which the children will be iterated
-     */
-    default void visit(GoToBackLayer node) {
-        visit((SpriteLookStmt) node);
-    }
-
-    /**
-     * Default implementation of visit method for {@link GoToFrontLayer}.
-     *
-     * <p>
-     * Iterates all children of this node without performing any action.
-     * </p>
-     *
-     * @param node GoToFrontLayer  Node of which the children will be iterated
-     */
-    default void visit(GoToFrontLayer node) {
-        visit((SpriteLookStmt) node);
-    }
-
-    /**
      * Default implementation of visit method for {@link GoToLayer}.
      *
      * <p>
@@ -3024,5 +3034,18 @@ public interface ScratchVisitor {
      */
     default void visit(AttributeFromVariable node){
         visit((Attribute) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link LayerChoice}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node LayerChoice Node of which the children will be iterated
+     */
+    default void visit(LayerChoice node) {
+        visit((ASTNode) node);
     }
 }

@@ -27,9 +27,9 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.ChangeLayerBy;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.ChangeSizeBy;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.GoToBackLayer;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.GoToFrontLayer;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.GoToLayer;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Hide;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.LayerChoice;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.NextCostume;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Say;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SayForSecs;
@@ -125,13 +125,10 @@ public class SpriteLookStmtParser {
 
         JsonNode front_back = current.get(FIELDS_KEY).get("FRONT_BACK").get(FIELD_VALUE);
         String layerOption = front_back.asText();
-        if (layerOption.equals("front")) {
-            return new GoToFrontLayer();
-        } else if (layerOption.equals("back")) {
-            return new GoToBackLayer();
-        } else {
-            throw new ParsingException("Unknown option " + layerOption +
-                    "+ when parsing block with opcode " + current.get(OPCODE_KEY));
+        try {
+            return new GoToLayer(LayerChoice.fromString(layerOption));
+        } catch (IllegalArgumentException e) {
+            throw new ParsingException("Unknown LayerChoice label for GoToLayer.");
         }
     }
 }

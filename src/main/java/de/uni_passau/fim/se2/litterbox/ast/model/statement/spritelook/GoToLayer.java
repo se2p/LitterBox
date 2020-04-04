@@ -19,21 +19,20 @@
 package de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 public class GoToLayer extends AbstractNode implements SpriteLookStmt {
 
-    private final NumExpr layer;
+    private final LayerChoice layerChoice;
 
-    public GoToLayer(NumExpr layer) {
-        super(layer);
-        this.layer = Preconditions.checkNotNull(layer);
+    public GoToLayer(LayerChoice layerChoice) {
+        super(layerChoice);
+        this.layerChoice = Preconditions.checkNotNull(layerChoice);
     }
 
-    public NumExpr getLayer() {
-        return layer;
+    public LayerChoice getLayerChoice() {
+        return layerChoice;
     }
 
     @Override

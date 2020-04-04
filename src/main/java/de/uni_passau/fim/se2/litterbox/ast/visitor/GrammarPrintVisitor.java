@@ -80,11 +80,9 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.Round;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.Timer;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.UnspecifiedNumExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AttributeOf;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.ItemOfVariable;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.Join;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.LetterOf;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.UnspecifiedStringExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.Username;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.BoolLiteral;
@@ -145,8 +143,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.list.InsertAt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.list.ReplaceItem;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.ChangeLayerBy;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.ChangeSizeBy;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.GoToBackLayer;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.GoToFrontLayer;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.GoToLayer;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Hide;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Say;
@@ -502,17 +498,7 @@ public class GrammarPrintVisitor implements ScratchVisitor {
     @Override
     public void visit(GoToLayer goToLayer) {
         emitToken("go to layer");
-        goToLayer.getLayer().accept(this);
-    }
-
-    @Override
-    public void visit(GoToFrontLayer goToFrontLayer) {
-        emitToken("go to front layer");
-    }
-
-    @Override
-    public void visit(GoToBackLayer goToBackLayer) {
-        emitToken("go to back layer");
+        goToLayer.getLayerChoice().accept(this);
     }
 
     @Override
