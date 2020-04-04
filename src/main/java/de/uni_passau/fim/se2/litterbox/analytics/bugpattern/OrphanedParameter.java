@@ -89,7 +89,7 @@ public class OrphanedParameter implements IssueFinder, ScratchVisitor {
     @Override
     public void visit(ProcedureDefinition node) {
         insideProcedure = true;
-        currentParameters = node.getParameterList().getParameterListPlain().getParameters();
+        currentParameters = node.getParameterList().getParameters();
         if (!node.getChildren().isEmpty()) {
             for (ASTNode child : node.getChildren()) {
                 child.accept(this);

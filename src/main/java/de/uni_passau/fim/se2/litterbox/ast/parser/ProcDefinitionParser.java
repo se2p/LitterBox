@@ -23,11 +23,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import de.uni_passau.fim.se2.litterbox.ast.Constants;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.Parameter;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterList;
-import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterListPlain;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinitionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.BooleanType;
@@ -161,8 +159,7 @@ public class ProcDefinitionParser {
         for (int i = 0; i < paraTypes.size(); i++) {
             inputs.add(new Parameter(new StrId(arguments[i]), paraTypes.get(i)));
         }
-        ParameterListPlain parameterListPlain = new ParameterListPlain(inputs);
-        ParameterList parameterList = new ParameterList(parameterListPlain);
+        ParameterList parameterList = new ParameterList(inputs);
         StmtList stmtList = ScriptParser.parseStmtList(def.get(NEXT_KEY).asText(), blocks);
         return new ProcedureDefinition(ident, parameterList, stmtList);
     }

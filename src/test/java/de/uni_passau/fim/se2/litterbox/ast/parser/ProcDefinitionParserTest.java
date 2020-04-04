@@ -70,7 +70,7 @@ public class ProcDefinitionParserTest {
                     ProgramParser.procDefMap.getProcedures().get(actorName).get(list.get(0).getIdent()).getName());
             Assertions.assertEquals(0,
                     ProgramParser.procDefMap.getProcedures().get(actorName).get(list.get(0).getIdent()).getArguments().length);
-            Assertions.assertEquals(0, list.get(0).getParameterList().getParameterListPlain().getParameters().size());
+            Assertions.assertEquals(0, list.get(0).getParameterList().getParameters().size());
             Assertions.assertEquals(3, list.get(0).getStmtList().getStmts().size());
         } catch (ParsingException e) {
             e.printStackTrace();
@@ -101,13 +101,13 @@ public class ProcDefinitionParserTest {
             Truth.assertThat(procedureInfo.getArguments()[1].getType()).isInstanceOf(BooleanType.class);
             Assertions.assertEquals(3, list.get(1).getStmtList().getStmts().size());
             Assertions.assertEquals(procedureInfo.getArguments()[1].getName(),
-                    list.get(1).getParameterList().getParameterListPlain().getParameters().get(1).getIdent().getName());
+                    list.get(1).getParameterList().getParameters().get(1).getIdent().getName());
             Assertions.assertEquals(procedureInfo.getArguments()[0].getName(),
-                    list.get(1).getParameterList().getParameterListPlain().getParameters().get(0).getIdent().getName());
+                    list.get(1).getParameterList().getParameters().get(0).getIdent().getName());
             Assertions.assertEquals(procedureInfo.getArguments()[1].getType(),
-                    list.get(1).getParameterList().getParameterListPlain().getParameters().get(1).getType());
+                    list.get(1).getParameterList().getParameters().get(1).getType());
             Assertions.assertEquals(procedureInfo.getArguments()[0].getType(),
-                    list.get(1).getParameterList().getParameterListPlain().getParameters().get(0).getType());
+                    list.get(1).getParameterList().getParameters().get(0).getType());
             Assertions.assertTrue(list.get(1).getStmtList().getStmts().get(0) instanceof MoveSteps);
             Truth.assertThat(((MoveSteps) list.get(1).getStmtList().getStmts().get(0)).getSteps()).isInstanceOf(AsNumber.class);
             Assertions.assertEquals(Constants.PARAMETER_ABBREVIATION + "NumInput",

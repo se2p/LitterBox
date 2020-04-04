@@ -22,17 +22,19 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
+import java.util.List;
+
 public class ParameterList extends AbstractNode implements ASTNode {
 
-    private final ParameterListPlain parameterListPlain;
+    private final List<Parameter> parameters;
 
-    public ParameterList(ParameterListPlain parameterListPlain) {
-        super(parameterListPlain);
-        this.parameterListPlain = parameterListPlain;
+    public ParameterList(List<Parameter> parameters) {
+        super(parameters);
+        this.parameters = parameters;
     }
 
-    public ParameterListPlain getParameterListPlain() {
-        return parameterListPlain;
+    public List<Parameter> getParameters() {
+        return parameters;
     }
 
     @Override

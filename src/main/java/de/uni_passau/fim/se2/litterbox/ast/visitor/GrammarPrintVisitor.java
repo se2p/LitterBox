@@ -98,7 +98,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.position.PivotOf;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.RandomPos;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.Parameter;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterList;
-import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterListPlain;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinitionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.resource.ImageResource;
@@ -856,13 +855,7 @@ public class GrammarPrintVisitor implements ScratchVisitor {
     @Override
     public void visit(ParameterList parameterList) {
         openParentheses();
-        parameterList.getParameterListPlain().accept(this);
-        closeParentheses();
-    }
-
-    @Override
-    public void visit(ParameterListPlain parameterListPlain) {
-        List<Parameter> parameters = parameterListPlain.getParameters();
+        List<Parameter> parameters = parameterList.getParameters();
         if (parameters.size() > 0) {
             for (int i = 0; i < parameters.size() - 1; i++) {
                 parameters.get(i).accept(this);
@@ -870,6 +863,7 @@ public class GrammarPrintVisitor implements ScratchVisitor {
             }
             parameters.get(parameters.size() - 1).accept(this);
         }
+        closeParentheses();
     }
 
     private void comma() {
