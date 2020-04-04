@@ -180,7 +180,7 @@ public class BoolExprParser {
             case sensing_coloristouchingcolor:
                 Color one = ColorParser.parseColor(expressionBlock, 0, blocks);
                 Color two = ColorParser.parseColor(expressionBlock, 1, blocks);
-                return new ColorTouches(one, two);
+                return new ColorTouchingColor(one, two);
             case sensing_keypressed:
                 Key key = KeyParser.parse(expressionBlock, blocks);
                 return new IsKeyPressed(key);

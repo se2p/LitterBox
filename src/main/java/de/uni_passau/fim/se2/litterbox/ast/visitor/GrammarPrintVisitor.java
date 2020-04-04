@@ -46,7 +46,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.UnspecifiedExpressio
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.And;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.AsBool;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BiggerThan;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.ColorTouches;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.ColorTouchingColor;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Equals;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.ExpressionContains;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.IsKeyPressed;
@@ -1214,11 +1214,11 @@ public class GrammarPrintVisitor implements ScratchVisitor {
     }
 
     @Override
-    public void visit(ColorTouches colorTouches) {
+    public void visit(ColorTouchingColor colorTouchingColor) {
         emitNoSpace("colorIsTouchingColor(");
-        colorTouches.getOperand1().accept(this);
+        colorTouchingColor.getOperand1().accept(this);
         comma();
-        colorTouches.getOperand2().accept(this);
+        colorTouchingColor.getOperand2().accept(this);
         closeParentheses();
     }
 

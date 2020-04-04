@@ -53,7 +53,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.And;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.AsBool;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BiggerThan;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BoolExpr;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.ColorTouches;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.ColorTouchingColor;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Equals;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.ExpressionContains;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.IsKeyPressed;
@@ -932,15 +932,15 @@ public interface ScratchVisitor {
     }
 
     /**
-     * Default implementation of visit method for {@link ColorTouches}.
+     * Default implementation of visit method for {@link ColorTouchingColor}.
      *
      * <p>
      * Iterates all children of this node without performing any action.
      * </p>
      *
-     * @param node ColorTouches  Node of which the children will be iterated
+     * @param node ColorTouchingColor  Node of which the children will be iterated
      */
-    default void visit(ColorTouches node) {
+    default void visit(ColorTouchingColor node) {
         visit((BoolExpr) node);
     }
 
