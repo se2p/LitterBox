@@ -19,20 +19,20 @@
 package de.uni_passau.fim.se2.litterbox.ast.model.elementchoice;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 public class WithExpr extends AbstractNode implements ElementChoice {
 
-    private final StringExpr stringExpr;
+    private final Expression expression;
 
-    public WithExpr(StringExpr stringExpr) {
-        super(stringExpr);
-        this.stringExpr = stringExpr;
+    public WithExpr(Expression expression) {
+        super(expression);
+        this.expression = expression;
     }
 
-    public StringExpr getStringExpr() {
-        return stringExpr;
+    public Expression getExpression() {
+        return expression;
     }
 
     @Override

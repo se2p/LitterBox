@@ -27,8 +27,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.Next;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.Prev;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.Random;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.WithExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.StrId;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
@@ -40,6 +40,8 @@ import static de.uni_passau.fim.se2.litterbox.ast.opcodes.ActorLookStmtOpcode.lo
 import static de.uni_passau.fim.se2.litterbox.ast.opcodes.SpriteLookStmtOpcode.looks_nextcostume;
 
 public class ElementChoiceParser {
+
+    private static final String BACKDROP = "BACKDROP";
 
     public static ElementChoice parse(JsonNode current, JsonNode allBlocks) throws ParsingException {
         Preconditions.checkNotNull(current);
@@ -59,8 +61,8 @@ public class ElementChoiceParser {
         if (getShadowIndicator((ArrayNode) inputsNode) == 1) {
             return getElementChoiceFromMenu(allBlocks, inputsNode);
         } else {
-            final StringExpr stringExpr = StringExprParser.parseStringExpr(current, 0, allBlocks);
-            return new WithExpr(stringExpr);
+            final Expression expression = ExpressionParser.parseExpression(current, BACKDROP, allBlocks);
+            return new WithExpr(expression);
         }
     }
 

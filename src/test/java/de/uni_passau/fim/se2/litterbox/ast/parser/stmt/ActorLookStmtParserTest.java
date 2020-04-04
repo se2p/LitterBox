@@ -29,6 +29,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.ElementChoice;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.WithExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
@@ -137,7 +138,8 @@ public class ActorLookStmtParserTest {
             Truth.assertThat(switchBackropStmt.getClass()).isEqualTo(SwitchBackdrop.class);
 
             ElementChoice elementChoice = ((SwitchBackdrop) switchBackropStmt).getElementChoice();
-            StringExpr stringExpr = ((WithExpr) elementChoice).getStringExpr();
+            Expression expression = ((WithExpr) elementChoice).getExpression();
+            StringExpr stringExpr = (StringExpr) expression;
             AsString strid = (AsString) stringExpr;
 
             Truth.assertThat(((StrId) strid.getOperand1()).getName()).isEqualTo("Baseball 1");

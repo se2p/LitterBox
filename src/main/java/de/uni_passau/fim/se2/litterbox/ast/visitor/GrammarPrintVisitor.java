@@ -33,7 +33,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.Next;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.Prev;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.Random;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.WithExpr;
-import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.WithNumber;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.BackdropSwitchTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Clicked;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.GreenFlag;
@@ -543,15 +542,9 @@ public class GrammarPrintVisitor implements ScratchVisitor {
     }
 
     @Override
-    public void visit(WithNumber withNumber) {
-        emitToken("with_number");
-        withNumber.getNumExpr().accept(this);
-    }
-
-    @Override
     public void visit(WithExpr withExpr) {
         emitToken("with_name");
-        withExpr.getStringExpr().accept(this);
+        withExpr.getExpression().accept(this);
     }
 
     @Override
