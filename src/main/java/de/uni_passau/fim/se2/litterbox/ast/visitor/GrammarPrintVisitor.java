@@ -185,7 +185,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.Rgba;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.BooleanType;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.ImageType;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.ListType;
-import de.uni_passau.fim.se2.litterbox.ast.model.type.MapType;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.NumberType;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.SoundType;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.StringType;
@@ -934,11 +933,6 @@ public class GrammarPrintVisitor implements ScratchVisitor {
     @Override
     public void visit(ListType listType) {
         emitNoSpace("list string"); // TODO is this correct
-    }
-
-    @Override
-    public void visit(MapType mapType) {
-        emitNoSpace("map string");
     }
 
     @Override

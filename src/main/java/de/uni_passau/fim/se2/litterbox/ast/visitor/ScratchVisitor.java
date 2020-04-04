@@ -216,7 +216,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.Rgba;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.BooleanType;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.ImageType;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.ListType;
-import de.uni_passau.fim.se2.litterbox.ast.model.type.MapType;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.NumberType;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.SoundType;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.StringType;
@@ -2778,19 +2777,6 @@ public interface ScratchVisitor {
      * @param node ListType  Node of which the children will be iterated
      */
     default void visit(ListType node) {
-        visit((Type) node);
-    }
-
-    /**
-     * Default implementation of visit method for {@link MapType}.
-     *
-     * <p>
-     * Iterates all children of this node without performing any action.
-     * </p>
-     *
-     * @param node MapType  Node of which the children will be iterated
-     */
-    default void visit(MapType node) {
         visit((Type) node);
     }
 
