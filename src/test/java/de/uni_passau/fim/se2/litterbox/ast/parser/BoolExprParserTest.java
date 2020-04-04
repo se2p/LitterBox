@@ -28,7 +28,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.And;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BiggerThan;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.ColorTouches;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.ColorTouchingColor;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Equals;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.ExpressionContains;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.IsKeyPressed;
@@ -223,9 +223,9 @@ public class BoolExprParserTest {
         Truth.assertThat(stmt).isInstanceOf(IfThenStmt.class);
 
         IfThenStmt ifThenStmt = (IfThenStmt) stmt;
-        Truth.assertThat(ifThenStmt.getBoolExpr()).isInstanceOf(ColorTouches.class);
-        Truth.assertThat(((ColorTouches) ifThenStmt.getBoolExpr()).getOperand1()).isInstanceOf(ColorLiteral.class);
-        Truth.assertThat(((ColorTouches) ifThenStmt.getBoolExpr()).getOperand2()).isInstanceOf(ColorLiteral.class);
+        Truth.assertThat(ifThenStmt.getBoolExpr()).isInstanceOf(ColorTouchingColor.class);
+        Truth.assertThat(((ColorTouchingColor) ifThenStmt.getBoolExpr()).getOperand1()).isInstanceOf(ColorLiteral.class);
+        Truth.assertThat(((ColorTouchingColor) ifThenStmt.getBoolExpr()).getOperand2()).isInstanceOf(ColorLiteral.class);
     }
 
     @Test

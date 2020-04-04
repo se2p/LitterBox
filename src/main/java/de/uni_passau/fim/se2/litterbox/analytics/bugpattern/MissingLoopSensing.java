@@ -27,7 +27,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.GreenFlag;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.StartedAsClone;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BoolExpr;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.ColorTouches;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.ColorTouchingColor;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.IsKeyPressed;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.IsMouseDown;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Touching;
@@ -124,7 +124,7 @@ public class MissingLoopSensing implements IssueFinder, ScratchVisitor {
     public void visit(IfThenStmt node) {
         if (insideGreenFlagClone && !insideLoop) {
             BoolExpr boolExpr = node.getBoolExpr();
-            if (boolExpr instanceof IsKeyPressed || boolExpr instanceof Touching || boolExpr instanceof IsMouseDown || boolExpr instanceof ColorTouches) {
+            if (boolExpr instanceof IsKeyPressed || boolExpr instanceof Touching || boolExpr instanceof IsMouseDown || boolExpr instanceof ColorTouchingColor) {
                 count++;
                 found = true;
             }
@@ -140,7 +140,7 @@ public class MissingLoopSensing implements IssueFinder, ScratchVisitor {
     public void visit(IfElseStmt node) {
         if (insideGreenFlagClone && !insideLoop) {
             BoolExpr boolExpr = node.getBoolExpr();
-            if (boolExpr instanceof IsKeyPressed || boolExpr instanceof Touching || boolExpr instanceof IsMouseDown || boolExpr instanceof ColorTouches) {
+            if (boolExpr instanceof IsKeyPressed || boolExpr instanceof Touching || boolExpr instanceof IsMouseDown || boolExpr instanceof ColorTouchingColor) {
                 count++;
                 found = true;
             }
