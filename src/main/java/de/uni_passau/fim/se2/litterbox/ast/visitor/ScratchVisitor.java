@@ -34,7 +34,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.ElementChoice;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.Next;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.Prev;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.Random;
-import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.WithId;
+import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.WithExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.WithNumber;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.BackdropSwitchTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Clicked;
@@ -1223,26 +1223,26 @@ public interface ScratchVisitor {
     }
 
     /**
-     * Default implementation of visit method for {@link WithId}.
+     * Default implementation of visit method for {@link WithExpr}.
      *
      * <p>
      * Iterates all children of this node without performing any action.
      * </p>
      *
-     * @param node WithId  Node of which the children will be iterated
+     * @param node WithExpr  Node of which the children will be iterated
      */
-    default void visit(WithId node) {
+    default void visit(WithExpr node) {
         visit((ElementChoice) node);
     }
 
     /**
-     * Default implementation of visit method for {@link WithId}.
+     * Default implementation of visit method for {@link WithExpr}.
      *
      * <p>
      * Iterates all children of this node without performing any action.
      * </p>
      *
-     * @param node WithId  Node of which the children will be iterated
+     * @param node WithExpr  Node of which the children will be iterated
      */
     default void visit(WithNumber node) {
         visit((ElementChoice) node);

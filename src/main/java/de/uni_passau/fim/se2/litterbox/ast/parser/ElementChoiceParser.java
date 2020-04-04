@@ -26,7 +26,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.ElementChoice;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.Next;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.Prev;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.Random;
-import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.WithId;
+import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.WithExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.StrId;
@@ -60,7 +60,7 @@ public class ElementChoiceParser {
             return getElementChoiceFromMenu(allBlocks, inputsNode);
         } else {
             final StringExpr stringExpr = StringExprParser.parseStringExpr(current, 0, allBlocks);
-            return new WithId(stringExpr);
+            return new WithExpr(stringExpr);
         }
     }
 
@@ -81,7 +81,7 @@ public class ElementChoiceParser {
         }
 
         if (!StandardElemChoice.contains(elemKey)) {
-            return new WithId(new AsString(new StrId(elementName)));
+            return new WithExpr(new AsString(new StrId(elementName)));
         }
 
         StandardElemChoice standardElemChoice = StandardElemChoice.valueOf(elemKey);

@@ -28,7 +28,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.ElementChoice;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.Next;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.Prev;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.Random;
-import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.WithId;
+import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.WithExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.BackdropSwitchTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
@@ -111,15 +111,15 @@ public class MissingBackdropSwitch implements IssueFinder, ScratchVisitor {
         final ElementChoice msgName = node.getElementChoice();
         if (msgName instanceof Next || msgName instanceof Prev || msgName instanceof Random) {
             nextRandPrev = true;
-        } else if (msgName instanceof WithId) {
-            if (((WithId) msgName).getStringExpr() instanceof StrId) {
-                switched.add(new Pair(actorName, ((StrId) ((WithId) msgName).getStringExpr()).getName()));
+        } else if (msgName instanceof WithExpr) {
+            if (((WithExpr) msgName).getStringExpr() instanceof StrId) {
+                switched.add(new Pair(actorName, ((StrId) ((WithExpr) msgName).getStringExpr()).getName()));
             }
-            if (((WithId) msgName).getStringExpr() instanceof StringLiteral) {
-                switched.add(new Pair(actorName, ((StringLiteral) ((WithId) msgName).getStringExpr()).getText()));
+            if (((WithExpr) msgName).getStringExpr() instanceof StringLiteral) {
+                switched.add(new Pair(actorName, ((StringLiteral) ((WithExpr) msgName).getStringExpr()).getText()));
             }
-            if (((WithId) msgName).getStringExpr() instanceof AsString) {
-                AsString expr = (AsString) ((WithId) msgName).getStringExpr();
+            if (((WithExpr) msgName).getStringExpr() instanceof AsString) {
+                AsString expr = (AsString) ((WithExpr) msgName).getStringExpr();
                 if (expr.getOperand1() instanceof StrId) {
                     switched.add(new Pair(actorName, ((StrId) expr.getOperand1()).getName()));
                 }
@@ -136,15 +136,15 @@ public class MissingBackdropSwitch implements IssueFinder, ScratchVisitor {
         final ElementChoice msgName = node.getElementChoice();
         if (msgName instanceof Next || msgName instanceof Prev || msgName instanceof Random) {
             nextRandPrev = true;
-        } else if (msgName instanceof WithId) {
-            if (((WithId) msgName).getStringExpr() instanceof StringLiteral) {
-                switched.add(new Pair(actorName, ((StringLiteral) ((WithId) msgName).getStringExpr()).getText()));
+        } else if (msgName instanceof WithExpr) {
+            if (((WithExpr) msgName).getStringExpr() instanceof StringLiteral) {
+                switched.add(new Pair(actorName, ((StringLiteral) ((WithExpr) msgName).getStringExpr()).getText()));
             }
-            if (((WithId) msgName).getStringExpr() instanceof StrId) {
-                switched.add(new Pair(actorName, ((StrId) ((WithId) msgName).getStringExpr()).getName()));
+            if (((WithExpr) msgName).getStringExpr() instanceof StrId) {
+                switched.add(new Pair(actorName, ((StrId) ((WithExpr) msgName).getStringExpr()).getName()));
             }
-            if (((WithId) msgName).getStringExpr() instanceof AsString) {
-                AsString expr = (AsString) ((WithId) msgName).getStringExpr();
+            if (((WithExpr) msgName).getStringExpr() instanceof AsString) {
+                AsString expr = (AsString) ((WithExpr) msgName).getStringExpr();
                 if (expr.getOperand1() instanceof StrId) {
                     switched.add(new Pair(actorName, ((StrId) expr.getOperand1()).getName()));
                 }
