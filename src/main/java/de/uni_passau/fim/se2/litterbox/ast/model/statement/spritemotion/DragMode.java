@@ -16,9 +16,16 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.uni_passau.fim.se2.litterbox.ast.parser.attributes;
+package de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion;
 
-public enum DragMode {
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTLeaf;
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
+
+import java.util.Collections;
+import java.util.List;
+
+public enum DragMode implements ASTLeaf {
 
     not_draggable("not draggable"),
     draggable("draggable");
@@ -36,6 +43,41 @@ public enum DragMode {
             }
         }
         return false;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public static DragMode fromString(String type) {
+        for (DragMode f : values()) {
+            if (f.getToken().equals(type.toLowerCase())) {
+                return f;
+            }
+        }
+        throw new IllegalArgumentException("Unknown DragMode: " + type);
+    }
+
+    @Override
+    public void accept(ScratchVisitor visitor) {
+        visitor.visit(this);
+    }
+
+    @Override
+    public List<? extends ASTNode> getChildren() {
+        return Collections.emptyList();
+    }
+
+    @Override
+    public String getUniqueName() {
+        return this.getClass().getSimpleName();
+    }
+
+    @Override
+    public String[] toSimpleStringArray() {
+        String[] result = new String[1];
+        result[0] = token;
+        return result;
     }
 
     @Override

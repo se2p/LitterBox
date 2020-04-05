@@ -16,38 +16,46 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes;
+package de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTLeaf;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
-import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import java.util.Collections;
 import java.util.List;
 
-public enum FixedAttribute implements ASTLeaf {
-    Y_POSITION("y position"), X_POSITION("x position"), DIRECTION("direction"), SIZE("size"), VOLUME("volume"),
-    BACKDROP_NAME("backdrop name"), BACKDROP_NUMBER("backdrop #"), COSTUME_NAME("costume name"), COSTUME_NUMBER(
-            "costume #");
+public enum GraphicEffect implements ASTLeaf {
 
-    private final String type;
+    COLOR("COLOR"), GHOST("GHOST"), BRIGHTNESS("BRIGHTNESS"), WHIRL("WHIRL"), FISHEYE("FISHEYE"), PIXELATE("PIXELATE"),
+    MOSAIC("MOSAIC");
 
-    FixedAttribute(String type) {
-        this.type = Preconditions.checkNotNull(type);
+    private final String token;
+
+    GraphicEffect(String token) {
+        this.token = token;
     }
 
-    public static FixedAttribute fromString(String type) {
-        for (FixedAttribute f : values()) {
-            if (f.getType().equals(type.toLowerCase())) {
+    public static boolean contains(String effect) {
+        for (GraphicEffect value : GraphicEffect.values()) {
+            if (value.name().equals(effect.toUpperCase())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public static GraphicEffect fromString(String type) {
+        for (GraphicEffect f : values()) {
+            if (f.getToken().equals(type.toUpperCase())) {
                 return f;
             }
         }
-        throw new IllegalArgumentException("Unknown FixedAttribute: " + type);
-    }
-
-    public String getType() {
-        return type;
+        throw new IllegalArgumentException("Unknown GraphicEffect: " + type);
     }
 
     @Override
@@ -68,7 +76,7 @@ public enum FixedAttribute implements ASTLeaf {
     @Override
     public String[] toSimpleStringArray() {
         String[] result = new String[1];
-        result[0] = type;
+        result[0] = token;
         return result;
     }
 }

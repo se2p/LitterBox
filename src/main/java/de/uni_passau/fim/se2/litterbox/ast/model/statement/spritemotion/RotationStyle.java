@@ -16,9 +16,16 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.uni_passau.fim.se2.litterbox.ast.parser.attributes;
+package de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion;
 
-public enum RotationStyle {
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTLeaf;
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
+
+import java.util.Collections;
+import java.util.List;
+
+public enum RotationStyle implements ASTLeaf {
 
     dont_rotate("don't rotate"),
     left_right("left-right"),
@@ -30,6 +37,19 @@ public enum RotationStyle {
         this.token = token;
     }
 
+    public String getToken() {
+        return token;
+    }
+
+    public static RotationStyle fromString(String type) {
+        for (RotationStyle f : values()) {
+            if (f.getToken().equals(type.toLowerCase())) {
+                return f;
+            }
+        }
+        throw new IllegalArgumentException("Unknown RotationStyle: " + type);
+    }
+
     public static boolean contains(String opcode) {
         for (RotationStyle value : RotationStyle.values()) {
             if (value.toString().equals(opcode)) {
@@ -37,6 +57,28 @@ public enum RotationStyle {
             }
         }
         return false;
+    }
+
+    @Override
+    public void accept(ScratchVisitor visitor) {
+        visitor.visit(this);
+    }
+
+    @Override
+    public List<? extends ASTNode> getChildren() {
+        return Collections.emptyList();
+    }
+
+    @Override
+    public String getUniqueName() {
+        return this.getClass().getSimpleName();
+    }
+
+    @Override
+    public String[] toSimpleStringArray() {
+        String[] result = new String[1];
+        result[0] = token;
+        return result;
     }
 
     @Override

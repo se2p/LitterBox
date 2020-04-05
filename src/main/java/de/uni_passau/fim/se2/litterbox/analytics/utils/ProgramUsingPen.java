@@ -24,14 +24,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.ChangeAttributeBy;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetAttributeTo;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.pen.ChangePenColorParamBy;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.pen.PenClearStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.pen.PenDownStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.pen.PenStampStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.pen.PenUpStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.pen.SetPenColorParamTo;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.pen.SetPenColorToColorStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.pen.*;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
@@ -80,16 +73,8 @@ public class ProgramUsingPen implements IssueFinder, ScratchVisitor {
     }
 
     @Override
-    public void visit(SetAttributeTo node) {
-        if (node.getStringExpr().equals(new StringLiteral(PEN_SIZE_KEY))) {
-            found = true;
-        } else {
-            if (!node.getChildren().isEmpty()) {
-                for (ASTNode child : node.getChildren()) {
-                    child.accept(this);
-                }
-            }
-        }
+    public void visit(SetPenSizeTo node) {
+        found = true;
     }
 
     @Override

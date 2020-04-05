@@ -184,8 +184,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.type.StringType;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Id;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.StrId;
-import de.uni_passau.fim.se2.litterbox.ast.parser.attributes.GraphicEffect;
-import de.uni_passau.fim.se2.litterbox.ast.parser.attributes.SoundEffect;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.GraphicEffect;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.SoundEffect;
 
 import java.io.PrintStream;
 import java.util.List;

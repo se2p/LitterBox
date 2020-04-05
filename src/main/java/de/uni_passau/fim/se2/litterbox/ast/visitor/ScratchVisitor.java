@@ -18,18 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.visitor;
 
-import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
-import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
-import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinitionList;
-import de.uni_passau.fim.se2.litterbox.ast.model.ActorType;
-import de.uni_passau.fim.se2.litterbox.ast.model.Key;
-import de.uni_passau.fim.se2.litterbox.ast.model.Message;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.model.Script;
-import de.uni_passau.fim.se2.litterbox.ast.model.ScriptList;
-import de.uni_passau.fim.se2.litterbox.ast.model.SetStmtList;
-import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
-import de.uni_passau.fim.se2.litterbox.ast.model.URI;
+import de.uni_passau.fim.se2.litterbox.ast.model.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.ElementChoice;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.Next;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.Prev;
@@ -130,19 +119,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.ExpressionStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.UnspecifiedStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.ActorLookStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.AskAndWait;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.ClearGraphicEffects;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.HideVariable;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.NextBackdrop;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.ShowVariable;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.SwitchBackdrop;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.SwitchBackdropAndWait;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.ActorSoundStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.ClearSoundEffects;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.PlaySoundUntilDone;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.StartSound;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.StopAllSounds;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.Broadcast;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.BroadcastAndWait;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.ChangeAttributeBy;
@@ -174,14 +152,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.list.DeleteOf;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.list.InsertAt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.list.ListStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.list.ReplaceItem;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.pen.ChangePenColorParamBy;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.pen.PenClearStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.pen.PenDownStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.pen.PenStampStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.pen.PenStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.pen.PenUpStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.pen.SetPenColorParamTo;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.pen.SetPenColorToColorStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.pen.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.ChangeLayerBy;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.ChangeSizeBy;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.GoToLayer;
@@ -196,19 +167,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SpriteLook
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SwitchCostumeTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Think;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.ThinkForSecs;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.ChangeXBy;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.ChangeYBy;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.GlideSecsTo;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.GoToPos;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.IfOnEdgeBounce;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.MoveSteps;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.PointInDirection;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.PointTowards;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SetXTo;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SetYTo;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SpriteMotionStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.TurnLeft;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.TurnRight;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.DeleteClone;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopAll;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopThisScript;
@@ -3047,5 +3006,135 @@ public interface ScratchVisitor {
      */
     default void visit(LayerChoice node) {
         visit((ASTNode) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link SetPenSizeTo}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node SetPenSizeTo Node of which the children will be iterated
+     */
+    default void visit(SetPenSizeTo node) {
+        visit((PenStmt) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link SetGraphicEffectTo}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node SetGraphicEffectTo Node of which the children will be iterated
+     */
+    default void visit(SetGraphicEffectTo node) {
+        visit((ActorLookStmt) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link GraphicEffect}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node GraphicEffect Node of which the children will be iterated
+     */
+    default void visit(GraphicEffect node) {
+        visit((ASTLeaf) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link SoundEffect}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node SoundEffect Node of which the children will be iterated
+     */
+    default void visit(SoundEffect node) {
+        visit((ASTLeaf) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link SetSoundEffectTo}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node SetSoundEffectTo Node of which the children will be iterated
+     */
+    default void visit(SetSoundEffectTo node) {
+        visit((ActorSoundStmt) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link SetVolumeTo}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node SetVolumeTo Node of which the children will be iterated
+     */
+    default void visit(SetVolumeTo node) {
+        visit((ActorSoundStmt) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link DragMode}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node DragMode Node of which the children will be iterated
+     */
+    default void visit(DragMode node) {
+        visit((ASTLeaf) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link RotationStyle}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node RotationStyle Node of which the children will be iterated
+     */
+    default void visit(RotationStyle node) {
+        visit((ASTLeaf) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link SetRotationStyle}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node SetRotationStyle Node of which the children will be iterated
+     */
+    default void visit(SetRotationStyle node) {
+        visit((SpriteMotionStmt) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link SetDragMode}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node SetDragMode Node of which the children will be iterated
+     */
+    default void visit(SetDragMode node) {
+        visit((SpriteMotionStmt) node);
     }
 }

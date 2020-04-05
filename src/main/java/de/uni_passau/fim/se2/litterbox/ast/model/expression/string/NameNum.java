@@ -27,7 +27,7 @@ import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 import java.util.Collections;
 import java.util.List;
 
-public enum NameNum implements ASTNode, ASTLeaf {
+public enum NameNum implements ASTLeaf {
     NAME("name"), NUMBER("number");
 
     private final String type;
@@ -38,7 +38,7 @@ public enum NameNum implements ASTNode, ASTLeaf {
 
     public static NameNum fromString(String type) {
         for (NameNum f : values()) {
-            if (f.getType().equals(type)) {
+            if (f.getType().equals(type.toLowerCase())) {
                 return f;
             }
         }

@@ -23,7 +23,9 @@ public enum ActorSoundStmtOpcode {
     sound_playuntildone,    //    "play" "sound"  ElementChoice  "until" "done"
     sound_play,             // |  "start" "sound"  ElementChoice
     sound_cleareffects,     // |  "clear" "sound" "effects"
-    sound_stopallsounds;    // |  "stop" "all" "sounds"
+    sound_stopallsounds,    // |  "stop" "all" "sounds"
+    sound_seteffectto,      // | "set effect" SoundEffect" "to" NumExpr
+    sound_setvolumeto;      // | "set volume to" NumExpr
 
     public static boolean contains(String opcode) {
         for (ActorSoundStmtOpcode value : ActorSoundStmtOpcode.values()) {

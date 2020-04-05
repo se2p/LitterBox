@@ -26,16 +26,13 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.pen.ChangePenColorParamBy;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.pen.PenClearStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.pen.PenDownStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.pen.PenStampStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.pen.PenUpStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.pen.SetPenColorParamTo;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.pen.SetPenColorToColorStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetAttributeTo;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.pen.*;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.DependentBlockOpcodes;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.PenOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ColorParser;
+import de.uni_passau.fim.se2.litterbox.ast.parser.ExpressionParser;
 import de.uni_passau.fim.se2.litterbox.ast.parser.NumExprParser;
 import de.uni_passau.fim.se2.litterbox.ast.parser.StringExprParser;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
@@ -76,6 +73,8 @@ public class PenStmtParser {
             numExpr = NumExprParser.parseNumExpr(current, VALUE_KEY, blocks);
             param = parseParam(current, blocks);
             return new SetPenColorParamTo(numExpr, param);
+            case pen_setPenSizeTo:
+                return parseSetPenSizeTo(current, blocks);
         default:
             throw new RuntimeException("Not implemented yet for opcode " + opcode);
         }
@@ -107,5 +106,11 @@ public class PenStmtParser {
 
     static int getShadowIndicator(ArrayNode exprArray) {
         return exprArray.get(Constants.POS_INPUT_SHADOW).asInt();
+    }
+
+
+    private static PenStmt parseSetPenSizeTo(JsonNode current, JsonNode allBlocks) throws ParsingException {
+        return new SetPenSizeTo(NumExprParser.parseNumExpr(current, "SIZE",
+                allBlocks));
     }
 }

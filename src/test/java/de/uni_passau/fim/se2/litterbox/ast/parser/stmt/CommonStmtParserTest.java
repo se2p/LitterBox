@@ -27,6 +27,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinitionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.SetSoundEffectTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.Broadcast;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.BroadcastAndWait;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.ChangeAttributeBy;
@@ -95,7 +96,7 @@ public class CommonStmtParserTest {
             Truth.assertThat(listOfStmt.get(6).getClass()).isEqualTo(ResetTimer.class);
             Truth.assertThat(listOfStmt.get(7).getClass()).isEqualTo(ChangeVariableBy.class);
             Truth.assertThat(listOfStmt.get(8).getClass()).isEqualTo(ChangeAttributeBy.class);
-            Truth.assertThat(listOfStmt.get(9).getClass()).isEqualTo(SetAttributeTo.class);
+            Truth.assertThat(listOfStmt.get(9).getClass()).isEqualTo(SetSoundEffectTo.class);
             Truth.assertThat(listOfStmt.get(10).getClass()).isEqualTo(ChangeAttributeBy.class);
             Truth.assertThat(listOfStmt.get(11).getClass()).isEqualTo(DeleteClone.class);
         } catch (ParsingException e) {
