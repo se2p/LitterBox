@@ -20,7 +20,6 @@ package de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTLeaf;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.DragMode;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 import java.util.Collections;

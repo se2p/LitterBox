@@ -31,12 +31,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.BroadcastAndWa
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 /**
  * This pattern is a specialised version of unmatched broadcast and receive blocks. When

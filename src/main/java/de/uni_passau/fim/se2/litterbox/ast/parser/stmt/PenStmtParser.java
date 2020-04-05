@@ -26,13 +26,10 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetAttributeTo;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.pen.*;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.DependentBlockOpcodes;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.PenOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ColorParser;
-import de.uni_passau.fim.se2.litterbox.ast.parser.ExpressionParser;
 import de.uni_passau.fim.se2.litterbox.ast.parser.NumExprParser;
 import de.uni_passau.fim.se2.litterbox.ast.parser.StringExprParser;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
@@ -55,28 +52,31 @@ public class PenStmtParser {
         }
         final PenOpcode opcode = PenOpcode.valueOf(opCodeString);
         switch (opcode) {
-        case pen_clear:
-            return new PenClearStmt();
-        case pen_penDown:
-            return new PenDownStmt();
-        case pen_penUp:
-            return new PenUpStmt();
-        case pen_stamp:
-            return new PenStampStmt();
-        case pen_setPenColorToColor:
-            return new SetPenColorToColorStmt(ColorParser.parseColor(current, 0, blocks));
-        case pen_changePenColorParamBy:
-            NumExpr numExpr = NumExprParser.parseNumExpr(current, VALUE_KEY, blocks);
-            StringExpr param = parseParam(current, blocks);
-            return new ChangePenColorParamBy(numExpr, param);
-        case pen_setPenColorParamTo:
-            numExpr = NumExprParser.parseNumExpr(current, VALUE_KEY, blocks);
-            param = parseParam(current, blocks);
-            return new SetPenColorParamTo(numExpr, param);
+            case pen_clear:
+                return new PenClearStmt();
+            case pen_penDown:
+                return new PenDownStmt();
+            case pen_penUp:
+                return new PenUpStmt();
+            case pen_stamp:
+                return new PenStampStmt();
+            case pen_setPenColorToColor:
+                return new SetPenColorToColorStmt(ColorParser.parseColor(current, 0, blocks));
+            case pen_changePenColorParamBy:
+                NumExpr numExpr = NumExprParser.parseNumExpr(current, VALUE_KEY, blocks);
+                StringExpr param = parseParam(current, blocks);
+                return new ChangePenColorParamBy(numExpr, param);
+            case pen_setPenColorParamTo:
+                numExpr = NumExprParser.parseNumExpr(current, VALUE_KEY, blocks);
+                param = parseParam(current, blocks);
+                return new SetPenColorParamTo(numExpr, param);
             case pen_setPenSizeTo:
                 return parseSetPenSizeTo(current, blocks);
-        default:
-            throw new RuntimeException("Not implemented yet for opcode " + opcode);
+            case pen_changePenSizeBy:
+                return new ChangePenSizeBy(NumExprParser.parseNumExpr(current, "SIZE",
+                        blocks));
+            default:
+                throw new RuntimeException("Not implemented yet for opcode " + opcode);
         }
     }
 

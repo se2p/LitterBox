@@ -27,12 +27,7 @@ public enum CommonStmtOpcode {
     event_broadcast,         // "broadcast" Message
     event_broadcastandwait,  // "broadcast" Message "and" "wait"
     sensing_resettimer,      // "reset" "timer"
-    data_changevariableby,    // "change" Variable "by" Expression
-
-    sound_changevolumeby,
-    sound_changeeffectby,
-    looks_changeeffectby,
-    pen_changePenSizeBy;
+    data_changevariableby;    // "change" Variable "by" Expression
 
     public static boolean contains(String opcode) {
         for (CommonStmtOpcode value : CommonStmtOpcode.values()) {

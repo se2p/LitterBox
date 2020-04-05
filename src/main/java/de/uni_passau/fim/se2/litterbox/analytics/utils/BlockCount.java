@@ -39,11 +39,12 @@ import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterDefinitionLi
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterDefiniton;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.ExpressionStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.ChangeGraphicEffectBy;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.HideVariable;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.SetGraphicEffectTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.ShowVariable;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.ChangeSoundEffectBy;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.SetSoundEffectTo;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.ChangeAttributeBy;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.ChangeVariableBy;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetAttributeTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetVariableTo;
@@ -188,6 +189,22 @@ public class BlockCount implements IssueFinder, ScratchVisitor {
 
     @Override
     public void visit(SetSoundEffectTo node) {
+        if (insideScript || insideProcedure) {
+            count++;
+        }
+        node.getValue().accept(this);
+    }
+
+    @Override
+    public void visit(ChangeSoundEffectBy node) {
+        if (insideScript || insideProcedure) {
+            count++;
+        }
+        node.getValue().accept(this);
+    }
+
+    @Override
+    public void visit(ChangeGraphicEffectBy node) {
         if (insideScript || insideProcedure) {
             count++;
         }
@@ -387,17 +404,6 @@ public class BlockCount implements IssueFinder, ScratchVisitor {
 
     @Override
     public void visit(SetAttributeTo node) {
-        if (insideScript || insideProcedure) {
-            count++;
-        }
-        if (!node.getChildren().isEmpty()) {
-            //only expression has to be counted since the attributes are fixed in the blocks
-            node.getExpr().accept(this);
-        }
-    }
-
-    @Override
-    public void visit(ChangeAttributeBy node) {
         if (insideScript || insideProcedure) {
             count++;
         }

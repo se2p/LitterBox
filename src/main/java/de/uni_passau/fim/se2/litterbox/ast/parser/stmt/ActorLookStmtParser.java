@@ -21,17 +21,18 @@ package de.uni_passau.fim.se2.litterbox.ast.parser.stmt;
 import com.fasterxml.jackson.databind.JsonNode;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.ElementChoice;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
-import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.*;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetAttributeTo;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.UnspecifiedId;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.ActorLookStmtOpcode;
-import de.uni_passau.fim.se2.litterbox.ast.parser.*;
+import de.uni_passau.fim.se2.litterbox.ast.parser.ElementChoiceParser;
+import de.uni_passau.fim.se2.litterbox.ast.parser.NumExprParser;
+import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
+import de.uni_passau.fim.se2.litterbox.ast.parser.StringExprParser;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ExpressionListInfo;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.VariableInfo;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
@@ -125,8 +126,14 @@ public class ActorLookStmtParser {
                     var = new Qualified(new StrId(actorName), new StrId(LIST_ABBREVIATION + variableName));
                 }
                 return new HideVariable(var);
+
             case looks_seteffectto:
                 return parseSetLookEffect(current, allBlocks);
+
+            case looks_changeeffectby:
+                NumExpr numExpr = NumExprParser.parseNumExpr(current, "CHANGE", allBlocks);
+                String effectName = current.get(FIELDS_KEY).get("EFFECT").get(0).asText();
+                return new ChangeGraphicEffectBy(GraphicEffect.fromString(effectName), numExpr);
             default:
                 throw new ParsingException("No parser for opcode " + opcodeString);
         }

@@ -19,81 +19,17 @@
 package de.uni_passau.fim.se2.litterbox.ast.visitor;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.*;
-import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.ElementChoice;
-import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.Next;
-import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.Prev;
-import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.Random;
-import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.WithExpr;
-import de.uni_passau.fim.se2.litterbox.ast.model.event.BackdropSwitchTo;
-import de.uni_passau.fim.se2.litterbox.ast.model.event.Clicked;
-import de.uni_passau.fim.se2.litterbox.ast.model.event.Event;
-import de.uni_passau.fim.se2.litterbox.ast.model.event.GreenFlag;
-import de.uni_passau.fim.se2.litterbox.ast.model.event.KeyPressed;
-import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
-import de.uni_passau.fim.se2.litterbox.ast.model.event.ReceptionOfMessage;
-import de.uni_passau.fim.se2.litterbox.ast.model.event.SpriteClicked;
-import de.uni_passau.fim.se2.litterbox.ast.model.event.StageClicked;
-import de.uni_passau.fim.se2.litterbox.ast.model.event.StartedAsClone;
-import de.uni_passau.fim.se2.litterbox.ast.model.event.VariableAboveValue;
+import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.event.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.ComparableExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.UnspecifiedExpression;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.And;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.AsBool;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BiggerThan;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BoolExpr;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.ColorTouchingColor;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Equals;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.ExpressionContains;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.IsKeyPressed;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.IsMouseDown;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.LessThan;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Not;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Or;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Touching;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.UnspecifiedBoolExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.AsListIndex;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.ExpressionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.ListExpr;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.Add;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.AsNumber;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.Current;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.DaysSince2000;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.Direction;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.DistanceTo;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.Div;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.IndexOf;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.LengthOfString;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.LengthOfVar;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.Loudness;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.Minus;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.Mod;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.MouseX;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.MouseY;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.Mult;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumFunct;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumFunctOf;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.PickRandom;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.PositionX;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.PositionY;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.Round;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.Size;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.Timer;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.UnspecifiedNumExpr;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.Volume;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.Answer;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AttributeOf;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.Backdrop;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.Costume;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.ItemOfVariable;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.Join;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.LetterOf;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.NameNum;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.UnspecifiedStringExpr;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.Username;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.Attribute;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.AttributeFromFixed;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.AttributeFromVariable;
@@ -102,11 +38,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.literals.BoolLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.ColorLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
-import de.uni_passau.fim.se2.litterbox.ast.model.position.CoordinatePosition;
-import de.uni_passau.fim.se2.litterbox.ast.model.position.MousePos;
-import de.uni_passau.fim.se2.litterbox.ast.model.position.PivotOf;
-import de.uni_passau.fim.se2.litterbox.ast.model.position.Position;
-import de.uni_passau.fim.se2.litterbox.ast.model.position.RandomPos;
+import de.uni_passau.fim.se2.litterbox.ast.model.position.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterDefinitionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterDefiniton;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
@@ -121,78 +53,24 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.UnspecifiedStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.*;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.Broadcast;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.BroadcastAndWait;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.ChangeAttributeBy;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.ChangeVariableBy;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.CommonStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.CreateCloneOf;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.ResetTimer;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetAttributeTo;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetVariableTo;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.StopOtherScriptsInSprite;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitSeconds;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitUntil;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.ControlStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfElseStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatTimesStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.declaration.DeclarationAttributeAsTypeStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.declaration.DeclarationAttributeOfIdentAsTypeStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.declaration.DeclarationIdentAsTypeStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.declaration.DeclarationStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.declaration.DeclarationStmtList;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.list.AddTo;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.list.DeleteAllOf;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.list.DeleteOf;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.list.InsertAt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.list.ListStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.list.ReplaceItem;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.declaration.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.list.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.pen.*;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.ChangeLayerBy;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.ChangeSizeBy;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.GoToLayer;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Hide;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.LayerChoice;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.NextCostume;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Say;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SayForSecs;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SetSizeTo;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Show;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SpriteLookStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SwitchCostumeTo;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Think;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.ThinkForSecs;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.DeleteClone;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopAll;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopThisScript;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.TerminationStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.timecomp.TimeComp;
-import de.uni_passau.fim.se2.litterbox.ast.model.touchable.AsTouchable;
-import de.uni_passau.fim.se2.litterbox.ast.model.touchable.Edge;
-import de.uni_passau.fim.se2.litterbox.ast.model.touchable.MousePointer;
-import de.uni_passau.fim.se2.litterbox.ast.model.touchable.SpriteTouchable;
-import de.uni_passau.fim.se2.litterbox.ast.model.touchable.Touchable;
+import de.uni_passau.fim.se2.litterbox.ast.model.touchable.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.Color;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.FromNumber;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.Rgba;
-import de.uni_passau.fim.se2.litterbox.ast.model.type.BooleanType;
-import de.uni_passau.fim.se2.litterbox.ast.model.type.ImageType;
-import de.uni_passau.fim.se2.litterbox.ast.model.type.ListType;
-import de.uni_passau.fim.se2.litterbox.ast.model.type.NumberType;
-import de.uni_passau.fim.se2.litterbox.ast.model.type.SoundType;
-import de.uni_passau.fim.se2.litterbox.ast.model.type.StringType;
-import de.uni_passau.fim.se2.litterbox.ast.model.type.Type;
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.Id;
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.Identifier;
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.Qualified;
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.StrId;
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
+import de.uni_passau.fim.se2.litterbox.ast.model.type.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.variable.*;
 
 public interface ScratchVisitor {
 
@@ -978,19 +856,6 @@ public interface ScratchVisitor {
      */
     default void visit(SetPenColorParamTo node) {
         visit((PenStmt) node);
-    }
-
-    /**
-     * Default implementation of visit method for {@link ChangeAttributeBy}.
-     *
-     * <p>
-     * Iterates all children of this node without performing any action.
-     * </p>
-     *
-     * @param node ChangeAttributeBy  Node of which the children will be iterated
-     */
-    default void visit(ChangeAttributeBy node) {
-        visit((CommonStmt) node);
     }
 
     /**
@@ -3022,6 +2887,19 @@ public interface ScratchVisitor {
     }
 
     /**
+     * Default implementation of visit method for {@link ChangePenSizeBy}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node ChangePenSizeBy Node of which the children will be iterated
+     */
+    default void visit(ChangePenSizeBy node) {
+        visit((PenStmt) node);
+    }
+
+    /**
      * Default implementation of visit method for {@link SetGraphicEffectTo}.
      *
      * <p>
@@ -3031,6 +2909,19 @@ public interface ScratchVisitor {
      * @param node SetGraphicEffectTo Node of which the children will be iterated
      */
     default void visit(SetGraphicEffectTo node) {
+        visit((ActorLookStmt) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link ChangeGraphicEffectBy}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node ChangeGraphicEffectBy Node of which the children will be iterated
+     */
+    default void visit(ChangeGraphicEffectBy node) {
         visit((ActorLookStmt) node);
     }
 
@@ -3074,6 +2965,19 @@ public interface ScratchVisitor {
     }
 
     /**
+     * Default implementation of visit method for {@link ChangeSoundEffectBy}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node ChangeSoundEffectBy Node of which the children will be iterated
+     */
+    default void visit(ChangeSoundEffectBy node) {
+        visit((ActorSoundStmt) node);
+    }
+
+    /**
      * Default implementation of visit method for {@link SetVolumeTo}.
      *
      * <p>
@@ -3083,6 +2987,19 @@ public interface ScratchVisitor {
      * @param node SetVolumeTo Node of which the children will be iterated
      */
     default void visit(SetVolumeTo node) {
+        visit((ActorSoundStmt) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link ChangeVolumeBy}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node ChangeVolumeBy Node of which the children will be iterated
+     */
+    default void visit(ChangeVolumeBy node) {
         visit((ActorSoundStmt) node);
     }
 

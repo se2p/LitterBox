@@ -25,11 +25,9 @@ import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.ElementChoice;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.WithExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
-import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.*;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetAttributeTo;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.ActorSoundStmtOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ExpressionParser;
@@ -75,6 +73,14 @@ public class ActorSoundStmtParser {
                 return parseSetVolumeTo(current, allBlocks);
             case sound_seteffectto:
                 return parseSetSoundEffect(current, allBlocks);
+            case sound_changevolumeby:
+                NumExpr numExpr = NumExprParser.parseNumExpr(current, "VOLUME",
+                        allBlocks);
+                return new ChangeVolumeBy( numExpr);
+            case sound_changeeffectby:
+                numExpr = NumExprParser.parseNumExpr(current, VALUE_KEY, allBlocks);
+                String effectName = current.get(FIELDS_KEY).get("EFFECT").get(0).asText();
+                return new ChangeSoundEffectBy(SoundEffect.fromString(effectName), numExpr);
 
             default:
                 throw new RuntimeException("Not implemented yet for opcode " + opCodeString);

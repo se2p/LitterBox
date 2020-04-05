@@ -19,8 +19,6 @@
 package de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
-
-
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 public class AttributeFromFixed extends AbstractNode implements Attribute {
