@@ -22,11 +22,11 @@ import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
-public class PivotOf extends AbstractNode implements Position {
+public class FromExpression extends AbstractNode implements Position {
 
     private final StringExpr stringExpr;
 
-    public PivotOf(StringExpr stringExpr) {
+    public FromExpression(StringExpr stringExpr) {
         super(stringExpr);
         this.stringExpr = stringExpr;
     }

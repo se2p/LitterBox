@@ -48,7 +48,7 @@ import static de.uni_passau.fim.se2.litterbox.ast.parser.ExpressionParser.*;
 public class NumExprParser {
 
     public static NumExpr parseNumExpr(JsonNode block, String inputName, JsonNode blocks)
-            throws ParsingException { // we ignored "(" NumExpr ")"
+            throws ParsingException {
         ArrayNode exprArray = getExprArrayByName(block.get(INPUTS_KEY), inputName);
         int shadowIndicator = getShadowIndicator(exprArray);
         if (shadowIndicator == INPUT_SAME_BLOCK_SHADOW ||

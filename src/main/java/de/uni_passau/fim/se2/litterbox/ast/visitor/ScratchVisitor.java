@@ -115,9 +115,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.literals.BoolLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.ColorLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
-import de.uni_passau.fim.se2.litterbox.ast.model.position.CoordinatePosition;
+import de.uni_passau.fim.se2.litterbox.ast.model.position.FromExpression;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.MousePos;
-import de.uni_passau.fim.se2.litterbox.ast.model.position.PivotOf;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.Position;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.RandomPos;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterDefinitionList;
@@ -1804,19 +1803,6 @@ public interface ScratchVisitor {
     }
 
     /**
-     * Default implementation of visit method for {@link CoordinatePosition}.
-     *
-     * <p>
-     * Iterates all children of this node without performing any action.
-     * </p>
-     *
-     * @param node CoordinatePosition  Node of which the children will be iterated
-     */
-    default void visit(CoordinatePosition node) {
-        visit((Position) node);
-    }
-
-    /**
      * Default implementation of visit method for {@link MousePos}.
      *
      * <p>
@@ -1830,26 +1816,26 @@ public interface ScratchVisitor {
     }
 
     /**
-     * Default implementation of visit method for {@link PivotOf}.
+     * Default implementation of visit method for {@link FromExpression}.
      *
      * <p>
      * Iterates all children of this node without performing any action.
      * </p>
      *
-     * @param node PivotOf  Node of which the children will be iterated
+     * @param node FromExpression  Node of which the children will be iterated
      */
-    default void visit(PivotOf node) {
+    default void visit(FromExpression node) {
         visit((Position) node);
     }
 
     /**
-     * Default implementation of visit method for {@link PivotOf}.
+     * Default implementation of visit method for {@link RandomPos}.
      *
      * <p>
      * Iterates all children of this node without performing any action.
      * </p>
      *
-     * @param node PivotOf  Node of which the children will be iterated
+     * @param node RandomPos  Node of which the children will be iterated
      */
     default void visit(RandomPos node) {
         visit((Position) node);

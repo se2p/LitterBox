@@ -171,6 +171,9 @@ public class Constants {
     public static final String VIDTRANSPARENCY_KEY = "videoTransparency";
     public static final String VIDSTATE_KEY = "videoState";
     public static final String VISIBLE_KEY = "visible";
+    public static final String SECS_KEY = "SECS";
+    public static final String X = "X";
+    public static final String Y = "Y";
     public static final String X_KEY = "x";
     public static final String Y_KEY = "y";
     public static final String SIZE_KEY = "size";

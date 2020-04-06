@@ -16,28 +16,36 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.uni_passau.fim.se2.litterbox.ast.model.position;
+package de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
+import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-public class CoordinatePosition extends AbstractNode implements Position {
+public class GlideSecsToXY extends AbstractNode implements SpriteMotionStmt {
 
-    private final NumExpr xCoord;
-    private final NumExpr yCoord;
+    private final NumExpr secs;
+    private final NumExpr x;
+    private final NumExpr y;
 
-    public CoordinatePosition(NumExpr xCoord, NumExpr yCoord) {
-        this.xCoord = xCoord;
-        this.yCoord = yCoord;
+    public GlideSecsToXY(NumExpr secs, NumExpr x, NumExpr y) {
+        super(secs, x, y);
+        this.secs = Preconditions.checkNotNull(secs);
+        this.x = Preconditions.checkNotNull(x);
+        this.y = Preconditions.checkNotNull(y);
     }
 
-    public NumExpr getXCoord() {
-        return xCoord;
+    public NumExpr getSecs() {
+        return secs;
     }
 
-    public NumExpr getYCoord() {
-        return yCoord;
+    public NumExpr getX() {
+        return x;
+    }
+
+    public NumExpr getY() {
+        return y;
     }
 
     @Override
