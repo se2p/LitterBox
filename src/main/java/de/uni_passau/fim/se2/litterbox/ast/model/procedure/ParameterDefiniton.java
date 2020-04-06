@@ -21,21 +21,21 @@ package de.uni_passau.fim.se2.litterbox.ast.model.procedure;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.Type;
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.Identifier;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 public class ParameterDefiniton extends AbstractNode implements ASTNode {
 
-    private final Identifier ident;
+    private final LocalIdentifier ident;
     private final Type type;
 
-    public ParameterDefiniton(Identifier ident, Type type) {
+    public ParameterDefiniton(LocalIdentifier ident, Type type) {
         super(ident, type);
         this.ident = ident;
         this.type = type;
     }
 
-    public Identifier getIdent() {
+    public LocalIdentifier getIdent() {
         return ident;
     }
 

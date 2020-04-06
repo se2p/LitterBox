@@ -29,7 +29,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.DeleteClone;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopAll;
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.Identifier;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ProcedureInfo;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
@@ -58,7 +58,7 @@ public class CustomBlockWithTermination implements ScratchVisitor, IssueFinder {
     private List<String> proceduresWithForever;
     private List<String> calledProcedures;
     private boolean insideProcedure;
-    private Map<Identifier, ProcedureInfo> procMap;
+    private Map<LocalIdentifier, ProcedureInfo> procMap;
     private Program program;
 
     @Override

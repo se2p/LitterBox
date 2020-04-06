@@ -243,9 +243,13 @@ import de.uni_passau.fim.se2.litterbox.ast.model.type.NumberType;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.SoundType;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.StringType;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.Type;
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.Identifier;
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.Qualified;
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.StrId;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Identifier;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
+import de.uni_passau.fim.se2.litterbox.ast.model.variable.Parameter;
+import de.uni_passau.fim.se2.litterbox.ast.model.variable.Placeholder;
+import de.uni_passau.fim.se2.litterbox.ast.model.variable.ScratchList;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 
 public interface ScratchVisitor {
@@ -394,7 +398,7 @@ public interface ScratchVisitor {
      * @param node StrId of which the children will be iterated
      */
     default void visit(StrId node) {
-        visit((Identifier) node);
+        visit((LocalIdentifier) node);
     }
 
     /**
@@ -697,7 +701,7 @@ public interface ScratchVisitor {
     }
 
     /**
-     * Default implementation of visit method for {@link Identifier}.
+     * Default implementation of visit method for {@link LocalIdentifier}.
      *
      * <p>
      * Iterates all children of this node without performing any action.
@@ -705,8 +709,8 @@ public interface ScratchVisitor {
      *
      * @param node Identifier Node of which the children will be iterated
      */
-    default void visit(Identifier node) {
-        visit((Variable) node);
+    default void visit(LocalIdentifier node) {
+        visit((Identifier) node);
     }
 
     /**
@@ -940,7 +944,7 @@ public interface ScratchVisitor {
      * @param node Qualified Node of which the children will be iterated
      */
     default void visit(Qualified node) {
-        visit((Variable) node);
+        visit((Identifier) node);
     }
 
     /**
@@ -2751,15 +2755,15 @@ public interface ScratchVisitor {
     }
 
     /**
-     * Default implementation of visit method for {@link SpriteTouchable}.
+     * Default implementation of visit method for {@link Identifier }.
      *
      * <p>
      * Iterates all children of this node without performing any action.
      * </p>
      *
-     * @param node SpriteTouchable  Node of which the children will be iterated
+     * @param node Identifier   Node of which the children will be iterated
      */
-    default void visit(Variable node) {
+    default void visit(Identifier node) {
         visit((Expression) node);
     }
 
@@ -3217,5 +3221,61 @@ public interface ScratchVisitor {
      */
     default void visit(SpriteTouchingColor node) {
         visit((BoolExpr) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link Placeholder}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node Placeholder Node of which the children will
+     *             be iterated
+     */
+    default void visit(Placeholder node) {
+        visit((Expression) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link Variable}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node Variable Node of which the children will
+     *             be iterated
+     */
+    default void visit(Variable node) {
+        visit((Placeholder) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link ScratchList}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node ScratchList Node of which the children will
+     *             be iterated
+     */
+    default void visit(ScratchList node) {
+        visit((Placeholder) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link Parameter}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node Parameter Node of which the children will
+     *             be iterated
+     */
+    default void visit(Parameter node) {
+        visit((Placeholder) node);
     }
 }

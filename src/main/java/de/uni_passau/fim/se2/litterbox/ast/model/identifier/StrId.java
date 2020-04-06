@@ -16,25 +16,19 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.uni_passau.fim.se2.litterbox.ast.model.variable;
+package de.uni_passau.fim.se2.litterbox.ast.model.identifier;
 
-import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
+
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
-import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-public abstract class Identifier extends AbstractNode implements Variable, Expression {
-
-    private final StringLiteral name;
-
-    public Identifier(StringLiteral name) {
-        super(name);
-        this.name = Preconditions.checkNotNull(name);
+public class StrId extends LocalIdentifier {
+    public StrId(String name) {
+        this(new StringLiteral(name));
     }
 
-    public String getName() {
-        return name.getText();
+    public StrId(StringLiteral name) {
+        super(name);
     }
 
     @Override

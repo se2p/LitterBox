@@ -29,8 +29,9 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.UnspecifiedBool
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.*;
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.CommonStmtOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.parser.BoolExprParser;
 import de.uni_passau.fim.se2.litterbox.ast.parser.NumExprParser;
@@ -97,7 +98,7 @@ public class CommonStmtParser {
 
     private static CommonStmt parseChangeVariableBy(JsonNode current, JsonNode allBlocks) throws ParsingException {
         Expression numExpr = NumExprParser.parseNumExpr(current, 0, allBlocks);
-        Variable var;
+        Identifier var;
         String variableName = current.get(FIELDS_KEY).get(VARIABLE_KEY).get(VARIABLE_NAME_POS).asText();
         String variableID = current.get(FIELDS_KEY).get(VARIABLE_KEY).get(VARIABLE_IDENTIFIER_POS).asText();
         if (!ProgramParser.symbolTable.getVariables().containsKey(variableID)) {
@@ -105,7 +106,7 @@ public class CommonStmtParser {
         } else {
             VariableInfo variableInfo = ProgramParser.symbolTable.getVariables().get(variableID);
             String actorName = variableInfo.getActor();
-            var = new Qualified(new StrId(actorName), new StrId(VARIABLE_ABBREVIATION + variableName));
+            var = new Qualified(new StrId(actorName), new Variable(new StrId(variableName)));
         }
 
         return new ChangeVariableBy(var, numExpr);
@@ -141,7 +142,7 @@ public class CommonStmtParser {
             String cloneOptionMenu = inputs.get(CLONE_OPTION).get(Constants.POS_INPUT_VALUE).asText();
             JsonNode optionBlock = allBlocks.get(cloneOptionMenu);
             String cloneValue = optionBlock.get(FIELDS_KEY).get(CLONE_OPTION).get(FIELD_VALUE).asText();
-            Identifier ident = new StrId(cloneValue);
+            LocalIdentifier ident = new StrId(cloneValue);
             return new CreateCloneOf(new AsString(ident));
         } else {
             final StringExpr stringExpr = StringExprParser.parseStringExpr(current, 0, allBlocks);

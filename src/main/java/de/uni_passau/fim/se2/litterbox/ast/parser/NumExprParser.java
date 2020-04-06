@@ -26,12 +26,15 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BoolExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Identifier;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.UnspecifiedId;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.Position;
 import de.uni_passau.fim.se2.litterbox.ast.model.timecomp.TimeComp;
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.Qualified;
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.StrId;
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.UnspecifiedId;
+import de.uni_passau.fim.se2.litterbox.ast.model.variable.Parameter;
+import de.uni_passau.fim.se2.litterbox.ast.model.variable.ScratchList;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.NumExprOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.ProcedureOpcode;
@@ -127,7 +130,7 @@ public class NumExprParser {
     private static NumExpr parseParameter(JsonNode blocks, ArrayNode exprArray) {
         JsonNode paramBlock = blocks.get(exprArray.get(POS_BLOCK_ID).asText());
         String name = paramBlock.get(FIELDS_KEY).get(VALUE_KEY).get(VARIABLE_NAME_POS).asText();
-        return new AsNumber(new StrId(PARAMETER_ABBREVIATION + name));
+        return new AsNumber(new Parameter(new StrId(name)));
     }
 
     private static NumExpr parseVariable(ArrayNode exprArray) {
@@ -138,7 +141,7 @@ public class NumExprParser {
             return new AsNumber(
                     new Qualified(
                             new StrId(variableInfo.getActor()),
-                            new StrId((variableInfo.getVariableName())
+                            new Variable(new StrId((variableInfo.getVariableName()))
                             )
                     ));
         } else if (ProgramParser.symbolTable.getLists().containsKey(idString)) {
@@ -146,7 +149,7 @@ public class NumExprParser {
             return new AsNumber(
                     new Qualified(
                             new StrId(variableInfo.getActor()),
-                            new StrId((variableInfo.getVariableName()
+                            new ScratchList(new StrId((variableInfo.getVariableName())
                             ))
                     ));
         }
@@ -220,11 +223,11 @@ public class NumExprParser {
             case data_lengthoflist:
                 String identifier =
                         expressionBlock.get(FIELDS_KEY).get(LIST_KEY).get(LIST_IDENTIFIER_POS).asText();
-                Variable var;
+                Identifier var;
                 if (ProgramParser.symbolTable.getLists().containsKey(identifier)) {
                     ExpressionListInfo variableInfo = ProgramParser.symbolTable.getLists().get(identifier);
                     var = new Qualified(new StrId(variableInfo.getActor()),
-                            new StrId((variableInfo.getVariableName())));
+                            new ScratchList(new StrId(variableInfo.getVariableName())));
                 } else {
                     var = new UnspecifiedId();
                 }
@@ -258,7 +261,7 @@ public class NumExprParser {
                 if (ProgramParser.symbolTable.getLists().containsKey(identifier)) {
                     ExpressionListInfo variableInfo = ProgramParser.symbolTable.getLists().get(identifier);
                     var = new Qualified(new StrId(variableInfo.getActor()),
-                            new StrId((variableInfo.getVariableName())));
+                            new ScratchList(new StrId(variableInfo.getVariableName())));
                 } else {
                     var = new UnspecifiedId();
                 }

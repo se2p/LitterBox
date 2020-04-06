@@ -21,20 +21,20 @@ package de.uni_passau.fim.se2.litterbox.ast.model.statement.list;
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Identifier;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 public class ReplaceItem extends AbstractNode implements ListStmt {
 
     private final NumExpr index;
-    private final Variable variable;
+    private final Identifier identifier;
     private final StringExpr string;
 
-    public ReplaceItem(StringExpr string, NumExpr index, Variable variable) {
-        super(index, variable, string);
+    public ReplaceItem(StringExpr string, NumExpr index, Identifier identifier) {
+        super(index, identifier, string);
         this.index = Preconditions.checkNotNull(index);
-        this.variable = Preconditions.checkNotNull(variable);
+        this.identifier = Preconditions.checkNotNull(identifier);
         this.string = Preconditions.checkNotNull(string);
     }
 
@@ -42,8 +42,8 @@ public class ReplaceItem extends AbstractNode implements ListStmt {
         return index;
     }
 
-    public Variable getVariable() {
-        return variable;
+    public Identifier getIdentifier() {
+        return identifier;
     }
 
     public StringExpr getString() {

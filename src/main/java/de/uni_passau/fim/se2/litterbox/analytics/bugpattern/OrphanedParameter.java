@@ -20,13 +20,12 @@ package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueReport;
-import de.uni_passau.fim.se2.litterbox.ast.Constants;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterDefiniton;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.StrId;
+import de.uni_passau.fim.se2.litterbox.ast.model.variable.Parameter;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
@@ -99,11 +98,9 @@ public class OrphanedParameter implements IssueFinder, ScratchVisitor {
     }
 
     @Override
-    public void visit(StrId node) {
+    public void visit(Parameter node) {
         if (insideProcedure) {
-            if (node.getName().startsWith(Constants.PARAMETER_ABBREVIATION)) {
-                checkParameterNames(node.getName());
-            }
+            checkParameterNames(node.getName().getName());
         }
         if (!node.getChildren().isEmpty()) {
             for (ASTNode child : node.getChildren()) {

@@ -33,8 +33,9 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.UnspecifiedNumEx
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.UnspecifiedStringExpr;
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.Qualified;
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.StrId;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
+import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.BoolExprOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.NumExprOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.StringExprOpcode;
@@ -229,11 +230,11 @@ public class ExpressionParser {
                 VariableInfo variableInfo = ProgramParser.symbolTable.getVariables().get(idString);
 
                 return new Qualified(new StrId(variableInfo.getActor()),
-                        new StrId((variableInfo.getVariableName())));
+                        new Variable(new StrId((variableInfo.getVariableName()))));
             } else if (ProgramParser.symbolTable.getLists().containsKey(idString)) {
                 ExpressionListInfo variableInfo = ProgramParser.symbolTable.getLists().get(idString);
                 return new Qualified(new StrId(variableInfo.getActor()),
-                        new StrId((variableInfo.getVariableName())));
+                        new Variable(new StrId((variableInfo.getVariableName()))));
             }
         } else {
             // it's a normal reporter block

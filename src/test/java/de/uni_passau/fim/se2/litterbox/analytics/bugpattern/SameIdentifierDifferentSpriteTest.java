@@ -30,7 +30,7 @@ import org.junit.jupiter.api.Test;
 import java.io.File;
 import java.io.IOException;
 
-public class SameVariableDifferentSpriteTest {
+public class SameIdentifierDifferentSpriteTest {
     private static Program empty;
     private static Program variableDifferentSprite;
     private static ObjectMapper mapper = new ObjectMapper();

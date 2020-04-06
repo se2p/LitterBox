@@ -21,21 +21,21 @@ package de.uni_passau.fim.se2.litterbox.ast.model;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinitionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.resource.ResourceList;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.declaration.DeclarationStmtList;
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.Identifier;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 public class ActorDefinition extends AbstractNode {
 
     private final ActorType actorType;
-    private final Identifier ident;
+    private final LocalIdentifier ident;
     private final ResourceList resources;
     private final DeclarationStmtList decls;
     private final SetStmtList setStmtList;
     private final ProcedureDefinitionList procedureDefinitionList;
     private final ScriptList scripts;
 
-    public ActorDefinition(ActorType actorType, Identifier ident, ResourceList resources, DeclarationStmtList decls,
+    public ActorDefinition(ActorType actorType, LocalIdentifier ident, ResourceList resources, DeclarationStmtList decls,
                            SetStmtList setStmtList, ProcedureDefinitionList procedureDefinitionList,
                            ScriptList scripts) {
 
@@ -54,7 +54,7 @@ public class ActorDefinition extends AbstractNode {
         return actorType;
     }
 
-    public Identifier getIdent() {
+    public LocalIdentifier getIdent() {
         return ident;
     }
 

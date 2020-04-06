@@ -31,6 +31,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.AsListIndex;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.ExpressionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.BoolLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.ColorLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
@@ -54,13 +55,10 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SetDragM
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SetRotationStyle;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.AsTouchable;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.Type;
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.Identifier;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import java.util.LinkedList;
-
-import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 
 public class BlockCount implements IssueFinder, ScratchVisitor {
     public static final String NAME = "block_count";
@@ -216,7 +214,7 @@ public class BlockCount implements IssueFinder, ScratchVisitor {
         if (insideScript || insideProcedure) {
             count++;
         }
-        node.getIdentifier().accept(this);
+        node.getLocalIdentifier().accept(this);
     }
 
     @Override
@@ -256,12 +254,7 @@ public class BlockCount implements IssueFinder, ScratchVisitor {
     }
 
     @Override
-    public void visit(Identifier node) {
-        if ((insideProcedure || insideScript) && !insideParameterList && !fixedBlock) {
-            if (node.getName().startsWith(PARAMETER_ABBREVIATION) || node.getName().startsWith(VARIABLE_ABBREVIATION) || node.getName().startsWith(LIST_ABBREVIATION)) {
-                count++;
-            }
-        }
+    public void visit(LocalIdentifier node) {
         if (!node.getChildren().isEmpty()) {
             for (ASTNode child : node.getChildren()) {
                 child.accept(this);

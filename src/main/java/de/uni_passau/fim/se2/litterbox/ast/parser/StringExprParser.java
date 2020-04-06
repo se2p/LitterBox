@@ -29,8 +29,11 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.At
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.AttributeFromFixed;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.AttributeFromVariable;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.FixedAttribute;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.variable.Parameter;
+import de.uni_passau.fim.se2.litterbox.ast.model.variable.ScratchList;
+import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.ProcedureOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.StringExprOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ExpressionListInfo;
@@ -95,14 +98,14 @@ public class StringExprParser {
             return new AsString(
                     new Qualified(
                             new StrId(variableInfo.getActor()),
-                            new StrId((variableInfo.getVariableName()))
+                            new Variable(new StrId((variableInfo.getVariableName())))
                     ));
         } else if (ProgramParser.symbolTable.getLists().containsKey(idString)) {
             ExpressionListInfo variableInfo = ProgramParser.symbolTable.getLists().get(idString);
             return new AsString(
                     new Qualified(
                             new StrId(variableInfo.getActor()),
-                            new StrId((variableInfo.getVariableName()))
+                            new ScratchList(new StrId((variableInfo.getVariableName())))
                     ));
         }
         return null;
@@ -136,7 +139,7 @@ public class StringExprParser {
         JsonNode paramBlock = blocks.get(exprArray.get(POS_BLOCK_ID).asText());
         String name = paramBlock.get(FIELDS_KEY).get(VALUE_KEY).get(VARIABLE_NAME_POS).asText();
 
-        return new AsString(new StrId(PARAMETER_ABBREVIATION + name));
+        return new AsString(new Parameter(new StrId(name)));
     }
 
     private static StringLiteral parseStr(JsonNode inputs, int pos) throws ParsingException {
@@ -177,11 +180,11 @@ public class StringExprParser {
                 NumExpr index = NumExprParser.parseNumExpr(expressionBlock, 0, blocks);
                 String id =
                         expressionBlock.get(FIELDS_KEY).get(LIST_KEY).get(LIST_IDENTIFIER_POS).asText();
-                Variable var;
+                Identifier var;
                 if (ProgramParser.symbolTable.getLists().containsKey(id)) {
                     ExpressionListInfo variableInfo = ProgramParser.symbolTable.getLists().get(id);
                     var = new Qualified(new StrId(variableInfo.getActor()),
-                            new StrId((variableInfo.getVariableName())));
+                            new ScratchList(new StrId((variableInfo.getVariableName()))));
                 } else {
                     var = new UnspecifiedId();
                 }
@@ -198,22 +201,22 @@ public class StringExprParser {
                 String menuIdentifier = expressionBlock.get(INPUTS_KEY).get(OBJECT_KEY).get(1).asText();
                 JsonNode objectMenuBlock = blocks.get(menuIdentifier);
 
-                Identifier identifier;
+                LocalIdentifier localIdentifier;
                 if (objectMenuBlock != null) {
                     JsonNode menuOpcode = objectMenuBlock.get(OPCODE_KEY);
                     if (menuOpcode.asText().equalsIgnoreCase(sensing_of_object_menu.name())) {
-                        identifier = new StrId(
+                        localIdentifier = new StrId(
                                 objectMenuBlock.get(FIELDS_KEY).get(OBJECT_KEY).get(FIELD_VALUE)
                                         .asText());
                     } else {
                         //Technically there could be blocks in here, but we do not allow
                         //any expressions to work as identifiers here.
-                        identifier = new StrId("");
+                        localIdentifier = new StrId("");
                     }
                 } else {
                     //Technically there could be blocks in here, but we do not allow
                     //any expressions to work as identifiers here.
-                    identifier = new StrId("");
+                    localIdentifier = new StrId("");
                 }
                 String prop = expressionBlock.get(FIELDS_KEY).get("PROPERTY").get(0).asText();
                 Attribute property;
@@ -232,7 +235,7 @@ public class StringExprParser {
                     default:
                         property = new AttributeFromVariable(new StrId(prop));
                 }
-                return new AttributeOf(property, identifier);
+                return new AttributeOf(property, localIdentifier);
             default:
                 throw new RuntimeException(opcodeString + " is not covered by parseBlockStringExpr");
         }

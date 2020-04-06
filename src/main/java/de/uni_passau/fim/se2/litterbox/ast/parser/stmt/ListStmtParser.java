@@ -23,10 +23,11 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.UnspecifiedId;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.list.*;
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.Qualified;
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.StrId;
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.UnspecifiedId;
+import de.uni_passau.fim.se2.litterbox.ast.model.variable.ScratchList;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.ListStmtOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.parser.NumExprParser;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
@@ -50,23 +51,23 @@ public class ListStmtParser {
         final ListStmtOpcode opcode = ListStmtOpcode.valueOf(opcodeString);
 
         switch (opcode) {
-        case data_replaceitemoflist:
-            return parseReplaceItemOfList(current, allBlocks);
+            case data_replaceitemoflist:
+                return parseReplaceItemOfList(current, allBlocks);
 
-        case data_insertatlist:
-            return parseInsertAtList(current, allBlocks);
+            case data_insertatlist:
+                return parseInsertAtList(current, allBlocks);
 
-        case data_deletealloflist:
-            return parseDeleteAllOfList(current);
+            case data_deletealloflist:
+                return parseDeleteAllOfList(current);
 
-        case data_deleteoflist:
-            return parseDeleteOfList(current, allBlocks);
+            case data_deleteoflist:
+                return parseDeleteOfList(current, allBlocks);
 
-        case data_addtolist:
-            return parseAddToList(current, allBlocks);
+            case data_addtolist:
+                return parseAddToList(current, allBlocks);
 
-        default:
-            throw new RuntimeException("Not Implemented yet");
+            default:
+                throw new RuntimeException("Not Implemented yet");
         }
     }
 
@@ -80,7 +81,7 @@ public class ListStmtParser {
             return new AddTo(expr, new UnspecifiedId());
         }
         return new AddTo(expr, new Qualified(new StrId(info.getActor()),
-                new StrId(info.getVariableName())));
+                new ScratchList(new StrId(info.getVariableName()))));
     }
 
     private static ExpressionListInfo getListInfo(JsonNode current) {
@@ -92,7 +93,7 @@ public class ListStmtParser {
             return null;
         }
         ExpressionListInfo info = ProgramParser.symbolTable.getLists().get(identifier);
-        Preconditions.checkArgument(info.getVariableName().equals(LIST_ABBREVIATION + listArray.get(LIST_NAME_POS).asText()));
+        Preconditions.checkArgument(info.getVariableName().equals(listArray.get(LIST_NAME_POS).asText()));
         return info;
     }
 
@@ -106,7 +107,7 @@ public class ListStmtParser {
             return new DeleteOf(expr, new UnspecifiedId());
         }
         return new DeleteOf(expr, new Qualified(new StrId(info.getActor()),
-                new StrId(info.getVariableName())));
+                new ScratchList(new StrId(info.getVariableName()))));
     }
 
     private static ListStmt parseDeleteAllOfList(JsonNode current) {
@@ -117,7 +118,7 @@ public class ListStmtParser {
             return new DeleteAllOf(new UnspecifiedId());
         }
         return new DeleteAllOf(new Qualified(new StrId(info.getActor()),
-                new StrId(info.getVariableName())));
+                new ScratchList(new StrId(info.getVariableName()))));
     }
 
     private static ListStmt parseInsertAtList(JsonNode current, JsonNode allBlocks) throws ParsingException {
@@ -131,7 +132,7 @@ public class ListStmtParser {
             return new InsertAt(stringExpr, numExpr, new UnspecifiedId());
         }
         return new InsertAt(stringExpr, numExpr, new Qualified(new StrId(info.getActor()),
-                new StrId(info.getVariableName())));
+                new ScratchList(new StrId(info.getVariableName()))));
     }
 
     private static ListStmt parseReplaceItemOfList(JsonNode current, JsonNode allBlocks) throws ParsingException {
@@ -145,6 +146,6 @@ public class ListStmtParser {
             return new ReplaceItem(stringExpr, numExpr, new UnspecifiedId());
         }
         return new ReplaceItem(stringExpr, numExpr, new Qualified(new StrId(info.getActor()),
-                new StrId(info.getVariableName())));
+                new ScratchList(new StrId(info.getVariableName()))));
     }
 }

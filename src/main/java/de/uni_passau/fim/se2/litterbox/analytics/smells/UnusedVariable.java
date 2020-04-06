@@ -25,7 +25,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.Qualified;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ExpressionListInfo;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.VariableInfo;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
@@ -92,12 +92,12 @@ public class UnusedVariable implements IssueFinder, ScratchVisitor {
             boolean currFound = false;
             for (int i = 0; i < variableCalls.size() && !currFound; i++) {
                 if (variableCalls.get(i).getFirst().getName().equals(actorName)
-                        && variableCalls.get(i).getSecond().getName().equals(name)) {
+                        && variableCalls.get(i).getSecond().getName().getName().equals(name)) {
                     currFound = true;
                 }
             }
 
-            if (!currFound && !Arrays.asList(MY_VARIABLE_LANGUAGES).contains(name.substring(Constants.VARIABLE_ABBREVIATION.length()))) {
+            if (!currFound && !Arrays.asList(MY_VARIABLE_LANGUAGES).contains(name)) {
                 count++;
             }
         }
@@ -109,7 +109,7 @@ public class UnusedVariable implements IssueFinder, ScratchVisitor {
             boolean currFound = false;
             for (int i = 0; i < variableCalls.size() && !currFound; i++) {
                 if (variableCalls.get(i).getFirst().getName().equals(actorName)
-                        && variableCalls.get(i).getSecond().getName().equals(name)) {
+                        && variableCalls.get(i).getSecond().getName().getName().equals(name)) {
                     currFound = true;
                 }
             }

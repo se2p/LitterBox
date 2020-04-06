@@ -20,26 +20,26 @@ package de.uni_passau.fim.se2.litterbox.ast.model.expression.num;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Identifier;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 public class IndexOf extends AbstractNode implements NumExpr {
 
     private final Expression expr;
-    private final Variable variable;
+    private final Identifier identifier;
 
-    public IndexOf(Expression expr, Variable variable) {
-        super(expr, variable);
+    public IndexOf(Expression expr, Identifier identifier) {
+        super(expr, identifier);
         this.expr = expr;
-        this.variable = variable;
+        this.identifier = identifier;
     }
 
     public Expression getExpr() {
         return expr;
     }
 
-    public Variable getVariable() {
-        return variable;
+    public Identifier getIdentifier() {
+        return identifier;
     }
 
     @Override

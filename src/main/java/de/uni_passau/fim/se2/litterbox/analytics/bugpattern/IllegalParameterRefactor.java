@@ -31,7 +31,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfElseStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.BooleanType;
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.Identifier;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
+import de.uni_passau.fim.se2.litterbox.ast.model.variable.Parameter;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ArgumentInfo;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ProcedureInfo;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
@@ -50,7 +51,7 @@ public class IllegalParameterRefactor implements IssueFinder, ScratchVisitor {
     private int count = 0;
     private List<String> actorNames = new LinkedList<>();
     private ActorDefinition currentActor;
-    private Map<Identifier, ProcedureInfo> procedureMap;
+    private Map<LocalIdentifier, ProcedureInfo> procedureMap;
     private ArgumentInfo[] currentArguments;
     private boolean insideProcedure;
     private Program program;
@@ -116,16 +117,16 @@ public class IllegalParameterRefactor implements IssueFinder, ScratchVisitor {
     }
 
     private void checkBool(BoolExpr boolExpr) {
-        if (boolExpr instanceof AsBool && ((AsBool) boolExpr).getOperand1() instanceof Identifier) {
-            Identifier ident = (Identifier) ((AsBool) boolExpr).getOperand1();
-            if (ident.getName().startsWith(Constants.PARAMETER_ABBREVIATION)) {
+        if (boolExpr instanceof AsBool && ((AsBool) boolExpr).getOperand1() instanceof Parameter) {
+           Parameter ident = (Parameter) ((AsBool) boolExpr).getOperand1();
+
                 for (ArgumentInfo currentArgument : currentArguments) {
-                    if (currentArgument.getName().equals(ident.getName()) && !(currentArgument.getType() instanceof BooleanType)) {
+                    if (currentArgument.getName().equals(ident.getName().getName()) && !(currentArgument.getType() instanceof BooleanType)) {
                         found = true;
                         count++;
                     }
                 }
-            }
+
         }
     }
 

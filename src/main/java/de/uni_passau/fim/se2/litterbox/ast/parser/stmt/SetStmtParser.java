@@ -20,12 +20,13 @@ package de.uni_passau.fim.se2.litterbox.ast.parser.stmt;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.UnspecifiedId;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetVariableTo;
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.Qualified;
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.StrId;
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.UnspecifiedId;
+import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.SetStmtOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ExpressionParser;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
@@ -46,12 +47,10 @@ public class SetStmtParser {
 
         final SetStmtOpcode opcode = SetStmtOpcode.valueOf(opcodeString);
 
-        switch (opcode) {
-        case data_setvariableto:
+        if (opcode == SetStmtOpcode.data_setvariableto) {
             return parseSetVariable(current, allBlocks);
-        default:
-            throw new RuntimeException("Not Implemented yet");
         }
+        throw new RuntimeException("Not Implemented yet");
     }
 
 
@@ -63,7 +62,7 @@ public class SetStmtParser {
         }
         VariableInfo info = ProgramParser.symbolTable.getVariables().get(unique);
         return new SetVariableTo(new Qualified(new StrId(info.getActor()),
-                new StrId((VARIABLE_ABBREVIATION + info.getVariableName()))), ExpressionParser.parseExpression(current,
+                new Variable(new StrId(info.getVariableName()))), ExpressionParser.parseExpression(current,
                 0, allBlocks));
     }
 }

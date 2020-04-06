@@ -40,8 +40,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.HideVariabl
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.ShowVariable;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.SwitchBackdrop;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopAll;
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.Qualified;
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.StrId;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -161,16 +161,16 @@ public class ActorLookStmtParserTest {
 
             Stmt showVariable = listOfStmt.get(2);
             Truth.assertThat(showVariable.getClass()).isEqualTo(ShowVariable.class);
-            Truth.assertThat(((Qualified) ((ShowVariable) showVariable).getVariable()).getFirst().getName())
+            Truth.assertThat(((Qualified) ((ShowVariable) showVariable).getIdentifier()).getFirst().getName())
                     .isEqualTo("Stage");
-            Truth.assertThat(((Qualified) ((ShowVariable) showVariable).getVariable()).getSecond().getName())
-                    .isEqualTo(Constants.VARIABLE_ABBREVIATION + "my variable");
+            Truth.assertThat(((Qualified) ((ShowVariable) showVariable).getIdentifier()).getSecond().getName().getName())
+                    .isEqualTo("my variable");
 
             Stmt hideVariable = listOfStmt.get(3);
-            Truth.assertThat(((Qualified) ((HideVariable) hideVariable).getVariable()).getFirst().getName())
+            Truth.assertThat(((Qualified) ((HideVariable) hideVariable).getIdentifier()).getFirst().getName())
                     .isEqualTo("Stage");
-            Truth.assertThat(((Qualified) ((HideVariable) hideVariable).getVariable()).getSecond().getName())
-                    .isEqualTo(Constants.VARIABLE_ABBREVIATION + "my variable");
+            Truth.assertThat(((Qualified) ((HideVariable) hideVariable).getIdentifier()).getSecond().getName().getName())
+                    .isEqualTo("my variable");
         } catch (ParsingException e) {
             e.printStackTrace();
             fail();
@@ -189,16 +189,16 @@ public class ActorLookStmtParserTest {
 
             Stmt showVariable = listOfStmt.get(4);
             Truth.assertThat(showVariable.getClass()).isEqualTo(ShowVariable.class);
-            Truth.assertThat(((Qualified) ((ShowVariable) showVariable).getVariable()).getFirst().getName())
+            Truth.assertThat(((Qualified) ((ShowVariable) showVariable).getIdentifier()).getFirst().getName())
                     .isEqualTo("Stage");
-            Truth.assertThat(((Qualified) ((ShowVariable) showVariable).getVariable()).getSecond().getName())
-                    .isEqualTo(Constants.LIST_ABBREVIATION + "List");
+            Truth.assertThat(((Qualified) ((ShowVariable) showVariable).getIdentifier()).getSecond().getName().getName())
+                    .isEqualTo("List");
 
             Stmt hideVariable = listOfStmt.get(5);
-            Truth.assertThat(((Qualified) ((HideVariable) hideVariable).getVariable()).getFirst().getName())
+            Truth.assertThat(((Qualified) ((HideVariable) hideVariable).getIdentifier()).getFirst().getName())
                     .isEqualTo("Stage");
-            Truth.assertThat(((Qualified) ((HideVariable) hideVariable).getVariable()).getSecond().getName())
-                    .isEqualTo(Constants.LIST_ABBREVIATION + "List");
+            Truth.assertThat(((Qualified) ((HideVariable) hideVariable).getIdentifier()).getSecond().getName().getName())
+                    .isEqualTo( "List");
         } catch (ParsingException e) {
             e.printStackTrace();
             fail();

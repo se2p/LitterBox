@@ -181,8 +181,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.type.ListType;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.NumberType;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.SoundType;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.StringType;
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.Qualified;
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.StrId;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 
 import java.io.PrintStream;
 import java.util.List;
@@ -347,7 +347,7 @@ public class GrammarPrintVisitor implements ScratchVisitor {
     @Override
     public void visit(VariableAboveValue variableAboveValue) {
         emitToken("value of");
-        variableAboveValue.getVariable().accept(this);
+        variableAboveValue.getIdentifier().accept(this);
         emitToken(" above");
         variableAboveValue.getValue().accept(this);
     }
@@ -416,13 +416,13 @@ public class GrammarPrintVisitor implements ScratchVisitor {
     @Override
     public void visit(ShowVariable showVariable) {
         emitToken("show variable");
-        showVariable.getVariable().accept(this);
+        showVariable.getIdentifier().accept(this);
     }
 
     @Override
     public void visit(HideVariable hideVariable) {
         emitToken("hide variable");
-        hideVariable.getVariable().accept(this);
+        hideVariable.getIdentifier().accept(this);
     }
 
     @Override
@@ -616,7 +616,7 @@ public class GrammarPrintVisitor implements ScratchVisitor {
     @Override
     public void visit(DeleteAllOf deleteAllOf) {
         emitToken("delete all of");
-        deleteAllOf.getVariable().accept(this);
+        deleteAllOf.getIdentifier().accept(this);
     }
 
     @Override
@@ -624,7 +624,7 @@ public class GrammarPrintVisitor implements ScratchVisitor {
         emitToken("delete");
         deleteOf.getNum().accept(this);
         emitToken(" of");
-        deleteOf.getVariable().accept(this);
+        deleteOf.getIdentifier().accept(this);
     }
 
     @Override
@@ -632,7 +632,7 @@ public class GrammarPrintVisitor implements ScratchVisitor {
         emitToken("add");
         addTo.getString().accept(this);
         emitToken(" to");
-        addTo.getVariable().accept(this);
+        addTo.getIdentifier().accept(this);
     }
 
     @Override
@@ -642,7 +642,7 @@ public class GrammarPrintVisitor implements ScratchVisitor {
         emitToken(" at");
         insertAt.getIndex().accept(this);
         emitToken(" of");
-        insertAt.getVariable().accept(this);
+        insertAt.getIdentifier().accept(this);
     }
 
     @Override
@@ -650,7 +650,7 @@ public class GrammarPrintVisitor implements ScratchVisitor {
         emitToken("replace item");
         replaceItem.getIndex().accept(this);
         emitToken(" of");
-        replaceItem.getVariable().accept(this);
+        replaceItem.getIdentifier().accept(this);
         emitToken(" by");
         replaceItem.getString().accept(this);
     }
@@ -700,7 +700,7 @@ public class GrammarPrintVisitor implements ScratchVisitor {
     @Override
     public void visit(ChangeVariableBy changeVariableBy) {
         emitToken("change");
-        changeVariableBy.getVariable().accept(this);
+        changeVariableBy.getIdentifier().accept(this);
         emitToken(" by");
         changeVariableBy.getExpr().accept(this);
     }
@@ -925,7 +925,7 @@ public class GrammarPrintVisitor implements ScratchVisitor {
         emitToken("item");
         itemOfVariable.getNum().accept(this);
         of();
-        itemOfVariable.getVariable().accept(this);
+        itemOfVariable.getIdentifier().accept(this);
     }
 
     @Override
@@ -976,7 +976,7 @@ public class GrammarPrintVisitor implements ScratchVisitor {
     @Override
     public void visit(SetVariableTo setVariableTo) {
         set();
-        setVariableTo.getVariable().accept(this);
+        setVariableTo.getIdentifier().accept(this);
         to();
         setVariableTo.getExpr().accept(this);
     }
@@ -1243,7 +1243,7 @@ public class GrammarPrintVisitor implements ScratchVisitor {
     @Override
     public void visit(LengthOfVar lengthOfVar) {
         emitToken("length of list");
-        lengthOfVar.getVariable().accept(this);
+        lengthOfVar.getIdentifier().accept(this);
     }
 
     @Override
@@ -1251,7 +1251,7 @@ public class GrammarPrintVisitor implements ScratchVisitor {
         emitToken("index of");
         indexOf.getExpr().accept(this);
         emitToken(" in");
-        indexOf.getVariable().accept(this);
+        indexOf.getIdentifier().accept(this);
     }
 
     @Override

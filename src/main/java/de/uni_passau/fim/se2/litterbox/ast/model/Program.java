@@ -18,7 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.model;
 
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.Identifier;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ProcedureDefinitionNameMapping;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.SymbolTable;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
@@ -26,12 +26,12 @@ import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 public class Program extends AbstractNode {
 
-    private final Identifier ident;
+    private final LocalIdentifier ident;
     private final ActorDefinitionList actorDefinitionList;
     private final SymbolTable symbolTable;
     private final ProcedureDefinitionNameMapping procedureMapping;
 
-    public Program(Identifier ident, ActorDefinitionList actorDefinitionList, SymbolTable symbolTable,
+    public Program(LocalIdentifier ident, ActorDefinitionList actorDefinitionList, SymbolTable symbolTable,
                    ProcedureDefinitionNameMapping procedureMapping) {
         super(ident, actorDefinitionList);
         this.ident = Preconditions.checkNotNull(ident);
@@ -40,7 +40,7 @@ public class Program extends AbstractNode {
         this.symbolTable = symbolTable;
     }
 
-    public Identifier getIdent() {
+    public LocalIdentifier getIdent() {
         return ident;
     }
 

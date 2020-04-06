@@ -16,18 +16,10 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.uni_passau.fim.se2.litterbox.ast.model.variable;
+package de.uni_passau.fim.se2.litterbox.ast.model.identifier;
 
-import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 
-public class UnspecifiedId extends AbstractNode implements Variable {
-    public UnspecifiedId() {
-        super();
-    }
+public interface Identifier extends Expression {
 
-    @Override
-    public void accept(ScratchVisitor visitor) {
-        visitor.visit(this);
-    }
 }

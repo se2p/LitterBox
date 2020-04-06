@@ -20,27 +20,27 @@ package de.uni_passau.fim.se2.litterbox.ast.model.statement.list;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Identifier;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 public class AddTo extends AbstractNode implements ListStmt {
 
     private final StringExpr string;
-    private final Variable variable;
+    private final Identifier identifier;
 
-    public AddTo(StringExpr string, Variable variable) {
-        super(string, variable);
+    public AddTo(StringExpr string, Identifier identifier) {
+        super(string, identifier);
         this.string = Preconditions.checkNotNull(string);
-        this.variable = Preconditions.checkNotNull(variable);
+        this.identifier = Preconditions.checkNotNull(identifier);
     }
 
     public StringExpr getString() {
         return string;
     }
 
-    public Variable getVariable() {
-        return variable;
+    public Identifier getIdentifier() {
+        return identifier;
     }
 
     @Override

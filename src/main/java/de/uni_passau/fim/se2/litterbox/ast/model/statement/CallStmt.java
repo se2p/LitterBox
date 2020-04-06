@@ -20,16 +20,16 @@ package de.uni_passau.fim.se2.litterbox.ast.model.statement;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.ExpressionList;
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.Identifier;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 public class CallStmt extends AbstractNode implements Stmt {
 
-    private final Identifier ident;
+    private final LocalIdentifier ident;
     private final ExpressionList expressions;
 
-    public CallStmt(Identifier ident, ExpressionList expressions) {
+    public CallStmt(LocalIdentifier ident, ExpressionList expressions) {
         super(ident, expressions);
         this.ident = Preconditions.checkNotNull(ident);
         this.expressions = Preconditions.checkNotNull(expressions);
@@ -40,7 +40,7 @@ public class CallStmt extends AbstractNode implements Stmt {
         visitor.visit(this);
     }
 
-    public Identifier getIdent() {
+    public LocalIdentifier getIdent() {
         return ident;
     }
 

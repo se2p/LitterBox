@@ -26,21 +26,7 @@ import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Key;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.ComparableExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.And;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.AsBool;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BiggerThan;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BoolExpr;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.ColorTouchingColor;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Equals;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.ExpressionContains;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.IsKeyPressed;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.IsMouseDown;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.LessThan;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Not;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Or;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.SpriteTouchingColor;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Touching;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.UnspecifiedBoolExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.AsNumber;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.IndexOf;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
@@ -48,12 +34,15 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.UnspecifiedNumEx
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.ItemOfVariable;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Identifier;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.UnspecifiedId;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.BoolLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.Touchable;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.Color;
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.Qualified;
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.StrId;
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.UnspecifiedId;
+import de.uni_passau.fim.se2.litterbox.ast.model.variable.Parameter;
+import de.uni_passau.fim.se2.litterbox.ast.model.variable.ScratchList;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.BoolExprOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.NumExprOpcode;
@@ -134,14 +123,14 @@ public class BoolExprParser {
             return new AsBool(
                     new Qualified(
                             new StrId(variableInfo.getActor()),
-                            new StrId((variableInfo.getVariableName()))
+                            new Variable(new StrId((variableInfo.getVariableName())))
                     ));
         } else if (ProgramParser.symbolTable.getLists().containsKey(idString)) {
             ExpressionListInfo variableInfo = ProgramParser.symbolTable.getLists().get(idString);
             return new AsBool(
                     new Qualified(
                             new StrId(variableInfo.getActor()),
-                            new StrId((variableInfo.getVariableName()))
+                            new ScratchList(new StrId((variableInfo.getVariableName())))
                     ));
         }
         return null;
@@ -175,11 +164,11 @@ public class BoolExprParser {
                 .checkArgument(BoolExprOpcode.contains(opcodeString) || opcodeString.equals(StringExprOpcode.data_itemoflist.name()) || opcodeString.equals(NumExprOpcode.data_itemnumoflist.name()), opcodeString + " is not a BoolExprOpcode.");
         if (opcodeString.equals(StringExprOpcode.data_itemoflist.name())) {
             NumExpr index = NumExprParser.parseNumExpr(expressionBlock, 0, blocks);
-            Variable var = ListExprParser.parseVariableFromFields(expressionBlock.get(FIELDS_KEY));
+            Identifier var = ListExprParser.parseVariableFromFields(expressionBlock.get(FIELDS_KEY));
             return new AsBool(new ItemOfVariable(index, var));
         } else if (opcodeString.equals(NumExprOpcode.data_itemnumoflist.name())) {
             Expression item = parseExpression(expressionBlock, 0, blocks);
-            Variable list = ListExprParser.parseVariableFromFields(expressionBlock.get(FIELDS_KEY));
+            Identifier list = ListExprParser.parseVariableFromFields(expressionBlock.get(FIELDS_KEY));
             return new AsBool(new IndexOf(item, list));
         }
 
@@ -293,11 +282,11 @@ public class BoolExprParser {
             case data_listcontainsitem:
                 String identifier =
                         expressionBlock.get(FIELDS_KEY).get(LIST_KEY).get(LIST_IDENTIFIER_POS).asText();
-                Variable containingVar;
+                Identifier containingVar;
                 if (ProgramParser.symbolTable.getLists().containsKey(identifier)) {
                     ExpressionListInfo variableInfo = ProgramParser.symbolTable.getLists().get(identifier);
                     containingVar = new Qualified(new StrId(variableInfo.getActor()),
-                            new StrId((variableInfo.getVariableName())));
+                            new ScratchList(new StrId((variableInfo.getVariableName()))));
                 } else {
                     containingVar = new UnspecifiedId();
                 }
@@ -311,7 +300,7 @@ public class BoolExprParser {
 
     private static BoolExpr parseParameter(JsonNode blocks, JsonNode expressionBlock) {
         String name = expressionBlock.get(FIELDS_KEY).get(VALUE_KEY).get(VARIABLE_NAME_POS).asText();
-        return new AsBool(new StrId(PARAMETER_ABBREVIATION + name));
+        return new AsBool(new Parameter(new StrId( name)));
     }
 
     private static BoolExpr parseCondition(JsonNode expressionBlock, String fieldName, JsonNode blocks) throws ParsingException {

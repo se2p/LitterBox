@@ -16,30 +16,30 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.uni_passau.fim.se2.litterbox.ast.model.event;
+package de.uni_passau.fim.se2.litterbox.ast.model.identifier;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
-import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Identifier;
+import de.uni_passau.fim.se2.litterbox.ast.model.variable.Placeholder;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
+import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-public class VariableAboveValue extends AbstractNode implements Event {
+public class Qualified extends AbstractNode implements Identifier {
 
-    private final Identifier identifier;
-    private final NumExpr value;
+    private final LocalIdentifier first;
+    private final Placeholder second;
 
-    public VariableAboveValue(Identifier identifier, NumExpr value) {
-        super(identifier, value);
-        this.identifier = identifier;
-        this.value = value;
+    public Qualified(LocalIdentifier first, Placeholder second) {
+        super(first, second);
+        this.first = Preconditions.checkNotNull(first);
+        this.second = Preconditions.checkNotNull(second);
     }
 
-    public Identifier getIdentifier() {
-        return identifier;
+    public LocalIdentifier getFirst() {
+        return first;
     }
 
-    public NumExpr getValue() {
-        return value;
+    public Placeholder getSecond() {
+        return second;
     }
 
     @Override

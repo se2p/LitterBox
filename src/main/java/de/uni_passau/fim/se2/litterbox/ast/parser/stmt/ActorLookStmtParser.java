@@ -24,9 +24,11 @@ import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.ElementChoice;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.*;
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.Qualified;
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.StrId;
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.UnspecifiedId;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.UnspecifiedId;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Identifier;
+import de.uni_passau.fim.se2.litterbox.ast.model.variable.ScratchList;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.ActorLookStmtOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ElementChoiceParser;
@@ -58,7 +60,7 @@ public class ActorLookStmtParser {
         String variableID;
         VariableInfo variableInfo;
         String actorName;
-        Variable var;
+        Identifier var;
         ExpressionListInfo expressionListInfo;
 
         switch (opcode) {
@@ -87,7 +89,7 @@ public class ActorLookStmtParser {
                 } else {
                     variableInfo = ProgramParser.symbolTable.getVariables().get(variableID);
                     actorName = variableInfo.getActor();
-                    var = new Qualified(new StrId(actorName), new StrId(VARIABLE_ABBREVIATION + variableName));
+                    var = new Qualified(new StrId(actorName), new Variable(new StrId( variableName)));
                 }
                 return new HideVariable(var);
 
@@ -99,7 +101,8 @@ public class ActorLookStmtParser {
                 } else {
                     variableInfo = ProgramParser.symbolTable.getVariables().get(variableID);
                     actorName = variableInfo.getActor();
-                    var = new Qualified(new StrId(actorName), new StrId(VARIABLE_ABBREVIATION + variableName));
+                    var = new Qualified(new StrId(actorName),
+                            new Variable(new StrId( variableName)));
                 }
                 return new ShowVariable(var);
 
@@ -111,7 +114,7 @@ public class ActorLookStmtParser {
                 } else {
                     expressionListInfo = ProgramParser.symbolTable.getLists().get(variableID);
                     actorName = expressionListInfo.getActor();
-                    var = new Qualified(new StrId(actorName), new StrId(LIST_ABBREVIATION + variableName));
+                    var = new Qualified(new StrId(actorName), new ScratchList(new StrId(variableName)));
                 }
                 return new ShowVariable(var);
 
@@ -123,7 +126,7 @@ public class ActorLookStmtParser {
                 } else {
                     expressionListInfo = ProgramParser.symbolTable.getLists().get(variableID);
                     actorName = expressionListInfo.getActor();
-                    var = new Qualified(new StrId(actorName), new StrId(LIST_ABBREVIATION + variableName));
+                    var = new Qualified(new StrId(actorName), new ScratchList(new StrId( variableName)));
                 }
                 return new HideVariable(var);
 

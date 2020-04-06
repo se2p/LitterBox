@@ -19,7 +19,7 @@
 package de.uni_passau.fim.se2.litterbox.ast.parser.symboltable;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.type.Type;
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.Identifier;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import java.util.ArrayList;
@@ -29,7 +29,7 @@ import java.util.Map;
 
 public class ProcedureDefinitionNameMapping {
 
-    private Map<String, Map<Identifier, ProcedureInfo>> procedures;
+    private Map<String, Map<LocalIdentifier, ProcedureInfo>> procedures;
     private List<String> malformatedProcedures;
 
     public ProcedureDefinitionNameMapping() {
@@ -37,16 +37,16 @@ public class ProcedureDefinitionNameMapping {
         malformatedProcedures = new ArrayList<>();
     }
 
-    public void addProcedure(Identifier identifier, String actorName, String procedureName, String[] argumentNames,
+    public void addProcedure(LocalIdentifier localIdentifier, String actorName, String procedureName, String[] argumentNames,
                              Type[] types) {
-        Map<Identifier, ProcedureInfo> currentMap;
+        Map<LocalIdentifier, ProcedureInfo> currentMap;
         if (procedures.containsKey(actorName)) {
             currentMap = procedures.get(actorName);
         } else {
             currentMap = new LinkedHashMap<>();
             procedures.put(actorName, currentMap);
         }
-        currentMap.put(identifier, new ProcedureInfo(procedureName, makeArguments(argumentNames, types), actorName));
+        currentMap.put(localIdentifier, new ProcedureInfo(procedureName, makeArguments(argumentNames, types), actorName));
     }
 
     private ArgumentInfo[] makeArguments(String[] argumentNames, Type[] types) {
@@ -58,7 +58,7 @@ public class ProcedureDefinitionNameMapping {
         return arguments;
     }
 
-    public Map<String, Map<Identifier, ProcedureInfo>> getProcedures() {
+    public Map<String, Map<LocalIdentifier, ProcedureInfo>> getProcedures() {
         return procedures;
     }
 

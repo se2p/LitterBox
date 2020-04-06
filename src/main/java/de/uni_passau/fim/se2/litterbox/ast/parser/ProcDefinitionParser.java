@@ -31,8 +31,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinitionLi
 import de.uni_passau.fim.se2.litterbox.ast.model.type.BooleanType;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.StringType;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.Type;
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.Identifier;
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.StrId;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.ProcedureOpcode;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
@@ -112,7 +112,7 @@ public class ProcDefinitionParser {
         }
 
         String methodName = proto.get(MUTATION_KEY).get(PROCCODE_KEY).asText();
-        Identifier ident = null;
+        LocalIdentifier ident = null;
         if (proto.has(PARENT_KEY)) {
             ident = new StrId(proto.get(PARENT_KEY).asText());
         } else {
@@ -145,7 +145,7 @@ public class ProcDefinitionParser {
 
         String[] arguments = new String[argumentsArray.size()];
         for (int i = 0; i < arguments.length; i++) {
-            arguments[i] = PARAMETER_ABBREVIATION + argumentsArray.get(i).asText();
+            arguments[i] = argumentsArray.get(i).asText();
         }
 
         if (!(arguments.length == paraTypes.size())) {

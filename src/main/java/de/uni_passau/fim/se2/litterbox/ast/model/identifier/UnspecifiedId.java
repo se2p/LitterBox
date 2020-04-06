@@ -16,19 +16,16 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.uni_passau.fim.se2.litterbox.ast.model.variable;
+package de.uni_passau.fim.se2.litterbox.ast.model.identifier;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
-public class StrId extends Identifier {
+public class UnspecifiedId extends LocalIdentifier {
 
-    public StrId(String value) {
-        this(new StringLiteral(value));
-    }
 
-    public StrId(StringLiteral value) {
-        super(value);
+    public UnspecifiedId() {
+        super(new StringLiteral(""));
     }
 
     @Override
