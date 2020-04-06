@@ -26,7 +26,21 @@ import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Key;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.ComparableExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.And;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.AsBool;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BiggerThan;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BoolExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.ColorTouchingColor;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Equals;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.ExpressionContains;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.IsKeyPressed;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.IsMouseDown;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.LessThan;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Not;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Or;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.SpriteTouchingColor;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Touching;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.UnspecifiedBoolExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.AsNumber;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.IndexOf;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
@@ -174,6 +188,8 @@ public class BoolExprParser {
         switch (opcode) {
 
             case sensing_touchingcolor:
+                Touchable color = TouchableParser.parseTouchable(expressionBlock, blocks);
+                return new SpriteTouchingColor(color);
             case sensing_touchingobject:
                 Touchable touchable = TouchableParser.parseTouchable(expressionBlock, blocks);
                 return new Touching(touchable);

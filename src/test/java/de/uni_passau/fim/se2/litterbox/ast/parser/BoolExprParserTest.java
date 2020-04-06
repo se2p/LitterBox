@@ -36,11 +36,10 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.IsMouseDown;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.LessThan;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Not;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Or;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.SpriteTouchingColor;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Touching;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.AsNumber;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.PositionX;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.Answer;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AttributeOf;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.ColorLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
@@ -240,7 +239,7 @@ public class BoolExprParserTest {
         Truth.assertThat(stmt).isInstanceOf(IfThenStmt.class);
 
         IfThenStmt ifThenStmt = (IfThenStmt) stmt;
-        Truth.assertThat(ifThenStmt.getBoolExpr()).isInstanceOf(Touching.class);
-        Truth.assertThat(((Touching) ifThenStmt.getBoolExpr()).getTouchable()).isInstanceOf(ColorLiteral.class);
+        Truth.assertThat(ifThenStmt.getBoolExpr()).isInstanceOf(SpriteTouchingColor.class);
+        Truth.assertThat(((SpriteTouchingColor) ifThenStmt.getBoolExpr()).getColor()).isInstanceOf(ColorLiteral.class);
     }
 }
