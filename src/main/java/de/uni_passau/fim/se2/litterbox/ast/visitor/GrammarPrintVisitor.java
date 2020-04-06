@@ -48,7 +48,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.AsBool;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BiggerThan;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.ColorTouchingColor;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Equals;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.ExpressionContains;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.StringContains;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.IsKeyPressed;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.IsMouseDown;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.LessThan;
@@ -1091,10 +1091,10 @@ public class GrammarPrintVisitor implements ScratchVisitor {
     }
 
     @Override
-    public void visit(ExpressionContains expressionContains) {
-        expressionContains.getContaining().accept(this);
+    public void visit(StringContains stringContains) {
+        stringContains.getContaining().accept(this);
         emitToken(" contains");
-        expressionContains.getContained().accept(this);
+        stringContains.getContained().accept(this);
     }
 
     @Override

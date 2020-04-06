@@ -19,25 +19,25 @@
 package de.uni_passau.fim.se2.litterbox.ast.model.expression.bool;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
-public class ExpressionContains extends AbstractNode implements BoolExpr {
+public class StringContains extends AbstractNode implements BoolExpr {
 
-    private final Expression containing;
-    private final Expression contained;
+    private final StringExpr containing;
+    private final StringExpr contained;
 
-    public ExpressionContains(Expression containing, Expression contained) {
+    public StringContains(StringExpr containing, StringExpr contained) {
         super(containing, contained);
         this.containing = containing;
         this.contained = contained;
     }
 
-    public Expression getContaining() {
+    public StringExpr getContaining() {
         return containing;
     }
 
-    public Expression getContained() {
+    public StringExpr getContained() {
         return contained;
     }
 

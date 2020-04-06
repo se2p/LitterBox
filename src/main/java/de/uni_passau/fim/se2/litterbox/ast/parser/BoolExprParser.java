@@ -276,9 +276,9 @@ public class BoolExprParser {
                 BoolExpr notInput = parseCondition(expressionBlock, OPERAND_KEY, blocks);
                 return new Not(notInput);
             case operator_contains:
-                Expression containing = ExpressionParser.parseExpression(expressionBlock, 0, blocks);
-                Expression contained = ExpressionParser.parseExpression(expressionBlock, 1, blocks);
-                return new ExpressionContains(containing, contained);
+                StringExpr containing = StringExprParser.parseStringExpr(expressionBlock, 0, blocks);
+                StringExpr contained = StringExprParser.parseStringExpr(expressionBlock, 1, blocks);
+                return new StringContains(containing, contained);
             case data_listcontainsitem:
                 String identifier =
                         expressionBlock.get(FIELDS_KEY).get(LIST_KEY).get(LIST_IDENTIFIER_POS).asText();
@@ -290,8 +290,8 @@ public class BoolExprParser {
                 } else {
                     containingVar = new UnspecifiedId();
                 }
-                contained = ExpressionParser.parseExpression(expressionBlock, 0, blocks);
-                return new ExpressionContains(containingVar, contained);
+                contained = StringExprParser.parseStringExpr(expressionBlock, 0, blocks);
+                return new ListContains(containingVar, contained);
             default:
                 throw new RuntimeException(
                         opcodeString + " is not covered by parseBlockExpr");

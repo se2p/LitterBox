@@ -50,21 +50,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.event.VariableAboveValue;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.ComparableExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.UnspecifiedExpression;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.And;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.AsBool;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BiggerThan;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BoolExpr;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.ColorTouchingColor;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Equals;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.ExpressionContains;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.IsKeyPressed;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.IsMouseDown;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.LessThan;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Not;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Or;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.SpriteTouchingColor;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Touching;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.UnspecifiedBoolExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.AsListIndex;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.ExpressionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.ListExpr;
@@ -1289,7 +1275,7 @@ public interface ScratchVisitor {
     }
 
     /**
-     * Default implementation of visit method for {@link ExpressionContains}.
+     * Default implementation of visit method for {@link StringContains}.
      *
      * <p>
      * Iterates all children of this node without performing any action.
@@ -1297,7 +1283,7 @@ public interface ScratchVisitor {
      *
      * @param node ExpressionContains  Node of which the children will be iterated
      */
-    default void visit(ExpressionContains node) {
+    default void visit(StringContains node) {
         visit((BoolExpr) node);
     }
 
@@ -3293,5 +3279,19 @@ public interface ScratchVisitor {
      */
     default void visit(Parameter node) {
         visit((Placeholder) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link ListContains}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node ListContains Node of which the children will
+     *             be iterated
+     */
+    default void visit(ListContains node) {
+        visit((BoolExpr) node);
     }
 }

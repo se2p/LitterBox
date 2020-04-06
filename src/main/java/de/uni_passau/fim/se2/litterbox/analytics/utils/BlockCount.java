@@ -26,7 +26,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.AsBool;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.ExpressionContains;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.ListContains;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.StringContains;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.AsListIndex;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.ExpressionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
@@ -631,18 +632,18 @@ public class BlockCount implements IssueFinder, ScratchVisitor {
     }
 
     @Override
-    public void visit(ExpressionContains node) {
+    public void visit(LayerChoice node) {
+    }
+
+    @Override
+    public void visit(ListContains node) {
         if (insideScript || insideProcedure) {
             count++;
         }
         if (!node.getChildren().isEmpty()) {
-            //only expression has to be counted since the attributes are fixed in the blocks
-            node.getContained().accept(this);
+            //only expression has to be counted since the list is an identifier
+            node.getElement().accept(this);
         }
-    }
-
-    @Override
-    public void visit(LayerChoice node) {
     }
 }
 

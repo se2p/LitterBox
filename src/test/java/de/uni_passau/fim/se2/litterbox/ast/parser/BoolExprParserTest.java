@@ -30,7 +30,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.And;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BiggerThan;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.ColorTouchingColor;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Equals;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.ExpressionContains;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.StringContains;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.IsKeyPressed;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.IsMouseDown;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.LessThan;
@@ -84,7 +84,7 @@ public class BoolExprParserTest {
         Truth.assertThat(stmt).isInstanceOf(IfThenStmt.class);
 
         IfThenStmt ifThenStmt = (IfThenStmt) stmt;
-        ExpressionContains containsExpr = (ExpressionContains) ifThenStmt.getBoolExpr();
+        StringContains containsExpr = (StringContains) ifThenStmt.getBoolExpr();
         Truth.assertThat(containsExpr.getContaining()).isInstanceOf(Answer.class);
         Truth.assertThat(containsExpr.getContained()).isInstanceOf(StringLiteral.class);
     }
