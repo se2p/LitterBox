@@ -22,6 +22,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BoolExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.*;
@@ -201,7 +202,7 @@ public class StringExprParser {
                 String menuIdentifier = expressionBlock.get(INPUTS_KEY).get(OBJECT_KEY).get(1).asText();
                 JsonNode objectMenuBlock = blocks.get(menuIdentifier);
 
-                LocalIdentifier localIdentifier;
+                Expression localIdentifier;
                 if (objectMenuBlock != null) {
                     JsonNode menuOpcode = objectMenuBlock.get(OPCODE_KEY);
                     if (menuOpcode.asText().equalsIgnoreCase(sensing_of_object_menu.name())) {
@@ -211,7 +212,7 @@ public class StringExprParser {
                     } else {
                         //Technically there could be blocks in here, but we do not allow
                         //any expressions to work as identifiers here.
-                        localIdentifier = new StrId("");
+                        localIdentifier = ExpressionParser.parseExpression(expressionBlock,OBJECT_KEY,blocks);
                     }
                 } else {
                     //Technically there could be blocks in here, but we do not allow
