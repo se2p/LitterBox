@@ -40,10 +40,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterDefinitionLi
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterDefiniton;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.ExpressionStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.ChangeGraphicEffectBy;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.HideVariable;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.SetGraphicEffectTo;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.ShowVariable;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.ChangeSoundEffectBy;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.SetSoundEffectTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.ChangeVariableBy;
@@ -474,7 +471,35 @@ public class BlockCount implements IssueFinder, ScratchVisitor {
     }
 
     @Override
+    public void visit(HideList node) {
+        if (insideScript || insideProcedure) {
+            count++;
+        }
+        fixedBlock = true;
+        if (!node.getChildren().isEmpty()) {
+            for (ASTNode child : node.getChildren()) {
+                child.accept(this);
+            }
+        }
+        fixedBlock = false;
+    }
+
+    @Override
     public void visit(ShowVariable node) {
+        if (insideScript || insideProcedure) {
+            count++;
+        }
+        fixedBlock = true;
+        if (!node.getChildren().isEmpty()) {
+            for (ASTNode child : node.getChildren()) {
+                child.accept(this);
+            }
+        }
+        fixedBlock = false;
+    }
+
+    @Override
+    public void visit(ShowList node) {
         if (insideScript || insideProcedure) {
             count++;
         }

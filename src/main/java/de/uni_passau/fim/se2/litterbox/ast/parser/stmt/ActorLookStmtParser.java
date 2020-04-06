@@ -116,7 +116,7 @@ public class ActorLookStmtParser {
                     actorName = expressionListInfo.getActor();
                     var = new Qualified(new StrId(actorName), new ScratchList(new StrId(variableName)));
                 }
-                return new ShowVariable(var);
+                return new ShowList(var);
 
             case data_hidelist:
                 variableName = current.get(FIELDS_KEY).get(LIST_KEY).get(LIST_NAME_POS).asText();
@@ -128,7 +128,7 @@ public class ActorLookStmtParser {
                     actorName = expressionListInfo.getActor();
                     var = new Qualified(new StrId(actorName), new ScratchList(new StrId( variableName)));
                 }
-                return new HideVariable(var);
+                return new HideList(var);
 
             case looks_seteffectto:
                 return parseSetLookEffect(current, allBlocks);

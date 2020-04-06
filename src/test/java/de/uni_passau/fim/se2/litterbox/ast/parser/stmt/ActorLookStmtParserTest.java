@@ -34,11 +34,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.AskAndWait;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.ClearGraphicEffects;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.HideVariable;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.ShowVariable;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.SwitchBackdrop;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopAll;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
@@ -94,8 +90,8 @@ public class ActorLookStmtParserTest {
             Truth.assertThat(listOfStmt.get(1).getClass()).isEqualTo(SwitchBackdrop.class);
             Truth.assertThat(listOfStmt.get(2).getClass()).isEqualTo(ShowVariable.class);
             Truth.assertThat(listOfStmt.get(3).getClass()).isEqualTo(HideVariable.class);
-            Truth.assertThat(listOfStmt.get(4).getClass()).isEqualTo(ShowVariable.class);
-            Truth.assertThat(listOfStmt.get(5).getClass()).isEqualTo(HideVariable.class);
+            Truth.assertThat(listOfStmt.get(4).getClass()).isEqualTo(ShowList.class);
+            Truth.assertThat(listOfStmt.get(5).getClass()).isEqualTo(HideList.class);
             Truth.assertThat(listOfStmt.get(6).getClass()).isEqualTo(ClearGraphicEffects.class);
             Truth.assertThat(listOfStmt.get(7).getClass()).isEqualTo(StopAll.class);
         } catch (ParsingException e) {
@@ -188,16 +184,16 @@ public class ActorLookStmtParserTest {
             List<Stmt> listOfStmt = script.getStmtList().getStmts();
 
             Stmt showVariable = listOfStmt.get(4);
-            Truth.assertThat(showVariable.getClass()).isEqualTo(ShowVariable.class);
-            Truth.assertThat(((Qualified) ((ShowVariable) showVariable).getIdentifier()).getFirst().getName())
+            Truth.assertThat(showVariable.getClass()).isEqualTo(ShowList.class);
+            Truth.assertThat(((Qualified) ((ShowList) showVariable).getIdentifier()).getFirst().getName())
                     .isEqualTo("Stage");
-            Truth.assertThat(((Qualified) ((ShowVariable) showVariable).getIdentifier()).getSecond().getName().getName())
+            Truth.assertThat(((Qualified) ((ShowList) showVariable).getIdentifier()).getSecond().getName().getName())
                     .isEqualTo("List");
 
             Stmt hideVariable = listOfStmt.get(5);
-            Truth.assertThat(((Qualified) ((HideVariable) hideVariable).getIdentifier()).getFirst().getName())
+            Truth.assertThat(((Qualified) ((HideList) hideVariable).getIdentifier()).getFirst().getName())
                     .isEqualTo("Stage");
-            Truth.assertThat(((Qualified) ((HideVariable) hideVariable).getIdentifier()).getSecond().getName().getName())
+            Truth.assertThat(((Qualified) ((HideList) hideVariable).getIdentifier()).getSecond().getName().getName())
                     .isEqualTo( "List");
         } catch (ParsingException e) {
             e.printStackTrace();

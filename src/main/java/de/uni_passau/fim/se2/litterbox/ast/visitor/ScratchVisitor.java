@@ -131,17 +131,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.ExpressionStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.UnspecifiedStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.ActorLookStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.AskAndWait;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.ChangeGraphicEffectBy;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.ClearGraphicEffects;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.GraphicEffect;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.HideVariable;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.NextBackdrop;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.SetGraphicEffectTo;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.ShowVariable;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.SwitchBackdrop;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.SwitchBackdropAndWait;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.ActorSoundStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.ChangeSoundEffectBy;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.ChangeVolumeBy;
@@ -2387,6 +2377,32 @@ public interface ScratchVisitor {
      * @param node HideVariable  Node of which the children will be iterated
      */
     default void visit(HideVariable node) {
+        visit((ActorLookStmt) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link HideList}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node HideList  Node of which the children will be iterated
+     */
+    default void visit(HideList node) {
+        visit((ActorLookStmt) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link ShowList}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node ShowList  Node of which the children will be iterated
+     */
+    default void visit(ShowList node) {
         visit((ActorLookStmt) node);
     }
 
