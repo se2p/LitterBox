@@ -181,7 +181,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.type.ListType;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.NumberType;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.SoundType;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.StringType;
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.Id;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.StrId;
 
@@ -1008,11 +1007,6 @@ public class GrammarPrintVisitor implements ScratchVisitor {
         } else {
             emitNoSpace("ScratchActor");
         }
-    }
-
-    @Override
-    public void visit(Id id) {
-        emitNoSpace("\"" + id.getName() + "\"");
     }
 
     @Override

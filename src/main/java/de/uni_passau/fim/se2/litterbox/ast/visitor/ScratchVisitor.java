@@ -243,7 +243,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.type.NumberType;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.SoundType;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.StringType;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.Type;
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.Id;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Identifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.StrId;
@@ -2762,19 +2761,6 @@ public interface ScratchVisitor {
      */
     default void visit(Variable node) {
         visit((Expression) node);
-    }
-
-    /**
-     * Default implementation of visit method for {@link Id}.
-     *
-     * <p>
-     * Iterates all children of this node without performing any action.
-     * </p>
-     *
-     * @param node Id  Node of which the children will be iterated
-     */
-    default void visit(Id node) {
-        visit((Identifier) node);
     }
 
     /**
