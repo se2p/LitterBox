@@ -35,6 +35,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.UnspecifiedStringExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
+import de.uni_passau.fim.se2.litterbox.ast.model.variable.Parameter;
+import de.uni_passau.fim.se2.litterbox.ast.model.variable.ScratchList;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.BoolExprOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.NumExprOpcode;
@@ -58,6 +60,12 @@ public class ExpressionParser {
             AsNumber stmt = ((AsNumber) numExpr.get());
             if (stmt.getOperand1() instanceof StrId) {
                 return stmt;
+            } else if (stmt.getOperand1() instanceof Parameter){
+                return stmt;
+            } else if (stmt.getOperand1() instanceof ScratchList){
+                return stmt;
+            } else if (stmt.getOperand1() instanceof Variable){
+                return stmt;
             }
         }
         if (numExpr.isPresent()
@@ -70,6 +78,12 @@ public class ExpressionParser {
         if (stringExpr.isPresent() && stringExpr.get() instanceof AsString) {
             AsString stmt = ((AsString) stringExpr.get());
             if (stmt.getOperand1() instanceof StrId) {
+                return stmt;
+            } else if (stmt.getOperand1() instanceof Parameter){
+                return stmt;
+            } else if (stmt.getOperand1() instanceof ScratchList){
+                return stmt;
+            } else if (stmt.getOperand1() instanceof Variable){
                 return stmt;
             }
         }
@@ -98,6 +112,12 @@ public class ExpressionParser {
             AsNumber stmt = ((AsNumber) numExpr.get());
             if (stmt.getOperand1() instanceof StrId) {
                 return stmt;
+            } else if (stmt.getOperand1() instanceof Parameter){
+                return stmt;
+            } else if (stmt.getOperand1() instanceof ScratchList){
+                return stmt;
+            } else if (stmt.getOperand1() instanceof Variable){
+                return stmt;
             }
         }
         if (numExpr.isPresent()
@@ -110,6 +130,12 @@ public class ExpressionParser {
         if (stringExpr.isPresent() && stringExpr.get() instanceof AsString) {
             AsString stmt = ((AsString) stringExpr.get());
             if (stmt.getOperand1() instanceof StrId) {
+                return stmt;
+            } else if (stmt.getOperand1() instanceof Parameter){
+                return stmt;
+            } else if (stmt.getOperand1() instanceof ScratchList){
+                return stmt;
+            } else if (stmt.getOperand1() instanceof Variable){
                 return stmt;
             }
         }
