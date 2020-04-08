@@ -55,7 +55,7 @@ import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 import java.util.Optional;
 
 import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
-import static de.uni_passau.fim.se2.litterbox.ast.parser.ExpressionParser.parseExpressionWithPos;
+import static de.uni_passau.fim.se2.litterbox.ast.parser.ExpressionParser.parseExpressionWithName;
 
 public class BoolExprParser {
 
@@ -167,7 +167,7 @@ public class BoolExprParser {
             Identifier var = ListExprParser.parseVariableFromFields(expressionBlock.get(FIELDS_KEY));
             return new AsBool(new ItemOfVariable(index, var));
         } else if (opcodeString.equals(NumExprOpcode.data_itemnumoflist.name())) {
-            Expression item = parseExpressionWithPos(expressionBlock, 0, blocks);
+            Expression item = parseExpressionWithName(expressionBlock, ITEM_KEY, blocks);
             Identifier list = ListExprParser.parseVariableFromFields(expressionBlock.get(FIELDS_KEY));
             return new AsBool(new IndexOf(item, list));
         }
@@ -300,7 +300,7 @@ public class BoolExprParser {
 
     private static BoolExpr parseParameter(JsonNode blocks, JsonNode expressionBlock) {
         String name = expressionBlock.get(FIELDS_KEY).get(VALUE_KEY).get(VARIABLE_NAME_POS).asText();
-        return new AsBool(new Parameter(new StrId( name)));
+        return new AsBool(new Parameter(new StrId(name)));
     }
 
     private static BoolExpr parseCondition(JsonNode expressionBlock, String fieldName, JsonNode blocks) throws ParsingException {
