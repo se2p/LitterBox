@@ -56,7 +56,7 @@ public class ExpressionParser {
 
     public static Expression parseExpression(JsonNode block, String inputName, JsonNode blocks) throws ParsingException {
         final Optional<NumExpr> numExpr = maybeParseNumExpr(block, inputName, blocks);
-        if (numExpr.isPresent() && numExpr.get() instanceof AsString) {
+        if (numExpr.isPresent() && numExpr.get() instanceof AsNumber) {
             AsNumber stmt = ((AsNumber) numExpr.get());
             if (stmt.getOperand1() instanceof StrId) {
                 return stmt;
@@ -108,7 +108,7 @@ public class ExpressionParser {
 
     public static Expression parseExpression(JsonNode block, int pos, JsonNode blocks) throws ParsingException {
         final Optional<NumExpr> numExpr = maybeParseNumExpr(block, pos, blocks);
-        if (numExpr.isPresent() && numExpr.get() instanceof AsString) {
+        if (numExpr.isPresent() && numExpr.get() instanceof AsNumber) {
             AsNumber stmt = ((AsNumber) numExpr.get());
             if (stmt.getOperand1() instanceof StrId) {
                 return stmt;
