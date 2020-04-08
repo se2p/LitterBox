@@ -47,7 +47,7 @@ public class CostumeChoiceParser {
         if (getShadowIndicator((ArrayNode) inputsNode) == 1) {
             return getCostumeChoiceFromMenu(allBlocks, inputsNode);
         } else {
-            return ExpressionParser.parseExpression(current, COSTUME_INPUT, allBlocks);
+            return ExpressionParser.parseExpressionWithName(current, COSTUME_INPUT, allBlocks);
         }
     }
 

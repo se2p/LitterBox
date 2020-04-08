@@ -98,7 +98,7 @@ public class ActorSoundStmtParser {
             String soundValue = soundMenu.get(FIELDS_KEY).get(SOUND_MENU).get(FIELD_VALUE).asText();
             return new WithExpr(new AsString(new StrId(soundValue)));
         } else {
-            final Expression expression = ExpressionParser.parseExpression(current, SOUND_MENU, allBlocks);
+            final Expression expression = ExpressionParser.parseExpressionWithName(current, SOUND_MENU, allBlocks);
             return new WithExpr(expression);
         }
     }

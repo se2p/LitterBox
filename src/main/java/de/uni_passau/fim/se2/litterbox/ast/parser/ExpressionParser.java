@@ -54,7 +54,7 @@ import static de.uni_passau.fim.se2.litterbox.ast.Constants.POS_DATA_ARRAY;
 
 public class ExpressionParser {
 
-    public static Expression parseExpression(JsonNode block, String inputName, JsonNode blocks) throws ParsingException {
+    public static Expression parseExpressionWithName(JsonNode block, String inputName, JsonNode blocks) throws ParsingException {
         final Optional<NumExpr> numExpr = maybeParseNumExpr(block, inputName, blocks);
         if (numExpr.isPresent() && numExpr.get() instanceof AsNumber) {
             AsNumber stmt = ((AsNumber) numExpr.get());
@@ -106,7 +106,7 @@ public class ExpressionParser {
         }
     }
 
-    public static Expression parseExpression(JsonNode block, int pos, JsonNode blocks) throws ParsingException {
+    public static Expression parseExpressionWithPos(JsonNode block, int pos, JsonNode blocks) throws ParsingException {
         final Optional<NumExpr> numExpr = maybeParseNumExpr(block, pos, blocks);
         if (numExpr.isPresent() && numExpr.get() instanceof AsNumber) {
             AsNumber stmt = ((AsNumber) numExpr.get());

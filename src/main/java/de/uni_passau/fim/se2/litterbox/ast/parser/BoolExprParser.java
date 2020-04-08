@@ -55,7 +55,7 @@ import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 import java.util.Optional;
 
 import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
-import static de.uni_passau.fim.se2.litterbox.ast.parser.ExpressionParser.parseExpression;
+import static de.uni_passau.fim.se2.litterbox.ast.parser.ExpressionParser.parseExpressionWithPos;
 
 public class BoolExprParser {
 
@@ -167,7 +167,7 @@ public class BoolExprParser {
             Identifier var = ListExprParser.parseVariableFromFields(expressionBlock.get(FIELDS_KEY));
             return new AsBool(new ItemOfVariable(index, var));
         } else if (opcodeString.equals(NumExprOpcode.data_itemnumoflist.name())) {
-            Expression item = parseExpression(expressionBlock, 0, blocks);
+            Expression item = parseExpressionWithPos(expressionBlock, 0, blocks);
             Identifier list = ListExprParser.parseVariableFromFields(expressionBlock.get(FIELDS_KEY));
             return new AsBool(new IndexOf(item, list));
         }

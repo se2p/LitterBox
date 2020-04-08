@@ -212,7 +212,7 @@ public class StringExprParser {
                     } else {
                         //Technically there could be blocks in here, but we do not allow
                         //any expressions to work as identifiers here.
-                        localIdentifier = ExpressionParser.parseExpression(expressionBlock,OBJECT_KEY,blocks);
+                        localIdentifier = ExpressionParser.parseExpressionWithName(expressionBlock,OBJECT_KEY,blocks);
                     }
                 } else {
                     //Technically there could be blocks in here, but we do not allow

@@ -57,7 +57,7 @@ public class ElementChoiceParser {
         if (getShadowIndicator((ArrayNode) inputsNode) == 1) {
             return getElementChoiceFromMenu(allBlocks, inputsNode);
         } else {
-            final Expression expression = ExpressionParser.parseExpression(current, BACKDROP, allBlocks);
+            final Expression expression = ExpressionParser.parseExpressionWithName(current, BACKDROP, allBlocks);
             return new WithExpr(expression);
         }
     }

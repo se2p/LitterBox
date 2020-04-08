@@ -50,7 +50,7 @@ public class TouchableParser {
             if (getShadowIndicator((ArrayNode) inputsList.get(0)) == 1) {
                 return getTouchableMenuOption(current, allBlocks);
             } else {
-                Expression expr = ExpressionParser.parseExpression(current, TOUCHINGOBJECTMENU, allBlocks);
+                Expression expr = ExpressionParser.parseExpressionWithName(current, TOUCHINGOBJECTMENU, allBlocks);
                 return new AsTouchable(expr);
             }
         } else if (BoolExprOpcode.sensing_touchingcolor.name().equals(opcodeString)) {

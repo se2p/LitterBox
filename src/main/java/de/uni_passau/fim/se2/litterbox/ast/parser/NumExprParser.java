@@ -266,7 +266,7 @@ public class NumExprParser {
                 NumExpr numExpr = parseNumExpr(expressionBlock, 0, allBlocks);
                 return new NumFunctOf(funct, numExpr);
             case data_itemnumoflist:
-                Expression item = parseExpression(expressionBlock, 0, allBlocks);
+                Expression item = parseExpressionWithPos(expressionBlock, 0, allBlocks);
                 identifier =
                         expressionBlock.get(FIELDS_KEY).get(LIST_KEY).get(LIST_IDENTIFIER_POS).asText();
                 if (ProgramParser.symbolTable.getLists().containsKey(identifier)) {
