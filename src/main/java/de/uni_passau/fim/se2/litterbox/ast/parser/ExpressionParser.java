@@ -217,8 +217,6 @@ public class ExpressionParser {
         inputs.fields().forEachRemaining(slotEntries::add);
         Map.Entry slotEntry = slotEntries.get(pos);
         ArrayNode exprArray = (ArrayNode) slotEntry.getValue();
-//        String numberName = (String) slotEntry.getKey(); // we don't need that here but maybe later for storing
-//        additional information
         return exprArray;
     }
 
@@ -248,10 +246,18 @@ public class ExpressionParser {
         }
     }
 
-    public static Expression parseExpressionBlock(JsonNode current, JsonNode allBlocks) throws ParsingException {
-        if (current instanceof ArrayNode) {
+    /**
+     * Parses a single expression corresponding to a reporter block.
+     *
+     * @param expressionBlock The JsonNode of the reporter block.
+     * @param allBlocks       The JsonNode holding all blocks of the program.
+     * @return The parsed expression.
+     * @throws ParsingException If the block is not parsable.
+     */
+    public static Expression parseExpressionBlock(JsonNode expressionBlock, JsonNode allBlocks) throws ParsingException {
+        if (expressionBlock instanceof ArrayNode) {
             // it's a list or variable
-            String idString = current.get(2).asText();
+            String idString = expressionBlock.get(2).asText();
             if (ProgramParser.symbolTable.getVariables().containsKey(idString)) {
                 VariableInfo variableInfo = ProgramParser.symbolTable.getVariables().get(idString);
 
@@ -264,13 +270,13 @@ public class ExpressionParser {
             }
         } else {
             // it's a normal reporter block
-            String opcode = current.get(OPCODE_KEY).asText();
+            String opcode = expressionBlock.get(OPCODE_KEY).asText();
             if (NumExprOpcode.contains(opcode)) {
-                return NumExprParser.parseBlockNumExpr(current, allBlocks);
+                return NumExprParser.parseBlockNumExpr(expressionBlock, allBlocks);
             } else if (StringExprOpcode.contains(opcode)) {
-                return StringExprParser.parseBlockStringExpr(current, allBlocks);
+                return StringExprParser.parseBlockStringExpr(expressionBlock, allBlocks);
             } else if (BoolExprOpcode.contains(opcode)) {
-                return BoolExprParser.parseBlockBoolExpr(current, allBlocks);
+                return BoolExprParser.parseBlockBoolExpr(expressionBlock, allBlocks);
             } else {
                 throw new ParsingException(opcode + " is an unexpected opcode for an expression");
             }

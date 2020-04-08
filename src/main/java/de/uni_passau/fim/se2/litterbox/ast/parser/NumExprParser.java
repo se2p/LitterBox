@@ -189,10 +189,21 @@ public class NumExprParser {
         }
     }
 
-    static NumExpr parseBlockNumExpr(JsonNode expressionBlock, JsonNode blocks)
+    /**
+     * Parses a single NumExpression corresponding to a reporter block.
+     * The opcode of the block has to be a NumExprOpcode.
+     *
+     * @param expressionBlock The JsonNode of the reporter block.
+     * @param allBlocks       The JsonNode holding all allBlocks of the program.
+     * @return The parsed expression.
+     * @throws ParsingException If the opcode of the block is no NumExprOpcode
+     *                          or if parsing inputs of the block fails.
+     */
+    static NumExpr parseBlockNumExpr(JsonNode expressionBlock, JsonNode allBlocks)
             throws ParsingException {
         String opcodeString = expressionBlock.get(OPCODE_KEY).asText();
-        Preconditions.checkArgument(NumExprOpcode.contains(opcodeString), opcodeString + " is not a NumExprOpcode.");
+        Preconditions.checkArgument(NumExprOpcode.contains(opcodeString),
+                opcodeString + " is not a NumExprOpcode.");
         NumExprOpcode opcode = NumExprOpcode.valueOf(opcodeString);
         switch (opcode) {
             case sound_volume:
@@ -216,10 +227,10 @@ public class NumExprParser {
             case sensing_loudness:
                 return new Loudness();
             case operator_round:
-                NumExpr num = parseNumExpr(expressionBlock, 0, blocks);
+                NumExpr num = parseNumExpr(expressionBlock, 0, allBlocks);
                 return new Round(num);
             case operator_length:
-                return new LengthOfString(StringExprParser.parseStringExpr(expressionBlock, 0, blocks));
+                return new LengthOfString(StringExprParser.parseStringExpr(expressionBlock, 0, allBlocks));
             case data_lengthoflist:
                 String identifier =
                         expressionBlock.get(FIELDS_KEY).get(LIST_KEY).get(LIST_IDENTIFIER_POS).asText();
@@ -236,26 +247,26 @@ public class NumExprParser {
                 TimeComp timeComp = TimecompParser.parse(expressionBlock);
                 return new Current(timeComp);
             case sensing_distanceto:
-                Position pos = PositionParser.parse(expressionBlock, blocks);
+                Position pos = PositionParser.parse(expressionBlock, allBlocks);
                 return new DistanceTo(pos);
             case operator_add:
-                return buildNumExprWithTwoNumExprInputs(Add.class, expressionBlock, blocks);
+                return buildNumExprWithTwoNumExprInputs(Add.class, expressionBlock, allBlocks);
             case operator_subtract:
-                return buildNumExprWithTwoNumExprInputs(Minus.class, expressionBlock, blocks);
+                return buildNumExprWithTwoNumExprInputs(Minus.class, expressionBlock, allBlocks);
             case operator_multiply:
-                return buildNumExprWithTwoNumExprInputs(Mult.class, expressionBlock, blocks);
+                return buildNumExprWithTwoNumExprInputs(Mult.class, expressionBlock, allBlocks);
             case operator_divide:
-                return buildNumExprWithTwoNumExprInputs(Div.class, expressionBlock, blocks);
+                return buildNumExprWithTwoNumExprInputs(Div.class, expressionBlock, allBlocks);
             case operator_mod:
-                return buildNumExprWithTwoNumExprInputs(Mod.class, expressionBlock, blocks);
+                return buildNumExprWithTwoNumExprInputs(Mod.class, expressionBlock, allBlocks);
             case operator_random:
-                return buildNumExprWithTwoNumExprInputs(PickRandom.class, expressionBlock, blocks);
+                return buildNumExprWithTwoNumExprInputs(PickRandom.class, expressionBlock, allBlocks);
             case operator_mathop:
                 NumFunct funct = parseNumFunct(expressionBlock.get(FIELDS_KEY));
-                NumExpr numExpr = parseNumExpr(expressionBlock, 0, blocks);
+                NumExpr numExpr = parseNumExpr(expressionBlock, 0, allBlocks);
                 return new NumFunctOf(funct, numExpr);
             case data_itemnumoflist:
-                Expression item = parseExpression(expressionBlock, 0, blocks);
+                Expression item = parseExpression(expressionBlock, 0, allBlocks);
                 identifier =
                         expressionBlock.get(FIELDS_KEY).get(LIST_KEY).get(LIST_IDENTIFIER_POS).asText();
                 if (ProgramParser.symbolTable.getLists().containsKey(identifier)) {
@@ -294,8 +305,15 @@ public class NumExprParser {
         }
     }
 
-    static NumFunct parseNumFunct(JsonNode fields)
-            throws ParsingException {
+    /**
+     * Parses a NumFunct from the "fields" JsonNode.
+     * The node has to have an "OPERATOR" key.
+     *
+     * @param fields The JsonNode containing the operator of the NumFunct.
+     * @return The NumFunct stored in the fields node.
+     */
+    static NumFunct parseNumFunct(JsonNode fields) {
+        Preconditions.checkArgument(fields.has(OPERATOR_KEY));
         ArrayNode operator = (ArrayNode) fields.get(OPERATOR_KEY);
         String operatorOpcode = operator.get(FIELD_VALUE).asText();
         return NumFunct.fromString(operatorOpcode);
