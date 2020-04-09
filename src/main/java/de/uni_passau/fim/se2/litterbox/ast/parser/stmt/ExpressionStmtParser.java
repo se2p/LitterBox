@@ -35,12 +35,12 @@ public class ExpressionStmtParser {
      * Parses a single reporter block and puts it into a new ExpressionStmt.
      *
      * @param current   The JsonNode of the reporter block.
-     * @param allBlocks The JsonNode holding all blocks of the program.
+     * @param allBlocks The JsonNode holding all blocks of the actor definition currently analysed.
      * @return A new ExpressionStmt holding the expression corresponding to the
      * reporter block.
      * @throws ParsingException If the block is not parsable.
      */
     public static Stmt parse(JsonNode current, JsonNode allBlocks) throws ParsingException {
-        return new ExpressionStmt(ExpressionParser.parseExpressionBlock(current, allBlocks));
+        return new ExpressionStmt(ExpressionParser.parseExprBlock(current, allBlocks));
     }
 }

@@ -24,114 +24,60 @@ import com.fasterxml.jackson.databind.node.NullNode;
 import de.uni_passau.fim.se2.litterbox.ast.Constants;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.UnspecifiedExpression;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BoolExpr;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.UnspecifiedBoolExpr;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.AsNumber;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.UnspecifiedNumExpr;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.UnspecifiedStringExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.Parameter;
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.ScratchList;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.BoolExprOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.NumExprOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.StringExprOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ExpressionListInfo;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.VariableInfo;
-import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
-import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
+import static de.uni_passau.fim.se2.litterbox.ast.Constants.OPCODE_KEY;
+import static de.uni_passau.fim.se2.litterbox.ast.Constants.POS_DATA_ARRAY;
+import static de.uni_passau.fim.se2.litterbox.ast.parser.BoolExprParser.parsableAsBoolExpr;
+import static de.uni_passau.fim.se2.litterbox.ast.parser.DataExprParser.parsableAsDataExpr;
+import static de.uni_passau.fim.se2.litterbox.ast.parser.ListExprParser.parsableAsListExpr;
+import static de.uni_passau.fim.se2.litterbox.ast.parser.NumExprParser.parsableAsNumExpr;
+import static de.uni_passau.fim.se2.litterbox.ast.parser.StringExprParser.parsableAsStringExpr;
 
 public class ExpressionParser {
 
-    public static Expression parseExpressionWithName(JsonNode block, String inputName, JsonNode blocks) throws ParsingException {
-        Preconditions.checkNotNull(block.get(INPUTS_KEY));
-        Preconditions.checkArgument(block.get(INPUTS_KEY).has(inputName));
-        final Optional<NumExpr> numExpr = maybeParseNumExpr(block, inputName, blocks);
-        if (numExpr.isPresent() && numExpr.get() instanceof AsNumber) {
-            AsNumber stmt = ((AsNumber) numExpr.get());
-            if (stmt.getOperand1() instanceof StrId) {
-                return stmt;
-            } else if (stmt.getOperand1() instanceof Parameter){
-                return stmt;
-            } else if (stmt.getOperand1() instanceof ScratchList){
-                return stmt;
-            } else if (stmt.getOperand1() instanceof Variable){
-                return stmt;
-            }
+    /**
+     * Parses a expression which is input to another containingBlock. The parsed expression
+     * may not directly correspond to a reporter containingBlock but can also be a literal,
+     * for example.
+     *
+     * @param containingBlock The block inputs of which contain the expression to be parsed.
+     * @param inputName       The name identifying the expression input.
+     * @param allBlocks       All blocks of the actor definition currently parsed.
+     * @return The expression identified by the inputName.
+     * @throws ParsingException If parsing fails.
+     */
+    public static Expression parseExprWithName(JsonNode containingBlock,
+                                               String inputName,
+                                               JsonNode allBlocks)
+            throws ParsingException {
+        Expression expr = null;
+        if (parsableAsNumExpr(containingBlock, inputName, allBlocks)) {
+            expr = NumExprParser.parseNumExpr(containingBlock, inputName, allBlocks);
+        } else if (parsableAsStringExpr(containingBlock, inputName, allBlocks)) {
+            expr = StringExprParser.parseStringExpr(containingBlock, inputName, allBlocks);
+        } else if (parsableAsBoolExpr(containingBlock, inputName, allBlocks)) {
+            expr = BoolExprParser.parseBoolExpr(containingBlock, inputName, allBlocks);
+        } else if (parsableAsDataExpr(containingBlock, inputName, allBlocks)) {
+            expr = DataExprParser.parseDataExpr(containingBlock, inputName, allBlocks);
+        } else if (parsableAsListExpr(containingBlock, inputName)) {
+            expr = ListExprParser.parseListExpr(containingBlock, inputName, allBlocks);
         }
-        if (numExpr.isPresent()
-                && !(numExpr.get() instanceof UnspecifiedNumExpr)
-                && !(numExpr.get() instanceof AsNumber)) {
-            return numExpr.get();
-        }
-
-        final Optional<StringExpr> stringExpr = maybeParseStringExpr(block, inputName, blocks);
-        if (stringExpr.isPresent() && stringExpr.get() instanceof AsString) {
-            AsString stmt = ((AsString) stringExpr.get());
-            if (stmt.getOperand1() instanceof StrId) {
-                return stmt;
-            } else if (stmt.getOperand1() instanceof Parameter){
-                return stmt;
-            } else if (stmt.getOperand1() instanceof ScratchList){
-                return stmt;
-            } else if (stmt.getOperand1() instanceof Variable){
-                return stmt;
-            }
-        }
-        if (stringExpr.isPresent()
-                && !(stringExpr.get() instanceof UnspecifiedStringExpr)
-                && !(stringExpr.get() instanceof AsString)) {
-            return stringExpr.get();
-        }
-
-        final Optional<BoolExpr> boolExpr = maybeParseBoolExpr(block, inputName, blocks);
-        if (boolExpr.isPresent() && !(boolExpr.get() instanceof UnspecifiedBoolExpr)) {
-            return boolExpr.get();
-        }
-
-        try {
-            return ListExprParser.parseListExpr(block, inputName, blocks);
-        } catch (Exception excp) {
-            return new UnspecifiedExpression();
-            //throw new ParsingException("This is no expression we can parse.");
-        }
-    }
-
-    private static Optional<BoolExpr> maybeParseBoolExpr(JsonNode block, String inputName, JsonNode blocks) {
-        try {
-            final BoolExpr boolExpr = BoolExprParser.parseBoolExpr(block, inputName, blocks);
-            return Optional.of(boolExpr);
-        } catch (ParsingException e) {
-            return Optional.empty();
-        }
-    }
-
-    private static Optional<StringExpr> maybeParseStringExpr(JsonNode block, String inputName, JsonNode blocks) {
-        try {
-            final StringExpr stringExpr = StringExprParser.parseStringExpr(block, inputName, blocks);
-            return Optional.of(stringExpr);
-        } catch (ParsingException e) {
-            return Optional.empty();
-        }
-    }
-
-    private static Optional<NumExpr> maybeParseNumExpr(JsonNode block, String inputName, JsonNode blocks) {
-        try {
-            final NumExpr numExpr = NumExprParser.parseNumExpr(block, inputName, blocks);
-            return Optional.of(numExpr);
-        } catch (ParsingException e) {
-            return Optional.empty();
+        if (expr != null) {
+            return expr;
+        } else {
+            throw new ParsingException("Could not parse expr.");
         }
     }
 
@@ -172,15 +118,15 @@ public class ExpressionParser {
     /**
      * Parses a single expression corresponding to a reporter block.
      *
-     * @param expressionBlock The JsonNode of the reporter block.
-     * @param allBlocks       The JsonNode holding all blocks of the program.
+     * @param exprBlock The JsonNode of the reporter block.
+     * @param allBlocks The JsonNode holding all blocks of the actor definition currently analysed.
      * @return The parsed expression.
      * @throws ParsingException If the block is not parsable.
      */
-    public static Expression parseExpressionBlock(JsonNode expressionBlock, JsonNode allBlocks) throws ParsingException {
-        if (expressionBlock instanceof ArrayNode) {
+    public static Expression parseExprBlock(JsonNode exprBlock, JsonNode allBlocks) throws ParsingException {
+        if (exprBlock instanceof ArrayNode) {
             // it's a list or variable
-            String idString = expressionBlock.get(2).asText();
+            String idString = exprBlock.get(2).asText();
             if (ProgramParser.symbolTable.getVariables().containsKey(idString)) {
                 VariableInfo variableInfo = ProgramParser.symbolTable.getVariables().get(idString);
 
@@ -193,17 +139,17 @@ public class ExpressionParser {
             }
         } else {
             // it's a normal reporter block
-            String opcode = expressionBlock.get(OPCODE_KEY).asText();
+            String opcode = exprBlock.get(OPCODE_KEY).asText();
             if (NumExprOpcode.contains(opcode)) {
-                return NumExprParser.parseBlockNumExpr(expressionBlock, allBlocks);
+                return NumExprParser.parseBlockNumExpr(exprBlock, allBlocks);
             } else if (StringExprOpcode.contains(opcode)) {
-                return StringExprParser.parseBlockStringExpr(expressionBlock, allBlocks);
+                return StringExprParser.parseBlockStringExpr(exprBlock, allBlocks);
             } else if (BoolExprOpcode.contains(opcode)) {
-                return BoolExprParser.parseBlockBoolExpr(expressionBlock, allBlocks);
+                return BoolExprParser.parseBlockBoolExpr(exprBlock, allBlocks);
             } else {
                 throw new ParsingException(opcode + " is an unexpected opcode for an expression");
             }
         }
-        throw new ParsingException("Calling parseExpressionBlock here went wrong");
+        throw new ParsingException("Calling parseExprBlock here went wrong");
     }
 }

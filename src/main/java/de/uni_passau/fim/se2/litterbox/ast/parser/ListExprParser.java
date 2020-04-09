@@ -35,6 +35,25 @@ import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 
 public class ListExprParser {
 
+    /**
+     * Returns true iff the specified input of the block can be parsed as
+     * ListExpr.
+     *
+     * @param containingBlock The block inputs of which contain the expression
+     *                        to be checked.
+     * @param inputName       The name of the input containing the expression to be checked.
+     * @return True iff the the input of the containing block is parsable as ListExpr.
+     */
+    public static boolean parsableAsListExpr(JsonNode containingBlock, String inputName) {
+        ArrayNode exprArray = ExpressionParser.getExprArrayByName(containingBlock.get(INPUTS_KEY), inputName);
+        if (ExpressionParser.getShadowIndicator(exprArray) == 1 || exprArray.get(POS_BLOCK_ID) instanceof TextNode) {
+            return false;
+        } else {
+            String idString = exprArray.get(POS_DATA_ARRAY).get(POS_INPUT_ID).asText();
+            return ProgramParser.symbolTable.getLists().containsKey(idString);
+        }
+    }
+
     public static ListExpr parseListExpr(JsonNode block, String inputName, JsonNode blocks) throws ParsingException {
         ArrayNode exprArray = ExpressionParser.getExprArrayByName(block.get(INPUTS_KEY), inputName);
 
@@ -47,27 +66,6 @@ public class ListExprParser {
             ExpressionListInfo variableInfo = ProgramParser.symbolTable.getLists().get(idString);
             return new AsListIndex(new Qualified(new StrId(variableInfo.getActor()),
                     new ScratchList(new StrId((variableInfo.getVariableName())))));
-        }
-        throw new ParsingException("Block does not contain a list");
-    }
-
-    public static ListExpr parseListExpr(JsonNode block, int pos, JsonNode blocks) throws ParsingException {
-        //In Scratch itself we can probably never get here because Lists in Scratch are always used as variables
-        //and such in every case get parsed as StringExpr first.
-        ArrayNode exprArray = ExpressionParser.getExprArrayAtPos(block.get(INPUTS_KEY), pos);
-
-        if (ExpressionParser.getShadowIndicator(exprArray) == 1 || exprArray.get(POS_BLOCK_ID) instanceof TextNode) {
-            throw new ParsingException("Block does not contain a list");
-        }
-
-        String idString = exprArray.get(POS_DATA_ARRAY).get(POS_INPUT_ID).asText();
-        if (ProgramParser.symbolTable.getLists().containsKey(idString)) {
-            ExpressionListInfo variableInfo = ProgramParser.symbolTable.getLists().get(idString);
-            return new AsListIndex(
-                    new Qualified(
-                            new StrId(variableInfo.getActor()),
-                            new ScratchList(new StrId((variableInfo.getVariableName())))
-                    ));
         }
         throw new ParsingException("Block does not contain a list");
     }
