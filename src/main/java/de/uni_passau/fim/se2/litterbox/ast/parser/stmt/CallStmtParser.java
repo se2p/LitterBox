@@ -57,13 +57,12 @@ public class CallStmtParser {
         ArrayNode argumentsArray = (ArrayNode) argumentsNode;
         JsonNode inputNode = current.get(INPUTS_KEY);
         Iterator<Entry<String, JsonNode>> entries = inputNode.fields();
-        int i = 0;
         while (entries.hasNext()) {
             Entry<String, JsonNode> currentEntry = entries.next();
-            if (arrayNodeContains(argumentsArray, currentEntry.getKey())) {
-                expressions.add(ExpressionParser.parseExpressionWithPos(current, i, blocks));
+            String inputName = currentEntry.getKey();
+            if (arrayNodeContains(argumentsArray, inputName)) {
+                expressions.add(ExpressionParser.parseExpressionWithName(current, inputName, blocks));
             }
-            i++;
         }
 
         return new CallStmt(new StrId(current.get(Constants.MUTATION_KEY).get(Constants.PROCCODE_KEY).asText()),
