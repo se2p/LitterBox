@@ -52,8 +52,6 @@ public class NoWorkingScriptTest {
         myWarrior = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
         f = new File("./src/test/fixtures/bugpattern/noodle.json");
         noodle = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
-        f = new File("./src/test/fixtures/356361667.json");
-        test = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
     }
 
     @Test
