@@ -36,6 +36,7 @@ public class NoWorkingScriptTest {
     private static Program workingScript;
     private static Program myWarrior;
     private static Program noodle;
+    private static Program test;
     private static ObjectMapper mapper = new ObjectMapper();
 
     @BeforeAll
@@ -51,6 +52,8 @@ public class NoWorkingScriptTest {
         myWarrior = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
         f = new File("./src/test/fixtures/bugpattern/noodle.json");
         noodle = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
+        f = new File("./src/test/fixtures/356361667.json");
+        test = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
     }
 
     @Test
