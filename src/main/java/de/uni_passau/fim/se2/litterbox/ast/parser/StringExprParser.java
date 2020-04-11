@@ -23,7 +23,6 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BoolExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.Attribute;
@@ -35,16 +34,10 @@ import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.UnspecifiedId;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.Parameter;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.ScratchList;
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
-import de.uni_passau.fim.se2.litterbox.ast.opcodes.ProcedureOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.StringExprOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ExpressionListInfo;
-import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.VariableInfo;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
-
-import java.util.Optional;
 
 import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 import static de.uni_passau.fim.se2.litterbox.ast.opcodes.DependentBlockOpcodes.sensing_of_object_menu;
@@ -80,123 +73,40 @@ public class StringExprParser {
         if (exprArray.get(POS_BLOCK_ID) instanceof TextNode) {
             String identifier = exprArray.get(POS_BLOCK_ID).asText();
             JsonNode exprBlock = allBlocks.get(identifier);
+            if (exprBlock == null) {
+                return false; // it is a DataExpr
+            }
             String opcodeString = exprBlock.get(OPCODE_KEY).asText();
             hasStringExprOpcode = StringExprOpcode.contains(opcodeString);
         }
         return hasStringExprOpcode || parsableAsStringLiteral;
     }
 
-    public static StringExpr parseStringExpr(JsonNode containingBlock, String inputName, JsonNode blocks)
+    public static StringExpr parseStringExprWithName(JsonNode containingBlock, String inputName, JsonNode allBlocks)
             throws ParsingException {
-        ArrayNode exprArray = ExpressionParser.getExprArrayByName(containingBlock.get(INPUTS_KEY), inputName);
-        int shadowIndicator = ExpressionParser.getShadowIndicator(exprArray);
-        if (shadowIndicator == INPUT_SAME_BLOCK_SHADOW
-                || (shadowIndicator == INPUT_BLOCK_NO_SHADOW && !(exprArray.get(POS_BLOCK_ID) instanceof TextNode))) {
-            try {
-                return parseStr(containingBlock.get(INPUTS_KEY), inputName);
-            } catch (ParsingException e) {
-                return new UnspecifiedStringExpr();
+        if (parsableAsStringExpr(containingBlock, inputName, allBlocks)) {
+            ArrayNode exprArray = ExpressionParser.getExprArrayByName(containingBlock.get(INPUTS_KEY), inputName);
+            int shadowIndicator = ExpressionParser.getShadowIndicator(exprArray);
+            if (shadowIndicator == INPUT_SAME_BLOCK_SHADOW
+                    || (shadowIndicator == INPUT_BLOCK_NO_SHADOW && !(exprArray.get(POS_BLOCK_ID) instanceof TextNode))) {
+                try {
+                    return parseStr(containingBlock.get(INPUTS_KEY), inputName);
+                } catch (ParsingException e) {
+                    return new UnspecifiedStringExpr();
+                }
+            } else if (exprArray.get(POS_BLOCK_ID) instanceof TextNode) {
+                String identifier = exprArray.get(POS_BLOCK_ID).asText();
+                return parseBlockStringExpr(allBlocks.get(identifier), allBlocks);
             }
-        } else if (exprArray.get(POS_BLOCK_ID) instanceof TextNode) {
-            return parseTextNode(blocks, exprArray);
         } else {
-            StringExpr variableInfo = parseVariable(exprArray);
-            if (variableInfo != null) {
-                return variableInfo;
-            }
+            return new AsString(ExpressionParser.parseExprWithName(containingBlock, inputName, allBlocks));
         }
         throw new ParsingException("Could not parse StringExpr");
-    }
-
-    public static StringExpr parseStringExpr(JsonNode containingBlock, int pos, JsonNode blocks) throws ParsingException {
-        ArrayNode exprArray = ExpressionParser.getExprArrayAtPos(containingBlock.get(INPUTS_KEY), pos);
-        int shadowIndicator = ExpressionParser.getShadowIndicator(exprArray);
-        if (shadowIndicator == INPUT_SAME_BLOCK_SHADOW ||
-                (shadowIndicator == INPUT_BLOCK_NO_SHADOW && !(exprArray.get(POS_BLOCK_ID) instanceof TextNode))) {
-            try {
-                return parseStr(containingBlock.get(INPUTS_KEY), pos);
-            } catch (ParsingException e) {
-                return new UnspecifiedStringExpr();
-            }
-        } else if (exprArray.get(POS_BLOCK_ID) instanceof TextNode) {
-            return parseTextNode(blocks, exprArray);
-        } else {
-            StringExpr variableInfo = parseVariable(exprArray);
-            if (variableInfo != null) {
-                return variableInfo;
-            }
-        }
-        throw new ParsingException("Could not parse StringExpr");
-    }
-
-    private static StringExpr parseVariable(ArrayNode exprArray) {
-        String idString = exprArray.get(POS_DATA_ARRAY).get(POS_INPUT_ID).asText();
-        if (ProgramParser.symbolTable.getVariables().containsKey(idString)) {
-            VariableInfo variableInfo = ProgramParser.symbolTable.getVariables().get(idString);
-
-            return new AsString(
-                    new Qualified(
-                            new StrId(variableInfo.getActor()),
-                            new Variable(new StrId((variableInfo.getVariableName())))
-                    ));
-        } else if (ProgramParser.symbolTable.getLists().containsKey(idString)) {
-            ExpressionListInfo variableInfo = ProgramParser.symbolTable.getLists().get(idString);
-            return new AsString(
-                    new Qualified(
-                            new StrId(variableInfo.getActor()),
-                            new ScratchList(new StrId((variableInfo.getVariableName())))
-                    ));
-        }
-        return null;
-    }
-
-    private static StringExpr parseTextNode(JsonNode blocks, ArrayNode exprArray) throws ParsingException {
-        String identifier = exprArray.get(POS_BLOCK_ID).asText();
-        String opcode = blocks.get(identifier).get(OPCODE_KEY).asText();
-        if (opcode.equals(ProcedureOpcode.argument_reporter_string_number.name()) || opcode.equals(ProcedureOpcode.argument_reporter_boolean.name())) {
-            return parseParameter(blocks, exprArray);
-        }
-        final Optional<StringExpr> stringExpr = maybeParseBlockStringExpr(blocks.get(identifier), blocks);
-        if (stringExpr.isPresent()) {
-            return stringExpr.get();
-        }
-
-        final Optional<NumExpr> optExpr = NumExprParser.maybeParseBlockNumExpr(blocks.get(identifier), blocks);
-        if (optExpr.isPresent()) {
-            return new AsString(optExpr.get());
-        }
-
-        final Optional<BoolExpr> boolExpr = BoolExprParser.maybeParseBlockBoolExpr(blocks.get(identifier), blocks);
-        if (boolExpr.isPresent()) {
-            return new AsString(boolExpr.get());
-        }
-
-        return new UnspecifiedStringExpr();
-    }
-
-    private static StringExpr parseParameter(JsonNode blocks, ArrayNode exprArray) {
-        JsonNode paramBlock = blocks.get(exprArray.get(POS_BLOCK_ID).asText());
-        String name = paramBlock.get(FIELDS_KEY).get(VALUE_KEY).get(VARIABLE_NAME_POS).asText();
-
-        return new AsString(new Parameter(new StrId(name)));
-    }
-
-    private static StringLiteral parseStr(JsonNode inputs, int pos) throws ParsingException {
-        String value = ExpressionParser.getDataArrayAtPos(inputs, pos).get(POS_INPUT_VALUE).asText();
-        return new StringLiteral(value);
     }
 
     private static StringLiteral parseStr(JsonNode inputs, String inputName) throws ParsingException {
         String value = ExpressionParser.getDataArrayByName(inputs, inputName).get(POS_INPUT_VALUE).asText();
         return new StringLiteral(value);
-    }
-
-    static Optional<StringExpr> maybeParseBlockStringExpr(JsonNode exprBlock, JsonNode blocks) {
-        try {
-            return Optional.of(parseBlockStringExpr(exprBlock, blocks));
-        } catch (ParsingException | IllegalArgumentException e) {
-            return Optional.empty();
-        }
     }
 
     static StringExpr parseBlockStringExpr(JsonNode exprBlock, JsonNode blocks) throws ParsingException {
@@ -206,17 +116,17 @@ public class StringExprParser {
         StringExprOpcode opcode = StringExprOpcode.valueOf(opcodeString);
         switch (opcode) {
             case operator_join:
-                StringExpr first = parseStringExpr(exprBlock, 0, blocks);
-                StringExpr second = parseStringExpr(exprBlock, 1, blocks);
+                StringExpr first = parseStringExprWithName(exprBlock, STRING1_KEY, blocks);
+                StringExpr second = parseStringExprWithName(exprBlock, STRING2_KEY, blocks);
                 return new Join(first, second);
             case operator_letter_of:
-                NumExpr num = NumExprParser.parseNumExpr(exprBlock, 0, blocks);
-                StringExpr word = parseStringExpr(exprBlock, 1, blocks);
+                NumExpr num = NumExprParser.parseNumExprWithName(exprBlock, LETTER_KEY, blocks);
+                StringExpr word = parseStringExprWithName(exprBlock, STRING_KEY, blocks);
                 return new LetterOf(num, word);
             case sensing_username:
                 return new Username();
             case data_itemoflist:
-                NumExpr index = NumExprParser.parseNumExpr(exprBlock, 0, blocks);
+                NumExpr index = NumExprParser.parseNumExprWithName(exprBlock, INDEX_KEY, blocks);
                 String id =
                         exprBlock.get(FIELDS_KEY).get(LIST_KEY).get(LIST_IDENTIFIER_POS).asText();
                 Identifier var;
@@ -248,14 +158,10 @@ public class StringExprParser {
                                 objectMenuBlock.get(FIELDS_KEY).get(OBJECT_KEY).get(FIELD_VALUE)
                                         .asText());
                     } else {
-                        //Technically there could be blocks in here, but we do not allow
-                        //any expressions to work as identifiers here.
                         localIdentifier = ExpressionParser.parseExprWithName(exprBlock, OBJECT_KEY, blocks);
                     }
                 } else {
-                    //Technically there could be blocks in here, but we do not allow
-                    //any expressions to work as identifiers here.
-                    localIdentifier = new StrId("");
+                    localIdentifier = new StrId(""); //TODO still correct?
                 }
                 String prop = exprBlock.get(FIELDS_KEY).get("PROPERTY").get(0).asText();
                 Attribute property;

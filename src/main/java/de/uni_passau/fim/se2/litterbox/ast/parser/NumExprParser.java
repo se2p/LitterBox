@@ -23,9 +23,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BoolExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Identifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
@@ -33,17 +31,12 @@ import de.uni_passau.fim.se2.litterbox.ast.model.identifier.UnspecifiedId;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.Position;
 import de.uni_passau.fim.se2.litterbox.ast.model.timecomp.TimeComp;
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.Parameter;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.ScratchList;
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.NumExprOpcode;
-import de.uni_passau.fim.se2.litterbox.ast.opcodes.ProcedureOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ExpressionListInfo;
-import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.VariableInfo;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.Optional;
 
 import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 import static de.uni_passau.fim.se2.litterbox.ast.parser.ExpressionParser.*;
@@ -61,6 +54,7 @@ public class NumExprParser {
      * @return True iff the the in put of the containing block is parsable as NumExpr.
      * @throws ParsingException If the json is malformed.
      */
+    @SuppressWarnings("unused")
     public static boolean parsableAsNumExpr(JsonNode containingBlock,
                                             String inputName, JsonNode allBlocks) throws ParsingException {
         JsonNode inputs = containingBlock.get(INPUTS_KEY);
@@ -85,119 +79,41 @@ public class NumExprParser {
         if (exprArray.get(POS_BLOCK_ID) instanceof TextNode) {
             String identifier = exprArray.get(POS_BLOCK_ID).asText();
             JsonNode exprBlock = allBlocks.get(identifier);
-            String opcodeString = exprBlock.get(OPCODE_KEY).asText();
+            if (exprBlock == null) {
+                return false; // it is a DataExpr
+            }
+            JsonNode opcodeNode = exprBlock.get(OPCODE_KEY);
+            String opcodeString = opcodeNode.asText();
             hasNumExprOpcode = NumExprOpcode.contains(opcodeString);
         }
         return hasNumExprOpcode || parsableAsNumberLiteral;
     }
 
-    public static NumExpr parseNumExpr(JsonNode block, String inputName, JsonNode blocks)
+    public static NumExpr parseNumExprWithName(JsonNode containingBlock, String inputName, JsonNode allBlocks)
             throws ParsingException {
-        ArrayNode exprArray = getExprArrayByName(block.get(INPUTS_KEY), inputName);
-        int shadowIndicator = getShadowIndicator(exprArray);
-        if (shadowIndicator == INPUT_SAME_BLOCK_SHADOW ||
-                (shadowIndicator == INPUT_BLOCK_NO_SHADOW && !(exprArray.get(POS_BLOCK_ID) instanceof TextNode))) {
-            try {
-                return parseNumber(block.get(INPUTS_KEY), inputName);
-            } catch (NumberFormatException | ParsingException e) { // right exception? hm.
-                return new UnspecifiedNumExpr();
+        if (parsableAsNumExpr(containingBlock, inputName, allBlocks)) {
+
+            ArrayNode exprArray = getExprArrayByName(containingBlock.get(INPUTS_KEY), inputName);
+            int shadowIndicator = getShadowIndicator(exprArray);
+            if (shadowIndicator == INPUT_SAME_BLOCK_SHADOW ||
+                    (shadowIndicator == INPUT_BLOCK_NO_SHADOW && !(exprArray.get(POS_BLOCK_ID) instanceof TextNode))) {
+                try {
+                    return parseNumber(containingBlock.get(INPUTS_KEY), inputName);
+                } catch (NumberFormatException | ParsingException e) {
+                    return new UnspecifiedNumExpr();
+                }
+            } else if (exprArray.get(POS_BLOCK_ID) instanceof TextNode) {
+                String identifier = exprArray.get(POS_BLOCK_ID).asText();
+                return parseBlockNumExpr(allBlocks.get(identifier), allBlocks);
             }
-        } else if (exprArray.get(POS_BLOCK_ID) instanceof TextNode) {
-            return parseTextNode(blocks, exprArray);
         } else {
-            NumExpr variableInfo = parseVariable(exprArray);
-            if (variableInfo != null) {
-                return variableInfo;
-            }
+            return new AsNumber(ExpressionParser.parseExprWithName(containingBlock, inputName, allBlocks));
         }
         throw new ParsingException("Could not parse NumExpr.");
     }
 
     /**
-     * Parses the NumExpr at the given position of the given block.
-     *
-     * @param block  The JsonNode holding the block of which a NumExpr has to be parsed.
-     * @param pos    The index of the NumExpr in the block.
-     * @param blocks All blocks of the current actor definition.
-     * @return The NumExpr at the position of the block.
-     */
-    public static NumExpr parseNumExpr(JsonNode block, int pos, JsonNode blocks)
-            throws ParsingException { // we ignored "(" NumExpr ")"
-        ArrayNode exprArray = getExprArrayAtPos(block.get(INPUTS_KEY), pos);
-        int shadowIndicator = getShadowIndicator(exprArray);
-        if (shadowIndicator == INPUT_SAME_BLOCK_SHADOW ||
-                (shadowIndicator == INPUT_BLOCK_NO_SHADOW && !(exprArray.get(POS_BLOCK_ID) instanceof TextNode))) {
-            try {
-                return parseNumber(block.get(INPUTS_KEY), pos);
-            } catch (NumberFormatException | ParsingException e) {
-                return new UnspecifiedNumExpr();
-            }
-        } else if (exprArray.get(POS_BLOCK_ID) instanceof TextNode) {
-            return parseTextNode(blocks, exprArray);
-        } else {
-            NumExpr variableInfo = parseVariable(exprArray);
-            if (variableInfo != null) {
-                return variableInfo;
-            }
-        }
-        throw new ParsingException("Could not parse NumExpr.");
-    }
-
-    private static NumExpr parseTextNode(JsonNode blocks, ArrayNode exprArray) throws ParsingException {
-        String identifier = exprArray.get(POS_BLOCK_ID).asText();
-        String opcode = blocks.get(identifier).get(OPCODE_KEY).asText();
-        if (opcode.equals(ProcedureOpcode.argument_reporter_string_number.name()) || opcode.equals(ProcedureOpcode.argument_reporter_boolean.name())) {
-            return parseParameter(blocks, exprArray);
-        }
-        final Optional<NumExpr> optExpr = maybeParseBlockNumExpr(blocks.get(identifier), blocks);
-        if (optExpr.isPresent()) {
-            return optExpr.get();
-        }
-
-        final Optional<StringExpr> stringExpr = StringExprParser
-                .maybeParseBlockStringExpr(blocks.get(identifier), blocks);
-        if (stringExpr.isPresent()) {
-            return new AsNumber(stringExpr.get());
-        }
-
-        final Optional<BoolExpr> boolExpr = BoolExprParser.maybeParseBlockBoolExpr(blocks.get(identifier), blocks);
-        if (boolExpr.isPresent()) {
-            return new AsNumber(boolExpr.get());
-        }
-
-        return new UnspecifiedNumExpr();
-    }
-
-    private static NumExpr parseParameter(JsonNode blocks, ArrayNode exprArray) {
-        JsonNode paramBlock = blocks.get(exprArray.get(POS_BLOCK_ID).asText());
-        String name = paramBlock.get(FIELDS_KEY).get(VALUE_KEY).get(VARIABLE_NAME_POS).asText();
-        return new AsNumber(new Parameter(new StrId(name)));
-    }
-
-    private static NumExpr parseVariable(ArrayNode exprArray) {
-        String idString = exprArray.get(POS_DATA_ARRAY).get(POS_INPUT_ID).asText();
-        if (ProgramParser.symbolTable.getVariables().containsKey(idString)) {
-            VariableInfo variableInfo = ProgramParser.symbolTable.getVariables().get(idString);
-
-            return new AsNumber(
-                    new Qualified(
-                            new StrId(variableInfo.getActor()),
-                            new Variable(new StrId((variableInfo.getVariableName()))
-                            )
-                    ));
-        } else if (ProgramParser.symbolTable.getLists().containsKey(idString)) {
-            ExpressionListInfo variableInfo = ProgramParser.symbolTable.getLists().get(idString);
-            return new AsNumber(
-                    new Qualified(
-                            new StrId(variableInfo.getActor()),
-                            new ScratchList(new StrId((variableInfo.getVariableName())
-                            ))
-                    ));
-        }
-        return null;
-    }
-
-    /**
+     * FIXME this is the old version of parsing with position instead of input name. adjust.
      * Returns the number at the position in the inputs node. For example, if script is the JsonNode holding all blocks
      * and "EU(l=G6)z8NGlJFcx|fS" is a blockID, you can parse the first input to a Number like this:
      * <p>
@@ -206,28 +122,14 @@ public class NumExprParser {
      * <p>
      * Note that this method only works if there is a number literal at the given position of the inputs.
      *
-     * @param inputs The JsonNode holding all inputs of a block.
-     * @param pos    The position of the number to parse in the inputs node.
+     * @param inputs    The JsonNode holding all inputs of a block.
+     * @param inputName The name of the input to parse in the inputs node.
      * @return A Number holding the value of the literal entered.
      */
-    static NumberLiteral parseNumber(JsonNode inputs, int pos) throws ParsingException {
-        String valueString = getDataArrayAtPos(inputs, pos).get(POS_INPUT_VALUE).asText();
-        float value = Float.parseFloat(valueString);
-        return new NumberLiteral(value);
-    }
-
     static NumberLiteral parseNumber(JsonNode inputs, String inputName) throws ParsingException {
         String valueString = ExpressionParser.getDataArrayByName(inputs, inputName).get(POS_INPUT_VALUE).asText();
         float value = Float.parseFloat(valueString);
         return new NumberLiteral(value);
-    }
-
-    static Optional<NumExpr> maybeParseBlockNumExpr(JsonNode exprBlock, JsonNode allBlocks) {
-        try {
-            return Optional.of(parseBlockNumExpr(exprBlock, allBlocks));
-        } catch (ParsingException | IllegalArgumentException e) {
-            return Optional.empty();
-        }
     }
 
     /**
@@ -268,10 +170,10 @@ public class NumExprParser {
             case sensing_loudness:
                 return new Loudness();
             case operator_round:
-                NumExpr num = parseNumExpr(exprBlock, 0, allBlocks);
+                NumExpr num = parseNumExprWithName(exprBlock, NUM_KEY, allBlocks);
                 return new Round(num);
             case operator_length:
-                return new LengthOfString(StringExprParser.parseStringExpr(exprBlock, 0, allBlocks));
+                return new LengthOfString(StringExprParser.parseStringExprWithName(exprBlock, STRING_KEY, allBlocks));
             case data_lengthoflist:
                 String identifier =
                         exprBlock.get(FIELDS_KEY).get(LIST_KEY).get(LIST_IDENTIFIER_POS).asText();
@@ -291,20 +193,20 @@ public class NumExprParser {
                 Position pos = PositionParser.parse(exprBlock, allBlocks);
                 return new DistanceTo(pos);
             case operator_add:
-                return buildNumExprWithTwoNumExprInputs(Add.class, exprBlock, allBlocks);
+                return buildNumExprWithTwoNumExprInputs(Add.class, exprBlock, NUM1_KEY, NUM2_KEY, allBlocks);
             case operator_subtract:
-                return buildNumExprWithTwoNumExprInputs(Minus.class, exprBlock, allBlocks);
+                return buildNumExprWithTwoNumExprInputs(Minus.class, exprBlock, NUM1_KEY, NUM2_KEY, allBlocks);
             case operator_multiply:
-                return buildNumExprWithTwoNumExprInputs(Mult.class, exprBlock, allBlocks);
+                return buildNumExprWithTwoNumExprInputs(Mult.class, exprBlock, NUM1_KEY, NUM2_KEY, allBlocks);
             case operator_divide:
-                return buildNumExprWithTwoNumExprInputs(Div.class, exprBlock, allBlocks);
+                return buildNumExprWithTwoNumExprInputs(Div.class, exprBlock, NUM1_KEY, NUM2_KEY, allBlocks);
             case operator_mod:
-                return buildNumExprWithTwoNumExprInputs(Mod.class, exprBlock, allBlocks);
+                return buildNumExprWithTwoNumExprInputs(Mod.class, exprBlock, NUM1_KEY, NUM2_KEY, allBlocks);
             case operator_random:
-                return buildNumExprWithTwoNumExprInputs(PickRandom.class, exprBlock, allBlocks);
+                return buildNumExprWithTwoNumExprInputs(PickRandom.class, exprBlock, FROM_KEY, TO_KEY, allBlocks);
             case operator_mathop:
                 NumFunct funct = parseNumFunct(exprBlock.get(FIELDS_KEY));
-                NumExpr numExpr = parseNumExpr(exprBlock, 0, allBlocks);
+                NumExpr numExpr = parseNumExprWithName(exprBlock, NUM_KEY, allBlocks);
                 return new NumFunctOf(funct, numExpr);
             case data_itemnumoflist:
                 Expression item = parseExprWithName(exprBlock, ITEM_KEY, allBlocks);
@@ -336,9 +238,11 @@ public class NumExprParser {
      */
     private static <T extends NumExpr> NumExpr buildNumExprWithTwoNumExprInputs(Class<T> clazz,
                                                                                 JsonNode exprBlock,
+                                                                                String firstInputName,
+                                                                                String secondInputName,
                                                                                 JsonNode blocks) throws ParsingException {
-        NumExpr first = parseNumExpr(exprBlock, 0, blocks);
-        NumExpr second = parseNumExpr(exprBlock, 1, blocks);
+        NumExpr first = parseNumExprWithName(exprBlock, firstInputName, blocks);
+        NumExpr second = parseNumExprWithName(exprBlock, secondInputName, blocks);
         try {
             return clazz.getConstructor(NumExpr.class, NumExpr.class).newInstance(first, second);
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {

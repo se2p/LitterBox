@@ -54,7 +54,7 @@ public class TouchableParser {
                 return new AsTouchable(expr);
             }
         } else if (BoolExprOpcode.sensing_touchingcolor.name().equals(opcodeString)) {
-            return ColorParser.parseColor(current, 0, allBlocks);
+            return ColorParser.parseColor(current, COLOR_KEY, allBlocks);
         } else {
             throw new RuntimeException("Not implemented yet");
         }

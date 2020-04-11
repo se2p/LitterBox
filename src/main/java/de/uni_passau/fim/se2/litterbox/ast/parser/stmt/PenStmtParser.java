@@ -61,19 +61,19 @@ public class PenStmtParser {
             case pen_stamp:
                 return new PenStampStmt();
             case pen_setPenColorToColor:
-                return new SetPenColorToColorStmt(ColorParser.parseColor(current, 0, blocks));
+                return new SetPenColorToColorStmt(ColorParser.parseColor(current, COLOR_KEY, blocks));
             case pen_changePenColorParamBy:
-                NumExpr numExpr = NumExprParser.parseNumExpr(current, VALUE_KEY, blocks);
+                NumExpr numExpr = NumExprParser.parseNumExprWithName(current, VALUE_KEY, blocks);
                 StringExpr param = parseParam(current, blocks);
                 return new ChangePenColorParamBy(numExpr, param);
             case pen_setPenColorParamTo:
-                numExpr = NumExprParser.parseNumExpr(current, VALUE_KEY, blocks);
+                numExpr = NumExprParser.parseNumExprWithName(current, VALUE_KEY, blocks);
                 param = parseParam(current, blocks);
                 return new SetPenColorParamTo(numExpr, param);
             case pen_setPenSizeTo:
                 return parseSetPenSizeTo(current, blocks);
             case pen_changePenSizeBy:
-                return new ChangePenSizeBy(NumExprParser.parseNumExpr(current, "SIZE",
+                return new ChangePenSizeBy(NumExprParser.parseNumExprWithName(current, SIZE_KEY_CAP,
                         blocks));
             default:
                 throw new RuntimeException("Not implemented yet for opcode " + opcode);
@@ -95,10 +95,10 @@ public class PenStmtParser {
                 String attribute = colorParamNode.get(FIELD_VALUE).asText();
                 expr = new StringLiteral(attribute);
             } else {
-                expr = StringExprParser.parseStringExpr(current, COLOR_PARAM_BIG_KEY, blocks);
+                expr = StringExprParser.parseStringExprWithName(current, COLOR_PARAM_BIG_KEY, blocks);
             }
         } else {
-            expr = StringExprParser.parseStringExpr(current, 0, blocks);
+            expr = StringExprParser.parseStringExprWithName(current, COLOR_PARAM_BIG_KEY, blocks);
         }
 
         return expr;
@@ -108,9 +108,8 @@ public class PenStmtParser {
         return exprArray.get(Constants.POS_INPUT_SHADOW).asInt();
     }
 
-
     private static PenStmt parseSetPenSizeTo(JsonNode current, JsonNode allBlocks) throws ParsingException {
-        return new SetPenSizeTo(NumExprParser.parseNumExpr(current, "SIZE",
+        return new SetPenSizeTo(NumExprParser.parseNumExprWithName(current, "SIZE",
                 allBlocks));
     }
 }

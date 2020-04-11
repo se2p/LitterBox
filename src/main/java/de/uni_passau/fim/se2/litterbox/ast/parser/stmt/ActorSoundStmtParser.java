@@ -74,11 +74,11 @@ public class ActorSoundStmtParser {
             case sound_seteffectto:
                 return parseSetSoundEffect(current, allBlocks);
             case sound_changevolumeby:
-                NumExpr numExpr = NumExprParser.parseNumExpr(current, "VOLUME",
+                NumExpr numExpr = NumExprParser.parseNumExprWithName(current, VOLUME_KEY_CAPS,
                         allBlocks);
                 return new ChangeVolumeBy(numExpr);
             case sound_changeeffectby:
-                numExpr = NumExprParser.parseNumExpr(current, VALUE_KEY, allBlocks);
+                numExpr = NumExprParser.parseNumExprWithName(current, VALUE_KEY, allBlocks);
                 String effectName = current.get(FIELDS_KEY).get("EFFECT").get(0).asText();
                 return new ChangeSoundEffectBy(SoundEffect.fromString(effectName), numExpr);
 
@@ -108,13 +108,13 @@ public class ActorSoundStmtParser {
     }
 
     private static ActorSoundStmt parseSetVolumeTo(JsonNode current, JsonNode allBlocks) throws ParsingException {
-        return new SetVolumeTo(NumExprParser.parseNumExpr(current, "VOLUME", allBlocks));
+        return new SetVolumeTo(NumExprParser.parseNumExprWithName(current, VOLUME_KEY_CAPS, allBlocks));
     }
 
     private static ActorSoundStmt parseSetSoundEffect(JsonNode current, JsonNode allBlocks) throws ParsingException {
         String effect = current.get(FIELDS_KEY).get(EFFECT_KEY).get(0).asText();
         Preconditions.checkArgument(SoundEffect.contains(effect));
-        return new SetSoundEffectTo(SoundEffect.fromString(effect), NumExprParser.parseNumExpr(current, VALUE_KEY,
+        return new SetSoundEffectTo(SoundEffect.fromString(effect), NumExprParser.parseNumExprWithName(current, VALUE_KEY,
                 allBlocks));
     }
 }

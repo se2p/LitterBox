@@ -24,9 +24,9 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Key;
 import de.uni_passau.fim.se2.litterbox.ast.model.Message;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
-import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
+import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.EventOpcode;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
@@ -72,7 +72,7 @@ public class EventParser {
             String variableValue = current.get(FIELDS_KEY).get(VARIABLE_MENU).get(0).asText();
             LocalIdentifier var = new StrId(variableValue);
 
-            NumExpr fieldValue = NumExprParser.parseNumExpr(current, 0, allBlocks);
+            NumExpr fieldValue = NumExprParser.parseNumExprWithName(current, VALUE_KEY, allBlocks);
 
             return new VariableAboveValue(var, fieldValue);
         } else if (opcode.equals(event_whenbackdropswitchesto)) {

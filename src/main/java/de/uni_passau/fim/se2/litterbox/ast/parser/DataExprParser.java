@@ -52,9 +52,14 @@ public class DataExprParser {
         ArrayNode exprArray = ExpressionParser.getExprArrayByName(containingBlock.get(INPUTS_KEY), inputName);
         if (exprArray.get(POS_BLOCK_ID) instanceof TextNode) {
             String identifier = exprArray.get(POS_BLOCK_ID).asText();
-            String opcode = allBlocks.get(identifier).get(OPCODE_KEY).asText();
-            return opcode.equals(argument_reporter_string_number.name())
-                    || opcode.equals(argument_reporter_boolean.name());
+            JsonNode exprBlock = allBlocks.get(identifier);
+            if (exprBlock == null) {
+                return true; // it is a DataExpr
+            } else {
+                String opcode = exprBlock.get(OPCODE_KEY).asText();
+                return opcode.equals(argument_reporter_string_number.name())
+                        || opcode.equals(argument_reporter_boolean.name());
+            }
         } else if (exprArray.get(POS_DATA_ARRAY) instanceof ArrayNode) {
             String idString = exprArray.get(POS_DATA_ARRAY).get(POS_INPUT_ID).asText();
             return symbolTable.getVariables().containsKey(idString)

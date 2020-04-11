@@ -64,11 +64,11 @@ public class ExpressionParser {
             throws ParsingException {
         Expression expr = null;
         if (parsableAsNumExpr(containingBlock, inputName, allBlocks)) {
-            expr = NumExprParser.parseNumExpr(containingBlock, inputName, allBlocks);
+            expr = NumExprParser.parseNumExprWithName(containingBlock, inputName, allBlocks);
         } else if (parsableAsStringExpr(containingBlock, inputName, allBlocks)) {
-            expr = StringExprParser.parseStringExpr(containingBlock, inputName, allBlocks);
+            expr = StringExprParser.parseStringExprWithName(containingBlock, inputName, allBlocks);
         } else if (parsableAsBoolExpr(containingBlock, inputName, allBlocks)) {
-            expr = BoolExprParser.parseBoolExpr(containingBlock, inputName, allBlocks);
+            expr = BoolExprParser.parseBoolExprWithName(containingBlock, inputName, allBlocks);
         } else if (parsableAsDataExpr(containingBlock, inputName, allBlocks)) {
             expr = DataExprParser.parseDataExpr(containingBlock, inputName, allBlocks);
         } else if (parsableAsListExpr(containingBlock, inputName)) {

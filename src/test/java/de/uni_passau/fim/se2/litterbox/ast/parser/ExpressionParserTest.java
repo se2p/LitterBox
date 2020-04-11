@@ -20,20 +20,13 @@ package de.uni_passau.fim.se2.litterbox.ast.parser;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.Add;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.Div;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.Minus;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.Mod;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.MouseX;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.Mult;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumFunct;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.PickRandom;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.utils.JsonParser;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import static de.uni_passau.fim.se2.litterbox.ast.Constants.STEPS_KEY;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -44,7 +37,7 @@ public class ExpressionParserTest {
     private static JsonNode literalBlock;
     private static JsonNode variableBlock;
     private static JsonNode listBlock;
-    private static JsonNode blockBlock;
+    private static JsonNode containingBlock;
 
     private static JsonNode twoNumExprSlotsNumExprs;
     private static JsonNode addBlock;
@@ -60,7 +53,7 @@ public class ExpressionParserTest {
         literalBlock = allExprTypesScript.get("QJ:02/{CIWEai#dfuC(k");
         variableBlock = allExprTypesScript.get("Q0r@4R,=K;bq+x;8?O)j");
         listBlock = allExprTypesScript.get("3k1#g23nWs5dk)w3($|+");
-        blockBlock = allExprTypesScript.get("K0-dZ/kW=hWWb/GpMt8:");
+        containingBlock = allExprTypesScript.get("K0-dZ/kW=hWWb/GpMt8:");
 
         addBlock = twoNumExprSlotsNumExprs.get("$`zwlVu=MrX}[7_|OkP0");
         minusBlock = twoNumExprSlotsNumExprs.get("kNxFx|sm51cAUYf?x(cR");
@@ -71,25 +64,25 @@ public class ExpressionParserTest {
     @Test
     public void testParseNumber() throws ParsingException {
         JsonNode inputs = moveStepsScript.get("EU(l=G6)z8NGlJFcx|fS").get("inputs");
-        NumberLiteral result = NumExprParser.parseNumber(inputs, 0);
+        NumberLiteral result = NumExprParser.parseNumber(inputs, STEPS_KEY);
         assertEquals("10.0", String.valueOf(result.getValue()));
     }
 
     @Test
     public void testParseNumExprLiteral() throws ParsingException {
-        NumExpr numExpr = NumExprParser.parseNumExpr(literalBlock, 0, allExprTypesScript);
+        NumExpr numExpr = NumExprParser.parseNumExprWithName(literalBlock, STEPS_KEY, allExprTypesScript);
         assertTrue(numExpr instanceof NumberLiteral);
     }
 
     @Test
     public void testParseNumExprBlock() throws ParsingException {
-        NumExpr numExpr = NumExprParser.parseNumExpr(blockBlock, 0, allExprTypesScript);
+        NumExpr numExpr = NumExprParser.parseNumExprWithName(containingBlock, STEPS_KEY, allExprTypesScript);
         assertTrue(numExpr instanceof MouseX);
     }
 
     @Test
     public void testAdd() throws ParsingException {
-        NumExpr add = NumExprParser.parseNumExpr(addBlock, 0, twoNumExprSlotsNumExprs);
+        NumExpr add = NumExprParser.parseNumExprWithName(addBlock, STEPS_KEY, twoNumExprSlotsNumExprs);
         assertTrue(add instanceof Add);
         assertEquals("1.0", String.valueOf(((NumberLiteral) ((Add) add).getOperand1()).getValue()));
         assertEquals("2.0", String.valueOf(((NumberLiteral) ((Add) add).getOperand2()).getValue()));
@@ -97,7 +90,7 @@ public class ExpressionParserTest {
 
     @Test
     public void testMinus() throws ParsingException {
-        NumExpr minus = NumExprParser.parseNumExpr(minusBlock, 0, twoNumExprSlotsNumExprs);
+        NumExpr minus = NumExprParser.parseNumExprWithName(minusBlock, STEPS_KEY, twoNumExprSlotsNumExprs);
         assertTrue(minus instanceof Minus);
         assertEquals("1.0", String.valueOf(((NumberLiteral) ((Minus) minus).getOperand1()).getValue()));
         assertEquals("2.0", String.valueOf(((NumberLiteral) ((Minus) minus).getOperand2()).getValue()));
@@ -105,7 +98,7 @@ public class ExpressionParserTest {
 
     @Test
     public void testMult() throws ParsingException {
-        NumExpr mult = NumExprParser.parseNumExpr(multBlock, 0, twoNumExprSlotsNumExprs);
+        NumExpr mult = NumExprParser.parseNumExprWithName(multBlock, STEPS_KEY, twoNumExprSlotsNumExprs);
         assertTrue(mult instanceof Mult);
         assertEquals("1.0", String.valueOf(((NumberLiteral) ((Mult) mult).getOperand1()).getValue()));
         assertEquals("2.0", String.valueOf(((NumberLiteral) ((Mult) mult).getOperand2()).getValue()));
@@ -113,7 +106,7 @@ public class ExpressionParserTest {
 
     @Test
     public void testDiv() throws ParsingException {
-        NumExpr div = NumExprParser.parseNumExpr(divBlock, 0, twoNumExprSlotsNumExprs);
+        NumExpr div = NumExprParser.parseNumExprWithName(divBlock, STEPS_KEY, twoNumExprSlotsNumExprs);
         assertTrue(div instanceof Div);
         PickRandom pickRandom = (PickRandom) ((Div) div).getOperand1();
         assertEquals("1.0", String.valueOf(((NumberLiteral) (pickRandom.getFrom())).getValue()));

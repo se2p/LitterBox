@@ -24,11 +24,11 @@ import de.uni_passau.fim.se2.litterbox.ast.Constants;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.FromExpression;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.MousePos;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.Position;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.RandomPos;
-import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.NumExprOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.SpriteMotionStmtOpcode;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
@@ -101,7 +101,7 @@ public class PositionParser {
                 posName = "DISTANCETOMENU";
             }
 
-            final StringExpr stringExpr = StringExprParser.parseStringExpr(current, posName, allBlocks);
+            final StringExpr stringExpr = StringExprParser.parseStringExprWithName(current, posName, allBlocks);
             return new FromExpression(stringExpr);
         }
     }

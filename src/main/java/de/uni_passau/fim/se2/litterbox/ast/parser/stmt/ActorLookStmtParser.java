@@ -23,11 +23,11 @@ import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.ElementChoice;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Identifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.UnspecifiedId;
-import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Identifier;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.ScratchList;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.ActorLookStmtOpcode;
@@ -65,7 +65,7 @@ public class ActorLookStmtParser {
 
         switch (opcode) {
             case sensing_askandwait:
-                StringExpr question = StringExprParser.parseStringExpr(current, 0, allBlocks);
+                StringExpr question = StringExprParser.parseStringExprWithName(current, QUESTION_KEY, allBlocks);
                 return new AskAndWait(question);
 
             case looks_nextbackdrop:
@@ -89,7 +89,7 @@ public class ActorLookStmtParser {
                 } else {
                     variableInfo = ProgramParser.symbolTable.getVariables().get(variableID);
                     actorName = variableInfo.getActor();
-                    var = new Qualified(new StrId(actorName), new Variable(new StrId( variableName)));
+                    var = new Qualified(new StrId(actorName), new Variable(new StrId(variableName)));
                 }
                 return new HideVariable(var);
 
@@ -102,7 +102,7 @@ public class ActorLookStmtParser {
                     variableInfo = ProgramParser.symbolTable.getVariables().get(variableID);
                     actorName = variableInfo.getActor();
                     var = new Qualified(new StrId(actorName),
-                            new Variable(new StrId( variableName)));
+                            new Variable(new StrId(variableName)));
                 }
                 return new ShowVariable(var);
 
@@ -126,7 +126,7 @@ public class ActorLookStmtParser {
                 } else {
                     expressionListInfo = ProgramParser.symbolTable.getLists().get(variableID);
                     actorName = expressionListInfo.getActor();
-                    var = new Qualified(new StrId(actorName), new ScratchList(new StrId( variableName)));
+                    var = new Qualified(new StrId(actorName), new ScratchList(new StrId(variableName)));
                 }
                 return new HideList(var);
 
@@ -134,7 +134,7 @@ public class ActorLookStmtParser {
                 return parseSetLookEffect(current, allBlocks);
 
             case looks_changeeffectby:
-                NumExpr numExpr = NumExprParser.parseNumExpr(current, "CHANGE", allBlocks);
+                NumExpr numExpr = NumExprParser.parseNumExprWithName(current, "CHANGE", allBlocks);
                 String effectName = current.get(FIELDS_KEY).get("EFFECT").get(0).asText();
                 return new ChangeGraphicEffectBy(GraphicEffect.fromString(effectName), numExpr);
             default:
@@ -145,7 +145,7 @@ public class ActorLookStmtParser {
     private static ActorLookStmt parseSetLookEffect(JsonNode current, JsonNode allBlocks) throws ParsingException {
         String effect = current.get(FIELDS_KEY).get(EFFECT_KEY).get(0).asText();
         Preconditions.checkArgument(GraphicEffect.contains(effect));
-        return new SetGraphicEffectTo(GraphicEffect.fromString(effect), NumExprParser.parseNumExpr(current, VALUE_KEY,
+        return new SetGraphicEffectTo(GraphicEffect.fromString(effect), NumExprParser.parseNumExprWithName(current, VALUE_KEY,
                 allBlocks));
     }
 }
