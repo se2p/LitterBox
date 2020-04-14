@@ -69,7 +69,7 @@ public class NumExprParser {
                 String valueString = ExpressionParser.getDataArrayByName(inputs, inputKey).get(POS_INPUT_VALUE).asText();
                 float value = Float.parseFloat(valueString);
                 parsableAsNumberLiteral = true;
-            } catch (NumberFormatException e) {
+            } catch (NumberFormatException | ParsingException e) {
                 // not parsable as NumberLiteral
             }
         }

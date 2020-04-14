@@ -24,6 +24,7 @@ import com.fasterxml.jackson.databind.node.TextNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.UnspecifiedId;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Parameter;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.ScratchList;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
@@ -62,8 +63,11 @@ public class DataExprParser {
             }
         } else if (exprArray.get(POS_DATA_ARRAY) instanceof ArrayNode) {
             String idString = exprArray.get(POS_DATA_ARRAY).get(POS_INPUT_ID).asText();
-            return symbolTable.getVariables().containsKey(idString)
-                    || symbolTable.getLists().containsKey(idString);
+            //return symbolTable.getVariables().containsKey(idString)
+            //        || symbolTable.getLists().containsKey(idString);
+            return true; // the above is the "strict" truth, but some JSON files
+            // contain references to IDs which are not present in the lookup tables
+            // and we want to keep these without exception
         }
         return false;
     }
@@ -91,10 +95,13 @@ public class DataExprParser {
         } else if (exprArray.get(POS_DATA_ARRAY) instanceof ArrayNode) {
             String idString = exprArray.get(POS_DATA_ARRAY).get(POS_INPUT_ID).asText();
             boolean isVariable = symbolTable.getVariables().containsKey(idString);
+            boolean isList = symbolTable.getLists().containsKey(idString);
             if (isVariable) {
                 return parseVariable(exprArray);
-            } else {
+            } else if (isList) {
                 return parseScratchList(exprArray);
+            } else {
+                return new UnspecifiedId();
             }
         }
         throw new IllegalArgumentException("The block does not contain a DataExpr.");

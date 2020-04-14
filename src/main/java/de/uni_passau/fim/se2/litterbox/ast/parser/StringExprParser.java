@@ -65,7 +65,12 @@ public class StringExprParser {
         boolean parsableAsStringLiteral = false;
         if (shadowIndicator == INPUT_SAME_BLOCK_SHADOW ||
                 (shadowIndicator == INPUT_BLOCK_NO_SHADOW && !(exprArray.get(POS_BLOCK_ID) instanceof TextNode))) {
-            parsableAsStringLiteral = true;
+            try {
+                ExpressionParser.getDataArrayByName(inputs, inputKey).get(POS_INPUT_VALUE);
+                parsableAsStringLiteral = true;
+            } catch (ParsingException e) {
+                parsableAsStringLiteral = false;
+            }
         }
 
         // or parsable as StringExpr

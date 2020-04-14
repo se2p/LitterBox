@@ -60,14 +60,17 @@ public class BoolExprParser {
     public static boolean parsableAsBoolExpr(JsonNode containingBlock, String inputKey, JsonNode allBlocks) {
         ArrayNode exprArray = ExpressionParser.getExprArray(containingBlock.get(INPUTS_KEY), inputKey);
         boolean hasBoolExprOpcode = false;
-        if (exprArray.get(POS_BLOCK_ID) instanceof TextNode) {
-            String identifier = exprArray.get(POS_BLOCK_ID).asText();
+        JsonNode input = exprArray.get(POS_BLOCK_ID);
+        if (input instanceof TextNode) {
+            String identifier = input.asText();
             JsonNode exprBlock = allBlocks.get(identifier);
             if (exprBlock == null) {
                 return false; // it is a DataExpr
             }
             String opcodeString = exprBlock.get(OPCODE_KEY).asText();
             hasBoolExprOpcode = BoolExprOpcode.contains(opcodeString);
+        } else if (input instanceof NullNode) {
+            return true;
         }
         return hasBoolExprOpcode;
     }
@@ -86,7 +89,7 @@ public class BoolExprParser {
     public static BoolExpr parseBoolExpr(JsonNode containingBlock, String inputKey, JsonNode allBlocks) throws ParsingException {
         if (parsableAsBoolExpr(containingBlock, inputKey, allBlocks)) {
             ArrayNode exprArray = ExpressionParser.getExprArray(containingBlock.get(INPUTS_KEY), inputKey);
-            if (exprArray == null) {
+            if (exprArray == null || exprArray.get(POS_INPUT_VALUE) instanceof NullNode) {
                 return new UnspecifiedBoolExpr();
             }
             int shadowIndicator = ExpressionParser.getShadowIndicator(exprArray);
