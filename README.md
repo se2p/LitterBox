@@ -8,14 +8,14 @@ This project is developed at the Chair of Software Engineering II in Passau, Ger
 
 List of contributors:
 
-Christoph Frädrich
-Gordon Fraser
-Ute Heuer
-Nina Körber
-Stephan Lukasczyk
-Florian Obermüller
-Andreas Stahlbauer
-Florian Sulzmeier
+Christoph Frädrich  
+Gordon Fraser  
+Ute Heuer  
+Nina Körber  
+Stephan Lukasczyk  
+Florian Obermüller  
+Andreas Stahlbauer  
+Florian Sulzmeier  
 
 LitterBox was created in the project FR 2955/3-1 funded by the "Deutsche Forschungsgemeinschaft".
 
