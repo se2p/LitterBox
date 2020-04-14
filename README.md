@@ -2,9 +2,22 @@
 
 Static code analysis tool for detecting recurring bug patterns in Scratch projects. 
 
-## Authors
+## Contributors 
 
-See [Contributors](https://github.com/se2p/LitterBox/graphs/contributors)
+This project is developed at the Chair of Software Engineering II in Passau, Germany.
+
+List of contributors:
+
+Christoph Frädrich
+Gordon Fraser
+Ute Heuer
+Nina Körber
+Stephan Lukasczyk
+Florian Obermüller
+Andreas Stahlbauer
+Florian Sulzmeier
+
+LitterBox was created in the project FR 2955/3-1 funded by the "Deutsche Forschungsgemeinschaft".
 
 ## Usage
 
