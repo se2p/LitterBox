@@ -49,13 +49,13 @@ public class WeightedMethodCountTest {
     public void testEmptyProgram() {
         WeightedMethodCount parameterName = new WeightedMethodCount();
         IssueReport report = parameterName.check(empty);
-        Assertions.assertEquals(1, report.getCount());
+        Assertions.assertEquals(0, report.getCount());
     }
 
     @Test
     public void testMethodCount() {
         WeightedMethodCount parameterName = new WeightedMethodCount();
         IssueReport report = parameterName.check(unusedProc);
-        Assertions.assertEquals(5, report.getCount());
+        Assertions.assertEquals(6, report.getCount());
     }
 }
