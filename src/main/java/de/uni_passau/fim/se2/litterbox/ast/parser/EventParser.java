@@ -72,7 +72,7 @@ public class EventParser {
             String variableValue = current.get(FIELDS_KEY).get(VARIABLE_MENU).get(0).asText();
             LocalIdentifier var = new StrId(variableValue);
 
-            NumExpr fieldValue = NumExprParser.parseNumExprWithName(current, VALUE_KEY, allBlocks);
+            NumExpr fieldValue = NumExprParser.parseNumExpr(current, VALUE_KEY, allBlocks);
 
             return new VariableAboveValue(var, fieldValue);
         } else if (opcode.equals(event_whenbackdropswitchesto)) {

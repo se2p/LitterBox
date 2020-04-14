@@ -95,7 +95,7 @@ public class CommonStmtParser {
     }
 
     private static CommonStmt parseChangeVariableBy(JsonNode current, JsonNode allBlocks) throws ParsingException {
-        Expression numExpr = NumExprParser.parseNumExprWithName(current, VALUE_KEY, allBlocks);
+        Expression numExpr = NumExprParser.parseNumExpr(current, VALUE_KEY, allBlocks);
         Identifier var;
         String variableName = current.get(FIELDS_KEY).get(VARIABLE_KEY).get(VARIABLE_NAME_POS).asText();
         String variableID = current.get(FIELDS_KEY).get(VARIABLE_KEY).get(VARIABLE_IDENTIFIER_POS).asText();
@@ -114,7 +114,7 @@ public class CommonStmtParser {
         Preconditions.checkArgument(current.get(INPUTS_KEY).get(BROADCAST_INPUT_KEY).isArray());
 
         // The inputs contains array itself,
-        StringExpr messageName = StringExprParser.parseStringExprWithName(current, BROADCAST_INPUT_KEY, allBlocks);
+        StringExpr messageName = StringExprParser.parseStringExpr(current, BROADCAST_INPUT_KEY, allBlocks);
 
         Message message = new Message(messageName);
         return new Broadcast(message);
@@ -124,7 +124,7 @@ public class CommonStmtParser {
         Preconditions.checkArgument(current.get(INPUTS_KEY).get(BROADCAST_INPUT_KEY).isArray());
 
         // The inputs contains array itself,
-        StringExpr messageName = StringExprParser.parseStringExprWithName(current, BROADCAST_INPUT_KEY, allBlocks);
+        StringExpr messageName = StringExprParser.parseStringExpr(current, BROADCAST_INPUT_KEY, allBlocks);
 
         Message message = new Message(messageName);
         BroadcastAndWait broadcast = new BroadcastAndWait(message);
@@ -143,7 +143,7 @@ public class CommonStmtParser {
             LocalIdentifier ident = new StrId(cloneValue);
             return new CreateCloneOf(new AsString(ident));
         } else {
-            final StringExpr stringExpr = StringExprParser.parseStringExprWithName(current, CLONE_OPTION, allBlocks);
+            final StringExpr stringExpr = StringExprParser.parseStringExpr(current, CLONE_OPTION, allBlocks);
             return new CreateCloneOf(stringExpr);
         }
     }
@@ -151,7 +151,7 @@ public class CommonStmtParser {
     private static WaitUntil parseWaitUntil(JsonNode current, JsonNode allBlocks) throws ParsingException {
         JsonNode inputs = current.get(INPUTS_KEY);
         if (inputs.has(CONDITION_KEY)) {
-            BoolExpr boolExpr = BoolExprParser.parseBoolExprWithName(current, CONDITION_KEY, allBlocks);
+            BoolExpr boolExpr = BoolExprParser.parseBoolExpr(current, CONDITION_KEY, allBlocks);
             return new WaitUntil(boolExpr);
         } else {
             return new WaitUntil(new UnspecifiedBoolExpr());
@@ -159,7 +159,7 @@ public class CommonStmtParser {
     }
 
     private static WaitSeconds parseWaitSeconds(JsonNode current, JsonNode allBlocks) throws ParsingException {
-        NumExpr numExpr = NumExprParser.parseNumExprWithName(current, DURATION_KEY, allBlocks);
+        NumExpr numExpr = NumExprParser.parseNumExpr(current, DURATION_KEY, allBlocks);
         return new WaitSeconds(numExpr);
     }
 

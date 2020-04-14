@@ -33,10 +33,6 @@ import de.uni_passau.fim.se2.litterbox.ast.opcodes.StringExprOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ExpressionListInfo;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.VariableInfo;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
 import static de.uni_passau.fim.se2.litterbox.ast.Constants.OPCODE_KEY;
 import static de.uni_passau.fim.se2.litterbox.ast.Constants.POS_DATA_ARRAY;
 import static de.uni_passau.fim.se2.litterbox.ast.parser.BoolExprParser.parsableAsBoolExpr;
@@ -49,69 +45,35 @@ public class ExpressionParser {
 
     /**
      * Parses a expression which is input to another containingBlock. The parsed expression
-     * may not directly correspond to a reporter containingBlock but can also be a literal,
+     * may not directly correspond to a reporter block but can also be a literal,
      * for example.
      *
      * @param containingBlock The block inputs of which contain the expression to be parsed.
-     * @param inputName       The name identifying the expression input.
+     * @param inputKey        The key identifying the expression input.
      * @param allBlocks       All blocks of the actor definition currently parsed.
-     * @return The expression identified by the inputName.
+     * @return The expression identified by the inputKey.
      * @throws ParsingException If parsing fails.
      */
-    public static Expression parseExprWithName(JsonNode containingBlock,
-                                               String inputName,
-                                               JsonNode allBlocks)
+    public static Expression parseExpr(JsonNode containingBlock,
+                                       String inputKey,
+                                       JsonNode allBlocks)
             throws ParsingException {
         Expression expr = null;
-        if (parsableAsNumExpr(containingBlock, inputName, allBlocks)) {
-            expr = NumExprParser.parseNumExprWithName(containingBlock, inputName, allBlocks);
-        } else if (parsableAsStringExpr(containingBlock, inputName, allBlocks)) {
-            expr = StringExprParser.parseStringExprWithName(containingBlock, inputName, allBlocks);
-        } else if (parsableAsBoolExpr(containingBlock, inputName, allBlocks)) {
-            expr = BoolExprParser.parseBoolExprWithName(containingBlock, inputName, allBlocks);
-        } else if (parsableAsDataExpr(containingBlock, inputName, allBlocks)) {
-            expr = DataExprParser.parseDataExpr(containingBlock, inputName, allBlocks);
-        } else if (parsableAsListExpr(containingBlock, inputName)) {
-            expr = ListExprParser.parseListExpr(containingBlock, inputName, allBlocks);
+        if (parsableAsNumExpr(containingBlock, inputKey, allBlocks)) {
+            expr = NumExprParser.parseNumExpr(containingBlock, inputKey, allBlocks);
+        } else if (parsableAsStringExpr(containingBlock, inputKey, allBlocks)) {
+            expr = StringExprParser.parseStringExpr(containingBlock, inputKey, allBlocks);
+        } else if (parsableAsBoolExpr(containingBlock, inputKey, allBlocks)) {
+            expr = BoolExprParser.parseBoolExpr(containingBlock, inputKey, allBlocks);
+        } else if (parsableAsDataExpr(containingBlock, inputKey, allBlocks)) {
+            expr = DataExprParser.parseDataExpr(containingBlock, inputKey, allBlocks);
+        } else if (parsableAsListExpr(containingBlock, inputKey)) {
+            expr = ListExprParser.parseListExpr(containingBlock, inputKey);
         }
         if (expr != null) {
             return expr;
         } else {
             throw new ParsingException("Could not parse expr.");
-        }
-    }
-
-    static ArrayNode getExprArrayAtPos(JsonNode inputs, int pos) {
-        List<Map.Entry> slotEntries = new LinkedList<>();
-        inputs.fields().forEachRemaining(slotEntries::add);
-        Map.Entry slotEntry = slotEntries.get(pos);
-        ArrayNode exprArray = (ArrayNode) slotEntry.getValue();
-        return exprArray;
-    }
-
-    static ArrayNode getExprArrayByName(JsonNode inputs, String inputName) {
-        return (ArrayNode) inputs.get(inputName);
-    }
-
-    static int getShadowIndicator(ArrayNode exprArray) {
-        return exprArray.get(Constants.POS_INPUT_SHADOW).asInt();
-    }
-
-    static ArrayNode getDataArrayAtPos(JsonNode inputs, int pos) throws ParsingException {
-        JsonNode jsonNode = getExprArrayAtPos(inputs, pos).get(POS_DATA_ARRAY);
-        if (!(jsonNode instanceof NullNode)) {
-            return (ArrayNode) jsonNode;
-        } else {
-            throw new ParsingException();
-        }
-    }
-
-    static ArrayNode getDataArrayByName(JsonNode inputs, String inputName) throws ParsingException {
-        final JsonNode jsonNode = getExprArrayByName(inputs, inputName).get(POS_DATA_ARRAY);
-        if (!(jsonNode instanceof NullNode)) {
-            return (ArrayNode) jsonNode;
-        } else {
-            throw new ParsingException("Cannot parse null node as ArrayNode");
         }
     }
 
@@ -151,5 +113,22 @@ public class ExpressionParser {
             }
         }
         throw new ParsingException("Calling parseExprBlock here went wrong");
+    }
+
+    static int getShadowIndicator(ArrayNode exprArray) {
+        return exprArray.get(Constants.POS_INPUT_SHADOW).asInt();
+    }
+
+    static ArrayNode getDataArrayByName(JsonNode inputs, String inputKey) throws ParsingException {
+        final JsonNode dataArray = getExprArray(inputs, inputKey).get(POS_DATA_ARRAY);
+        if (!(dataArray instanceof NullNode)) {
+            return (ArrayNode) dataArray;
+        } else {
+            throw new ParsingException("Cannot parse null node as ArrayNode");
+        }
+    }
+
+    static ArrayNode getExprArray(JsonNode inputs, String inputKey) {
+        return (ArrayNode) inputs.get(inputKey);
     }
 }

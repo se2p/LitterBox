@@ -57,7 +57,7 @@ public class KeyParser {
                 block = allBlocks.get(menuBlockID);
             } else {
                 // If there is a variable or expression we evaluate it and use it as key;
-                final NumExpr numExpr = NumExprParser.parseNumExprWithName(current, KEY_OPTION, allBlocks);
+                final NumExpr numExpr = NumExprParser.parseNumExpr(current, KEY_OPTION, allBlocks);
                 return new Key(numExpr);
             }
         } else {

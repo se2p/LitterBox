@@ -41,7 +41,7 @@ import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 import static de.uni_passau.fim.se2.litterbox.ast.opcodes.DependentBlockOpcodes.sensing_of_object_menu;
-import static de.uni_passau.fim.se2.litterbox.ast.parser.ExpressionParser.getExprArrayByName;
+import static de.uni_passau.fim.se2.litterbox.ast.parser.ExpressionParser.getExprArray;
 import static de.uni_passau.fim.se2.litterbox.ast.parser.ExpressionParser.getShadowIndicator;
 
 public class StringExprParser {
@@ -52,14 +52,14 @@ public class StringExprParser {
      *
      * @param containingBlock The block inputs of which contain the expression
      *                        to be checked.
-     * @param inputName       The name of the input containing the expression to be checked.
+     * @param inputKey        The key of the input containing the expression to be checked.
      * @param allBlocks       All blocks of the actor definition currently analysed.
-     * @return True iff the the in put of the containing block is parsable as StringExpr.
+     * @return True iff the the input of the containing block is parsable as StringExpr.
      */
     public static boolean parsableAsStringExpr(JsonNode containingBlock,
-                                               String inputName, JsonNode allBlocks) {
+                                               String inputKey, JsonNode allBlocks) {
         JsonNode inputs = containingBlock.get(INPUTS_KEY);
-        ArrayNode exprArray = getExprArrayByName(inputs, inputName);
+        ArrayNode exprArray = getExprArray(inputs, inputKey);
         int shadowIndicator = getShadowIndicator(exprArray);
 
         boolean parsableAsStringLiteral = false;
@@ -82,15 +82,26 @@ public class StringExprParser {
         return hasStringExprOpcode || parsableAsStringLiteral;
     }
 
-    public static StringExpr parseStringExprWithName(JsonNode containingBlock, String inputName, JsonNode allBlocks)
+    /**
+     * Parses the input of the containingBlock specified by the inputKey.
+     * If the input does not contain a StringExpr calls the ExpressionParser
+     * and wraps the result as StringExpr.
+     *
+     * @param containingBlock The block inputs of which contain the expression to be parsed.
+     * @param inputKey        The key of the input which contains the expression.
+     * @param allBlocks       All blocks of the actor definition currently parsed.
+     * @return The expression identified by the inputKey.
+     * @throws ParsingException If parsing fails.
+     */
+    public static StringExpr parseStringExpr(JsonNode containingBlock, String inputKey, JsonNode allBlocks)
             throws ParsingException {
-        if (parsableAsStringExpr(containingBlock, inputName, allBlocks)) {
-            ArrayNode exprArray = ExpressionParser.getExprArrayByName(containingBlock.get(INPUTS_KEY), inputName);
+        if (parsableAsStringExpr(containingBlock, inputKey, allBlocks)) {
+            ArrayNode exprArray = ExpressionParser.getExprArray(containingBlock.get(INPUTS_KEY), inputKey);
             int shadowIndicator = ExpressionParser.getShadowIndicator(exprArray);
             if (shadowIndicator == INPUT_SAME_BLOCK_SHADOW
                     || (shadowIndicator == INPUT_BLOCK_NO_SHADOW && !(exprArray.get(POS_BLOCK_ID) instanceof TextNode))) {
                 try {
-                    return parseStr(containingBlock.get(INPUTS_KEY), inputName);
+                    return parseStr(containingBlock.get(INPUTS_KEY), inputKey);
                 } catch (ParsingException e) {
                     return new UnspecifiedStringExpr();
                 }
@@ -99,34 +110,39 @@ public class StringExprParser {
                 return parseBlockStringExpr(allBlocks.get(identifier), allBlocks);
             }
         } else {
-            return new AsString(ExpressionParser.parseExprWithName(containingBlock, inputName, allBlocks));
+            return new AsString(ExpressionParser.parseExpr(containingBlock, inputKey, allBlocks));
         }
         throw new ParsingException("Could not parse StringExpr");
     }
 
-    private static StringLiteral parseStr(JsonNode inputs, String inputName) throws ParsingException {
-        String value = ExpressionParser.getDataArrayByName(inputs, inputName).get(POS_INPUT_VALUE).asText();
-        return new StringLiteral(value);
-    }
-
-    static StringExpr parseBlockStringExpr(JsonNode exprBlock, JsonNode blocks) throws ParsingException {
+    /**
+     * Parses a single StringExpr corresponding to a reporter block.
+     * The opcode of the block has to be a StringExprOpcode.
+     *
+     * @param exprBlock The JsonNode of the reporter block.
+     * @param allBlocks All blocks of the actor definition currently analysed.
+     * @return The parsed expression.
+     * @throws ParsingException If the opcode of the block is no StringExprOpcode
+     *                          or if parsing inputs of the block fails.
+     */
+    static StringExpr parseBlockStringExpr(JsonNode exprBlock, JsonNode allBlocks) throws ParsingException {
         String opcodeString = exprBlock.get(OPCODE_KEY).asText();
         Preconditions
                 .checkArgument(StringExprOpcode.contains(opcodeString), opcodeString + " is not a StringExprOpcode.");
         StringExprOpcode opcode = StringExprOpcode.valueOf(opcodeString);
         switch (opcode) {
             case operator_join:
-                StringExpr first = parseStringExprWithName(exprBlock, STRING1_KEY, blocks);
-                StringExpr second = parseStringExprWithName(exprBlock, STRING2_KEY, blocks);
+                StringExpr first = parseStringExpr(exprBlock, STRING1_KEY, allBlocks);
+                StringExpr second = parseStringExpr(exprBlock, STRING2_KEY, allBlocks);
                 return new Join(first, second);
             case operator_letter_of:
-                NumExpr num = NumExprParser.parseNumExprWithName(exprBlock, LETTER_KEY, blocks);
-                StringExpr word = parseStringExprWithName(exprBlock, STRING_KEY, blocks);
+                NumExpr num = NumExprParser.parseNumExpr(exprBlock, LETTER_KEY, allBlocks);
+                StringExpr word = parseStringExpr(exprBlock, STRING_KEY, allBlocks);
                 return new LetterOf(num, word);
             case sensing_username:
                 return new Username();
             case data_itemoflist:
-                NumExpr index = NumExprParser.parseNumExprWithName(exprBlock, INDEX_KEY, blocks);
+                NumExpr index = NumExprParser.parseNumExpr(exprBlock, INDEX_KEY, allBlocks);
                 String id =
                         exprBlock.get(FIELDS_KEY).get(LIST_KEY).get(LIST_IDENTIFIER_POS).asText();
                 Identifier var;
@@ -148,7 +164,7 @@ public class StringExprParser {
                 return new Answer();
             case sensing_of:
                 String menuIdentifier = exprBlock.get(INPUTS_KEY).get(OBJECT_KEY).get(1).asText();
-                JsonNode objectMenuBlock = blocks.get(menuIdentifier);
+                JsonNode objectMenuBlock = allBlocks.get(menuIdentifier);
 
                 Expression localIdentifier;
                 if (objectMenuBlock != null) {
@@ -158,7 +174,7 @@ public class StringExprParser {
                                 objectMenuBlock.get(FIELDS_KEY).get(OBJECT_KEY).get(FIELD_VALUE)
                                         .asText());
                     } else {
-                        localIdentifier = ExpressionParser.parseExprWithName(exprBlock, OBJECT_KEY, blocks);
+                        localIdentifier = ExpressionParser.parseExpr(exprBlock, OBJECT_KEY, allBlocks);
                     }
                 } else {
                     localIdentifier = new StrId(""); //TODO still correct?
@@ -184,5 +200,10 @@ public class StringExprParser {
             default:
                 throw new RuntimeException(opcodeString + " is not covered by parseBlockStringExpr");
         }
+    }
+
+    private static StringLiteral parseStr(JsonNode inputs, String inputKey) throws ParsingException {
+        String value = ExpressionParser.getDataArrayByName(inputs, inputKey).get(POS_INPUT_VALUE).asText();
+        return new StringLiteral(value);
     }
 }

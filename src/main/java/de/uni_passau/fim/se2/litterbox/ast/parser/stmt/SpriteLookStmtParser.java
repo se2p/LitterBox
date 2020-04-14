@@ -56,18 +56,18 @@ public class SpriteLookStmtParser {
             case looks_hide:
                 return new Hide();
             case looks_sayforsecs:
-                stringExpr = StringExprParser.parseStringExprWithName(current, MESSAGE_KEY, allBlocks);
-                numExpr = NumExprParser.parseNumExprWithName(current, SECS_KEY, allBlocks);
+                stringExpr = StringExprParser.parseStringExpr(current, MESSAGE_KEY, allBlocks);
+                numExpr = NumExprParser.parseNumExpr(current, SECS_KEY, allBlocks);
                 return new SayForSecs(stringExpr, numExpr);
             case looks_say:
-                stringExpr = StringExprParser.parseStringExprWithName(current, MESSAGE_KEY, allBlocks);
+                stringExpr = StringExprParser.parseStringExpr(current, MESSAGE_KEY, allBlocks);
                 return new Say(stringExpr);
             case looks_thinkforsecs:
-                stringExpr = StringExprParser.parseStringExprWithName(current, MESSAGE_KEY, allBlocks);
-                numExpr = NumExprParser.parseNumExprWithName(current, SECS_KEY, allBlocks);
+                stringExpr = StringExprParser.parseStringExpr(current, MESSAGE_KEY, allBlocks);
+                numExpr = NumExprParser.parseNumExpr(current, SECS_KEY, allBlocks);
                 return new ThinkForSecs(stringExpr, numExpr);
             case looks_think:
-                stringExpr = StringExprParser.parseStringExprWithName(current, MESSAGE_KEY, allBlocks);
+                stringExpr = StringExprParser.parseStringExpr(current, MESSAGE_KEY, allBlocks);
                 return new Think(stringExpr);
             case looks_nextcostume:
                 return new NextCostume();
@@ -75,10 +75,10 @@ public class SpriteLookStmtParser {
                 Expression costumeChoice = CostumeChoiceParser.parse(current, allBlocks);
                 return new SwitchCostumeTo(costumeChoice);
             case looks_changesizeby:
-                numExpr = NumExprParser.parseNumExprWithName(current, CHANGE_KEY, allBlocks);
+                numExpr = NumExprParser.parseNumExpr(current, CHANGE_KEY, allBlocks);
                 return new ChangeSizeBy(numExpr);
             case looks_setsizeto:
-                numExpr = NumExprParser.parseNumExprWithName(current, SIZE_KEY_CAP, allBlocks);
+                numExpr = NumExprParser.parseNumExpr(current, SIZE_KEY_CAP, allBlocks);
                 return new SetSizeTo(numExpr);
             case looks_gotofrontback:
                 return parseGoToLayer(current, allBlocks);
@@ -93,7 +93,7 @@ public class SpriteLookStmtParser {
             throws ParsingException {
         JsonNode front_back = current.get(FIELDS_KEY).get("FORWARD_BACKWARD").get(FIELD_VALUE);
 
-        NumExpr num = NumExprParser.parseNumExprWithName(current, NUM_KEY, allBlocks);
+        NumExpr num = NumExprParser.parseNumExpr(current, NUM_KEY, allBlocks);
 
         String layerOption = front_back.asText();
         if (layerOption.equals("forward")) {

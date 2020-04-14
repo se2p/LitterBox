@@ -68,7 +68,7 @@ public class ControlStmtParser {
                 return new IfElseStmt(boolExpr, stmtList, elseStmtList);
 
             case control_repeat:
-                NumExpr numExpr = NumExprParser.parseNumExprWithName(current, TIMES_KEY, allBlocks);
+                NumExpr numExpr = NumExprParser.parseNumExpr(current, TIMES_KEY, allBlocks);
                 stmtList = getSubstackStmtList(allBlocks, inputs, INPUT_SUBSTACK);
                 return new RepeatTimesStmt(numExpr, stmtList);
 
@@ -90,7 +90,7 @@ public class ControlStmtParser {
             throws ParsingException {
 
         if (inputs.has(INPUT_CONDITION)) {
-            return BoolExprParser.parseBoolExprWithName(current, INPUT_CONDITION, allBlocks);
+            return BoolExprParser.parseBoolExpr(current, INPUT_CONDITION, allBlocks);
         } else {
             return new UnspecifiedBoolExpr();
         }

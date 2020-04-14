@@ -61,7 +61,7 @@ public class CallStmtParser {
             Entry<String, JsonNode> currentEntry = entries.next();
             String inputName = currentEntry.getKey();
             if (arrayNodeContains(argumentsArray, inputName)) {
-                expressions.add(ExpressionParser.parseExprWithName(current, inputName, blocks));
+                expressions.add(ExpressionParser.parseExpr(current, inputName, blocks));
             }
         }
 

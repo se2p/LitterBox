@@ -65,7 +65,7 @@ public class ActorLookStmtParser {
 
         switch (opcode) {
             case sensing_askandwait:
-                StringExpr question = StringExprParser.parseStringExprWithName(current, QUESTION_KEY, allBlocks);
+                StringExpr question = StringExprParser.parseStringExpr(current, QUESTION_KEY, allBlocks);
                 return new AskAndWait(question);
 
             case looks_nextbackdrop:
@@ -134,7 +134,7 @@ public class ActorLookStmtParser {
                 return parseSetLookEffect(current, allBlocks);
 
             case looks_changeeffectby:
-                NumExpr numExpr = NumExprParser.parseNumExprWithName(current, "CHANGE", allBlocks);
+                NumExpr numExpr = NumExprParser.parseNumExpr(current, "CHANGE", allBlocks);
                 String effectName = current.get(FIELDS_KEY).get("EFFECT").get(0).asText();
                 return new ChangeGraphicEffectBy(GraphicEffect.fromString(effectName), numExpr);
             default:
@@ -145,7 +145,7 @@ public class ActorLookStmtParser {
     private static ActorLookStmt parseSetLookEffect(JsonNode current, JsonNode allBlocks) throws ParsingException {
         String effect = current.get(FIELDS_KEY).get(EFFECT_KEY).get(0).asText();
         Preconditions.checkArgument(GraphicEffect.contains(effect));
-        return new SetGraphicEffectTo(GraphicEffect.fromString(effect), NumExprParser.parseNumExprWithName(current, VALUE_KEY,
+        return new SetGraphicEffectTo(GraphicEffect.fromString(effect), NumExprParser.parseNumExpr(current, VALUE_KEY,
                 allBlocks));
     }
 }

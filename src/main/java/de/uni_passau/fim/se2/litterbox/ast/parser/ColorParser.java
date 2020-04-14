@@ -46,7 +46,7 @@ public class ColorParser {
 
             return new ColorLiteral(rNumber, gNumber, bNumber);
         } else {
-            final NumExpr numExpr = NumExprParser.parseNumExprWithName(current, inputName, allBlocks);
+            final NumExpr numExpr = NumExprParser.parseNumExpr(current, inputName, allBlocks);
             return new FromNumber(numExpr);
         }
     }

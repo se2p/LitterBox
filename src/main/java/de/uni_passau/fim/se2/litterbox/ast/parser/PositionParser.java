@@ -101,7 +101,7 @@ public class PositionParser {
                 posName = "DISTANCETOMENU";
             }
 
-            final StringExpr stringExpr = StringExprParser.parseStringExprWithName(current, posName, allBlocks);
+            final StringExpr stringExpr = StringExprParser.parseStringExpr(current, posName, allBlocks);
             return new FromExpression(stringExpr);
         }
     }

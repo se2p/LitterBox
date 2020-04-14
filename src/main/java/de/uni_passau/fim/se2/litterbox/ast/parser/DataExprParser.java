@@ -44,12 +44,12 @@ public class DataExprParser {
      *
      * @param containingBlock The block inputs of which contain the expression
      *                        to be checked.
-     * @param inputName       The name of the input containing the expression to be checked.
+     * @param inputKey        The key of the input containing the expression to be checked.
      * @param allBlocks       All blocks of the actor definition currently analysed.
-     * @return True iff the the in put of the containing block is parsable as DataExpr.
+     * @return True iff the the input of the containing block is parsable as DataExpr.
      */
-    public static boolean parsableAsDataExpr(JsonNode containingBlock, String inputName, JsonNode allBlocks) {
-        ArrayNode exprArray = ExpressionParser.getExprArrayByName(containingBlock.get(INPUTS_KEY), inputName);
+    public static boolean parsableAsDataExpr(JsonNode containingBlock, String inputKey, JsonNode allBlocks) {
+        ArrayNode exprArray = ExpressionParser.getExprArray(containingBlock.get(INPUTS_KEY), inputKey);
         if (exprArray.get(POS_BLOCK_ID) instanceof TextNode) {
             String identifier = exprArray.get(POS_BLOCK_ID).asText();
             JsonNode exprBlock = allBlocks.get(identifier);
@@ -72,13 +72,13 @@ public class DataExprParser {
      * Parses the DataExpr of the input of the block.
      *
      * @param containingBlock The block the input of which contains a DataExpr.
-     * @param inputName       Name of the input holding the DataExpr.
+     * @param inputKey        Key of the input holding the DataExpr.
      * @param allBlocks       All blocks of the actor definition currently analysed.
      * @return The DataExpr - either a Parameter, Variable or ScratchList.
      */
-    public static Expression parseDataExpr(JsonNode containingBlock, String inputName, JsonNode allBlocks) {
-        Preconditions.checkArgument(parsableAsDataExpr(containingBlock, inputName, allBlocks));
-        ArrayNode exprArray = ExpressionParser.getExprArrayByName(containingBlock.get(INPUTS_KEY), inputName);
+    public static Expression parseDataExpr(JsonNode containingBlock, String inputKey, JsonNode allBlocks) {
+        Preconditions.checkArgument(parsableAsDataExpr(containingBlock, inputKey, allBlocks));
+        ArrayNode exprArray = ExpressionParser.getExprArray(containingBlock.get(INPUTS_KEY), inputKey);
         if (exprArray.get(POS_BLOCK_ID) instanceof TextNode) {
             String identifier = exprArray.get(POS_BLOCK_ID).asText();
             String opcode = allBlocks.get(identifier).get(OPCODE_KEY).asText();
@@ -86,7 +86,7 @@ public class DataExprParser {
             boolean isBooleanParam = opcode.equals(argument_reporter_boolean.name());
             boolean isParameter = isNumOrStringParam || isBooleanParam;
             if (isParameter) {
-                return parseParameter(allBlocks, exprArray);
+                return parseParameter(exprArray, allBlocks);
             }
         } else if (exprArray.get(POS_DATA_ARRAY) instanceof ArrayNode) {
             String idString = exprArray.get(POS_DATA_ARRAY).get(POS_INPUT_ID).asText();
@@ -103,12 +103,12 @@ public class DataExprParser {
     /**
      * Parses the ScratchList stored in the expression array.
      *
-     * @param allBlocks All blocks of the actor definition currently analysed.
      * @param exprArray The expression array containing the ScratchList.
+     * @param allBlocks All blocks of the actor definition currently analysed.
      * @return The ScratchList wrapped as Qualified.
      */
-    private static Parameter parseParameter(JsonNode allBlocks, ArrayNode
-            exprArray) {
+    private static Parameter parseParameter(ArrayNode
+                                                    exprArray, JsonNode allBlocks) {
         JsonNode paramBlock = allBlocks.get(exprArray.get(POS_BLOCK_ID).asText());
         String name = paramBlock.get(FIELDS_KEY).get(VALUE_KEY).get(VARIABLE_NAME_POS).asText();
         return new Parameter(new StrId(name));

@@ -47,47 +47,47 @@ public class SpriteMotionStmtParser {
 
         switch (opcode) {
             case motion_movesteps:
-                numExpr = NumExprParser.parseNumExprWithName(current, STEPS_KEY, allBlocks);
+                numExpr = NumExprParser.parseNumExpr(current, STEPS_KEY, allBlocks);
                 return new MoveSteps(numExpr);
             case motion_turnright:
-                numExpr = NumExprParser.parseNumExprWithName(current, DEGREES_KEY, allBlocks);
+                numExpr = NumExprParser.parseNumExpr(current, DEGREES_KEY, allBlocks);
                 return new TurnRight(numExpr);
             case motion_turnleft:
-                numExpr = NumExprParser.parseNumExprWithName(current, DEGREES_KEY, allBlocks);
+                numExpr = NumExprParser.parseNumExpr(current, DEGREES_KEY, allBlocks);
                 return new TurnLeft(numExpr);
             case motion_gotoxy:
-                NumExpr xExpr = NumExprParser.parseNumExprWithName(current, X, allBlocks);
-                NumExpr yExpr = NumExprParser.parseNumExprWithName(current, Y, allBlocks);
+                NumExpr xExpr = NumExprParser.parseNumExpr(current, X, allBlocks);
+                NumExpr yExpr = NumExprParser.parseNumExpr(current, Y, allBlocks);
                 return new GoToPosXY(xExpr, yExpr);
             case motion_goto:
                 position = PositionParser.parse(current, allBlocks);
                 return new GoToPos(position);
             case motion_glidesecstoxy:
-                NumExpr secs = NumExprParser.parseNumExprWithName(current, SECS_KEY, allBlocks);
-                NumExpr x = NumExprParser.parseNumExprWithName(current, X, allBlocks);
-                NumExpr y = NumExprParser.parseNumExprWithName(current, Y, allBlocks);
+                NumExpr secs = NumExprParser.parseNumExpr(current, SECS_KEY, allBlocks);
+                NumExpr x = NumExprParser.parseNumExpr(current, X, allBlocks);
+                NumExpr y = NumExprParser.parseNumExpr(current, Y, allBlocks);
                 return new GlideSecsToXY(secs, x, y);
             case motion_glideto:
-                numExpr = NumExprParser.parseNumExprWithName(current, SECS_KEY, allBlocks);
+                numExpr = NumExprParser.parseNumExpr(current, SECS_KEY, allBlocks);
                 position = PositionParser.parse(current, allBlocks);
                 return new GlideSecsTo(numExpr, position);
             case motion_pointindirection:
-                numExpr = NumExprParser.parseNumExprWithName(current, DIRECTION_KEY_CAP, allBlocks);
+                numExpr = NumExprParser.parseNumExpr(current, DIRECTION_KEY_CAP, allBlocks);
                 return new PointInDirection(numExpr);
             case motion_pointtowards:
                 position = PositionParser.parse(current, allBlocks);
                 return new PointTowards(position);
             case motion_changexby:
-                numExpr = NumExprParser.parseNumExprWithName(current, DX_KEY, allBlocks);
+                numExpr = NumExprParser.parseNumExpr(current, DX_KEY, allBlocks);
                 return new ChangeXBy(numExpr);
             case motion_changeyby:
-                numExpr = NumExprParser.parseNumExprWithName(current, DY_KEY, allBlocks);
+                numExpr = NumExprParser.parseNumExpr(current, DY_KEY, allBlocks);
                 return new ChangeYBy(numExpr);
             case motion_setx:
-                numExpr = NumExprParser.parseNumExprWithName(current, X_KEY_CAP, allBlocks);
+                numExpr = NumExprParser.parseNumExpr(current, X_KEY_CAP, allBlocks);
                 return new SetXTo(numExpr);
             case motion_sety:
-                numExpr = NumExprParser.parseNumExprWithName(current, Y_KEY_CAP, allBlocks);
+                numExpr = NumExprParser.parseNumExpr(current, Y_KEY_CAP, allBlocks);
                 return new SetYTo(numExpr);
             case motion_ifonedgebounce:
                 return new IfOnEdgeBounce();

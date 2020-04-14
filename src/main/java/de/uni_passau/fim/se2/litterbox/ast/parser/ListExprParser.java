@@ -41,11 +41,11 @@ public class ListExprParser {
      *
      * @param containingBlock The block inputs of which contain the expression
      *                        to be checked.
-     * @param inputName       The name of the input containing the expression to be checked.
+     * @param inputKey        The key of the input containing the expression to be checked.
      * @return True iff the the input of the containing block is parsable as ListExpr.
      */
-    public static boolean parsableAsListExpr(JsonNode containingBlock, String inputName) {
-        ArrayNode exprArray = ExpressionParser.getExprArrayByName(containingBlock.get(INPUTS_KEY), inputName);
+    public static boolean parsableAsListExpr(JsonNode containingBlock, String inputKey) {
+        ArrayNode exprArray = ExpressionParser.getExprArray(containingBlock.get(INPUTS_KEY), inputKey);
         if (ExpressionParser.getShadowIndicator(exprArray) == 1 || exprArray.get(POS_BLOCK_ID) instanceof TextNode) {
             return false;
         } else {
@@ -54,8 +54,8 @@ public class ListExprParser {
         }
     }
 
-    public static ListExpr parseListExpr(JsonNode block, String inputName, JsonNode blocks) throws ParsingException {
-        ArrayNode exprArray = ExpressionParser.getExprArrayByName(block.get(INPUTS_KEY), inputName);
+    public static ListExpr parseListExpr(JsonNode containingBlock, String inputKey) throws ParsingException { //TODO do we need this?
+        ArrayNode exprArray = ExpressionParser.getExprArray(containingBlock.get(INPUTS_KEY), inputKey);
 
         if (ExpressionParser.getShadowIndicator(exprArray) == 1 || exprArray.get(POS_BLOCK_ID) instanceof TextNode) {
             throw new ParsingException("Block does not contain a list");
@@ -70,7 +70,7 @@ public class ListExprParser {
         throw new ParsingException("Block does not contain a list");
     }
 
-    static Identifier parseVariableFromFields(JsonNode fields) throws ParsingException {
+    static Identifier parseVariableFromFields(JsonNode fields) throws ParsingException { //TODO do we need this?
         String identifier = fields.get(LIST_KEY).get(LIST_IDENTIFIER_POS).asText();
         if (ProgramParser.symbolTable.getLists().containsKey(identifier)) {
             ExpressionListInfo variableInfo = ProgramParser.symbolTable.getLists().get(identifier);
