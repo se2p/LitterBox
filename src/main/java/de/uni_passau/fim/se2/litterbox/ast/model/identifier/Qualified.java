@@ -19,16 +19,16 @@
 package de.uni_passau.fim.se2.litterbox.ast.model.identifier;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.Placeholder;
+import de.uni_passau.fim.se2.litterbox.ast.model.variable.DataExpr;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 public class Qualified extends AbstractNode implements Identifier {
 
     private final LocalIdentifier first;
-    private final Placeholder second;
+    private final DataExpr second;
 
-    public Qualified(LocalIdentifier first, Placeholder second) {
+    public Qualified(LocalIdentifier first, DataExpr second) {
         super(first, second);
         this.first = Preconditions.checkNotNull(first);
         this.second = Preconditions.checkNotNull(second);
@@ -38,7 +38,7 @@ public class Qualified extends AbstractNode implements Identifier {
         return first;
     }
 
-    public Placeholder getSecond() {
+    public DataExpr getSecond() {
         return second;
     }
 

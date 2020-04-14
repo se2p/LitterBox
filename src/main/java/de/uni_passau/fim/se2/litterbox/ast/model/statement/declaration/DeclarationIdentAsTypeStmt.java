@@ -20,23 +20,22 @@ package de.uni_passau.fim.se2.litterbox.ast.model.statement.declaration;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.Type;
-import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.Placeholder;
+import de.uni_passau.fim.se2.litterbox.ast.model.variable.DataExpr;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 public class DeclarationIdentAsTypeStmt extends AbstractNode implements DeclarationStmt {
 
-    private final Placeholder ident;
+    private final DataExpr ident;
     private final Type type;
 
-    public DeclarationIdentAsTypeStmt(Placeholder ident, Type type) {
+    public DeclarationIdentAsTypeStmt(DataExpr ident, Type type) {
         super(ident, type);
         this.ident = Preconditions.checkNotNull(ident);
         this.type = Preconditions.checkNotNull(type);
     }
 
-    public Placeholder getIdent() {
+    public DataExpr getIdent() {
         return ident;
     }
 

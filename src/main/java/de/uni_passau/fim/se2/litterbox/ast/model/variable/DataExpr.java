@@ -5,10 +5,10 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
-public abstract class Placeholder extends AbstractNode implements Expression {
+public abstract class DataExpr extends AbstractNode implements Expression {
     private LocalIdentifier name;
 
-    public Placeholder(LocalIdentifier name) {
+    public DataExpr(LocalIdentifier name) {
         super(name);
         this.name = name;
     }
