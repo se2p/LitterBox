@@ -68,8 +68,8 @@ public class StringExprParser {
             try {
                 ExpressionParser.getDataArrayByName(inputs, inputKey).get(POS_INPUT_VALUE);
                 parsableAsStringLiteral = true;
-            } catch (ParsingException e) {
-                parsableAsStringLiteral = false;
+            } catch (ParsingException | ClassCastException e) {
+                // not parsable as StringExpr
             }
         }
 
