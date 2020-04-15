@@ -57,7 +57,7 @@ public class KeyParser {
                 block = allBlocks.get(menuBlockID);
             } else {
                 // If there is a variable or expression we evaluate it and use it as key;
-                final NumExpr numExpr = NumExprParser.parseNumExpr(current, 0, allBlocks);
+                final NumExpr numExpr = NumExprParser.parseNumExpr(current, KEY_OPTION, allBlocks);
                 return new Key(numExpr);
             }
         } else {
@@ -68,25 +68,25 @@ public class KeyParser {
         }
         String keyValue = block.get(FIELDS_KEY).get(KEY_OPTION).get(FIELD_VALUE).asText();
         switch (keyValue) {
-        case "space":
-            return new Key(new NumberLiteral(SPACE));
-        case "up arrow":
-            return new Key(new NumberLiteral(UPARROW));
-        case "down arrow":
-            return new Key(new NumberLiteral(DOWNARROW));
-        case "left arrow":
-            return new Key(new NumberLiteral(LEFTARROW));
-        case "right arrow":
-            return new Key(new NumberLiteral(RIGHTARROW));
-        case "any":
-            return new Key(new NumberLiteral(ANYKEY));
-        default:
-            if (keyValue.length() > 0) {
-                return new Key(new NumberLiteral(keyValue.charAt(0)));
-            } else {
-                // It is not clear how this can happen, but it happens sometimtes.
-                return new Key(new NumberLiteral(0));
-            }
+            case "space":
+                return new Key(new NumberLiteral(SPACE));
+            case "up arrow":
+                return new Key(new NumberLiteral(UPARROW));
+            case "down arrow":
+                return new Key(new NumberLiteral(DOWNARROW));
+            case "left arrow":
+                return new Key(new NumberLiteral(LEFTARROW));
+            case "right arrow":
+                return new Key(new NumberLiteral(RIGHTARROW));
+            case "any":
+                return new Key(new NumberLiteral(ANYKEY));
+            default:
+                if (keyValue.length() > 0) {
+                    return new Key(new NumberLiteral(keyValue.charAt(0)));
+                } else {
+                    // It is not clear how this can happen, but it happens sometimtes.
+                    return new Key(new NumberLiteral(0));
+                }
         }
     }
 

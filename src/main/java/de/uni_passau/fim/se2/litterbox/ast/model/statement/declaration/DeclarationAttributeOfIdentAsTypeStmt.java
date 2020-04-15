@@ -21,17 +21,17 @@ package de.uni_passau.fim.se2.litterbox.ast.model.statement.declaration;
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.Type;
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.Identifier;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 public class DeclarationAttributeOfIdentAsTypeStmt extends AbstractNode implements DeclarationStmt {
 
     private final StringExpr stringExpr;
-    private final Identifier ident;
+    private final LocalIdentifier ident;
     private final Type type;
 
-    public DeclarationAttributeOfIdentAsTypeStmt(StringExpr stringExpr, Identifier ident, Type type) {
+    public DeclarationAttributeOfIdentAsTypeStmt(StringExpr stringExpr, LocalIdentifier ident, Type type) {
         super(stringExpr, ident, type);
         this.stringExpr = Preconditions.checkNotNull(stringExpr);
         this.ident = Preconditions.checkNotNull(ident);
@@ -42,7 +42,7 @@ public class DeclarationAttributeOfIdentAsTypeStmt extends AbstractNode implemen
         return stringExpr;
     }
 
-    public Identifier getIdent() {
+    public LocalIdentifier getIdent() {
         return ident;
     }
 

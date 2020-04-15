@@ -25,7 +25,6 @@ import java.util.List;
 
 public enum ActorType implements ASTLeaf {
 
-    ACTOR,
     STAGE,
     SPRITE;
 

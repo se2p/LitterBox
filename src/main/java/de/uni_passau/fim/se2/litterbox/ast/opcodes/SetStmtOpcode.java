@@ -19,8 +19,7 @@
 package de.uni_passau.fim.se2.litterbox.ast.opcodes;
 
 public enum SetStmtOpcode {
-    data_setvariableto, sensing_setdragmode, motion_setrotationstyle, looks_seteffectto,
-    sound_seteffectto, sound_setvolumeto, pen_setPenSizeTo;
+    data_setvariableto;
 
     public static boolean contains(String opcode) {
         for (SetStmtOpcode value : SetStmtOpcode.values()) {

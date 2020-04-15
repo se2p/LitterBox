@@ -83,7 +83,7 @@ public class NestedLoops implements IssueFinder, ScratchVisitor {
 
     @Override
     public void visit(UntilStmt node) {
-        checkNested(node.getStmtList().getStmts().getListOfStmt());
+        checkNested(node.getStmtList().getStmts());
         if (!node.getChildren().isEmpty()) {
             for (ASTNode child : node.getChildren()) {
                 child.accept(this);
@@ -93,7 +93,7 @@ public class NestedLoops implements IssueFinder, ScratchVisitor {
 
     @Override
     public void visit(RepeatForeverStmt node) {
-        checkNested(node.getStmtList().getStmts().getListOfStmt());
+        checkNested(node.getStmtList().getStmts());
         if (!node.getChildren().isEmpty()) {
             for (ASTNode child : node.getChildren()) {
                 child.accept(this);
@@ -110,7 +110,7 @@ public class NestedLoops implements IssueFinder, ScratchVisitor {
 
     @Override
     public void visit(RepeatTimesStmt node) {
-        checkNested(node.getStmtList().getStmts().getListOfStmt());
+        checkNested(node.getStmtList().getStmts());
         if (!node.getChildren().isEmpty()) {
             for (ASTNode child : node.getChildren()) {
                 child.accept(this);

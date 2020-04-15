@@ -18,18 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.model.event;
 
-import de.uni_passau.fim.se2.litterbox.ast.model.ASTLeaf;
-import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
+public interface Clicked extends Event {
 
-public class Clicked extends AbstractNode implements Event, ASTLeaf {
-
-    public Clicked() {
-        super();
-    }
-
-    @Override
-    public void accept(ScratchVisitor visitor) {
-        visitor.visit(this);
-    }
 }

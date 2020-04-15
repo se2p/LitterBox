@@ -20,27 +20,27 @@ package de.uni_passau.fim.se2.litterbox.ast.model.statement.list;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Identifier;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 public class DeleteOf extends AbstractNode implements ListStmt {
 
     private final NumExpr num;
-    private final Variable variable;
+    private final Identifier identifier;
 
-    public DeleteOf(NumExpr num, Variable variable) {
-        super(num, variable);
+    public DeleteOf(NumExpr num, Identifier identifier) {
+        super(num, identifier);
         this.num = Preconditions.checkNotNull(num);
-        this.variable = Preconditions.checkNotNull(variable);
+        this.identifier = Preconditions.checkNotNull(identifier);
     }
 
     public NumExpr getNum() {
         return num;
     }
 
-    public Variable getVariable() {
-        return variable;
+    public Identifier getIdentifier() {
+        return identifier;
     }
 
     @Override

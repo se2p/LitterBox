@@ -19,21 +19,21 @@
 package de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Identifier;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 public class HideVariable extends AbstractNode implements ActorLookStmt {
 
-    private final Variable variable;
+    private final Identifier identifier;
 
-    public HideVariable(Variable variable) {
-        super(variable);
-        this.variable = Preconditions.checkNotNull(variable);
+    public HideVariable(Identifier identifier) {
+        super(identifier);
+        this.identifier = Preconditions.checkNotNull(identifier);
     }
 
-    public Variable getVariable() {
-        return variable;
+    public Identifier getIdentifier() {
+        return identifier;
     }
 
     @Override

@@ -20,19 +20,15 @@ package de.uni_passau.fim.se2.litterbox.ast.parser;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
-import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
-import de.uni_passau.fim.se2.litterbox.ast.model.ActorType;
-import de.uni_passau.fim.se2.litterbox.ast.model.Script;
-import de.uni_passau.fim.se2.litterbox.ast.model.ScriptList;
-import de.uni_passau.fim.se2.litterbox.ast.model.SetStmtList;
+import de.uni_passau.fim.se2.litterbox.ast.model.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinitionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.resource.Resource;
 import de.uni_passau.fim.se2.litterbox.ast.model.resource.ResourceList;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.declaration.DeclarationStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.declaration.DeclarationStmtList;
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.Identifier;
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.StrId;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.DependentBlockOpcodes;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
@@ -47,7 +43,7 @@ import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 
 public class ActorDefinitionParser {
 
-    private static Identifier currentActor;
+    private static LocalIdentifier currentActor;
 
     public static ActorDefinition parse(JsonNode actorDefinitionNode) throws ParsingException {
         Preconditions.checkNotNull(actorDefinitionNode);
@@ -61,19 +57,19 @@ public class ActorDefinitionParser {
             actorType = ActorType.SPRITE;
         }
 
-        Identifier identifier = new StrId(actorDefinitionNode.get(NAME_KEY).asText());
-        currentActor = identifier;
+        LocalIdentifier localIdentifier = new StrId(actorDefinitionNode.get(NAME_KEY).asText());
+        currentActor = localIdentifier;
 
         List<Resource> res = ResourceParser.parseSound(actorDefinitionNode.get("sounds"));
         res.addAll(ResourceParser.parseCostume(actorDefinitionNode.get("costumes")));
         ResourceList resources = new ResourceList(res);
 
         List<DeclarationStmt> decls = DeclarationStmtParser
-                .parseLists(actorDefinitionNode.get("lists"), identifier.getName(),
+                .parseLists(actorDefinitionNode.get("lists"), localIdentifier.getName(),
                         actorDefinitionNode.get(IS_STAGE_KEY).asBoolean());
-        decls.addAll(DeclarationStmtParser.parseBroadcasts(actorDefinitionNode.get("broadcasts"), identifier.getName(),
+        decls.addAll(DeclarationStmtParser.parseBroadcasts(actorDefinitionNode.get("broadcasts"), localIdentifier.getName(),
                 actorDefinitionNode.get(IS_STAGE_KEY).asBoolean()));
-        decls.addAll(DeclarationStmtParser.parseVariables(actorDefinitionNode.get("variables"), identifier.getName(),
+        decls.addAll(DeclarationStmtParser.parseVariables(actorDefinitionNode.get("variables"), localIdentifier.getName(),
                 actorDefinitionNode.get(IS_STAGE_KEY).asBoolean()));
         decls.addAll(DeclarationStmtParser.parseAttributeDeclarations(actorDefinitionNode));
         DeclarationStmtList declarations = new DeclarationStmtList(decls);
@@ -101,14 +97,14 @@ public class ActorDefinitionParser {
         }
         ScriptList scriptList = new ScriptList(scripts);
 
-        ProcedureDefinitionList procDeclList = ProcDefinitionParser.parse(allBlocks, identifier.getName());
+        ProcedureDefinitionList procDeclList = ProcDefinitionParser.parse(allBlocks, localIdentifier.getName());
 
         List<SetStmt> setStmtList = DeclarationStmtParser.parseAttributeDeclarationSetStmts(actorDefinitionNode);
         setStmtList.addAll(DeclarationStmtParser.parseListDeclarationSetStmts(actorDefinitionNode.get("lists"),
-                identifier.getName()));
+                localIdentifier.getName()));
         setStmtList.addAll(DeclarationStmtParser.parseVariableDeclarationSetStmts(actorDefinitionNode.get("variables"),
-                identifier.getName()));
-        return new ActorDefinition(actorType, identifier, resources, declarations, new SetStmtList(setStmtList),
+                localIdentifier.getName()));
+        return new ActorDefinition(actorType, localIdentifier, resources, declarations, new SetStmtList(setStmtList),
                 procDeclList,
                 scriptList);
     }
@@ -118,7 +114,7 @@ public class ActorDefinitionParser {
      *
      * @return
      */
-    public static Identifier getCurrentActor() {
+    public static LocalIdentifier getCurrentActor() {
         return new StrId(currentActor.getName());
     }
 }

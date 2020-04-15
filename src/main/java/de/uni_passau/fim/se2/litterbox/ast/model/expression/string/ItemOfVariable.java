@@ -20,26 +20,26 @@ package de.uni_passau.fim.se2.litterbox.ast.model.expression.string;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Identifier;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 public class ItemOfVariable extends AbstractNode implements StringExpr {
 
     private final NumExpr num;
-    private final Variable variable;
+    private final Identifier identifier;
 
-    public ItemOfVariable(NumExpr num, Variable variable) {
-        super(num, variable);
+    public ItemOfVariable(NumExpr num, Identifier identifier) {
+        super(num, identifier);
         this.num = num;
-        this.variable = variable;
+        this.identifier = identifier;
     }
 
     public NumExpr getNum() {
         return num;
     }
 
-    public Variable getVariable() {
-        return variable;
+    public Identifier getIdentifier() {
+        return identifier;
     }
 
     @Override

@@ -23,7 +23,8 @@ import de.uni_passau.fim.se2.litterbox.analytics.IssueReport;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.ColorTouches;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.ColorTouchingColor;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.SpriteTouchingColor;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Touching;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.ColorLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.pen.SetPenColorToColorStmt;
@@ -98,7 +99,7 @@ public class ExpressionAsTouchingOrColor implements IssueFinder, ScratchVisitor 
     }
 
     @Override
-    public void visit(ColorTouches node) {
+    public void visit(ColorTouchingColor node) {
         if (!(node.getOperand1() instanceof ColorLiteral)) {
             count++;
             found = true;
@@ -115,17 +116,26 @@ public class ExpressionAsTouchingOrColor implements IssueFinder, ScratchVisitor 
     }
 
     @Override
-    public void visit(Touching node) {
-        if (!(node.getTouchable() instanceof MousePointer) && !(node.getTouchable() instanceof Edge) && !(node.getTouchable() instanceof SpriteTouchable)) {
-            if (!(node.getTouchable() instanceof ColorLiteral)) {
-                count++;
-                found = true;
-            }
+    public void visit(SpriteTouchingColor node) {
+        if (!(node.getColor() instanceof ColorLiteral)) {
+            count++;
+            found = true;
         }
+
         if (!node.getChildren().isEmpty()) {
             for (ASTNode child : node.getChildren()) {
                 child.accept(this);
             }
+        }
+    }
+
+    @Override
+    public void visit(Touching node) {
+        if (!(node.getTouchable() instanceof MousePointer)
+                && !(node.getTouchable() instanceof Edge)
+                && !(node.getTouchable() instanceof SpriteTouchable)) {
+            count++;
+            found = true;
         }
     }
 }

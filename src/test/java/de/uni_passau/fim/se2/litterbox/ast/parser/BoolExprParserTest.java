@@ -28,17 +28,18 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.And;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BiggerThan;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.ColorTouches;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.ColorTouchingColor;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Equals;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.ExpressionContains;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.StringContains;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.IsKeyPressed;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.IsMouseDown;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.LessThan;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Not;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Or;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.SpriteTouchingColor;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Touching;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.AsNumber;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AttributeOf;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.Answer;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.ColorLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
@@ -79,12 +80,12 @@ public class BoolExprParserTest {
         final ActorDefinition sprite = program.getActorDefinitionList().getDefintions().get(1);
         final Script script = sprite.getScripts().getScriptList().get(0);
 
-        final Stmt stmt = script.getStmtList().getStmts().getListOfStmt().get(1);
+        final Stmt stmt = script.getStmtList().getStmts().get(1);
         Truth.assertThat(stmt).isInstanceOf(IfThenStmt.class);
 
         IfThenStmt ifThenStmt = (IfThenStmt) stmt;
-        ExpressionContains containsExpr = (ExpressionContains) ifThenStmt.getBoolExpr();
-        Truth.assertThat(containsExpr.getContaining()).isInstanceOf(AttributeOf.class);
+        StringContains containsExpr = (StringContains) ifThenStmt.getBoolExpr();
+        Truth.assertThat(containsExpr.getContaining()).isInstanceOf(Answer.class);
         Truth.assertThat(containsExpr.getContained()).isInstanceOf(StringLiteral.class);
     }
 
@@ -94,13 +95,13 @@ public class BoolExprParserTest {
         final ActorDefinition sprite = program.getActorDefinitionList().getDefintions().get(1);
         final Script script = sprite.getScripts().getScriptList().get(0);
 
-        final Stmt stmt = script.getStmtList().getStmts().getListOfStmt().get(2);
+        final Stmt stmt = script.getStmtList().getStmts().get(2);
         Truth.assertThat(stmt).isInstanceOf(RepeatTimesStmt.class);
 
         RepeatTimesStmt repeatTimesStmt = (RepeatTimesStmt) stmt;
         StmtList substack = repeatTimesStmt.getStmtList();
 
-        final Stmt subStackStmt = substack.getStmts().getListOfStmt().get(0);
+        final Stmt subStackStmt = substack.getStmts().get(0);
         Truth.assertThat(subStackStmt).isInstanceOf(IfElseStmt.class);
 
         IfElseStmt ifThenStmt = (IfElseStmt) subStackStmt;
@@ -115,7 +116,7 @@ public class BoolExprParserTest {
         final ActorDefinition sprite = program.getActorDefinitionList().getDefintions().get(1);
         final Script script = sprite.getScripts().getScriptList().get(0);
 
-        final Stmt stmt = script.getStmtList().getStmts().getListOfStmt().get(3);
+        final Stmt stmt = script.getStmtList().getStmts().get(3);
         Truth.assertThat(stmt).isInstanceOf(WaitUntil.class);
 
         WaitUntil waitUntil = (WaitUntil) stmt;
@@ -129,7 +130,7 @@ public class BoolExprParserTest {
         final ActorDefinition sprite = program.getActorDefinitionList().getDefintions().get(1);
         final Script script = sprite.getScripts().getScriptList().get(0);
 
-        final Stmt stmt = script.getStmtList().getStmts().getListOfStmt().get(4);
+        final Stmt stmt = script.getStmtList().getStmts().get(4);
         Truth.assertThat(stmt).isInstanceOf(WaitSeconds.class);
 
         WaitSeconds wait = (WaitSeconds) stmt;
@@ -144,11 +145,11 @@ public class BoolExprParserTest {
         final ActorDefinition sprite = program.getActorDefinitionList().getDefintions().get(1);
         final Script script = sprite.getScripts().getScriptList().get(0);
 
-        final Stmt stmt = script.getStmtList().getStmts().getListOfStmt().get(5);
+        final Stmt stmt = script.getStmtList().getStmts().get(5);
         Truth.assertThat(stmt).isInstanceOf(RepeatTimesStmt.class);
 
         RepeatTimesStmt repeatTimesStmt = (RepeatTimesStmt) stmt;
-        IfElseStmt ifElseStmt = (IfElseStmt) repeatTimesStmt.getStmtList().getStmts().getListOfStmt().get(0);
+        IfElseStmt ifElseStmt = (IfElseStmt) repeatTimesStmt.getStmtList().getStmts().get(0);
         Truth.assertThat(ifElseStmt.getBoolExpr()).isInstanceOf(Not.class);
         Not boolExpr = (Not) ifElseStmt.getBoolExpr();
         Truth.assertThat(boolExpr.getOperand1()).isInstanceOf(BiggerThan.class);
@@ -160,7 +161,7 @@ public class BoolExprParserTest {
         final ActorDefinition sprite = program.getActorDefinitionList().getDefintions().get(1);
         final Script script = sprite.getScripts().getScriptList().get(1);
 
-        final Stmt stmt = script.getStmtList().getStmts().getListOfStmt().get(0);
+        final Stmt stmt = script.getStmtList().getStmts().get(0);
         Truth.assertThat(stmt).isInstanceOf(IfThenStmt.class);
 
         IfThenStmt ifThenStmt = (IfThenStmt) stmt;
@@ -175,7 +176,7 @@ public class BoolExprParserTest {
         final ActorDefinition sprite = program.getActorDefinitionList().getDefintions().get(1);
         final Script script = sprite.getScripts().getScriptList().get(1);
 
-        final Stmt stmt = script.getStmtList().getStmts().getListOfStmt().get(1);
+        final Stmt stmt = script.getStmtList().getStmts().get(1);
         Truth.assertThat(stmt).isInstanceOf(IfThenStmt.class);
 
         IfThenStmt ifThenStmt = (IfThenStmt) stmt;
@@ -190,7 +191,7 @@ public class BoolExprParserTest {
         final ActorDefinition sprite = program.getActorDefinitionList().getDefintions().get(1);
         final Script script = sprite.getScripts().getScriptList().get(1);
 
-        final Stmt stmt = script.getStmtList().getStmts().getListOfStmt().get(2);
+        final Stmt stmt = script.getStmtList().getStmts().get(2);
         Truth.assertThat(stmt).isInstanceOf(IfThenStmt.class);
 
         IfThenStmt ifThenStmt = (IfThenStmt) stmt;
@@ -205,7 +206,7 @@ public class BoolExprParserTest {
         final ActorDefinition sprite = program.getActorDefinitionList().getDefintions().get(1);
         final Script script = sprite.getScripts().getScriptList().get(1);
 
-        final Stmt stmt = script.getStmtList().getStmts().getListOfStmt().get(3);
+        final Stmt stmt = script.getStmtList().getStmts().get(3);
         Truth.assertThat(stmt).isInstanceOf(IfThenStmt.class);
 
         IfThenStmt ifThenStmt = (IfThenStmt) stmt;
@@ -219,13 +220,13 @@ public class BoolExprParserTest {
         final ActorDefinition sprite = program.getActorDefinitionList().getDefintions().get(1);
         final Script script = sprite.getScripts().getScriptList().get(1);
 
-        final Stmt stmt = script.getStmtList().getStmts().getListOfStmt().get(4);
+        final Stmt stmt = script.getStmtList().getStmts().get(4);
         Truth.assertThat(stmt).isInstanceOf(IfThenStmt.class);
 
         IfThenStmt ifThenStmt = (IfThenStmt) stmt;
-        Truth.assertThat(ifThenStmt.getBoolExpr()).isInstanceOf(ColorTouches.class);
-        Truth.assertThat(((ColorTouches) ifThenStmt.getBoolExpr()).getOperand1()).isInstanceOf(ColorLiteral.class);
-        Truth.assertThat(((ColorTouches) ifThenStmt.getBoolExpr()).getOperand2()).isInstanceOf(ColorLiteral.class);
+        Truth.assertThat(ifThenStmt.getBoolExpr()).isInstanceOf(ColorTouchingColor.class);
+        Truth.assertThat(((ColorTouchingColor) ifThenStmt.getBoolExpr()).getOperand1()).isInstanceOf(ColorLiteral.class);
+        Truth.assertThat(((ColorTouchingColor) ifThenStmt.getBoolExpr()).getOperand2()).isInstanceOf(ColorLiteral.class);
     }
 
     @Test
@@ -234,11 +235,11 @@ public class BoolExprParserTest {
         final ActorDefinition sprite = program.getActorDefinitionList().getDefintions().get(1);
         final Script script = sprite.getScripts().getScriptList().get(1);
 
-        final Stmt stmt = script.getStmtList().getStmts().getListOfStmt().get(5);
+        final Stmt stmt = script.getStmtList().getStmts().get(5);
         Truth.assertThat(stmt).isInstanceOf(IfThenStmt.class);
 
         IfThenStmt ifThenStmt = (IfThenStmt) stmt;
-        Truth.assertThat(ifThenStmt.getBoolExpr()).isInstanceOf(Touching.class);
-        Truth.assertThat(((Touching) ifThenStmt.getBoolExpr()).getTouchable()).isInstanceOf(ColorLiteral.class);
+        Truth.assertThat(ifThenStmt.getBoolExpr()).isInstanceOf(SpriteTouchingColor.class);
+        Truth.assertThat(((SpriteTouchingColor) ifThenStmt.getBoolExpr()).getColor()).isInstanceOf(ColorLiteral.class);
     }
 }

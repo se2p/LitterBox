@@ -20,21 +20,21 @@ package de.uni_passau.fim.se2.litterbox.ast.model.resource;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.URI;
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.Identifier;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 public class ImageResource extends AbstractNode implements Resource {
 
-    private final Identifier ident;
+    private final LocalIdentifier ident;
     private final URI uri;
 
-    public ImageResource(Identifier ident, URI uri) {
+    public ImageResource(LocalIdentifier ident, URI uri) {
         super(ident, uri);
         this.ident = ident;
         this.uri = uri;
     }
 
-    public Identifier getIdent() {
+    public LocalIdentifier getIdent() {
         return ident;
     }
 

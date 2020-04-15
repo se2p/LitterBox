@@ -19,25 +19,27 @@
 package de.uni_passau.fim.se2.litterbox.ast.model.expression.string;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.Identifier;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.Attribute;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 public class AttributeOf extends AbstractNode implements StringExpr {
 
-    private final StringExpr attribute;
-    private final Identifier identifier;
+    private final Attribute attribute;
+    private final Expression identifier;
 
-    public AttributeOf(StringExpr attribute, Identifier identifier) {
+    public AttributeOf(Attribute attribute,Expression identifier) {
         super(attribute, identifier);
         this.attribute = attribute;
         this.identifier = identifier;
     }
 
-    public StringExpr getAttribute() {
+    public Attribute getAttribute() {
         return attribute;
     }
 
-    public Identifier getIdentifier() {
+    public Expression getLocalIdentifier() {
         return identifier;
     }
 

@@ -30,7 +30,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.MoveSteps;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.BooleanType;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.StringType;
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.Identifier;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
+import de.uni_passau.fim.se2.litterbox.ast.model.variable.Parameter;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ProcedureInfo;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -70,8 +71,8 @@ public class ProcDefinitionParserTest {
                     ProgramParser.procDefMap.getProcedures().get(actorName).get(list.get(0).getIdent()).getName());
             Assertions.assertEquals(0,
                     ProgramParser.procDefMap.getProcedures().get(actorName).get(list.get(0).getIdent()).getArguments().length);
-            Assertions.assertEquals(0, list.get(0).getParameterList().getParameterListPlain().getParameters().size());
-            Assertions.assertEquals(3, list.get(0).getStmtList().getStmts().getListOfStmt().size());
+            Assertions.assertEquals(0, list.get(0).getParameterDefinitionList().getParameterDefinitons().size());
+            Assertions.assertEquals(3, list.get(0).getStmtList().getStmts().size());
         } catch (ParsingException e) {
             e.printStackTrace();
             fail();
@@ -92,26 +93,26 @@ public class ProcDefinitionParserTest {
                     procedureInfo.getName());
             Assertions.assertEquals(2,
                     procedureInfo.getArguments().length);
-            Assertions.assertEquals(Constants.PARAMETER_ABBREVIATION + "NumInput",
+            Assertions.assertEquals( "NumInput",
                     procedureInfo.getArguments()[0].getName());
-            Assertions.assertEquals(Constants.PARAMETER_ABBREVIATION + "Boolean",
+            Assertions.assertEquals( "Boolean",
                     procedureInfo.getArguments()[1].getName());
 
             Truth.assertThat(procedureInfo.getArguments()[0].getType()).isInstanceOf(StringType.class);
             Truth.assertThat(procedureInfo.getArguments()[1].getType()).isInstanceOf(BooleanType.class);
-            Assertions.assertEquals(3, list.get(1).getStmtList().getStmts().getListOfStmt().size());
+            Assertions.assertEquals(3, list.get(1).getStmtList().getStmts().size());
             Assertions.assertEquals(procedureInfo.getArguments()[1].getName(),
-                    list.get(1).getParameterList().getParameterListPlain().getParameters().get(1).getIdent().getName());
+                    list.get(1).getParameterDefinitionList().getParameterDefinitons().get(1).getIdent().getName());
             Assertions.assertEquals(procedureInfo.getArguments()[0].getName(),
-                    list.get(1).getParameterList().getParameterListPlain().getParameters().get(0).getIdent().getName());
+                    list.get(1).getParameterDefinitionList().getParameterDefinitons().get(0).getIdent().getName());
             Assertions.assertEquals(procedureInfo.getArguments()[1].getType(),
-                    list.get(1).getParameterList().getParameterListPlain().getParameters().get(1).getType());
+                    list.get(1).getParameterDefinitionList().getParameterDefinitons().get(1).getType());
             Assertions.assertEquals(procedureInfo.getArguments()[0].getType(),
-                    list.get(1).getParameterList().getParameterListPlain().getParameters().get(0).getType());
-            Assertions.assertTrue(list.get(1).getStmtList().getStmts().getListOfStmt().get(0) instanceof MoveSteps);
-            Truth.assertThat(((MoveSteps) list.get(1).getStmtList().getStmts().getListOfStmt().get(0)).getSteps()).isInstanceOf(AsNumber.class);
-            Assertions.assertEquals(Constants.PARAMETER_ABBREVIATION + "NumInput",
-                    ((Identifier) ((AsNumber) ((MoveSteps) list.get(1).getStmtList().getStmts().getListOfStmt().get(0)).getSteps()).getOperand1()).getName());
+                    list.get(1).getParameterDefinitionList().getParameterDefinitons().get(0).getType());
+            Assertions.assertTrue(list.get(1).getStmtList().getStmts().get(0) instanceof MoveSteps);
+            Truth.assertThat(((MoveSteps) list.get(1).getStmtList().getStmts().get(0)).getSteps()).isInstanceOf(AsNumber.class);
+            Assertions.assertEquals( "NumInput",
+                    ((Parameter) ((AsNumber) ((MoveSteps) list.get(1).getStmtList().getStmts().get(0)).getSteps()).getOperand1()).getName().getName());
         } catch (ParsingException e) {
             e.printStackTrace();
             fail();

@@ -92,12 +92,12 @@ public class NoWorkingScripts implements IssueFinder, ScratchVisitor {
     public void visit(Script node) {
         if (stillFullfilledEmptyScript) {
             if (node.getEvent() instanceof Never) {
-                if (node.getStmtList().getStmts().getListOfStmt().size() > 0) {
+                if (node.getStmtList().getStmts().size() > 0) {
                     deadCodeFound = true;
                 }
             } else {
                 foundEvent = true;
-                if (node.getStmtList().getStmts().getListOfStmt().size() > 0) {
+                if (node.getStmtList().getStmts().size() > 0) {
                     stillFullfilledEmptyScript = false;
                 }
             }

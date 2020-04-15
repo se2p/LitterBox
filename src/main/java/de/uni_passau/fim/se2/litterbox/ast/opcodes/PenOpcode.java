@@ -20,7 +20,8 @@ package de.uni_passau.fim.se2.litterbox.ast.opcodes;
 
 public enum PenOpcode {
     pen_clear, pen_stamp, pen_penDown, pen_penUp, pen_setPenColorToColor, pen_setPenColorParamTo,
-    pen_changePenColorParamBy;
+    pen_changePenColorParamBy,
+    pen_setPenSizeTo, pen_changePenSizeBy;
 
     public static boolean contains(String opcode) {
         for (PenOpcode value : PenOpcode.values()) {

@@ -24,7 +24,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.Identifier;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ProcedureInfo;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
@@ -49,7 +49,7 @@ public class AmbiguousCustomBlockSignature implements IssueFinder, ScratchVisito
     private int count = 0;
     private List<String> actorNames = new LinkedList<>();
     private ActorDefinition currentActor;
-    private Map<Identifier, ProcedureInfo> procMap;
+    private Map<LocalIdentifier, ProcedureInfo> procMap;
     private Program program;
 
     @Override
@@ -85,7 +85,7 @@ public class AmbiguousCustomBlockSignature implements IssueFinder, ScratchVisito
 
     @Override
     public void visit(ProcedureDefinition node) {
-        if (node.getStmtList().getStmts().getListOfStmt().size() > 0) {
+        if (node.getStmtList().getStmts().size() > 0) {
             checkProc(node.getIdent());
         }
 
@@ -96,7 +96,7 @@ public class AmbiguousCustomBlockSignature implements IssueFinder, ScratchVisito
         }
     }
 
-    private void checkProc(Identifier ident) {
+    private void checkProc(LocalIdentifier ident) {
         List<ProcedureInfo> procedureInfos = new ArrayList<>(procMap.values());
         ProcedureInfo current = procMap.get(ident);
         for (ProcedureInfo procedureInfo : procedureInfos) {

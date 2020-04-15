@@ -19,19 +19,19 @@
 package de.uni_passau.fim.se2.litterbox.ast.model.event;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.Identifier;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 public class BackdropSwitchTo extends AbstractNode implements Event {
 
-    private final Identifier backdrop;
+    private final LocalIdentifier backdrop;
 
-    public BackdropSwitchTo(Identifier backdrop) {
+    public BackdropSwitchTo(LocalIdentifier backdrop) {
         super(backdrop);
         this.backdrop = backdrop;
     }
 
-    public Identifier getBackdrop() {
+    public LocalIdentifier getBackdrop() {
         return backdrop;
     }
 

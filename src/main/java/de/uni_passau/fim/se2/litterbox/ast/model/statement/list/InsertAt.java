@@ -21,7 +21,7 @@ package de.uni_passau.fim.se2.litterbox.ast.model.statement.list;
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Identifier;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
@@ -29,13 +29,13 @@ public class InsertAt extends AbstractNode implements ListStmt {
 
     private final StringExpr string;
     private final NumExpr index;
-    private final Variable variable;
+    private final Identifier identifier;
 
-    public InsertAt(StringExpr string, NumExpr index, Variable variable) {
-        super(string, index, variable);
+    public InsertAt(StringExpr string, NumExpr index, Identifier identifier) {
+        super(string, index, identifier);
         this.string = Preconditions.checkNotNull(string);
         this.index = Preconditions.checkNotNull(index);
-        this.variable = Preconditions.checkNotNull(variable);
+        this.identifier = Preconditions.checkNotNull(identifier);
     }
 
     public StringExpr getString() {
@@ -46,8 +46,8 @@ public class InsertAt extends AbstractNode implements ListStmt {
         return index;
     }
 
-    public Variable getVariable() {
-        return variable;
+    public Identifier getIdentifier() {
+        return identifier;
     }
 
     @Override

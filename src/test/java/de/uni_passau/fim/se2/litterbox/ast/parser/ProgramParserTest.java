@@ -27,7 +27,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinitionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.SetStmtList;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.ExpressionListPlain;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.ExpressionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.resource.ImageResource;
@@ -37,7 +37,10 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetVariableTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.declaration.DeclarationIdentAsTypeStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.declaration.DeclarationStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.Qualified;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
+import de.uni_passau.fim.se2.litterbox.ast.model.variable.ScratchList;
+import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -118,13 +121,15 @@ public class ProgramParserTest {
             Program program = ProgramParser.parseProgram("Empty", project);
             ActorDefinition stage = program.getActorDefinitionList().getDefintions().get(0);
             List<DeclarationStmt> decls = stage.getDecls().getDeclarationStmtList();
+            Assertions.assertTrue(((DeclarationIdentAsTypeStmt) decls.get(0)).getIdent() instanceof Variable);
             Truth.assertThat(((DeclarationIdentAsTypeStmt) decls.get(0)).getIdent()
-                    .getName()).isEqualTo(Constants.VARIABLE_ABBREVIATION + "my variable");
+                    .getName().getName()).isEqualTo( "my variable");
 
             SetVariableTo setStmt = (SetVariableTo) stage.getSetStmtList().getStmts().stream()
                     .filter(t -> t instanceof SetVariableTo)
                     .findFirst().get();
-            Truth.assertThat(((Qualified) setStmt.getVariable()).getSecond().getName()).isEqualTo(Constants.VARIABLE_ABBREVIATION + "my variable");
+            Assertions.assertTrue(((Qualified) setStmt.getIdentifier()).getSecond() instanceof Variable);
+            Truth.assertThat(((Qualified) setStmt.getIdentifier()).getSecond().getName().getName()).isEqualTo( "my variable");
             Truth.assertThat(((NumberLiteral) setStmt.getExpr()).getValue()).isEqualTo(0);
 
             ActorDefinition sprite = program.getActorDefinitionList().getDefintions().get(1);
@@ -133,9 +138,10 @@ public class ProgramParserTest {
                             Collectors.toList());
 
             SetVariableTo setList = (SetVariableTo) spriteSetStmts.get(0);
-            Qualified variable = (Qualified) setList.getVariable();
-            Truth.assertThat(variable.getSecond().getName()).isEqualTo(Constants.LIST_ABBREVIATION + "SpriteLocalList");
-            ExpressionListPlain exprListPlain = (ExpressionListPlain) setList.getExpr();
+            Qualified variable = (Qualified) setList.getIdentifier();
+            Assertions.assertTrue(variable.getSecond() instanceof ScratchList);
+            Truth.assertThat(variable.getSecond().getName().getName()).isEqualTo( "SpriteLocalList");
+            ExpressionList exprListPlain = (ExpressionList) setList.getExpr();
             Truth.assertThat(((StringLiteral) exprListPlain.getExpressions().get(0)).getText()).isEqualTo("Elem1");
             Truth.assertThat(((StringLiteral) exprListPlain.getExpressions().get(1)).getText()).isEqualTo("Elem2");
             Truth.assertThat(((StringLiteral) exprListPlain.getExpressions().get(2)).getText()).isEqualTo("1");

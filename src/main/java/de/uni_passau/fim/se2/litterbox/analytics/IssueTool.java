@@ -20,32 +20,14 @@ package de.uni_passau.fim.se2.litterbox.analytics;
 
 import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.*;
 import de.uni_passau.fim.se2.litterbox.analytics.ctscore.FlowControl;
-import de.uni_passau.fim.se2.litterbox.analytics.smells.DeadCode;
-import de.uni_passau.fim.se2.litterbox.analytics.smells.EmptyControlBody;
-import de.uni_passau.fim.se2.litterbox.analytics.smells.EmptyCustomBlock;
-import de.uni_passau.fim.se2.litterbox.analytics.smells.EmptyProject;
-import de.uni_passau.fim.se2.litterbox.analytics.smells.EmptyScript;
-import de.uni_passau.fim.se2.litterbox.analytics.smells.EmptySprite;
-import de.uni_passau.fim.se2.litterbox.analytics.smells.LongScript;
-import de.uni_passau.fim.se2.litterbox.analytics.smells.NestedLoops;
-import de.uni_passau.fim.se2.litterbox.analytics.smells.UnusedCustomBlock;
-import de.uni_passau.fim.se2.litterbox.analytics.smells.UnusedVariable;
-import de.uni_passau.fim.se2.litterbox.analytics.utils.BlockCount;
-import de.uni_passau.fim.se2.litterbox.analytics.utils.ProcedureCount;
-import de.uni_passau.fim.se2.litterbox.analytics.utils.ProgramUsingPen;
-import de.uni_passau.fim.se2.litterbox.analytics.utils.SpriteCount;
-import de.uni_passau.fim.se2.litterbox.analytics.utils.WeightedMethodCount;
+import de.uni_passau.fim.se2.litterbox.analytics.smells.*;
+import de.uni_passau.fim.se2.litterbox.analytics.utils.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.utils.CSVWriter;
 import org.apache.commons.csv.CSVPrinter;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 
 import static de.uni_passau.fim.se2.litterbox.utils.GroupConstants.*;
 

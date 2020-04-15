@@ -20,19 +20,22 @@ package de.uni_passau.fim.se2.litterbox.ast.model.expression.list;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
-public class ExpressionList extends AbstractNode implements ASTNode {
+import java.util.List;
 
-    private ExpressionListPlain expressionListPlain;
+public class ExpressionList extends AbstractNode implements ASTNode, ListExpr {
 
-    public ExpressionList(ExpressionListPlain expressionListPlain) {
-        super(expressionListPlain);
-        this.expressionListPlain = expressionListPlain;
+    private List<Expression> expressions;
+
+    public ExpressionList(List<Expression> expressions) {
+        super(expressions);
+        this.expressions = expressions;
     }
 
-    public ExpressionListPlain getExpressionListPlain() {
-        return expressionListPlain;
+    public List<Expression> getExpressions() {
+        return expressions;
     }
 
     @Override

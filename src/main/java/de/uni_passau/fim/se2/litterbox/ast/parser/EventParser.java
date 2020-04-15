@@ -22,18 +22,11 @@ import com.fasterxml.jackson.databind.JsonNode;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Key;
 import de.uni_passau.fim.se2.litterbox.ast.model.Message;
-import de.uni_passau.fim.se2.litterbox.ast.model.event.BackdropSwitchTo;
-import de.uni_passau.fim.se2.litterbox.ast.model.event.Clicked;
-import de.uni_passau.fim.se2.litterbox.ast.model.event.Event;
-import de.uni_passau.fim.se2.litterbox.ast.model.event.GreenFlag;
-import de.uni_passau.fim.se2.litterbox.ast.model.event.KeyPressed;
-import de.uni_passau.fim.se2.litterbox.ast.model.event.ReceptionOfMessage;
-import de.uni_passau.fim.se2.litterbox.ast.model.event.StartedAsClone;
-import de.uni_passau.fim.se2.litterbox.ast.model.event.VariableAboveValue;
+import de.uni_passau.fim.se2.litterbox.ast.model.event.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.Identifier;
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.EventOpcode;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
@@ -63,8 +56,10 @@ public class EventParser {
         } else if (opcode.equals(event_whenkeypressed)) {
             Key key = KeyParser.parse(current, allBlocks);
             return new KeyPressed(key);
-        } else if (opcode.equals(event_whenthisspriteclicked) || opcode.equals(event_whenstageclicked)) {
-            return new Clicked();
+        } else if (opcode.equals(event_whenthisspriteclicked)) {
+            return new SpriteClicked();
+        } else if (opcode.equals(event_whenstageclicked)) {
+            return new StageClicked();
         } else if (opcode.equals(event_whenbroadcastreceived)) {
             JsonNode fields = current.get(FIELDS_KEY);
             String msgValue = fields.get(BCAST_OPTION).get(FIELD_VALUE).asText();
@@ -75,16 +70,16 @@ public class EventParser {
         } else if (opcode.equals(event_whengreaterthan)) {
 
             String variableValue = current.get(FIELDS_KEY).get(VARIABLE_MENU).get(0).asText();
-            Identifier var = new StrId(variableValue);
+            LocalIdentifier var = new StrId(variableValue);
 
-            NumExpr fieldValue = NumExprParser.parseNumExpr(current, 0, allBlocks);
+            NumExpr fieldValue = NumExprParser.parseNumExpr(current, VALUE_KEY, allBlocks);
 
             return new VariableAboveValue(var, fieldValue);
         } else if (opcode.equals(event_whenbackdropswitchesto)) {
             JsonNode fields = current.get(FIELDS_KEY);
             JsonNode backdropArray = fields.get(BACKDROP);
             String backdropName = backdropArray.get(FIELD_VALUE).asText();
-            Identifier id = new StrId(backdropName);
+            LocalIdentifier id = new StrId(backdropName);
             return new BackdropSwitchTo(id);
         } else {
             throw new IllegalStateException("EventBlock with opcode " + opcode + " was not parsed");

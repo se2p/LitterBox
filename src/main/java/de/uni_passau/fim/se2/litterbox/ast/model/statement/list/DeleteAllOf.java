@@ -19,21 +19,21 @@
 package de.uni_passau.fim.se2.litterbox.ast.model.statement.list;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Identifier;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 public class DeleteAllOf extends AbstractNode implements ListStmt {
 
-    private final Variable variable;
+    private final Identifier identifier;
 
-    public DeleteAllOf(Variable variable) {
-        super(variable);
-        this.variable = Preconditions.checkNotNull(variable);
+    public DeleteAllOf(Identifier identifier) {
+        super(identifier);
+        this.identifier = Preconditions.checkNotNull(identifier);
     }
 
-    public Variable getVariable() {
-        return variable;
+    public Identifier getIdentifier() {
+        return identifier;
     }
 
     @Override

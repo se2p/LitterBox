@@ -25,7 +25,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Event;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.ListOfStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.DependentBlockOpcodes;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.EventOpcode;
@@ -105,7 +104,6 @@ public class ScriptParser {
             current = blocks.get(blockID);
         }
 
-        ListOfStmt listOfStmt = new ListOfStmt(list);
-        return new StmtList(listOfStmt);
+        return new StmtList(list);
     }
 }

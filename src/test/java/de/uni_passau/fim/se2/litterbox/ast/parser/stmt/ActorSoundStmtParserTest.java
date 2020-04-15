@@ -26,7 +26,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinitionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
-import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.WithId;
+import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.WithExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.ClearSoundEffects;
@@ -34,7 +34,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.PlaySoundU
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.StartSound;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.StopAllSounds;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopAll;
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.StrId;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -81,7 +81,7 @@ public class ActorSoundStmtParserTest {
             ActorDefinition sprite = list.getDefintions().get(1);
 
             Script script = sprite.getScripts().getScriptList().get(0);
-            List<Stmt> listOfStmt = script.getStmtList().getStmts().getListOfStmt();
+            List<Stmt> listOfStmt = script.getStmtList().getStmts();
 
             Truth.assertThat(listOfStmt.get(0).getClass()).isEqualTo(PlaySoundUntilDone.class);
             Truth.assertThat(listOfStmt.get(1).getClass()).isEqualTo(StartSound.class);
@@ -102,13 +102,13 @@ public class ActorSoundStmtParserTest {
             ActorDefinition sprite = list.getDefintions().get(1);
 
             Script script = sprite.getScripts().getScriptList().get(0);
-            List<Stmt> listOfStmt = script.getStmtList().getStmts().getListOfStmt();
+            List<Stmt> listOfStmt = script.getStmtList().getStmts();
 
             Truth.assertThat(listOfStmt.get(0).getClass()).isEqualTo(PlaySoundUntilDone.class);
 
             PlaySoundUntilDone playSoundUntilDone = (PlaySoundUntilDone) listOfStmt.get(0);
-            WithId elementChoice = (WithId) playSoundUntilDone.getElementChoice();
-            AsString stringExpr = (AsString) elementChoice.getStringExpr();
+            WithExpr elementChoice = (WithExpr) playSoundUntilDone.getElementChoice();
+            AsString stringExpr = (AsString) elementChoice.getExpression();
             StrId strid = (StrId) stringExpr.getOperand1();
             Truth.assertThat(strid.getName()).isEqualTo("Meow");
         } catch (ParsingException e) {
@@ -125,13 +125,13 @@ public class ActorSoundStmtParserTest {
             ActorDefinition sprite = list.getDefintions().get(1);
 
             Script script = sprite.getScripts().getScriptList().get(0);
-            List<Stmt> listOfStmt = script.getStmtList().getStmts().getListOfStmt();
+            List<Stmt> listOfStmt = script.getStmtList().getStmts();
 
             Truth.assertThat(listOfStmt.get(0).getClass()).isEqualTo(PlaySoundUntilDone.class);
 
             StartSound startSound = (StartSound) listOfStmt.get(1);
-            WithId elementChoice = (WithId) startSound.getElementChoice();
-            AsString stringExpr = (AsString) elementChoice.getStringExpr();
+            WithExpr elementChoice = (WithExpr) startSound.getElementChoice();
+            AsString stringExpr = (AsString) elementChoice.getExpression();
             StrId strid = (StrId) stringExpr.getOperand1();
             Truth.assertThat(strid.getName()).isEqualTo("Meow");
         } catch (ParsingException e) {

@@ -23,11 +23,11 @@ import de.uni_passau.fim.se2.litterbox.analytics.IssueReport;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.model.event.Clicked;
+import de.uni_passau.fim.se2.litterbox.ast.model.event.SpriteClicked;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.StartedAsClone;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.CreateCloneOf;
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.StrId;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
@@ -97,7 +97,7 @@ public class MissingCloneInitialization implements IssueFinder, ScratchVisitor {
     }
 
     @Override
-    public void visit(Clicked node) {
+    public void visit(SpriteClicked node) {
         whenStartsAsCloneActors.add(currentActor.getIdent().getName());
     }
 }

@@ -18,96 +18,36 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.visitor;
 
-import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
-import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
-import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinitionList;
-import de.uni_passau.fim.se2.litterbox.ast.model.ActorType;
-import de.uni_passau.fim.se2.litterbox.ast.model.Key;
-import de.uni_passau.fim.se2.litterbox.ast.model.Message;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.model.Script;
-import de.uni_passau.fim.se2.litterbox.ast.model.ScriptList;
-import de.uni_passau.fim.se2.litterbox.ast.model.SetStmtList;
-import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
-import de.uni_passau.fim.se2.litterbox.ast.model.URI;
-import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.ElementChoice;
-import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.Next;
-import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.Prev;
-import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.Random;
-import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.WithId;
-import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.WithNumber;
-import de.uni_passau.fim.se2.litterbox.ast.model.event.BackdropSwitchTo;
-import de.uni_passau.fim.se2.litterbox.ast.model.event.Clicked;
-import de.uni_passau.fim.se2.litterbox.ast.model.event.Event;
-import de.uni_passau.fim.se2.litterbox.ast.model.event.GreenFlag;
-import de.uni_passau.fim.se2.litterbox.ast.model.event.KeyPressed;
-import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
-import de.uni_passau.fim.se2.litterbox.ast.model.event.ReceptionOfMessage;
-import de.uni_passau.fim.se2.litterbox.ast.model.event.StartedAsClone;
-import de.uni_passau.fim.se2.litterbox.ast.model.event.VariableAboveValue;
+import de.uni_passau.fim.se2.litterbox.ast.model.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.event.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.ComparableExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.UnspecifiedExpression;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.And;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.AsBool;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BiggerThan;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BoolExpr;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.ColorTouches;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Equals;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.ExpressionContains;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.IsKeyPressed;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.IsMouseDown;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.LessThan;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Not;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Or;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Touching;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.UnspecifiedBoolExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.AsListIndex;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.ExpressionList;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.ExpressionListPlain;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.ListExpr;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.Add;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.AsNumber;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.Current;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.DaysSince2000;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.DistanceTo;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.Div;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.IndexOf;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.LengthOfString;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.LengthOfVar;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.Loudness;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.Minus;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.Mod;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.MouseX;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.MouseY;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.Mult;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumFunct;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumFunctOf;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.PickRandom;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.Round;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.Timer;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.UnspecifiedNumExpr;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AttributeOf;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.ItemOfVariable;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.Join;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.LetterOf;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.UnspecifiedStringExpr;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.Username;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.Attribute;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.AttributeFromFixed;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.AttributeFromVariable;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.FixedAttribute;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Identifier;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.BoolLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.ColorLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
-import de.uni_passau.fim.se2.litterbox.ast.model.position.CoordinatePosition;
+import de.uni_passau.fim.se2.litterbox.ast.model.position.FromExpression;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.MousePos;
-import de.uni_passau.fim.se2.litterbox.ast.model.position.PivotOf;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.Position;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.RandomPos;
-import de.uni_passau.fim.se2.litterbox.ast.model.procedure.Parameter;
-import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterList;
-import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterListPlain;
+import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterDefinitionList;
+import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterDefiniton;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinitionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.resource.ImageResource;
@@ -116,112 +56,30 @@ import de.uni_passau.fim.se2.litterbox.ast.model.resource.ResourceList;
 import de.uni_passau.fim.se2.litterbox.ast.model.resource.SoundResource;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.ExpressionStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.ListOfStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.UnspecifiedStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.ActorLookStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.AskAndWait;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.ClearGraphicEffects;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.HideVariable;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.ShowVariable;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.SwitchBackdrop;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.SwitchBackdropAndWait;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.ActorSoundStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.ClearSoundEffects;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.PlaySoundUntilDone;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.StartSound;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.StopAllSounds;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.Broadcast;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.BroadcastAndWait;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.ChangeAttributeBy;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.ChangeVariableBy;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.CommonStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.CreateCloneOf;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.ResetTimer;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetAttributeTo;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetVariableTo;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.StopOtherScriptsInSprite;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitSeconds;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitUntil;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.ControlStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfElseStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatTimesStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.declaration.DeclarationAttributeAsTypeStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.declaration.DeclarationAttributeOfIdentAsTypeStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.declaration.DeclarationIdentAsTypeStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.declaration.DeclarationStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.declaration.DeclarationStmtList;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.list.AddTo;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.list.DeleteAllOf;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.list.DeleteOf;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.list.InsertAt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.list.ListStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.list.ReplaceItem;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.pen.ChangePenColorParamBy;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.pen.PenClearStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.pen.PenDownStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.pen.PenStampStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.pen.PenStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.pen.PenUpStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.pen.SetPenColorParamTo;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.pen.SetPenColorToColorStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.ChangeLayerBy;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.ChangeSizeBy;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.GoToBackLayer;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.GoToFrontLayer;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.GoToLayer;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Hide;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Say;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SayForSecs;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SetSizeTo;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Show;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SpriteLookStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SwitchCostumeTo;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Think;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.ThinkForSecs;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.ChangeXBy;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.ChangeYBy;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.GlideSecsTo;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.GoToPos;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.IfOnEdgeBounce;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.MoveSteps;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.PointInDirection;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.PointTowards;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SetXTo;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SetYTo;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SpriteMotionStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.TurnLeft;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.TurnRight;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.declaration.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.list.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.pen.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.DeleteClone;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopAll;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopThisScript;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.TerminationStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.timecomp.TimeComp;
-import de.uni_passau.fim.se2.litterbox.ast.model.touchable.AsTouchable;
-import de.uni_passau.fim.se2.litterbox.ast.model.touchable.Edge;
-import de.uni_passau.fim.se2.litterbox.ast.model.touchable.MousePointer;
-import de.uni_passau.fim.se2.litterbox.ast.model.touchable.SpriteTouchable;
-import de.uni_passau.fim.se2.litterbox.ast.model.touchable.Touchable;
+import de.uni_passau.fim.se2.litterbox.ast.model.touchable.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.Color;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.FromNumber;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.Rgba;
-import de.uni_passau.fim.se2.litterbox.ast.model.type.BooleanType;
-import de.uni_passau.fim.se2.litterbox.ast.model.type.ImageType;
-import de.uni_passau.fim.se2.litterbox.ast.model.type.ListType;
-import de.uni_passau.fim.se2.litterbox.ast.model.type.MapType;
-import de.uni_passau.fim.se2.litterbox.ast.model.type.NumberType;
-import de.uni_passau.fim.se2.litterbox.ast.model.type.SoundType;
-import de.uni_passau.fim.se2.litterbox.ast.model.type.StringType;
-import de.uni_passau.fim.se2.litterbox.ast.model.type.Type;
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.Id;
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.Identifier;
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.Qualified;
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.StrId;
+import de.uni_passau.fim.se2.litterbox.ast.model.type.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.variable.DataExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.variable.Parameter;
+import de.uni_passau.fim.se2.litterbox.ast.model.variable.ScratchList;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 
 public interface ScratchVisitor {
@@ -370,7 +228,7 @@ public interface ScratchVisitor {
      * @param node StrId of which the children will be iterated
      */
     default void visit(StrId node) {
-        visit((Identifier) node);
+        visit((LocalIdentifier) node);
     }
 
     /**
@@ -673,7 +531,7 @@ public interface ScratchVisitor {
     }
 
     /**
-     * Default implementation of visit method for {@link Identifier}.
+     * Default implementation of visit method for {@link LocalIdentifier}.
      *
      * <p>
      * Iterates all children of this node without performing any action.
@@ -681,8 +539,8 @@ public interface ScratchVisitor {
      *
      * @param node Identifier Node of which the children will be iterated
      */
-    default void visit(Identifier node) {
-        visit((Variable) node);
+    default void visit(LocalIdentifier node) {
+        visit((Identifier) node);
     }
 
     /**
@@ -699,54 +557,28 @@ public interface ScratchVisitor {
     }
 
     /**
-     * Default implementation of visit method for {@link ListOfStmt}.
+     * Default implementation of visit method for {@link ParameterDefinitionList}.
      *
      * <p>
      * Iterates all children of this node without performing any action.
      * </p>
      *
-     * @param node ListOfStmt Node of which the children will be iterated
+     * @param node ParameterDefinitionList Node of which the children will be iterated
      */
-    default void visit(ListOfStmt node) {
+    default void visit(ParameterDefinitionList node) {
         visit((ASTNode) node);
     }
 
     /**
-     * Default implementation of visit method for {@link ParameterList}.
+     * Default implementation of visit method for {@link ParameterDefiniton}.
      *
      * <p>
      * Iterates all children of this node without performing any action.
      * </p>
      *
-     * @param node ParameterList Node of which the children will be iterated
+     * @param node ParameterDefiniton Node of which the children will be iterated
      */
-    default void visit(ParameterList node) {
-        visit((ASTNode) node);
-    }
-
-    /**
-     * Default implementation of visit method for {@link ParameterListPlain}.
-     *
-     * <p>
-     * Iterates all children of this node without performing any action.
-     * </p>
-     *
-     * @param node ParameterListPlain Node of which the children will be iterated
-     */
-    default void visit(ParameterListPlain node) {
-        visit((ASTNode) node);
-    }
-
-    /**
-     * Default implementation of visit method for {@link Parameter}.
-     *
-     * <p>
-     * Iterates all children of this node without performing any action.
-     * </p>
-     *
-     * @param node Parameter Node of which the children will be iterated
-     */
-    default void visit(Parameter node) {
+    default void visit(ParameterDefiniton node) {
         visit((ASTNode) node);
     }
 
@@ -760,19 +592,6 @@ public interface ScratchVisitor {
      * @param node ExpressionList Node of which the children will be iterated
      */
     default void visit(ExpressionList node) {
-        visit((ASTNode) node);
-    }
-
-    /**
-     * Default implementation of visit method for {@link ExpressionListPlain}.
-     *
-     * <p>
-     * Iterates all children of this node without performing any action.
-     * </p>
-     *
-     * @param node ExpressionListPlain Node of which the children will be iterated
-     */
-    default void visit(ExpressionListPlain node) {
         visit((ListExpr) node);
     }
 
@@ -799,6 +618,19 @@ public interface ScratchVisitor {
      * @param node SwitchBackdrop Node of which the children will be iterated
      */
     default void visit(SwitchBackdrop node) {
+        visit((ActorLookStmt) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link NextBackdrop}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node NextBackdrop Node of which the children will be iterated
+     */
+    default void visit(NextBackdrop node) {
         visit((ActorLookStmt) node);
     }
 
@@ -920,6 +752,19 @@ public interface ScratchVisitor {
     }
 
     /**
+     * Default implementation of visit method for {@link GoToPosXY}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node GoToPos Node of which the children will be iterated
+     */
+    default void visit(GoToPosXY node) {
+        visit((SpriteMotionStmt) node);
+    }
+
+    /**
      * Default implementation of visit method for {@link TerminationStmt}.
      *
      * <p>
@@ -942,7 +787,7 @@ public interface ScratchVisitor {
      * @param node Qualified Node of which the children will be iterated
      */
     default void visit(Qualified node) {
-        visit((Variable) node);
+        visit((Identifier) node);
     }
 
     /**
@@ -959,15 +804,15 @@ public interface ScratchVisitor {
     }
 
     /**
-     * Default implementation of visit method for {@link ColorTouches}.
+     * Default implementation of visit method for {@link ColorTouchingColor}.
      *
      * <p>
      * Iterates all children of this node without performing any action.
      * </p>
      *
-     * @param node ColorTouches  Node of which the children will be iterated
+     * @param node ColorTouchingColor  Node of which the children will be iterated
      */
-    default void visit(ColorTouches node) {
+    default void visit(ColorTouchingColor node) {
         visit((BoolExpr) node);
     }
 
@@ -1034,19 +879,6 @@ public interface ScratchVisitor {
      */
     default void visit(SetPenColorParamTo node) {
         visit((PenStmt) node);
-    }
-
-    /**
-     * Default implementation of visit method for {@link ChangeAttributeBy}.
-     *
-     * <p>
-     * Iterates all children of this node without performing any action.
-     * </p>
-     *
-     * @param node ChangeAttributeBy  Node of which the children will be iterated
-     */
-    default void visit(ChangeAttributeBy node) {
-        visit((CommonStmt) node);
     }
 
     /**
@@ -1206,28 +1038,15 @@ public interface ScratchVisitor {
     }
 
     /**
-     * Default implementation of visit method for {@link WithId}.
+     * Default implementation of visit method for {@link WithExpr}.
      *
      * <p>
      * Iterates all children of this node without performing any action.
      * </p>
      *
-     * @param node WithId  Node of which the children will be iterated
+     * @param node WithExpr  Node of which the children will be iterated
      */
-    default void visit(WithId node) {
-        visit((ElementChoice) node);
-    }
-
-    /**
-     * Default implementation of visit method for {@link WithId}.
-     *
-     * <p>
-     * Iterates all children of this node without performing any action.
-     * </p>
-     *
-     * @param node WithId  Node of which the children will be iterated
-     */
-    default void visit(WithNumber node) {
+    default void visit(WithExpr node) {
         visit((ElementChoice) node);
     }
 
@@ -1323,7 +1142,7 @@ public interface ScratchVisitor {
     }
 
     /**
-     * Default implementation of visit method for {@link ExpressionContains}.
+     * Default implementation of visit method for {@link StringContains}.
      *
      * <p>
      * Iterates all children of this node without performing any action.
@@ -1331,7 +1150,7 @@ public interface ScratchVisitor {
      *
      * @param node ExpressionContains  Node of which the children will be iterated
      */
-    default void visit(ExpressionContains node) {
+    default void visit(StringContains node) {
         visit((BoolExpr) node);
     }
 
@@ -1830,19 +1649,6 @@ public interface ScratchVisitor {
     }
 
     /**
-     * Default implementation of visit method for {@link CoordinatePosition}.
-     *
-     * <p>
-     * Iterates all children of this node without performing any action.
-     * </p>
-     *
-     * @param node CoordinatePosition  Node of which the children will be iterated
-     */
-    default void visit(CoordinatePosition node) {
-        visit((Position) node);
-    }
-
-    /**
      * Default implementation of visit method for {@link MousePos}.
      *
      * <p>
@@ -1856,26 +1662,26 @@ public interface ScratchVisitor {
     }
 
     /**
-     * Default implementation of visit method for {@link PivotOf}.
+     * Default implementation of visit method for {@link FromExpression}.
      *
      * <p>
      * Iterates all children of this node without performing any action.
      * </p>
      *
-     * @param node PivotOf  Node of which the children will be iterated
+     * @param node FromExpression  Node of which the children will be iterated
      */
-    default void visit(PivotOf node) {
+    default void visit(FromExpression node) {
         visit((Position) node);
     }
 
     /**
-     * Default implementation of visit method for {@link PivotOf}.
+     * Default implementation of visit method for {@link RandomPos}.
      *
      * <p>
      * Iterates all children of this node without performing any action.
      * </p>
      *
-     * @param node PivotOf  Node of which the children will be iterated
+     * @param node RandomPos  Node of which the children will be iterated
      */
     default void visit(RandomPos node) {
         visit((Position) node);
@@ -2389,32 +2195,6 @@ public interface ScratchVisitor {
     }
 
     /**
-     * Default implementation of visit method for {@link GoToBackLayer}.
-     *
-     * <p>
-     * Iterates all children of this node without performing any action.
-     * </p>
-     *
-     * @param node GoToBackLayer  Node of which the children will be iterated
-     */
-    default void visit(GoToBackLayer node) {
-        visit((SpriteLookStmt) node);
-    }
-
-    /**
-     * Default implementation of visit method for {@link GoToFrontLayer}.
-     *
-     * <p>
-     * Iterates all children of this node without performing any action.
-     * </p>
-     *
-     * @param node GoToFrontLayer  Node of which the children will be iterated
-     */
-    default void visit(GoToFrontLayer node) {
-        visit((SpriteLookStmt) node);
-    }
-
-    /**
      * Default implementation of visit method for {@link GoToLayer}.
      *
      * <p>
@@ -2450,6 +2230,32 @@ public interface ScratchVisitor {
      * @param node HideVariable  Node of which the children will be iterated
      */
     default void visit(HideVariable node) {
+        visit((ActorLookStmt) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link HideList}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node HideList  Node of which the children will be iterated
+     */
+    default void visit(HideList node) {
+        visit((ActorLookStmt) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link ShowList}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node ShowList  Node of which the children will be iterated
+     */
+    default void visit(ShowList node) {
         visit((ActorLookStmt) node);
     }
 
@@ -2532,6 +2338,19 @@ public interface ScratchVisitor {
     }
 
     /**
+     * Default implementation of visit method for {@link NextCostume}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node NextCostume  Node of which the children will be iterated
+     */
+    default void visit(NextCostume node) {
+        visit((SpriteLookStmt) node);
+    }
+
+    /**
      * Default implementation of visit method for {@link Think}.
      *
      * <p>
@@ -2580,6 +2399,19 @@ public interface ScratchVisitor {
      * @param node GlideSecsTo  Node of which the children will be iterated
      */
     default void visit(GlideSecsTo node) {
+        visit((SpriteMotionStmt) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link GlideSecsToXY}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node GlideSecsToXY  Node of which the children will be iterated
+     */
+    default void visit(GlideSecsToXY node) {
         visit((SpriteMotionStmt) node);
     }
 
@@ -2766,19 +2598,6 @@ public interface ScratchVisitor {
     }
 
     /**
-     * Default implementation of visit method for {@link MapType}.
-     *
-     * <p>
-     * Iterates all children of this node without performing any action.
-     * </p>
-     *
-     * @param node MapType  Node of which the children will be iterated
-     */
-    default void visit(MapType node) {
-        visit((Type) node);
-    }
-
-    /**
      * Default implementation of visit method for {@link NumberType}.
      *
      * <p>
@@ -2818,29 +2637,16 @@ public interface ScratchVisitor {
     }
 
     /**
-     * Default implementation of visit method for {@link SpriteTouchable}.
+     * Default implementation of visit method for {@link Identifier }.
      *
      * <p>
      * Iterates all children of this node without performing any action.
      * </p>
      *
-     * @param node SpriteTouchable  Node of which the children will be iterated
+     * @param node Identifier   Node of which the children will be iterated
      */
-    default void visit(Variable node) {
+    default void visit(Identifier node) {
         visit((Expression) node);
-    }
-
-    /**
-     * Default implementation of visit method for {@link Id}.
-     *
-     * <p>
-     * Iterates all children of this node without performing any action.
-     * </p>
-     *
-     * @param node Id  Node of which the children will be iterated
-     */
-    default void visit(Id node) {
-        visit((Identifier) node);
     }
 
     /**
@@ -2893,5 +2699,479 @@ public interface ScratchVisitor {
      */
     default void visit(ScriptList node) {
         visit((ASTNode) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link SpriteClicked}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node SpriteClicked Node of which the children will be iterated
+     */
+    default void visit(SpriteClicked node) {
+        visit((Clicked) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link StageClicked}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node StageClicked Node of which the children will be iterated
+     */
+    default void visit(StageClicked node) {
+        visit((Clicked) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link Costume}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node Costume Node of which the children will be iterated
+     */
+    default void visit(Costume node) {
+        visit((StringExpr) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link Backdrop}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node Backdrop Node of which the children will be iterated
+     */
+    default void visit(Backdrop node) {
+        visit((StringExpr) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link Direction}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node Direction Node of which the children will be iterated
+     */
+    default void visit(Direction node) {
+        visit((NumExpr) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link PositionX}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node PositionX Node of which the children will be iterated
+     */
+    default void visit(PositionX node) {
+        visit((NumExpr) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link PositionY}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node PositionY Node of which the children will be iterated
+     */
+    default void visit(PositionY node) {
+        visit((NumExpr) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link Size}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node Size Node of which the children will be iterated
+     */
+    default void visit(Size node) {
+        visit((NumExpr) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link Volume}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node Volume Node of which the children will be iterated
+     */
+    default void visit(Volume node) {
+        visit((NumExpr) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link Answer}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node Answer Node of which the children will be iterated
+     */
+    default void visit(Answer node) {
+        visit((StringExpr) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link NameNum}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node NameNum Node of which the children will be iterated
+     */
+    default void visit(NameNum node) {
+        visit((ASTNode) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link FixedAttribute}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node FixedAttribute Node of which the children will be iterated
+     */
+    default void visit(FixedAttribute node) {
+        visit((ASTNode) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link Attribute}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node Attribute Node of which the children will be iterated
+     */
+    default void visit(Attribute node) {
+        visit((ASTNode) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link AttributeFromFixed}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node AttributeFromFixed Node of which the children will be iterated
+     */
+    default void visit(AttributeFromFixed node) {
+        visit((Attribute) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link AttributeFromVariable}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node AttributeFromVariable Node of which the children will be iterated
+     */
+    default void visit(AttributeFromVariable node) {
+        visit((Attribute) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link LayerChoice}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node LayerChoice Node of which the children will be iterated
+     */
+    default void visit(LayerChoice node) {
+        visit((ASTNode) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link SetPenSizeTo}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node SetPenSizeTo Node of which the children will be iterated
+     */
+    default void visit(SetPenSizeTo node) {
+        visit((PenStmt) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link ChangePenSizeBy}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node ChangePenSizeBy Node of which the children will be iterated
+     */
+    default void visit(ChangePenSizeBy node) {
+        visit((PenStmt) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link SetGraphicEffectTo}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node SetGraphicEffectTo Node of which the children will be iterated
+     */
+    default void visit(SetGraphicEffectTo node) {
+        visit((ActorLookStmt) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link ChangeGraphicEffectBy}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node ChangeGraphicEffectBy Node of which the children will be iterated
+     */
+    default void visit(ChangeGraphicEffectBy node) {
+        visit((ActorLookStmt) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link GraphicEffect}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node GraphicEffect Node of which the children will be iterated
+     */
+    default void visit(GraphicEffect node) {
+        visit((ASTLeaf) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link SoundEffect}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node SoundEffect Node of which the children will be iterated
+     */
+    default void visit(SoundEffect node) {
+        visit((ASTLeaf) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link SetSoundEffectTo}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node SetSoundEffectTo Node of which the children will be iterated
+     */
+    default void visit(SetSoundEffectTo node) {
+        visit((ActorSoundStmt) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link ChangeSoundEffectBy}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node ChangeSoundEffectBy Node of which the children will be iterated
+     */
+    default void visit(ChangeSoundEffectBy node) {
+        visit((ActorSoundStmt) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link SetVolumeTo}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node SetVolumeTo Node of which the children will be iterated
+     */
+    default void visit(SetVolumeTo node) {
+        visit((ActorSoundStmt) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link ChangeVolumeBy}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node ChangeVolumeBy Node of which the children will be iterated
+     */
+    default void visit(ChangeVolumeBy node) {
+        visit((ActorSoundStmt) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link DragMode}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node DragMode Node of which the children will be iterated
+     */
+    default void visit(DragMode node) {
+        visit((ASTLeaf) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link RotationStyle}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node RotationStyle Node of which the children will be iterated
+     */
+    default void visit(RotationStyle node) {
+        visit((ASTLeaf) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link SetRotationStyle}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node SetRotationStyle Node of which the children will be iterated
+     */
+    default void visit(SetRotationStyle node) {
+        visit((SpriteMotionStmt) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link SetDragMode}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node SetDragMode Node of which the children will be iterated
+     */
+    default void visit(SetDragMode node) {
+        visit((SpriteMotionStmt) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link SpriteTouchingColor}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node SpriteTouchingColor Node of which the children will
+     *             be iterated
+     */
+    default void visit(SpriteTouchingColor node) {
+        visit((BoolExpr) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link DataExpr}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node DataExpr Node of which the children will
+     *             be iterated
+     */
+    default void visit(DataExpr node) {
+        visit((Expression) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link Variable}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node Variable Node of which the children will
+     *             be iterated
+     */
+    default void visit(Variable node) {
+        visit((DataExpr) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link ScratchList}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node ScratchList Node of which the children will
+     *             be iterated
+     */
+    default void visit(ScratchList node) {
+        visit((DataExpr) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link Parameter}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node Parameter Node of which the children will
+     *             be iterated
+     */
+    default void visit(Parameter node) {
+        visit((DataExpr) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link ListContains}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node ListContains Node of which the children will
+     *             be iterated
+     */
+    default void visit(ListContains node) {
+        visit((BoolExpr) node);
     }
 }

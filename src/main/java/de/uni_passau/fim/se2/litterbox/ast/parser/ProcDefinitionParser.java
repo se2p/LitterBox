@@ -23,18 +23,16 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import de.uni_passau.fim.se2.litterbox.ast.Constants;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
-import de.uni_passau.fim.se2.litterbox.ast.model.procedure.Parameter;
-import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterList;
-import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterListPlain;
+import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterDefinitionList;
+import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterDefiniton;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinitionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.BooleanType;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.StringType;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.Type;
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.Identifier;
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.StrId;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.ProcedureOpcode;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
@@ -98,7 +96,7 @@ public class ProcDefinitionParser {
         ArrayNode inputArray = (ArrayNode) input;
         String protoReference = inputArray.get(PROTOTYPE_REFERENCE_POS).asText();
         JsonNode proto = blocks.get(protoReference);
-        ArrayList<Parameter> inputs = new ArrayList<>();
+        ArrayList<ParameterDefiniton> inputs = new ArrayList<>();
 
         Iterator<Map.Entry<String, JsonNode>> iter = proto.get(INPUTS_KEY).fields();
         List<Type> paraTypes = new ArrayList<>();
@@ -114,7 +112,7 @@ public class ProcDefinitionParser {
         }
 
         String methodName = proto.get(MUTATION_KEY).get(PROCCODE_KEY).asText();
-        Identifier ident = null;
+        LocalIdentifier ident = null;
         if (proto.has(PARENT_KEY)) {
             ident = new StrId(proto.get(PARENT_KEY).asText());
         } else {
@@ -147,7 +145,7 @@ public class ProcDefinitionParser {
 
         String[] arguments = new String[argumentsArray.size()];
         for (int i = 0; i < arguments.length; i++) {
-            arguments[i] = PARAMETER_ABBREVIATION + argumentsArray.get(i).asText();
+            arguments[i] = argumentsArray.get(i).asText();
         }
 
         if (!(arguments.length == paraTypes.size())) {
@@ -159,12 +157,11 @@ public class ProcDefinitionParser {
         ProgramParser.procDefMap.addProcedure(ident, actorName, methodName, arguments, paraTypes.toArray(typeArray));
 
         for (int i = 0; i < paraTypes.size(); i++) {
-            inputs.add(new Parameter(new StrId(arguments[i]), paraTypes.get(i)));
+            inputs.add(new ParameterDefiniton(new StrId(arguments[i]), paraTypes.get(i)));
         }
-        ParameterListPlain parameterListPlain = new ParameterListPlain(inputs);
-        ParameterList parameterList = new ParameterList(parameterListPlain);
+        ParameterDefinitionList parameterDefinitionList = new ParameterDefinitionList(inputs);
         StmtList stmtList = ScriptParser.parseStmtList(def.get(NEXT_KEY).asText(), blocks);
-        return new ProcedureDefinition(ident, parameterList, stmtList);
+        return new ProcedureDefinition(ident, parameterDefinitionList, stmtList);
     }
 
     private static List<Type> addType(JsonNode blocks, List<Type> types, String textValue) {
