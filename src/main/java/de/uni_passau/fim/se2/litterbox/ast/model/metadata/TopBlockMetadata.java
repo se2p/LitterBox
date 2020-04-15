@@ -2,10 +2,19 @@ package de.uni_passau.fim.se2.litterbox.ast.model.metadata;
 
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
+import java.util.List;
+
 public class TopBlockMetadata extends BlockMetadata {
     private int xPos;
     private int yPos;
 
+    public TopBlockMetadata(CommentMetadata commentMetadata, String blockId, String opcode, String next,
+                            String parent, List<InputMetadata> inputMetadata, List<InputMetadata> fields,
+                            boolean topLevel, boolean shadow, int xPos, int yPos) {
+        super(commentMetadata, blockId, opcode, next, parent, inputMetadata, fields, topLevel, shadow);
+        this.xPos = xPos;
+        this.yPos = yPos;
+    }
 
     public int getxPos() {
         return xPos;
