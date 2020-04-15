@@ -7,6 +7,7 @@ import java.util.List;
 
 public class BlockMetadata extends AbstractNode implements Metadata {
     private CommentMetadata commentMetadata;
+    private String blockId;
     private String opcode;
     private String next;
     private String parent;
