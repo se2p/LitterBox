@@ -50,11 +50,11 @@ public class TouchableParser {
             if (getShadowIndicator((ArrayNode) inputsList.get(0)) == 1) {
                 return getTouchableMenuOption(current, allBlocks);
             } else {
-                Expression expr = ExpressionParser.parseExpression(current, TOUCHINGOBJECTMENU, allBlocks);
+                Expression expr = ExpressionParser.parseExpr(current, TOUCHINGOBJECTMENU, allBlocks);
                 return new AsTouchable(expr);
             }
         } else if (BoolExprOpcode.sensing_touchingcolor.name().equals(opcodeString)) {
-            return ColorParser.parseColor(current, 0, allBlocks);
+            return ColorParser.parseColor(current, COLOR_KEY, allBlocks);
         } else {
             throw new RuntimeException("Not implemented yet");
         }

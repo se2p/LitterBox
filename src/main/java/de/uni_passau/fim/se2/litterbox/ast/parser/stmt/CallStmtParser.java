@@ -25,9 +25,9 @@ import de.uni_passau.fim.se2.litterbox.ast.Constants;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.ExpressionList;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ExpressionParser;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
@@ -55,19 +55,40 @@ public class CallStmtParser {
 
         Preconditions.checkArgument(argumentsNode.isArray());
         ArrayNode argumentsArray = (ArrayNode) argumentsNode;
-
         JsonNode inputNode = current.get(INPUTS_KEY);
         Iterator<Entry<String, JsonNode>> entries = inputNode.fields();
-        int i = 0;
         while (entries.hasNext()) {
             Entry<String, JsonNode> currentEntry = entries.next();
-            if (argumentsArray.has(currentEntry.getKey())) {
-                expressions.add(ExpressionParser.parseExpression(current, i, blocks));
+            String inputName = currentEntry.getKey();
+            if (arrayNodeContains(argumentsArray, inputName)) {
+                expressions.add(ExpressionParser.parseExpr(current, inputName, blocks));
             }
-            i++;
         }
 
         return new CallStmt(new StrId(current.get(Constants.MUTATION_KEY).get(Constants.PROCCODE_KEY).asText()),
                 new ExpressionList(expressions));
+    }
+
+    /**
+     * Returns true if the array node contains a node which equals the key.
+     *
+     * @param node Array node to check.
+     * @param key  The string existence of which will be checked.
+     * @return True iff there is a TextNode the text of which equals the key.
+     */
+    private static boolean arrayNodeContains(ArrayNode node, String key) {
+        Preconditions.checkNotNull(node);
+        Preconditions.checkNotNull(key);
+        Iterator<JsonNode> elements = node.elements();
+        while (elements.hasNext()) {
+            JsonNode next = elements.next();
+            String nextText = next.asText();
+            if (nextText != null) {
+                if (nextText.equals(key)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }

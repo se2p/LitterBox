@@ -25,26 +25,17 @@ import de.uni_passau.fim.se2.litterbox.ast.model.literals.ColorLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.Color;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.FromNumber;
 
-import java.util.Iterator;
-import java.util.LinkedList;
-
 import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 
 public class ColorParser {
 
-    public static Color parseColor(JsonNode current, int pos, JsonNode allBlocks) throws ParsingException {
+    public static Color parseColor(JsonNode current, String inputName, JsonNode allBlocks) throws ParsingException {
         //FIXME parse inputs that are not a text color as a "FromNumber" color
 
-        LinkedList<JsonNode> inputs = new LinkedList<>();
-        final Iterator<JsonNode> elements = current.get(INPUTS_KEY).elements();
-        while (elements.hasNext()) {
-            JsonNode jsonNode = elements.next();
-            inputs.add(jsonNode);
-        }
-
+        JsonNode inputs = current.get(INPUTS_KEY);
         String rgbCode = "";
-        if (inputs.get(pos).get(POS_DATA_ARRAY).isArray()) {
-            rgbCode = inputs.get(pos).get(POS_DATA_ARRAY).get(POS_INPUT_VALUE).asText();
+        if (inputs.get(inputName).get(POS_DATA_ARRAY).isArray()) {
+            rgbCode = inputs.get(inputName).get(POS_DATA_ARRAY).get(POS_INPUT_VALUE).asText();
         }
 
         if (rgbCode.startsWith("#")) {
@@ -55,7 +46,7 @@ public class ColorParser {
 
             return new ColorLiteral(rNumber, gNumber, bNumber);
         } else {
-            final NumExpr numExpr = NumExprParser.parseNumExpr(current, pos, allBlocks);
+            final NumExpr numExpr = NumExprParser.parseNumExpr(current, inputName, allBlocks);
             return new FromNumber(numExpr);
         }
     }

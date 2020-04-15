@@ -35,6 +35,8 @@ import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import java.util.ArrayList;
 
+import static de.uni_passau.fim.se2.litterbox.ast.Constants.TIMES_KEY;
+
 public class ControlStmtParser {
 
     public static final String INPUT_SUBSTACK = "SUBSTACK";
@@ -54,33 +56,33 @@ public class ControlStmtParser {
         StmtList stmtList, elseStmtList;
 
         switch (opcode) {
-        case control_if:
-            stmtList = getSubstackStmtList(allBlocks, inputs, INPUT_SUBSTACK);
-            boolExpr = getCondition(current, allBlocks, inputs);
-            return new IfThenStmt(boolExpr, stmtList);
+            case control_if:
+                stmtList = getSubstackStmtList(allBlocks, inputs, INPUT_SUBSTACK);
+                boolExpr = getCondition(current, allBlocks, inputs);
+                return new IfThenStmt(boolExpr, stmtList);
 
-        case control_if_else:
-            stmtList = getSubstackStmtList(allBlocks, inputs, INPUT_SUBSTACK);
-            boolExpr = getCondition(current, allBlocks, inputs);
-            elseStmtList = getSubstackStmtList(allBlocks, inputs, INPUT_ELSE_SUBSTACK);
-            return new IfElseStmt(boolExpr, stmtList, elseStmtList);
+            case control_if_else:
+                stmtList = getSubstackStmtList(allBlocks, inputs, INPUT_SUBSTACK);
+                boolExpr = getCondition(current, allBlocks, inputs);
+                elseStmtList = getSubstackStmtList(allBlocks, inputs, INPUT_ELSE_SUBSTACK);
+                return new IfElseStmt(boolExpr, stmtList, elseStmtList);
 
-        case control_repeat:
-            NumExpr numExpr = NumExprParser.parseNumExpr(current, 0, allBlocks);
-            stmtList = getSubstackStmtList(allBlocks, inputs, INPUT_SUBSTACK);
-            return new RepeatTimesStmt(numExpr, stmtList);
+            case control_repeat:
+                NumExpr numExpr = NumExprParser.parseNumExpr(current, TIMES_KEY, allBlocks);
+                stmtList = getSubstackStmtList(allBlocks, inputs, INPUT_SUBSTACK);
+                return new RepeatTimesStmt(numExpr, stmtList);
 
-        case control_repeat_until:
-            stmtList = getSubstackStmtList(allBlocks, inputs, INPUT_SUBSTACK);
-            boolExpr = getCondition(current, allBlocks, inputs);
-            return new UntilStmt(boolExpr, stmtList);
+            case control_repeat_until:
+                stmtList = getSubstackStmtList(allBlocks, inputs, INPUT_SUBSTACK);
+                boolExpr = getCondition(current, allBlocks, inputs);
+                return new UntilStmt(boolExpr, stmtList);
 
-        case control_forever:
-            stmtList = getSubstackStmtList(allBlocks, inputs, INPUT_SUBSTACK);
-            return new RepeatForeverStmt(stmtList);
+            case control_forever:
+                stmtList = getSubstackStmtList(allBlocks, inputs, INPUT_SUBSTACK);
+                return new RepeatForeverStmt(stmtList);
 
-        default:
-            throw new ParsingException("Unknown Opcode " + opcodeString);
+            default:
+                throw new ParsingException("Unknown Opcode " + opcodeString);
         }
     }
 

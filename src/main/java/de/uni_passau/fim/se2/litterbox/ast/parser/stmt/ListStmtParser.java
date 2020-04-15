@@ -74,7 +74,7 @@ public class ListStmtParser {
     private static ListStmt parseAddToList(JsonNode current, JsonNode allBlocks) throws ParsingException {
         Preconditions.checkNotNull(current);
         Preconditions.checkNotNull(allBlocks);
-        StringExpr expr = StringExprParser.parseStringExpr(current, 0, allBlocks);
+        StringExpr expr = StringExprParser.parseStringExpr(current, ITEM_KEY, allBlocks);
 
         ExpressionListInfo info = getListInfo(current);
         if (info == null) {
@@ -100,7 +100,7 @@ public class ListStmtParser {
     private static ListStmt parseDeleteOfList(JsonNode current, JsonNode allBlocks) throws ParsingException {
         Preconditions.checkNotNull(current);
         Preconditions.checkNotNull(allBlocks);
-        NumExpr expr = NumExprParser.parseNumExpr(current, 0, allBlocks);
+        NumExpr expr = NumExprParser.parseNumExpr(current, INDEX_KEY, allBlocks);
 
         ExpressionListInfo info = getListInfo(current);
         if (info == null) {
@@ -124,8 +124,8 @@ public class ListStmtParser {
     private static ListStmt parseInsertAtList(JsonNode current, JsonNode allBlocks) throws ParsingException {
         Preconditions.checkNotNull(current);
         Preconditions.checkNotNull(allBlocks);
-        StringExpr stringExpr = StringExprParser.parseStringExpr(current, 0, allBlocks);
-        NumExpr numExpr = NumExprParser.parseNumExpr(current, 1, allBlocks);
+        StringExpr stringExpr = StringExprParser.parseStringExpr(current, ITEM_KEY, allBlocks);
+        NumExpr numExpr = NumExprParser.parseNumExpr(current, INDEX_KEY, allBlocks);
 
         ExpressionListInfo info = getListInfo(current);
         if (info == null) {
@@ -138,8 +138,8 @@ public class ListStmtParser {
     private static ListStmt parseReplaceItemOfList(JsonNode current, JsonNode allBlocks) throws ParsingException {
         Preconditions.checkNotNull(current);
         Preconditions.checkNotNull(allBlocks);
-        StringExpr stringExpr = StringExprParser.parseStringExpr(current, 1, allBlocks);
-        NumExpr numExpr = NumExprParser.parseNumExpr(current, 0, allBlocks);
+        StringExpr stringExpr = StringExprParser.parseStringExpr(current, ITEM_KEY, allBlocks);
+        NumExpr numExpr = NumExprParser.parseNumExpr(current, INDEX_KEY, allBlocks);
 
         ExpressionListInfo info = getListInfo(current);
         if (info == null) {

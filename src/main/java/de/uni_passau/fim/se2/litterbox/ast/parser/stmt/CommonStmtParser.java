@@ -65,39 +65,37 @@ public class CommonStmtParser {
         final CommonStmtOpcode opcode = CommonStmtOpcode.valueOf(opcodeString);
 
         switch (opcode) {
-        case control_wait:
-            return parseWaitSeconds(current, allBlocks);
+            case control_wait:
+                return parseWaitSeconds(current, allBlocks);
 
-        case control_wait_until:
-            return parseWaitUntil(current, allBlocks);
+            case control_wait_until:
+                return parseWaitUntil(current, allBlocks);
 
-        case control_stop:
-            return parseControlStop(current);
+            case control_stop:
+                return parseControlStop(current);
 
-        case control_create_clone_of:
-            return parseCreateCloneOf(current, allBlocks);
+            case control_create_clone_of:
+                return parseCreateCloneOf(current, allBlocks);
 
-        case event_broadcast:
-            return parseBroadcast(current, allBlocks);
+            case event_broadcast:
+                return parseBroadcast(current, allBlocks);
 
-        case event_broadcastandwait:
-            return parseBroadcastAndWait(current, allBlocks);
+            case event_broadcastandwait:
+                return parseBroadcastAndWait(current, allBlocks);
 
-        case sensing_resettimer:
-            return new ResetTimer();
+            case sensing_resettimer:
+                return new ResetTimer();
 
-        case data_changevariableby:
-            return parseChangeVariableBy(current, allBlocks);
+            case data_changevariableby:
+                return parseChangeVariableBy(current, allBlocks);
 
-        default:
-            throw new RuntimeException("Not Implemented yet");
+            default:
+                throw new RuntimeException("Not Implemented yet");
         }
     }
 
-
-
     private static CommonStmt parseChangeVariableBy(JsonNode current, JsonNode allBlocks) throws ParsingException {
-        Expression numExpr = NumExprParser.parseNumExpr(current, 0, allBlocks);
+        Expression numExpr = NumExprParser.parseNumExpr(current, VALUE_KEY, allBlocks);
         Identifier var;
         String variableName = current.get(FIELDS_KEY).get(VARIABLE_KEY).get(VARIABLE_NAME_POS).asText();
         String variableID = current.get(FIELDS_KEY).get(VARIABLE_KEY).get(VARIABLE_IDENTIFIER_POS).asText();
@@ -139,21 +137,21 @@ public class CommonStmtParser {
         inputs.elements().forEachRemaining(inputsList::add);
 
         if (getShadowIndicator((ArrayNode) inputsList.get(0)) == 1) {
-            String cloneOptionMenu = inputs.get(CLONE_OPTION).get(Constants.POS_INPUT_VALUE).asText();
+            String cloneOptionMenu = inputs.get(CLONE_OPTION).get(POS_INPUT_VALUE).asText();
             JsonNode optionBlock = allBlocks.get(cloneOptionMenu);
             String cloneValue = optionBlock.get(FIELDS_KEY).get(CLONE_OPTION).get(FIELD_VALUE).asText();
             LocalIdentifier ident = new StrId(cloneValue);
             return new CreateCloneOf(new AsString(ident));
         } else {
-            final StringExpr stringExpr = StringExprParser.parseStringExpr(current, 0, allBlocks);
+            final StringExpr stringExpr = StringExprParser.parseStringExpr(current, CLONE_OPTION, allBlocks);
             return new CreateCloneOf(stringExpr);
         }
     }
 
     private static WaitUntil parseWaitUntil(JsonNode current, JsonNode allBlocks) throws ParsingException {
         JsonNode inputs = current.get(INPUTS_KEY);
-        if (inputs.elements().hasNext()) {
-            BoolExpr boolExpr = BoolExprParser.parseBoolExpr(current, 0, allBlocks);
+        if (inputs.has(CONDITION_KEY)) {
+            BoolExpr boolExpr = BoolExprParser.parseBoolExpr(current, CONDITION_KEY, allBlocks);
             return new WaitUntil(boolExpr);
         } else {
             return new WaitUntil(new UnspecifiedBoolExpr());
@@ -161,7 +159,7 @@ public class CommonStmtParser {
     }
 
     private static WaitSeconds parseWaitSeconds(JsonNode current, JsonNode allBlocks) throws ParsingException {
-        NumExpr numExpr = NumExprParser.parseNumExpr(current, 0, allBlocks);
+        NumExpr numExpr = NumExprParser.parseNumExpr(current, DURATION_KEY, allBlocks);
         return new WaitSeconds(numExpr);
     }
 

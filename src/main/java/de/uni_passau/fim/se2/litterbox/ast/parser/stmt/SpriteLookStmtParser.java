@@ -51,41 +51,41 @@ public class SpriteLookStmtParser {
         NumExpr numExpr;
 
         switch (opcode) {
-        case looks_show:
-            return new Show();
-        case looks_hide:
-            return new Hide();
-        case looks_sayforsecs:
-            stringExpr = StringExprParser.parseStringExpr(current, 0, allBlocks);
-            numExpr = NumExprParser.parseNumExpr(current, 1, allBlocks);
-            return new SayForSecs(stringExpr, numExpr);
-        case looks_say:
-            stringExpr = StringExprParser.parseStringExpr(current, 0, allBlocks);
-            return new Say(stringExpr);
-        case looks_thinkforsecs:
-            stringExpr = StringExprParser.parseStringExpr(current, 0, allBlocks);
-            numExpr = NumExprParser.parseNumExpr(current, 1, allBlocks);
-            return new ThinkForSecs(stringExpr, numExpr);
-        case looks_think:
-            stringExpr = StringExprParser.parseStringExpr(current, 0, allBlocks);
-            return new Think(stringExpr);
-        case looks_nextcostume:
-            return new NextCostume();
-        case looks_switchcostumeto:
-            Expression costumeChoice = CostumeChoiceParser.parse(current, allBlocks);
-            return new SwitchCostumeTo(costumeChoice);
-        case looks_changesizeby:
-            numExpr = NumExprParser.parseNumExpr(current, 0, allBlocks);
-            return new ChangeSizeBy(numExpr);
-        case looks_setsizeto:
-            numExpr = NumExprParser.parseNumExpr(current, 0, allBlocks);
-            return new SetSizeTo(numExpr);
-        case looks_gotofrontback:
-            return parseGoToLayer(current, allBlocks);
-        case looks_goforwardbackwardlayers:
-            return parseGoForwardBackwardLayer(current, allBlocks);
-        default:
-            throw new RuntimeException("Not implemented for opcode " + opcodeString);
+            case looks_show:
+                return new Show();
+            case looks_hide:
+                return new Hide();
+            case looks_sayforsecs:
+                stringExpr = StringExprParser.parseStringExpr(current, MESSAGE_KEY, allBlocks);
+                numExpr = NumExprParser.parseNumExpr(current, SECS_KEY, allBlocks);
+                return new SayForSecs(stringExpr, numExpr);
+            case looks_say:
+                stringExpr = StringExprParser.parseStringExpr(current, MESSAGE_KEY, allBlocks);
+                return new Say(stringExpr);
+            case looks_thinkforsecs:
+                stringExpr = StringExprParser.parseStringExpr(current, MESSAGE_KEY, allBlocks);
+                numExpr = NumExprParser.parseNumExpr(current, SECS_KEY, allBlocks);
+                return new ThinkForSecs(stringExpr, numExpr);
+            case looks_think:
+                stringExpr = StringExprParser.parseStringExpr(current, MESSAGE_KEY, allBlocks);
+                return new Think(stringExpr);
+            case looks_nextcostume:
+                return new NextCostume();
+            case looks_switchcostumeto:
+                Expression costumeChoice = CostumeChoiceParser.parse(current, allBlocks);
+                return new SwitchCostumeTo(costumeChoice);
+            case looks_changesizeby:
+                numExpr = NumExprParser.parseNumExpr(current, CHANGE_KEY, allBlocks);
+                return new ChangeSizeBy(numExpr);
+            case looks_setsizeto:
+                numExpr = NumExprParser.parseNumExpr(current, SIZE_KEY_CAP, allBlocks);
+                return new SetSizeTo(numExpr);
+            case looks_gotofrontback:
+                return parseGoToLayer(current, allBlocks);
+            case looks_goforwardbackwardlayers:
+                return parseGoForwardBackwardLayer(current, allBlocks);
+            default:
+                throw new RuntimeException("Not implemented for opcode " + opcodeString);
         }
     }
 
@@ -93,7 +93,7 @@ public class SpriteLookStmtParser {
             throws ParsingException {
         JsonNode front_back = current.get(FIELDS_KEY).get("FORWARD_BACKWARD").get(FIELD_VALUE);
 
-        NumExpr num = NumExprParser.parseNumExpr(current, 0, allBlocks);
+        NumExpr num = NumExprParser.parseNumExpr(current, NUM_KEY, allBlocks);
 
         String layerOption = front_back.asText();
         if (layerOption.equals("forward")) {

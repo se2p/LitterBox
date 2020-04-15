@@ -53,16 +53,15 @@ public class SetStmtParser {
         throw new RuntimeException("Not Implemented yet");
     }
 
-
     private static SetStmt parseSetVariable(JsonNode current, JsonNode allBlocks) throws ParsingException {
         String unique = current.get(FIELDS_KEY).get(VARIABLE_KEY).get(VARIABLE_IDENTIFIER_POS).asText();
         if (!ProgramParser.symbolTable.getVariables().containsKey(unique)) {
-            return new SetVariableTo(new UnspecifiedId(), ExpressionParser.parseExpression(current,
-                    0, allBlocks));
+            return new SetVariableTo(new UnspecifiedId(), ExpressionParser.parseExpr(current,
+                    VALUE_KEY, allBlocks));
         }
         VariableInfo info = ProgramParser.symbolTable.getVariables().get(unique);
         return new SetVariableTo(new Qualified(new StrId(info.getActor()),
-                new Variable(new StrId(info.getVariableName()))), ExpressionParser.parseExpression(current,
-                0, allBlocks));
+                new Variable(new StrId(info.getVariableName()))), ExpressionParser.parseExpr(current,
+                VALUE_KEY, allBlocks));
     }
 }

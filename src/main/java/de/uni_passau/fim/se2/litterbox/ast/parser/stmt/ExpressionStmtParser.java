@@ -24,9 +24,23 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.ExpressionStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ExpressionParser;
 
+/**
+ * This parser parses expressions, in this case reporter blocks, which are not
+ * embedded in regular statements. In the AST they are represented embedded
+ * in an ExpressionStmt.
+ */
 public class ExpressionStmtParser {
 
+    /**
+     * Parses a single reporter block and puts it into a new ExpressionStmt.
+     *
+     * @param current   The JsonNode of the reporter block.
+     * @param allBlocks The JsonNode holding all blocks of the actor definition currently analysed.
+     * @return A new ExpressionStmt holding the expression corresponding to the
+     * reporter block.
+     * @throws ParsingException If the block is not parsable.
+     */
     public static Stmt parse(JsonNode current, JsonNode allBlocks) throws ParsingException {
-        return new ExpressionStmt(ExpressionParser.parseExpressionBlock(current, allBlocks));
+        return new ExpressionStmt(ExpressionParser.parseExprBlock(current, allBlocks));
     }
 }
