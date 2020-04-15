@@ -5,16 +5,16 @@ import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 import java.util.List;
 
-public class ExtensionMetadata extends AbstractNode implements Metadata {
-    private List<String> extensionNames;
+public class BroadcastMetadataList extends AbstractNode {
+    private List<BroadcastMetadata> list;
 
-    public ExtensionMetadata(List<String> extensionNames) {
-        super();
-        this.extensionNames = extensionNames;
+    public BroadcastMetadataList(List<BroadcastMetadata> list) {
+        super(list);
+        this.list = list;
     }
 
-    public List<String> getExtensionNames() {
-        return extensionNames;
+    public List<BroadcastMetadata> getList() {
+        return list;
     }
 
     @Override

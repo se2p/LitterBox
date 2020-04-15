@@ -16,6 +16,20 @@ public class BlockMetadata extends AbstractNode implements Metadata {
     private boolean topLevel;
     private boolean shadow;
 
+    public BlockMetadata(CommentMetadata commentMetadata, String blockId, String opcode, String next, String parent,
+                         List<InputMetadata> inputMetadata, List<InputMetadata> fields, boolean topLevel,
+                         boolean shadow) {
+        super(); //todo
+        this.commentMetadata = commentMetadata;
+        this.blockId = blockId;
+        this.opcode = opcode;
+        this.next = next;
+        this.parent = parent;
+        this.inputMetadata = inputMetadata;
+        this.fields = fields;
+        this.topLevel = topLevel;
+        this.shadow = shadow;
+    }
 
     public CommentMetadata getCommentMetadata() {
         return commentMetadata;
