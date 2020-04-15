@@ -6,7 +6,7 @@ import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import java.util.List;
 
 public class BlockMetadata extends AbstractNode implements Metadata {
-    private CommentsMetadata commentsMetadata;
+    private CommentMetadata commentMetadata;
     private String opcode;
     private String next;
     private String parent;
@@ -16,8 +16,8 @@ public class BlockMetadata extends AbstractNode implements Metadata {
     private boolean shadow;
 
 
-    public CommentsMetadata getCommentsMetadata() {
-        return commentsMetadata;
+    public CommentMetadata getCommentMetadata() {
+        return commentMetadata;
     }
 
     public String getOpcode() {
