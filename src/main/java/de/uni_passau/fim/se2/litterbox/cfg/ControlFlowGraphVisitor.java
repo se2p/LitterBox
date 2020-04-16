@@ -1,0 +1,226 @@
+/*
+ * Copyright (C) 2019 LitterBox contributors
+ *
+ * This file is part of LitterBox.
+ *
+ * LitterBox is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or (at
+ * your option) any later version.
+ *
+ * LitterBox is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
+ */
+
+package de.uni_passau.fim.se2.litterbox.cfg;
+
+import de.uni_passau.fim.se2.litterbox.ast.model.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.event.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.declaration.DeclarationAttributeAsTypeStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.declaration.DeclarationIdentAsTypeStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.DeleteClone;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopAll;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopThisScript;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
+
+import java.util.List;
+
+public class ControlFlowGraphVisitor implements ScratchVisitor {
+
+    private ControlFlowGraphBuilder builder = new ControlFlowGraphBuilder();
+
+    public ControlFlowGraph getControlFlowGraph() {
+        return builder.getControlFlowGraph();
+    }
+
+    @Override
+    public void visit(Script node) {
+        visit((ASTNode) node);
+        builder.addEdgeToExit();
+    }
+
+    @Override
+    public void visit(ActorDefinition node) {
+        builder.setCurrentActor(node);
+        visit((ASTNode) node);
+        // TODO: Unset afterwards?
+    }
+
+    @Override
+    public void visit(Stmt node) {
+        // FIXXME: What is this stuff?
+        if(node instanceof SetAttributeTo || node instanceof DeclarationAttributeAsTypeStmt || node instanceof DeclarationIdentAsTypeStmt || node instanceof SetVariableTo) {
+            return;
+        }
+        builder.addStatement(node);
+    }
+
+    //---------------------------------------------------------------
+    // Custom blocks and invocation
+
+    @Override
+    public void visit(CallStmt node) {
+        builder.addCall(node);
+    }
+
+    @Override
+    public void visit(ProcedureDefinition node) {
+        builder.addProcedure(node);
+        node.getStmtList().accept(this);
+    }
+
+
+    //---------------------------------------------------------------
+    // Clone statements
+
+    @Override
+    public void visit(CreateCloneOf node) {
+        builder.addCreateClone(node);
+    }
+
+    @Override
+    public void visit(StartedAsClone node) {
+        builder.addCloneHandler(node);
+    }
+
+    //---------------------------------------------------------------
+    // Broadcast statements
+
+    @Override
+    public void visit(BroadcastAndWait node) {
+        builder.addBroadcastStatement(node, node.getMessage());
+    }
+
+    @Override
+    public void visit(Broadcast node) {
+        builder.addBroadcastStatement(node, node.getMessage());
+    }
+
+    @Override
+    public void visit(ReceptionOfMessage node) {
+        builder.addBroadcastHandler(node.getMsg());
+    }
+
+    //---------------------------------------------------------------
+    // Control statements
+
+    @Override
+    public void visit(RepeatForeverStmt stmt) {
+        CFGNode node = builder.addStatement(stmt);
+
+        stmt.getStmtList().accept(this);
+
+        // Edge back to loop header, and update current node
+        builder.addEdge(node);
+        builder.addEdgeToExit();
+    }
+
+    @Override
+    public void visit(RepeatTimesStmt stmt) {
+        CFGNode node = builder.addStatement(stmt);
+
+        stmt.getStmtList().accept(this);
+
+        // Edge back to loop header, and update current node
+        builder.addEdge(node);
+    }
+
+
+    @Override
+    public void visit(UntilStmt stmt) {
+        CFGNode node = builder.addStatement(stmt);
+
+        stmt.getStmtList().accept(this);
+
+        // Edge back to loop header, and update current node
+        builder.addEdge(node);
+    }
+
+
+    @Override
+    public void visit(IfElseStmt stmt) {
+        CFGNode node = builder.addStatement(stmt);
+
+        // Then statements:
+        stmt.getStmtList().accept(this);
+        List<CFGNode> endOfThen = builder.getCurrentStatements();
+
+        // Go back to head so that else is attached to if
+        builder.setCurrentStatement(node);
+
+        // Else statements:
+        stmt.getElseStmts().accept(this);
+
+        // Next node should attach to end of then and else
+        endOfThen.forEach(n -> builder.addCurrentStatement(n));
+    }
+
+    @Override
+    public void visit(IfThenStmt stmt) {
+        CFGNode node = builder.addStatement(stmt);
+        StmtList thenStatements = stmt.getThenStmts();
+        thenStatements.accept(this);
+
+        // Next statement linked to if and end of then
+        builder.addCurrentStatement(node);
+    }
+
+
+    //---------------------------------------------------------------
+    // Termination statements
+
+    @Override
+    public void visit(DeleteClone node) {
+        builder.addStopStatement(node);
+    }
+
+    @Override
+    public void visit(StopAll node) {
+        builder.addStopStatement(node);
+    }
+
+    @Override
+    public void visit(StopThisScript node) {
+        builder.addStopStatement(node);
+    }
+
+
+    //---------------------------------------------------------------
+    // Events
+
+    @Override
+    public void visit(GreenFlag node) {
+        builder.addUserEventHandler(node);
+    }
+
+    @Override
+    public void visit(KeyPressed node) {
+        builder.addUserEventHandler(node);
+    }
+
+    @Override
+    public void visit(Clicked node) {
+        builder.addUserEventHandler(node);
+    }
+
+    @Override
+    public void visit(BackdropSwitchTo node) {
+        builder.addEventHandler(node);
+    }
+
+    @Override
+    public void visit(VariableAboveValue node) {
+        // TODO: Edge from entry node, presumably?
+        throw new RuntimeException("Not yet implemented");
+    }
+}
