@@ -22,6 +22,7 @@ package de.uni_passau.fim.se2.litterbox.cfg;
 import de.uni_passau.fim.se2.litterbox.ast.model.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
+import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinitionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.*;
@@ -81,7 +82,10 @@ public class ControlFlowGraphVisitor implements ScratchVisitor {
     @Override
     public void visit(ProcedureDefinition node) {
         builder.addProcedure(node);
+        inScript = true;
         node.getStmtList().accept(this);
+        inScript = false;
+        builder.addEndOfProcedure(node, builder.getCurrentStatements());
     }
 
 

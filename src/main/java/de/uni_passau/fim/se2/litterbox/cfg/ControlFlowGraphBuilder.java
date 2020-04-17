@@ -42,10 +42,34 @@ public class ControlFlowGraphBuilder {
 
     private Optional<ActorDefinition> currentActor = Optional.empty();
 
+    private Map<CFGNode, List<CFGNode>> procedureMap = new LinkedHashMap<>();
+
+    private Map<CFGNode, CFGNode> procedureCallMap = new LinkedHashMap<>();
+
     public ControlFlowGraph getControlFlowGraph() {
         addMissingEdgesToExit();
+        connectCustomBlockCalls();
         cfg.fixDetachedEntryExit();
         return cfg;
+    }
+
+    public void addEndOfProcedure(ProcedureDefinition node, List<CFGNode> endOfProcedure) {
+        ProcedureNode customBlockNode = new ProcedureNode(node.getIdent().getName());
+        procedureMap.put(customBlockNode, endOfProcedure);
+    }
+
+    private void connectCustomBlockCalls() {
+        for(Map.Entry<CFGNode, CFGNode> entry : procedureCallMap.entrySet()) {
+            CFGNode callNode = entry.getKey();
+            CFGNode procedureNode = entry.getValue();
+            if(procedureMap.containsKey(procedureNode)) {
+                List<CFGNode> endNodes = procedureMap.get(procedureNode);
+                endNodes.forEach(n -> cfg.addEdge(n, callNode));
+
+            } else {
+                cfg.addEdge(procedureNode, callNode);
+            }
+        }
     }
 
     public void setCurrentActor(ActorDefinition actor) {
@@ -178,7 +202,7 @@ public class ControlFlowGraphBuilder {
 
     public void addProcedure(ProcedureDefinition node) {
         ProcedureNode customBlockNode = new ProcedureNode(node.getIdent().getName());
-        cfg.addEdgeToExit(customBlockNode);
+        // cfg.addEdgeToExit(customBlockNode);
         setCurrentNode(customBlockNode);
     }
 
@@ -189,12 +213,12 @@ public class ControlFlowGraphBuilder {
 
         // Retrieve custom block handler, or create if it doesn't exist yet
         ProcedureNode customBlockNode = new ProcedureNode(stmt.getIdent().getName());
-        cfg.addEdgeToExit(customBlockNode);
+        // cfg.addEdgeToExit(customBlockNode);
+        procedureCallMap.put(node, customBlockNode);
 
         cfg.addEdge(node, customBlockNode);
 
-        // TODO: Add edge back from procedure handler to current node??
-        throw new RuntimeException("Not implemented yet");
+        // Return edge is added at end
     }
 
     public void addStopStatement(Stmt stmt) {

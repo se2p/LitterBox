@@ -237,6 +237,7 @@ public class CFGTest {
     @Test
     public void testCustomBlock() throws IOException, ParsingException {
         ControlFlowGraph cfg = getCFG("src/test/fixtures/cfg/customblock.json");
+        System.out.println(cfg.toDotString());
         assertThat(cfg.getNumNodes()).isEqualTo(3); // Entry, Exit, Block
         assertThat(cfg.getNumEdges()).isEqualTo(2);
     }
@@ -245,9 +246,20 @@ public class CFGTest {
     public void testCallCustomBlock() throws IOException, ParsingException {
         ControlFlowGraph cfg = getCFG("src/test/fixtures/cfg/callcustomblock.json");
         System.out.println(cfg.toDotString());
-
+        // TODO: Should call node be split into call and return node?
         // TODO: What is correct?
         assertThat(cfg.getNumNodes()).isEqualTo(5); // Entry, Exit, Greenflag, movex2
         assertThat(cfg.getNumEdges()).isEqualTo(6);
+    }
+
+
+    @Test
+    public void testCallCustomBlockWithCode() throws IOException, ParsingException {
+        ControlFlowGraph cfg = getCFG("src/test/fixtures/cfg/calledcustomblock.json");
+        System.out.println(cfg.toDotString());
+        // TODO: Should call node be split into call and return node?
+        // TODO: What is correct?
+        assertThat(cfg.getNumNodes()).isEqualTo(7); // Entry, Exit, Greenflag, movex2
+        assertThat(cfg.getNumEdges()).isEqualTo(7);
     }
 }
