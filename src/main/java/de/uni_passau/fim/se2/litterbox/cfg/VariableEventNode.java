@@ -3,11 +3,11 @@ package de.uni_passau.fim.se2.litterbox.cfg;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.VariableAboveValue;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Identifier;
 
 public class VariableEventNode extends CFGNode {
 
-    private Variable variable;
+    private Identifier variable;
 
     private NumExpr expression;
 
@@ -15,13 +15,14 @@ public class VariableEventNode extends CFGNode {
 
     public VariableEventNode(VariableAboveValue node) {
         this.node = node;
-        this.variable = node.getVariable();
+        this.variable = node.getIdentifier();
         this.expression = node.getValue();
     }
 
     @Override
     public String toString() {
-        return "Variable above value: "+variable.getUniqueName();
+        // TODO: Actual variable name?
+        return "Variable above value: "+variable.toString();
     }
 
     @Override

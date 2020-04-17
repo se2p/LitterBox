@@ -19,10 +19,10 @@
 
 package de.uni_passau.fim.se2.litterbox.cfg;
 
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.ChangeVariableBy;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetVariableTo;
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 import java.util.LinkedHashSet;
@@ -44,13 +44,13 @@ public class DefinitionVisitor implements ScratchVisitor {
     @Override
     public void visit(SetVariableTo node) {
         // Only the variable is a def
-        node.getVariable().accept(this);
+        node.getIdentifier().accept(this);
     }
 
     @Override
     public void visit(ChangeVariableBy node) {
         // Only the variable is a def
-        node.getVariable().accept(this);
+        node.getIdentifier().accept(this);
     }
 
     @Override

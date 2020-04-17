@@ -50,4 +50,51 @@ public class MissingVariableInitializationTest {
         IssueReport report = (new MissingVariableInitialization()).check(program);
         Assertions.assertEquals(1, report.getCount());
     }
+
+    @Test
+    public void testMissingInitializationWrongVarUsed() throws IOException, ParsingException {
+        File f = new File("src/test/fixtures/bugpattern/missingVariableInitializationWrongVarUsed.json");
+        Program program = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
+
+        IssueReport report = (new MissingVariableInitialization()).check(program);
+        Assertions.assertEquals(1, report.getCount());
+    }
+
+    @Test
+    public void testMissingInitializationInBroadcast() throws IOException, ParsingException {
+        File f = new File("src/test/fixtures/bugpattern/missingVariableInitializationInBroadcast.json");
+        Program program = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
+
+        IssueReport report = (new MissingVariableInitialization()).check(program);
+        Assertions.assertEquals(1, report.getCount());
+    }
+
+    @Test
+    public void testMissingInitializationInTwoBroadcasts() throws IOException, ParsingException {
+        File f = new File("src/test/fixtures/bugpattern/missingVariableInitializationInTwoBroadcasts.json");
+        Program program = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
+
+        IssueReport report = (new MissingVariableInitialization()).check(program);
+        Assertions.assertEquals(1, report.getCount());
+    }
+
+    @Test
+    public void testMissingInitializationInTwoBroadcastsWithDefinition() throws IOException, ParsingException {
+        File f = new File("src/test/fixtures/bugpattern/missingVariableInitializationInTwoBroadcastsWithDefinition.json");
+        Program program = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
+
+        IssueReport report = (new MissingVariableInitialization()).check(program);
+        Assertions.assertEquals(1, report.getCount());
+    }
+
+    @Test
+    public void testMissingInitializationTwoVarReadChange() throws IOException, ParsingException {
+        File f = new File("src/test/fixtures/bugpattern/missingVariableInitializationTwoVarReadChange.json");
+        Program program = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
+
+        IssueReport report = (new MissingVariableInitialization()).check(program);
+        // 2 vars, each is first used in a say, then in a change
+        Assertions.assertEquals(4, report.getCount());
+    }
+
 }

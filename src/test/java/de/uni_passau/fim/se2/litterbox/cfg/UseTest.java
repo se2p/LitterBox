@@ -23,14 +23,12 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.ShowVariable;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.ChangeVariableBy;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetVariableTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SayForSecs;
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.DotVisitor;
-import de.uni_passau.fim.se2.litterbox.cfg.*;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;

@@ -19,7 +19,8 @@
 
 package de.uni_passau.fim.se2.litterbox.cfg;
 
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.Qualified;
+
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 
 import java.util.Objects;
 
@@ -34,7 +35,7 @@ public class Variable implements Defineable {
     public Variable(Qualified qualified) {
         this.qualified = qualified;
         this.first = qualified.getFirst().getName();
-        this.second = qualified.getSecond().getName();
+        this.second = qualified.getSecond().getName().getName();
     }
 
     public Qualified getQualified() {

@@ -19,8 +19,8 @@
 
 package de.uni_passau.fim.se2.litterbox.cfg;
 
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetVariableTo;
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 import java.util.LinkedHashSet;
