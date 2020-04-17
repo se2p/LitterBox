@@ -25,11 +25,12 @@ import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.ShowVariable;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.ChangeVariableBy;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.CreateCloneOf;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetVariableTo;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SayForSecs;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
-import de.uni_passau.fim.se2.litterbox.cfg.*;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -113,4 +114,28 @@ public class DefinitionTest {
 
     }
 
+    @Test
+    public void testTwoVariablesTwoScripts() throws IOException, ParsingException {
+        ControlFlowGraph cfg = getCFG("src/test/fixtures/cfg/variables.json");
+
+        CFGNode node = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof SetVariableTo).findFirst().get();
+        assertThat(getDefinitions(node)).hasSize(1);
+        Definition def = new Definition(node, new Variable(getDefinitions(node).iterator().next()));
+
+        node = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof ChangeVariableBy).findFirst().get();
+        assertThat(getDefinitions(node)).containsExactly(def);
+
+        node = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof IfThenStmt).findFirst().get();
+        assertThat(getDefinitions(node)).isEmpty();
+        node = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof CreateCloneOf).findFirst().get();
+        assertThat(getDefinitions(node)).isEmpty();
+        node = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof SayForSecs).findFirst().get();
+        assertThat(getDefinitions(node)).isEmpty();
+    }
+
+    private Set<Qualified> getDefinitions(CFGNode node) {
+        DefinitionVisitor visitor = new DefinitionVisitor();
+        node.getASTNode().accept(visitor);
+        return visitor.getDefinitions();
+    }
 }

@@ -27,8 +27,14 @@ public class Variable implements Defineable {
 
     private Qualified qualified;
 
+    private String first;
+
+    private String second;
+
     public Variable(Qualified qualified) {
         this.qualified = qualified;
+        this.first = qualified.getFirst().getName();
+        this.second = qualified.getSecond().getName();
     }
 
     public Qualified getQualified() {
@@ -40,11 +46,12 @@ public class Variable implements Defineable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Variable variable = (Variable) o;
-        return Objects.equals(qualified, variable.qualified);
+        return Objects.equals(first, variable.first) &&
+                Objects.equals(second, variable.second);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(qualified);
+        return Objects.hash(first, second);
     }
 }

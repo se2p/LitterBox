@@ -24,6 +24,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.ChangeVariableBy;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.CreateCloneOf;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetVariableTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SayForSecs;
@@ -101,4 +102,32 @@ public class ReachingDefinitionsAnalysisTest {
         assertThat(analysis.getDataflowFacts(exitNode)).containsExactly(firstDefinition, secondDefinition);
     }
 
+
+    @Test
+    public void testReachingDefinitionsInClone() throws IOException, ParsingException {
+        ControlFlowGraph cfg = getCFG("src/test/fixtures/cfg/variables.json");
+
+        DataflowAnalysisBuilder<Definition> builder = new DataflowAnalysisBuilder<>(cfg);
+        DataflowAnalysis<Definition> analysis = builder.withForward().withMay().withTransferFunction(new ReachingDefinitionsTransferFunction()).build();
+        analysis.applyAnalysis();
+
+        CFGNode entryNode = cfg.getEntryNode();
+        CFGNode exitNode = cfg.getExitNode();
+        CFGNode setNode = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof SetVariableTo).findFirst().get();
+        CFGNode changeNode = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof ChangeVariableBy).findFirst().get();
+        CFGNode ifNode = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof IfThenStmt).findFirst().get();
+        CFGNode cloneNode = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof CreateCloneOf).findFirst().get();
+        CFGNode sayNode = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof SayForSecs).findFirst().get();
+
+        Definition firstDefinition = setNode.getDefinitions().iterator().next();
+        Definition secondDefinition = changeNode.getDefinitions().iterator().next();
+
+        assertThat(analysis.getDataflowFacts(entryNode)).isEmpty();
+        assertThat(analysis.getDataflowFacts(setNode)).containsExactly();
+        assertThat(analysis.getDataflowFacts(ifNode)).containsExactly(firstDefinition);
+        assertThat(analysis.getDataflowFacts(changeNode)).containsExactly(firstDefinition);
+        assertThat(analysis.getDataflowFacts(cloneNode)).containsExactly(firstDefinition, secondDefinition);
+        assertThat(analysis.getDataflowFacts(sayNode)).containsExactly(firstDefinition, secondDefinition);
+        assertThat(analysis.getDataflowFacts(exitNode)).containsExactly(firstDefinition, secondDefinition);
+    }
 }

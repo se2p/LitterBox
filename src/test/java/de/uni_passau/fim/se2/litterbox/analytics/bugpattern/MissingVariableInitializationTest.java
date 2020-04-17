@@ -42,4 +42,12 @@ public class MissingVariableInitializationTest {
         Assertions.assertEquals(1, report.getCount());
     }
 
+    @Test
+    public void testMissingInitializationInClone() throws IOException, ParsingException {
+        File f = new File("src/test/fixtures/bugpattern/missingVariableInitializationInClone.json");
+        Program program = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
+
+        IssueReport report = (new MissingVariableInitialization()).check(program);
+        Assertions.assertEquals(1, report.getCount());
+    }
 }
