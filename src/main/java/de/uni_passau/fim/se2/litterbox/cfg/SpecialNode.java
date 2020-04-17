@@ -19,13 +19,20 @@
 
 package de.uni_passau.fim.se2.litterbox.cfg;
 
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
+
 import java.util.Objects;
 
-public class SpecialNode implements CFGNode {
+public class SpecialNode extends CFGNode {
     private String name;
 
     public SpecialNode(String name) {
         this.name = name;
+    }
+
+    @Override
+    public ASTNode getASTNode() {
+        return null;
     }
 
     @Override

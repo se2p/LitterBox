@@ -19,14 +19,21 @@
 
 package de.uni_passau.fim.se2.litterbox.cfg;
 
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
+
 import java.util.Objects;
 
-public class ProcedureNode implements CFGNode {
+public class ProcedureNode extends CFGNode {
 
     private String procedureName;
 
     public ProcedureNode(String name) {
         procedureName = name;
+    }
+
+    @Override
+    public ASTNode getASTNode() {
+        return null;
     }
 
     @Override

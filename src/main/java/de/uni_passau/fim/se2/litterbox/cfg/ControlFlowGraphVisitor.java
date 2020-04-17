@@ -39,13 +39,17 @@ public class ControlFlowGraphVisitor implements ScratchVisitor {
 
     private ControlFlowGraphBuilder builder = new ControlFlowGraphBuilder();
 
+    private boolean inScript = false;
+
     public ControlFlowGraph getControlFlowGraph() {
         return builder.getControlFlowGraph();
     }
 
     @Override
     public void visit(Script node) {
+        inScript = true;
         visit((ASTNode) node);
+        inScript = false;
         builder.addEdgeToExit();
     }
 
@@ -58,10 +62,11 @@ public class ControlFlowGraphVisitor implements ScratchVisitor {
 
     @Override
     public void visit(Stmt node) {
-        // FIXXME: What is this stuff?
-        if(node instanceof SetAttributeTo || node instanceof DeclarationAttributeAsTypeStmt || node instanceof DeclarationIdentAsTypeStmt || node instanceof SetVariableTo) {
+        if(!isInScript()) {
+            // Variable declarations outside of scripts are irrelevant for the CFG
             return;
         }
+
         builder.addStatement(node);
     }
 
@@ -222,5 +227,9 @@ public class ControlFlowGraphVisitor implements ScratchVisitor {
     public void visit(VariableAboveValue node) {
         // TODO: Edge from entry node, presumably?
         throw new RuntimeException("Not yet implemented");
+    }
+
+    private boolean isInScript() {
+        return inScript;
     }
 }

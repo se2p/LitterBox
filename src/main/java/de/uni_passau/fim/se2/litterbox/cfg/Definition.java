@@ -19,39 +19,22 @@
 
 package de.uni_passau.fim.se2.litterbox.cfg;
 
-import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
-import de.uni_passau.fim.se2.litterbox.ast.model.event.Event;
+public class Definition implements DataflowFact {
 
-import java.util.Objects;
+    private CFGNode source;
 
-public class EventNode extends CFGNode {
+    private Defineable defineable;
 
-    private Event event;
-
-    public EventNode(Event event) {
-        this.event = event;
+    public Definition(CFGNode source, Defineable defineable) {
+        this.source = source;
+        this.defineable = defineable;
     }
 
-    @Override
-    public String toString() {
-        return event.toString();
+    public CFGNode getDefinitionSource() {
+        return source;
     }
 
-    @Override
-    public ASTNode getASTNode() {
-        return event;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        EventNode eventNode = (EventNode) o;
-        return Objects.equals(event, eventNode.event);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(event);
+    public Defineable getDefinable() {
+        return defineable;
     }
 }

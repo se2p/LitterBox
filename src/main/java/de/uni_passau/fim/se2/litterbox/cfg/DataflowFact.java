@@ -19,25 +19,5 @@
 
 package de.uni_passau.fim.se2.litterbox.cfg;
 
-import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
-
-public class StatementNode extends CFGNode {
-
-    private ASTNode node;
-
-    public StatementNode(ASTNode node) {
-        this.node = node;
-    }
-
-    @Override
-    public ASTNode getASTNode() {
-        return node;
-    }
-
-    @Override
-    public String toString() {
-        return node.getClass().getSimpleName() + "@" + System.identityHashCode(node);
-    }
-
-    // No hashcode&equals on purpose, to ensure contract in Graph
+public interface DataflowFact {
 }

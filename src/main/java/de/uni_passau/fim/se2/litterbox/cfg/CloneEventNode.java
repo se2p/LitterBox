@@ -19,9 +19,11 @@
 
 package de.uni_passau.fim.se2.litterbox.cfg;
 
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
+
 import java.util.Objects;
 
-public class CloneEventNode implements CFGNode {
+public class CloneEventNode extends CFGNode {
 
     private String actorName;
 
@@ -45,5 +47,10 @@ public class CloneEventNode implements CFGNode {
     @Override
     public int hashCode() {
         return Objects.hash(actorName);
+    }
+
+    @Override
+    public ASTNode getASTNode() {
+        return null;
     }
 }

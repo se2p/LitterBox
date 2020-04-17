@@ -26,6 +26,9 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Message;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Event;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 
+import java.util.Collections;
+import java.util.Set;
+
 public class ControlFlowGraph {
 
     private MutableGraph<CFGNode> graph;
@@ -47,6 +50,26 @@ public class ControlFlowGraph {
 
     public int getNumEdges() {
         return graph.edges().size();
+    }
+
+    public CFGNode getEntryNode() {
+        return entryNode;
+    }
+
+    public CFGNode getExitNode() {
+        return exitNode;
+    }
+
+    public Set<CFGNode> getNodes() {
+        return Collections.unmodifiableSet(graph.nodes());
+    }
+
+    public Set<CFGNode> getSuccessors(CFGNode node) {
+        return graph.successors(node);
+    }
+
+    public Set<CFGNode> getPredecessors(CFGNode node) {
+        return graph.predecessors(node);
     }
 
     public StatementNode addNode(Stmt stmt) {

@@ -86,11 +86,9 @@ public class ControlFlowGraphBuilder {
         return Collections.unmodifiableList(currentNodes);
     }
 
-    // TODO: Redundant
     private void setCurrentNode(CFGNode... node) {
         currentNodes = new ArrayList<>(Arrays.asList(node));
     }
-
 
     public void addUserEventHandler(Event event) {
 

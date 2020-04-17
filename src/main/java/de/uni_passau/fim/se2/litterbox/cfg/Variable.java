@@ -19,39 +19,32 @@
 
 package de.uni_passau.fim.se2.litterbox.cfg;
 
-import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
-import de.uni_passau.fim.se2.litterbox.ast.model.event.Event;
+import de.uni_passau.fim.se2.litterbox.ast.model.variable.Qualified;
 
 import java.util.Objects;
 
-public class EventNode extends CFGNode {
+public class Variable implements Defineable {
 
-    private Event event;
+    private Qualified qualified;
 
-    public EventNode(Event event) {
-        this.event = event;
+    public Variable(Qualified qualified) {
+        this.qualified = qualified;
     }
 
-    @Override
-    public String toString() {
-        return event.toString();
-    }
-
-    @Override
-    public ASTNode getASTNode() {
-        return event;
+    public Qualified getQualified() {
+        return qualified;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        EventNode eventNode = (EventNode) o;
-        return Objects.equals(event, eventNode.event);
+        Variable variable = (Variable) o;
+        return Objects.equals(qualified, variable.qualified);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(event);
+        return Objects.hash(qualified);
     }
 }

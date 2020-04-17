@@ -24,6 +24,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
+import org.junit.Ignore;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -89,6 +90,7 @@ public class CFGTest {
     public void testOnVolume() throws IOException, ParsingException {
         ControlFlowGraph cfg = getCFG("src/test/fixtures/cfg/onvolume.json");
         System.out.println(cfg.toDotString());
+        // TODO: Not yet implemented
         assertThat(cfg.getNumNodes()).isEqualTo(4); // Entry, Exit, Volume, Move
         assertThat(cfg.getNumEdges()).isEqualTo(4); // Volume is conditional
     }
@@ -217,6 +219,15 @@ public class CFGTest {
         assertThat(cfg.getNumNodes()).isEqualTo(9); // Entry, Exit, Greenflag, CreateClonex2, Clonex2, Movex2
         assertThat(cfg.getNumEdges()).isEqualTo(13);
     }
+
+
+    @Test
+    public void testVariable() throws IOException, ParsingException {
+        ControlFlowGraph cfg = getCFG("src/test/fixtures/cfg/variable.json");
+        assertThat(cfg.getNumNodes()).isEqualTo(6); // Entry, Exit, Set, Change, Read
+        assertThat(cfg.getNumEdges()).isEqualTo(6);
+    }
+
 
     @Test
     public void testTwoSprites() throws IOException, ParsingException {

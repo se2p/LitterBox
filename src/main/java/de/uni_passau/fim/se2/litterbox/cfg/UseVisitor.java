@@ -19,39 +19,29 @@
 
 package de.uni_passau.fim.se2.litterbox.cfg;
 
-import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
-import de.uni_passau.fim.se2.litterbox.ast.model.event.Event;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetVariableTo;
+import de.uni_passau.fim.se2.litterbox.ast.model.variable.Qualified;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
-import java.util.Objects;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
-public class EventNode extends CFGNode {
+public class UseVisitor implements ScratchVisitor {
 
-    private Event event;
+    private Set<Qualified> uses = new LinkedHashSet<>();
 
-    public EventNode(Event event) {
-        this.event = event;
+    public Set<Qualified> getUses() {
+        return uses;
     }
 
     @Override
-    public String toString() {
-        return event.toString();
+    public void visit(SetVariableTo node) {
+        // Skip variable as that's a def, only visit expression
+        node.getExpr().accept(this);
     }
 
     @Override
-    public ASTNode getASTNode() {
-        return event;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        EventNode eventNode = (EventNode) o;
-        return Objects.equals(event, eventNode.event);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(event);
+    public void visit(Qualified node) {
+        uses.add(node);
     }
 }

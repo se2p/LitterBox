@@ -18,11 +18,12 @@ package de.uni_passau.fim.se2.litterbox.cfg;
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Message;
 
 import java.util.Objects;
 
-public class MessageNode implements CFGNode {
+public class MessageNode extends CFGNode {
 
     private Message message;
 
@@ -33,6 +34,11 @@ public class MessageNode implements CFGNode {
     @Override
     public String toString() {
         return "Message: "+message.getMessage().toString();
+    }
+
+    @Override
+    public ASTNode getASTNode() {
+        return message;
     }
 
     @Override
