@@ -24,7 +24,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
-import org.junit.Ignore;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -238,11 +237,8 @@ public class CFGTest {
     @Test
     public void testCustomBlock() throws IOException, ParsingException {
         ControlFlowGraph cfg = getCFG("src/test/fixtures/cfg/customblock.json");
-        System.out.println(cfg.toDotString());
-
-        // TODO: What is correct?
-        assertThat(cfg.getNumNodes()).isEqualTo(5); // Entry, Exit, Greenflag, movex2
-        assertThat(cfg.getNumEdges()).isEqualTo(6);
+        assertThat(cfg.getNumNodes()).isEqualTo(3); // Entry, Exit, Block
+        assertThat(cfg.getNumEdges()).isEqualTo(2);
     }
 
     @Test

@@ -120,13 +120,6 @@ public class ControlFlowGraph {
         builder.append("digraph {");
         builder.append(System.lineSeparator());
 
-        for(CFGNode node : graph.nodes()) {
-            builder.append("  \"");
-            builder.append(node);
-            builder.append("\";");
-            builder.append(System.lineSeparator());
-        }
-
         for(EndpointPair<CFGNode> edge : graph.edges()) {
             builder.append("  \"");
             builder.append(edge.nodeU());

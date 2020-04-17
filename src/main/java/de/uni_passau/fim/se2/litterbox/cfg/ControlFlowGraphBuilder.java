@@ -178,7 +178,6 @@ public class ControlFlowGraphBuilder {
 
     public void addProcedure(ProcedureDefinition node) {
         ProcedureNode customBlockNode = new ProcedureNode(node.getIdent().getName());
-        System.out.println("Adding new procedure: "+node.getIdent().getName());
         cfg.addEdgeToExit(customBlockNode);
         setCurrentNode(customBlockNode);
     }
@@ -190,10 +189,12 @@ public class ControlFlowGraphBuilder {
 
         // Retrieve custom block handler, or create if it doesn't exist yet
         ProcedureNode customBlockNode = new ProcedureNode(stmt.getIdent().getName());
+        cfg.addEdgeToExit(customBlockNode);
+
         cfg.addEdge(node, customBlockNode);
-        System.out.println("Adding call to procedure: "+stmt.getIdent().getName());
 
         // TODO: Add edge back from procedure handler to current node??
+        throw new RuntimeException("Not implemented yet");
     }
 
     public void addStopStatement(Stmt stmt) {
