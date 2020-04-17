@@ -23,6 +23,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Message;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Event;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.StartedAsClone;
+import de.uni_passau.fim.se2.litterbox.ast.model.event.VariableAboveValue;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
@@ -107,6 +108,15 @@ public class ControlFlowGraphBuilder {
 
     public void addEventHandler(Event event) {
         CFGNode eventNode = cfg.addNode(event);
+        cfg.addEdgeToExit(eventNode);
+
+        // Update current node to event node (so that it branches)
+        setCurrentNode(eventNode);
+    }
+
+    public void addVariableEventHandler(VariableAboveValue node) {
+        CFGNode eventNode = cfg.addNode(node);
+        cfg.addEdgeFromEntry(eventNode);
         cfg.addEdgeToExit(eventNode);
 
         // Update current node to event node (so that it branches)

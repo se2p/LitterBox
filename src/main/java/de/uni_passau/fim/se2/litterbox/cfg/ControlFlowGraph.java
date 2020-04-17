@@ -24,6 +24,7 @@ import com.google.common.graph.GraphBuilder;
 import com.google.common.graph.MutableGraph;
 import de.uni_passau.fim.se2.litterbox.ast.model.Message;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Event;
+import de.uni_passau.fim.se2.litterbox.ast.model.event.VariableAboveValue;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 
 import java.util.Collections;
@@ -90,6 +91,11 @@ public class ControlFlowGraph {
         return cfgNode;
     }
 
+    public VariableEventNode addNode(VariableAboveValue node) {
+        VariableEventNode cfgNode = new VariableEventNode(node);
+        graph.addNode(cfgNode);
+        return cfgNode;
+    }
     public void addEdge(CFGNode from, CFGNode to) {
         graph.putEdge(from, to);
     }

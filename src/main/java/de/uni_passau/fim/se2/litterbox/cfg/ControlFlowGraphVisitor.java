@@ -225,8 +225,7 @@ public class ControlFlowGraphVisitor implements ScratchVisitor {
 
     @Override
     public void visit(VariableAboveValue node) {
-        // TODO: Edge from entry node, presumably?
-        throw new RuntimeException("Not yet implemented");
+        builder.addVariableEventHandler(node);
     }
 
     private boolean isInScript() {

@@ -89,8 +89,7 @@ public class CFGTest {
     @Test
     public void testOnVolume() throws IOException, ParsingException {
         ControlFlowGraph cfg = getCFG("src/test/fixtures/cfg/onvolume.json");
-        System.out.println(cfg.toDotString());
-        // TODO: Not yet implemented
+        // TODO: Also test for multiple event handlers
         assertThat(cfg.getNumNodes()).isEqualTo(4); // Entry, Exit, Volume, Move
         assertThat(cfg.getNumEdges()).isEqualTo(4); // Volume is conditional
     }
