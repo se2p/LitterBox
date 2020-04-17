@@ -19,20 +19,20 @@
 package de.uni_passau.fim.se2.litterbox.ast.model.expression.num;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Identifier;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 public class LengthOfVar extends AbstractNode implements NumExpr {
 
-    private final Variable variable;
+    private final Identifier identifier;
 
-    public LengthOfVar(Variable variable) {
-        super(variable);
-        this.variable = variable;
+    public LengthOfVar(Identifier identifier) {
+        super(identifier);
+        this.identifier = identifier;
     }
 
-    public Variable getVariable() {
-        return variable;
+    public Identifier getIdentifier() {
+        return identifier;
     }
 
     @Override

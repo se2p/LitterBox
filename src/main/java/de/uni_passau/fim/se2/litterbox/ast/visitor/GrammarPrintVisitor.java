@@ -32,8 +32,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.URI;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.Next;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.Prev;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.Random;
-import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.WithId;
-import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.WithNumber;
+import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.WithExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.BackdropSwitchTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Clicked;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.GreenFlag;
@@ -47,9 +46,9 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.UnspecifiedExpressio
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.And;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.AsBool;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BiggerThan;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.ColorTouches;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.ColorTouchingColor;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Equals;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.ExpressionContains;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.StringContains;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.IsKeyPressed;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.IsMouseDown;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.LessThan;
@@ -58,7 +57,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Or;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Touching;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.UnspecifiedBoolExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.ExpressionList;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.ExpressionListPlain;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.ListExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.Add;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.AsNumber;
@@ -82,24 +80,20 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.Round;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.Timer;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.UnspecifiedNumExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AttributeOf;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.ItemOfVariable;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.Join;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.LetterOf;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.UnspecifiedStringExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.Username;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.BoolLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.ColorLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
-import de.uni_passau.fim.se2.litterbox.ast.model.position.CoordinatePosition;
+import de.uni_passau.fim.se2.litterbox.ast.model.position.FromExpression;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.MousePos;
-import de.uni_passau.fim.se2.litterbox.ast.model.position.PivotOf;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.RandomPos;
-import de.uni_passau.fim.se2.litterbox.ast.model.procedure.Parameter;
-import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterList;
-import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterListPlain;
+import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterDefinitionList;
+import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterDefiniton;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinitionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.resource.ImageResource;
@@ -108,21 +102,21 @@ import de.uni_passau.fim.se2.litterbox.ast.model.resource.ResourceList;
 import de.uni_passau.fim.se2.litterbox.ast.model.resource.SoundResource;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.ExpressionStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.ListOfStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.AskAndWait;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.ClearGraphicEffects;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.GraphicEffect;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.HideVariable;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.ShowVariable;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.SwitchBackdrop;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.SwitchBackdropAndWait;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.ClearSoundEffects;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.PlaySoundUntilDone;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.SoundEffect;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.StartSound;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.StopAllSounds;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.Broadcast;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.BroadcastAndWait;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.ChangeAttributeBy;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.ChangeVariableBy;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.CreateCloneOf;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.ResetTimer;
@@ -149,8 +143,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.list.InsertAt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.list.ReplaceItem;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.ChangeLayerBy;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.ChangeSizeBy;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.GoToBackLayer;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.GoToFrontLayer;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.GoToLayer;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Hide;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Say;
@@ -186,15 +178,11 @@ import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.Rgba;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.BooleanType;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.ImageType;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.ListType;
-import de.uni_passau.fim.se2.litterbox.ast.model.type.MapType;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.NumberType;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.SoundType;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.StringType;
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.Id;
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.Qualified;
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.StrId;
-import de.uni_passau.fim.se2.litterbox.ast.parser.attributes.GraphicEffect;
-import de.uni_passau.fim.se2.litterbox.ast.parser.attributes.SoundEffect;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 
 import java.io.PrintStream;
 import java.util.List;
@@ -359,7 +347,7 @@ public class GrammarPrintVisitor implements ScratchVisitor {
     @Override
     public void visit(VariableAboveValue variableAboveValue) {
         emitToken("value of");
-        variableAboveValue.getVariable().accept(this);
+        variableAboveValue.getIdentifier().accept(this);
         emitToken(" above");
         variableAboveValue.getValue().accept(this);
     }
@@ -368,18 +356,11 @@ public class GrammarPrintVisitor implements ScratchVisitor {
     public void visit(StmtList stmtList) {
         begin();
         beginIndentation();
-        stmtList.getStmts().accept(this);
-        endIndentation();
-        end();
-    }
-
-    @Override
-    public void visit(ListOfStmt listOfStmt) {
-        for (Stmt stmt : listOfStmt.getListOfStmt()) {
-            newLine();
-            appendIndentation();
+        for (Stmt stmt : stmtList.getStmts()) {
             stmt.accept(this);
         }
+        endIndentation();
+        end();
     }
 
     @Override
@@ -435,13 +416,13 @@ public class GrammarPrintVisitor implements ScratchVisitor {
     @Override
     public void visit(ShowVariable showVariable) {
         emitToken("show variable");
-        showVariable.getVariable().accept(this);
+        showVariable.getIdentifier().accept(this);
     }
 
     @Override
     public void visit(HideVariable hideVariable) {
         emitToken("hide variable");
-        hideVariable.getVariable().accept(this);
+        hideVariable.getIdentifier().accept(this);
     }
 
     @Override
@@ -488,7 +469,7 @@ public class GrammarPrintVisitor implements ScratchVisitor {
     @Override
     public void visit(SwitchCostumeTo switchCostumeTo) {
         emitNoSpace("changeCostumeTo(");
-        switchCostumeTo.getElementChoice().accept(this);
+        switchCostumeTo.getCostumeChoice().accept(this);
         closeParentheses();
     }
 
@@ -514,17 +495,7 @@ public class GrammarPrintVisitor implements ScratchVisitor {
     @Override
     public void visit(GoToLayer goToLayer) {
         emitToken("go to layer");
-        goToLayer.getLayer().accept(this);
-    }
-
-    @Override
-    public void visit(GoToFrontLayer goToFrontLayer) {
-        emitToken("go to front layer");
-    }
-
-    @Override
-    public void visit(GoToBackLayer goToBackLayer) {
-        emitToken("go to back layer");
+        goToLayer.getLayerChoice().accept(this);
     }
 
     @Override
@@ -543,15 +514,9 @@ public class GrammarPrintVisitor implements ScratchVisitor {
     }
 
     @Override
-    public void visit(WithNumber withNumber) {
-        emitToken("with_number");
-        withNumber.getNumExpr().accept(this);
-    }
-
-    @Override
-    public void visit(WithId withId) {
+    public void visit(WithExpr withExpr) {
         emitToken("with_name");
-        withId.getStringExpr().accept(this);
+        withExpr.getExpression().accept(this);
     }
 
     @Override
@@ -582,9 +547,9 @@ public class GrammarPrintVisitor implements ScratchVisitor {
     }
 
     @Override
-    public void visit(PivotOf pivotOf) {
+    public void visit(FromExpression fromExpression) {
         emitToken("pivot of");
-        pivotOf.getStringExpr().accept(this);
+        fromExpression.getStringExpr().accept(this);
     }
 
     @Override
@@ -595,15 +560,6 @@ public class GrammarPrintVisitor implements ScratchVisitor {
     @Override
     public void visit(MousePos mousePos) {
         emitNoSpace("mouse_pos");
-    }
-
-    @Override
-    public void visit(CoordinatePosition coordinatePosition) {
-        openParentheses();
-        coordinatePosition.getXCoord().accept(this);
-        comma();
-        coordinatePosition.getYCoord().accept(this);
-        closeParentheses();
     }
 
     @Override
@@ -660,7 +616,7 @@ public class GrammarPrintVisitor implements ScratchVisitor {
     @Override
     public void visit(DeleteAllOf deleteAllOf) {
         emitToken("delete all of");
-        deleteAllOf.getVariable().accept(this);
+        deleteAllOf.getIdentifier().accept(this);
     }
 
     @Override
@@ -668,7 +624,7 @@ public class GrammarPrintVisitor implements ScratchVisitor {
         emitToken("delete");
         deleteOf.getNum().accept(this);
         emitToken(" of");
-        deleteOf.getVariable().accept(this);
+        deleteOf.getIdentifier().accept(this);
     }
 
     @Override
@@ -676,7 +632,7 @@ public class GrammarPrintVisitor implements ScratchVisitor {
         emitToken("add");
         addTo.getString().accept(this);
         emitToken(" to");
-        addTo.getVariable().accept(this);
+        addTo.getIdentifier().accept(this);
     }
 
     @Override
@@ -686,7 +642,7 @@ public class GrammarPrintVisitor implements ScratchVisitor {
         emitToken(" at");
         insertAt.getIndex().accept(this);
         emitToken(" of");
-        insertAt.getVariable().accept(this);
+        insertAt.getIdentifier().accept(this);
     }
 
     @Override
@@ -694,7 +650,7 @@ public class GrammarPrintVisitor implements ScratchVisitor {
         emitToken("replace item");
         replaceItem.getIndex().accept(this);
         emitToken(" of");
-        replaceItem.getVariable().accept(this);
+        replaceItem.getIdentifier().accept(this);
         emitToken(" by");
         replaceItem.getString().accept(this);
     }
@@ -744,26 +700,9 @@ public class GrammarPrintVisitor implements ScratchVisitor {
     @Override
     public void visit(ChangeVariableBy changeVariableBy) {
         emitToken("change");
-        changeVariableBy.getVariable().accept(this);
+        changeVariableBy.getIdentifier().accept(this);
         emitToken(" by");
         changeVariableBy.getExpr().accept(this);
-    }
-
-    @Override
-    public void visit(ChangeAttributeBy changeAttributeBy) {
-        volume = false;
-        emitNoSpace("change");
-        emitAttributeType = true;
-        changeAttributeBy.getAttribute().accept(this);
-        emitNoSpace("By(");
-        emitAttributeType = false;
-        if (!volume) {
-            changeAttributeBy.getAttribute().accept(this);
-            comma();
-        }
-        changeAttributeBy.getExpr().accept(this);
-        closeParentheses();
-        volume = false;
     }
 
     @Override
@@ -781,13 +720,7 @@ public class GrammarPrintVisitor implements ScratchVisitor {
     @Override
     public void visit(ExpressionList expressionList) {
         openParentheses();
-        expressionList.getExpressionListPlain().accept(this);
-        closeParentheses();
-    }
-
-    @Override
-    public void visit(ExpressionListPlain expressionListPlain) {
-        List<Expression> expressions = expressionListPlain.getExpressions();
+        List<Expression> expressions = expressionList.getExpressions();
         if (expressions.size() > 0) {
             for (int i = 0; i < expressions.size() - 1; i++) {
                 expressions.get(i).accept(this);
@@ -795,6 +728,7 @@ public class GrammarPrintVisitor implements ScratchVisitor {
             }
             expressions.get(expressions.size() - 1).accept(this);
         }
+        closeParentheses();
     }
 
     @Override
@@ -850,7 +784,7 @@ public class GrammarPrintVisitor implements ScratchVisitor {
     public void visit(ProcedureDefinition procedureDefinition) {
         emitToken("procedure");
         procedureDefinition.getIdent().accept(this);
-        procedureDefinition.getParameterList().accept(this);
+        procedureDefinition.getParameterDefinitionList().accept(this);
         procedureDefinition.getStmtList().accept(this);
     }
 
@@ -870,22 +804,17 @@ public class GrammarPrintVisitor implements ScratchVisitor {
     }
 
     @Override
-    public void visit(ParameterList parameterList) {
+    public void visit(ParameterDefinitionList parameterDefinitionList) {
         openParentheses();
-        parameterList.getParameterListPlain().accept(this);
-        closeParentheses();
-    }
-
-    @Override
-    public void visit(ParameterListPlain parameterListPlain) {
-        List<Parameter> parameters = parameterListPlain.getParameters();
-        if (parameters.size() > 0) {
-            for (int i = 0; i < parameters.size() - 1; i++) {
-                parameters.get(i).accept(this);
+        List<ParameterDefiniton> parameterDefinitons = parameterDefinitionList.getParameterDefinitons();
+        if (parameterDefinitons.size() > 0) {
+            for (int i = 0; i < parameterDefinitons.size() - 1; i++) {
+                parameterDefinitons.get(i).accept(this);
                 comma();
             }
-            parameters.get(parameters.size() - 1).accept(this);
+            parameterDefinitons.get(parameterDefinitons.size() - 1).accept(this);
         }
+        closeParentheses();
     }
 
     private void comma() {
@@ -893,10 +822,10 @@ public class GrammarPrintVisitor implements ScratchVisitor {
     }
 
     @Override
-    public void visit(Parameter parameter) {
-        parameter.getIdent().accept(this);
+    public void visit(ParameterDefiniton parameterDefiniton) {
+        parameterDefiniton.getIdent().accept(this);
         colon();
-        parameter.getType().accept(this);
+        parameterDefiniton.getType().accept(this);
     }
 
     private void colon() {
@@ -944,11 +873,6 @@ public class GrammarPrintVisitor implements ScratchVisitor {
     }
 
     @Override
-    public void visit(MapType mapType) {
-        emitNoSpace("map string");
-    }
-
-    @Override
     public void visit(NumberType numberType) {
         emitNoSpace("number");
     }
@@ -975,30 +899,6 @@ public class GrammarPrintVisitor implements ScratchVisitor {
         asString.getOperand1().accept(this);
     }
 
-    @Override
-    public void visit(AttributeOf attributeOf) {
-        StringExpr attribute = attributeOf.getAttribute();
-        boolean done = false;
-        if (attribute instanceof StringLiteral) {
-            String attributeText = ((StringLiteral) attribute).getText();
-            if (attributeText.equalsIgnoreCase("backdrop_number")) {
-                emitNoSpace("backdropNumber()");
-                done = true;
-            } else if (attributeText.equalsIgnoreCase("backdrop_name")) {
-                emitNoSpace("backdropName()");
-                done = true;
-            } else if (attributeText.equalsIgnoreCase("sound_volume")) {
-                emitNoSpace("volume()");
-                done = true;
-            }
-        }
-        if (!done) {
-            emitToken("attribute");
-            attributeOf.getAttribute().accept(this);
-            of();
-            attributeOf.getIdentifier().accept(this);
-        }
-    }
 
     @Override
     public void visit(Join join) {
@@ -1025,7 +925,7 @@ public class GrammarPrintVisitor implements ScratchVisitor {
         emitToken("item");
         itemOfVariable.getNum().accept(this);
         of();
-        itemOfVariable.getVariable().accept(this);
+        itemOfVariable.getIdentifier().accept(this);
     }
 
     @Override
@@ -1076,7 +976,7 @@ public class GrammarPrintVisitor implements ScratchVisitor {
     @Override
     public void visit(SetVariableTo setVariableTo) {
         set();
-        setVariableTo.getVariable().accept(this);
+        setVariableTo.getIdentifier().accept(this);
         to();
         setVariableTo.getExpr().accept(this);
     }
@@ -1107,11 +1007,6 @@ public class GrammarPrintVisitor implements ScratchVisitor {
         } else {
             emitNoSpace("ScratchActor");
         }
-    }
-
-    @Override
-    public void visit(Id id) {
-        emitNoSpace("\"" + id.getName() + "\"");
     }
 
     @Override
@@ -1196,10 +1091,10 @@ public class GrammarPrintVisitor implements ScratchVisitor {
     }
 
     @Override
-    public void visit(ExpressionContains expressionContains) {
-        expressionContains.getContaining().accept(this);
+    public void visit(StringContains stringContains) {
+        stringContains.getContaining().accept(this);
         emitToken(" contains");
-        expressionContains.getContained().accept(this);
+        stringContains.getContained().accept(this);
     }
 
     @Override
@@ -1247,11 +1142,11 @@ public class GrammarPrintVisitor implements ScratchVisitor {
     }
 
     @Override
-    public void visit(ColorTouches colorTouches) {
+    public void visit(ColorTouchingColor colorTouchingColor) {
         emitNoSpace("colorIsTouchingColor(");
-        colorTouches.getOperand1().accept(this);
+        colorTouchingColor.getOperand1().accept(this);
         comma();
-        colorTouches.getOperand2().accept(this);
+        colorTouchingColor.getOperand2().accept(this);
         closeParentheses();
     }
 
@@ -1348,7 +1243,7 @@ public class GrammarPrintVisitor implements ScratchVisitor {
     @Override
     public void visit(LengthOfVar lengthOfVar) {
         emitToken("length of list");
-        lengthOfVar.getVariable().accept(this);
+        lengthOfVar.getIdentifier().accept(this);
     }
 
     @Override
@@ -1356,7 +1251,7 @@ public class GrammarPrintVisitor implements ScratchVisitor {
         emitToken("index of");
         indexOf.getExpr().accept(this);
         emitToken(" in");
-        indexOf.getVariable().accept(this);
+        indexOf.getIdentifier().accept(this);
     }
 
     @Override

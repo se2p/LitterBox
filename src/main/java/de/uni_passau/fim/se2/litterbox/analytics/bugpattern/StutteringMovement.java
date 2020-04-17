@@ -89,7 +89,7 @@ public class StutteringMovement implements IssueFinder, ScratchVisitor {
     @Override
     public void visit(Script script) {
         if (script.getEvent() instanceof KeyPressed) {
-            List<Stmt> listOfStmt = script.getStmtList().getStmts().getListOfStmt();
+            List<Stmt> listOfStmt = script.getStmtList().getStmts();
             if (listOfStmt.size() == 1) {
                 Stmt stmt = listOfStmt.get(0);
                 if (stmt instanceof MoveSteps || stmt instanceof ChangeXBy || stmt instanceof ChangeYBy) {

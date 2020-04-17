@@ -23,11 +23,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.IssueReport;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfElseStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatTimesStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.*;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
@@ -83,11 +79,11 @@ public class EmptyControlBody implements IssueFinder, ScratchVisitor {
 
     @Override
     public void visit(IfElseStmt node) {
-        if (node.getStmtList().getStmts().getListOfStmt().isEmpty()) {
+        if (node.getStmtList().getStmts().isEmpty()) {
             found = true;
             count++;
         }
-        if (node.getElseStmts().getStmts().getListOfStmt().isEmpty()) {
+        if (node.getElseStmts().getStmts().isEmpty()) {
             found = true;
             count++;
         }
@@ -100,7 +96,7 @@ public class EmptyControlBody implements IssueFinder, ScratchVisitor {
 
     @Override
     public void visit(IfThenStmt node) {
-        if (node.getThenStmts().getStmts().getListOfStmt().isEmpty()) {
+        if (node.getThenStmts().getStmts().isEmpty()) {
             found = true;
             count++;
         }
@@ -113,7 +109,7 @@ public class EmptyControlBody implements IssueFinder, ScratchVisitor {
 
     @Override
     public void visit(UntilStmt node) {
-        if (node.getStmtList().getStmts().getListOfStmt().isEmpty()) {
+        if (node.getStmtList().getStmts().isEmpty()) {
             found = true;
             count++;
         }
@@ -126,7 +122,7 @@ public class EmptyControlBody implements IssueFinder, ScratchVisitor {
 
     @Override
     public void visit(RepeatForeverStmt node) {
-        if (node.getStmtList().getStmts().getListOfStmt().isEmpty()) {
+        if (node.getStmtList().getStmts().isEmpty()) {
             found = true;
             count++;
         }
@@ -139,7 +135,7 @@ public class EmptyControlBody implements IssueFinder, ScratchVisitor {
 
     @Override
     public void visit(RepeatTimesStmt node) {
-        if (node.getStmtList().getStmts().getListOfStmt().isEmpty()) {
+        if (node.getStmtList().getStmts().isEmpty()) {
             found = true;
             count++;
         }

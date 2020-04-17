@@ -18,20 +18,22 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.model;
 
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.ListOfStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
+import java.util.List;
+
 public class StmtList extends AbstractNode implements ASTNode {
 
-    private final ListOfStmt stmts;
+    private final List<Stmt> stmts;
 
-    public StmtList(ListOfStmt stmts) {
+    public StmtList(List<Stmt> stmts) {
         super(stmts);
         this.stmts = Preconditions.checkNotNull(stmts);
     }
 
-    public ListOfStmt getStmts() {
+    public List<Stmt> getStmts() {
         return stmts;
     }
 

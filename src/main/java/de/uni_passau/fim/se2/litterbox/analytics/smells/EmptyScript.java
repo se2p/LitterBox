@@ -74,7 +74,7 @@ public class EmptyScript implements IssueFinder, ScratchVisitor {
 
     @Override
     public void visit(Script node) {
-        if (!(node.getEvent() instanceof Never) && node.getStmtList().getStmts().getListOfStmt().size() == 0) {
+        if (!(node.getEvent() instanceof Never) && node.getStmtList().getStmts().size() == 0) {
             count++;
         }
     }

@@ -44,6 +44,6 @@ public class UnspecifiedStmtTest {
 
     @Test
     public void parseTextToSpeechTest() {
-        Assertions.assertTrue(unusedProc.getActorDefinitionList().getDefintions().get(1).getScripts().getScriptList().get(0).getStmtList().getStmts().getListOfStmt().get(0) instanceof UnspecifiedStmt);
+        Assertions.assertTrue(unusedProc.getActorDefinitionList().getDefintions().get(1).getScripts().getScriptList().get(0).getStmtList().getStmts().get(0) instanceof UnspecifiedStmt);
     }
 }

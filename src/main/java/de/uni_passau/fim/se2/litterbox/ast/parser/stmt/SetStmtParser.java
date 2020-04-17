@@ -20,21 +20,16 @@ package de.uni_passau.fim.se2.litterbox.ast.parser.stmt;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
-import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.UnspecifiedId;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetAttributeTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetVariableTo;
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.Qualified;
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.StrId;
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.UnspecifiedId;
+import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.SetStmtOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ExpressionParser;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
-import de.uni_passau.fim.se2.litterbox.ast.parser.attributes.DragMode;
-import de.uni_passau.fim.se2.litterbox.ast.parser.attributes.GraphicEffect;
-import de.uni_passau.fim.se2.litterbox.ast.parser.attributes.RotationStyle;
-import de.uni_passau.fim.se2.litterbox.ast.parser.attributes.SoundEffect;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.VariableInfo;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
@@ -52,71 +47,21 @@ public class SetStmtParser {
 
         final SetStmtOpcode opcode = SetStmtOpcode.valueOf(opcodeString);
 
-        switch (opcode) {
-        case data_setvariableto:
+        if (opcode == SetStmtOpcode.data_setvariableto) {
             return parseSetVariable(current, allBlocks);
-        case sensing_setdragmode:
-            return parseSetDragmode(current);
-        case motion_setrotationstyle:
-            return parseSetRotationStyle(current);
-        case looks_seteffectto:
-            return parseSetLookEffect(current, allBlocks);
-        case sound_seteffectto:
-            return parseSetSoundEffect(current, allBlocks);
-        case sound_setvolumeto:
-            return parseSetVolumeTo(current, allBlocks);
-        case pen_setPenSizeTo:
-            return parseSetPenSizeTo(current, allBlocks);
-        default:
-            throw new RuntimeException("Not Implemented yet");
         }
-    }
-
-    private static SetStmt parseSetPenSizeTo(JsonNode current, JsonNode allBlocks) throws ParsingException {
-        return new SetAttributeTo(new StringLiteral(PEN_SIZE_KEY), ExpressionParser.parseExpression(current, 0,
-                allBlocks));
-    }
-
-    private static SetStmt parseSetVolumeTo(JsonNode current, JsonNode allBlocks) throws ParsingException {
-        return new SetAttributeTo(new StringLiteral(VOLUME_KEY), ExpressionParser.parseExpression(current, 0,
-                allBlocks));
-    }
-
-    private static SetStmt parseSetSoundEffect(JsonNode current, JsonNode allBlocks) throws ParsingException {
-        String effect = current.get(FIELDS_KEY).get(EFFECT_KEY).get(0).asText();
-        Preconditions.checkArgument(SoundEffect.contains(effect));
-        return new SetAttributeTo(new StringLiteral(effect), ExpressionParser.parseExpression(current, 0,
-                allBlocks));
-    }
-
-    private static SetStmt parseSetLookEffect(JsonNode current, JsonNode allBlocks) throws ParsingException {
-        String effect = current.get(FIELDS_KEY).get(EFFECT_KEY).get(0).asText();
-        Preconditions.checkArgument(GraphicEffect.contains(effect));
-        return new SetAttributeTo(new StringLiteral(effect), ExpressionParser.parseExpression(current, 0,
-                allBlocks));
-    }
-
-    private static SetStmt parseSetRotationStyle(JsonNode current) {
-        String rota = current.get(FIELDS_KEY).get(STYLE_KEY).get(0).asText();
-        Preconditions.checkArgument(RotationStyle.contains(rota));
-        return new SetAttributeTo(new StringLiteral(ROTATIONSTYLE_KEY), new StringLiteral(rota));
-    }
-
-    private static SetStmt parseSetDragmode(JsonNode current) {
-        String drag = current.get(FIELDS_KEY).get(DRAGMODE_KEY).get(0).asText();
-        Preconditions.checkArgument(DragMode.contains(drag));
-        return new SetAttributeTo(new StringLiteral(DRAG_KEY), new StringLiteral(drag));
+        throw new RuntimeException("Not Implemented yet");
     }
 
     private static SetStmt parseSetVariable(JsonNode current, JsonNode allBlocks) throws ParsingException {
         String unique = current.get(FIELDS_KEY).get(VARIABLE_KEY).get(VARIABLE_IDENTIFIER_POS).asText();
         if (!ProgramParser.symbolTable.getVariables().containsKey(unique)) {
-            return new SetVariableTo(new UnspecifiedId(), ExpressionParser.parseExpression(current,
-                    0, allBlocks));
+            return new SetVariableTo(new UnspecifiedId(), ExpressionParser.parseExpr(current,
+                    VALUE_KEY, allBlocks));
         }
         VariableInfo info = ProgramParser.symbolTable.getVariables().get(unique);
         return new SetVariableTo(new Qualified(new StrId(info.getActor()),
-                new StrId((VARIABLE_ABBREVIATION + info.getVariableName()))), ExpressionParser.parseExpression(current,
-                0, allBlocks));
+                new Variable(new StrId(info.getVariableName()))), ExpressionParser.parseExpr(current,
+                VALUE_KEY, allBlocks));
     }
 }

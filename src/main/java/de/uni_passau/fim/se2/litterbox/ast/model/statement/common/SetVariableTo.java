@@ -20,23 +20,23 @@ package de.uni_passau.fim.se2.litterbox.ast.model.statement.common;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Identifier;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 public class SetVariableTo extends AbstractNode implements SetStmt {
 
-    private final Variable variable;
+    private final Identifier identifier;
     private final Expression expr;
 
-    public SetVariableTo(Variable variable, Expression expr) {
-        super(variable, expr);
-        this.variable = Preconditions.checkNotNull(variable);
+    public SetVariableTo(Identifier identifier, Expression expr) {
+        super(identifier, expr);
+        this.identifier = Preconditions.checkNotNull(identifier);
         this.expr = Preconditions.checkNotNull(expr);
     }
 
-    public Variable getVariable() {
-        return variable;
+    public Identifier getIdentifier() {
+        return identifier;
     }
 
     public Expression getExpr() {

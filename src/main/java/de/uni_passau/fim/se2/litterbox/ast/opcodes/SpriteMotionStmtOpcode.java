@@ -33,7 +33,9 @@ public enum SpriteMotionStmtOpcode {
     motion_changeyby,       // |  "change" "y" "by"  NumExpr
     motion_setx,            // |  "set" "x" "to"  NumExpr
     motion_sety,            // |  "set" "y" "to"  NumExpr
-    motion_ifonedgebounce;  // |  "if" "on" "edge" "bounce"
+    motion_ifonedgebounce,  // |  "if" "on" "edge" "bounce"
+    motion_setrotationstyle,// |  "set rotation style" RotationStyle
+    sensing_setdragmode;    // |  "set drag mode" DragMode
 
     public static boolean contains(String opcode) {
         for (SpriteMotionStmtOpcode value : SpriteMotionStmtOpcode.values()) {

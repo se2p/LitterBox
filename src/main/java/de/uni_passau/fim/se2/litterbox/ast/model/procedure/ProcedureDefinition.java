@@ -21,28 +21,28 @@ package de.uni_passau.fim.se2.litterbox.ast.model.procedure;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.Identifier;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 public class ProcedureDefinition extends AbstractNode implements ASTNode {
 
-    private final Identifier ident;
-    private final ParameterList parameterList;
+    private final LocalIdentifier ident;
+    private final ParameterDefinitionList parameterDefinitionList;
     private final StmtList stmtList;
 
-    public ProcedureDefinition(Identifier ident, ParameterList parameterList, StmtList stmtList) {
-        super(ident, parameterList, stmtList);
+    public ProcedureDefinition(LocalIdentifier ident, ParameterDefinitionList parameterDefinitionList, StmtList stmtList) {
+        super(ident, parameterDefinitionList, stmtList);
         this.ident = ident;
-        this.parameterList = parameterList;
+        this.parameterDefinitionList = parameterDefinitionList;
         this.stmtList = stmtList;
     }
 
-    public Identifier getIdent() {
+    public LocalIdentifier getIdent() {
         return ident;
     }
 
-    public ParameterList getParameterList() {
-        return parameterList;
+    public ParameterDefinitionList getParameterDefinitionList() {
+        return parameterDefinitionList;
     }
 
     public StmtList getStmtList() {

@@ -29,21 +29,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.UnspecifiedBool
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
-import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.Broadcast;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.BroadcastAndWait;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.ChangeAttributeBy;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.ChangeVariableBy;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.CommonStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.CreateCloneOf;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.ResetTimer;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.StopOtherScriptsInSprite;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitSeconds;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitUntil;
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.Identifier;
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.Qualified;
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.StrId;
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.UnspecifiedId;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.CommonStmtOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.parser.BoolExprParser;
@@ -57,7 +44,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
-import static de.uni_passau.fim.se2.litterbox.ast.opcodes.CommonStmtOpcode.*;
 
 public class CommonStmtParser {
 
@@ -79,65 +65,38 @@ public class CommonStmtParser {
         final CommonStmtOpcode opcode = CommonStmtOpcode.valueOf(opcodeString);
 
         switch (opcode) {
-        case control_wait:
-            return parseWaitSeconds(current, allBlocks);
+            case control_wait:
+                return parseWaitSeconds(current, allBlocks);
 
-        case control_wait_until:
-            return parseWaitUntil(current, allBlocks);
+            case control_wait_until:
+                return parseWaitUntil(current, allBlocks);
 
-        case control_stop:
-            return parseControlStop(current);
+            case control_stop:
+                return parseControlStop(current);
 
-        case control_create_clone_of:
-            return parseCreateCloneOf(current, allBlocks);
+            case control_create_clone_of:
+                return parseCreateCloneOf(current, allBlocks);
 
-        case event_broadcast:
-            return parseBroadcast(current, allBlocks);
+            case event_broadcast:
+                return parseBroadcast(current, allBlocks);
 
-        case event_broadcastandwait:
-            return parseBroadcastAndWait(current, allBlocks);
+            case event_broadcastandwait:
+                return parseBroadcastAndWait(current, allBlocks);
 
-        case sensing_resettimer:
-            return new ResetTimer();
+            case sensing_resettimer:
+                return new ResetTimer();
 
-        case data_changevariableby:
-            return parseChangeVariableBy(current, allBlocks);
+            case data_changevariableby:
+                return parseChangeVariableBy(current, allBlocks);
 
-        case sound_changevolumeby:
-        case sound_changeeffectby:
-        case looks_changeeffectby:
-        case pen_changePenSizeBy:
-            return parseChangeAttributeBy(current, allBlocks);
-
-        default:
-            throw new RuntimeException("Not Implemented yet");
-        }
-    }
-
-    private static CommonStmt parseChangeAttributeBy(JsonNode current, JsonNode allBlocks) throws ParsingException {
-        String opcodeString = current.get(OPCODE_KEY).asText();
-        CommonStmtOpcode opcode = CommonStmtOpcode.valueOf(opcodeString);
-
-        if (sound_changevolumeby.equals(opcode)) {
-            String attributeName = "VOLUME";
-            NumExpr numExpr = NumExprParser.parseNumExpr(current, 0,
-                    allBlocks);
-            return new ChangeAttributeBy(new StringLiteral(attributeName), numExpr);
-        } else if (sound_changeeffectby.equals(opcode) || looks_changeeffectby.equals(opcode)) {
-            NumExpr numExpr = NumExprParser.parseNumExpr(current, 0, allBlocks);
-            String effectName = current.get(FIELDS_KEY).get("EFFECT").get(0).asText();
-            return new ChangeAttributeBy(new StringLiteral(effectName), numExpr);
-        } else if (pen_changePenSizeBy.equals(opcode)) {
-            return new ChangeAttributeBy(new StringLiteral(PEN_SIZE_KEY), NumExprParser.parseNumExpr(current, 0,
-                    allBlocks));
-        } else {
-            throw new ParsingException("Cannot parse block with opcode " + opcodeString + " to ChangeAttributeBy");
+            default:
+                throw new RuntimeException("Not Implemented yet");
         }
     }
 
     private static CommonStmt parseChangeVariableBy(JsonNode current, JsonNode allBlocks) throws ParsingException {
-        Expression numExpr = NumExprParser.parseNumExpr(current, 0, allBlocks);
-        Variable var;
+        Expression numExpr = NumExprParser.parseNumExpr(current, VALUE_KEY, allBlocks);
+        Identifier var;
         String variableName = current.get(FIELDS_KEY).get(VARIABLE_KEY).get(VARIABLE_NAME_POS).asText();
         String variableID = current.get(FIELDS_KEY).get(VARIABLE_KEY).get(VARIABLE_IDENTIFIER_POS).asText();
         if (!ProgramParser.symbolTable.getVariables().containsKey(variableID)) {
@@ -145,7 +104,7 @@ public class CommonStmtParser {
         } else {
             VariableInfo variableInfo = ProgramParser.symbolTable.getVariables().get(variableID);
             String actorName = variableInfo.getActor();
-            var = new Qualified(new StrId(actorName), new StrId(VARIABLE_ABBREVIATION + variableName));
+            var = new Qualified(new StrId(actorName), new Variable(new StrId(variableName)));
         }
 
         return new ChangeVariableBy(var, numExpr);
@@ -178,21 +137,21 @@ public class CommonStmtParser {
         inputs.elements().forEachRemaining(inputsList::add);
 
         if (getShadowIndicator((ArrayNode) inputsList.get(0)) == 1) {
-            String cloneOptionMenu = inputs.get(CLONE_OPTION).get(Constants.POS_INPUT_VALUE).asText();
+            String cloneOptionMenu = inputs.get(CLONE_OPTION).get(POS_INPUT_VALUE).asText();
             JsonNode optionBlock = allBlocks.get(cloneOptionMenu);
             String cloneValue = optionBlock.get(FIELDS_KEY).get(CLONE_OPTION).get(FIELD_VALUE).asText();
-            Identifier ident = new StrId(cloneValue);
+            LocalIdentifier ident = new StrId(cloneValue);
             return new CreateCloneOf(new AsString(ident));
         } else {
-            final StringExpr stringExpr = StringExprParser.parseStringExpr(current, 0, allBlocks);
+            final StringExpr stringExpr = StringExprParser.parseStringExpr(current, CLONE_OPTION, allBlocks);
             return new CreateCloneOf(stringExpr);
         }
     }
 
     private static WaitUntil parseWaitUntil(JsonNode current, JsonNode allBlocks) throws ParsingException {
         JsonNode inputs = current.get(INPUTS_KEY);
-        if (inputs.elements().hasNext()) {
-            BoolExpr boolExpr = BoolExprParser.parseBoolExpr(current, 0, allBlocks);
+        if (inputs.has(CONDITION_KEY)) {
+            BoolExpr boolExpr = BoolExprParser.parseBoolExpr(current, CONDITION_KEY, allBlocks);
             return new WaitUntil(boolExpr);
         } else {
             return new WaitUntil(new UnspecifiedBoolExpr());
@@ -200,7 +159,7 @@ public class CommonStmtParser {
     }
 
     private static WaitSeconds parseWaitSeconds(JsonNode current, JsonNode allBlocks) throws ParsingException {
-        NumExpr numExpr = NumExprParser.parseNumExpr(current, 0, allBlocks);
+        NumExpr numExpr = NumExprParser.parseNumExpr(current, DURATION_KEY, allBlocks);
         return new WaitSeconds(numExpr);
     }
 

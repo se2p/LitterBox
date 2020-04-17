@@ -28,7 +28,9 @@ public enum ActorLookStmtOpcode {
     data_showvariable,
     data_hidevariable,
     data_showlist,
-    data_hidelist;
+    data_hidelist,
+    looks_changeeffectby,
+    looks_seteffectto; // "set effect" GraphicEffect "to" NumExpr
 
     public static boolean contains(String opcode) {
         for (ActorLookStmtOpcode value : ActorLookStmtOpcode.values()) {

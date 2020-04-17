@@ -23,11 +23,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.pen.PenDownStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.pen.PenUpStmt;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.LinkedList;
 import java.util.List;

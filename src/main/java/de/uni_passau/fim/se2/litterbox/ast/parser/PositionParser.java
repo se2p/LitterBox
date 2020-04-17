@@ -22,15 +22,13 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import de.uni_passau.fim.se2.litterbox.ast.Constants;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
-import de.uni_passau.fim.se2.litterbox.ast.model.position.CoordinatePosition;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
+import de.uni_passau.fim.se2.litterbox.ast.model.position.FromExpression;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.MousePos;
-import de.uni_passau.fim.se2.litterbox.ast.model.position.PivotOf;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.Position;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.RandomPos;
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.NumExprOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.SpriteMotionStmtOpcode;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
@@ -44,10 +42,7 @@ public class PositionParser {
     public static Position parse(JsonNode current, JsonNode allBlocks) throws ParsingException {
         Preconditions.checkNotNull(current);
         Preconditions.checkNotNull(allBlocks);
-
-        if (current.get(Constants.INPUTS_KEY).has("X") && current.get(Constants.INPUTS_KEY).has("Y")) {
-            return parseCoordinate(current, allBlocks);
-        } else if (current.get(Constants.INPUTS_KEY).has("TO") ||
+        if (current.get(Constants.INPUTS_KEY).has("TO") ||
                 current.get(Constants.INPUTS_KEY).has("TOWARDS") ||
                 current.get(Constants.INPUTS_KEY).has("DISTANCETOMENU")) {
             return parseRelativePos(current, allBlocks);
@@ -94,7 +89,7 @@ public class PositionParser {
             } else if (posString.equals("_random_")) {
                 return new RandomPos();
             } else {
-                return new PivotOf(new AsString(new StrId(posString)));
+                return new FromExpression(new AsString(new StrId(posString)));
             }
         } else {
             String posName = "";
@@ -107,23 +102,7 @@ public class PositionParser {
             }
 
             final StringExpr stringExpr = StringExprParser.parseStringExpr(current, posName, allBlocks);
-            return new PivotOf(stringExpr);
-        }
-    }
-
-    private static Position parseCoordinate(JsonNode current, JsonNode allBlocks) throws ParsingException {
-        SpriteMotionStmtOpcode spriteMotionStmtOpcode = valueOf(current.get(Constants.OPCODE_KEY).asText());
-        if (motion_glidesecstoxy.equals(spriteMotionStmtOpcode)) {
-            NumExpr xExpr = NumExprParser.parseNumExpr(current, 1, allBlocks);
-            NumExpr yExpr = NumExprParser.parseNumExpr(current, 2, allBlocks);
-            return new CoordinatePosition(xExpr, yExpr);
-        } else if (motion_gotoxy.equals(spriteMotionStmtOpcode)) {
-            NumExpr xExpr = NumExprParser.parseNumExpr(current, 0, allBlocks);
-            NumExpr yExpr = NumExprParser.parseNumExpr(current, 1, allBlocks);
-            return new CoordinatePosition(xExpr, yExpr);
-        } else {
-            throw new ParsingException(
-                    "Cannot parse x and y coordinates for a block with opcode " + current.get(Constants.OPCODE_KEY));
+            return new FromExpression(stringExpr);
         }
     }
 

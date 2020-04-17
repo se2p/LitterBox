@@ -1,0 +1,127 @@
+{
+  "targets": [
+    {
+      "isStage": true,
+      "name": "Stage",
+      "variables": {
+        "`jEk@4|i[#Fk?(8x)AV.-my variable": [
+          "meine Variable",
+          0
+        ]
+      },
+      "lists": {
+        "E$49RF2a(q:*jNpz=8SL": [
+          "test",
+          []
+        ]
+      },
+      "broadcasts": {},
+      "blocks": {
+        "x$jgJ}{RJO4Furfz_sg{": {
+          "opcode": "sensing_of",
+          "next": null,
+          "parent": null,
+          "inputs": {
+            "OBJECT": [
+              3,
+              "7rUO^k9cT%CQA8`c24(?",
+              "M)J:gP_9?Fn7RAY7]%eW"
+            ]
+          },
+          "fields": {
+            "PROPERTY": [
+              "backdrop #",
+              null
+            ]
+          },
+          "shadow": false,
+          "topLevel": true,
+          "x": 310,
+          "y": 204
+        },
+        "M)J:gP_9?Fn7RAY7]%eW": {
+          "opcode": "sensing_of_object_menu",
+          "next": null,
+          "parent": null,
+          "inputs": {},
+          "fields": {
+            "OBJECT": [
+              "_stage_",
+              null
+            ]
+          },
+          "shadow": true,
+          "topLevel": true,
+          "x": 486,
+          "y": 208
+        },
+        "7rUO^k9cT%CQA8`c24(?": {
+          "opcode": "looks_backdropnumbername",
+          "next": null,
+          "parent": "x$jgJ}{RJO4Furfz_sg{",
+          "inputs": {},
+          "fields": {
+            "NUMBER_NAME": [
+              "number",
+              null
+            ]
+          },
+          "shadow": false,
+          "topLevel": false
+        }
+      },
+      "comments": {},
+      "currentCostume": 0,
+      "costumes": [
+        {
+          "assetId": "cd21514d0531fdffb22204e0ec5ed84a",
+          "name": "Bühnenbild1",
+          "md5ext": "cd21514d0531fdffb22204e0ec5ed84a.svg",
+          "dataFormat": "svg",
+          "rotationCenterX": 240,
+          "rotationCenterY": 180
+        }
+      ],
+      "sounds": [
+        {
+          "assetId": "83a9787d4cb6f3b7632b4ddfebf74367",
+          "name": "Plopp",
+          "dataFormat": "wav",
+          "format": "",
+          "rate": 48000,
+          "sampleCount": 1124,
+          "md5ext": "83a9787d4cb6f3b7632b4ddfebf74367.wav"
+        }
+      ],
+      "volume": 100,
+      "layerOrder": 0,
+      "tempo": 60,
+      "videoTransparency": 50,
+      "videoState": "on",
+      "textToSpeechLanguage": null
+    }
+  ],
+  "monitors": [
+    {
+      "id": "E$49RF2a(q:*jNpz=8SL",
+      "mode": "list",
+      "opcode": "data_listcontents",
+      "params": {
+        "LIST": "test"
+      },
+      "spriteName": null,
+      "value": [],
+      "width": 0,
+      "height": 0,
+      "x": 5,
+      "y": 5,
+      "visible": true
+    }
+  ],
+  "extensions": [],
+  "meta": {
+    "semver": "3.0.0",
+    "vm": "0.2.0-prerelease.20200319175700",
+    "agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:74.0) Gecko/20100101 Firefox/74.0"
+  }
+}
