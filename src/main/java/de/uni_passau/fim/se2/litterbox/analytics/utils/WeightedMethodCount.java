@@ -22,6 +22,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueReport;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitUntil;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.*;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
@@ -39,7 +40,6 @@ public class WeightedMethodCount implements IssueFinder, ScratchVisitor {
     @Override
     public IssueReport check(Program program) {
         Preconditions.checkNotNull(program);
-        count = 1;
         actorNames = new LinkedList<>();
 
         program.accept(this);
@@ -50,6 +50,15 @@ public class WeightedMethodCount implements IssueFinder, ScratchVisitor {
     @Override
     public String getName() {
         return NAME;
+    }
+
+    public void visit(Script node) {
+        count++;
+        if (!node.getChildren().isEmpty()) {
+            for (ASTNode child : node.getChildren()) {
+                child.accept(this);
+            }
+        }
     }
 
     @Override
