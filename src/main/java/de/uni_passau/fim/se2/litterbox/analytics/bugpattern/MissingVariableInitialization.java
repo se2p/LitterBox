@@ -27,23 +27,12 @@ public class MissingVariableInitialization implements IssueFinder {
         program.accept(visitor);
         ControlFlowGraph cfg = visitor.getControlFlowGraph();
 
-        DataflowAnalysisBuilder<Definition> builder = new DataflowAnalysisBuilder<>(cfg);
-        DataflowAnalysis<Definition> analysis = builder.withForward().withMay().withTransferFunction(new ReachingDefinitionsTransferFunction()).build();
+        DataflowAnalysisBuilder<Use> builder = new DataflowAnalysisBuilder<>(cfg);
+        DataflowAnalysis<Use> analysis = builder.withBackward().withMay().withTransferFunction(new LivenessTransferFunction()).build();
         analysis.applyAnalysis();
 
-        int violations = 0;
-        for(CFGNode node : cfg.getNodes()) {
-            Set<Use> usedVariables = node.getUses();
-            Set<Definition> facts = analysis.getDataflowFacts(node);
-
-            for(Use use : usedVariables) {
-                // TODO: This is overly strict. We could instead check if undef can reach a use
-                if(facts.stream().noneMatch(f -> f.getDefinable().equals(use.getDefinable()))) {
-                    // If no definitions are available
-                    violations++;
-                }
-            }
-        }
+        Set<Use> undefinedUses = analysis.getDataflowFacts(cfg.getEntryNode());
+        int violations = undefinedUses.size();
 
         // TODO: Add positions
         return new IssueReport(NAME, violations, Collections.emptyList(), "");

@@ -61,6 +61,16 @@ public class MissingVariableInitializationTest {
     }
 
     @Test
+    public void testMissingInitializationInBranch() throws IOException, ParsingException {
+        File f = new File("src/test/fixtures/bugpattern/missingVariableInitializationInBranch.json");
+        Program program = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
+
+        IssueReport report = (new MissingVariableInitialization()).check(program);
+        Assertions.assertEquals(1, report.getCount());
+    }
+
+
+    @Test
     public void testMissingInitializationInBroadcast() throws IOException, ParsingException {
         File f = new File("src/test/fixtures/bugpattern/missingVariableInitializationInBroadcast.json");
         Program program = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
