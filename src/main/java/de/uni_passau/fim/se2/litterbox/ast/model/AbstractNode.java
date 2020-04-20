@@ -18,6 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.model;
 
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.Metadata;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 import de.uni_passau.fim.se2.litterbox.utils.UnmodifiableListBuilder;
@@ -29,12 +30,14 @@ import java.util.Objects;
 public abstract class AbstractNode implements ASTNode {
 
     protected final List<? extends ASTNode> children;
+    private Metadata metadata;
 
     public AbstractNode(ASTNode... children) {
         this(Arrays.asList(children));
     }
 
     public AbstractNode(List<? extends ASTNode> children) {
+        //todo set metadata
         Preconditions.checkAllArgsNotNull(children);
         this.children = UnmodifiableListBuilder.<ASTNode>builder()
                 .addAll(children)
@@ -49,6 +52,10 @@ public abstract class AbstractNode implements ASTNode {
 
     public String getUniqueName() {
         return this.getClass().getSimpleName();
+    }
+
+    public Metadata getMetadata() {
+        return metadata;
     }
 
     @Override
