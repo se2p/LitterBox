@@ -57,7 +57,6 @@ public class CFGTest {
     @Test
     public void testTwoGreenflags() throws IOException, ParsingException {
         ControlFlowGraph cfg = getCFG("src/test/fixtures/cfg/twogreenflags.json");
-        System.out.println(cfg.toDotString());
         assertThat(cfg.getNumNodes()).isEqualTo(5); // Entry, Exit, Greenflag, Move, TurnRight
         assertThat(cfg.getNumEdges()).isEqualTo(6); // Greenflag is conditional
     }
@@ -79,7 +78,6 @@ public class CFGTest {
     @Test
     public void testOnStage() throws IOException, ParsingException {
         ControlFlowGraph cfg = getCFG("src/test/fixtures/cfg/onstage.json");
-        System.out.println(cfg.toDotString());
         assertThat(cfg.getNumNodes()).isEqualTo(4); // Entry, Exit, Stage, Move
         assertThat(cfg.getNumEdges()).isEqualTo(4); // OnStage is not connected!
         // TODO: Is this a bug pattern?
@@ -103,7 +101,6 @@ public class CFGTest {
     @Test
     public void testIfElse() throws IOException, ParsingException {
         ControlFlowGraph cfg = getCFG("src/test/fixtures/cfg/ifelse.json");
-        System.out.println(cfg.toDotString());
         assertThat(cfg.getNumNodes()).isEqualTo(6); // Entry, Exit, Greenflag, If, Movex2
         assertThat(cfg.getNumEdges()).isEqualTo(7); // Event and then+else
     }
@@ -118,8 +115,6 @@ public class CFGTest {
     @Test
     public void testRepeatUntil() throws IOException, ParsingException {
         ControlFlowGraph cfg = getCFG("src/test/fixtures/cfg/repeatuntil.json");
-        System.out.println(cfg.toDotString());
-
         assertThat(cfg.getNumNodes()).isEqualTo(5); // Entry, Exit, Greenflag, Repeat, Move
         assertThat(cfg.getNumEdges()).isEqualTo(6); // Two conditionals
     }
@@ -142,7 +137,6 @@ public class CFGTest {
     @Test
     public void testTwoEvents() throws IOException, ParsingException {
         ControlFlowGraph cfg = getCFG("src/test/fixtures/cfg/twoevents.json");
-        System.out.println(cfg.toDotString());
         assertThat(cfg.getNumNodes()).isEqualTo(6); // Entry, Exit, Greenflag, KeyPressed, 2xMove
         assertThat(cfg.getNumEdges()).isEqualTo(8);
     }
@@ -150,7 +144,6 @@ public class CFGTest {
     @Test
     public void testBroadcastWithoutReceiver() throws IOException, ParsingException {
         ControlFlowGraph cfg = getCFG("src/test/fixtures/cfg/broadcastnoreceiver.json");
-        System.out.println(cfg.toDotString());
         assertThat(cfg.getNumNodes()).isEqualTo(5); // Entry, Exit, Greenflag, Broadcast, Message
         assertThat(cfg.getNumEdges()).isEqualTo(6);
     }
@@ -160,7 +153,6 @@ public class CFGTest {
     @Test
     public void testReceiveWithoutBroadcast() throws IOException, ParsingException {
         ControlFlowGraph cfg = getCFG("src/test/fixtures/cfg/receivewithoutbroadcast.json");
-        System.out.println(cfg.toDotString());
         assertThat(cfg.getNumNodes()).isEqualTo(4); // Entry, Exit, BroadcastReceive, Move
         assertThat(cfg.getNumEdges()).isEqualTo(4);
     }
@@ -168,7 +160,6 @@ public class CFGTest {
     @Test
     public void testReceiveBroadcast() throws IOException, ParsingException {
         ControlFlowGraph cfg = getCFG("src/test/fixtures/cfg/broadcastreceive.json");
-        System.out.println(cfg.toDotString());
         assertThat(cfg.getNumNodes()).isEqualTo(6); // Entry, Exit, Greenflag, Broadcast, Receive, Move
         assertThat(cfg.getNumEdges()).isEqualTo(8);
     }
@@ -176,7 +167,6 @@ public class CFGTest {
     @Test
     public void testReceiveTwoMessages() throws IOException, ParsingException {
         ControlFlowGraph cfg = getCFG("src/test/fixtures/cfg/receivetwomessages.json");
-        System.out.println(cfg.toDotString());
         assertThat(cfg.getNumNodes()).isEqualTo(9); // Entry, Exit, Greenflag, Broadcastx2, Messagex2, Move, Turn
         assertThat(cfg.getNumEdges()).isEqualTo(13);
     }
@@ -184,7 +174,6 @@ public class CFGTest {
     @Test
     public void testCloneInit() throws IOException, ParsingException {
         ControlFlowGraph cfg = getCFG("src/test/fixtures/cfg/cloneinit.json");
-        System.out.println(cfg.toDotString());
         // On clone, and move
         assertThat(cfg.getNumNodes()).isEqualTo(4); // Entry, Exit, Greenflag, Broadcastx2, Messagex2, Move, Turn
         assertThat(cfg.getNumEdges()).isEqualTo(4);
@@ -237,29 +226,30 @@ public class CFGTest {
     @Test
     public void testCustomBlock() throws IOException, ParsingException {
         ControlFlowGraph cfg = getCFG("src/test/fixtures/cfg/customblock.json");
-        System.out.println(cfg.toDotString());
-        assertThat(cfg.getNumNodes()).isEqualTo(3); // Entry, Exit, Block
-        assertThat(cfg.getNumEdges()).isEqualTo(2);
+        assertThat(cfg.getNumNodes()).isEqualTo(4); // Entry, Exit, Block, Move
+        assertThat(cfg.getNumEdges()).isEqualTo(3); // Block is connected to exit. TODO: Should it?
     }
 
     @Test
     public void testCallCustomBlock() throws IOException, ParsingException {
         ControlFlowGraph cfg = getCFG("src/test/fixtures/cfg/callcustomblock.json");
-        System.out.println(cfg.toDotString());
-        // TODO: Should call node be split into call and return node?
-        // TODO: What is correct?
-        assertThat(cfg.getNumNodes()).isEqualTo(5); // Entry, Exit, Greenflag, movex2
-        assertThat(cfg.getNumEdges()).isEqualTo(6);
+        assertThat(cfg.getNumNodes()).isEqualTo(7); // Entry, Exit, Greenflag, move, call, return, customblock
+        assertThat(cfg.getNumEdges()).isEqualTo(7);
+    }
+
+    @Test
+    public void testTwoCallsCustomBlock() throws IOException, ParsingException {
+        ControlFlowGraph cfg = getCFG("src/test/fixtures/cfg/customblocktwocalls.json");
+        assertThat(cfg.getNumNodes()).isEqualTo(9); // Entry, Exit, Greenflag, move, callx2
+                                                             // Returnx2, custom block
+        assertThat(cfg.getNumEdges()).isEqualTo(10);
     }
 
 
     @Test
     public void testCallCustomBlockWithCode() throws IOException, ParsingException {
         ControlFlowGraph cfg = getCFG("src/test/fixtures/cfg/calledcustomblock.json");
-        System.out.println(cfg.toDotString());
-        // TODO: Should call node be split into call and return node?
-        // TODO: What is correct?
-        assertThat(cfg.getNumNodes()).isEqualTo(7); // Entry, Exit, Greenflag, movex2
-        assertThat(cfg.getNumEdges()).isEqualTo(7);
+        assertThat(cfg.getNumNodes()).isEqualTo(9); // testCallCustomBlock + 2
+        assertThat(cfg.getNumEdges()).isEqualTo(9); // testCallCustomBlock + 2
     }
 }

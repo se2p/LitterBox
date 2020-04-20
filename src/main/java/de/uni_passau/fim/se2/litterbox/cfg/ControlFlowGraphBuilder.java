@@ -24,11 +24,14 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Message;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Event;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.StartedAsClone;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.VariableAboveValue;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.CreateCloneOf;
+import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
+import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ProcedureInfo;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Identifier;
 
@@ -40,7 +43,7 @@ public class ControlFlowGraphBuilder {
 
     private List<CFGNode> currentNodes = new ArrayList<>();
 
-    private Optional<ActorDefinition> currentActor = Optional.empty();
+    private ActorDefinition currentActor = null;
 
     private Map<CFGNode, List<CFGNode>> procedureMap = new LinkedHashMap<>();
 
@@ -54,7 +57,10 @@ public class ControlFlowGraphBuilder {
     }
 
     public void addEndOfProcedure(ProcedureDefinition node, List<CFGNode> endOfProcedure) {
-        ProcedureNode customBlockNode = new ProcedureNode(node.getIdent().getName());
+        ProcedureInfo procDef = ProgramParser.procDefMap.getProcedureForHash(currentActor.getIdent().getName(), node.getIdent().getName());
+
+        ProcedureNode customBlockNode = new ProcedureNode(procDef.getName());
+
         procedureMap.put(customBlockNode, endOfProcedure);
     }
 
@@ -73,7 +79,7 @@ public class ControlFlowGraphBuilder {
     }
 
     public void setCurrentActor(ActorDefinition actor) {
-        this.currentActor = Optional.of(actor);
+        this.currentActor = actor;
     }
 
     public CFGNode addStatement(Stmt stmt) {
@@ -182,8 +188,7 @@ public class ControlFlowGraphBuilder {
         assert(names.size() == 1);
         String name = names.get(0);
         if(name.equals(Identifier.MYSELF.getValue())) {
-            assert(currentActor.isPresent());
-            name = currentActor.get().getIdent().getName();
+            name = currentActor.getIdent().getName();
         }
 
         CloneEventNode handlerNode = new CloneEventNode(name);
@@ -194,15 +199,15 @@ public class ControlFlowGraphBuilder {
     }
 
     public void addCloneHandler(StartedAsClone node) {
-        assert(currentActor.isPresent());
-        CloneEventNode handlerNode = new CloneEventNode(currentActor.get().getIdent().getName());
+        CloneEventNode handlerNode = new CloneEventNode(currentActor.getIdent().getName());
         cfg.addEdgeToExit(handlerNode);
         setCurrentNode(handlerNode);
     }
 
     public void addProcedure(ProcedureDefinition node) {
-        ProcedureNode customBlockNode = new ProcedureNode(node.getIdent().getName());
-        // cfg.addEdgeToExit(customBlockNode);
+
+        ProcedureInfo procDef = ProgramParser.procDefMap.getProcedureForHash(currentActor.getIdent().getName(), node.getIdent().getName());
+        ProcedureNode customBlockNode = new ProcedureNode(procDef.getName());
         setCurrentNode(customBlockNode);
     }
 
@@ -211,14 +216,17 @@ public class ControlFlowGraphBuilder {
         // Add node and edge from current
         CFGNode node = addStatement(stmt);
 
-        // Retrieve custom block handler, or create if it doesn't exist yet
+        // Add edge to procedure entry node
         ProcedureNode customBlockNode = new ProcedureNode(stmt.getIdent().getName());
-        // cfg.addEdgeToExit(customBlockNode);
-        procedureCallMap.put(node, customBlockNode);
-
         cfg.addEdge(node, customBlockNode);
 
-        // Return edge is added at end
+        // Add return node as next node
+        CallReturnNode returnNode = new CallReturnNode(stmt);
+        //currentNodes.forEach(n -> cfg.addEdge(n, node));
+        setCurrentNode(returnNode);
+
+        // Ensure edge from end of procedure to return node
+        procedureCallMap.put(returnNode, customBlockNode);
     }
 
     public void addStopStatement(Stmt stmt) {
