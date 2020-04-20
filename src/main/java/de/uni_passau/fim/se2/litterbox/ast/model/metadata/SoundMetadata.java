@@ -13,12 +13,12 @@ public class SoundMetadata extends ResourceMetadata {
         this.sampleCount = sampleCount;
     }
 
-    public void setRate(int rate) {
-        this.rate = rate;
+    public int getRate() {
+        return rate;
     }
 
-    public void setSampleCount(int sampleCount) {
-        this.sampleCount = sampleCount;
+    public int getSampleCount() {
+        return sampleCount;
     }
 
     @Override

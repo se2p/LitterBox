@@ -3,23 +3,21 @@ package de.uni_passau.fim.se2.litterbox.ast.model.metadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
-import java.util.List;
-
 public class BlockMetadata extends AbstractNode implements Metadata {
     private CommentMetadata commentMetadata;
     private String blockId;
     private String opcode;
     private String next;
     private String parent;
-    private List<InputMetadata> inputMetadata;
-    private List<InputMetadata> fields;
+    private InputMetadataList inputMetadata;
+    private InputMetadataList fields;
     private boolean topLevel;
     private boolean shadow;
 
     public BlockMetadata(CommentMetadata commentMetadata, String blockId, String opcode, String next, String parent,
-                         List<InputMetadata> inputMetadata, List<InputMetadata> fields, boolean topLevel,
+                         InputMetadataList inputMetadata, InputMetadataList fields, boolean topLevel,
                          boolean shadow) {
-        super(); //todo
+        super(commentMetadata, inputMetadata, fields);
         this.commentMetadata = commentMetadata;
         this.blockId = blockId;
         this.opcode = opcode;
@@ -47,11 +45,11 @@ public class BlockMetadata extends AbstractNode implements Metadata {
         return parent;
     }
 
-    public List<InputMetadata> getInputMetadata() {
+    public InputMetadataList getInputMetadata() {
         return inputMetadata;
     }
 
-    public List<InputMetadata> getFields() {
+    public InputMetadataList getFields() {
         return fields;
     }
 
