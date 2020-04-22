@@ -22,6 +22,7 @@ package de.uni_passau.fim.se2.litterbox.cfg;
 import com.google.common.graph.EndpointPair;
 import com.google.common.graph.GraphBuilder;
 import com.google.common.graph.MutableGraph;
+import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Message;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Event;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.VariableAboveValue;
@@ -73,8 +74,8 @@ public class ControlFlowGraph {
         return graph.predecessors(node);
     }
 
-    public StatementNode addNode(Stmt stmt) {
-        StatementNode node = new StatementNode(stmt);
+    public StatementNode addNode(Stmt stmt, ActorDefinition actor) {
+        StatementNode node = new StatementNode(stmt, actor);
         graph.addNode(node);
         return node;
     }

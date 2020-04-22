@@ -30,7 +30,7 @@ import org.junit.jupiter.api.Test;
 import java.io.File;
 import java.io.IOException;
 
-public class MissingVariableInitializationTest {
+public class MissingInitializationTest {
     private static ObjectMapper mapper = new ObjectMapper();
 
     @Test
@@ -38,7 +38,7 @@ public class MissingVariableInitializationTest {
         File f = new File("src/test/fixtures/bugpattern/missingVariableInitialization.json");
         Program program = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
 
-        IssueReport report = (new MissingVariableInitialization()).check(program);
+        IssueReport report = (new MissingInitialization()).check(program);
         Assertions.assertEquals(1, report.getCount());
     }
 
@@ -47,7 +47,7 @@ public class MissingVariableInitializationTest {
         File f = new File("src/test/fixtures/bugpattern/missingVariableInitializationInClone.json");
         Program program = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
 
-        IssueReport report = (new MissingVariableInitialization()).check(program);
+        IssueReport report = (new MissingInitialization()).check(program);
         Assertions.assertEquals(1, report.getCount());
     }
 
@@ -56,7 +56,7 @@ public class MissingVariableInitializationTest {
         File f = new File("src/test/fixtures/bugpattern/missingVariableInitializationWrongVarUsed.json");
         Program program = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
 
-        IssueReport report = (new MissingVariableInitialization()).check(program);
+        IssueReport report = (new MissingInitialization()).check(program);
         Assertions.assertEquals(1, report.getCount());
     }
 
@@ -65,7 +65,7 @@ public class MissingVariableInitializationTest {
         File f = new File("src/test/fixtures/bugpattern/missingVariableInitializationInBranch.json");
         Program program = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
 
-        IssueReport report = (new MissingVariableInitialization()).check(program);
+        IssueReport report = (new MissingInitialization()).check(program);
         Assertions.assertEquals(1, report.getCount());
     }
 
@@ -75,7 +75,7 @@ public class MissingVariableInitializationTest {
         File f = new File("src/test/fixtures/bugpattern/missingVariableInitializationInBroadcast.json");
         Program program = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
 
-        IssueReport report = (new MissingVariableInitialization()).check(program);
+        IssueReport report = (new MissingInitialization()).check(program);
         Assertions.assertEquals(1, report.getCount());
     }
 
@@ -84,7 +84,7 @@ public class MissingVariableInitializationTest {
         File f = new File("src/test/fixtures/bugpattern/missingVariableInitializationInTwoBroadcasts.json");
         Program program = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
 
-        IssueReport report = (new MissingVariableInitialization()).check(program);
+        IssueReport report = (new MissingInitialization()).check(program);
         Assertions.assertEquals(1, report.getCount());
     }
 
@@ -93,7 +93,7 @@ public class MissingVariableInitializationTest {
         File f = new File("src/test/fixtures/bugpattern/missingVariableInitializationInTwoBroadcastsWithDefinition.json");
         Program program = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
 
-        IssueReport report = (new MissingVariableInitialization()).check(program);
+        IssueReport report = (new MissingInitialization()).check(program);
         Assertions.assertEquals(1, report.getCount());
     }
 
@@ -102,9 +102,26 @@ public class MissingVariableInitializationTest {
         File f = new File("src/test/fixtures/bugpattern/missingVariableInitializationTwoVarReadChange.json");
         Program program = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
 
-        IssueReport report = (new MissingVariableInitialization()).check(program);
+        IssueReport report = (new MissingInitialization()).check(program);
         // 2 vars, each is first used in a say, then in a change
         Assertions.assertEquals(4, report.getCount());
     }
 
+    @Test
+    public void testMissingInitializationVarAndAttribute() throws IOException, ParsingException {
+        File f = new File("src/test/fixtures/bugpattern/missingVariableAndAttributeInitialization.json");
+        Program program = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
+
+        IssueReport report = (new MissingInitialization()).check(program);
+        Assertions.assertEquals(2, report.getCount());
+    }
+
+    @Test
+    public void testMissingPositionInitialization() throws IOException, ParsingException {
+        File f = new File("src/test/fixtures/bugpattern/missingAttributeInitializationPosition.json");
+        Program program = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
+
+        IssueReport report = (new MissingInitialization()).check(program);
+        Assertions.assertEquals(1, report.getCount());
+    }
 }

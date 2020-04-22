@@ -57,7 +57,7 @@ public class UseTest {
     public void testSingleUse() throws IOException, ParsingException {
         ControlFlowGraph cfg = getCFG("src/test/fixtures/dataflow/oneuse.json");
         CFGNode node = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof ShowVariable).findFirst().get();
-        UseVisitor visitor = new UseVisitor();
+        VariableUseVisitor visitor = new VariableUseVisitor();
         node.getASTNode().accept(visitor);
         Set<Qualified> uses = visitor.getUses();
         assertThat(uses).hasSize(1);
@@ -67,7 +67,7 @@ public class UseTest {
     public void testDefinitionIsNotAUse() throws IOException, ParsingException {
         ControlFlowGraph cfg = getCFG("src/test/fixtures/dataflow/onedef.json");
         CFGNode node = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof SetVariableTo).findFirst().get();
-        UseVisitor visitor = new UseVisitor();
+        VariableUseVisitor visitor = new VariableUseVisitor();
         node.getASTNode().accept(visitor);
 
         Set<Qualified> uses = visitor.getUses();
@@ -78,7 +78,7 @@ public class UseTest {
     public void testUseAndDefinition() throws IOException, ParsingException {
         ControlFlowGraph cfg = getCFG("src/test/fixtures/dataflow/defuse.json");
         CFGNode node = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof ChangeVariableBy).findFirst().get();
-        UseVisitor visitor = new UseVisitor();
+        VariableUseVisitor visitor = new VariableUseVisitor();
         node.getASTNode().accept(visitor);
 
         Set<Qualified> uses = visitor.getUses();
@@ -90,7 +90,7 @@ public class UseTest {
     public void testVariableReferenceIsAUse() throws IOException, ParsingException {
         ControlFlowGraph cfg = getCFG("src/test/fixtures/dataflow/variableref.json");
         CFGNode node = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof SayForSecs).findFirst().get();
-        UseVisitor visitor = new UseVisitor();
+        VariableUseVisitor visitor = new VariableUseVisitor();
         node.getASTNode().accept(visitor);
 
         Set<Qualified> uses = visitor.getUses();
@@ -102,13 +102,13 @@ public class UseTest {
         ControlFlowGraph cfg = getCFG("src/test/fixtures/dataflow/defsayuse.json");
 
         CFGNode node = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof SayForSecs).findFirst().get();
-        UseVisitor visitor = new UseVisitor();
+        VariableUseVisitor visitor = new VariableUseVisitor();
         node.getASTNode().accept(visitor);
         Set<Qualified> uses = visitor.getUses();
         assertThat(uses).hasSize(1);
 
         node = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof SetVariableTo).findFirst().get();
-        visitor = new UseVisitor();
+        visitor = new VariableUseVisitor();
         node.getASTNode().accept(visitor);
         uses = visitor.getUses();
         assertThat(uses).hasSize(0);

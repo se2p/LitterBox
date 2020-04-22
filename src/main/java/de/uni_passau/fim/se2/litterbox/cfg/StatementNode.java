@@ -20,13 +20,15 @@
 package de.uni_passau.fim.se2.litterbox.cfg;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 
 public class StatementNode extends CFGNode {
 
     private ASTNode node;
 
-    public StatementNode(ASTNode node) {
+    public StatementNode(ASTNode node, ActorDefinition actor) {
         this.node = node;
+        this.actor = actor;
     }
 
     @Override

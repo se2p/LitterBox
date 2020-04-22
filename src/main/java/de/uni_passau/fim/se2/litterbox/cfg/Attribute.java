@@ -19,9 +19,45 @@
 
 package de.uni_passau.fim.se2.litterbox.cfg;
 
+import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
+
 /**
  * An attribute of a sprite (e.g. position or colour)
- * TODO: Implement
  */
 public class Attribute implements Defineable {
+
+    public enum AttributeType {
+        POSITION, ROTATION, COSTUME, SIZE, STAGE //, VISIBILITY, LAYER, EFFECT, VOLUME
+    };
+
+    private ActorDefinition actor;
+
+    private AttributeType attribute;
+
+    public Attribute(ActorDefinition actor, AttributeType attribute) {
+        this.actor = actor;
+        this.attribute = attribute;
+    }
+
+    public AttributeType getAttributeType() {
+        return attribute;
+    }
+
+    public static Attribute positionOf(ActorDefinition actor) {
+        return new Attribute(actor, AttributeType.POSITION);
+    }
+
+    public static Attribute rotationOf(ActorDefinition actor) {
+        return new Attribute(actor, AttributeType.ROTATION);
+    }
+
+    public static Attribute costumeOf(ActorDefinition actor) {
+        return new Attribute(actor, AttributeType.COSTUME);
+    }
+
+    public static Attribute sizeOf(ActorDefinition actor) {
+        return new Attribute(actor, AttributeType.SIZE);
+    }
+
+
 }

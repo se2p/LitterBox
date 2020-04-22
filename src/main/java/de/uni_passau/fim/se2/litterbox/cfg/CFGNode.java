@@ -20,6 +20,7 @@
 package de.uni_passau.fim.se2.litterbox.cfg;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 
 import java.util.Collections;
@@ -32,7 +33,13 @@ public abstract class CFGNode {
 
     private Set<Use> uses = null;
 
+    protected ActorDefinition actor = null;
+
     public abstract ASTNode getASTNode();
+
+    public ActorDefinition getActor() {
+        return actor;
+    }
 
     public Set<Definition> getDefinitions() {
         if(definitions == null) {
@@ -52,13 +59,23 @@ public abstract class CFGNode {
         if(getASTNode() == null) {
             return Collections.emptySet();
         }
-        DefinitionVisitor visitor = new DefinitionVisitor();
+        VariableDefinitionVisitor visitor = new VariableDefinitionVisitor();
         getASTNode().accept(visitor);
 
         Set<Definition> definitions = new LinkedHashSet<>();
         for(Qualified q : visitor.getDefinitions()) {
+            // TODO: Should the visitor return Variables already?
             definitions.add(new Definition(this, new Variable(q)));
         }
+
+        if(getActor() != null) {
+            AttributeDefinitionVisitor avisitor = new AttributeDefinitionVisitor(getActor());
+            getASTNode().accept(avisitor);
+            for (Attribute attribute: avisitor.getAttributeDefinitions()) {
+                definitions.add(new Definition(this, attribute));
+            }
+        }
+
         return definitions;
     }
 
@@ -66,12 +83,20 @@ public abstract class CFGNode {
         if(getASTNode() == null) {
             return Collections.emptySet();
         }
-        UseVisitor visitor = new UseVisitor();
+        VariableUseVisitor visitor = new VariableUseVisitor();
         getASTNode().accept(visitor);
 
         Set<Use> uses = new LinkedHashSet<>();
         for(Qualified q : visitor.getUses()) {
             uses.add(new Use(this, new Variable(q)));
+        }
+
+        if(getActor() != null) {
+            AttributeUseVisitor avisitor = new AttributeUseVisitor(getActor());
+            getASTNode().accept(avisitor);
+            for (Attribute attribute: avisitor.getAttributeUses()) {
+                uses.add(new Use(this, attribute));
+            }
         }
         return uses;
     }

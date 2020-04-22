@@ -20,28 +20,43 @@
 package de.uni_passau.fim.se2.litterbox.cfg;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.ChangeVariableBy;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetVariableTo;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-public class UseVisitor implements ScratchVisitor {
+public class VariableDefinitionVisitor implements ScratchVisitor {
 
-    private Set<Qualified> uses = new LinkedHashSet<>();
+    private Set<Qualified> definitions = new LinkedHashSet<>();
 
-    public Set<Qualified> getUses() {
-        return uses;
+    public Set<Qualified> getDefinitions() {
+        return definitions;
+    }
+
+    @Override
+    public void visit(Stmt node) {
+        // Nop
     }
 
     @Override
     public void visit(SetVariableTo node) {
-        // Skip variable as that's a def, only visit expression
-        node.getExpr().accept(this);
+        // Only the variable is a def
+        node.getIdentifier().accept(this);
+    }
+
+    @Override
+    public void visit(ChangeVariableBy node) {
+        // Only the variable is a def
+        node.getIdentifier().accept(this);
     }
 
     @Override
     public void visit(Qualified node) {
-        uses.add(node);
+        definitions.add(node);
     }
+
+
 }

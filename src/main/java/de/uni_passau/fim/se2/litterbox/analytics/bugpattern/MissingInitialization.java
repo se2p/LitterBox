@@ -3,25 +3,23 @@ package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueReport;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.model.event.GreenFlag;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.VariableInfo;
 import de.uni_passau.fim.se2.litterbox.cfg.*;
 import de.uni_passau.fim.se2.litterbox.dataflow.*;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
-// TODO: Only implemented/tested for variables but could be applied to anything defineable
-public class MissingVariableInitialization implements IssueFinder {
+public class MissingInitialization implements IssueFinder {
 
-    public static final String NAME = "missing_variable_initialization";
-    public static final String SHORT_NAME = "mssVarInit";
+    public static final String NAME = "missing_initialization";
+    public static final String SHORT_NAME = "mssInit"; // TODO: Why do we need this?
 
     @Override
     public IssueReport check(Program program) {
         Preconditions.checkNotNull(program);
-
-        Map<String, VariableInfo> variableInfoMap = program.getSymbolTable().getVariables();
-        ArrayList<VariableInfo> varInfos = new ArrayList<>(variableInfoMap.values());
 
         ControlFlowGraphVisitor visitor = new ControlFlowGraphVisitor();
         program.accept(visitor);
@@ -31,8 +29,13 @@ public class MissingVariableInitialization implements IssueFinder {
         DataflowAnalysis<Use> analysis = builder.withBackward().withMay().withTransferFunction(new LivenessTransferFunction()).build();
         analysis.applyAnalysis();
 
-        Set<Use> undefinedUses = analysis.getDataflowFacts(cfg.getEntryNode());
-        int violations = undefinedUses.size();
+        // Missing initialization is only a problem if the program is started with the green flag
+        Set<CFGNode> greenFlags = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof GreenFlag).collect(Collectors.toSet());
+        int violations = 0;
+        for(CFGNode greenFlag : greenFlags) {
+            Set<Use> undefinedUses = analysis.getDataflowFacts(greenFlag);
+            violations += undefinedUses.size();
+        }
 
         // TODO: Add positions
         return new IssueReport(NAME, violations, Collections.emptyList(), "");

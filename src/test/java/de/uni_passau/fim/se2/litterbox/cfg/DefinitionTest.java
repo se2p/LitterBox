@@ -61,7 +61,7 @@ public class DefinitionTest {
     public void testSingleDefinition() throws IOException, ParsingException {
         ControlFlowGraph cfg = getCFG("src/test/fixtures/dataflow/onedef.json");
         CFGNode node = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof SetVariableTo).findFirst().get();
-        DefinitionVisitor visitor = new DefinitionVisitor();
+        VariableDefinitionVisitor visitor = new VariableDefinitionVisitor();
         node.getASTNode().accept(visitor);
         Set<Qualified> definitions = visitor.getDefinitions();
         assertThat(definitions).hasSize(1);
@@ -71,7 +71,7 @@ public class DefinitionTest {
     public void testUseIsNotDefinition() throws IOException, ParsingException {
         ControlFlowGraph cfg = getCFG("src/test/fixtures/dataflow/oneuse.json");
         CFGNode node = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof ShowVariable).findFirst().get();
-        DefinitionVisitor visitor = new DefinitionVisitor();
+        VariableDefinitionVisitor visitor = new VariableDefinitionVisitor();
         node.getASTNode().accept(visitor);
         Set<Qualified> definitions = visitor.getDefinitions();
         assertThat(definitions).hasSize(0);
@@ -81,7 +81,7 @@ public class DefinitionTest {
     public void testUseAndDefinition() throws IOException, ParsingException {
         ControlFlowGraph cfg = getCFG("src/test/fixtures/dataflow/defuse.json");
         CFGNode node = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof ChangeVariableBy).findFirst().get();
-        DefinitionVisitor visitor = new DefinitionVisitor();
+        VariableDefinitionVisitor visitor = new VariableDefinitionVisitor();
         node.getASTNode().accept(visitor);
         Set<Qualified> definitions = visitor.getDefinitions();
         assertThat(definitions).hasSize(1);
@@ -91,7 +91,7 @@ public class DefinitionTest {
     public void testVariableReferenceIsNotADef() throws IOException, ParsingException {
         ControlFlowGraph cfg = getCFG("src/test/fixtures/dataflow/variableref.json");
         CFGNode node = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof SayForSecs).findFirst().get();
-        DefinitionVisitor visitor = new DefinitionVisitor();
+        VariableDefinitionVisitor visitor = new VariableDefinitionVisitor();
         node.getASTNode().accept(visitor);
         Set<Qualified> definitions = visitor.getDefinitions();
         assertThat(definitions).hasSize(0);
@@ -102,13 +102,13 @@ public class DefinitionTest {
         ControlFlowGraph cfg = getCFG("src/test/fixtures/dataflow/defsayuse.json");
 
         CFGNode node = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof SayForSecs).findFirst().get();
-        DefinitionVisitor visitor = new DefinitionVisitor();
+        VariableDefinitionVisitor visitor = new VariableDefinitionVisitor();
         node.getASTNode().accept(visitor);
         Set<Qualified> definitions = visitor.getDefinitions();
         assertThat(definitions).hasSize(0);
 
         node = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof SetVariableTo).findFirst().get();
-        visitor = new DefinitionVisitor();
+        visitor = new VariableDefinitionVisitor();
         node.getASTNode().accept(visitor);
         definitions = visitor.getDefinitions();
         assertThat(definitions).hasSize(1);
@@ -135,7 +135,7 @@ public class DefinitionTest {
     }
 
     private Set<Variable> getDefinitions(CFGNode node) {
-        DefinitionVisitor visitor = new DefinitionVisitor();
+        VariableDefinitionVisitor visitor = new VariableDefinitionVisitor();
         node.getASTNode().accept(visitor);
         Set<Variable> vars = new LinkedHashSet<>();
 

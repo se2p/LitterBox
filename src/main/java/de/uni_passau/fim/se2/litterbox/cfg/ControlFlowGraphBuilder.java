@@ -24,7 +24,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Message;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Event;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.StartedAsClone;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.VariableAboveValue;
-import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
@@ -83,7 +82,7 @@ public class ControlFlowGraphBuilder {
     }
 
     public CFGNode addStatement(Stmt stmt) {
-        CFGNode node = cfg.addNode(stmt);
+        CFGNode node = cfg.addNode(stmt, currentActor);
         currentNodes.forEach(n -> cfg.addEdge(n, node));
         setCurrentNode(node);
         return node;

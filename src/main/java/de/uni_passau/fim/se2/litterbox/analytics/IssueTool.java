@@ -59,7 +59,7 @@ public class IssueTool {
         bugFinder.put(MissingBackdropSwitch.SHORT_NAME, new MissingBackdropSwitch());
         bugFinder.put(MissingCloneCall.SHORT_NAME, new MissingCloneCall());
         bugFinder.put(MissingCloneInitialization.SHORT_NAME, new MissingCloneInitialization());
-        bugFinder.put(MissingVariableInitialization.SHORT_NAME, new MissingVariableInitialization());
+        bugFinder.put(MissingInitialization.SHORT_NAME, new MissingInitialization());
         bugFinder.put(MissingEraseAll.SHORT_NAME, new MissingEraseAll());
         bugFinder.put(MissingLoopSensing.SHORT_NAME, new MissingLoopSensing());
         bugFinder.put(MissingPenDown.SHORT_NAME, new MissingPenDown());
