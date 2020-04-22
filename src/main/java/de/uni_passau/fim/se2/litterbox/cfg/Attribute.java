@@ -27,7 +27,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 public class Attribute implements Defineable {
 
     public enum AttributeType {
-        POSITION, ROTATION, COSTUME, SIZE, STAGE //, VISIBILITY, LAYER, EFFECT, VOLUME
+        POSITION, ROTATION, COSTUME, SIZE, BACKDROP // VOLUME?
+        // VISIBILITY, LAYER, EFFECT
     };
 
     private ActorDefinition actor;
@@ -59,5 +60,8 @@ public class Attribute implements Defineable {
         return new Attribute(actor, AttributeType.SIZE);
     }
 
+    public static Attribute backdropOf(ActorDefinition actor) {
+        return new Attribute(actor, AttributeType.BACKDROP);
+    }
 
 }

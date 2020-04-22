@@ -107,6 +107,17 @@ public class MissingInitializationTest {
         Assertions.assertEquals(4, report.getCount());
     }
 
+
+    @Test
+    public void testMissingInitializationVariableOfAndVar() throws IOException, ParsingException {
+        File f = new File("src/test/fixtures/bugpattern/missingVariableInitializationVariableOf.json");
+        Program program = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
+
+        IssueReport report = (new MissingInitialization()).check(program);
+        // One direct use, one us with AttributeOf
+        Assertions.assertEquals(2, report.getCount());
+    }
+
     @Test
     public void testMissingInitializationVarAndAttribute() throws IOException, ParsingException {
         File f = new File("src/test/fixtures/bugpattern/missingVariableAndAttributeInitialization.json");

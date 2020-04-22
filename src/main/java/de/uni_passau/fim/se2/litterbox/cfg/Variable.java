@@ -20,26 +20,20 @@
 package de.uni_passau.fim.se2.litterbox.cfg;
 
 
-import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Identifier;
 
 import java.util.Objects;
 
 public class Variable implements Defineable {
 
-    private Qualified qualified;
+    private Identifier identifier;
 
-    private String first;
-
-    private String second;
-
-    public Variable(Qualified qualified) {
-        this.qualified = qualified;
-        this.first = qualified.getFirst().getName();
-        this.second = qualified.getSecond().getName().getName();
+    public Variable(Identifier identifier) {
+        this.identifier = identifier;
     }
 
-    public Qualified getQualified() {
-        return qualified;
+    public Identifier getIdentifier() {
+        return identifier;
     }
 
     @Override
@@ -47,12 +41,11 @@ public class Variable implements Defineable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Variable variable = (Variable) o;
-        return Objects.equals(first, variable.first) &&
-                Objects.equals(second, variable.second);
+        return Objects.equals(identifier, variable.identifier);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(first, second);
+        return Objects.hash(identifier);
     }
 }

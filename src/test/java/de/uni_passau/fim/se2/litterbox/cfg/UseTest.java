@@ -23,6 +23,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Identifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.ShowVariable;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.ChangeVariableBy;
@@ -33,7 +34,9 @@ import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static com.google.common.truth.Truth.assertThat;
 
@@ -59,7 +62,7 @@ public class UseTest {
         CFGNode node = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof ShowVariable).findFirst().get();
         VariableUseVisitor visitor = new VariableUseVisitor();
         node.getASTNode().accept(visitor);
-        Set<Qualified> uses = visitor.getUses();
+        Set<Identifier> uses = visitor.getUses();
         assertThat(uses).hasSize(1);
     }
 
@@ -70,7 +73,7 @@ public class UseTest {
         VariableUseVisitor visitor = new VariableUseVisitor();
         node.getASTNode().accept(visitor);
 
-        Set<Qualified> uses = visitor.getUses();
+        Set<Identifier> uses = visitor.getUses();
         assertThat(uses).hasSize(0);
     }
 
@@ -81,7 +84,7 @@ public class UseTest {
         VariableUseVisitor visitor = new VariableUseVisitor();
         node.getASTNode().accept(visitor);
 
-        Set<Qualified> uses = visitor.getUses();
+        Set<Identifier> uses = visitor.getUses();
         assertThat(uses).hasSize(1);
     }
 
@@ -93,7 +96,25 @@ public class UseTest {
         VariableUseVisitor visitor = new VariableUseVisitor();
         node.getASTNode().accept(visitor);
 
-        Set<Qualified> uses = visitor.getUses();
+        Set<Identifier> uses = visitor.getUses();
+        assertThat(uses).hasSize(1);
+    }
+
+
+    @Test
+    public void testVariableUsedInAttributeOf() throws IOException, ParsingException {
+        ControlFlowGraph cfg = getCFG("src/test/fixtures/bugpattern/missingVariableInitializationVariableOf.json");
+        List<CFGNode> nodes = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof SayForSecs).collect(Collectors.toList());
+        VariableUseVisitor visitor = new VariableUseVisitor();
+        nodes.get(0).getASTNode().accept(visitor);
+
+        Set<Identifier> uses = visitor.getUses();
+        assertThat(uses).hasSize(1);
+
+        visitor = new VariableUseVisitor();
+        nodes.get(1).getASTNode().accept(visitor);
+
+        uses = visitor.getUses();
         assertThat(uses).hasSize(1);
     }
 
@@ -104,7 +125,7 @@ public class UseTest {
         CFGNode node = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof SayForSecs).findFirst().get();
         VariableUseVisitor visitor = new VariableUseVisitor();
         node.getASTNode().accept(visitor);
-        Set<Qualified> uses = visitor.getUses();
+        Set<Identifier> uses = visitor.getUses();
         assertThat(uses).hasSize(1);
 
         node = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof SetVariableTo).findFirst().get();

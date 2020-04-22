@@ -23,6 +23,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
+import java.util.Objects;
+
 public abstract class LocalIdentifier extends AbstractNode implements Identifier, Expression {
     private final StringLiteral name;
 
@@ -38,5 +40,19 @@ public abstract class LocalIdentifier extends AbstractNode implements Identifier
     @Override
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof LocalIdentifier)) return false;
+        if (!super.equals(o)) return false;
+        LocalIdentifier that = (LocalIdentifier) o;
+        return Objects.equals(name, that.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), name);
     }
 }

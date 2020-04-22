@@ -19,6 +19,8 @@
 
 package de.uni_passau.fim.se2.litterbox.cfg;
 
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.AttributeFromVariable;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Identifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetVariableTo;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
@@ -28,9 +30,9 @@ import java.util.Set;
 
 public class VariableUseVisitor implements ScratchVisitor {
 
-    private Set<Qualified> uses = new LinkedHashSet<>();
+    private Set<Identifier> uses = new LinkedHashSet<>();
 
-    public Set<Qualified> getUses() {
+    public Set<Identifier> getUses() {
         return uses;
     }
 
@@ -44,4 +46,10 @@ public class VariableUseVisitor implements ScratchVisitor {
     public void visit(Qualified node) {
         uses.add(node);
     }
+
+    @Override
+    public void visit(AttributeFromVariable node) {
+        uses.add(node.getId());
+    }
+
 }

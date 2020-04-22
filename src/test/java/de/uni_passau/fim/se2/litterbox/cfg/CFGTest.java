@@ -215,7 +215,6 @@ public class CFGTest {
         assertThat(cfg.getNumEdges()).isEqualTo(6);
     }
 
-
     @Test
     public void testTwoSprites() throws IOException, ParsingException {
         ControlFlowGraph cfg = getCFG("src/test/fixtures/cfg/twosprites.json");

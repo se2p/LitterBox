@@ -23,6 +23,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.variable.DataExpr;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
+import java.util.Objects;
+
 public class Qualified extends AbstractNode implements Identifier {
 
     private final LocalIdentifier first;
@@ -45,5 +47,20 @@ public class Qualified extends AbstractNode implements Identifier {
     @Override
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        Qualified qualified = (Qualified) o;
+        return Objects.equals(first, qualified.first) &&
+                Objects.equals(second, qualified.second);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), first, second);
     }
 }

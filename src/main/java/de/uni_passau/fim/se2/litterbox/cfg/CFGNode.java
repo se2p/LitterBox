@@ -21,6 +21,7 @@ package de.uni_passau.fim.se2.litterbox.cfg;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Identifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 
 import java.util.Collections;
@@ -63,9 +64,9 @@ public abstract class CFGNode {
         getASTNode().accept(visitor);
 
         Set<Definition> definitions = new LinkedHashSet<>();
-        for(Qualified q : visitor.getDefinitions()) {
+        for(Identifier i : visitor.getDefinitions()) {
             // TODO: Should the visitor return Variables already?
-            definitions.add(new Definition(this, new Variable(q)));
+            definitions.add(new Definition(this, new Variable(i)));
         }
 
         if(getActor() != null) {
@@ -87,8 +88,8 @@ public abstract class CFGNode {
         getASTNode().accept(visitor);
 
         Set<Use> uses = new LinkedHashSet<>();
-        for(Qualified q : visitor.getUses()) {
-            uses.add(new Use(this, new Variable(q)));
+        for(Identifier i : visitor.getUses()) {
+            uses.add(new Use(this, new Variable(i)));
         }
 
         if(getActor() != null) {

@@ -19,6 +19,7 @@
 
 package de.uni_passau.fim.se2.litterbox.cfg;
 
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Identifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.ChangeVariableBy;
@@ -30,9 +31,9 @@ import java.util.Set;
 
 public class VariableDefinitionVisitor implements ScratchVisitor {
 
-    private Set<Qualified> definitions = new LinkedHashSet<>();
+    private Set<Identifier> definitions = new LinkedHashSet<>();
 
-    public Set<Qualified> getDefinitions() {
+    public Set<Identifier> getDefinitions() {
         return definitions;
     }
 
