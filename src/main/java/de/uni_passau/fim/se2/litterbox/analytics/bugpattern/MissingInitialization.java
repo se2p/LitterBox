@@ -29,13 +29,14 @@ public class MissingInitialization implements IssueFinder {
         DataflowAnalysis<Use> analysis = builder.withBackward().withMay().withTransferFunction(new LivenessTransferFunction()).build();
         analysis.applyAnalysis();
 
-        // Missing initialization is only a problem if the program is started with the green flag
-        Set<CFGNode> greenFlags = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof GreenFlag).collect(Collectors.toSet());
         int violations = 0;
-        for(CFGNode greenFlag : greenFlags) {
-            Set<Use> undefinedUses = analysis.getDataflowFacts(greenFlag);
+        // Missing initialization is only a problem if the program is started with the green flag
+        Optional<CFGNode> greenFlag = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof GreenFlag).findFirst();
+        if(greenFlag.isPresent()) {
+            Set<Use> undefinedUses = analysis.getDataflowFacts(greenFlag.get());
             violations += undefinedUses.size();
         }
+
 
         // TODO: Add positions
         return new IssueReport(NAME, violations, Collections.emptyList(), "");

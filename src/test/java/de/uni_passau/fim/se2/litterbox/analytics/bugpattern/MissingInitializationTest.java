@@ -118,6 +118,16 @@ public class MissingInitializationTest {
         Assertions.assertEquals(2, report.getCount());
     }
 
+    // TODO: Is this a false positive or not? It depends on scheduling...
+    @Test
+    public void testMissingInitializationInParallel() throws IOException, ParsingException {
+        File f = new File("src/test/fixtures/bugpattern/missingVariableInitializationInParallel.json");
+        Program program = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
+
+        IssueReport report = (new MissingInitialization()).check(program);
+        Assertions.assertEquals(1, report.getCount());
+    }
+
     @Test
     public void testMissingInitializationVarAndAttribute() throws IOException, ParsingException {
         File f = new File("src/test/fixtures/bugpattern/missingVariableAndAttributeInitialization.json");
