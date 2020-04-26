@@ -22,6 +22,7 @@ package de.uni_passau.fim.se2.litterbox.cfg;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.BackdropSwitchTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.NextBackdrop;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.ControlStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.ChangeSizeBy;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.NextCostume;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SetSizeTo;
@@ -47,6 +48,11 @@ public class AttributeDefinitionVisitor implements ScratchVisitor {
 
     public Set<Attribute> getAttributeDefinitions() {
         return definitions;
+    }
+
+    @Override
+    public void visit(ControlStmt node) {
+        // Don't visit child statements
     }
 
     //---------------------------------------------------------------

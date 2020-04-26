@@ -22,13 +22,10 @@ package de.uni_passau.fim.se2.litterbox.cfg;
 import de.uni_passau.fim.se2.litterbox.ast.model.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
-import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinitionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.*;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.declaration.DeclarationAttributeAsTypeStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.declaration.DeclarationIdentAsTypeStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.DeleteClone;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopAll;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopThisScript;
@@ -49,6 +46,7 @@ public class ControlFlowGraphVisitor implements ScratchVisitor {
     @Override
     public void visit(Script node) {
         inScript = true;
+        builder.setCurrentScriptOrProcedure(node);
         visit((ASTNode) node);
         inScript = false;
         builder.addEdgeToExit();
@@ -82,6 +80,7 @@ public class ControlFlowGraphVisitor implements ScratchVisitor {
     @Override
     public void visit(ProcedureDefinition node) {
         builder.addProcedure(node);
+        builder.setCurrentScriptOrProcedure(node);
         inScript = true;
         node.getStmtList().accept(this);
         inScript = false;

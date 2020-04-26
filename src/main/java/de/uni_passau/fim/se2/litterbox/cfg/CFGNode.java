@@ -21,8 +21,8 @@ package de.uni_passau.fim.se2.litterbox.cfg;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
+import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Identifier;
-import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 
 import java.util.Collections;
 import java.util.LinkedHashSet;
@@ -36,11 +36,15 @@ public abstract class CFGNode {
 
     protected ActorDefinition actor = null;
 
+    protected ASTNode scriptOrProcedure = null;
+
     public abstract ASTNode getASTNode();
 
     public ActorDefinition getActor() {
         return actor;
     }
+
+    public ASTNode getScriptOrProcedure() { return scriptOrProcedure; }
 
     public Set<Definition> getDefinitions() {
         if(definitions == null) {

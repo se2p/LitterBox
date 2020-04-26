@@ -22,6 +22,8 @@ package de.uni_passau.fim.se2.litterbox.cfg;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.Costume;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.ControlStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.ChangeSizeBy;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.NextCostume;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.*;
@@ -42,6 +44,11 @@ public class AttributeUseVisitor  implements ScratchVisitor {
 
     public Set<Attribute> getAttributeUses() {
         return uses;
+    }
+
+    @Override
+    public void visit(ControlStmt node) {
+        // Don't visit child statements
     }
 
     @Override

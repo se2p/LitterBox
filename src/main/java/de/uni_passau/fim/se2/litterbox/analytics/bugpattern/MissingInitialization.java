@@ -3,14 +3,11 @@ package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueReport;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.model.event.GreenFlag;
-import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.VariableInfo;
 import de.uni_passau.fim.se2.litterbox.cfg.*;
 import de.uni_passau.fim.se2.litterbox.dataflow.*;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class MissingInitialization implements IssueFinder {
 
@@ -25,20 +22,28 @@ public class MissingInitialization implements IssueFinder {
         program.accept(visitor);
         ControlFlowGraph cfg = visitor.getControlFlowGraph();
 
-        DataflowAnalysisBuilder<Use> builder = new DataflowAnalysisBuilder<>(cfg);
-        DataflowAnalysis<Use> analysis = builder.withBackward().withMay().withTransferFunction(new LivenessTransferFunction()).build();
+        DataflowAnalysisBuilder<Definition> builder = new DataflowAnalysisBuilder<>(cfg);
+
+        // Initial definitions: All definitions that can be reached without a use before them
+        DataflowAnalysis<Definition> analysis = builder.withBackward().withMay().withTransferFunction(new InitialDefinitionTransferFunction()).build();
         analysis.applyAnalysis();
+        Set<Definition> initialDefinitions = analysis.getDataflowFacts(cfg.getEntryNode());
+
+        // Initial uses: All uses that can be reached without a definition before them
+        DataflowAnalysis<Use> livenessAnalysis = builder.withBackward().withMay().withTransferFunction(new LivenessTransferFunction()).build();
+        livenessAnalysis.applyAnalysis();
+        Set<Use> initialUses = livenessAnalysis.getDataflowFacts(cfg.getEntryNode());
 
         int violations = 0;
-        // Missing initialization is only a problem if the program is started with the green flag
-        Optional<CFGNode> greenFlag = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof GreenFlag).findFirst();
-        if(greenFlag.isPresent()) {
-            Set<Use> undefinedUses = analysis.getDataflowFacts(greenFlag.get());
-            violations += undefinedUses.size();
+        for(Use use : initialUses) {
+            // If there are no initial definitions of the same defineable in other scripts it's an anomaly
+            if(initialDefinitions.stream()
+                    .filter(d -> d.getDefinable().equals(use.getDefinable()))
+                    .noneMatch(d -> d.getDefinitionSource().getScriptOrProcedure() != use.getUseTarget().getScriptOrProcedure())) {
+                violations++;
+                // TODO: Store more information here
+            }
         }
-
-
-        // TODO: Add positions
         return new IssueReport(NAME, violations, Collections.emptyList(), "");
     }
 
@@ -46,4 +51,5 @@ public class MissingInitialization implements IssueFinder {
     public String getName() {
         return NAME;
     }
+
 }

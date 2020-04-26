@@ -21,6 +21,8 @@ package de.uni_passau.fim.se2.litterbox.cfg;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 
+import java.util.Objects;
+
 /**
  * An attribute of a sprite (e.g. position or colour)
  */
@@ -42,6 +44,21 @@ public class Attribute implements Defineable {
 
     public AttributeType getAttributeType() {
         return attribute;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Attribute)) return false;
+        Attribute attribute1 = (Attribute) o;
+        return Objects.equals(actor.getIdent(), attribute1.actor.getIdent()) &&
+                Objects.equals(actor.getActorType(), attribute1.actor.getActorType()) &&
+                attribute == attribute1.attribute;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(actor.getIdent(), actor.getActorType(), attribute);
     }
 
     public static Attribute positionOf(ActorDefinition actor) {

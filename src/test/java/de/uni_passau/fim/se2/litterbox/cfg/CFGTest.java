@@ -216,6 +216,13 @@ public class CFGTest {
     }
 
     @Test
+    public void testVariable2() throws IOException, ParsingException {
+        ControlFlowGraph cfg = getCFG("src/test/fixtures/bugpattern/missingVariableInitializationInParallel2.json");
+        System.out.println(cfg.toDotString());
+        assertThat(cfg.getNumNodes()).isEqualTo(6); // Entry, Exit, Set, Change, Read
+        assertThat(cfg.getNumEdges()).isEqualTo(6);
+    }
+    @Test
     public void testTwoSprites() throws IOException, ParsingException {
         ControlFlowGraph cfg = getCFG("src/test/fixtures/cfg/twosprites.json");
         assertThat(cfg.getNumNodes()).isEqualTo(5); // Entry, Exit, Greenflag, movex2

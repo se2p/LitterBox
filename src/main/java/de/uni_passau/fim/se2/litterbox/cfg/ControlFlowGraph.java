@@ -19,17 +19,17 @@
 
 package de.uni_passau.fim.se2.litterbox.cfg;
 
-import com.google.common.graph.EndpointPair;
-import com.google.common.graph.GraphBuilder;
-import com.google.common.graph.MutableGraph;
+import com.google.common.graph.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Message;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Event;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.VariableAboveValue;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 
-import java.util.Collections;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class ControlFlowGraph {
 
@@ -74,8 +74,8 @@ public class ControlFlowGraph {
         return graph.predecessors(node);
     }
 
-    public StatementNode addNode(Stmt stmt, ActorDefinition actor) {
-        StatementNode node = new StatementNode(stmt, actor);
+    public StatementNode addNode(Stmt stmt, ActorDefinition actor, ASTNode scriptOrProcedure) {
+        StatementNode node = new StatementNode(stmt, actor, scriptOrProcedure);
         graph.addNode(node);
         return node;
     }
@@ -133,4 +133,21 @@ public class ControlFlowGraph {
         builder.append("}");
         return builder.toString();
     }
+
+    public Set<Definition> getDefinitions() {
+        return graph.nodes().stream().map(CFGNode::getDefinitions).flatMap(Set::stream).collect(Collectors.toSet());
+    }
+
+    public Set<Use> getUses() {
+        return graph.nodes().stream().map(CFGNode::getUses).flatMap(Set::stream).collect(Collectors.toSet());
+    }
+
+    public Stream<CFGNode> stream() {
+        return graph.nodes().stream();
+    }
+
+    public Iterable<CFGNode> traverse() {
+        return Traverser.forGraph(graph).breadthFirst(entryNode);
+    }
+
 }

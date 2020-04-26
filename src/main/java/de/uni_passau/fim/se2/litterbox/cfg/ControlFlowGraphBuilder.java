@@ -19,6 +19,7 @@
 
 package de.uni_passau.fim.se2.litterbox.cfg;
 
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Message;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Event;
@@ -43,6 +44,8 @@ public class ControlFlowGraphBuilder {
     private List<CFGNode> currentNodes = new ArrayList<>();
 
     private ActorDefinition currentActor = null;
+
+    private ASTNode currentScriptOrProcedure = null;
 
     private Map<CFGNode, List<CFGNode>> procedureMap = new LinkedHashMap<>();
 
@@ -81,8 +84,12 @@ public class ControlFlowGraphBuilder {
         this.currentActor = actor;
     }
 
+    public void setCurrentScriptOrProcedure(ASTNode node) {
+        this.currentScriptOrProcedure = node;
+    }
+
     public CFGNode addStatement(Stmt stmt) {
-        CFGNode node = cfg.addNode(stmt, currentActor);
+        CFGNode node = cfg.addNode(stmt, currentActor, currentScriptOrProcedure);
         currentNodes.forEach(n -> cfg.addEdge(n, node));
         setCurrentNode(node);
         return node;

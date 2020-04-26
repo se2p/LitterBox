@@ -24,6 +24,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.IssueReport;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
+import de.uni_passau.fim.se2.litterbox.cfg.ControlFlowGraphVisitor;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -65,6 +66,10 @@ public class MissingInitializationTest {
         File f = new File("src/test/fixtures/bugpattern/missingVariableInitializationInBranch.json");
         Program program = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
 
+        ControlFlowGraphVisitor visitor = new ControlFlowGraphVisitor();
+        visitor.visit(program);
+        System.out.println(visitor.getControlFlowGraph().toDotString());
+
         IssueReport report = (new MissingInitialization()).check(program);
         Assertions.assertEquals(1, report.getCount());
     }
@@ -93,8 +98,10 @@ public class MissingInitializationTest {
         File f = new File("src/test/fixtures/bugpattern/missingVariableInitializationInTwoBroadcastsWithDefinition.json");
         Program program = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
 
+        // Not an anomaly: The definition happens in the message receiver, and we don't know
+        // if the execution of the receiver will be scheduled before the use
         IssueReport report = (new MissingInitialization()).check(program);
-        Assertions.assertEquals(1, report.getCount());
+        Assertions.assertEquals(0, report.getCount());
     }
 
     @Test
@@ -118,20 +125,24 @@ public class MissingInitializationTest {
         Assertions.assertEquals(2, report.getCount());
     }
 
-    // TODO: Is this a false positive or not? It depends on scheduling...
     @Test
     public void testMissingInitializationInParallel() throws IOException, ParsingException {
         File f = new File("src/test/fixtures/bugpattern/missingVariableInitializationInParallel.json");
         Program program = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
 
+        // This is not an anomaly: The initialization may happen before the use, depending on the scheduler
         IssueReport report = (new MissingInitialization()).check(program);
-        Assertions.assertEquals(1, report.getCount());
+        Assertions.assertEquals(0, report.getCount());
     }
 
     @Test
     public void testMissingInitializationVarAndAttribute() throws IOException, ParsingException {
         File f = new File("src/test/fixtures/bugpattern/missingVariableAndAttributeInitialization.json");
         Program program = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
+
+        ControlFlowGraphVisitor visitor = new ControlFlowGraphVisitor();
+        visitor.visit(program);
+        System.out.println(visitor.getControlFlowGraph().toDotString());
 
         IssueReport report = (new MissingInitialization()).check(program);
         Assertions.assertEquals(2, report.getCount());

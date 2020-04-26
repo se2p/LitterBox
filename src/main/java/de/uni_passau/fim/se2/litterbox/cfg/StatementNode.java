@@ -26,9 +26,10 @@ public class StatementNode extends CFGNode {
 
     private ASTNode node;
 
-    public StatementNode(ASTNode node, ActorDefinition actor) {
+    public StatementNode(ASTNode node, ActorDefinition actor, ASTNode scriptOrProcedure) {
         this.node = node;
         this.actor = actor;
+        this.scriptOrProcedure = scriptOrProcedure;
     }
 
     @Override
