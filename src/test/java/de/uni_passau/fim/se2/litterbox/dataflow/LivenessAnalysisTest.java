@@ -127,7 +127,6 @@ public class LivenessAnalysisTest {
     @Test
     public void testMultipleUsesInClone() throws IOException, ParsingException {
         ControlFlowGraph cfg = getCFG("src/test/fixtures/cfg/variables.json");
-        System.out.println(cfg.toDotString());
         DataflowAnalysisBuilder<Use> builder = new DataflowAnalysisBuilder<>(cfg);
         DataflowAnalysis<Use> analysis = builder.withBackward().withMay().withTransferFunction(new LivenessTransferFunction()).build();
         analysis.applyAnalysis();
