@@ -28,13 +28,13 @@ public class ExtensionMetadataTest {
 
     @Test
     public void testEmptyProgram() {
-        ExtensionMetadata meta = ExtensionMetadataParser.parse(empty);
+        ExtensionMetadata meta = ExtensionMetadataParser.parse(empty.get("extensions"));
         Assertions.assertEquals(0, meta.getExtensionNames().size());
     }
 
     @Test
     public void testTwoExtensions() {
-        ExtensionMetadata meta = ExtensionMetadataParser.parse(prog);
+        ExtensionMetadata meta = ExtensionMetadataParser.parse(prog.get("extensions"));
         Assertions.assertEquals(2, meta.getExtensionNames().size());
         Assertions.assertEquals("pen",meta.getExtensionNames().get(0));
         Assertions.assertEquals("music",meta.getExtensionNames().get(1));

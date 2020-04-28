@@ -7,6 +7,20 @@ public class MonitorParamMetadata extends AbstractNode implements Metadata {
     private String inputName;
     private String inputValue;
 
+    public MonitorParamMetadata(String inputName, String inputValue) {
+        super();
+        this.inputName = inputName;
+        this.inputValue = inputValue;
+    }
+
+    public String getInputName() {
+        return inputName;
+    }
+
+    public String getInputValue() {
+        return inputValue;
+    }
+
     @Override
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);

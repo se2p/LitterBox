@@ -5,19 +5,18 @@ import de.uni_passau.fim.se2.litterbox.ast.model.metadata.MetaMetadata;
 
 public class MetaMetadataParser {
 
-    public static MetaMetadata parse(JsonNode program) {
+    public static MetaMetadata parse(JsonNode metaNode) {
         String vm = "";
         String semver = "";
         String agent = "";
-        JsonNode meta = program.get("meta");
-        if (meta.has("semver")){
-            semver = meta.get("semver").asText();
+        if (metaNode.has("semver")){
+            semver = metaNode.get("semver").asText();
         }
-        if (meta.has("vm")){
-            vm = meta.get("vm").asText();
+        if (metaNode.has("vm")){
+            vm = metaNode.get("vm").asText();
         }
-        if (meta.has("agent")){
-            agent = meta.get("agent").asText();
+        if (metaNode.has("agent")){
+            agent = metaNode.get("agent").asText();
         }
         return new MetaMetadata(semver, vm, agent);
     }

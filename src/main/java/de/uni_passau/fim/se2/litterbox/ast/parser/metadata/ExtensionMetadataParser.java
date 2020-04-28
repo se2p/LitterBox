@@ -10,11 +10,10 @@ import java.util.List;
 
 public class ExtensionMetadataParser {
 
-    public static ExtensionMetadata parse(JsonNode program) {
+    public static ExtensionMetadata parse(JsonNode extensionNode) {
         List<String> extensions = new ArrayList<>();
-        JsonNode extension = program.get("extensions");
-        Preconditions.checkArgument(extension instanceof ArrayNode);
-        ArrayNode extensionsArray = (ArrayNode) extension;
+        Preconditions.checkArgument(extensionNode instanceof ArrayNode);
+        ArrayNode extensionsArray = (ArrayNode) extensionNode;
         for (int i = 0; i < extensionsArray.size(); i++) {
             extensions.add(extensionsArray.get(i).asText());
         }

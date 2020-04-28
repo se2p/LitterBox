@@ -1,14 +1,15 @@
 package de.uni_passau.fim.se2.litterbox.ast.model.metadata;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astLists.MonitorMetadataList;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 public class ProgramMetadata extends AbstractNode implements Metadata {
     private MetaMetadata meta;
-    private MonitorMetadata monitor;
+    private MonitorMetadataList monitor;
     private ExtensionMetadata extension;
 
-    public ProgramMetadata(MonitorMetadata monitor, ExtensionMetadata extension, MetaMetadata meta) {
+    public ProgramMetadata(MonitorMetadataList monitor, ExtensionMetadata extension, MetaMetadata meta) {
         super(monitor, extension, meta);
         this.meta = meta;
         this.monitor = monitor;
@@ -19,7 +20,7 @@ public class ProgramMetadata extends AbstractNode implements Metadata {
         return meta;
     }
 
-    public MonitorMetadata getMonitor() {
+    public MonitorMetadataList getMonitor() {
         return monitor;
     }
 
