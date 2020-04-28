@@ -5,7 +5,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.metadata.MetaMetadata;
 
 public class MetaMetadataParser {
 
-    public static MetaMetadata parseMeta(JsonNode program) {
+    public static MetaMetadata parse(JsonNode program) {
         String vm = "";
         String semver = "";
         String agent = "";

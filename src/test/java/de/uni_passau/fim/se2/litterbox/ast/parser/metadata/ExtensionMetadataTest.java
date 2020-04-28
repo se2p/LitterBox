@@ -19,7 +19,7 @@ public class ExtensionMetadataTest {
     private static JsonNode empty;
 
     @BeforeAll
-    public static void setUp() throws IOException, ParsingException {
+    public static void setUp() throws IOException {
         File f = new File("./src/test/fixtures/emptyProject.json");
         empty =  mapper.readTree(f);
         f = new File("./src/test/fixtures/metadata/metaExtensionMonitorData.json");
