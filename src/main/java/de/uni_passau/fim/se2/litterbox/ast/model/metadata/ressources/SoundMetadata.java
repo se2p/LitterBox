@@ -1,4 +1,4 @@
-package de.uni_passau.fim.se2.litterbox.ast.model.metadata;
+package de.uni_passau.fim.se2.litterbox.ast.model.metadata.ressources;
 
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 

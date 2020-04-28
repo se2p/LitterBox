@@ -1,6 +1,7 @@
 package de.uni_passau.fim.se2.litterbox.ast.model.metadata;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astLists.MonitorParamMetadataList;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 import java.util.List;
@@ -10,7 +11,7 @@ public class MonitorMetadata extends AbstractNode implements Metadata {
     private String id;
     private String mode;
     private String opcode;
-    private List<ParamMetadata> paramsMetadata;
+    private MonitorParamMetadataList paramsMetadata;
     private String spriteName;
     private String value;
     private int width;

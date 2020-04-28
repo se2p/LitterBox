@@ -1,22 +1,18 @@
-package de.uni_passau.fim.se2.litterbox.ast.model.metadata;
+package de.uni_passau.fim.se2.litterbox.ast.model.metadata.input;
 
-import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
-public class InputMetadata extends AbstractNode implements Metadata {
-    private String name;
+/**
+ * This input consists of directly entered literals
+ */
+public class TypeInputMetadata extends InputMetadata {
     private int type;
     private String value;
 
-    public InputMetadata(String name, int type, String value) {
-        super();
-        this.name = name;
+    public TypeInputMetadata(String inputName, int type, String value) {
+        super(inputName);
         this.type = type;
         this.value = value;
-    }
-
-    public String getName() {
-        return name;
     }
 
     public int getType() {
