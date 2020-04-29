@@ -40,7 +40,7 @@ public class ControlFlowGraph {
     private SpecialNode exitNode = new SpecialNode("Exit");
 
     public ControlFlowGraph() {
-        graph = GraphBuilder.directed().build();
+        graph = GraphBuilder.directed().allowsSelfLoops(true).build();
 
         graph.addNode(entryNode);
         graph.addNode(exitNode);
