@@ -24,6 +24,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.GreenFlag;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.NextBackdrop;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.MoveSteps;
@@ -33,6 +34,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -236,5 +238,29 @@ public class AttributeTest {
         changeSize.getASTNode().accept(defVisitor);
         assertThat(useVisitor.getAttributeUses()).hasSize(1);
         assertThat(defVisitor.getAttributeDefinitions()).hasSize(1);
+    }
+
+
+    @Test
+    public void testNextBackdrop() throws IOException, ParsingException {
+        ControlFlowGraph cfg = getCFG("src/test/fixtures/cfg/nextbackdroponstage.json");
+        CFGNode node = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof NextBackdrop).findFirst().get();
+        // TODO: Attributes on backdrop are not yet implemented
+        assertThat(getAttributes(node)).hasSize(0);
+    }
+
+    @Test
+    public void testNextBackdropOnSprite() throws IOException, ParsingException {
+        ControlFlowGraph cfg = getCFG("src/test/fixtures/cfg/nextbackdroponsprite.json");
+        CFGNode node = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof NextBackdrop).findFirst().get();
+        // TODO: Attributes on backdrop are not yet implemented
+        assertThat(getAttributes(node)).hasSize(0);
+    }
+
+    private Set<Attribute> getAttributes(CFGNode node) {
+        AttributeDefinitionVisitor visitor = new AttributeDefinitionVisitor(node.getActor());
+        node.getASTNode().accept(visitor);
+
+        return visitor.getAttributeDefinitions();
     }
 }

@@ -251,4 +251,26 @@ public class CFGTest {
         assertThat(cfg.getNumNodes()).isEqualTo(9); // testCallCustomBlock + 2
         assertThat(cfg.getNumEdges()).isEqualTo(9); // testCallCustomBlock + 2
     }
+
+    @Test
+    public void testNextBackdrop() throws IOException, ParsingException {
+        ControlFlowGraph cfg = getCFG("src/test/fixtures/cfg/nextbackdroponstage.json");
+        assertThat(cfg.getNumNodes()).isEqualTo(4);
+        assertThat(cfg.getNumEdges()).isEqualTo(4);
+    }
+
+    @Test
+    public void testNextBackdropOnSprite() throws IOException, ParsingException {
+        ControlFlowGraph cfg = getCFG("src/test/fixtures/cfg/nextbackdroponsprite.json");
+        assertThat(cfg.getNumNodes()).isEqualTo(4);
+        assertThat(cfg.getNumEdges()).isEqualTo(4);
+    }
+
+    // Empty loops may lead to self-loops. Which are ok.
+    @Test
+    public void testEmptyLoop() throws IOException, ParsingException {
+        ControlFlowGraph cfg = getCFG("src/test/fixtures/cfg/emptyloop.json");
+        assertThat(cfg.getNumNodes()).isEqualTo(4);
+        assertThat(cfg.getNumEdges()).isEqualTo(5); // Including self-loop
+    }
 }
