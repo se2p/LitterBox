@@ -20,8 +20,6 @@
 package de.uni_passau.fim.se2.litterbox.cfg;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
-import de.uni_passau.fim.se2.litterbox.ast.model.event.BackdropSwitchTo;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.NextBackdrop;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.ControlStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.ChangeSizeBy;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.NextCostume;
@@ -37,12 +35,9 @@ public class AttributeDefinitionVisitor implements ScratchVisitor {
 
     private Set<Attribute> definitions = new LinkedHashSet<>();
 
-    private ActorDefinition stageActor;
-
     private ActorDefinition currentActor;
 
     public AttributeDefinitionVisitor(ActorDefinition currentActor) {
-        this.stageActor = stageActor;
         this.currentActor = currentActor;
     }
 
@@ -155,14 +150,14 @@ public class AttributeDefinitionVisitor implements ScratchVisitor {
 
     //---------------------------------------------------------------
     // Backdrop
-
-    @Override
-    public void visit(NextBackdrop node) {
-        definitions.add(Attribute.backdropOf(stageActor));
-    }
-
-    @Override
-    public void visit(BackdropSwitchTo node) {
-        definitions.add(Attribute.backdropOf(stageActor));
-    }
+//
+//    @Override
+//    public void visit(NextBackdrop node) {
+//        definitions.add(Attribute.backdropOf(stageActor));
+//    }
+//
+//    @Override
+//    public void visit(BackdropSwitchTo node) {
+//        definitions.add(Attribute.backdropOf(stageActor));
+//    }
 }

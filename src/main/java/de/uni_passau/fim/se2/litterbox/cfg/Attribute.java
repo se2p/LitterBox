@@ -29,7 +29,7 @@ import java.util.Objects;
 public class Attribute implements Defineable {
 
     public enum AttributeType {
-        POSITION, ROTATION, COSTUME, SIZE, BACKDROP // VOLUME?
+        POSITION, ROTATION, COSTUME, SIZE //, BACKDROP // VOLUME?
         // VISIBILITY, LAYER, EFFECT
     };
 
@@ -77,8 +77,8 @@ public class Attribute implements Defineable {
         return new Attribute(actor, AttributeType.SIZE);
     }
 
-    public static Attribute backdropOf(ActorDefinition actor) {
-        return new Attribute(actor, AttributeType.BACKDROP);
-    }
+//    public static Attribute backdropOf(ActorDefinition actor) {
+//        return new Attribute(actor, AttributeType.BACKDROP);
+//    }
 
 }
