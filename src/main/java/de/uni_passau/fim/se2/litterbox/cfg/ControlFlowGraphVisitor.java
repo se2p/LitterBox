@@ -31,6 +31,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopAll;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopThisScript;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ControlFlowGraphVisitor implements ScratchVisitor {
@@ -161,7 +162,7 @@ public class ControlFlowGraphVisitor implements ScratchVisitor {
 
         // Then statements:
         stmt.getStmtList().accept(this);
-        List<CFGNode> endOfThen = builder.getCurrentStatements();
+        List<CFGNode> endOfThen = new ArrayList<>(builder.getCurrentStatements());
 
         // Go back to head so that else is attached to if
         builder.setCurrentStatement(node);
