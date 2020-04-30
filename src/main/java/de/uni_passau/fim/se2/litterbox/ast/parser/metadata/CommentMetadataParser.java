@@ -14,10 +14,10 @@ public class CommentMetadataParser {
         if (!(commentNode.get("blockId") instanceof NullNode)) {
             blockId = commentNode.get("blockId").asText();
         }
-        int x = commentNode.get(X).asInt();
-        int y = commentNode.get(Y).asInt();
-        int width = commentNode.get(WIDTH_KEY).asInt();
-        int height = commentNode.get(HEIGHT_KEY).asInt();
+        double x = commentNode.get(X_KEY).asDouble();
+        double y = commentNode.get(Y_KEY).asDouble();
+        double width = commentNode.get(WIDTH_KEY).asDouble();
+        double height = commentNode.get(HEIGHT_KEY).asDouble();
         boolean minimized = commentNode.get("minimized").asBoolean();
         String text = commentNode.get("text").asText();
         return new CommentMetadata(commentId, blockId, x, y, width, height, minimized, text);

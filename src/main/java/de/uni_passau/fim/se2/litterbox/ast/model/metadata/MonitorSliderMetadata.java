@@ -8,14 +8,15 @@ import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
  * This metadata is for all monitors that do not belong to lists.
  */
 public class MonitorSliderMetadata extends MonitorMetadata {
-    private int sliderMin;
-    private int sliderMax;
+    private double sliderMin;
+    private double sliderMax;
     private boolean isDiscrete;
     private String value;
 
     public MonitorSliderMetadata(String id, String mode, String opcode, MonitorParamMetadataList paramsMetadata,
-                                 String spriteName, int width, int height, int x, int y,
-                                 boolean visible, String value, int sliderMin, int sliderMax, boolean isDiscrete) {
+                                 String spriteName, double width, double height, double x, double y,
+                                 boolean visible, String value, double sliderMin, double sliderMax,
+                                 boolean isDiscrete) {
         super(id, mode, opcode, paramsMetadata, spriteName, width, height, x, y, visible);
         this.value = value;
         this.sliderMin = sliderMin;
@@ -23,11 +24,11 @@ public class MonitorSliderMetadata extends MonitorMetadata {
         this.isDiscrete = isDiscrete;
     }
 
-    public int getSliderMin() {
+    public double getSliderMin() {
         return sliderMin;
     }
 
-    public int getSliderMax() {
+    public double getSliderMax() {
         return sliderMax;
     }
 

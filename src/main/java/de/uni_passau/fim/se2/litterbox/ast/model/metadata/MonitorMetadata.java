@@ -14,14 +14,14 @@ public abstract class MonitorMetadata extends AbstractNode implements Metadata {
     private String opcode;
     private MonitorParamMetadataList paramsMetadata;
     private String spriteName; //TODO this can be null -> have to check when creating json from metadata
-    private int width;
-    private int height;
-    private int x;
-    private int y;
+    private double width;
+    private double height;
+    private double x;
+    private double y;
     private boolean visible;
 
     public MonitorMetadata(String id, String mode, String opcode, MonitorParamMetadataList paramsMetadata,
-                           String spriteName, int width, int height, int x, int y, boolean visible) {
+                           String spriteName, double width, double height, double x, double y, boolean visible) {
         super(paramsMetadata);
         this.id = id;
         this.mode = mode;
@@ -55,19 +55,19 @@ public abstract class MonitorMetadata extends AbstractNode implements Metadata {
         return spriteName;
     }
 
-    public int getWidth() {
+    public double getWidth() {
         return width;
     }
 
-    public int getHeight() {
+    public double getHeight() {
         return height;
     }
 
-    public int getX() {
+    public double getX() {
         return x;
     }
 
-    public int getY() {
+    public double getY() {
         return y;
     }
 

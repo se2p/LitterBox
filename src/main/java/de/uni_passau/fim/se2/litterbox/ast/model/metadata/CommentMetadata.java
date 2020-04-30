@@ -9,12 +9,12 @@ public class CommentMetadata extends AbstractNode implements Metadata {
     private String blockId;
     private double x;
     private double y;
-    private int width;
-    private int height;
+    private double width;
+    private double height;
     private boolean minimized;
     private String text;
 
-    public CommentMetadata(String commentId, String blockId, double x, double y, int width, int height,
+    public CommentMetadata(String commentId, String blockId, double x, double y, double width, double height,
                            boolean minimized,
                            String text) {
         super();
@@ -40,11 +40,11 @@ public class CommentMetadata extends AbstractNode implements Metadata {
         return y;
     }
 
-    public int getWidth() {
+    public double getWidth() {
         return width;
     }
 
-    public int getHeight() {
+    public double getHeight() {
         return height;
     }
 

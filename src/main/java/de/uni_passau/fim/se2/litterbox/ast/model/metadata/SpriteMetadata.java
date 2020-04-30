@@ -5,8 +5,8 @@ import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 public class SpriteMetadata extends ActorMetadata {
     private boolean visible;
-    private int x;
-    private int y;
+    private double x;
+    private double y;
     private double size;
     private double direction;
     private boolean draggable;
@@ -14,8 +14,8 @@ public class SpriteMetadata extends ActorMetadata {
 
     public SpriteMetadata(CommentMetadataList commentsMetadata, VariableMetadataList variables,
                           ListMetadataList lists, BroadcastMetadataList broadcasts, int currentCostume,
-                          ImageMetadataList costumes, SoundMetadataList sounds, int volume, int layerOrder,
-                          boolean visible, int x, int y, double size, double direction, boolean draggable,
+                          ImageMetadataList costumes, SoundMetadataList sounds, double volume, int layerOrder,
+                          boolean visible, double x, double y, double size, double direction, boolean draggable,
                           String rotationStyle) {
         super(commentsMetadata, variables, lists, broadcasts, currentCostume, costumes, sounds, volume, layerOrder);
         this.visible = visible;
@@ -31,11 +31,11 @@ public class SpriteMetadata extends ActorMetadata {
         return visible;
     }
 
-    public int getX() {
+    public double getX() {
         return x;
     }
 
-    public int getY() {
+    public double getY() {
         return y;
     }
 

@@ -26,10 +26,10 @@ public class MonitorMetadataParser {
         if (!(monitorNode.get("spriteName") instanceof NullNode)) {
             spriteName = monitorNode.get("spriteName").asText();
         }
-        int width = monitorNode.get("width").asInt();
-        int height = monitorNode.get("height").asInt();
-        int x = monitorNode.get(X_KEY).asInt();
-        int y = monitorNode.get(Y_KEY).asInt();
+        double width = monitorNode.get("width").asDouble();
+        double height = monitorNode.get("height").asDouble();
+        double x = monitorNode.get(X_KEY).asDouble();
+        double y = monitorNode.get(Y_KEY).asDouble();
         boolean visible = monitorNode.get(VISIBLE_KEY).asBoolean();
         JsonNode valueNode = monitorNode.get("value");
         if (valueNode instanceof ArrayNode) {
@@ -42,8 +42,8 @@ public class MonitorMetadataParser {
                     visible, values);
         } else {
             String value = valueNode.asText();
-            int sliderMin = monitorNode.get("sliderMin").asInt();
-            int sliderMax = monitorNode.get("sliderMax").asInt();
+            double sliderMin = monitorNode.get("sliderMin").asDouble();
+            double sliderMax = monitorNode.get("sliderMax").asDouble();
             boolean isDiscrete = monitorNode.get("isDiscrete").asBoolean();
             return new MonitorSliderMetadata(id, mode, opcode, paramsMetadata, spriteName, width, height, x, y,
                     visible, value,

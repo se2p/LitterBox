@@ -12,12 +12,12 @@ public abstract class ActorMetadata extends AbstractNode implements Metadata {
     private int currentCostume;
     private ImageMetadataList costumes;
     private SoundMetadataList sounds;
-    private int volume;
+    private double volume;
     private int layerOrder;
 
     public ActorMetadata(CommentMetadataList commentsMetadata,
                          VariableMetadataList variables, ListMetadataList lists, BroadcastMetadataList broadcasts,
-                         int currentCostume, ImageMetadataList costumes, SoundMetadataList sounds, int volume,
+                         int currentCostume, ImageMetadataList costumes, SoundMetadataList sounds, double volume,
                          int layerOrder) {
         super(commentsMetadata, variables, lists, broadcasts, costumes, sounds);
         this.commentsMetadata = commentsMetadata;
@@ -59,7 +59,7 @@ public abstract class ActorMetadata extends AbstractNode implements Metadata {
         return sounds;
     }
 
-    public int getVolume() {
+    public double getVolume() {
         return volume;
     }
 
