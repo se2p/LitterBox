@@ -16,7 +16,7 @@ public class ImageMetadataListParser {
         List<ImageMetadata> imageMetadataList = new ArrayList<>();
         Preconditions.checkArgument(imagesNode instanceof ArrayNode);
         ArrayNode imagesArray = (ArrayNode) imagesNode;
-        for (int i = 0; i < imagesNode.size(); i++) {
+        for (int i = 0; i < imagesArray.size(); i++) {
             imageMetadataList.add(ImageMetadataParser.parse(imagesArray.get(i)));
         }
 
