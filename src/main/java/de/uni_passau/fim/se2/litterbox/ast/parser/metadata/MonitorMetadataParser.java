@@ -12,6 +12,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astLists.MonitorParamM
 import java.util.ArrayList;
 import java.util.List;
 
+import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
+
 
 public class MonitorMetadataParser {
 
@@ -26,9 +28,9 @@ public class MonitorMetadataParser {
         }
         int width = monitorNode.get("width").asInt();
         int height = monitorNode.get("height").asInt();
-        int x = monitorNode.get("x").asInt();
-        int y = monitorNode.get("y").asInt();
-        boolean visible = monitorNode.get("visible").asBoolean();
+        int x = monitorNode.get(X_KEY).asInt();
+        int y = monitorNode.get(Y_KEY).asInt();
+        boolean visible = monitorNode.get(VISIBLE_KEY).asBoolean();
         JsonNode valueNode = monitorNode.get("value");
         if (valueNode instanceof ArrayNode) {
             List<String> values = new ArrayList<>();

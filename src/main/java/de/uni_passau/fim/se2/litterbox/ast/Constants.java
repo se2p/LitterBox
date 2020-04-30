@@ -218,7 +218,7 @@ public class Constants {
     public final static String DIRECTION_KEY_CAP = "DIRECTION";
     public final static String DX_KEY = "DX";
     public final static String DY_KEY = "DY";
-    public final static String X_KEY_CAP = "X";
-    public final static String Y_KEY_CAP = "Y";
     public final static String VOLUME_KEY_CAPS = "VOLUME";
+    public final static String HEIGHT_KEY = "height";
+    public final static String WIDTH_KEY = "width";
 }

@@ -5,16 +5,20 @@ import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 public class CommentMetadata extends AbstractNode implements Metadata {
 
+    private String commentId;
     private String blockId;
-    private int x;
-    private int y;
+    private double x;
+    private double y;
     private int width;
     private int height;
     private boolean minimized;
     private String text;
 
-    public CommentMetadata(String blockId, int x, int y, int width, int height, boolean minimized, String text) {
+    public CommentMetadata(String commentId, String blockId, double x, double y, int width, int height,
+                           boolean minimized,
+                           String text) {
         super();
+        this.commentId = commentId;
         this.blockId = blockId;
         this.x = x;
         this.y = y;
@@ -28,11 +32,11 @@ public class CommentMetadata extends AbstractNode implements Metadata {
         return blockId;
     }
 
-    public int getX() {
+    public double getX() {
         return x;
     }
 
-    public int getY() {
+    public double getY() {
         return y;
     }
 
@@ -50,6 +54,10 @@ public class CommentMetadata extends AbstractNode implements Metadata {
 
     public String getText() {
         return text;
+    }
+
+    public String getCommentId() {
+        return commentId;
     }
 
     @Override

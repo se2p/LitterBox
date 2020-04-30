@@ -84,10 +84,10 @@ public class SpriteMotionStmtParser {
                 numExpr = NumExprParser.parseNumExpr(current, DY_KEY, allBlocks);
                 return new ChangeYBy(numExpr);
             case motion_setx:
-                numExpr = NumExprParser.parseNumExpr(current, X_KEY_CAP, allBlocks);
+                numExpr = NumExprParser.parseNumExpr(current, X, allBlocks);
                 return new SetXTo(numExpr);
             case motion_sety:
-                numExpr = NumExprParser.parseNumExpr(current, Y_KEY_CAP, allBlocks);
+                numExpr = NumExprParser.parseNumExpr(current, Y, allBlocks);
                 return new SetYTo(numExpr);
             case motion_ifonedgebounce:
                 return new IfOnEdgeBounce();
