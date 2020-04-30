@@ -32,7 +32,7 @@ public class VariableMetadataTest {
     }
 
     @Test
-    public void testBroadcastsProgram() {
+    public void testVariablesProgram() {
         VariableMetadataList monitors = VariableMetadataListParser.parse(prog.get("targets").get(0)
                 .get("variables"));
         Assertions.assertEquals(2, monitors.getList().size());
