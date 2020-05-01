@@ -157,13 +157,4 @@ public class MissingInitializationTest {
         Assertions.assertEquals(1, report.getCount());
     }
 
-    @Test
-    public void test() throws IOException, ParsingException {
-        File f = new File("/tmp/bar/random-sample/351681564.json");
-        Program program = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
-
-        IssueReport report = (new MissingInitialization()).check(program);
-        Assertions.assertEquals(1, report.getCount());
-    }
-
 }
