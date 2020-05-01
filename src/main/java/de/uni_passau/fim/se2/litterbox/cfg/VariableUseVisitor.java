@@ -19,6 +19,10 @@
 
 package de.uni_passau.fim.se2.litterbox.cfg;
 
+import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AttributeOf;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.Attribute;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.AttributeFromVariable;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Identifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
@@ -30,6 +34,8 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 public class VariableUseVisitor implements ScratchVisitor {
+
+    // TODO: Need Qualified rather than Identifier to assign variables to their actors (in case of local vars)
 
     private Set<Identifier> uses = new LinkedHashSet<>();
 
@@ -70,12 +76,26 @@ public class VariableUseVisitor implements ScratchVisitor {
     }
 
     @Override
-    public void visit(Qualified node) {
-        uses.add(node);
+    public void visit(AttributeOf node) {
+        // TODO: Handle this
+        
+        // Name of var or attribute
+//        Attribute attribute = node.getAttribute();
+//        // Name of owner
+//        LocalIdentifier owner = node.getLocalIdentifier();
+//
+//        if(attribute instanceof AttributeFromVariable) {
+//            AttributeFromVariable varAttribute = (AttributeFromVariable)attribute;
+//            Identifier id = varAttribute.getId();
+//            Qualified q = new Qualified(owner, new DataExpr(id));
+//            Variable theVar = new Variable(varAttribute.getId());
+//        }
+
     }
 
+
     @Override
-    public void visit(AttributeFromVariable node) {
-        uses.add(node.getId());
+    public void visit(Qualified node) {
+        uses.add(node);
     }
 }
