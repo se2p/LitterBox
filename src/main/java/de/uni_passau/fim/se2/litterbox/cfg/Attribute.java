@@ -20,6 +20,7 @@
 package de.uni_passau.fim.se2.litterbox.cfg;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
 
 import java.util.Objects;
 
@@ -28,17 +29,19 @@ import java.util.Objects;
  */
 public class Attribute implements Defineable {
 
+    // TODO: This should be replaced with a FixedAttribute
+
     public enum AttributeType {
         POSITION, ROTATION, COSTUME, SIZE //, BACKDROP // VOLUME?
         // VISIBILITY, LAYER, EFFECT
     };
 
-    private ActorDefinition actor;
+    private LocalIdentifier actorIdentifier;
 
     private AttributeType attribute;
 
-    public Attribute(ActorDefinition actor, AttributeType attribute) {
-        this.actor = actor;
+    public Attribute(LocalIdentifier actorIdentifier, AttributeType attribute) {
+        this.actorIdentifier = actorIdentifier;
         this.attribute = attribute;
     }
 
@@ -51,30 +54,29 @@ public class Attribute implements Defineable {
         if (this == o) return true;
         if (!(o instanceof Attribute)) return false;
         Attribute attribute1 = (Attribute) o;
-        return Objects.equals(actor.getIdent(), attribute1.actor.getIdent()) &&
-                Objects.equals(actor.getActorType(), attribute1.actor.getActorType()) &&
+        return Objects.equals(actorIdentifier, attribute1.actorIdentifier) &&
                 attribute == attribute1.attribute;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(actor.getIdent(), actor.getActorType(), attribute);
+        return Objects.hash(actorIdentifier, attribute);
     }
 
-    public static Attribute positionOf(ActorDefinition actor) {
-        return new Attribute(actor, AttributeType.POSITION);
+    public static Attribute positionOf(LocalIdentifier actorIdentifier) {
+        return new Attribute(actorIdentifier, AttributeType.POSITION);
     }
 
-    public static Attribute rotationOf(ActorDefinition actor) {
-        return new Attribute(actor, AttributeType.ROTATION);
+    public static Attribute rotationOf(LocalIdentifier actorIdentifier) {
+        return new Attribute(actorIdentifier, AttributeType.ROTATION);
     }
 
-    public static Attribute costumeOf(ActorDefinition actor) {
-        return new Attribute(actor, AttributeType.COSTUME);
+    public static Attribute costumeOf(LocalIdentifier actorIdentifier) {
+        return new Attribute(actorIdentifier, AttributeType.COSTUME);
     }
 
-    public static Attribute sizeOf(ActorDefinition actor) {
-        return new Attribute(actor, AttributeType.SIZE);
+    public static Attribute sizeOf(LocalIdentifier actorIdentifier) {
+        return new Attribute(actorIdentifier, AttributeType.SIZE);
     }
 
 //    public static Attribute backdropOf(ActorDefinition actor) {

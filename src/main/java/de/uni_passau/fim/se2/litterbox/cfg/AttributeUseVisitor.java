@@ -20,13 +20,23 @@
 package de.uni_passau.fim.se2.litterbox.cfg;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AttributeOf;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.Costume;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.ControlStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.AttributeFromFixed;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.AttributeFromVariable;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.FixedAttribute;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Identifier;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.ChangeSizeBy;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.NextCostume;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.variable.DataExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
+import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 import java.util.LinkedHashSet;
@@ -46,54 +56,77 @@ public class AttributeUseVisitor  implements ScratchVisitor {
         return uses;
     }
 
+
     @Override
-    public void visit(ControlStmt node) {
-        // Don't visit child statements
+    public void visit(IfThenStmt node) {
+        node.getBoolExpr().accept(this);
+    }
+
+
+    @Override
+    public void visit(IfElseStmt node) {
+        node.getBoolExpr().accept(this);
     }
 
     @Override
+    public void visit(RepeatForeverStmt node) {
+        // Nop
+    }
+
+    @Override
+    public void visit(RepeatTimesStmt node) {
+        node.getTimes().accept(this);
+    }
+
+    @Override
+    public void visit(UntilStmt node) {
+        node.getBoolExpr().accept(this);
+    }
+
+
+    @Override
     public void visit(ChangeXBy node) {
-        uses.add(Attribute.positionOf(currentActor));
+        uses.add(Attribute.positionOf(currentActor.getIdent()));
     }
 
     @Override
     public void visit(ChangeYBy node) {
-        uses.add(Attribute.positionOf(currentActor));
+        uses.add(Attribute.positionOf(currentActor.getIdent()));
     }
 
     @Override
     public void visit(MoveSteps node) {
-        uses.add(Attribute.positionOf(currentActor));
+        uses.add(Attribute.positionOf(currentActor.getIdent()));
     }
 
     @Override
     public void visit(PositionX node) {
-        uses.add(Attribute.positionOf(currentActor));
+        uses.add(Attribute.positionOf(currentActor.getIdent()));
     }
 
     @Override
     public void visit(PositionY node) {
-        uses.add(Attribute.positionOf(currentActor));
+        uses.add(Attribute.positionOf(currentActor.getIdent()));
     }
 
     @Override
     public void visit(DistanceTo node) {
-        uses.add(Attribute.positionOf(currentActor));
+        uses.add(Attribute.positionOf(currentActor.getIdent()));
     }
 
     @Override
     public void visit(TurnLeft node) {
-        uses.add(Attribute.rotationOf(currentActor));
+        uses.add(Attribute.rotationOf(currentActor.getIdent()));
     }
 
     @Override
     public void visit(TurnRight node) {
-        uses.add(Attribute.rotationOf(currentActor));
+        uses.add(Attribute.rotationOf(currentActor.getIdent()));
     }
 
     @Override
     public void visit(Direction node) {
-        uses.add(Attribute.rotationOf(currentActor));
+        uses.add(Attribute.rotationOf(currentActor.getIdent()));
     }
 
 
@@ -102,12 +135,12 @@ public class AttributeUseVisitor  implements ScratchVisitor {
 
     @Override
     public void visit(NextCostume node) {
-        uses.add(Attribute.costumeOf(currentActor));
+        uses.add(Attribute.costumeOf(currentActor.getIdent()));
     }
 
     @Override
     public void visit(Costume node) {
-        uses.add(Attribute.costumeOf(currentActor));
+        uses.add(Attribute.costumeOf(currentActor.getIdent()));
     }
 
     //---------------------------------------------------------------
@@ -115,13 +148,53 @@ public class AttributeUseVisitor  implements ScratchVisitor {
 
     @Override
     public void visit(ChangeSizeBy node) {
-        uses.add(Attribute.sizeOf(currentActor));
+        uses.add(Attribute.sizeOf(currentActor.getIdent()));
     }
 
     @Override
     public void visit(Size node) {
-        uses.add(Attribute.sizeOf(currentActor));
+        uses.add(Attribute.sizeOf(currentActor.getIdent()));
     }
 
+
+    @Override
+    public void visit(AttributeOf node) {
+        // TODO: Handle this
+
+        // Name of var or attribute
+        de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.Attribute attribute = node.getAttribute();
+        // Name of owner
+        Expression owner = node.getLocalIdentifier();
+
+        assert(owner instanceof LocalIdentifier) : "This has to be a LocalIdentifier, no?";
+        LocalIdentifier localIdentifier = (LocalIdentifier)owner;
+
+        if(attribute instanceof AttributeFromFixed) {
+            AttributeFromFixed fixedAttribute = (AttributeFromFixed)attribute;
+            FixedAttribute at = fixedAttribute.getAttribute();
+            switch(at) {
+                case X_POSITION:
+                case Y_POSITION:
+                    uses.add(Attribute.positionOf(localIdentifier));
+                    break;
+                case SIZE:
+                    uses.add(Attribute.sizeOf(localIdentifier));
+                    break;
+                case DIRECTION:
+                    uses.add(Attribute.rotationOf(localIdentifier));
+                    break;
+                case COSTUME_NUMBER:
+                    uses.add(Attribute.costumeOf(localIdentifier));
+                    break;
+                case VOLUME:
+                case COSTUME_NAME:
+                case BACKDROP_NAME:
+                case BACKDROP_NUMBER:
+                    // Not handled yet
+                    break;
+            }
+        }
+
+    }
 
 }

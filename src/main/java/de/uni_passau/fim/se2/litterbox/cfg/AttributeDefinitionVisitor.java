@@ -54,47 +54,47 @@ public class AttributeDefinitionVisitor implements ScratchVisitor {
     // Position
     @Override
     public void visit(ChangeXBy node) {
-        definitions.add(Attribute.positionOf(currentActor));
+        definitions.add(Attribute.positionOf(currentActor.getIdent()));
     }
 
     @Override
     public void visit(ChangeYBy node) {
-        definitions.add(Attribute.positionOf(currentActor));
+        definitions.add(Attribute.positionOf(currentActor.getIdent()));
     }
 
     @Override
     public void visit(SetXTo node) {
-        definitions.add(Attribute.positionOf(currentActor));
+        definitions.add(Attribute.positionOf(currentActor.getIdent()));
     }
 
     @Override
     public void visit(SetYTo node) {
-        definitions.add(Attribute.positionOf(currentActor));
+        definitions.add(Attribute.positionOf(currentActor.getIdent()));
     }
 
     @Override
     public void visit(GoToPos node) {
-        definitions.add(Attribute.positionOf(currentActor));
+        definitions.add(Attribute.positionOf(currentActor.getIdent()));
     }
 
     @Override
     public void visit(GoToPosXY node) {
-        definitions.add(Attribute.positionOf(currentActor));
+        definitions.add(Attribute.positionOf(currentActor.getIdent()));
     }
 
     @Override
     public void visit(MoveSteps node) {
-        definitions.add(Attribute.positionOf(currentActor));
+        definitions.add(Attribute.positionOf(currentActor.getIdent()));
     }
 
     @Override
     public void visit(GlideSecsToXY node) {
-        definitions.add(Attribute.positionOf(currentActor));
+        definitions.add(Attribute.positionOf(currentActor.getIdent()));
     }
 
     @Override
     public void visit(GlideSecsTo node) {
-        definitions.add(Attribute.positionOf(currentActor));
+        definitions.add(Attribute.positionOf(currentActor.getIdent()));
     }
 
     //---------------------------------------------------------------
@@ -102,22 +102,22 @@ public class AttributeDefinitionVisitor implements ScratchVisitor {
 
     @Override
     public void visit(TurnLeft node) {
-        definitions.add(Attribute.rotationOf(currentActor));
+        definitions.add(Attribute.rotationOf(currentActor.getIdent()));
     }
 
     @Override
     public void visit(TurnRight node) {
-        definitions.add(Attribute.rotationOf(currentActor));
+        definitions.add(Attribute.rotationOf(currentActor.getIdent()));
     }
 
     @Override
     public void visit(PointInDirection node) {
-        definitions.add(Attribute.rotationOf(currentActor));
+        definitions.add(Attribute.rotationOf(currentActor.getIdent()));
     }
 
     @Override
     public void visit(PointTowards node) {
-        definitions.add(Attribute.rotationOf(currentActor));
+        definitions.add(Attribute.rotationOf(currentActor.getIdent()));
     }
 
 
@@ -126,12 +126,12 @@ public class AttributeDefinitionVisitor implements ScratchVisitor {
 
     @Override
     public void visit(NextCostume node) {
-        definitions.add(Attribute.costumeOf(currentActor));
+        definitions.add(Attribute.costumeOf(currentActor.getIdent()));
     }
 
     @Override
     public void visit(SwitchCostumeTo node) {
-        definitions.add(Attribute.costumeOf(currentActor));
+        definitions.add(Attribute.costumeOf(currentActor.getIdent()));
     }
 
     //---------------------------------------------------------------
@@ -139,12 +139,12 @@ public class AttributeDefinitionVisitor implements ScratchVisitor {
 
     @Override
     public void visit(ChangeSizeBy node) {
-        definitions.add(Attribute.sizeOf(currentActor));
+        definitions.add(Attribute.sizeOf(currentActor.getIdent()));
     }
 
     @Override
     public void visit(SetSizeTo node) {
-        definitions.add(Attribute.sizeOf(currentActor));
+        definitions.add(Attribute.sizeOf(currentActor.getIdent()));
     }
 
 

@@ -34,7 +34,6 @@ import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -246,7 +245,7 @@ public class AttributeTest {
         ControlFlowGraph cfg = getCFG("src/test/fixtures/cfg/nextbackdroponstage.json");
         CFGNode node = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof NextBackdrop).findFirst().get();
         // TODO: Attributes on backdrop are not yet implemented
-        assertThat(getAttributes(node)).hasSize(0);
+        assertThat(getDefinedAttributes(node)).hasSize(0);
     }
 
     @Test
@@ -254,13 +253,30 @@ public class AttributeTest {
         ControlFlowGraph cfg = getCFG("src/test/fixtures/cfg/nextbackdroponsprite.json");
         CFGNode node = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof NextBackdrop).findFirst().get();
         // TODO: Attributes on backdrop are not yet implemented
-        assertThat(getAttributes(node)).hasSize(0);
+        assertThat(getDefinedAttributes(node)).hasSize(0);
     }
 
-    private Set<Attribute> getAttributes(CFGNode node) {
+
+    @Test
+    public void testUseOfOtherSprite() throws IOException, ParsingException {
+        ControlFlowGraph cfg = getCFG("src/test/fixtures/cfg/useattributefromothersprite.json");
+
+        CFGNode node = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof SayForSecs).findFirst().get();
+        assertThat(getUsedAttributes(node)).hasSize(1);
+    }
+
+    private Set<Attribute> getDefinedAttributes(CFGNode node) {
         AttributeDefinitionVisitor visitor = new AttributeDefinitionVisitor(node.getActor());
         node.getASTNode().accept(visitor);
 
         return visitor.getAttributeDefinitions();
     }
+
+    private Set<Attribute> getUsedAttributes(CFGNode node) {
+        AttributeUseVisitor visitor = new AttributeUseVisitor(node.getActor());
+        node.getASTNode().accept(visitor);
+
+        return visitor.getAttributeUses();
+    }
+
 }
