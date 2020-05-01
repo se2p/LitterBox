@@ -22,6 +22,9 @@ package de.uni_passau.fim.se2.litterbox.cfg;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
 
+import java.util.Collections;
+import java.util.Set;
+
 public class CallReturnNode extends CFGNode {
 
     private CallStmt originalCall;
@@ -32,6 +35,16 @@ public class CallReturnNode extends CFGNode {
     @Override
     public ASTNode getASTNode() {
         return originalCall;
+    }
+
+    @Override
+    public Set<Definition> getDefinitions() {
+        return Collections.emptySet();
+    }
+
+    @Override
+    public Set<Use> getUses() {
+        return Collections.emptySet();
     }
 
     @Override
