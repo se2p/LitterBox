@@ -32,6 +32,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SayForSecs;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.MoveSteps;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
+import org.junit.Ignore;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -155,6 +156,19 @@ public class UseTest {
 
         node = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof MoveSteps).findFirst().get();
         assertThat(getUses(node)).isEmpty();
+    }
+
+
+    @Ignore // This isn't implemented yet
+    @Test
+    public void testUseOfOtherSprite() throws IOException, ParsingException {
+        ControlFlowGraph cfg = getCFG("src/test/fixtures/cfg/uselocalvarfromothersprite.json");
+
+        CFGNode node = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof SetVariableTo).findFirst().get();
+        Defineable var = node.getDefinitions().iterator().next().getDefinable();
+
+        node = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof SayForSecs).findFirst().get();
+        assertThat(getUses(node)).containsExactly(var);
     }
 
     private Set<Variable> getUses(CFGNode node) {
