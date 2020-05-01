@@ -28,12 +28,15 @@ import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.ShowVariable;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.ChangeVariableBy;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetVariableTo;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SayForSecs;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.MoveSteps;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -133,5 +136,33 @@ public class UseTest {
         node.getASTNode().accept(visitor);
         uses = visitor.getUses();
         assertThat(uses).hasSize(0);
+    }
+
+    @Test
+    public void testUseInIf() throws IOException, ParsingException {
+        ControlFlowGraph cfg = getCFG("src/test/fixtures/cfg/defuseinif.json");
+
+        CFGNode node = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof SetVariableTo).findFirst().get();
+        Defineable var = node.getDefinitions().iterator().next().getDefinable();
+
+        node = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof IfThenStmt).findFirst().get();
+        assertThat(getUses(node)).containsExactly(var);
+
+        node = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof ChangeVariableBy).findFirst().get();
+        assertThat(getUses(node)).containsExactly(var);
+        node = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof SayForSecs).findFirst().get();
+        assertThat(getUses(node)).containsExactly(var);
+
+        node = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof MoveSteps).findFirst().get();
+        assertThat(getUses(node)).isEmpty();
+    }
+
+    private Set<Variable> getUses(CFGNode node) {
+        VariableUseVisitor visitor = new VariableUseVisitor();
+        node.getASTNode().accept(visitor);
+        Set<Variable> vars = new LinkedHashSet<>();
+
+        visitor.getUses().forEach(q -> vars.add(new Variable(q)));
+        return vars;
     }
 }

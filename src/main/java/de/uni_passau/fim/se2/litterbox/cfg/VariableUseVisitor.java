@@ -23,6 +23,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.At
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Identifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetVariableTo;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.*;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 import java.util.LinkedHashSet;
@@ -43,6 +44,32 @@ public class VariableUseVisitor implements ScratchVisitor {
     }
 
     @Override
+    public void visit(IfThenStmt node) {
+        node.getBoolExpr().accept(this);
+    }
+
+
+    @Override
+    public void visit(IfElseStmt node) {
+        node.getBoolExpr().accept(this);
+    }
+
+    @Override
+    public void visit(RepeatForeverStmt node) {
+        // Nop
+    }
+
+    @Override
+    public void visit(RepeatTimesStmt node) {
+        node.getTimes().accept(this);
+    }
+
+    @Override
+    public void visit(UntilStmt node) {
+        node.getBoolExpr().accept(this);
+    }
+
+    @Override
     public void visit(Qualified node) {
         uses.add(node);
     }
@@ -51,5 +78,4 @@ public class VariableUseVisitor implements ScratchVisitor {
     public void visit(AttributeFromVariable node) {
         uses.add(node.getId());
     }
-
 }

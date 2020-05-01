@@ -5,8 +5,7 @@ import de.uni_passau.fim.se2.litterbox.cfg.Defineable;
 import de.uni_passau.fim.se2.litterbox.cfg.Definition;
 import de.uni_passau.fim.se2.litterbox.cfg.Use;
 
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class InitialDefinitionTransferFunction implements TransferFunction<Definition> {
@@ -29,8 +28,10 @@ public class InitialDefinitionTransferFunction implements TransferFunction<Defin
         result.addAll(defs);
 
         // Remove all defs of variables that are used here
-        Set<Defineable> uses = node.getUses().stream().map(Use::getDefinable).collect(Collectors.toSet());
-        result.removeIf(d -> uses.contains(d.getDefinable()));
+        Set<Defineable> uses = node.getUses().parallelStream().map(Use::getDefinable).collect(Collectors.toSet());
+        if(!uses.isEmpty()) {
+            result.removeIf(d -> uses.contains(d.getDefinable()));
+        }
 
         return result;
     }

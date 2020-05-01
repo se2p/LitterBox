@@ -21,7 +21,6 @@ package de.uni_passau.fim.se2.litterbox.cfg;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
-import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Identifier;
 
 import java.util.Collections;
@@ -50,14 +49,16 @@ public abstract class CFGNode {
         if(definitions == null) {
             definitions = calculateDefinitions();
         }
-        return definitions;
+
+        return Collections.unmodifiableSet(definitions);
     }
 
     public Set<Use> getUses() {
         if(uses == null) {
             uses = calculateUses();
         }
-        return uses;
+
+        return Collections.unmodifiableSet(uses);
     }
 
     private Set<Definition> calculateDefinitions() {
