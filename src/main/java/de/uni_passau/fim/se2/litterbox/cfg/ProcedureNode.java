@@ -27,8 +27,11 @@ public class ProcedureNode extends CFGNode {
 
     private String procedureName;
 
-    public ProcedureNode(String name) {
-        procedureName = name;
+    private String actorName;
+
+    public ProcedureNode(String name, String actorName) {
+        this.procedureName = name;
+        this.actorName = actorName;
     }
 
     @Override
@@ -38,19 +41,20 @@ public class ProcedureNode extends CFGNode {
 
     @Override
     public String toString() {
-        return "Custom Block: "+procedureName;
+        return "Custom Block: "+actorName+"."+procedureName;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof ProcedureNode)) return false;
         ProcedureNode that = (ProcedureNode) o;
-        return Objects.equals(procedureName, that.procedureName);
+        return Objects.equals(procedureName, that.procedureName) &&
+                Objects.equals(actorName, that.actorName);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(procedureName);
+        return Objects.hash(procedureName, actorName);
     }
 }

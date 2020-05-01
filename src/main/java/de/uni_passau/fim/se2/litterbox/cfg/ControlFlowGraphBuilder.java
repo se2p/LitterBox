@@ -61,7 +61,7 @@ public class ControlFlowGraphBuilder {
     public void addEndOfProcedure(ProcedureDefinition node, List<CFGNode> endOfProcedure) {
         ProcedureInfo procDef = ProgramParser.procDefMap.getProcedureForHash(currentActor.getIdent().getName(), node.getIdent().getName());
 
-        ProcedureNode customBlockNode = new ProcedureNode(procDef.getName());
+        ProcedureNode customBlockNode = new ProcedureNode(procDef.getName(), procDef.getActorName());
 
         procedureMap.put(customBlockNode, endOfProcedure);
     }
@@ -213,7 +213,7 @@ public class ControlFlowGraphBuilder {
     public void addProcedure(ProcedureDefinition node) {
 
         ProcedureInfo procDef = ProgramParser.procDefMap.getProcedureForHash(currentActor.getIdent().getName(), node.getIdent().getName());
-        ProcedureNode customBlockNode = new ProcedureNode(procDef.getName());
+        ProcedureNode customBlockNode = new ProcedureNode(procDef.getName(), procDef.getActorName());
         setCurrentNode(customBlockNode);
     }
 
@@ -223,7 +223,7 @@ public class ControlFlowGraphBuilder {
         CFGNode node = addStatement(stmt);
 
         // Add edge to procedure entry node
-        ProcedureNode customBlockNode = new ProcedureNode(stmt.getIdent().getName());
+        ProcedureNode customBlockNode = new ProcedureNode(stmt.getIdent().getName(), currentActor.getIdent().getName());
         cfg.addEdge(node, customBlockNode);
 
         // Add return node as next node
