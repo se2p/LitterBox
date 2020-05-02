@@ -64,13 +64,13 @@ public class AttributeTest {
 
         AttributeDefinitionVisitor visitor = new AttributeDefinitionVisitor(node.getActor());
         node.getASTNode().accept(visitor);
-        Set<Attribute> definitions = visitor.getAttributeDefinitions();
+        Set<Attribute> definitions = visitor.getDefineables();
         assertThat(definitions).hasSize(1);
         assertThat(definitions.iterator().next().getAttributeType()).isEqualTo(POSITION);
 
         AttributeUseVisitor useVisitor = new AttributeUseVisitor(node.getActor());
         node.getASTNode().accept(useVisitor);
-        Set<Attribute> uses = visitor.getAttributeDefinitions();
+        Set<Attribute> uses = visitor.getDefineables();
         assertThat(uses).hasSize(1);
         assertThat(uses.iterator().next().getAttributeType()).isEqualTo(POSITION);
     }
@@ -85,7 +85,7 @@ public class AttributeTest {
         for(CFGNode node : nodes) {
             AttributeDefinitionVisitor visitor = new AttributeDefinitionVisitor(node.getActor());
             node.getASTNode().accept(visitor);
-            Set<Attribute> definitions = visitor.getAttributeDefinitions();
+            Set<Attribute> definitions = visitor.getDefineables();
             assertThat(definitions).hasSize(1);
             assertThat(definitions.stream().findFirst().get().getAttributeType()).isEqualTo(POSITION);
         }
@@ -100,7 +100,7 @@ public class AttributeTest {
         for(CFGNode node : nodes) {
             AttributeDefinitionVisitor visitor = new AttributeDefinitionVisitor(node.getActor());
             node.getASTNode().accept(visitor);
-            Set<Attribute> definitions = visitor.getAttributeDefinitions();
+            Set<Attribute> definitions = visitor.getDefineables();
             assertThat(definitions).hasSize(1);
             assertThat(definitions.stream().findFirst().get().getAttributeType()).isEqualTo(ROTATION);
         }
@@ -115,7 +115,7 @@ public class AttributeTest {
         for(CFGNode node : nodes) {
             AttributeUseVisitor visitor = new AttributeUseVisitor(node.getActor());
             node.getASTNode().accept(visitor);
-            Set<Attribute> uses = visitor.getAttributeUses();
+            Set<Attribute> uses = visitor.getDefineables();
             assertThat(uses).hasSize(1);
             assertThat(uses.stream().findFirst().get().getAttributeType()).isEqualTo(POSITION);
         }
@@ -130,7 +130,7 @@ public class AttributeTest {
         for(CFGNode node : nodes) {
             AttributeUseVisitor visitor = new AttributeUseVisitor(node.getActor());
             node.getASTNode().accept(visitor);
-            Set<Attribute> uses = visitor.getAttributeUses();
+            Set<Attribute> uses = visitor.getDefineables();
             assertThat(uses).hasSize(1);
             assertThat(uses.stream().findFirst().get().getAttributeType()).isEqualTo(ROTATION);
         }
@@ -147,7 +147,7 @@ public class AttributeTest {
         for(CFGNode node : nodes) {
             AttributeDefinitionVisitor visitor = new AttributeDefinitionVisitor(node.getActor());
             node.getASTNode().accept(visitor);
-            Set<Attribute> definitions = visitor.getAttributeDefinitions();
+            Set<Attribute> definitions = visitor.getDefineables();
             assertThat(definitions).hasSize(1);
             assertThat(definitions.stream().findFirst().get().getAttributeType()).isEqualTo(COSTUME);
         }
@@ -163,7 +163,7 @@ public class AttributeTest {
         for(CFGNode node : nodes) {
             AttributeUseVisitor visitor = new AttributeUseVisitor(node.getActor());
             node.getASTNode().accept(visitor);
-            Set<Attribute> uses = visitor.getAttributeUses();
+            Set<Attribute> uses = visitor.getDefineables();
             assertThat(uses).hasSize(1);
             assertThat(uses.stream().findFirst().get().getAttributeType()).isEqualTo(COSTUME);
         }
@@ -179,7 +179,7 @@ public class AttributeTest {
         for(CFGNode node : nodes) {
             AttributeDefinitionVisitor visitor = new AttributeDefinitionVisitor(node.getActor());
             node.getASTNode().accept(visitor);
-            Set<Attribute> definitions = visitor.getAttributeDefinitions();
+            Set<Attribute> definitions = visitor.getDefineables();
             assertThat(definitions).hasSize(1);
             assertThat(definitions.stream().findFirst().get().getAttributeType()).isEqualTo(SIZE);
         }
@@ -195,7 +195,7 @@ public class AttributeTest {
         for(CFGNode node : nodes) {
             AttributeUseVisitor visitor = new AttributeUseVisitor(node.getActor());
             node.getASTNode().accept(visitor);
-            Set<Attribute> uses = visitor.getAttributeUses();
+            Set<Attribute> uses = visitor.getDefineables();
             assertThat(uses).hasSize(1);
             assertThat(uses.stream().findFirst().get().getAttributeType()).isEqualTo(SIZE);
         }
@@ -214,29 +214,29 @@ public class AttributeTest {
         AttributeDefinitionVisitor defVisitor = new AttributeDefinitionVisitor(greenFlag.getActor()); // TODO: the greenflag is shared?
         greenFlag.getASTNode().accept(useVisitor);
         greenFlag.getASTNode().accept(defVisitor);
-        assertThat(useVisitor.getAttributeUses()).isEmpty();
-        assertThat(defVisitor.getAttributeDefinitions()).isEmpty();
+        assertThat(useVisitor.getDefineables()).isEmpty();
+        assertThat(defVisitor.getDefineables()).isEmpty();
 
         useVisitor = new AttributeUseVisitor(setSize.getActor());
         defVisitor = new AttributeDefinitionVisitor(setSize.getActor());
         setSize.getASTNode().accept(useVisitor);
         setSize.getASTNode().accept(defVisitor);
-        assertThat(useVisitor.getAttributeUses()).isEmpty();
-        assertThat(defVisitor.getAttributeDefinitions()).hasSize(1);
+        assertThat(useVisitor.getDefineables()).isEmpty();
+        assertThat(defVisitor.getDefineables()).hasSize(1);
 
         useVisitor = new AttributeUseVisitor(repeatForever.getActor());
         defVisitor = new AttributeDefinitionVisitor(repeatForever.getActor());
         repeatForever.getASTNode().accept(useVisitor);
         repeatForever.getASTNode().accept(defVisitor);
-        assertThat(useVisitor.getAttributeUses()).isEmpty();
-        assertThat(defVisitor.getAttributeDefinitions()).isEmpty();
+        assertThat(useVisitor.getDefineables()).isEmpty();
+        assertThat(defVisitor.getDefineables()).isEmpty();
 
         useVisitor = new AttributeUseVisitor(changeSize.getActor());
         defVisitor = new AttributeDefinitionVisitor(changeSize.getActor());
         changeSize.getASTNode().accept(useVisitor);
         changeSize.getASTNode().accept(defVisitor);
-        assertThat(useVisitor.getAttributeUses()).hasSize(1);
-        assertThat(defVisitor.getAttributeDefinitions()).hasSize(1);
+        assertThat(useVisitor.getDefineables()).hasSize(1);
+        assertThat(defVisitor.getDefineables()).hasSize(1);
     }
 
 
@@ -269,14 +269,13 @@ public class AttributeTest {
         AttributeDefinitionVisitor visitor = new AttributeDefinitionVisitor(node.getActor());
         node.getASTNode().accept(visitor);
 
-        return visitor.getAttributeDefinitions();
+        return visitor.getDefineables();
     }
 
     private Set<Attribute> getUsedAttributes(CFGNode node) {
         AttributeUseVisitor visitor = new AttributeUseVisitor(node.getActor());
         node.getASTNode().accept(visitor);
-
-        return visitor.getAttributeUses();
+        return visitor.getDefineables();
     }
 
 }

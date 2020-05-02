@@ -1,3 +1,22 @@
+/*
+ * Copyright (C) 2019 LitterBox contributors
+ *
+ * This file is part of LitterBox.
+ *
+ * LitterBox is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or (at
+ * your option) any later version.
+ *
+ * LitterBox is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package de.uni_passau.fim.se2.litterbox.cfg;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -11,13 +30,12 @@ import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.google.common.truth.Truth.assertThat;
 
-public class ListTest {
+public class ListVariableTest {
 
 
     @Test
@@ -25,7 +43,7 @@ public class ListTest {
         ControlFlowGraph cfg = getCFG("src/test/fixtures/cfg/listoperations.json");
 
         CFGNode node = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof AddTo).findFirst().get();
-        List theList = new List(((AddTo)node.getASTNode()).getIdentifier());
+        ListVariable theList = new ListVariable(((AddTo)node.getASTNode()).getIdentifier());
 
         for(CFGNode sayNode : cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof SayForSecs).collect(Collectors.toSet())) {
             assertThat(getUsedLists(sayNode)).containsExactly(theList);
@@ -43,7 +61,7 @@ public class ListTest {
         ControlFlowGraph cfg = getCFG("src/test/fixtures/cfg/listoperations.json");
 
         CFGNode node = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof AddTo).findFirst().get();
-        List theList = new List(((AddTo)node.getASTNode()).getIdentifier());
+        ListVariable theList = new ListVariable(((AddTo)node.getASTNode()).getIdentifier());
 
         for(CFGNode sayNode : cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof SayForSecs).collect(Collectors.toSet())) {
             assertThat(getDefinedLists(sayNode)).isEmpty();
@@ -56,11 +74,11 @@ public class ListTest {
         assertThat(defsOf(cfg, AddTo.class)).containsExactly(theList);
     }
 
-    private Set<List> defsOf(ControlFlowGraph cfg, Class<?> nodeClass) {
+    private Set<ListVariable> defsOf(ControlFlowGraph cfg, Class<?> nodeClass) {
         return getDefinedLists(getNodeOfType(cfg, nodeClass));
     }
 
-    private Set<List> usesOf(ControlFlowGraph cfg, Class<?> nodeClass) {
+    private Set<ListVariable> usesOf(ControlFlowGraph cfg, Class<?> nodeClass) {
         return getUsedLists(getNodeOfType(cfg, nodeClass));
     }
 
@@ -82,23 +100,15 @@ public class ListTest {
         return visitor.getControlFlowGraph();
     }
 
-    private Set<List> getDefinedLists(CFGNode node) {
+    private Set<ListVariable> getDefinedLists(CFGNode node) {
         ListDefinitionVisitor visitor = new ListDefinitionVisitor();
         node.getASTNode().accept(visitor);
-
-        Set<List> vars = new LinkedHashSet<>();
-        visitor.getDefinitions().forEach(q -> vars.add(new List(q)));
-
-        return vars;
+        return visitor.getDefineables();
     }
 
-    private Set<List> getUsedLists(CFGNode node) {
+    private Set<ListVariable> getUsedLists(CFGNode node) {
         ListUseVisitor visitor = new ListUseVisitor();
         node.getASTNode().accept(visitor);
-
-        Set<List> vars = new LinkedHashSet<>();
-        visitor.getUses().forEach(q -> vars.add(new List(q)));
-
-        return vars;
+        return visitor.getDefineables();
     }
 }

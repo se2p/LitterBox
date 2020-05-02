@@ -19,7 +19,6 @@
 
 package de.uni_passau.fim.se2.litterbox.cfg;
 
-import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
 
 import java.util.Objects;
@@ -29,7 +28,7 @@ import java.util.Objects;
  */
 public class Attribute implements Defineable {
 
-    // TODO: This should be replaced with a FixedAttribute
+    // TODO: This should be replaced with a FixedAttribute?
 
     public enum AttributeType {
         POSITION, ROTATION, COSTUME, SIZE //, BACKDROP // VOLUME?

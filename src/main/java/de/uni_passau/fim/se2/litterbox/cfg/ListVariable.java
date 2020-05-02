@@ -19,17 +19,15 @@
 
 package de.uni_passau.fim.se2.litterbox.cfg;
 
-
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Identifier;
-import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 
 import java.util.Objects;
 
-public class Variable implements Defineable {
+public class ListVariable implements Defineable {
 
     private Identifier identifier;
 
-    public Variable(Identifier identifier) {
+    public ListVariable(Identifier identifier) {
         this.identifier = identifier;
     }
 
@@ -41,7 +39,7 @@ public class Variable implements Defineable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Variable variable = (Variable) o;
+        ListVariable variable = (ListVariable) o;
         return Objects.equals(identifier, variable.identifier);
     }
 
@@ -50,17 +48,4 @@ public class Variable implements Defineable {
         return Objects.hash(identifier);
     }
 
-    @Override
-    public String toString() {
-        if(identifier instanceof Qualified) {
-            Qualified q = (Qualified)identifier;
-            return "Variable{" +
-                    "identifier=" + q.getFirst().getName()+"." + q.getSecond().getName().getName() +
-                    '}';
-        } else {
-            return "Variable{" +
-                    "identifier=" + identifier +
-                    '}';
-        }
-    }
 }

@@ -31,17 +31,19 @@ import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-public class AttributeDefinitionVisitor implements ScratchVisitor {
+public class AttributeDefinitionVisitor implements DefinableCollector<Attribute> {
 
     private Set<Attribute> definitions = new LinkedHashSet<>();
 
+    // TODO: Store LocalIdentifier instead of actor directly?
     private ActorDefinition currentActor;
 
     public AttributeDefinitionVisitor(ActorDefinition currentActor) {
         this.currentActor = currentActor;
     }
 
-    public Set<Attribute> getAttributeDefinitions() {
+    @Override
+    public Set<Attribute> getDefineables() {
         return definitions;
     }
 

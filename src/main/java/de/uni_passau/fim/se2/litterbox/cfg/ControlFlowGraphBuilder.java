@@ -35,13 +35,15 @@ import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ProcedureInfo;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Identifier;
 
+import java.util.List;
+
 import java.util.*;
 
 public class ControlFlowGraphBuilder {
 
     private ControlFlowGraph cfg = new ControlFlowGraph();
 
-    private List<CFGNode> currentNodes = new ArrayList<>();
+    private java.util.List<CFGNode> currentNodes = new ArrayList<>();
 
     private ActorDefinition currentActor = null;
 

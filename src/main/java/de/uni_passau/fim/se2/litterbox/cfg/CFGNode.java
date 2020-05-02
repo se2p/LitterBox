@@ -21,11 +21,8 @@ package de.uni_passau.fim.se2.litterbox.cfg;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
-import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Identifier;
 
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.*;
 
 public abstract class CFGNode {
 
@@ -65,27 +62,22 @@ public abstract class CFGNode {
         if(getASTNode() == null) {
             return Collections.emptySet();
         }
-        VariableDefinitionVisitor visitor = new VariableDefinitionVisitor();
-        getASTNode().accept(visitor);
 
         Set<Definition> definitions = new LinkedHashSet<>();
-        for(Identifier i : visitor.getDefinitions()) {
-            // TODO: Should the visitor return Variables already?
-            definitions.add(new Definition(this, new Variable(i)));
-        }
+        List<DefinableCollector> collectors = new ArrayList<>(Arrays.asList(
+                new VariableDefinitionVisitor(),
+                new ListDefinitionVisitor()
+        ));
 
-        ListDefinitionVisitor listDefinitionVisitor = new ListDefinitionVisitor();
-        getASTNode().accept(listDefinitionVisitor);
-        for(Identifier i : listDefinitionVisitor.getDefinitions()) {
-            definitions.add(new Definition(this, new List(i)));
-        }
 
         if(getActor() != null) {
-            AttributeDefinitionVisitor avisitor = new AttributeDefinitionVisitor(getActor());
-            getASTNode().accept(avisitor);
-            for (Attribute attribute: avisitor.getAttributeDefinitions()) {
-                definitions.add(new Definition(this, attribute));
-            }
+            collectors.add(new AttributeDefinitionVisitor(getActor()));
+        }
+
+        for(DefinableCollector collector : collectors) {
+            getASTNode().accept(collector);
+            Set<Defineable> defineables = collector.getDefineables();
+            defineables.forEach(d -> definitions.add(new Definition(this, d)));
         }
 
         return definitions;
@@ -95,28 +87,23 @@ public abstract class CFGNode {
         if(getASTNode() == null) {
             return Collections.emptySet();
         }
-        VariableUseVisitor visitor = new VariableUseVisitor();
-        getASTNode().accept(visitor);
 
         Set<Use> uses = new LinkedHashSet<>();
-        for(Identifier i : visitor.getUses()) {
-            uses.add(new Use(this, new Variable(i)));
-        }
-
-        ListUseVisitor listUseVisitor = new ListUseVisitor();
-        getASTNode().accept(listUseVisitor);
-        for(Identifier i : listUseVisitor.getUses()) {
-            uses.add(new Use(this, new List(i)));
-        }
+        List<DefinableCollector> collectors = new ArrayList<>(Arrays.asList(
+                new VariableUseVisitor(),
+                new ListUseVisitor()
+        ));
 
         if(getActor() != null) {
-            AttributeUseVisitor avisitor = new AttributeUseVisitor(getActor());
-            getASTNode().accept(avisitor);
-            for (Attribute attribute: avisitor.getAttributeUses()) {
-                uses.add(new Use(this, attribute));
-            }
+            collectors.add(new AttributeUseVisitor(getActor()));
         }
-        return uses;
+
+         for(DefinableCollector collector : collectors) {
+            getASTNode().accept(collector);
+            Set<Defineable> defineables = collector.getDefineables();
+            defineables.forEach(d -> uses.add(new Use(this, d)));
+         }
+         return uses;
     }
 
 }

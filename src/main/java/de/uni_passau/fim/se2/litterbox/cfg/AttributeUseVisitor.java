@@ -42,7 +42,7 @@ import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-public class AttributeUseVisitor  implements ScratchVisitor {
+public class AttributeUseVisitor implements DefinableCollector<Attribute> {
 
     private Set<Attribute> uses = new LinkedHashSet<>();
 
@@ -52,10 +52,10 @@ public class AttributeUseVisitor  implements ScratchVisitor {
         this.currentActor = currentActor;
     }
 
-    public Set<Attribute> getAttributeUses() {
+    @Override
+    public Set<Attribute> getDefineables() {
         return uses;
     }
-
 
     @Override
     public void visit(IfThenStmt node) {

@@ -31,16 +31,16 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.DataExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.ScratchList;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-public class VariableUseVisitor implements ScratchVisitor {
+public class VariableUseVisitor implements DefinableCollector<de.uni_passau.fim.se2.litterbox.cfg.Variable> {
 
-    private Set<Identifier> uses = new LinkedHashSet<>();
+    private Set<de.uni_passau.fim.se2.litterbox.cfg.Variable> uses = new LinkedHashSet<>();
 
-    public Set<Identifier> getUses() {
+    @Override
+    public Set<de.uni_passau.fim.se2.litterbox.cfg.Variable> getDefineables() {
         return uses;
     }
 
@@ -78,7 +78,7 @@ public class VariableUseVisitor implements ScratchVisitor {
 
     @Override
     public void visit(AttributeOf node) {
-        // TODO: Handle this
+        // TODO: Handle this properly
         
         // Name of var or attribute
         Attribute attribute = node.getAttribute();
@@ -91,19 +91,16 @@ public class VariableUseVisitor implements ScratchVisitor {
         if(attribute instanceof AttributeFromVariable) {
             AttributeFromVariable varAttribute = (AttributeFromVariable)attribute;
             Identifier id = varAttribute.getId();
-            assert(id instanceof LocalIdentifier);
             DataExpr e = new Variable((LocalIdentifier)id);
             Qualified q = new Qualified(localIdentifier, e);
-            uses.add(q);
+            uses.add(new de.uni_passau.fim.se2.litterbox.cfg.Variable(q));
         }
-
     }
-
 
     @Override
     public void visit(Qualified node) {
         if(!(node.getSecond() instanceof ScratchList)) {
-            uses.add(node);
+            uses.add(new de.uni_passau.fim.se2.litterbox.cfg.Variable(node));
         }
     }
 }

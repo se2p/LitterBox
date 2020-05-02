@@ -165,5 +165,4 @@ public class MissingInitializationTest {
         IssueReport report = (new MissingInitialization()).check(program);
         Assertions.assertEquals(1, report.getCount());
     }
-
 }

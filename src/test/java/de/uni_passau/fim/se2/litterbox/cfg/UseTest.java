@@ -40,7 +40,6 @@ import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -69,7 +68,7 @@ public class UseTest {
         CFGNode node = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof ShowVariable).findFirst().get();
         VariableUseVisitor visitor = new VariableUseVisitor();
         node.getASTNode().accept(visitor);
-        Set<Identifier> uses = visitor.getUses();
+        Set<Variable> uses = visitor.getDefineables();
         assertThat(uses).hasSize(1);
     }
 
@@ -80,7 +79,7 @@ public class UseTest {
         VariableUseVisitor visitor = new VariableUseVisitor();
         node.getASTNode().accept(visitor);
 
-        Set<Identifier> uses = visitor.getUses();
+        Set<Variable> uses = visitor.getDefineables();
         assertThat(uses).hasSize(0);
     }
 
@@ -91,7 +90,7 @@ public class UseTest {
         VariableUseVisitor visitor = new VariableUseVisitor();
         node.getASTNode().accept(visitor);
 
-        Set<Identifier> uses = visitor.getUses();
+        Set<Variable> uses = visitor.getDefineables();
         assertThat(uses).hasSize(1);
     }
 
@@ -103,7 +102,7 @@ public class UseTest {
         VariableUseVisitor visitor = new VariableUseVisitor();
         node.getASTNode().accept(visitor);
 
-        Set<Identifier> uses = visitor.getUses();
+        Set<Variable> uses = visitor.getDefineables();
         assertThat(uses).hasSize(1);
     }
 
@@ -115,13 +114,13 @@ public class UseTest {
         VariableUseVisitor visitor = new VariableUseVisitor();
         nodes.get(0).getASTNode().accept(visitor);
 
-        Set<Identifier> uses = visitor.getUses();
+        Set<Variable> uses = visitor.getDefineables();
         assertThat(uses).hasSize(1);
 
         visitor = new VariableUseVisitor();
         nodes.get(1).getASTNode().accept(visitor);
 
-        uses = visitor.getUses();
+        uses = visitor.getDefineables();
         assertThat(uses).hasSize(1);
     }
 
@@ -132,13 +131,13 @@ public class UseTest {
         CFGNode node = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof SayForSecs).findFirst().get();
         VariableUseVisitor visitor = new VariableUseVisitor();
         node.getASTNode().accept(visitor);
-        Set<Identifier> uses = visitor.getUses();
+        Set<Variable> uses = visitor.getDefineables();
         assertThat(uses).hasSize(1);
 
         node = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof SetVariableTo).findFirst().get();
         visitor = new VariableUseVisitor();
         node.getASTNode().accept(visitor);
-        uses = visitor.getUses();
+        uses = visitor.getDefineables();
         assertThat(uses).hasSize(0);
     }
 
@@ -232,9 +231,6 @@ public class UseTest {
     private Set<Variable> getUses(CFGNode node) {
         VariableUseVisitor visitor = new VariableUseVisitor();
         node.getASTNode().accept(visitor);
-        Set<Variable> vars = new LinkedHashSet<>();
-
-        visitor.getUses().forEach(q -> vars.add(new Variable(q)));
-        return vars;
+        return visitor.getDefineables();
     }
 }

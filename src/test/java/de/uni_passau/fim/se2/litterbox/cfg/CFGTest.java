@@ -280,4 +280,5 @@ public class CFGTest {
         assertThat(cfg.getNumNodes()).isEqualTo(14);
         assertThat(cfg.getNumEdges()).isEqualTo(14);
     }
+
 }

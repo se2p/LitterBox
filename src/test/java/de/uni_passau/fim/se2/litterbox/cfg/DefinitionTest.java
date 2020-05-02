@@ -65,7 +65,7 @@ public class DefinitionTest {
         CFGNode node = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof SetVariableTo).findFirst().get();
         VariableDefinitionVisitor visitor = new VariableDefinitionVisitor();
         node.getASTNode().accept(visitor);
-        Set<Identifier> definitions = visitor.getDefinitions();
+        Set<Variable> definitions = visitor.getDefineables();
         assertThat(definitions).hasSize(1);
     }
 
@@ -75,7 +75,7 @@ public class DefinitionTest {
         CFGNode node = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof ShowVariable).findFirst().get();
         VariableDefinitionVisitor visitor = new VariableDefinitionVisitor();
         node.getASTNode().accept(visitor);
-        Set<Identifier> definitions = visitor.getDefinitions();
+        Set<Variable> definitions = visitor.getDefineables();
         assertThat(definitions).hasSize(0);
     }
 
@@ -85,7 +85,7 @@ public class DefinitionTest {
         CFGNode node = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof ChangeVariableBy).findFirst().get();
         VariableDefinitionVisitor visitor = new VariableDefinitionVisitor();
         node.getASTNode().accept(visitor);
-        Set<Identifier> definitions = visitor.getDefinitions();
+        Set<Variable> definitions = visitor.getDefineables();
         assertThat(definitions).hasSize(1);
     }
 
@@ -95,7 +95,7 @@ public class DefinitionTest {
         CFGNode node = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof SayForSecs).findFirst().get();
         VariableDefinitionVisitor visitor = new VariableDefinitionVisitor();
         node.getASTNode().accept(visitor);
-        Set<Identifier> definitions = visitor.getDefinitions();
+        Set<Variable> definitions = visitor.getDefineables();
         assertThat(definitions).hasSize(0);
     }
 
@@ -106,13 +106,13 @@ public class DefinitionTest {
         CFGNode node = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof SayForSecs).findFirst().get();
         VariableDefinitionVisitor visitor = new VariableDefinitionVisitor();
         node.getASTNode().accept(visitor);
-        Set<Identifier> definitions = visitor.getDefinitions();
+        Set<Variable> definitions = visitor.getDefineables();
         assertThat(definitions).hasSize(0);
 
         node = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof SetVariableTo).findFirst().get();
         visitor = new VariableDefinitionVisitor();
         node.getASTNode().accept(visitor);
-        definitions = visitor.getDefinitions();
+        definitions = visitor.getDefineables();
         assertThat(definitions).hasSize(1);
 
     }
@@ -160,9 +160,6 @@ public class DefinitionTest {
     private Set<Variable> getDefinitions(CFGNode node) {
         VariableDefinitionVisitor visitor = new VariableDefinitionVisitor();
         node.getASTNode().accept(visitor);
-        Set<Variable> vars = new LinkedHashSet<>();
-
-        visitor.getDefinitions().forEach(q -> vars.add(new Variable(q)));
-        return vars;
+        return visitor.getDefineables();
     }
 }

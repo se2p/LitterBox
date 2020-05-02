@@ -1,40 +1,51 @@
+/*
+ * Copyright (C) 2019 LitterBox contributors
+ *
+ * This file is part of LitterBox.
+ *
+ * LitterBox is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or (at
+ * your option) any later version.
+ *
+ * LitterBox is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package de.uni_passau.fim.se2.litterbox.cfg;
 
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AttributeOf;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.Attribute;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.AttributeFromVariable;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Identifier;
-import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.list.*;
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.DataExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.ScratchList;
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-public class ListUseVisitor implements ScratchVisitor {
+public class ListUseVisitor implements DefinableCollector<ListVariable> {
 
+    private Set<ListVariable> defineables = new LinkedHashSet<>();
 
-    private Set<Identifier> uses = new LinkedHashSet<>();
-
-    public Set<Identifier> getUses() {
-        return uses;
+    @Override
+    public Set<ListVariable> getDefineables() {
+        return defineables;
     }
-
 
     @Override
     public void visit(AddTo stmt) {
-        uses.add(stmt.getIdentifier());
+        defineables.add(new ListVariable(stmt.getIdentifier()));
     }
 
     @Override
     public void visit(DeleteOf stmt) {
-        uses.add(stmt.getIdentifier());
+        defineables.add(new ListVariable(stmt.getIdentifier()));
         stmt.getNum().accept(this);
     }
 
@@ -45,13 +56,13 @@ public class ListUseVisitor implements ScratchVisitor {
 
     @Override
     public void visit(InsertAt stmt) {
-        uses.add(stmt.getIdentifier());
+        defineables.add(new ListVariable(stmt.getIdentifier()));
         stmt.getIndex().accept(this);
     }
 
     @Override
     public void visit(ReplaceItem stmt) {
-        uses.add(stmt.getIdentifier());
+        defineables.add(new ListVariable(stmt.getIdentifier()));
         stmt.getIndex().accept(this);
     }
 
@@ -88,7 +99,8 @@ public class ListUseVisitor implements ScratchVisitor {
     @Override
     public void visit(Qualified node) {
         if(node.getSecond() instanceof ScratchList) {
-            uses.add(node);
+            defineables.add(new ListVariable(node));
         }
     }
+
 }
