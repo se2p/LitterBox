@@ -157,4 +157,13 @@ public class MissingInitializationTest {
         Assertions.assertEquals(1, report.getCount());
     }
 
+    @Test
+    public void testMissingListInitialization() throws IOException, ParsingException {
+        File f = new File("src/test/fixtures/cfg/listoperations.json");
+        Program program = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
+
+        IssueReport report = (new MissingInitialization()).check(program);
+        Assertions.assertEquals(1, report.getCount());
+    }
+
 }

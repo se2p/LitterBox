@@ -273,4 +273,11 @@ public class CFGTest {
         assertThat(cfg.getNumNodes()).isEqualTo(4);
         assertThat(cfg.getNumEdges()).isEqualTo(5); // Including self-loop
     }
+
+    @Test
+    public void testListStatements() throws IOException, ParsingException {
+        ControlFlowGraph cfg = getCFG("src/test/fixtures/cfg/listoperations.json");
+        assertThat(cfg.getNumNodes()).isEqualTo(14);
+        assertThat(cfg.getNumEdges()).isEqualTo(14);
+    }
 }

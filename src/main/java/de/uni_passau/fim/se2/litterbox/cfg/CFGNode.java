@@ -74,6 +74,12 @@ public abstract class CFGNode {
             definitions.add(new Definition(this, new Variable(i)));
         }
 
+        ListDefinitionVisitor listDefinitionVisitor = new ListDefinitionVisitor();
+        getASTNode().accept(listDefinitionVisitor);
+        for(Identifier i : listDefinitionVisitor.getDefinitions()) {
+            definitions.add(new Definition(this, new List(i)));
+        }
+
         if(getActor() != null) {
             AttributeDefinitionVisitor avisitor = new AttributeDefinitionVisitor(getActor());
             getASTNode().accept(avisitor);
@@ -95,6 +101,12 @@ public abstract class CFGNode {
         Set<Use> uses = new LinkedHashSet<>();
         for(Identifier i : visitor.getUses()) {
             uses.add(new Use(this, new Variable(i)));
+        }
+
+        ListUseVisitor listUseVisitor = new ListUseVisitor();
+        getASTNode().accept(listUseVisitor);
+        for(Identifier i : listUseVisitor.getUses()) {
+            uses.add(new Use(this, new List(i)));
         }
 
         if(getActor() != null) {
