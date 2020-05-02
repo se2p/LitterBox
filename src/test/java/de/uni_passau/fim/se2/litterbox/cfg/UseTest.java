@@ -27,8 +27,13 @@ import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Identifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.ShowVariable;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.ChangeVariableBy;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetVariableTo;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitSeconds;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitUntil;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Say;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SayForSecs;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Think;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.ThinkForSecs;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.MoveSteps;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
 import org.junit.jupiter.api.Test;
@@ -166,6 +171,62 @@ public class UseTest {
 
         node = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof SayForSecs).findFirst().get();
         assertThat(getUses(node)).containsExactly(var);
+    }
+
+    @Test
+    public void testUseOfVariablesInDifferentScopes() throws IOException, ParsingException {
+        ControlFlowGraph cfg = getCFG("src/test/fixtures/cfg/variablescopes.json");
+
+        // In this test there are two sprites
+        // Sprite 1:
+        //   Says a global variable
+        //   Thinks a variable local to Sprite 1
+        //   Waits for a variable local to Sprite 2
+        // Sprite 2:
+        //   Says a global variable
+        //   Thinks a variable local to Sprite 1
+        //   Waits for a variable local to Sprite 2
+        //
+        // The resulting variables extracted need to be equal
+
+        // Sprite 1
+        CFGNode sayGlobalVariable1 = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof SayForSecs).findFirst().get();
+        assertThat(getUses(sayGlobalVariable1)).hasSize(1);
+        Defineable globalVar1 = sayGlobalVariable1.getUses().iterator().next().getDefinable();
+        assertThat(globalVar1).isInstanceOf(Variable.class);
+
+        CFGNode thinkLocalVariable1 = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof ThinkForSecs).findFirst().get();
+        assertThat(getUses(thinkLocalVariable1)).hasSize(1);
+        Defineable localVar1 = thinkLocalVariable1.getUses().iterator().next().getDefinable();
+        assertThat(localVar1).isInstanceOf(Variable.class);
+
+        CFGNode waitOtherVariable1 = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof WaitUntil).findFirst().get();
+        assertThat(getUses(waitOtherVariable1)).hasSize(1);
+        Defineable waitOtherVar1 = waitOtherVariable1.getUses().iterator().next().getDefinable();
+        assertThat(waitOtherVar1).isInstanceOf(Variable.class);
+
+        assertThat(globalVar1).isNotEqualTo(localVar1);
+        assertThat(globalVar1).isNotEqualTo(waitOtherVar1);
+
+        // Sprite 2
+        CFGNode sayGlobalVariable2 = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof Say).findFirst().get();
+        assertThat(getUses(sayGlobalVariable2)).hasSize(1);
+        Defineable globalVar2 = sayGlobalVariable1.getUses().iterator().next().getDefinable();
+        assertThat(globalVar2).isInstanceOf(Variable.class);
+
+        CFGNode thinkLocalVariable2 = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof Think).findFirst().get();
+        assertThat(getUses(thinkLocalVariable2)).hasSize(1);
+        Defineable localVar2 = thinkLocalVariable2.getUses().iterator().next().getDefinable();
+        assertThat(localVar2).isInstanceOf(Variable.class);
+
+        CFGNode waitOtherVariable2 = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof WaitSeconds).findFirst().get();
+        assertThat(getUses(waitOtherVariable2)).hasSize(1);
+        Defineable waitOtherVar2 = waitOtherVariable2.getUses().iterator().next().getDefinable();
+        assertThat(waitOtherVar2).isInstanceOf(Variable.class);
+
+        assertThat(globalVar1).isEqualTo(globalVar2);
+        assertThat(localVar1).isEqualTo(localVar2);
+        assertThat(waitOtherVar1).isEqualTo(waitOtherVar2);
     }
 
     private Set<Variable> getUses(CFGNode node) {

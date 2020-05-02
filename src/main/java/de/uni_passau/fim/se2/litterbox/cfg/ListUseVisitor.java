@@ -82,7 +82,7 @@ public class ListUseVisitor implements ScratchVisitor {
 
     @Override
     public void visit(AttributeOf node) {
-        // TODO: Handle this
+        // It seems AttributeOf cannot refer to lists
     }
 
     @Override
