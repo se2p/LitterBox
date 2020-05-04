@@ -20,22 +20,21 @@ package de.uni_passau.fim.se2.litterbox.ast.model.event;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
-import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Identifier;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
-public class VariableAboveValue extends AbstractNode implements Event {
+public class AttributeAboveValue extends AbstractNode implements Event {
 
-    private final Identifier identifier;
+    private final EventAttribute attribute;
     private final NumExpr value;
 
-    public VariableAboveValue(Identifier identifier, NumExpr value) {
-        super(identifier, value);
-        this.identifier = identifier;
+    public AttributeAboveValue(EventAttribute attribute, NumExpr value) {
+        super(attribute, value);
+        this.attribute = attribute;
         this.value = value;
     }
 
-    public Identifier getIdentifier() {
-        return identifier;
+    public EventAttribute getAttribute() {
+        return attribute;
     }
 
     public NumExpr getValue() {

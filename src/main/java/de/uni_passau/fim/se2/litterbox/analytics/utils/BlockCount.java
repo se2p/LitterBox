@@ -27,7 +27,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.AsBool;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.ListContains;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.StringContains;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.AsListIndex;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.ExpressionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
@@ -447,7 +446,7 @@ public class BlockCount implements IssueFinder, ScratchVisitor {
     }
 
     @Override
-    public void visit(VariableAboveValue node) {
+    public void visit(AttributeAboveValue node) {
         if (insideScript || insideProcedure) {
             count++;
         }
