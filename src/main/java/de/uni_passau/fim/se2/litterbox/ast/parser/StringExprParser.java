@@ -182,8 +182,9 @@ public class StringExprParser {
                         localIdentifier = ExpressionParser.parseExpr(exprBlock, OBJECT_KEY, allBlocks);
                     }
                 } else {
-                    localIdentifier = new StrId(""); //TODO still correct?
+                    localIdentifier = ExpressionParser.parseExpr(exprBlock, OBJECT_KEY, allBlocks);
                 }
+
                 String prop = exprBlock.get(FIELDS_KEY).get("PROPERTY").get(0).asText();
                 Attribute property;
                 switch (prop) {
