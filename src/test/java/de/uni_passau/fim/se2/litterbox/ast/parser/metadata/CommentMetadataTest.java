@@ -2,17 +2,16 @@ package de.uni_passau.fim.se2.litterbox.ast.parser.metadata;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.CommentMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astLists.CommentMetadataList;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astLists.ListMetadataList;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+
+import static de.uni_passau.fim.se2.litterbox.ast.Constants.COMMENTS_KEY;
+import static de.uni_passau.fim.se2.litterbox.ast.Constants.TARGETS_KEY;
 
 public class CommentMetadataTest {
     private static ObjectMapper mapper = new ObjectMapper();
@@ -29,15 +28,15 @@ public class CommentMetadataTest {
 
     @Test
     public void testEmptyProgram() {
-        CommentMetadataList monitors = CommentMetadataListParser.parse(empty.get("targets").get(0)
-                .get("comments"));
+        CommentMetadataList monitors = CommentMetadataListParser.parse(empty.get(TARGETS_KEY).get(0)
+                .get(COMMENTS_KEY));
         Assertions.assertEquals(0, monitors.getList().size());
     }
 
     @Test
     public void testCommentsProgram() {
-        CommentMetadataList monitors = CommentMetadataListParser.parse(prog.get("targets").get(1)
-                .get("comments"));
+        CommentMetadataList monitors = CommentMetadataListParser.parse(prog.get(TARGETS_KEY).get(1)
+                .get(COMMENTS_KEY));
         Assertions.assertEquals(2, monitors.getList().size());
         Assertions.assertEquals("csOuoew*W[q[5bX=8_ah", monitors.getList().get(0).getCommentId());
         Assertions.assertEquals("z;/~(2Z_Xv9~^9yakTU1", monitors.getList().get(0).getBlockId());

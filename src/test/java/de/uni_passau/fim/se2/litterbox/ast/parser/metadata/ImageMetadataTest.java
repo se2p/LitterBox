@@ -10,6 +10,9 @@ import org.junit.jupiter.api.Test;
 import java.io.File;
 import java.io.IOException;
 
+import static de.uni_passau.fim.se2.litterbox.ast.Constants.COSTUMES_KEY;
+import static de.uni_passau.fim.se2.litterbox.ast.Constants.TARGETS_KEY;
+
 public class ImageMetadataTest {
 
     private static ObjectMapper mapper = new ObjectMapper();
@@ -23,8 +26,8 @@ public class ImageMetadataTest {
 
     @Test
     public void testEmptyProgram() {
-        ImageMetadataList meta = ImageMetadataListParser.parse(empty.get("targets").get(0)
-                .get("costumes"));
+        ImageMetadataList meta = ImageMetadataListParser.parse(empty.get(TARGETS_KEY).get(0)
+                .get(COSTUMES_KEY));
         Assertions.assertEquals(1, meta.getList().size());
         Assertions.assertEquals("cd21514d0531fdffb22204e0ec5ed84a", meta.getList().get(0).getAssetId());
         Assertions.assertEquals("svg", meta.getList().get(0).getDataFormat());

@@ -10,6 +10,9 @@ import org.junit.jupiter.api.Test;
 import java.io.File;
 import java.io.IOException;
 
+import static de.uni_passau.fim.se2.litterbox.ast.Constants.BROADCASTS_KEY;
+import static de.uni_passau.fim.se2.litterbox.ast.Constants.TARGETS_KEY;
+
 public class BroadcastMetadataTest {
     private static ObjectMapper mapper = new ObjectMapper();
     private static JsonNode prog;
@@ -25,15 +28,15 @@ public class BroadcastMetadataTest {
 
     @Test
     public void testEmptyProgram() {
-        BroadcastMetadataList monitors = BroadcastMetadataListParser.parse(empty.get("targets").get(0)
-                .get("broadcasts"));
+        BroadcastMetadataList monitors = BroadcastMetadataListParser.parse(empty.get(TARGETS_KEY).get(0)
+                .get(BROADCASTS_KEY));
         Assertions.assertEquals(0, monitors.getList().size());
     }
 
     @Test
     public void testBroadcastsProgram() {
-        BroadcastMetadataList monitors = BroadcastMetadataListParser.parse(prog.get("targets").get(0)
-                .get("broadcasts"));
+        BroadcastMetadataList monitors = BroadcastMetadataListParser.parse(prog.get(TARGETS_KEY).get(0)
+                .get(BROADCASTS_KEY));
         Assertions.assertEquals(5, monitors.getList().size());
         Assertions.assertEquals("0kl{~LnXg|/EA][m;V;9", monitors.getList().get(0).getBroadcastID());
         Assertions.assertEquals("received", monitors.getList().get(0).getBroadcastName());

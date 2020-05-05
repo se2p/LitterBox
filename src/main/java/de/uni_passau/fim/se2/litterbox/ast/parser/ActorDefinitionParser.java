@@ -60,21 +60,21 @@ public class ActorDefinitionParser {
         LocalIdentifier localIdentifier = new StrId(actorDefinitionNode.get(NAME_KEY).asText());
         currentActor = localIdentifier;
 
-        List<Resource> res = ResourceParser.parseSound(actorDefinitionNode.get("sounds"));
-        res.addAll(ResourceParser.parseCostume(actorDefinitionNode.get("costumes")));
+        List<Resource> res = ResourceParser.parseSound(actorDefinitionNode.get(SOUNDS_KEY));
+        res.addAll(ResourceParser.parseCostume(actorDefinitionNode.get(COSTUMES_KEY)));
         ResourceList resources = new ResourceList(res);
 
         List<DeclarationStmt> decls = DeclarationStmtParser
-                .parseLists(actorDefinitionNode.get("lists"), localIdentifier.getName(),
+                .parseLists(actorDefinitionNode.get(LISTS_KEY), localIdentifier.getName(),
                         actorDefinitionNode.get(IS_STAGE_KEY).asBoolean());
-        decls.addAll(DeclarationStmtParser.parseBroadcasts(actorDefinitionNode.get("broadcasts"), localIdentifier.getName(),
+        decls.addAll(DeclarationStmtParser.parseBroadcasts(actorDefinitionNode.get(BROADCASTS_KEY), localIdentifier.getName(),
                 actorDefinitionNode.get(IS_STAGE_KEY).asBoolean()));
-        decls.addAll(DeclarationStmtParser.parseVariables(actorDefinitionNode.get("variables"), localIdentifier.getName(),
+        decls.addAll(DeclarationStmtParser.parseVariables(actorDefinitionNode.get(VARIABLES_KEY), localIdentifier.getName(),
                 actorDefinitionNode.get(IS_STAGE_KEY).asBoolean()));
         decls.addAll(DeclarationStmtParser.parseAttributeDeclarations(actorDefinitionNode));
         DeclarationStmtList declarations = new DeclarationStmtList(decls);
 
-        JsonNode allBlocks = actorDefinitionNode.get("blocks");
+        JsonNode allBlocks = actorDefinitionNode.get(BLOCKS_KEY);
         Iterator<String> fieldIterator = allBlocks.fieldNames();
         Iterable<String> iterable = () -> fieldIterator;
         Stream<String> stream = StreamSupport.stream(iterable.spliterator(), false);
@@ -83,8 +83,8 @@ public class ActorDefinitionParser {
         // the reason for this is, that menues count as topLevel in the Json File
         // if the menu is replaced by another expression
         List<String> topLevelNodes = stream.filter(fieldName ->
-                (allBlocks.get(fieldName).has("topLevel") &&
-                        allBlocks.get(fieldName).get("topLevel").asBoolean()) &&
+                (allBlocks.get(fieldName).has(TOPLEVEL_KEY) &&
+                        allBlocks.get(fieldName).get(TOPLEVEL_KEY).asBoolean()) &&
                         !DependentBlockOpcodes.contains(allBlocks.get(fieldName).get(OPCODE_KEY).asText()))
                 .collect(Collectors.toList());
 
@@ -100,9 +100,9 @@ public class ActorDefinitionParser {
         ProcedureDefinitionList procDeclList = ProcDefinitionParser.parse(allBlocks, localIdentifier.getName());
 
         List<SetStmt> setStmtList = DeclarationStmtParser.parseAttributeDeclarationSetStmts(actorDefinitionNode);
-        setStmtList.addAll(DeclarationStmtParser.parseListDeclarationSetStmts(actorDefinitionNode.get("lists"),
+        setStmtList.addAll(DeclarationStmtParser.parseListDeclarationSetStmts(actorDefinitionNode.get(LISTS_KEY),
                 localIdentifier.getName()));
-        setStmtList.addAll(DeclarationStmtParser.parseVariableDeclarationSetStmts(actorDefinitionNode.get("variables"),
+        setStmtList.addAll(DeclarationStmtParser.parseVariableDeclarationSetStmts(actorDefinitionNode.get(VARIABLES_KEY),
                 localIdentifier.getName()));
         return new ActorDefinition(actorType, localIdentifier, resources, declarations, new SetStmtList(setStmtList),
                 procDeclList,

@@ -26,8 +26,8 @@ public class MonitorMetadataParser {
         if (!(monitorNode.get("spriteName") instanceof NullNode)) {
             spriteName = monitorNode.get("spriteName").asText();
         }
-        double width = monitorNode.get("width").asDouble();
-        double height = monitorNode.get("height").asDouble();
+        double width = monitorNode.get(WIDTH_KEY).asDouble();
+        double height = monitorNode.get(HEIGHT_KEY).asDouble();
         double x = monitorNode.get(X_KEY).asDouble();
         double y = monitorNode.get(Y_KEY).asDouble();
         boolean visible = monitorNode.get(VISIBLE_KEY).asBoolean();

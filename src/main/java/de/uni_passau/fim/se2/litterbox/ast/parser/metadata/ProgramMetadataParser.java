@@ -6,11 +6,22 @@ import de.uni_passau.fim.se2.litterbox.ast.model.metadata.MetaMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.ProgramMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astLists.MonitorMetadataList;
 
+import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
+
 public class ProgramMetadataParser {
     public static ProgramMetadata parse(JsonNode program) {
-        MetaMetadata meta = MetaMetadataParser.parse(program.get("meta"));
-        ExtensionMetadata extensionMetadata = ExtensionMetadataParser.parse(program.get("extensions"));
-        MonitorMetadataList monitorMetadataList = MonitorMetadataListParser.parse(program.get("monitors"));
+        MonitorMetadataList monitorMetadataList = null;
+        MetaMetadata meta = null;
+        ExtensionMetadata extensionMetadata = null;
+        if (program.has(META_KEY)) {
+            meta = MetaMetadataParser.parse(program.get(META_KEY));
+        }
+        if (program.has(EXTENSIONS_KEY)) {
+            extensionMetadata = ExtensionMetadataParser.parse(program.get(EXTENSIONS_KEY));
+        }
+        if (program.has(MONITORS_KEY)) {
+            monitorMetadataList = MonitorMetadataListParser.parse(program.get(MONITORS_KEY));
+        }
         return new ProgramMetadata(monitorMetadataList, extensionMetadata, meta);
     }
 }

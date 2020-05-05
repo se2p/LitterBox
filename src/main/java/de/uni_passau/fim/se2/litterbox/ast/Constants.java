@@ -221,4 +221,20 @@ public class Constants {
     public final static String VOLUME_KEY_CAPS = "VOLUME";
     public final static String HEIGHT_KEY = "height";
     public final static String WIDTH_KEY = "width";
+    public final static String COMMENTS_KEY = "comments";
+    public final static String CURRENT_COSTUME_KEY = "currentCostume";
+    public final static String BROADCASTS_KEY = "broadcasts";
+    public final static String LISTS_KEY = "lists";
+    public final static String VARIABLES_KEY = "variables";
+    public final static String COSTUMES_KEY = "costumes";
+    public final static String SOUNDS_KEY = "sounds";
+    public final static String META_KEY = "meta";
+    public final static String EXTENSIONS_KEY = "extensions";
+    public final static String MONITORS_KEY = "monitors";
+    public final static String SEMVER_KEY = "semver";
+    public final static String VM_KEY = "vm";
+    public final static String AGENT_KEY = "agent";
+    public final static String BLOCKS_KEY = "blocks";
+    public final static String TOPLEVEL_KEY = "topLevel";
+    public final static String TARGETS_KEY = "targets";
 }
