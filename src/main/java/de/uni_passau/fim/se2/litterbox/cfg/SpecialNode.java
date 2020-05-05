@@ -16,43 +16,40 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.uni_passau.fim.se2.litterbox.ast.model.identifier;
 
-import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
-import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
+package de.uni_passau.fim.se2.litterbox.cfg;
+
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 
 import java.util.Objects;
 
-public abstract class LocalIdentifier extends AbstractNode implements Identifier, Expression {
-    private final StringLiteral name;
+public class SpecialNode extends CFGNode {
+    private String name;
 
-    public LocalIdentifier(StringLiteral name) {
-        super(name);
-        this.name=name;
-    }
-
-    public String getName() {
-        return name.getText();
+    public SpecialNode(String name) {
+        this.name = name;
     }
 
     @Override
-    public void accept(ScratchVisitor visitor) {
-        visitor.visit(this);
+    public ASTNode getASTNode() {
+        return null;
+    }
+
+    @Override
+    public String toString() {
+        return name;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof LocalIdentifier)) return false;
-        if (!super.equals(o)) return false;
-        LocalIdentifier that = (LocalIdentifier) o;
+        if (o == null || getClass() != o.getClass()) return false;
+        SpecialNode that = (SpecialNode) o;
         return Objects.equals(name, that.name);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), name);
+        return Objects.hash(name);
     }
 }

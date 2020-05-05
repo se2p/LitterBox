@@ -20,12 +20,10 @@ package de.uni_passau.fim.se2.litterbox.ast.parser.symboltable;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.type.Type;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
+import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class ProcedureDefinitionNameMapping {
 
@@ -60,6 +58,16 @@ public class ProcedureDefinitionNameMapping {
 
     public Map<String, Map<LocalIdentifier, ProcedureInfo>> getProcedures() {
         return procedures;
+    }
+
+    public ProcedureInfo getProcedureForHash(String actorName, String jsonHash) {
+        Map<LocalIdentifier, ProcedureInfo> procedureMap = getProcedures().get(actorName);
+        return procedureMap.entrySet().stream().filter(e -> e.getKey().getName().equals(jsonHash)).map(Map.Entry::getValue).findFirst().get();
+    }
+
+    public ProcedureInfo getProcedureForName(String actorName, String jsonHash) {
+        Map<LocalIdentifier, ProcedureInfo> procedureMap = getProcedures().get(actorName);
+        return procedureMap.values().stream().filter(p -> p.getName().equals(jsonHash)).findFirst().get();
     }
 
     public void addMalformated(String malformated){
