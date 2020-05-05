@@ -10,8 +10,8 @@ public class TopBlockMetadata extends BlockMetadata {
 
     public TopBlockMetadata(CommentMetadata commentMetadata, String blockId, String opcode, String next,
                             String parent, InputMetadataList inputMetadata, InputMetadataList fields,
-                            boolean topLevel, boolean shadow, double xPos, double yPos) {
-        super(commentMetadata, blockId, opcode, next, parent, inputMetadata, fields, topLevel, shadow);
+                            boolean topLevel, boolean shadow, MutationMetadata mutation, double xPos, double yPos) {
+        super(commentMetadata, blockId, opcode, next, parent, inputMetadata, fields, topLevel, shadow, mutation);
         this.xPos = xPos;
         this.yPos = yPos;
     }

@@ -16,11 +16,12 @@ public class BlockMetadata extends AbstractNode implements Metadata {
     private InputMetadataList fields;
     private boolean topLevel;
     private boolean shadow;
+    private MutationMetadata mutation;
 
     public BlockMetadata(CommentMetadata commentMetadata, String blockId, String opcode, String next, String parent,
                          InputMetadataList inputMetadata, InputMetadataList fields, boolean topLevel,
-                         boolean shadow) {
-        super(commentMetadata, inputMetadata, fields);
+                         boolean shadow, MutationMetadata mutation) {
+        super(commentMetadata, inputMetadata, fields, mutation);
         this.commentMetadata = commentMetadata;
         this.blockId = blockId;
         this.opcode = opcode;
@@ -30,6 +31,7 @@ public class BlockMetadata extends AbstractNode implements Metadata {
         this.fields = fields;
         this.topLevel = topLevel;
         this.shadow = shadow;
+        this.mutation = mutation;
     }
 
     public CommentMetadata getCommentMetadata() {
@@ -66,6 +68,10 @@ public class BlockMetadata extends AbstractNode implements Metadata {
 
     public boolean isShadow() {
         return shadow;
+    }
+
+    public MutationMetadata getMutation() {
+        return mutation;
     }
 
     @Override
