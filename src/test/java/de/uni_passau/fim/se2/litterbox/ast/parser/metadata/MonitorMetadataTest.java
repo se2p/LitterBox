@@ -2,10 +2,8 @@ package de.uni_passau.fim.se2.litterbox.ast.parser.metadata;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.ExtensionMetadata;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.MonitorListMetadata;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.MonitorMetadata;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.MonitorSliderMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.monitor.MonitorListMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.monitor.MonitorSliderMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astLists.MonitorMetadataList;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;

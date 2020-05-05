@@ -4,9 +4,9 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.NullNode;
 import de.uni_passau.fim.se2.litterbox.ast.Constants;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.MonitorListMetadata;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.MonitorMetadata;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.MonitorSliderMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.monitor.MonitorListMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.monitor.MonitorMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.monitor.MonitorSliderMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astLists.MonitorParamMetadataList;
 
 import java.util.ArrayList;

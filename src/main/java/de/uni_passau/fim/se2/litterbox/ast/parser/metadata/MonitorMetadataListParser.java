@@ -2,7 +2,7 @@ package de.uni_passau.fim.se2.litterbox.ast.parser.metadata;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.MonitorMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.monitor.MonitorMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astLists.MonitorMetadataList;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 

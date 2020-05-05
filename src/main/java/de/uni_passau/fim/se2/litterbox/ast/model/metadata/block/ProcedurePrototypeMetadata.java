@@ -1,5 +1,6 @@
-package de.uni_passau.fim.se2.litterbox.ast.model.metadata;
+package de.uni_passau.fim.se2.litterbox.ast.model.metadata.block;
 
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.CommentMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astLists.InputMetadataList;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 

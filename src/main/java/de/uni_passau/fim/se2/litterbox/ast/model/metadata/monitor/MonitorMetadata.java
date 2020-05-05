@@ -1,6 +1,7 @@
-package de.uni_passau.fim.se2.litterbox.ast.model.metadata;
+package de.uni_passau.fim.se2.litterbox.ast.model.metadata.monitor;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.Metadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astLists.MonitorParamMetadataList;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
