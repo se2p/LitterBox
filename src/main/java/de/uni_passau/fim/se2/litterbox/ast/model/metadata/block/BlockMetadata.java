@@ -7,7 +7,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astLists.InputMetadata
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 public class BlockMetadata extends AbstractNode implements Metadata {
-    private CommentMetadata commentMetadata;
+    private String commentId;
     private String blockId;
     private String opcode;
     private String next;
@@ -18,11 +18,11 @@ public class BlockMetadata extends AbstractNode implements Metadata {
     private boolean shadow;
     private MutationMetadata mutation;
 
-    public BlockMetadata(CommentMetadata commentMetadata, String blockId, String opcode, String next, String parent,
+    public BlockMetadata(String commentId, String blockId, String opcode, String next, String parent,
                          InputMetadataList inputMetadata, InputMetadataList fields, boolean topLevel,
                          boolean shadow, MutationMetadata mutation) {
-        super(commentMetadata, inputMetadata, fields, mutation);
-        this.commentMetadata = commentMetadata;
+        super(inputMetadata, fields, mutation);
+        this.commentId = commentId;
         this.blockId = blockId;
         this.opcode = opcode;
         this.next = next;
@@ -34,8 +34,8 @@ public class BlockMetadata extends AbstractNode implements Metadata {
         this.mutation = mutation;
     }
 
-    public CommentMetadata getCommentMetadata() {
-        return commentMetadata;
+    public String getCommentId() {
+        return commentId;
     }
 
     public String getBlockId() {

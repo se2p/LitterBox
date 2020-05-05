@@ -238,4 +238,6 @@ public class Constants {
     public final static String TOPLEVEL_KEY = "topLevel";
     public final static String TARGETS_KEY = "targets";
     public final static String TEXT_TO_SPEECH_KEY ="textToSpeechLanguage";
+    public final static String COMMENT_KEY = "comment";
+    public final static String SHADOW_KEY = "shadow";
 }
