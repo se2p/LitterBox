@@ -36,6 +36,10 @@ public class BlockMetadata extends AbstractNode implements Metadata {
         return commentMetadata;
     }
 
+    public String getBlockId() {
+        return blockId;
+    }
+
     public String getOpcode() {
         return opcode;
     }

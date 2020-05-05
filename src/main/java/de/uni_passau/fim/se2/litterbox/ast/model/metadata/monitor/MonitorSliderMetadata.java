@@ -36,6 +36,10 @@ public class MonitorSliderMetadata extends MonitorMetadata {
         return isDiscrete;
     }
 
+    public String getValue() {
+        return value;
+    }
+
     @Override
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);
