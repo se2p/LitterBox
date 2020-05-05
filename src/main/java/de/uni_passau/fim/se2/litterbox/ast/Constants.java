@@ -237,4 +237,5 @@ public class Constants {
     public final static String BLOCKS_KEY = "blocks";
     public final static String TOPLEVEL_KEY = "topLevel";
     public final static String TARGETS_KEY = "targets";
+    public final static String TEXT_TO_SPEECH_KEY ="textToSpeechLanguage";
 }

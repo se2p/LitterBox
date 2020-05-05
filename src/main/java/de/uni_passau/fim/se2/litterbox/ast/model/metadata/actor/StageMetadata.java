@@ -4,14 +4,15 @@ import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astLists.*;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 public class StageMetadata extends ActorMetadata {
-    private int tempo;
-    private int videoTransparency;
+    private double tempo;
+    private double videoTransparency;
     private String videoState;
     private String textToSpeechLanguage;
 
     public StageMetadata(CommentMetadataList commentsMetadata, VariableMetadataList variables, ListMetadataList lists
             , BroadcastMetadataList broadcasts, int currentCostume, ImageMetadataList costumes,
-                         SoundMetadataList sounds, int volume, int layerOrder, int tempo, int videoTransparency,
+                         SoundMetadataList sounds, double volume, int layerOrder, double tempo,
+                         double videoTransparency,
                          String videoState, String textToSpeechLanguage) {
         super(commentsMetadata, variables, lists, broadcasts, currentCostume, costumes, sounds, volume, layerOrder);
         this.tempo = tempo;
@@ -20,11 +21,11 @@ public class StageMetadata extends ActorMetadata {
         this.textToSpeechLanguage = textToSpeechLanguage;
     }
 
-    public int getTempo() {
+    public double getTempo() {
         return tempo;
     }
 
-    public int getVideoTransparency() {
+    public double getVideoTransparency() {
         return videoTransparency;
     }
 

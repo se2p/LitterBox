@@ -190,7 +190,7 @@ public class DeclarationStmtParser {
             list.add(new DeclarationAttributeAsTypeStmt(keyExpr, new NumberType()));
         }
 
-        if (actorDefinitionNode.get("isStage").asBoolean()) {
+        if (actorDefinitionNode.get(IS_STAGE_KEY).asBoolean()) {
 
             if (actorDefinitionNode.has(TEMPO_KEY)) {
                 keyExpr = new StringLiteral(TEMPO_KEY);
@@ -288,7 +288,7 @@ public class DeclarationStmtParser {
             list.add(setStmt);
         }
 
-        if (actorDefinitionNode.get("isStage").asBoolean()) {
+        if (actorDefinitionNode.get(IS_STAGE_KEY).asBoolean()) {
 
             if (actorDefinitionNode.has(TEMPO_KEY)) {
                 keyExpr = new StringLiteral(TEMPO_KEY);
