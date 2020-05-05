@@ -1,6 +1,7 @@
 package de.uni_passau.fim.se2.litterbox.ast.parser.metadata;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.NullNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.actor.ActorMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.actor.SpriteMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.actor.StageMetadata;
@@ -61,7 +62,7 @@ public class ActorMetadataParser {
                 videoState = actorNode.get(VIDSTATE_KEY).asText();
             }
             String textToSpeechLanguage = null;
-            if (actorNode.has(TEXT_TO_SPEECH_KEY)) {
+            if (actorNode.has(TEXT_TO_SPEECH_KEY) && !(actorNode.get(TEXT_TO_SPEECH_KEY) instanceof NullNode)) {
                 textToSpeechLanguage = actorNode.get(TEXT_TO_SPEECH_KEY).asText();
             }
             return new StageMetadata(commentsMetadata, variables, lists, broadcasts, currentCostume, costumes, sounds,
