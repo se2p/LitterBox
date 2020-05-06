@@ -204,13 +204,23 @@
           "parent": "$GeyMV0(T2|(]Ed=WhYy",
           "inputs": {
             "DURATION": [
-              1,
+              3,
+              "L$DzhY,d;L%t+*!M{*x;",
               [
                 5,
                 "1"
               ]
             ]
           },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "L$DzhY,d;L%t+*!M{*x;": {
+          "opcode": "sound_volume",
+          "next": null,
+          "parent": "ta`$d#%;xETkGw6iGLbs",
+          "inputs": {},
           "fields": {},
           "shadow": false,
           "topLevel": false

@@ -117,6 +117,16 @@ public class Constants {
     public static final int LIST_NAME_POS = 0;
 
     /**
+     * The position of the unique identifier in a DATA_INPUT.
+     */
+    public static final int DATA_INPUT_IDENTIFIER_POS = 2;
+
+    /**
+     * The position of the name in a DATA_INPUT.
+     */
+    public static final int DATA_INPUT_NAME_POS = 1;
+
+    /**
      * The position of the unique identifier in a VARIABLE.
      */
     public static final int VARIABLE_IDENTIFIER_POS = 1;
@@ -237,7 +247,7 @@ public class Constants {
     public final static String BLOCKS_KEY = "blocks";
     public final static String TOPLEVEL_KEY = "topLevel";
     public final static String TARGETS_KEY = "targets";
-    public final static String TEXT_TO_SPEECH_KEY ="textToSpeechLanguage";
+    public final static String TEXT_TO_SPEECH_KEY = "textToSpeechLanguage";
     public final static String COMMENT_KEY = "comment";
     public final static String SHADOW_KEY = "shadow";
 }
