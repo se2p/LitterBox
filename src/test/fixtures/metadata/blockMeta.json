@@ -9,10 +9,13 @@
           0
         ]
       },
-      "lists": {},
-      "broadcasts": {
-        "27r,|@;0onf||.p@1,3,": "message1"
+      "lists": {
+        ",RQ%ov+voxA{ud)}En#-": [
+          "TestList",
+          []
+        ]
       },
+      "broadcasts": {},
       "blocks": {},
       "comments": {},
       "currentCostume": 0,
@@ -51,30 +54,44 @@
       "lists": {},
       "broadcasts": {},
       "blocks": {
-        "CM!HbONV=YE#6b)gIS#t": {
+        "GKr#[hOQWwm(reaPtK%R": [
+          12,
+          "my variable",
+          "`jEk@4|i[#Fk?(8x)AV.-my variable",
+          471,
+          383
+        ],
+        "MB.bbXFHwgb6k}HA{.fb": [
+          13,
+          "TestList",
+          ",RQ%ov+voxA{ud)}En#-",
+          485,
+          480
+        ],
+        "X)N~xB@[E,i0S}Vwwtjm": {
           "opcode": "procedures_definition",
-          "next": null,
+          "next": "$C@+K-:6ie`W)?I*4jc9",
           "parent": null,
           "inputs": {
             "custom_block": [
               1,
-              "S@lD`A/#c{kUQTH!gvpr"
+              "Vr$zTl8mo1W,U?+q6,T{"
             ]
           },
           "fields": {},
           "shadow": false,
           "topLevel": true,
-          "x": 44,
-          "y": 44
+          "x": 56,
+          "y": 184
         },
-        "S@lD`A/#c{kUQTH!gvpr": {
+        "Vr$zTl8mo1W,U?+q6,T{": {
           "opcode": "procedures_prototype",
           "next": null,
-          "parent": "CM!HbONV=YE#6b)gIS#t",
+          "parent": "X)N~xB@[E,i0S}Vwwtjm",
           "inputs": {
-            "@h-!PEWHMbp(R8avdUKm": [
+            "k~QZ.p5)uSGZZ]?@TWD$": [
               1,
-              "3Dyj%i`(q;QQ[3?Uqf@-"
+              "c@bcun.aPW8(fPX~fG]f"
             ]
           },
           "fields": {},
@@ -84,16 +101,16 @@
             "tagName": "mutation",
             "children": [],
             "proccode": "TestMethod %s",
-            "argumentids": "[\"@h-!PEWHMbp(R8avdUKm\"]",
+            "argumentids": "[\"k~QZ.p5)uSGZZ]?@TWD$\"]",
             "argumentnames": "[\"number or text\"]",
             "argumentdefaults": "[\"\"]",
             "warp": "false"
           }
         },
-        "3Dyj%i`(q;QQ[3?Uqf@-": {
+        "c@bcun.aPW8(fPX~fG]f": {
           "opcode": "argument_reporter_string_number",
           "next": null,
-          "parent": "S@lD`A/#c{kUQTH!gvpr",
+          "parent": "Vr$zTl8mo1W,U?+q6,T{",
           "inputs": {},
           "fields": {
             "VALUE": [
@@ -104,33 +121,7 @@
           "shadow": true,
           "topLevel": false
         },
-        "q9ZbNoim:e`/;y-_4bQI": {
-          "opcode": "procedures_call",
-          "next": null,
-          "parent": null,
-          "inputs": {
-            "@h-!PEWHMbp(R8avdUKm": [
-              1,
-              [
-                10,
-                "10"
-              ]
-            ]
-          },
-          "fields": {},
-          "shadow": false,
-          "topLevel": true,
-          "x": 704,
-          "y": 150,
-          "mutation": {
-            "tagName": "mutation",
-            "children": [],
-            "proccode": "TestMethod %s",
-            "argumentids": "[\"@h-!PEWHMbp(R8avdUKm\"]",
-            "warp": "false"
-          }
-        },
-        "7}{h-7p:Rx!=R0(7/a}(": {
+        "3D+M5Gsu_,ms3uB_iK$y": {
           "opcode": "argument_reporter_string_number",
           "next": null,
           "parent": null,
@@ -143,13 +134,39 @@
           },
           "shadow": false,
           "topLevel": true,
-          "x": 402,
-          "y": 288
+          "x": 471,
+          "y": 253
         },
-        "a~JYi0t+i|Yz]5X=YRYw": {
-          "opcode": "looks_sayforsecs",
+        "O3bG_[t(B3p}k0KF:.,|": {
+          "opcode": "procedures_call",
           "next": null,
           "parent": null,
+          "inputs": {
+            "k~QZ.p5)uSGZZ]?@TWD$": [
+              1,
+              [
+                10,
+                ""
+              ]
+            ]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": true,
+          "x": 846,
+          "y": 255,
+          "mutation": {
+            "tagName": "mutation",
+            "children": [],
+            "proccode": "TestMethod %s",
+            "argumentids": "[\"k~QZ.p5)uSGZZ]?@TWD$\"]",
+            "warp": "false"
+          }
+        },
+        "$C@+K-:6ie`W)?I*4jc9": {
+          "opcode": "looks_sayforsecs",
+          "next": null,
+          "parent": "X)N~xB@[E,i0S}Vwwtjm",
           "inputs": {
             "MESSAGE": [
               1,
@@ -168,36 +185,29 @@
           },
           "fields": {},
           "shadow": false,
-          "topLevel": true,
-          "x": 692,
-          "y": 384
+          "topLevel": false
         },
-        "+Cb+wxs1`u;N1AUu|iZW": {
-          "opcode": "event_whenbroadcastreceived",
-          "next": "yay%pKS{J.Xh+-3FYw#^",
+        "$GeyMV0(T2|(]Ed=WhYy": {
+          "opcode": "event_whenflagclicked",
+          "next": "ta`$d#%;xETkGw6iGLbs",
           "parent": null,
           "inputs": {},
-          "fields": {
-            "BROADCAST_OPTION": [
-              "message1",
-              "27r,|@;0onf||.p@1,3,"
-            ]
-          },
+          "fields": {},
           "shadow": false,
           "topLevel": true,
-          "x": 243,
-          "y": 419
+          "x": 101,
+          "y": 566
         },
-        "yay%pKS{J.Xh+-3FYw#^": {
-          "opcode": "motion_movesteps",
+        "ta`$d#%;xETkGw6iGLbs": {
+          "opcode": "control_wait",
           "next": null,
-          "parent": "+Cb+wxs1`u;N1AUu|iZW",
+          "parent": "$GeyMV0(T2|(]Ed=WhYy",
           "inputs": {
-            "STEPS": [
+            "DURATION": [
               1,
               [
-                4,
-                "10"
+                5,
+                "1"
               ]
             ]
           },
@@ -250,7 +260,23 @@
       "rotationStyle": "all around"
     }
   ],
-  "monitors": [],
+  "monitors": [
+    {
+      "id": ",RQ%ov+voxA{ud)}En#-",
+      "mode": "list",
+      "opcode": "data_listcontents",
+      "params": {
+        "LIST": "TestList"
+      },
+      "spriteName": null,
+      "value": [],
+      "width": 0,
+      "height": 0,
+      "x": 5,
+      "y": 5,
+      "visible": true
+    }
+  ],
   "extensions": [],
   "meta": {
     "semver": "3.0.0",

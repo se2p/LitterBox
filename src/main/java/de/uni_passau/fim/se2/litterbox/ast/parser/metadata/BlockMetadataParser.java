@@ -3,15 +3,15 @@ package de.uni_passau.fim.se2.litterbox.ast.parser.metadata;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.NullNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astLists.InputMetadataList;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.MutationMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoMutationMetadata;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.TopBlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.TopNonDataBlockMetadata;
 
 import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 
 public class BlockMetadataParser {
-    public static BlockMetadata parse(String blockId, JsonNode blockNode) {
+    public static NonDataBlockMetadata parse(String blockId, JsonNode blockNode) {
         if (blockNode.has(OPCODE_KEY)) {
             String commentId = null;
             if (blockNode.has(COMMENT_KEY)) {
@@ -37,13 +37,13 @@ public class BlockMetadataParser {
                 mutation = new NoMutationMetadata();
             }
             if (!topLevel) {
-                return new BlockMetadata(commentId, blockId, opcode, next, parent, inputMetadata, fields, topLevel,
+                return new NonDataBlockMetadata(commentId, blockId, opcode, next, parent, inputMetadata, fields, topLevel,
                         shadow,
                         mutation);
             }
             double x = blockNode.get(X_KEY).asDouble();
             double y = blockNode.get(Y_KEY).asDouble();
-            return new TopBlockMetadata(commentId, blockId, opcode, next, parent, inputMetadata, fields, topLevel,
+            return new TopNonDataBlockMetadata(commentId, blockId, opcode, next, parent, inputMetadata, fields, topLevel,
                     shadow,
                     mutation, x, y);
         } else {
