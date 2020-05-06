@@ -1,8 +1,7 @@
 package de.uni_passau.fim.se2.litterbox.ast.model.metadata.block;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.CommentMetadata;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.Metadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astLists.FieldsMetadataList;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astLists.InputMetadataList;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
@@ -13,13 +12,13 @@ public class NonDataBlockMetadata extends AbstractNode implements BlockMetadata 
     private String next;
     private String parent;
     private InputMetadataList inputMetadata;
-    private InputMetadataList fields;
+    private FieldsMetadataList fields;
     private boolean topLevel;
     private boolean shadow;
     private MutationMetadata mutation;
 
     public NonDataBlockMetadata(String commentId, String blockId, String opcode, String next, String parent,
-                                InputMetadataList inputMetadata, InputMetadataList fields, boolean topLevel,
+                                InputMetadataList inputMetadata, FieldsMetadataList fields, boolean topLevel,
                                 boolean shadow, MutationMetadata mutation) {
         super(inputMetadata, fields, mutation);
         this.commentId = commentId;
@@ -58,7 +57,7 @@ public class NonDataBlockMetadata extends AbstractNode implements BlockMetadata 
         return inputMetadata;
     }
 
-    public InputMetadataList getFields() {
+    public FieldsMetadataList getFields() {
         return fields;
     }
 

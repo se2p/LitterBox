@@ -3,6 +3,7 @@ package de.uni_passau.fim.se2.litterbox.ast.parser.metadata;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.NullNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astLists.FieldsMetadataList;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astLists.InputMetadataList;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.*;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
@@ -26,7 +27,7 @@ public class BlockMetadataParser {
                 parent = blockNode.get(PARENT_KEY).asText();
             }
             InputMetadataList inputMetadata = InputMetadataListParser.parse(blockNode.get(INPUTS_KEY));
-            InputMetadataList fields = InputMetadataListParser.parse(blockNode.get(FIELDS_KEY));
+            FieldsMetadataList fields = FieldsMetadataListParser.parse(blockNode.get(FIELDS_KEY));
             boolean topLevel = blockNode.get(TOPLEVEL_KEY).asBoolean();
             boolean shadow = blockNode.get(SHADOW_KEY).asBoolean();
             MutationMetadata mutation;

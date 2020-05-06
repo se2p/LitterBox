@@ -102,6 +102,11 @@ public class Constants {
     public static final int FIELD_VALUE = 0;
 
     /**
+     * The position of the field reference in the field data array.
+     */
+    public static final int FIELD_REFERENCE = 1;
+
+    /**
      * The position of the block ID in an expr array.
      */
     public static final int POS_BLOCK_ID = 1;
