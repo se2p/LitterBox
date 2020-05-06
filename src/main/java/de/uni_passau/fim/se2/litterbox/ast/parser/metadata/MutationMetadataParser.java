@@ -1,7 +1,8 @@
 package de.uni_passau.fim.se2.litterbox.ast.parser.metadata;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.ExistingMutationMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.ExistingCallMutationMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.ExistingPrototypeMutationMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.MutationMetadata;
 
 import java.util.ArrayList;
@@ -17,7 +18,7 @@ public class MutationMetadataParser {
         }
         List<String> children = new ArrayList<>();
         if (mutationNode.get(CHILDREN_KEY).size() > 0) {
-            System.err.println("THIS MUTATION HAS CHILDREN!");
+            throw new IllegalArgumentException("THIS MUTATION HAS CHILDREN!");
         }
         String procCode = null;
         if (mutationNode.has(PROCCODE_KEY)) {
@@ -39,6 +40,10 @@ public class MutationMetadataParser {
         if (mutationNode.has(WARP_KEY)) {
             warp = mutationNode.get(WARP_KEY).asBoolean();
         }
-        return new ExistingMutationMetadata(tagName, children, procCode, argumentIds, argumentNames, argumentDefaults, warp);
+        if (mutationNode.has(ARGUMENTNAMES_KEY) && mutationNode.has(ARGUMENTNAMES_KEY)) {
+            return new ExistingPrototypeMutationMetadata(tagName, children, procCode, argumentIds, warp,
+                    argumentNames, argumentDefaults);
+        } else
+            return new ExistingCallMutationMetadata(tagName, children, procCode, argumentIds, warp);
     }
 }
