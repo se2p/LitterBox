@@ -1,17 +1,16 @@
 package de.uni_passau.fim.se2.litterbox.ast.parser.metadata;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.NullNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astLists.InputMetadataList;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.MutationMetadata;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoMutationMetadata;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.TopNonDataBlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.*;
+import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 
 public class BlockMetadataParser {
-    public static NonDataBlockMetadata parse(String blockId, JsonNode blockNode) {
+    public static BlockMetadata parse(String blockId, JsonNode blockNode) {
         if (blockNode.has(OPCODE_KEY)) {
             String commentId = null;
             if (blockNode.has(COMMENT_KEY)) {
@@ -37,17 +36,29 @@ public class BlockMetadataParser {
                 mutation = new NoMutationMetadata();
             }
             if (!topLevel) {
-                return new NonDataBlockMetadata(commentId, blockId, opcode, next, parent, inputMetadata, fields, topLevel,
+                return new NonDataBlockMetadata(commentId, blockId, opcode, next, parent, inputMetadata, fields,
+                        topLevel,
                         shadow,
                         mutation);
             }
             double x = blockNode.get(X_KEY).asDouble();
             double y = blockNode.get(Y_KEY).asDouble();
-            return new TopNonDataBlockMetadata(commentId, blockId, opcode, next, parent, inputMetadata, fields, topLevel,
+            return new TopNonDataBlockMetadata(commentId, blockId, opcode, next, parent, inputMetadata, fields,
+                    topLevel,
                     shadow,
                     mutation, x, y);
         } else {
-            return null;
+            Preconditions.checkArgument(blockNode instanceof ArrayNode, "This is neither a variable or list nor a " +
+                    "NonDataBlock. ID: " + blockId);
+            ArrayNode data = (ArrayNode) blockNode;
+            Preconditions.checkArgument(data.size() == 5, "This data block does not have the required length for a " +
+                    "top level data block. ID: " + blockId);
+            int type = data.get(0).asInt();
+            String dataName = data.get(1).asText();
+            String dataReference = data.get(2).asText();
+            double x = data.get(3).asDouble();
+            double y = data.get(4).asDouble();
+            return new DataBlockMetadata(type, dataName, dataReference, x, y);
         }
     }
 }
