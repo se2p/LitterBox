@@ -127,6 +127,16 @@ public class Constants {
     public static final int DATA_INPUT_NAME_POS = 1;
 
     /**
+     * The position of the x in a top DATA_INPUT.
+     */
+    public static final int DATA_INPUT_X_POS = 3;
+
+    /**
+     * The position of the y in a top DATA_INPUT.
+     */
+    public static final int DATA_INPUT_Y_POS = 4;
+
+    /**
      * The position of the unique identifier in a VARIABLE.
      */
     public static final int VARIABLE_IDENTIFIER_POS = 1;
