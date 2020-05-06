@@ -4,16 +4,18 @@ import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.Metadata;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
+import java.util.List;
+
 public class ExistingMutationMetadata extends AbstractNode implements MutationMetadata {
     private String tagName;
-    private String[] children;
+    private List<String> children;
     private String procCode;
     private String argumentIds;
     private String argumentNames;
     private String argumentDefaults;
     private boolean warp;
 
-    public ExistingMutationMetadata(String tagName, String[] children, String procCode, String argumentIds,
+    public ExistingMutationMetadata(String tagName, List<String> children, String procCode, String argumentIds,
                                     String argumentNames, String argumentDefaults, boolean warp) {
         super();
         this.tagName = tagName;
@@ -29,7 +31,7 @@ public class ExistingMutationMetadata extends AbstractNode implements MutationMe
         return tagName;
     }
 
-    public String[] getChild() {
+    public List<String> getChild() {
         return children;
     }
 

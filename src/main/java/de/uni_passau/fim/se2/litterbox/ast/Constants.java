@@ -260,4 +260,8 @@ public class Constants {
     public final static String TEXT_TO_SPEECH_KEY = "textToSpeechLanguage";
     public final static String COMMENT_KEY = "comment";
     public final static String SHADOW_KEY = "shadow";
+    public final static String CHILDREN_KEY = "children";
+    public final static String TAG_NAME_KEY = "tagName";
+    public final static String ARGUMENT_DEFAULTS_KEY ="argumentdefaults";
+    public final static String WARP_KEY = "warp";
 }
