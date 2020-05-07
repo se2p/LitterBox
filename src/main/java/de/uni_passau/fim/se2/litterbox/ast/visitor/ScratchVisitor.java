@@ -3765,4 +3765,32 @@ public interface ScratchVisitor {
     default void visit(VariableMetadataList node) {
         visit((ASTNode) node);
     }
+
+    /**
+     * Default implementation of visit method for {@link NoMetadata}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node NoMetadata Node of which the children will
+     *             be iterated
+     */
+    default void visit(NoMetadata node) {
+        visit((Metadata) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link NoBlockMetadata}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node NoBlockMetadata Node of which the children will
+     *             be iterated
+     */
+    default void visit(NoBlockMetadata node) {
+        visit((BlockMetadata) node);
+    }
 }

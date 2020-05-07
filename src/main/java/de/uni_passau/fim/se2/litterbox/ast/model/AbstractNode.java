@@ -30,14 +30,13 @@ import java.util.Objects;
 public abstract class AbstractNode implements ASTNode {
 
     protected final List<? extends ASTNode> children;
-    private Metadata metadata;
 
     public AbstractNode(ASTNode... children) {
         this(Arrays.asList(children));
     }
 
     public AbstractNode(List<? extends ASTNode> children) {
-        //todo set metadata
+
         Preconditions.checkAllArgsNotNull(children);
         this.children = UnmodifiableListBuilder.<ASTNode>builder()
                 .addAll(children)
@@ -52,10 +51,6 @@ public abstract class AbstractNode implements ASTNode {
 
     public String getUniqueName() {
         return this.getClass().getSimpleName();
-    }
-
-    public Metadata getMetadata() {
-        return metadata;
     }
 
     @Override
