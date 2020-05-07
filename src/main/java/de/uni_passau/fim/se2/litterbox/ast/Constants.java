@@ -267,6 +267,14 @@ public class Constants {
     public final static String SHADOW_KEY = "shadow";
     public final static String CHILDREN_KEY = "children";
     public final static String TAG_NAME_KEY = "tagName";
-    public final static String ARGUMENT_DEFAULTS_KEY ="argumentdefaults";
+    public final static String ARGUMENT_DEFAULTS_KEY = "argumentdefaults";
     public final static String WARP_KEY = "warp";
+    public final static String ASSET_ID_KEY = "assetId";
+    public final static String MD5EXT_KEY = "md5ext";
+    public final static String DATA_FORMAT_KEY = "dataFormat";
+    public final static String BITMAP_KEY = "bitmapResolution";
+    public final static String ROTATIONX_KEY = "rotationCenterX";
+    public final static String ROTATIONY_KEY = "rotationCenterY";
+    public final static String RATE_KEY = "rate";
+    public final static String SAMPLE_COUNT_KEY = "sampleCount";
 }
