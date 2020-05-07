@@ -40,7 +40,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.event.KeyPressed;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.ReceptionOfMessage;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.StartedAsClone;
-import de.uni_passau.fim.se2.litterbox.ast.model.event.VariableAboveValue;
+import de.uni_passau.fim.se2.litterbox.ast.model.event.AttributeAboveValue;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.UnspecifiedExpression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.And;
@@ -333,11 +333,11 @@ public class GrammarPrintVisitor implements ScratchVisitor {
     }
 
     @Override
-    public void visit(VariableAboveValue variableAboveValue) {
+    public void visit(AttributeAboveValue attributeAboveValue) {
         emitToken("value of");
-        variableAboveValue.getIdentifier().accept(this);
+        attributeAboveValue.getAttribute().accept(this);
         emitToken(" above");
-        variableAboveValue.getValue().accept(this);
+        attributeAboveValue.getValue().accept(this);
     }
 
     @Override

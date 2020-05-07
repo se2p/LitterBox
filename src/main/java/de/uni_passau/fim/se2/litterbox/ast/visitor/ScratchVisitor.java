@@ -1090,7 +1090,7 @@ public interface ScratchVisitor {
     }
 
     /**
-     * Default implementation of visit method for {@link VariableAboveValue}.
+     * Default implementation of visit method for {@link AttributeAboveValue}.
      *
      * <p>
      * Iterates all children of this node without performing any action.
@@ -1098,7 +1098,7 @@ public interface ScratchVisitor {
      *
      * @param node VariableAboveValue  Node of which the children will be iterated
      */
-    default void visit(VariableAboveValue node) {
+    default void visit(AttributeAboveValue node) {
         visit((Event) node);
     }
 
@@ -3134,6 +3134,19 @@ public interface ScratchVisitor {
      */
     default void visit(ListContains node) {
         visit((BoolExpr) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link EventAttribute}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node EventAttribute  Node of which the children will be iterated
+     */
+    default void visit(EventAttribute node) { //TODO enum
+        visit((ASTNode) node);
     }
 
     /**

@@ -228,7 +228,7 @@ public class ControlFlowGraphVisitor implements ScratchVisitor {
     }
 
     @Override
-    public void visit(VariableAboveValue node) {
+    public void visit(AttributeAboveValue node) {
         builder.addVariableEventHandler(node);
     }
 
