@@ -1,11 +1,10 @@
 package de.uni_passau.fim.se2.litterbox.ast.model.metadata.block;
 
-import de.uni_passau.fim.se2.litterbox.ast.model.ASTLeaf;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 import java.util.List;
 
-public class ExistingPrototypeMutationMetadata extends ExistingCallMutationMetadata implements MutationMetadata, ASTLeaf {
+public class ExistingPrototypeMutationMetadata extends ExistingCallMutationMetadata {
     private String argumentNames;
     private String argumentDefaults;
 

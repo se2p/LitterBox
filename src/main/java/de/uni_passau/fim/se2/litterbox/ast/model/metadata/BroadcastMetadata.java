@@ -11,12 +11,6 @@ public class BroadcastMetadata extends AbstractNode implements Metadata, ASTLeaf
     private String broadcastID;
     private String broadcastName;
 
-    public BroadcastMetadata(String broadcastID, String broadcastName, ASTNode... children) {
-        super(children);
-        this.broadcastID = broadcastID;
-        this.broadcastName = broadcastName;
-    }
-
     public BroadcastMetadata( String broadcastID, String broadcastName) {
         super();
         this.broadcastID = broadcastID;
