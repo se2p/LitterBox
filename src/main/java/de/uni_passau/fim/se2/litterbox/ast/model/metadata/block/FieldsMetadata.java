@@ -1,10 +1,11 @@
 package de.uni_passau.fim.se2.litterbox.ast.model.metadata.block;
 
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTLeaf;
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.Metadata;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
-public class FieldsMetadata extends AbstractNode implements Metadata {
+public class FieldsMetadata extends AbstractNode implements Metadata, ASTLeaf {
     private String fieldsName;
     private String fieldsValue;
     private String fieldsReference;
