@@ -67,10 +67,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterDefinitionLi
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterDefiniton;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinitionList;
-import de.uni_passau.fim.se2.litterbox.ast.model.resource.ImageResource;
-import de.uni_passau.fim.se2.litterbox.ast.model.resource.Resource;
-import de.uni_passau.fim.se2.litterbox.ast.model.resource.ResourceList;
-import de.uni_passau.fim.se2.litterbox.ast.model.resource.SoundResource;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.ExpressionStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
@@ -1715,58 +1711,6 @@ public interface ScratchVisitor {
      */
     default void visit(ProcedureDefinitionList node) {
         visit((ASTNode) node);
-    }
-
-    /**
-     * Default implementation of visit method for {@link Resource}.
-     *
-     * <p>
-     * Iterates all children of this node without performing any action.
-     * </p>
-     *
-     * @param node Resource  Node of which the children will be iterated
-     */
-    default void visit(Resource node) {
-        visit((ASTNode) node);
-    }
-
-    /**
-     * Default implementation of visit method for {@link ImageResource}.
-     *
-     * <p>
-     * Iterates all children of this node without performing any action.
-     * </p>
-     *
-     * @param node ImageResource  Node of which the children will be iterated
-     */
-    default void visit(ImageResource node) {
-        visit((Resource) node);
-    }
-
-    /**
-     * Default implementation of visit method for {@link ResourceList}.
-     *
-     * <p>
-     * Iterates all children of this node without performing any action.
-     * </p>
-     *
-     * @param node ResourceList  Node of which the children will be iterated
-     */
-    default void visit(ResourceList node) {
-        visit((ASTNode) node);
-    }
-
-    /**
-     * Default implementation of visit method for {@link SoundResource}.
-     *
-     * <p>
-     * Iterates all children of this node without performing any action.
-     * </p>
-     *
-     * @param node SoundResource  Node of which the children will be iterated
-     */
-    default void visit(SoundResource node) {
-        visit((Resource) node);
     }
 
     /**

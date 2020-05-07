@@ -96,10 +96,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterDefinitionLi
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterDefiniton;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinitionList;
-import de.uni_passau.fim.se2.litterbox.ast.model.resource.ImageResource;
-import de.uni_passau.fim.se2.litterbox.ast.model.resource.Resource;
-import de.uni_passau.fim.se2.litterbox.ast.model.resource.ResourceList;
-import de.uni_passau.fim.se2.litterbox.ast.model.resource.SoundResource;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.ExpressionStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
@@ -229,14 +225,6 @@ public class GrammarPrintVisitor implements ScratchVisitor {
         def.getActorType().accept(this);
         begin();
         beginIndentation();
-        ResourceList resources = def.getResources();
-        List<Resource> resourceList = resources.getResourceList();
-        for (Resource resource : resourceList) {
-            newLine();
-            appendIndentation();
-            resource.accept(this);
-        }
-
         DeclarationStmtList declarations = def.getDecls();
         List<DeclarationStmt> declarationStmtList = declarations.getDeclarationStmtList();
         if (declarationStmtList.size() > 0) {
@@ -830,22 +818,6 @@ public class GrammarPrintVisitor implements ScratchVisitor {
 
     private void colon() {
         emitToken(":");
-    }
-
-    @Override
-    public void visit(ImageResource imageResource) {
-        emitToken("image");
-        imageResource.getIdent().accept(this);
-        emitNoSpace(" ");
-        imageResource.getUri().accept(this);
-    }
-
-    @Override
-    public void visit(SoundResource soundResource) {
-        emitToken("sound");
-        soundResource.getIdent().accept(this);
-        emitNoSpace(" ");
-        soundResource.getUri().accept(this);
     }
 
     @Override
