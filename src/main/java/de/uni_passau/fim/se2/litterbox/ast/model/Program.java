@@ -19,6 +19,7 @@
 package de.uni_passau.fim.se2.litterbox.ast.model;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.ProgramMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ProcedureDefinitionNameMapping;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.SymbolTable;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
@@ -30,14 +31,20 @@ public class Program extends AbstractNode {
     private final ActorDefinitionList actorDefinitionList;
     private final SymbolTable symbolTable;
     private final ProcedureDefinitionNameMapping procedureMapping;
+    private final ProgramMetadata metadata;
 
     public Program(LocalIdentifier ident, ActorDefinitionList actorDefinitionList, SymbolTable symbolTable,
-                   ProcedureDefinitionNameMapping procedureMapping) {
-        super(ident, actorDefinitionList);
+                   ProcedureDefinitionNameMapping procedureMapping, ProgramMetadata metadata) {
+        super(ident, actorDefinitionList,metadata);
         this.ident = Preconditions.checkNotNull(ident);
         this.actorDefinitionList = Preconditions.checkNotNull(actorDefinitionList);
         this.procedureMapping = procedureMapping;
         this.symbolTable = symbolTable;
+        this.metadata=metadata;
+    }
+
+    public ProgramMetadata getMetadata() {
+        return metadata;
     }
 
     public LocalIdentifier getIdent() {

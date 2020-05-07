@@ -23,11 +23,13 @@ import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.actor.ActorMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinitionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.declaration.DeclarationStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.declaration.DeclarationStmtList;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.DependentBlockOpcodes;
+import de.uni_passau.fim.se2.litterbox.ast.parser.metadata.ActorMetadataParser;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import java.util.Iterator;
@@ -100,9 +102,9 @@ public class ActorDefinitionParser {
                 localIdentifier.getName()));
         setStmtList.addAll(DeclarationStmtParser.parseVariableDeclarationSetStmts(actorDefinitionNode.get(VARIABLES_KEY),
                 localIdentifier.getName()));
+        ActorMetadata metadata = ActorMetadataParser.parse(actorDefinitionNode);
         return new ActorDefinition(actorType, localIdentifier, declarations, new SetStmtList(setStmtList),
-                procDeclList,
-                scriptList);
+                procDeclList, scriptList, metadata);
     }
 
     /**

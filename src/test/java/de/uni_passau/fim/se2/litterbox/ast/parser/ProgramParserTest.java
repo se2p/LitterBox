@@ -69,7 +69,7 @@ public class ProgramParserTest {
         try {
             Program program = ProgramParser.parseProgram("Empty", project);
             Truth.assertThat(program.getIdent().getName()).isEqualTo("Empty");
-            Truth.assertThat(program.getChildren().size()).isEqualTo(2);
+            Truth.assertThat(program.getChildren().size()).isEqualTo(3);
             Truth.assertThat(program.getChildren().get(1)).isInstanceOf(ActorDefinitionList.class);
 
             ActorDefinitionList list = program.getActorDefinitionList();
