@@ -19,6 +19,18 @@ public class DataBlockMetadata extends AbstractNode implements BlockMetadata {
         this.y = y;
     }
 
+    public int getDataType() {
+        return dataType;
+    }
+
+    public String getDataName() {
+        return dataName;
+    }
+
+    public String getDataReference() {
+        return dataReference;
+    }
+
     public double getX() {
         return x;
     }
