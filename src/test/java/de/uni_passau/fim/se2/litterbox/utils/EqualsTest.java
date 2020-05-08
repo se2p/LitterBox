@@ -38,7 +38,7 @@ public class EqualsTest {
         MoveSteps goTo = new MoveSteps(new NumberLiteral(12), new NoBlockMetadata());
         List<Stmt> list = new ArrayList<>();
         list.add(goTo);
-        RepeatTimesStmt repeat = new RepeatTimesStmt(num, new StmtList(list));
+        RepeatTimesStmt repeat = new RepeatTimesStmt(num, new StmtList(list), new NoBlockMetadata());
         NumberLiteral num2 = new NumberLiteral(2);
         Assertions.assertTrue(num.equals(num2));
         MoveSteps goTo2 = new MoveSteps(new NumberLiteral(12), new NoBlockMetadata());
@@ -46,7 +46,7 @@ public class EqualsTest {
         List<Stmt> list2 = new ArrayList<>();
         list2.add(goTo2);
 
-        RepeatTimesStmt repeat2 = new RepeatTimesStmt(num2, new StmtList(list2));
+        RepeatTimesStmt repeat2 = new RepeatTimesStmt(num2, new StmtList(list2), new NoBlockMetadata());
         Assertions.assertTrue(repeat.equals(repeat2));
     }
 }

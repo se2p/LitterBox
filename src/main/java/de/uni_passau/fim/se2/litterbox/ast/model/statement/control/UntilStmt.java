@@ -21,6 +21,7 @@ package de.uni_passau.fim.se2.litterbox.ast.model.statement.control;
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BoolExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
@@ -28,11 +29,17 @@ public class UntilStmt extends AbstractNode implements ControlStmt {
 
     private final BoolExpr boolExpr;
     private final StmtList stmtList;
+    private final BlockMetadata metadata;
 
-    public UntilStmt(BoolExpr boolExpr, StmtList stmtList) {
-        super(boolExpr, stmtList);
+    public UntilStmt(BoolExpr boolExpr, StmtList stmtList, BlockMetadata metadata) {
+        super(boolExpr, stmtList, metadata);
         this.boolExpr = Preconditions.checkNotNull(boolExpr);
         this.stmtList = Preconditions.checkNotNull(stmtList);
+        this.metadata = metadata;
+    }
+
+    public BlockMetadata getMetadata() {
+        return metadata;
     }
 
     public BoolExpr getBoolExpr() {

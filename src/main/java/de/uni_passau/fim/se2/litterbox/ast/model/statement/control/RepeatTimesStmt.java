@@ -21,6 +21,7 @@ package de.uni_passau.fim.se2.litterbox.ast.model.statement.control;
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
@@ -28,11 +29,17 @@ public class RepeatTimesStmt extends AbstractNode implements ControlStmt {
 
     private final NumExpr times;
     private final StmtList stmtList;
+    private final BlockMetadata metadata;
 
-    public RepeatTimesStmt(NumExpr times, StmtList stmtList) {
-        super(times, stmtList);
+    public RepeatTimesStmt(NumExpr times, StmtList stmtList, BlockMetadata metadata) {
+        super(times, stmtList, metadata);
         this.times = Preconditions.checkNotNull(times);
         this.stmtList = Preconditions.checkNotNull(stmtList);
+        this.metadata = metadata;
+    }
+
+    public BlockMetadata getMetadata() {
+        return metadata;
     }
 
     public NumExpr getTimes() {

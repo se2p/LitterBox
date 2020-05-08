@@ -25,12 +25,14 @@ import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BoolExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.UnspecifiedBoolExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.*;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.ControlStmtOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.parser.BoolExprParser;
 import de.uni_passau.fim.se2.litterbox.ast.parser.NumExprParser;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ScriptParser;
+import de.uni_passau.fim.se2.litterbox.ast.parser.metadata.BlockMetadataParser;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import java.util.ArrayList;
@@ -44,7 +46,7 @@ public class ControlStmtParser {
     public static final String INPUT_CONDITION = "CONDITION";
     public static final String INPUT_TIMES = "TIMES";
 
-    public static Stmt parse(JsonNode current, JsonNode allBlocks) throws ParsingException {
+    public static Stmt parse(String identifier, JsonNode current, JsonNode allBlocks) throws ParsingException {
         Preconditions.checkNotNull(current);
         Preconditions.checkNotNull(allBlocks);
 
@@ -54,32 +56,33 @@ public class ControlStmtParser {
 
         BoolExpr boolExpr;
         StmtList stmtList, elseStmtList;
+        BlockMetadata metadata = BlockMetadataParser.parse(identifier, current);
 
         switch (opcode) {
             case control_if:
                 stmtList = getSubstackStmtList(allBlocks, inputs, INPUT_SUBSTACK);
                 boolExpr = getCondition(current, allBlocks, inputs);
-                return new IfThenStmt(boolExpr, stmtList);
+                return new IfThenStmt(boolExpr, stmtList, metadata);
 
             case control_if_else:
                 stmtList = getSubstackStmtList(allBlocks, inputs, INPUT_SUBSTACK);
                 boolExpr = getCondition(current, allBlocks, inputs);
                 elseStmtList = getSubstackStmtList(allBlocks, inputs, INPUT_ELSE_SUBSTACK);
-                return new IfElseStmt(boolExpr, stmtList, elseStmtList);
+                return new IfElseStmt(boolExpr, stmtList, elseStmtList, metadata);
 
             case control_repeat:
                 NumExpr numExpr = NumExprParser.parseNumExpr(current, TIMES_KEY, allBlocks);
                 stmtList = getSubstackStmtList(allBlocks, inputs, INPUT_SUBSTACK);
-                return new RepeatTimesStmt(numExpr, stmtList);
+                return new RepeatTimesStmt(numExpr, stmtList, metadata);
 
             case control_repeat_until:
                 stmtList = getSubstackStmtList(allBlocks, inputs, INPUT_SUBSTACK);
                 boolExpr = getCondition(current, allBlocks, inputs);
-                return new UntilStmt(boolExpr, stmtList);
+                return new UntilStmt(boolExpr, stmtList, metadata);
 
             case control_forever:
                 stmtList = getSubstackStmtList(allBlocks, inputs, INPUT_SUBSTACK);
-                return new RepeatForeverStmt(stmtList);
+                return new RepeatForeverStmt(stmtList, metadata);
 
             default:
                 throw new ParsingException("Unknown Opcode " + opcodeString);
