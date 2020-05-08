@@ -22,19 +22,27 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.ProcedureMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 public class ProcedureDefinition extends AbstractNode implements ASTNode {
-
+    private final ProcedureMetadata metadata;
     private final LocalIdentifier ident;
     private final ParameterDefinitionList parameterDefinitionList;
     private final StmtList stmtList;
 
-    public ProcedureDefinition(LocalIdentifier ident, ParameterDefinitionList parameterDefinitionList, StmtList stmtList) {
+    public ProcedureDefinition(LocalIdentifier ident, ParameterDefinitionList parameterDefinitionList,
+                               StmtList stmtList, ProcedureMetadata metadata) {
         super(ident, parameterDefinitionList, stmtList);
         this.ident = ident;
         this.parameterDefinitionList = parameterDefinitionList;
         this.stmtList = stmtList;
+        this.metadata=metadata;
+    }
+
+    public ProcedureMetadata getMetadata() {
+        return metadata;
     }
 
     public LocalIdentifier getIdent() {

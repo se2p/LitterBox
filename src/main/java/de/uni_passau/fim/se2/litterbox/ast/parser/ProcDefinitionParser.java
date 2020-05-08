@@ -24,6 +24,9 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import de.uni_passau.fim.se2.litterbox.ast.Constants;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.ProcedureMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterDefinitionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterDefiniton;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
@@ -31,9 +34,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinitionLi
 import de.uni_passau.fim.se2.litterbox.ast.model.type.BooleanType;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.StringType;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.Type;
-import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
-import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.ProcedureOpcode;
+import de.uni_passau.fim.se2.litterbox.ast.parser.metadata.ProcedureMetadataParser;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import java.io.IOException;
@@ -126,7 +128,7 @@ public class ProcDefinitionParser {
             }
         }
         if (ident == null) {
-            ProgramParser.procDefMap.addMalformated(actorName+methodName);
+            ProgramParser.procDefMap.addMalformated(actorName + methodName);
             throw new ParsingException("Procedure prototype is missing its parent identifier and could not be parsed.");
         }
         JsonNode argumentNamesNode = proto.get(MUTATION_KEY).get(ARGUMENTNAMES_KEY);
@@ -136,7 +138,7 @@ public class ProcDefinitionParser {
         try {
             argumentsNode = mapper.readTree(argumentNamesNode.asText());
         } catch (IOException e) {
-            ProgramParser.procDefMap.addMalformated(actorName+methodName);
+            ProgramParser.procDefMap.addMalformated(actorName + methodName);
             throw new ParsingException("Could not read argument names of a procedure");
         }
 
@@ -149,7 +151,7 @@ public class ProcDefinitionParser {
         }
 
         if (!(arguments.length == paraTypes.size())) {
-            ProgramParser.procDefMap.addMalformated(actorName+methodName);
+            ProgramParser.procDefMap.addMalformated(actorName + methodName);
             throw new ParsingException("A procedure in this project does have malformated code, where inputs or " +
                     "parameternames are missing.");
         }
@@ -161,7 +163,8 @@ public class ProcDefinitionParser {
         }
         ParameterDefinitionList parameterDefinitionList = new ParameterDefinitionList(inputs);
         StmtList stmtList = ScriptParser.parseStmtList(def.get(NEXT_KEY).asText(), blocks);
-        return new ProcedureDefinition(ident, parameterDefinitionList, stmtList);
+        ProcedureMetadata meta = ProcedureMetadataParser.parse(ident.getName(), protoReference, blocks);
+        return new ProcedureDefinition(ident, parameterDefinitionList, stmtList, meta);
     }
 
     private static List<Type> addType(JsonNode blocks, List<Type> types, String textValue) {
