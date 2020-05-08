@@ -20,16 +20,23 @@ package de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 public class Say extends AbstractNode implements SpriteLookStmt {
 
     private final StringExpr string;
+    private final BlockMetadata metadata;
 
-    public Say(StringExpr string) {
-        super(string);
+    public Say(StringExpr string, BlockMetadata metadata) {
+        super(string, metadata);
         this.string = Preconditions.checkNotNull(string);
+        this.metadata = metadata;
+    }
+
+    public BlockMetadata getMetadata() {
+        return metadata;
     }
 
     public StringExpr getString() {

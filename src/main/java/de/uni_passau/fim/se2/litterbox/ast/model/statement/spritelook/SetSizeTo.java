@@ -20,15 +20,22 @@ package de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 public class SetSizeTo extends AbstractNode implements SpriteLookStmt {
 
     private final NumExpr percent;
+    private final BlockMetadata metadata;
 
-    public SetSizeTo(NumExpr percent) {
-        super(percent);
+    public SetSizeTo(NumExpr percent, BlockMetadata metadata) {
+        super(percent, metadata);
         this.percent = percent;
+        this.metadata = metadata;
+    }
+
+    public BlockMetadata getMetadata() {
+        return metadata;
     }
 
     public NumExpr getPercent() {

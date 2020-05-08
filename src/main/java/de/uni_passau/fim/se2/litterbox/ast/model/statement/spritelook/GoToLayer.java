@@ -19,16 +19,23 @@
 package de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 public class GoToLayer extends AbstractNode implements SpriteLookStmt {
 
     private final LayerChoice layerChoice;
+    private final BlockMetadata metadata;
 
-    public GoToLayer(LayerChoice layerChoice) {
-        super(layerChoice);
+    public GoToLayer(LayerChoice layerChoice, BlockMetadata metadata) {
+        super(layerChoice, metadata);
         this.layerChoice = Preconditions.checkNotNull(layerChoice);
+        this.metadata = metadata;
+    }
+
+    public BlockMetadata getMetadata() {
+        return metadata;
     }
 
     public LayerChoice getLayerChoice() {

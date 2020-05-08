@@ -25,11 +25,13 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.Mult;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.*;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.SpriteLookStmtOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.parser.CostumeChoiceParser;
 import de.uni_passau.fim.se2.litterbox.ast.parser.NumExprParser;
 import de.uni_passau.fim.se2.litterbox.ast.parser.StringExprParser;
+import de.uni_passau.fim.se2.litterbox.ast.parser.metadata.BlockMetadataParser;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
@@ -37,7 +39,7 @@ import static de.uni_passau.fim.se2.litterbox.ast.opcodes.SpriteLookStmtOpcode.l
 
 public class SpriteLookStmtParser {
 
-    public static SpriteLookStmt parse(JsonNode current, JsonNode allBlocks) throws ParsingException {
+    public static SpriteLookStmt parse(String identifier, JsonNode current, JsonNode allBlocks) throws ParsingException {
         Preconditions.checkNotNull(current);
         Preconditions.checkNotNull(allBlocks);
 
@@ -49,47 +51,48 @@ public class SpriteLookStmtParser {
         final SpriteLookStmtOpcode opcode = SpriteLookStmtOpcode.valueOf(opcodeString);
         StringExpr stringExpr;
         NumExpr numExpr;
-
+        BlockMetadata metadata = BlockMetadataParser.parse(identifier, current);
         switch (opcode) {
             case looks_show:
-                return new Show();
+                return new Show(metadata);
             case looks_hide:
-                return new Hide();
+                return new Hide(metadata);
             case looks_sayforsecs:
                 stringExpr = StringExprParser.parseStringExpr(current, MESSAGE_KEY, allBlocks);
                 numExpr = NumExprParser.parseNumExpr(current, SECS_KEY, allBlocks);
-                return new SayForSecs(stringExpr, numExpr);
+                return new SayForSecs(stringExpr, numExpr, metadata);
             case looks_say:
                 stringExpr = StringExprParser.parseStringExpr(current, MESSAGE_KEY, allBlocks);
-                return new Say(stringExpr);
+                return new Say(stringExpr, metadata);
             case looks_thinkforsecs:
                 stringExpr = StringExprParser.parseStringExpr(current, MESSAGE_KEY, allBlocks);
                 numExpr = NumExprParser.parseNumExpr(current, SECS_KEY, allBlocks);
-                return new ThinkForSecs(stringExpr, numExpr);
+                return new ThinkForSecs(stringExpr, numExpr, metadata);
             case looks_think:
                 stringExpr = StringExprParser.parseStringExpr(current, MESSAGE_KEY, allBlocks);
-                return new Think(stringExpr);
+                return new Think(stringExpr, metadata);
             case looks_nextcostume:
-                return new NextCostume();
+                return new NextCostume(metadata);
             case looks_switchcostumeto:
                 Expression costumeChoice = CostumeChoiceParser.parse(current, allBlocks);
-                return new SwitchCostumeTo(costumeChoice);
+                return new SwitchCostumeTo(costumeChoice, metadata);
             case looks_changesizeby:
                 numExpr = NumExprParser.parseNumExpr(current, CHANGE_KEY, allBlocks);
-                return new ChangeSizeBy(numExpr);
+                return new ChangeSizeBy(numExpr, metadata);
             case looks_setsizeto:
                 numExpr = NumExprParser.parseNumExpr(current, SIZE_KEY_CAP, allBlocks);
-                return new SetSizeTo(numExpr);
+                return new SetSizeTo(numExpr, metadata);
             case looks_gotofrontback:
-                return parseGoToLayer(current, allBlocks);
+                return parseGoToLayer(current, allBlocks, metadata);
             case looks_goforwardbackwardlayers:
-                return parseGoForwardBackwardLayer(current, allBlocks);
+                return parseGoForwardBackwardLayer(current, allBlocks, metadata);
             default:
                 throw new RuntimeException("Not implemented for opcode " + opcodeString);
         }
     }
 
-    private static SpriteLookStmt parseGoForwardBackwardLayer(JsonNode current, JsonNode allBlocks)
+    private static SpriteLookStmt parseGoForwardBackwardLayer(JsonNode current, JsonNode allBlocks,
+                                                              BlockMetadata metadata)
             throws ParsingException {
         JsonNode front_back = current.get(FIELDS_KEY).get("FORWARD_BACKWARD").get(FIELD_VALUE);
 
@@ -97,23 +100,23 @@ public class SpriteLookStmtParser {
 
         String layerOption = front_back.asText();
         if (layerOption.equals("forward")) {
-            return new ChangeLayerBy(num);
+            return new ChangeLayerBy(num, metadata);
         } else if (layerOption.equals("backward")) {
             NumExpr negated = new Mult(new NumberLiteral(-1), num);
-            return new ChangeLayerBy(negated);
+            return new ChangeLayerBy(negated, metadata);
         } else {
             throw new ParsingException("Unknown option " + layerOption +
                     "+ when parsing block with opcode " + current.get(OPCODE_KEY));
         }
     }
 
-    private static SpriteLookStmt parseGoToLayer(JsonNode current, JsonNode allBlocks) throws ParsingException {
+    private static SpriteLookStmt parseGoToLayer(JsonNode current, JsonNode allBlocks, BlockMetadata metadata) throws ParsingException {
         Preconditions.checkArgument(current.get(OPCODE_KEY).asText().equals(looks_gotofrontback.toString()));
 
         JsonNode front_back = current.get(FIELDS_KEY).get("FRONT_BACK").get(FIELD_VALUE);
         String layerOption = front_back.asText();
         try {
-            return new GoToLayer(LayerChoice.fromString(layerOption));
+            return new GoToLayer(LayerChoice.fromString(layerOption), metadata);
         } catch (IllegalArgumentException e) {
             throw new ParsingException("Unknown LayerChoice label for GoToLayer.");
         }

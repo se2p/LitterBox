@@ -20,20 +20,27 @@ package de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 public class Think extends AbstractNode implements SpriteLookStmt {
 
     private final StringExpr thought;
+    private final BlockMetadata metadata;
 
-    public Think(StringExpr thought) {
-        super(thought);
+    public Think(StringExpr thought, BlockMetadata metadata) {
+        super(thought, metadata);
         this.thought = Preconditions.checkNotNull(thought);
+        this.metadata = metadata;
     }
 
     public StringExpr getThought() {
         return thought;
+    }
+
+    public BlockMetadata getMetadata() {
+        return metadata;
     }
 
     @Override

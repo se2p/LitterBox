@@ -20,16 +20,23 @@ package de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 public class SwitchCostumeTo extends AbstractNode implements SpriteLookStmt {
 
     private final Expression costumeChoice;
+    private final BlockMetadata metadata;
 
-    public SwitchCostumeTo(Expression costumeChoice) {
-        super(costumeChoice);
+    public SwitchCostumeTo(Expression costumeChoice, BlockMetadata metadata) {
+        super(costumeChoice, metadata);
         this.costumeChoice = Preconditions.checkNotNull(costumeChoice);
+        this.metadata = metadata;
+    }
+
+    public BlockMetadata getMetadata() {
+        return metadata;
     }
 
     public Expression getCostumeChoice() {
