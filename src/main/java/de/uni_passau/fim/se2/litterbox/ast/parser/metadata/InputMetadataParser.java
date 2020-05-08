@@ -26,7 +26,7 @@ public class InputMetadataParser {
                     "ArrayNode.");
             ArrayNode valueArray = (ArrayNode) inputNode.get(POS_BLOCK_ID);
             int type = valueArray.get(POS_INPUT_TYPE).asInt();
-            if (type == VAR_PRIMITIVE || type == LIST_PRIMITIVE) {
+            if (type == VAR_PRIMITIVE || type == LIST_PRIMITIVE|| type == BROADCAST_PRIMITIVE) {
                 String dataName = valueArray.get(DATA_INPUT_NAME_POS).asText();
                 String identifier = valueArray.get(DATA_INPUT_IDENTIFIER_POS).asText();
                 return new DataInputMetadata(inputName, type, dataName, identifier);

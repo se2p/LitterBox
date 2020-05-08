@@ -15,7 +15,7 @@ public class FieldsMetadataParser {
         Preconditions.checkArgument(fieldNode instanceof ArrayNode, "The field is not an ArrayNode.");
         String value = fieldNode.get(FIELD_VALUE).asText();
         String reference = null;
-        if (!(fieldNode.get(FIELD_REFERENCE) instanceof NullNode)) {
+        if (fieldNode.has(FIELD_REFERENCE) && !(fieldNode.get(FIELD_REFERENCE) instanceof NullNode)) {
             reference = fieldNode.get(FIELD_REFERENCE).asText();
         }
         return new FieldsMetadata(key, value, reference);
