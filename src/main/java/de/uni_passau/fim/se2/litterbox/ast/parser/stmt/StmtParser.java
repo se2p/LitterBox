@@ -42,7 +42,7 @@ public class StmtParser {
                     .equals("other scripts in sprite")
                     || current.get(Constants.FIELDS_KEY).get("STOP_OPTION").get(Constants.FIELD_VALUE).asText()
                     .equals("other scripts in stage")))) {
-                return TerminationStmtParser.parseTerminationStmt(current, blocks);
+                return TerminationStmtParser.parseTerminationStmt(blockID, current, blocks);
             }
         }
 
@@ -62,7 +62,7 @@ public class StmtParser {
         } else if (ActorSoundStmtOpcode.contains(opcode)) {
             return ActorSoundStmtParser.parse(current, blocks);
         } else if (CallStmtOpcode.contains(opcode)) {
-            return CallStmtParser.parse(current, blocks);
+            return CallStmtParser.parse(blockID, current, blocks);
         } else if (ListStmtOpcode.contains(opcode)) {
             return ListStmtParser.parse(current, blocks);
         } else if (SetStmtOpcode.contains(opcode)) {

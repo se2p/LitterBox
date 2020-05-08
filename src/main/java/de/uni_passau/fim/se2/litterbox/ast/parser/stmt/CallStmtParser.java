@@ -29,6 +29,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ExpressionParser;
+import de.uni_passau.fim.se2.litterbox.ast.parser.metadata.BlockMetadataParser;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import java.io.IOException;
@@ -41,7 +42,7 @@ import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 
 public class CallStmtParser {
 
-    public static Stmt parse(JsonNode current, JsonNode blocks) throws ParsingException {
+    public static Stmt parse(String identifier, JsonNode current, JsonNode blocks) throws ParsingException {
         List<Expression> expressions = new ArrayList<>();
         JsonNode argumentIds = current.get(MUTATION_KEY).get(ARGUMENTIDS_KEY);
         ObjectMapper mapper = new ObjectMapper();
@@ -66,7 +67,7 @@ public class CallStmtParser {
         }
 
         return new CallStmt(new StrId(current.get(Constants.MUTATION_KEY).get(Constants.PROCCODE_KEY).asText()),
-                new ExpressionList(expressions));
+                new ExpressionList(expressions), BlockMetadataParser.parse(identifier,current));
     }
 
     /**
