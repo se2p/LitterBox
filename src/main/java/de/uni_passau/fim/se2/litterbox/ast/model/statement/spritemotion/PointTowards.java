@@ -19,6 +19,7 @@
 package de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.Position;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
@@ -26,10 +27,16 @@ import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 public class PointTowards extends AbstractNode implements SpriteMotionStmt {
 
     private final Position position;
+    private final BlockMetadata metadata;
 
-    public PointTowards(Position position) {
-        super(position);
+    public PointTowards(Position position, BlockMetadata metadata) {
+        super(position, metadata);
         this.position = Preconditions.checkNotNull(position);
+        this.metadata = metadata;
+    }
+
+    public BlockMetadata getMetadata() {
+        return metadata;
     }
 
     public Position getPosition() {

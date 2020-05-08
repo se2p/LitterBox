@@ -20,15 +20,23 @@ package de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 public class PointInDirection extends AbstractNode implements SpriteMotionStmt {
 
     private final NumExpr direction;
+    private final BlockMetadata metadata;
 
-    public PointInDirection(NumExpr direction) {
+    public PointInDirection(NumExpr direction, BlockMetadata metadata) {
+        super(direction, metadata);
         this.direction = Preconditions.checkNotNull(direction);
+        this.metadata = metadata;
+    }
+
+    public BlockMetadata getMetadata() {
+        return metadata;
     }
 
     public NumExpr getDirection() {

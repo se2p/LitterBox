@@ -20,16 +20,23 @@ package de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 public class MoveSteps extends AbstractNode implements SpriteMotionStmt {
 
     private final NumExpr steps;
+    private final BlockMetadata metadata;
 
-    public MoveSteps(NumExpr steps) {
-        super(steps);
+    public MoveSteps(NumExpr steps, BlockMetadata metadata) {
+        super(steps, metadata);
         this.steps = Preconditions.checkNotNull(steps);
+        this.metadata = metadata;
+    }
+
+    public BlockMetadata getMetadata() {
+        return metadata;
     }
 
     public NumExpr getSteps() {

@@ -20,6 +20,7 @@ package de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.Position;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
@@ -28,11 +29,17 @@ public class GlideSecsTo extends AbstractNode implements SpriteMotionStmt {
 
     private final NumExpr secs;
     private final Position position;
+    private final BlockMetadata metadata;
 
-    public GlideSecsTo(NumExpr secs, Position position) {
-        super(secs, position);
+    public GlideSecsTo(NumExpr secs, Position position, BlockMetadata metadata) {
+        super(secs, position, metadata);
         this.secs = Preconditions.checkNotNull(secs);
         this.position = Preconditions.checkNotNull(position);
+        this.metadata = metadata;
+    }
+
+    public BlockMetadata getMetadata() {
+        return metadata;
     }
 
     public NumExpr getSecs() {

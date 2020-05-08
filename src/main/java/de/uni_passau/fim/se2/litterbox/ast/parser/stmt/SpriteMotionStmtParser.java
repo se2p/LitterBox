@@ -21,18 +21,20 @@ package de.uni_passau.fim.se2.litterbox.ast.parser.stmt;
 import com.fasterxml.jackson.databind.JsonNode;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.Position;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.*;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.SpriteMotionStmtOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.parser.NumExprParser;
 import de.uni_passau.fim.se2.litterbox.ast.parser.PositionParser;
+import de.uni_passau.fim.se2.litterbox.ast.parser.metadata.BlockMetadataParser;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 
 public class SpriteMotionStmtParser {
 
-    public static SpriteMotionStmt parse(JsonNode current, JsonNode allBlocks) throws ParsingException {
+    public static SpriteMotionStmt parse(String identifier, JsonNode current, JsonNode allBlocks) throws ParsingException {
         Preconditions.checkNotNull(current);
         Preconditions.checkNotNull(allBlocks);
 
@@ -44,69 +46,69 @@ public class SpriteMotionStmtParser {
         final SpriteMotionStmtOpcode opcode = SpriteMotionStmtOpcode.valueOf(opcodeString);
         NumExpr numExpr;
         Position position;
-
+        BlockMetadata metadata = BlockMetadataParser.parse(identifier, current);
         switch (opcode) {
             case motion_movesteps:
                 numExpr = NumExprParser.parseNumExpr(current, STEPS_KEY, allBlocks);
-                return new MoveSteps(numExpr);
+                return new MoveSteps(numExpr, metadata);
             case motion_turnright:
                 numExpr = NumExprParser.parseNumExpr(current, DEGREES_KEY, allBlocks);
-                return new TurnRight(numExpr);
+                return new TurnRight(numExpr, metadata);
             case motion_turnleft:
                 numExpr = NumExprParser.parseNumExpr(current, DEGREES_KEY, allBlocks);
-                return new TurnLeft(numExpr);
+                return new TurnLeft(numExpr, metadata);
             case motion_gotoxy:
                 NumExpr xExpr = NumExprParser.parseNumExpr(current, X, allBlocks);
                 NumExpr yExpr = NumExprParser.parseNumExpr(current, Y, allBlocks);
-                return new GoToPosXY(xExpr, yExpr);
+                return new GoToPosXY(xExpr, yExpr, metadata);
             case motion_goto:
                 position = PositionParser.parse(current, allBlocks);
-                return new GoToPos(position);
+                return new GoToPos(position, metadata);
             case motion_glidesecstoxy:
                 NumExpr secs = NumExprParser.parseNumExpr(current, SECS_KEY, allBlocks);
                 NumExpr x = NumExprParser.parseNumExpr(current, X, allBlocks);
                 NumExpr y = NumExprParser.parseNumExpr(current, Y, allBlocks);
-                return new GlideSecsToXY(secs, x, y);
+                return new GlideSecsToXY(secs, x, y, metadata);
             case motion_glideto:
                 numExpr = NumExprParser.parseNumExpr(current, SECS_KEY, allBlocks);
                 position = PositionParser.parse(current, allBlocks);
-                return new GlideSecsTo(numExpr, position);
+                return new GlideSecsTo(numExpr, position, metadata);
             case motion_pointindirection:
                 numExpr = NumExprParser.parseNumExpr(current, DIRECTION_KEY_CAP, allBlocks);
-                return new PointInDirection(numExpr);
+                return new PointInDirection(numExpr, metadata);
             case motion_pointtowards:
                 position = PositionParser.parse(current, allBlocks);
-                return new PointTowards(position);
+                return new PointTowards(position, metadata);
             case motion_changexby:
                 numExpr = NumExprParser.parseNumExpr(current, DX_KEY, allBlocks);
-                return new ChangeXBy(numExpr);
+                return new ChangeXBy(numExpr, metadata);
             case motion_changeyby:
                 numExpr = NumExprParser.parseNumExpr(current, DY_KEY, allBlocks);
-                return new ChangeYBy(numExpr);
+                return new ChangeYBy(numExpr, metadata);
             case motion_setx:
                 numExpr = NumExprParser.parseNumExpr(current, X, allBlocks);
-                return new SetXTo(numExpr);
+                return new SetXTo(numExpr, metadata);
             case motion_sety:
                 numExpr = NumExprParser.parseNumExpr(current, Y, allBlocks);
-                return new SetYTo(numExpr);
+                return new SetYTo(numExpr, metadata);
             case motion_ifonedgebounce:
-                return new IfOnEdgeBounce();
+                return new IfOnEdgeBounce(metadata);
             case sensing_setdragmode:
-                return parseSetDragmode(current);
+                return parseSetDragmode(current, metadata);
             case motion_setrotationstyle:
-                return parseSetRotationStyle(current);
+                return parseSetRotationStyle(current, metadata);
             default:
                 throw new RuntimeException("Parsing not implemented yet for opcode " + opcodeString);
         }
     }
 
-    private static SpriteMotionStmt parseSetRotationStyle(JsonNode current) {
+    private static SpriteMotionStmt parseSetRotationStyle(JsonNode current, BlockMetadata metadata) {
         String rota = current.get(FIELDS_KEY).get(STYLE_KEY).get(0).asText();
-        return new SetRotationStyle(RotationStyle.fromString(rota));
+        return new SetRotationStyle(RotationStyle.fromString(rota), metadata);
     }
 
-    private static SpriteMotionStmt parseSetDragmode(JsonNode current) {
+    private static SpriteMotionStmt parseSetDragmode(JsonNode current, BlockMetadata metadata) {
         String drag = current.get(FIELDS_KEY).get(DRAGMODE_KEY).get(0).asText();
-        return new SetDragMode(DragMode.fromString(drag));
+        return new SetDragMode(DragMode.fromString(drag), metadata);
     }
 }

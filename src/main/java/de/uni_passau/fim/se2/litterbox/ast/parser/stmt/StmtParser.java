@@ -56,7 +56,7 @@ public class StmtParser {
         } else if (CommonStmtOpcode.contains(opcode)) {
             return CommonStmtParser.parse(current, blocks);
         } else if (SpriteMotionStmtOpcode.contains(opcode)) {
-            return SpriteMotionStmtParser.parse(current, blocks);
+            return SpriteMotionStmtParser.parse(blockID, current, blocks);
         } else if (SpriteLookStmtOpcode.contains(opcode)) {
             return SpriteLookStmtParser.parse(current, blocks);
         } else if (ActorSoundStmtOpcode.contains(opcode)) {
