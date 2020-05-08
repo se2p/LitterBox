@@ -19,11 +19,11 @@ public class BlockMetadataParser {
             }
             String opcode = blockNode.get(OPCODE_KEY).asText();
             String next = null;
-            if (!(blockNode.get(NEXT_KEY) instanceof NullNode)) {
+            if (blockNode.has(NEXT_KEY) && !(blockNode.get(NEXT_KEY) instanceof NullNode)) {
                 next = blockNode.get(NEXT_KEY).asText();
             }
             String parent = null;
-            if (!(blockNode.get(PARENT_KEY) instanceof NullNode)) {
+            if (blockNode.has(PARENT_KEY) && !(blockNode.get(PARENT_KEY) instanceof NullNode)) {
                 parent = blockNode.get(PARENT_KEY).asText();
             }
             InputMetadataList inputMetadata = InputMetadataListParser.parse(blockNode.get(INPUTS_KEY));
