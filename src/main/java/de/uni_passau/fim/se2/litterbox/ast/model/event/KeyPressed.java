@@ -20,20 +20,27 @@ package de.uni_passau.fim.se2.litterbox.ast.model.event;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Key;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 public class KeyPressed extends AbstractNode implements Event {
 
     private Key key;
+    private BlockMetadata metadata;
 
-    public KeyPressed(Key key) {
-        super(key);
+    public KeyPressed(Key key, BlockMetadata metadata) {
+        super(key, metadata);
         this.key = Preconditions.checkNotNull(key);
+        this.metadata = metadata;
     }
 
     public Key getKey() {
         return key;
+    }
+
+    public BlockMetadata getMetadata() {
+        return metadata;
     }
 
     @Override
