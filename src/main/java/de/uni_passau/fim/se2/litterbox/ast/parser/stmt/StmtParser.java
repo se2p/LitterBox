@@ -68,7 +68,7 @@ public class StmtParser {
         } else if (SetStmtOpcode.contains(opcode)) {
             return SetStmtParser.parse(current, blocks);
         } else if (PenOpcode.contains(opcode)) {
-            return PenStmtParser.parse(current, blocks);
+            return PenStmtParser.parse(blockID, current, blocks);
         } else {
             return new UnspecifiedStmt();
         }

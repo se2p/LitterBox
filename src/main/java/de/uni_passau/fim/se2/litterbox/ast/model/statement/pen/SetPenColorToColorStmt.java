@@ -19,16 +19,23 @@
 package de.uni_passau.fim.se2.litterbox.ast.model.statement.pen;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.Color;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 public class SetPenColorToColorStmt extends AbstractNode implements PenStmt {
-    private Color color;
+    private final Color color;
+    private final BlockMetadata metadata;
 
-    public SetPenColorToColorStmt(Color color) {
-        super(color);
+    public SetPenColorToColorStmt(Color color, BlockMetadata metadata) {
+        super(color, metadata);
         this.color = Preconditions.checkNotNull(color);
+        this.metadata=metadata;
+    }
+
+    public BlockMetadata getMetadata() {
+        return metadata;
     }
 
     public Color getColorExpr() {
