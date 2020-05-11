@@ -66,6 +66,14 @@ public class ControlFlowGraph {
         return Collections.unmodifiableSet(graph.nodes());
     }
 
+    public Iterable<CFGNode> getNodesInPostOrder() {
+        return Traverser.forGraph(graph).depthFirstPostOrder(entryNode);
+    }
+
+    public Iterable<CFGNode> getNodesInReversePostOrder() {
+        return Traverser.forGraph(graph).depthFirstPreOrder(entryNode);
+    }
+
     public Set<CFGNode> getSuccessors(CFGNode node) {
         return graph.successors(node);
     }

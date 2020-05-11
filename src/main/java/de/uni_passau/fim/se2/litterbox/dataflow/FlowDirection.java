@@ -27,4 +27,5 @@ import java.util.Set;
 public interface FlowDirection  {
     Set<CFGNode> getInNodes(ControlFlowGraph cfg, CFGNode cfgNode);
     Set<CFGNode> getOutNodes(ControlFlowGraph cfg, CFGNode cfgNode);
+    Iterable<CFGNode> getInitialNodes(ControlFlowGraph cfg);
 }
