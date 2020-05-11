@@ -30,6 +30,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.CommonStmtOpcode;
@@ -37,6 +38,7 @@ import de.uni_passau.fim.se2.litterbox.ast.parser.BoolExprParser;
 import de.uni_passau.fim.se2.litterbox.ast.parser.NumExprParser;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
 import de.uni_passau.fim.se2.litterbox.ast.parser.StringExprParser;
+import de.uni_passau.fim.se2.litterbox.ast.parser.metadata.BlockMetadataParser;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.VariableInfo;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
@@ -53,7 +55,7 @@ public class CommonStmtParser {
     private static final String STOP_OTHER_IN_STAGE = "other scripts in stage";
     private static final String BROADCAST_INPUT_KEY = "BROADCAST_INPUT";
 
-    public static CommonStmt parse(JsonNode current, JsonNode allBlocks) throws ParsingException {
+    public static CommonStmt parse(String blockId, JsonNode current, JsonNode allBlocks) throws ParsingException {
         Preconditions.checkNotNull(current);
         Preconditions.checkNotNull(allBlocks);
 
@@ -63,38 +65,38 @@ public class CommonStmtParser {
                         "block.");
 
         final CommonStmtOpcode opcode = CommonStmtOpcode.valueOf(opcodeString);
-
+        BlockMetadata metadata = BlockMetadataParser.parse(blockId, current);
         switch (opcode) {
             case control_wait:
-                return parseWaitSeconds(current, allBlocks);
+                return parseWaitSeconds(current, allBlocks, metadata);
 
             case control_wait_until:
-                return parseWaitUntil(current, allBlocks);
+                return parseWaitUntil(current, allBlocks, metadata);
 
             case control_stop:
-                return parseControlStop(current);
+                return parseControlStop(current, metadata);
 
             case control_create_clone_of:
-                return parseCreateCloneOf(current, allBlocks);
+                return parseCreateCloneOf(current, allBlocks, metadata);
 
             case event_broadcast:
-                return parseBroadcast(current, allBlocks);
+                return parseBroadcast(current, allBlocks, metadata);
 
             case event_broadcastandwait:
-                return parseBroadcastAndWait(current, allBlocks);
+                return parseBroadcastAndWait(current, allBlocks, metadata);
 
             case sensing_resettimer:
-                return new ResetTimer();
+                return new ResetTimer(metadata);
 
             case data_changevariableby:
-                return parseChangeVariableBy(current, allBlocks);
+                return parseChangeVariableBy(current, allBlocks, metadata);
 
             default:
                 throw new RuntimeException("Not Implemented yet");
         }
     }
 
-    private static CommonStmt parseChangeVariableBy(JsonNode current, JsonNode allBlocks) throws ParsingException {
+    private static CommonStmt parseChangeVariableBy(JsonNode current, JsonNode allBlocks, BlockMetadata metadata) throws ParsingException {
         Expression numExpr = NumExprParser.parseNumExpr(current, VALUE_KEY, allBlocks);
         Identifier var;
         String variableName = current.get(FIELDS_KEY).get(VARIABLE_KEY).get(VARIABLE_NAME_POS).asText();
@@ -107,31 +109,31 @@ public class CommonStmtParser {
             var = new Qualified(new StrId(actorName), new Variable(new StrId(variableName)));
         }
 
-        return new ChangeVariableBy(var, numExpr);
+        return new ChangeVariableBy(var, numExpr, metadata);
     }
 
-    private static CommonStmt parseBroadcast(JsonNode current, JsonNode allBlocks) throws ParsingException {
+    private static CommonStmt parseBroadcast(JsonNode current, JsonNode allBlocks, BlockMetadata metadata) throws ParsingException {
         Preconditions.checkArgument(current.get(INPUTS_KEY).get(BROADCAST_INPUT_KEY).isArray());
 
         // The inputs contains array itself,
         StringExpr messageName = StringExprParser.parseStringExpr(current, BROADCAST_INPUT_KEY, allBlocks);
 
         Message message = new Message(messageName);
-        return new Broadcast(message);
+        return new Broadcast(message, metadata);
     }
 
-    private static CommonStmt parseBroadcastAndWait(JsonNode current, JsonNode allBlocks) throws ParsingException {
+    private static CommonStmt parseBroadcastAndWait(JsonNode current, JsonNode allBlocks, BlockMetadata metadata) throws ParsingException {
         Preconditions.checkArgument(current.get(INPUTS_KEY).get(BROADCAST_INPUT_KEY).isArray());
 
         // The inputs contains array itself,
         StringExpr messageName = StringExprParser.parseStringExpr(current, BROADCAST_INPUT_KEY, allBlocks);
 
         Message message = new Message(messageName);
-        BroadcastAndWait broadcast = new BroadcastAndWait(message);
+        BroadcastAndWait broadcast = new BroadcastAndWait(message, metadata);
         return broadcast;
     }
 
-    private static CommonStmt parseCreateCloneOf(JsonNode current, JsonNode allBlocks) throws ParsingException {
+    private static CommonStmt parseCreateCloneOf(JsonNode current, JsonNode allBlocks, BlockMetadata metadata) throws ParsingException {
         JsonNode inputs = current.get(INPUTS_KEY);
         List<JsonNode> inputsList = new ArrayList<>();
         inputs.elements().forEachRemaining(inputsList::add);
@@ -141,36 +143,36 @@ public class CommonStmtParser {
             JsonNode optionBlock = allBlocks.get(cloneOptionMenu);
             String cloneValue = optionBlock.get(FIELDS_KEY).get(CLONE_OPTION).get(FIELD_VALUE).asText();
             LocalIdentifier ident = new StrId(cloneValue);
-            return new CreateCloneOf(new AsString(ident));
+            return new CreateCloneOf(new AsString(ident), metadata);
         } else {
             final StringExpr stringExpr = StringExprParser.parseStringExpr(current, CLONE_OPTION, allBlocks);
-            return new CreateCloneOf(stringExpr);
+            return new CreateCloneOf(stringExpr, metadata);
         }
     }
 
-    private static WaitUntil parseWaitUntil(JsonNode current, JsonNode allBlocks) throws ParsingException {
+    private static WaitUntil parseWaitUntil(JsonNode current, JsonNode allBlocks, BlockMetadata metadata) throws ParsingException {
         JsonNode inputs = current.get(INPUTS_KEY);
         if (inputs.has(CONDITION_KEY)) {
             BoolExpr boolExpr = BoolExprParser.parseBoolExpr(current, CONDITION_KEY, allBlocks);
-            return new WaitUntil(boolExpr);
+            return new WaitUntil(boolExpr, metadata);
         } else {
-            return new WaitUntil(new UnspecifiedBoolExpr());
+            return new WaitUntil(new UnspecifiedBoolExpr(), metadata);
         }
     }
 
-    private static WaitSeconds parseWaitSeconds(JsonNode current, JsonNode allBlocks) throws ParsingException {
+    private static WaitSeconds parseWaitSeconds(JsonNode current, JsonNode allBlocks, BlockMetadata metadata) throws ParsingException {
         NumExpr numExpr = NumExprParser.parseNumExpr(current, DURATION_KEY, allBlocks);
-        return new WaitSeconds(numExpr);
+        return new WaitSeconds(numExpr, metadata);
     }
 
-    private static CommonStmt parseControlStop(JsonNode current) throws ParsingException {
+    private static CommonStmt parseControlStop(JsonNode current, BlockMetadata metadata) throws ParsingException {
         CommonStmt stmt;
         String stopOptionValue =
                 current.get(Constants.FIELDS_KEY).get(STOP_OPTION).get(Constants.FIELD_VALUE)
                         .asText();
 
         if (stopOptionValue.equals(STOP_OTHER) || stopOptionValue.equals(STOP_OTHER_IN_STAGE)) {
-            stmt = new StopOtherScriptsInSprite();
+            stmt = new StopOtherScriptsInSprite(metadata);
         } else {
             throw new RuntimeException();
         }

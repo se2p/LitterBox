@@ -20,16 +20,23 @@ package de.uni_passau.fim.se2.litterbox.ast.model.statement.common;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 public class CreateCloneOf extends AbstractNode implements CommonStmt {
 
     private final StringExpr stringExpr;
+    private final BlockMetadata metadata;
 
-    public CreateCloneOf(StringExpr stringExpr) {
-        super(stringExpr);
+    public CreateCloneOf(StringExpr stringExpr, BlockMetadata metadata) {
+        super(stringExpr, metadata);
         this.stringExpr = Preconditions.checkNotNull(stringExpr);
+        this.metadata = metadata;
+    }
+
+    public BlockMetadata getMetadata() {
+        return metadata;
     }
 
     public StringExpr getStringExpr() {

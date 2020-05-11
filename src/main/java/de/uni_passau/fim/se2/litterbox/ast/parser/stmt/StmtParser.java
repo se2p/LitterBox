@@ -54,7 +54,7 @@ public class StmtParser {
                 .contains(opcode)) {
             return ExpressionStmtParser.parse(current, blocks);
         } else if (CommonStmtOpcode.contains(opcode)) {
-            return CommonStmtParser.parse(current, blocks);
+            return CommonStmtParser.parse(blockID, current, blocks);
         } else if (SpriteMotionStmtOpcode.contains(opcode)) {
             return SpriteMotionStmtParser.parse(blockID, current, blocks);
         } else if (SpriteLookStmtOpcode.contains(opcode)) {
@@ -66,7 +66,7 @@ public class StmtParser {
         } else if (ListStmtOpcode.contains(opcode)) {
             return ListStmtParser.parse(blockID, current, blocks);
         } else if (SetStmtOpcode.contains(opcode)) {
-            return SetStmtParser.parse(current, blocks);
+            return SetStmtParser.parse(blockID,current, blocks);
         } else if (PenOpcode.contains(opcode)) {
             return PenStmtParser.parse(blockID, current, blocks);
         } else {

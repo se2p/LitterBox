@@ -20,16 +20,23 @@ package de.uni_passau.fim.se2.litterbox.ast.model.statement.common;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Message;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 public class BroadcastAndWait extends AbstractNode implements CommonStmt {
 
     private final Message message;
+    private final BlockMetadata metadata;
 
-    public BroadcastAndWait(Message message) {
-        super(message);
+    public BroadcastAndWait(Message message, BlockMetadata metadata) {
+        super(message, metadata);
         this.message = Preconditions.checkNotNull(message);
+        this.metadata = metadata;
+    }
+
+    public BlockMetadata getMetadata() {
+        return metadata;
     }
 
     public Message getMessage() {

@@ -20,16 +20,23 @@ package de.uni_passau.fim.se2.litterbox.ast.model.statement.common;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BoolExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 public class WaitUntil extends AbstractNode implements CommonStmt {
 
     private final BoolExpr until;
+    private final BlockMetadata metadata;
 
-    public WaitUntil(BoolExpr until) {
-        super(until);
+    public WaitUntil(BoolExpr until, BlockMetadata metadata) {
+        super(until, metadata);
         this.until = Preconditions.checkNotNull(until);
+        this.metadata = metadata;
+    }
+
+    public BlockMetadata getMetadata() {
+        return metadata;
     }
 
     public BoolExpr getUntil() {

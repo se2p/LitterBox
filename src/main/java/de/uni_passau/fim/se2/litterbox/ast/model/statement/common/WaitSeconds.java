@@ -20,16 +20,23 @@ package de.uni_passau.fim.se2.litterbox.ast.model.statement.common;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 public class WaitSeconds extends AbstractNode implements CommonStmt {
 
     private final NumExpr seconds;
+    private final BlockMetadata metadata;
 
-    public WaitSeconds(NumExpr seconds) {
-        super(seconds);
+    public WaitSeconds(NumExpr seconds, BlockMetadata metadata) {
+        super(seconds, metadata);
         this.seconds = Preconditions.checkNotNull(seconds);
+        this.metadata = metadata;
+    }
+
+    public BlockMetadata getMetadata() {
+        return metadata;
     }
 
     public NumExpr getSeconds() {

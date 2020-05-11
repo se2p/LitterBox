@@ -21,6 +21,7 @@ package de.uni_passau.fim.se2.litterbox.ast.model.statement.common;
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
@@ -28,11 +29,17 @@ public class SetAttributeTo extends AbstractNode implements SetStmt {
 
     private final StringExpr stringExpr;
     private final Expression expr;
+    private final BlockMetadata metadata;
 
-    public SetAttributeTo(StringExpr stringExpr, Expression expr) {
-        super(stringExpr, expr);
+    public SetAttributeTo(StringExpr stringExpr, Expression expr, BlockMetadata metadata) {
+        super(stringExpr, expr, metadata);
         this.stringExpr = Preconditions.checkNotNull(stringExpr);
         this.expr = Preconditions.checkNotNull(expr);
+        this.metadata = metadata;
+    }
+
+    public BlockMetadata getMetadata() {
+        return metadata;
     }
 
     public StringExpr getStringExpr() {

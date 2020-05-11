@@ -21,6 +21,7 @@ package de.uni_passau.fim.se2.litterbox.ast.model.statement.common;
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Identifier;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
@@ -28,11 +29,17 @@ public class ChangeVariableBy extends AbstractNode implements CommonStmt {
 
     private final Identifier identifier;
     private final Expression expr;
+    private final BlockMetadata metadata;
 
-    public ChangeVariableBy(Identifier identifier, Expression expr) {
-        super(identifier, expr);
+    public ChangeVariableBy(Identifier identifier, Expression expr, BlockMetadata metadata) {
+        super(identifier, expr, metadata);
         this.identifier = Preconditions.checkNotNull(identifier);
         this.expr = Preconditions.checkNotNull(expr);
+        this.metadata = metadata;
+    }
+
+    public BlockMetadata getMetadata() {
+        return metadata;
     }
 
     public Identifier getIdentifier() {
