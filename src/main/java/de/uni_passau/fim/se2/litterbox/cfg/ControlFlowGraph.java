@@ -24,7 +24,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Message;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Event;
-import de.uni_passau.fim.se2.litterbox.ast.model.event.VariableAboveValue;
+import de.uni_passau.fim.se2.litterbox.ast.model.event.AttributeAboveValue;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 
 import java.util.*;
@@ -100,8 +100,8 @@ public class ControlFlowGraph {
         return cfgNode;
     }
 
-    public VariableEventNode addNode(VariableAboveValue node) {
-        VariableEventNode cfgNode = new VariableEventNode(node);
+    public AttributeEventNode addNode(AttributeAboveValue node) {
+        AttributeEventNode cfgNode = new AttributeEventNode(node);
         graph.addNode(cfgNode);
         return cfgNode;
     }

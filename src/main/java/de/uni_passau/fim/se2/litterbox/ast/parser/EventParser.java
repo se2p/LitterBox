@@ -38,7 +38,7 @@ public class EventParser {
     public static final String INPUTS = "WHENGREATERTHANMENU";
     public static final String KEY_OPTION = "KEY_OPTION";
     public static final String BCAST_OPTION = "BROADCAST_OPTION";
-    public static final String VARIABLE_MENU = "WHENGREATERTHANMENU";
+    public static final String GREATER_THAN_MENU = "WHENGREATERTHANMENU";
     public static final String BACKDROP = "BACKDROP";
 
     public static Event parse(String blockID, JsonNode allBlocks) throws ParsingException {
@@ -68,13 +68,10 @@ public class EventParser {
         } else if (opcode.equals(control_start_as_clone)) {
             return new StartedAsClone();
         } else if (opcode.equals(event_whengreaterthan)) {
-
-            String variableValue = current.get(FIELDS_KEY).get(VARIABLE_MENU).get(0).asText();
-            LocalIdentifier var = new StrId(variableValue);
-
+            String variableValue = current.get(FIELDS_KEY).get(GREATER_THAN_MENU).get(0).asText();
+            EventAttribute attr = EventAttribute.fromString(variableValue.toLowerCase());
             NumExpr fieldValue = NumExprParser.parseNumExpr(current, VALUE_KEY, allBlocks);
-
-            return new VariableAboveValue(var, fieldValue);
+            return new AttributeAboveValue(attr, fieldValue);
         } else if (opcode.equals(event_whenbackdropswitchesto)) {
             JsonNode fields = current.get(FIELDS_KEY);
             JsonNode backdropArray = fields.get(BACKDROP);
