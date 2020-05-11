@@ -21,6 +21,7 @@ package de.uni_passau.fim.se2.litterbox.ast.model.statement.list;
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Identifier;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
@@ -28,11 +29,17 @@ public class DeleteOf extends AbstractNode implements ListStmt {
 
     private final NumExpr num;
     private final Identifier identifier;
+    private final BlockMetadata metadata;
 
-    public DeleteOf(NumExpr num, Identifier identifier) {
-        super(num, identifier);
+    public DeleteOf(NumExpr num, Identifier identifier, BlockMetadata metadata) {
+        super(num, identifier, metadata);
         this.num = Preconditions.checkNotNull(num);
         this.identifier = Preconditions.checkNotNull(identifier);
+        this.metadata = metadata;
+    }
+
+    public BlockMetadata getMetadata() {
+        return metadata;
     }
 
     public NumExpr getNum() {

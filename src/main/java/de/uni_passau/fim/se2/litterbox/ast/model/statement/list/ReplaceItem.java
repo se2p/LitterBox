@@ -22,6 +22,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Identifier;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
@@ -30,12 +31,18 @@ public class ReplaceItem extends AbstractNode implements ListStmt {
     private final NumExpr index;
     private final Identifier identifier;
     private final StringExpr string;
+    private final BlockMetadata metadata;
 
-    public ReplaceItem(StringExpr string, NumExpr index, Identifier identifier) {
-        super(index, identifier, string);
+    public ReplaceItem(StringExpr string, NumExpr index, Identifier identifier, BlockMetadata metadata) {
+        super(index, identifier, string, metadata);
         this.index = Preconditions.checkNotNull(index);
         this.identifier = Preconditions.checkNotNull(identifier);
         this.string = Preconditions.checkNotNull(string);
+        this.metadata = metadata;
+    }
+
+    public BlockMetadata getMetadata() {
+        return metadata;
     }
 
     public NumExpr getIndex() {

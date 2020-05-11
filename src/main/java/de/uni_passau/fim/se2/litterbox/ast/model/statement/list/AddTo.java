@@ -21,6 +21,7 @@ package de.uni_passau.fim.se2.litterbox.ast.model.statement.list;
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Identifier;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
@@ -28,11 +29,17 @@ public class AddTo extends AbstractNode implements ListStmt {
 
     private final StringExpr string;
     private final Identifier identifier;
+    private final BlockMetadata metadata;
 
-    public AddTo(StringExpr string, Identifier identifier) {
-        super(string, identifier);
+    public AddTo(StringExpr string, Identifier identifier, BlockMetadata metadata) {
+        super(string, identifier, metadata);
         this.string = Preconditions.checkNotNull(string);
         this.identifier = Preconditions.checkNotNull(identifier);
+        this.metadata = metadata;
+    }
+
+    public BlockMetadata getMetadata() {
+        return metadata;
     }
 
     public StringExpr getString() {

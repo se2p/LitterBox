@@ -22,6 +22,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Identifier;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
@@ -30,12 +31,18 @@ public class InsertAt extends AbstractNode implements ListStmt {
     private final StringExpr string;
     private final NumExpr index;
     private final Identifier identifier;
+    private final BlockMetadata metadata;
 
-    public InsertAt(StringExpr string, NumExpr index, Identifier identifier) {
-        super(string, index, identifier);
+    public InsertAt(StringExpr string, NumExpr index, Identifier identifier, BlockMetadata metadata) {
+        super(string, index, identifier, metadata);
         this.string = Preconditions.checkNotNull(string);
         this.index = Preconditions.checkNotNull(index);
         this.identifier = Preconditions.checkNotNull(identifier);
+        this.metadata = metadata;
+    }
+
+    public BlockMetadata getMetadata() {
+        return metadata;
     }
 
     public StringExpr getString() {
