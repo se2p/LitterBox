@@ -35,4 +35,9 @@ public class BackwardFlowDirection implements FlowDirection {
     public Set<CFGNode> getOutNodes(ControlFlowGraph cfg, CFGNode cfgNode) {
         return cfg.getPredecessors(cfgNode);
     }
+
+    @Override
+    public Iterable<CFGNode> getInitialNodes(ControlFlowGraph cfg) {
+        return cfg.getNodesInPostOrder();
+    }
 }

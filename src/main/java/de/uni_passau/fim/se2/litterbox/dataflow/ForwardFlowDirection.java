@@ -35,4 +35,9 @@ public class ForwardFlowDirection implements FlowDirection {
     public Set<CFGNode> getOutNodes(ControlFlowGraph cfg, CFGNode cfgNode) {
         return cfg.getSuccessors(cfgNode);
     }
+
+    @Override
+    public Iterable<CFGNode> getInitialNodes(ControlFlowGraph cfg) {
+        return cfg.getNodesInReversePostOrder();
+    }
 }

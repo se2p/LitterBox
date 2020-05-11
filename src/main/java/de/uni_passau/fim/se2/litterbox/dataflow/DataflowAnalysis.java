@@ -83,7 +83,8 @@ public class DataflowAnalysis<T extends DataflowFact> {
 
     public void applyAnalysis() {
         outFacts.putAll(dataflowFacts); // TODO: Is this correct?
-        final Deque<CFGNode> workList = new ArrayDeque<>(cfg.getNodes());
+        final Deque<CFGNode> workList = new ArrayDeque<>();
+        flowDirection.getInitialNodes(cfg).forEach(workList::add);
 
         while (!workList.isEmpty()) {
             final CFGNode node = workList.poll();
