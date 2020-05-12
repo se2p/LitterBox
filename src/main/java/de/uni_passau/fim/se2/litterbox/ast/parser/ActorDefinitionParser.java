@@ -19,6 +19,7 @@
 package de.uni_passau.fim.se2.litterbox.ast.parser;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinitionList;
@@ -83,9 +84,9 @@ public class ActorDefinitionParser {
         // the reason for this is, that menues count as topLevel in the Json File
         // if the menu is replaced by another expression
         List<String> topLevelNodes = stream.filter(fieldName ->
-                (allBlocks.get(fieldName).has("topLevel") &&
+                ((allBlocks.get(fieldName).has("topLevel") &&
                         allBlocks.get(fieldName).get("topLevel").asBoolean()) &&
-                        !DependentBlockOpcodes.contains(allBlocks.get(fieldName).get(OPCODE_KEY).asText()))
+                        !DependentBlockOpcodes.contains(allBlocks.get(fieldName).get(OPCODE_KEY).asText())) || allBlocks.get(fieldName) instanceof ArrayNode)
                 .collect(Collectors.toList());
 
         List<Script> scripts = new LinkedList<>();

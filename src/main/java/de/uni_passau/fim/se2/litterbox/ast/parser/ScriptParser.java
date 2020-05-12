@@ -19,6 +19,7 @@
 package de.uni_passau.fim.se2.litterbox.ast.parser;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
@@ -76,34 +77,42 @@ public class ScriptParser {
     }
 
     private static boolean isEvent(JsonNode current) {
-        String opcode = current.get(OPCODE).asText();
-        return EventOpcode.contains(opcode);
+        if (current.has(OPCODE)) {
+            String opcode = current.get(OPCODE).asText();
+            return EventOpcode.contains(opcode);
+        }
+        return false;
     }
 
     public static StmtList parseStmtList(String blockID, JsonNode blocks) throws ParsingException {
         List<Stmt> list = new LinkedList<>();
         JsonNode current = blocks.get(blockID);
 
-        while (current != null && !current.isNull()) {
-            try {
-                if (ProcedureOpcode.contains(blocks.get(blockID).get(OPCODE_KEY).asText()) || DependentBlockOpcodes.contains(blocks.get(blockID).get(OPCODE_KEY).asText())) {
-                    //Ignore ProcedureOpcodes
+        if (current instanceof ArrayNode) {
+            Stmt stmt = StmtParser.parse(blockID, blocks);
+            list.add(stmt);
+        } else {
+
+            while (current != null && !current.isNull()) {
+                try {
+                    if (ProcedureOpcode.contains(blocks.get(blockID).get(OPCODE_KEY).asText()) || DependentBlockOpcodes.contains(blocks.get(blockID).get(OPCODE_KEY).asText())) {
+                        //Ignore ProcedureOpcodes
 //                    blockID = current.get(NEXT_KEY).asText();
 //                    current = blocks.get(blockID);
-                    return null;
+                        return null;
+                    }
+
+                    Stmt stmt = StmtParser.parse(blockID, blocks);
+                    list.add(stmt);
+                } catch (ParsingException e) {
+                    // and needs to be removed
+                    Logger.getGlobal().warning("Could not parse block with ID " + blockID + " and opcode "
+                            + current.get(OPCODE_KEY));
                 }
-
-                Stmt stmt = StmtParser.parse(blockID, blocks);
-                list.add(stmt);
-            } catch (ParsingException e) {
-                // and needs to be removed
-                Logger.getGlobal().warning("Could not parse block with ID " + blockID + " and opcode "
-                        + current.get(OPCODE_KEY));
+                blockID = current.get(NEXT_KEY).asText();
+                current = blocks.get(blockID);
             }
-            blockID = current.get(NEXT_KEY).asText();
-            current = blocks.get(blockID);
         }
-
         return new StmtList(list);
     }
 }
