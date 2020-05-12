@@ -37,6 +37,7 @@ public class BlockCountTest {
     private static Program fixedStatements;
     private static Program fixedExpressions;
     private static Program halfFixedExpr;
+    private static Program onlyVariable;
     private static ObjectMapper mapper = new ObjectMapper();
 
     @BeforeAll
@@ -54,6 +55,8 @@ public class BlockCountTest {
         fixedStatements = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
         f = new File("./src/test/fixtures/halfFixedExpressions.json");
         halfFixedExpr = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
+        f = new File("./src/test/fixtures/onlyVariable.json");
+        onlyVariable = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
     }
 
     @Test
@@ -89,6 +92,13 @@ public class BlockCountTest {
         BlockCount parameterName = new BlockCount();
         IssueReport report = parameterName.check(fixedExpressions);
         Assertions.assertEquals(4, report.getCount());
+    }
+
+    @Test
+    public void testOnlyVariable() {
+        BlockCount parameterName = new BlockCount();
+        IssueReport report = parameterName.check(onlyVariable);
+        Assertions.assertEquals(1, report.getCount());
     }
 
     @Test
