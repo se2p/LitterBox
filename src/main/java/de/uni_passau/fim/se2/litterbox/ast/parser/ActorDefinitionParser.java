@@ -19,6 +19,7 @@
 package de.uni_passau.fim.se2.litterbox.ast.parser;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
@@ -83,7 +84,8 @@ public class ActorDefinitionParser {
         List<String> topLevelNodes = stream.filter(fieldName ->
                 (allBlocks.get(fieldName).has(TOPLEVEL_KEY) &&
                         allBlocks.get(fieldName).get(TOPLEVEL_KEY).asBoolean()) &&
-                        !DependentBlockOpcodes.contains(allBlocks.get(fieldName).get(OPCODE_KEY).asText()))
+                        !DependentBlockOpcodes.contains(allBlocks.get(fieldName).get(OPCODE_KEY).asText())
+                || allBlocks.get(fieldName) instanceof ArrayNode)
                 .collect(Collectors.toList());
 
         List<Script> scripts = new LinkedList<>();

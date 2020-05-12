@@ -19,6 +19,7 @@
 package de.uni_passau.fim.se2.litterbox.ast.parser.stmt;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import de.uni_passau.fim.se2.litterbox.ast.Constants;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
@@ -34,7 +35,10 @@ public class StmtParser {
         Preconditions.checkState(blocks.has(blockID), "No block for id %s", blockID);
 
         JsonNode current = blocks.get(blockID);
-        final String opcode = current.get(Constants.OPCODE_KEY).asText();
+        if (current instanceof ArrayNode) {
+            return ExpressionStmtParser.parse(current, blocks);
+        } else {
+            final String opcode = current.get(Constants.OPCODE_KEY).asText();
 
         if (TerminationStmtOpcode.contains(opcode)) {
             if (!(current.get(Constants.FIELDS_KEY).has("STOP_OPTION")
