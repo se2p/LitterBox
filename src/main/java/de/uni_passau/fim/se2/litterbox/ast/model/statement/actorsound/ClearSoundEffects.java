@@ -20,12 +20,19 @@ package de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTLeaf;
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 public class ClearSoundEffects extends AbstractNode implements ActorSoundStmt, ASTLeaf {
+    public final BlockMetadata metadata;
 
-    public ClearSoundEffects() {
-        super();
+    public ClearSoundEffects(BlockMetadata metadata) {
+        super(metadata);
+        this.metadata = metadata;
+    }
+
+    public BlockMetadata getMetadata() {
+        return metadata;
     }
 
     @Override

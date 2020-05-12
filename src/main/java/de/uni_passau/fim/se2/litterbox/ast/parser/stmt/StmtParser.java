@@ -60,7 +60,7 @@ public class StmtParser {
         } else if (SpriteLookStmtOpcode.contains(opcode)) {
             return SpriteLookStmtParser.parse(blockID, current, blocks);
         } else if (ActorSoundStmtOpcode.contains(opcode)) {
-            return ActorSoundStmtParser.parse(current, blocks);
+            return ActorSoundStmtParser.parse(blockID, current, blocks);
         } else if (CallStmtOpcode.contains(opcode)) {
             return CallStmtParser.parse(blockID, current, blocks);
         } else if (ListStmtOpcode.contains(opcode)) {

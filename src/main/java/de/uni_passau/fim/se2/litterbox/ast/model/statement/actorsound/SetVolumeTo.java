@@ -2,14 +2,21 @@ package de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 public class SetVolumeTo extends AbstractNode implements ActorSoundStmt {
-    private NumExpr volumeValue;
+    private final NumExpr volumeValue;
+    private final BlockMetadata metadata;
 
-    public SetVolumeTo(NumExpr volumeValue) {
-        super(volumeValue);
+    public SetVolumeTo(NumExpr volumeValue, BlockMetadata metadata) {
+        super(volumeValue, metadata);
         this.volumeValue = volumeValue;
+        this.metadata = metadata;
+    }
+
+    public BlockMetadata getMetadata() {
+        return metadata;
     }
 
     public NumExpr getVolumeValue() {
