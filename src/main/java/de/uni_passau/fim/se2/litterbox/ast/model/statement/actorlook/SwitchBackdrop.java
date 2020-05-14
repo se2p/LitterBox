@@ -20,15 +20,23 @@ package de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.ElementChoice;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 public class SwitchBackdrop extends AbstractNode implements ActorLookStmt {
 
     private final ElementChoice elementChoice;
+    private final BlockMetadata metadata;
 
-    public SwitchBackdrop(ElementChoice elementChoice) {
+    public SwitchBackdrop(ElementChoice elementChoice, BlockMetadata metadata) {
+        super(elementChoice, metadata);
         this.elementChoice = Preconditions.checkNotNull(elementChoice);
+        this.metadata = metadata;
+    }
+
+    public BlockMetadata getMetadata() {
+        return metadata;
     }
 
     public ElementChoice getElementChoice() {

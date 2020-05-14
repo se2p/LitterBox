@@ -51,7 +51,7 @@ public class StmtParser {
             }
 
             if (ActorLookStmtOpcode.contains(opcode)) {
-                return ActorLookStmtParser.parse(current, blocks);
+                return ActorLookStmtParser.parse(blockID, current, blocks);
             } else if (ControlStmtOpcode.contains(opcode)) {
                 return ControlStmtParser.parse(blockID, current, blocks);
             } else if (BoolExprOpcode.contains(opcode) || NumExprOpcode.contains(opcode) || StringExprOpcode

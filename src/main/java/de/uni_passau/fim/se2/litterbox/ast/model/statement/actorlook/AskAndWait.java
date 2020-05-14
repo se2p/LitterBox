@@ -20,16 +20,23 @@ package de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 public class AskAndWait extends AbstractNode implements ActorLookStmt {
 
     private final StringExpr question;
+    private final BlockMetadata metadata;
 
-    public AskAndWait(StringExpr question) {
-        super(question);
+    public AskAndWait(StringExpr question, BlockMetadata metadata) {
+        super(question, metadata);
         this.question = Preconditions.checkNotNull(question);
+        this.metadata = metadata;
+    }
+
+    public BlockMetadata getMetadata() {
+        return metadata;
     }
 
     public StringExpr getQuestion() {
