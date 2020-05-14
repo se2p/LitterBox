@@ -25,12 +25,14 @@ import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.FromExpression;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.MousePos;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.Position;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.RandomPos;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.NumExprOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.SpriteMotionStmtOpcode;
+import de.uni_passau.fim.se2.litterbox.ast.parser.metadata.BlockMetadataParser;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import java.util.ArrayList;
@@ -83,11 +85,12 @@ public class PositionParser {
             ArrayList<JsonNode> fields = new ArrayList<>();
             allBlocks.get(menuID.asText()).get(Constants.FIELDS_KEY).elements().forEachRemaining(fields::add);
             String posString = fields.get(Constants.FIELD_VALUE).get(0).asText();
+            BlockMetadata metadata = BlockMetadataParser.parse(menuID.asText(),allBlocks.get(menuID.asText()));
 
             if (posString.equals("_mouse_")) {
-                return new MousePos();
+                return new MousePos(metadata);
             } else if (posString.equals("_random_")) {
-                return new RandomPos();
+                return new RandomPos(metadata);
             } else {
                 return new FromExpression(new AsString(new StrId(posString)));
             }
