@@ -26,14 +26,15 @@ import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoBlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.parser.metadata.BlockMetadataParser;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static de.uni_passau.fim.se2.litterbox.ast.Constants.FIELDS_KEY;
-import static de.uni_passau.fim.se2.litterbox.ast.opcodes.ActorLookStmtOpcode.looks_nextbackdrop;
-import static de.uni_passau.fim.se2.litterbox.ast.opcodes.SpriteLookStmtOpcode.looks_nextcostume;
 
 public class ElementChoiceParser {
 
@@ -42,11 +43,6 @@ public class ElementChoiceParser {
     public static ElementChoice parse(JsonNode current, JsonNode allBlocks) throws ParsingException {
         Preconditions.checkNotNull(current);
         Preconditions.checkNotNull(allBlocks);
-
-        String opcodeString = current.get(Constants.OPCODE_KEY).asText();
-        if (opcodeString.equals(looks_nextcostume.toString()) || opcodeString.equals(looks_nextbackdrop.toString())) {
-            return new Next();
-        }
 
         //Make a list of all elements in inputs
         List<JsonNode> inputsList = new ArrayList<>();
@@ -58,13 +54,14 @@ public class ElementChoiceParser {
             return getElementChoiceFromMenu(allBlocks, inputsNode);
         } else {
             final Expression expression = ExpressionParser.parseExpr(current, BACKDROP, allBlocks);
-            return new WithExpr(expression);
+            return new WithExpr(expression, new NoBlockMetadata());
         }
     }
 
     private static ElementChoice getElementChoiceFromMenu(JsonNode allBlocks, JsonNode inputsNode) {
         String blockMenuID = inputsNode.get(Constants.POS_INPUT_VALUE).asText();
         JsonNode menu = allBlocks.get(blockMenuID);
+        BlockMetadata metadata = BlockMetadataParser.parse(blockMenuID, menu);
 
         List<JsonNode> fieldsList = new ArrayList<>();
         menu.get(FIELDS_KEY).elements().forEachRemaining(fieldsList::add);
@@ -79,17 +76,17 @@ public class ElementChoiceParser {
         }
 
         if (!StandardElemChoice.contains(elemKey)) {
-            return new WithExpr(new AsString(new StrId(elementName)));
+            return new WithExpr(new AsString(new StrId(elementName)), metadata);
         }
 
         StandardElemChoice standardElemChoice = StandardElemChoice.valueOf(elemKey);
         switch (standardElemChoice) {
             case random:
-                return new Random();
+                return new Random(metadata);
             case next:
-                return new Next();
+                return new Next(metadata);
             case previous:
-                return new Prev();
+                return new Prev(metadata);
             default:
                 throw new RuntimeException("No implementation for " + standardElemChoice);
         }

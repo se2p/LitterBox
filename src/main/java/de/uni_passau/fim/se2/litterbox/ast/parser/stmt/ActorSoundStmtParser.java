@@ -29,6 +29,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.*;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.ActorSoundStmtOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ExpressionParser;
@@ -99,10 +100,12 @@ public class ActorSoundStmtParser {
             String soundMenuId = current.get(INPUTS_KEY).get(SOUND_MENU).get(Constants.POS_INPUT_VALUE).asText();
             JsonNode soundMenu = allBlocks.get(soundMenuId);
             String soundValue = soundMenu.get(FIELDS_KEY).get(SOUND_MENU).get(FIELD_VALUE).asText();
-            return new WithExpr(new AsString(new StrId(soundValue)));
+            BlockMetadata metadata = BlockMetadataParser.parse(soundMenuId, soundMenu);
+
+            return new WithExpr(new AsString(new StrId(soundValue)), metadata);
         } else {
             final Expression expression = ExpressionParser.parseExpr(current, SOUND_MENU, allBlocks);
-            return new WithExpr(expression);
+            return new WithExpr(expression, new NoBlockMetadata());
         }
     }
 
