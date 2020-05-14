@@ -20,6 +20,7 @@
 package de.uni_passau.fim.se2.litterbox.cfg;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
+import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.WithExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AttributeOf;
@@ -164,7 +165,7 @@ public class AttributeUseVisitor implements DefinableCollector<Attribute> {
         // Name of var or attribute
         de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.Attribute attribute = node.getAttribute();
         // Name of owner
-        Expression owner = node.getLocalIdentifier();
+        Expression owner = ((WithExpr) node.getLocalIdentifier()).getExpression();
 
         assert(owner instanceof LocalIdentifier) : "This has to be a LocalIdentifier, no?";
         LocalIdentifier localIdentifier = (LocalIdentifier)owner;

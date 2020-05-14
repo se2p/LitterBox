@@ -22,7 +22,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
+import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.ElementChoice;
+import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.WithExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.Attribute;
@@ -34,8 +35,11 @@ import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.UnspecifiedId;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.ScratchList;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.StringExprOpcode;
+import de.uni_passau.fim.se2.litterbox.ast.parser.metadata.BlockMetadataParser;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ExpressionListInfo;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
@@ -168,21 +172,25 @@ public class StringExprParser {
             case sensing_answer:
                 return new Answer();
             case sensing_of:
-                String menuIdentifier = exprBlock.get(INPUTS_KEY).get(OBJECT_KEY).get(1).asText();
-                JsonNode objectMenuBlock = allBlocks.get(menuIdentifier);
+                ElementChoice localIdentifier;
+                JsonNode inputsNode = exprBlock.get(INPUTS_KEY).get(OBJECT_KEY);
+                if (getShadowIndicator((ArrayNode) inputsNode) == 1) {
+                    String menuIdentifier = inputsNode.get(1).asText();
+                    JsonNode objectMenuBlock = allBlocks.get(menuIdentifier);
+                    BlockMetadata metadata = BlockMetadataParser.parse(menuIdentifier, objectMenuBlock);
 
-                Expression localIdentifier;
-                if (objectMenuBlock != null) {
                     JsonNode menuOpcode = objectMenuBlock.get(OPCODE_KEY);
                     if (menuOpcode.asText().equalsIgnoreCase(sensing_of_object_menu.name())) {
-                        localIdentifier = new StrId(
+                        localIdentifier = new WithExpr(new StrId(
                                 objectMenuBlock.get(FIELDS_KEY).get(OBJECT_KEY).get(FIELD_VALUE)
-                                        .asText());
+                                        .asText()),metadata);
                     } else {
-                        localIdentifier = ExpressionParser.parseExpr(exprBlock, OBJECT_KEY, allBlocks);
+                        localIdentifier = new WithExpr(ExpressionParser.parseExpr(exprBlock, OBJECT_KEY, allBlocks),
+                                new NoBlockMetadata());
                     }
                 } else {
-                    localIdentifier = ExpressionParser.parseExpr(exprBlock, OBJECT_KEY, allBlocks);
+                    localIdentifier = new WithExpr(ExpressionParser.parseExpr(exprBlock, OBJECT_KEY, allBlocks),
+                            new NoBlockMetadata());
                 }
 
                 String prop = exprBlock.get(FIELDS_KEY).get("PROPERTY").get(0).asText();

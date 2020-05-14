@@ -24,6 +24,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
+import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.WithExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.AsBool;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.ListContains;
@@ -219,6 +220,15 @@ public class BlockCount implements IssueFinder, ScratchVisitor {
             count++;
         }
         node.getLocalIdentifier().accept(this);
+    }
+
+    @Override
+    public void visit(WithExpr node) {
+        if (!node.getChildren().isEmpty()) {
+            for (ASTNode child : node.getChildren()) {
+                child.accept(this);
+            }
+        }
     }
 
     @Override

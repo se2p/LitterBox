@@ -7,6 +7,7 @@ import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
+import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.WithExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.StringContains;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.Answer;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AttributeOf;
@@ -52,6 +53,6 @@ public class AttributeOfExpressionTest {
         ExpressionStmt expressionStmt = (ExpressionStmt) stmt;
         Truth.assertThat(expressionStmt.getExpression()).isInstanceOf(AttributeOf.class);
         AttributeOf attributeOf = (AttributeOf) expressionStmt.getExpression();
-        Truth.assertThat(attributeOf.getLocalIdentifier()).isInstanceOf(Backdrop.class);
+        Truth.assertThat(attributeOf.getLocalIdentifier()).isInstanceOf(WithExpr.class);
     }
 }

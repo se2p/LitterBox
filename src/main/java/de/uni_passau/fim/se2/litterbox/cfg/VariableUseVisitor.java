@@ -19,6 +19,7 @@
 
 package de.uni_passau.fim.se2.litterbox.cfg;
 
+import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.WithExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AttributeOf;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.Attribute;
@@ -83,7 +84,7 @@ public class VariableUseVisitor implements DefinableCollector<de.uni_passau.fim.
         // Name of var or attribute
         Attribute attribute = node.getAttribute();
         // Name of owner
-        Expression owner = node.getLocalIdentifier();
+        Expression owner = ((WithExpr) node.getLocalIdentifier()).getExpression();
 
         assert(owner instanceof LocalIdentifier) : "This has to be a LocalIdentifier, no?";
         LocalIdentifier localIdentifier = (LocalIdentifier)owner;
