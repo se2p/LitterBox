@@ -76,7 +76,7 @@ public class ElementChoiceParser {
         }
 
         if (!StandardElemChoice.contains(elemKey)) {
-            return new WithExpr(new AsString(new StrId(elementName)), metadata);
+            return new WithExpr(new StrId(elementName), metadata);
         }
 
         StandardElemChoice standardElemChoice = StandardElemChoice.valueOf(elemKey);
