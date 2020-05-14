@@ -20,17 +20,24 @@ package de.uni_passau.fim.se2.litterbox.ast.model.expression.string;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 public class LetterOf extends AbstractNode implements StringExpr {
 
     private final NumExpr num;
     private final StringExpr stringExpr;
+    private final BlockMetadata metadata;
 
-    public LetterOf(NumExpr num, StringExpr stringExpr) {
-        super(num, stringExpr);
+    public LetterOf(NumExpr num, StringExpr stringExpr, BlockMetadata metadata) {
+        super(num, stringExpr, metadata);
         this.num = num;
         this.stringExpr = stringExpr;
+        this.metadata = metadata;
+    }
+
+    public BlockMetadata getMetadata() {
+        return metadata;
     }
 
     public NumExpr getNum() {

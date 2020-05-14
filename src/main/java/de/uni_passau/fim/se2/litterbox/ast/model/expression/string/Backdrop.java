@@ -19,14 +19,21 @@
 package de.uni_passau.fim.se2.litterbox.ast.model.expression.string;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 public class Backdrop extends AbstractNode implements StringExpr {
-    private NameNum type;
+    private final BlockMetadata metadata;
+    private final NameNum type;
 
-    public Backdrop(NameNum type) {
-        super(type);
+    public Backdrop(NameNum type, BlockMetadata metadata) {
+        super(type, metadata);
         this.type = type;
+        this.metadata = metadata;
+    }
+
+    public BlockMetadata getMetadata() {
+        return metadata;
     }
 
     public NameNum getType() {

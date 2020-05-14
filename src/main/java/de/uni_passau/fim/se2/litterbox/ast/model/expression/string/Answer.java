@@ -20,11 +20,19 @@ package de.uni_passau.fim.se2.litterbox.ast.model.expression.string;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTLeaf;
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 public class Answer extends AbstractNode implements StringExpr, ASTLeaf {
-    public Answer() {
-        super();
+    private final BlockMetadata metadata;
+
+    public Answer(BlockMetadata metadata) {
+        super(metadata);
+        this.metadata = metadata;
+    }
+
+    public BlockMetadata getMetadata() {
+        return metadata;
     }
 
     @Override

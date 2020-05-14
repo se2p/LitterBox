@@ -20,16 +20,19 @@ package de.uni_passau.fim.se2.litterbox.ast.model.expression;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 
 public abstract class BinaryExpression<A extends ASTNode, B extends ASTNode> extends AbstractNode {
 
     private final A operand1;
     private final B operand2;
+    private final BlockMetadata metadata;
 
-    protected BinaryExpression(A operand1, B operand2) {
-        super(operand1, operand2);
+    protected BinaryExpression(A operand1, B operand2, BlockMetadata metadata) {
+        super(operand1, operand2, metadata);
         this.operand1 = operand1;
         this.operand2 = operand2;
+        this.metadata = metadata;
     }
 
     public A getOperand1() {
@@ -38,5 +41,9 @@ public abstract class BinaryExpression<A extends ASTNode, B extends ASTNode> ext
 
     public B getOperand2() {
         return operand2;
+    }
+
+    public BlockMetadata getMetadata() {
+        return metadata;
     }
 }
