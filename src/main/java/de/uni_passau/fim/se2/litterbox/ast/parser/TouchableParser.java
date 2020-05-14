@@ -24,8 +24,10 @@ import de.uni_passau.fim.se2.litterbox.ast.Constants;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.*;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.BoolExprOpcode;
+import de.uni_passau.fim.se2.litterbox.ast.parser.metadata.BlockMetadataParser;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import java.util.ArrayList;
@@ -63,13 +65,14 @@ public class TouchableParser {
     private static Touchable getTouchableMenuOption(JsonNode current, JsonNode allBlocks) throws ParsingException {
         String menuID = current.get(INPUTS_KEY).get(TOUCHINGOBJECTMENU).get(POS_INPUT_VALUE).asText();
         String touchingObject = allBlocks.get(menuID).get(FIELDS_KEY).get(TOUCHINGOBJECTMENU).get(0).asText();
+        BlockMetadata metadata = BlockMetadataParser.parse(menuID, allBlocks.get(menuID));
 
         if (touchingObject.equals(TOUCHING_MOUSE)) {
-            return new MousePointer();
+            return new MousePointer(metadata);
         } else if (touchingObject.equals(TOUCHING_EDGE)) {
-            return new Edge();
+            return new Edge(metadata);
         } else {
-            return new SpriteTouchable(new StringLiteral(touchingObject));
+            return new SpriteTouchable(new StringLiteral(touchingObject), metadata);
         }
     }
 
