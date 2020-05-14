@@ -22,8 +22,12 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import de.uni_passau.fim.se2.litterbox.ast.Constants;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
+import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.ElementChoice;
+import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.WithExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoBlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.parser.metadata.BlockMetadataParser;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import java.util.ArrayList;
@@ -35,7 +39,7 @@ public class CostumeChoiceParser {
 
     private static final String COSTUME_INPUT = "COSTUME";
 
-    public static Expression parse(JsonNode current, JsonNode allBlocks) throws ParsingException {
+    public static ElementChoice parse(JsonNode current, JsonNode allBlocks) throws ParsingException {
         Preconditions.checkNotNull(current);
         Preconditions.checkNotNull(allBlocks);
 
@@ -47,18 +51,19 @@ public class CostumeChoiceParser {
         if (getShadowIndicator((ArrayNode) inputsNode) == 1) {
             return getCostumeChoiceFromMenu(allBlocks, inputsNode);
         } else {
-            return ExpressionParser.parseExpr(current, COSTUME_INPUT, allBlocks);
+            return new WithExpr(ExpressionParser.parseExpr(current, COSTUME_INPUT, allBlocks), new NoBlockMetadata());
         }
     }
 
-    private static Expression getCostumeChoiceFromMenu(JsonNode allBlocks, JsonNode inputsNode) {
+    private static ElementChoice getCostumeChoiceFromMenu(JsonNode allBlocks, JsonNode inputsNode) {
         String blockMenuID = inputsNode.get(Constants.POS_INPUT_VALUE).asText();
         JsonNode menu = allBlocks.get(blockMenuID);
+        BlockMetadata metadata = BlockMetadataParser.parse(blockMenuID, menu);
 
         List<JsonNode> fieldsList = new ArrayList<>();
         menu.get(FIELDS_KEY).elements().forEachRemaining(fieldsList::add);
         String elementName = fieldsList.get(0).get(0).asText();
-        return new StrId(elementName); // TODO use qualified here?
+        return new WithExpr(new StrId(elementName), metadata); // TODO use qualified here?
     }
 
     static int getShadowIndicator(ArrayNode exprArray) {

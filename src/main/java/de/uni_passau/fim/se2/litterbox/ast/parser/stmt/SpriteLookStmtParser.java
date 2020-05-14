@@ -20,6 +20,7 @@ package de.uni_passau.fim.se2.litterbox.ast.parser.stmt;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
+import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.ElementChoice;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.Mult;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
@@ -74,7 +75,7 @@ public class SpriteLookStmtParser {
             case looks_nextcostume:
                 return new NextCostume(metadata);
             case looks_switchcostumeto:
-                Expression costumeChoice = CostumeChoiceParser.parse(current, allBlocks);
+                ElementChoice costumeChoice = CostumeChoiceParser.parse(current, allBlocks);
                 return new SwitchCostumeTo(costumeChoice, metadata);
             case looks_changesizeby:
                 numExpr = NumExprParser.parseNumExpr(current, CHANGE_KEY, allBlocks);
