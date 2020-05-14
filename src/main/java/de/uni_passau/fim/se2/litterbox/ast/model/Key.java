@@ -19,16 +19,23 @@
 package de.uni_passau.fim.se2.litterbox.ast.model;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 public class Key extends AbstractNode {
 
     private final NumExpr key;
+    private final BlockMetadata metadata;
 
-    public Key(NumExpr key) {
-        super(key);
+    public Key(NumExpr key, BlockMetadata metadata) {
+        super(key, metadata);
         this.key = Preconditions.checkNotNull(key);
+        this.metadata = metadata;
+    }
+
+    public BlockMetadata getMetadata() {
+        return metadata;
     }
 
     public NumExpr getKey() {
