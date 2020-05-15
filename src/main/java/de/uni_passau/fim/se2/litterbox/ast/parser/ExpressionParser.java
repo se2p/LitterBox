@@ -27,10 +27,12 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.UnspecifiedExpression;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.BoolExprOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.NumExprOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.StringExprOpcode;
+import de.uni_passau.fim.se2.litterbox.ast.parser.metadata.BlockMetadataParser;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ExpressionListInfo;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.VariableInfo;
 
@@ -90,15 +92,16 @@ public class ExpressionParser {
         if (exprBlock instanceof ArrayNode) {
             // it's a list or variable
             String idString = exprBlock.get(2).asText();
+            BlockMetadata metadata = BlockMetadataParser.parse(blockId, exprBlock);
             if (ProgramParser.symbolTable.getVariables().containsKey(idString)) {
                 VariableInfo variableInfo = ProgramParser.symbolTable.getVariables().get(idString);
 
                 return new Qualified(new StrId(variableInfo.getActor()),
-                        new Variable(new StrId((variableInfo.getVariableName()))));
+                        new Variable(new StrId(variableInfo.getVariableName()), metadata));
             } else if (ProgramParser.symbolTable.getLists().containsKey(idString)) {
                 ExpressionListInfo variableInfo = ProgramParser.symbolTable.getLists().get(idString);
                 return new Qualified(new StrId(variableInfo.getActor()),
-                        new Variable(new StrId((variableInfo.getVariableName()))));
+                        new Variable(new StrId(variableInfo.getVariableName()), metadata));
             }
         } else {
             // it's a normal reporter block
