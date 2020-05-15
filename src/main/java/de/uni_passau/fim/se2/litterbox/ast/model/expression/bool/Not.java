@@ -19,12 +19,13 @@
 package de.uni_passau.fim.se2.litterbox.ast.model.expression.bool;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.UnaryExpression;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 public class Not extends UnaryExpression<BoolExpr> implements BoolExpr {
 
-    public Not(BoolExpr operand1) {
-        super(operand1);
+    public Not(BoolExpr operand1, BlockMetadata metadata) {
+        super(operand1, metadata);
     }
 
     @Override

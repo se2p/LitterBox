@@ -86,7 +86,7 @@ public class ExpressionParser {
      * @return The parsed expression.
      * @throws ParsingException If the block is not parsable.
      */
-    public static Expression parseExprBlock(JsonNode exprBlock, JsonNode allBlocks) throws ParsingException {
+    public static Expression parseExprBlock(String blockId, JsonNode exprBlock, JsonNode allBlocks) throws ParsingException {
         if (exprBlock instanceof ArrayNode) {
             // it's a list or variable
             String idString = exprBlock.get(2).asText();
@@ -106,9 +106,9 @@ public class ExpressionParser {
             if (NumExprOpcode.contains(opcode)) {
                 return NumExprParser.parseBlockNumExpr(exprBlock, allBlocks);
             } else if (StringExprOpcode.contains(opcode)) {
-                return StringExprParser.parseBlockStringExpr(exprBlock, allBlocks);
+                return StringExprParser.parseBlockStringExpr(blockId, exprBlock, allBlocks);
             } else if (BoolExprOpcode.contains(opcode)) {
-                return BoolExprParser.parseBlockBoolExpr(exprBlock, allBlocks);
+                return BoolExprParser.parseBlockBoolExpr(blockId, exprBlock, allBlocks);
             } else {
                 throw new ParsingException(opcode + " is an unexpected opcode for an expression");
             }

@@ -20,12 +20,13 @@ package de.uni_passau.fim.se2.litterbox.ast.model.expression.bool;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.BinaryExpression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.ComparableExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 public class Equals extends BinaryExpression<ComparableExpr, ComparableExpr> implements BoolExpr {
 
-    public Equals(ComparableExpr first, ComparableExpr second) {
-        super(first, second);
+    public Equals(ComparableExpr first, ComparableExpr second, BlockMetadata metadata) {
+        super(first, second, metadata);
     }
 
     @Override

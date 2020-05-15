@@ -20,12 +20,13 @@ package de.uni_passau.fim.se2.litterbox.ast.model.expression.bool;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.UnaryExpression;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 public class AsBool extends UnaryExpression<Expression> implements BoolExpr {
 
     public AsBool(Expression expr) {
-        super(expr);
+        super(expr, new NoBlockMetadata());
     }
 
     @Override

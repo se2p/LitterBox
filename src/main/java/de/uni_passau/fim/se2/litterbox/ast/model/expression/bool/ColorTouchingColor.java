@@ -19,13 +19,14 @@
 package de.uni_passau.fim.se2.litterbox.ast.model.expression.bool;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.BinaryExpression;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.Color;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 public class ColorTouchingColor extends BinaryExpression<Color, Color> implements BoolExpr {
 
-    public ColorTouchingColor(Color operand1, Color operand2) {
-        super(operand1, operand2);
+    public ColorTouchingColor(Color operand1, Color operand2, BlockMetadata metadata) {
+        super(operand1, operand2, metadata);
     }
 
     @Override

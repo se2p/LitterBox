@@ -19,16 +19,23 @@
 package de.uni_passau.fim.se2.litterbox.ast.model.expression.bool;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.Touchable;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 public class Touching extends AbstractNode implements BoolExpr {
 
     private final Touchable touchable;
+    private final BlockMetadata metadata;
 
-    public Touching(Touchable touchable) {
-        super(touchable);
+    public Touching(Touchable touchable, BlockMetadata metadata) {
+        super(touchable, metadata);
         this.touchable = touchable;
+        this.metadata = metadata;
+    }
+
+    public BlockMetadata getMetadata() {
+        return metadata;
     }
 
     public Touchable getTouchable() {

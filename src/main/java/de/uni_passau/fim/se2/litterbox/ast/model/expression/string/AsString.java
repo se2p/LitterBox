@@ -20,12 +20,13 @@ package de.uni_passau.fim.se2.litterbox.ast.model.expression.string;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.UnaryExpression;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 public class AsString extends UnaryExpression<Expression> implements StringExpr {
 
     public AsString(Expression expression) {
-        super(expression);
+        super(expression, new NoBlockMetadata());
     }
 
     @Override
