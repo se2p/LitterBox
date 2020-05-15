@@ -10,6 +10,9 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BiggerThan;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.Volume;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.Join;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.ExistingCallMutationMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.TopNonDataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
@@ -52,12 +55,17 @@ class CallStmtParserTest {
                     assertTrue(stmt instanceof CallStmt);
                     CallStmt callStmt = (CallStmt) stmt;
                     List<Expression> expressions = callStmt.getExpressions().getExpressions();
+                    assertTrue(callStmt.getMetadata() instanceof TopNonDataBlockMetadata);
+                    assertTrue(((TopNonDataBlockMetadata) callStmt.getMetadata()).getMutation() instanceof ExistingCallMutationMetadata);
                     assertTrue(expressions.get(0) instanceof Volume);
+                    assertTrue(((Volume) expressions.get(0)).getMetadata() instanceof NonDataBlockMetadata);
                     Expression biggerThan = expressions.get(1);
                     assertTrue(biggerThan instanceof BiggerThan);
+                    assertTrue(((BiggerThan) biggerThan).getMetadata() instanceof NonDataBlockMetadata);
                     ComparableExpr operand1 = ((BiggerThan) biggerThan).getOperand1();
                     ComparableExpr operand2 = ((BiggerThan) biggerThan).getOperand2();
                     assertTrue(operand1 instanceof Join);
+                    assertTrue(((Join) operand1).getMetadata() instanceof NonDataBlockMetadata);
                     assertTrue(operand2 instanceof NumberLiteral);
                 }
             }
