@@ -277,4 +277,5 @@ public class Constants {
     public final static String ROTATIONY_KEY = "rotationCenterY";
     public final static String RATE_KEY = "rate";
     public final static String SAMPLE_COUNT_KEY = "sampleCount";
+    public final static String HAS_NEXT_KEY = "hasnext";
 }

@@ -2,8 +2,9 @@ package de.uni_passau.fim.se2.litterbox.ast.parser.metadata;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.CallMutationMetadata;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.PrototypeMutationMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.MutationMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.PrototypeMutationMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.StopMutation;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,6 +37,10 @@ public class MutationMetadataParser {
         if (mutationNode.has(ARGUMENT_DEFAULTS_KEY)) {
             argumentDefaults = mutationNode.get(ARGUMENT_DEFAULTS_KEY).asText();
         }
+        boolean hasNext = false;
+        if (mutationNode.has(HAS_NEXT_KEY)) {
+            hasNext = mutationNode.get(HAS_NEXT_KEY).asBoolean();
+        }
         boolean warp = false;
         if (mutationNode.has(WARP_KEY)) {
             warp = mutationNode.get(WARP_KEY).asBoolean();
@@ -43,7 +48,10 @@ public class MutationMetadataParser {
         if (mutationNode.has(ARGUMENTNAMES_KEY) && mutationNode.has(ARGUMENTNAMES_KEY)) {
             return new PrototypeMutationMetadata(tagName, children, procCode, argumentIds, warp,
                     argumentNames, argumentDefaults);
-        } else
+        } else if (mutationNode.has(HAS_NEXT_KEY)) {
+            return new StopMutation(tagName, children, hasNext);
+        } else {
             return new CallMutationMetadata(tagName, children, procCode, argumentIds, warp);
+        }
     }
 }
