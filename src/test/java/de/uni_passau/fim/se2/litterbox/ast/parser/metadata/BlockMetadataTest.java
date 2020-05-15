@@ -71,7 +71,7 @@ public class BlockMetadataTest {
         Assertions.assertEquals(1,nonDataBlockMetadata.getInputMetadata().getList().size());
         Assertions.assertEquals("Vr$zTl8mo1W,U?+q6,T{",nonDataBlockMetadata.getBlockId());
         Assertions.assertNull(nonDataBlockMetadata.getCommentId());
-        Assertions.assertTrue(nonDataBlockMetadata.getMutation() instanceof ExistingPrototypeMutationMetadata);
+        Assertions.assertTrue(nonDataBlockMetadata.getMutation() instanceof PrototypeMutationMetadata);
         Assertions.assertFalse(nonDataBlockMetadata.isTopLevel());
         Assertions.assertTrue(nonDataBlockMetadata.isShadow());
         Assertions.assertEquals("procedures_prototype",nonDataBlockMetadata.getOpcode());

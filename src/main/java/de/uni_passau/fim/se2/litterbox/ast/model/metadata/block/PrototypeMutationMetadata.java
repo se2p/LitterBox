@@ -4,13 +4,13 @@ import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 import java.util.List;
 
-public class ExistingPrototypeMutationMetadata extends ExistingCallMutationMetadata {
+public class PrototypeMutationMetadata extends CallMutationMetadata {
     private String argumentNames;
     private String argumentDefaults;
 
 
-    public ExistingPrototypeMutationMetadata(String tagName, List<String> children, String procCode, String argumentIds,
-                                             boolean warp, String argumentNames, String argumentDefaults) {
+    public PrototypeMutationMetadata(String tagName, List<String> children, String procCode, String argumentIds,
+                                     boolean warp, String argumentNames, String argumentDefaults) {
         super(tagName, children, procCode, argumentIds, warp);
         this.argumentNames = argumentNames;
         this.argumentDefaults = argumentDefaults;

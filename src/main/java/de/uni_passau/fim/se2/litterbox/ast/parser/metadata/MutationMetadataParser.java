@@ -1,8 +1,8 @@
 package de.uni_passau.fim.se2.litterbox.ast.parser.metadata;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.ExistingCallMutationMetadata;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.ExistingPrototypeMutationMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.CallMutationMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.PrototypeMutationMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.MutationMetadata;
 
 import java.util.ArrayList;
@@ -41,9 +41,9 @@ public class MutationMetadataParser {
             warp = mutationNode.get(WARP_KEY).asBoolean();
         }
         if (mutationNode.has(ARGUMENTNAMES_KEY) && mutationNode.has(ARGUMENTNAMES_KEY)) {
-            return new ExistingPrototypeMutationMetadata(tagName, children, procCode, argumentIds, warp,
+            return new PrototypeMutationMetadata(tagName, children, procCode, argumentIds, warp,
                     argumentNames, argumentDefaults);
         } else
-            return new ExistingCallMutationMetadata(tagName, children, procCode, argumentIds, warp);
+            return new CallMutationMetadata(tagName, children, procCode, argumentIds, warp);
     }
 }

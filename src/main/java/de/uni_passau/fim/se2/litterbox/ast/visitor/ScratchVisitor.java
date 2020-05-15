@@ -3514,7 +3514,7 @@ public interface ScratchVisitor {
     }
 
     /**
-     * Default implementation of visit method for {@link ExistingCallMutationMetadata}.
+     * Default implementation of visit method for {@link CallMutationMetadata}.
      *
      * <p>
      * Iterates all children of this node without performing any action.
@@ -3523,7 +3523,7 @@ public interface ScratchVisitor {
      * @param node ExistingCallMutationMetadata Node of which the children will
      *             be iterated
      */
-    default void visit(ExistingCallMutationMetadata node) {
+    default void visit(CallMutationMetadata node) {
         visit((MutationMetadata) node);
     }
 
@@ -3537,8 +3537,8 @@ public interface ScratchVisitor {
      * @param node ExistingPrototypeMutationMetadata Node of which the children will
      *             be iterated
      */
-    default void visit(ExistingPrototypeMutationMetadata node) {
-        visit((ExistingCallMutationMetadata) node);
+    default void visit(PrototypeMutationMetadata node) {
+        visit((CallMutationMetadata) node);
     }
 
     /**
