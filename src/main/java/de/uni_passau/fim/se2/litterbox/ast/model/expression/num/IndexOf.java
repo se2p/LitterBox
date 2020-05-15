@@ -21,17 +21,24 @@ package de.uni_passau.fim.se2.litterbox.ast.model.expression.num;
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Identifier;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 public class IndexOf extends AbstractNode implements NumExpr {
 
     private final Expression expr;
     private final Identifier identifier;
+    private final BlockMetadata metadata;
 
-    public IndexOf(Expression expr, Identifier identifier) {
-        super(expr, identifier);
+    public IndexOf(Expression expr, Identifier identifier, BlockMetadata metadata) {
+        super(expr, identifier,metadata);
         this.expr = expr;
         this.identifier = identifier;
+        this.metadata=metadata;
+    }
+
+    public BlockMetadata getMetadata() {
+        return metadata;
     }
 
     public Expression getExpr() {

@@ -18,26 +18,14 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.model.expression.num;
 
-import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.BinaryExpression;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
-public class PickRandom extends AbstractNode implements NumExpr {
+public class PickRandom extends BinaryExpression<NumExpr, NumExpr> implements NumExpr {
 
-    private final NumExpr from;
-    private final NumExpr to;
-
-    public PickRandom(NumExpr from, NumExpr to) {
-        super(from, to);
-        this.from = from;
-        this.to = to;
-    }
-
-    public NumExpr getFrom() {
-        return from;
-    }
-
-    public NumExpr getTo() {
-        return to;
+    public PickRandom(NumExpr from, NumExpr to, BlockMetadata metadata) {
+        super(from, to, metadata);
     }
 
     @Override

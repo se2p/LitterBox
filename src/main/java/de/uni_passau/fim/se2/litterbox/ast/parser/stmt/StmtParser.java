@@ -36,7 +36,7 @@ public class StmtParser {
 
         JsonNode current = blocks.get(blockID);
         if (current instanceof ArrayNode) {
-            return ExpressionStmtParser.parse(current, blocks);
+            return ExpressionStmtParser.parse(blockID, current, blocks);
         } else {
             final String opcode = current.get(Constants.OPCODE_KEY).asText();
 
@@ -56,7 +56,7 @@ public class StmtParser {
                 return ControlStmtParser.parse(blockID, current, blocks);
             } else if (BoolExprOpcode.contains(opcode) || NumExprOpcode.contains(opcode) || StringExprOpcode
                     .contains(opcode)) {
-                return ExpressionStmtParser.parse(current, blocks);
+                return ExpressionStmtParser.parse(blockID, current, blocks);
             } else if (CommonStmtOpcode.contains(opcode)) {
                 return CommonStmtParser.parse(blockID, current, blocks);
             } else if (SpriteMotionStmtOpcode.contains(opcode)) {

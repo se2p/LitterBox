@@ -19,21 +19,15 @@
 package de.uni_passau.fim.se2.litterbox.ast.model.expression.num;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.UnaryExpression;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
-public class Round extends UnaryExpression implements NumExpr {
+public class Round extends UnaryExpression<NumExpr> implements NumExpr {
 
-    private final NumExpr num;
+    public Round(NumExpr num, BlockMetadata metadata) {
+        super(num,metadata);
 
-    public Round(NumExpr num) {
-        super(num);
-        this.num = num;
     }
-
-    public NumExpr getNum() {
-        return num;
-    }
-
     @Override
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);

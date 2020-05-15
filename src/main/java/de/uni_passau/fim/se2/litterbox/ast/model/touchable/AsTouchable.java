@@ -20,12 +20,13 @@ package de.uni_passau.fim.se2.litterbox.ast.model.touchable;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.UnaryExpression;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 public class AsTouchable extends UnaryExpression<Expression> implements Touchable {
 
     public AsTouchable(Expression expr) {
-        super(expr);
+        super(expr, new NoBlockMetadata());
     }
 
     @Override

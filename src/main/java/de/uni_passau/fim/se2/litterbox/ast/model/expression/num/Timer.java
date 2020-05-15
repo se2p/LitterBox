@@ -20,11 +20,15 @@ package de.uni_passau.fim.se2.litterbox.ast.model.expression.num;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTLeaf;
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.SingularExpression;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
-public class Timer extends AbstractNode implements NumExpr, ASTLeaf {
-    public Timer() {
-        super();
+public class Timer extends SingularExpression implements NumExpr, ASTLeaf {
+
+    public Timer(BlockMetadata metadata) {
+        super(metadata);
+
     }
 
     @Override

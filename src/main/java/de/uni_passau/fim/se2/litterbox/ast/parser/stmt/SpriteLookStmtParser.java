@@ -21,12 +21,12 @@ package de.uni_passau.fim.se2.litterbox.ast.parser.stmt;
 import com.fasterxml.jackson.databind.JsonNode;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.ElementChoice;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.Mult;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.*;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.SpriteLookStmtOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.parser.CostumeChoiceParser;
@@ -103,7 +103,7 @@ public class SpriteLookStmtParser {
         if (layerOption.equals("forward")) {
             return new ChangeLayerBy(num, metadata);
         } else if (layerOption.equals("backward")) {
-            NumExpr negated = new Mult(new NumberLiteral(-1), num);
+            NumExpr negated = new Mult(new NumberLiteral(-1), num, new NoBlockMetadata());
             return new ChangeLayerBy(negated, metadata);
         } else {
             throw new ParsingException("Unknown option " + layerOption +

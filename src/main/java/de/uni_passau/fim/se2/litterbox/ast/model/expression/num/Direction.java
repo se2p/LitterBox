@@ -20,12 +20,14 @@ package de.uni_passau.fim.se2.litterbox.ast.model.expression.num;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTLeaf;
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.SingularExpression;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 
-public class Direction extends AbstractNode implements NumExpr, ASTLeaf {
-    public Direction() {
-        super();
+public class Direction extends SingularExpression implements NumExpr, ASTLeaf {
+    public Direction(BlockMetadata metadata) {
+        super(metadata);
     }
 
     @Override

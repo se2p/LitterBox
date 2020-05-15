@@ -20,15 +20,22 @@ package de.uni_passau.fim.se2.litterbox.ast.model.expression.num;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Identifier;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 public class LengthOfVar extends AbstractNode implements NumExpr {
 
     private final Identifier identifier;
+    private final BlockMetadata metadata;
 
-    public LengthOfVar(Identifier identifier) {
-        super(identifier);
+    public LengthOfVar(Identifier identifier, BlockMetadata metadata) {
+        super(identifier, metadata);
         this.identifier = identifier;
+        this.metadata = metadata;
+    }
+
+    public BlockMetadata getMetadata() {
+        return metadata;
     }
 
     public Identifier getIdentifier() {

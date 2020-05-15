@@ -40,7 +40,7 @@ public class ExpressionStmtParser {
      * reporter block.
      * @throws ParsingException If the block is not parsable.
      */
-    public static Stmt parse(JsonNode current, JsonNode allBlocks) throws ParsingException {
-        return new ExpressionStmt(ExpressionParser.parseExprBlock(current, allBlocks));
+    public static Stmt parse(String blockId, JsonNode current, JsonNode allBlocks) throws ParsingException {
+        return new ExpressionStmt(ExpressionParser.parseExprBlock(blockId, current, allBlocks));
     }
 }

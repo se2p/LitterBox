@@ -19,12 +19,13 @@
 package de.uni_passau.fim.se2.litterbox.ast.model.expression.num;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.BinaryExpression;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 public class Add extends BinaryExpression<NumExpr, NumExpr> implements NumExpr {
 
-    public Add(NumExpr first, NumExpr second) {
-        super(first, second);
+    public Add(NumExpr first, NumExpr second, BlockMetadata metadata) {
+        super(first, second, metadata);
     }
 
     @Override

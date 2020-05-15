@@ -104,7 +104,7 @@ public class ExpressionParser {
             // it's a normal reporter block
             String opcode = exprBlock.get(OPCODE_KEY).asText();
             if (NumExprOpcode.contains(opcode)) {
-                return NumExprParser.parseBlockNumExpr(exprBlock, allBlocks);
+                return NumExprParser.parseBlockNumExpr(blockId, exprBlock, allBlocks);
             } else if (StringExprOpcode.contains(opcode)) {
                 return StringExprParser.parseBlockStringExpr(blockId, exprBlock, allBlocks);
             } else if (BoolExprOpcode.contains(opcode)) {
