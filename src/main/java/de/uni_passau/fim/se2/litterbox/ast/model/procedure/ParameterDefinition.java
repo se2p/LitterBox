@@ -20,19 +20,26 @@ package de.uni_passau.fim.se2.litterbox.ast.model.procedure;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
-import de.uni_passau.fim.se2.litterbox.ast.model.type.Type;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.type.Type;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
-public class ParameterDefiniton extends AbstractNode implements ASTNode {
+public class ParameterDefinition extends AbstractNode implements ASTNode {
 
     private final LocalIdentifier ident;
     private final Type type;
+    private final BlockMetadata metadata;
 
-    public ParameterDefiniton(LocalIdentifier ident, Type type) {
-        super(ident, type);
+    public ParameterDefinition(LocalIdentifier ident, Type type, BlockMetadata metadata) {
+        super(ident, type, metadata);
         this.ident = ident;
         this.type = type;
+        this.metadata = metadata;
+    }
+
+    public BlockMetadata getMetadata() {
+        return metadata;
     }
 
     public LocalIdentifier getIdent() {

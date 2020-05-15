@@ -26,15 +26,15 @@ import java.util.List;
 
 public class ParameterDefinitionList extends AbstractNode implements ASTNode {
 
-    private final List<ParameterDefiniton> parameterDefinitons;
+    private final List<ParameterDefinition> parameterDefinitions;
 
-    public ParameterDefinitionList(List<ParameterDefiniton> parameterDefinitons) {
-        super(parameterDefinitons);
-        this.parameterDefinitons = parameterDefinitons;
+    public ParameterDefinitionList(List<ParameterDefinition> parameterDefinitions) {
+        super(parameterDefinitions);
+        this.parameterDefinitions = parameterDefinitions;
     }
 
-    public List<ParameterDefiniton> getParameterDefinitons() {
-        return parameterDefinitons;
+    public List<ParameterDefinition> getParameterDefinitions() {
+        return parameterDefinitions;
     }
 
     @Override

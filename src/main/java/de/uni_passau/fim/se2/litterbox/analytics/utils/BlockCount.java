@@ -40,7 +40,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.Metadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterDefinitionList;
-import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterDefiniton;
+import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.ExpressionStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.*;
@@ -333,7 +333,7 @@ public class BlockCount implements IssueFinder, ScratchVisitor {
     }
 
     @Override
-    public void visit(ParameterDefiniton node) {
+    public void visit(ParameterDefinition node) {
         if (!node.getChildren().isEmpty()) {
             for (ASTNode child : node.getChildren()) {
                 child.accept(this);

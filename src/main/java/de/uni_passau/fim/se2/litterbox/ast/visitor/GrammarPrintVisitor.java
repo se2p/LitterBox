@@ -41,7 +41,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.position.FromExpression;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.MousePos;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.RandomPos;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterDefinitionList;
-import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterDefiniton;
+import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinitionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
@@ -682,13 +682,13 @@ public class GrammarPrintVisitor implements ScratchVisitor {
     @Override
     public void visit(ParameterDefinitionList parameterDefinitionList) {
         openParentheses();
-        List<ParameterDefiniton> parameterDefinitons = parameterDefinitionList.getParameterDefinitons();
-        if (parameterDefinitons.size() > 0) {
-            for (int i = 0; i < parameterDefinitons.size() - 1; i++) {
-                parameterDefinitons.get(i).accept(this);
+        List<ParameterDefinition> parameterDefinitions = parameterDefinitionList.getParameterDefinitions();
+        if (parameterDefinitions.size() > 0) {
+            for (int i = 0; i < parameterDefinitions.size() - 1; i++) {
+                parameterDefinitions.get(i).accept(this);
                 comma();
             }
-            parameterDefinitons.get(parameterDefinitons.size() - 1).accept(this);
+            parameterDefinitions.get(parameterDefinitions.size() - 1).accept(this);
         }
         closeParentheses();
     }
@@ -698,10 +698,10 @@ public class GrammarPrintVisitor implements ScratchVisitor {
     }
 
     @Override
-    public void visit(ParameterDefiniton parameterDefiniton) {
-        parameterDefiniton.getIdent().accept(this);
+    public void visit(ParameterDefinition parameterDefinition) {
+        parameterDefinition.getIdent().accept(this);
         colon();
-        parameterDefiniton.getType().accept(this);
+        parameterDefinition.getType().accept(this);
     }
 
     private void colon() {

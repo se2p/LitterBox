@@ -64,7 +64,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.position.MousePos;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.Position;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.RandomPos;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterDefinitionList;
-import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterDefiniton;
+import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinitionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
@@ -583,7 +583,7 @@ public interface ScratchVisitor {
     }
 
     /**
-     * Default implementation of visit method for {@link ParameterDefiniton}.
+     * Default implementation of visit method for {@link ParameterDefinition}.
      *
      * <p>
      * Iterates all children of this node without performing any action.
@@ -591,7 +591,7 @@ public interface ScratchVisitor {
      *
      * @param node ParameterDefiniton Node of which the children will be iterated
      */
-    default void visit(ParameterDefiniton node) {
+    default void visit(ParameterDefinition node) {
         visit((ASTNode) node);
     }
 
