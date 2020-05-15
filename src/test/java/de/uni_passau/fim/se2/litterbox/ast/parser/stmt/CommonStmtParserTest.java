@@ -26,6 +26,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinitionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.ChangeGraphicEffectBy;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.ChangeSoundEffectBy;
@@ -89,17 +90,29 @@ public class CommonStmtParserTest {
             List<Stmt> listOfStmt = script.getStmtList().getStmts();
 
             Truth.assertThat(listOfStmt.get(0).getClass()).isEqualTo(WaitSeconds.class);
+            Truth.assertThat(((WaitSeconds) listOfStmt.get(0)).getMetadata().getClass()).isEqualTo(NonDataBlockMetadata.class);
             Truth.assertThat(listOfStmt.get(1).getClass()).isEqualTo(WaitUntil.class);
+            Truth.assertThat(((WaitUntil) listOfStmt.get(1)).getMetadata().getClass()).isEqualTo(NonDataBlockMetadata.class);
             Truth.assertThat(listOfStmt.get(2).getClass()).isEqualTo(StopOtherScriptsInSprite.class);
+            Truth.assertThat(((StopOtherScriptsInSprite) listOfStmt.get(2)).getMetadata().getClass()).isEqualTo(NonDataBlockMetadata.class);
             Truth.assertThat(listOfStmt.get(3).getClass()).isEqualTo(CreateCloneOf.class);
+            Truth.assertThat(((CreateCloneOf) listOfStmt.get(3)).getMetadata().getClass()).isEqualTo(NonDataBlockMetadata.class);
             Truth.assertThat(listOfStmt.get(4).getClass()).isEqualTo(Broadcast.class);
+            Truth.assertThat(((Broadcast) listOfStmt.get(4)).getMetadata().getClass()).isEqualTo(NonDataBlockMetadata.class);
             Truth.assertThat(listOfStmt.get(5).getClass()).isEqualTo(BroadcastAndWait.class);
+            Truth.assertThat(((BroadcastAndWait) listOfStmt.get(5)).getMetadata().getClass()).isEqualTo(NonDataBlockMetadata.class);
             Truth.assertThat(listOfStmt.get(6).getClass()).isEqualTo(ResetTimer.class);
+            Truth.assertThat(((ResetTimer) listOfStmt.get(6)).getMetadata().getClass()).isEqualTo(NonDataBlockMetadata.class);
             Truth.assertThat(listOfStmt.get(7).getClass()).isEqualTo(ChangeVariableBy.class);
+            Truth.assertThat(((ChangeVariableBy) listOfStmt.get(7)).getMetadata().getClass()).isEqualTo(NonDataBlockMetadata.class);
             Truth.assertThat(listOfStmt.get(8).getClass()).isEqualTo(ChangeSoundEffectBy.class);
+            Truth.assertThat(((ChangeSoundEffectBy) listOfStmt.get(8)).getMetadata().getClass()).isEqualTo(NonDataBlockMetadata.class);
             Truth.assertThat(listOfStmt.get(9).getClass()).isEqualTo(SetSoundEffectTo.class);
+            Truth.assertThat(((SetSoundEffectTo) listOfStmt.get(9)).getMetadata().getClass()).isEqualTo(NonDataBlockMetadata.class);
             Truth.assertThat(listOfStmt.get(10).getClass()).isEqualTo(ChangeGraphicEffectBy.class);
+            Truth.assertThat(((ChangeGraphicEffectBy) listOfStmt.get(10)).getMetadata().getClass()).isEqualTo(NonDataBlockMetadata.class);
             Truth.assertThat(listOfStmt.get(11).getClass()).isEqualTo(DeleteClone.class);
+            Truth.assertThat(((DeleteClone) listOfStmt.get(11)).getMetadata().getClass()).isEqualTo(NonDataBlockMetadata.class);
         } catch (ParsingException e) {
             e.printStackTrace();
             fail();
