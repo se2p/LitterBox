@@ -28,6 +28,9 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.WithExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.StopMutation;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.TopNonDataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.ClearSoundEffects;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.PlaySoundUntilDone;
@@ -84,10 +87,19 @@ public class ActorSoundStmtParserTest {
             List<Stmt> listOfStmt = script.getStmtList().getStmts();
 
             Truth.assertThat(listOfStmt.get(0).getClass()).isEqualTo(PlaySoundUntilDone.class);
+            PlaySoundUntilDone playSoundUntilDone = (PlaySoundUntilDone) listOfStmt.get(0);
+            Truth.assertThat(playSoundUntilDone.getMetadata().getClass()).isEqualTo(NonDataBlockMetadata.class);
+            Truth.assertThat(playSoundUntilDone.getElementChoice().getClass()).isEqualTo(WithExpr.class);
+            WithExpr expr = (WithExpr) playSoundUntilDone.getElementChoice();
+            Truth.assertThat(expr.getMetadata().getClass()).isEqualTo(NonDataBlockMetadata.class);
+            Truth.assertThat(listOfStmt.get(0).getClass()).isEqualTo(PlaySoundUntilDone.class);
             Truth.assertThat(listOfStmt.get(1).getClass()).isEqualTo(StartSound.class);
             Truth.assertThat(listOfStmt.get(2).getClass()).isEqualTo(ClearSoundEffects.class);
             Truth.assertThat(listOfStmt.get(3).getClass()).isEqualTo(StopAllSounds.class);
             Truth.assertThat(listOfStmt.get(4).getClass()).isEqualTo(StopAll.class);
+            StopAll stop = (StopAll) listOfStmt.get(4);
+            Truth.assertThat(stop.getMetadata().getClass()).isEqualTo(NonDataBlockMetadata.class);
+            Truth.assertThat(((NonDataBlockMetadata)stop.getMetadata()).getMutation() instanceof StopMutation);
         } catch (ParsingException e) {
             e.printStackTrace();
             fail();
