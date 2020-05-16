@@ -25,6 +25,7 @@ import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.AsNumber;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.MoveSteps;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.BooleanType;
@@ -66,9 +67,9 @@ public class ProcDefinitionParserTest {
             final String actorName = defintions.get(1).getIdent().getName();
             Truth.assertThat(list.get(0)).isInstanceOf(ProcedureDefinition.class);
             Assertions.assertEquals("BlockNoInputs",
-                    ProgramParser.procDefMap.getProcedures().get(actorName).get(list.get(0).getIdent()).getName());
+                    program.getProcedureMapping().getProcedures().get(actorName).get(list.get(0).getIdent()).getName());
             Assertions.assertEquals(0,
-                    ProgramParser.procDefMap.getProcedures().get(actorName).get(list.get(0).getIdent()).getArguments().length);
+                    program.getProcedureMapping().getProcedures().get(actorName).get(list.get(0).getIdent()).getArguments().length);
             Assertions.assertEquals(0, list.get(0).getParameterDefinitionList().getParameterDefinitions().size());
             Assertions.assertEquals(3, list.get(0).getStmtList().getStmts().size());
         } catch (ParsingException e) {
@@ -86,14 +87,15 @@ public class ProcDefinitionParserTest {
             final String actorName = defintions.get(1).getIdent().getName();
 
             Truth.assertThat(list.get(1)).isInstanceOf(ProcedureDefinition.class);
-            ProcedureInfo procedureInfo = ProgramParser.procDefMap.getProcedures().get(actorName).get(list.get(1).getIdent());
+            ProcedureInfo procedureInfo =
+                    program.getProcedureMapping().getProcedures().get(actorName).get(list.get(1).getIdent());
             Assertions.assertEquals("BlockWithInputs %s %b",
                     procedureInfo.getName());
             Assertions.assertEquals(2,
                     procedureInfo.getArguments().length);
-            Assertions.assertEquals( "NumInput",
+            Assertions.assertEquals("NumInput",
                     procedureInfo.getArguments()[0].getName());
-            Assertions.assertEquals( "Boolean",
+            Assertions.assertEquals("Boolean",
                     procedureInfo.getArguments()[1].getName());
 
             Truth.assertThat(procedureInfo.getArguments()[0].getType()).isInstanceOf(StringType.class);
@@ -103,13 +105,15 @@ public class ProcDefinitionParserTest {
                     list.get(1).getParameterDefinitionList().getParameterDefinitions().get(1).getIdent().getName());
             Assertions.assertEquals(procedureInfo.getArguments()[0].getName(),
                     list.get(1).getParameterDefinitionList().getParameterDefinitions().get(0).getIdent().getName());
+            Assertions.assertEquals(NonDataBlockMetadata.class,
+                    list.get(1).getParameterDefinitionList().getParameterDefinitions().get(0).getMetadata().getClass());
             Assertions.assertEquals(procedureInfo.getArguments()[1].getType(),
                     list.get(1).getParameterDefinitionList().getParameterDefinitions().get(1).getType());
             Assertions.assertEquals(procedureInfo.getArguments()[0].getType(),
                     list.get(1).getParameterDefinitionList().getParameterDefinitions().get(0).getType());
             Assertions.assertTrue(list.get(1).getStmtList().getStmts().get(0) instanceof MoveSteps);
             Truth.assertThat(((MoveSteps) list.get(1).getStmtList().getStmts().get(0)).getSteps()).isInstanceOf(AsNumber.class);
-            Assertions.assertEquals( "NumInput",
+            Assertions.assertEquals("NumInput",
                     ((Parameter) ((AsNumber) ((MoveSteps) list.get(1).getStmtList().getStmts().get(0)).getSteps()).getOperand1()).getName().getName());
         } catch (ParsingException e) {
             e.printStackTrace();
