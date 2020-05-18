@@ -16,24 +16,24 @@ public class JSONStringCreator {
 
     public static String createProgramJSONString(Program program) {
         StringBuilder jsonString = new StringBuilder();
-        jsonString.append("{\"" + TARGETS_KEY + "\": [");
+        jsonString.append("{\"").append(TARGETS_KEY).append("\": [");
         List<ActorDefinition> actorDefinitionList = program.getActorDefinitionList().getDefintions();
         for (int i = 0; i < actorDefinitionList.size() - 1; i++) {
             jsonString.append(ActorJSONCreator.createProgramJSONString(actorDefinitionList.get(i)));
+            System.out.println("komma");
             jsonString.append(",");
         }
         jsonString.append(ActorJSONCreator.createProgramJSONString(actorDefinitionList.get(actorDefinitionList.size() - 1)));
         jsonString.append("],");
-        jsonString.append(createMonitorListJSONString(program)).append(",");
-        jsonString.append(createExtensionJSONString(program)).append(",");
-        jsonString.append(createMetaJSONString(program));
+        createMonitorListJSONString(jsonString, program).append(",");
+        createExtensionJSONString(jsonString, program).append(",");
+        createMetaJSONString(jsonString, program);
         jsonString.append("}");
         return jsonString.toString();
     }
 
-    private static String createExtensionJSONString(Program program) {
-        StringBuilder jsonString = new StringBuilder();
-        jsonString.append("\"" + EXTENSIONS_KEY + "\": [");
+    private static StringBuilder createExtensionJSONString(StringBuilder jsonString, Program program) {
+        createField(jsonString, EXTENSIONS_KEY).append("[");
         List<String> ext = program.getMetadata().getExtension().getExtensionNames();
         for (int i = 0; i < ext.size() - 1; i++) {
             jsonString.append("\"").append(ext.get(i)).append("\"").append(",");
@@ -42,37 +42,50 @@ public class JSONStringCreator {
             jsonString.append("\"").append(ext.get(ext.size() - 1)).append("\"");
         }
         jsonString.append("]");
-        return jsonString.toString();
+        return jsonString;
     }
 
-    private static StringBuilder createMetaJSONString(Program program) {
-        StringBuilder jsonString = new StringBuilder();
+    private static StringBuilder createMetaJSONString(StringBuilder jsonString, Program program) {
         MetaMetadata meta = program.getMetadata().getMeta();
-        jsonString.append("\"").append(META_KEY).append("\": {");
-        jsonString.append("\"" + SEMVER_KEY + "\": \"").append(meta.getSemver()).append("\"").append(",");
-        jsonString.append("\"" + VM_KEY + "\": \"").append(meta.getVm()).append("\"").append(",");
-        jsonString.append("\"" + AGENT_KEY + "\": \"").append(meta.getAgent()).append("\"");
+        createField(jsonString, META_KEY).append("{");
+        createFieldValue(jsonString, SEMVER_KEY, meta.getSemver()).append(",");
+        createFieldValue(jsonString, VM_KEY, meta.getVm()).append(",");
+        createFieldValue(jsonString, AGENT_KEY, meta.getAgent()).append(",");
         jsonString.append("}");
         return jsonString;
     }
 
+    private static StringBuilder createFieldValue(StringBuilder jsonString, String fieldName, String fieldValue) {
+        return createField(jsonString, fieldName).append("\"").append(fieldValue).append("\"");
+    }
 
-    private static StringBuilder createMonitorListJSONString(Program program) {
-        StringBuilder jsonString = new StringBuilder();
+    private static StringBuilder createField(StringBuilder jsonString, String fieldName) {
+        return jsonString.append("\"").append(fieldName).append("\": ");
+    }
+
+    private static StringBuilder createFieldValue(StringBuilder jsonString, String fieldName, double fieldValue) {
+        return createField(jsonString, fieldName).append(fieldValue);
+    }
+
+    private static StringBuilder createFieldValue(StringBuilder jsonString, String fieldName, boolean fieldValue) {
+        return createField(jsonString, fieldName).append(fieldValue);
+    }
+
+    private static StringBuilder createMonitorListJSONString(StringBuilder jsonString, Program program) {
         List<MonitorMetadata> monitorMetadataList = program.getMetadata().getMonitor().getList();
-        jsonString.append("\"" + MONITORS_KEY + "\": [");
+        createField(jsonString, MONITORS_KEY).append("[");
         for (int i = 0; i < monitorMetadataList.size() - 1; i++) {
-            jsonString.append(createMonitorJSONString(monitorMetadataList.get(i))).append(",");
+            createMonitorJSONString(jsonString, monitorMetadataList.get(i)).append(",");
         }
         if (monitorMetadataList.size() > 0) {
-            jsonString.append(createMonitorJSONString(monitorMetadataList.get(monitorMetadataList.size() - 1)));
+            createMonitorJSONString(jsonString,
+                    monitorMetadataList.get(monitorMetadataList.size() - 1));
         }
         jsonString.append("]");
         return jsonString;
     }
 
-    private static StringBuilder createMonitorJSONString(MonitorMetadata metadata) {
-        StringBuilder jsonString = new StringBuilder();
+    private static StringBuilder createMonitorJSONString(StringBuilder jsonString, MonitorMetadata metadata) {
         boolean isSlider = metadata instanceof MonitorSliderMetadata;
         MonitorSliderMetadata slider = null;
         MonitorListMetadata list = null;
@@ -84,27 +97,29 @@ public class JSONStringCreator {
         }
 
         jsonString.append("{");
-        jsonString.append("\"" + ID_KEY + "\": \"").append(metadata.getId()).append("\"").append(",");
-        jsonString.append("\"" + MODE_KEY + "\": \"").append(metadata.getMode()).append("\"").append(",");
-        jsonString.append("\"" + OPCODE_KEY + "\": \"").append(metadata.getOpcode()).append("\"").append(",");
-        jsonString.append("\"" + PARAMS_KEY + "\": {");
+        createFieldValue(jsonString, ID_KEY, metadata.getId()).append(",");
+        createFieldValue(jsonString, MODE_KEY, metadata.getMode()).append(",");
+        createFieldValue(jsonString, OPCODE_KEY, metadata.getOpcode()).append(",");
+
+        createField(jsonString, PARAMS_KEY).append("{");
         List<MonitorParamMetadata> monitors = metadata.getParamsMetadata().getList();
         for (int i = 0; i < monitors.size() - 1; i++) {
-            jsonString.append("\"").append(monitors.get(i).getInputName()).append("\": \"").append(monitors.get(i).getInputValue()).append("\"").append(",");
+            createFieldValue(jsonString, monitors.get(i).getInputName(), monitors.get(i).getInputValue()).append(",");
         }
         if (monitors.size() > 0) {
-            jsonString.append("\"").append(monitors.get(monitors.size() - 1).getInputName()).append("\": \"").append(monitors.get(monitors.size() - 1).getInputValue()).append("\"");
+            createFieldValue(jsonString, monitors.get(monitors.size() - 1).getInputName(),
+                    monitors.get(monitors.size() - 1).getInputValue());
         }
         jsonString.append("},");
 
-        jsonString.append("\"" + SPRITE_NAME_KEY + "\":");
+        createField(jsonString, SPRITE_NAME_KEY);
         if (metadata.getSpriteName() == null) {
             jsonString.append(metadata.getSpriteName()).append(",");
         } else {
             jsonString.append("\"").append(metadata.getSpriteName()).append("\",");
         }
 
-        jsonString.append("\"" + VALUE_LOWER_KEY + "\": ");
+        createField(jsonString, VALUE_LOWER_KEY);
         if (isSlider) {
             jsonString.append("\"").append(slider.getValue()).append("\"");
         } else {
@@ -120,17 +135,17 @@ public class JSONStringCreator {
         }
 
         jsonString.append(",");
-        jsonString.append("\"" + WIDTH_KEY + "\": ").append(metadata.getWidth()).append(",");
-        jsonString.append("\"" + HEIGHT_KEY + "\": ").append(metadata.getHeight()).append(",");
-        jsonString.append("\"" + X_KEY + "\": ").append(metadata.getX()).append(",");
-        jsonString.append("\"" + Y_KEY + "\": ").append(metadata.getY()).append(",");
-        jsonString.append("\"" + VISIBLE_KEY + "\": ").append(metadata.isVisible());
+        createFieldValue(jsonString, WIDTH_KEY, metadata.getWidth()).append(",");
+        createFieldValue(jsonString, HEIGHT_KEY, metadata.getHeight()).append(",");
+        createFieldValue(jsonString, X_KEY, metadata.getX()).append(",");
+        createFieldValue(jsonString, Y_KEY, metadata.getY()).append(",");
+        createFieldValue(jsonString, VISIBLE_KEY, metadata.isVisible());
 
         if (isSlider) {
             jsonString.append(",");
-            jsonString.append("\"" + SLIDER_MIN_KEY + "\": ").append(slider.getSliderMin()).append(",");
-            jsonString.append("\"" + SLIDER_MAX_KEY + "\": ").append(slider.getSliderMax()).append(",");
-            jsonString.append("\"" + IS_DISCRETE_KEY + "\": ").append(slider.isDiscrete());
+            createFieldValue(jsonString, SLIDER_MIN_KEY, ((MonitorSliderMetadata) metadata).getSliderMin()).append(",");
+            createFieldValue(jsonString, SLIDER_MAX_KEY, ((MonitorSliderMetadata) metadata).getSliderMax()).append(",");
+            createFieldValue(jsonString, IS_DISCRETE_KEY, ((MonitorSliderMetadata) metadata).isDiscrete());
         }
 
         jsonString.append("}");
