@@ -20,7 +20,6 @@ public class JSONStringCreator {
         List<ActorDefinition> actorDefinitionList = program.getActorDefinitionList().getDefintions();
         for (int i = 0; i < actorDefinitionList.size() - 1; i++) {
             jsonString.append(ActorJSONCreator.createProgramJSONString(actorDefinitionList.get(i)));
-            System.out.println("komma");
             jsonString.append(",");
         }
         jsonString.append(ActorJSONCreator.createProgramJSONString(actorDefinitionList.get(actorDefinitionList.size() - 1)));
