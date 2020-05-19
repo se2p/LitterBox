@@ -19,10 +19,10 @@ public class JSONStringCreator {
         jsonString.append("{\"").append(TARGETS_KEY).append("\": [");
         List<ActorDefinition> actorDefinitionList = program.getActorDefinitionList().getDefintions();
         for (int i = 0; i < actorDefinitionList.size() - 1; i++) {
-            jsonString.append(ActorJSONCreator.createProgramJSONString(actorDefinitionList.get(i)));
+            jsonString.append(ActorJSONCreator.createActorJSONString(actorDefinitionList.get(i)));
             jsonString.append(",");
         }
-        jsonString.append(ActorJSONCreator.createProgramJSONString(actorDefinitionList.get(actorDefinitionList.size() - 1)));
+        jsonString.append(ActorJSONCreator.createActorJSONString(actorDefinitionList.get(actorDefinitionList.size() - 1)));
         jsonString.append("],");
         createMonitorListJSONString(jsonString, program).append(",");
         createExtensionJSONString(jsonString, program).append(",");
