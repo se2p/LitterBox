@@ -1,9 +1,9 @@
 package de.uni_passau.fim.se2.litterbox.jsonCreation;
 
-import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
+import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 
 public class ScriptJSONCreator {
-    public static String createScriptJSONString(ActorDefinition actor){
+    public static String createScriptJSONString(Script script){
         return "";
     }
 }

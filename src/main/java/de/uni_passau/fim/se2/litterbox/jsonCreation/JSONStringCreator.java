@@ -16,7 +16,7 @@ public class JSONStringCreator {
 
     public static String createProgramJSONString(Program program) {
         StringBuilder jsonString = new StringBuilder();
-        jsonString.append("{\"").append(TARGETS_KEY).append("\": [");
+        createField(jsonString, TARGETS_KEY).append("[");
         List<ActorDefinition> actorDefinitionList = program.getActorDefinitionList().getDefintions();
         for (int i = 0; i < actorDefinitionList.size() - 1; i++) {
             jsonString.append(ActorJSONCreator.createActorJSONString(actorDefinitionList.get(i)));
@@ -54,19 +54,19 @@ public class JSONStringCreator {
         return jsonString;
     }
 
-    private static StringBuilder createFieldValue(StringBuilder jsonString, String fieldName, String fieldValue) {
-        return createField(jsonString, fieldName).append("\"").append(fieldValue).append("\"");
-    }
-
-    private static StringBuilder createField(StringBuilder jsonString, String fieldName) {
+    public static StringBuilder createField(StringBuilder jsonString, String fieldName) {
         return jsonString.append("\"").append(fieldName).append("\": ");
     }
 
-    private static StringBuilder createFieldValue(StringBuilder jsonString, String fieldName, double fieldValue) {
+    public static StringBuilder createFieldValue(StringBuilder jsonString, String fieldName, String fieldValue) {
+        return createField(jsonString, fieldName).append("\"").append(fieldValue).append("\"");
+    }
+
+    public static StringBuilder createFieldValue(StringBuilder jsonString, String fieldName, double fieldValue) {
         return createField(jsonString, fieldName).append(fieldValue);
     }
 
-    private static StringBuilder createFieldValue(StringBuilder jsonString, String fieldName, boolean fieldValue) {
+    public static StringBuilder createFieldValue(StringBuilder jsonString, String fieldName, boolean fieldValue) {
         return createField(jsonString, fieldName).append(fieldValue);
     }
 
