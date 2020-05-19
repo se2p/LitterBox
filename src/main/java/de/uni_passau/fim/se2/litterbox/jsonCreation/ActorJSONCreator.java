@@ -8,6 +8,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.metadata.CommentMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.ListMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.VariableMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.actor.ActorMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.actor.SpriteMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.actor.StageMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.ressources.ImageMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.ressources.SoundMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
@@ -122,6 +124,23 @@ public class ActorJSONCreator {
 
         JSONStringCreator.createFieldValue(jsonString, VOLUME_KEY, meta.getVolume()).append(",");
         JSONStringCreator.createFieldValue(jsonString, LAYERORDER_KEY, meta.getLayerOrder()).append(",");
+
+        //attributes that are only in stage or sprite
+        if (isStage) {
+            StageMetadata stageMetadata = (StageMetadata) meta;
+            JSONStringCreator.createFieldValue(jsonString, TEMPO_KEY, stageMetadata.getTempo()).append(",");
+            JSONStringCreator.createFieldValue(jsonString, VIDTRANSPARENCY_KEY, stageMetadata.getVideoTransparency()).append(",");
+            JSONStringCreator.createFieldValue(jsonString, VIDSTATE_KEY, stageMetadata.getVideoState()).append(",");
+            if (stageMetadata.getTextToSpeechLanguage() == null) {
+                JSONStringCreator.createField(jsonString, TEXT_TO_SPEECH_KEY).append(stageMetadata.getTextToSpeechLanguage());
+            } else {
+                JSONStringCreator.createFieldValue(jsonString, TEXT_TO_SPEECH_KEY,
+                        stageMetadata.getTextToSpeechLanguage());
+            }
+        } else {
+            SpriteMetadata spriteMetadata = (SpriteMetadata) meta;
+
+        }
 
         return jsonString.toString();
     }
