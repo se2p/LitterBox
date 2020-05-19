@@ -139,7 +139,13 @@ public class ActorJSONCreator {
             }
         } else {
             SpriteMetadata spriteMetadata = (SpriteMetadata) meta;
-
+            JSONStringCreator.createFieldValue(jsonString, VISIBLE_KEY, spriteMetadata.isVisible()).append(",");
+            JSONStringCreator.createFieldValue(jsonString, X_KEY, spriteMetadata.getX()).append(",");
+            JSONStringCreator.createFieldValue(jsonString, Y_KEY, spriteMetadata.getY()).append(",");
+            JSONStringCreator.createFieldValue(jsonString, SIZE_KEY, spriteMetadata.getSize()).append(",");
+            JSONStringCreator.createFieldValue(jsonString, DIRECTION_KEY, spriteMetadata.getDirection()).append(",");
+            JSONStringCreator.createFieldValue(jsonString, DRAG_KEY, spriteMetadata.isDraggable()).append(",");
+            JSONStringCreator.createFieldValue(jsonString, ROTATIONSTYLE_KEY, spriteMetadata.getRotationStyle());
         }
 
         return jsonString.toString();
