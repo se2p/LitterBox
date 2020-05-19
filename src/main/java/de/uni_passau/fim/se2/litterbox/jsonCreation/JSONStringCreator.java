@@ -66,6 +66,10 @@ public class JSONStringCreator {
         return createField(jsonString, fieldName).append(fieldValue);
     }
 
+    public static StringBuilder createFieldValue(StringBuilder jsonString, String fieldName, int fieldValue) {
+        return createField(jsonString, fieldName).append(fieldValue);
+    }
+
     public static StringBuilder createFieldValue(StringBuilder jsonString, String fieldName, boolean fieldValue) {
         return createField(jsonString, fieldName).append(fieldValue);
     }
