@@ -147,7 +147,7 @@ public class ActorJSONCreator {
             JSONStringCreator.createFieldValue(jsonString, DRAG_KEY, spriteMetadata.isDraggable()).append(",");
             JSONStringCreator.createFieldValue(jsonString, ROTATIONSTYLE_KEY, spriteMetadata.getRotationStyle());
         }
-
+        jsonString.append("}");
         return jsonString.toString();
     }
 
@@ -194,7 +194,7 @@ public class ActorJSONCreator {
         if (values.size() > 0) {
             jsonString.append("\"").append(values.get(values.size() - 1)).append("\"");
         }
-        jsonString.append("]");
+        jsonString.append("]]");
         return jsonString;
     }
 
