@@ -11,15 +11,15 @@ public class CommentMetadataParser {
     public static CommentMetadata parse(String commentId, JsonNode commentNode) {
 
         String blockId = null;
-        if (!(commentNode.get("blockId") instanceof NullNode)) {
-            blockId = commentNode.get("blockId").asText();
+        if (!(commentNode.get(BLOCK_ID_KEY) instanceof NullNode)) {
+            blockId = commentNode.get(BLOCK_ID_KEY).asText();
         }
         double x = commentNode.get(X_KEY).asDouble();
         double y = commentNode.get(Y_KEY).asDouble();
         double width = commentNode.get(WIDTH_KEY).asDouble();
         double height = commentNode.get(HEIGHT_KEY).asDouble();
-        boolean minimized = commentNode.get("minimized").asBoolean();
-        String text = commentNode.get("text").asText();
+        boolean minimized = commentNode.get(MINIMIZED_KEY).asBoolean();
+        String text = commentNode.get(TEXT_KEY).asText();
         return new CommentMetadata(commentId, blockId, x, y, width, height, minimized, text);
     }
 }

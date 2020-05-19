@@ -286,4 +286,7 @@ public class Constants {
     public final static String SLIDER_MIN_KEY ="sliderMin";
     public final static String SLIDER_MAX_KEY ="sliderMax";
     public final static String IS_DISCRETE_KEY ="isDiscrete";
+    public final static String BLOCK_ID_KEY = "blockId";
+    public final static String MINIMIZED_KEY = "minimized";
+    public final static String TEXT_KEY = "text";
 }
