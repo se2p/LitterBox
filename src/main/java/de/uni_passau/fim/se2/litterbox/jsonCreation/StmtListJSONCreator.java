@@ -2,33 +2,44 @@ package de.uni_passau.fim.se2.litterbox.jsonCreation;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.TopNonDataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.ClearGraphicEffects;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.NextBackdrop;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.ClearSoundEffects;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.StopAllSounds;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.ResetTimer;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Hide;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.NextCostume;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Show;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.IfOnEdgeBounce;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.DeleteClone;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
-import static de.uni_passau.fim.se2.litterbox.jsonCreation.JSONStringCreator.*;
+import static de.uni_passau.fim.se2.litterbox.jsonCreation.BlockJsonCreatorHelper.createFixedBlock;
 
 public class StmtListJSONCreator implements ScratchVisitor {
-    private String currentBlockId = null;
+    private String previousBlockId = null;
     private List<String> finishedJSONStrings;
     private List<Stmt> stmtList;
     private int counter;
+    private IdVisitor idVis;
 
     public StmtListJSONCreator(String parentID, StmtList stmtList) {
-        currentBlockId = parentID;
+        previousBlockId = parentID;
         finishedJSONStrings = new ArrayList<>();
         this.stmtList = stmtList.getStmts();
         counter = 0;
+        idVis = new IdVisitor();
     }
 
     public StmtListJSONCreator(StmtList stmtList) {
         finishedJSONStrings = new ArrayList<>();
         this.stmtList = stmtList.getStmts();
         counter = 0;
+        idVis = new IdVisitor();
     }
 
     public String createStmtListJSONString() {
@@ -46,52 +57,81 @@ public class StmtListJSONCreator implements ScratchVisitor {
         return jsonString.toString();
     }
 
-    public static StringBuilder createBlockUpToParent(StringBuilder jsonString, NonDataBlockMetadata meta,
-                                                      String nextId, String parentId) {
-
-        createField(jsonString, meta.getBlockId()).append("{");
-        createFieldValue(jsonString, OPCODE_KEY, meta.getOpcode()).append(",");
-        if (nextId == null) {
-            createFieldValueNull(jsonString, NEXT_KEY).append(",");
-        } else {
-            createFieldValue(jsonString, NEXT_KEY, nextId).append(",");
+    private String getNextId() {
+        String nextId = null;
+        if (counter < stmtList.size() - 1) {
+            nextId = idVis.getBlockId(stmtList.get(counter + 1));
         }
-        if (parentId == null) {
-            createFieldValueNull(jsonString, PARENT_KEY).append(",");
-        } else {
-            createFieldValue(jsonString, PARENT_KEY, parentId).append(",");
-        }
-        return jsonString;
+        return nextId;
     }
 
-    public static StringBuilder createBlockInputFieldForFixed(StringBuilder jsonString) {
-        createField(jsonString, INPUTS_KEY).append("{},");
-        createField(jsonString, FIELDS_KEY).append("{},");
-        return jsonString;
+    @Override
+    public void visit(IfOnEdgeBounce node) {
+        finishedJSONStrings.add(createFixedBlock((NonDataBlockMetadata) node.getMetadata(), getNextId(),
+                previousBlockId));
+        previousBlockId = ((NonDataBlockMetadata) node.getMetadata()).getBlockId();
     }
 
-    public static StringBuilder createBlockAfterFields(StringBuilder jsonString, NonDataBlockMetadata meta) {
-        createFieldValue(jsonString, SHADOW_KEY, meta.isShadow()).append(",");
-        createFieldValue(jsonString, TOPLEVEL_KEY, meta.isTopLevel());
-        if (meta.getCommentId() != null) {
-            jsonString.append(",");
-            createFieldValue(jsonString, COMMENT_KEY, meta.getCommentId());
-        }
-        if (meta instanceof TopNonDataBlockMetadata) {
-            TopNonDataBlockMetadata topNonDataBlockMetadata = (TopNonDataBlockMetadata) meta;
-            jsonString.append(",");
-            createFieldValue(jsonString, X_KEY, topNonDataBlockMetadata.getxPos()).append(",");
-            createFieldValue(jsonString, Y_KEY, topNonDataBlockMetadata.getyPos());
-        }
-        jsonString.append("}");
-        return jsonString;
+    @Override
+    public void visit(NextCostume node) {
+        finishedJSONStrings.add(createFixedBlock((NonDataBlockMetadata) node.getMetadata(), getNextId(),
+                previousBlockId));
+        previousBlockId = ((NonDataBlockMetadata) node.getMetadata()).getBlockId();
     }
 
-    public static StringBuilder createFixedBlock(StringBuilder jsonString, NonDataBlockMetadata meta,
-                                                 String nextId, String parentId) {
-        createBlockUpToParent(jsonString, meta, nextId, parentId);
-        createBlockInputFieldForFixed(jsonString);
-        createBlockAfterFields(jsonString, meta);
-        return jsonString;
+    @Override
+    public void visit(NextBackdrop node) {
+        finishedJSONStrings.add(createFixedBlock((NonDataBlockMetadata) node.getMetadata(), getNextId(),
+                previousBlockId));
+        previousBlockId = ((NonDataBlockMetadata) node.getMetadata()).getBlockId();
+    }
+
+    @Override
+    public void visit(ClearGraphicEffects node) {
+        finishedJSONStrings.add(createFixedBlock((NonDataBlockMetadata) node.getMetadata(), getNextId(),
+                previousBlockId));
+        previousBlockId = ((NonDataBlockMetadata) node.getMetadata()).getBlockId();
+    }
+
+    @Override
+    public void visit(Show node) {
+        finishedJSONStrings.add(createFixedBlock((NonDataBlockMetadata) node.getMetadata(), getNextId(),
+                previousBlockId));
+        previousBlockId = ((NonDataBlockMetadata) node.getMetadata()).getBlockId();
+    }
+
+    @Override
+    public void visit(Hide node) {
+        finishedJSONStrings.add(createFixedBlock((NonDataBlockMetadata) node.getMetadata(), getNextId(),
+                previousBlockId));
+        previousBlockId = ((NonDataBlockMetadata) node.getMetadata()).getBlockId();
+    }
+
+    @Override
+    public void visit(StopAllSounds node) {
+        finishedJSONStrings.add(createFixedBlock((NonDataBlockMetadata) node.getMetadata(), getNextId(),
+                previousBlockId));
+        previousBlockId = ((NonDataBlockMetadata) node.getMetadata()).getBlockId();
+    }
+
+    @Override
+    public void visit(ClearSoundEffects node) {
+        finishedJSONStrings.add(createFixedBlock((NonDataBlockMetadata) node.getMetadata(), getNextId(),
+                previousBlockId));
+        previousBlockId = ((NonDataBlockMetadata) node.getMetadata()).getBlockId();
+    }
+
+    @Override
+    public void visit(DeleteClone node) {
+        finishedJSONStrings.add(createFixedBlock((NonDataBlockMetadata) node.getMetadata(), getNextId(),
+                previousBlockId));
+        previousBlockId = ((NonDataBlockMetadata) node.getMetadata()).getBlockId();
+    }
+
+    @Override
+    public void visit(ResetTimer node) {
+        finishedJSONStrings.add(createFixedBlock((NonDataBlockMetadata) node.getMetadata(), getNextId(),
+                previousBlockId));
+        previousBlockId = ((NonDataBlockMetadata) node.getMetadata()).getBlockId();
     }
 }

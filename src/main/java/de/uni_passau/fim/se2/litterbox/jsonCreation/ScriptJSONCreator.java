@@ -5,8 +5,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.TopNonDataBlockMetadata;
 
-import static de.uni_passau.fim.se2.litterbox.jsonCreation.StmtListJSONCreator.createBlockUpToParent;
-import static de.uni_passau.fim.se2.litterbox.jsonCreation.StmtListJSONCreator.createFixedBlock;
+import static de.uni_passau.fim.se2.litterbox.jsonCreation.BlockJsonCreatorHelper.createBlockUpToParent;
+import static de.uni_passau.fim.se2.litterbox.jsonCreation.BlockJsonCreatorHelper.createFixedBlock;
 
 public class ScriptJSONCreator {
     public static String createScriptJSONString(Script script) {
@@ -15,8 +15,8 @@ public class ScriptJSONCreator {
         StmtListJSONCreator stmtListJSONCreator = null;
         StmtList stmtList = script.getStmtList();
         if (event instanceof Never) {
-            stmtListJSONCreator = new StmtListJSONCreator(script.getStmtList());
-            jsonString.append(stmtList);
+            stmtListJSONCreator = new StmtListJSONCreator(stmtList);
+            jsonString.append(stmtListJSONCreator.createStmtListJSONString());
         } else {
             StringBuilder endOfEventBlock = new StringBuilder();
             String blockId = null;
@@ -43,7 +43,7 @@ public class ScriptJSONCreator {
                 GreenFlag greenFlag = (GreenFlag) event;
                 TopNonDataBlockMetadata meta = (TopNonDataBlockMetadata) greenFlag.getMetadata();
                 blockId = meta.getBlockId();
-                createFixedBlock(jsonString, meta, nextId, null);
+                jsonString.append(createFixedBlock(meta, nextId, null));
             } else if (event instanceof KeyPressed) {
                 KeyPressed keyPressed = (KeyPressed) event;
                 TopNonDataBlockMetadata meta = (TopNonDataBlockMetadata) keyPressed.getMetadata();
@@ -60,17 +60,17 @@ public class ScriptJSONCreator {
                 SpriteClicked spriteClicked = (SpriteClicked) event;
                 TopNonDataBlockMetadata meta = (TopNonDataBlockMetadata) spriteClicked.getMetadata();
                 blockId = meta.getBlockId();
-                createFixedBlock(jsonString, meta, nextId, null);
+                jsonString.append(createFixedBlock(meta, nextId, null));
             } else if (event instanceof StageClicked) {
                 StageClicked stageClicked = (StageClicked) event;
                 TopNonDataBlockMetadata meta = (TopNonDataBlockMetadata) stageClicked.getMetadata();
                 blockId = meta.getBlockId();
-                createFixedBlock(jsonString, meta, nextId, null);
+                jsonString.append(createFixedBlock(meta, nextId, null));
             } else if (event instanceof StartedAsClone) {
                 StartedAsClone startedAsClone = (StartedAsClone) event;
                 TopNonDataBlockMetadata meta = (TopNonDataBlockMetadata) startedAsClone.getMetadata();
                 blockId = meta.getBlockId();
-                createFixedBlock(jsonString, meta, nextId, null);
+                jsonString.append(createFixedBlock(meta, nextId, null));
             }
             if (script.getStmtList().getStmts().size() > 0) {
                 assert blockId != null;
