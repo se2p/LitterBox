@@ -132,7 +132,7 @@ public class ActorJSONCreator {
             JSONStringCreator.createFieldValue(jsonString, VIDTRANSPARENCY_KEY, stageMetadata.getVideoTransparency()).append(",");
             JSONStringCreator.createFieldValue(jsonString, VIDSTATE_KEY, stageMetadata.getVideoState()).append(",");
             if (stageMetadata.getTextToSpeechLanguage() == null) {
-                JSONStringCreator.createField(jsonString, TEXT_TO_SPEECH_KEY).append(stageMetadata.getTextToSpeechLanguage());
+                JSONStringCreator.createFieldValueNull(jsonString, TEXT_TO_SPEECH_KEY);
             } else {
                 JSONStringCreator.createFieldValue(jsonString, TEXT_TO_SPEECH_KEY,
                         stageMetadata.getTextToSpeechLanguage());
@@ -201,7 +201,7 @@ public class ActorJSONCreator {
     private static StringBuilder addComment(StringBuilder jsonString, CommentMetadata meta) {
         JSONStringCreator.createField(jsonString, meta.getCommentId()).append("{");
         if (meta.getBlockId() == null) {
-            JSONStringCreator.createField(jsonString, BLOCK_ID_KEY).append(meta.getBlockId()).append(",");
+            JSONStringCreator.createFieldValueNull(jsonString, BLOCK_ID_KEY).append(",");
         } else {
             JSONStringCreator.createFieldValue(jsonString, BLOCK_ID_KEY, meta.getBlockId()).append(",");
         }
