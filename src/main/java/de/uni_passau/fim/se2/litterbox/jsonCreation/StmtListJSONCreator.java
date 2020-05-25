@@ -24,7 +24,10 @@ import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import java.util.ArrayList;
 import java.util.List;
 
-import static de.uni_passau.fim.se2.litterbox.jsonCreation.BlockJsonCreatorHelper.createFixedBlock;
+import static de.uni_passau.fim.se2.litterbox.ast.Constants.FIELDS_KEY;
+import static de.uni_passau.fim.se2.litterbox.ast.Constants.INPUTS_KEY;
+import static de.uni_passau.fim.se2.litterbox.jsonCreation.BlockJsonCreatorHelper.*;
+import static de.uni_passau.fim.se2.litterbox.jsonCreation.JSONStringCreator.createField;
 
 public class StmtListJSONCreator implements ScratchVisitor {
     private String previousBlockId = null;
@@ -141,9 +144,21 @@ public class StmtListJSONCreator implements ScratchVisitor {
         previousBlockId = ((NonDataBlockMetadata) node.getMetadata()).getBlockId();
     }
 
+    private String createFieldsBlockString(NonDataBlockMetadata metadata, String nextId, String fieldsString){
+        StringBuilder jsonString = new StringBuilder();
+        createBlockUpToParent(jsonString, metadata, nextId, previousBlockId);
+        createField(jsonString, INPUTS_KEY).append("{},");
+        createField(jsonString, FIELDS_KEY).append(fieldsString).append(",");
+        createBlockAfterFields(jsonString,metadata);
+        return jsonString.toString();
+    }
+
     @Override
     public void visit(SetRotationStyle node){
-
+        //todo fields handling
+        String fieldsString=null;
+        finishedJSONStrings.add(createFieldsBlockString((NonDataBlockMetadata) node.getMetadata(),getNextId(),fieldsString));
+        previousBlockId = ((NonDataBlockMetadata) node.getMetadata()).getBlockId();
     }
 
     @Override
