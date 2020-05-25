@@ -42,7 +42,6 @@ public class ScriptJSONCreator {
             } else if (event instanceof GreenFlag) {
                 GreenFlag greenFlag = (GreenFlag) event;
                 TopNonDataBlockMetadata meta = (TopNonDataBlockMetadata) greenFlag.getMetadata();
-                //todo event handling
                 blockId = meta.getBlockId();
                 createFixedBlock(jsonString, meta, nextId, null);
             } else if (event instanceof KeyPressed) {
@@ -60,19 +59,16 @@ public class ScriptJSONCreator {
             } else if (event instanceof SpriteClicked) {
                 SpriteClicked spriteClicked = (SpriteClicked) event;
                 TopNonDataBlockMetadata meta = (TopNonDataBlockMetadata) spriteClicked.getMetadata();
-                //todo event handling
                 blockId = meta.getBlockId();
                 createFixedBlock(jsonString, meta, nextId, null);
             } else if (event instanceof StageClicked) {
                 StageClicked stageClicked = (StageClicked) event;
                 TopNonDataBlockMetadata meta = (TopNonDataBlockMetadata) stageClicked.getMetadata();
-                //todo event handling
                 blockId = meta.getBlockId();
                 createFixedBlock(jsonString, meta, nextId, null);
             } else if (event instanceof StartedAsClone) {
                 StartedAsClone startedAsClone = (StartedAsClone) event;
                 TopNonDataBlockMetadata meta = (TopNonDataBlockMetadata) startedAsClone.getMetadata();
-                //todo event handling
                 blockId = meta.getBlockId();
                 createFixedBlock(jsonString, meta, nextId, null);
             }
