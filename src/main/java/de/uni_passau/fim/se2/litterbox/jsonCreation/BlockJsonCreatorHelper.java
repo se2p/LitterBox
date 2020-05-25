@@ -19,16 +19,16 @@ public abstract class BlockJsonCreatorHelper {
             createFieldValue(jsonString, NEXT_KEY, nextId).append(",");
         }
         if (parentId == null) {
-            createFieldValueNull(jsonString, PARENT_KEY).append(",");
+            createFieldValueNull(jsonString, PARENT_KEY);
         } else {
-            createFieldValue(jsonString, PARENT_KEY, parentId).append(",");
+            createFieldValue(jsonString, PARENT_KEY, parentId);
         }
         return jsonString;
     }
 
     public static StringBuilder createBlockInputFieldForFixed(StringBuilder jsonString) {
         createField(jsonString, INPUTS_KEY).append("{},");
-        createField(jsonString, FIELDS_KEY).append("{},");
+        createField(jsonString, FIELDS_KEY).append("{}");
         return jsonString;
     }
 
@@ -45,27 +45,43 @@ public abstract class BlockJsonCreatorHelper {
             createFieldValue(jsonString, X_KEY, topNonDataBlockMetadata.getxPos()).append(",");
             createFieldValue(jsonString, Y_KEY, topNonDataBlockMetadata.getyPos());
         }
-        jsonString.append("}");
         return jsonString;
     }
 
     public static String createFixedBlock(NonDataBlockMetadata meta,
                                                  String nextId, String parentId) {
         StringBuilder jsonString = new StringBuilder();
-        createBlockUpToParent(jsonString, meta, nextId, parentId);
-        createBlockInputFieldForFixed(jsonString);
-        createBlockAfterFields(jsonString, meta);
+        createBlockUpToParent(jsonString, meta, nextId, parentId).append(",");
+        createBlockInputFieldForFixed(jsonString).append(",");
+        createBlockAfterFields(jsonString, meta).append("}");
         return jsonString.toString();
     }
 
-    public static String createBlockString(NonDataBlockMetadata metadata, String nextId, String parentId,
+    private static StringBuilder createBlockString(NonDataBlockMetadata metadata, String nextId, String parentId,
                                            String inputsString,
                                            String fieldsString) {
         StringBuilder jsonString = new StringBuilder();
-        createBlockUpToParent(jsonString, metadata, nextId, parentId);
+        createBlockUpToParent(jsonString, metadata, nextId, parentId).append(",");
         createField(jsonString, INPUTS_KEY).append(inputsString).append(",");
         createField(jsonString, FIELDS_KEY).append(fieldsString).append(",");
         createBlockAfterFields(jsonString, metadata);
+        return jsonString;
+    }
+
+    public static String createBlockWithMutationString(NonDataBlockMetadata metadata, String nextId, String parentId,
+                                           String inputsString,
+                                           String fieldsString, String mutation) {
+        StringBuilder jsonString = createBlockString(metadata,nextId,parentId,inputsString,fieldsString);
+        //todo do metadatahandling
+        jsonString.append("}");
+        return jsonString.toString();
+    }
+
+    public static String createBlockWithoutMutationString(NonDataBlockMetadata metadata, String nextId, String parentId,
+                                           String inputsString,
+                                           String fieldsString) {
+        StringBuilder jsonString = createBlockString(metadata,nextId,parentId,inputsString,fieldsString);
+        jsonString.append("}");
         return jsonString.toString();
     }
 }

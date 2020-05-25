@@ -148,7 +148,7 @@ public class StmtListJSONCreator implements ScratchVisitor {
     public void visit(SetRotationStyle node) {
         //todo fields handling
         String fieldsString = null;
-        finishedJSONStrings.add(createBlockString((NonDataBlockMetadata) node.getMetadata(), getNextId(),
+        finishedJSONStrings.add(createBlockWithoutMutationString((NonDataBlockMetadata) node.getMetadata(), getNextId(),
                 previousBlockId, "{}", fieldsString));
         previousBlockId = ((NonDataBlockMetadata) node.getMetadata()).getBlockId();
     }
