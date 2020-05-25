@@ -76,7 +76,7 @@ public class ScriptJSONCreator {
                 assert blockId != null;
                 stmtListJSONCreator = new StmtListJSONCreator(blockId, stmtList);
                 jsonString.append(",");
-                jsonString.append(stmtListJSONCreator.getStmtListJSONString());
+                jsonString.append(stmtListJSONCreator.createStmtListJSONString());
             }
         }
 

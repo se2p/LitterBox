@@ -14,7 +14,7 @@ public class ProcedureJSONCreator {
         if (definition.getStmtList().getStmts().size()>0) {
             StmtListJSONCreator stmtListJSONCreator =
                     new StmtListJSONCreator(defMetadata.getBlockId(), definition.getStmtList());
-            jsonString.append(stmtListJSONCreator.getStmtListJSONString());
+            jsonString.append(stmtListJSONCreator.createStmtListJSONString());
         }
         return jsonString.toString();
     }
