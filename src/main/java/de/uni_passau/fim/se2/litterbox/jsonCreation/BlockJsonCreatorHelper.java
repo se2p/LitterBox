@@ -57,4 +57,15 @@ public abstract class BlockJsonCreatorHelper {
         createBlockAfterFields(jsonString, meta);
         return jsonString.toString();
     }
+
+    public static String createBlockString(NonDataBlockMetadata metadata, String nextId, String parentId,
+                                           String inputsString,
+                                           String fieldsString) {
+        StringBuilder jsonString = new StringBuilder();
+        createBlockUpToParent(jsonString, metadata, nextId, parentId);
+        createField(jsonString, INPUTS_KEY).append(inputsString).append(",");
+        createField(jsonString, FIELDS_KEY).append(fieldsString).append(",");
+        createBlockAfterFields(jsonString, metadata);
+        return jsonString.toString();
+    }
 }

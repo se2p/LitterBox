@@ -144,70 +144,62 @@ public class StmtListJSONCreator implements ScratchVisitor {
         previousBlockId = ((NonDataBlockMetadata) node.getMetadata()).getBlockId();
     }
 
-    private String createFieldsBlockString(NonDataBlockMetadata metadata, String nextId, String fieldsString){
-        StringBuilder jsonString = new StringBuilder();
-        createBlockUpToParent(jsonString, metadata, nextId, previousBlockId);
-        createField(jsonString, INPUTS_KEY).append("{},");
-        createField(jsonString, FIELDS_KEY).append(fieldsString).append(",");
-        createBlockAfterFields(jsonString,metadata);
-        return jsonString.toString();
-    }
-
     @Override
-    public void visit(SetRotationStyle node){
+    public void visit(SetRotationStyle node) {
         //todo fields handling
-        String fieldsString=null;
-        finishedJSONStrings.add(createFieldsBlockString((NonDataBlockMetadata) node.getMetadata(),getNextId(),fieldsString));
+        String fieldsString = null;
+        finishedJSONStrings.add(createBlockString((NonDataBlockMetadata) node.getMetadata(), getNextId(),
+                previousBlockId, "{}", fieldsString));
         previousBlockId = ((NonDataBlockMetadata) node.getMetadata()).getBlockId();
     }
 
     @Override
-    public void visit(GoToLayer node){
+    public void visit(GoToLayer node) {
 
     }
 
     @Override
-    public void visit(SetDragMode node){
+    public void visit(SetDragMode node) {
 
     }
 
     @Override
-    public void visit(DeleteAllOf node){
+    public void visit(DeleteAllOf node) {
 
     }
 
     @Override
-    public void visit(ShowList node){
+    public void visit(ShowList node) {
 
     }
 
     @Override
-    public void visit(HideList node){
+    public void visit(HideList node) {
 
     }
 
     @Override
-    public void visit(ShowVariable node){
+    public void visit(ShowVariable node) {
 
     }
 
     @Override
-    public void visit(HideVariable node){
+    public void visit(HideVariable node) {
 
     }
 
     @Override
-    public void visit(StopAll node){
+    public void visit(StopAll node) {
 
     }
 
     @Override
-    public void visit(StopThisScript node){
+    public void visit(StopThisScript node) {
 
     }
 
     @Override
-    public void visit(StopOtherScriptsInSprite node){
+    public void visit(StopOtherScriptsInSprite node) {
 
     }
 }
