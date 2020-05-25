@@ -3,16 +3,22 @@ package de.uni_passau.fim.se2.litterbox.jsonCreation;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.ClearGraphicEffects;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.NextBackdrop;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.ClearSoundEffects;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.StopAllSounds;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.ResetTimer;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.StopOtherScriptsInSprite;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.list.DeleteAllOf;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.GoToLayer;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Hide;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.NextCostume;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Show;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.IfOnEdgeBounce;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SetDragMode;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SetRotationStyle;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.DeleteClone;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopAll;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopThisScript;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 import java.util.ArrayList;
@@ -133,5 +139,60 @@ public class StmtListJSONCreator implements ScratchVisitor {
         finishedJSONStrings.add(createFixedBlock((NonDataBlockMetadata) node.getMetadata(), getNextId(),
                 previousBlockId));
         previousBlockId = ((NonDataBlockMetadata) node.getMetadata()).getBlockId();
+    }
+
+    @Override
+    public void visit(SetRotationStyle node){
+
+    }
+
+    @Override
+    public void visit(GoToLayer node){
+
+    }
+
+    @Override
+    public void visit(SetDragMode node){
+
+    }
+
+    @Override
+    public void visit(DeleteAllOf node){
+
+    }
+
+    @Override
+    public void visit(ShowList node){
+
+    }
+
+    @Override
+    public void visit(HideList node){
+
+    }
+
+    @Override
+    public void visit(ShowVariable node){
+
+    }
+
+    @Override
+    public void visit(HideVariable node){
+
+    }
+
+    @Override
+    public void visit(StopAll node){
+
+    }
+
+    @Override
+    public void visit(StopThisScript node){
+
+    }
+
+    @Override
+    public void visit(StopOtherScriptsInSprite node){
+
     }
 }
