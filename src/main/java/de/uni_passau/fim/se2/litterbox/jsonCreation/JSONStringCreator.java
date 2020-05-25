@@ -13,6 +13,7 @@ import java.util.List;
 import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 
 public class JSONStringCreator {
+    private static final String NULL_VALUE = null;
 
     public static String createProgramJSONString(Program program) {
         StringBuilder jsonString = new StringBuilder();
@@ -61,6 +62,10 @@ public class JSONStringCreator {
 
     public static StringBuilder createFieldValue(StringBuilder jsonString, String fieldName, String fieldValue) {
         return createField(jsonString, fieldName).append("\"").append(fieldValue).append("\"");
+    }
+
+    public static StringBuilder createFieldValueNull(StringBuilder jsonString, String fieldName) {
+        return createField(jsonString, fieldName).append(NULL_VALUE);
     }
 
     public static StringBuilder createFieldValue(StringBuilder jsonString, String fieldName, double fieldValue) {
