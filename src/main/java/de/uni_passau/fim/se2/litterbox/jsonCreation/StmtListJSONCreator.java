@@ -23,6 +23,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.DeleteClo
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopAll;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopThisScript;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.ScratchList;
+import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.SymbolTable;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
@@ -183,15 +184,15 @@ public class StmtListJSONCreator implements ScratchVisitor {
 
     @Override
     public void visit(DeleteAllOf node) {
-        getDataFields((NonDataBlockMetadata) node.getMetadata(), node.getIdentifier());
+        getListDataFields((NonDataBlockMetadata) node.getMetadata(), node.getIdentifier());
     }
 
     @Override
     public void visit(ShowList node) {
-        getDataFields((NonDataBlockMetadata) node.getMetadata(), node.getIdentifier());
+        getListDataFields((NonDataBlockMetadata) node.getMetadata(), node.getIdentifier());
     }
 
-    private void getDataFields(NonDataBlockMetadata metadata, Identifier identifier) {
+    private void getListDataFields(NonDataBlockMetadata metadata, Identifier identifier) {
         FieldsMetadata fieldsMeta = metadata.getFields().getList().get(0);
         Preconditions.checkArgument(identifier instanceof Qualified, "Identifier of list has to be in Qualified");
         Qualified qual = (Qualified) identifier;
@@ -206,29 +207,31 @@ public class StmtListJSONCreator implements ScratchVisitor {
 
     @Override
     public void visit(HideList node) {
-        //todo fields handling
-        String fieldsString = null;
-        finishedJSONStrings.add(createBlockWithoutMutationString((NonDataBlockMetadata) node.getMetadata(), getNextId(),
-                previousBlockId, EMPTY_VALUE, fieldsString));
-        previousBlockId = ((NonDataBlockMetadata) node.getMetadata()).getBlockId();
+        getListDataFields((NonDataBlockMetadata) node.getMetadata(), node.getIdentifier());
     }
 
     @Override
     public void visit(ShowVariable node) {
-        //todo fields handling
-        String fieldsString = null;
-        finishedJSONStrings.add(createBlockWithoutMutationString((NonDataBlockMetadata) node.getMetadata(), getNextId(),
-                previousBlockId, EMPTY_VALUE, fieldsString));
-        previousBlockId = ((NonDataBlockMetadata) node.getMetadata()).getBlockId();
+        getVariableFields((NonDataBlockMetadata) node.getMetadata(), node.getIdentifier());
     }
 
     @Override
     public void visit(HideVariable node) {
-        //todo fields handling
-        String fieldsString = null;
-        finishedJSONStrings.add(createBlockWithoutMutationString((NonDataBlockMetadata) node.getMetadata(), getNextId(),
+        getVariableFields((NonDataBlockMetadata) node.getMetadata(), node.getIdentifier());
+    }
+
+    private void getVariableFields(NonDataBlockMetadata metadata, Identifier identifier) {
+        FieldsMetadata fieldsMeta = metadata.getFields().getList().get(0);
+        Preconditions.checkArgument(identifier instanceof Qualified, "Identifier of variable has to be in Qualified");
+        Qualified qual = (Qualified) identifier;
+        Preconditions.checkArgument(qual.getSecond() instanceof Variable, "Qualified has to hold Variable");
+        Variable variable = (Variable) qual.getSecond();
+        String id = symbolTable.getVariableIdentifierFromActorAndName(qual.getFirst().getName(),
+                variable.getName().getName());
+        String fieldsString = createFields(fieldsMeta.getFieldsName(), variable.getName().getName(), id);
+        finishedJSONStrings.add(createBlockWithoutMutationString(metadata, getNextId(),
                 previousBlockId, EMPTY_VALUE, fieldsString));
-        previousBlockId = ((NonDataBlockMetadata) node.getMetadata()).getBlockId();
+        previousBlockId = metadata.getBlockId();
     }
 
     @Override
