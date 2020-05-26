@@ -38,23 +38,30 @@ public class ScriptJSONCreator {
                 //todo event handling
                 blockId = meta.getBlockId();
                 createBlockUpToParent(jsonString, meta, nextId, null);
+
             } else if (event instanceof BackdropSwitchTo) {
                 BackdropSwitchTo backdropSwitchTo = (BackdropSwitchTo) event;
                 TopNonDataBlockMetadata meta = (TopNonDataBlockMetadata) backdropSwitchTo.getMetadata();
-                //todo event handling
                 blockId = meta.getBlockId();
-                createBlockUpToParent(jsonString, meta, nextId, null);
+
+                FieldsMetadata fieldsMetadata = meta.getFields().getList().get(0);
+                String name = backdropSwitchTo.getBackdrop().getName();
+                String fields = createFields(fieldsMetadata.getFieldsName(), name, null);
+                jsonString.append(createBlockWithoutMutationString(meta, nextId, null, EMPTY_VALUE, fields));
+
             } else if (event instanceof GreenFlag) {
                 GreenFlag greenFlag = (GreenFlag) event;
                 TopNonDataBlockMetadata meta = (TopNonDataBlockMetadata) greenFlag.getMetadata();
                 blockId = meta.getBlockId();
                 jsonString.append(createFixedBlock(meta, nextId, null));
+
             } else if (event instanceof KeyPressed) {
                 KeyPressed keyPressed = (KeyPressed) event;
                 TopNonDataBlockMetadata meta = (TopNonDataBlockMetadata) keyPressed.getMetadata();
                 //todo event handling
                 blockId = meta.getBlockId();
                 createBlockUpToParent(jsonString, meta, nextId, null);
+
             } else if (event instanceof ReceptionOfMessage) {
                 ReceptionOfMessage receptionOfMessage = (ReceptionOfMessage) event;
                 TopNonDataBlockMetadata meta = (TopNonDataBlockMetadata) receptionOfMessage.getMetadata();
@@ -67,22 +74,26 @@ public class ScriptJSONCreator {
                 String id = symbol.getMessages().get(messageText).getIdentifier();
                 String fields = createFields(fieldsMetadata.getFieldsName(), messageText, id);
                 jsonString.append(createBlockWithoutMutationString(meta, nextId, null, EMPTY_VALUE, fields));
+
             } else if (event instanceof SpriteClicked) {
                 SpriteClicked spriteClicked = (SpriteClicked) event;
                 TopNonDataBlockMetadata meta = (TopNonDataBlockMetadata) spriteClicked.getMetadata();
                 blockId = meta.getBlockId();
                 jsonString.append(createFixedBlock(meta, nextId, null));
+
             } else if (event instanceof StageClicked) {
                 StageClicked stageClicked = (StageClicked) event;
                 TopNonDataBlockMetadata meta = (TopNonDataBlockMetadata) stageClicked.getMetadata();
                 blockId = meta.getBlockId();
                 jsonString.append(createFixedBlock(meta, nextId, null));
+
             } else if (event instanceof StartedAsClone) {
                 StartedAsClone startedAsClone = (StartedAsClone) event;
                 TopNonDataBlockMetadata meta = (TopNonDataBlockMetadata) startedAsClone.getMetadata();
                 blockId = meta.getBlockId();
                 jsonString.append(createFixedBlock(meta, nextId, null));
             }
+
             if (script.getStmtList().getStmts().size() > 0) {
                 assert blockId != null;
                 stmtListJSONCreator = new StmtListJSONCreator(blockId, stmtList, symbol);
@@ -90,9 +101,6 @@ public class ScriptJSONCreator {
                 jsonString.append(stmtListJSONCreator.createStmtListJSONString());
             }
         }
-
         return jsonString.toString();
     }
-
-
 }
