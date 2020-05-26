@@ -133,7 +133,7 @@ public abstract class BlockJsonCreatorHelper {
                 key = "any";
                 break;
             default:
-                key = "" + (char) numberValue;
+                key = String.valueOf( (char)numberValue);
         }
         return key;
     }
