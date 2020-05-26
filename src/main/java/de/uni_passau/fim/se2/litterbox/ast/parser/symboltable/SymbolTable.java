@@ -22,8 +22,11 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Message;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.ExpressionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.Type;
 
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 public class SymbolTable {
 
@@ -63,5 +66,27 @@ public class SymbolTable {
     public void addMessage(String ident, Message message, boolean global, String actorName) {
         MessageInfo info = new MessageInfo(global, actorName, ident, message);
         messages.put(ident, info);
+    }
+
+    public String getListIdentifierFromActorAndName(String actor, String name){
+        Set<Entry<String,ExpressionListInfo>> entries = lists.entrySet();
+        for (Entry<String, ExpressionListInfo> current : entries) {
+            ExpressionListInfo info = current.getValue();
+            if (info.getVariableName().equals(name) && info.getActor().equals(actor)) {
+                return current.getKey();
+            }
+        }
+        return null;
+    }
+
+    public String getVariableIdentifierFromActorAndName(String actor, String name){
+        Set<Entry<String,VariableInfo>> entries = variables.entrySet();
+        for (Entry<String, VariableInfo> current : entries) {
+            VariableInfo info = current.getValue();
+            if (info.getVariableName().equals(name) && info.getActor().equals(actor)) {
+                return current.getKey();
+            }
+        }
+        return null;
     }
 }
