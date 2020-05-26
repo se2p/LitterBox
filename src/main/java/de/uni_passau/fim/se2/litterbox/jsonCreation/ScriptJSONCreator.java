@@ -11,7 +11,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.TopNonDataBlockM
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.SymbolTable;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-import static de.uni_passau.fim.se2.litterbox.ast.parser.KeyParser.*;
 import static de.uni_passau.fim.se2.litterbox.jsonCreation.BlockJsonCreatorHelper.*;
 import static de.uni_passau.fim.se2.litterbox.jsonCreation.StmtListJSONCreator.EMPTY_VALUE;
 
@@ -37,9 +36,14 @@ public class ScriptJSONCreator {
             if (event instanceof AttributeAboveValue) {
                 AttributeAboveValue attributeAboveValue = (AttributeAboveValue) event;
                 TopNonDataBlockMetadata meta = (TopNonDataBlockMetadata) attributeAboveValue.getMetadata();
-                //todo event handling
                 blockId = meta.getBlockId();
-                createBlockUpToParent(jsonString, meta, nextId, null);
+                //todo event handling
+                String inputString = null;
+
+                FieldsMetadata fieldsMetadata = meta.getFields().getList().get(0);
+                String attribute = attributeAboveValue.getAttribute().getType();
+                String fields = createFields(fieldsMetadata.getFieldsName(), attribute, null);
+                jsonString.append(createBlockWithoutMutationString(meta, nextId, inputString, EMPTY_VALUE, fields));
 
             } else if (event instanceof BackdropSwitchTo) {
                 BackdropSwitchTo backdropSwitchTo = (BackdropSwitchTo) event;
