@@ -3,11 +3,15 @@ package de.uni_passau.fim.se2.litterbox.jsonCreation;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.FieldsMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.TopNonDataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.SymbolTable;
+import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-import static de.uni_passau.fim.se2.litterbox.jsonCreation.BlockJsonCreatorHelper.createBlockUpToParent;
-import static de.uni_passau.fim.se2.litterbox.jsonCreation.BlockJsonCreatorHelper.createFixedBlock;
+import static de.uni_passau.fim.se2.litterbox.jsonCreation.BlockJsonCreatorHelper.*;
+import static de.uni_passau.fim.se2.litterbox.jsonCreation.StmtListJSONCreator.EMPTY_VALUE;
 
 public class ScriptJSONCreator {
     public static String createScriptJSONString(Script script, SymbolTable symbol) {
@@ -16,7 +20,7 @@ public class ScriptJSONCreator {
         StmtListJSONCreator stmtListJSONCreator = null;
         StmtList stmtList = script.getStmtList();
         if (event instanceof Never) {
-            stmtListJSONCreator = new StmtListJSONCreator(stmtList,symbol);
+            stmtListJSONCreator = new StmtListJSONCreator(stmtList, symbol);
             jsonString.append(stmtListJSONCreator.createStmtListJSONString());
         } else {
             StringBuilder endOfEventBlock = new StringBuilder();
@@ -54,9 +58,15 @@ public class ScriptJSONCreator {
             } else if (event instanceof ReceptionOfMessage) {
                 ReceptionOfMessage receptionOfMessage = (ReceptionOfMessage) event;
                 TopNonDataBlockMetadata meta = (TopNonDataBlockMetadata) receptionOfMessage.getMetadata();
-                //todo event handling
                 blockId = meta.getBlockId();
-                createBlockUpToParent(jsonString, meta, nextId, null);
+
+                StringExpr expr = receptionOfMessage.getMsg().getMessage();
+                Preconditions.checkArgument(expr instanceof StringLiteral);
+                String messageText = ((StringLiteral) expr).getText();
+                FieldsMetadata fieldsMetadata = meta.getFields().getList().get(0);
+                String id = symbol.getMessages().get(messageText).getIdentifier();
+                String fields = createFields(fieldsMetadata.getFieldsName(), messageText, id);
+                jsonString.append(createBlockWithoutMutationString(meta, nextId, null, EMPTY_VALUE, fields));
             } else if (event instanceof SpriteClicked) {
                 SpriteClicked spriteClicked = (SpriteClicked) event;
                 TopNonDataBlockMetadata meta = (TopNonDataBlockMetadata) spriteClicked.getMetadata();
@@ -75,7 +85,7 @@ public class ScriptJSONCreator {
             }
             if (script.getStmtList().getStmts().size() > 0) {
                 assert blockId != null;
-                stmtListJSONCreator = new StmtListJSONCreator(blockId, stmtList,symbol);
+                stmtListJSONCreator = new StmtListJSONCreator(blockId, stmtList, symbol);
                 jsonString.append(",");
                 jsonString.append(stmtListJSONCreator.createStmtListJSONString());
             }

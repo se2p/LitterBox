@@ -20,9 +20,9 @@ package de.uni_passau.fim.se2.litterbox.ast.parser.symboltable;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.Message;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.ExpressionList;
+import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.Type;
 
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -63,9 +63,9 @@ public class SymbolTable {
         lists.put(ident, info);
     }
 
-    public void addMessage(String ident, Message message, boolean global, String actorName) {
-        MessageInfo info = new MessageInfo(global, actorName, ident, message);
-        messages.put(ident, info);
+    public void addMessage(String name, Message message, boolean global, String actorName, String identifier) {
+        MessageInfo info = new MessageInfo(global, actorName, identifier, message);
+        messages.put(name, info);
     }
 
     public String getListIdentifierFromActorAndName(String actor, String name){

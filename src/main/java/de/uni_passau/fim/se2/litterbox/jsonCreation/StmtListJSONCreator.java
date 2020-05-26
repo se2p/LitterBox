@@ -42,7 +42,7 @@ public class StmtListJSONCreator implements ScratchVisitor {
     private int counter;
     private IdVisitor idVis;
     private SymbolTable symbolTable;
-    private final static String EMPTY_VALUE = "{}";
+    public final static String EMPTY_VALUE = "{}";
 
     public StmtListJSONCreator(String parentID, StmtList stmtList, SymbolTable symbolTable) {
         previousBlockId = parentID;
