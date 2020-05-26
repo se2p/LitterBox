@@ -4,7 +4,9 @@ import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Identifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.FieldsMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.MutationMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.StopMutation;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.ClearSoundEffects;
@@ -238,33 +240,30 @@ public class StmtListJSONCreator implements ScratchVisitor {
     public void visit(StopAll node) {
         FieldsMetadata fieldsMeta = ((NonDataBlockMetadata) node.getMetadata()).getFields().getList().get(0);
         String fieldsString = createFields(fieldsMeta.getFieldsName(), "all", null);
-        // todo mutation handling
-
-        String mutationString = null;
-        finishedJSONStrings.add(createBlockWithMutationString((NonDataBlockMetadata) node.getMetadata(), getNextId(),
-                previousBlockId, EMPTY_VALUE, fieldsString, mutationString));
-        previousBlockId = ((NonDataBlockMetadata) node.getMetadata()).getBlockId();
+        getStopMutation(fieldsString, (NonDataBlockMetadata) node.getMetadata());
     }
 
     @Override
     public void visit(StopThisScript node) {
         FieldsMetadata fieldsMeta = ((NonDataBlockMetadata) node.getMetadata()).getFields().getList().get(0);
         String fieldsString = createFields(fieldsMeta.getFieldsName(), "this script", null);
-        // todo mutation handling
-        String mutationString = null;
-        finishedJSONStrings.add(createBlockWithMutationString((NonDataBlockMetadata) node.getMetadata(), getNextId(),
-                previousBlockId, EMPTY_VALUE, fieldsString, mutationString));
-        previousBlockId = ((NonDataBlockMetadata) node.getMetadata()).getBlockId();
+        getStopMutation(fieldsString, (NonDataBlockMetadata) node.getMetadata());
     }
 
     @Override
     public void visit(StopOtherScriptsInSprite node) {
         FieldsMetadata fieldsMeta = ((NonDataBlockMetadata) node.getMetadata()).getFields().getList().get(0);
         String fieldsString = createFields(fieldsMeta.getFieldsName(), "other scripts in sprite", null);
-        // todo mutation handling
-        String mutationString = null;
-        finishedJSONStrings.add(createBlockWithMutationString((NonDataBlockMetadata) node.getMetadata(), getNextId(),
+        getStopMutation(fieldsString, (NonDataBlockMetadata) node.getMetadata());
+    }
+
+    private void getStopMutation(String fieldsString, NonDataBlockMetadata metadata) {
+        MutationMetadata mutation = metadata.getMutation();
+        Preconditions.checkArgument(mutation instanceof StopMutation);
+        StopMutation stopMutation = (StopMutation) mutation;
+        String mutationString = createStopMetadata(stopMutation.getTagName(),stopMutation.isHasNext());
+        finishedJSONStrings.add(createBlockWithMutationString(metadata, getNextId(),
                 previousBlockId, EMPTY_VALUE, fieldsString, mutationString));
-        previousBlockId = ((NonDataBlockMetadata) node.getMetadata()).getBlockId();
+        previousBlockId = metadata.getBlockId();
     }
 }

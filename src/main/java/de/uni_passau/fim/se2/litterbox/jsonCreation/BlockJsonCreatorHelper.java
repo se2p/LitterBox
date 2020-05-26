@@ -98,4 +98,14 @@ public abstract class BlockJsonCreatorHelper {
         jsonString.append("]}");
         return jsonString.toString();
     }
+
+    public static String createStopMetadata(String tagName, boolean hasNext) {
+        StringBuilder jsonString = new StringBuilder();
+        jsonString.append("{");
+        createFieldValue(jsonString,TAG_NAME_KEY,tagName).append(",");
+        createField(jsonString, CHILDREN_KEY).append("[],");
+        createFieldValue(jsonString,HAS_NEXT_KEY,hasNext);
+        jsonString.append("}");
+        return jsonString.toString();
+    }
 }
