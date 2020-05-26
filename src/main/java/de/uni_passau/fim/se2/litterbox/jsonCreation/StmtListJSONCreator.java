@@ -24,10 +24,7 @@ import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import java.util.ArrayList;
 import java.util.List;
 
-import static de.uni_passau.fim.se2.litterbox.ast.Constants.FIELDS_KEY;
-import static de.uni_passau.fim.se2.litterbox.ast.Constants.INPUTS_KEY;
 import static de.uni_passau.fim.se2.litterbox.jsonCreation.BlockJsonCreatorHelper.*;
-import static de.uni_passau.fim.se2.litterbox.jsonCreation.JSONStringCreator.createField;
 
 public class StmtListJSONCreator implements ScratchVisitor {
     private String previousBlockId = null;
@@ -155,51 +152,97 @@ public class StmtListJSONCreator implements ScratchVisitor {
 
     @Override
     public void visit(GoToLayer node) {
-
+        //todo fields handling
+        String fieldsString = null;
+        finishedJSONStrings.add(createBlockWithoutMutationString((NonDataBlockMetadata) node.getMetadata(), getNextId(),
+                previousBlockId, "{}", fieldsString));
+        previousBlockId = ((NonDataBlockMetadata) node.getMetadata()).getBlockId();
     }
 
     @Override
     public void visit(SetDragMode node) {
-
+        //todo fields handling
+        String fieldsString = null;
+        finishedJSONStrings.add(createBlockWithoutMutationString((NonDataBlockMetadata) node.getMetadata(), getNextId(),
+                previousBlockId, "{}", fieldsString));
+        previousBlockId = ((NonDataBlockMetadata) node.getMetadata()).getBlockId();
     }
 
     @Override
     public void visit(DeleteAllOf node) {
-
+        //todo fields handling
+        String fieldsString = null;
+        finishedJSONStrings.add(createBlockWithoutMutationString((NonDataBlockMetadata) node.getMetadata(), getNextId(),
+                previousBlockId, "{}", fieldsString));
+        previousBlockId = ((NonDataBlockMetadata) node.getMetadata()).getBlockId();
     }
 
     @Override
     public void visit(ShowList node) {
-
+        //todo fields handling
+        String fieldsString = null;
+        finishedJSONStrings.add(createBlockWithoutMutationString((NonDataBlockMetadata) node.getMetadata(), getNextId(),
+                previousBlockId, "{}", fieldsString));
+        previousBlockId = ((NonDataBlockMetadata) node.getMetadata()).getBlockId();
     }
 
     @Override
     public void visit(HideList node) {
-
+        //todo fields handling
+        String fieldsString = null;
+        finishedJSONStrings.add(createBlockWithoutMutationString((NonDataBlockMetadata) node.getMetadata(), getNextId(),
+                previousBlockId, "{}", fieldsString));
+        previousBlockId = ((NonDataBlockMetadata) node.getMetadata()).getBlockId();
     }
 
     @Override
     public void visit(ShowVariable node) {
-
+        //todo fields handling
+        String fieldsString = null;
+        finishedJSONStrings.add(createBlockWithoutMutationString((NonDataBlockMetadata) node.getMetadata(), getNextId(),
+                previousBlockId, "{}", fieldsString));
+        previousBlockId = ((NonDataBlockMetadata) node.getMetadata()).getBlockId();
     }
 
     @Override
     public void visit(HideVariable node) {
-
+        //todo fields handling
+        String fieldsString = null;
+        finishedJSONStrings.add(createBlockWithoutMutationString((NonDataBlockMetadata) node.getMetadata(), getNextId(),
+                previousBlockId, "{}", fieldsString));
+        previousBlockId = ((NonDataBlockMetadata) node.getMetadata()).getBlockId();
     }
 
     @Override
     public void visit(StopAll node) {
-
+        //todo fields handling
+        // todo mutation handling
+        String fieldsString = null;
+        String mutationString = null;
+        finishedJSONStrings.add(createBlockWithMutationString((NonDataBlockMetadata) node.getMetadata(), getNextId(),
+                previousBlockId, "{}", fieldsString, mutationString));
+        previousBlockId = ((NonDataBlockMetadata) node.getMetadata()).getBlockId();
     }
 
     @Override
     public void visit(StopThisScript node) {
-
+        //todo fields handling
+        // todo mutation handling
+        String fieldsString = null;
+        String mutationString = null;
+        finishedJSONStrings.add(createBlockWithMutationString((NonDataBlockMetadata) node.getMetadata(), getNextId(),
+                previousBlockId, "{}", fieldsString, mutationString));
+        previousBlockId = ((NonDataBlockMetadata) node.getMetadata()).getBlockId();
     }
 
     @Override
     public void visit(StopOtherScriptsInSprite node) {
-
+        //todo fields handling
+        // todo mutation handling
+        String fieldsString = null;
+        String mutationString = null;
+        finishedJSONStrings.add(createBlockWithMutationString((NonDataBlockMetadata) node.getMetadata(), getNextId(),
+                previousBlockId, "{}", fieldsString, mutationString));
+        previousBlockId = ((NonDataBlockMetadata) node.getMetadata()).getBlockId();
     }
 }

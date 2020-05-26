@@ -72,7 +72,8 @@ public abstract class BlockJsonCreatorHelper {
                                            String inputsString,
                                            String fieldsString, String mutation) {
         StringBuilder jsonString = createBlockString(metadata,nextId,parentId,inputsString,fieldsString);
-        //todo do metadatahandling
+        jsonString.append(",");
+        createField(jsonString, MUTATION_KEY).append(mutation);
         jsonString.append("}");
         return jsonString.toString();
     }
