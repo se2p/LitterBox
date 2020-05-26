@@ -4,6 +4,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMeta
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.TopNonDataBlockMetadata;
 
 import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
+import static de.uni_passau.fim.se2.litterbox.ast.parser.KeyParser.*;
+import static de.uni_passau.fim.se2.litterbox.ast.parser.KeyParser.ANYKEY;
 import static de.uni_passau.fim.se2.litterbox.jsonCreation.JSONStringCreator.*;
 
 public abstract class BlockJsonCreatorHelper {
@@ -107,5 +109,32 @@ public abstract class BlockJsonCreatorHelper {
         createFieldValue(jsonString,HAS_NEXT_KEY,hasNext);
         jsonString.append("}");
         return jsonString.toString();
+    }
+
+    public static String getKeyValue(int numberValue){
+        String key;
+        switch (numberValue) {
+            case UPARROW:
+                key = "up arrow";
+                break;
+            case DOWNARROW:
+                key = "down arrow";
+                break;
+            case LEFTARROW:
+                key = "left arrow";
+                break;
+            case RIGHTARROW:
+                key = "right arrow";
+                break;
+            case SPACE:
+                key = "space";
+                break;
+            case ANYKEY:
+                key = "any";
+                break;
+            default:
+                key = "" + (char) numberValue;
+        }
+        return key;
     }
 }

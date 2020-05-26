@@ -4,12 +4,14 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.FieldsMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.TopNonDataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.SymbolTable;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
+import static de.uni_passau.fim.se2.litterbox.ast.parser.KeyParser.*;
 import static de.uni_passau.fim.se2.litterbox.jsonCreation.BlockJsonCreatorHelper.*;
 import static de.uni_passau.fim.se2.litterbox.jsonCreation.StmtListJSONCreator.EMPTY_VALUE;
 
@@ -58,9 +60,14 @@ public class ScriptJSONCreator {
             } else if (event instanceof KeyPressed) {
                 KeyPressed keyPressed = (KeyPressed) event;
                 TopNonDataBlockMetadata meta = (TopNonDataBlockMetadata) keyPressed.getMetadata();
-                //todo event handling
                 blockId = meta.getBlockId();
-                createBlockUpToParent(jsonString, meta, nextId, null);
+
+                FieldsMetadata fieldsMetadata = meta.getFields().getList().get(0);
+                Preconditions.checkArgument(keyPressed.getKey().getKey() instanceof NumberLiteral);
+                String key = getKeyValue((int) ((NumberLiteral) keyPressed.getKey().getKey()).getValue());
+
+                String fields = createFields(fieldsMetadata.getFieldsName(), key, null);
+                jsonString.append(createBlockWithoutMutationString(meta, nextId, null, EMPTY_VALUE, fields));
 
             } else if (event instanceof ReceptionOfMessage) {
                 ReceptionOfMessage receptionOfMessage = (ReceptionOfMessage) event;
