@@ -4,18 +4,19 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.TopNonDataBlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.SymbolTable;
 
 import static de.uni_passau.fim.se2.litterbox.jsonCreation.BlockJsonCreatorHelper.createBlockUpToParent;
 import static de.uni_passau.fim.se2.litterbox.jsonCreation.BlockJsonCreatorHelper.createFixedBlock;
 
 public class ScriptJSONCreator {
-    public static String createScriptJSONString(Script script) {
+    public static String createScriptJSONString(Script script, SymbolTable symbol) {
         StringBuilder jsonString = new StringBuilder();
         Event event = script.getEvent();
         StmtListJSONCreator stmtListJSONCreator = null;
         StmtList stmtList = script.getStmtList();
         if (event instanceof Never) {
-            stmtListJSONCreator = new StmtListJSONCreator(stmtList);
+            stmtListJSONCreator = new StmtListJSONCreator(stmtList,symbol);
             jsonString.append(stmtListJSONCreator.createStmtListJSONString());
         } else {
             StringBuilder endOfEventBlock = new StringBuilder();
@@ -74,7 +75,7 @@ public class ScriptJSONCreator {
             }
             if (script.getStmtList().getStmts().size() > 0) {
                 assert blockId != null;
-                stmtListJSONCreator = new StmtListJSONCreator(blockId, stmtList);
+                stmtListJSONCreator = new StmtListJSONCreator(blockId, stmtList,symbol);
                 jsonString.append(",");
                 jsonString.append(stmtListJSONCreator.createStmtListJSONString());
             }

@@ -1,6 +1,9 @@
 package de.uni_passau.fim.se2.litterbox.jsonCreation;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Identifier;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.FieldsMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.*;
@@ -19,7 +22,10 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SetRotat
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.DeleteClone;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopAll;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopThisScript;
+import de.uni_passau.fim.se2.litterbox.ast.model.variable.ScratchList;
+import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.SymbolTable;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
+import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,20 +38,24 @@ public class StmtListJSONCreator implements ScratchVisitor {
     private List<Stmt> stmtList;
     private int counter;
     private IdVisitor idVis;
+    private SymbolTable symbolTable;
+    private final static String EMPTY_VALUE = "{}";
 
-    public StmtListJSONCreator(String parentID, StmtList stmtList) {
+    public StmtListJSONCreator(String parentID, StmtList stmtList, SymbolTable symbolTable) {
         previousBlockId = parentID;
         finishedJSONStrings = new ArrayList<>();
         this.stmtList = stmtList.getStmts();
         counter = 0;
         idVis = new IdVisitor();
+        this.symbolTable = symbolTable;
     }
 
-    public StmtListJSONCreator(StmtList stmtList) {
+    public StmtListJSONCreator(StmtList stmtList, SymbolTable symbolTable) {
         finishedJSONStrings = new ArrayList<>();
         this.stmtList = stmtList.getStmts();
         counter = 0;
         idVis = new IdVisitor();
+        this.symbolTable = symbolTable;
     }
 
     public String createStmtListJSONString() {
@@ -143,47 +153,55 @@ public class StmtListJSONCreator implements ScratchVisitor {
 
     @Override
     public void visit(SetRotationStyle node) {
-        //todo fields handling
-        String fieldsString = null;
+        String rotation = node.getRotation().toString();
+        FieldsMetadata fieldsMeta = ((NonDataBlockMetadata) node.getMetadata()).getFields().getList().get(0);
+        String fieldsString = createFields(fieldsMeta.getFieldsName(), rotation, null);
         finishedJSONStrings.add(createBlockWithoutMutationString((NonDataBlockMetadata) node.getMetadata(), getNextId(),
-                previousBlockId, "{}", fieldsString));
+                previousBlockId, EMPTY_VALUE, fieldsString));
         previousBlockId = ((NonDataBlockMetadata) node.getMetadata()).getBlockId();
     }
 
     @Override
     public void visit(GoToLayer node) {
-        //todo fields handling
-        String fieldsString = null;
+        FieldsMetadata fieldsMeta = ((NonDataBlockMetadata) node.getMetadata()).getFields().getList().get(0);
+        String layer = node.getLayerChoice().getType();
+        String fieldsString = createFields(fieldsMeta.getFieldsName(), layer, null);
         finishedJSONStrings.add(createBlockWithoutMutationString((NonDataBlockMetadata) node.getMetadata(), getNextId(),
-                previousBlockId, "{}", fieldsString));
+                previousBlockId, EMPTY_VALUE, fieldsString));
         previousBlockId = ((NonDataBlockMetadata) node.getMetadata()).getBlockId();
     }
 
     @Override
     public void visit(SetDragMode node) {
-        //todo fields handling
-        String fieldsString = null;
+        FieldsMetadata fieldsMeta = ((NonDataBlockMetadata) node.getMetadata()).getFields().getList().get(0);
+        String drag = node.getDrag().getToken();
+        String fieldsString = createFields(fieldsMeta.getFieldsName(), drag, null);
         finishedJSONStrings.add(createBlockWithoutMutationString((NonDataBlockMetadata) node.getMetadata(), getNextId(),
-                previousBlockId, "{}", fieldsString));
+                previousBlockId, EMPTY_VALUE, fieldsString));
         previousBlockId = ((NonDataBlockMetadata) node.getMetadata()).getBlockId();
     }
 
     @Override
     public void visit(DeleteAllOf node) {
-        //todo fields handling
-        String fieldsString = null;
-        finishedJSONStrings.add(createBlockWithoutMutationString((NonDataBlockMetadata) node.getMetadata(), getNextId(),
-                previousBlockId, "{}", fieldsString));
-        previousBlockId = ((NonDataBlockMetadata) node.getMetadata()).getBlockId();
+        getDataFields((NonDataBlockMetadata) node.getMetadata(), node.getIdentifier());
     }
 
     @Override
     public void visit(ShowList node) {
-        //todo fields handling
-        String fieldsString = null;
-        finishedJSONStrings.add(createBlockWithoutMutationString((NonDataBlockMetadata) node.getMetadata(), getNextId(),
-                previousBlockId, "{}", fieldsString));
-        previousBlockId = ((NonDataBlockMetadata) node.getMetadata()).getBlockId();
+        getDataFields((NonDataBlockMetadata) node.getMetadata(), node.getIdentifier());
+    }
+
+    private void getDataFields(NonDataBlockMetadata metadata, Identifier identifier) {
+        FieldsMetadata fieldsMeta = metadata.getFields().getList().get(0);
+        Preconditions.checkArgument(identifier instanceof Qualified, "Identifier of list has to be in Qualified");
+        Qualified qual = (Qualified) identifier;
+        Preconditions.checkArgument(qual.getSecond() instanceof ScratchList, "Qualified has to hold Scratch List");
+        ScratchList list = (ScratchList) qual.getSecond();
+        String id = symbolTable.getListIdentifierFromActorAndName(qual.getFirst().getName(),list.getName().getName());
+        String fieldsString = createFields(fieldsMeta.getFieldsName(), list.getName().getName(), id);
+        finishedJSONStrings.add(createBlockWithoutMutationString(metadata, getNextId(),
+                previousBlockId, EMPTY_VALUE, fieldsString));
+        previousBlockId = metadata.getBlockId();
     }
 
     @Override
@@ -191,7 +209,7 @@ public class StmtListJSONCreator implements ScratchVisitor {
         //todo fields handling
         String fieldsString = null;
         finishedJSONStrings.add(createBlockWithoutMutationString((NonDataBlockMetadata) node.getMetadata(), getNextId(),
-                previousBlockId, "{}", fieldsString));
+                previousBlockId, EMPTY_VALUE, fieldsString));
         previousBlockId = ((NonDataBlockMetadata) node.getMetadata()).getBlockId();
     }
 
@@ -200,7 +218,7 @@ public class StmtListJSONCreator implements ScratchVisitor {
         //todo fields handling
         String fieldsString = null;
         finishedJSONStrings.add(createBlockWithoutMutationString((NonDataBlockMetadata) node.getMetadata(), getNextId(),
-                previousBlockId, "{}", fieldsString));
+                previousBlockId, EMPTY_VALUE, fieldsString));
         previousBlockId = ((NonDataBlockMetadata) node.getMetadata()).getBlockId();
     }
 
@@ -209,7 +227,7 @@ public class StmtListJSONCreator implements ScratchVisitor {
         //todo fields handling
         String fieldsString = null;
         finishedJSONStrings.add(createBlockWithoutMutationString((NonDataBlockMetadata) node.getMetadata(), getNextId(),
-                previousBlockId, "{}", fieldsString));
+                previousBlockId, EMPTY_VALUE, fieldsString));
         previousBlockId = ((NonDataBlockMetadata) node.getMetadata()).getBlockId();
     }
 
@@ -220,7 +238,7 @@ public class StmtListJSONCreator implements ScratchVisitor {
         String fieldsString = null;
         String mutationString = null;
         finishedJSONStrings.add(createBlockWithMutationString((NonDataBlockMetadata) node.getMetadata(), getNextId(),
-                previousBlockId, "{}", fieldsString, mutationString));
+                previousBlockId, EMPTY_VALUE, fieldsString, mutationString));
         previousBlockId = ((NonDataBlockMetadata) node.getMetadata()).getBlockId();
     }
 
@@ -231,7 +249,7 @@ public class StmtListJSONCreator implements ScratchVisitor {
         String fieldsString = null;
         String mutationString = null;
         finishedJSONStrings.add(createBlockWithMutationString((NonDataBlockMetadata) node.getMetadata(), getNextId(),
-                previousBlockId, "{}", fieldsString, mutationString));
+                previousBlockId, EMPTY_VALUE, fieldsString, mutationString));
         previousBlockId = ((NonDataBlockMetadata) node.getMetadata()).getBlockId();
     }
 
@@ -242,7 +260,7 @@ public class StmtListJSONCreator implements ScratchVisitor {
         String fieldsString = null;
         String mutationString = null;
         finishedJSONStrings.add(createBlockWithMutationString((NonDataBlockMetadata) node.getMetadata(), getNextId(),
-                previousBlockId, "{}", fieldsString, mutationString));
+                previousBlockId, EMPTY_VALUE, fieldsString, mutationString));
         previousBlockId = ((NonDataBlockMetadata) node.getMetadata()).getBlockId();
     }
 }

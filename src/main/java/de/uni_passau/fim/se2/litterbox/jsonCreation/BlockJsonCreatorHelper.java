@@ -5,7 +5,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.TopNonDataBlockM
 
 import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 import static de.uni_passau.fim.se2.litterbox.jsonCreation.JSONStringCreator.*;
-import static de.uni_passau.fim.se2.litterbox.jsonCreation.JSONStringCreator.createFieldValue;
 
 public abstract class BlockJsonCreatorHelper {
     public static StringBuilder createBlockUpToParent(StringBuilder jsonString, NonDataBlockMetadata meta,
@@ -49,7 +48,7 @@ public abstract class BlockJsonCreatorHelper {
     }
 
     public static String createFixedBlock(NonDataBlockMetadata meta,
-                                                 String nextId, String parentId) {
+                                          String nextId, String parentId) {
         StringBuilder jsonString = new StringBuilder();
         createBlockUpToParent(jsonString, meta, nextId, parentId).append(",");
         createBlockInputFieldForFixed(jsonString).append(",");
@@ -58,8 +57,8 @@ public abstract class BlockJsonCreatorHelper {
     }
 
     private static StringBuilder createBlockString(NonDataBlockMetadata metadata, String nextId, String parentId,
-                                           String inputsString,
-                                           String fieldsString) {
+                                                   String inputsString,
+                                                   String fieldsString) {
         StringBuilder jsonString = new StringBuilder();
         createBlockUpToParent(jsonString, metadata, nextId, parentId).append(",");
         createField(jsonString, INPUTS_KEY).append(inputsString).append(",");
@@ -69,9 +68,9 @@ public abstract class BlockJsonCreatorHelper {
     }
 
     public static String createBlockWithMutationString(NonDataBlockMetadata metadata, String nextId, String parentId,
-                                           String inputsString,
-                                           String fieldsString, String mutation) {
-        StringBuilder jsonString = createBlockString(metadata,nextId,parentId,inputsString,fieldsString);
+                                                       String inputsString,
+                                                       String fieldsString, String mutation) {
+        StringBuilder jsonString = createBlockString(metadata, nextId, parentId, inputsString, fieldsString);
         jsonString.append(",");
         createField(jsonString, MUTATION_KEY).append(mutation);
         jsonString.append("}");
@@ -79,10 +78,24 @@ public abstract class BlockJsonCreatorHelper {
     }
 
     public static String createBlockWithoutMutationString(NonDataBlockMetadata metadata, String nextId, String parentId,
-                                           String inputsString,
-                                           String fieldsString) {
-        StringBuilder jsonString = createBlockString(metadata,nextId,parentId,inputsString,fieldsString);
+                                                          String inputsString,
+                                                          String fieldsString) {
+        StringBuilder jsonString = createBlockString(metadata, nextId, parentId, inputsString, fieldsString);
         jsonString.append("}");
+        return jsonString.toString();
+    }
+
+    public static String createFields(String fieldName, String fieldValue, String fieldReference) {
+        StringBuilder jsonString = new StringBuilder();
+        jsonString.append("{");
+        createField(jsonString, fieldName).append("[");
+        jsonString.append("\"").append(fieldValue).append("\",");
+        if (fieldReference == null) {
+            jsonString.append(fieldReference);
+        } else {
+            jsonString.append("\"").append(fieldReference).append("\"");
+        }
+        jsonString.append("]}");
         return jsonString.toString();
     }
 }
