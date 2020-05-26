@@ -236,9 +236,10 @@ public class StmtListJSONCreator implements ScratchVisitor {
 
     @Override
     public void visit(StopAll node) {
-        //todo fields handling
+        FieldsMetadata fieldsMeta = ((NonDataBlockMetadata) node.getMetadata()).getFields().getList().get(0);
+        String fieldsString = createFields(fieldsMeta.getFieldsName(), "all", null);
         // todo mutation handling
-        String fieldsString = null;
+
         String mutationString = null;
         finishedJSONStrings.add(createBlockWithMutationString((NonDataBlockMetadata) node.getMetadata(), getNextId(),
                 previousBlockId, EMPTY_VALUE, fieldsString, mutationString));
@@ -247,9 +248,9 @@ public class StmtListJSONCreator implements ScratchVisitor {
 
     @Override
     public void visit(StopThisScript node) {
-        //todo fields handling
+        FieldsMetadata fieldsMeta = ((NonDataBlockMetadata) node.getMetadata()).getFields().getList().get(0);
+        String fieldsString = createFields(fieldsMeta.getFieldsName(), "this script", null);
         // todo mutation handling
-        String fieldsString = null;
         String mutationString = null;
         finishedJSONStrings.add(createBlockWithMutationString((NonDataBlockMetadata) node.getMetadata(), getNextId(),
                 previousBlockId, EMPTY_VALUE, fieldsString, mutationString));
@@ -258,9 +259,9 @@ public class StmtListJSONCreator implements ScratchVisitor {
 
     @Override
     public void visit(StopOtherScriptsInSprite node) {
-        //todo fields handling
+        FieldsMetadata fieldsMeta = ((NonDataBlockMetadata) node.getMetadata()).getFields().getList().get(0);
+        String fieldsString = createFields(fieldsMeta.getFieldsName(), "other scripts in sprite", null);
         // todo mutation handling
-        String fieldsString = null;
         String mutationString = null;
         finishedJSONStrings.add(createBlockWithMutationString((NonDataBlockMetadata) node.getMetadata(), getNextId(),
                 previousBlockId, EMPTY_VALUE, fieldsString, mutationString));
