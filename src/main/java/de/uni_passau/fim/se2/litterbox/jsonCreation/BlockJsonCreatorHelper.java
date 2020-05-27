@@ -3,6 +3,8 @@ package de.uni_passau.fim.se2.litterbox.jsonCreation;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.TopNonDataBlockMetadata;
 
+import java.util.List;
+
 import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 import static de.uni_passau.fim.se2.litterbox.ast.parser.KeyParser.*;
 import static de.uni_passau.fim.se2.litterbox.ast.parser.KeyParser.ANYKEY;
@@ -136,5 +138,30 @@ public abstract class BlockJsonCreatorHelper {
                 key = String.valueOf( (char)numberValue);
         }
         return key;
+    }
+
+    public static String createReferenceInput(String inputName, int shadowIndicator, String reference){
+        StringBuilder jsonString = new StringBuilder();
+        createField(jsonString,inputName).append("[").append(shadowIndicator).append(",");
+        if (reference == null){
+            jsonString.append(reference);
+        }else{
+            jsonString.append("\"").append(reference).append("\"");
+        }
+        jsonString.append("]");
+        return jsonString.toString();
+    }
+
+    public static String createInputs(List<String> inputsList){
+        StringBuilder jsonString = new StringBuilder();
+        jsonString.append("{");
+        for (int i = 0; i < inputsList.size()-1; i++) {
+            jsonString.append(inputsList.get(i)).append(",");
+        }
+        if (inputsList.size()>0){
+            jsonString.append(inputsList.get(inputsList.size()-1));
+        }
+        jsonString.append("}");
+        return jsonString.toString();
     }
 }

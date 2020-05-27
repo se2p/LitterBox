@@ -7,12 +7,15 @@ import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.FieldsMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.MutationMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.StopMutation;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.input.InputMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.input.ReferenceInputMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.ClearSoundEffects;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.StopAllSounds;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.ResetTimer;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.StopOtherScriptsInSprite;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.list.DeleteAllOf;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.pen.PenClearStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.pen.PenDownStmt;
@@ -37,6 +40,7 @@ import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 import java.util.ArrayList;
 import java.util.List;
 
+import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 import static de.uni_passau.fim.se2.litterbox.jsonCreation.BlockJsonCreatorHelper.*;
 
 public class StmtListJSONCreator implements ScratchVisitor {
@@ -296,6 +300,35 @@ public class StmtListJSONCreator implements ScratchVisitor {
     public void visit(PenStampStmt node) {
         finishedJSONStrings.add(createFixedBlock((NonDataBlockMetadata) node.getMetadata(), getNextId(),
                 previousBlockId));
+        previousBlockId = ((NonDataBlockMetadata) node.getMetadata()).getBlockId();
+    }
+
+    @Override
+    public void visit(RepeatForeverStmt node) {
+        NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
+
+        StmtList stmtList = node.getStmtList();
+        StmtListJSONCreator creator = null;
+        String insideBlockId = null;
+
+        if (stmtList.getStmts().size() > 0) {
+            creator = new StmtListJSONCreator(metadata.getBlockId(), stmtList, symbolTable);
+            insideBlockId = idVis.getBlockId(stmtList.getStmts().get(0));
+        }
+
+        List<String> inputs = new ArrayList<>();
+        if (insideBlockId == null) {
+            inputs.add(createReferenceInput(SUBSTACK_KEY, INPUT_SAME_BLOCK_SHADOW, null));
+        } else {
+            inputs.add(createReferenceInput(SUBSTACK_KEY, INPUT_BLOCK_NO_SHADOW,
+                    insideBlockId));
+        }
+
+        finishedJSONStrings.add(createBlockWithoutMutationString(metadata, getNextId(),
+                previousBlockId, createInputs(inputs), EMPTY_VALUE));
+        if (creator != null) {
+            finishedJSONStrings.add(creator.createStmtListJSONString());
+        }
         previousBlockId = ((NonDataBlockMetadata) node.getMetadata()).getBlockId();
     }
 }

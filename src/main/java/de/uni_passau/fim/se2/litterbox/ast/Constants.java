@@ -289,4 +289,5 @@ public class Constants {
     public final static String BLOCK_ID_KEY = "blockId";
     public final static String MINIMIZED_KEY = "minimized";
     public final static String TEXT_KEY = "text";
+    public final static String SUBSTACK_KEY = "SUBSTACK";
 }
