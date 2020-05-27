@@ -14,6 +14,10 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.StopAllSou
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.ResetTimer;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.StopOtherScriptsInSprite;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.list.DeleteAllOf;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.pen.PenClearStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.pen.PenDownStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.pen.PenStampStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.pen.PenUpStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.GoToLayer;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Hide;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.NextCostume;
@@ -200,7 +204,7 @@ public class StmtListJSONCreator implements ScratchVisitor {
         Qualified qual = (Qualified) identifier;
         Preconditions.checkArgument(qual.getSecond() instanceof ScratchList, "Qualified has to hold Scratch List");
         ScratchList list = (ScratchList) qual.getSecond();
-        String id = symbolTable.getListIdentifierFromActorAndName(qual.getFirst().getName(),list.getName().getName());
+        String id = symbolTable.getListIdentifierFromActorAndName(qual.getFirst().getName(), list.getName().getName());
         String fieldsString = createFields(fieldsMeta.getFieldsName(), list.getName().getName(), id);
         finishedJSONStrings.add(createBlockWithoutMutationString(metadata, getNextId(),
                 previousBlockId, EMPTY_VALUE, fieldsString));
@@ -261,9 +265,37 @@ public class StmtListJSONCreator implements ScratchVisitor {
         MutationMetadata mutation = metadata.getMutation();
         Preconditions.checkArgument(mutation instanceof StopMutation);
         StopMutation stopMutation = (StopMutation) mutation;
-        String mutationString = createStopMetadata(stopMutation.getTagName(),stopMutation.isHasNext());
+        String mutationString = createStopMetadata(stopMutation.getTagName(), stopMutation.isHasNext());
         finishedJSONStrings.add(createBlockWithMutationString(metadata, getNextId(),
                 previousBlockId, EMPTY_VALUE, fieldsString, mutationString));
         previousBlockId = metadata.getBlockId();
+    }
+
+    @Override
+    public void visit(PenDownStmt node) {
+        finishedJSONStrings.add(createFixedBlock((NonDataBlockMetadata) node.getMetadata(), getNextId(),
+                previousBlockId));
+        previousBlockId = ((NonDataBlockMetadata) node.getMetadata()).getBlockId();
+    }
+
+    @Override
+    public void visit(PenUpStmt node) {
+        finishedJSONStrings.add(createFixedBlock((NonDataBlockMetadata) node.getMetadata(), getNextId(),
+                previousBlockId));
+        previousBlockId = ((NonDataBlockMetadata) node.getMetadata()).getBlockId();
+    }
+
+    @Override
+    public void visit(PenClearStmt node) {
+        finishedJSONStrings.add(createFixedBlock((NonDataBlockMetadata) node.getMetadata(), getNextId(),
+                previousBlockId));
+        previousBlockId = ((NonDataBlockMetadata) node.getMetadata()).getBlockId();
+    }
+
+    @Override
+    public void visit(PenStampStmt node) {
+        finishedJSONStrings.add(createFixedBlock((NonDataBlockMetadata) node.getMetadata(), getNextId(),
+                previousBlockId));
+        previousBlockId = ((NonDataBlockMetadata) node.getMetadata()).getBlockId();
     }
 }
