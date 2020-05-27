@@ -1,6 +1,8 @@
 package de.uni_passau.fim.se2.litterbox.jsonCreation;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BoolExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.UnspecifiedBoolExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Identifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.FieldsMetadata;
@@ -16,6 +18,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.StopAllSou
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.ResetTimer;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.StopOtherScriptsInSprite;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.list.DeleteAllOf;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.pen.PenClearStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.pen.PenDownStmt;
@@ -317,6 +320,38 @@ public class StmtListJSONCreator implements ScratchVisitor {
         }
 
         List<String> inputs = new ArrayList<>();
+        createSubstackJSON(metadata, inputs, creator, insideBlockId);
+    }
+
+    @Override
+    public void visit(UntilStmt node) {
+        NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
+
+        StmtList stmtList = node.getStmtList();
+        List<String> inputs = new ArrayList<>();
+        StmtListJSONCreator creator = null;
+        String insideBlockId = null;
+        String conditionBlockId = null;
+
+        BoolExpr condition = node.getBoolExpr();
+
+        if (condition instanceof UnspecifiedBoolExpr){
+            inputs.add(createReferenceInput(CONDITION_KEY, INPUT_SAME_BLOCK_SHADOW, null));
+        }else{
+            //todo expression handling
+        }
+
+        if (stmtList.getStmts().size() > 0) {
+            creator = new StmtListJSONCreator(metadata.getBlockId(), stmtList, symbolTable);
+            insideBlockId = idVis.getBlockId(stmtList.getStmts().get(0));
+        }
+
+        createSubstackJSON(metadata, inputs, creator, insideBlockId);
+    }
+
+    private void createSubstackJSON(NonDataBlockMetadata metadata, List<String> inputs, StmtListJSONCreator creator,
+                                    String insideBlockId) {
+
         if (insideBlockId == null) {
             inputs.add(createReferenceInput(SUBSTACK_KEY, INPUT_SAME_BLOCK_SHADOW, null));
         } else {
@@ -329,6 +364,6 @@ public class StmtListJSONCreator implements ScratchVisitor {
         if (creator != null) {
             finishedJSONStrings.add(creator.createStmtListJSONString());
         }
-        previousBlockId = ((NonDataBlockMetadata) node.getMetadata()).getBlockId();
+        previousBlockId = metadata.getBlockId();
     }
 }
