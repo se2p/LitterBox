@@ -3,22 +3,22 @@ package de.uni_passau.fim.se2.litterbox.jsonCreation;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BoolExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.UnspecifiedBoolExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.UnspecifiedNumExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Identifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
+import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.FieldsMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.MutationMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.StopMutation;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.input.InputMetadata;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.input.ReferenceInputMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.ClearSoundEffects;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.StopAllSounds;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.ResetTimer;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.StopOtherScriptsInSprite;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.list.DeleteAllOf;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.pen.PenClearStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.pen.PenDownStmt;
@@ -312,15 +312,13 @@ public class StmtListJSONCreator implements ScratchVisitor {
 
         StmtList stmtList = node.getStmtList();
         StmtListJSONCreator creator = null;
-        String insideBlockId = null;
-
-        if (stmtList.getStmts().size() > 0) {
-            creator = new StmtListJSONCreator(metadata.getBlockId(), stmtList, symbolTable);
-            insideBlockId = idVis.getBlockId(stmtList.getStmts().get(0));
-        }
-
         List<String> inputs = new ArrayList<>();
-        createSubstackJSON(metadata, inputs, creator, insideBlockId);
+        String insideBlockId = createSubstackJSON(stmtList, metadata);
+        addSubstackOrBoolJSON(inputs, insideBlockId, SUBSTACK_KEY);
+        finishedJSONStrings.add(createBlockWithoutMutationString(metadata, getNextId(),
+                previousBlockId, createInputs(inputs), EMPTY_VALUE));
+
+        previousBlockId = metadata.getBlockId();
     }
 
     @Override
@@ -330,40 +328,123 @@ public class StmtListJSONCreator implements ScratchVisitor {
         StmtList stmtList = node.getStmtList();
         List<String> inputs = new ArrayList<>();
         StmtListJSONCreator creator = null;
-        String insideBlockId = null;
         String conditionBlockId = null;
 
         BoolExpr condition = node.getBoolExpr();
 
-        if (condition instanceof UnspecifiedBoolExpr){
+        if (condition instanceof UnspecifiedBoolExpr) {
             inputs.add(createReferenceInput(CONDITION_KEY, INPUT_SAME_BLOCK_SHADOW, null));
-        }else{
+        } else {
             //todo expression handling
         }
 
+        String insideBlockId = createSubstackJSON(stmtList, metadata);
+
+        addSubstackOrBoolJSON(inputs, insideBlockId, SUBSTACK_KEY);
+        finishedJSONStrings.add(createBlockWithoutMutationString(metadata, getNextId(),
+                previousBlockId, createInputs(inputs), EMPTY_VALUE));
+
+        previousBlockId = metadata.getBlockId();
+    }
+
+    @Override
+    public void visit(IfElseStmt node) {
+        NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
+
+        StmtList stmtList = node.getStmtList();
+        StmtList elseStmtList = node.getElseStmts();
+        List<String> inputs = new ArrayList<>();
+        String conditionBlockId = null;
+
+        BoolExpr condition = node.getBoolExpr();
+
+        if (condition instanceof UnspecifiedBoolExpr) {
+            inputs.add(createReferenceInput(CONDITION_KEY, INPUT_SAME_BLOCK_SHADOW, null));
+        } else {
+            //todo expression handling
+        }
+
+        String insideBlockId = createSubstackJSON(stmtList, metadata);
+        String elseInsideBlockId = createSubstackJSON(elseStmtList, metadata);
+
+        addSubstackOrBoolJSON(inputs, insideBlockId, SUBSTACK_KEY);
+        addSubstackOrBoolJSON(inputs, elseInsideBlockId, SUBSTACK2_KEY);
+        finishedJSONStrings.add(createBlockWithoutMutationString(metadata, getNextId(),
+                previousBlockId, createInputs(inputs), EMPTY_VALUE));
+        previousBlockId = metadata.getBlockId();
+    }
+
+    @Override
+    public void visit(IfThenStmt node) {
+        NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
+
+        StmtList stmtList = node.getThenStmts();
+        List<String> inputs = new ArrayList<>();
+        String conditionBlockId = null;
+
+        BoolExpr condition = node.getBoolExpr();
+
+        if (condition instanceof UnspecifiedBoolExpr) {
+            inputs.add(createReferenceInput(CONDITION_KEY, INPUT_SAME_BLOCK_SHADOW, null));
+        } else {
+            //todo expression handling
+        }
+
+        String insideBlockId = createSubstackJSON(stmtList, metadata);
+        addSubstackOrBoolJSON(inputs, insideBlockId, SUBSTACK_KEY);
+        finishedJSONStrings.add(createBlockWithoutMutationString(metadata, getNextId(),
+                previousBlockId, createInputs(inputs), EMPTY_VALUE));
+
+        previousBlockId = metadata.getBlockId();
+    }
+
+    @Override
+    public void visit(RepeatTimesStmt node) {
+        NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
+
+        StmtList stmtList = node.getStmtList();
+        List<String> inputs = new ArrayList<>();
+
+        String conditionBlockId = null;
+        NumExpr condition = node.getTimes();
+
+        if (condition instanceof UnspecifiedNumExpr) {
+            inputs.add(createTypeInput(TIMES_KEY, INPUT_SAME_BLOCK_SHADOW, WHOLE_NUM_PRIMITIVE, ""));
+        } else if (condition instanceof NumberLiteral) {
+            inputs.add(createTypeInput(TIMES_KEY, INPUT_SAME_BLOCK_SHADOW, WHOLE_NUM_PRIMITIVE,
+                    String.valueOf((int) ((NumberLiteral) condition).getValue())));
+        } else {
+            //todo expression handling
+        }
+
+        String insideBlockId = createSubstackJSON(stmtList, metadata);
+        addSubstackOrBoolJSON(inputs, insideBlockId, SUBSTACK_KEY);
+        finishedJSONStrings.add(createBlockWithoutMutationString(metadata, getNextId(),
+                previousBlockId, createInputs(inputs), EMPTY_VALUE));
+
+        previousBlockId = metadata.getBlockId();
+    }
+
+    private String createSubstackJSON(StmtList stmtList, NonDataBlockMetadata metadata) {
+        String insideBlockId = null;
+        StmtListJSONCreator creator = null;
         if (stmtList.getStmts().size() > 0) {
             creator = new StmtListJSONCreator(metadata.getBlockId(), stmtList, symbolTable);
             insideBlockId = idVis.getBlockId(stmtList.getStmts().get(0));
         }
-
-        createSubstackJSON(metadata, inputs, creator, insideBlockId);
-    }
-
-    private void createSubstackJSON(NonDataBlockMetadata metadata, List<String> inputs, StmtListJSONCreator creator,
-                                    String insideBlockId) {
-
-        if (insideBlockId == null) {
-            inputs.add(createReferenceInput(SUBSTACK_KEY, INPUT_SAME_BLOCK_SHADOW, null));
-        } else {
-            inputs.add(createReferenceInput(SUBSTACK_KEY, INPUT_BLOCK_NO_SHADOW,
-                    insideBlockId));
-        }
-
-        finishedJSONStrings.add(createBlockWithoutMutationString(metadata, getNextId(),
-                previousBlockId, createInputs(inputs), EMPTY_VALUE));
         if (creator != null) {
             finishedJSONStrings.add(creator.createStmtListJSONString());
         }
-        previousBlockId = metadata.getBlockId();
+        return insideBlockId;
+    }
+
+    private void addSubstackOrBoolJSON(List<String> inputs,
+                                       String insideBlockId, String inputName) {
+        if (insideBlockId == null) {
+            inputs.add(createReferenceInput(inputName, INPUT_SAME_BLOCK_SHADOW, null));
+        } else {
+            inputs.add(createReferenceInput(inputName, INPUT_BLOCK_NO_SHADOW,
+                    insideBlockId));
+        }
     }
 }

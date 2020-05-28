@@ -290,4 +290,5 @@ public class Constants {
     public final static String MINIMIZED_KEY = "minimized";
     public final static String TEXT_KEY = "text";
     public final static String SUBSTACK_KEY = "SUBSTACK";
+    public final static String SUBSTACK2_KEY = "SUBSTACK2";
 }

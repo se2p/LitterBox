@@ -7,7 +7,6 @@ import java.util.List;
 
 import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 import static de.uni_passau.fim.se2.litterbox.ast.parser.KeyParser.*;
-import static de.uni_passau.fim.se2.litterbox.ast.parser.KeyParser.ANYKEY;
 import static de.uni_passau.fim.se2.litterbox.jsonCreation.JSONStringCreator.*;
 
 public abstract class BlockJsonCreatorHelper {
@@ -106,14 +105,14 @@ public abstract class BlockJsonCreatorHelper {
     public static String createStopMetadata(String tagName, boolean hasNext) {
         StringBuilder jsonString = new StringBuilder();
         jsonString.append("{");
-        createFieldValue(jsonString,TAG_NAME_KEY,tagName).append(",");
+        createFieldValue(jsonString, TAG_NAME_KEY, tagName).append(",");
         createField(jsonString, CHILDREN_KEY).append("[],");
-        createFieldValue(jsonString,HAS_NEXT_KEY,hasNext);
+        createFieldValue(jsonString, HAS_NEXT_KEY, hasNext);
         jsonString.append("}");
         return jsonString.toString();
     }
 
-    public static String getKeyValue(int numberValue){
+    public static String getKeyValue(int numberValue) {
         String key;
         switch (numberValue) {
             case UPARROW:
@@ -135,33 +134,41 @@ public abstract class BlockJsonCreatorHelper {
                 key = "any";
                 break;
             default:
-                key = String.valueOf( (char)numberValue);
+                key = String.valueOf((char) numberValue);
         }
         return key;
     }
 
-    public static String createReferenceInput(String inputName, int shadowIndicator, String reference){
+    public static String createReferenceInput(String inputName, int shadowIndicator, String reference) {
         StringBuilder jsonString = new StringBuilder();
-        createField(jsonString,inputName).append("[").append(shadowIndicator).append(",");
-        if (reference == null){
+        createField(jsonString, inputName).append("[").append(shadowIndicator).append(",");
+        if (reference == null) {
             jsonString.append(reference);
-        }else{
+        } else {
             jsonString.append("\"").append(reference).append("\"");
         }
         jsonString.append("]");
         return jsonString.toString();
     }
 
-    public static String createInputs(List<String> inputsList){
+    public static String createInputs(List<String> inputsList) {
         StringBuilder jsonString = new StringBuilder();
         jsonString.append("{");
-        for (int i = 0; i < inputsList.size()-1; i++) {
+        for (int i = 0; i < inputsList.size() - 1; i++) {
             jsonString.append(inputsList.get(i)).append(",");
         }
-        if (inputsList.size()>0){
-            jsonString.append(inputsList.get(inputsList.size()-1));
+        if (inputsList.size() > 0) {
+            jsonString.append(inputsList.get(inputsList.size() - 1));
         }
         jsonString.append("}");
+        return jsonString.toString();
+    }
+
+
+    public static String createTypeInput(String inputName, int shadowIndicator, int typeNumber,
+                                               String value) {
+        StringBuilder jsonString = new StringBuilder();
+        createField(jsonString, inputName).append("[").append(shadowIndicator).append(",").append("[").append(typeNumber).append(",\"").append(value).append("\"]]");
         return jsonString.toString();
     }
 }
