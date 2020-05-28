@@ -37,14 +37,9 @@ import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import java.util.ArrayList;
 
-import static de.uni_passau.fim.se2.litterbox.ast.Constants.TIMES_KEY;
+import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 
 public class ControlStmtParser {
-
-    public static final String INPUT_SUBSTACK = "SUBSTACK";
-    public static final String INPUT_ELSE_SUBSTACK = "SUBSTACK2";
-    public static final String INPUT_CONDITION = "CONDITION";
-    public static final String INPUT_TIMES = "TIMES";
 
     public static Stmt parse(String identifier, JsonNode current, JsonNode allBlocks) throws ParsingException {
         Preconditions.checkNotNull(current);
@@ -60,28 +55,28 @@ public class ControlStmtParser {
 
         switch (opcode) {
             case control_if:
-                stmtList = getSubstackStmtList(allBlocks, inputs, INPUT_SUBSTACK);
+                stmtList = getSubstackStmtList(allBlocks, inputs, SUBSTACK_KEY);
                 boolExpr = getCondition(current, allBlocks, inputs);
                 return new IfThenStmt(boolExpr, stmtList, metadata);
 
             case control_if_else:
-                stmtList = getSubstackStmtList(allBlocks, inputs, INPUT_SUBSTACK);
+                stmtList = getSubstackStmtList(allBlocks, inputs, SUBSTACK_KEY);
                 boolExpr = getCondition(current, allBlocks, inputs);
-                elseStmtList = getSubstackStmtList(allBlocks, inputs, INPUT_ELSE_SUBSTACK);
+                elseStmtList = getSubstackStmtList(allBlocks, inputs, SUBSTACK2_KEY);
                 return new IfElseStmt(boolExpr, stmtList, elseStmtList, metadata);
 
             case control_repeat:
                 NumExpr numExpr = NumExprParser.parseNumExpr(current, TIMES_KEY, allBlocks);
-                stmtList = getSubstackStmtList(allBlocks, inputs, INPUT_SUBSTACK);
+                stmtList = getSubstackStmtList(allBlocks, inputs, SUBSTACK_KEY);
                 return new RepeatTimesStmt(numExpr, stmtList, metadata);
 
             case control_repeat_until:
-                stmtList = getSubstackStmtList(allBlocks, inputs, INPUT_SUBSTACK);
+                stmtList = getSubstackStmtList(allBlocks, inputs, SUBSTACK_KEY);
                 boolExpr = getCondition(current, allBlocks, inputs);
                 return new UntilStmt(boolExpr, stmtList, metadata);
 
             case control_forever:
-                stmtList = getSubstackStmtList(allBlocks, inputs, INPUT_SUBSTACK);
+                stmtList = getSubstackStmtList(allBlocks, inputs, SUBSTACK_KEY);
                 return new RepeatForeverStmt(stmtList, metadata);
 
             default:
@@ -92,8 +87,8 @@ public class ControlStmtParser {
     private static BoolExpr getCondition(JsonNode current, JsonNode allBlocks, JsonNode inputs)
             throws ParsingException {
 
-        if (inputs.has(INPUT_CONDITION)) {
-            return BoolExprParser.parseBoolExpr(current, INPUT_CONDITION, allBlocks);
+        if (inputs.has(CONDITION_KEY)) {
+            return BoolExprParser.parseBoolExpr(current, CONDITION_KEY, allBlocks);
         } else {
             return new UnspecifiedBoolExpr();
         }
