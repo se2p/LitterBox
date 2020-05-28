@@ -487,6 +487,36 @@ public class StmtListJSONCreator implements ScratchVisitor {
         createSingeNumExprBlock(metadata, X, node.getNum(), MATH_NUM_PRIMITIVE);
     }
 
+    @Override
+    public void visit(GoToPosXY node) {
+        NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
+        List<String> inputs = new ArrayList<>();
+
+        inputs.add(createNumExpr(X, node.getX(), MATH_NUM_PRIMITIVE));
+        inputs.add(createNumExpr(Y, node.getY(), MATH_NUM_PRIMITIVE));
+
+        finishedJSONStrings.add(createBlockWithoutMutationString(metadata, getNextId(),
+                previousBlockId, createInputs(inputs), EMPTY_VALUE));
+
+        previousBlockId = metadata.getBlockId();
+    }
+
+    @Override
+    public void visit(GlideSecsToXY node) {
+        NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
+        List<String> inputs = new ArrayList<>();
+
+        inputs.add(createNumExpr(SECS_KEY, node.getSecs(), POSITIVE_NUM_PRIMITIVE));
+        inputs.add(createNumExpr(X, node.getX(), MATH_NUM_PRIMITIVE));
+        inputs.add(createNumExpr(Y, node.getY(), MATH_NUM_PRIMITIVE));
+
+        finishedJSONStrings.add(createBlockWithoutMutationString(metadata, getNextId(),
+                previousBlockId, createInputs(inputs), EMPTY_VALUE));
+
+        previousBlockId = metadata.getBlockId();
+    }
+
+
     private String createSubstackJSON(StmtList stmtList, NonDataBlockMetadata metadata) {
         String insideBlockId = null;
         StmtListJSONCreator creator = null;
