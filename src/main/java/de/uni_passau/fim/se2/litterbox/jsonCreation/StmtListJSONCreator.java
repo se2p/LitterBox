@@ -18,6 +18,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.ClearSound
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.StopAllSounds;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.ResetTimer;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.StopOtherScriptsInSprite;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitSeconds;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitUntil;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.list.DeleteAllOf;
@@ -315,7 +316,7 @@ public class StmtListJSONCreator implements ScratchVisitor {
         StmtListJSONCreator creator = null;
         List<String> inputs = new ArrayList<>();
         String insideBlockId = createSubstackJSON(stmtList, metadata);
-        addSubstackOrBoolJSON(inputs, insideBlockId, SUBSTACK_KEY);
+        inputs.add(createReferenceJSON(insideBlockId, SUBSTACK_KEY));
         finishedJSONStrings.add(createBlockWithoutMutationString(metadata, getNextId(),
                 previousBlockId, createInputs(inputs), EMPTY_VALUE));
 
@@ -328,20 +329,19 @@ public class StmtListJSONCreator implements ScratchVisitor {
 
         StmtList stmtList = node.getStmtList();
         List<String> inputs = new ArrayList<>();
-        StmtListJSONCreator creator = null;
         String conditionBlockId = null;
 
         BoolExpr condition = node.getBoolExpr();
 
         if (condition instanceof UnspecifiedBoolExpr) {
-            addSubstackOrBoolJSON(inputs, null, CONDITION_KEY);
+            inputs.add(createReferenceJSON(null, CONDITION_KEY));
         } else {
             //todo expression handling
         }
 
         String insideBlockId = createSubstackJSON(stmtList, metadata);
 
-        addSubstackOrBoolJSON(inputs, insideBlockId, SUBSTACK_KEY);
+        inputs.add(createReferenceJSON(insideBlockId, SUBSTACK_KEY));
         finishedJSONStrings.add(createBlockWithoutMutationString(metadata, getNextId(),
                 previousBlockId, createInputs(inputs), EMPTY_VALUE));
 
@@ -360,7 +360,7 @@ public class StmtListJSONCreator implements ScratchVisitor {
         BoolExpr condition = node.getBoolExpr();
 
         if (condition instanceof UnspecifiedBoolExpr) {
-            addSubstackOrBoolJSON(inputs, null, CONDITION_KEY);
+            inputs.add(createReferenceJSON(null, CONDITION_KEY));
         } else {
             //todo expression handling
         }
@@ -368,8 +368,8 @@ public class StmtListJSONCreator implements ScratchVisitor {
         String insideBlockId = createSubstackJSON(stmtList, metadata);
         String elseInsideBlockId = createSubstackJSON(elseStmtList, metadata);
 
-        addSubstackOrBoolJSON(inputs, insideBlockId, SUBSTACK_KEY);
-        addSubstackOrBoolJSON(inputs, elseInsideBlockId, SUBSTACK2_KEY);
+        inputs.add(createReferenceJSON(insideBlockId, SUBSTACK_KEY));
+        inputs.add(createReferenceJSON(elseInsideBlockId, SUBSTACK2_KEY));
         finishedJSONStrings.add(createBlockWithoutMutationString(metadata, getNextId(),
                 previousBlockId, createInputs(inputs), EMPTY_VALUE));
         previousBlockId = metadata.getBlockId();
@@ -386,13 +386,13 @@ public class StmtListJSONCreator implements ScratchVisitor {
         BoolExpr condition = node.getBoolExpr();
 
         if (condition instanceof UnspecifiedBoolExpr) {
-            addSubstackOrBoolJSON(inputs, null, CONDITION_KEY);
+            inputs.add(createReferenceJSON(null, CONDITION_KEY));
         } else {
             //todo expression handling
         }
 
         String insideBlockId = createSubstackJSON(stmtList, metadata);
-        addSubstackOrBoolJSON(inputs, insideBlockId, SUBSTACK_KEY);
+        inputs.add(createReferenceJSON(insideBlockId, SUBSTACK_KEY));
         finishedJSONStrings.add(createBlockWithoutMutationString(metadata, getNextId(),
                 previousBlockId, createInputs(inputs), EMPTY_VALUE));
 
@@ -406,20 +406,10 @@ public class StmtListJSONCreator implements ScratchVisitor {
         StmtList stmtList = node.getStmtList();
         List<String> inputs = new ArrayList<>();
 
-        String conditionBlockId = null;
-        NumExpr condition = node.getTimes();
-
-        if (condition instanceof UnspecifiedNumExpr) {
-            inputs.add(createTypeInput(TIMES_KEY, INPUT_SAME_BLOCK_SHADOW, WHOLE_NUM_PRIMITIVE, ""));
-        } else if (condition instanceof NumberLiteral) {
-            inputs.add(createTypeInput(TIMES_KEY, INPUT_SAME_BLOCK_SHADOW, WHOLE_NUM_PRIMITIVE,
-                    String.valueOf((int) ((NumberLiteral) condition).getValue())));
-        } else {
-            //todo expression handling
-        }
+        inputs.add(createNumExpr(TIMES_KEY, node.getTimes(), WHOLE_NUM_PRIMITIVE));
 
         String insideBlockId = createSubstackJSON(stmtList, metadata);
-        addSubstackOrBoolJSON(inputs, insideBlockId, SUBSTACK_KEY);
+        inputs.add(createReferenceJSON(insideBlockId, SUBSTACK_KEY));
         finishedJSONStrings.add(createBlockWithoutMutationString(metadata, getNextId(),
                 previousBlockId, createInputs(inputs), EMPTY_VALUE));
 
@@ -429,11 +419,11 @@ public class StmtListJSONCreator implements ScratchVisitor {
     @Override
     public void visit(WaitUntil node) {
         NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
-        List<String> inputs = new ArrayList<>();
         BoolExpr condition = node.getUntil();
 
+        List<String> inputs = new ArrayList<>();
         if (condition instanceof UnspecifiedBoolExpr) {
-            addSubstackOrBoolJSON(inputs, null, CONDITION_KEY);
+            inputs.add(createReferenceJSON(null, CONDITION_KEY));
         } else {
             //todo expression handling
         }
@@ -442,6 +432,12 @@ public class StmtListJSONCreator implements ScratchVisitor {
                 previousBlockId, createInputs(inputs), EMPTY_VALUE));
 
         previousBlockId = metadata.getBlockId();
+    }
+
+    @Override
+    public void visit(WaitSeconds node) {
+        NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
+        createSingeNumExprBlock(metadata, DURATION_KEY, node.getSeconds(), POSITIVE_NUM_PRIMITIVE);
     }
 
     private String createSubstackJSON(StmtList stmtList, NonDataBlockMetadata metadata) {
@@ -457,13 +453,29 @@ public class StmtListJSONCreator implements ScratchVisitor {
         return insideBlockId;
     }
 
-    private void addSubstackOrBoolJSON(List<String> inputs,
-                                       String blockId, String inputName) {
-        if (blockId == null) {
-            inputs.add(createReferenceInput(inputName, INPUT_SAME_BLOCK_SHADOW, null));
+
+
+    private void createSingeNumExprBlock(NonDataBlockMetadata metadata, String inputKey, NumExpr numExpr,
+                                         int primitive) {
+        List<String> inputs = new ArrayList<>();
+
+        inputs.add(createNumExpr(inputKey, numExpr, primitive));
+
+        finishedJSONStrings.add(createBlockWithoutMutationString(metadata, getNextId(),
+                previousBlockId, createInputs(inputs), EMPTY_VALUE));
+
+        previousBlockId = metadata.getBlockId();
+    }
+
+    private String createNumExpr(String inputKey, NumExpr numExpr, int primitive) {
+        if (numExpr instanceof UnspecifiedNumExpr) {
+            return createTypeInput(inputKey, INPUT_SAME_BLOCK_SHADOW, primitive, "");
+        } else if (numExpr instanceof NumberLiteral) {
+            return createTypeInput(inputKey, INPUT_SAME_BLOCK_SHADOW, primitive,
+                    String.valueOf((int) ((NumberLiteral) numExpr).getValue()));
         } else {
-            inputs.add(createReferenceInput(inputName, INPUT_BLOCK_NO_SHADOW,
-                    blockId));
+            //todo expression handling
+            return "";
         }
     }
 }
