@@ -30,9 +30,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.GoToLayer;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Hide;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.NextCostume;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Show;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.IfOnEdgeBounce;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SetDragMode;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SetRotationStyle;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.DeleteClone;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopAll;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopThisScript;
@@ -434,10 +432,59 @@ public class StmtListJSONCreator implements ScratchVisitor {
         previousBlockId = metadata.getBlockId();
     }
 
+
     @Override
     public void visit(WaitSeconds node) {
         NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
         createSingeNumExprBlock(metadata, DURATION_KEY, node.getSeconds(), POSITIVE_NUM_PRIMITIVE);
+    }
+
+    @Override
+    public void visit(MoveSteps node) {
+        NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
+        createSingeNumExprBlock(metadata, STEPS_KEY, node.getSteps(), MATH_NUM_PRIMITIVE);
+    }
+
+    @Override
+    public void visit(TurnLeft node) {
+        NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
+        createSingeNumExprBlock(metadata, DEGREES_KEY, node.getDegrees(), MATH_NUM_PRIMITIVE);
+    }
+
+    @Override
+    public void visit(TurnRight node) {
+        NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
+        createSingeNumExprBlock(metadata, DEGREES_KEY, node.getDegrees(), MATH_NUM_PRIMITIVE);
+    }
+
+    @Override
+    public void visit(PointInDirection node) {
+        NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
+        createSingeNumExprBlock(metadata, DIRECTION_KEY_CAP, node.getDirection(), MATH_NUM_PRIMITIVE);
+    }
+
+    @Override
+    public void visit(ChangeXBy node) {
+        NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
+        createSingeNumExprBlock(metadata, DX_KEY, node.getNum(), MATH_NUM_PRIMITIVE);
+    }
+
+    @Override
+    public void visit(ChangeYBy node) {
+        NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
+        createSingeNumExprBlock(metadata, DY_KEY, node.getNum(), MATH_NUM_PRIMITIVE);
+    }
+
+    @Override
+    public void visit(SetYTo node) {
+        NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
+        createSingeNumExprBlock(metadata, Y, node.getNum(), MATH_NUM_PRIMITIVE);
+    }
+
+    @Override
+    public void visit(SetXTo node) {
+        NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
+        createSingeNumExprBlock(metadata, X, node.getNum(), MATH_NUM_PRIMITIVE);
     }
 
     private String createSubstackJSON(StmtList stmtList, NonDataBlockMetadata metadata) {
@@ -452,7 +499,6 @@ public class StmtListJSONCreator implements ScratchVisitor {
         }
         return insideBlockId;
     }
-
 
 
     private void createSingeNumExprBlock(NonDataBlockMetadata metadata, String inputKey, NumExpr numExpr,
