@@ -13,10 +13,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.FieldsMetadata;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.MutationMetadata;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.StopMutation;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.FromExpression;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.MousePos;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.Position;
@@ -662,33 +659,28 @@ public class StmtListJSONCreator implements ScratchVisitor {
         NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
         List<String> inputs = new ArrayList<>();
         Position pos = node.getPosition();
+        IdJsonStringTuple tuple;
+
         if (pos instanceof RandomPos || pos instanceof MousePos) {
-            IdJsonStringTuple tuple = fixedExprCreator.createFixedExpressionJSON(metadata.getBlockId(), pos);
+            tuple = fixedExprCreator.createFixedExpressionJSON(metadata.getBlockId(), pos);
             inputs.add(createReferenceInput(TO_KEY, INPUT_SAME_BLOCK_SHADOW, tuple.getId()));
-            finishedJSONStrings.add(tuple.getJsonString());
         } else {
             FromExpression fromPos = (FromExpression) pos;
-            if (fromPos.getStringExpr() instanceof AsString) {
-                AsString asString = (AsString) fromPos.getStringExpr();
-                IdJsonStringTuple tuple;
-                if (asString.getOperand1() instanceof StrId) {
-                    tuple = fixedExprCreator.createFixedExpressionJSON(metadata.getBlockId(), pos);
-                    inputs.add(createReferenceInput(TO_KEY, INPUT_SAME_BLOCK_SHADOW, tuple.getId()));
-                } else {
-                    tuple = exprCreator.createExpressionJSON(metadata.getBlockId(), asString);
-                    inputs.add(createReferenceJSON(tuple.getId(), TO_KEY));
-                }
-                finishedJSONStrings.add(tuple.getJsonString());
-            } else {
-                IdJsonStringTuple tuple = exprCreator.createExpressionJSON(metadata.getBlockId(),
+
+            //if metadata are NoBlockMetadata the FromExpression is simply a wrapper ofr another block
+            if (fromPos.getMetadata() instanceof NoBlockMetadata){
+                tuple = exprCreator.createExpressionJSON(metadata.getBlockId(),
                         fromPos.getStringExpr());
                 inputs.add(createReferenceJSON(tuple.getId(), TO_KEY));
-                finishedJSONStrings.add(tuple.getJsonString());
+            }else{
+                tuple = fixedExprCreator.createFixedExpressionJSON(metadata.getBlockId(), pos);
+                inputs.add(createReferenceInput(TO_KEY, INPUT_SAME_BLOCK_SHADOW, tuple.getId()));
             }
         }
 
         finishedJSONStrings.add(createBlockWithoutMutationString(metadata, getNextId(),
                 previousBlockId, createInputs(inputs), EMPTY_VALUE));
+        finishedJSONStrings.add(tuple.getJsonString());
         previousBlockId = metadata.getBlockId();
     }
 
