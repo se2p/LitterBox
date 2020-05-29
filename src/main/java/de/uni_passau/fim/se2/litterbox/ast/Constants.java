@@ -237,6 +237,8 @@ public class Constants {
     public final static String NUM2_KEY = "NUM2";
     public final static String FROM_KEY = "FROM";
     public final static String TO_KEY = "TO";
+    public final static String TOWARDS_KEY = "TOWARDS";
+    public final static String DISTANCETOMENU_KEY = "DISTANCETOMENU";
     public final static String TIMES_KEY = "TIMES";
     public final static String STEPS_KEY = "STEPS";
     public final static String DEGREES_KEY = "DEGREES";
@@ -291,4 +293,6 @@ public class Constants {
     public final static String TEXT_KEY = "text";
     public final static String SUBSTACK_KEY = "SUBSTACK";
     public final static String SUBSTACK2_KEY = "SUBSTACK2";
+    public final static String MOUSE = "_mouse_";
+    public final static String RANDOM = "_random_";
 }
