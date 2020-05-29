@@ -5,9 +5,12 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BoolExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.UnspecifiedBoolExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.UnspecifiedNumExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.UnspecifiedStringExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Identifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
+import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.FieldsMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.MutationMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
@@ -529,28 +532,51 @@ public class StmtListJSONCreator implements ScratchVisitor {
 
     @Override
     public void visit(SetGraphicEffectTo node) {
-        createNumExprFieldsBlockJson((NonDataBlockMetadata) node.getMetadata(), node.getValue(), node.getEffect().getToken());
+        createNumExprFieldsBlockJson((NonDataBlockMetadata) node.getMetadata(), node.getValue(),
+                node.getEffect().getToken(), VALUE_KEY);
     }
 
     @Override
     public void visit(ChangeGraphicEffectBy node) {
-        createNumExprFieldsBlockJson((NonDataBlockMetadata) node.getMetadata(), node.getValue(), node.getEffect().getToken());
+        createNumExprFieldsBlockJson((NonDataBlockMetadata) node.getMetadata(), node.getValue(),
+                node.getEffect().getToken(), CHANGE_KEY);
     }
 
     @Override
     public void visit(SetSoundEffectTo node) {
-        createNumExprFieldsBlockJson((NonDataBlockMetadata) node.getMetadata(), node.getValue(), node.getEffect().getToken());
+        createNumExprFieldsBlockJson((NonDataBlockMetadata) node.getMetadata(), node.getValue(),
+                node.getEffect().getToken(), VALUE_KEY);
     }
 
     @Override
     public void visit(ChangeSoundEffectBy node) {
-        createNumExprFieldsBlockJson((NonDataBlockMetadata) node.getMetadata(), node.getValue(), node.getEffect().getToken());
+        createNumExprFieldsBlockJson((NonDataBlockMetadata) node.getMetadata(), node.getValue(),
+                node.getEffect().getToken(), VALUE_KEY);
     }
 
-    private void createNumExprFieldsBlockJson(NonDataBlockMetadata metadata, NumExpr value, String fieldsValue) {
+    @Override
+    public void visit(Say node) {
+        NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
+        createSingeStringExprBlock(metadata, MESSAGE_KEY, node.getString());
+    }
+
+    @Override
+    public void visit(Think node) {
+        NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
+        createSingeStringExprBlock(metadata, MESSAGE_KEY, node.getThought());
+    }
+
+    @Override
+    public void visit(AskAndWait node) {
+        NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
+        createSingeStringExprBlock(metadata, QUESTION_KEY, node.getQuestion());
+    }
+
+    private void createNumExprFieldsBlockJson(NonDataBlockMetadata metadata, NumExpr value, String fieldsValue,
+                                              String inputName) {
         FieldsMetadata fieldsMeta = metadata.getFields().getList().get(0);
         List<String> inputs = new ArrayList<>();
-        inputs.add(createNumExpr(VALUE_KEY, value, MATH_NUM_PRIMITIVE));
+        inputs.add(createNumExpr(inputName, value, MATH_NUM_PRIMITIVE));
         String fields = createFields(fieldsMeta.getFieldsName(), fieldsValue, null);
         finishedJSONStrings.add(createBlockWithoutMutationString(metadata, getNextId(),
                 previousBlockId, createInputs(inputs), fields));
@@ -585,12 +611,35 @@ public class StmtListJSONCreator implements ScratchVisitor {
         previousBlockId = metadata.getBlockId();
     }
 
+    private void createSingeStringExprBlock(NonDataBlockMetadata metadata, String inputKey, StringExpr stringExpr) {
+        List<String> inputs = new ArrayList<>();
+
+        inputs.add(createStringExpr(inputKey, stringExpr));
+
+        finishedJSONStrings.add(createBlockWithoutMutationString(metadata, getNextId(),
+                previousBlockId, createInputs(inputs), EMPTY_VALUE));
+
+        previousBlockId = metadata.getBlockId();
+    }
+
     private String createNumExpr(String inputKey, NumExpr numExpr, int primitive) {
         if (numExpr instanceof UnspecifiedNumExpr) {
             return createTypeInput(inputKey, INPUT_SAME_BLOCK_SHADOW, primitive, "");
         } else if (numExpr instanceof NumberLiteral) {
             return createTypeInput(inputKey, INPUT_SAME_BLOCK_SHADOW, primitive,
                     String.valueOf((float) ((NumberLiteral) numExpr).getValue()));
+        } else {
+            //todo expression handling
+            return "";
+        }
+    }
+
+    private String createStringExpr(String inputKey, StringExpr numExpr) {
+        if (numExpr instanceof UnspecifiedStringExpr) {
+            return createTypeInput(inputKey, INPUT_SAME_BLOCK_SHADOW, TEXT_PRIMITIVE, "");
+        } else if (numExpr instanceof StringLiteral) {
+            return createTypeInput(inputKey, INPUT_SAME_BLOCK_SHADOW, TEXT_PRIMITIVE,
+                    ((StringLiteral) numExpr).getText());
         } else {
             //todo expression handling
             return "";
