@@ -14,7 +14,9 @@ import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMeta
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.StopMutation;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.ChangeSoundEffectBy;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.ClearSoundEffects;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.SetSoundEffectTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.StopAllSounds;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.ResetTimer;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.StopOtherScriptsInSprite;
@@ -26,10 +28,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.pen.PenClearStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.pen.PenDownStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.pen.PenStampStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.pen.PenUpStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.GoToLayer;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Hide;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.NextCostume;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Show;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.DeleteClone;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopAll;
@@ -506,12 +505,55 @@ public class StmtListJSONCreator implements ScratchVisitor {
         NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
         List<String> inputs = new ArrayList<>();
 
-        inputs.add(createNumExpr(SECS_KEY, node.getSecs(), POSITIVE_NUM_PRIMITIVE));
+        inputs.add(createNumExpr(SECS_KEY, node.getSecs(), MATH_NUM_PRIMITIVE));
         inputs.add(createNumExpr(X, node.getX(), MATH_NUM_PRIMITIVE));
         inputs.add(createNumExpr(Y, node.getY(), MATH_NUM_PRIMITIVE));
 
         finishedJSONStrings.add(createBlockWithoutMutationString(metadata, getNextId(),
                 previousBlockId, createInputs(inputs), EMPTY_VALUE));
+
+        previousBlockId = metadata.getBlockId();
+    }
+
+    @Override
+    public void visit(ChangeSizeBy node) {
+        NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
+        createSingeNumExprBlock(metadata, CHANGE_KEY, node.getNum(), MATH_NUM_PRIMITIVE);
+    }
+
+    @Override
+    public void visit(SetSizeTo node) {
+        NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
+        createSingeNumExprBlock(metadata, SIZE_KEY_CAP, node.getPercent(), MATH_NUM_PRIMITIVE);
+    }
+
+    @Override
+    public void visit(SetGraphicEffectTo node) {
+        createNumExprFieldsBlockJson((NonDataBlockMetadata) node.getMetadata(), node.getValue(), node.getEffect().getToken());
+    }
+
+    @Override
+    public void visit(ChangeGraphicEffectBy node) {
+        createNumExprFieldsBlockJson((NonDataBlockMetadata) node.getMetadata(), node.getValue(), node.getEffect().getToken());
+    }
+
+    @Override
+    public void visit(SetSoundEffectTo node) {
+        createNumExprFieldsBlockJson((NonDataBlockMetadata) node.getMetadata(), node.getValue(), node.getEffect().getToken());
+    }
+
+    @Override
+    public void visit(ChangeSoundEffectBy node) {
+        createNumExprFieldsBlockJson((NonDataBlockMetadata) node.getMetadata(), node.getValue(), node.getEffect().getToken());
+    }
+
+    private void createNumExprFieldsBlockJson(NonDataBlockMetadata metadata, NumExpr value, String fieldsValue) {
+        FieldsMetadata fieldsMeta = metadata.getFields().getList().get(0);
+        List<String> inputs = new ArrayList<>();
+        inputs.add(createNumExpr(VALUE_KEY, value, MATH_NUM_PRIMITIVE));
+        String fields = createFields(fieldsMeta.getFieldsName(), fieldsValue, null);
+        finishedJSONStrings.add(createBlockWithoutMutationString(metadata, getNextId(),
+                previousBlockId, createInputs(inputs), fields));
 
         previousBlockId = metadata.getBlockId();
     }
@@ -548,7 +590,7 @@ public class StmtListJSONCreator implements ScratchVisitor {
             return createTypeInput(inputKey, INPUT_SAME_BLOCK_SHADOW, primitive, "");
         } else if (numExpr instanceof NumberLiteral) {
             return createTypeInput(inputKey, INPUT_SAME_BLOCK_SHADOW, primitive,
-                    String.valueOf((int) ((NumberLiteral) numExpr).getValue()));
+                    String.valueOf((float) ((NumberLiteral) numExpr).getValue()));
         } else {
             //todo expression handling
             return "";
