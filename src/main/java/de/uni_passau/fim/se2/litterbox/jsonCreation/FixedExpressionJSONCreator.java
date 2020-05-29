@@ -1,0 +1,76 @@
+package de.uni_passau.fim.se2.litterbox.jsonCreation;
+
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.position.FromExpression;
+import de.uni_passau.fim.se2.litterbox.ast.model.position.MousePos;
+import de.uni_passau.fim.se2.litterbox.ast.model.position.RandomPos;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
+import static de.uni_passau.fim.se2.litterbox.jsonCreation.BlockJsonCreatorHelper.*;
+import static de.uni_passau.fim.se2.litterbox.jsonCreation.BlockJsonCreatorHelper.createReferenceJSON;
+import static de.uni_passau.fim.se2.litterbox.jsonCreation.StmtListJSONCreator.EMPTY_VALUE;
+
+
+/**
+ * This class is for creating the JSONs of predetermined drop downs, that could be replaced by expressions such as
+ * {@link de.uni_passau.fim.se2.litterbox.ast.model.position.Position} or
+ * {@link de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.ElementChoice}.
+ */
+public class FixedExpressionJSONCreator implements ScratchVisitor {
+    private List<String> finishedJSONStrings;
+    private String previousBlockId = null;
+    private String topExpressionId = null;
+
+    public IdJsonStringTuple createFixedExpressionJSON(String parentId, ASTNode expression) {
+        finishedJSONStrings = new ArrayList<>();
+        topExpressionId = null;
+        previousBlockId = parentId;
+        expression.accept(this);
+        StringBuilder jsonString = new StringBuilder();
+        for (int i = 0; i < finishedJSONStrings.size() - 1; i++) {
+            jsonString.append(finishedJSONStrings.get(i)).append(",");
+        }
+        if (finishedJSONStrings.size() > 0) {
+            jsonString.append(finishedJSONStrings.get(finishedJSONStrings.size() - 1));
+        }
+        return new IdJsonStringTuple(topExpressionId, jsonString.toString());
+    }
+
+    @Override
+    public void visit(RandomPos node) {
+        createFieldsExpression((NonDataBlockMetadata) node.getMetadata(), RANDOM);
+    }
+
+    @Override
+    public void visit(MousePos node) {
+        createFieldsExpression((NonDataBlockMetadata) node.getMetadata(), MOUSE);
+    }
+
+    @Override
+    public void visit(FromExpression node) {
+        if (node.getStringExpr() instanceof AsString){
+            AsString asString = (AsString) node.getStringExpr();
+            if (asString.getOperand1() instanceof StrId){
+                createFieldsExpression((NonDataBlockMetadata) node.getMetadata(),
+                        ((StrId) asString.getOperand1()).getName());
+            }
+        }
+    }
+
+    private void createFieldsExpression(NonDataBlockMetadata metadata, String fieldsValue) {
+        if (topExpressionId == null) {
+            topExpressionId = metadata.getBlockId();
+        }
+
+        String fieldsString = createFields(metadata.getFields().getList().get(0).getFieldsName(), fieldsValue, null);
+        finishedJSONStrings.add(createBlockWithoutMutationString(metadata, null,
+                previousBlockId, EMPTY_VALUE, fieldsString));
+    }
+}
