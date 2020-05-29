@@ -26,6 +26,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.FromExpression;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.MousePos;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.Position;
@@ -93,7 +94,7 @@ public class PositionParser {
             } else if (posString.equals(RANDOM)) {
                 return new RandomPos(metadata);
             } else {
-                return new FromExpression(new AsString(new StrId(posString)));
+                return new FromExpression(new AsString(new StrId(posString)),metadata);
             }
         } else {
             String posName = "";
@@ -106,7 +107,7 @@ public class PositionParser {
             }
 
             final StringExpr stringExpr = StringExprParser.parseStringExpr(current, posName, allBlocks);
-            return new FromExpression(stringExpr);
+            return new FromExpression(stringExpr,new NoBlockMetadata());
         }
     }
 
