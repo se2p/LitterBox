@@ -26,7 +26,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.StopOtherScrip
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitSeconds;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitUntil;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.*;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.list.DeleteAllOf;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.list.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.pen.PenClearStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.pen.PenDownStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.pen.PenStampStmt;
@@ -204,25 +204,30 @@ public class StmtListJSONCreator implements ScratchVisitor {
 
     @Override
     public void visit(ShowList node) {
-        getListDataFields((NonDataBlockMetadata) node.getMetadata(), node.getIdentifier());
+        NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
+        String fieldsString = getListDataFields((NonDataBlockMetadata) node.getMetadata(), node.getIdentifier());
+        finishedJSONStrings.add(createBlockWithoutMutationString(metadata, getNextId(),
+                previousBlockId, EMPTY_VALUE, fieldsString));
+        previousBlockId = metadata.getBlockId();
     }
 
-    private void getListDataFields(NonDataBlockMetadata metadata, Identifier identifier) {
+    private String getListDataFields(NonDataBlockMetadata metadata, Identifier identifier) {
         FieldsMetadata fieldsMeta = metadata.getFields().getList().get(0);
         Preconditions.checkArgument(identifier instanceof Qualified, "Identifier of list has to be in Qualified");
         Qualified qual = (Qualified) identifier;
         Preconditions.checkArgument(qual.getSecond() instanceof ScratchList, "Qualified has to hold Scratch List");
         ScratchList list = (ScratchList) qual.getSecond();
         String id = symbolTable.getListIdentifierFromActorAndName(qual.getFirst().getName(), list.getName().getName());
-        String fieldsString = createFields(fieldsMeta.getFieldsName(), list.getName().getName(), id);
-        finishedJSONStrings.add(createBlockWithoutMutationString(metadata, getNextId(),
-                previousBlockId, EMPTY_VALUE, fieldsString));
-        previousBlockId = metadata.getBlockId();
+        return createFields(fieldsMeta.getFieldsName(), list.getName().getName(), id);
     }
 
     @Override
     public void visit(HideList node) {
-        getListDataFields((NonDataBlockMetadata) node.getMetadata(), node.getIdentifier());
+        NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
+        String fieldsString = getListDataFields((NonDataBlockMetadata) node.getMetadata(), node.getIdentifier());
+        finishedJSONStrings.add(createBlockWithoutMutationString(metadata, getNextId(),
+                previousBlockId, EMPTY_VALUE, fieldsString));
+        previousBlockId = metadata.getBlockId();
     }
 
     @Override
@@ -570,6 +575,52 @@ public class StmtListJSONCreator implements ScratchVisitor {
     public void visit(AskAndWait node) {
         NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
         createSingeStringExprBlock(metadata, QUESTION_KEY, node.getQuestion());
+    }
+
+    @Override
+    public void visit(AddTo node) {
+        NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
+        String fieldsString = getListDataFields(metadata, node.getIdentifier());
+        List<String> inputs = new ArrayList<>();
+        inputs.add(createStringExpr(ITEM_KEY, node.getString()));
+        finishedJSONStrings.add(createBlockWithoutMutationString(metadata, getNextId(),
+                previousBlockId, createInputs(inputs), fieldsString));
+        previousBlockId = metadata.getBlockId();
+    }
+
+    @Override
+    public void visit(DeleteOf node) {
+        NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
+        String fieldsString = getListDataFields(metadata, node.getIdentifier());
+        List<String> inputs = new ArrayList<>();
+        inputs.add(createNumExpr(INDEX_KEY, node.getNum(), INTEGER_NUM_PRIMITIVE));
+        finishedJSONStrings.add(createBlockWithoutMutationString(metadata, getNextId(),
+                previousBlockId, createInputs(inputs), fieldsString));
+        previousBlockId = metadata.getBlockId();
+    }
+
+    @Override
+    public void visit(InsertAt node) {
+        NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
+        String fieldsString = getListDataFields(metadata, node.getIdentifier());
+        List<String> inputs = new ArrayList<>();
+        inputs.add(createStringExpr(ITEM_KEY, node.getString()));
+        inputs.add(createNumExpr(INDEX_KEY, node.getIndex(), INTEGER_NUM_PRIMITIVE));
+        finishedJSONStrings.add(createBlockWithoutMutationString(metadata, getNextId(),
+                previousBlockId, createInputs(inputs), fieldsString));
+        previousBlockId = metadata.getBlockId();
+    }
+
+    @Override
+    public void visit(ReplaceItem node) {
+        NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
+        String fieldsString = getListDataFields(metadata, node.getIdentifier());
+        List<String> inputs = new ArrayList<>();
+        inputs.add(createNumExpr(INDEX_KEY, node.getIndex(), INTEGER_NUM_PRIMITIVE));
+        inputs.add(createStringExpr(ITEM_KEY, node.getString()));
+        finishedJSONStrings.add(createBlockWithoutMutationString(metadata, getNextId(),
+                previousBlockId, createInputs(inputs), fieldsString));
+        previousBlockId = metadata.getBlockId();
     }
 
     private void createNumExprFieldsBlockJson(NonDataBlockMetadata metadata, NumExpr value, String fieldsValue,
