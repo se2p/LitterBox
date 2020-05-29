@@ -3,6 +3,8 @@ package de.uni_passau.fim.se2.litterbox.jsonCreation;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.UnspecifiedNumExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
@@ -11,6 +13,10 @@ import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.TopNonDataBlockM
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.SymbolTable;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 import static de.uni_passau.fim.se2.litterbox.jsonCreation.BlockJsonCreatorHelper.*;
 import static de.uni_passau.fim.se2.litterbox.jsonCreation.StmtListJSONCreator.EMPTY_VALUE;
 
@@ -24,7 +30,6 @@ public class ScriptJSONCreator {
             stmtListJSONCreator = new StmtListJSONCreator(stmtList, symbol);
             jsonString.append(stmtListJSONCreator.createStmtListJSONString());
         } else {
-            StringBuilder endOfEventBlock = new StringBuilder();
             String blockId = null;
             String nextId = null;
 
@@ -37,13 +42,24 @@ public class ScriptJSONCreator {
                 AttributeAboveValue attributeAboveValue = (AttributeAboveValue) event;
                 TopNonDataBlockMetadata meta = (TopNonDataBlockMetadata) attributeAboveValue.getMetadata();
                 blockId = meta.getBlockId();
-                //todo event handling
-                String inputString = null;
+
+                List<String> inputs = new ArrayList<>();
+                NumExpr numExpr = attributeAboveValue.getValue();
+                if (numExpr instanceof UnspecifiedNumExpr) {
+                    inputs.add(createTypeInput(VALUE_KEY, INPUT_SAME_BLOCK_SHADOW, MATH_NUM_PRIMITIVE, ""));
+                } else if (numExpr instanceof NumberLiteral) {
+                    inputs.add(createTypeInput(VALUE_KEY, INPUT_SAME_BLOCK_SHADOW, MATH_NUM_PRIMITIVE,
+                            String.valueOf((float) ((NumberLiteral) numExpr).getValue())));
+                } else {
+                    //todo expression handling
+                    return "";
+                }
 
                 FieldsMetadata fieldsMetadata = meta.getFields().getList().get(0);
                 String attribute = attributeAboveValue.getAttribute().getType();
                 String fields = createFields(fieldsMetadata.getFieldsName(), attribute, null);
-                jsonString.append(createBlockWithoutMutationString(meta, nextId, inputString, EMPTY_VALUE, fields));
+                jsonString.append(createBlockWithoutMutationString(meta, nextId, null, createInputs(inputs),
+                        fields));
 
             } else if (event instanceof BackdropSwitchTo) {
                 BackdropSwitchTo backdropSwitchTo = (BackdropSwitchTo) event;
