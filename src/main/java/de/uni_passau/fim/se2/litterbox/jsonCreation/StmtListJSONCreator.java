@@ -578,6 +578,28 @@ public class StmtListJSONCreator implements ScratchVisitor {
     }
 
     @Override
+    public void visit(SayForSecs node) {
+        NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
+        List<String> inputs = new ArrayList<>();
+        inputs.add(createStringExpr(MESSAGE_KEY, node.getString()));
+        inputs.add(createNumExpr(SECS_KEY, node.getSecs(), MATH_NUM_PRIMITIVE));
+        finishedJSONStrings.add(createBlockWithoutMutationString(metadata, getNextId(),
+                previousBlockId, createInputs(inputs), EMPTY_VALUE));
+        previousBlockId = metadata.getBlockId();
+    }
+
+    @Override
+    public void visit(ThinkForSecs node) {
+        NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
+        List<String> inputs = new ArrayList<>();
+        inputs.add(createStringExpr(MESSAGE_KEY, node.getThought()));
+        inputs.add(createNumExpr(SECS_KEY, node.getSecs(), MATH_NUM_PRIMITIVE));
+        finishedJSONStrings.add(createBlockWithoutMutationString(metadata, getNextId(),
+                previousBlockId, createInputs(inputs), EMPTY_VALUE));
+        previousBlockId = metadata.getBlockId();
+    }
+
+    @Override
     public void visit(AddTo node) {
         NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
         String fieldsString = getListDataFields(metadata, node.getIdentifier());
@@ -622,6 +644,7 @@ public class StmtListJSONCreator implements ScratchVisitor {
                 previousBlockId, createInputs(inputs), fieldsString));
         previousBlockId = metadata.getBlockId();
     }
+
 
     private void createNumExprFieldsBlockJson(NonDataBlockMetadata metadata, NumExpr value, String fieldsValue,
                                               String inputName) {

@@ -1,0 +1,223 @@
+{
+  "targets": [
+    {
+      "isStage": true,
+      "name": "Stage",
+      "variables": {},
+      "lists": {
+        "Ul%tb2WRQ{Xm7tjT*$-s": [
+          "testlist",
+          [
+            "Ding"
+          ]
+        ]
+      },
+      "broadcasts": {},
+      "blocks": {},
+      "comments": {},
+      "currentCostume": 0,
+      "costumes": [
+        {
+          "assetId": "cd21514d0531fdffb22204e0ec5ed84a",
+          "name": "Bühnenbild1",
+          "md5ext": "cd21514d0531fdffb22204e0ec5ed84a.svg",
+          "dataFormat": "svg",
+          "rotationCenterX": 240,
+          "rotationCenterY": 180
+        }
+      ],
+      "sounds": [
+        {
+          "assetId": "83a9787d4cb6f3b7632b4ddfebf74367",
+          "name": "Plopp",
+          "dataFormat": "wav",
+          "format": "",
+          "rate": 48000,
+          "sampleCount": 1124,
+          "md5ext": "83a9787d4cb6f3b7632b4ddfebf74367.wav"
+        }
+      ],
+      "volume": 100,
+      "layerOrder": 0,
+      "tempo": 60,
+      "videoTransparency": 50,
+      "videoState": "on",
+      "textToSpeechLanguage": null
+    },
+    {
+      "isStage": false,
+      "name": "Figur1",
+      "variables": {},
+      "lists": {},
+      "broadcasts": {},
+      "blocks": {
+        "=1%uCK^}.SM~8gEy2!D_": {
+          "opcode": "looks_sayforsecs",
+          "next": "{(;=w9tZ.D?4cV77R^#2",
+          "parent": "E0fzLkL-W9Fs(6_UyATv",
+          "inputs": {
+            "MESSAGE": [
+              1,
+              [
+                10,
+                "Hallo!"
+              ]
+            ],
+            "SECS": [
+              1,
+              [
+                4,
+                "-5.4"
+              ]
+            ]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "{(;=w9tZ.D?4cV77R^#2": {
+          "opcode": "looks_changeeffectby",
+          "next": ".}Gj*D*ON9FIY:j@QTtD",
+          "parent": "=1%uCK^}.SM~8gEy2!D_",
+          "inputs": {
+            "CHANGE": [
+              1,
+              [
+                4,
+                "25"
+              ]
+            ]
+          },
+          "fields": {
+            "EFFECT": [
+              "FISHEYE",
+              null
+            ]
+          },
+          "shadow": false,
+          "topLevel": false
+        },
+        ".}Gj*D*ON9FIY:j@QTtD": {
+          "opcode": "data_insertatlist",
+          "next": null,
+          "parent": "{(;=w9tZ.D?4cV77R^#2",
+          "inputs": {
+            "ITEM": [
+              1,
+              [
+                10,
+                "Ding"
+              ]
+            ],
+            "INDEX": [
+              1,
+              [
+                7,
+                "-3"
+              ]
+            ]
+          },
+          "fields": {
+            "LIST": [
+              "testlist",
+              "Ul%tb2WRQ{Xm7tjT*$-s"
+            ]
+          },
+          "shadow": false,
+          "topLevel": false
+        },
+        "E0fzLkL-W9Fs(6_UyATv": {
+          "opcode": "event_whengreaterthan",
+          "next": "=1%uCK^}.SM~8gEy2!D_",
+          "parent": null,
+          "inputs": {
+            "VALUE": [
+              1,
+              [
+                4,
+                "10"
+              ]
+            ]
+          },
+          "fields": {
+            "WHENGREATERTHANMENU": [
+              "LOUDNESS",
+              null
+            ]
+          },
+          "shadow": false,
+          "topLevel": true,
+          "x": 252,
+          "y": -82
+        }
+      },
+      "comments": {},
+      "currentCostume": 0,
+      "costumes": [
+        {
+          "assetId": "b7853f557e4426412e64bb3da6531a99",
+          "name": "Kostüm1",
+          "bitmapResolution": 1,
+          "md5ext": "b7853f557e4426412e64bb3da6531a99.svg",
+          "dataFormat": "svg",
+          "rotationCenterX": 48,
+          "rotationCenterY": 50
+        },
+        {
+          "assetId": "e6ddc55a6ddd9cc9d84fe0b4c21e016f",
+          "name": "Kostüm2",
+          "bitmapResolution": 1,
+          "md5ext": "e6ddc55a6ddd9cc9d84fe0b4c21e016f.svg",
+          "dataFormat": "svg",
+          "rotationCenterX": 46,
+          "rotationCenterY": 53
+        }
+      ],
+      "sounds": [
+        {
+          "assetId": "83c36d806dc92327b9e7049a565c6bff",
+          "name": "Miau",
+          "dataFormat": "wav",
+          "format": "",
+          "rate": 48000,
+          "sampleCount": 40682,
+          "md5ext": "83c36d806dc92327b9e7049a565c6bff.wav"
+        }
+      ],
+      "volume": 100,
+      "layerOrder": 1,
+      "visible": true,
+      "x": 100,
+      "y": 0,
+      "size": 100,
+      "direction": 90,
+      "draggable": false,
+      "rotationStyle": "all around"
+    }
+  ],
+  "monitors": [
+    {
+      "id": "Ul%tb2WRQ{Xm7tjT*$-s",
+      "mode": "list",
+      "opcode": "data_listcontents",
+      "params": {
+        "LIST": "testlist"
+      },
+      "spriteName": null,
+      "value": [
+        "Ding"
+      ],
+      "width": 0,
+      "height": 0,
+      "x": 5,
+      "y": 5,
+      "visible": true
+    }
+  ],
+  "extensions": [],
+  "meta": {
+    "semver": "3.0.0",
+    "vm": "0.2.0-prerelease.20200519202709",
+    "agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:76.0) Gecko/20100101 Firefox/76.0"
+  }
+}
