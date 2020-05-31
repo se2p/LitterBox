@@ -19,10 +19,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.position.Position;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.RandomPos;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.*;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.ChangeSoundEffectBy;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.ClearSoundEffects;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.SetSoundEffectTo;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.StopAllSounds;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.ResetTimer;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.StopOtherScriptsInSprite;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitSeconds;
@@ -696,6 +693,18 @@ public class StmtListJSONCreator implements ScratchVisitor {
                 BACKDROP_INPUT);
     }
 
+    @Override
+    public void visit(PlaySoundUntilDone node) {
+        createStatementWithElementChoice((NonDataBlockMetadata) node.getMetadata(), node.getElementChoice(),
+                SOUND_MENU);
+    }
+
+    @Override
+    public void visit(StartSound node) {
+        createStatementWithElementChoice((NonDataBlockMetadata) node.getMetadata(), node.getElementChoice(),
+                SOUND_MENU);
+    }
+
     private void createStatementWithElementChoice(NonDataBlockMetadata metadata, ElementChoice elem, String inputName) {
         List<String> inputs = new ArrayList<>();
         String toAdd = addElementChoiceReference(metadata, elem, inputs, inputName);
@@ -747,7 +756,8 @@ public class StmtListJSONCreator implements ScratchVisitor {
         } else {
             FromExpression fromPos = (FromExpression) pos;
 
-            //if metadata are NoBlockMetadata the FromExpression is simply a wrapper of another block
+            //if metadata are NoBlockMetadata the FromExpression is simply a wrapper of
+            // another block
             if (fromPos.getMetadata() instanceof NoBlockMetadata) {
                 tuple = exprCreator.createExpressionJSON(metadata.getBlockId(),
                         fromPos.getStringExpr());
