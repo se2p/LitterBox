@@ -295,4 +295,9 @@ public class Constants {
     public final static String SUBSTACK2_KEY = "SUBSTACK2";
     public final static String MOUSE = "_mouse_";
     public final static String RANDOM = "_random_";
+    public static final String COSTUME_INPUT = "COSTUME";
+    public static final String BACKDROP_INPUT = "BACKDROP";
+    public static final String RANDOM_BACKDROP = "random backdrop";
+    public static final String NEXT_BACKDROP = "next backdrop";
+    public static final String PREVIOUS_BACKDROP = "previous backdrop";
 }
