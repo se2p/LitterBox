@@ -300,5 +300,7 @@ public class Constants {
     public static final String RANDOM_BACKDROP = "random backdrop";
     public static final String NEXT_BACKDROP = "next backdrop";
     public static final String PREVIOUS_BACKDROP = "previous backdrop";
-    public static final String SOUND_MENU ="SOUND_MENU";
+    public static final String SOUND_MENU = "SOUND_MENU";
+    public static final String CLONE_OPTION = "CLONE_OPTION";
+    public static final String BROADCAST_INPUT_KEY = "BROADCAST_INPUT";
 }

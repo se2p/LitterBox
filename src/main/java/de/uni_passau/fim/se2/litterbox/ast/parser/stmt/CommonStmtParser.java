@@ -49,11 +49,9 @@ import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 
 public class CommonStmtParser {
 
-    private static final String CLONE_OPTION = "CLONE_OPTION";
     private static final String STOP_OPTION = "STOP_OPTION";
     private static final String STOP_OTHER = "other scripts in sprite";
     private static final String STOP_OTHER_IN_STAGE = "other scripts in stage";
-    private static final String BROADCAST_INPUT_KEY = "BROADCAST_INPUT";
 
     public static CommonStmt parse(String blockId, JsonNode current, JsonNode allBlocks) throws ParsingException {
         Preconditions.checkNotNull(current);
