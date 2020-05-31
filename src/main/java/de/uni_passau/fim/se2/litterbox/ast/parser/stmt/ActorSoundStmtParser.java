@@ -44,8 +44,6 @@ import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 
 public class ActorSoundStmtParser {
 
-    private static final String SOUND_MENU = "SOUND_MENU";
-
     public static ActorSoundStmt parse(String blockId, JsonNode current, JsonNode allBlocks) throws ParsingException {
         Preconditions.checkNotNull(current);
         Preconditions.checkNotNull(allBlocks);

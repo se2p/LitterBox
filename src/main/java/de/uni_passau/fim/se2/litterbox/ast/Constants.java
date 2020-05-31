@@ -300,4 +300,5 @@ public class Constants {
     public static final String RANDOM_BACKDROP = "random backdrop";
     public static final String NEXT_BACKDROP = "next backdrop";
     public static final String PREVIOUS_BACKDROP = "previous backdrop";
+    public static final String SOUND_MENU ="SOUND_MENU";
 }
