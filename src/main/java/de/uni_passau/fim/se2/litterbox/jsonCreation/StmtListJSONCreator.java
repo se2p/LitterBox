@@ -1,6 +1,7 @@
 package de.uni_passau.fim.se2.litterbox.jsonCreation;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
+import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BoolExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.UnspecifiedBoolExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
@@ -677,6 +678,55 @@ public class StmtListJSONCreator implements ScratchVisitor {
         createStatementWithPosition((NonDataBlockMetadata) node.getMetadata(), node.getPosition(), TOWARDS_KEY);
     }
 
+    @Override
+    public void visit(SwitchCostumeTo node) {
+        createStatementWithElementChoice((NonDataBlockMetadata) node.getMetadata(), node.getCostumeChoice(),
+                COSTUME_INPUT);
+    }
+
+    @Override
+    public void visit(SwitchBackdrop node) {
+        createStatementWithElementChoice((NonDataBlockMetadata) node.getMetadata(), node.getElementChoice(),
+                BACKDROP_INPUT);
+    }
+
+    @Override
+    public void visit(SwitchBackdropAndWait node) {
+        createStatementWithElementChoice((NonDataBlockMetadata) node.getMetadata(), node.getElementChoice(),
+                BACKDROP_INPUT);
+    }
+
+    private void createStatementWithElementChoice(NonDataBlockMetadata metadata, ElementChoice elem, String inputName) {
+        List<String> inputs = new ArrayList<>();
+        String toAdd = addElementChoiceReference(metadata, elem, inputs, inputName);
+
+        finishedJSONStrings.add(createBlockWithoutMutationString(metadata, getNextId(),
+                previousBlockId, createInputs(inputs), EMPTY_VALUE));
+        finishedJSONStrings.add(toAdd);
+        previousBlockId = metadata.getBlockId();
+    }
+
+    private String addElementChoiceReference(NonDataBlockMetadata metadata, ElementChoice elem, List<String> inputs,
+                                             String inputName) {
+        IdJsonStringTuple tuple;
+        if (elem instanceof Prev || elem instanceof Next || elem instanceof Random) {
+            tuple = fixedExprCreator.createFixedExpressionJSON(metadata.getBlockId(), elem);
+            inputs.add(createReferenceInput(inputName, INPUT_SAME_BLOCK_SHADOW, tuple.getId()));
+        } else {
+            WithExpr withExpr = (WithExpr) elem;
+            //if metadata are NoBlockMetadata the WithExpr is simply a wrapper of another block
+            if (withExpr.getMetadata() instanceof NoBlockMetadata) {
+                tuple = exprCreator.createExpressionJSON(metadata.getBlockId(),
+                        withExpr.getExpression());
+                inputs.add(createReferenceJSON(tuple.getId(), inputName));
+            } else {
+                tuple = fixedExprCreator.createFixedExpressionJSON(metadata.getBlockId(), elem);
+                inputs.add(createReferenceInput(inputName, INPUT_SAME_BLOCK_SHADOW, tuple.getId()));
+            }
+        }
+        return tuple.getJsonString();
+    }
+
     private void createStatementWithPosition(NonDataBlockMetadata metadata, Position position, String inputName) {
         List<String> inputs = new ArrayList<>();
         String toAdd = addPositionReference(metadata, position, inputs, inputName);
@@ -697,7 +747,7 @@ public class StmtListJSONCreator implements ScratchVisitor {
         } else {
             FromExpression fromPos = (FromExpression) pos;
 
-            //if metadata are NoBlockMetadata the FromExpression is simply a wrapper ofr another block
+            //if metadata are NoBlockMetadata the FromExpression is simply a wrapper of another block
             if (fromPos.getMetadata() instanceof NoBlockMetadata) {
                 tuple = exprCreator.createExpressionJSON(metadata.getBlockId(),
                         fromPos.getStringExpr());

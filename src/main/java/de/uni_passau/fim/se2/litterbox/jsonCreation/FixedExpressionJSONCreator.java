@@ -1,6 +1,10 @@
 package de.uni_passau.fim.se2.litterbox.jsonCreation;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.Next;
+import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.Prev;
+import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.Random;
+import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.WithExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
@@ -13,8 +17,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
-import static de.uni_passau.fim.se2.litterbox.jsonCreation.BlockJsonCreatorHelper.*;
-import static de.uni_passau.fim.se2.litterbox.jsonCreation.BlockJsonCreatorHelper.createReferenceJSON;
+import static de.uni_passau.fim.se2.litterbox.jsonCreation.BlockJsonCreatorHelper.createBlockWithoutMutationString;
+import static de.uni_passau.fim.se2.litterbox.jsonCreation.BlockJsonCreatorHelper.createFields;
 import static de.uni_passau.fim.se2.litterbox.jsonCreation.StmtListJSONCreator.EMPTY_VALUE;
 
 
@@ -55,13 +59,37 @@ public class FixedExpressionJSONCreator implements ScratchVisitor {
 
     @Override
     public void visit(FromExpression node) {
-        if (node.getStringExpr() instanceof AsString){
+        if (node.getStringExpr() instanceof AsString) {
             AsString asString = (AsString) node.getStringExpr();
-            if (asString.getOperand1() instanceof StrId){
+            if (asString.getOperand1() instanceof StrId) {
                 createFieldsExpression((NonDataBlockMetadata) node.getMetadata(),
                         ((StrId) asString.getOperand1()).getName());
             }
         }
+    }
+
+    @Override
+    public void visit(Next node) {
+        createFieldsExpression((NonDataBlockMetadata) node.getMetadata(), NEXT_BACKDROP);
+    }
+
+    @Override
+    public void visit(Prev node) {
+        createFieldsExpression((NonDataBlockMetadata) node.getMetadata(), PREVIOUS_BACKDROP);
+    }
+
+    @Override
+    public void visit(Random node) {
+        createFieldsExpression((NonDataBlockMetadata) node.getMetadata(), RANDOM_BACKDROP);
+    }
+
+    @Override
+    public void visit(WithExpr node) {
+            if (node.getExpression() instanceof StrId) {
+                createFieldsExpression((NonDataBlockMetadata) node.getMetadata(),
+                        ((StrId) node.getExpression()).getName());
+            }
+
     }
 
     private void createFieldsExpression(NonDataBlockMetadata metadata, String fieldsValue) {
