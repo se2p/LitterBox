@@ -6,10 +6,12 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BoolExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.UnspecifiedBoolExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.UnspecifiedNumExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.UnspecifiedStringExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Identifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.*;
@@ -20,10 +22,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.position.RandomPos;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.*;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.ResetTimer;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.StopOtherScriptsInSprite;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitSeconds;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitUntil;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.list.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.pen.PenClearStmt;
@@ -704,6 +703,32 @@ public class StmtListJSONCreator implements ScratchVisitor {
         createStatementWithElementChoice((NonDataBlockMetadata) node.getMetadata(), node.getElementChoice(),
                 SOUND_MENU);
     }
+
+    @Override
+    public void visit(CreateCloneOf node) {
+        NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
+        List<String> inputs = new ArrayList<>();
+        StringExpr stringExpr = node.getStringExpr();
+        IdJsonStringTuple tuple = null;
+
+        if (stringExpr instanceof AsString && (( AsString) stringExpr).getOperand1() instanceof StrId){
+            StrId strid = (StrId) ((AsString) stringExpr).getOperand1();
+            String fieldsString = createFields(CLONE_OPTION, strid.getName(), null);
+            finishedJSONStrings.add(createBlockWithoutMutationString(metadata, null,
+                    previousBlockId, EMPTY_VALUE, fieldsString));
+            //inputs.add()
+        }else{
+            tuple = exprCreator.createExpressionJSON(metadata.getBlockId(),
+                    stringExpr);
+            inputs.add(  createReferenceJSON(tuple.getId(), CLONE_OPTION));
+            finishedJSONStrings.add(tuple.getJsonString());
+        }
+
+        finishedJSONStrings.add(createBlockWithoutMutationString(metadata, getNextId(),
+                previousBlockId, createInputs(inputs), EMPTY_VALUE));
+        previousBlockId = metadata.getBlockId();
+    }
+
 
     private void createStatementWithElementChoice(NonDataBlockMetadata metadata, ElementChoice elem, String inputName) {
         List<String> inputs = new ArrayList<>();
