@@ -26,6 +26,7 @@ public class ScriptJSONCreator {
         Event event = script.getEvent();
         StmtListJSONCreator stmtListJSONCreator = null;
         StmtList stmtList = script.getStmtList();
+        ExpressionJSONCreator exprCreator= new ExpressionJSONCreator();
         if (event instanceof Never) {
             stmtListJSONCreator = new StmtListJSONCreator(stmtList, symbol);
             jsonString.append(stmtListJSONCreator.createStmtListJSONString());
@@ -51,8 +52,14 @@ public class ScriptJSONCreator {
                     inputs.add(createTypeInput(VALUE_KEY, INPUT_SAME_BLOCK_SHADOW, MATH_NUM_PRIMITIVE,
                             String.valueOf((float) ((NumberLiteral) numExpr).getValue())));
                 } else {
-                    //todo expression handling
-                    return "";
+                    IdJsonStringTuple tuple = exprCreator.createExpressionJSON(meta.getBlockId(),
+                            numExpr);
+                    if (tuple.getId()==null){
+                        inputs.add(tuple.getJsonString());
+                    }else{
+                        inputs.add(createReferenceJSON(tuple.getId(),VALUE_KEY));
+                        jsonString.append(tuple.getJsonString()).append(",");
+                    }
                 }
 
                 FieldsMetadata fieldsMetadata = meta.getFields().getList().get(0);
