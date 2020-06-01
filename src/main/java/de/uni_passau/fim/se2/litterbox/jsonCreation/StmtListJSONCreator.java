@@ -10,6 +10,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.UnspecifiedStringExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Identifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.*;
@@ -723,6 +724,36 @@ public class StmtListJSONCreator implements ScratchVisitor {
                 previousBlockId, createInputs(inputs), EMPTY_VALUE));
         finishedJSONStrings.add(tuple.getJsonString());
         previousBlockId = cloneBlockMetadata.getBlockId();
+    }
+
+    @Override
+    public void visit(Broadcast node) {
+        createBroadcastStmt((NonDataBlockMetadata) node.getMetadata(), node.getMessage().getMessage());
+    }
+
+    @Override
+    public void visit(BroadcastAndWait node) {
+        createBroadcastStmt((NonDataBlockMetadata) node.getMetadata(), node.getMessage().getMessage());
+    }
+
+    private void createBroadcastStmt(NonDataBlockMetadata metadata, StringExpr stringExpr) {
+        List<String> inputs = new ArrayList<>();
+        System.out.println(stringExpr.getClass().getName());
+        if (stringExpr instanceof StringLiteral) {
+            String message = ((StringLiteral) stringExpr).getText();
+            String messageId = symbolTable.getMessages().get(message).getIdentifier();
+            inputs.add(createReferenceTypeInput(BROADCAST_INPUT_KEY, INPUT_SAME_BLOCK_SHADOW, BROADCAST_PRIMITIVE,
+                    message, messageId));
+        } else {
+            IdJsonStringTuple tuple = exprCreator.createExpressionJSON(metadata.getBlockId(),
+                    stringExpr);
+            inputs.add(createReferenceJSON(tuple.getId(), BROADCAST_INPUT_KEY));
+            finishedJSONStrings.add(tuple.getJsonString());
+        }
+
+        finishedJSONStrings.add(createBlockWithoutMutationString(metadata, getNextId(),
+                previousBlockId, createInputs(inputs), EMPTY_VALUE));
+        previousBlockId = metadata.getBlockId();
     }
 
 

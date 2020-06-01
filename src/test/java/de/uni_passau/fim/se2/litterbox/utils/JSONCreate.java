@@ -18,7 +18,7 @@ public class JSONCreate {
 
     @BeforeAll
     public static void setUp() throws IOException {
-        File f = new File("./src/test/fixtures/metadata/elementChoice.json");
+        File f = new File("./src/test/fixtures/metadata/broadcastClone.json");
         prog = mapper.readTree(f);
     }
 
