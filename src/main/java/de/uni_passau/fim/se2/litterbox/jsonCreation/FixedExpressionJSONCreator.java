@@ -6,6 +6,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.Prev;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.Random;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.WithExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.CloneOfMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
@@ -96,12 +97,16 @@ public class FixedExpressionJSONCreator implements ScratchVisitor {
 
     @Override
     public void visit(CreateCloneOf node) {
-        StrId strid = (StrId) ((AsString) node.getStringExpr()).getOperand1();
-        CloneOfMetadata metadata = (CloneOfMetadata) node.getMetadata();
-        createFieldsExpression((NonDataBlockMetadata) metadata.getCloneMenuMetadata(),
-                strid.getName());
-
+        StringExpr stringExpr = node.getStringExpr();
+        if (stringExpr instanceof AsString && ((AsString) stringExpr).getOperand1() instanceof StrId) {
+            StrId strid = (StrId) ((AsString) node.getStringExpr()).getOperand1();
+            CloneOfMetadata metadata = (CloneOfMetadata) node.getMetadata();
+            createFieldsExpression((NonDataBlockMetadata) metadata.getCloneMenuMetadata(),
+                    strid.getName());
+        }
     }
+
+
 
     private void createFieldsExpression(NonDataBlockMetadata metadata, String fieldsValue) {
         if (topExpressionId == null) {
