@@ -18,6 +18,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.position.FromExpression;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.MousePos;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.Position;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.RandomPos;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.ExpressionStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.*;
@@ -734,6 +735,14 @@ public class StmtListJSONCreator implements ScratchVisitor {
     @Override
     public void visit(BroadcastAndWait node) {
         createBroadcastStmt((NonDataBlockMetadata) node.getMetadata(), node.getMessage().getMessage());
+    }
+
+    @Override
+    public void visit(ExpressionStmt node) {
+        IdJsonStringTuple tuple= exprCreator.createExpressionJSON(null,
+                node.getExpression());
+        finishedJSONStrings.add(tuple.getJsonString());
+        previousBlockId = tuple.getId();
     }
 
     private void createBroadcastStmt(NonDataBlockMetadata metadata, StringExpr stringExpr) {
