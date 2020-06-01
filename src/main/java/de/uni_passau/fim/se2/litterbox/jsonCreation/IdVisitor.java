@@ -1,5 +1,6 @@
 package de.uni_passau.fim.se2.litterbox.jsonCreation;
 
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.CloneOfMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
@@ -41,7 +42,8 @@ public class IdVisitor implements ScratchVisitor {
 
     @Override
     public void visit(CreateCloneOf node) {
-        id = ((NonDataBlockMetadata) node.getMetadata()).getBlockId();
+        CloneOfMetadata meta = (CloneOfMetadata) node.getMetadata();
+        id = ((NonDataBlockMetadata) meta.getCloneBlockMetadata()).getBlockId();
     }
 
     @Override
