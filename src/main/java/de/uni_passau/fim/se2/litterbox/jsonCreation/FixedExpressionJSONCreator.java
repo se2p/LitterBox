@@ -7,10 +7,12 @@ import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.Random;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.WithExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.CloneOfMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.FromExpression;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.MousePos;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.RandomPos;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.CreateCloneOf;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 import java.util.ArrayList;
@@ -85,10 +87,19 @@ public class FixedExpressionJSONCreator implements ScratchVisitor {
 
     @Override
     public void visit(WithExpr node) {
-            if (node.getExpression() instanceof StrId) {
-                createFieldsExpression((NonDataBlockMetadata) node.getMetadata(),
-                        ((StrId) node.getExpression()).getName());
-            }
+        if (node.getExpression() instanceof StrId) {
+            createFieldsExpression((NonDataBlockMetadata) node.getMetadata(),
+                    ((StrId) node.getExpression()).getName());
+        }
+
+    }
+
+    @Override
+    public void visit(CreateCloneOf node) {
+        StrId strid = (StrId) ((AsString) node.getStringExpr()).getOperand1();
+        CloneOfMetadata metadata = (CloneOfMetadata) node.getMetadata();
+        createFieldsExpression((NonDataBlockMetadata) metadata.getCloneMenuMetadata(),
+                strid.getName());
 
     }
 

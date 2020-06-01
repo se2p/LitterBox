@@ -6,12 +6,10 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BoolExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.UnspecifiedBoolExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.UnspecifiedNumExpr;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.UnspecifiedStringExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Identifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
-import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.*;
@@ -706,27 +704,25 @@ public class StmtListJSONCreator implements ScratchVisitor {
 
     @Override
     public void visit(CreateCloneOf node) {
-        NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
+        CloneOfMetadata metadata = (CloneOfMetadata) node.getMetadata();
+        NonDataBlockMetadata cloneBlockMetadata = (NonDataBlockMetadata) metadata.getCloneBlockMetadata();
         List<String> inputs = new ArrayList<>();
         StringExpr stringExpr = node.getStringExpr();
-        IdJsonStringTuple tuple = null;
+        IdJsonStringTuple tuple;
 
-        if (stringExpr instanceof AsString && (( AsString) stringExpr).getOperand1() instanceof StrId){
-            StrId strid = (StrId) ((AsString) stringExpr).getOperand1();
-            String fieldsString = createFields(CLONE_OPTION, strid.getName(), null);
-            finishedJSONStrings.add(createBlockWithoutMutationString(metadata, null,
-                    previousBlockId, EMPTY_VALUE, fieldsString));
-            //inputs.add()
-        }else{
-            tuple = exprCreator.createExpressionJSON(metadata.getBlockId(),
+        if (!(metadata.getCloneMenuMetadata() instanceof NoBlockMetadata)) {
+            tuple = fixedExprCreator.createFixedExpressionJSON(cloneBlockMetadata.getBlockId(), node);
+            inputs.add(createReferenceInput(CLONE_OPTION, INPUT_SAME_BLOCK_SHADOW, tuple.getId()));
+        } else {
+            tuple = exprCreator.createExpressionJSON(cloneBlockMetadata.getBlockId(),
                     stringExpr);
-            inputs.add(  createReferenceJSON(tuple.getId(), CLONE_OPTION));
-            finishedJSONStrings.add(tuple.getJsonString());
+            inputs.add(createReferenceJSON(tuple.getId(), CLONE_OPTION));
         }
 
-        finishedJSONStrings.add(createBlockWithoutMutationString(metadata, getNextId(),
+        finishedJSONStrings.add(createBlockWithoutMutationString(cloneBlockMetadata, getNextId(),
                 previousBlockId, createInputs(inputs), EMPTY_VALUE));
-        previousBlockId = metadata.getBlockId();
+        finishedJSONStrings.add(tuple.getJsonString());
+        previousBlockId = cloneBlockMetadata.getBlockId();
     }
 
 
