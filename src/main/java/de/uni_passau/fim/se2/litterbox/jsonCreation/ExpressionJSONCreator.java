@@ -1,9 +1,8 @@
 package de.uni_passau.fim.se2.litterbox.jsonCreation;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.AsBool;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.IsMouseDown;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.UnspecifiedBoolExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Identifier;
@@ -25,6 +24,7 @@ import java.util.List;
 
 import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 import static de.uni_passau.fim.se2.litterbox.jsonCreation.BlockJsonCreatorHelper.*;
+import static de.uni_passau.fim.se2.litterbox.jsonCreation.JSONStringCreator.createField;
 import static de.uni_passau.fim.se2.litterbox.jsonCreation.StmtListJSONCreator.EMPTY_VALUE;
 
 
@@ -33,12 +33,14 @@ public class ExpressionJSONCreator implements ScratchVisitor {
     private String previousBlockId = null;
     private String topExpressionId = null;
     private SymbolTable symbolTable;
+    private ExpressionJSONCreator expressionJSONCreator;
 
     public IdJsonStringTuple createExpressionJSON(String parentId, ASTNode expression, SymbolTable symbolTable) {
         finishedJSONStrings = new ArrayList<>();
         topExpressionId = null;
         previousBlockId = parentId;
         this.symbolTable = symbolTable;
+        expressionJSONCreator = new ExpressionJSONCreator();
         expression.accept(this);
         StringBuilder jsonString = new StringBuilder();
         for (int i = 0; i < finishedJSONStrings.size() - 1; i++) {
@@ -237,5 +239,122 @@ public class ExpressionJSONCreator implements ScratchVisitor {
         return createFields(fieldsMeta.getFieldsName(), list.getName().getName(), id);
     }
 
+    @Override
+    public void visit(Add node) {
+        mathOperations((NonDataBlockMetadata) node.getMetadata(), node.getOperand1(), node.getOperand2(), NUM1_KEY,
+                NUM2_KEY);
+    }
 
+    @Override
+    public void visit(Minus node) {
+        mathOperations((NonDataBlockMetadata) node.getMetadata(), node.getOperand1(), node.getOperand2(), NUM1_KEY,
+                NUM2_KEY);
+    }
+
+    @Override
+    public void visit(Mult node) {
+        mathOperations((NonDataBlockMetadata) node.getMetadata(), node.getOperand1(), node.getOperand2(), NUM1_KEY,
+                NUM2_KEY);
+    }
+
+    @Override
+    public void visit(Div node) {
+        mathOperations((NonDataBlockMetadata) node.getMetadata(), node.getOperand1(), node.getOperand2(), NUM1_KEY,
+                NUM2_KEY);
+    }
+
+    @Override
+    public void visit(LessThan node) {
+        mathOperations((NonDataBlockMetadata) node.getMetadata(), node.getOperand1(), node.getOperand2(), OPERAND1_KEY,
+                OPERAND2_KEY);
+    }
+
+    @Override
+    public void visit(BiggerThan node) {
+        mathOperations((NonDataBlockMetadata) node.getMetadata(), node.getOperand1(), node.getOperand2(), OPERAND1_KEY,
+                OPERAND2_KEY);
+    }
+
+    @Override
+    public void visit(Equals node) {
+        mathOperations((NonDataBlockMetadata) node.getMetadata(), node.getOperand1(), node.getOperand2(), OPERAND1_KEY,
+                OPERAND2_KEY);
+    }
+
+    @Override
+    public void visit(Or node) {
+        boolOperations((NonDataBlockMetadata) node.getMetadata(), node.getOperand1(), node.getOperand2());
+    }
+
+    @Override
+    public void visit(And node) {
+        boolOperations((NonDataBlockMetadata) node.getMetadata(), node.getOperand1(), node.getOperand2());
+    }
+
+    @Override
+    public void visit(Not node) {
+        NonDataBlockMetadata metadata =(NonDataBlockMetadata) node.getMetadata();
+        if (topExpressionId == null) {
+            topExpressionId = metadata.getBlockId();
+        }
+        List<String> inputs = new ArrayList<>();
+        if (node.getOperand1() instanceof UnspecifiedBoolExpr) {
+            inputs.add(createReferenceJSON(null, OPERAND_KEY, false));
+        } else {
+            inputs.add(createExpr(metadata, node.getOperand1(), OPERAND_KEY, false));
+        }
+
+        finishedJSONStrings.add(createBlockWithoutMutationString(metadata, null,
+                previousBlockId, createInputs(inputs), EMPTY_VALUE));
+        previousBlockId = metadata.getBlockId();
+    }
+
+    private void boolOperations(NonDataBlockMetadata metadata, BoolExpr expr1, BoolExpr expr2) {
+        if (topExpressionId == null) {
+            topExpressionId = metadata.getBlockId();
+        }
+        List<String> inputs = new ArrayList<>();
+        if (expr1 instanceof UnspecifiedBoolExpr) {
+            inputs.add(createReferenceJSON(null, OPERAND1_KEY, false));
+        } else {
+            inputs.add(createExpr(metadata, expr1, OPERAND1_KEY, false));
+        }
+
+        if (expr2 instanceof UnspecifiedBoolExpr) {
+            inputs.add(createReferenceJSON(null, OPERAND2_KEY, false));
+        } else {
+            inputs.add(createExpr(metadata, expr2, OPERAND2_KEY, false));
+        }
+        finishedJSONStrings.add(createBlockWithoutMutationString(metadata, null,
+                previousBlockId, createInputs(inputs), EMPTY_VALUE));
+        previousBlockId = metadata.getBlockId();
+    }
+
+    private void mathOperations(NonDataBlockMetadata metadata, Expression expr1, Expression expr2, String inputName1,
+                                String inputName2) {
+        if (topExpressionId == null) {
+            topExpressionId = metadata.getBlockId();
+        }
+        List<String> inputs = new ArrayList<>();
+
+        inputs.add(createExpr(metadata, expr1, inputName1,true));
+        inputs.add(createExpr(metadata, expr2, inputName2,true));
+
+        finishedJSONStrings.add(createBlockWithoutMutationString(metadata, null,
+                previousBlockId, createInputs(inputs), EMPTY_VALUE));
+        previousBlockId = metadata.getBlockId();
+    }
+
+    private String createExpr(NonDataBlockMetadata metadata, Expression expr, String inputName, boolean withDefault) {
+        IdJsonStringTuple tuple = expressionJSONCreator.createExpressionJSON(metadata.getBlockId(), expr
+                , symbolTable);
+        if (tuple.getId() == null) {
+            StringBuilder jsonString = new StringBuilder();
+            createField(jsonString, inputName).append(tuple.getJsonString());
+            return jsonString.toString();
+        } else {
+            finishedJSONStrings.add(tuple.getJsonString());
+            return createReferenceJSON(tuple.getId(), inputName, withDefault);
+        }
+    }
 }

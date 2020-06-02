@@ -54,7 +54,7 @@ public class ScriptJSONCreator {
                             String.valueOf((float) ((NumberLiteral) numExpr).getValue())));
                 } else {
                     IdJsonStringTuple tuple = exprCreator.createExpressionJSON(meta.getBlockId(),
-                            numExpr);
+                            numExpr, symbol);
                     if (tuple.getId() == null) {
                         StringBuilder inputString = new StringBuilder();
                         createField(inputString, VALUE_KEY).append(tuple.getJsonString());
