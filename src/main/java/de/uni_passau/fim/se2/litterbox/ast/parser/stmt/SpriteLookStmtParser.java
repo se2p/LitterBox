@@ -96,15 +96,7 @@ public class SpriteLookStmtParser {
         NumExpr num = NumExprParser.parseNumExpr(current, NUM_KEY, allBlocks);
 
         String layerOption = front_back.asText();
-        if (layerOption.equals("forward")) {
-            return new ChangeLayerBy(num);
-        } else if (layerOption.equals("backward")) {
-            NumExpr negated = new Mult(new NumberLiteral(-1), num);
-            return new ChangeLayerBy(negated);
-        } else {
-            throw new ParsingException("Unknown option " + layerOption +
-                    "+ when parsing block with opcode " + current.get(OPCODE_KEY));
-        }
+        return new ChangeLayerBy(num, ForwardBackwardChoice.fromString(layerOption));
     }
 
     private static SpriteLookStmt parseGoToLayer(JsonNode current, JsonNode allBlocks) throws ParsingException {

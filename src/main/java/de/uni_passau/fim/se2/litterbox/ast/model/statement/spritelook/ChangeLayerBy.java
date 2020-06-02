@@ -26,14 +26,20 @@ import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 public class ChangeLayerBy extends AbstractNode implements SpriteLookStmt {
 
     private final NumExpr num;
+    private final ForwardBackwardChoice forwardBackwardChoice;
 
-    public ChangeLayerBy(NumExpr num) {
-        super(num);
+    public ChangeLayerBy(NumExpr num, ForwardBackwardChoice forwardBackwardChoice) {
+        super(num, forwardBackwardChoice);
         this.num = Preconditions.checkNotNull(num);
+        this.forwardBackwardChoice = Preconditions.checkNotNull(forwardBackwardChoice);
     }
 
     public NumExpr getNum() {
         return num;
+    }
+
+    public ForwardBackwardChoice getForwardBackwardChoice() {
+        return forwardBackwardChoice;
     }
 
     @Override
