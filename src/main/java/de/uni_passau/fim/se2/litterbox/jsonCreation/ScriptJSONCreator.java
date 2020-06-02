@@ -18,6 +18,7 @@ import java.util.List;
 
 import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 import static de.uni_passau.fim.se2.litterbox.jsonCreation.BlockJsonCreatorHelper.*;
+import static de.uni_passau.fim.se2.litterbox.jsonCreation.JSONStringCreator.createField;
 import static de.uni_passau.fim.se2.litterbox.jsonCreation.StmtListJSONCreator.EMPTY_VALUE;
 
 public class ScriptJSONCreator {
@@ -26,7 +27,7 @@ public class ScriptJSONCreator {
         Event event = script.getEvent();
         StmtListJSONCreator stmtListJSONCreator = null;
         StmtList stmtList = script.getStmtList();
-        ExpressionJSONCreator exprCreator= new ExpressionJSONCreator();
+        ExpressionJSONCreator exprCreator = new ExpressionJSONCreator();
         if (event instanceof Never) {
             stmtListJSONCreator = new StmtListJSONCreator(stmtList, symbol);
             jsonString.append(stmtListJSONCreator.createStmtListJSONString());
@@ -54,10 +55,12 @@ public class ScriptJSONCreator {
                 } else {
                     IdJsonStringTuple tuple = exprCreator.createExpressionJSON(meta.getBlockId(),
                             numExpr);
-                    if (tuple.getId()==null){
-                        inputs.add(tuple.getJsonString());
-                    }else{
-                        inputs.add(createReferenceJSON(tuple.getId(),VALUE_KEY,true));
+                    if (tuple.getId() == null) {
+                        StringBuilder inputString = new StringBuilder();
+                        createField(inputString, VALUE_KEY).append(tuple.getJsonString());
+                        inputs.add(inputString.toString());
+                    } else {
+                        inputs.add(createReferenceJSON(tuple.getId(), VALUE_KEY, true));
                         jsonString.append(tuple.getJsonString()).append(",");
                     }
                 }
