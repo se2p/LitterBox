@@ -3764,4 +3764,17 @@ public interface ScratchVisitor {
     default void visit(ProcedureMetadata node) {
         visit((Metadata) node);
     }
+
+    /**
+     * Default implementation of visit method for {@link ForwardBackwardChoice}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node ForwardBackwardChoice Node of which the children will be iterated
+     */
+    default void visit(ForwardBackwardChoice node) {
+        visit((ASTLeaf) node);
+    }
 }
