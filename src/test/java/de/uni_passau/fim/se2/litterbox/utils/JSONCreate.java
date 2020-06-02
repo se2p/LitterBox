@@ -18,7 +18,7 @@ public class JSONCreate {
 
     @BeforeAll
     public static void setUp() throws IOException {
-        File f = new File("./src/test/fixtures/metadata/penSizeColorStmts.json");
+        File f = new File("./src/test/fixtures/metadata/simpleExpressions.json");
         prog = mapper.readTree(f);
     }
 

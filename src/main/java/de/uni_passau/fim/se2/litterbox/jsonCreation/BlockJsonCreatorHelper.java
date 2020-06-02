@@ -10,6 +10,8 @@ import static de.uni_passau.fim.se2.litterbox.ast.parser.KeyParser.*;
 import static de.uni_passau.fim.se2.litterbox.jsonCreation.JSONStringCreator.*;
 
 public abstract class BlockJsonCreatorHelper {
+    private static final String defaultValue = "[10,\"\"]";
+
     public static StringBuilder createBlockUpToParent(StringBuilder jsonString, NonDataBlockMetadata meta,
                                                       String nextId, String parentId) {
 
@@ -139,13 +141,17 @@ public abstract class BlockJsonCreatorHelper {
         return key;
     }
 
-    public static String createReferenceInput(String inputName, int shadowIndicator, String reference) {
+    public static String createReferenceInput(String inputName, int shadowIndicator, String reference,
+                                              boolean withDefault) {
         StringBuilder jsonString = new StringBuilder();
         createField(jsonString, inputName).append("[").append(shadowIndicator).append(",");
         if (reference == null) {
             jsonString.append(reference);
         } else {
             jsonString.append("\"").append(reference).append("\"");
+        }
+        if (withDefault) {
+            jsonString.append(",").append(defaultValue);
         }
         jsonString.append("]");
         return jsonString.toString();
@@ -164,27 +170,34 @@ public abstract class BlockJsonCreatorHelper {
         return jsonString.toString();
     }
 
-    public static String createTypeInput(String inputName, int shadowIndicator, int typeNumber,
+    public static String createTypeInputWithName(String inputName, int shadowIndicator, int typeNumber,
+                                                 String value) {
+        StringBuilder jsonString = new StringBuilder();
+        createField(jsonString, inputName).append(createTypeInput(shadowIndicator, typeNumber, value));
+        return jsonString.toString();
+    }
+
+    public static String createTypeInput(int shadowIndicator, int typeNumber,
                                          String value) {
         StringBuilder jsonString = new StringBuilder();
-        createField(jsonString, inputName).append("[").append(shadowIndicator).append(",").append("[").append(typeNumber).append(",\"").append(value).append("\"]]");
+        jsonString.append("[").append(shadowIndicator).append(",").append("[").append(typeNumber).append(",\"").append(value).append("\"]]");
         return jsonString.toString();
     }
 
     public static String createReferenceTypeInput(String inputName, int shadowIndicator, int typeNumber,
                                                   String value, String reference) {
         StringBuilder jsonString = new StringBuilder();
-        createField(jsonString, inputName).append("[").append(shadowIndicator).append(",").append("[").append(typeNumber).append(",\"").append(value).append("\",\"").append(reference).append("\"]]");
+        createField(jsonString, inputName).append("[").append(shadowIndicator).append(",").append("[").append(typeNumber).append(",\"").append(value).append("\",\"").append(reference).append("\"],").append(defaultValue).append("]");
         return jsonString.toString();
     }
 
     public static String createReferenceJSON(
-            String blockId, String inputName) {
+            String blockId, String inputName, boolean withDefault) {
         if (blockId == null) {
-            return createReferenceInput(inputName, INPUT_SAME_BLOCK_SHADOW, null);
+            return createReferenceInput(inputName, INPUT_SAME_BLOCK_SHADOW, null, false);
         } else {
-            return createReferenceInput(inputName, INPUT_BLOCK_NO_SHADOW,
-                    blockId);
+            return createReferenceInput(inputName, INPUT_DIFF_BLOCK_SHADOW,
+                    blockId, withDefault);
         }
     }
 }

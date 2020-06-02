@@ -47,9 +47,9 @@ public class ScriptJSONCreator {
                 List<String> inputs = new ArrayList<>();
                 NumExpr numExpr = attributeAboveValue.getValue();
                 if (numExpr instanceof UnspecifiedNumExpr) {
-                    inputs.add(createTypeInput(VALUE_KEY, INPUT_SAME_BLOCK_SHADOW, MATH_NUM_PRIMITIVE, ""));
+                    inputs.add(createTypeInputWithName(VALUE_KEY, INPUT_SAME_BLOCK_SHADOW, MATH_NUM_PRIMITIVE, ""));
                 } else if (numExpr instanceof NumberLiteral) {
-                    inputs.add(createTypeInput(VALUE_KEY, INPUT_SAME_BLOCK_SHADOW, MATH_NUM_PRIMITIVE,
+                    inputs.add(createTypeInputWithName(VALUE_KEY, INPUT_SAME_BLOCK_SHADOW, MATH_NUM_PRIMITIVE,
                             String.valueOf((float) ((NumberLiteral) numExpr).getValue())));
                 } else {
                     IdJsonStringTuple tuple = exprCreator.createExpressionJSON(meta.getBlockId(),
@@ -57,7 +57,7 @@ public class ScriptJSONCreator {
                     if (tuple.getId()==null){
                         inputs.add(tuple.getJsonString());
                     }else{
-                        inputs.add(createReferenceJSON(tuple.getId(),VALUE_KEY));
+                        inputs.add(createReferenceJSON(tuple.getId(),VALUE_KEY,true));
                         jsonString.append(tuple.getJsonString()).append(",");
                     }
                 }

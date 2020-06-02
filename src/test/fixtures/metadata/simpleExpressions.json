@@ -49,72 +49,48 @@
       "lists": {},
       "broadcasts": {},
       "blocks": {
-        "ohUwn9%Nv/$`Ch20M-G(": {
-          "opcode": "motion_movesteps",
-          "next": "H-nJ+}V_upU;b_MxGb*q",
+        "J1uLO6PR7Fw]|!YP6E%*": {
+          "opcode": "looks_sayforsecs",
+          "next": null,
           "parent": null,
           "inputs": {
-            "STEPS": [
-              1,
+            "MESSAGE": [
+              3,
+              "Ouuix*D._hhSU*YY_Wi1",
+              [
+                10,
+                ""
+              ]
+            ],
+            "SECS": [
+              3,
+              "J!x:[xq~}8ZCDD|4dV0?",
               [
                 4,
-                ""
+                "2"
               ]
             ]
           },
           "fields": {},
           "shadow": false,
           "topLevel": true,
-          "x": 339,
-          "y": 211
+          "x": 448,
+          "y": 316
         },
-        "H-nJ+}V_upU;b_MxGb*q": {
-          "opcode": "pen_setPenColorToColor",
-          "next": "4aMZwFP90;b.gLiQ)(Bb",
-          "parent": "ohUwn9%Nv/$`Ch20M-G(",
-          "inputs": {
-            "COLOR": [
-              1,
-              [
-                9,
-                "#8906bc"
-              ]
-            ]
-          },
-          "fields": {},
-          "shadow": false,
-          "topLevel": false
-        },
-        "4aMZwFP90;b.gLiQ)(Bb": {
-          "opcode": "pen_changePenSizeBy",
-          "next": "0gugoe6VGFsjPRdy5[/X",
-          "parent": "H-nJ+}V_upU;b_MxGb*q",
-          "inputs": {
-            "SIZE": [
-              1,
-              [
-                4,
-                "1.4"
-              ]
-            ]
-          },
-          "fields": {},
-          "shadow": false,
-          "topLevel": false
-        },
-        "0gugoe6VGFsjPRdy5[/X": {
-          "opcode": "pen_setPenSizeTo",
+        "Ouuix*D._hhSU*YY_Wi1": {
+          "opcode": "sensing_answer",
           "next": null,
-          "parent": "4aMZwFP90;b.gLiQ)(Bb",
-          "inputs": {
-            "SIZE": [
-              1,
-              [
-                4,
-                "-1.2"
-              ]
-            ]
-          },
+          "parent": "J1uLO6PR7Fw]|!YP6E%*",
+          "inputs": {},
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "J!x:[xq~}8ZCDD|4dV0?": {
+          "opcode": "sensing_mousex",
+          "next": null,
+          "parent": "J1uLO6PR7Fw]|!YP6E%*",
+          "inputs": {},
           "fields": {},
           "shadow": false,
           "topLevel": false
@@ -165,9 +141,7 @@
     }
   ],
   "monitors": [],
-  "extensions": [
-    "pen"
-  ],
+  "extensions": [],
   "meta": {
     "semver": "3.0.0",
     "vm": "0.2.0-prerelease.20200527195112",
