@@ -5,24 +5,26 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.AsBool;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.IsMouseDown;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.UnspecifiedBoolExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.Answer;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.UnspecifiedStringExpr;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.Username;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Identifier;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.BoolLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.ColorLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.FieldsMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.FromNumber;
+import de.uni_passau.fim.se2.litterbox.ast.model.variable.ScratchList;
+import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.SymbolTable;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
+import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
-import static de.uni_passau.fim.se2.litterbox.jsonCreation.BlockJsonCreatorHelper.createBlockWithoutMutationString;
-import static de.uni_passau.fim.se2.litterbox.jsonCreation.BlockJsonCreatorHelper.createTypeInput;
+import static de.uni_passau.fim.se2.litterbox.jsonCreation.BlockJsonCreatorHelper.*;
 import static de.uni_passau.fim.se2.litterbox.jsonCreation.StmtListJSONCreator.EMPTY_VALUE;
 
 
@@ -30,11 +32,13 @@ public class ExpressionJSONCreator implements ScratchVisitor {
     private List<String> finishedJSONStrings;
     private String previousBlockId = null;
     private String topExpressionId = null;
+    private SymbolTable symbolTable;
 
-    public IdJsonStringTuple createExpressionJSON(String parentId, ASTNode expression) {
+    public IdJsonStringTuple createExpressionJSON(String parentId, ASTNode expression, SymbolTable symbolTable) {
         finishedJSONStrings = new ArrayList<>();
         topExpressionId = null;
         previousBlockId = parentId;
+        this.symbolTable = symbolTable;
         expression.accept(this);
         StringBuilder jsonString = new StringBuilder();
         for (int i = 0; i < finishedJSONStrings.size() - 1; i++) {
@@ -110,7 +114,7 @@ public class ExpressionJSONCreator implements ScratchVisitor {
     }
 
 
-    private void createSimpleExpression(NonDataBlockMetadata metadata){
+    private void createSimpleExpression(NonDataBlockMetadata metadata) {
         if (topExpressionId == null) {
             topExpressionId = metadata.getBlockId();
         }
@@ -121,7 +125,7 @@ public class ExpressionJSONCreator implements ScratchVisitor {
 
     @Override
     public void visit(Answer node) {
-       createSimpleExpression((NonDataBlockMetadata) node.getMetadata());
+        createSimpleExpression((NonDataBlockMetadata) node.getMetadata());
 
     }
 
@@ -129,6 +133,7 @@ public class ExpressionJSONCreator implements ScratchVisitor {
     public void visit(MouseX node) {
         createSimpleExpression((NonDataBlockMetadata) node.getMetadata());
     }
+
     @Override
     public void visit(MouseY node) {
         createSimpleExpression((NonDataBlockMetadata) node.getMetadata());
@@ -183,4 +188,54 @@ public class ExpressionJSONCreator implements ScratchVisitor {
     public void visit(Username node) {
         createSimpleExpression((NonDataBlockMetadata) node.getMetadata());
     }
+
+    @Override
+    public void visit(Costume node) {
+        createFieldsExpression((NonDataBlockMetadata) node.getMetadata(), node.getType().getType());
+    }
+
+    @Override
+    public void visit(Backdrop node) {
+        createFieldsExpression((NonDataBlockMetadata) node.getMetadata(), node.getType().getType());
+    }
+
+    @Override
+    public void visit(Current node) {
+        createFieldsExpression((NonDataBlockMetadata) node.getMetadata(), node.getTimeComp().getLabel());
+    }
+
+    private void createFieldsExpression(NonDataBlockMetadata metadata, String fieldValue) {
+        if (topExpressionId == null) {
+            topExpressionId = metadata.getBlockId();
+        }
+        FieldsMetadata fieldsMeta = metadata.getFields().getList().get(0);
+        String fieldsString = createFields(fieldsMeta.getFieldsName(), fieldValue, null);
+        finishedJSONStrings.add(createBlockWithoutMutationString(metadata, null,
+                previousBlockId, EMPTY_VALUE, fieldsString));
+        previousBlockId = metadata.getBlockId();
+    }
+
+    @Override
+    public void visit(LengthOfVar node) {
+        NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
+        if (topExpressionId == null) {
+            topExpressionId = metadata.getBlockId();
+        }
+        String fieldsString = getListDataFields((NonDataBlockMetadata) node.getMetadata(), node.getIdentifier());
+        finishedJSONStrings.add(createBlockWithoutMutationString(metadata, null,
+                previousBlockId, EMPTY_VALUE, fieldsString));
+        previousBlockId = metadata.getBlockId();
+    }
+
+    private String getListDataFields(NonDataBlockMetadata metadata, Identifier identifier) {
+        FieldsMetadata fieldsMeta = metadata.getFields().getList().get(0);
+        Preconditions.checkArgument(identifier instanceof Qualified, "Identifier of list has to be in Qualified");
+        Qualified qual = (Qualified) identifier;
+        Preconditions.checkArgument(qual.getSecond() instanceof ScratchList, "Qualified has to hold Scratch List");
+        ScratchList list = (ScratchList) qual.getSecond();
+        String id = symbolTable.getListIdentifierFromActorAndName(qual.getFirst().getName(), list.getName().getName());
+        return createFields(fieldsMeta.getFieldsName(), list.getName().getName(), id);
+    }
+
+
 }
