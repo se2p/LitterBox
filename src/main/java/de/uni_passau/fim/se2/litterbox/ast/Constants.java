@@ -237,6 +237,8 @@ public class Constants {
     public final static String NUM2_KEY = "NUM2";
     public final static String FROM_KEY = "FROM";
     public final static String TO_KEY = "TO";
+    public final static String TOWARDS_KEY = "TOWARDS";
+    public final static String DISTANCETOMENU_KEY = "DISTANCETOMENU";
     public final static String TIMES_KEY = "TIMES";
     public final static String STEPS_KEY = "STEPS";
     public final static String DEGREES_KEY = "DEGREES";
@@ -278,4 +280,27 @@ public class Constants {
     public final static String RATE_KEY = "rate";
     public final static String SAMPLE_COUNT_KEY = "sampleCount";
     public final static String HAS_NEXT_KEY = "hasnext";
+    public final static String ID_KEY = "id";
+    public final static String MODE_KEY = "mode";
+    public final static String PARAMS_KEY = "params";
+    public final static String SPRITE_NAME_KEY = "spriteName";
+    public final static String VALUE_LOWER_KEY = "value";
+    public final static String SLIDER_MIN_KEY = "sliderMin";
+    public final static String SLIDER_MAX_KEY = "sliderMax";
+    public final static String IS_DISCRETE_KEY = "isDiscrete";
+    public final static String BLOCK_ID_KEY = "blockId";
+    public final static String MINIMIZED_KEY = "minimized";
+    public final static String TEXT_KEY = "text";
+    public final static String SUBSTACK_KEY = "SUBSTACK";
+    public final static String SUBSTACK2_KEY = "SUBSTACK2";
+    public final static String MOUSE = "_mouse_";
+    public final static String RANDOM = "_random_";
+    public static final String COSTUME_INPUT = "COSTUME";
+    public static final String BACKDROP_INPUT = "BACKDROP";
+    public static final String RANDOM_BACKDROP = "random backdrop";
+    public static final String NEXT_BACKDROP = "next backdrop";
+    public static final String PREVIOUS_BACKDROP = "previous backdrop";
+    public static final String SOUND_MENU = "SOUND_MENU";
+    public static final String CLONE_OPTION = "CLONE_OPTION";
+    public static final String BROADCAST_INPUT_KEY = "BROADCAST_INPUT";
 }

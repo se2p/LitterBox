@@ -44,8 +44,6 @@ import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 
 public class ActorSoundStmtParser {
 
-    private static final String SOUND_MENU = "SOUND_MENU";
-
     public static ActorSoundStmt parse(String blockId, JsonNode current, JsonNode allBlocks) throws ParsingException {
         Preconditions.checkNotNull(current);
         Preconditions.checkNotNull(allBlocks);
@@ -102,7 +100,7 @@ public class ActorSoundStmtParser {
             String soundValue = soundMenu.get(FIELDS_KEY).get(SOUND_MENU).get(FIELD_VALUE).asText();
             BlockMetadata metadata = BlockMetadataParser.parse(soundMenuId, soundMenu);
 
-            return new WithExpr(new AsString(new StrId(soundValue)), metadata);
+            return new WithExpr(new StrId(soundValue), metadata);
         } else {
             final Expression expression = ExpressionParser.parseExpr(current, SOUND_MENU, allBlocks);
             return new WithExpr(expression, new NoBlockMetadata());

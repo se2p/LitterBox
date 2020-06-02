@@ -23,15 +23,15 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Message;
 public class MessageInfo {
 
     boolean global;
-    String scriptGroup;
-    String variableName;
+    String actor;
+    String identifier;
     Message message;
 
-    public MessageInfo(boolean global, String scriptGroup, String ident,
+    public MessageInfo(boolean global, String actor, String ident,
                        Message message) {
         this.global = global;
-        this.scriptGroup = scriptGroup;
-        this.variableName = ident;
+        this.actor = actor;
+        this.identifier = ident;
         this.message = message;
     }
 
@@ -39,12 +39,12 @@ public class MessageInfo {
         return global;
     }
 
-    public String getScriptGroup() {
-        return scriptGroup;
+    public String getActor() {
+        return actor;
     }
 
-    public String getVariableName() {
-        return variableName;
+    public String getIdentifier() {
+        return identifier;
     }
 
     public Message getMessage() {

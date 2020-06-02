@@ -33,11 +33,10 @@ import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 import java.util.ArrayList;
 import java.util.List;
 
+import static de.uni_passau.fim.se2.litterbox.ast.Constants.COSTUME_INPUT;
 import static de.uni_passau.fim.se2.litterbox.ast.Constants.FIELDS_KEY;
 
 public class CostumeChoiceParser {
-
-    private static final String COSTUME_INPUT = "COSTUME";
 
     public static ElementChoice parse(JsonNode current, JsonNode allBlocks) throws ParsingException {
         Preconditions.checkNotNull(current);

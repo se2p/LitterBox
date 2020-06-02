@@ -26,6 +26,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.FromExpression;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.MousePos;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.Position;
@@ -37,6 +38,7 @@ import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import java.util.ArrayList;
 
+import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 import static de.uni_passau.fim.se2.litterbox.ast.opcodes.SpriteMotionStmtOpcode.*;
 
 public class PositionParser {
@@ -44,9 +46,9 @@ public class PositionParser {
     public static Position parse(JsonNode current, JsonNode allBlocks) throws ParsingException {
         Preconditions.checkNotNull(current);
         Preconditions.checkNotNull(allBlocks);
-        if (current.get(Constants.INPUTS_KEY).has("TO") ||
-                current.get(Constants.INPUTS_KEY).has("TOWARDS") ||
-                current.get(Constants.INPUTS_KEY).has("DISTANCETOMENU")) {
+        if (current.get(Constants.INPUTS_KEY).has(TO_KEY) ||
+                current.get(Constants.INPUTS_KEY).has(TOWARDS_KEY) ||
+                current.get(Constants.INPUTS_KEY).has(DISTANCETOMENU_KEY)) {
             return parseRelativePos(current, allBlocks);
         } else {
             throw new ParsingException("Could not parse block " + current.toString());
@@ -85,27 +87,27 @@ public class PositionParser {
             ArrayList<JsonNode> fields = new ArrayList<>();
             allBlocks.get(menuID.asText()).get(Constants.FIELDS_KEY).elements().forEachRemaining(fields::add);
             String posString = fields.get(Constants.FIELD_VALUE).get(0).asText();
-            BlockMetadata metadata = BlockMetadataParser.parse(menuID.asText(),allBlocks.get(menuID.asText()));
+            BlockMetadata metadata = BlockMetadataParser.parse(menuID.asText(), allBlocks.get(menuID.asText()));
 
-            if (posString.equals("_mouse_")) {
+            if (posString.equals(MOUSE)) {
                 return new MousePos(metadata);
-            } else if (posString.equals("_random_")) {
+            } else if (posString.equals(RANDOM)) {
                 return new RandomPos(metadata);
             } else {
-                return new FromExpression(new AsString(new StrId(posString)));
+                return new FromExpression(new AsString(new StrId(posString)),metadata);
             }
         } else {
             String posName = "";
             if (motion_goto.toString().equals(opcodeString) || motion_glideto.toString().equals(opcodeString)) {
-                posName = "TO";
+                posName = TO_KEY;
             } else if (motion_pointtowards.toString().equals(opcodeString)) {
-                posName = "TOWARDS";
+                posName = TOWARDS_KEY;
             } else if (NumExprOpcode.sensing_distanceto.toString().equals(opcodeString)) {
-                posName = "DISTANCETOMENU";
+                posName = DISTANCETOMENU_KEY;
             }
 
             final StringExpr stringExpr = StringExprParser.parseStringExpr(current, posName, allBlocks);
-            return new FromExpression(stringExpr);
+            return new FromExpression(stringExpr,new NoBlockMetadata());
         }
     }
 

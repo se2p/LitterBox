@@ -45,8 +45,6 @@ import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 
 public class ActorLookStmtParser {
 
-    private static final String CHANGE_BACKDROP_TO = "BACKDROP";
-
     public static ActorLookStmt parse(String blockId, JsonNode current, JsonNode allBlocks) throws ParsingException {
         Preconditions.checkNotNull(current);
         Preconditions.checkNotNull(allBlocks);
@@ -137,8 +135,8 @@ public class ActorLookStmtParser {
                 return parseSetLookEffect(current, allBlocks, metadata);
 
             case looks_changeeffectby:
-                NumExpr numExpr = NumExprParser.parseNumExpr(current, "CHANGE", allBlocks);
-                String effectName = current.get(FIELDS_KEY).get("EFFECT").get(0).asText();
+                NumExpr numExpr = NumExprParser.parseNumExpr(current, CHANGE_KEY, allBlocks);
+                String effectName = current.get(FIELDS_KEY).get(EFFECT_KEY).get(0).asText();
                 return new ChangeGraphicEffectBy(GraphicEffect.fromString(effectName), numExpr, metadata);
             default:
                 throw new ParsingException("No parser for opcode " + opcodeString);

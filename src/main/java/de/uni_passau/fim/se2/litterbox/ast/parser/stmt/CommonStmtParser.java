@@ -31,6 +31,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.CloneOfMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.CommonStmtOpcode;
@@ -49,11 +51,9 @@ import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 
 public class CommonStmtParser {
 
-    private static final String CLONE_OPTION = "CLONE_OPTION";
     private static final String STOP_OPTION = "STOP_OPTION";
     private static final String STOP_OTHER = "other scripts in sprite";
     private static final String STOP_OTHER_IN_STAGE = "other scripts in stage";
-    private static final String BROADCAST_INPUT_KEY = "BROADCAST_INPUT";
 
     public static CommonStmt parse(String blockId, JsonNode current, JsonNode allBlocks) throws ParsingException {
         Preconditions.checkNotNull(current);
@@ -141,12 +141,13 @@ public class CommonStmtParser {
         if (getShadowIndicator((ArrayNode) inputsList.get(0)) == 1) {
             String cloneOptionMenu = inputs.get(CLONE_OPTION).get(POS_INPUT_VALUE).asText();
             JsonNode optionBlock = allBlocks.get(cloneOptionMenu);
+            BlockMetadata cloneMenuMetadata = BlockMetadataParser.parse(cloneOptionMenu, optionBlock);
             String cloneValue = optionBlock.get(FIELDS_KEY).get(CLONE_OPTION).get(FIELD_VALUE).asText();
             LocalIdentifier ident = new StrId(cloneValue);
-            return new CreateCloneOf(new AsString(ident), metadata);
+            return new CreateCloneOf(new AsString(ident), new CloneOfMetadata(metadata, cloneMenuMetadata));
         } else {
             final StringExpr stringExpr = StringExprParser.parseStringExpr(current, CLONE_OPTION, allBlocks);
-            return new CreateCloneOf(stringExpr, metadata);
+            return new CreateCloneOf(stringExpr, new CloneOfMetadata(metadata, new NoBlockMetadata()));
         }
     }
 
