@@ -50,6 +50,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.ChangeVariable
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetAttributeTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetVariableTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.list.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.ChangeLayerBy;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.LayerChoice;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SetDragMode;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SetRotationStyle;
@@ -196,6 +197,14 @@ public class BlockCount implements IssueFinder, ScratchVisitor {
             count++;
         }
         node.getValue().accept(this);
+    }
+
+    @Override
+    public void visit(ChangeLayerBy node) {
+        if (insideScript || insideProcedure) {
+            count++;
+        }
+       node.getNum().accept(this);
     }
 
     @Override

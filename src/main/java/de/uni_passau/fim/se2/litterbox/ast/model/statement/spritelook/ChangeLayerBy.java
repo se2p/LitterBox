@@ -28,10 +28,12 @@ public class ChangeLayerBy extends AbstractNode implements SpriteLookStmt {
 
     private final NumExpr num;
     private final BlockMetadata metadata;
+    private final ForwardBackwardChoice forwardBackwardChoice;
 
-    public ChangeLayerBy(NumExpr num, BlockMetadata metadata) {
-        super(num, metadata);
+    public ChangeLayerBy(NumExpr num,ForwardBackwardChoice forwardBackwardChoice, BlockMetadata metadata) {
+        super(num, forwardBackwardChoice,metadata);
         this.num = Preconditions.checkNotNull(num);
+        this.forwardBackwardChoice = Preconditions.checkNotNull(forwardBackwardChoice);
         this.metadata = metadata;
     }
 
@@ -41,6 +43,10 @@ public class ChangeLayerBy extends AbstractNode implements SpriteLookStmt {
 
     public NumExpr getNum() {
         return num;
+    }
+
+    public ForwardBackwardChoice getForwardBackwardChoice() {
+        return forwardBackwardChoice;
     }
 
     @Override
