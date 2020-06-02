@@ -2,13 +2,13 @@ package de.uni_passau.fim.se2.litterbox.jsonCreation;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.AsBool;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.IsMouseDown;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.UnspecifiedBoolExpr;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.AsNumber;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.MouseX;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.UnspecifiedNumExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.Answer;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.UnspecifiedStringExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.Username;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.BoolLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.ColorLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
@@ -110,9 +110,7 @@ public class ExpressionJSONCreator implements ScratchVisitor {
     }
 
 
-    @Override
-    public void visit(Answer node) {
-        NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
+    private void createSimpleExpression(NonDataBlockMetadata metadata){
         if (topExpressionId == null) {
             topExpressionId = metadata.getBlockId();
         }
@@ -122,13 +120,67 @@ public class ExpressionJSONCreator implements ScratchVisitor {
     }
 
     @Override
+    public void visit(Answer node) {
+       createSimpleExpression((NonDataBlockMetadata) node.getMetadata());
+
+    }
+
+    @Override
     public void visit(MouseX node) {
-        NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
-        if (topExpressionId == null) {
-            topExpressionId = metadata.getBlockId();
-        }
-        finishedJSONStrings.add(createBlockWithoutMutationString(metadata, null, previousBlockId, EMPTY_VALUE,
-                EMPTY_VALUE));
-        previousBlockId = metadata.getBlockId();
+        createSimpleExpression((NonDataBlockMetadata) node.getMetadata());
+    }
+    @Override
+    public void visit(MouseY node) {
+        createSimpleExpression((NonDataBlockMetadata) node.getMetadata());
+    }
+
+    @Override
+    public void visit(PositionX node) {
+        createSimpleExpression((NonDataBlockMetadata) node.getMetadata());
+    }
+
+    @Override
+    public void visit(PositionY node) {
+        createSimpleExpression((NonDataBlockMetadata) node.getMetadata());
+    }
+
+    @Override
+    public void visit(Direction node) {
+        createSimpleExpression((NonDataBlockMetadata) node.getMetadata());
+    }
+
+    @Override
+    public void visit(Size node) {
+        createSimpleExpression((NonDataBlockMetadata) node.getMetadata());
+    }
+
+    @Override
+    public void visit(Volume node) {
+        createSimpleExpression((NonDataBlockMetadata) node.getMetadata());
+    }
+
+    @Override
+    public void visit(IsMouseDown node) {
+        createSimpleExpression((NonDataBlockMetadata) node.getMetadata());
+    }
+
+    @Override
+    public void visit(Loudness node) {
+        createSimpleExpression((NonDataBlockMetadata) node.getMetadata());
+    }
+
+    @Override
+    public void visit(Timer node) {
+        createSimpleExpression((NonDataBlockMetadata) node.getMetadata());
+    }
+
+    @Override
+    public void visit(DaysSince2000 node) {
+        createSimpleExpression((NonDataBlockMetadata) node.getMetadata());
+    }
+
+    @Override
+    public void visit(Username node) {
+        createSimpleExpression((NonDataBlockMetadata) node.getMetadata());
     }
 }
