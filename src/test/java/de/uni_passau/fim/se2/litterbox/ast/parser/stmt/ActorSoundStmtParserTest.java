@@ -120,8 +120,7 @@ public class ActorSoundStmtParserTest {
 
             PlaySoundUntilDone playSoundUntilDone = (PlaySoundUntilDone) listOfStmt.get(0);
             WithExpr elementChoice = (WithExpr) playSoundUntilDone.getElementChoice();
-            AsString stringExpr = (AsString) elementChoice.getExpression();
-            StrId strid = (StrId) stringExpr.getOperand1();
+            StrId strid = (StrId) elementChoice.getExpression();
             Truth.assertThat(strid.getName()).isEqualTo("Meow");
         } catch (ParsingException e) {
             e.printStackTrace();
@@ -143,8 +142,7 @@ public class ActorSoundStmtParserTest {
 
             StartSound startSound = (StartSound) listOfStmt.get(1);
             WithExpr elementChoice = (WithExpr) startSound.getElementChoice();
-            AsString stringExpr = (AsString) elementChoice.getExpression();
-            StrId strid = (StrId) stringExpr.getOperand1();
+            StrId strid = (StrId) elementChoice.getExpression();
             Truth.assertThat(strid.getName()).isEqualTo("Meow");
         } catch (ParsingException e) {
             e.printStackTrace();
