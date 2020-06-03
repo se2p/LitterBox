@@ -254,44 +254,84 @@ public class ExpressionJSONCreator implements ScratchVisitor {
 
     @Override
     public void visit(Add node) {
-        mathOperations((NonDataBlockMetadata) node.getMetadata(), node.getOperand1(), node.getOperand2(), NUM1_KEY,
+        mathStringOperations((NonDataBlockMetadata) node.getMetadata(), node.getOperand1(), node.getOperand2(),
+                NUM1_KEY,
                 NUM2_KEY);
     }
 
     @Override
     public void visit(Minus node) {
-        mathOperations((NonDataBlockMetadata) node.getMetadata(), node.getOperand1(), node.getOperand2(), NUM1_KEY,
+        mathStringOperations((NonDataBlockMetadata) node.getMetadata(), node.getOperand1(), node.getOperand2(),
+                NUM1_KEY,
                 NUM2_KEY);
     }
 
     @Override
     public void visit(Mult node) {
-        mathOperations((NonDataBlockMetadata) node.getMetadata(), node.getOperand1(), node.getOperand2(), NUM1_KEY,
+        mathStringOperations((NonDataBlockMetadata) node.getMetadata(), node.getOperand1(), node.getOperand2(),
+                NUM1_KEY,
                 NUM2_KEY);
     }
 
     @Override
     public void visit(Div node) {
-        mathOperations((NonDataBlockMetadata) node.getMetadata(), node.getOperand1(), node.getOperand2(), NUM1_KEY,
+        mathStringOperations((NonDataBlockMetadata) node.getMetadata(), node.getOperand1(), node.getOperand2(),
+                NUM1_KEY,
                 NUM2_KEY);
     }
 
     @Override
     public void visit(LessThan node) {
-        mathOperations((NonDataBlockMetadata) node.getMetadata(), node.getOperand1(), node.getOperand2(), OPERAND1_KEY,
+        mathStringOperations((NonDataBlockMetadata) node.getMetadata(), node.getOperand1(), node.getOperand2(),
+                OPERAND1_KEY,
                 OPERAND2_KEY);
     }
 
     @Override
     public void visit(BiggerThan node) {
-        mathOperations((NonDataBlockMetadata) node.getMetadata(), node.getOperand1(), node.getOperand2(), OPERAND1_KEY,
+        mathStringOperations((NonDataBlockMetadata) node.getMetadata(), node.getOperand1(), node.getOperand2(),
+                OPERAND1_KEY,
                 OPERAND2_KEY);
     }
 
     @Override
     public void visit(Equals node) {
-        mathOperations((NonDataBlockMetadata) node.getMetadata(), node.getOperand1(), node.getOperand2(), OPERAND1_KEY,
+        mathStringOperations((NonDataBlockMetadata) node.getMetadata(), node.getOperand1(), node.getOperand2(),
+                OPERAND1_KEY,
                 OPERAND2_KEY);
+    }
+
+    @Override
+    public void visit(PickRandom node) {
+        mathStringOperations((NonDataBlockMetadata) node.getMetadata(), node.getOperand1(), node.getOperand2(),
+                FROM_KEY,
+                TO_KEY);
+    }
+
+    @Override
+    public void visit(Join node) {
+        mathStringOperations((NonDataBlockMetadata) node.getMetadata(), node.getOperand1(), node.getOperand2(),
+                STRING1_KEY,
+                STRING2_KEY);
+    }
+
+    @Override
+    public void visit(LetterOf node) {
+        mathStringOperations((NonDataBlockMetadata) node.getMetadata(), node.getNum(), node.getStringExpr(), LETTER_KEY,
+                STRING_KEY);
+    }
+
+    @Override
+    public void visit(Mod node) {
+        mathStringOperations((NonDataBlockMetadata) node.getMetadata(), node.getOperand1(), node.getOperand2(),
+                NUM1_KEY,
+                NUM2_KEY);
+    }
+
+    @Override
+    public void visit(StringContains node) {
+        mathStringOperations((NonDataBlockMetadata) node.getMetadata(), node.getContaining(), node.getContained(),
+                STRING1_KEY, STRING2_KEY);
     }
 
     @Override
@@ -302,6 +342,32 @@ public class ExpressionJSONCreator implements ScratchVisitor {
     @Override
     public void visit(And node) {
         boolOperations((NonDataBlockMetadata) node.getMetadata(), node.getOperand1(), node.getOperand2());
+    }
+
+    @Override
+    public void visit(Round node) {
+        NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
+        if (topExpressionId == null) {
+            topExpressionId = metadata.getBlockId();
+        }
+        List<String> inputs = new ArrayList<>();
+        inputs.add(createExpr(metadata, node.getOperand1(), NUM_KEY, false));
+        finishedJSONStrings.add(createBlockWithoutMutationString(metadata, null,
+                previousBlockId, createInputs(inputs), EMPTY_VALUE));
+        previousBlockId = metadata.getBlockId();
+    }
+
+    @Override
+    public void visit(LengthOfString node) {
+        NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
+        if (topExpressionId == null) {
+            topExpressionId = metadata.getBlockId();
+        }
+        List<String> inputs = new ArrayList<>();
+        inputs.add(createExpr(metadata, node.getStringExpr(), STRING_KEY, false));
+        finishedJSONStrings.add(createBlockWithoutMutationString(metadata, null,
+                previousBlockId, createInputs(inputs), EMPTY_VALUE));
+        previousBlockId = metadata.getBlockId();
     }
 
     @Override
@@ -407,6 +473,24 @@ public class ExpressionJSONCreator implements ScratchVisitor {
     }
 
     @Override
+    public void visit(NumFunctOf node) {
+        NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
+        if (topExpressionId == null) {
+            topExpressionId = metadata.getBlockId();
+        }
+        List<String> inputs = new ArrayList<>();
+        inputs.add(createExpr(metadata, node.getOperand2(), NUM_KEY, true));
+
+        FieldsMetadata fieldsMeta = metadata.getFields().getList().get(0);
+        String fieldsString = createFields(fieldsMeta.getFieldsName(), node.getOperand1().getFunction(), null);
+
+        finishedJSONStrings.add(createBlockWithoutMutationString(metadata, null,
+                previousBlockId, createInputs(inputs), fieldsString));
+        previousBlockId = metadata.getBlockId();
+    }
+
+
+    @Override
     public void visit(IsKeyPressed node) {
         NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
         if (topExpressionId == null) {
@@ -448,8 +532,9 @@ public class ExpressionJSONCreator implements ScratchVisitor {
         previousBlockId = metadata.getBlockId();
     }
 
-    private void mathOperations(NonDataBlockMetadata metadata, Expression expr1, Expression expr2, String inputName1,
-                                String inputName2) {
+    private void mathStringOperations(NonDataBlockMetadata metadata, Expression expr1, Expression expr2,
+                                      String inputName1,
+                                      String inputName2) {
         if (topExpressionId == null) {
             topExpressionId = metadata.getBlockId();
         }
