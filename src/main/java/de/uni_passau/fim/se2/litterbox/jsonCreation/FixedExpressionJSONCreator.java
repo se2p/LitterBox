@@ -8,12 +8,16 @@ import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.WithExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
+import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.CloneOfMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.FromExpression;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.MousePos;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.RandomPos;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.CreateCloneOf;
+import de.uni_passau.fim.se2.litterbox.ast.model.touchable.Edge;
+import de.uni_passau.fim.se2.litterbox.ast.model.touchable.MousePointer;
+import de.uni_passau.fim.se2.litterbox.ast.model.touchable.SpriteTouchable;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 import java.util.ArrayList;
@@ -106,7 +110,21 @@ public class FixedExpressionJSONCreator implements ScratchVisitor {
         }
     }
 
+    @Override
+    public void visit(MousePointer node) {
+        createFieldsExpression((NonDataBlockMetadata) node.getMetadata(), MOUSE);
+    }
 
+    @Override
+    public void visit(Edge node) {
+        createFieldsExpression((NonDataBlockMetadata) node.getMetadata(), TOUCHING_EDGE);
+    }
+
+    @Override
+    public void visit(SpriteTouchable node) {
+        createFieldsExpression((NonDataBlockMetadata) node.getMetadata(),
+                ((StringLiteral) node.getStringExpr()).getText());
+    }
 
     private void createFieldsExpression(NonDataBlockMetadata metadata, String fieldsValue) {
         if (topExpressionId == null) {

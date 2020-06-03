@@ -1,0 +1,265 @@
+{
+  "targets": [
+    {
+      "isStage": true,
+      "name": "Stage",
+      "variables": {
+        "`jEk@4|i[#Fk?(8x)AV.-my variable": [
+          "my variable",
+          0
+        ]
+      },
+      "lists": {},
+      "broadcasts": {},
+      "blocks": {},
+      "comments": {},
+      "currentCostume": 0,
+      "costumes": [
+        {
+          "assetId": "cd21514d0531fdffb22204e0ec5ed84a",
+          "name": "backdrop1",
+          "md5ext": "cd21514d0531fdffb22204e0ec5ed84a.svg",
+          "dataFormat": "svg",
+          "rotationCenterX": 240,
+          "rotationCenterY": 180
+        }
+      ],
+      "sounds": [
+        {
+          "assetId": "83a9787d4cb6f3b7632b4ddfebf74367",
+          "name": "pop",
+          "dataFormat": "wav",
+          "format": "",
+          "rate": 48000,
+          "sampleCount": 1124,
+          "md5ext": "83a9787d4cb6f3b7632b4ddfebf74367.wav"
+        }
+      ],
+      "volume": 100,
+      "layerOrder": 0,
+      "tempo": 60,
+      "videoTransparency": 50,
+      "videoState": "on",
+      "textToSpeechLanguage": null
+    },
+    {
+      "isStage": false,
+      "name": "Sprite1",
+      "variables": {},
+      "lists": {},
+      "broadcasts": {},
+      "blocks": {
+        "XB+ovq5iPF.ik+oV+-Ck": {
+          "opcode": "sensing_touchingobject",
+          "next": null,
+          "parent": null,
+          "inputs": {
+            "TOUCHINGOBJECTMENU": [
+              1,
+              "*pAL#2*62gM|}3%~2Ed*"
+            ]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": true,
+          "x": 311,
+          "y": 282
+        },
+        "*pAL#2*62gM|}3%~2Ed*": {
+          "opcode": "sensing_touchingobjectmenu",
+          "next": null,
+          "parent": "XB+ovq5iPF.ik+oV+-Ck",
+          "inputs": {},
+          "fields": {
+            "TOUCHINGOBJECTMENU": [
+              "_mouse_",
+              null
+            ]
+          },
+          "shadow": true,
+          "topLevel": false
+        },
+        "Sok1)?36Qrc!?Yw1xKAy": {
+          "opcode": "sensing_touchingobject",
+          "next": null,
+          "parent": null,
+          "inputs": {
+            "TOUCHINGOBJECTMENU": [
+              1,
+              "2d^Xpp?B{wXOhPA!Le@q"
+            ]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": true,
+          "x": 324,
+          "y": 353
+        },
+        "2d^Xpp?B{wXOhPA!Le@q": {
+          "opcode": "sensing_touchingobjectmenu",
+          "next": null,
+          "parent": "Sok1)?36Qrc!?Yw1xKAy",
+          "inputs": {},
+          "fields": {
+            "TOUCHINGOBJECTMENU": [
+              "Apple",
+              null
+            ]
+          },
+          "shadow": true,
+          "topLevel": false
+        },
+        "wJ)%FOm[*^FJO$1tPtd#": {
+          "opcode": "sensing_distanceto",
+          "next": null,
+          "parent": null,
+          "inputs": {
+            "DISTANCETOMENU": [
+              1,
+              "9L5!{UI8[pXeo$H_K2i-"
+            ]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": true,
+          "x": 295,
+          "y": 449
+        },
+        "9L5!{UI8[pXeo$H_K2i-": {
+          "opcode": "sensing_distancetomenu",
+          "next": null,
+          "parent": "wJ)%FOm[*^FJO$1tPtd#",
+          "inputs": {},
+          "fields": {
+            "DISTANCETOMENU": [
+              "_mouse_",
+              null
+            ]
+          },
+          "shadow": true,
+          "topLevel": false
+        },
+        "e+QK!/OcY2Zm!Q[{2w11": {
+          "opcode": "sensing_distanceto",
+          "next": null,
+          "parent": null,
+          "inputs": {
+            "DISTANCETOMENU": [
+              1,
+              "SllZB?rTI)n}wp(6hMiZ"
+            ]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": true,
+          "x": 279,
+          "y": 521
+        },
+        "SllZB?rTI)n}wp(6hMiZ": {
+          "opcode": "sensing_distancetomenu",
+          "next": null,
+          "parent": "e+QK!/OcY2Zm!Q[{2w11",
+          "inputs": {},
+          "fields": {
+            "DISTANCETOMENU": [
+              "Apple",
+              null
+            ]
+          },
+          "shadow": true,
+          "topLevel": false
+        }
+      },
+      "comments": {},
+      "currentCostume": 0,
+      "costumes": [
+        {
+          "assetId": "b7853f557e4426412e64bb3da6531a99",
+          "name": "costume1",
+          "bitmapResolution": 1,
+          "md5ext": "b7853f557e4426412e64bb3da6531a99.svg",
+          "dataFormat": "svg",
+          "rotationCenterX": 48,
+          "rotationCenterY": 50
+        },
+        {
+          "assetId": "e6ddc55a6ddd9cc9d84fe0b4c21e016f",
+          "name": "costume2",
+          "bitmapResolution": 1,
+          "md5ext": "e6ddc55a6ddd9cc9d84fe0b4c21e016f.svg",
+          "dataFormat": "svg",
+          "rotationCenterX": 46,
+          "rotationCenterY": 53
+        }
+      ],
+      "sounds": [
+        {
+          "assetId": "83c36d806dc92327b9e7049a565c6bff",
+          "name": "Meow",
+          "dataFormat": "wav",
+          "format": "",
+          "rate": 48000,
+          "sampleCount": 40682,
+          "md5ext": "83c36d806dc92327b9e7049a565c6bff.wav"
+        }
+      ],
+      "volume": 100,
+      "layerOrder": 1,
+      "visible": true,
+      "x": 0,
+      "y": 0,
+      "size": 100,
+      "direction": 90,
+      "draggable": false,
+      "rotationStyle": "all around"
+    },
+    {
+      "isStage": false,
+      "name": "Apple",
+      "variables": {},
+      "lists": {},
+      "broadcasts": {},
+      "blocks": {},
+      "comments": {},
+      "currentCostume": 0,
+      "costumes": [
+        {
+          "assetId": "3826a4091a33e4d26f87a2fac7cf796b",
+          "name": "apple",
+          "bitmapResolution": 1,
+          "md5ext": "3826a4091a33e4d26f87a2fac7cf796b.svg",
+          "dataFormat": "svg",
+          "rotationCenterX": 31,
+          "rotationCenterY": 31
+        }
+      ],
+      "sounds": [
+        {
+          "assetId": "0b1e3033140d094563248e61de4039e5",
+          "name": "Chomp",
+          "dataFormat": "wav",
+          "format": "",
+          "rate": 48000,
+          "sampleCount": 12679,
+          "md5ext": "0b1e3033140d094563248e61de4039e5.wav"
+        }
+      ],
+      "volume": 100,
+      "layerOrder": 2,
+      "visible": true,
+      "x": 74,
+      "y": -7,
+      "size": 100,
+      "direction": 90,
+      "draggable": false,
+      "rotationStyle": "all around"
+    }
+  ],
+  "monitors": [],
+  "extensions": [],
+  "meta": {
+    "semver": "3.0.0",
+    "vm": "0.2.0-prerelease.20200527195112",
+    "agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:76.0) Gecko/20100101 Firefox/76.0"
+  }
+}

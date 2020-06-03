@@ -13,6 +13,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.FieldsMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.touchable.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.FromNumber;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.ScratchList;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.SymbolTable;
@@ -34,6 +35,7 @@ public class ExpressionJSONCreator implements ScratchVisitor {
     private String topExpressionId = null;
     private SymbolTable symbolTable;
     private ExpressionJSONCreator expressionJSONCreator;
+    private FixedExpressionJSONCreator fixedExprCreator;
 
     public IdJsonStringTuple createExpressionJSON(String parentId, ASTNode expression, SymbolTable symbolTable) {
         finishedJSONStrings = new ArrayList<>();
@@ -41,6 +43,7 @@ public class ExpressionJSONCreator implements ScratchVisitor {
         previousBlockId = parentId;
         this.symbolTable = symbolTable;
         expressionJSONCreator = new ExpressionJSONCreator();
+        fixedExprCreator = new FixedExpressionJSONCreator();
         expression.accept(this);
         StringBuilder jsonString = new StringBuilder();
         for (int i = 0; i < finishedJSONStrings.size() - 1; i++) {
@@ -304,6 +307,28 @@ public class ExpressionJSONCreator implements ScratchVisitor {
             inputs.add(createExpr(metadata, node.getOperand1(), OPERAND_KEY, false));
         }
 
+        finishedJSONStrings.add(createBlockWithoutMutationString(metadata, null,
+                previousBlockId, createInputs(inputs), EMPTY_VALUE));
+        previousBlockId = metadata.getBlockId();
+    }
+
+
+    @Override
+    public void visit(Touching node) {
+        NonDataBlockMetadata metadata =(NonDataBlockMetadata) node.getMetadata();
+        if (topExpressionId == null) {
+            topExpressionId = metadata.getBlockId();
+        }
+        List<String> inputs = new ArrayList<>();
+        Touchable touchable = node.getTouchable();
+        if (touchable instanceof SpriteTouchable || touchable instanceof Edge || touchable instanceof MousePointer){
+            IdJsonStringTuple tuple = fixedExprCreator.createFixedExpressionJSON(metadata.getBlockId(), touchable);
+            finishedJSONStrings.add(tuple.getJsonString());
+           inputs.add(createReferenceInput(TOUCHINGOBJECTMENU, INPUT_SAME_BLOCK_SHADOW, tuple.getId(), false));
+        }else{
+            AsTouchable asTouchable = (AsTouchable) touchable;
+            inputs.add(createExpr(metadata, asTouchable.getOperand1(), TOUCHINGOBJECTMENU, true));
+        }
         finishedJSONStrings.add(createBlockWithoutMutationString(metadata, null,
                 previousBlockId, createInputs(inputs), EMPTY_VALUE));
         previousBlockId = metadata.getBlockId();

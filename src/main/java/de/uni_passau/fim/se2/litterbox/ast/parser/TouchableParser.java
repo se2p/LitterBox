@@ -63,7 +63,7 @@ public class TouchableParser {
         String touchingObject = allBlocks.get(menuID).get(FIELDS_KEY).get(TOUCHINGOBJECTMENU).get(0).asText();
         BlockMetadata metadata = BlockMetadataParser.parse(menuID, allBlocks.get(menuID));
 
-        if (touchingObject.equals(TOUCHING_MOUSE)) {
+        if (touchingObject.equals(MOUSE)) {
             return new MousePointer(metadata);
         } else if (touchingObject.equals(TOUCHING_EDGE)) {
             return new Edge(metadata);
