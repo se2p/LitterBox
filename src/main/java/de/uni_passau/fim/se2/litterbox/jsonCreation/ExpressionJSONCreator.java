@@ -1,10 +1,16 @@
 package de.uni_passau.fim.se2.litterbox.jsonCreation;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.Key;
+import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.ElementChoice;
+import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.WithExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.Attribute;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.AttributeFromFixed;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.AttributeFromVariable;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Identifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.BoolLiteral;
@@ -362,6 +368,60 @@ public class ExpressionJSONCreator implements ScratchVisitor {
                 inputs.add(createReferenceInput(DISTANCETOMENU_KEY, INPUT_SAME_BLOCK_SHADOW, tuple.getId(), false));
             }
         }
+        finishedJSONStrings.add(createBlockWithoutMutationString(metadata, null,
+                previousBlockId, createInputs(inputs), EMPTY_VALUE));
+        previousBlockId = metadata.getBlockId();
+    }
+
+    @Override
+    public void visit(AttributeOf node) {
+        NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
+        if (topExpressionId == null) {
+            topExpressionId = metadata.getBlockId();
+        }
+        List<String> inputs = new ArrayList<>();
+        ElementChoice elem = node.getElementChoice();
+        WithExpr withExpr = (WithExpr) elem;
+        //if metadata are NoBlockMetadata the WithExpr is simply a wrapper of another block
+        if (withExpr.getMetadata() instanceof NoBlockMetadata) {
+            inputs.add(createExpr(metadata, withExpr.getExpression(), OBJECT_KEY, true));
+        } else {
+            IdJsonStringTuple tuple = fixedExprCreator.createFixedExpressionJSON(metadata.getBlockId(), elem);
+            finishedJSONStrings.add(tuple.getJsonString());
+            inputs.add(createReferenceInput(OBJECT_KEY, INPUT_SAME_BLOCK_SHADOW, tuple.getId(), false));
+        }
+
+        FieldsMetadata fieldsMeta = metadata.getFields().getList().get(0);
+        String fieldValue;
+        Attribute attr = node.getAttribute();
+        if (attr instanceof AttributeFromFixed) {
+            fieldValue = ((AttributeFromFixed) attr).getAttribute().getType();
+        } else {
+            fieldValue = ((AttributeFromVariable) attr).getVariable().getName().getName();
+        }
+        String fieldsString = createFields(fieldsMeta.getFieldsName(), fieldValue, null);
+
+        finishedJSONStrings.add(createBlockWithoutMutationString(metadata, null,
+                previousBlockId, createInputs(inputs), fieldsString));
+        previousBlockId = metadata.getBlockId();
+    }
+
+    @Override
+    public void visit(IsKeyPressed node) {
+        NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
+        if (topExpressionId == null) {
+            topExpressionId = metadata.getBlockId();
+        }
+        List<String> inputs = new ArrayList<>();
+        Key key = node.getKey();
+        if (key.getMetadata() instanceof NoBlockMetadata) {
+            inputs.add(createExpr(metadata, key.getKey(), KEY_OPTION, true));
+        } else {
+            IdJsonStringTuple tuple = fixedExprCreator.createFixedExpressionJSON(metadata.getBlockId(), key);
+            finishedJSONStrings.add(tuple.getJsonString());
+            inputs.add(createReferenceInput(OBJECT_KEY, INPUT_SAME_BLOCK_SHADOW, tuple.getId(), false));
+        }
+
         finishedJSONStrings.add(createBlockWithoutMutationString(metadata, null,
                 previousBlockId, createInputs(inputs), EMPTY_VALUE));
         previousBlockId = metadata.getBlockId();
