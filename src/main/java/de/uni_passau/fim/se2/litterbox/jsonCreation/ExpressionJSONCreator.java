@@ -489,7 +489,6 @@ public class ExpressionJSONCreator implements ScratchVisitor {
         previousBlockId = metadata.getBlockId();
     }
 
-
     @Override
     public void visit(IsKeyPressed node) {
         NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
@@ -508,6 +507,37 @@ public class ExpressionJSONCreator implements ScratchVisitor {
 
         finishedJSONStrings.add(createBlockWithoutMutationString(metadata, null,
                 previousBlockId, createInputs(inputs), EMPTY_VALUE));
+        previousBlockId = metadata.getBlockId();
+    }
+
+    @Override
+    public void visit(ItemOfVariable node) {
+        createListBlockWithExpr((NonDataBlockMetadata) node.getMetadata(), node.getNum(), INDEX_KEY,
+                node.getIdentifier());
+    }
+
+    @Override
+    public void visit(IndexOf node) {
+        createListBlockWithExpr((NonDataBlockMetadata) node.getMetadata(), node.getExpr(), ITEM_KEY,
+                node.getIdentifier());
+    }
+
+    @Override
+    public void visit(ListContains node) {
+        createListBlockWithExpr((NonDataBlockMetadata) node.getMetadata(), node.getElement(), ITEM_KEY,
+                node.getIdentifier());
+    }
+
+    private void createListBlockWithExpr(NonDataBlockMetadata metadata, Expression expr, String inputName,
+                                         Identifier identifier) {
+        if (topExpressionId == null) {
+            topExpressionId = metadata.getBlockId();
+        }
+        List<String> inputs = new ArrayList<>();
+        inputs.add(createExpr(metadata, expr, inputName, true));
+        String fieldsString = getListDataFields(metadata, identifier);
+        finishedJSONStrings.add(createBlockWithoutMutationString(metadata, null,
+                previousBlockId, EMPTY_VALUE, fieldsString));
         previousBlockId = metadata.getBlockId();
     }
 
