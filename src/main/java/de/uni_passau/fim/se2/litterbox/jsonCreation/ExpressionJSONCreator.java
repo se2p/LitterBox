@@ -12,7 +12,11 @@ import de.uni_passau.fim.se2.litterbox.ast.model.literals.ColorLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.FieldsMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.position.FromExpression;
+import de.uni_passau.fim.se2.litterbox.ast.model.position.MousePos;
+import de.uni_passau.fim.se2.litterbox.ast.model.position.Position;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.FromNumber;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.ScratchList;
@@ -296,7 +300,7 @@ public class ExpressionJSONCreator implements ScratchVisitor {
 
     @Override
     public void visit(Not node) {
-        NonDataBlockMetadata metadata =(NonDataBlockMetadata) node.getMetadata();
+        NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
         if (topExpressionId == null) {
             topExpressionId = metadata.getBlockId();
         }
@@ -315,19 +319,48 @@ public class ExpressionJSONCreator implements ScratchVisitor {
 
     @Override
     public void visit(Touching node) {
-        NonDataBlockMetadata metadata =(NonDataBlockMetadata) node.getMetadata();
+        NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
         if (topExpressionId == null) {
             topExpressionId = metadata.getBlockId();
         }
         List<String> inputs = new ArrayList<>();
         Touchable touchable = node.getTouchable();
-        if (touchable instanceof SpriteTouchable || touchable instanceof Edge || touchable instanceof MousePointer){
+        if (touchable instanceof SpriteTouchable || touchable instanceof Edge || touchable instanceof MousePointer) {
             IdJsonStringTuple tuple = fixedExprCreator.createFixedExpressionJSON(metadata.getBlockId(), touchable);
             finishedJSONStrings.add(tuple.getJsonString());
-           inputs.add(createReferenceInput(TOUCHINGOBJECTMENU, INPUT_SAME_BLOCK_SHADOW, tuple.getId(), false));
-        }else{
+            inputs.add(createReferenceInput(TOUCHINGOBJECTMENU, INPUT_SAME_BLOCK_SHADOW, tuple.getId(), false));
+        } else {
             AsTouchable asTouchable = (AsTouchable) touchable;
             inputs.add(createExpr(metadata, asTouchable.getOperand1(), TOUCHINGOBJECTMENU, true));
+        }
+        finishedJSONStrings.add(createBlockWithoutMutationString(metadata, null,
+                previousBlockId, createInputs(inputs), EMPTY_VALUE));
+        previousBlockId = metadata.getBlockId();
+    }
+
+    @Override
+    public void visit(DistanceTo node) {
+        NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
+        if (topExpressionId == null) {
+            topExpressionId = metadata.getBlockId();
+        }
+        List<String> inputs = new ArrayList<>();
+        Position pos = node.getPosition();
+        if (pos instanceof MousePos) {
+            IdJsonStringTuple tuple = fixedExprCreator.createFixedExpressionJSON(metadata.getBlockId(), pos);
+            finishedJSONStrings.add(tuple.getJsonString());
+            inputs.add(createReferenceInput(DISTANCETOMENU_KEY, INPUT_SAME_BLOCK_SHADOW, tuple.getId(), false));
+        } else {
+            FromExpression fromPos = (FromExpression) pos;
+            IdJsonStringTuple tuple;
+
+            if (fromPos.getMetadata() instanceof NoBlockMetadata) {
+                inputs.add(createExpr(metadata, fromPos.getStringExpr(), DISTANCETOMENU_KEY, true));
+            } else {
+                tuple = fixedExprCreator.createFixedExpressionJSON(metadata.getBlockId(), pos);
+                finishedJSONStrings.add(tuple.getJsonString());
+                inputs.add(createReferenceInput(DISTANCETOMENU_KEY, INPUT_SAME_BLOCK_SHADOW, tuple.getId(), false));
+            }
         }
         finishedJSONStrings.add(createBlockWithoutMutationString(metadata, null,
                 previousBlockId, createInputs(inputs), EMPTY_VALUE));
@@ -362,8 +395,8 @@ public class ExpressionJSONCreator implements ScratchVisitor {
         }
         List<String> inputs = new ArrayList<>();
 
-        inputs.add(createExpr(metadata, expr1, inputName1,true));
-        inputs.add(createExpr(metadata, expr2, inputName2,true));
+        inputs.add(createExpr(metadata, expr1, inputName1, true));
+        inputs.add(createExpr(metadata, expr2, inputName2, true));
 
         finishedJSONStrings.add(createBlockWithoutMutationString(metadata, null,
                 previousBlockId, createInputs(inputs), EMPTY_VALUE));
