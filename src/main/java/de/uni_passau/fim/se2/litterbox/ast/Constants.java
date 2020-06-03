@@ -303,4 +303,7 @@ public class Constants {
     public static final String SOUND_MENU = "SOUND_MENU";
     public static final String CLONE_OPTION = "CLONE_OPTION";
     public static final String BROADCAST_INPUT_KEY = "BROADCAST_INPUT";
+    public static final String TOUCHINGOBJECTMENU = "TOUCHINGOBJECTMENU";
+    public static final String TOUCHING_MOUSE = "_mouse_";
+    public static final String TOUCHING_EDGE = "_edge_";
 }

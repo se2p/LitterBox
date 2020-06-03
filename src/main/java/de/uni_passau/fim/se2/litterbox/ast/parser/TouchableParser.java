@@ -37,10 +37,6 @@ import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 
 public class TouchableParser {
 
-    public static final String TOUCHINGOBJECTMENU = "TOUCHINGOBJECTMENU";
-    public static final String TOUCHING_MOUSE = "_mouse_";
-    public static final String TOUCHING_EDGE = "_edge_";
-
     public static Touchable parseTouchable(JsonNode current, JsonNode allBlocks) throws ParsingException {
         Preconditions.checkNotNull(current);
         Preconditions.checkNotNull(allBlocks);
