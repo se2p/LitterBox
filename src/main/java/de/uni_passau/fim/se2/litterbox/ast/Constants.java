@@ -305,4 +305,5 @@ public class Constants {
     public static final String BROADCAST_INPUT_KEY = "BROADCAST_INPUT";
     public static final String TOUCHINGOBJECTMENU = "TOUCHINGOBJECTMENU";
     public static final String TOUCHING_EDGE = "_edge_";
+    public static final String KEY_OPTION = "KEY_OPTION";
 }

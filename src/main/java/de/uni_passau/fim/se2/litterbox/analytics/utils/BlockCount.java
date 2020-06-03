@@ -250,7 +250,7 @@ public class BlockCount implements IssueFinder, ScratchVisitor {
         if (insideScript || insideProcedure) {
             count++;
         }
-        node.getLocalIdentifier().accept(this);
+        node.getElementChoice().accept(this);
     }
 
     @Override

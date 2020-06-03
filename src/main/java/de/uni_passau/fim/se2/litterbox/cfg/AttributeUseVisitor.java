@@ -26,19 +26,12 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AttributeOf;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.Costume;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.AttributeFromFixed;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.AttributeFromVariable;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.FixedAttribute;
-import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Identifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
-import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.ChangeSizeBy;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.NextCostume;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.*;
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.DataExpr;
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
-import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -165,7 +158,7 @@ public class AttributeUseVisitor implements DefinableCollector<Attribute> {
         // Name of var or attribute
         de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.Attribute attribute = node.getAttribute();
         // Name of owner
-        Expression owner = ((WithExpr) node.getLocalIdentifier()).getExpression();
+        Expression owner = ((WithExpr) node.getElementChoice()).getExpression();
 
         assert(owner instanceof LocalIdentifier) : "This has to be a LocalIdentifier, no?";
         LocalIdentifier localIdentifier = (LocalIdentifier)owner;

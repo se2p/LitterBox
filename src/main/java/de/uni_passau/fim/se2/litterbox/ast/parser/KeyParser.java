@@ -37,8 +37,6 @@ import java.util.List;
 import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 
 public class KeyParser {
-
-    public static final String KEY_OPTION = "KEY_OPTION";
     public static final int UPARROW = 38;
     public static final int DOWNARROW = 40;
     public static final int RIGHTARROW = 39;

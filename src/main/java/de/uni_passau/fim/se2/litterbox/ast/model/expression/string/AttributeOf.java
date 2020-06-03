@@ -45,7 +45,7 @@ public class AttributeOf extends AbstractNode implements StringExpr {
         return attribute;
     }
 
-    public ElementChoice getLocalIdentifier() {
+    public ElementChoice getElementChoice() {
         return identifier;
     }
 

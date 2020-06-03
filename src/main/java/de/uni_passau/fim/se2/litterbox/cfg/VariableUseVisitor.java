@@ -24,14 +24,12 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AttributeOf;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.Attribute;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.AttributeFromVariable;
-import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Identifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetVariableTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.DataExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.ScratchList;
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -84,7 +82,7 @@ public class VariableUseVisitor implements DefinableCollector<de.uni_passau.fim.
         // Name of var or attribute
         Attribute attribute = node.getAttribute();
         // Name of owner
-        Expression owner = ((WithExpr) node.getLocalIdentifier()).getExpression();
+        Expression owner = ((WithExpr) node.getElementChoice()).getExpression();
 
         assert(owner instanceof LocalIdentifier) : "This has to be a LocalIdentifier, no? If not another block was " +
                 "inserted into the ElementChoice";
