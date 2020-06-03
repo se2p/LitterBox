@@ -537,7 +537,7 @@ public class ExpressionJSONCreator implements ScratchVisitor {
         inputs.add(createExpr(metadata, expr, inputName, true));
         String fieldsString = getListDataFields(metadata, identifier);
         finishedJSONStrings.add(createBlockWithoutMutationString(metadata, null,
-                previousBlockId, EMPTY_VALUE, fieldsString));
+                previousBlockId, createInputs(inputs), fieldsString));
         previousBlockId = metadata.getBlockId();
     }
 
@@ -581,6 +581,7 @@ public class ExpressionJSONCreator implements ScratchVisitor {
     private String createExpr(NonDataBlockMetadata metadata, Expression expr, String inputName, boolean withDefault) {
         IdJsonStringTuple tuple = expressionJSONCreator.createExpressionJSON(metadata.getBlockId(), expr
                 , symbolTable);
+        System.out.println(tuple.getId()+"   "+tuple.getJsonString());
         if (tuple.getId() == null) {
             StringBuilder jsonString = new StringBuilder();
             createField(jsonString, inputName).append(tuple.getJsonString());
