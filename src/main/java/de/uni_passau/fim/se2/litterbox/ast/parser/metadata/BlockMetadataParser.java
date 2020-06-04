@@ -59,7 +59,7 @@ public class BlockMetadataParser {
             String dataReference = data.get(DATA_INPUT_IDENTIFIER_POS).asText();
             double x = data.get(DATA_INPUT_X_POS).asDouble();
             double y = data.get(DATA_INPUT_Y_POS).asDouble();
-            return new DataBlockMetadata(type, dataName, dataReference, x, y);
+            return new DataBlockMetadata(blockId, type, dataName, dataReference, x, y);
         }
     }
 }

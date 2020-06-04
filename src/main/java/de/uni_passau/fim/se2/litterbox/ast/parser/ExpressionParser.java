@@ -28,6 +28,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.UnspecifiedExpressio
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.variable.ScratchList;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.BoolExprOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.NumExprOpcode;
@@ -101,7 +102,7 @@ public class ExpressionParser {
             } else if (ProgramParser.symbolTable.getLists().containsKey(idString)) {
                 ExpressionListInfo variableInfo = ProgramParser.symbolTable.getLists().get(idString);
                 return new Qualified(new StrId(variableInfo.getActor()),
-                        new Variable(new StrId(variableInfo.getVariableName()), metadata));
+                        new ScratchList(new StrId(variableInfo.getVariableName()), metadata));
             }
         } else {
             // it's a normal reporter block
