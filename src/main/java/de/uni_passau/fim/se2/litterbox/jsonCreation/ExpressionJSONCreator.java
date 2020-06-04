@@ -528,6 +528,30 @@ public class ExpressionJSONCreator implements ScratchVisitor {
                 node.getIdentifier());
     }
 
+    @Override
+    public void visit(SpriteTouchingColor node) {
+        NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
+        List<String> inputs = new ArrayList<>();
+        Touchable color = node.getColor();
+        inputs.add(createExpr(metadata, color, COLOR_KEY, true));
+        finishedJSONStrings.add(createBlockWithoutMutationString(metadata, null,
+                previousBlockId, createInputs(inputs), EMPTY_VALUE));
+        previousBlockId = metadata.getBlockId();
+    }
+
+    @Override
+    public void visit(ColorTouchingColor node) {
+        NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
+        List<String> inputs = new ArrayList<>();
+        Touchable color = node.getOperand1();
+        Touchable color2 = node.getOperand2();
+        inputs.add(createExpr(metadata, color, COLOR_KEY, true));
+        inputs.add(createExpr(metadata, color2, COLOR2_KEY, true));
+        finishedJSONStrings.add(createBlockWithoutMutationString(metadata, null,
+                previousBlockId, createInputs(inputs), EMPTY_VALUE));
+        previousBlockId = metadata.getBlockId();
+    }
+
     private void createListBlockWithExpr(NonDataBlockMetadata metadata, Expression expr, String inputName,
                                          Identifier identifier) {
         if (topExpressionId == null) {
@@ -578,10 +602,9 @@ public class ExpressionJSONCreator implements ScratchVisitor {
         previousBlockId = metadata.getBlockId();
     }
 
-    private String createExpr(NonDataBlockMetadata metadata, Expression expr, String inputName, boolean withDefault) {
+    private String createExpr(NonDataBlockMetadata metadata, ASTNode expr, String inputName, boolean withDefault) {
         IdJsonStringTuple tuple = expressionJSONCreator.createExpressionJSON(metadata.getBlockId(), expr
                 , symbolTable);
-        System.out.println(tuple.getId()+"   "+tuple.getJsonString());
         if (tuple.getId() == null) {
             StringBuilder jsonString = new StringBuilder();
             createField(jsonString, inputName).append(tuple.getJsonString());
