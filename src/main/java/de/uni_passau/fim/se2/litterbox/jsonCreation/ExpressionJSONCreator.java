@@ -24,6 +24,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.position.MousePos;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.Position;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.FromNumber;
+import de.uni_passau.fim.se2.litterbox.ast.model.variable.Parameter;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.ScratchList;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.SymbolTable;
@@ -530,6 +531,9 @@ public class ExpressionJSONCreator implements ScratchVisitor {
     @Override
     public void visit(SpriteTouchingColor node) {
         NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
+        if (topExpressionId == null) {
+            topExpressionId = metadata.getBlockId();
+        }
         List<String> inputs = new ArrayList<>();
         Touchable color = node.getColor();
         inputs.add(createExpr(metadata, color, COLOR_KEY, true));
@@ -541,6 +545,9 @@ public class ExpressionJSONCreator implements ScratchVisitor {
     @Override
     public void visit(ColorTouchingColor node) {
         NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
+        if (topExpressionId == null) {
+            topExpressionId = metadata.getBlockId();
+        }
         List<String> inputs = new ArrayList<>();
         Touchable color = node.getOperand1();
         Touchable color2 = node.getOperand2();
@@ -596,6 +603,11 @@ public class ExpressionJSONCreator implements ScratchVisitor {
     @Override
     public void visit(AsTouchable node) {
         node.getOperand1().accept(this);
+    }
+
+    @Override
+    public void visit(Parameter node) {
+        createFieldsExpression((NonDataBlockMetadata) node.getMetadata(), node.getName().getName());
     }
 
     private void createListBlockWithExpr(NonDataBlockMetadata metadata, Expression expr, String inputName,
