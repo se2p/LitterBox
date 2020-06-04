@@ -10,7 +10,7 @@ import static de.uni_passau.fim.se2.litterbox.ast.parser.KeyParser.*;
 import static de.uni_passau.fim.se2.litterbox.jsonCreation.JSONStringCreator.*;
 
 public abstract class BlockJsonCreatorHelper {
-    private static final String defaultValue = "[10,\"\"]";
+    public static final String DEFAULT_VALUE = "[10,\"\"]";
 
     public static StringBuilder createBlockUpToParent(StringBuilder jsonString, NonDataBlockMetadata meta,
                                                       String nextId, String parentId) {
@@ -151,7 +151,7 @@ public abstract class BlockJsonCreatorHelper {
             jsonString.append("\"").append(reference).append("\"");
         }
         if (withDefault) {
-            jsonString.append(",").append(defaultValue);
+            jsonString.append(",").append(DEFAULT_VALUE);
         }
         jsonString.append("]");
         return jsonString.toString();
@@ -185,9 +185,21 @@ public abstract class BlockJsonCreatorHelper {
     }
 
     public static String createReferenceTypeInput(String inputName, int shadowIndicator, int typeNumber,
-                                                  String value, String reference) {
+                                                  String value, String reference, boolean withDefault) {
         StringBuilder jsonString = new StringBuilder();
-        createField(jsonString, inputName).append("[").append(shadowIndicator).append(",").append("[").append(typeNumber).append(",\"").append(value).append("\",\"").append(reference).append("\"],").append(defaultValue).append("]");
+        createField(jsonString, inputName).append(createReferenceType(shadowIndicator, typeNumber, value, reference,
+                withDefault));
+        return jsonString.toString();
+    }
+
+    public static String createReferenceType(int shadowIndicator, int typeNumber,
+                                             String value, String reference, boolean withDefault) {
+        StringBuilder jsonString = new StringBuilder();
+        jsonString.append("[").append(shadowIndicator).append(",").append("[").append(typeNumber).append(",\"").append(value).append("\",\"").append(reference).append("\"]");
+        if (withDefault) {
+            jsonString.append(",").append(DEFAULT_VALUE);
+        }
+        jsonString.append("]");
         return jsonString.toString();
     }
 

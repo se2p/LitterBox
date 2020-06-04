@@ -838,7 +838,7 @@ public class StmtListJSONCreator implements ScratchVisitor {
             String message = ((StringLiteral) stringExpr).getText();
             String messageId = symbolTable.getMessages().get(message).getIdentifier();
             inputs.add(createReferenceTypeInput(BROADCAST_INPUT_KEY, INPUT_SAME_BLOCK_SHADOW, BROADCAST_PRIMITIVE,
-                    message, messageId));
+                    message, messageId,false));
         } else {
             inputs.add(createExpr(metadata, BROADCAST_INPUT_KEY, stringExpr));
         }

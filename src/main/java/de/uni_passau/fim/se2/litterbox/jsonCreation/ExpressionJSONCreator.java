@@ -6,6 +6,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.ElementChoice;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.WithExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.AsListIndex;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.Attribute;
@@ -17,15 +18,14 @@ import de.uni_passau.fim.se2.litterbox.ast.model.literals.BoolLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.ColorLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.FieldsMetadata;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoBlockMetadata;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.FromExpression;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.MousePos;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.Position;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.FromNumber;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.ScratchList;
+import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.SymbolTable;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
@@ -550,6 +550,53 @@ public class ExpressionJSONCreator implements ScratchVisitor {
         finishedJSONStrings.add(createBlockWithoutMutationString(metadata, null,
                 previousBlockId, createInputs(inputs), EMPTY_VALUE));
         previousBlockId = metadata.getBlockId();
+    }
+
+    @Override
+    public void visit(Qualified node) {
+        String actor = node.getFirst().getName();
+        StringBuilder jsonString = new StringBuilder();
+        if (node.getSecond() instanceof ScratchList) {
+            ScratchList list = (ScratchList) node.getSecond();
+            String listName = list.getName().getName();
+            String listId = symbolTable.getListIdentifierFromActorAndName(actor, listName);
+            BlockMetadata metadata = list.getMetadata();
+            if (metadata instanceof DataBlockMetadata) {
+                DataBlockMetadata dataBlockMetadata = (DataBlockMetadata) metadata;
+                createField(jsonString, dataBlockMetadata.getBlockId()).append("[").append(LIST_PRIMITIVE);
+                jsonString.append(",\"").append(listName).append("\",\"");
+                jsonString.append(listId).append("\",").append(dataBlockMetadata.getX()).append(",").append(dataBlockMetadata.getY()).append("]");
+            } else {
+                jsonString.append(createReferenceType(INPUT_DIFF_BLOCK_SHADOW, LIST_PRIMITIVE, listName, listId,
+                        true));
+            }
+
+        } else if (node.getSecond() instanceof Variable) {
+            Variable variable = (Variable) node.getSecond();
+            String variableName = variable.getName().getName();
+            String variableId = symbolTable.getVariableIdentifierFromActorAndName(actor, variableName);
+            BlockMetadata metadata = variable.getMetadata();
+            if (metadata instanceof DataBlockMetadata) {
+                DataBlockMetadata dataBlockMetadata = (DataBlockMetadata) metadata;
+                createField(jsonString, dataBlockMetadata.getBlockId()).append("[").append(VAR_PRIMITIVE);
+                jsonString.append(",\"").append(variableName).append("\",\"");
+                jsonString.append(variableId).append("\",").append(dataBlockMetadata.getX()).append(",").append(dataBlockMetadata.getY()).append("]");
+            } else {
+                jsonString.append(createReferenceType(INPUT_DIFF_BLOCK_SHADOW, VAR_PRIMITIVE, variableName, variableId,
+                        true));
+            }
+        }
+        finishedJSONStrings.add(jsonString.toString());
+    }
+
+    @Override
+    public void visit(AsListIndex node) {
+        node.getOperand1().accept(this);
+    }
+
+    @Override
+    public void visit(AsTouchable node) {
+        node.getOperand1().accept(this);
     }
 
     private void createListBlockWithExpr(NonDataBlockMetadata metadata, Expression expr, String inputName,
