@@ -26,6 +26,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoBlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.PenWithParamMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.pen.*;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.DependentBlockOpcodes;
@@ -42,6 +44,7 @@ import java.util.List;
 import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 
 public class PenStmtParser {
+    private static BlockMetadata paramMetadata = new NoBlockMetadata();
 
     public static Stmt parse(String blockId, JsonNode current, JsonNode blocks) throws ParsingException {
         Preconditions.checkNotNull(current);
@@ -68,11 +71,11 @@ public class PenStmtParser {
             case pen_changePenColorParamBy:
                 NumExpr numExpr = NumExprParser.parseNumExpr(current, VALUE_KEY, blocks);
                 StringExpr param = parseParam(current, blocks);
-                return new ChangePenColorParamBy(numExpr, param, metadata);
+                return new ChangePenColorParamBy(numExpr, param, new PenWithParamMetadata(metadata, paramMetadata));
             case pen_setPenColorParamTo:
                 numExpr = NumExprParser.parseNumExpr(current, VALUE_KEY, blocks);
                 param = parseParam(current, blocks);
-                return new SetPenColorParamTo(numExpr, param, metadata);
+                return new SetPenColorParamTo(numExpr, param, new PenWithParamMetadata(metadata, paramMetadata));
             case pen_setPenSizeTo:
                 return parseSetPenSizeTo(current, blocks, metadata);
             case pen_changePenSizeBy:
@@ -97,11 +100,14 @@ public class PenStmtParser {
                 Preconditions.checkArgument(colorParamNode.isArray());
                 String attribute = colorParamNode.get(FIELD_VALUE).asText();
                 expr = new StringLiteral(attribute);
+                paramMetadata = BlockMetadataParser.parse(reference, referredBlock);
             } else {
                 expr = StringExprParser.parseStringExpr(current, COLOR_PARAM_BIG_KEY, blocks);
+                paramMetadata = new NoBlockMetadata();
             }
         } else {
             expr = StringExprParser.parseStringExpr(current, COLOR_PARAM_BIG_KEY, blocks);
+            paramMetadata = new NoBlockMetadata();
         }
 
         return expr;
