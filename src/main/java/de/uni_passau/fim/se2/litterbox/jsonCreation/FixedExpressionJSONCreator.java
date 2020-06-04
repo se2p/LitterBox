@@ -14,10 +14,13 @@ import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.CloneOfMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.PenWithParamMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.FromExpression;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.MousePos;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.RandomPos;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.CreateCloneOf;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.pen.ChangePenColorParamBy;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.pen.SetPenColorParamTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.Edge;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.MousePointer;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.SpriteTouchable;
@@ -109,6 +112,28 @@ public class FixedExpressionJSONCreator implements ScratchVisitor {
             CloneOfMetadata metadata = (CloneOfMetadata) node.getMetadata();
             createFieldsExpression((NonDataBlockMetadata) metadata.getCloneMenuMetadata(),
                     strid.getName());
+        }
+    }
+
+    @Override
+    public void visit(ChangePenColorParamBy node) {
+        StringExpr stringExpr = node.getParam();
+        if (stringExpr instanceof StringLiteral) {
+            String strid =  ((StringLiteral) stringExpr).getText();
+            PenWithParamMetadata metadata = (PenWithParamMetadata) node.getMetadata();
+            createFieldsExpression((NonDataBlockMetadata) metadata.getParamMetadata(),
+                    strid);
+        }
+    }
+
+    @Override
+    public void visit(SetPenColorParamTo node) {
+        StringExpr stringExpr = node.getParam();
+        if (stringExpr instanceof StringLiteral) {
+            String strid =  ((StringLiteral) stringExpr).getText();
+            PenWithParamMetadata metadata = (PenWithParamMetadata) node.getMetadata();
+            createFieldsExpression((NonDataBlockMetadata) metadata.getParamMetadata(),
+                    strid);
         }
     }
 

@@ -2,6 +2,7 @@ package de.uni_passau.fim.se2.litterbox.jsonCreation;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.CloneOfMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.PenWithParamMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.*;
@@ -163,12 +164,14 @@ public class IdVisitor implements ScratchVisitor {
 
     @Override
     public void visit(ChangePenColorParamBy node) {
-        id = ((NonDataBlockMetadata) node.getMetadata()).getBlockId();
+        PenWithParamMetadata meta = (PenWithParamMetadata) node.getMetadata();
+        id = ((NonDataBlockMetadata) meta.getPenBlockMetadata()).getBlockId();
     }
 
     @Override
     public void visit(SetPenColorParamTo node) {
-        id = ((NonDataBlockMetadata) node.getMetadata()).getBlockId();
+        PenWithParamMetadata meta = (PenWithParamMetadata) node.getMetadata();
+        id = ((NonDataBlockMetadata) meta.getPenBlockMetadata()).getBlockId();
     }
 
     @Override

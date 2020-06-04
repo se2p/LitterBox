@@ -726,8 +726,9 @@ public class StmtListJSONCreator implements ScratchVisitor {
         if (!(metadata.getCloneMenuMetadata() instanceof NoBlockMetadata)) {
             tuple = fixedExprCreator.createFixedExpressionJSON(cloneBlockMetadata.getBlockId(), node);
             inputs.add(createReferenceInput(CLONE_OPTION, INPUT_SAME_BLOCK_SHADOW, tuple.getId(), false));
+            finishedJSONStrings.add(tuple.getJsonString());
         } else {
-            inputs.add(createExpr((NonDataBlockMetadata) metadata.getCloneBlockMetadata(), CLONE_OPTION, stringExpr));
+            inputs.add(createExpr(cloneBlockMetadata, CLONE_OPTION, stringExpr));
         }
         finishedJSONStrings.add(createBlockWithoutMutationString(cloneBlockMetadata, getNextId(),
                 previousBlockId, createInputs(inputs), EMPTY_VALUE));
@@ -789,12 +790,36 @@ public class StmtListJSONCreator implements ScratchVisitor {
 
     @Override
     public void visit(ChangePenColorParamBy node) {
-//todo
+        PenWithParamMetadata metadata = (PenWithParamMetadata) node.getMetadata();
+        createPenWithParamStmt(metadata, node.getParam(), node.getValue(), node);
     }
 
     @Override
     public void visit(SetPenColorParamTo node) {
-//todo
+        PenWithParamMetadata metadata = (PenWithParamMetadata) node.getMetadata();
+        createPenWithParamStmt(metadata, node.getParam(), node.getValue(), node);
+    }
+
+    private void createPenWithParamStmt(PenWithParamMetadata metadata, StringExpr stringExpr,
+                                        NumExpr numExpr, Stmt node) {
+        NonDataBlockMetadata penBlockMetadata = (NonDataBlockMetadata) metadata.getPenBlockMetadata();
+        List<String> inputs = new ArrayList<>();
+        IdJsonStringTuple tuple;
+
+        if (!(metadata.getParamMetadata() instanceof NoBlockMetadata)) {
+            tuple = fixedExprCreator.createFixedExpressionJSON(penBlockMetadata.getBlockId(), node);
+            inputs.add(createReferenceInput(COLOR_PARAM_BIG_KEY, INPUT_SAME_BLOCK_SHADOW, tuple.getId(), false));
+            finishedJSONStrings.add(tuple.getJsonString());
+        } else {
+            inputs.add(createExpr(penBlockMetadata, COLOR_PARAM_BIG_KEY, stringExpr));
+        }
+
+        inputs.add(createNumExpr(penBlockMetadata, VALUE_KEY, numExpr, MATH_NUM_PRIMITIVE));
+
+        finishedJSONStrings.add(createBlockWithoutMutationString(penBlockMetadata, getNextId(),
+                previousBlockId, createInputs(inputs), EMPTY_VALUE));
+
+        previousBlockId = penBlockMetadata.getBlockId();
     }
 
     @Override
@@ -838,7 +863,7 @@ public class StmtListJSONCreator implements ScratchVisitor {
             String message = ((StringLiteral) stringExpr).getText();
             String messageId = symbolTable.getMessages().get(message).getIdentifier();
             inputs.add(createReferenceTypeInput(BROADCAST_INPUT_KEY, INPUT_SAME_BLOCK_SHADOW, BROADCAST_PRIMITIVE,
-                    message, messageId,false));
+                    message, messageId, false));
         } else {
             inputs.add(createExpr(metadata, BROADCAST_INPUT_KEY, stringExpr));
         }
