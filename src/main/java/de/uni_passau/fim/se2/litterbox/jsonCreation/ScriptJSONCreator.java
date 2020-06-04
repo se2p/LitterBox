@@ -19,7 +19,6 @@ import java.util.List;
 import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 import static de.uni_passau.fim.se2.litterbox.jsonCreation.BlockJsonCreatorHelper.*;
 import static de.uni_passau.fim.se2.litterbox.jsonCreation.JSONStringCreator.createField;
-import static de.uni_passau.fim.se2.litterbox.jsonCreation.StmtListJSONCreator.EMPTY_VALUE;
 
 public class ScriptJSONCreator {
     public static String createScriptJSONString(Script script, SymbolTable symbol) {

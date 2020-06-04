@@ -22,10 +22,10 @@ public class JSONStringCreator {
         List<ActorDefinition> actorDefinitionList = program.getActorDefinitionList().getDefintions();
         for (int i = 0; i < actorDefinitionList.size() - 1; i++) {
             jsonString.append(ActorJSONCreator.createActorJSONString(actorDefinitionList.get(i),
-                    program.getSymbolTable()));
+                    program.getSymbolTable(), program.getProcedureMapping()));
             jsonString.append(",");
         }
-        jsonString.append(ActorJSONCreator.createActorJSONString(actorDefinitionList.get(actorDefinitionList.size() - 1), program.getSymbolTable()));
+        jsonString.append(ActorJSONCreator.createActorJSONString(actorDefinitionList.get(actorDefinitionList.size() - 1), program.getSymbolTable(), program.getProcedureMapping()));
         jsonString.append("],");
         createMonitorListJSONString(jsonString, program).append(",");
         createExtensionJSONString(jsonString, program).append(",");

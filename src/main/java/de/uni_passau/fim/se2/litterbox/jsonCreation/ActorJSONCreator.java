@@ -13,6 +13,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.metadata.actor.StageMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.ressources.ImageMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.ressources.SoundMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
+import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ProcedureDefinitionNameMapping;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.SymbolTable;
 
 import java.util.List;
@@ -21,7 +22,8 @@ import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 
 public class ActorJSONCreator {
 
-    public static String createActorJSONString(ActorDefinition actor, SymbolTable symbol) {
+    public static String createActorJSONString(ActorDefinition actor, SymbolTable symbol,
+                                               ProcedureDefinitionNameMapping procDefNameMapping) {
         StringBuilder jsonString = new StringBuilder();
         ActorMetadata meta = actor.getMetadata();
         boolean isStage = false;
@@ -72,20 +74,21 @@ public class ActorJSONCreator {
         List<ProcedureDefinition> procedures = actor.getProcedureDefinitionList().getList();
         List<Script> scripts = actor.getScripts().getScriptList();
         for (int i = 0; i < procedures.size() - 1; i++) {
-            jsonString.append(ProcedureJSONCreator.createProcedureJSONString(procedures.get(i),symbol)).append(",");
+            jsonString.append(ProcedureJSONCreator.createProcedureJSONString(procedures.get(i),
+                    actor.getIdent().getName(), symbol, procDefNameMapping)).append(",");
         }
         if (procedures.size() > 0) {
             jsonString.append(ProcedureJSONCreator.createProcedureJSONString(procedures.get(procedures.size() - 1),
-                    symbol));
+                    actor.getIdent().getName(), symbol, procDefNameMapping));
             if (scripts.size() > 0) {
                 jsonString.append(",");
             }
         }
         for (int i = 0; i < scripts.size() - 1; i++) {
-            jsonString.append(ScriptJSONCreator.createScriptJSONString(scripts.get(i),symbol)).append(",");
+            jsonString.append(ScriptJSONCreator.createScriptJSONString(scripts.get(i), symbol)).append(",");
         }
         if (scripts.size() > 0) {
-            jsonString.append(ScriptJSONCreator.createScriptJSONString(scripts.get(scripts.size() - 1),symbol));
+            jsonString.append(ScriptJSONCreator.createScriptJSONString(scripts.get(scripts.size() - 1), symbol));
         }
         jsonString.append("},");
 

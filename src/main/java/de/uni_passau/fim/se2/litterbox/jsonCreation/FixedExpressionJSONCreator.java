@@ -31,7 +31,6 @@ import java.util.List;
 
 import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 import static de.uni_passau.fim.se2.litterbox.jsonCreation.BlockJsonCreatorHelper.*;
-import static de.uni_passau.fim.se2.litterbox.jsonCreation.StmtListJSONCreator.EMPTY_VALUE;
 
 
 /**
@@ -119,7 +118,7 @@ public class FixedExpressionJSONCreator implements ScratchVisitor {
     public void visit(ChangePenColorParamBy node) {
         StringExpr stringExpr = node.getParam();
         if (stringExpr instanceof StringLiteral) {
-            String strid =  ((StringLiteral) stringExpr).getText();
+            String strid = ((StringLiteral) stringExpr).getText();
             PenWithParamMetadata metadata = (PenWithParamMetadata) node.getMetadata();
             createFieldsExpression((NonDataBlockMetadata) metadata.getParamMetadata(),
                     strid);
@@ -130,7 +129,7 @@ public class FixedExpressionJSONCreator implements ScratchVisitor {
     public void visit(SetPenColorParamTo node) {
         StringExpr stringExpr = node.getParam();
         if (stringExpr instanceof StringLiteral) {
-            String strid =  ((StringLiteral) stringExpr).getText();
+            String strid = ((StringLiteral) stringExpr).getText();
             PenWithParamMetadata metadata = (PenWithParamMetadata) node.getMetadata();
             createFieldsExpression((NonDataBlockMetadata) metadata.getParamMetadata(),
                     strid);

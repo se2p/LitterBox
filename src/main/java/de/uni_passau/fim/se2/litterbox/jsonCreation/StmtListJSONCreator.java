@@ -50,7 +50,6 @@ public class StmtListJSONCreator implements ScratchVisitor {
     private int counter;
     private IdVisitor idVis;
     private SymbolTable symbolTable;
-    public final static String EMPTY_VALUE = "{}";
     private ExpressionJSONCreator exprCreator;
     private FixedExpressionJSONCreator fixedExprCreator;
 

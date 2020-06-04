@@ -306,4 +306,6 @@ public class Constants {
     public static final String TOUCHINGOBJECTMENU = "TOUCHINGOBJECTMENU";
     public static final String TOUCHING_EDGE = "_edge_";
     public static final String KEY_OPTION = "KEY_OPTION";
+    public final static String CUSTOM_BLOCK_KEY = "custom_block";
+    public final static String EMPTY_VALUE = "{}";
 }
