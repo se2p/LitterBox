@@ -3,6 +3,7 @@ package de.uni_passau.fim.se2.litterbox.jsonCreation;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.PrototypeMutationMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.TopNonDataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
@@ -11,6 +12,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.type.Type;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ProcedureDefinitionNameMapping;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ProcedureInfo;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.SymbolTable;
+import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,6 +56,17 @@ public class ProcedureJSONCreator {
         }
 
         //todo prototype
+        PrototypeMutationMetadata protoMutationMeta = (PrototypeMutationMetadata) protoMetadata.getMutation();
+        List<String> argumentIds = protoMutationMeta.getArgumentIds();
+        Preconditions.checkArgument(argumentIds.size() == parameterInfos.size(), "Number of parameters is not equal " +
+                "to the number of argument ids");
+        inputs = new ArrayList<>();
+        for (int i = 0; i < argumentIds.size(); i++) {
+            inputs.add(createReferenceInput(argumentIds.get(i), INPUT_SAME_BLOCK_SHADOW, parameterInfos.get(i).getId(),
+                    false));
+        }
+
+        //String mutationString = createPrototypeMetadata(protoMutationMeta.getTagName(),)
 
         if (stmtList.getStmts().size() > 0) {
             StmtListJSONCreator stmtListJSONCreator =
@@ -74,34 +87,6 @@ public class ProcedureJSONCreator {
         return new ParameterInfo(parameterDefinition.getIdent().getName(), metadata.getBlockId(),
                 parameterDefinition.getType());
 
-    }
-
-    private static class ParameterInfo {
-        String name;
-        String defaultValue;
-        String id;
-
-        public ParameterInfo(String name, String id, Type type) {
-            this.name = name;
-            this.id = id;
-            if (type instanceof BooleanType) {
-                defaultValue = "\\\"false\\\"";
-            } else {
-                defaultValue = "\\\"\\\"";
-            }
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public String getDefaultValue() {
-            return defaultValue;
-        }
-
-        public String getId() {
-            return id;
-        }
     }
 }
 

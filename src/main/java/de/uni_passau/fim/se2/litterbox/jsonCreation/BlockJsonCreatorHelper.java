@@ -114,6 +114,63 @@ public abstract class BlockJsonCreatorHelper {
         return jsonString.toString();
     }
 
+    public static String createPrototypeMetadata(String tagName, String proccode, List<String> argumentId,
+                                                 List<ParameterInfo> parameterInfos,
+                                                 boolean warp) {
+        StringBuilder jsonString = new StringBuilder();
+        jsonString.append("{");
+        createFieldValue(jsonString, TAG_NAME_KEY, tagName).append(",");
+        createField(jsonString, CHILDREN_KEY).append("[],");
+        createFieldValue(jsonString, PROCCODE_KEY, proccode).append(",");
+        createField(jsonString, ARGUMENTIDS_KEY);
+        createArgumentIds(jsonString, argumentId).append(",");
+        createField(jsonString, ARGUMENTNAMES_KEY);
+        createArgumentNames(jsonString, parameterInfos).append(",");
+        createField(jsonString, ARGUMENT_DEFAULTS_KEY);
+        createArgumentDefaults(jsonString, parameterInfos).append(",");
+        createFieldValue(jsonString, WARP_KEY, warp);
+        jsonString.append("}");
+        return jsonString.toString();
+    }
+
+    private static StringBuilder createArgumentDefaults(StringBuilder jsonString, List<ParameterInfo> parameterInfos) {
+        jsonString.append("\"[");
+        for (int i = 0; i < parameterInfos.size() - 1; i++) {
+            jsonString.append("\\\"").append(parameterInfos.get(i).getDefaultValue()).append("\\\"").append(",");
+        }
+        if (parameterInfos.size() > 0) {
+            jsonString.append("\\\"").append(parameterInfos.get(parameterInfos.size() - 1).getDefaultValue()).append(
+                    "\\\"");
+        }
+        jsonString.append("]\"");
+        return jsonString;
+    }
+
+    private static StringBuilder createArgumentNames(StringBuilder jsonString, List<ParameterInfo> parameterInfos) {
+        jsonString.append("\"[");
+        for (int i = 0; i < parameterInfos.size() - 1; i++) {
+            jsonString.append("\\\"").append(parameterInfos.get(i).getName()).append("\\\"").append(",");
+        }
+        if (parameterInfos.size() > 0) {
+            jsonString.append("\\\"").append(parameterInfos.get(parameterInfos.size() - 1).getName()).append("\\\"");
+        }
+        jsonString.append("]\"");
+        return jsonString;
+    }
+
+    private static StringBuilder createArgumentIds(StringBuilder jsonString, List<String> argumentId) {
+        jsonString.append("\"[");
+        for (int i = 0; i < argumentId.size() - 1; i++) {
+            jsonString.append("\\\"").append(argumentId.get(i)).append("\\\"").append(",");
+        }
+        if (argumentId.size() > 0) {
+            jsonString.append("\\\"").append(argumentId.get(argumentId.size() - 1)).append("\\\"");
+        }
+        jsonString.append("]\"");
+        return jsonString;
+    }
+
+
     public static String getKeyValue(int numberValue) {
         String key;
         switch (numberValue) {
