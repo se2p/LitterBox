@@ -133,6 +133,20 @@ public abstract class BlockJsonCreatorHelper {
         return jsonString.toString();
     }
 
+    public static String createCallMetadata(String tagName, String proccode, List<String> argumentId,
+                                                 boolean warp) {
+        StringBuilder jsonString = new StringBuilder();
+        jsonString.append("{");
+        createFieldValue(jsonString, TAG_NAME_KEY, tagName).append(",");
+        createField(jsonString, CHILDREN_KEY).append("[],");
+        createFieldValue(jsonString, PROCCODE_KEY, proccode).append(",");
+        createField(jsonString, ARGUMENTIDS_KEY);
+        createArgumentIds(jsonString, argumentId).append(",");
+        createFieldValue(jsonString, WARP_KEY, warp);
+        jsonString.append("}");
+        return jsonString.toString();
+    }
+
     private static StringBuilder createArgumentDefaults(StringBuilder jsonString, List<ParameterInfo> parameterInfos) {
         jsonString.append("\"[");
         for (int i = 0; i < parameterInfos.size() - 1; i++) {

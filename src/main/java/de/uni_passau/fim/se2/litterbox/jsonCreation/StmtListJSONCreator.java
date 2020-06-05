@@ -9,6 +9,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Identifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.*;
@@ -16,6 +17,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.position.FromExpression;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.MousePos;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.Position;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.RandomPos;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.ExpressionStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.*;
@@ -797,6 +799,55 @@ public class StmtListJSONCreator implements ScratchVisitor {
     public void visit(SetPenColorParamTo node) {
         PenWithParamMetadata metadata = (PenWithParamMetadata) node.getMetadata();
         createPenWithParamStmt(metadata, node.getParam(), node.getValue(), node);
+    }
+
+    @Override
+    public void visit(CallStmt node) {
+        NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
+        CallMutationMetadata mutationMetadata = (CallMutationMetadata) metadata.getMutation();
+        List<String> argumentIds = mutationMetadata.getArgumentIds();
+
+        StrId name = (StrId) node.getIdent();
+        List<String> inputs = new ArrayList<>();
+        IdJsonStringTuple tuple;
+        List<Expression> expressionList = node.getExpressions().getExpressions();
+        Preconditions.checkArgument(argumentIds.size() == expressionList.size(), "Number of parameters is not equal " +
+                "to the number of argument ids");
+
+        for (int i = 0; i < expressionList.size(); i++) {
+            Expression current = expressionList.get(i);
+            if (current instanceof UnspecifiedBoolExpr) {
+                inputs.add(createReferenceJSON(null, argumentIds.get(i), false));
+            } else if (current instanceof BoolExpr) {
+                tuple = exprCreator.createExpressionJSON(metadata.getBlockId(),
+                        current, symbolTable);
+                if (tuple.getId() == null) {
+                    StringBuilder jsonString = new StringBuilder();
+                    createField(jsonString, argumentIds.get(i)).append(tuple.getJsonString());
+                    inputs.add(jsonString.toString());
+                } else {
+                    finishedJSONStrings.add(tuple.getJsonString());
+                    inputs.add(createReferenceJSON(tuple.getId(), argumentIds.get(i), false));
+                }
+            } else {
+                tuple = exprCreator.createExpressionJSON(metadata.getBlockId(),
+                        current, symbolTable);
+                if (tuple.getId() == null) {
+                    StringBuilder jsonString = new StringBuilder();
+                    createField(jsonString, argumentIds.get(i)).append(tuple.getJsonString());
+                    inputs.add(jsonString.toString());
+                } else {
+                    finishedJSONStrings.add(tuple.getJsonString());
+                    inputs.add(createReferenceJSON(tuple.getId(), argumentIds.get(i), true));
+                }
+            }
+        }
+
+        String mutationString = createCallMetadata(mutationMetadata.getTagName(), name.getName(), argumentIds,
+                mutationMetadata.isWarp());
+        finishedJSONStrings.add(createBlockWithMutationString(metadata, getNextId(),
+                previousBlockId, createInputs(inputs), EMPTY_VALUE, mutationString));
+        previousBlockId = metadata.getBlockId();
     }
 
     private void createPenWithParamStmt(PenWithParamMetadata metadata, StringExpr stringExpr,
