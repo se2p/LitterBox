@@ -7,8 +7,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.PrototypeMutatio
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.TopNonDataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
-import de.uni_passau.fim.se2.litterbox.ast.model.type.BooleanType;
-import de.uni_passau.fim.se2.litterbox.ast.model.type.Type;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ProcedureDefinitionNameMapping;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ProcedureInfo;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.SymbolTable;
@@ -55,7 +53,7 @@ public class ProcedureJSONCreator {
             jsonString.append(",");
         }
 
-        //todo prototype
+        //create prototype
         PrototypeMutationMetadata protoMutationMeta = (PrototypeMutationMetadata) protoMetadata.getMutation();
         List<String> argumentIds = protoMutationMeta.getArgumentIds();
         Preconditions.checkArgument(argumentIds.size() == parameterInfos.size(), "Number of parameters is not equal " +
@@ -66,7 +64,10 @@ public class ProcedureJSONCreator {
                     false));
         }
 
-        //String mutationString = createPrototypeMetadata(protoMutationMeta.getTagName(),)
+        String mutationString = createPrototypeMetadata(protoMutationMeta.getTagName(), procInfo.getName(), argumentIds
+                , parameterInfos, protoMutationMeta.isWarp());
+        jsonString.append(createBlockWithMutationString(protoMetadata, null, defMetadata.getBlockId(),
+                createInputs(inputs), EMPTY_VALUE, mutationString));
 
         if (stmtList.getStmts().size() > 0) {
             StmtListJSONCreator stmtListJSONCreator =

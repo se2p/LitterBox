@@ -136,11 +136,10 @@ public abstract class BlockJsonCreatorHelper {
     private static StringBuilder createArgumentDefaults(StringBuilder jsonString, List<ParameterInfo> parameterInfos) {
         jsonString.append("\"[");
         for (int i = 0; i < parameterInfos.size() - 1; i++) {
-            jsonString.append("\\\"").append(parameterInfos.get(i).getDefaultValue()).append("\\\"").append(",");
+            jsonString.append(parameterInfos.get(i).getDefaultValue()).append(",");
         }
         if (parameterInfos.size() > 0) {
-            jsonString.append("\\\"").append(parameterInfos.get(parameterInfos.size() - 1).getDefaultValue()).append(
-                    "\\\"");
+            jsonString.append(parameterInfos.get(parameterInfos.size() - 1).getDefaultValue());
         }
         jsonString.append("]\"");
         return jsonString;
