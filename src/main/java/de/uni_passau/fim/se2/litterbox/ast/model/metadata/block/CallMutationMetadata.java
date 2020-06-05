@@ -10,10 +10,10 @@ public class CallMutationMetadata extends AbstractNode implements MutationMetada
     private String tagName;
     private List<String> children;
     private String procCode;
-    private String argumentIds;
+    private List<String> argumentIds;
     private boolean warp;
 
-    public CallMutationMetadata(String tagName, List<String> children, String procCode, String argumentIds,
+    public CallMutationMetadata(String tagName, List<String> children, String procCode, List<String> argumentIds,
                                 boolean warp) {
         super();
         this.tagName = tagName;
@@ -35,7 +35,7 @@ public class CallMutationMetadata extends AbstractNode implements MutationMetada
         return procCode;
     }
 
-    public String getArgumentIds() {
+    public List<String> getArgumentIds() {
         return argumentIds;
     }
 

@@ -3,6 +3,7 @@ package de.uni_passau.fim.se2.litterbox.ast.parser.metadata;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.NullNode;
+import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astLists.FieldsMetadataList;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astLists.InputMetadataList;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.*;
@@ -11,7 +12,7 @@ import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 
 public class BlockMetadataParser {
-    public static BlockMetadata parse(String blockId, JsonNode blockNode) {
+    public static BlockMetadata parse(String blockId, JsonNode blockNode) throws ParsingException {
         if (blockNode.has(OPCODE_KEY)) {
             String commentId = null;
             if (blockNode.has(COMMENT_KEY)) {

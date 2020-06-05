@@ -9,7 +9,7 @@ public class PrototypeMutationMetadata extends CallMutationMetadata {
     private String argumentDefaults;
 
 
-    public PrototypeMutationMetadata(String tagName, List<String> children, String procCode, String argumentIds,
+    public PrototypeMutationMetadata(String tagName, List<String> children, String procCode, List<String> argumentIds,
                                      boolean warp, String argumentNames, String argumentDefaults) {
         super(tagName, children, procCode, argumentIds, warp);
         this.argumentNames = argumentNames;

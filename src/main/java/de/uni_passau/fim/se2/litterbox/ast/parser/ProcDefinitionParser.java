@@ -169,7 +169,7 @@ public class ProcDefinitionParser {
     }
 
     private static void addType(JsonNode blocks, List<Type> types,
-                                List<BlockMetadata> paramMetadata, String textValue) {
+                                List<BlockMetadata> paramMetadata, String textValue) throws ParsingException {
         JsonNode param = blocks.get(textValue);
         paramMetadata.add(BlockMetadataParser.parse(textValue, param));
         final String opcodeString = param.get(OPCODE_KEY).asText();

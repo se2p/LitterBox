@@ -21,6 +21,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import static de.uni_passau.fim.se2.litterbox.ast.Constants.VAR_PRIMITIVE;
@@ -68,6 +69,8 @@ public class TopLevelMetadataTest {
         Assertions.assertEquals(PrototypeMutationMetadata.class, protoMet.getMutation().getClass());
         PrototypeMutationMetadata mutationMetadata = (PrototypeMutationMetadata) protoMet.getMutation();
         Assertions.assertEquals("TestMethod %s", mutationMetadata.getProcCode());
-        Assertions.assertEquals("[\"k~QZ.p5)uSGZZ]?@TWD$\"]", mutationMetadata.getArgumentIds());
+        List<String> list = new ArrayList<>();
+        list.add("k~QZ.p5)uSGZZ]?@TWD$");
+        Assertions.assertEquals(list, mutationMetadata.getArgumentIds());
     }
 }

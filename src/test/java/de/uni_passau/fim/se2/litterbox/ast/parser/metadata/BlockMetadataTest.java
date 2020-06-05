@@ -2,6 +2,7 @@ package de.uni_passau.fim.se2.litterbox.ast.parser.metadata;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -26,7 +27,7 @@ public class BlockMetadataTest {
     }
 
     @Test
-    public void testDataBlock(){
+    public void testDataBlock() throws ParsingException {
         BlockMetadata blockMetadata = BlockMetadataParser.parse("GKr#[hOQWwm(reaPtK%R",
                 prog.get(TARGETS_KEY).get(1).get(BLOCKS_KEY).get(
                 "GKr#[hOQWwm(reaPtK%R"));
@@ -40,7 +41,7 @@ public class BlockMetadataTest {
     }
 
     @Test
-    public void testNoMetadataTopBlock(){
+    public void testNoMetadataTopBlock() throws ParsingException {
         BlockMetadata blockMetadata = BlockMetadataParser.parse("X)N~xB@[E,i0S}Vwwtjm",
                 prog.get(TARGETS_KEY).get(1).get(BLOCKS_KEY).get(
                         "X)N~xB@[E,i0S}Vwwtjm"));
@@ -61,7 +62,7 @@ public class BlockMetadataTest {
     }
 
     @Test
-    public void testMetadataBlock(){
+    public void testMetadataBlock() throws ParsingException {
         BlockMetadata blockMetadata = BlockMetadataParser.parse("Vr$zTl8mo1W,U?+q6,T{",
                 prog.get(TARGETS_KEY).get(1).get(BLOCKS_KEY).get(
                         "Vr$zTl8mo1W,U?+q6,T{"));
