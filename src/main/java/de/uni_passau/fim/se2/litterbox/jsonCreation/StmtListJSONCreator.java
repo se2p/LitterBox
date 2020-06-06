@@ -811,7 +811,7 @@ public class StmtListJSONCreator implements ScratchVisitor {
         List<String> inputs = new ArrayList<>();
         IdJsonStringTuple tuple;
         List<Expression> expressionList = node.getExpressions().getExpressions();
-        Preconditions.checkArgument(argumentIds.size() == expressionList.size(), "Number of parameters is not equal " +
+        Preconditions.checkArgument(argumentIds.size() >= expressionList.size(), "Number of parameters is not equal " +
                 "to the number of argument ids");
 
         for (int i = 0; i < expressionList.size(); i++) {

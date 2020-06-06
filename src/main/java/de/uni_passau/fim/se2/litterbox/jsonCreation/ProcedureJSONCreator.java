@@ -56,7 +56,7 @@ public class ProcedureJSONCreator {
         //create prototype
         PrototypeMutationMetadata protoMutationMeta = (PrototypeMutationMetadata) protoMetadata.getMutation();
         List<String> argumentIds = protoMutationMeta.getArgumentIds();
-        Preconditions.checkArgument(argumentIds.size() == parameterInfos.size(), "Number of parameters is not equal " +
+        Preconditions.checkArgument(argumentIds.size() >= parameterInfos.size(), "Number of parameters is not equal " +
                 "to the number of argument ids");
         inputs = new ArrayList<>();
         for (int i = 0; i < argumentIds.size(); i++) {
