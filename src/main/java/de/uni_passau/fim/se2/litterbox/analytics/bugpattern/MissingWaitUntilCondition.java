@@ -26,12 +26,15 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.UnspecifiedBoolExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitUntil;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import java.util.LinkedList;
 import java.util.List;
+
+import static de.uni_passau.fim.se2.litterbox.analytics.CommentAdder.addComment;
 
 /**
  * Checks for missing statements in repeat-until blocks.
@@ -40,6 +43,8 @@ public class MissingWaitUntilCondition implements IssueFinder {
 
     public static final String NAME = "missing_wait_condition";
     public static final String SHORT_NAME = "mssWaitCond";
+    public static final String HINT_TEXT = "missing wait condition";
+
 
     @Override
     public IssueReport check(Program program) {
@@ -61,7 +66,7 @@ public class MissingWaitUntilCondition implements IssueFinder {
     }
 
     private static class CheckVisitor implements ScratchVisitor {
-
+        private ActorDefinition currentActor;
         private int count = 0;
         private boolean patternFound = false;
         private List<String> actorNames = new LinkedList<>();
@@ -78,6 +83,7 @@ public class MissingWaitUntilCondition implements IssueFinder {
         @Override
         public void visit(ActorDefinition actor) {
             patternFound = false;
+            currentActor = actor;
             if (!actor.getChildren().isEmpty()) {
                 for (ASTNode child : actor.getChildren()) {
                     child.accept(this);
@@ -94,6 +100,8 @@ public class MissingWaitUntilCondition implements IssueFinder {
             if (node.getUntil() instanceof UnspecifiedBoolExpr) {
                 patternFound = true;
                 count++;
+                addComment((NonDataBlockMetadata) node.getMetadata(), currentActor, HINT_TEXT,
+                        SHORT_NAME + count);
             }
         }
 

@@ -27,6 +27,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.GreenFlag;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.StartedAsClone;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfElseStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
@@ -37,6 +38,8 @@ import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 import java.util.LinkedList;
 import java.util.List;
 
+import static de.uni_passau.fim.se2.litterbox.analytics.CommentAdder.addComment;
+
 /**
  * A script should execute actions when an event occurs. Instead of continuously checking for the event to occur
  * inside a forever or until loop it is only checked once in a conditional construct, making it
@@ -45,6 +48,7 @@ import java.util.List;
 public class MissingLoopSensing implements IssueFinder, ScratchVisitor {
     public static final String NAME = "missing_loop_sensing";
     public static final String SHORT_NAME = "mssLoopSens";
+    public static final String HINT_TEXT = "missing loop sensing";
     private static final String NOTE1 = "There is no fishy touching or keyPressed checks without a loop.";
     private static final String NOTE2 = "The project contains some fishy touching and / or keyPressed checks without " +
             "a loop.";
@@ -53,6 +57,7 @@ public class MissingLoopSensing implements IssueFinder, ScratchVisitor {
     private List<String> actorNames = new LinkedList<>();
     private boolean insideGreenFlagClone = false;
     private boolean insideLoop = false;
+    private ActorDefinition currentActor;
 
     @Override
     public IssueReport check(Program program) {
@@ -70,6 +75,7 @@ public class MissingLoopSensing implements IssueFinder, ScratchVisitor {
 
     @Override
     public void visit(ActorDefinition actor) {
+        currentActor = actor;
         if (!actor.getChildren().isEmpty()) {
             for (ASTNode child : actor.getChildren()) {
                 child.accept(this);
@@ -123,6 +129,8 @@ public class MissingLoopSensing implements IssueFinder, ScratchVisitor {
             if (boolExpr instanceof IsKeyPressed || boolExpr instanceof Touching || boolExpr instanceof IsMouseDown || boolExpr instanceof ColorTouchingColor) {
                 count++;
                 found = true;
+                addComment((NonDataBlockMetadata) node.getMetadata(), currentActor, HINT_TEXT,
+                        SHORT_NAME + count);
             }
         }
         if (!node.getChildren().isEmpty()) {
@@ -139,6 +147,8 @@ public class MissingLoopSensing implements IssueFinder, ScratchVisitor {
             if (boolExpr instanceof IsKeyPressed || boolExpr instanceof Touching || boolExpr instanceof IsMouseDown || boolExpr instanceof ColorTouchingColor) {
                 count++;
                 found = true;
+                addComment((NonDataBlockMetadata) node.getMetadata(), currentActor, HINT_TEXT,
+                        SHORT_NAME + count);
             }
         }
         if (!node.getChildren().isEmpty()) {
