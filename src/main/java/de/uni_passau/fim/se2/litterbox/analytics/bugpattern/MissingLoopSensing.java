@@ -38,7 +38,7 @@ import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 import java.util.LinkedList;
 import java.util.List;
 
-import static de.uni_passau.fim.se2.litterbox.analytics.CommentAdder.addComment;
+import static de.uni_passau.fim.se2.litterbox.analytics.CommentAdder.addBlockComment;
 
 /**
  * A script should execute actions when an event occurs. Instead of continuously checking for the event to occur
@@ -129,7 +129,7 @@ public class MissingLoopSensing implements IssueFinder, ScratchVisitor {
             if (boolExpr instanceof IsKeyPressed || boolExpr instanceof Touching || boolExpr instanceof IsMouseDown || boolExpr instanceof ColorTouchingColor) {
                 count++;
                 found = true;
-                addComment((NonDataBlockMetadata) node.getMetadata(), currentActor, HINT_TEXT,
+                addBlockComment((NonDataBlockMetadata) node.getMetadata(), currentActor, HINT_TEXT,
                         SHORT_NAME + count);
             }
         }
@@ -147,7 +147,7 @@ public class MissingLoopSensing implements IssueFinder, ScratchVisitor {
             if (boolExpr instanceof IsKeyPressed || boolExpr instanceof Touching || boolExpr instanceof IsMouseDown || boolExpr instanceof ColorTouchingColor) {
                 count++;
                 found = true;
-                addComment((NonDataBlockMetadata) node.getMetadata(), currentActor, HINT_TEXT,
+                addBlockComment((NonDataBlockMetadata) node.getMetadata(), currentActor, HINT_TEXT,
                         SHORT_NAME + count);
             }
         }

@@ -6,10 +6,17 @@ import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMeta
 
 public abstract class CommentAdder {
 
-    public static void addComment(NonDataBlockMetadata metadata, ActorDefinition currentActor, String hintText,
-                                  String commentId) {
+    public static void addBlockComment(NonDataBlockMetadata metadata, ActorDefinition currentActor, String hintText,
+                                       String commentId) {
         (metadata).setCommentId(commentId);
         CommentMetadata comment = new CommentMetadata(commentId, metadata.getBlockId(), 500, 400, 100, 100, false,
+                hintText);
+        currentActor.getMetadata().addComment(comment);
+    }
+
+    public static void addLooseComment(ActorDefinition currentActor, String hintText,
+                                       String commentId) {
+        CommentMetadata comment = new CommentMetadata(commentId, null, 500, 400, 100, 100, false,
                 hintText);
         currentActor.getMetadata().addComment(comment);
     }

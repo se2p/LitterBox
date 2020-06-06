@@ -32,7 +32,7 @@ import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 import java.util.LinkedList;
 import java.util.List;
 
-import static de.uni_passau.fim.se2.litterbox.analytics.CommentAdder.addComment;
+import static de.uni_passau.fim.se2.litterbox.analytics.CommentAdder.addBlockComment;
 
 /**
  * The parameters of a custom block can be used anywhere inside the sprite that defines the custom block.
@@ -100,7 +100,7 @@ public class ParameterOutOfScope implements IssueFinder, ScratchVisitor {
         if (!insideProcedure) {
             count++;
             found = true;
-            addComment((NonDataBlockMetadata) node.getMetadata(), currentActor, HINT_TEXT,
+            addBlockComment((NonDataBlockMetadata) node.getMetadata(), currentActor, HINT_TEXT,
                     SHORT_NAME + count);
         }
         if (!node.getChildren().isEmpty()) {

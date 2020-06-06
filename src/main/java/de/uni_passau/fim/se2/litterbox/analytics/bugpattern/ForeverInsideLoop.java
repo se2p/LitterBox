@@ -33,7 +33,7 @@ import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 import java.util.LinkedList;
 import java.util.List;
 
-import static de.uni_passau.fim.se2.litterbox.analytics.CommentAdder.addComment;
+import static de.uni_passau.fim.se2.litterbox.analytics.CommentAdder.addBlockComment;
 
 /**
  * If two loops are nested and the inner loop is a forever loop, the inner loop will never terminate. Thus
@@ -103,7 +103,7 @@ public class ForeverInsideLoop implements IssueFinder, ScratchVisitor {
         if (loopcounter > 0) {
             found = true;
             count++;
-            addComment((NonDataBlockMetadata) node.getMetadata(), currentActor, HINT_TEXT,
+            addBlockComment((NonDataBlockMetadata) node.getMetadata(), currentActor, HINT_TEXT,
                     SHORT_NAME + count);
         }
         loopcounter++;

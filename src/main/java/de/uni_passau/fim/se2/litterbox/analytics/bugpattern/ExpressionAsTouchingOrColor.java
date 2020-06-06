@@ -38,7 +38,7 @@ import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 import java.util.LinkedList;
 import java.util.List;
 
-import static de.uni_passau.fim.se2.litterbox.analytics.CommentAdder.addComment;
+import static de.uni_passau.fim.se2.litterbox.analytics.CommentAdder.addBlockComment;
 
 /**
  * This happens when inside a block that expects a colour or sprite as parameter (e.g., set pen color to or
@@ -94,7 +94,7 @@ public class ExpressionAsTouchingOrColor implements IssueFinder, ScratchVisitor 
         if (!(node.getColorExpr() instanceof ColorLiteral)) {
             count++;
             found = true;
-            addComment((NonDataBlockMetadata) node.getMetadata(), currentActor, HINT_TEXT,
+            addBlockComment((NonDataBlockMetadata) node.getMetadata(), currentActor, HINT_TEXT,
                     SHORT_NAME + count);
         }
         if (!node.getChildren().isEmpty()) {
@@ -109,13 +109,13 @@ public class ExpressionAsTouchingOrColor implements IssueFinder, ScratchVisitor 
         if (!(node.getOperand1() instanceof ColorLiteral)) {
             count++;
             found = true;
-            addComment((NonDataBlockMetadata) node.getMetadata(), currentActor, HINT_TEXT,
+            addBlockComment((NonDataBlockMetadata) node.getMetadata(), currentActor, HINT_TEXT,
                     SHORT_NAME + count);
         }
         if (!(node.getOperand2() instanceof ColorLiteral)) {
             count++;
             found = true;
-            addComment((NonDataBlockMetadata) node.getMetadata(), currentActor, HINT_TEXT,
+            addBlockComment((NonDataBlockMetadata) node.getMetadata(), currentActor, HINT_TEXT,
                     SHORT_NAME + count);
         }
         if (!node.getChildren().isEmpty()) {
@@ -130,7 +130,7 @@ public class ExpressionAsTouchingOrColor implements IssueFinder, ScratchVisitor 
         if (!(node.getColor() instanceof ColorLiteral)) {
             count++;
             found = true;
-            addComment((NonDataBlockMetadata) node.getMetadata(), currentActor, HINT_TEXT,
+            addBlockComment((NonDataBlockMetadata) node.getMetadata(), currentActor, HINT_TEXT,
                     SHORT_NAME + count);
         }
 
@@ -148,7 +148,7 @@ public class ExpressionAsTouchingOrColor implements IssueFinder, ScratchVisitor 
                 && !(node.getTouchable() instanceof SpriteTouchable)) {
             count++;
             found = true;
-            addComment((NonDataBlockMetadata) node.getMetadata(), currentActor, HINT_TEXT,
+            addBlockComment((NonDataBlockMetadata) node.getMetadata(), currentActor, HINT_TEXT,
                     SHORT_NAME + count);
         }
     }

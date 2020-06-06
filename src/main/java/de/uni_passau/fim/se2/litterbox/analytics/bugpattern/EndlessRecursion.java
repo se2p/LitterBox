@@ -37,7 +37,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import static de.uni_passau.fim.se2.litterbox.analytics.CommentAdder.addComment;
+import static de.uni_passau.fim.se2.litterbox.analytics.CommentAdder.addBlockComment;
 
 /**
  * If a custom block calls itself inside its body and has no condition to stop the recursion, it will run for an
@@ -115,7 +115,7 @@ public class EndlessRecursion implements IssueFinder, ScratchVisitor {
             if (call.equals(currentProcedureName)) {
                 found = true;
                 count++;
-                addComment((NonDataBlockMetadata) node.getMetadata(), currentActor, HINT_TEXT,
+                addBlockComment((NonDataBlockMetadata) node.getMetadata(), currentActor, HINT_TEXT,
                         SHORT_NAME + count);
             }
         }

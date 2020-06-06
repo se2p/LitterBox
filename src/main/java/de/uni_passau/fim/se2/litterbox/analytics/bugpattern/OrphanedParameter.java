@@ -33,7 +33,7 @@ import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 import java.util.LinkedList;
 import java.util.List;
 
-import static de.uni_passau.fim.se2.litterbox.analytics.CommentAdder.addComment;
+import static de.uni_passau.fim.se2.litterbox.analytics.CommentAdder.addBlockComment;
 
 /**
  * When custom blocks are created the user can define parameters, which can then be used in the body of the custom
@@ -123,7 +123,7 @@ public class OrphanedParameter implements IssueFinder, ScratchVisitor {
         if (!validParametername) {
             count++;
             found = true;
-            addComment((NonDataBlockMetadata) node.getMetadata(), currentActor, HINT_TEXT,
+            addBlockComment((NonDataBlockMetadata) node.getMetadata(), currentActor, HINT_TEXT,
                     SHORT_NAME + count);
         }
     }

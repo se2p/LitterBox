@@ -36,7 +36,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import static de.uni_passau.fim.se2.litterbox.analytics.CommentAdder.addComment;
+import static de.uni_passau.fim.se2.litterbox.analytics.CommentAdder.addBlockComment;
 
 /**
  * When a custom block is called without being defined nothing happens. This can occur in two different situations:
@@ -102,7 +102,7 @@ public class CallWithoutDefinition implements IssueFinder, ScratchVisitor {
             if (!proceduresDef.contains(calledProcedure.getIdent().getName()) && !program.getProcedureMapping().checkIfMalformated(currentActor.getIdent().getName() + calledProcedure.getIdent().getName())) {
                 found = true;
                 count++;
-                addComment((NonDataBlockMetadata) calledProcedure.getMetadata(), currentActor, HINT_TEXT,
+                addBlockComment((NonDataBlockMetadata) calledProcedure.getMetadata(), currentActor, HINT_TEXT,
                         SHORT_NAME + count);
             }
         }

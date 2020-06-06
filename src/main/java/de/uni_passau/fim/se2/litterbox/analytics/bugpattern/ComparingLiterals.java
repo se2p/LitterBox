@@ -35,7 +35,7 @@ import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 import java.util.LinkedList;
 import java.util.List;
 
-import static de.uni_passau.fim.se2.litterbox.analytics.CommentAdder.addComment;
+import static de.uni_passau.fim.se2.litterbox.analytics.CommentAdder.addBlockComment;
 
 /**
  * Reporter blocks are used to evaluate the truth value of certain expressions.
@@ -91,7 +91,7 @@ public class ComparingLiterals implements IssueFinder, ScratchVisitor {
                 && (node.getOperand2() instanceof StringLiteral || node.getOperand2() instanceof NumberLiteral)) {
             count++;
             found = true;
-            addComment((NonDataBlockMetadata) node.getMetadata(), currentActor, HINT_TEXT, SHORT_NAME + count);
+            addBlockComment((NonDataBlockMetadata) node.getMetadata(), currentActor, HINT_TEXT, SHORT_NAME + count);
         }
         if (!node.getChildren().isEmpty()) {
             for (ASTNode child : node.getChildren()) {
@@ -107,7 +107,7 @@ public class ComparingLiterals implements IssueFinder, ScratchVisitor {
                 && (node.getOperand2() instanceof StringLiteral || node.getOperand2() instanceof NumberLiteral)) {
             count++;
             found = true;
-            addComment((NonDataBlockMetadata) node.getMetadata(), currentActor, HINT_TEXT, SHORT_NAME + count);
+            addBlockComment((NonDataBlockMetadata) node.getMetadata(), currentActor, HINT_TEXT, SHORT_NAME + count);
         }
         if (!node.getChildren().isEmpty()) {
             for (ASTNode child : node.getChildren()) {
@@ -122,7 +122,7 @@ public class ComparingLiterals implements IssueFinder, ScratchVisitor {
                 && (node.getOperand2() instanceof StringLiteral || node.getOperand2() instanceof NumberLiteral)) {
             count++;
             found = true;
-            addComment((NonDataBlockMetadata) node.getMetadata(), currentActor, HINT_TEXT, SHORT_NAME + count);
+            addBlockComment((NonDataBlockMetadata) node.getMetadata(), currentActor, HINT_TEXT, SHORT_NAME + count);
         }
         if (!node.getChildren().isEmpty()) {
             for (ASTNode child : node.getChildren()) {

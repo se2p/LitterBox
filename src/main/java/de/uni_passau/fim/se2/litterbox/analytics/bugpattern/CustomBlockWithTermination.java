@@ -40,7 +40,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import static de.uni_passau.fim.se2.litterbox.analytics.CommentAdder.addComment;
+import static de.uni_passau.fim.se2.litterbox.analytics.CommentAdder.addBlockComment;
 
 /**
  * If a custom block contains a Stop all or Delete this clone and the custom block is called in the
@@ -108,7 +108,7 @@ public class CustomBlockWithTermination implements ScratchVisitor, IssueFinder {
             if (proceduresWithForever.contains(calledProcedure.getIdent().getName())) {
                 found = true;
                 count++;
-                addComment((NonDataBlockMetadata) calledProcedure.getMetadata(), currentActor, HINT_TEXT,
+                addBlockComment((NonDataBlockMetadata) calledProcedure.getMetadata(), currentActor, HINT_TEXT,
                         SHORT_NAME + count);
             }
         }
