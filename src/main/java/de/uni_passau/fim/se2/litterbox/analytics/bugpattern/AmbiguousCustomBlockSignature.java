@@ -23,8 +23,9 @@ import de.uni_passau.fim.se2.litterbox.analytics.IssueReport;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ProcedureInfo;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
@@ -33,6 +34,8 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+
+import static de.uni_passau.fim.se2.litterbox.analytics.CommentAdder.addBlockComment;
 
 /**
  * Names for custom blocks are non-unique. Two custom blocks with the same name can only be distinguished if they have a
@@ -43,6 +46,7 @@ import java.util.Map;
 public class AmbiguousCustomBlockSignature implements IssueFinder, ScratchVisitor {
     public static final String NAME = "ambiguous_custom_block_signature";
     public static final String SHORT_NAME = "ambCustBlSign";
+    public static final String HINT_TEXT = "ambiguous custom block signature";
     private static final String NOTE1 = "There are no ambiguous custom block signatures in your project.";
     private static final String NOTE2 = "Some of the custom block signatures are ambiguous.";
     private boolean found = false;
@@ -86,7 +90,12 @@ public class AmbiguousCustomBlockSignature implements IssueFinder, ScratchVisito
     @Override
     public void visit(ProcedureDefinition node) {
         if (node.getStmtList().getStmts().size() > 0) {
+            int currentCount = count;
             checkProc(node.getIdent());
+            if (currentCount < count) {
+                addBlockComment((NonDataBlockMetadata) node.getMetadata().getDefinition(), currentActor, HINT_TEXT,
+                        SHORT_NAME + count);
+            }
         }
 
         if (!node.getChildren().isEmpty()) {
