@@ -24,6 +24,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.IssueReport;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
+import de.uni_passau.fim.se2.litterbox.jsonCreation.JSONFileCreator;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -55,6 +56,5 @@ class MissingPenUpTest {
         Truth.assertThat(result.getCount()).isEqualTo(2);
         Truth.assertThat(result.getPosition().get(0)).isEqualTo("Sprite1");
         Truth.assertThat(result.getPosition().get(1)).isEqualTo("Apple");
-        System.out.println(result);
     }
 }
