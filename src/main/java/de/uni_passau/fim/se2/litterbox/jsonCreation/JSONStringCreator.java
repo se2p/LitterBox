@@ -52,7 +52,7 @@ public class JSONStringCreator {
         createField(jsonString, META_KEY).append("{");
         createFieldValue(jsonString, SEMVER_KEY, meta.getSemver()).append(",");
         createFieldValue(jsonString, VM_KEY, meta.getVm()).append(",");
-        createFieldValue(jsonString, AGENT_KEY, meta.getAgent()).append(",");
+        createFieldValue(jsonString, AGENT_KEY, meta.getAgent());
         jsonString.append("}");
         return jsonString;
     }

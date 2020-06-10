@@ -109,7 +109,7 @@ public class Main {
             if (cmd.hasOption(DETECTORS)) {
                 if (cmd.hasOption(ANNOTATE)) {
                     Scratch3Analyzer.analyzeAndAnnotate(cmd.getOptionValue(DETECTORS),
-                            cmd.getOptionValue(OUTPUT), folder,cmd.getOptionValue(ANNOTATE));
+                            cmd.getOptionValue(OUTPUT), folder, cmd.getOptionValue(ANNOTATE));
                 } else {
                     Scratch3Analyzer.analyze(cmd.getOptionValue(DETECTORS),
                             cmd.getOptionValue(OUTPUT), folder);
@@ -117,7 +117,7 @@ public class Main {
             } else {
                 if (cmd.hasOption(ANNOTATE)) {
                     Scratch3Analyzer.analyzeAndAnnotate(cmd.getOptionValue(DETECTORS, ALL),
-                            cmd.getOptionValue(OUTPUT), folder,cmd.getOptionValue(ANNOTATE));
+                            cmd.getOptionValue(OUTPUT), folder, cmd.getOptionValue(ANNOTATE));
                 } else {
                     Scratch3Analyzer.analyze(cmd.getOptionValue(DETECTORS, ALL),
                             cmd.getOptionValue(OUTPUT), folder);
@@ -128,29 +128,57 @@ public class Main {
             if (cmd.hasOption(PROJECTID)) {
                 String projectid = cmd.getOptionValue(PROJECTID);
                 if (cmd.hasOption(DETECTORS)) {
-                    Scratch3Analyzer.downloadAndAnalyze(projectid, cmd.getOptionValue(PROJECTOUT),
-                            cmd.getOptionValue(DETECTORS),
-                            cmd.getOptionValue(OUTPUT));
+                    if (cmd.hasOption(ANNOTATE)) {
+                        Scratch3Analyzer.downloadAndAnalyze(projectid, cmd.getOptionValue(PROJECTOUT),
+                                cmd.getOptionValue(DETECTORS),
+                                cmd.getOptionValue(OUTPUT),cmd.getOptionValue(ANNOTATE));
+                    } else {
+                        Scratch3Analyzer.downloadAndAnalyze(projectid, cmd.getOptionValue(PROJECTOUT),
+                                cmd.getOptionValue(DETECTORS),
+                                cmd.getOptionValue(OUTPUT));
+                    }
                 } else {
-                    Scratch3Analyzer.downloadAndAnalyze(projectid, cmd.getOptionValue(PROJECTOUT),
-                            cmd.getOptionValue(DETECTORS, ALL),
-                            cmd.getOptionValue(OUTPUT));
+                    if (cmd.hasOption(ANNOTATE)) {
+                        Scratch3Analyzer.downloadAndAnalyze(projectid, cmd.getOptionValue(PROJECTOUT),
+                                cmd.getOptionValue(DETECTORS, ALL),
+                                cmd.getOptionValue(OUTPUT),cmd.getOptionValue(ANNOTATE));
+                    } else {
+                        Scratch3Analyzer.downloadAndAnalyze(projectid, cmd.getOptionValue(PROJECTOUT),
+                                cmd.getOptionValue(DETECTORS, ALL),
+                                cmd.getOptionValue(OUTPUT));
+                    }
                 }
             }
 
             if (cmd.hasOption(PROJECTLIST)) {
                 if (cmd.hasOption(DETECTORS)) {
-                    Scratch3Analyzer.downloadAndAnalyzeMultiple(
-                            cmd.getOptionValue(PROJECTLIST),
-                            cmd.getOptionValue(PROJECTOUT),
-                            cmd.getOptionValue(DETECTORS),
-                            cmd.getOptionValue(OUTPUT));
+                    if (cmd.hasOption(ANNOTATE)) {
+                        Scratch3Analyzer.downloadAndAnalyzeMultiple(
+                                cmd.getOptionValue(PROJECTLIST),
+                                cmd.getOptionValue(PROJECTOUT),
+                                cmd.getOptionValue(DETECTORS),
+                                cmd.getOptionValue(OUTPUT), cmd.getOptionValue(ANNOTATE));
+                    } else {
+                        Scratch3Analyzer.downloadAndAnalyzeMultiple(
+                                cmd.getOptionValue(PROJECTLIST),
+                                cmd.getOptionValue(PROJECTOUT),
+                                cmd.getOptionValue(DETECTORS),
+                                cmd.getOptionValue(OUTPUT));
+                    }
                 } else {
-                    Scratch3Analyzer.downloadAndAnalyzeMultiple(
-                            cmd.getOptionValue(PROJECTLIST),
-                            cmd.getOptionValue(PROJECTOUT),
-                            cmd.getOptionValue(DETECTORS, ALL),
-                            cmd.getOptionValue(OUTPUT));
+                    if (cmd.hasOption(ANNOTATE)) {
+                        Scratch3Analyzer.downloadAndAnalyzeMultiple(
+                                cmd.getOptionValue(PROJECTLIST),
+                                cmd.getOptionValue(PROJECTOUT),
+                                cmd.getOptionValue(DETECTORS, ALL),
+                                cmd.getOptionValue(OUTPUT), cmd.getOptionValue(ANNOTATE));
+                    } else {
+                        Scratch3Analyzer.downloadAndAnalyzeMultiple(
+                                cmd.getOptionValue(PROJECTLIST),
+                                cmd.getOptionValue(PROJECTOUT),
+                                cmd.getOptionValue(DETECTORS, ALL),
+                                cmd.getOptionValue(OUTPUT));
+                    }
                 }
             }
             return;

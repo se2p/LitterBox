@@ -77,7 +77,8 @@ public class Scratch3Analyzer {
      * @param detectors   to be executed
      * @param csv         file where the results should be stored
      */
-    public static void checkDownloaded(String json, String projectName, String detectors, String csv) {
+    public static void checkDownloaded(String json, String projectName, String detectors, String csv,
+                                       String annotatePath) {
         try {
 
             ObjectMapper mapper = new ObjectMapper();
@@ -100,9 +101,14 @@ public class Scratch3Analyzer {
                 }
 
             }
+
+            if (annotatePath != null) {
+                JSONFileCreator.writeJsonFromProgram(program, annotatePath);
+            }
         } catch (Exception e) {
             log.warning(e.getMessage());
         }
+
     }
 
     /**
@@ -129,15 +135,18 @@ public class Scratch3Analyzer {
             }
         }
         if (annotatePath != null) {
-            createAnnotatedFile(fileEntry, program, annotatePath);
+            try {
+                createAnnotatedFile(fileEntry, program, annotatePath);
+            } catch (IOException e) {
+                log.warning(e.getMessage());
+            }
         }
     }
 
-    private static void createAnnotatedFile(File fileEntry, Program program, String annotatePath) {
+    private static void createAnnotatedFile(File fileEntry, Program program, String annotatePath) throws IOException {
         if ((FilenameUtils.getExtension(fileEntry.getPath())).toLowerCase().equals("json")) {
             JSONFileCreator.writeJsonFromProgram(program, annotatePath);
         } else {
-
             JSONFileCreator.writeSb3FromProgram(program, annotatePath, fileEntry);
         }
     }
@@ -255,7 +264,18 @@ public class Scratch3Analyzer {
         try {
             String json = Downloader.downloadAndSaveProject(projectid, outfolder);
             Scratch3Analyzer.checkDownloaded(json, projectid, //Name ProjectID is not the same as the Projectname
-                    detectors, resultpath);
+                    detectors, resultpath, null);
+        } catch (IOException e) {
+            log.info("Could not load project with id " + projectid);
+        }
+    }
+
+    public static void downloadAndAnalyze(String projectid, String outfolder, String detectors, String resultpath,
+                                          String annotatePath) {
+        try {
+            String json = Downloader.downloadAndSaveProject(projectid, outfolder);
+            Scratch3Analyzer.checkDownloaded(json, projectid, //Name ProjectID is not the same as the Projectname
+                    detectors, resultpath, annotatePath);
         } catch (IOException e) {
             log.info("Could not load project with id " + projectid);
         }
@@ -293,6 +313,34 @@ public class Scratch3Analyzer {
             while (line != null) {
                 line = line.trim();
                 downloadAndAnalyze(line, outfolder, detectors, resultpath);
+                line = br.readLine();
+            }
+            br.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void downloadAndAnalyzeMultiple(String projectListPath,
+                                                  String outfolder,
+                                                  String detectors,
+                                                  String resultpath, String annotationPath) {
+        File file = new File(projectListPath);
+
+        if (!file.exists()) {
+            log.info("File " + projectListPath + " does not exist.");
+            return;
+        } else if (file.isDirectory()) {
+            log.info("File " + projectListPath + " is a directory.");
+            return;
+        }
+
+        try {
+            BufferedReader br = new BufferedReader(new FileReader(file, StandardCharsets.UTF_8));
+            String line = br.readLine();
+            while (line != null) {
+                line = line.trim();
+                downloadAndAnalyze(line, outfolder, detectors, resultpath, annotationPath);
                 line = br.readLine();
             }
             br.close();

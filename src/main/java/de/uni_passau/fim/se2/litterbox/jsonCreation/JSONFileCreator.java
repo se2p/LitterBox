@@ -30,15 +30,12 @@ public class JSONFileCreator {
         }
     }
 
-    public static void writeSb3FromProgram(Program program, String output, File file) {
+    public static void writeSb3FromProgram(Program program, String output, File file) throws IOException {
         String jsonString = JSONStringCreator.createProgramJSONString(program);
-        String destinationPath = output + program.getIdent().getName() + "_annotated.sb3";
+        String destinationPath = output + program.getIdent().getName() + "_annotated.zip";
 
-        try {
-            FileUtils.copyFile(file, new File(destinationPath));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+
+        FileUtils.copyFile(file, new File(destinationPath));
 
 
         try (PrintWriter out = new PrintWriter(program.getIdent().getName() + "_annotated.json")) {
@@ -50,14 +47,12 @@ public class JSONFileCreator {
         File annotatedJson = new File(program.getIdent().getName() + "_annotated.json");
 
         Path zipFilePath = Paths.get(destinationPath);
-        try (FileSystem fs = FileSystems.newFileSystem(zipFilePath, null)) {
-            Path source = fs.getPath("/project.json");
-            Files.delete(source);
-            Files.copy(annotatedJson.toPath(), source);
-            Files.delete(annotatedJson.toPath());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        FileSystem fs = FileSystems.newFileSystem(zipFilePath, null);
+        Path source = fs.getPath("/project.json");
+        Files.delete(source);
+        Files.copy(annotatedJson.toPath(), source);
+        Files.delete(annotatedJson.toPath());
+
 
     }
 }
