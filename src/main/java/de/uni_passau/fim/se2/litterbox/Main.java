@@ -44,6 +44,8 @@ public class Main {
     private static final String PROJECTOUT_SHORT = "s"; //*s*ave to
     private static final String OUTPUT = "output";
     private static final String OUTPUT_SHORT = "o";
+    private static final String ANNOTATE = "annotate";
+    private static final String ANNOTATE_SHORT = "a";
     private static final String DETECTORS = "detectors";
     private static final String DETECTORS_SHORT = "d";
     private static final String HELP = "help";
@@ -77,6 +79,8 @@ public class Main {
                 + " is a folder path)\nusage with --intermediate: Path to file or folder for the resulting .sc file(s);"
                 + "\nhas to be a folder if multiple projects are analysed"
                 + "\n(file will be created if not existing yet,\npath has to exist)");
+        options.addOption(ANNOTATE_SHORT, ANNOTATE, true, "path where scratch files with hints to bug patterns should" +
+                " be created");
         options.addOption(DETECTORS_SHORT, DETECTORS, true, "name all detectors you want to run separated by ',' "
                 + "\n(all detectors defined in the README)");
         options.addOption(HELP_SHORT, HELP, false, "print this message");
@@ -103,11 +107,21 @@ public class Main {
         } else if (cmd.hasOption(PATH)) {
             File folder = new File(cmd.getOptionValue(PATH));
             if (cmd.hasOption(DETECTORS)) {
-                Scratch3Analyzer.analyze(cmd.getOptionValue(DETECTORS),
-                        cmd.getOptionValue(OUTPUT), folder);
+                if (cmd.hasOption(ANNOTATE)) {
+                    Scratch3Analyzer.analyzeAndAnnotate(cmd.getOptionValue(DETECTORS),
+                            cmd.getOptionValue(OUTPUT), folder,cmd.getOptionValue(ANNOTATE));
+                } else {
+                    Scratch3Analyzer.analyze(cmd.getOptionValue(DETECTORS),
+                            cmd.getOptionValue(OUTPUT), folder);
+                }
             } else {
-                Scratch3Analyzer.analyze(cmd.getOptionValue(DETECTORS, ALL),
-                        cmd.getOptionValue(OUTPUT), folder);
+                if (cmd.hasOption(ANNOTATE)) {
+                    Scratch3Analyzer.analyzeAndAnnotate(cmd.getOptionValue(DETECTORS, ALL),
+                            cmd.getOptionValue(OUTPUT), folder,cmd.getOptionValue(ANNOTATE));
+                } else {
+                    Scratch3Analyzer.analyze(cmd.getOptionValue(DETECTORS, ALL),
+                            cmd.getOptionValue(OUTPUT), folder);
+                }
             }
             return;
         } else if (cmd.hasOption(PROJECTID) || cmd.hasOption(PROJECTLIST)) {
