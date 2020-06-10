@@ -136,8 +136,9 @@ public class Scratch3Analyzer {
     private static void createAnnotatedFile(File fileEntry, Program program, String annotatePath) {
         if ((FilenameUtils.getExtension(fileEntry.getPath())).toLowerCase().equals("json")) {
             JSONFileCreator.writeJsonFromProgram(program, annotatePath);
-        }else{
+        } else {
 
+            JSONFileCreator.writeSb3FromProgram(program, annotatePath, fileEntry);
         }
     }
 
@@ -234,7 +235,7 @@ public class Scratch3Analyzer {
                     return null;
                 }
                 program = ProgramParser.parseProgram(fileEntry.getName().substring(0, fileEntry.getName().lastIndexOf(
-                        ".") - 1), node);
+                        ".")), node);
             } catch (ParsingException | IOException | RuntimeException e) {
                 e.printStackTrace();
             }
