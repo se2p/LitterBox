@@ -56,34 +56,33 @@ public class PositionParser {
     }
 
     private static Position parseRelativePos(JsonNode current, JsonNode allBlocks) throws ParsingException {
-        ArrayList<JsonNode> inputs = new ArrayList<>();
-        current.get(Constants.INPUTS_KEY).elements().forEachRemaining(inputs::add);
+        JsonNode inputsArray = current.get(INPUTS_KEY);
 
         JsonNode menuID;
         String opcodeString = current.get(Constants.OPCODE_KEY).asText();
-        int positionInput;
+        String positionInputKey;
         if (SpriteMotionStmtOpcode.contains(opcodeString)) {
             SpriteMotionStmtOpcode opcode = valueOf(opcodeString);
 
-            if (motion_goto.equals(opcode) || motion_pointtowards.equals(opcode)) {
-                positionInput = 0;
-                menuID = inputs.get(positionInput).get(Constants.POS_INPUT_VALUE);
-            } else if (motion_glideto.equals(opcode)) {
-                positionInput = 1;
-                menuID = inputs.get(positionInput).get(Constants.POS_INPUT_VALUE);
+            if (motion_goto.equals(opcode) || motion_glideto.equals(opcode)) {
+                positionInputKey = TO_KEY;
+                menuID = inputsArray.get(positionInputKey).get(POS_INPUT_VALUE);
+            } else if (motion_pointtowards.equals(opcode)) {
+                positionInputKey = TOWARDS_KEY;
+                menuID = inputsArray.get(positionInputKey).get(POS_INPUT_VALUE);
             } else {
                 throw new ParsingException(
                         "Cannot parse relative coordinates for a block with opcode " + current.get(Constants.OPCODE_KEY));
             }
         } else if (NumExprOpcode.sensing_distanceto.toString().equals(opcodeString)) {
-            positionInput = 0;
-            menuID = inputs.get(positionInput).get(Constants.POS_INPUT_VALUE);
+            positionInputKey = DISTANCETOMENU_KEY;
+            menuID = inputsArray.get(positionInputKey).get(POS_INPUT_VALUE);
         } else {
             throw new ParsingException(
                     "Cannot parse relative coordinates for a block with opcode " + current.get(Constants.OPCODE_KEY));
         }
 
-        if (getShadowIndicator((ArrayNode) inputs.get(positionInput)) == 1) {
+        if (getShadowIndicator((ArrayNode) inputsArray.get(positionInputKey)) == 1) {
             ArrayList<JsonNode> fields = new ArrayList<>();
             allBlocks.get(menuID.asText()).get(Constants.FIELDS_KEY).elements().forEachRemaining(fields::add);
             String posString = fields.get(Constants.FIELD_VALUE).get(0).asText();
