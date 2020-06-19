@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 LitterBox contributors
+ * Copyright (C) 2020 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -18,17 +18,17 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.parser;
 
+import static junit.framework.TestCase.fail;
+
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.DotVisitor;
-import org.junit.jupiter.api.BeforeAll;
-
 import java.io.File;
 import java.io.IOException;
-
-import static junit.framework.TestCase.fail;
+import org.junit.jupiter.api.BeforeAll;
 
 /**
  * This class contains test cases for a program that contains most constructions from the AST. The fixture for these

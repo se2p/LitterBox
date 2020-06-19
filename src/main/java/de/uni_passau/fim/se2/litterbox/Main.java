@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 LitterBox contributors
+ * Copyright (C) 2020 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -18,17 +18,17 @@
  */
 package de.uni_passau.fim.se2.litterbox;
 
+import static de.uni_passau.fim.se2.litterbox.analytics.Scratch3Analyzer.removeEndSeparator;
+import static de.uni_passau.fim.se2.litterbox.utils.GroupConstants.*;
+
+
 import de.uni_passau.fim.se2.litterbox.analytics.IssueTool;
 import de.uni_passau.fim.se2.litterbox.analytics.Scratch3Analyzer;
-import org.apache.commons.cli.*;
-
 import java.io.File;
 import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.logging.Logger;
-
-import static de.uni_passau.fim.se2.litterbox.analytics.Scratch3Analyzer.removeEndSeparator;
-import static de.uni_passau.fim.se2.litterbox.utils.GroupConstants.*;
+import org.apache.commons.cli.*;
 
 public class Main {
 

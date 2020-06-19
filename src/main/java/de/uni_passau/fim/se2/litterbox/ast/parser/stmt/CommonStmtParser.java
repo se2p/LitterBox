@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 LitterBox contributors
+ * Copyright (C) 2020 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -17,6 +17,9 @@
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
 package de.uni_passau.fim.se2.litterbox.ast.parser.stmt;
+
+import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
+
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -43,11 +46,8 @@ import de.uni_passau.fim.se2.litterbox.ast.parser.StringExprParser;
 import de.uni_passau.fim.se2.litterbox.ast.parser.metadata.BlockMetadataParser;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.VariableInfo;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
-
 import java.util.ArrayList;
 import java.util.List;
-
-import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 
 public class CommonStmtParser {
 

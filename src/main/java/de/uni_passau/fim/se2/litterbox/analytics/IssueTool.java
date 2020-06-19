@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 LitterBox contributors
+ * Copyright (C) 2020 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -18,18 +18,18 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics;
 
+import static de.uni_passau.fim.se2.litterbox.utils.GroupConstants.*;
+
+
 import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.*;
 import de.uni_passau.fim.se2.litterbox.analytics.ctscore.FlowControl;
 import de.uni_passau.fim.se2.litterbox.analytics.smells.*;
 import de.uni_passau.fim.se2.litterbox.analytics.utils.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.utils.CSVWriter;
-import org.apache.commons.csv.CSVPrinter;
-
 import java.io.IOException;
 import java.util.*;
-
-import static de.uni_passau.fim.se2.litterbox.utils.GroupConstants.*;
+import org.apache.commons.csv.CSVPrinter;
 
 /**
  * Holds all IssueFinder and executes them.
