@@ -19,12 +19,19 @@
 package de.uni_passau.fim.se2.litterbox.ast.model.statement.termination;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 public class StopThisScript extends AbstractNode implements TerminationStmt {
+    private final BlockMetadata metadata;
 
-    public StopThisScript() {
-        super();
+    public StopThisScript(BlockMetadata metadata) {
+        super(metadata);
+        this.metadata = metadata;
+    }
+
+    public BlockMetadata getMetadata() {
+        return metadata;
     }
 
     @Override

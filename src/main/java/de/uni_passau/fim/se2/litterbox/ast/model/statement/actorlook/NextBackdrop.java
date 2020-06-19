@@ -20,11 +20,19 @@ package de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTLeaf;
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 public class NextBackdrop extends AbstractNode implements ActorLookStmt, ASTLeaf {
+    private final BlockMetadata metadata;
 
-    public NextBackdrop() {
+    public NextBackdrop(BlockMetadata metadata) {
+        super(metadata);
+        this.metadata = metadata;
+    }
+
+    public BlockMetadata getMetadata() {
+        return metadata;
     }
 
     @Override

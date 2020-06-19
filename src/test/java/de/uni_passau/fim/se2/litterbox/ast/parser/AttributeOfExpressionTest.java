@@ -7,16 +7,10 @@ import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.StringContains;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.Answer;
+import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.WithExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AttributeOf;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.Backdrop;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.Attribute;
-import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.ExpressionStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -52,6 +46,6 @@ public class AttributeOfExpressionTest {
         ExpressionStmt expressionStmt = (ExpressionStmt) stmt;
         Truth.assertThat(expressionStmt.getExpression()).isInstanceOf(AttributeOf.class);
         AttributeOf attributeOf = (AttributeOf) expressionStmt.getExpression();
-        Truth.assertThat(attributeOf.getLocalIdentifier()).isInstanceOf(Backdrop.class);
+        Truth.assertThat(attributeOf.getElementChoice()).isInstanceOf(WithExpr.class);
     }
 }

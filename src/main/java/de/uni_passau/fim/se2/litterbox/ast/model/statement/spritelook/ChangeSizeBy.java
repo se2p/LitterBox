@@ -20,16 +20,23 @@ package de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 public class ChangeSizeBy extends AbstractNode implements SpriteLookStmt {
 
     private final NumExpr num;
+    private final BlockMetadata metadata;
 
-    public ChangeSizeBy(NumExpr num) {
-        super(num);
+    public ChangeSizeBy(NumExpr num, BlockMetadata metadata) {
+        super(num, metadata);
         this.num = Preconditions.checkNotNull(num);
+        this.metadata = metadata;
+    }
+
+    public BlockMetadata getMetadata() {
+        return metadata;
     }
 
     public NumExpr getNum() {

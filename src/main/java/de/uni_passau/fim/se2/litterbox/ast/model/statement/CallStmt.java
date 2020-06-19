@@ -21,6 +21,7 @@ package de.uni_passau.fim.se2.litterbox.ast.model.statement;
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.ExpressionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
@@ -28,11 +29,17 @@ public class CallStmt extends AbstractNode implements Stmt {
 
     private final LocalIdentifier ident;
     private final ExpressionList expressions;
+    private final BlockMetadata metadata;
 
-    public CallStmt(LocalIdentifier ident, ExpressionList expressions) {
-        super(ident, expressions);
+    public CallStmt(LocalIdentifier ident, ExpressionList expressions, BlockMetadata metadata) {
+        super(ident, expressions, metadata);
         this.ident = Preconditions.checkNotNull(ident);
         this.expressions = Preconditions.checkNotNull(expressions);
+        this.metadata = metadata;
+    }
+
+    public BlockMetadata getMetadata() {
+        return metadata;
     }
 
     @Override

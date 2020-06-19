@@ -20,20 +20,27 @@ package de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 public class SetYTo extends AbstractNode implements SpriteMotionStmt {
 
     private final NumExpr num;
+    private final BlockMetadata metadata;
 
-    public SetYTo(NumExpr num) {
-        super(num);
+    public SetYTo(NumExpr num, BlockMetadata metadata) {
+        super(num, metadata);
         this.num = Preconditions.checkNotNull(num);
+        this.metadata = metadata;
     }
 
     public NumExpr getNum() {
         return num;
+    }
+
+    public BlockMetadata getMetadata() {
+        return metadata;
     }
 
     @Override

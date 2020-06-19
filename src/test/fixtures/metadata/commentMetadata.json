@@ -1,0 +1,383 @@
+{
+  "targets": [
+    {
+      "isStage": true,
+      "name": "Stage",
+      "variables": {
+        "`jEk@4|i[#Fk?(8x)AV.-my variable": [
+          "meine Variable",
+          0
+        ]
+      },
+      "lists": {},
+      "broadcasts": {},
+      "blocks": {},
+      "comments": {},
+      "currentCostume": 0,
+      "costumes": [
+        {
+          "assetId": "cd21514d0531fdffb22204e0ec5ed84a",
+          "name": "Bühnenbild1",
+          "md5ext": "cd21514d0531fdffb22204e0ec5ed84a.svg",
+          "dataFormat": "svg",
+          "rotationCenterX": 240,
+          "rotationCenterY": 180
+        }
+      ],
+      "sounds": [
+        {
+          "assetId": "83a9787d4cb6f3b7632b4ddfebf74367",
+          "name": "Plopp",
+          "dataFormat": "wav",
+          "format": "",
+          "rate": 48000,
+          "sampleCount": 1124,
+          "md5ext": "83a9787d4cb6f3b7632b4ddfebf74367.wav"
+        }
+      ],
+      "volume": 100,
+      "layerOrder": 0,
+      "tempo": 60,
+      "videoTransparency": 50,
+      "videoState": "on",
+      "textToSpeechLanguage": null
+    },
+    {
+      "isStage": false,
+      "name": "Figur1",
+      "variables": {},
+      "lists": {},
+      "broadcasts": {},
+      "blocks": {
+        "z;/~(2Z_Xv9~^9yakTU1": {
+          "opcode": "procedures_definition",
+          "next": "CJRU|ScYPZ=a`Irs6AH2",
+          "parent": null,
+          "inputs": {
+            "custom_block": [
+              1,
+              "z~EcO`mZ9S%]k)ZGk3=6"
+            ]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": true,
+          "x": 139,
+          "y": 160,
+          "comment": "csOuoew*W[q[5bX=8_ah"
+        },
+        "z~EcO`mZ9S%]k)ZGk3=6": {
+          "opcode": "procedures_prototype",
+          "next": null,
+          "parent": "z;/~(2Z_Xv9~^9yakTU1",
+          "inputs": {},
+          "fields": {},
+          "shadow": true,
+          "topLevel": false,
+          "mutation": {
+            "tagName": "mutation",
+            "children": [],
+            "proccode": "Quadratzeichnen",
+            "argumentids": "[]",
+            "argumentnames": "[]",
+            "argumentdefaults": "[]",
+            "warp": "false"
+          }
+        },
+        "CJRU|ScYPZ=a`Irs6AH2": {
+          "opcode": "pen_penDown",
+          "next": "OM:#+Q*%uu!pd`4WFfw5",
+          "parent": "z;/~(2Z_Xv9~^9yakTU1",
+          "inputs": {},
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "+c|yX1N5}sK_79-RwT7c": {
+          "opcode": "pen_penUp",
+          "next": null,
+          "parent": "AZwwOtn6J#2+[7qX86R6",
+          "inputs": {},
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "OM:#+Q*%uu!pd`4WFfw5": {
+          "opcode": "motion_movesteps",
+          "next": "/M2fV3qwr/IS~ZC5:Z/q",
+          "parent": "CJRU|ScYPZ=a`Irs6AH2",
+          "inputs": {
+            "STEPS": [
+              1,
+              [
+                4,
+                "100"
+              ]
+            ]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "/M2fV3qwr/IS~ZC5:Z/q": {
+          "opcode": "motion_turnright",
+          "next": "F?L9@U+t!DHLLN6xvW}u",
+          "parent": "OM:#+Q*%uu!pd`4WFfw5",
+          "inputs": {
+            "DEGREES": [
+              1,
+              [
+                4,
+                "90"
+              ]
+            ]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "F?L9@U+t!DHLLN6xvW}u": {
+          "opcode": "motion_movesteps",
+          "next": "Ik$5sTkq0ZFIeP`^~r`E",
+          "parent": "/M2fV3qwr/IS~ZC5:Z/q",
+          "inputs": {
+            "STEPS": [
+              1,
+              [
+                4,
+                "100"
+              ]
+            ]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "Ik$5sTkq0ZFIeP`^~r`E": {
+          "opcode": "motion_turnright",
+          "next": "*2lRg+x1tx~pb{U%q.lT",
+          "parent": "F?L9@U+t!DHLLN6xvW}u",
+          "inputs": {
+            "DEGREES": [
+              1,
+              [
+                4,
+                "90"
+              ]
+            ]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "*2lRg+x1tx~pb{U%q.lT": {
+          "opcode": "motion_movesteps",
+          "next": "*/hhnnGD8-bs)0?YGE4=",
+          "parent": "Ik$5sTkq0ZFIeP`^~r`E",
+          "inputs": {
+            "STEPS": [
+              1,
+              [
+                4,
+                "100"
+              ]
+            ]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "*/hhnnGD8-bs)0?YGE4=": {
+          "opcode": "motion_turnright",
+          "next": "zH_6oPpS[3Cc_[gCCC$y",
+          "parent": "*2lRg+x1tx~pb{U%q.lT",
+          "inputs": {
+            "DEGREES": [
+              1,
+              [
+                4,
+                "90"
+              ]
+            ]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "zH_6oPpS[3Cc_[gCCC$y": {
+          "opcode": "motion_movesteps",
+          "next": "AZwwOtn6J#2+[7qX86R6",
+          "parent": "*/hhnnGD8-bs)0?YGE4=",
+          "inputs": {
+            "STEPS": [
+              1,
+              [
+                4,
+                "100"
+              ]
+            ]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "AZwwOtn6J#2+[7qX86R6": {
+          "opcode": "motion_turnright",
+          "next": "+c|yX1N5}sK_79-RwT7c",
+          "parent": "zH_6oPpS[3Cc_[gCCC$y",
+          "inputs": {
+            "DEGREES": [
+              1,
+              [
+                4,
+                "90"
+              ]
+            ]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "q)YN;)zzTetpw=D0%Ne0": {
+          "opcode": "procedures_call",
+          "next": "pQ/noIiq|qs@ggQbbg;%",
+          "parent": "yasK6II%Zv9D%OKx3#Ab",
+          "inputs": {},
+          "fields": {},
+          "shadow": false,
+          "topLevel": false,
+          "mutation": {
+            "tagName": "mutation",
+            "children": [],
+            "proccode": "Quadratzeichnen",
+            "argumentids": "[]",
+            "warp": "false"
+          }
+        },
+        "SM_WTN5{(:3A}SaVIX~T": {
+          "opcode": "event_whenflagclicked",
+          "next": "yasK6II%Zv9D%OKx3#Ab",
+          "parent": null,
+          "inputs": {},
+          "fields": {},
+          "shadow": false,
+          "topLevel": true,
+          "x": 844,
+          "y": 110
+        },
+        "pQ/noIiq|qs@ggQbbg;%": {
+          "opcode": "motion_movesteps",
+          "next": "EzJPO$DID^eClcU]hKxf",
+          "parent": "q)YN;)zzTetpw=D0%Ne0",
+          "inputs": {
+            "STEPS": [
+              1,
+              [
+                4,
+                "15"
+              ]
+            ]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "yasK6II%Zv9D%OKx3#Ab": {
+          "opcode": "pen_clear",
+          "next": "q)YN;)zzTetpw=D0%Ne0",
+          "parent": "SM_WTN5{(:3A}SaVIX~T",
+          "inputs": {},
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "EzJPO$DID^eClcU]hKxf": {
+          "opcode": "procedures_call",
+          "next": null,
+          "parent": "pQ/noIiq|qs@ggQbbg;%",
+          "inputs": {},
+          "fields": {},
+          "shadow": false,
+          "topLevel": false,
+          "mutation": {
+            "tagName": "mutation",
+            "children": [],
+            "proccode": "Quadratzeichnen",
+            "argumentids": "[]",
+            "warp": "false"
+          }
+        }
+      },
+      "comments": {
+        "csOuoew*W[q[5bX=8_ah": {
+          "blockId": "z;/~(2Z_Xv9~^9yakTU1",
+          "x": 504.0740740740741,
+          "y": 457.48148148148147,
+          "width": 200,
+          "height": 200,
+          "minimized": false,
+          "text": "Block comment"
+        },
+        "Ax)k7KjbWbvteP=L0Mrs": {
+          "blockId": null,
+          "x": 1143.7037037037037,
+          "y": 308.1481481481482,
+          "width": 200,
+          "height": 200,
+          "minimized": false,
+          "text": "Editor comment"
+        }
+      },
+      "currentCostume": 0,
+      "costumes": [
+        {
+          "assetId": "b7853f557e4426412e64bb3da6531a99",
+          "name": "Kostüm1",
+          "bitmapResolution": 1,
+          "md5ext": "b7853f557e4426412e64bb3da6531a99.svg",
+          "dataFormat": "svg",
+          "rotationCenterX": 48,
+          "rotationCenterY": 50
+        },
+        {
+          "assetId": "e6ddc55a6ddd9cc9d84fe0b4c21e016f",
+          "name": "Kostüm2",
+          "bitmapResolution": 1,
+          "md5ext": "e6ddc55a6ddd9cc9d84fe0b4c21e016f.svg",
+          "dataFormat": "svg",
+          "rotationCenterX": 46,
+          "rotationCenterY": 53
+        }
+      ],
+      "sounds": [
+        {
+          "assetId": "83c36d806dc92327b9e7049a565c6bff",
+          "name": "Miau",
+          "dataFormat": "wav",
+          "format": "",
+          "rate": 48000,
+          "sampleCount": 40682,
+          "md5ext": "83c36d806dc92327b9e7049a565c6bff.wav"
+        }
+      ],
+      "volume": 100,
+      "layerOrder": 1,
+      "visible": true,
+      "x": 55.00000000000001,
+      "y": -3.9999999999999574,
+      "size": 100,
+      "direction": 90,
+      "draggable": false,
+      "rotationStyle": "all around"
+    }
+  ],
+  "monitors": [],
+  "extensions": [
+    "pen"
+  ],
+  "meta": {
+    "semver": "3.0.0",
+    "vm": "0.2.0-prerelease.20200402182733",
+    "agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:75.0) Gecko/20100101 Firefox/75.0"
+  }
+}

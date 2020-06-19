@@ -24,9 +24,12 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
+import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.WithExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.UnspecifiedExpression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.AsBool;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.ListContains;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.UnspecifiedBoolExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.AsListIndex;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.ExpressionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
@@ -37,8 +40,9 @@ import de.uni_passau.fim.se2.litterbox.ast.model.literals.BoolLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.ColorLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.Metadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterDefinitionList;
-import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterDefiniton;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.ExpressionStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.*;
@@ -48,6 +52,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.ChangeVariable
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetAttributeTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetVariableTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.list.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.ChangeLayerBy;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.LayerChoice;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SetDragMode;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SetRotationStyle;
@@ -117,6 +122,31 @@ public class BlockCount implements IssueFinder, ScratchVisitor {
                 child.accept(this);
             }
         }
+    }
+
+    @Override
+    public void visit(Metadata node) {
+        //everything inside Metadata should not be counted
+    }
+
+    @Override
+    public void visit(UnspecifiedStringExpr node) {
+
+    }
+
+    @Override
+    public void visit(UnspecifiedNumExpr node) {
+
+    }
+
+    @Override
+    public void visit(UnspecifiedBoolExpr node) {
+
+    }
+
+    @Override
+    public void visit(UnspecifiedExpression node) {
+
     }
 
     @Override
@@ -192,6 +222,14 @@ public class BlockCount implements IssueFinder, ScratchVisitor {
     }
 
     @Override
+    public void visit(ChangeLayerBy node) {
+        if (insideScript || insideProcedure) {
+            count++;
+        }
+        node.getNum().accept(this);
+    }
+
+    @Override
     public void visit(ChangeSoundEffectBy node) {
         if (insideScript || insideProcedure) {
             count++;
@@ -212,7 +250,16 @@ public class BlockCount implements IssueFinder, ScratchVisitor {
         if (insideScript || insideProcedure) {
             count++;
         }
-        node.getLocalIdentifier().accept(this);
+        node.getElementChoice().accept(this);
+    }
+
+    @Override
+    public void visit(WithExpr node) {
+        if (!node.getChildren().isEmpty()) {
+            for (ASTNode child : node.getChildren()) {
+                child.accept(this);
+            }
+        }
     }
 
     @Override
@@ -317,7 +364,7 @@ public class BlockCount implements IssueFinder, ScratchVisitor {
     }
 
     @Override
-    public void visit(ParameterDefiniton node) {
+    public void visit(ParameterDefinition node) {
         if (!node.getChildren().isEmpty()) {
             for (ASTNode child : node.getChildren()) {
                 child.accept(this);

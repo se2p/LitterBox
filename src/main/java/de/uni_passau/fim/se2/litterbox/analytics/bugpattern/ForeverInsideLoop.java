@@ -23,6 +23,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.IssueReport;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatTimesStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
@@ -32,6 +33,8 @@ import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 import java.util.LinkedList;
 import java.util.List;
 
+import static de.uni_passau.fim.se2.litterbox.analytics.CommentAdder.addBlockComment;
+
 /**
  * If two loops are nested and the inner loop is a forever loop, the inner loop will never terminate. Thus
  * the statements preceeding the inner loop are only executed once. Furthermore, the statements following the outer
@@ -40,6 +43,7 @@ import java.util.List;
 public class ForeverInsideLoop implements IssueFinder, ScratchVisitor {
     public static final String NAME = "forever_inside_loop";
     public static final String SHORT_NAME = "foreverInLoop";
+    public static final String HINT_TEXT = "forever inside loop";
     private static final String NOTE1 = "There are no forever loops inside other loops in your project.";
     private static final String NOTE2 = "Some of the sprites contain forever loops inside other loops.";
     private boolean found = false;
@@ -99,6 +103,8 @@ public class ForeverInsideLoop implements IssueFinder, ScratchVisitor {
         if (loopcounter > 0) {
             found = true;
             count++;
+            addBlockComment((NonDataBlockMetadata) node.getMetadata(), currentActor, HINT_TEXT,
+                    SHORT_NAME + count);
         }
         loopcounter++;
         if (!node.getChildren().isEmpty()) {

@@ -109,8 +109,8 @@ public class ExpressionParserTest {
         NumExpr div = NumExprParser.parseNumExpr(divBlock, STEPS_KEY, twoNumExprSlotsNumExprs);
         assertTrue(div instanceof Div);
         PickRandom pickRandom = (PickRandom) ((Div) div).getOperand1();
-        assertEquals("1.0", String.valueOf(((NumberLiteral) (pickRandom.getFrom())).getValue()));
-        assertEquals("2.0", String.valueOf(((NumberLiteral) (pickRandom.getTo())).getValue()));
+        assertEquals("1.0", String.valueOf(((NumberLiteral) (pickRandom.getOperand1())).getValue()));
+        assertEquals("2.0", String.valueOf(((NumberLiteral) (pickRandom.getOperand2())).getValue()));
         Mod mod = (Mod) ((Div) div).getOperand2();
         assertEquals("1.0", String.valueOf(((NumberLiteral) (mod.getOperand1())).getValue()));
         assertEquals("2.0", String.valueOf(((NumberLiteral) (mod.getOperand2())).getValue()));

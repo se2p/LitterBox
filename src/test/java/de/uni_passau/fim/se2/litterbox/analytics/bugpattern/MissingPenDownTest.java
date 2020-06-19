@@ -54,6 +54,5 @@ class MissingPenDownTest {
         final IssueReport result = finder.check(program);
         Truth.assertThat(result.getCount()).isEqualTo(1);
         Truth.assertThat(result.getPosition().get(0)).isEqualTo("Apple");
-        System.out.println(result);
     }
 }

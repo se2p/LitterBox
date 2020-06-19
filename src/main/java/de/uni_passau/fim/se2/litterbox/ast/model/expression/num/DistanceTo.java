@@ -19,16 +19,23 @@
 package de.uni_passau.fim.se2.litterbox.ast.model.expression.num;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.Position;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 public class DistanceTo extends AbstractNode implements NumExpr {
 
     private final Position position;
+    private final BlockMetadata metadata;
 
-    public DistanceTo(Position position) {
-        super(position);
+    public DistanceTo(Position position, BlockMetadata metadata) {
+        super(position, metadata);
         this.position = position;
+        this.metadata = metadata;
+    }
+
+    public BlockMetadata getMetadata() {
+        return metadata;
     }
 
     public Position getPosition() {

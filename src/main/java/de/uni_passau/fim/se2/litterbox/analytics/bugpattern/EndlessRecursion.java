@@ -23,11 +23,12 @@ import de.uni_passau.fim.se2.litterbox.analytics.IssueReport;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfElseStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ProcedureInfo;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
@@ -36,6 +37,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import static de.uni_passau.fim.se2.litterbox.analytics.CommentAdder.addBlockComment;
+
 /**
  * If a custom block calls itself inside its body and has no condition to stop the recursion, it will run for an
  * indefinite amount of time.
@@ -43,6 +46,7 @@ import java.util.Map;
 public class EndlessRecursion implements IssueFinder, ScratchVisitor {
     public static final String NAME = "endless_recursion";
     public static final String SHORT_NAME = "endlRec";
+    public static final String HINT_TEXT = "endless recursion";
     private static final String NOTE1 = "There are no endless recursions in your project.";
     private static final String NOTE2 = "Some of the sprites can contain endless recursions.";
     private boolean found = false;
@@ -111,6 +115,8 @@ public class EndlessRecursion implements IssueFinder, ScratchVisitor {
             if (call.equals(currentProcedureName)) {
                 found = true;
                 count++;
+                addBlockComment((NonDataBlockMetadata) node.getMetadata(), currentActor, HINT_TEXT,
+                        SHORT_NAME + count);
             }
         }
     }

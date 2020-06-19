@@ -20,15 +20,22 @@ package de.uni_passau.fim.se2.litterbox.ast.model.expression.bool;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Key;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 public class IsKeyPressed extends AbstractNode implements BoolExpr {
 
     private final Key key;
+    private final BlockMetadata metadata;
 
-    public IsKeyPressed(Key key) {
-        super(key);
+    public IsKeyPressed(Key key, BlockMetadata metadata) {
+        super(key, metadata);
         this.key = key;
+        this.metadata = metadata;
+    }
+
+    public BlockMetadata getMetadata() {
+        return metadata;
     }
 
     public Key getKey() {

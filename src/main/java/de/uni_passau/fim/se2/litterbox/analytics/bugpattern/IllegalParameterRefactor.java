@@ -25,6 +25,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitUntil;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfElseStmt;
@@ -42,9 +43,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import static de.uni_passau.fim.se2.litterbox.analytics.CommentAdder.addBlockComment;
+
 public class IllegalParameterRefactor implements IssueFinder, ScratchVisitor {
     public static final String NAME = "illegal_parameter_refactor";
     public static final String SHORT_NAME = "illParamRefac";
+    public static final String HINT_TEXT = "illegal parameter refactor";
     private static final String NOTE1 = "There are no procedures with illegally refactored parameters in your project.";
     private static final String NOTE2 = "Some of the sprites contain procedures with illegally refactored parameters.";
     private boolean found = false;
@@ -124,6 +128,8 @@ public class IllegalParameterRefactor implements IssueFinder, ScratchVisitor {
                     if (currentArgument.getName().equals(ident.getName().getName()) && !(currentArgument.getType() instanceof BooleanType)) {
                         found = true;
                         count++;
+                        addBlockComment((NonDataBlockMetadata) ident.getMetadata(), currentActor,
+                                HINT_TEXT, SHORT_NAME + count);
                     }
                 }
 

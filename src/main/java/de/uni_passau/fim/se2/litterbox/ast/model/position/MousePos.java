@@ -20,12 +20,19 @@ package de.uni_passau.fim.se2.litterbox.ast.model.position;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTLeaf;
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 public class MousePos extends AbstractNode implements Position, ASTLeaf {
+    private final BlockMetadata metadata;
 
-    public MousePos() {
-        super();
+    public MousePos(BlockMetadata metadata) {
+        super(metadata);
+        this.metadata = metadata;
+    }
+
+    public BlockMetadata getMetadata() {
+        return metadata;
     }
 
     @Override

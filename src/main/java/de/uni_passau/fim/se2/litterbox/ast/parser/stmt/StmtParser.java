@@ -36,7 +36,7 @@ public class StmtParser {
 
         JsonNode current = blocks.get(blockID);
         if (current instanceof ArrayNode) {
-            return ExpressionStmtParser.parse(current, blocks);
+            return ExpressionStmtParser.parse(blockID, current, blocks);
         } else {
             final String opcode = current.get(Constants.OPCODE_KEY).asText();
 
@@ -46,33 +46,33 @@ public class StmtParser {
                         .equals("other scripts in sprite")
                         || current.get(Constants.FIELDS_KEY).get("STOP_OPTION").get(Constants.FIELD_VALUE).asText()
                         .equals("other scripts in stage")))) {
-                    return TerminationStmtParser.parseTerminationStmt(current, blocks);
+                    return TerminationStmtParser.parseTerminationStmt(blockID, current, blocks);
                 }
             }
 
             if (ActorLookStmtOpcode.contains(opcode)) {
-                return ActorLookStmtParser.parse(current, blocks);
+                return ActorLookStmtParser.parse(blockID, current, blocks);
             } else if (ControlStmtOpcode.contains(opcode)) {
-                return ControlStmtParser.parse(current, blocks);
+                return ControlStmtParser.parse(blockID, current, blocks);
             } else if (BoolExprOpcode.contains(opcode) || NumExprOpcode.contains(opcode) || StringExprOpcode
                     .contains(opcode)) {
-                return ExpressionStmtParser.parse(current, blocks);
+                return ExpressionStmtParser.parse(blockID, current, blocks);
             } else if (CommonStmtOpcode.contains(opcode)) {
-                return CommonStmtParser.parse(current, blocks);
+                return CommonStmtParser.parse(blockID, current, blocks);
             } else if (SpriteMotionStmtOpcode.contains(opcode)) {
-                return SpriteMotionStmtParser.parse(current, blocks);
+                return SpriteMotionStmtParser.parse(blockID, current, blocks);
             } else if (SpriteLookStmtOpcode.contains(opcode)) {
-                return SpriteLookStmtParser.parse(current, blocks);
+                return SpriteLookStmtParser.parse(blockID, current, blocks);
             } else if (ActorSoundStmtOpcode.contains(opcode)) {
-                return ActorSoundStmtParser.parse(current, blocks);
+                return ActorSoundStmtParser.parse(blockID, current, blocks);
             } else if (CallStmtOpcode.contains(opcode)) {
-                return CallStmtParser.parse(current, blocks);
+                return CallStmtParser.parse(blockID, current, blocks);
             } else if (ListStmtOpcode.contains(opcode)) {
-                return ListStmtParser.parse(current, blocks);
+                return ListStmtParser.parse(blockID, current, blocks);
             } else if (SetStmtOpcode.contains(opcode)) {
-                return SetStmtParser.parse(current, blocks);
+                return SetStmtParser.parse(blockID, current, blocks);
             } else if (PenOpcode.contains(opcode)) {
-                return PenStmtParser.parse(current, blocks);
+                return PenStmtParser.parse(blockID, current, blocks);
             } else {
                 return new UnspecifiedStmt();
             }

@@ -20,17 +20,20 @@ package de.uni_passau.fim.se2.litterbox.ast.model.event;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 public class AttributeAboveValue extends AbstractNode implements Event {
 
     private final EventAttribute attribute;
     private final NumExpr value;
+    private final BlockMetadata metadata;
 
-    public AttributeAboveValue(EventAttribute attribute, NumExpr value) {
-        super(attribute, value);
+    public AttributeAboveValue(EventAttribute attribute, NumExpr value, BlockMetadata metadata) {
+        super(attribute, value, metadata);
         this.attribute = attribute;
         this.value = value;
+        this.metadata = metadata;
     }
 
     public EventAttribute getAttribute() {
@@ -39,6 +42,10 @@ public class AttributeAboveValue extends AbstractNode implements Event {
 
     public NumExpr getValue() {
         return value;
+    }
+
+    public BlockMetadata getMetadata() {
+        return metadata;
     }
 
     @Override

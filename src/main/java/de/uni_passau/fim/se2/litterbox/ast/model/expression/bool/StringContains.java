@@ -20,17 +20,24 @@ package de.uni_passau.fim.se2.litterbox.ast.model.expression.bool;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 public class StringContains extends AbstractNode implements BoolExpr {
 
     private final StringExpr containing;
     private final StringExpr contained;
+    private final BlockMetadata metadata;
 
-    public StringContains(StringExpr containing, StringExpr contained) {
-        super(containing, contained);
+    public StringContains(StringExpr containing, StringExpr contained, BlockMetadata metadata) {
+        super(containing, contained, metadata);
         this.containing = containing;
         this.contained = contained;
+        this.metadata = metadata;
+    }
+
+    public BlockMetadata getMetadata() {
+        return metadata;
     }
 
     public StringExpr getContaining() {

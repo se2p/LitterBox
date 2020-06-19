@@ -20,15 +20,22 @@ package de.uni_passau.fim.se2.litterbox.ast.model.event;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Message;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 public class ReceptionOfMessage extends AbstractNode implements Event {
 
     private final Message msg;
+    private final BlockMetadata metadata;
 
-    public ReceptionOfMessage(Message msg) {
-        super(msg);
+    public ReceptionOfMessage(Message msg, BlockMetadata metadata) {
+        super(msg, metadata);
         this.msg = msg;
+        this.metadata=metadata;
+    }
+
+    public BlockMetadata getMetadata() {
+        return metadata;
     }
 
     public Message getMsg() {

@@ -20,15 +20,22 @@ package de.uni_passau.fim.se2.litterbox.ast.model.elementchoice;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 public class WithExpr extends AbstractNode implements ElementChoice {
 
     private final Expression expression;
+    private final BlockMetadata metadata;
 
-    public WithExpr(Expression expression) {
-        super(expression);
+    public WithExpr(Expression expression, BlockMetadata metadata) {
+        super(expression, metadata);
         this.expression = expression;
+        this.metadata = metadata;
+    }
+
+    public BlockMetadata getMetadata() {
+        return metadata;
     }
 
     public Expression getExpression() {

@@ -19,12 +19,13 @@
 package de.uni_passau.fim.se2.litterbox.ast.model.expression.num;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.BinaryExpression;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 public class Div extends BinaryExpression<NumExpr, NumExpr> implements NumExpr {
 
-    public Div(NumExpr operand1, NumExpr operand2) {
-        super(operand1, operand2);
+    public Div(NumExpr operand1, NumExpr operand2, BlockMetadata metadata) {
+        super(operand1, operand2, metadata);
     }
 
     @Override

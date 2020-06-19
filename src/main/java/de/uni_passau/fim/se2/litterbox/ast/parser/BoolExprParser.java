@@ -35,10 +35,12 @@ import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.UnspecifiedId;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.BoolLiteral;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.Touchable;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.Color;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.ScratchList;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.BoolExprOpcode;
+import de.uni_passau.fim.se2.litterbox.ast.parser.metadata.BlockMetadataParser;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ExpressionListInfo;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
@@ -102,7 +104,7 @@ public class BoolExprParser {
                 }
             } else if (exprArray.get(POS_BLOCK_ID) instanceof TextNode) {
                 String identifier = exprArray.get(POS_BLOCK_ID).asText();
-                return parseBlockBoolExpr(allBlocks.get(identifier), allBlocks);
+                return parseBlockBoolExpr(identifier, allBlocks.get(identifier), allBlocks);
             } else if (shadowIndicator == INPUT_DIFF_BLOCK_SHADOW
                     && exprArray.get(POS_DATA_ARRAY) instanceof NullNode) {
                 return new UnspecifiedBoolExpr();
@@ -124,31 +126,31 @@ public class BoolExprParser {
      * @throws ParsingException If the opcode of the block is no NumExprOpcode
      *                          or if parsing inputs of the block fails.
      */
-    static BoolExpr parseBlockBoolExpr(JsonNode exprBlock, JsonNode allBlocks)
+    static BoolExpr parseBlockBoolExpr(String blockID, JsonNode exprBlock, JsonNode allBlocks)
             throws ParsingException {
         final String opcodeString = exprBlock.get(OPCODE_KEY).asText();
         Preconditions
                 .checkArgument(BoolExprOpcode.contains(opcodeString),
                         opcodeString + " is not a BoolExprOpcode.");
         final BoolExprOpcode opcode = BoolExprOpcode.valueOf(opcodeString);
-
+        BlockMetadata metadata = BlockMetadataParser.parse(blockID, exprBlock);
         switch (opcode) {
 
             case sensing_touchingcolor:
                 Touchable color = TouchableParser.parseTouchable(exprBlock, allBlocks);
-                return new SpriteTouchingColor(color);
+                return new SpriteTouchingColor(color, metadata);
             case sensing_touchingobject:
                 Touchable touchable = TouchableParser.parseTouchable(exprBlock, allBlocks);
-                return new Touching(touchable);
+                return new Touching(touchable, metadata);
             case sensing_coloristouchingcolor:
                 Color one = ColorParser.parseColor(exprBlock, COLOR_KEY, allBlocks);
                 Color two = ColorParser.parseColor(exprBlock, COLOR2_KEY, allBlocks);
-                return new ColorTouchingColor(one, two);
+                return new ColorTouchingColor(one, two, metadata);
             case sensing_keypressed:
                 Key key = KeyParser.parse(exprBlock, allBlocks);
-                return new IsKeyPressed(key);
+                return new IsKeyPressed(key, metadata);
             case sensing_mousedown:
-                return new IsMouseDown();
+                return new IsMouseDown(metadata);
             case operator_gt:
                 ComparableExpr first = NumExprParser.parseNumExpr(exprBlock, OPERAND1_KEY, allBlocks);
                 ComparableExpr second = NumExprParser.parseNumExpr(exprBlock, OPERAND2_KEY, allBlocks);
@@ -172,7 +174,7 @@ public class BoolExprParser {
                     second = StringExprParser.parseStringExpr(exprBlock, OPERAND2_KEY, allBlocks);
                 }
 
-                return new BiggerThan(first, second);
+                return new BiggerThan(first, second, metadata);
             case operator_lt:
                 first = NumExprParser.parseNumExpr(exprBlock, OPERAND1_KEY, allBlocks);
                 second = NumExprParser.parseNumExpr(exprBlock, OPERAND2_KEY, allBlocks);
@@ -196,7 +198,7 @@ public class BoolExprParser {
                     second = StringExprParser.parseStringExpr(exprBlock, OPERAND2_KEY, allBlocks);
                 }
 
-                return new LessThan(first, second);
+                return new LessThan(first, second, metadata);
             case operator_equals:
                 first = NumExprParser.parseNumExpr(exprBlock, OPERAND1_KEY, allBlocks);
                 second = NumExprParser.parseNumExpr(exprBlock, OPERAND2_KEY, allBlocks);
@@ -220,22 +222,22 @@ public class BoolExprParser {
                     second = StringExprParser.parseStringExpr(exprBlock, OPERAND2_KEY, allBlocks);
                 }
 
-                return new Equals(first, second);
+                return new Equals(first, second, metadata);
             case operator_and:
                 BoolExpr andFirst = parseCondition(exprBlock, OPERAND1_KEY, allBlocks);
                 BoolExpr andSecond = parseCondition(exprBlock, OPERAND2_KEY, allBlocks);
-                return new And(andFirst, andSecond);
+                return new And(andFirst, andSecond, metadata);
             case operator_or:
                 BoolExpr orFirst = parseCondition(exprBlock, OPERAND1_KEY, allBlocks);
                 BoolExpr orSecond = parseCondition(exprBlock, OPERAND2_KEY, allBlocks);
-                return new Or(orFirst, orSecond);
+                return new Or(orFirst, orSecond, metadata);
             case operator_not:
                 BoolExpr notInput = parseCondition(exprBlock, OPERAND_KEY, allBlocks);
-                return new Not(notInput);
+                return new Not(notInput, metadata);
             case operator_contains:
                 StringExpr containing = StringExprParser.parseStringExpr(exprBlock, STRING1_KEY, allBlocks);
                 StringExpr contained = StringExprParser.parseStringExpr(exprBlock, STRING2_KEY, allBlocks);
-                return new StringContains(containing, contained);
+                return new StringContains(containing, contained, metadata);
             case data_listcontainsitem:
                 String identifier =
                         exprBlock.get(FIELDS_KEY).get(LIST_KEY).get(LIST_IDENTIFIER_POS).asText();
@@ -248,7 +250,7 @@ public class BoolExprParser {
                     containingVar = new UnspecifiedId();
                 }
                 contained = StringExprParser.parseStringExpr(exprBlock, ITEM_KEY, allBlocks);
-                return new ListContains(containingVar, contained);
+                return new ListContains(containingVar, contained, metadata);
             default:
                 throw new RuntimeException(
                         opcodeString + " is not covered by parseBlockExpr");

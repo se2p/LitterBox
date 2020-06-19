@@ -23,6 +23,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.IssueReport;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ArgumentInfo;
@@ -33,6 +34,8 @@ import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+
+import static de.uni_passau.fim.se2.litterbox.analytics.CommentAdder.addBlockComment;
 
 
 /**
@@ -45,6 +48,7 @@ public class AmbiguousParameterName implements IssueFinder, ScratchVisitor {
     private static final String NOTE2 = "Some of the procedures contain ambiguous parameter names.";
     public static final String NAME = "ambiguous_parameter_name";
     public static final String SHORT_NAME = "ambParamName";
+    public static final String HINT_TEXT = "ambiguous parameter name";
     private boolean found = false;
     private int count = 0;
     private List<String> actorNames = new LinkedList<>();
@@ -100,8 +104,12 @@ public class AmbiguousParameterName implements IssueFinder, ScratchVisitor {
     public void visit(ProcedureDefinition node) {
 
         if (node.getStmtList().getStmts().size() > 0) {
+            int currentCount = count;
             checkArguments(procMap.get(node.getIdent()).getArguments());
-
+            if (currentCount < count) {
+                addBlockComment((NonDataBlockMetadata) node.getMetadata().getDefinition(), currentActor, HINT_TEXT,
+                        SHORT_NAME + count);
+            }
         }
 
         if (!node.getChildren().isEmpty()) {

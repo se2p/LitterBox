@@ -24,6 +24,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
@@ -36,6 +37,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import static de.uni_passau.fim.se2.litterbox.analytics.CommentAdder.addBlockComment;
+
 /**
  * The parameter names in custom blocks do not have to be unique.
  * Therefore, when two parameters have the same name, no matter the type or which one is used inside the custom
@@ -45,6 +48,7 @@ import java.util.Map;
 public class AmbiguousParameterNameStrict implements IssueFinder, ScratchVisitor {
     public static final String NAME = "ambiguous_parameter_name_strict";
     public static final String SHORT_NAME = "ambParamNameStrct";
+    public static final String HINT_TEXT = "ambiguous parameter name strict";
     private static final String NOTE1 = "There are no ambiguous parameter names in your project.";
     private static final String NOTE2 = "Some of the procedures contain ambiguous parameter names.";
     private boolean inStmtList = false;
@@ -130,6 +134,8 @@ public class AmbiguousParameterNameStrict implements IssueFinder, ScratchVisitor
 
         if (used) {
             count++;
+            addBlockComment((NonDataBlockMetadata) node.getMetadata().getDefinition(), currentActor, HINT_TEXT,
+                    SHORT_NAME + count);
         }
 
         used = false;

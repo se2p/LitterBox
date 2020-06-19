@@ -24,12 +24,15 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.UnspecifiedBoolExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import java.util.LinkedList;
 import java.util.List;
+
+import static de.uni_passau.fim.se2.litterbox.analytics.CommentAdder.addBlockComment;
 
 /**
  * The repeat until blocks require a stopping condition.
@@ -39,6 +42,7 @@ import java.util.List;
 public class MissingTerminationCondition implements IssueFinder, ScratchVisitor {
     public static final String NAME = "missing_termination";
     public static final String SHORT_NAME = "mssTerm";
+    public static final String HINT_TEXT = "missing termination";
     private static final String NOTE1 = "All 'repeat until' blocks terminating correctly.";
     private static final String NOTE2 = "Some 'repeat until' blocks have no termination statement.";
     private boolean found;
@@ -80,6 +84,8 @@ public class MissingTerminationCondition implements IssueFinder, ScratchVisitor 
     public void visit(UntilStmt node) {
         if (node.getBoolExpr() instanceof UnspecifiedBoolExpr) {
             count++;
+            addBlockComment((NonDataBlockMetadata) node.getMetadata(), currentActor, HINT_TEXT,
+                    SHORT_NAME + count);
         }
         if (!node.getChildren().isEmpty()) {
             for (ASTNode child : node.getChildren()) {

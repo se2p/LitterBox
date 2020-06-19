@@ -26,6 +26,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.StartedAsClone;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.CloneOfMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.CreateCloneOf;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
@@ -34,6 +36,8 @@ import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 import java.util.LinkedList;
 import java.util.List;
 
+import static de.uni_passau.fim.se2.litterbox.analytics.CommentAdder.addBlockComment;
+
 /**
  * Script starting with a When I start as a clone event handler that contain a create clone of
  * myself block may result in an infinite recursion.
@@ -41,6 +45,7 @@ import java.util.List;
 public class RecursiveCloning implements ScratchVisitor, IssueFinder {
     public static final String NAME = "recursive_cloning";
     public static final String SHORT_NAME = "recClone";
+    public static final String HINT_TEXT = "recursive cloning";
     private static final String NOTE1 = "There are no recursive cloning calls in your project.";
     private static final String NOTE2 = "Some of the sprites contain recursive cloning calls.";
     private boolean found = false;
@@ -108,6 +113,9 @@ public class RecursiveCloning implements ScratchVisitor, IssueFinder {
                 if (spriteName.equals("_myself_")) {
                     count++;
                     found = true;
+                    CloneOfMetadata metadata = (CloneOfMetadata) node.getMetadata();
+                    addBlockComment((NonDataBlockMetadata) metadata.getCloneBlockMetadata(), currentActor, HINT_TEXT,
+                            SHORT_NAME + count);
                 }
             }
         }

@@ -19,18 +19,17 @@
 
 package de.uni_passau.fim.se2.litterbox.cfg;
 
+import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.WithExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AttributeOf;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.Attribute;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.AttributeFromVariable;
-import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Identifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetVariableTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.DataExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.ScratchList;
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -83,15 +82,15 @@ public class VariableUseVisitor implements DefinableCollector<de.uni_passau.fim.
         // Name of var or attribute
         Attribute attribute = node.getAttribute();
         // Name of owner
-        Expression owner = node.getLocalIdentifier();
+        Expression owner = ((WithExpr) node.getElementChoice()).getExpression();
 
-        assert(owner instanceof LocalIdentifier) : "This has to be a LocalIdentifier, no?";
+        assert(owner instanceof LocalIdentifier) : "This has to be a LocalIdentifier, no? If not another block was " +
+                "inserted into the ElementChoice";
         LocalIdentifier localIdentifier = (LocalIdentifier)owner;
 
         if(attribute instanceof AttributeFromVariable) {
             AttributeFromVariable varAttribute = (AttributeFromVariable)attribute;
-            Identifier id = varAttribute.getId();
-            DataExpr e = new Variable((LocalIdentifier)id);
+            DataExpr e = varAttribute.getVariable();
             Qualified q = new Qualified(localIdentifier, e);
             uses.add(new de.uni_passau.fim.se2.litterbox.cfg.Variable(q));
         }

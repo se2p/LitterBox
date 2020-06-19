@@ -21,6 +21,7 @@ package de.uni_passau.fim.se2.litterbox.ast.model.statement.control;
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BoolExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
@@ -29,12 +30,18 @@ public class IfElseStmt extends AbstractNode implements IfStmt {
     private final BoolExpr boolExpr;
     private final StmtList stmtList;
     private final StmtList elseStmts;
+    private final BlockMetadata metadata;
 
-    public IfElseStmt(BoolExpr boolExpr, StmtList stmtList, StmtList elseStmts) {
-        super(boolExpr, stmtList, elseStmts);
+    public IfElseStmt(BoolExpr boolExpr, StmtList stmtList, StmtList elseStmts, BlockMetadata metadata) {
+        super(boolExpr, stmtList, elseStmts, metadata);
         this.boolExpr = Preconditions.checkNotNull(boolExpr);
         this.stmtList = Preconditions.checkNotNull(stmtList);
         this.elseStmts = Preconditions.checkNotNull(elseStmts);
+        this.metadata = metadata;
+    }
+
+    public BlockMetadata getMetadata() {
+        return metadata;
     }
 
     public BoolExpr getBoolExpr() {

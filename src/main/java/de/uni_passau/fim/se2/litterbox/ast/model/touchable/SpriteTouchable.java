@@ -20,15 +20,22 @@ package de.uni_passau.fim.se2.litterbox.ast.model.touchable;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 public class SpriteTouchable extends AbstractNode implements Touchable {
 
+    private final BlockMetadata metadata;
     private final StringExpr stringExpr;
 
-    public SpriteTouchable(StringExpr stringExpr) {
-        super(stringExpr);
+    public SpriteTouchable(StringExpr stringExpr, BlockMetadata metadata) {
+        super(stringExpr, metadata);
         this.stringExpr = stringExpr;
+        this.metadata = metadata;
+    }
+
+    public BlockMetadata getMetadata() {
+        return metadata;
     }
 
     public StringExpr getStringExpr() {

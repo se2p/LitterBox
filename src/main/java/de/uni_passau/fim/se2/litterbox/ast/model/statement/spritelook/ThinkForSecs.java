@@ -21,6 +21,7 @@ package de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook;
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
@@ -28,11 +29,13 @@ public class ThinkForSecs extends AbstractNode implements SpriteLookStmt {
 
     private final StringExpr thought;
     private final NumExpr secs;
+    private final BlockMetadata metadata;
 
-    public ThinkForSecs(StringExpr thought, NumExpr secs) {
-        super(thought, secs);
+    public ThinkForSecs(StringExpr thought, NumExpr secs, BlockMetadata metadata) {
+        super(thought, secs, metadata);
         this.thought = Preconditions.checkNotNull(thought);
         this.secs = Preconditions.checkNotNull(secs);
+        this.metadata = metadata;
     }
 
     public StringExpr getThought() {
@@ -41,6 +44,10 @@ public class ThinkForSecs extends AbstractNode implements SpriteLookStmt {
 
     public NumExpr getSecs() {
         return secs;
+    }
+
+    public BlockMetadata getMetadata() {
+        return metadata;
     }
 
     @Override

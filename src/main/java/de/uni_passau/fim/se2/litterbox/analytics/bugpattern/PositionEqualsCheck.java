@@ -29,6 +29,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AttributeOf;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.AttributeFromFixed;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.FixedAttribute;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitUntil;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfElseStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
@@ -38,6 +39,8 @@ import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import java.util.LinkedList;
 import java.util.List;
+
+import static de.uni_passau.fim.se2.litterbox.analytics.CommentAdder.addBlockComment;
 
 /**
  * When an equals comparison is used as check for an until loop or a wait until, it can occur that
@@ -49,6 +52,7 @@ import java.util.List;
 public class PositionEqualsCheck implements IssueFinder, ScratchVisitor {
     public static final String NAME = "position_equals_check";
     public static final String SHORT_NAME = "posEqCheck";
+    public static final String HINT_TEXT = "position equals check";
     private static final String NOTE1 = "There are equals checks in conditions in your project.";
     private static final String NOTE2 = "Some of the conditions contain equals checks.";
     private boolean found = false;
@@ -93,7 +97,12 @@ public class PositionEqualsCheck implements IssueFinder, ScratchVisitor {
     @Override
     public void visit(WaitUntil node) {
         if (node.getUntil() instanceof Equals) {
+            int currentCount = count;
             checkEquals((Equals) node.getUntil());
+            if (currentCount < count) {
+                addBlockComment((NonDataBlockMetadata) node.getMetadata(), currentActor, HINT_TEXT,
+                        SHORT_NAME + count);
+            }
         }
         if (!node.getChildren().isEmpty()) {
             for (ASTNode child : node.getChildren()) {
@@ -126,7 +135,12 @@ public class PositionEqualsCheck implements IssueFinder, ScratchVisitor {
     @Override
     public void visit(UntilStmt node) {
         if (node.getBoolExpr() instanceof Equals) {
+            int currentCount = count;
             checkEquals((Equals) node.getBoolExpr());
+            if (currentCount < count) {
+                addBlockComment((NonDataBlockMetadata) node.getMetadata(), currentActor, HINT_TEXT,
+                        SHORT_NAME + count);
+            }
         }
         if (!node.getChildren().isEmpty()) {
             for (ASTNode child : node.getChildren()) {
@@ -138,7 +152,12 @@ public class PositionEqualsCheck implements IssueFinder, ScratchVisitor {
     @Override
     public void visit(IfThenStmt node) {
         if (node.getBoolExpr() instanceof Equals) {
+            int currentCount = count;
             checkEquals((Equals) node.getBoolExpr());
+            if (currentCount < count) {
+                addBlockComment((NonDataBlockMetadata) node.getMetadata(), currentActor, HINT_TEXT,
+                        SHORT_NAME + count);
+            }
         }
         if (!node.getChildren().isEmpty()) {
             for (ASTNode child : node.getChildren()) {
@@ -150,7 +169,12 @@ public class PositionEqualsCheck implements IssueFinder, ScratchVisitor {
     @Override
     public void visit(IfElseStmt node) {
         if (node.getBoolExpr() instanceof Equals) {
+            int currentCount = count;
             checkEquals((Equals) node.getBoolExpr());
+            if (currentCount < count) {
+                addBlockComment((NonDataBlockMetadata) node.getMetadata(), currentActor, HINT_TEXT,
+                        SHORT_NAME + count);
+            }
         }
         if (!node.getChildren().isEmpty()) {
             for (ASTNode child : node.getChildren()) {

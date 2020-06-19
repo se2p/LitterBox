@@ -1,0 +1,71 @@
+package de.uni_passau.fim.se2.litterbox.ast.parser.metadata;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astLists.InputMetadataList;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.MutationMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.input.DataInputMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.input.InputMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.input.ReferenceInputMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.input.TypeInputMetadata;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+
+import java.io.File;
+import java.io.IOException;
+
+import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
+
+public class InputMetadataTest {
+    private static ObjectMapper mapper = new ObjectMapper();
+    private static JsonNode prog;
+    private static JsonNode field;
+
+    @BeforeAll
+    public static void setUp() throws IOException {
+        File f = new File("./src/test/fixtures/metadata/blockMeta.json");
+        prog = mapper.readTree(f);
+        f = new File("./src/test/fixtures/metadata/fieldsMeta.json");
+        field = mapper.readTree(f);
+    }
+
+    @Test
+    public void testTypeInput(){
+        InputMetadataList inputsMetadata =
+                InputMetadataListParser.parse(prog.get(TARGETS_KEY).get(1).get(BLOCKS_KEY).get(
+                        "$C@+K-:6ie`W)?I*4jc9").get(INPUTS_KEY));
+        InputMetadata input = inputsMetadata.getList().get(0);
+        Assertions.assertTrue(input instanceof TypeInputMetadata);
+        TypeInputMetadata typeInput = (TypeInputMetadata) input;
+        Assertions.assertEquals(10,typeInput.getType());
+        Assertions.assertEquals("Hello!",typeInput.getValue());
+    }
+
+    @Test
+    public void testReferenceInput(){
+        InputMetadataList inputsMetadata =
+                InputMetadataListParser.parse(prog.get(TARGETS_KEY).get(1).get(BLOCKS_KEY).get(
+                        "Vr$zTl8mo1W,U?+q6,T{").get(INPUTS_KEY));
+        InputMetadata input = inputsMetadata.getList().get(0);
+        Assertions.assertTrue(input instanceof ReferenceInputMetadata);
+        ReferenceInputMetadata reference = (ReferenceInputMetadata) input;
+        Assertions.assertEquals("k~QZ.p5)uSGZZ]?@TWD$",reference.getInputName());
+        Assertions.assertEquals("c@bcun.aPW8(fPX~fG]f",reference.getReference());
+    }
+
+    @Test
+    public void testDataInput(){
+        InputMetadataList inputsMetadata =
+                InputMetadataListParser.parse(field.get(TARGETS_KEY).get(1).get(BLOCKS_KEY).get(
+                        "W93h`Dsu0+Mnx_;OGLY8").get(INPUTS_KEY));
+        InputMetadata input = inputsMetadata.getList().get(0);
+        Assertions.assertTrue(input instanceof DataInputMetadata);
+        DataInputMetadata reference = (DataInputMetadata) input;
+        Assertions.assertEquals("TO",reference.getInputName());
+        Assertions.assertEquals("my variable",reference.getDataName());
+        Assertions.assertEquals("`jEk@4|i[#Fk?(8x)AV.-my variable",reference.getDataReference());
+        Assertions.assertEquals(VAR_PRIMITIVE,reference.getDataType());
+    }
+}
+

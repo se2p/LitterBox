@@ -29,6 +29,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.BackdropSwitchTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.NextBackdrop;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.SwitchBackdrop;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.SwitchBackdropAndWait;
@@ -37,6 +38,9 @@ import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import java.util.*;
+
+import static de.uni_passau.fim.se2.litterbox.analytics.CommentAdder.addBlockComment;
+import static de.uni_passau.fim.se2.litterbox.analytics.CommentAdder.addLooseComment;
 
 /**
  * If the When backdrop switches to event handler is used to start a script and the backdrop never switches
@@ -47,11 +51,15 @@ public class MissingBackdropSwitch implements IssueFinder, ScratchVisitor {
 
     public static final String NAME = "missing_backdrop_switch";
     public static final String SHORT_NAME = "mssBackdrSwitch";
-
+    public static final String HINT_TEXT = "missing backdrop switch";
     private List<Pair> switched = new ArrayList<>();
     private List<Pair> switchReceived = new ArrayList<>();
     private ActorDefinition currentActor;
     private boolean nextRandPrev = false;
+    private int identifierCounter;
+    private boolean addComment;
+    private Set<String> notSentMessages;
+
 
     @Override
     public IssueReport check(Program program) {
@@ -59,6 +67,9 @@ public class MissingBackdropSwitch implements IssueFinder, ScratchVisitor {
         switched = new ArrayList<>();
         switchReceived = new ArrayList<>();
         nextRandPrev = false;
+        identifierCounter = 1;
+        addComment = false;
+        notSentMessages = new LinkedHashSet<>();
         program.accept(this);
 
         final LinkedHashSet<Pair> nonSyncedPairs = new LinkedHashSet<>();
@@ -73,8 +84,11 @@ public class MissingBackdropSwitch implements IssueFinder, ScratchVisitor {
                 }
                 if (!isReceived) {
                     nonSyncedPairs.add(received);
+                    notSentMessages.add(received.msgName);
                 }
             }
+            addComment = true;
+            program.accept(this);
         }
         final Set<String> actorNames = new LinkedHashSet<>();
         nonSyncedPairs.forEach(p -> actorNames.add(p.getActorName()));
@@ -99,7 +113,7 @@ public class MissingBackdropSwitch implements IssueFinder, ScratchVisitor {
 
     @Override
     public void visit(SwitchBackdrop node) {
-
+        if (!addComment) {
         final String actorName = currentActor.getIdent().getName();
         final ElementChoice msgName = node.getElementChoice();
         if (msgName instanceof Next || msgName instanceof Prev || msgName instanceof Random) {
@@ -120,11 +134,12 @@ public class MissingBackdropSwitch implements IssueFinder, ScratchVisitor {
                     switched.add(new Pair(actorName, ((StringLiteral) expr.getOperand1()).getText()));
                 }
             }
-        }
+        }}
     }
 
     @Override
     public void visit(SwitchBackdropAndWait node) {
+        if (!addComment) {
         final String actorName = currentActor.getIdent().getName();
         final ElementChoice msgName = node.getElementChoice();
         if (msgName instanceof Next || msgName instanceof Prev || msgName instanceof Random) {
@@ -145,22 +160,30 @@ public class MissingBackdropSwitch implements IssueFinder, ScratchVisitor {
                     switched.add(new Pair(actorName, ((StringLiteral) expr.getOperand1()).getText()));
                 }
             }
-        }
+        }}
     }
 
     @Override
     public void visit(NextBackdrop node) {
-        nextRandPrev = true;
+        if (!addComment) {
+            nextRandPrev = true;
+        }
     }
 
     @Override
     public void visit(Script node) {
         if (node.getStmtList().getStmts().size() > 0 && node.getEvent() instanceof BackdropSwitchTo) {
             BackdropSwitchTo event = (BackdropSwitchTo) node.getEvent();
-
-            final String actorName = currentActor.getIdent().getName();
             final String msgName = event.getBackdrop().getName();
-            switchReceived.add(new Pair(actorName, msgName));
+
+            if (!addComment) {
+                final String actorName = currentActor.getIdent().getName();
+                switchReceived.add(new Pair(actorName, msgName));
+            }else if (notSentMessages.contains(msgName)) {
+                addBlockComment((NonDataBlockMetadata) event.getMetadata(), currentActor, HINT_TEXT,
+                        SHORT_NAME + identifierCounter);
+                identifierCounter++;
+            }
         }
         if (!node.getChildren().isEmpty()) {
             for (ASTNode child : node.getChildren()) {

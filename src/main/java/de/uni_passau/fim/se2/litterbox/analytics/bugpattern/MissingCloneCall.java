@@ -26,14 +26,19 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.StartedAsClone;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.CreateCloneOf;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.CreateCloneOf;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
+
+import static de.uni_passau.fim.se2.litterbox.analytics.CommentAdder.addBlockComment;
 
 /**
  * If the When I start as a clone event handler is used to start a script, but the sprite is never cloned,
@@ -42,20 +47,30 @@ import java.util.stream.Collectors;
 public class MissingCloneCall implements IssueFinder, ScratchVisitor {
     public static final String NAME = "missing_clone_call";
     public static final String SHORT_NAME = "mssCloneCll";
+    public static final String HINT_TEXT = "missing clone call";
     private static final String NOTE1 = "There are no sprites with missing clone calls in your project.";
     private static final String NOTE2 = "Some of the sprites contain missing clone calls.";
     private List<String> whenStartsAsCloneActors = new ArrayList<>();
     private List<String> clonedActors = new ArrayList<>();
     private ActorDefinition currentActor;
+    private int identifierCounter;
+    private boolean addComment;
+    private Set<String> notClonedActor;
 
     @Override
     public IssueReport check(Program program) {
         Preconditions.checkNotNull(program);
         whenStartsAsCloneActors = new ArrayList<>();
         clonedActors = new ArrayList<>();
+        identifierCounter = 1;
+        addComment = false;
+        notClonedActor = new LinkedHashSet<>();
         program.accept(this);
         final List<String> uninitializingActors
                 = whenStartsAsCloneActors.stream().filter(s -> !clonedActors.contains(s)).collect(Collectors.toList());
+        notClonedActor = new LinkedHashSet<>(uninitializingActors);
+        addComment = true;
+        program.accept(this);
 
         return new IssueReport(NAME, uninitializingActors.size(), uninitializingActors, "");
     }
@@ -77,14 +92,16 @@ public class MissingCloneCall implements IssueFinder, ScratchVisitor {
 
     @Override
     public void visit(CreateCloneOf node) {
-        if (node.getStringExpr() instanceof AsString
-                && ((AsString) node.getStringExpr()).getOperand1() instanceof StrId) {
+        if(!addComment) {
+            if (node.getStringExpr() instanceof AsString
+                    && ((AsString) node.getStringExpr()).getOperand1() instanceof StrId) {
 
-            final String spriteName = ((StrId) ((AsString) node.getStringExpr()).getOperand1()).getName();
-            if (spriteName.equals("_myself_")) {
-                clonedActors.add(currentActor.getIdent().getName());
-            } else {
-                clonedActors.add(spriteName);
+                final String spriteName = ((StrId) ((AsString) node.getStringExpr()).getOperand1()).getName();
+                if (spriteName.equals("_myself_")) {
+                    clonedActors.add(currentActor.getIdent().getName());
+                } else {
+                    clonedActors.add(spriteName);
+                }
             }
         }
     }
@@ -92,7 +109,14 @@ public class MissingCloneCall implements IssueFinder, ScratchVisitor {
     @Override
     public void visit(Script node) {
         if (node.getStmtList().getStmts().size() > 0 && node.getEvent() instanceof StartedAsClone) {
-            whenStartsAsCloneActors.add(currentActor.getIdent().getName());
+            if(!addComment) {
+                whenStartsAsCloneActors.add(currentActor.getIdent().getName());
+            }else if (notClonedActor.contains(currentActor.getIdent().getName())) {
+                StartedAsClone event= (StartedAsClone) node.getEvent();
+                addBlockComment((NonDataBlockMetadata) event.getMetadata(), currentActor, HINT_TEXT,
+                        SHORT_NAME + identifierCounter);
+                identifierCounter++;
+            }
         }
         if (!node.getChildren().isEmpty()) {
             for (ASTNode child : node.getChildren()) {

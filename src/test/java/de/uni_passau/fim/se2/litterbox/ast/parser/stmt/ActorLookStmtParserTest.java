@@ -135,10 +135,9 @@ public class ActorLookStmtParserTest {
 
             ElementChoice elementChoice = ((SwitchBackdrop) switchBackropStmt).getElementChoice();
             Expression expression = ((WithExpr) elementChoice).getExpression();
-            StringExpr stringExpr = (StringExpr) expression;
-            AsString strid = (AsString) stringExpr;
+            StrId strid = (StrId) expression;
 
-            Truth.assertThat(((StrId) strid.getOperand1()).getName()).isEqualTo("Baseball 1");
+            Truth.assertThat(strid.getName()).isEqualTo("Baseball 1");
         } catch (ParsingException e) {
             e.printStackTrace();
             fail();

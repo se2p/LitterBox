@@ -18,13 +18,14 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.model.expression.bool;
 
-import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.SingularExpression;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
-public class IsMouseDown extends AbstractNode implements BoolExpr {
+public class IsMouseDown extends SingularExpression implements BoolExpr {
 
-    public IsMouseDown() {
-        super();
+    public IsMouseDown(BlockMetadata metadata) {
+        super(metadata);
     }
 
     @Override

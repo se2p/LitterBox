@@ -20,12 +20,14 @@ package de.uni_passau.fim.se2.litterbox.ast.model.expression.num;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTLeaf;
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.SingularExpression;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
-public class DaysSince2000 extends AbstractNode implements NumExpr, ASTLeaf {
+public class DaysSince2000 extends SingularExpression implements NumExpr, ASTLeaf {
 
-    public DaysSince2000() {
-        super();
+    public DaysSince2000(BlockMetadata metadata) {
+        super(metadata);
     }
 
     @Override

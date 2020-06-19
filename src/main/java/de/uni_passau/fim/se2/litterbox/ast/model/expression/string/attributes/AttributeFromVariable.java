@@ -20,16 +20,17 @@ package de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Identifier;
+import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 public class AttributeFromVariable extends AbstractNode implements Attribute {
-    Identifier id;
+    private Variable id;
 
-    public Identifier getId() {
+    public Variable getVariable() {
         return id;
     }
 
-    public AttributeFromVariable(Identifier id) {
+    public AttributeFromVariable(Variable id) {
         super(id);
         this.id = id;
     }

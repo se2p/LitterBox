@@ -102,6 +102,11 @@ public class Constants {
     public static final int FIELD_VALUE = 0;
 
     /**
+     * The position of the field reference in the field data array.
+     */
+    public static final int FIELD_REFERENCE = 1;
+
+    /**
      * The position of the block ID in an expr array.
      */
     public static final int POS_BLOCK_ID = 1;
@@ -115,6 +120,26 @@ public class Constants {
      * The position of the name in a LIST.
      */
     public static final int LIST_NAME_POS = 0;
+
+    /**
+     * The position of the unique identifier in a DATA_INPUT.
+     */
+    public static final int DATA_INPUT_IDENTIFIER_POS = 2;
+
+    /**
+     * The position of the name in a DATA_INPUT.
+     */
+    public static final int DATA_INPUT_NAME_POS = 1;
+
+    /**
+     * The position of the x in a top DATA_INPUT.
+     */
+    public static final int DATA_INPUT_X_POS = 3;
+
+    /**
+     * The position of the y in a top DATA_INPUT.
+     */
+    public static final int DATA_INPUT_Y_POS = 4;
 
     /**
      * The position of the unique identifier in a VARIABLE.
@@ -212,13 +237,75 @@ public class Constants {
     public final static String NUM2_KEY = "NUM2";
     public final static String FROM_KEY = "FROM";
     public final static String TO_KEY = "TO";
+    public final static String TOWARDS_KEY = "TOWARDS";
+    public final static String DISTANCETOMENU_KEY = "DISTANCETOMENU";
     public final static String TIMES_KEY = "TIMES";
     public final static String STEPS_KEY = "STEPS";
     public final static String DEGREES_KEY = "DEGREES";
     public final static String DIRECTION_KEY_CAP = "DIRECTION";
     public final static String DX_KEY = "DX";
     public final static String DY_KEY = "DY";
-    public final static String X_KEY_CAP = "X";
-    public final static String Y_KEY_CAP = "Y";
     public final static String VOLUME_KEY_CAPS = "VOLUME";
+    public final static String HEIGHT_KEY = "height";
+    public final static String WIDTH_KEY = "width";
+    public final static String COMMENTS_KEY = "comments";
+    public final static String CURRENT_COSTUME_KEY = "currentCostume";
+    public final static String BROADCASTS_KEY = "broadcasts";
+    public final static String LISTS_KEY = "lists";
+    public final static String VARIABLES_KEY = "variables";
+    public final static String COSTUMES_KEY = "costumes";
+    public final static String SOUNDS_KEY = "sounds";
+    public final static String META_KEY = "meta";
+    public final static String EXTENSIONS_KEY = "extensions";
+    public final static String MONITORS_KEY = "monitors";
+    public final static String SEMVER_KEY = "semver";
+    public final static String VM_KEY = "vm";
+    public final static String AGENT_KEY = "agent";
+    public final static String BLOCKS_KEY = "blocks";
+    public final static String TOPLEVEL_KEY = "topLevel";
+    public final static String TARGETS_KEY = "targets";
+    public final static String TEXT_TO_SPEECH_KEY = "textToSpeechLanguage";
+    public final static String COMMENT_KEY = "comment";
+    public final static String SHADOW_KEY = "shadow";
+    public final static String CHILDREN_KEY = "children";
+    public final static String TAG_NAME_KEY = "tagName";
+    public final static String ARGUMENT_DEFAULTS_KEY = "argumentdefaults";
+    public final static String WARP_KEY = "warp";
+    public final static String ASSET_ID_KEY = "assetId";
+    public final static String MD5EXT_KEY = "md5ext";
+    public final static String DATA_FORMAT_KEY = "dataFormat";
+    public final static String BITMAP_KEY = "bitmapResolution";
+    public final static String ROTATIONX_KEY = "rotationCenterX";
+    public final static String ROTATIONY_KEY = "rotationCenterY";
+    public final static String RATE_KEY = "rate";
+    public final static String SAMPLE_COUNT_KEY = "sampleCount";
+    public final static String HAS_NEXT_KEY = "hasnext";
+    public final static String ID_KEY = "id";
+    public final static String MODE_KEY = "mode";
+    public final static String PARAMS_KEY = "params";
+    public final static String SPRITE_NAME_KEY = "spriteName";
+    public final static String VALUE_LOWER_KEY = "value";
+    public final static String SLIDER_MIN_KEY = "sliderMin";
+    public final static String SLIDER_MAX_KEY = "sliderMax";
+    public final static String IS_DISCRETE_KEY = "isDiscrete";
+    public final static String BLOCK_ID_KEY = "blockId";
+    public final static String MINIMIZED_KEY = "minimized";
+    public final static String TEXT_KEY = "text";
+    public final static String SUBSTACK_KEY = "SUBSTACK";
+    public final static String SUBSTACK2_KEY = "SUBSTACK2";
+    public final static String MOUSE = "_mouse_";
+    public final static String RANDOM = "_random_";
+    public static final String COSTUME_INPUT = "COSTUME";
+    public static final String BACKDROP_INPUT = "BACKDROP";
+    public static final String RANDOM_BACKDROP = "random backdrop";
+    public static final String NEXT_BACKDROP = "next backdrop";
+    public static final String PREVIOUS_BACKDROP = "previous backdrop";
+    public static final String SOUND_MENU = "SOUND_MENU";
+    public static final String CLONE_OPTION = "CLONE_OPTION";
+    public static final String BROADCAST_INPUT_KEY = "BROADCAST_INPUT";
+    public static final String TOUCHINGOBJECTMENU = "TOUCHINGOBJECTMENU";
+    public static final String TOUCHING_EDGE = "_edge_";
+    public static final String KEY_OPTION = "KEY_OPTION";
+    public final static String CUSTOM_BLOCK_KEY = "custom_block";
+    public final static String EMPTY_VALUE = "{}";
 }

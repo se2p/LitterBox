@@ -18,26 +18,14 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.model.expression.num;
 
-import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.BinaryExpression;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
-public class NumFunctOf extends AbstractNode implements NumExpr {
+public class NumFunctOf extends BinaryExpression<NumFunct, NumExpr> implements NumExpr {
 
-    private NumFunct funct;
-    private NumExpr num;
-
-    public NumFunctOf(NumFunct funct, NumExpr num) {
-        super(funct, num);
-        this.funct = funct;
-        this.num = num;
-    }
-
-    public NumFunct getFunct() {
-        return funct;
-    }
-
-    public NumExpr getNum() {
-        return num;
+    public NumFunctOf(NumFunct funct, NumExpr num, BlockMetadata metadata) {
+        super(funct, num, metadata);
     }
 
     @Override

@@ -19,16 +19,23 @@
 package de.uni_passau.fim.se2.litterbox.ast.model.expression.bool;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.Touchable;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 public class SpriteTouchingColor extends AbstractNode implements BoolExpr {
 
     private final Touchable color;
+    private final BlockMetadata metadata;
 
-    public SpriteTouchingColor(Touchable color) {
-        super(color);
+    public SpriteTouchingColor(Touchable color, BlockMetadata metadata) {
+        super(color, metadata);
         this.color = color;
+        this.metadata = metadata;
+    }
+
+    public BlockMetadata getMetadata() {
+        return metadata;
     }
 
     public Touchable getColor() {

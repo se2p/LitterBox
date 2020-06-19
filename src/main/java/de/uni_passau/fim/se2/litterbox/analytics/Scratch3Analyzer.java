@@ -24,6 +24,7 @@ import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.GrammarPrintVisitor;
+import de.uni_passau.fim.se2.litterbox.jsonCreation.JSONFileCreator;
 import de.uni_passau.fim.se2.litterbox.utils.CSVWriter;
 import de.uni_passau.fim.se2.litterbox.utils.Downloader;
 import de.uni_passau.fim.se2.litterbox.utils.JsonParser;
@@ -50,9 +51,19 @@ public class Scratch3Analyzer {
 
     public static void analyze(String detectors, String output, File file) {
         if (file.exists() && file.isDirectory()) {
-            checkMultipleScratch3(file, detectors, output);
+            checkMultipleScratch3(file, detectors, output, null);
         } else if (file.exists() && !file.isDirectory()) {
-            checkSingleScratch3(file, detectors, output);
+            checkSingleScratch3(file, detectors, output, null);
+        } else {
+            log.info("Folder or file '" + file.getName() + "' does not exist");
+        }
+    }
+
+    public static void analyzeAndAnnotate(String detectors, String output, File file, String annotatePath) {
+        if (file.exists() && file.isDirectory()) {
+            checkMultipleScratch3(file, detectors, output, annotatePath);
+        } else if (file.exists() && !file.isDirectory()) {
+            checkSingleScratch3(file, detectors, output, annotatePath);
         } else {
             log.info("Folder or file '" + file.getName() + "' does not exist");
         }
@@ -66,7 +77,8 @@ public class Scratch3Analyzer {
      * @param detectors   to be executed
      * @param csv         file where the results should be stored
      */
-    public static void checkDownloaded(String json, String projectName, String detectors, String csv) {
+    public static void checkDownloaded(String json, String projectName, String detectors, String csv,
+                                       String annotatePath) {
         try {
 
             ObjectMapper mapper = new ObjectMapper();
@@ -87,10 +99,16 @@ public class Scratch3Analyzer {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+
+            }
+
+            if (annotatePath != null) {
+                JSONFileCreator.writeJsonFromProgram(program, annotatePath);
             }
         } catch (Exception e) {
             log.warning(e.getMessage());
         }
+
     }
 
     /**
@@ -99,7 +117,7 @@ public class Scratch3Analyzer {
      * @param fileEntry the file to analyze
      * @param detectors
      */
-    private static void checkSingleScratch3(File fileEntry, String detectors, String csv) {
+    private static void checkSingleScratch3(File fileEntry, String detectors, String csv, String annotatePath) {
         Program program = extractProgram(fileEntry);
 
         IssueTool iT = new IssueTool();
@@ -116,6 +134,21 @@ public class Scratch3Analyzer {
                 log.warning(e.getMessage());
             }
         }
+        if (annotatePath != null) {
+            try {
+                createAnnotatedFile(fileEntry, program, annotatePath);
+            } catch (IOException e) {
+                log.warning(e.getMessage());
+            }
+        }
+    }
+
+    private static void createAnnotatedFile(File fileEntry, Program program, String annotatePath) throws IOException {
+        if ((FilenameUtils.getExtension(fileEntry.getPath())).toLowerCase().equals("json")) {
+            JSONFileCreator.writeJsonFromProgram(program, annotatePath);
+        } else {
+            JSONFileCreator.writeSb3FromProgram(program, annotatePath, fileEntry);
+        }
     }
 
     private static CSVPrinter prepareCSVPrinter(String dtctrs, IssueTool iT, String name) {
@@ -123,21 +156,21 @@ public class Scratch3Analyzer {
         heads.add("project");
         String[] detectors;
         switch (dtctrs) {
-        case ALL:
-            detectors = iT.getAllFinder().keySet().toArray(new String[0]);
-            break;
-        case BUGS:
-            detectors = iT.getBugFinder().keySet().toArray(new String[0]);
-            break;
-        case SMELLS:
-            detectors = iT.getSmellFinder().keySet().toArray(new String[0]);
-            break;
-        case CTSCORE:
-            detectors = iT.getCTScoreFinder().keySet().toArray(new String[0]);
-            break;
-        default:
-            detectors = dtctrs.split(",");
-            break;
+            case ALL:
+                detectors = iT.getAllFinder().keySet().toArray(new String[0]);
+                break;
+            case BUGS:
+                detectors = iT.getBugFinder().keySet().toArray(new String[0]);
+                break;
+            case SMELLS:
+                detectors = iT.getSmellFinder().keySet().toArray(new String[0]);
+                break;
+            case CTSCORE:
+                detectors = iT.getCTScoreFinder().keySet().toArray(new String[0]);
+                break;
+            default:
+                detectors = dtctrs.split(",");
+                break;
         }
         for (String s : detectors) {
             if (iT.getAllFinder().containsKey(s)) {
@@ -157,7 +190,7 @@ public class Scratch3Analyzer {
      * The main method for analyzing all Scratch project files (ZIP) in the given folder location. It will produce a
      * .csv file with all entries.
      */
-    private static void checkMultipleScratch3(File folder, String dtctrs, String csv) {
+    private static void checkMultipleScratch3(File folder, String dtctrs, String csv, String annotatePath) {
 
         CSVPrinter printer = null;
         try {
@@ -171,6 +204,9 @@ public class Scratch3Analyzer {
                         //System.out.println(project.toString());
                         iT.check(program, printer, dtctrs);
                         log.info("Finished: " + fileEntry.getName());
+                        if (annotatePath != null) {
+                            createAnnotatedFile(fileEntry, program, annotatePath);
+                        }
                     } catch (NullPointerException e) {
                         log.info("Ignore due to NullPointerException: " + fileEntry.getName());
                     }
@@ -193,7 +229,9 @@ public class Scratch3Analyzer {
         Program program = null;
         if ((FilenameUtils.getExtension(fileEntry.getPath())).toLowerCase().equals("json")) {
             try {
-                program = ProgramParser.parseProgram(fileEntry.getName(), mapper.readTree(fileEntry));
+                program = ProgramParser.parseProgram(fileEntry.getName().substring(0, fileEntry.getName().lastIndexOf(
+                        ".") - 1),
+                        mapper.readTree(fileEntry));
             } catch (ParsingException | IOException | RuntimeException e) {
                 e.printStackTrace();
             }
@@ -205,7 +243,8 @@ public class Scratch3Analyzer {
                     log.info("[Error] project json did not contain root node");
                     return null;
                 }
-                program = ProgramParser.parseProgram(fileEntry.getName(), node);
+                program = ProgramParser.parseProgram(fileEntry.getName().substring(0, fileEntry.getName().lastIndexOf(
+                        ".")), node);
             } catch (ParsingException | IOException | RuntimeException e) {
                 e.printStackTrace();
             }
@@ -225,7 +264,18 @@ public class Scratch3Analyzer {
         try {
             String json = Downloader.downloadAndSaveProject(projectid, outfolder);
             Scratch3Analyzer.checkDownloaded(json, projectid, //Name ProjectID is not the same as the Projectname
-                    detectors, resultpath);
+                    detectors, resultpath, null);
+        } catch (IOException e) {
+            log.info("Could not load project with id " + projectid);
+        }
+    }
+
+    public static void downloadAndAnalyze(String projectid, String outfolder, String detectors, String resultpath,
+                                          String annotatePath) {
+        try {
+            String json = Downloader.downloadAndSaveProject(projectid, outfolder);
+            Scratch3Analyzer.checkDownloaded(json, projectid, //Name ProjectID is not the same as the Projectname
+                    detectors, resultpath, annotatePath);
         } catch (IOException e) {
             log.info("Could not load project with id " + projectid);
         }
@@ -263,6 +313,34 @@ public class Scratch3Analyzer {
             while (line != null) {
                 line = line.trim();
                 downloadAndAnalyze(line, outfolder, detectors, resultpath);
+                line = br.readLine();
+            }
+            br.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void downloadAndAnalyzeMultiple(String projectListPath,
+                                                  String outfolder,
+                                                  String detectors,
+                                                  String resultpath, String annotationPath) {
+        File file = new File(projectListPath);
+
+        if (!file.exists()) {
+            log.info("File " + projectListPath + " does not exist.");
+            return;
+        } else if (file.isDirectory()) {
+            log.info("File " + projectListPath + " is a directory.");
+            return;
+        }
+
+        try {
+            BufferedReader br = new BufferedReader(new FileReader(file, StandardCharsets.UTF_8));
+            String line = br.readLine();
+            while (line != null) {
+                line = line.trim();
+                downloadAndAnalyze(line, outfolder, detectors, resultpath, annotationPath);
                 line = br.readLine();
             }
             br.close();

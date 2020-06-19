@@ -20,20 +20,33 @@ package de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 public class ChangeLayerBy extends AbstractNode implements SpriteLookStmt {
 
     private final NumExpr num;
+    private final BlockMetadata metadata;
+    private final ForwardBackwardChoice forwardBackwardChoice;
 
-    public ChangeLayerBy(NumExpr num) {
-        super(num);
+    public ChangeLayerBy(NumExpr num,ForwardBackwardChoice forwardBackwardChoice, BlockMetadata metadata) {
+        super(num, forwardBackwardChoice,metadata);
         this.num = Preconditions.checkNotNull(num);
+        this.forwardBackwardChoice = Preconditions.checkNotNull(forwardBackwardChoice);
+        this.metadata = metadata;
+    }
+
+    public BlockMetadata getMetadata() {
+        return metadata;
     }
 
     public NumExpr getNum() {
         return num;
+    }
+
+    public ForwardBackwardChoice getForwardBackwardChoice() {
+        return forwardBackwardChoice;
     }
 
     @Override

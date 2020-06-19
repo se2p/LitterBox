@@ -18,10 +18,10 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.model;
 
-import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinitionList;
-import de.uni_passau.fim.se2.litterbox.ast.model.resource.ResourceList;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.declaration.DeclarationStmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.actor.ActorMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinitionList;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.declaration.DeclarationStmtList;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
@@ -29,25 +29,29 @@ public class ActorDefinition extends AbstractNode {
 
     private final ActorType actorType;
     private final LocalIdentifier ident;
-    private final ResourceList resources;
     private final DeclarationStmtList decls;
     private final SetStmtList setStmtList;
     private final ProcedureDefinitionList procedureDefinitionList;
     private final ScriptList scripts;
+    private final ActorMetadata metadata;
 
-    public ActorDefinition(ActorType actorType, LocalIdentifier ident, ResourceList resources, DeclarationStmtList decls,
+    public ActorDefinition(ActorType actorType, LocalIdentifier ident, DeclarationStmtList decls,
                            SetStmtList setStmtList, ProcedureDefinitionList procedureDefinitionList,
-                           ScriptList scripts) {
+                           ScriptList scripts, ActorMetadata metadata) {
 
-        super(actorType, ident, resources, decls, setStmtList, procedureDefinitionList, scripts);
+        super(actorType, ident, decls, setStmtList, procedureDefinitionList, scripts, metadata);
 
         this.actorType = Preconditions.checkNotNull(actorType);
         this.ident = Preconditions.checkNotNull(ident);
-        this.resources = Preconditions.checkNotNull(resources);
         this.decls = Preconditions.checkNotNull(decls);
         this.setStmtList = Preconditions.checkNotNull(setStmtList);
         this.procedureDefinitionList = Preconditions.checkNotNull(procedureDefinitionList);
         this.scripts = Preconditions.checkNotNull(scripts);
+        this.metadata = metadata;
+    }
+
+    public ActorMetadata getMetadata() {
+        return metadata;
     }
 
     public ActorType getActorType() {
@@ -56,10 +60,6 @@ public class ActorDefinition extends AbstractNode {
 
     public LocalIdentifier getIdent() {
         return ident;
-    }
-
-    public ResourceList getResources() {
-        return resources;
     }
 
     public DeclarationStmtList getDecls() {

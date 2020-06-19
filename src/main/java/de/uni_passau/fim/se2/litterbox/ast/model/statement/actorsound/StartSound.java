@@ -20,16 +20,23 @@ package de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.ElementChoice;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 public class StartSound extends AbstractNode implements ActorSoundStmt {
 
     private final ElementChoice elementChoice;
+    private final BlockMetadata metadata;
 
-    public StartSound(ElementChoice elementChoice) {
-        super(elementChoice);
+    public StartSound(ElementChoice elementChoice, BlockMetadata metadata) {
+        super(elementChoice, metadata);
         this.elementChoice = Preconditions.checkNotNull(elementChoice);
+        this.metadata = metadata;
+    }
+
+    public BlockMetadata getMetadata() {
+        return metadata;
     }
 
     public ElementChoice getElementChoice() {

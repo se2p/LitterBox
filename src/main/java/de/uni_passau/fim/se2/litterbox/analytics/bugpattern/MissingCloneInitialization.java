@@ -26,14 +26,20 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.SpriteClicked;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.StartedAsClone;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.CreateCloneOf;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.CloneOfMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.CreateCloneOf;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
+
+import static de.uni_passau.fim.se2.litterbox.analytics.CommentAdder.addBlockComment;
 
 /**
  * When a sprite creates a
@@ -47,20 +53,29 @@ public class MissingCloneInitialization implements IssueFinder, ScratchVisitor {
 
     public static final String NAME = "missing_clone_initialization";
     public static final String SHORT_NAME = "mssCloneInit";
+    public static final String HINT_TEXT = "missing clone initialization";
 
     private List<String> whenStartsAsCloneActors = new ArrayList<>();
     private List<String> clonedActors = new ArrayList<>();
     private ActorDefinition currentActor;
+    private int identifierCounter;
+    private boolean addComment;
+    private Set<String> notClonedActor;
 
     @Override
     public IssueReport check(Program program) {
         Preconditions.checkNotNull(program);
         whenStartsAsCloneActors = new ArrayList<>();
         clonedActors = new ArrayList<>();
+        identifierCounter = 1;
+        addComment = false;
+        notClonedActor = new LinkedHashSet<>();
         program.accept(this);
         final List<String> uninitializingActors
                 = clonedActors.stream().filter(s -> !whenStartsAsCloneActors.contains(s)).collect(Collectors.toList());
-
+        notClonedActor = new LinkedHashSet<>(uninitializingActors);
+        addComment = true;
+        program.accept(this);
         return new IssueReport(NAME, uninitializingActors.size(), uninitializingActors, "");
     }
 
@@ -83,21 +98,31 @@ public class MissingCloneInitialization implements IssueFinder, ScratchVisitor {
     public void visit(CreateCloneOf node) {
         if (node.getStringExpr() instanceof AsString && ((AsString) node.getStringExpr()).getOperand1() instanceof StrId) {
             final String spriteName = ((StrId) ((AsString) node.getStringExpr()).getOperand1()).getName();
-            if (spriteName.equals("_myself_")) {
-                clonedActors.add(currentActor.getIdent().getName());
-            } else {
-                clonedActors.add(spriteName);
+            if (!addComment) {
+                if (spriteName.equals("_myself_")) {
+                    clonedActors.add(currentActor.getIdent().getName());
+                } else {
+                    clonedActors.add(spriteName);
+                }
+            } else if (notClonedActor.contains(spriteName)) {
+                addBlockComment((NonDataBlockMetadata) ((CloneOfMetadata) node.getMetadata()).getCloneBlockMetadata(), currentActor, HINT_TEXT,
+                        SHORT_NAME + identifierCounter);
+                identifierCounter++;
             }
         }
     }
 
     @Override
     public void visit(StartedAsClone node) {
-        whenStartsAsCloneActors.add(currentActor.getIdent().getName());
+        if (!addComment) {
+            whenStartsAsCloneActors.add(currentActor.getIdent().getName());
+        }
     }
 
     @Override
     public void visit(SpriteClicked node) {
-        whenStartsAsCloneActors.add(currentActor.getIdent().getName());
+        if (!addComment) {
+            whenStartsAsCloneActors.add(currentActor.getIdent().getName());
+        }
     }
 }

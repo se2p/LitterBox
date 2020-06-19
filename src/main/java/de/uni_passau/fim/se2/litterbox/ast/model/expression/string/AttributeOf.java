@@ -19,27 +19,33 @@
 package de.uni_passau.fim.se2.litterbox.ast.model.expression.string;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
+import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.ElementChoice;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.Attribute;
-import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 public class AttributeOf extends AbstractNode implements StringExpr {
 
     private final Attribute attribute;
-    private final Expression identifier;
+    private final ElementChoice identifier;
+    private final BlockMetadata metadata;
 
-    public AttributeOf(Attribute attribute,Expression identifier) {
-        super(attribute, identifier);
+    public AttributeOf(Attribute attribute, ElementChoice identifier, BlockMetadata metadata) {
+        super(attribute, identifier, metadata);
         this.attribute = attribute;
         this.identifier = identifier;
+        this.metadata = metadata;
+    }
+
+    public BlockMetadata getMetadata() {
+        return metadata;
     }
 
     public Attribute getAttribute() {
         return attribute;
     }
 
-    public Expression getLocalIdentifier() {
+    public ElementChoice getElementChoice() {
         return identifier;
     }
 

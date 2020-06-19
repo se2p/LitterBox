@@ -23,7 +23,8 @@ import de.uni_passau.fim.se2.litterbox.analytics.IssueReport;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterDefiniton;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Parameter;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
@@ -31,6 +32,8 @@ import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import java.util.LinkedList;
 import java.util.List;
+
+import static de.uni_passau.fim.se2.litterbox.analytics.CommentAdder.addBlockComment;
 
 /**
  * When custom blocks are created the user can define parameters, which can then be used in the body of the custom
@@ -42,13 +45,14 @@ import java.util.List;
 public class OrphanedParameter implements IssueFinder, ScratchVisitor {
     public static final String NAME = "orphaned_parameter";
     public static final String SHORT_NAME = "orphParam";
+    public static final String HINT_TEXT = "orphaned parameter";
     private static final String NOTE1 = "There are no orphaned parameters in your project.";
     private static final String NOTE2 = "Some of the procedures contain orphaned parameters.";
     private boolean found = false;
     private int count = 0;
     private List<String> actorNames = new LinkedList<>();
     private ActorDefinition currentActor;
-    private List<ParameterDefiniton> currentParameterDefinitons;
+    private List<ParameterDefinition> currentParameterDefinitions;
     private boolean insideProcedure;
 
     @Override
@@ -88,7 +92,7 @@ public class OrphanedParameter implements IssueFinder, ScratchVisitor {
     @Override
     public void visit(ProcedureDefinition node) {
         insideProcedure = true;
-        currentParameterDefinitons = node.getParameterDefinitionList().getParameterDefinitons();
+        currentParameterDefinitions = node.getParameterDefinitionList().getParameterDefinitions();
         if (!node.getChildren().isEmpty()) {
             for (ASTNode child : node.getChildren()) {
                 child.accept(this);
@@ -100,7 +104,7 @@ public class OrphanedParameter implements IssueFinder, ScratchVisitor {
     @Override
     public void visit(Parameter node) {
         if (insideProcedure) {
-            checkParameterNames(node.getName().getName());
+            checkParameterNames(node.getName().getName(), node);
         }
         if (!node.getChildren().isEmpty()) {
             for (ASTNode child : node.getChildren()) {
@@ -109,16 +113,18 @@ public class OrphanedParameter implements IssueFinder, ScratchVisitor {
         }
     }
 
-    private void checkParameterNames(String name) {
+    private void checkParameterNames(String name, Parameter node) {
         boolean validParametername = false;
-        for (int i = 0; i < currentParameterDefinitons.size() && !validParametername; i++) {
-            if (name.equals(currentParameterDefinitons.get(i).getIdent().getName())) {
+        for (int i = 0; i < currentParameterDefinitions.size() && !validParametername; i++) {
+            if (name.equals(currentParameterDefinitions.get(i).getIdent().getName())) {
                 validParametername = true;
             }
         }
         if (!validParametername) {
             count++;
             found = true;
+            addBlockComment((NonDataBlockMetadata) node.getMetadata(), currentActor, HINT_TEXT,
+                    SHORT_NAME + count);
         }
     }
 }

@@ -20,12 +20,13 @@ package de.uni_passau.fim.se2.litterbox.ast.model.expression.num;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.UnaryExpression;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 public class AsNumber extends UnaryExpression<Expression> implements NumExpr {
 
     public AsNumber(Expression expr) {
-        super(expr);
+        super(expr, new NoBlockMetadata());
     }
 
     @Override

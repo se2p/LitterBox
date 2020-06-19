@@ -23,6 +23,7 @@ import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.UnspecifiedId;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetVariableTo;
@@ -30,6 +31,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.SetStmtOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ExpressionParser;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
+import de.uni_passau.fim.se2.litterbox.ast.parser.metadata.BlockMetadataParser;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.VariableInfo;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
@@ -37,7 +39,7 @@ import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 
 public class SetStmtParser {
 
-    public static Stmt parse(JsonNode current, JsonNode allBlocks) throws ParsingException {
+    public static Stmt parse(String blockId, JsonNode current, JsonNode allBlocks) throws ParsingException {
         Preconditions.checkNotNull(current);
         Preconditions.checkNotNull(allBlocks);
 
@@ -46,22 +48,22 @@ public class SetStmtParser {
                 .checkArgument(SetStmtOpcode.contains(opcodeString), "Given blockID does not point to a set block.");
 
         final SetStmtOpcode opcode = SetStmtOpcode.valueOf(opcodeString);
-
+        BlockMetadata metadata = BlockMetadataParser.parse(blockId, current);
         if (opcode == SetStmtOpcode.data_setvariableto) {
-            return parseSetVariable(current, allBlocks);
+            return parseSetVariable(current, allBlocks, metadata);
         }
         throw new RuntimeException("Not Implemented yet");
     }
 
-    private static SetStmt parseSetVariable(JsonNode current, JsonNode allBlocks) throws ParsingException {
+    private static SetStmt parseSetVariable(JsonNode current, JsonNode allBlocks, BlockMetadata metadata) throws ParsingException {
         String unique = current.get(FIELDS_KEY).get(VARIABLE_KEY).get(VARIABLE_IDENTIFIER_POS).asText();
         if (!ProgramParser.symbolTable.getVariables().containsKey(unique)) {
             return new SetVariableTo(new UnspecifiedId(), ExpressionParser.parseExpr(current,
-                    VALUE_KEY, allBlocks));
+                    VALUE_KEY, allBlocks), metadata);
         }
         VariableInfo info = ProgramParser.symbolTable.getVariables().get(unique);
         return new SetVariableTo(new Qualified(new StrId(info.getActor()),
                 new Variable(new StrId(info.getVariableName()))), ExpressionParser.parseExpr(current,
-                VALUE_KEY, allBlocks));
+                VALUE_KEY, allBlocks), metadata);
     }
 }

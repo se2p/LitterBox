@@ -26,6 +26,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ActorType;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetVariableTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Parameter;
@@ -63,6 +64,7 @@ class DataExprParserTest {
                     Expression param = setVariableTo.getExpr();
                     assertTrue(param instanceof Parameter);
                     assertEquals(((Parameter) param).getName().getName(), "input");
+                    assertEquals(((Parameter) param).getMetadata().getClass(), NonDataBlockMetadata.class);
                 }
             }
         } catch (ParsingException e) {

@@ -24,16 +24,20 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import de.uni_passau.fim.se2.litterbox.ast.Constants;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.ProcedureMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterDefinitionList;
-import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterDefiniton;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinitionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.BooleanType;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.StringType;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.Type;
-import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
-import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.ProcedureOpcode;
+import de.uni_passau.fim.se2.litterbox.ast.parser.metadata.BlockMetadataParser;
+import de.uni_passau.fim.se2.litterbox.ast.parser.metadata.ProcedureMetadataParser;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import java.io.IOException;
@@ -47,8 +51,6 @@ import java.util.logging.Logger;
 import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 
 public class ProcDefinitionParser {
-
-    private final static String CUSTOM_BLOCK_KEY = "custom_block";
     private final static int PROTOTYPE_REFERENCE_POS = 1;
     private final static int PARAMETER_REFERENCE_POS = 1;
 
@@ -96,10 +98,11 @@ public class ProcDefinitionParser {
         ArrayNode inputArray = (ArrayNode) input;
         String protoReference = inputArray.get(PROTOTYPE_REFERENCE_POS).asText();
         JsonNode proto = blocks.get(protoReference);
-        ArrayList<ParameterDefiniton> inputs = new ArrayList<>();
+        ArrayList<ParameterDefinition> inputs = new ArrayList<>();
 
         Iterator<Map.Entry<String, JsonNode>> iter = proto.get(INPUTS_KEY).fields();
         List<Type> paraTypes = new ArrayList<>();
+        List<BlockMetadata> paramMeta = new ArrayList<>();
         while (iter.hasNext()) {
             final Entry<String, JsonNode> current = iter.next();
             JsonNode currentInput = current.getValue();
@@ -107,7 +110,7 @@ public class ProcDefinitionParser {
             ArrayNode currentAsArray = (ArrayNode) currentInput;
 
             if (!currentAsArray.get(PARAMETER_REFERENCE_POS).asText().equals("null")) {
-                addType(blocks, paraTypes, currentAsArray.get(PARAMETER_REFERENCE_POS).asText());
+                addType(blocks, paraTypes, paramMeta, currentAsArray.get(PARAMETER_REFERENCE_POS).asText());
             }
         }
 
@@ -126,7 +129,7 @@ public class ProcDefinitionParser {
             }
         }
         if (ident == null) {
-            ProgramParser.procDefMap.addMalformated(actorName+methodName);
+            ProgramParser.procDefMap.addMalformated(actorName + methodName);
             throw new ParsingException("Procedure prototype is missing its parent identifier and could not be parsed.");
         }
         JsonNode argumentNamesNode = proto.get(MUTATION_KEY).get(ARGUMENTNAMES_KEY);
@@ -136,7 +139,7 @@ public class ProcDefinitionParser {
         try {
             argumentsNode = mapper.readTree(argumentNamesNode.asText());
         } catch (IOException e) {
-            ProgramParser.procDefMap.addMalformated(actorName+methodName);
+            ProgramParser.procDefMap.addMalformated(actorName + methodName);
             throw new ParsingException("Could not read argument names of a procedure");
         }
 
@@ -149,7 +152,7 @@ public class ProcDefinitionParser {
         }
 
         if (!(arguments.length == paraTypes.size())) {
-            ProgramParser.procDefMap.addMalformated(actorName+methodName);
+            ProgramParser.procDefMap.addMalformated(actorName + methodName);
             throw new ParsingException("A procedure in this project does have malformated code, where inputs or " +
                     "parameternames are missing.");
         }
@@ -157,21 +160,23 @@ public class ProcDefinitionParser {
         ProgramParser.procDefMap.addProcedure(ident, actorName, methodName, arguments, paraTypes.toArray(typeArray));
 
         for (int i = 0; i < paraTypes.size(); i++) {
-            inputs.add(new ParameterDefiniton(new StrId(arguments[i]), paraTypes.get(i)));
+            inputs.add(new ParameterDefinition(new StrId(arguments[i]), paraTypes.get(i), paramMeta.get(i)));
         }
         ParameterDefinitionList parameterDefinitionList = new ParameterDefinitionList(inputs);
         StmtList stmtList = ScriptParser.parseStmtList(def.get(NEXT_KEY).asText(), blocks);
-        return new ProcedureDefinition(ident, parameterDefinitionList, stmtList);
+        ProcedureMetadata meta = ProcedureMetadataParser.parse(ident.getName(), protoReference, blocks);
+        return new ProcedureDefinition(ident, parameterDefinitionList, stmtList, meta);
     }
 
-    private static List<Type> addType(JsonNode blocks, List<Type> types, String textValue) {
+    private static void addType(JsonNode blocks, List<Type> types,
+                                List<BlockMetadata> paramMetadata, String textValue) throws ParsingException {
         JsonNode param = blocks.get(textValue);
+        paramMetadata.add(BlockMetadataParser.parse(textValue, param));
         final String opcodeString = param.get(OPCODE_KEY).asText();
         if (opcodeString.equals(ProcedureOpcode.argument_reporter_boolean.name())) {
             types.add(new BooleanType());
         } else {
             types.add(new StringType());
         }
-        return types;
     }
 }

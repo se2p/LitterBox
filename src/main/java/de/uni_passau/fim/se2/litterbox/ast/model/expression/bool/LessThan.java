@@ -20,12 +20,13 @@ package de.uni_passau.fim.se2.litterbox.ast.model.expression.bool;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.BinaryExpression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.ComparableExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 public class LessThan extends BinaryExpression<ComparableExpr, ComparableExpr> implements BoolExpr {
 
-    public LessThan(ComparableExpr operand1, ComparableExpr operand2) {
-        super(operand1, operand2);
+    public LessThan(ComparableExpr operand1, ComparableExpr operand2, BlockMetadata metadata) {
+        super(operand1, operand2, metadata);
     }
 
     @Override

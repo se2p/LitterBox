@@ -20,11 +20,20 @@ package de.uni_passau.fim.se2.litterbox.ast.model.statement.pen;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTLeaf;
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.Metadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 public class PenDownStmt extends AbstractNode implements PenStmt, ASTLeaf {
-    public PenDownStmt() {
-        super();
+    private final BlockMetadata metadata;
+
+    public PenDownStmt(BlockMetadata metadata) {
+        super(metadata);
+        this.metadata=metadata;
+    }
+
+    public BlockMetadata getMetadata() {
+        return metadata;
     }
 
     @Override

@@ -20,17 +20,30 @@ package de.uni_passau.fim.se2.litterbox.ast.model.expression;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 public abstract class UnaryExpression<A extends ASTNode> extends AbstractNode {
 
     private final A operand1;
+    private final BlockMetadata metadata;
 
-    protected UnaryExpression(A operand1) {
-        super(operand1);
+    protected UnaryExpression(A operand1, BlockMetadata metadata) {
+        super(operand1, metadata);
         this.operand1 = operand1;
+        this.metadata = metadata;
+    }
+
+    public BlockMetadata getMetadata() {
+        return metadata;
     }
 
     public A getOperand1() {
         return operand1;
+    }
+
+    @Override
+    public void accept(ScratchVisitor visitor) {
+        visitor.visit(this);
     }
 }

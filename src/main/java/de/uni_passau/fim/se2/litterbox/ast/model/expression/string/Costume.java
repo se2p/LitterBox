@@ -19,14 +19,21 @@
 package de.uni_passau.fim.se2.litterbox.ast.model.expression.string;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
-public class Costume extends AbstractNode implements StringExpr{
-    private NameNum type;
+public class Costume extends AbstractNode implements StringExpr {
+    private final NameNum type;
+    private final BlockMetadata metadata;
 
-    public Costume(NameNum type) {
-        super(type);
+    public Costume(NameNum type, BlockMetadata metadata) {
+        super(type, metadata);
         this.type = type;
+        this.metadata = metadata;
+    }
+
+    public BlockMetadata getMetadata() {
+        return metadata;
     }
 
     public NameNum getType() {

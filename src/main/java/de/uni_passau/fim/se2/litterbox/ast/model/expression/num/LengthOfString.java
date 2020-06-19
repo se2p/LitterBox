@@ -20,15 +20,22 @@ package de.uni_passau.fim.se2.litterbox.ast.model.expression.num;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 public class LengthOfString extends AbstractNode implements NumExpr {
 
     private final StringExpr stringExpr;
+    private final BlockMetadata metadata;
 
-    public LengthOfString(StringExpr stringExpr) {
-        super(stringExpr);
+    public LengthOfString(StringExpr stringExpr, BlockMetadata metadata) {
+        super(stringExpr, metadata);
         this.stringExpr = stringExpr;
+        this.metadata = metadata;
+    }
+
+    public BlockMetadata getMetadata() {
+        return metadata;
     }
 
     public StringExpr getStringExpr() {

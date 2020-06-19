@@ -26,9 +26,12 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BoolExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.ExpressionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.BoolLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetAttributeTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetVariableTo;
@@ -40,8 +43,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.type.BooleanType;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.ListType;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.NumberType;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.StringType;
-import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
-import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.ScratchList;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
@@ -98,15 +99,18 @@ public class DeclarationStmtParser {
             if (arrNode.get(DECLARATION_VARIABLE_VALUE_POS).isNumber()) {
                 parsedVariables.add(new SetVariableTo(new Qualified(new StrId(actorName),
                         new Variable(new StrId(arrNode.get(DECLARATION_VARIABLE_NAME_POS).asText()))),
-                        new NumberLiteral((float) arrNode.get(DECLARATION_VARIABLE_VALUE_POS).asDouble())));
+                        new NumberLiteral((float) arrNode.get(DECLARATION_VARIABLE_VALUE_POS).asDouble()),
+                        new NoBlockMetadata()));
             } else if (arrNode.get(DECLARATION_VARIABLE_VALUE_POS).isBoolean()) {
                 parsedVariables.add(new SetVariableTo(new Qualified(new StrId(actorName),
-                        new Variable(new StrId( arrNode.get(DECLARATION_VARIABLE_NAME_POS).asText()))),
-                        new BoolLiteral(arrNode.get(DECLARATION_VARIABLE_VALUE_POS).asBoolean())));
+                        new Variable(new StrId(arrNode.get(DECLARATION_VARIABLE_NAME_POS).asText()))),
+                        new BoolLiteral(arrNode.get(DECLARATION_VARIABLE_VALUE_POS).asBoolean()),
+                        new NoBlockMetadata()));
             } else {
                 parsedVariables.add(new SetVariableTo(new Qualified(new StrId(actorName),
                         new Variable(new StrId(arrNode.get(DECLARATION_VARIABLE_NAME_POS).asText()))),
-                        new StringLiteral(arrNode.get(DECLARATION_VARIABLE_VALUE_POS).asText())));
+                        new StringLiteral(arrNode.get(DECLARATION_VARIABLE_VALUE_POS).asText()),
+                        new NoBlockMetadata()));
             }
         }
         return parsedVariables;
@@ -151,8 +155,9 @@ public class DeclarationStmtParser {
             JsonNode listValues = arrNode.get(DECLARATION_LIST_VALUES_POS);
             Preconditions.checkArgument(listValues.isArray());
             parsedLists.add(new SetVariableTo(new Qualified(new StrId(actorName),
-                    new ScratchList( new StrId(listName))),
-                    new ExpressionList(makeExpressionList((ArrayNode) listValues))));
+                    new ScratchList(new StrId(listName))),
+                    new ExpressionList(makeExpressionList((ArrayNode) listValues)),
+                    new NoBlockMetadata()));
         }
         return parsedLists;
     }
@@ -166,7 +171,7 @@ public class DeclarationStmtParser {
             Map.Entry<String, JsonNode> current = iter.next();
             ProgramParser.symbolTable.addMessage(current.getValue().asText(),
                     new Message(new StringLiteral(current.getValue().asText())), isStage,
-                    actorName);
+                    actorName,current.getKey());
             parsedBroadcasts.add(new DeclarationBroadcastStmt(new StrId(current.getValue().asText()),
                     new StringType()));
         }
@@ -190,7 +195,7 @@ public class DeclarationStmtParser {
             list.add(new DeclarationAttributeAsTypeStmt(keyExpr, new NumberType()));
         }
 
-        if (actorDefinitionNode.get("isStage").asBoolean()) {
+        if (actorDefinitionNode.get(IS_STAGE_KEY).asBoolean()) {
 
             if (actorDefinitionNode.has(TEMPO_KEY)) {
                 keyExpr = new StringLiteral(TEMPO_KEY);
@@ -275,7 +280,8 @@ public class DeclarationStmtParser {
             Preconditions.checkArgument(actorDefinitionNode.get(VOLUME_KEY).isNumber());
             jsonDouble = actorDefinitionNode.get(VOLUME_KEY).asDouble();
             numExpr = new NumberLiteral((float) jsonDouble);
-            setStmt = new SetAttributeTo(keyExpr, numExpr);
+            setStmt = new SetAttributeTo(keyExpr, numExpr,
+                    new NoBlockMetadata());
             list.add(setStmt);
         }
 
@@ -284,18 +290,20 @@ public class DeclarationStmtParser {
             Preconditions.checkArgument(actorDefinitionNode.get(LAYERORDER_KEY).isNumber());
             jsonDouble = actorDefinitionNode.get(LAYERORDER_KEY).asDouble();
             numExpr = new NumberLiteral((float) jsonDouble);
-            setStmt = new SetAttributeTo(keyExpr, numExpr);
+            setStmt = new SetAttributeTo(keyExpr, numExpr,
+                    new NoBlockMetadata());
             list.add(setStmt);
         }
 
-        if (actorDefinitionNode.get("isStage").asBoolean()) {
+        if (actorDefinitionNode.get(IS_STAGE_KEY).asBoolean()) {
 
             if (actorDefinitionNode.has(TEMPO_KEY)) {
                 keyExpr = new StringLiteral(TEMPO_KEY);
                 jsonDouble = actorDefinitionNode.get(TEMPO_KEY).asDouble();
                 Preconditions.checkArgument(actorDefinitionNode.get(TEMPO_KEY).isNumber());
                 numExpr = new NumberLiteral((float) jsonDouble);
-                setStmt = new SetAttributeTo(keyExpr, numExpr);
+                setStmt = new SetAttributeTo(keyExpr, numExpr,
+                        new NoBlockMetadata());
                 list.add(setStmt);
             }
 
@@ -304,7 +312,8 @@ public class DeclarationStmtParser {
                 Preconditions.checkArgument(actorDefinitionNode.get(VIDTRANSPARENCY_KEY).isNumber());
                 jsonDouble = actorDefinitionNode.get(VIDTRANSPARENCY_KEY).asDouble();
                 numExpr = new NumberLiteral((float) jsonDouble);
-                setStmt = new SetAttributeTo(keyExpr, numExpr);
+                setStmt = new SetAttributeTo(keyExpr, numExpr,
+                        new NoBlockMetadata());
                 list.add(setStmt);
             }
 
@@ -313,7 +322,8 @@ public class DeclarationStmtParser {
                 Preconditions.checkArgument(actorDefinitionNode.get(VIDSTATE_KEY).isTextual());
                 jsonString = actorDefinitionNode.get(VIDSTATE_KEY).asText();
                 stringExpr = new StringLiteral(jsonString);
-                setStmt = new SetAttributeTo(keyExpr, stringExpr);
+                setStmt = new SetAttributeTo(keyExpr, stringExpr,
+                        new NoBlockMetadata());
                 list.add(setStmt);
             }
         } else {
@@ -323,7 +333,8 @@ public class DeclarationStmtParser {
                 Preconditions.checkArgument(actorDefinitionNode.get(VISIBLE_KEY).isBoolean());
                 jsonBool = actorDefinitionNode.get(VISIBLE_KEY).asBoolean();
                 boolExpr = new BoolLiteral(jsonBool);
-                setStmt = new SetAttributeTo(keyExpr, boolExpr);
+                setStmt = new SetAttributeTo(keyExpr, boolExpr,
+                        new NoBlockMetadata());
                 list.add(setStmt);
             }
 
@@ -332,7 +343,8 @@ public class DeclarationStmtParser {
                 Preconditions.checkArgument(actorDefinitionNode.get(X_KEY).isNumber());
                 jsonDouble = actorDefinitionNode.get(X_KEY).asDouble();
                 numExpr = new NumberLiteral((float) jsonDouble);
-                setStmt = new SetAttributeTo(keyExpr, numExpr);
+                setStmt = new SetAttributeTo(keyExpr, numExpr,
+                        new NoBlockMetadata());
                 list.add(setStmt);
             }
 
@@ -341,7 +353,8 @@ public class DeclarationStmtParser {
                 Preconditions.checkArgument(actorDefinitionNode.get(Y_KEY).isNumber());
                 jsonDouble = actorDefinitionNode.get(Y_KEY).asDouble();
                 numExpr = new NumberLiteral((float) jsonDouble);
-                setStmt = new SetAttributeTo(keyExpr, numExpr);
+                setStmt = new SetAttributeTo(keyExpr, numExpr,
+                        new NoBlockMetadata());
                 list.add(setStmt);
             }
 
@@ -350,7 +363,8 @@ public class DeclarationStmtParser {
                 Preconditions.checkArgument(actorDefinitionNode.get(SIZE_KEY).isNumber());
                 jsonDouble = actorDefinitionNode.get(SIZE_KEY).asDouble();
                 numExpr = new NumberLiteral((float) jsonDouble);
-                setStmt = new SetAttributeTo(keyExpr, numExpr);
+                setStmt = new SetAttributeTo(keyExpr, numExpr,
+                        new NoBlockMetadata());
                 list.add(setStmt);
             }
 
@@ -359,7 +373,8 @@ public class DeclarationStmtParser {
                 Preconditions.checkArgument(actorDefinitionNode.get(DIRECTION_KEY).isNumber());
                 jsonDouble = actorDefinitionNode.get(DIRECTION_KEY).asDouble();
                 numExpr = new NumberLiteral((float) jsonDouble);
-                setStmt = new SetAttributeTo(keyExpr, numExpr);
+                setStmt = new SetAttributeTo(keyExpr, numExpr,
+                        new NoBlockMetadata());
                 list.add(setStmt);
             }
 
@@ -368,7 +383,8 @@ public class DeclarationStmtParser {
                 Preconditions.checkArgument(actorDefinitionNode.get(DRAG_KEY).isBoolean());
                 jsonBool = actorDefinitionNode.get(DRAG_KEY).asBoolean();
                 boolExpr = new BoolLiteral(jsonBool);
-                setStmt = new SetAttributeTo(keyExpr, boolExpr);
+                setStmt = new SetAttributeTo(keyExpr, boolExpr,
+                        new NoBlockMetadata());
                 list.add(setStmt);
             }
 
@@ -377,7 +393,8 @@ public class DeclarationStmtParser {
                 Preconditions.checkArgument(actorDefinitionNode.get(ROTATIONSTYLE_KEY).isTextual());
                 jsonString = actorDefinitionNode.get(ROTATIONSTYLE_KEY).asText();
                 stringExpr = new StringLiteral(jsonString);
-                setStmt = new SetAttributeTo(keyExpr, stringExpr);
+                setStmt = new SetAttributeTo(keyExpr, stringExpr,
+                        new NoBlockMetadata());
                 list.add(setStmt);
             }
         }

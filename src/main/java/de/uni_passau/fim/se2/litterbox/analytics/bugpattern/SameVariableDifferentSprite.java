@@ -21,6 +21,7 @@ package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueReport;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueTool;
+import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ExpressionListInfo;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.VariableInfo;
@@ -31,9 +32,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import static de.uni_passau.fim.se2.litterbox.analytics.CommentAdder.addLooseComment;
+
 public class SameVariableDifferentSprite implements IssueFinder {
     public static final String NAME = "same_variable_different_sprite";
     public static final String SHORT_NAME = "sameVarDiffSprite";
+    public static final String HINT_TEXT = "same_variable different sprite";
     private static final String NOTE1 = "There are no variables with the same name in your project.";
     private static final String NOTE2 = "Some of the variables have the same name but are in different sprites.";
     private boolean found = false;
@@ -46,6 +50,7 @@ public class SameVariableDifferentSprite implements IssueFinder {
         found = false;
         count = 0;
         actorNames = new LinkedList<>();
+        List<ActorDefinition> actorDefinitions = program.getActorDefinitionList().getDefintions();
         String notes = NOTE1;
         if (count > 0) {
             notes = NOTE2;
@@ -65,6 +70,13 @@ public class SameVariableDifferentSprite implements IssueFinder {
                 found = false;
                 count++;
                 actorNames.add(currentActor);
+                for (ActorDefinition actorDefinition : actorDefinitions) {
+                    if (actorDefinition.getIdent().getName().equals(currentActor)) {
+                        addLooseComment(actorDefinition, HINT_TEXT + " Variable " + currentName,
+                                SHORT_NAME + count);
+                        break;
+                    }
+                }
             }
         }
 
@@ -83,6 +95,13 @@ public class SameVariableDifferentSprite implements IssueFinder {
                 found = false;
                 count++;
                 actorNames.add(currentActor);
+                for (ActorDefinition actorDefinition : actorDefinitions) {
+                    if (actorDefinition.getIdent().getName().equals(currentActor)) {
+                        addLooseComment(actorDefinition, HINT_TEXT + " List " + currentName,
+                                SHORT_NAME + count);
+                        break;
+                    }
+                }
             }
         }
 

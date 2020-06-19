@@ -23,6 +23,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.IssueReport;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.pen.PenClearStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.pen.PenDownStmt;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
@@ -30,6 +31,8 @@ import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import java.util.LinkedList;
 import java.util.List;
+
+import static de.uni_passau.fim.se2.litterbox.analytics.CommentAdder.addBlockComment;
 
 /**
  * If a sprite uses a pen down block but never an erase all block, then all drawings from a
@@ -40,6 +43,7 @@ public class MissingEraseAll implements IssueFinder {
 
     public static final String NAME = "missing_erase_all";
     public static final String SHORT_NAME = "mssEraseAll";
+    public static final String HINT_TEXT = "missing erase all";
 
     @Override
     public IssueReport check(Program program) {
@@ -58,6 +62,7 @@ public class MissingEraseAll implements IssueFinder {
 
         private boolean penClearSet = false;
         private boolean penDownSet = false;
+        private boolean addComment = false;
         private int count = 0;
         private List<String> actorNames = new LinkedList<>();
         private ActorDefinition currentActor;
@@ -74,6 +79,9 @@ public class MissingEraseAll implements IssueFinder {
         @Override
         public void visit(ActorDefinition actor) {
             currentActor = actor;
+            addComment = false;
+            penClearSet = false;
+            penDownSet = false;
             if (!actor.getChildren().isEmpty()) {
                 for (ASTNode child : actor.getChildren()) {
                     child.accept(this);
@@ -83,26 +91,38 @@ public class MissingEraseAll implements IssueFinder {
             if (getResult()) {
                 count++;
                 actorNames.add(currentActor.getIdent().getName());
+                addComment = true;
+                for (ASTNode child : actor.getChildren()) {
+                    child.accept(this);
+                }
                 reset();
+
             }
         }
 
         @Override
         public void visit(PenDownStmt node) {
-            penDownSet = true;
-            if (!node.getChildren().isEmpty()) {
-                for (ASTNode child : node.getChildren()) {
-                    child.accept(this);
+            if (!addComment) {
+                penDownSet = true;
+                if (!node.getChildren().isEmpty()) {
+                    for (ASTNode child : node.getChildren()) {
+                        child.accept(this);
+                    }
                 }
+            } else if (getResult()) {
+                addBlockComment((NonDataBlockMetadata) node.getMetadata(), currentActor, HINT_TEXT,
+                        SHORT_NAME + count);
             }
         }
 
         @Override
         public void visit(PenClearStmt node) {
-            penClearSet = true;
-            if (!node.getChildren().isEmpty()) {
-                for (ASTNode child : node.getChildren()) {
-                    child.accept(this);
+            if (!addComment) {
+                penClearSet = true;
+                if (!node.getChildren().isEmpty()) {
+                    for (ASTNode child : node.getChildren()) {
+                        child.accept(this);
+                    }
                 }
             }
         }
@@ -111,6 +131,7 @@ public class MissingEraseAll implements IssueFinder {
             penClearSet = false;
             penDownSet = false;
             currentActor = null;
+            addComment = false;
         }
 
         public boolean getResult() {

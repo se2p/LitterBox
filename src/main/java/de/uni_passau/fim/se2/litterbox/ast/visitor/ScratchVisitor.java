@@ -42,18 +42,31 @@ import de.uni_passau.fim.se2.litterbox.ast.model.literals.BoolLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.ColorLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.actor.ActorMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.actor.SpriteMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.actor.StageMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astLists.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.input.DataInputMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.input.InputMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.input.ReferenceInputMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.input.TypeInputMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.monitor.MonitorListMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.monitor.MonitorMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.monitor.MonitorParamMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.monitor.MonitorSliderMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.ressources.ImageMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.ressources.ResourceMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.ressources.SoundMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.FromExpression;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.MousePos;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.Position;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.RandomPos;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterDefinitionList;
-import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterDefiniton;
+import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinitionList;
-import de.uni_passau.fim.se2.litterbox.ast.model.resource.ImageResource;
-import de.uni_passau.fim.se2.litterbox.ast.model.resource.Resource;
-import de.uni_passau.fim.se2.litterbox.ast.model.resource.ResourceList;
-import de.uni_passau.fim.se2.litterbox.ast.model.resource.SoundResource;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.ExpressionStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
@@ -570,7 +583,7 @@ public interface ScratchVisitor {
     }
 
     /**
-     * Default implementation of visit method for {@link ParameterDefiniton}.
+     * Default implementation of visit method for {@link ParameterDefinition}.
      *
      * <p>
      * Iterates all children of this node without performing any action.
@@ -578,7 +591,7 @@ public interface ScratchVisitor {
      *
      * @param node ParameterDefiniton Node of which the children will be iterated
      */
-    default void visit(ParameterDefiniton node) {
+    default void visit(ParameterDefinition node) {
         visit((ASTNode) node);
     }
 
@@ -1698,58 +1711,6 @@ public interface ScratchVisitor {
      */
     default void visit(ProcedureDefinitionList node) {
         visit((ASTNode) node);
-    }
-
-    /**
-     * Default implementation of visit method for {@link Resource}.
-     *
-     * <p>
-     * Iterates all children of this node without performing any action.
-     * </p>
-     *
-     * @param node Resource  Node of which the children will be iterated
-     */
-    default void visit(Resource node) {
-        visit((ASTNode) node);
-    }
-
-    /**
-     * Default implementation of visit method for {@link ImageResource}.
-     *
-     * <p>
-     * Iterates all children of this node without performing any action.
-     * </p>
-     *
-     * @param node ImageResource  Node of which the children will be iterated
-     */
-    default void visit(ImageResource node) {
-        visit((Resource) node);
-    }
-
-    /**
-     * Default implementation of visit method for {@link ResourceList}.
-     *
-     * <p>
-     * Iterates all children of this node without performing any action.
-     * </p>
-     *
-     * @param node ResourceList  Node of which the children will be iterated
-     */
-    default void visit(ResourceList node) {
-        visit((ASTNode) node);
-    }
-
-    /**
-     * Default implementation of visit method for {@link SoundResource}.
-     *
-     * <p>
-     * Iterates all children of this node without performing any action.
-     * </p>
-     *
-     * @param node SoundResource  Node of which the children will be iterated
-     */
-    default void visit(SoundResource node) {
-        visit((Resource) node);
     }
 
     /**
@@ -3186,5 +3147,648 @@ public interface ScratchVisitor {
      */
     default void visit(EventAttribute node) { //TODO enum
         visit((ASTNode) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link Metadata}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node Metadata Node of which the children will
+     *             be iterated
+     */
+    default void visit(Metadata node) {
+        visit((ASTNode) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link VariableMetadata}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node VariableMetadata Node of which the children will
+     *             be iterated
+     */
+    default void visit(VariableMetadata node) {
+        visit((Metadata) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link MetaMetadata}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node MetaMetadata Node of which the children will
+     *             be iterated
+     */
+    default void visit(MetaMetadata node) {
+        visit((Metadata) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link ListMetadata}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node ListMetadata Node of which the children will
+     *             be iterated
+     */
+    default void visit(ListMetadata node) {
+        visit((Metadata) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link ExtensionMetadata}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node ExtensionMetadata Node of which the children will
+     *             be iterated
+     */
+    default void visit(ExtensionMetadata node) {
+        visit((Metadata) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link CommentMetadata}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node CommentMetadata Node of which the children will
+     *             be iterated
+     */
+    default void visit(CommentMetadata node) {
+        visit((Metadata) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link ProgramMetadata}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node ProgramMetadata Node of which the children will
+     *             be iterated
+     */
+    default void visit(ProgramMetadata node) {
+        visit((Metadata) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link BroadcastMetadata}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node BroadcastMetadata Node of which the children will
+     *             be iterated
+     */
+    default void visit(BroadcastMetadata node) {
+        visit((Metadata) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link ResourceMetadata}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node ResourceMetadata Node of which the children will
+     *             be iterated
+     */
+    default void visit(ResourceMetadata node) {
+        visit((Metadata) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link ImageMetadata}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node ImageMetadata Node of which the children will
+     *             be iterated
+     */
+    default void visit(ImageMetadata node) {
+        visit((ResourceMetadata) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link SoundMetadata}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node SoundMetadata Node of which the children will
+     *             be iterated
+     */
+    default void visit(SoundMetadata node) {
+        visit((ResourceMetadata) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link MonitorMetadata}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node MonitorMetadata Node of which the children will
+     *             be iterated
+     */
+    default void visit(MonitorMetadata node) {
+        visit((Metadata) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link MonitorSliderMetadata}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node MonitorSliderMetadata Node of which the children will
+     *             be iterated
+     */
+    default void visit(MonitorSliderMetadata node) {
+        visit((MonitorMetadata) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link MonitorListMetadata}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node MonitorListMetadata Node of which the children will
+     *             be iterated
+     */
+    default void visit(MonitorListMetadata node) {
+        visit((MonitorMetadata) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link MonitorParamMetadata}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node MonitorParamMetadata Node of which the children will
+     *             be iterated
+     */
+    default void visit(MonitorParamMetadata node) {
+        visit((Metadata) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link InputMetadata}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node InputMetadata Node of which the children will
+     *             be iterated
+     */
+    default void visit(InputMetadata node) {
+        visit((Metadata) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link ReferenceInputMetadata}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node ReferenceInputMetadata Node of which the children will
+     *             be iterated
+     */
+    default void visit(ReferenceInputMetadata node) {
+        visit((InputMetadata) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link TypeInputMetadata}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node TypeInputMetadata Node of which the children will
+     *             be iterated
+     */
+    default void visit(TypeInputMetadata node) {
+        visit((InputMetadata) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link DataInputMetadata}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node DataInputMetadata Node of which the children will
+     *             be iterated
+     */
+    default void visit(DataInputMetadata node) {
+        visit((InputMetadata) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link BlockMetadata}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node BlockMetadata Node of which the children will
+     *             be iterated
+     */
+    default void visit(BlockMetadata node) {
+        visit((Metadata) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link DataBlockMetadata}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node DataBlockMetadata Node of which the children will
+     *             be iterated
+     */
+    default void visit(DataBlockMetadata node) {
+        visit((BlockMetadata) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link NonDataBlockMetadata}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node NonDataBlockMetadata Node of which the children will
+     *             be iterated
+     */
+    default void visit(NonDataBlockMetadata node) {
+        visit((BlockMetadata) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link TopNonDataBlockMetadata}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node TopNonDataBlockMetadata Node of which the children will
+     *             be iterated
+     */
+    default void visit(TopNonDataBlockMetadata node) {
+        visit((NonDataBlockMetadata) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link FieldsMetadata}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node FieldsMetadata Node of which the children will
+     *             be iterated
+     */
+    default void visit(FieldsMetadata node) {
+        visit((Metadata) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link MutationMetadata}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node MutationMetadata Node of which the children will
+     *             be iterated
+     */
+    default void visit(MutationMetadata node) {
+        visit((Metadata) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link NoMutationMetadata}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node NoMutationMetadata Node of which the children will
+     *             be iterated
+     */
+    default void visit(NoMutationMetadata node) {
+        visit((MutationMetadata) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link CallMutationMetadata}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node ExistingCallMutationMetadata Node of which the children will
+     *             be iterated
+     */
+    default void visit(CallMutationMetadata node) {
+        visit((MutationMetadata) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link }.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node ExistingPrototypeMutationMetadata Node of which the children will
+     *             be iterated
+     */
+    default void visit(PrototypeMutationMetadata node) {
+        visit((CallMutationMetadata) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link ActorMetadata}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node ActorMetadata Node of which the children will
+     *             be iterated
+     */
+    default void visit(ActorMetadata node) {
+        visit((Metadata) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link StageMetadata}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node StageMetadata Node of which the children will
+     *             be iterated
+     */
+    default void visit(StageMetadata node) {
+        visit((ActorMetadata) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link SpriteMetadata}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node SpriteMetadata Node of which the children will
+     *             be iterated
+     */
+    default void visit(SpriteMetadata node) {
+        visit((ActorMetadata) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link BroadcastMetadataList}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node BroadcastMetadataList Node of which the children will
+     *             be iterated
+     */
+    default void visit(BroadcastMetadataList node) {
+        visit((ASTNode) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link CommentMetadataList}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node CommentMetadataList Node of which the children will
+     *             be iterated
+     */
+    default void visit(CommentMetadataList node) {
+        visit((ASTNode) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link FieldsMetadataList}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node FieldsMetadataList Node of which the children will
+     *             be iterated
+     */
+    default void visit(FieldsMetadataList node) {
+        visit((ASTNode) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link ImageMetadataList}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node ImageMetadataList Node of which the children will
+     *             be iterated
+     */
+    default void visit(ImageMetadataList node) {
+        visit((ASTNode) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link InputMetadataList}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node InputMetadataList Node of which the children will
+     *             be iterated
+     */
+    default void visit(InputMetadataList node) {
+        visit((ASTNode) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link ListMetadataList}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node ListMetadataList Node of which the children will
+     *             be iterated
+     */
+    default void visit(ListMetadataList node) {
+        visit((ASTNode) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link MonitorMetadataList}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node MonitorMetadataList Node of which the children will
+     *             be iterated
+     */
+    default void visit(MonitorMetadataList node) {
+        visit((ASTNode) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link MonitorParamMetadataList}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node MonitorParamMetadataList Node of which the children will
+     *             be iterated
+     */
+    default void visit(MonitorParamMetadataList node) {
+        visit((ASTNode) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link SoundMetadataList}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node SoundMetadataList Node of which the children will
+     *             be iterated
+     */
+    default void visit(SoundMetadataList node) {
+        visit((ASTNode) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link VariableMetadataList}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node VariableMetadataList Node of which the children will
+     *             be iterated
+     */
+    default void visit(VariableMetadataList node) {
+        visit((ASTNode) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link NoMetadata}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node NoMetadata Node of which the children will
+     *             be iterated
+     */
+    default void visit(NoMetadata node) {
+        visit((Metadata) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link NoBlockMetadata}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node NoBlockMetadata Node of which the children will
+     *             be iterated
+     */
+    default void visit(NoBlockMetadata node) {
+        visit((BlockMetadata) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link ProcedureMetadata}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node ProcedureMetadata Node of which the children will
+     *             be iterated
+     */
+    default void visit(ProcedureMetadata node) {
+        visit((Metadata) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link ForwardBackwardChoice}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node ForwardBackwardChoice Node of which the children will be iterated
+     */
+    default void visit(ForwardBackwardChoice node) {
+        visit((ASTLeaf) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link CloneOfMetadata}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node CloneOfMetadata Node of which the children will
+     *             be iterated
+     */
+    default void visit(CloneOfMetadata node) {
+        visit((BlockMetadata) node);
     }
 }

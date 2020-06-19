@@ -1,0 +1,201 @@
+{
+  "targets": [
+    {
+      "isStage": true,
+      "name": "Stage",
+      "variables": {},
+      "lists": {},
+      "broadcasts": {},
+      "blocks": {},
+      "comments": {},
+      "currentCostume": 0,
+      "costumes": [
+        {
+          "assetId": "cd21514d0531fdffb22204e0ec5ed84a",
+          "name": "Bühnenbild1",
+          "md5ext": "cd21514d0531fdffb22204e0ec5ed84a.svg",
+          "dataFormat": "svg",
+          "rotationCenterX": 240,
+          "rotationCenterY": 180
+        }
+      ],
+      "sounds": [
+        {
+          "assetId": "83a9787d4cb6f3b7632b4ddfebf74367",
+          "name": "Plopp",
+          "dataFormat": "wav",
+          "format": "",
+          "rate": 48000,
+          "sampleCount": 1124,
+          "md5ext": "83a9787d4cb6f3b7632b4ddfebf74367.wav"
+        }
+      ],
+      "volume": 100,
+      "layerOrder": 0,
+      "tempo": 60,
+      "videoTransparency": 50,
+      "videoState": "on",
+      "textToSpeechLanguage": null
+    },
+    {
+      "isStage": false,
+      "name": "Figur1",
+      "variables": {},
+      "lists": {},
+      "broadcasts": {},
+      "blocks": {
+        "j|+wb)ZJ[8]iw3p)Rbm`": {
+          "opcode": "motion_ifonedgebounce",
+          "next": "B,MHq=2$Zt%N}]wuo]]k",
+          "parent": null,
+          "inputs": {},
+          "fields": {},
+          "shadow": false,
+          "topLevel": true,
+          "x": 318,
+          "y": -269
+        },
+        "B,MHq=2$Zt%N}]wuo]]k": {
+          "opcode": "looks_nextcostume",
+          "next": "u5*YlqO^gl$S]CG2}4~W",
+          "parent": "j|+wb)ZJ[8]iw3p)Rbm`",
+          "inputs": {},
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "u5*YlqO^gl$S]CG2}4~W": {
+          "opcode": "looks_nextbackdrop",
+          "next": "/GhPL1Nl-O-dczU4lxIz",
+          "parent": "B,MHq=2$Zt%N}]wuo]]k",
+          "inputs": {},
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "/GhPL1Nl-O-dczU4lxIz": {
+          "opcode": "looks_cleargraphiceffects",
+          "next": "6QbMI,Iv$8.rFF73e1z8",
+          "parent": "u5*YlqO^gl$S]CG2}4~W",
+          "inputs": {},
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "6QbMI,Iv$8.rFF73e1z8": {
+          "opcode": "looks_show",
+          "next": "}#yGY=v*gqgT4)(^c%Eq",
+          "parent": "/GhPL1Nl-O-dczU4lxIz",
+          "inputs": {},
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "}#yGY=v*gqgT4)(^c%Eq": {
+          "opcode": "looks_hide",
+          "next": "R_i)[=k3~cX^y+8yDev4",
+          "parent": "6QbMI,Iv$8.rFF73e1z8",
+          "inputs": {},
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "R_i)[=k3~cX^y+8yDev4": {
+          "opcode": "sound_stopallsounds",
+          "next": "gO3:!*7(e74bAm~h=noe",
+          "parent": "}#yGY=v*gqgT4)(^c%Eq",
+          "inputs": {},
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "gO3:!*7(e74bAm~h=noe": {
+          "opcode": "sound_cleareffects",
+          "next": "L8pJs:PD1M8eI=s2]~+W",
+          "parent": "R_i)[=k3~cX^y+8yDev4",
+          "inputs": {},
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "pC?0_{.O9ymLv:$O{Ch)": {
+          "opcode": "control_delete_this_clone",
+          "next": null,
+          "parent": "L8pJs:PD1M8eI=s2]~+W",
+          "inputs": {},
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "L8pJs:PD1M8eI=s2]~+W": {
+          "opcode": "sensing_resettimer",
+          "next": "pC?0_{.O9ymLv:$O{Ch)",
+          "parent": "gO3:!*7(e74bAm~h=noe",
+          "inputs": {},
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        }
+      },
+      "comments": {
+        "*tPdWsa:f03PT}6!lO|s": {
+          "blockId": "n;XYjO(nP#vP5lIKRvao",
+          "x": 1248.5999965667725,
+          "y": 261,
+          "width": 200,
+          "height": 200,
+          "minimized": false,
+          "text": ""
+        }
+      },
+      "currentCostume": 0,
+      "costumes": [
+        {
+          "assetId": "b7853f557e4426412e64bb3da6531a99",
+          "name": "Kostüm1",
+          "bitmapResolution": 1,
+          "md5ext": "b7853f557e4426412e64bb3da6531a99.svg",
+          "dataFormat": "svg",
+          "rotationCenterX": 48,
+          "rotationCenterY": 50
+        },
+        {
+          "assetId": "e6ddc55a6ddd9cc9d84fe0b4c21e016f",
+          "name": "Kostüm2",
+          "bitmapResolution": 1,
+          "md5ext": "e6ddc55a6ddd9cc9d84fe0b4c21e016f.svg",
+          "dataFormat": "svg",
+          "rotationCenterX": 46,
+          "rotationCenterY": 53
+        }
+      ],
+      "sounds": [
+        {
+          "assetId": "83c36d806dc92327b9e7049a565c6bff",
+          "name": "Miau",
+          "dataFormat": "wav",
+          "format": "",
+          "rate": 48000,
+          "sampleCount": 40682,
+          "md5ext": "83c36d806dc92327b9e7049a565c6bff.wav"
+        }
+      ],
+      "volume": 100,
+      "layerOrder": 1,
+      "visible": true,
+      "x": 0,
+      "y": 0,
+      "size": 100,
+      "direction": 90,
+      "draggable": false,
+      "rotationStyle": "all around"
+    }
+  ],
+  "monitors": [],
+  "extensions": [],
+  "meta": {
+    "semver": "3.0.0",
+    "vm": "0.2.0-prerelease.20200519202709",
+    "agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:76.0) Gecko/20100101 Firefox/76.0"
+  }
+}

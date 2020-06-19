@@ -36,6 +36,7 @@ public class NoWorkingScriptTest {
     private static Program workingScript;
     private static Program myWarrior;
     private static Program noodle;
+    private static Program test;
     private static ObjectMapper mapper = new ObjectMapper();
 
     @BeforeAll

@@ -23,9 +23,10 @@ import de.uni_passau.fim.se2.litterbox.analytics.IssueReport;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ProcedureInfo;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
@@ -34,6 +35,8 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+
+import static de.uni_passau.fim.se2.litterbox.analytics.CommentAdder.addBlockComment;
 
 /**
  * When a custom block is called without being defined nothing happens. This can occur in two different situations:
@@ -44,6 +47,7 @@ import java.util.Map;
 public class CallWithoutDefinition implements IssueFinder, ScratchVisitor {
     public static final String NAME = "call_without_definition";
     public static final String SHORT_NAME = "cllWithoutDef";
+    public static final String HINT_TEXT = "call without definition";
     private static final String NOTE1 = "There are no calls without definitions in your project.";
     private static final String NOTE2 = "Some of the sprites contain calls without definitions.";
     private boolean found = false;
@@ -51,7 +55,7 @@ public class CallWithoutDefinition implements IssueFinder, ScratchVisitor {
     private List<String> actorNames = new LinkedList<>();
     private ActorDefinition currentActor;
     private List<String> proceduresDef;
-    private List<String> calledProcedures;
+    private List<CallStmt> calledProcedures;
     private Map<LocalIdentifier, ProcedureInfo> procMap;
     private Program program;
 
@@ -94,10 +98,12 @@ public class CallWithoutDefinition implements IssueFinder, ScratchVisitor {
     }
 
     private void checkCalls() {
-        for (String calledProcedure : calledProcedures) {
-            if (!proceduresDef.contains(calledProcedure) && !program.getProcedureMapping().checkIfMalformated(currentActor.getIdent().getName()+calledProcedure)) {
+        for (CallStmt calledProcedure : calledProcedures) {
+            if (!proceduresDef.contains(calledProcedure.getIdent().getName()) && !program.getProcedureMapping().checkIfMalformated(currentActor.getIdent().getName() + calledProcedure.getIdent().getName())) {
                 found = true;
                 count++;
+                addBlockComment((NonDataBlockMetadata) calledProcedure.getMetadata(), currentActor, HINT_TEXT,
+                        SHORT_NAME + count);
             }
         }
     }
@@ -116,7 +122,7 @@ public class CallWithoutDefinition implements IssueFinder, ScratchVisitor {
 
     @Override
     public void visit(CallStmt node) {
-        calledProcedures.add(node.getIdent().getName());
+        calledProcedures.add(node);
         if (!node.getChildren().isEmpty()) {
             for (ASTNode child : node.getChildren()) {
                 child.accept(this);

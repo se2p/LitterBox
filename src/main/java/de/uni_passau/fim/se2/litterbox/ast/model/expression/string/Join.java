@@ -19,12 +19,13 @@
 package de.uni_passau.fim.se2.litterbox.ast.model.expression.string;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.BinaryExpression;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 public class Join extends BinaryExpression<StringExpr, StringExpr> implements StringExpr {
 
-    public Join(StringExpr operand1, StringExpr operand2) {
-        super(operand1, operand2);
+    public Join(StringExpr operand1, StringExpr operand2, BlockMetadata metadata) {
+        super(operand1, operand2, metadata);
     }
 
     @Override

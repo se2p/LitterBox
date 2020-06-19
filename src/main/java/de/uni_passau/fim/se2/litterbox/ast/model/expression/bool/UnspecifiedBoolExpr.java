@@ -19,7 +19,13 @@
 package de.uni_passau.fim.se2.litterbox.ast.model.expression.bool;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.UnspecifiedExpression;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 public class UnspecifiedBoolExpr extends UnspecifiedExpression implements BoolExpr {
+
+    @Override
+    public void accept(ScratchVisitor visitor) {
+        visitor.visit(this);
+    }
 
 }

@@ -22,7 +22,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
+import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.ElementChoice;
+import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.WithExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.Attribute;
@@ -34,8 +35,12 @@ import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.UnspecifiedId;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.ScratchList;
+import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.StringExprOpcode;
+import de.uni_passau.fim.se2.litterbox.ast.parser.metadata.BlockMetadataParser;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ExpressionListInfo;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
@@ -112,7 +117,7 @@ public class StringExprParser {
                 }
             } else if (exprArray.get(POS_BLOCK_ID) instanceof TextNode) {
                 String identifier = exprArray.get(POS_BLOCK_ID).asText();
-                return parseBlockStringExpr(allBlocks.get(identifier), allBlocks);
+                return parseBlockStringExpr(identifier, allBlocks.get(identifier), allBlocks);
             }
         } else {
             return new AsString(ExpressionParser.parseExpr(containingBlock, inputKey, allBlocks));
@@ -130,22 +135,23 @@ public class StringExprParser {
      * @throws ParsingException If the opcode of the block is no StringExprOpcode
      *                          or if parsing inputs of the block fails.
      */
-    static StringExpr parseBlockStringExpr(JsonNode exprBlock, JsonNode allBlocks) throws ParsingException {
+    static StringExpr parseBlockStringExpr(String blockId, JsonNode exprBlock, JsonNode allBlocks) throws ParsingException {
         String opcodeString = exprBlock.get(OPCODE_KEY).asText();
         Preconditions
                 .checkArgument(StringExprOpcode.contains(opcodeString), opcodeString + " is not a StringExprOpcode.");
         StringExprOpcode opcode = StringExprOpcode.valueOf(opcodeString);
+        BlockMetadata metadata = BlockMetadataParser.parse(blockId, exprBlock);
         switch (opcode) {
             case operator_join:
                 StringExpr first = parseStringExpr(exprBlock, STRING1_KEY, allBlocks);
                 StringExpr second = parseStringExpr(exprBlock, STRING2_KEY, allBlocks);
-                return new Join(first, second);
+                return new Join(first, second, metadata);
             case operator_letter_of:
                 NumExpr num = NumExprParser.parseNumExpr(exprBlock, LETTER_KEY, allBlocks);
                 StringExpr word = parseStringExpr(exprBlock, STRING_KEY, allBlocks);
-                return new LetterOf(num, word);
+                return new LetterOf(num, word, metadata);
             case sensing_username:
-                return new Username();
+                return new Username(metadata);
             case data_itemoflist:
                 NumExpr index = NumExprParser.parseNumExpr(exprBlock, INDEX_KEY, allBlocks);
                 String id =
@@ -158,31 +164,35 @@ public class StringExprParser {
                 } else {
                     var = new UnspecifiedId();
                 }
-                return new ItemOfVariable(index, var);
+                return new ItemOfVariable(index, var, metadata);
             case looks_costumenumbername:
                 String number_name = exprBlock.get(FIELDS_KEY).get(NUMBER_NAME_KEY).get(0).asText();
-                return new Costume(NameNum.fromString(number_name));
+                return new Costume(NameNum.fromString(number_name), metadata);
             case looks_backdropnumbername:
                 number_name = exprBlock.get(FIELDS_KEY).get(NUMBER_NAME_KEY).get(0).asText();
-                return new Backdrop(NameNum.fromString(number_name));
+                return new Backdrop(NameNum.fromString(number_name), metadata);
             case sensing_answer:
-                return new Answer();
+                return new Answer(metadata);
             case sensing_of:
-                String menuIdentifier = exprBlock.get(INPUTS_KEY).get(OBJECT_KEY).get(1).asText();
-                JsonNode objectMenuBlock = allBlocks.get(menuIdentifier);
+                ElementChoice elem;
+                JsonNode inputsNode = exprBlock.get(INPUTS_KEY).get(OBJECT_KEY);
+                if (getShadowIndicator((ArrayNode) inputsNode) == 1) {
+                    String menuIdentifier = inputsNode.get(1).asText();
+                    JsonNode objectMenuBlock = allBlocks.get(menuIdentifier);
+                    BlockMetadata metadataMenu = BlockMetadataParser.parse(menuIdentifier, objectMenuBlock);
 
-                Expression localIdentifier;
-                if (objectMenuBlock != null) {
                     JsonNode menuOpcode = objectMenuBlock.get(OPCODE_KEY);
                     if (menuOpcode.asText().equalsIgnoreCase(sensing_of_object_menu.name())) {
-                        localIdentifier = new StrId(
+                        elem = new WithExpr(new StrId(
                                 objectMenuBlock.get(FIELDS_KEY).get(OBJECT_KEY).get(FIELD_VALUE)
-                                        .asText());
+                                        .asText()), metadataMenu);
                     } else {
-                        localIdentifier = ExpressionParser.parseExpr(exprBlock, OBJECT_KEY, allBlocks);
+                        elem = new WithExpr(ExpressionParser.parseExpr(exprBlock, OBJECT_KEY, allBlocks),
+                                new NoBlockMetadata());
                     }
                 } else {
-                    localIdentifier = ExpressionParser.parseExpr(exprBlock, OBJECT_KEY, allBlocks);
+                    elem = new WithExpr(ExpressionParser.parseExpr(exprBlock, OBJECT_KEY, allBlocks),
+                            new NoBlockMetadata());
                 }
 
                 String prop = exprBlock.get(FIELDS_KEY).get("PROPERTY").get(0).asText();
@@ -200,9 +210,9 @@ public class StringExprParser {
                         property = new AttributeFromFixed(FixedAttribute.fromString(prop));
                         break;
                     default:
-                        property = new AttributeFromVariable(new StrId(prop));
+                        property = new AttributeFromVariable(new Variable(new StrId(prop)));
                 }
-                return new AttributeOf(property, localIdentifier);
+                return new AttributeOf(property, elem, metadata);
             default:
                 throw new RuntimeException(opcodeString + " is not covered by parseBlockStringExpr");
         }

@@ -27,7 +27,9 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.EventOpcode;
+import de.uni_passau.fim.se2.litterbox.ast.parser.metadata.BlockMetadataParser;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
@@ -51,33 +53,34 @@ public class EventParser {
                 .checkArgument(EventOpcode.contains(opcodeString), "Given blockID does not point to an event block.");
 
         EventOpcode opcode = EventOpcode.valueOf(opcodeString);
+        BlockMetadata metadata = BlockMetadataParser.parse(blockID, current);
         if (opcode.equals(event_whenflagclicked)) {
-            return new GreenFlag();
+            return new GreenFlag(metadata);
         } else if (opcode.equals(event_whenkeypressed)) {
             Key key = KeyParser.parse(current, allBlocks);
-            return new KeyPressed(key);
+            return new KeyPressed(key,metadata);
         } else if (opcode.equals(event_whenthisspriteclicked)) {
-            return new SpriteClicked();
+            return new SpriteClicked(metadata);
         } else if (opcode.equals(event_whenstageclicked)) {
-            return new StageClicked();
+            return new StageClicked(metadata);
         } else if (opcode.equals(event_whenbroadcastreceived)) {
             JsonNode fields = current.get(FIELDS_KEY);
             String msgValue = fields.get(BCAST_OPTION).get(FIELD_VALUE).asText();
             Message msg = new Message(new StringLiteral(msgValue));
-            return new ReceptionOfMessage(msg);
+            return new ReceptionOfMessage(msg,metadata);
         } else if (opcode.equals(control_start_as_clone)) {
-            return new StartedAsClone();
+            return new StartedAsClone(metadata);
         } else if (opcode.equals(event_whengreaterthan)) {
             String variableValue = current.get(FIELDS_KEY).get(GREATER_THAN_MENU).get(0).asText();
             EventAttribute attr = EventAttribute.fromString(variableValue.toLowerCase());
             NumExpr fieldValue = NumExprParser.parseNumExpr(current, VALUE_KEY, allBlocks);
-            return new AttributeAboveValue(attr, fieldValue);
+            return new AttributeAboveValue(attr, fieldValue,metadata);
         } else if (opcode.equals(event_whenbackdropswitchesto)) {
             JsonNode fields = current.get(FIELDS_KEY);
             JsonNode backdropArray = fields.get(BACKDROP);
             String backdropName = backdropArray.get(FIELD_VALUE).asText();
             LocalIdentifier id = new StrId(backdropName);
-            return new BackdropSwitchTo(id);
+            return new BackdropSwitchTo(id,metadata);
         } else {
             throw new IllegalStateException("EventBlock with opcode " + opcode + " was not parsed");
         }

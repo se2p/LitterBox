@@ -20,19 +20,26 @@ package de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 public class TurnLeft extends AbstractNode implements SpriteMotionStmt {
 
     private final NumExpr degrees;
+    private final BlockMetadata metadata;
 
-    public TurnLeft(NumExpr degrees) {
-        super(degrees);
+    public TurnLeft(NumExpr degrees, BlockMetadata metadata) {
+        super(degrees, metadata);
         this.degrees = degrees;
+        this.metadata = metadata;
     }
 
     public NumExpr getDegrees() {
         return degrees;
+    }
+
+    public BlockMetadata getMetadata() {
+        return metadata;
     }
 
     @Override

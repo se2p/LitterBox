@@ -20,16 +20,23 @@ package de.uni_passau.fim.se2.litterbox.ast.model.statement.control;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 public class RepeatForeverStmt extends AbstractNode implements ControlStmt {
 
     private final StmtList stmtList;
+    private final BlockMetadata metadata;
 
-    public RepeatForeverStmt(StmtList stmtList) {
-        super(stmtList);
+    public RepeatForeverStmt(StmtList stmtList, BlockMetadata metadata) {
+        super(stmtList, metadata);
         this.stmtList = Preconditions.checkNotNull(stmtList);
+        this.metadata = metadata;
+    }
+
+    public BlockMetadata getMetadata() {
+        return metadata;
     }
 
     public StmtList getStmtList() {

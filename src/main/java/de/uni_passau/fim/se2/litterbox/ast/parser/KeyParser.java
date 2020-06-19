@@ -26,7 +26,10 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Key;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.UnspecifiedNumExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.BoolExprOpcode;
+import de.uni_passau.fim.se2.litterbox.ast.parser.metadata.BlockMetadataParser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,8 +37,6 @@ import java.util.List;
 import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 
 public class KeyParser {
-
-    public static final String KEY_OPTION = "KEY_OPTION";
     public static final int UPARROW = 38;
     public static final int DOWNARROW = 40;
     public static final int RIGHTARROW = 39;
@@ -47,6 +48,7 @@ public class KeyParser {
 
         JsonNode block;
         final String opcodeString = current.get(OPCODE_KEY).asText();
+        BlockMetadata metadata = new NoBlockMetadata();
         if (BoolExprOpcode.sensing_keypressed.name().equals(opcodeString)) {
 
             List<JsonNode> inputsList = new ArrayList<>();
@@ -55,37 +57,38 @@ public class KeyParser {
                 // If there is only the menu in the inputs, we evaluate the menu
                 String menuBlockID = current.get(INPUTS_KEY).get(KEY_OPTION).get(POS_INPUT_VALUE).asText();
                 block = allBlocks.get(menuBlockID);
+                metadata = BlockMetadataParser.parse(menuBlockID, block);
             } else {
                 // If there is a variable or expression we evaluate it and use it as key;
                 final NumExpr numExpr = NumExprParser.parseNumExpr(current, KEY_OPTION, allBlocks);
-                return new Key(numExpr);
+                return new Key(numExpr, new NoBlockMetadata());
             }
         } else {
             block = current;
         }
         if (block == null) {
-            return new Key(new UnspecifiedNumExpr());
+            return new Key(new UnspecifiedNumExpr(), new NoBlockMetadata());
         }
         String keyValue = block.get(FIELDS_KEY).get(KEY_OPTION).get(FIELD_VALUE).asText();
         switch (keyValue) {
             case "space":
-                return new Key(new NumberLiteral(SPACE));
+                return new Key(new NumberLiteral(SPACE), metadata);
             case "up arrow":
-                return new Key(new NumberLiteral(UPARROW));
+                return new Key(new NumberLiteral(UPARROW), metadata);
             case "down arrow":
-                return new Key(new NumberLiteral(DOWNARROW));
+                return new Key(new NumberLiteral(DOWNARROW), metadata);
             case "left arrow":
-                return new Key(new NumberLiteral(LEFTARROW));
+                return new Key(new NumberLiteral(LEFTARROW), metadata);
             case "right arrow":
-                return new Key(new NumberLiteral(RIGHTARROW));
+                return new Key(new NumberLiteral(RIGHTARROW), metadata);
             case "any":
-                return new Key(new NumberLiteral(ANYKEY));
+                return new Key(new NumberLiteral(ANYKEY), metadata);
             default:
                 if (keyValue.length() > 0) {
-                    return new Key(new NumberLiteral(keyValue.charAt(0)));
+                    return new Key(new NumberLiteral(keyValue.charAt(0)), metadata);
                 } else {
                     // It is not clear how this can happen, but it happens sometimtes.
-                    return new Key(new NumberLiteral(0));
+                    return new Key(new NumberLiteral(0), metadata);
                 }
         }
     }

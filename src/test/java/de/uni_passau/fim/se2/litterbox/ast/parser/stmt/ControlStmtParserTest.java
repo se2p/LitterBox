@@ -26,6 +26,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinitionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfElseStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
@@ -81,10 +82,24 @@ public class ControlStmtParserTest {
             List<Stmt> listOfStmt = script.getStmtList().getStmts();
 
             Truth.assertThat(listOfStmt.get(0).getClass()).isEqualTo(IfThenStmt.class);
+            IfThenStmt ifthen = (IfThenStmt) listOfStmt.get(0);
+            Truth.assertThat(ifthen.getMetadata().getClass()).isEqualTo(NonDataBlockMetadata.class);
+
             Truth.assertThat(listOfStmt.get(1).getClass()).isEqualTo(IfElseStmt.class);
+            IfElseStmt ifelse = (IfElseStmt) listOfStmt.get(1);
+            Truth.assertThat(ifelse.getMetadata().getClass()).isEqualTo(NonDataBlockMetadata.class);
+
             Truth.assertThat(listOfStmt.get(2).getClass()).isEqualTo(RepeatTimesStmt.class);
+            RepeatTimesStmt times = (RepeatTimesStmt) listOfStmt.get(2);
+            Truth.assertThat(times.getMetadata().getClass()).isEqualTo(NonDataBlockMetadata.class);
+
             Truth.assertThat(listOfStmt.get(3).getClass()).isEqualTo(UntilStmt.class);
+            UntilStmt until = (UntilStmt) listOfStmt.get(3);
+            Truth.assertThat(until.getMetadata().getClass()).isEqualTo(NonDataBlockMetadata.class);
+
             Truth.assertThat(listOfStmt.get(4).getClass()).isEqualTo(RepeatForeverStmt.class);
+            RepeatForeverStmt forever = (RepeatForeverStmt) listOfStmt.get(4);
+            Truth.assertThat(forever.getMetadata().getClass()).isEqualTo(NonDataBlockMetadata.class);
         } catch (ParsingException e) {
             e.printStackTrace();
             fail();

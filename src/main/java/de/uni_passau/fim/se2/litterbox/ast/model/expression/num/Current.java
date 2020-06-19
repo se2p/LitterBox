@@ -19,16 +19,23 @@
 package de.uni_passau.fim.se2.litterbox.ast.model.expression.num;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.timecomp.TimeComp;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 public class Current extends AbstractNode implements NumExpr {
 
     private final TimeComp timeComp;
+    private final BlockMetadata metadata;
 
-    public Current(TimeComp timeComp) {
-        super(timeComp);
+    public Current(TimeComp timeComp, BlockMetadata metadata) {
+        super(timeComp, metadata);
         this.timeComp = timeComp;
+        this.metadata = metadata;
+    }
+
+    public BlockMetadata getMetadata() {
+        return metadata;
     }
 
     public TimeComp getTimeComp() {

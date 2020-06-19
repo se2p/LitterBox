@@ -20,6 +20,7 @@ package de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
@@ -27,11 +28,17 @@ public class GoToPosXY extends AbstractNode implements SpriteMotionStmt {
 
     private final NumExpr x;
     private final NumExpr y;
+    private final BlockMetadata metadata;
 
-    public GoToPosXY(NumExpr x, NumExpr y) {
-        super(x, y);
+    public GoToPosXY(NumExpr x, NumExpr y, BlockMetadata metadata) {
+        super(x, y, metadata);
         this.x = Preconditions.checkNotNull(x);
         this.y = Preconditions.checkNotNull(y);
+        this.metadata = metadata;
+    }
+
+    public BlockMetadata getMetadata() {
+        return metadata;
     }
 
     public NumExpr getX() {
