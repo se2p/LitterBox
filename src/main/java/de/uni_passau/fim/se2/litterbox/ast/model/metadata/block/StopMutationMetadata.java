@@ -23,12 +23,12 @@ import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import java.util.List;
 
-public class StopMutation extends AbstractNode implements MutationMetadata, ASTLeaf {
+public class StopMutationMetadata extends AbstractNode implements MutationMetadata, ASTLeaf {
     private final String tagName;
     private final List<String> children;
     private final boolean hasNext;
 
-    public StopMutation(String tagName, List<String> children, boolean hasNext) {
+    public StopMutationMetadata(String tagName, List<String> children, boolean hasNext) {
         super();
         this.tagName = tagName;
         this.children = children;

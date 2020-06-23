@@ -310,9 +310,9 @@ public class StmtListJSONCreator implements ScratchVisitor {
 
     private void getStopMutation(String fieldsString, NonDataBlockMetadata metadata) {
         MutationMetadata mutation = metadata.getMutation();
-        Preconditions.checkArgument(mutation instanceof StopMutation);
-        StopMutation stopMutation = (StopMutation) mutation;
-        String mutationString = createStopMetadata(stopMutation.getTagName(), stopMutation.isHasNext());
+        Preconditions.checkArgument(mutation instanceof StopMutationMetadata);
+        StopMutationMetadata stopMutationMetadata = (StopMutationMetadata) mutation;
+        String mutationString = createStopMetadata(stopMutationMetadata.getTagName(), stopMutationMetadata.isHasNext());
         finishedJSONStrings.add(createBlockWithMutationString(metadata, getNextId(),
                 previousBlockId, EMPTY_VALUE, fieldsString, mutationString));
         previousBlockId = metadata.getBlockId();
