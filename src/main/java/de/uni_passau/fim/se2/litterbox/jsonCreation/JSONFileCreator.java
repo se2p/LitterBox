@@ -19,12 +19,13 @@
 package de.uni_passau.fim.se2.litterbox.jsonCreation;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import org.apache.commons.io.FileUtils;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.*;
-import org.apache.commons.io.FileUtils;
 
 public class JSONFileCreator {
 
@@ -39,7 +40,9 @@ public class JSONFileCreator {
 
     public static void writeJsonFromProgram(Program program, String output) {
         String jsonString = JSONStringCreator.createProgramJSONString(program);
-
+        if (output.charAt(output.length() - 1) != '/') {
+            output = output + "/";
+        }
         try (PrintWriter out = new PrintWriter(output + program.getIdent().getName() + "_annotated.json")) {
             out.println(jsonString);
         } catch (FileNotFoundException e) {
@@ -49,7 +52,10 @@ public class JSONFileCreator {
 
     public static void writeSb3FromProgram(Program program, String output, File file) throws IOException {
         String jsonString = JSONStringCreator.createProgramJSONString(program);
-        String destinationPath = output + program.getIdent().getName() + "_annotated.zip";
+        if (output.charAt(output.length() - 1) != '/') {
+            output = output + "/";
+        }
+        String destinationPath = output + program.getIdent().getName() + "_annotated.sb3";
 
 
         FileUtils.copyFile(file, new File(destinationPath));
