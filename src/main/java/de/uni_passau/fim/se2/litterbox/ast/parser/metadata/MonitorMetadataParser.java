@@ -18,9 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.parser.metadata;
 
-import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
-
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.NullNode;
@@ -29,8 +26,11 @@ import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astLists.MonitorParamM
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.monitor.MonitorListMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.monitor.MonitorMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.monitor.MonitorSliderMetadata;
+
 import java.util.ArrayList;
 import java.util.List;
+
+import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 
 
 public class MonitorMetadataParser {
@@ -60,9 +60,22 @@ public class MonitorMetadataParser {
                     visible, values);
         } else {
             String value = valueNode.asText();
-            double sliderMin = monitorNode.get(SLIDER_MIN_KEY).asDouble();
-            double sliderMax = monitorNode.get(SLIDER_MAX_KEY).asDouble();
-            boolean isDiscrete = monitorNode.get(IS_DISCRETE_KEY).asBoolean();
+            double sliderMin = 0;
+            if (monitorNode.has(SLIDER_MIN_KEY)) {
+                sliderMin = monitorNode.get(SLIDER_MIN_KEY).asDouble();
+            }else if(monitorNode.has(MIN_KEY)){
+                sliderMin = monitorNode.get(MIN_KEY).asDouble();
+            }
+            double sliderMax = 100;
+            if (monitorNode.has(SLIDER_MAX_KEY)) {
+                sliderMax = monitorNode.get(SLIDER_MAX_KEY).asDouble();
+            }else if(monitorNode.has(MAX_KEY)){
+                sliderMin = monitorNode.get(MAX_KEY).asDouble();
+            }
+            boolean isDiscrete = false;
+            if (monitorNode.has(IS_DISCRETE_KEY)) {
+                isDiscrete = monitorNode.get(IS_DISCRETE_KEY).asBoolean();
+            }
             return new MonitorSliderMetadata(id, mode, opcode, paramsMetadata, spriteName, width, height, x, y,
                     visible, value,
                     sliderMin, sliderMax, isDiscrete);
