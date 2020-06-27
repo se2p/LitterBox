@@ -21,9 +21,11 @@ package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 import static de.uni_passau.fim.se2.litterbox.analytics.CommentAdder.addBlockComment;
 
 
+import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueReport;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.*;
@@ -40,9 +42,8 @@ import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ArgumentInfo;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ProcedureInfo;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+
+import java.util.*;
 
 public class IllegalParameterRefactor implements IssueFinder, ScratchVisitor {
     public static final String NAME = "illegal_parameter_refactor";
@@ -52,6 +53,7 @@ public class IllegalParameterRefactor implements IssueFinder, ScratchVisitor {
     private static final String NOTE2 = "Some of the sprites contain procedures with illegally refactored parameters.";
     private boolean found = false;
     private int count = 0;
+    private Set<Issue> issues = new LinkedHashSet<>();
     private List<String> actorNames = new LinkedList<>();
     private ActorDefinition currentActor;
     private Map<LocalIdentifier, ProcedureInfo> procedureMap;
@@ -60,7 +62,7 @@ public class IllegalParameterRefactor implements IssueFinder, ScratchVisitor {
     private Program program;
 
     @Override
-    public IssueReport check(Program program) {
+    public Set<Issue> check(Program program) {
         Preconditions.checkNotNull(program);
         this.program = program;
         found = false;
@@ -71,7 +73,8 @@ public class IllegalParameterRefactor implements IssueFinder, ScratchVisitor {
         if (count > 0) {
             notes = NOTE2;
         }
-        return new IssueReport(NAME, count, actorNames, notes);
+        return issues;
+        // return new IssueReport(NAME, count, actorNames, notes);
     }
 
     @Override
@@ -110,7 +113,7 @@ public class IllegalParameterRefactor implements IssueFinder, ScratchVisitor {
     @Override
     public void visit(IfElseStmt node) {
         if (insideProcedure) {
-            checkBool(node.getBoolExpr());
+            checkBool(node.getBoolExpr(), node);
         }
         if (!node.getChildren().isEmpty()) {
             for (ASTNode child : node.getChildren()) {
@@ -119,7 +122,7 @@ public class IllegalParameterRefactor implements IssueFinder, ScratchVisitor {
         }
     }
 
-    private void checkBool(BoolExpr boolExpr) {
+    private void checkBool(BoolExpr boolExpr, AbstractNode node) {
         if (boolExpr instanceof AsBool && ((AsBool) boolExpr).getOperand1() instanceof Parameter) {
            Parameter ident = (Parameter) ((AsBool) boolExpr).getOperand1();
 
@@ -127,6 +130,7 @@ public class IllegalParameterRefactor implements IssueFinder, ScratchVisitor {
                     if (currentArgument.getName().equals(ident.getName().getName()) && !(currentArgument.getType() instanceof BooleanType)) {
                         found = true;
                         count++;
+                        issues.add(new Issue(this, currentActor, node)); // TODO: boolExpr?
                         addBlockComment((NonDataBlockMetadata) ident.getMetadata(), currentActor,
                                 HINT_TEXT, SHORT_NAME + count);
                     }
@@ -138,7 +142,7 @@ public class IllegalParameterRefactor implements IssueFinder, ScratchVisitor {
     @Override
     public void visit(IfThenStmt node) {
         if (insideProcedure) {
-            checkBool(node.getBoolExpr());
+            checkBool(node.getBoolExpr(), node);
         }
         if (!node.getChildren().isEmpty()) {
             for (ASTNode child : node.getChildren()) {
@@ -150,7 +154,7 @@ public class IllegalParameterRefactor implements IssueFinder, ScratchVisitor {
     @Override
     public void visit(WaitUntil node) {
         if (insideProcedure) {
-            checkBool(node.getUntil());
+            checkBool(node.getUntil(), node);
         }
         if (!node.getChildren().isEmpty()) {
             for (ASTNode child : node.getChildren()) {
@@ -162,7 +166,7 @@ public class IllegalParameterRefactor implements IssueFinder, ScratchVisitor {
     @Override
     public void visit(UntilStmt node) {
         if (insideProcedure) {
-            checkBool(node.getBoolExpr());
+            checkBool(node.getBoolExpr(), node);
         }
         if (!node.getChildren().isEmpty()) {
             for (ASTNode child : node.getChildren()) {
@@ -174,7 +178,7 @@ public class IllegalParameterRefactor implements IssueFinder, ScratchVisitor {
     @Override
     public void visit(Not node) {
         if (insideProcedure) {
-            checkBool(node.getOperand1());
+            checkBool(node.getOperand1(), node);
         }
         if (!node.getChildren().isEmpty()) {
             for (ASTNode child : node.getChildren()) {
@@ -186,8 +190,8 @@ public class IllegalParameterRefactor implements IssueFinder, ScratchVisitor {
     @Override
     public void visit(And node) {
         if (insideProcedure) {
-            checkBool(node.getOperand1());
-            checkBool(node.getOperand2());
+            checkBool(node.getOperand1(), node);
+            checkBool(node.getOperand2(), node);
         }
         if (!node.getChildren().isEmpty()) {
             for (ASTNode child : node.getChildren()) {
@@ -199,8 +203,8 @@ public class IllegalParameterRefactor implements IssueFinder, ScratchVisitor {
     @Override
     public void visit(Or node) {
         if (insideProcedure) {
-            checkBool(node.getOperand1());
-            checkBool(node.getOperand2());
+            checkBool(node.getOperand1(), node);
+            checkBool(node.getOperand2(), node);
         }
         if (!node.getChildren().isEmpty()) {
             for (ASTNode child : node.getChildren()) {

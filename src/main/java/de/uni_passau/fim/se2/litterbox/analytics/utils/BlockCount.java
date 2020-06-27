@@ -18,6 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.utils;
 
+import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueReport;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
@@ -60,7 +61,10 @@ import de.uni_passau.fim.se2.litterbox.ast.model.touchable.AsTouchable;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.Type;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
+
+import java.util.Collections;
 import java.util.LinkedList;
+import java.util.Set;
 
 public class BlockCount implements IssueFinder, ScratchVisitor {
     public static final String NAME = "block_count";
@@ -72,7 +76,7 @@ public class BlockCount implements IssueFinder, ScratchVisitor {
     private boolean fixedBlock = false;
 
     @Override
-    public IssueReport check(Program program) {
+    public Set<Issue> check(Program program) {
         Preconditions.checkNotNull(program);
         count = 0;
         insideScript = false;
@@ -80,7 +84,9 @@ public class BlockCount implements IssueFinder, ScratchVisitor {
         insideParameterList = false;
         fixedBlock = false;
         program.accept(this);
-        return new IssueReport(NAME, count, new LinkedList<>(), "");
+        // TODO: This is not an issue.
+        return Collections.emptySet();
+        //return new IssueReport(NAME, count, new LinkedList<>(), "");
     }
 
     @Override

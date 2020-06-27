@@ -22,14 +22,13 @@ import static de.uni_passau.fim.se2.litterbox.utils.GroupConstants.*;
 
 
 import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.*;
-import de.uni_passau.fim.se2.litterbox.analytics.ctscore.FlowControl;
 import de.uni_passau.fim.se2.litterbox.analytics.smells.*;
 import de.uni_passau.fim.se2.litterbox.analytics.utils.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.utils.CSVWriter;
-import java.io.IOException;
+import de.uni_passau.fim.se2.litterbox.report.ReportGenerator;
+import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
+
 import java.util.*;
-import org.apache.commons.csv.CSVPrinter;
 
 /**
  * Holds all IssueFinder and executes them.
@@ -40,7 +39,6 @@ public class IssueTool {
     private Map<String, IssueFinder> utilFinder = new HashMap<>();
     private Map<String, IssueFinder> bugFinder = new HashMap<>();
     private Map<String, IssueFinder> smellFinder = new HashMap<>();
-    private Map<String, IssueFinder> ctScoreFinder = new HashMap<>();
 
     public IssueTool() {
         bugFinder.put(AmbiguousCustomBlockSignature.SHORT_NAME, new AmbiguousCustomBlockSignature());
@@ -93,8 +91,6 @@ public class IssueTool {
         utilFinder.put(ProgramUsingPen.SHORT_NAME, new ProgramUsingPen());
         utilFinder.put(WeightedMethodCount.SHORT_NAME, new WeightedMethodCount());
 
-        // To evaluate the CT score
-        ctScoreFinder.put(FlowControl.SHORT_NAME, new FlowControl());
     }
 
     public static List<String> getOnlyUniqueActorList(List<String> foundSpritesWithIssues) {
@@ -119,9 +115,6 @@ public class IssueTool {
         case SMELLS:
             detectors = getSmellFinder().keySet().toArray(new String[0]);
             break;
-        case CTSCORE:
-            detectors = getCTScoreFinder().keySet().toArray(new String[0]);
-            break;
         default:
             detectors = dtctrs.split(",");
             break;
@@ -130,8 +123,9 @@ public class IssueTool {
             if (getAllFinder().containsKey(s)) {
                 IssueFinder iF = getAllFinder().get(s);
                 if (program != null) {
-                    IssueReport issueReport = iF.check(program);
-                    System.out.println(issueReport);
+                    Set<Issue> issues = iF.check(program);
+                    // TODO: Use some debug output backend
+                    System.out.println(issues);
                 }
             }
         }
@@ -142,8 +136,9 @@ public class IssueTool {
      *
      * @param program the project to check
      */
-    public void check(Program program, CSVPrinter printer, String dtctrs) {
-        List<IssueReport> issueReports = new ArrayList<>();
+    public Set<Issue> check(Program program, String dtctrs) {
+        Preconditions.checkNotNull(program);
+        Set<Issue> issues = new LinkedHashSet<>();
         String[] detectors;
         switch (dtctrs) {
         case ALL:
@@ -155,37 +150,24 @@ public class IssueTool {
         case SMELLS:
             detectors = getSmellFinder().keySet().toArray(new String[0]);
             break;
-        case CTSCORE:
-            detectors = getCTScoreFinder().keySet().toArray(new String[0]);
-            break;
         default:
             detectors = dtctrs.split(",");
             break;
         }
         for (String s : detectors) {
+            // TODO: Why reconstruct this map all the time...
             if (getAllFinder().containsKey(s)) {
                 IssueFinder iF = getAllFinder().get(s);
-                if (program != null) {
-                    IssueReport issueReport = iF.check(program);
-                    issueReports.add(issueReport);
-                    //System.out.println(issueReport);
-                } else {
-                    return;
-                }
+                issues.addAll(iF.check(program));
             }
         }
-        try {
-            CSVWriter.addData(printer, issueReports, program);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        return issues;
     }
 
     public Map<String, IssueFinder> getAllFinder() {
         Map<String, IssueFinder> returnMap = new HashMap<>(smellFinder);
         returnMap.putAll(utilFinder);
         returnMap.putAll(bugFinder);
-        returnMap.putAll(ctScoreFinder);
         return returnMap;
     }
 
@@ -197,12 +179,6 @@ public class IssueTool {
 
     public Map<String, IssueFinder> getBugFinder() {
         Map<String, IssueFinder> returnMap = new HashMap<>(bugFinder);
-        returnMap.putAll(utilFinder);
-        return returnMap;
-    }
-
-    public Map<String, IssueFinder> getCTScoreFinder() {
-        Map<String, IssueFinder> returnMap = new HashMap<>(ctScoreFinder);
         returnMap.putAll(utilFinder);
         return returnMap;
     }

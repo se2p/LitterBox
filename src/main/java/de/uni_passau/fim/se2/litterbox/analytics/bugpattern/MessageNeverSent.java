@@ -21,6 +21,7 @@ package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 import static de.uni_passau.fim.se2.litterbox.analytics.CommentAdder.addBlockComment;
 
 
+import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueReport;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
@@ -51,11 +52,12 @@ public class MessageNeverSent implements IssueFinder, ScratchVisitor {
     private ActorDefinition currentActor;
     private int identifierCounter;
     private boolean addComment;
+    private Set<Issue> issues = new LinkedHashSet<>();
     private Set<String> notSentMessages;
 
 
     @Override
-    public IssueReport check(Program program) {
+    public Set<Issue> check(Program program) {
         Preconditions.checkNotNull(program);
         messageSent = new ArrayList<>();
         messageReceived = new ArrayList<>();
@@ -85,7 +87,8 @@ public class MessageNeverSent implements IssueFinder, ScratchVisitor {
         final Set<String> actorNames = new LinkedHashSet<>();
         nonSyncedPairs.forEach(p -> actorNames.add(p.getActorName()));
 
-        return new IssueReport(NAME, nonSyncedPairs.size(), new LinkedList<>(actorNames), "");
+        return issues;
+        // return new IssueReport(NAME, nonSyncedPairs.size(), new LinkedList<>(actorNames), "");
     }
 
     @Override
@@ -138,6 +141,7 @@ public class MessageNeverSent implements IssueFinder, ScratchVisitor {
                     addBlockComment((NonDataBlockMetadata) event.getMetadata(), currentActor, HINT_TEXT,
                             SHORT_NAME + identifierCounter);
                     identifierCounter++;
+                    issues.add(new Issue(this, currentActor, node));
                 }
             }
         }
@@ -148,6 +152,7 @@ public class MessageNeverSent implements IssueFinder, ScratchVisitor {
         }
     }
 
+    // TODO: Helper class should not be inner class since it's a duplicate
     /**
      * Helper class to map which messages are sent / received by which actor
      */

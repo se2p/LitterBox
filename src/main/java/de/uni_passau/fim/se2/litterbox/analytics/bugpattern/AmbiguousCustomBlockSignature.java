@@ -21,6 +21,7 @@ package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 import static de.uni_passau.fim.se2.litterbox.analytics.CommentAdder.addBlockComment;
 
 
+import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueReport;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
@@ -32,10 +33,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ProcedureInfo;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+
+import java.util.*;
 
 /**
  * Names for custom blocks are non-unique. Two custom blocks with the same name can only be distinguished if they have a
@@ -52,23 +51,27 @@ public class AmbiguousCustomBlockSignature implements IssueFinder, ScratchVisito
     private boolean found = false;
     private int count = 0;
     private List<String> actorNames = new LinkedList<>();
+    private Set<Issue> issues = new LinkedHashSet<>();
     private ActorDefinition currentActor;
     private Map<LocalIdentifier, ProcedureInfo> procMap;
     private Program program;
 
     @Override
-    public IssueReport check(Program program) {
+    public Set<Issue> check(Program program) {
         Preconditions.checkNotNull(program);
         this.program = program;
         found = false;
         count = 0;
         actorNames = new LinkedList<>();
         program.accept(this);
+
+        // TODO: Remove
         String notes = NOTE1;
         if (count > 0) {
             notes = NOTE2;
         }
-        return new IssueReport(NAME, count, actorNames, notes);
+        return issues;
+        // return new IssueReport(NAME, count, actorNames, notes);
     }
 
     @Override
@@ -81,6 +84,7 @@ public class AmbiguousCustomBlockSignature implements IssueFinder, ScratchVisito
             }
         }
 
+        // TODO: Remove
         if (found) {
             found = false;
             actorNames.add(currentActor.getIdent().getName());
@@ -93,6 +97,7 @@ public class AmbiguousCustomBlockSignature implements IssueFinder, ScratchVisito
             int currentCount = count;
             checkProc(node.getIdent());
             if (currentCount < count) {
+                // TODO: Move to separate entity
                 addBlockComment((NonDataBlockMetadata) node.getMetadata().getDefinition(), currentActor, HINT_TEXT,
                         SHORT_NAME + count);
             }
@@ -112,7 +117,8 @@ public class AmbiguousCustomBlockSignature implements IssueFinder, ScratchVisito
             if (procedureInfo != current && current.getName().equals(procedureInfo.getName())
                     && current.getActorName().equals(procedureInfo.getActorName())) {
                 found = true;
-                count++;
+                issues.add(new Issue(this, currentActor, ident));
+                count++; // TODO: Remove
             }
         }
     }

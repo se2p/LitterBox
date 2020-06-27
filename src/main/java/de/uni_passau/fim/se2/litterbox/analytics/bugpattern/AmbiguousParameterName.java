@@ -21,6 +21,7 @@ package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 import static de.uni_passau.fim.se2.litterbox.analytics.CommentAdder.addBlockComment;
 
 
+import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueReport;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
@@ -33,9 +34,8 @@ import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ArgumentInfo;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ProcedureInfo;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+
+import java.util.*;
 
 
 /**
@@ -49,6 +49,7 @@ public class AmbiguousParameterName implements IssueFinder, ScratchVisitor {
     public static final String NAME = "ambiguous_parameter_name";
     public static final String SHORT_NAME = "ambParamName";
     public static final String HINT_TEXT = "ambiguous parameter name";
+    private Set<Issue> issues = new LinkedHashSet<>();
     private boolean found = false;
     private int count = 0;
     private List<String> actorNames = new LinkedList<>();
@@ -58,18 +59,21 @@ public class AmbiguousParameterName implements IssueFinder, ScratchVisitor {
     private Program program;
 
     @Override
-    public IssueReport check(Program program) {
+    public Set<Issue> check(Program program) {
         Preconditions.checkNotNull(program);
         this.program = program;
         found = false;
         count = 0;
         actorNames = new LinkedList<>();
         program.accept(this);
+        // TODO: Remove
         String notes = NOTE1;
         if (count > 0) {
             notes = NOTE2;
         }
-        return new IssueReport(NAME, count, actorNames, notes);
+        return issues;
+        // TODO: Remove
+        // return new IssueReport(NAME, count, actorNames, notes);
     }
 
     @Override
@@ -88,12 +92,13 @@ public class AmbiguousParameterName implements IssueFinder, ScratchVisitor {
         }
     }
 
-    private void checkArguments(ArgumentInfo[] arguments) {
+    private void checkArguments(ArgumentInfo[] arguments, ProcedureDefinition node) {
         for (int i = 0; i < arguments.length; i++) {
             ArgumentInfo current = arguments[i];
             for (int j = 0; j < arguments.length; j++) {
                 if (i != j && current.getName().equals(arguments[j].getName())) {
                     found = true;
+                    issues.add(new Issue(this, currentActor, node));
                     count++;
                 }
             }
@@ -105,7 +110,7 @@ public class AmbiguousParameterName implements IssueFinder, ScratchVisitor {
 
         if (node.getStmtList().getStmts().size() > 0) {
             int currentCount = count;
-            checkArguments(procMap.get(node.getIdent()).getArguments());
+            checkArguments(procMap.get(node.getIdent()).getArguments(), node);
             if (currentCount < count) {
                 addBlockComment((NonDataBlockMetadata) node.getMetadata().getDefinition(), currentActor, HINT_TEXT,
                         SHORT_NAME + count);

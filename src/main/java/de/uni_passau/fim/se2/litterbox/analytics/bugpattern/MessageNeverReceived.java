@@ -21,6 +21,7 @@ package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 import static de.uni_passau.fim.se2.litterbox.analytics.CommentAdder.addBlockComment;
 
 
+import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueReport;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
@@ -50,10 +51,11 @@ public class MessageNeverReceived implements IssueFinder, ScratchVisitor {
     private ActorDefinition currentActor;
     private int identifierCounter;
     private boolean addComment;
+    private Set<Issue> issues = new LinkedHashSet<>();
     private Set<String> notReceivedMessages;
 
     @Override
-    public IssueReport check(Program program) {
+    public Set<Issue> check(Program program) {
         Preconditions.checkNotNull(program);
         messageSent = new ArrayList<>();
         messageReceived = new ArrayList<>();
@@ -82,7 +84,8 @@ public class MessageNeverReceived implements IssueFinder, ScratchVisitor {
 
         final Set<String> actorNames = new LinkedHashSet<>();
         nonSyncedPairs.forEach(p -> actorNames.add(p.getActorName()));
-        return new IssueReport(NAME, nonSyncedPairs.size(), new LinkedList<>(actorNames), "");
+        return issues;
+        // return new IssueReport(NAME, nonSyncedPairs.size(), new LinkedList<>(actorNames), "");
     }
 
     @Override
@@ -111,6 +114,7 @@ public class MessageNeverReceived implements IssueFinder, ScratchVisitor {
                 addBlockComment((NonDataBlockMetadata) node.getMetadata(), currentActor, HINT_TEXT,
                         SHORT_NAME + identifierCounter);
                 identifierCounter++;
+                issues.add(new Issue(this, currentActor, node));
             }
         }
     }
@@ -126,6 +130,7 @@ public class MessageNeverReceived implements IssueFinder, ScratchVisitor {
                 addBlockComment((NonDataBlockMetadata) node.getMetadata(), currentActor, HINT_TEXT,
                         SHORT_NAME + identifierCounter);
                 identifierCounter++;
+                issues.add(new Issue(this, currentActor, node));
             }
         }
     }

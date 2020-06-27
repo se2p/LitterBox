@@ -21,6 +21,7 @@ package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 import static de.uni_passau.fim.se2.litterbox.analytics.CommentAdder.addBlockComment;
 
 
+import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueReport;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
@@ -37,8 +38,11 @@ import de.uni_passau.fim.se2.litterbox.ast.model.touchable.MousePointer;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.SpriteTouchable;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
+
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * This happens when inside a block that expects a colour or sprite as parameter (e.g., set pen color to or
@@ -52,11 +56,12 @@ public class ExpressionAsTouchingOrColor implements IssueFinder, ScratchVisitor 
     private static final String NOTE2 = "Some of the sprites use expressions as touching or colors.";
     private boolean found = false;
     private int count = 0;
+    private Set<Issue> issues = new LinkedHashSet<>();
     private List<String> actorNames = new LinkedList<>();
     private ActorDefinition currentActor;
 
     @Override
-    public IssueReport check(Program program) {
+    public Set<Issue> check(Program program) {
         Preconditions.checkNotNull(program);
         found = false;
         count = 0;
@@ -66,7 +71,8 @@ public class ExpressionAsTouchingOrColor implements IssueFinder, ScratchVisitor 
         if (count > 0) {
             notes = NOTE2;
         }
-        return new IssueReport(NAME, count, actorNames, notes);
+        return issues;
+        // return new IssueReport(NAME, count, actorNames, notes);
     }
 
     @Override
@@ -94,6 +100,7 @@ public class ExpressionAsTouchingOrColor implements IssueFinder, ScratchVisitor 
         if (!(node.getColorExpr() instanceof ColorLiteral)) {
             count++;
             found = true;
+            issues.add(new Issue(this, currentActor, node));
             addBlockComment((NonDataBlockMetadata) node.getMetadata(), currentActor, HINT_TEXT,
                     SHORT_NAME + count);
         }
@@ -109,12 +116,14 @@ public class ExpressionAsTouchingOrColor implements IssueFinder, ScratchVisitor 
         if (!(node.getOperand1() instanceof ColorLiteral)) {
             count++;
             found = true;
+            issues.add(new Issue(this, currentActor, node));
             addBlockComment((NonDataBlockMetadata) node.getMetadata(), currentActor, HINT_TEXT,
                     SHORT_NAME + count);
         }
         if (!(node.getOperand2() instanceof ColorLiteral)) {
             count++;
             found = true;
+            issues.add(new Issue(this, currentActor, node));
             addBlockComment((NonDataBlockMetadata) node.getMetadata(), currentActor, HINT_TEXT,
                     SHORT_NAME + count);
         }
@@ -130,6 +139,7 @@ public class ExpressionAsTouchingOrColor implements IssueFinder, ScratchVisitor 
         if (!(node.getColor() instanceof ColorLiteral)) {
             count++;
             found = true;
+            issues.add(new Issue(this, currentActor, node));
             addBlockComment((NonDataBlockMetadata) node.getMetadata(), currentActor, HINT_TEXT,
                     SHORT_NAME + count);
         }
@@ -148,6 +158,7 @@ public class ExpressionAsTouchingOrColor implements IssueFinder, ScratchVisitor 
                 && !(node.getTouchable() instanceof SpriteTouchable)) {
             count++;
             found = true;
+            issues.add(new Issue(this, currentActor, node));
             addBlockComment((NonDataBlockMetadata) node.getMetadata(), currentActor, HINT_TEXT,
                     SHORT_NAME + count);
         }

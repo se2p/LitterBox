@@ -91,7 +91,8 @@ public class Scratch3Analyzer {
                 iT.checkRaw(program, detectors);
             } else {
                 CSVPrinter printer = prepareCSVPrinter(detectors, iT, csv);
-                iT.check(program, printer, detectors);
+                iT.check(program, detectors);
+                // TODO: Create outputs
                 log.info("Finished: " + projectName);
                 try {
                     assert printer != null;
@@ -125,7 +126,8 @@ public class Scratch3Analyzer {
             iT.checkRaw(program, detectors);
         } else {
             CSVPrinter printer = prepareCSVPrinter(detectors, iT, csv);
-            iT.check(program, printer, detectors);
+            iT.check(program, detectors);
+            // TODO: Create outputs
             System.out.println("Finished: " + fileEntry.getName());
             try {
                 assert printer != null;
@@ -165,9 +167,6 @@ public class Scratch3Analyzer {
             case SMELLS:
                 detectors = iT.getSmellFinder().keySet().toArray(new String[0]);
                 break;
-            case CTSCORE:
-                detectors = iT.getCTScoreFinder().keySet().toArray(new String[0]);
-                break;
             default:
                 detectors = dtctrs.split(",");
                 break;
@@ -202,7 +201,10 @@ public class Scratch3Analyzer {
                         log.info("Start: " + fileEntry.getName());
                         Program program = extractProgram(fileEntry);
                         //System.out.println(project.toString());
-                        iT.check(program, printer, dtctrs);
+                        iT.check(program, dtctrs);
+
+                        // TODO: Create outputs
+
                         log.info("Finished: " + fileEntry.getName());
                         if (annotatePath != null) {
                             createAnnotatedFile(fileEntry, program, annotatePath);

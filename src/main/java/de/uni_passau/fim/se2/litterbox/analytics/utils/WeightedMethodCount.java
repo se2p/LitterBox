@@ -18,6 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.utils;
 
+import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueReport;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
@@ -27,8 +28,11 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitUntil;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.*;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
+
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 public class WeightedMethodCount implements IssueFinder, ScratchVisitor {
     public static final String NAME = "weighted_method_count";
@@ -37,13 +41,16 @@ public class WeightedMethodCount implements IssueFinder, ScratchVisitor {
     private List<String> actorNames = new LinkedList<>();
 
     @Override
-    public IssueReport check(Program program) {
+    public Set<Issue> check(Program program) {
         Preconditions.checkNotNull(program);
         actorNames = new LinkedList<>();
 
         program.accept(this);
 
-        return new IssueReport(NAME, count, actorNames, "");
+        // TODO: This is not an issue.
+        return Collections.emptySet();
+
+        // return new IssueReport(NAME, count, actorNames, "");
     }
 
     @Override

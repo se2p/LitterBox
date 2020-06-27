@@ -25,6 +25,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
 import java.io.File;
 import java.io.IOException;
+import java.util.Set;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -61,49 +63,49 @@ public class BlockCountTest {
     @Test
     public void testEmptyProgram() {
         BlockCount parameterName = new BlockCount();
-        IssueReport report = parameterName.check(empty);
-        Assertions.assertEquals(0, report.getCount());
+        Set<Issue> reports = parameterName.check(empty);
+        Assertions.assertEquals(0, reports.size());
     }
 
     @Test
     public void testBlockCountNested() {
         BlockCount parameterName = new BlockCount();
-        IssueReport report = parameterName.check(nestedLoops);
-        Assertions.assertEquals(14, report.getCount());
+        Set<Issue> reports = parameterName.check(nestedLoops);
+        Assertions.assertEquals(14, reports.size());
     }
 
     @Test
     public void testBlockproc() {
         BlockCount parameterName = new BlockCount();
-        IssueReport report = parameterName.check(withproc);
-        Assertions.assertEquals(18, report.getCount());
+        Set<Issue> reports = parameterName.check(withproc);
+        Assertions.assertEquals(18, reports.size());
     }
 
     @Test
     public void testFixedStatements() {
         BlockCount parameterName = new BlockCount();
-        IssueReport report = parameterName.check(fixedStatements);
-        Assertions.assertEquals(26, report.getCount());
+        Set<Issue> reports = parameterName.check(fixedStatements);
+        Assertions.assertEquals(26, reports.size());
     }
 
     @Test
     public void testFixedExpr() {
         BlockCount parameterName = new BlockCount();
-        IssueReport report = parameterName.check(fixedExpressions);
-        Assertions.assertEquals(4, report.getCount());
+        Set<Issue> reports = parameterName.check(fixedExpressions);
+        Assertions.assertEquals(4, reports.size());
     }
 
     @Test
     public void testOnlyVariable() {
         BlockCount parameterName = new BlockCount();
-        IssueReport report = parameterName.check(onlyVariable);
-        Assertions.assertEquals(1, report.getCount());
+        Set<Issue> reports = parameterName.check(onlyVariable);
+        Assertions.assertEquals(1, reports.size());
     }
 
     @Test
     public void testHalfFixedExpr() {
         BlockCount parameterName = new BlockCount();
-        IssueReport report = parameterName.check(halfFixedExpr);
-        Assertions.assertEquals(5, report.getCount()); //TODO does an empty string have to be an UnspecifiedExpr?
+        Set<Issue> reports = parameterName.check(halfFixedExpr);
+        Assertions.assertEquals(5, reports.size()); //TODO does an empty string have to be an UnspecifiedExpr?
     }
 }

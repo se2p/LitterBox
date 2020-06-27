@@ -21,6 +21,7 @@ package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 import static de.uni_passau.fim.se2.litterbox.analytics.CommentAdder.addBlockComment;
 
 
+import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueReport;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
@@ -35,8 +36,11 @@ import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMeta
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.CreateCloneOf;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
+
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Script starting with a When I start as a clone event handler that contain a create clone of
@@ -52,10 +56,11 @@ public class RecursiveCloning implements ScratchVisitor, IssueFinder {
     private boolean startAsClone = false;
     private int count = 0;
     private List<String> actorNames = new LinkedList<>();
+    private Set<Issue> issues = new LinkedHashSet<>();
     private ActorDefinition currentActor;
 
     @Override
-    public IssueReport check(Program program) {
+    public Set<Issue> check(Program program) {
         Preconditions.checkNotNull(program);
         found = false;
         startAsClone = false;
@@ -66,7 +71,8 @@ public class RecursiveCloning implements ScratchVisitor, IssueFinder {
         if (count > 0) {
             notes = NOTE2;
         }
-        return new IssueReport(NAME, count, actorNames, notes);
+        return issues;
+        // return new IssueReport(NAME, count, actorNames, notes);
     }
 
     @Override
@@ -113,6 +119,7 @@ public class RecursiveCloning implements ScratchVisitor, IssueFinder {
                 if (spriteName.equals("_myself_")) {
                     count++;
                     found = true;
+                    issues.add(new Issue(this, currentActor, node));
                     CloneOfMetadata metadata = (CloneOfMetadata) node.getMetadata();
                     addBlockComment((NonDataBlockMetadata) metadata.getCloneBlockMetadata(), currentActor, HINT_TEXT,
                             SHORT_NAME + count);

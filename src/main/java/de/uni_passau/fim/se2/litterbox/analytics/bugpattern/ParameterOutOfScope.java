@@ -21,6 +21,7 @@ package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 import static de.uni_passau.fim.se2.litterbox.analytics.CommentAdder.addBlockComment;
 
 
+import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueReport;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
@@ -31,8 +32,11 @@ import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Parameter;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
+
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * The parameters of a custom block can be used anywhere inside the sprite that defines the custom block.
@@ -48,10 +52,11 @@ public class ParameterOutOfScope implements IssueFinder, ScratchVisitor {
     private int count = 0;
     private List<String> actorNames = new LinkedList<>();
     private ActorDefinition currentActor;
+    private Set<Issue> issues = new LinkedHashSet<>();
     private boolean insideProcedure;
 
     @Override
-    public IssueReport check(Program program) {
+    public Set<Issue> check(Program program) {
         Preconditions.checkNotNull(program);
         found = false;
         count = 0;
@@ -61,7 +66,8 @@ public class ParameterOutOfScope implements IssueFinder, ScratchVisitor {
         if (count > 0) {
             notes = NOTE2;
         }
-        return new IssueReport(NAME, count, actorNames, notes);
+        return issues;
+        // return new IssueReport(NAME, count, actorNames, notes);
     }
 
     @Override
@@ -99,6 +105,7 @@ public class ParameterOutOfScope implements IssueFinder, ScratchVisitor {
     public void visit(Parameter node) {
         if (!insideProcedure) {
             count++;
+            issues.add(new Issue(this, currentActor, node));
             found = true;
             addBlockComment((NonDataBlockMetadata) node.getMetadata(), currentActor, HINT_TEXT,
                     SHORT_NAME + count);

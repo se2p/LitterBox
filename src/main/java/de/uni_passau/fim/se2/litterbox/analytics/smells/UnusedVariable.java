@@ -18,6 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.smells;
 
+import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueReport;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
@@ -57,9 +58,10 @@ public class UnusedVariable implements IssueFinder, ScratchVisitor {
     private boolean insideScript;
     private Map<String, VariableInfo> varMap;
     private Map<String, ExpressionListInfo> listMap;
+    private Set<Issue> issues = new LinkedHashSet<>();
 
     @Override
-    public IssueReport check(Program program) {
+    public Set<Issue> check(Program program) {
         Preconditions.checkNotNull(program);
 
         count = 0;
@@ -73,7 +75,8 @@ public class UnusedVariable implements IssueFinder, ScratchVisitor {
         if (count > 0) {
             notes = NOTE2;
         }
-        return new IssueReport(NAME, count, actorNames, notes);
+        return issues;
+        // return new IssueReport(NAME, count, actorNames, notes);
     }
 
     @Override
@@ -97,6 +100,8 @@ public class UnusedVariable implements IssueFinder, ScratchVisitor {
 
             if (!currFound && !Arrays.asList(MY_VARIABLE_LANGUAGES).contains(name)) {
                 count++;
+                // TODO: Retrieve actor and node
+                issues.add(new Issue(this, null, null));
             }
         }
 
@@ -113,6 +118,8 @@ public class UnusedVariable implements IssueFinder, ScratchVisitor {
             }
             if (!currFound) {
                 count++;
+                // TODO: Retrieve actor and node
+                issues.add(new Issue(this, null, null));
             }
         }
     }

@@ -18,8 +18,10 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
+import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueReport;
+import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.cfg.ControlFlowGraph;
 import de.uni_passau.fim.se2.litterbox.cfg.ControlFlowGraphVisitor;
@@ -31,15 +33,17 @@ import de.uni_passau.fim.se2.litterbox.dataflow.InitialDefinitionTransferFunctio
 import de.uni_passau.fim.se2.litterbox.dataflow.LivenessTransferFunction;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 public class MissingInitialization implements IssueFinder {
 
     public static final String NAME = "missing_initialization";
     public static final String SHORT_NAME = "mssInit"; // TODO: Why do we need this?
+    private Set<Issue> issues = new LinkedHashSet<>();
 
     @Override
-    public IssueReport check(Program program) {
+    public Set<Issue> check(Program program) {
         Preconditions.checkNotNull(program);
 
         ControlFlowGraphVisitor visitor = new ControlFlowGraphVisitor();
@@ -65,10 +69,12 @@ public class MissingInitialization implements IssueFinder {
                     .filter(d -> d.getDefinable().equals(use.getDefinable()))
                     .noneMatch(d -> d.getDefinitionSource().getScriptOrProcedure() != use.getUseTarget().getScriptOrProcedure())) {
                 violations++;
-                // TODO: Store more information here
+                // TODO: Fix cast!
+                issues.add(new Issue(this, use.getUseTarget().getActor(), (AbstractNode) use.getUseTarget().getASTNode()));
             }
         }
-        return new IssueReport(NAME, violations, Collections.emptyList(), "");
+        return issues;
+        // return new IssueReport(NAME, violations, Collections.emptyList(), "");
     }
 
     @Override

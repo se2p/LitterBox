@@ -21,6 +21,7 @@ package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 import static de.uni_passau.fim.se2.litterbox.analytics.CommentAdder.addBlockComment;
 
 
+import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueReport;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
@@ -35,8 +36,11 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.ChangeYB
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.MoveSteps;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
+
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * A common way to move sprites in response to keyboard input is to use the specific event handler When key
@@ -52,12 +56,13 @@ public class StutteringMovement implements IssueFinder, ScratchVisitor {
     private static final String NOTE1 = "There are no scripts causing stuttering movement in your project.";
     private static final String NOTE2 = "There are some scripts causing stuttering movement in your project.";
     private boolean found = false;
+    private Set<Issue> issues = new LinkedHashSet<>();
     private int count = 0;
     private List<String> actorNames = new LinkedList<>();
     private ActorDefinition currentActor;
 
     @Override
-    public IssueReport check(Program program) {
+    public Set<Issue> check(Program program) {
         Preconditions.checkNotNull(program);
         found = false;
         count = 0;
@@ -67,7 +72,8 @@ public class StutteringMovement implements IssueFinder, ScratchVisitor {
         if (count > 0) {
             notes = NOTE2;
         }
-        return new IssueReport(NAME, count, actorNames, notes);
+        return issues;
+        // return new IssueReport(NAME, count, actorNames, notes);
     }
 
     @Override
@@ -99,6 +105,7 @@ public class StutteringMovement implements IssueFinder, ScratchVisitor {
                 if (stmt instanceof MoveSteps || stmt instanceof ChangeXBy || stmt instanceof ChangeYBy) {
                     found = true;
                     count++;
+                    issues.add(new Issue(this, currentActor, script));
                     KeyPressed keyPressed = (KeyPressed) script.getEvent();
                     addBlockComment((NonDataBlockMetadata) keyPressed.getMetadata(), currentActor, HINT_TEXT,
                             SHORT_NAME + count);

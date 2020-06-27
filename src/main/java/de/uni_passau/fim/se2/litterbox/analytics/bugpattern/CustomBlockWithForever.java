@@ -21,6 +21,7 @@ package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 import static de.uni_passau.fim.se2.litterbox.analytics.CommentAdder.addBlockComment;
 
 
+import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueReport;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
@@ -36,10 +37,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForever
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ProcedureInfo;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+
+import java.util.*;
 
 /**
  * If a custom block contains a forever loop and the custom block is used in the middle of another script,
@@ -58,6 +57,7 @@ public class CustomBlockWithForever implements IssueFinder, ScratchVisitor {
             "statements.";
     private boolean found = false;
     private int count = 0;
+    private Set<Issue> issues = new LinkedHashSet<>();
     private List<String> actorNames = new LinkedList<>();
     private ActorDefinition currentActor;
     private String currentProcedureName;
@@ -68,7 +68,7 @@ public class CustomBlockWithForever implements IssueFinder, ScratchVisitor {
     private Program program;
 
     @Override
-    public IssueReport check(Program program) {
+    public Set<Issue> check(Program program) {
         Preconditions.checkNotNull(program);
         found = false;
         count = 0;
@@ -79,7 +79,8 @@ public class CustomBlockWithForever implements IssueFinder, ScratchVisitor {
         if (count > 0) {
             notes = NOTE2;
         }
-        return new IssueReport(NAME, count, actorNames, notes);
+        return issues;
+        // return new IssueReport(NAME, count, actorNames, notes);
     }
 
     @Override
@@ -110,6 +111,7 @@ public class CustomBlockWithForever implements IssueFinder, ScratchVisitor {
             if (proceduresWithForever.contains(calledProcedure.getIdent().getName())) {
                 found = true;
                 count++;
+                issues.add(new Issue(this, currentActor, calledProcedure));
                 addBlockComment((NonDataBlockMetadata) calledProcedure.getMetadata(), currentActor, HINT_TEXT,
                         SHORT_NAME + count);
             }

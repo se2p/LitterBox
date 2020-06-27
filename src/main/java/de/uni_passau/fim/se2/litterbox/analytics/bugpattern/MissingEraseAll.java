@@ -21,6 +21,7 @@ package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 import static de.uni_passau.fim.se2.litterbox.analytics.CommentAdder.addBlockComment;
 
 
+import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueReport;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
@@ -31,8 +32,11 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.pen.PenClearStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.pen.PenDownStmt;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
+
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * If a sprite uses a pen down block but never an erase all block, then all drawings from a
@@ -46,11 +50,12 @@ public class MissingEraseAll implements IssueFinder {
     public static final String HINT_TEXT = "missing erase all";
 
     @Override
-    public IssueReport check(Program program) {
+    public Set<Issue> check(Program program) {
         Preconditions.checkNotNull(program);
-        CheckVisitor visitor = new CheckVisitor();
+        CheckVisitor visitor = new CheckVisitor(this);
         program.accept(visitor);
-        return new IssueReport(NAME, visitor.count, visitor.actorNames, "");
+        return visitor.getIssues();
+        // return new IssueReport(NAME, visitor.count, visitor.actorNames, "");
     }
 
     @Override
@@ -66,6 +71,16 @@ public class MissingEraseAll implements IssueFinder {
         private int count = 0;
         private List<String> actorNames = new LinkedList<>();
         private ActorDefinition currentActor;
+        private Set<Issue> issues = new LinkedHashSet<>();
+        private MissingEraseAll issueFinder;
+
+        public CheckVisitor(MissingEraseAll issueFinder) {
+            this.issueFinder = issueFinder;
+        }
+
+        public Set<Issue> getIssues() {
+            return issues;
+        }
 
         @Override
         public void visit(ASTNode node) {
@@ -90,6 +105,7 @@ public class MissingEraseAll implements IssueFinder {
 
             if (getResult()) {
                 count++;
+                issues.add(new Issue(issueFinder, currentActor, actor));
                 actorNames.add(currentActor.getIdent().getName());
                 addComment = true;
                 for (ASTNode child : actor.getChildren()) {

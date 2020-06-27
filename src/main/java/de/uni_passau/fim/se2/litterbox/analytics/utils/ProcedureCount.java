@@ -18,6 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.utils;
 
+import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueReport;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
@@ -26,6 +27,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Set;
 
 public class ProcedureCount implements IssueFinder, ScratchVisitor {
     public static final String NAME = "procedure_count";
@@ -34,12 +37,15 @@ public class ProcedureCount implements IssueFinder, ScratchVisitor {
     private int count = 0;
 
     @Override
-    public IssueReport check(Program program) {
+    public Set<Issue> check(Program program) {
         Preconditions.checkNotNull(program);
         count = 0;
         program.accept(this);
 
-        return new IssueReport(NAME, count, new ArrayList<>(), "");
+        // TODO: This is not an issue.
+        return Collections.emptySet();
+
+        //return new IssueReport(NAME, count, new ArrayList<>(), "");
     }
 
     @Override

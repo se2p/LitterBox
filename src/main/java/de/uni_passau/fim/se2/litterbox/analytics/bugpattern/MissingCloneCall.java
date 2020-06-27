@@ -21,6 +21,7 @@ package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 import static de.uni_passau.fim.se2.litterbox.analytics.CommentAdder.addBlockComment;
 
 
+import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueReport;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
@@ -53,12 +54,13 @@ public class MissingCloneCall implements IssueFinder, ScratchVisitor {
     private List<String> whenStartsAsCloneActors = new ArrayList<>();
     private List<String> clonedActors = new ArrayList<>();
     private ActorDefinition currentActor;
+    private Set<Issue> issues = new LinkedHashSet<>();
     private int identifierCounter;
     private boolean addComment;
     private Set<String> notClonedActor;
 
     @Override
-    public IssueReport check(Program program) {
+    public Set<Issue> check(Program program) {
         Preconditions.checkNotNull(program);
         whenStartsAsCloneActors = new ArrayList<>();
         clonedActors = new ArrayList<>();
@@ -72,7 +74,8 @@ public class MissingCloneCall implements IssueFinder, ScratchVisitor {
         addComment = true;
         program.accept(this);
 
-        return new IssueReport(NAME, uninitializingActors.size(), uninitializingActors, "");
+        return issues;
+        // return new IssueReport(NAME, uninitializingActors.size(), uninitializingActors, "");
     }
 
     @Override
@@ -116,6 +119,7 @@ public class MissingCloneCall implements IssueFinder, ScratchVisitor {
                 addBlockComment((NonDataBlockMetadata) event.getMetadata(), currentActor, HINT_TEXT,
                         SHORT_NAME + identifierCounter);
                 identifierCounter++;
+                issues.add(new Issue(this, currentActor, node));
             }
         }
         if (!node.getChildren().isEmpty()) {

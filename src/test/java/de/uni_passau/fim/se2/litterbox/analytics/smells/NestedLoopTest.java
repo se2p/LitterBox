@@ -19,12 +19,15 @@
 package de.uni_passau.fim.se2.litterbox.analytics.smells;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueReport;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
 import java.io.File;
 import java.io.IOException;
+import java.util.Set;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -46,14 +49,14 @@ public class NestedLoopTest {
     @Test
     public void testEmptyProgram() {
         NestedLoops parameterName = new NestedLoops();
-        IssueReport report = parameterName.check(empty);
-        Assertions.assertEquals(0, report.getCount());
+        Set<Issue> reports = parameterName.check(empty);
+        Assertions.assertEquals(0, reports.size());
     }
 
     @Test
     public void testNestedLoops() {
         NestedLoops parameterName = new NestedLoops();
-        IssueReport report = parameterName.check(nestedLoops);
-        Assertions.assertEquals(3, report.getCount());
+        Set<Issue> reports = parameterName.check(nestedLoops);
+        Assertions.assertEquals(3, reports.size());
     }
 }

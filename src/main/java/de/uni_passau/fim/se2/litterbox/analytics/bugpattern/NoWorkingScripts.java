@@ -21,6 +21,7 @@ package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 import static de.uni_passau.fim.se2.litterbox.analytics.CommentAdder.addLooseComment;
 
 
+import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueReport;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
@@ -30,8 +31,11 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
+
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * The empty script smell occurs if an event handler has no other blocks attached to it.
@@ -53,9 +57,10 @@ public class NoWorkingScripts implements IssueFinder, ScratchVisitor {
     private boolean stillFullfilledEmptyScript = false;
     private boolean deadCodeFound = false;
     private boolean foundEvent = false;
+    private Set<Issue> issues = new LinkedHashSet<>();
 
     @Override
-    public IssueReport check(Program program) {
+    public Set<Issue> check(Program program) {
         Preconditions.checkNotNull(program);
         count = 0;
         actorNames = new LinkedList<>();
@@ -65,7 +70,8 @@ public class NoWorkingScripts implements IssueFinder, ScratchVisitor {
         if (count > 0) {
             notes = NOTE2;
         }
-        return new IssueReport(NAME, count, actorNames, notes);
+        return issues;
+        // return new IssueReport(NAME, count, actorNames, notes);
     }
 
     @Override
@@ -88,6 +94,7 @@ public class NoWorkingScripts implements IssueFinder, ScratchVisitor {
         if (deadCodeFound && stillFullfilledEmptyScript && foundEvent) {
             actorNames.add(currentActor.getIdent().getName());
             count++;
+            issues.add(new Issue(this, currentActor, actor));
             addLooseComment(currentActor, HINT_TEXT, SHORT_NAME + count);
         }
     }

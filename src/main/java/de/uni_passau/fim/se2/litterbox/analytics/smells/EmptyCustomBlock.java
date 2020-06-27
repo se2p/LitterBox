@@ -18,6 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.smells;
 
+import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueReport;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
@@ -26,8 +27,11 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
+
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 public class EmptyCustomBlock implements IssueFinder, ScratchVisitor {
     public static final String NAME = "empty_custom_block";
@@ -38,9 +42,10 @@ public class EmptyCustomBlock implements IssueFinder, ScratchVisitor {
     private int count = 0;
     private List<String> actorNames = new LinkedList<>();
     private ActorDefinition currentActor;
+    private Set<Issue> issues = new LinkedHashSet<>();
 
     @Override
-    public IssueReport check(Program program) {
+    public Set<Issue> check(Program program) {
         Preconditions.checkNotNull(program);
         found = false;
         count = 0;
@@ -50,7 +55,8 @@ public class EmptyCustomBlock implements IssueFinder, ScratchVisitor {
         if (count > 0) {
             notes = NOTE2;
         }
-        return new IssueReport(NAME, count, actorNames, notes);
+        return issues;
+        // return new IssueReport(NAME, count, actorNames, notes);
     }
 
     @Override
@@ -78,6 +84,7 @@ public class EmptyCustomBlock implements IssueFinder, ScratchVisitor {
         if (node.getStmtList().getStmts().isEmpty()) {
             found = true;
             count++;
+            issues.add(new Issue(this, currentActor, node));
         }
         if (!node.getChildren().isEmpty()) {
             for (ASTNode child : node.getChildren()) {

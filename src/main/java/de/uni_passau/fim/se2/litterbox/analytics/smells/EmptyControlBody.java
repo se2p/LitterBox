@@ -18,6 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.smells;
 
+import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueReport;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
@@ -26,8 +27,11 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.*;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
+
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Checks for empty if or else bodies.
@@ -40,10 +44,11 @@ public class EmptyControlBody implements IssueFinder, ScratchVisitor {
     private boolean found = false;
     private int count = 0;
     private List<String> actorNames = new LinkedList<>();
+    private Set<Issue> issues = new LinkedHashSet<>();
     private ActorDefinition currentActor;
 
     @Override
-    public IssueReport check(Program program) {
+    public Set<Issue> check(Program program) {
         Preconditions.checkNotNull(program);
         found = false;
         count = 0;
@@ -53,7 +58,8 @@ public class EmptyControlBody implements IssueFinder, ScratchVisitor {
         if (count > 0) {
             notes = NOTE2;
         }
-        return new IssueReport(NAME, count, actorNames, notes);
+        return issues;
+        // return new IssueReport(NAME, count, actorNames, notes);
     }
 
     @Override
@@ -81,9 +87,11 @@ public class EmptyControlBody implements IssueFinder, ScratchVisitor {
         if (node.getStmtList().getStmts().isEmpty()) {
             found = true;
             count++;
+            issues.add(new Issue(this, currentActor, node));
         }
         if (node.getElseStmts().getStmts().isEmpty()) {
             found = true;
+            issues.add(new Issue(this, currentActor, node));
             count++;
         }
         if (!node.getChildren().isEmpty()) {
@@ -97,6 +105,7 @@ public class EmptyControlBody implements IssueFinder, ScratchVisitor {
     public void visit(IfThenStmt node) {
         if (node.getThenStmts().getStmts().isEmpty()) {
             found = true;
+            issues.add(new Issue(this, currentActor, node));
             count++;
         }
         if (!node.getChildren().isEmpty()) {
@@ -110,6 +119,7 @@ public class EmptyControlBody implements IssueFinder, ScratchVisitor {
     public void visit(UntilStmt node) {
         if (node.getStmtList().getStmts().isEmpty()) {
             found = true;
+            issues.add(new Issue(this, currentActor, node));
             count++;
         }
         if (!node.getChildren().isEmpty()) {
@@ -123,6 +133,7 @@ public class EmptyControlBody implements IssueFinder, ScratchVisitor {
     public void visit(RepeatForeverStmt node) {
         if (node.getStmtList().getStmts().isEmpty()) {
             found = true;
+            issues.add(new Issue(this, currentActor, node));
             count++;
         }
         if (!node.getChildren().isEmpty()) {
@@ -136,6 +147,7 @@ public class EmptyControlBody implements IssueFinder, ScratchVisitor {
     public void visit(RepeatTimesStmt node) {
         if (node.getStmtList().getStmts().isEmpty()) {
             found = true;
+            issues.add(new Issue(this, currentActor, node));
             count++;
         }
         if (!node.getChildren().isEmpty()) {

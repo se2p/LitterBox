@@ -18,14 +18,18 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.utils;
 
+import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueReport;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.pen.*;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
+
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 public class ProgramUsingPen implements IssueFinder, ScratchVisitor {
     public static final String NAME = "using_pen";
@@ -39,7 +43,7 @@ public class ProgramUsingPen implements IssueFinder, ScratchVisitor {
     }
 
     @Override
-    public IssueReport check(Program program) {
+    public Set<Issue> check(Program program) {
         Preconditions.checkNotNull(program);
         found = false;
         actorNames = new LinkedList<>();
@@ -48,7 +52,10 @@ public class ProgramUsingPen implements IssueFinder, ScratchVisitor {
         if (found) {
             count = 1;
         }
-        return new IssueReport(NAME, count, actorNames, "");
+        // TODO: This is not an issue.
+        return Collections.emptySet();
+
+        // return new IssueReport(NAME, count, actorNames, "");
     }
 
     @Override

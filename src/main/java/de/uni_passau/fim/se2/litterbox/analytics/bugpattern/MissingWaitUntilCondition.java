@@ -21,6 +21,7 @@ package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 import static de.uni_passau.fim.se2.litterbox.analytics.CommentAdder.addBlockComment;
 
 
+import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueReport;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
@@ -33,8 +34,11 @@ import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMeta
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitUntil;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
+
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Checks for missing statements in repeat-until blocks.
@@ -47,9 +51,9 @@ public class MissingWaitUntilCondition implements IssueFinder {
 
 
     @Override
-    public IssueReport check(Program program) {
+    public Set<Issue> check(Program program) {
         Preconditions.checkNotNull(program);
-        CheckVisitor visitor = new CheckVisitor();
+        CheckVisitor visitor = new CheckVisitor(this);
 
         program.accept(visitor);
         String notes = "All 'wait until' blocks terminating correctly.";
@@ -57,7 +61,8 @@ public class MissingWaitUntilCondition implements IssueFinder {
             notes = "Some 'wait until' blocks have no condition.";
         }
 
-        return new IssueReport(NAME, visitor.count, visitor.actorNames, notes);
+        return visitor.getIssues();
+        // return new IssueReport(NAME, visitor.count, visitor.actorNames, notes);
     }
 
     @Override
@@ -70,7 +75,16 @@ public class MissingWaitUntilCondition implements IssueFinder {
         private int count = 0;
         private boolean patternFound = false;
         private List<String> actorNames = new LinkedList<>();
+        private Set<Issue> issues = new LinkedHashSet<>();
+        private IssueFinder issueFinder;
 
+        public CheckVisitor(IssueFinder issueFinder) {
+            this.issueFinder = issueFinder;
+        }
+
+        public Set<Issue> getIssues() {
+            return issues;
+        }
         @Override
         public void visit(ASTNode node) {
             if (!node.getChildren().isEmpty()) {
@@ -100,6 +114,7 @@ public class MissingWaitUntilCondition implements IssueFinder {
             if (node.getUntil() instanceof UnspecifiedBoolExpr) {
                 patternFound = true;
                 count++;
+                issues.add(new Issue(issueFinder, currentActor, node));
                 addBlockComment((NonDataBlockMetadata) node.getMetadata(), currentActor, HINT_TEXT,
                         SHORT_NAME + count);
             }

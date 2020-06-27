@@ -18,6 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.smells;
 
+import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueReport;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
@@ -25,8 +26,11 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ActorType;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
+
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 public class EmptySprite implements IssueFinder, ScratchVisitor {
     public static final String NAME = "empty_sprite";
@@ -35,10 +39,11 @@ public class EmptySprite implements IssueFinder, ScratchVisitor {
     private static final String NOTE2 = "Some of the sprites contain no scripts.";
     private boolean found = false;
     private int count = 0;
+    private Set<Issue> issues = new LinkedHashSet<>();
     private List<String> actorNames = new LinkedList<>();
 
     @Override
-    public IssueReport check(Program program) {
+    public Set<Issue> check(Program program) {
         Preconditions.checkNotNull(program);
         found = false;
         count = 0;
@@ -48,7 +53,8 @@ public class EmptySprite implements IssueFinder, ScratchVisitor {
         if (count > 0) {
             notes = NOTE2;
         }
-        return new IssueReport(NAME, count, actorNames, notes);
+        return issues;
+        // return new IssueReport(NAME, count, actorNames, notes);
     }
 
     @Override
@@ -57,6 +63,7 @@ public class EmptySprite implements IssueFinder, ScratchVisitor {
                 && !actor.getActorType().equals(ActorType.STAGE)) {
             actorNames.add(actor.getIdent().getName());
             count++;
+            issues.add(new Issue(this, actor, actor));
         }
     }
 

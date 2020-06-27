@@ -21,6 +21,7 @@ package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 import static de.uni_passau.fim.se2.litterbox.analytics.CommentAdder.addBlockComment;
 
 
+import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueReport;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
@@ -32,8 +33,11 @@ import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Parameter;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
+
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * When custom blocks are created the user can define parameters, which can then be used in the body of the custom
@@ -54,9 +58,10 @@ public class OrphanedParameter implements IssueFinder, ScratchVisitor {
     private ActorDefinition currentActor;
     private List<ParameterDefinition> currentParameterDefinitions;
     private boolean insideProcedure;
+    private Set<Issue> issues = new LinkedHashSet<>();
 
     @Override
-    public IssueReport check(Program program) {
+    public Set<Issue> check(Program program) {
         Preconditions.checkNotNull(program);
         found = false;
         count = 0;
@@ -66,7 +71,8 @@ public class OrphanedParameter implements IssueFinder, ScratchVisitor {
         if (count > 0) {
             notes = NOTE2;
         }
-        return new IssueReport(NAME, count, actorNames, notes);
+        return issues;
+        // return new IssueReport(NAME, count, actorNames, notes);
     }
 
     @Override
@@ -123,6 +129,7 @@ public class OrphanedParameter implements IssueFinder, ScratchVisitor {
         if (!validParametername) {
             count++;
             found = true;
+            issues.add(new Issue(this, currentActor, node));
             addBlockComment((NonDataBlockMetadata) node.getMetadata(), currentActor, HINT_TEXT,
                     SHORT_NAME + count);
         }

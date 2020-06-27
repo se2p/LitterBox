@@ -25,6 +25,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
 import java.io.File;
 import java.io.IOException;
+import java.util.Set;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -46,14 +48,14 @@ public class SpriteCountTest {
     @Test
     public void testEmptyProgram() {
         SpriteCount parameterName = new SpriteCount();
-        IssueReport report = parameterName.check(empty);
-        Assertions.assertEquals(1, report.getCount());
+        Set<Issue> reports = parameterName.check(empty);
+        Assertions.assertEquals(1, reports.size());
     }
 
     @Test
     public void tesSpriteCount() {
         SpriteCount parameterName = new SpriteCount();
-        IssueReport report = parameterName.check(unusedProc);
-        Assertions.assertEquals(1, report.getCount());
+        Set<Issue> reports = parameterName.check(unusedProc);
+        Assertions.assertEquals(1, reports.size());
     }
 }

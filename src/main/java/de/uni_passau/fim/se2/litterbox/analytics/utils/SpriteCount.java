@@ -18,20 +18,26 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.utils;
 
+import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueReport;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Set;
 
 public class SpriteCount implements ScratchVisitor, IssueFinder {
     public static final String NAME = "sprite_count";
     public static final String SHORT_NAME = "spriteCnt";
 
     @Override
-    public IssueReport check(Program program) {
+    public Set<Issue> check(Program program) {
         int count = program.getActorDefinitionList().getDefintions().size() - 1;
-        return new IssueReport(NAME, count, new ArrayList<>(), "");
+        // TODO: This is not an issue.
+        return Collections.emptySet();
+
+        // return new IssueReport(NAME, count, new ArrayList<>(), "");
     }
 
     @Override

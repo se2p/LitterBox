@@ -21,6 +21,7 @@ package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 import static de.uni_passau.fim.se2.litterbox.analytics.CommentAdder.addLooseComment;
 
 
+import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueReport;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueTool;
@@ -29,10 +30,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ExpressionListInfo;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.VariableInfo;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+
+import java.util.*;
 
 public class SameVariableDifferentSprite implements IssueFinder {
     public static final String NAME = "same_variable_different_sprite";
@@ -42,14 +41,16 @@ public class SameVariableDifferentSprite implements IssueFinder {
     private static final String NOTE2 = "Some of the variables have the same name but are in different sprites.";
     private boolean found = false;
     private int count = 0;
+    private Set<Issue> issues = new LinkedHashSet<>();
     private List<String> actorNames = new LinkedList<>();
 
     @Override
-    public IssueReport check(Program program) {
+    public Set<Issue> check(Program program) {
         Preconditions.checkNotNull(program);
         found = false;
         count = 0;
         actorNames = new LinkedList<>();
+        // TODO: Fix typo in signature
         List<ActorDefinition> actorDefinitions = program.getActorDefinitionList().getDefintions();
         String notes = NOTE1;
         if (count > 0) {
@@ -97,6 +98,7 @@ public class SameVariableDifferentSprite implements IssueFinder {
                 actorNames.add(currentActor);
                 for (ActorDefinition actorDefinition : actorDefinitions) {
                     if (actorDefinition.getIdent().getName().equals(currentActor)) {
+                        issues.add(new Issue(this, actorDefinition, actorDefinition));
                         addLooseComment(actorDefinition, HINT_TEXT + " List " + currentName,
                                 SHORT_NAME + count);
                         break;
@@ -105,7 +107,8 @@ public class SameVariableDifferentSprite implements IssueFinder {
             }
         }
 
-        return new IssueReport(NAME, count, IssueTool.getOnlyUniqueActorList(actorNames), notes);
+        return issues;
+        // return new IssueReport(NAME, count, IssueTool.getOnlyUniqueActorList(actorNames), notes);
     }
 
     @Override
