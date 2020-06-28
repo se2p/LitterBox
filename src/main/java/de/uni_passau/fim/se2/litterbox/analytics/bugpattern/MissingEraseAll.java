@@ -23,7 +23,6 @@ import static de.uni_passau.fim.se2.litterbox.analytics.CommentAdder.addBlockCom
 
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueReport;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
@@ -52,10 +51,10 @@ public class MissingEraseAll implements IssueFinder {
     @Override
     public Set<Issue> check(Program program) {
         Preconditions.checkNotNull(program);
+
         CheckVisitor visitor = new CheckVisitor(this);
         program.accept(visitor);
         return visitor.getIssues();
-        // return new IssueReport(NAME, visitor.count, visitor.actorNames, "");
     }
 
     @Override
@@ -69,7 +68,6 @@ public class MissingEraseAll implements IssueFinder {
         private boolean penDownSet = false;
         private boolean addComment = false;
         private int count = 0;
-        private List<String> actorNames = new LinkedList<>();
         private ActorDefinition currentActor;
         private Set<Issue> issues = new LinkedHashSet<>();
         private MissingEraseAll issueFinder;
@@ -83,31 +81,20 @@ public class MissingEraseAll implements IssueFinder {
         }
 
         @Override
-        public void visit(ASTNode node) {
-            if (!node.getChildren().isEmpty()) {
-                for (ASTNode child : node.getChildren()) {
-                    child.accept(this);
-                }
-            }
-        }
-
-        @Override
         public void visit(ActorDefinition actor) {
             currentActor = actor;
             addComment = false;
             penClearSet = false;
             penDownSet = false;
-            if (!actor.getChildren().isEmpty()) {
-                for (ASTNode child : actor.getChildren()) {
-                    child.accept(this);
-                }
+            for (ASTNode child : actor.getChildren()) {
+                child.accept(this);
             }
 
             if (getResult()) {
                 count++;
                 issues.add(new Issue(issueFinder, currentActor, actor));
-                actorNames.add(currentActor.getIdent().getName());
                 addComment = true;
+                // TODO: Why visit twice?
                 for (ASTNode child : actor.getChildren()) {
                     child.accept(this);
                 }

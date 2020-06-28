@@ -23,7 +23,6 @@ import static de.uni_passau.fim.se2.litterbox.analytics.CommentAdder.addBlockCom
 
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueReport;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
@@ -34,8 +33,6 @@ import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import java.util.LinkedHashSet;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -56,7 +53,6 @@ public class MissingPenDown implements IssueFinder {
         CheckVisitor visitor = new CheckVisitor(this);
         program.accept(visitor);
         return visitor.getIssues();
-        // return new IssueReport(NAME, visitor.count, visitor.actorNames, "");
     }
 
     @Override
@@ -66,7 +62,6 @@ public class MissingPenDown implements IssueFinder {
 
     private static class CheckVisitor implements ScratchVisitor {
         private int count = 0;
-        private List<String> actorNames = new LinkedList<>();
         private Set<Issue> issues = new LinkedHashSet<>();
         private ActorDefinition currentActor;
         private boolean penUpSet = false;
@@ -80,15 +75,6 @@ public class MissingPenDown implements IssueFinder {
 
         public Set<Issue> getIssues() {
             return issues;
-        }
-
-        @Override
-        public void visit(ASTNode node) {
-            if (!node.getChildren().isEmpty()) {
-                for (ASTNode child : node.getChildren()) {
-                    child.accept(this);
-                }
-            }
         }
 
         @Override
@@ -106,8 +92,8 @@ public class MissingPenDown implements IssueFinder {
             if (getResult()) {
                 count++;
                 issues.add(new Issue(issueFinder, currentActor, actor));
-                actorNames.add(currentActor.getIdent().getName());
                 addComment = true;
+                // TODO: Why visit twice?
                 for (ASTNode child : actor.getChildren()) {
                     child.accept(this);
                 }
@@ -119,10 +105,8 @@ public class MissingPenDown implements IssueFinder {
         public void visit(PenDownStmt node) {
             if (!addComment) {
                 penDownSet = true;
-                if (!node.getChildren().isEmpty()) {
-                    for (ASTNode child : node.getChildren()) {
-                        child.accept(this);
-                    }
+                for (ASTNode child : node.getChildren()) {
+                    child.accept(this);
                 }
             }
         }
@@ -131,10 +115,8 @@ public class MissingPenDown implements IssueFinder {
         public void visit(PenUpStmt node) {
             if (!addComment) {
                 penUpSet = true;
-                if (!node.getChildren().isEmpty()) {
-                    for (ASTNode child : node.getChildren()) {
-                        child.accept(this);
-                    }
+                for (ASTNode child : node.getChildren()) {
+                    child.accept(this);
                 }
             } else if(getResult()){
                 addBlockComment((NonDataBlockMetadata) node.getMetadata(), currentActor, HINT_TEXT,

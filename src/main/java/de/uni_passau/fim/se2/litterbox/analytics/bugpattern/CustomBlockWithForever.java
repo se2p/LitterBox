@@ -50,15 +50,8 @@ public class CustomBlockWithForever implements IssueFinder, ScratchVisitor {
     public static final String NAME = "custom_block_with_forever";
     public static final String SHORT_NAME = "custBlWithForever";
     public static final String HINT_TEXT = "custom block with forever";
-    private static final String NOTE1 = "There are no custom blocks with forever where the call is followed by " +
-            "statements in your project.";
-    private static final String NOTE2 = "Some of the sprites contain custom blocks with forever where the call is " +
-            "followed by " +
-            "statements.";
-    private boolean found = false;
     private int count = 0;
     private Set<Issue> issues = new LinkedHashSet<>();
-    private List<String> actorNames = new LinkedList<>();
     private ActorDefinition currentActor;
     private String currentProcedureName;
     private List<String> proceduresWithForever;
@@ -70,17 +63,10 @@ public class CustomBlockWithForever implements IssueFinder, ScratchVisitor {
     @Override
     public Set<Issue> check(Program program) {
         Preconditions.checkNotNull(program);
-        found = false;
         count = 0;
-        actorNames = new LinkedList<>();
         this.program = program;
         program.accept(this);
-        String notes = NOTE1;
-        if (count > 0) {
-            notes = NOTE2;
-        }
         return issues;
-        // return new IssueReport(NAME, count, actorNames, notes);
     }
 
     @Override
@@ -94,22 +80,15 @@ public class CustomBlockWithForever implements IssueFinder, ScratchVisitor {
         procMap = program.getProcedureMapping().getProcedures().get(currentActor.getIdent().getName());
         calledProcedures = new ArrayList<>();
         proceduresWithForever = new ArrayList<>();
-        if (!actor.getChildren().isEmpty()) {
-            for (ASTNode child : actor.getChildren()) {
-                child.accept(this);
-            }
+        for (ASTNode child : actor.getChildren()) {
+            child.accept(this);
         }
         checkCalls();
-        if (found) {
-            found = false;
-            actorNames.add(currentActor.getIdent().getName());
-        }
     }
 
     private void checkCalls() {
         for (CallStmt calledProcedure : calledProcedures) {
             if (proceduresWithForever.contains(calledProcedure.getIdent().getName())) {
-                found = true;
                 count++;
                 issues.add(new Issue(this, currentActor, calledProcedure));
                 addBlockComment((NonDataBlockMetadata) calledProcedure.getMetadata(), currentActor, HINT_TEXT,
@@ -123,10 +102,8 @@ public class CustomBlockWithForever implements IssueFinder, ScratchVisitor {
         insideProcedure = true;
         currentProcedureName = procMap.get(node.getIdent()).getName();
 
-        if (!node.getChildren().isEmpty()) {
-            for (ASTNode child : node.getChildren()) {
-                child.accept(this);
-            }
+        for (ASTNode child : node.getChildren()) {
+            child.accept(this);
         }
         insideProcedure = false;
     }
@@ -136,25 +113,20 @@ public class CustomBlockWithForever implements IssueFinder, ScratchVisitor {
         if (insideProcedure) {
             proceduresWithForever.add(currentProcedureName);
         }
-        if (!node.getChildren().isEmpty()) {
-            for (ASTNode child : node.getChildren()) {
-                child.accept(this);
-            }
+        for (ASTNode child : node.getChildren()) {
+            child.accept(this);
         }
     }
 
     @Override
     public void visit(StmtList node) {
-        List<Stmt> stmts = node.getStmts();
-        for (int i = 0; i < stmts.size() - 1; i++) {
-            if (stmts.get(i) instanceof CallStmt) {
-                calledProcedures.add((CallStmt) stmts.get(i));
+        for(Stmt stmt : node.getStmts()) {
+            if(stmt instanceof CallStmt) {
+                calledProcedures.add((CallStmt)stmt);
             }
         }
-        if (!node.getChildren().isEmpty()) {
-            for (ASTNode child : node.getChildren()) {
-                child.accept(this);
-            }
+        for (ASTNode child : node.getChildren()) {
+            child.accept(this);
         }
     }
 }

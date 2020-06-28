@@ -23,7 +23,6 @@ import static de.uni_passau.fim.se2.litterbox.analytics.CommentAdder.addLooseCom
 
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueReport;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
@@ -33,8 +32,6 @@ import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import java.util.LinkedHashSet;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -48,11 +45,7 @@ public class NoWorkingScripts implements IssueFinder, ScratchVisitor {
     public static final String NAME = "no_working_scripts";
     public static final String SHORT_NAME = "noWorkScript";
     public static final String HINT_TEXT = "no working scripts";
-    private static final String NOTE1 = "There are no sprites with only empty scripts and simultaneously dead code in" +
-            " your project.";
-    private static final String NOTE2 = "Some of the sprites contain only empty scripts and simultaneously dead code.";
     private int count = 0;
-    private List<String> actorNames = new LinkedList<>();
     private ActorDefinition currentActor;
     private boolean stillFullfilledEmptyScript = false;
     private boolean deadCodeFound = false;
@@ -63,15 +56,8 @@ public class NoWorkingScripts implements IssueFinder, ScratchVisitor {
     public Set<Issue> check(Program program) {
         Preconditions.checkNotNull(program);
         count = 0;
-        actorNames = new LinkedList<>();
-
         program.accept(this);
-        String notes = NOTE1;
-        if (count > 0) {
-            notes = NOTE2;
-        }
         return issues;
-        // return new IssueReport(NAME, count, actorNames, notes);
     }
 
     @Override
@@ -85,14 +71,11 @@ public class NoWorkingScripts implements IssueFinder, ScratchVisitor {
         stillFullfilledEmptyScript = true;
         deadCodeFound = false;
         foundEvent = false;
-        if (!actor.getChildren().isEmpty()) {
-            for (ASTNode child : actor.getChildren()) {
-                child.accept(this);
-            }
+        for (ASTNode child : actor.getChildren()) {
+            child.accept(this);
         }
 
         if (deadCodeFound && stillFullfilledEmptyScript && foundEvent) {
-            actorNames.add(currentActor.getIdent().getName());
             count++;
             issues.add(new Issue(this, currentActor, actor));
             addLooseComment(currentActor, HINT_TEXT, SHORT_NAME + count);

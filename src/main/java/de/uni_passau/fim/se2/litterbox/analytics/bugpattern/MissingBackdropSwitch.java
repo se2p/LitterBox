@@ -23,7 +23,6 @@ import static de.uni_passau.fim.se2.litterbox.analytics.CommentAdder.addBlockCom
 
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueReport;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
@@ -96,7 +95,6 @@ public class MissingBackdropSwitch implements IssueFinder, ScratchVisitor {
         nonSyncedPairs.forEach(p -> actorNames.add(p.getFst()));
 
         return issues;
-        // return new IssueReport(NAME, nonSyncedPairs.size(), new LinkedList<>(actorNames), "");
     }
 
     @Override
@@ -107,10 +105,8 @@ public class MissingBackdropSwitch implements IssueFinder, ScratchVisitor {
     @Override
     public void visit(ActorDefinition actor) {
         currentActor = actor;
-        if (!actor.getChildren().isEmpty()) {
-            for (ASTNode child : actor.getChildren()) {
-                child.accept(this);
-            }
+        for (ASTNode child : actor.getChildren()) {
+            child.accept(this);
         }
     }
 
@@ -143,27 +139,28 @@ public class MissingBackdropSwitch implements IssueFinder, ScratchVisitor {
     @Override
     public void visit(SwitchBackdropAndWait node) {
         if (!addComment) {
-        final String actorName = currentActor.getIdent().getName();
-        final ElementChoice msgName = node.getElementChoice();
-        if (msgName instanceof Next || msgName instanceof Prev || msgName instanceof Random) {
-            nextRandPrev = true;
-        } else if (msgName instanceof WithExpr) {
-            if (((WithExpr) msgName).getExpression() instanceof StringLiteral) {
-                switched.add(new Pair<>(actorName, ((StringLiteral) ((WithExpr) msgName).getExpression()).getText()));
-            }
-            if (((WithExpr) msgName).getExpression() instanceof StrId) {
-                switched.add(new Pair<>(actorName, ((StrId) ((WithExpr) msgName).getExpression()).getName()));
-            }
-            if (((WithExpr) msgName).getExpression() instanceof AsString) {
-                AsString expr = (AsString) ((WithExpr) msgName).getExpression();
-                if (expr.getOperand1() instanceof StrId) {
-                    switched.add(new Pair<>(actorName, ((StrId) expr.getOperand1()).getName()));
+            final String actorName = currentActor.getIdent().getName();
+            final ElementChoice msgName = node.getElementChoice();
+            if (msgName instanceof Next || msgName instanceof Prev || msgName instanceof Random) {
+                nextRandPrev = true;
+            } else if (msgName instanceof WithExpr) {
+                if (((WithExpr) msgName).getExpression() instanceof StringLiteral) {
+                    switched.add(new Pair<>(actorName, ((StringLiteral) ((WithExpr) msgName).getExpression()).getText()));
                 }
-                if (expr.getOperand1() instanceof StringLiteral) {
-                    switched.add(new Pair<>(actorName, ((StringLiteral) expr.getOperand1()).getText()));
+                if (((WithExpr) msgName).getExpression() instanceof StrId) {
+                    switched.add(new Pair<>(actorName, ((StrId) ((WithExpr) msgName).getExpression()).getName()));
+                }
+                if (((WithExpr) msgName).getExpression() instanceof AsString) {
+                    AsString expr = (AsString) ((WithExpr) msgName).getExpression();
+                    if (expr.getOperand1() instanceof StrId) {
+                        switched.add(new Pair<>(actorName, ((StrId) expr.getOperand1()).getName()));
+                    }
+                    if (expr.getOperand1() instanceof StringLiteral) {
+                        switched.add(new Pair<>(actorName, ((StringLiteral) expr.getOperand1()).getText()));
+                    }
                 }
             }
-        }}
+        }
     }
 
     @Override
@@ -189,10 +186,8 @@ public class MissingBackdropSwitch implements IssueFinder, ScratchVisitor {
                 issues.add(new Issue(this, currentActor, node));
             }
         }
-        if (!node.getChildren().isEmpty()) {
-            for (ASTNode child : node.getChildren()) {
-                child.accept(this);
-            }
+        for (ASTNode child : node.getChildren()) {
+            child.accept(this);
         }
     }
 }

@@ -23,7 +23,6 @@ import static de.uni_passau.fim.se2.litterbox.analytics.CommentAdder.addBlockCom
 
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueReport;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
@@ -49,15 +48,12 @@ public class AmbiguousParameterNameStrict implements IssueFinder, ScratchVisitor
     public static final String NAME = "ambiguous_parameter_name_strict";
     public static final String SHORT_NAME = "ambParamNameStrct";
     public static final String HINT_TEXT = "ambiguous parameter name strict";
-    private static final String NOTE1 = "There are no ambiguous parameter names in your project.";
-    private static final String NOTE2 = "Some of the procedures contain ambiguous parameter names.";
     private boolean inStmtList = false;
     private boolean found = false;
     private boolean used = false;
     private int count = 0;
     private Set<Issue> issues = new LinkedHashSet<>();
     private LinkedList<String> paraNames = new LinkedList<>();
-    private List<String> actorNames = new LinkedList<>();
     private ActorDefinition currentActor;
 
     private Map<LocalIdentifier, ProcedureInfo> procMap;
@@ -69,29 +65,20 @@ public class AmbiguousParameterNameStrict implements IssueFinder, ScratchVisitor
         this.program = program;
         found = false;
         count = 0;
-        actorNames = new LinkedList<>();
         program.accept(this);
-        String notes = NOTE1;
-        if (count > 0) {
-            notes = NOTE2;
-        }
         return issues;
-        // return new IssueReport(NAME, count, actorNames, notes);
     }
 
     @Override
     public void visit(ActorDefinition actor) {
         currentActor = actor;
         procMap = program.getProcedureMapping().getProcedures().get(currentActor.getIdent().getName());
-        if (!actor.getChildren().isEmpty()) {
-            for (ASTNode child : actor.getChildren()) {
-                child.accept(this);
-            }
+        for (ASTNode child : actor.getChildren()) {
+            child.accept(this);
         }
 
         if (found) {
             found = false;
-            actorNames.add(currentActor.getIdent().getName());
         }
     }
 
@@ -128,10 +115,8 @@ public class AmbiguousParameterNameStrict implements IssueFinder, ScratchVisitor
             checkArguments(procMap.get(node.getIdent()).getArguments());
         }
 
-        if (!node.getChildren().isEmpty()) {
-            for (ASTNode child : node.getChildren()) {
-                child.accept(this);
-            }
+        for (ASTNode child : node.getChildren()) {
+            child.accept(this);
         }
 
         if (used) {
@@ -141,6 +126,7 @@ public class AmbiguousParameterNameStrict implements IssueFinder, ScratchVisitor
                     SHORT_NAME + count);
         }
 
+        // TODO: This handling with used/found seems really error prone
         used = false;
         found = false;
         paraNames.clear();
@@ -152,10 +138,8 @@ public class AmbiguousParameterNameStrict implements IssueFinder, ScratchVisitor
             used = true;
         }
 
-        if (!node.getChildren().isEmpty()) {
-            for (ASTNode child : node.getChildren()) {
-                child.accept(this);
-            }
+        for (ASTNode child : node.getChildren()) {
+            child.accept(this);
         }
     }
 

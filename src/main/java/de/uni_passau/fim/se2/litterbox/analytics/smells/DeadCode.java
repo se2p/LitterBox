@@ -20,7 +20,6 @@ package de.uni_passau.fim.se2.litterbox.analytics.smells;
 
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueReport;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
@@ -30,8 +29,6 @@ import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import java.util.LinkedHashSet;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -41,47 +38,27 @@ public class DeadCode implements IssueFinder, ScratchVisitor {
 
     public static final String NAME = "dead_code";
     public static final String SHORT_NAME = "dcode";
-    private static final String NOTE1 = "There are no loose blocks in your project.";
-    private static final String NOTE2 = "Some of the Sprites have loose blocks!";
-    private boolean found = false;
-    private int count = 0;
     private Set<Issue> issues = new LinkedHashSet<>();
-    private List<String> actorNames = new LinkedList<>();
     private ActorDefinition currentActor;
 
     @Override
     public Set<Issue> check(Program program) {
         Preconditions.checkNotNull(program);
-        found = false;
-        count = 0;
-        actorNames = new LinkedList<>();
         program.accept(this);
-        String notes = NOTE1;
-        if (count > 0) {
-            notes = NOTE2;
-        }
         return issues;
-        // return new IssueReport(NAME, count, actorNames, notes);
     }
 
     @Override
     public void visit(ActorDefinition actor) {
         currentActor = actor;
-        if (!actor.getChildren().isEmpty()) {
-            for (ASTNode child : actor.getChildren()) {
-                child.accept(this);
-            }
-        }
-        if (found) {
-            found = false;
-            actorNames.add(actor.getIdent().getName());
+        for (ASTNode child : actor.getChildren()) {
+            child.accept(this);
         }
     }
 
     @Override
     public void visit(Script node) {
         if (node.getEvent() instanceof Never && node.getStmtList().getStmts().size() > 0) {
-            count++;
             issues.add(new Issue(this, currentActor, node));
         }
     }

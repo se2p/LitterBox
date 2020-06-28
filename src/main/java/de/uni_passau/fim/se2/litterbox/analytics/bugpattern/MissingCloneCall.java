@@ -23,7 +23,6 @@ import static de.uni_passau.fim.se2.litterbox.analytics.CommentAdder.addBlockCom
 
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueReport;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
@@ -49,8 +48,6 @@ public class MissingCloneCall implements IssueFinder, ScratchVisitor {
     public static final String NAME = "missing_clone_call";
     public static final String SHORT_NAME = "mssCloneCll";
     public static final String HINT_TEXT = "missing clone call";
-    private static final String NOTE1 = "There are no sprites with missing clone calls in your project.";
-    private static final String NOTE2 = "Some of the sprites contain missing clone calls.";
     private List<String> whenStartsAsCloneActors = new ArrayList<>();
     private List<String> clonedActors = new ArrayList<>();
     private ActorDefinition currentActor;
@@ -75,7 +72,6 @@ public class MissingCloneCall implements IssueFinder, ScratchVisitor {
         program.accept(this);
 
         return issues;
-        // return new IssueReport(NAME, uninitializingActors.size(), uninitializingActors, "");
     }
 
     @Override
@@ -86,10 +82,8 @@ public class MissingCloneCall implements IssueFinder, ScratchVisitor {
     @Override
     public void visit(ActorDefinition actor) {
         currentActor = actor;
-        if (!actor.getChildren().isEmpty()) {
-            for (ASTNode child : actor.getChildren()) {
-                child.accept(this);
-            }
+        for (ASTNode child : actor.getChildren()) {
+            child.accept(this);
         }
     }
 
@@ -114,7 +108,7 @@ public class MissingCloneCall implements IssueFinder, ScratchVisitor {
         if (node.getStmtList().getStmts().size() > 0 && node.getEvent() instanceof StartedAsClone) {
             if(!addComment) {
                 whenStartsAsCloneActors.add(currentActor.getIdent().getName());
-            }else if (notClonedActor.contains(currentActor.getIdent().getName())) {
+            } else if (notClonedActor.contains(currentActor.getIdent().getName())) {
                 StartedAsClone event= (StartedAsClone) node.getEvent();
                 addBlockComment((NonDataBlockMetadata) event.getMetadata(), currentActor, HINT_TEXT,
                         SHORT_NAME + identifierCounter);
@@ -122,10 +116,8 @@ public class MissingCloneCall implements IssueFinder, ScratchVisitor {
                 issues.add(new Issue(this, currentActor, node));
             }
         }
-        if (!node.getChildren().isEmpty()) {
-            for (ASTNode child : node.getChildren()) {
-                child.accept(this);
-            }
+        for (ASTNode child : node.getChildren()) {
+            child.accept(this);
         }
     }
 }

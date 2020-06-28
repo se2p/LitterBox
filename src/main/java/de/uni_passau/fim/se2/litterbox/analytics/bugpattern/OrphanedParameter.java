@@ -23,7 +23,6 @@ import static de.uni_passau.fim.se2.litterbox.analytics.CommentAdder.addBlockCom
 
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueReport;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
@@ -35,7 +34,6 @@ import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import java.util.LinkedHashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -50,11 +48,7 @@ public class OrphanedParameter implements IssueFinder, ScratchVisitor {
     public static final String NAME = "orphaned_parameter";
     public static final String SHORT_NAME = "orphParam";
     public static final String HINT_TEXT = "orphaned parameter";
-    private static final String NOTE1 = "There are no orphaned parameters in your project.";
-    private static final String NOTE2 = "Some of the procedures contain orphaned parameters.";
-    private boolean found = false;
     private int count = 0;
-    private List<String> actorNames = new LinkedList<>();
     private ActorDefinition currentActor;
     private List<ParameterDefinition> currentParameterDefinitions;
     private boolean insideProcedure;
@@ -63,16 +57,9 @@ public class OrphanedParameter implements IssueFinder, ScratchVisitor {
     @Override
     public Set<Issue> check(Program program) {
         Preconditions.checkNotNull(program);
-        found = false;
         count = 0;
-        actorNames = new LinkedList<>();
         program.accept(this);
-        String notes = NOTE1;
-        if (count > 0) {
-            notes = NOTE2;
-        }
         return issues;
-        // return new IssueReport(NAME, count, actorNames, notes);
     }
 
     @Override
@@ -83,15 +70,8 @@ public class OrphanedParameter implements IssueFinder, ScratchVisitor {
     @Override
     public void visit(ActorDefinition actor) {
         currentActor = actor;
-        if (!actor.getChildren().isEmpty()) {
-            for (ASTNode child : actor.getChildren()) {
-                child.accept(this);
-            }
-        }
-
-        if (found) {
-            found = false;
-            actorNames.add(currentActor.getIdent().getName());
+        for (ASTNode child : actor.getChildren()) {
+            child.accept(this);
         }
     }
 
@@ -99,10 +79,8 @@ public class OrphanedParameter implements IssueFinder, ScratchVisitor {
     public void visit(ProcedureDefinition node) {
         insideProcedure = true;
         currentParameterDefinitions = node.getParameterDefinitionList().getParameterDefinitions();
-        if (!node.getChildren().isEmpty()) {
-            for (ASTNode child : node.getChildren()) {
-                child.accept(this);
-            }
+        for (ASTNode child : node.getChildren()) {
+            child.accept(this);
         }
         insideProcedure = false;
     }
@@ -112,10 +90,8 @@ public class OrphanedParameter implements IssueFinder, ScratchVisitor {
         if (insideProcedure) {
             checkParameterNames(node.getName().getName(), node);
         }
-        if (!node.getChildren().isEmpty()) {
-            for (ASTNode child : node.getChildren()) {
-                child.accept(this);
-            }
+        for (ASTNode child : node.getChildren()) {
+            child.accept(this);
         }
     }
 
@@ -128,7 +104,6 @@ public class OrphanedParameter implements IssueFinder, ScratchVisitor {
         }
         if (!validParametername) {
             count++;
-            found = true;
             issues.add(new Issue(this, currentActor, node));
             addBlockComment((NonDataBlockMetadata) node.getMetadata(), currentActor, HINT_TEXT,
                     SHORT_NAME + count);

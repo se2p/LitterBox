@@ -23,7 +23,6 @@ import static de.uni_passau.fim.se2.litterbox.analytics.CommentAdder.addBlockCom
 
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueReport;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
@@ -47,12 +46,8 @@ public class EndlessRecursion implements IssueFinder, ScratchVisitor {
     public static final String NAME = "endless_recursion";
     public static final String SHORT_NAME = "endlRec";
     public static final String HINT_TEXT = "endless recursion";
-    private static final String NOTE1 = "There are no endless recursions in your project.";
-    private static final String NOTE2 = "Some of the sprites can contain endless recursions.";
-    private boolean found = false;
     private int count = 0;
     private Set<Issue> issues = new LinkedHashSet<>();
-    private List<String> actorNames = new LinkedList<>();
     private ActorDefinition currentActor;
     private Map<LocalIdentifier, ProcedureInfo> procMap;
     private String currentProcedureName;
@@ -63,17 +58,10 @@ public class EndlessRecursion implements IssueFinder, ScratchVisitor {
     @Override
     public Set<Issue> check(Program program) {
         Preconditions.checkNotNull(program);
-        found = false;
         count = 0;
-        actorNames = new LinkedList<>();
         this.program = program;
         program.accept(this);
-        String notes = NOTE1;
-        if (count > 0) {
-            notes = NOTE2;
-        }
         return issues;
-        // return new IssueReport(NAME, count, actorNames, notes);
     }
 
     @Override
@@ -91,21 +79,14 @@ public class EndlessRecursion implements IssueFinder, ScratchVisitor {
                 child.accept(this);
             }
         }
-
-        if (found) {
-            found = false;
-            actorNames.add(currentActor.getIdent().getName());
-        }
     }
 
     @Override
     public void visit(ProcedureDefinition node) {
         insideProcedure = true;
         currentProcedureName = procMap.get(node.getIdent()).getName();
-        if (!node.getChildren().isEmpty()) {
-            for (ASTNode child : node.getChildren()) {
-                child.accept(this);
-            }
+        for (ASTNode child : node.getChildren()) {
+            child.accept(this);
         }
         insideProcedure = false;
     }
@@ -115,7 +96,6 @@ public class EndlessRecursion implements IssueFinder, ScratchVisitor {
         if (insideProcedure && loopIfCounter == 0) {
             String call = node.getIdent().getName();
             if (call.equals(currentProcedureName)) {
-                found = true;
                 count++;
                 issues.add(new Issue(this, currentActor, node));
                 addBlockComment((NonDataBlockMetadata) node.getMetadata(), currentActor, HINT_TEXT,
@@ -127,10 +107,8 @@ public class EndlessRecursion implements IssueFinder, ScratchVisitor {
     @Override
     public void visit(IfElseStmt node) {
         loopIfCounter++;
-        if (!node.getChildren().isEmpty()) {
-            for (ASTNode child : node.getChildren()) {
-                child.accept(this);
-            }
+        for (ASTNode child : node.getChildren()) {
+            child.accept(this);
         }
         loopIfCounter--;
     }
@@ -138,10 +116,8 @@ public class EndlessRecursion implements IssueFinder, ScratchVisitor {
     @Override
     public void visit(IfThenStmt node) {
         loopIfCounter++;
-        if (!node.getChildren().isEmpty()) {
-            for (ASTNode child : node.getChildren()) {
-                child.accept(this);
-            }
+        for (ASTNode child : node.getChildren()) {
+            child.accept(this);
         }
         loopIfCounter--;
     }

@@ -20,7 +20,6 @@ package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueReport;
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.cfg.ControlFlowGraph;
@@ -32,7 +31,6 @@ import de.uni_passau.fim.se2.litterbox.dataflow.DataflowAnalysisBuilder;
 import de.uni_passau.fim.se2.litterbox.dataflow.InitialDefinitionTransferFunction;
 import de.uni_passau.fim.se2.litterbox.dataflow.LivenessTransferFunction;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
-import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -74,7 +72,6 @@ public class MissingInitialization implements IssueFinder {
             }
         }
         return issues;
-        // return new IssueReport(NAME, violations, Collections.emptyList(), "");
     }
 
     @Override

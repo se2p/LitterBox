@@ -23,7 +23,6 @@ import static de.uni_passau.fim.se2.litterbox.analytics.CommentAdder.addBlockCom
 
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueReport;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
@@ -46,11 +45,7 @@ public class AmbiguousCustomBlockSignature implements IssueFinder, ScratchVisito
     public static final String NAME = "ambiguous_custom_block_signature";
     public static final String SHORT_NAME = "ambCustBlSign";
     public static final String HINT_TEXT = "ambiguous custom block signature";
-    private static final String NOTE1 = "There are no ambiguous custom block signatures in your project.";
-    private static final String NOTE2 = "Some of the custom block signatures are ambiguous.";
-    private boolean found = false;
     private int count = 0;
-    private List<String> actorNames = new LinkedList<>();
     private Set<Issue> issues = new LinkedHashSet<>();
     private ActorDefinition currentActor;
     private Map<LocalIdentifier, ProcedureInfo> procMap;
@@ -60,18 +55,8 @@ public class AmbiguousCustomBlockSignature implements IssueFinder, ScratchVisito
     public Set<Issue> check(Program program) {
         Preconditions.checkNotNull(program);
         this.program = program;
-        found = false;
-        count = 0;
-        actorNames = new LinkedList<>();
         program.accept(this);
-
-        // TODO: Remove
-        String notes = NOTE1;
-        if (count > 0) {
-            notes = NOTE2;
-        }
         return issues;
-        // return new IssueReport(NAME, count, actorNames, notes);
     }
 
     @Override
@@ -83,42 +68,30 @@ public class AmbiguousCustomBlockSignature implements IssueFinder, ScratchVisito
                 child.accept(this);
             }
         }
-
-        // TODO: Remove
-        if (found) {
-            found = false;
-            actorNames.add(currentActor.getIdent().getName());
-        }
     }
 
     @Override
     public void visit(ProcedureDefinition node) {
-        if (node.getStmtList().getStmts().size() > 0) {
-            int currentCount = count;
-            checkProc(node.getIdent());
-            if (currentCount < count) {
-                // TODO: Move to separate entity
-                addBlockComment((NonDataBlockMetadata) node.getMetadata().getDefinition(), currentActor, HINT_TEXT,
-                        SHORT_NAME + count);
-            }
+        if (!node.getStmtList().getStmts().isEmpty()) {
+            checkProc(node);
         }
 
-        if (!node.getChildren().isEmpty()) {
-            for (ASTNode child : node.getChildren()) {
-                child.accept(this);
-            }
+        for (ASTNode child : node.getChildren()) {
+            child.accept(this);
         }
     }
 
-    private void checkProc(LocalIdentifier ident) {
+    private void checkProc(ProcedureDefinition node) {
+        LocalIdentifier ident = node.getIdent();
         List<ProcedureInfo> procedureInfos = new ArrayList<>(procMap.values());
         ProcedureInfo current = procMap.get(ident);
         for (ProcedureInfo procedureInfo : procedureInfos) {
             if (procedureInfo != current && current.getName().equals(procedureInfo.getName())
                     && current.getActorName().equals(procedureInfo.getActorName())) {
-                found = true;
                 issues.add(new Issue(this, currentActor, ident));
-                count++; // TODO: Remove
+                count++;
+                addBlockComment((NonDataBlockMetadata) node.getMetadata().getDefinition(), currentActor, HINT_TEXT,
+                        SHORT_NAME + count);
             }
         }
     }

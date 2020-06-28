@@ -23,8 +23,6 @@ import static de.uni_passau.fim.se2.litterbox.analytics.CommentAdder.addLooseCom
 
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueReport;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueTool;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ExpressionListInfo;
@@ -37,25 +35,16 @@ public class SameVariableDifferentSprite implements IssueFinder {
     public static final String NAME = "same_variable_different_sprite";
     public static final String SHORT_NAME = "sameVarDiffSprite";
     public static final String HINT_TEXT = "same_variable different sprite";
-    private static final String NOTE1 = "There are no variables with the same name in your project.";
-    private static final String NOTE2 = "Some of the variables have the same name but are in different sprites.";
-    private boolean found = false;
     private int count = 0;
     private Set<Issue> issues = new LinkedHashSet<>();
-    private List<String> actorNames = new LinkedList<>();
 
     @Override
     public Set<Issue> check(Program program) {
         Preconditions.checkNotNull(program);
-        found = false;
+        boolean found = false;
         count = 0;
-        actorNames = new LinkedList<>();
         // TODO: Fix typo in signature
         List<ActorDefinition> actorDefinitions = program.getActorDefinitionList().getDefintions();
-        String notes = NOTE1;
-        if (count > 0) {
-            notes = NOTE2;
-        }
         Map<String, VariableInfo> variableInfoMap = program.getSymbolTable().getVariables();
         ArrayList<VariableInfo> varInfos = new ArrayList<>(variableInfoMap.values());
         for (int i = 0; i < varInfos.size(); i++) {
@@ -70,7 +59,6 @@ public class SameVariableDifferentSprite implements IssueFinder {
             if (found) {
                 found = false;
                 count++;
-                actorNames.add(currentActor);
                 for (ActorDefinition actorDefinition : actorDefinitions) {
                     if (actorDefinition.getIdent().getName().equals(currentActor)) {
                         addLooseComment(actorDefinition, HINT_TEXT + " Variable " + currentName,
@@ -95,7 +83,6 @@ public class SameVariableDifferentSprite implements IssueFinder {
             if (found) {
                 found = false;
                 count++;
-                actorNames.add(currentActor);
                 for (ActorDefinition actorDefinition : actorDefinitions) {
                     if (actorDefinition.getIdent().getName().equals(currentActor)) {
                         issues.add(new Issue(this, actorDefinition, actorDefinition));
@@ -108,7 +95,6 @@ public class SameVariableDifferentSprite implements IssueFinder {
         }
 
         return issues;
-        // return new IssueReport(NAME, count, IssueTool.getOnlyUniqueActorList(actorNames), notes);
     }
 
     @Override

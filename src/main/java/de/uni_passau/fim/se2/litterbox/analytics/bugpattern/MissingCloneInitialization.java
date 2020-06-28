@@ -79,7 +79,6 @@ public class MissingCloneInitialization implements IssueFinder, ScratchVisitor {
         addComment = true;
         program.accept(this);
         return issues;
-        // return new IssueReport(NAME, uninitializingActors.size(), uninitializingActors, "");
     }
 
     @Override
@@ -90,10 +89,8 @@ public class MissingCloneInitialization implements IssueFinder, ScratchVisitor {
     @Override
     public void visit(ActorDefinition actor) {
         currentActor = actor;
-        if (!actor.getChildren().isEmpty()) {
-            for (ASTNode child : actor.getChildren()) {
-                child.accept(this);
-            }
+        for (ASTNode child : actor.getChildren()) {
+            child.accept(this);
         }
     }
 

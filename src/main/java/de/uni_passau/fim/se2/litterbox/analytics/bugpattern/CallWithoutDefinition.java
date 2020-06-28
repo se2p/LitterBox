@@ -23,7 +23,6 @@ import static de.uni_passau.fim.se2.litterbox.analytics.CommentAdder.addBlockCom
 
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueReport;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
@@ -47,11 +46,7 @@ public class CallWithoutDefinition implements IssueFinder, ScratchVisitor {
     public static final String NAME = "call_without_definition";
     public static final String SHORT_NAME = "cllWithoutDef";
     public static final String HINT_TEXT = "call without definition";
-    private static final String NOTE1 = "There are no calls without definitions in your project.";
-    private static final String NOTE2 = "Some of the sprites contain calls without definitions.";
-    private boolean found = false;
     private int count = 0;
-    private List<String> actorNames = new LinkedList<>();
     private Set<Issue> issues = new LinkedHashSet<>();
     private ActorDefinition currentActor;
     private List<String> proceduresDef;
@@ -63,16 +58,9 @@ public class CallWithoutDefinition implements IssueFinder, ScratchVisitor {
     public Set<Issue> check(Program program) {
         Preconditions.checkNotNull(program);
         this.program = program;
-        found = false;
         count = 0;
-        actorNames = new LinkedList<>();
         program.accept(this);
-        String notes = NOTE1;
-        if (count > 0) {
-            notes = NOTE2;
-        }
         return issues;
-        // return new IssueReport(NAME, count, actorNames, notes);
     }
 
     @Override
@@ -86,22 +74,16 @@ public class CallWithoutDefinition implements IssueFinder, ScratchVisitor {
         calledProcedures = new ArrayList<>();
         proceduresDef = new ArrayList<>();
         procMap = program.getProcedureMapping().getProcedures().get(currentActor.getIdent().getName());
-        if (!actor.getChildren().isEmpty()) {
-            for (ASTNode child : actor.getChildren()) {
-                child.accept(this);
-            }
+        for (ASTNode child : actor.getChildren()) {
+            child.accept(this);
         }
         checkCalls();
-        if (found) {
-            found = false;
-            actorNames.add(currentActor.getIdent().getName());
-        }
     }
 
     private void checkCalls() {
         for (CallStmt calledProcedure : calledProcedures) {
-            if (!proceduresDef.contains(calledProcedure.getIdent().getName()) && !program.getProcedureMapping().checkIfMalformated(currentActor.getIdent().getName() + calledProcedure.getIdent().getName())) {
-                found = true;
+            if (!proceduresDef.contains(calledProcedure.getIdent().getName()) &&
+                    !program.getProcedureMapping().checkIfMalformated(currentActor.getIdent().getName() + calledProcedure.getIdent().getName())) {
                 count++;
                 issues.add(new Issue(this, currentActor, calledProcedure));
                 addBlockComment((NonDataBlockMetadata) calledProcedure.getMetadata(), currentActor, HINT_TEXT,
@@ -112,23 +94,19 @@ public class CallWithoutDefinition implements IssueFinder, ScratchVisitor {
 
     @Override
     public void visit(ProcedureDefinition node) {
-
         proceduresDef.add(procMap.get(node.getIdent()).getName());
 
-        if (!node.getChildren().isEmpty()) {
-            for (ASTNode child : node.getChildren()) {
-                child.accept(this);
-            }
+        for (ASTNode child : node.getChildren()) {
+            child.accept(this);
         }
     }
 
     @Override
     public void visit(CallStmt node) {
         calledProcedures.add(node);
-        if (!node.getChildren().isEmpty()) {
-            for (ASTNode child : node.getChildren()) {
-                child.accept(this);
-            }
+
+        for (ASTNode child : node.getChildren()) {
+            child.accept(this);
         }
     }
 }

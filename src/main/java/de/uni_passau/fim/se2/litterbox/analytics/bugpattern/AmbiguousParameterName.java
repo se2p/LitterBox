@@ -23,7 +23,6 @@ import static de.uni_passau.fim.se2.litterbox.analytics.CommentAdder.addBlockCom
 
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueReport;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
@@ -44,15 +43,11 @@ import java.util.*;
  * block, it will always be evaluated as the last input to the block.
  */
 public class AmbiguousParameterName implements IssueFinder, ScratchVisitor {
-    private static final String NOTE1 = "There are no ambiguous parameter names in your project.";
-    private static final String NOTE2 = "Some of the procedures contain ambiguous parameter names.";
     public static final String NAME = "ambiguous_parameter_name";
     public static final String SHORT_NAME = "ambParamName";
     public static final String HINT_TEXT = "ambiguous parameter name";
     private Set<Issue> issues = new LinkedHashSet<>();
-    private boolean found = false;
     private int count = 0;
-    private List<String> actorNames = new LinkedList<>();
     private ActorDefinition currentActor;
 
     private Map<LocalIdentifier, ProcedureInfo> procMap;
@@ -62,18 +57,9 @@ public class AmbiguousParameterName implements IssueFinder, ScratchVisitor {
     public Set<Issue> check(Program program) {
         Preconditions.checkNotNull(program);
         this.program = program;
-        found = false;
         count = 0;
-        actorNames = new LinkedList<>();
         program.accept(this);
-        // TODO: Remove
-        String notes = NOTE1;
-        if (count > 0) {
-            notes = NOTE2;
-        }
         return issues;
-        // TODO: Remove
-        // return new IssueReport(NAME, count, actorNames, notes);
     }
 
     @Override
@@ -85,11 +71,6 @@ public class AmbiguousParameterName implements IssueFinder, ScratchVisitor {
                 child.accept(this);
             }
         }
-
-        if (found) {
-            found = false;
-            actorNames.add(currentActor.getIdent().getName());
-        }
     }
 
     private void checkArguments(ArgumentInfo[] arguments, ProcedureDefinition node) {
@@ -97,9 +78,12 @@ public class AmbiguousParameterName implements IssueFinder, ScratchVisitor {
             ArgumentInfo current = arguments[i];
             for (int j = 0; j < arguments.length; j++) {
                 if (i != j && current.getName().equals(arguments[j].getName())) {
-                    found = true;
                     issues.add(new Issue(this, currentActor, node));
                     count++;
+                    // TODO: Does this add redundant comments?
+                    addBlockComment((NonDataBlockMetadata) node.getMetadata().getDefinition(), currentActor, HINT_TEXT,
+                            SHORT_NAME + count);
+
                 }
             }
         }
@@ -108,19 +92,12 @@ public class AmbiguousParameterName implements IssueFinder, ScratchVisitor {
     @Override
     public void visit(ProcedureDefinition node) {
 
-        if (node.getStmtList().getStmts().size() > 0) {
-            int currentCount = count;
+        if (!node.getStmtList().getStmts().isEmpty()) {
             checkArguments(procMap.get(node.getIdent()).getArguments(), node);
-            if (currentCount < count) {
-                addBlockComment((NonDataBlockMetadata) node.getMetadata().getDefinition(), currentActor, HINT_TEXT,
-                        SHORT_NAME + count);
-            }
         }
 
-        if (!node.getChildren().isEmpty()) {
-            for (ASTNode child : node.getChildren()) {
-                child.accept(this);
-            }
+        for (ASTNode child : node.getChildren()) {
+            child.accept(this);
         }
     }
 

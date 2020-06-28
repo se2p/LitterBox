@@ -23,7 +23,6 @@ import static de.uni_passau.fim.se2.litterbox.analytics.CommentAdder.addBlockCom
 
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueReport;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
@@ -36,8 +35,6 @@ import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import java.util.LinkedHashSet;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -54,15 +51,8 @@ public class MissingWaitUntilCondition implements IssueFinder {
     public Set<Issue> check(Program program) {
         Preconditions.checkNotNull(program);
         CheckVisitor visitor = new CheckVisitor(this);
-
         program.accept(visitor);
-        String notes = "All 'wait until' blocks terminating correctly.";
-        if (visitor.count > 0) {
-            notes = "Some 'wait until' blocks have no condition.";
-        }
-
         return visitor.getIssues();
-        // return new IssueReport(NAME, visitor.count, visitor.actorNames, notes);
     }
 
     @Override
@@ -73,8 +63,6 @@ public class MissingWaitUntilCondition implements IssueFinder {
     private static class CheckVisitor implements ScratchVisitor {
         private ActorDefinition currentActor;
         private int count = 0;
-        private boolean patternFound = false;
-        private List<String> actorNames = new LinkedList<>();
         private Set<Issue> issues = new LinkedHashSet<>();
         private IssueFinder issueFinder;
 
@@ -85,34 +73,18 @@ public class MissingWaitUntilCondition implements IssueFinder {
         public Set<Issue> getIssues() {
             return issues;
         }
-        @Override
-        public void visit(ASTNode node) {
-            if (!node.getChildren().isEmpty()) {
-                for (ASTNode child : node.getChildren()) {
-                    child.accept(this);
-                }
-            }
-        }
 
         @Override
         public void visit(ActorDefinition actor) {
-            patternFound = false;
             currentActor = actor;
-            if (!actor.getChildren().isEmpty()) {
-                for (ASTNode child : actor.getChildren()) {
-                    child.accept(this);
-                }
-            }
-
-            if (patternFound) {
-                actorNames.add(actor.getIdent().getName());
+            for (ASTNode child : actor.getChildren()) {
+                child.accept(this);
             }
         }
 
         @Override
         public void visit(WaitUntil node) {
             if (node.getUntil() instanceof UnspecifiedBoolExpr) {
-                patternFound = true;
                 count++;
                 issues.add(new Issue(issueFinder, currentActor, node));
                 addBlockComment((NonDataBlockMetadata) node.getMetadata(), currentActor, HINT_TEXT,
@@ -123,10 +95,8 @@ public class MissingWaitUntilCondition implements IssueFinder {
         @Override
         public void visit(Script node) {
             if (!(node.getEvent() instanceof Never)) {
-                if (!node.getChildren().isEmpty()) {
-                    for (ASTNode child : node.getChildren()) {
-                        child.accept(this);
-                    }
+                for (ASTNode child : node.getChildren()) {
+                    child.accept(this);
                 }
             }
         }

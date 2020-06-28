@@ -23,7 +23,6 @@ import static de.uni_passau.fim.se2.litterbox.analytics.CommentAdder.addBlockCom
 
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueReport;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
@@ -49,12 +48,8 @@ public class IllegalParameterRefactor implements IssueFinder, ScratchVisitor {
     public static final String NAME = "illegal_parameter_refactor";
     public static final String SHORT_NAME = "illParamRefac";
     public static final String HINT_TEXT = "illegal parameter refactor";
-    private static final String NOTE1 = "There are no procedures with illegally refactored parameters in your project.";
-    private static final String NOTE2 = "Some of the sprites contain procedures with illegally refactored parameters.";
-    private boolean found = false;
     private int count = 0;
     private Set<Issue> issues = new LinkedHashSet<>();
-    private List<String> actorNames = new LinkedList<>();
     private ActorDefinition currentActor;
     private Map<LocalIdentifier, ProcedureInfo> procedureMap;
     private ArgumentInfo[] currentArguments;
@@ -65,16 +60,9 @@ public class IllegalParameterRefactor implements IssueFinder, ScratchVisitor {
     public Set<Issue> check(Program program) {
         Preconditions.checkNotNull(program);
         this.program = program;
-        found = false;
         count = 0;
-        actorNames = new LinkedList<>();
         program.accept(this);
-        String notes = NOTE1;
-        if (count > 0) {
-            notes = NOTE2;
-        }
         return issues;
-        // return new IssueReport(NAME, count, actorNames, notes);
     }
 
     @Override
@@ -91,21 +79,14 @@ public class IllegalParameterRefactor implements IssueFinder, ScratchVisitor {
                 child.accept(this);
             }
         }
-
-        if (found) {
-            found = false;
-            actorNames.add(currentActor.getIdent().getName());
-        }
     }
 
     @Override
     public void visit(ProcedureDefinition node) {
         insideProcedure = true;
         currentArguments = procedureMap.get(node.getIdent()).getArguments();
-        if (!node.getChildren().isEmpty()) {
-            for (ASTNode child : node.getChildren()) {
-                child.accept(this);
-            }
+        for (ASTNode child : node.getChildren()) {
+            child.accept(this);
         }
         insideProcedure = false;
     }
@@ -115,10 +96,8 @@ public class IllegalParameterRefactor implements IssueFinder, ScratchVisitor {
         if (insideProcedure) {
             checkBool(node.getBoolExpr(), node);
         }
-        if (!node.getChildren().isEmpty()) {
-            for (ASTNode child : node.getChildren()) {
-                child.accept(this);
-            }
+        for (ASTNode child : node.getChildren()) {
+            child.accept(this);
         }
     }
 
@@ -128,7 +107,6 @@ public class IllegalParameterRefactor implements IssueFinder, ScratchVisitor {
 
                 for (ArgumentInfo currentArgument : currentArguments) {
                     if (currentArgument.getName().equals(ident.getName().getName()) && !(currentArgument.getType() instanceof BooleanType)) {
-                        found = true;
                         count++;
                         issues.add(new Issue(this, currentActor, node)); // TODO: boolExpr?
                         addBlockComment((NonDataBlockMetadata) ident.getMetadata(), currentActor,
@@ -144,10 +122,8 @@ public class IllegalParameterRefactor implements IssueFinder, ScratchVisitor {
         if (insideProcedure) {
             checkBool(node.getBoolExpr(), node);
         }
-        if (!node.getChildren().isEmpty()) {
-            for (ASTNode child : node.getChildren()) {
-                child.accept(this);
-            }
+        for (ASTNode child : node.getChildren()) {
+            child.accept(this);
         }
     }
 
@@ -156,10 +132,8 @@ public class IllegalParameterRefactor implements IssueFinder, ScratchVisitor {
         if (insideProcedure) {
             checkBool(node.getUntil(), node);
         }
-        if (!node.getChildren().isEmpty()) {
-            for (ASTNode child : node.getChildren()) {
-                child.accept(this);
-            }
+        for (ASTNode child : node.getChildren()) {
+            child.accept(this);
         }
     }
 
@@ -168,10 +142,8 @@ public class IllegalParameterRefactor implements IssueFinder, ScratchVisitor {
         if (insideProcedure) {
             checkBool(node.getBoolExpr(), node);
         }
-        if (!node.getChildren().isEmpty()) {
-            for (ASTNode child : node.getChildren()) {
-                child.accept(this);
-            }
+        for (ASTNode child : node.getChildren()) {
+            child.accept(this);
         }
     }
 
@@ -180,10 +152,8 @@ public class IllegalParameterRefactor implements IssueFinder, ScratchVisitor {
         if (insideProcedure) {
             checkBool(node.getOperand1(), node);
         }
-        if (!node.getChildren().isEmpty()) {
-            for (ASTNode child : node.getChildren()) {
-                child.accept(this);
-            }
+        for (ASTNode child : node.getChildren()) {
+            child.accept(this);
         }
     }
 
@@ -193,10 +163,8 @@ public class IllegalParameterRefactor implements IssueFinder, ScratchVisitor {
             checkBool(node.getOperand1(), node);
             checkBool(node.getOperand2(), node);
         }
-        if (!node.getChildren().isEmpty()) {
-            for (ASTNode child : node.getChildren()) {
-                child.accept(this);
-            }
+        for (ASTNode child : node.getChildren()) {
+            child.accept(this);
         }
     }
 
@@ -206,10 +174,8 @@ public class IllegalParameterRefactor implements IssueFinder, ScratchVisitor {
             checkBool(node.getOperand1(), node);
             checkBool(node.getOperand2(), node);
         }
-        if (!node.getChildren().isEmpty()) {
-            for (ASTNode child : node.getChildren()) {
-                child.accept(this);
-            }
+        for (ASTNode child : node.getChildren()) {
+            child.accept(this);
         }
     }
 }

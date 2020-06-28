@@ -88,7 +88,6 @@ public class MessageNeverSent implements IssueFinder, ScratchVisitor {
         nonSyncedPairs.forEach(p -> actorNames.add(p.getFst()));
 
         return issues;
-        // return new IssueReport(NAME, nonSyncedPairs.size(), new LinkedList<>(actorNames), "");
     }
 
     @Override
@@ -99,10 +98,8 @@ public class MessageNeverSent implements IssueFinder, ScratchVisitor {
     @Override
     public void visit(ActorDefinition actor) {
         currentActor = actor;
-        if (!actor.getChildren().isEmpty()) {
-            for (ASTNode child : actor.getChildren()) {
-                child.accept(this);
-            }
+        for (ASTNode child : actor.getChildren()) {
+            child.accept(this);
         }
     }
 
@@ -145,10 +142,8 @@ public class MessageNeverSent implements IssueFinder, ScratchVisitor {
                 }
             }
         }
-        if (!node.getChildren().isEmpty()) {
-            for (ASTNode child : node.getChildren()) {
-                child.accept(this);
-            }
+        for (ASTNode child : node.getChildren()) {
+            child.accept(this);
         }
     }
 }

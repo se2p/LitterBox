@@ -86,7 +86,6 @@ public class MessageNeverReceived implements IssueFinder, ScratchVisitor {
         final Set<String> actorNames = new LinkedHashSet<>();
         nonSyncedPairs.forEach(p -> actorNames.add(p.getFst()));
         return issues;
-        // return new IssueReport(NAME, nonSyncedPairs.size(), new LinkedList<>(actorNames), "");
     }
 
     @Override
@@ -97,10 +96,8 @@ public class MessageNeverReceived implements IssueFinder, ScratchVisitor {
     @Override
     public void visit(ActorDefinition actor) {
         currentActor = actor;
-        if (!actor.getChildren().isEmpty()) {
-            for (ASTNode child : actor.getChildren()) {
-                child.accept(this);
-            }
+        for (ASTNode child : actor.getChildren()) {
+            child.accept(this);
         }
     }
 

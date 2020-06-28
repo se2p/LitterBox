@@ -23,7 +23,6 @@ import static de.uni_passau.fim.se2.litterbox.analytics.CommentAdder.addBlockCom
 
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueReport;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
@@ -40,8 +39,6 @@ import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import java.util.LinkedHashSet;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -52,27 +49,16 @@ public class ExpressionAsTouchingOrColor implements IssueFinder, ScratchVisitor 
     public static final String NAME = "expression_as_touching_or_color";
     public static final String SHORT_NAME = "exprTouchColor";
     public static final String HINT_TEXT = "expression as touching or color";
-    private static final String NOTE1 = "There are no expressions used as touching or colors in your project.";
-    private static final String NOTE2 = "Some of the sprites use expressions as touching or colors.";
-    private boolean found = false;
     private int count = 0;
     private Set<Issue> issues = new LinkedHashSet<>();
-    private List<String> actorNames = new LinkedList<>();
     private ActorDefinition currentActor;
 
     @Override
     public Set<Issue> check(Program program) {
         Preconditions.checkNotNull(program);
-        found = false;
         count = 0;
-        actorNames = new LinkedList<>();
         program.accept(this);
-        String notes = NOTE1;
-        if (count > 0) {
-            notes = NOTE2;
-        }
         return issues;
-        // return new IssueReport(NAME, count, actorNames, notes);
     }
 
     @Override
@@ -83,15 +69,8 @@ public class ExpressionAsTouchingOrColor implements IssueFinder, ScratchVisitor 
     @Override
     public void visit(ActorDefinition actor) {
         currentActor = actor;
-        if (!actor.getChildren().isEmpty()) {
-            for (ASTNode child : actor.getChildren()) {
-                child.accept(this);
-            }
-        }
-
-        if (found) {
-            found = false;
-            actorNames.add(currentActor.getIdent().getName());
+        for (ASTNode child : actor.getChildren()) {
+            child.accept(this);
         }
     }
 
@@ -99,15 +78,12 @@ public class ExpressionAsTouchingOrColor implements IssueFinder, ScratchVisitor 
     public void visit(SetPenColorToColorStmt node) {
         if (!(node.getColorExpr() instanceof ColorLiteral)) {
             count++;
-            found = true;
             issues.add(new Issue(this, currentActor, node));
             addBlockComment((NonDataBlockMetadata) node.getMetadata(), currentActor, HINT_TEXT,
                     SHORT_NAME + count);
         }
-        if (!node.getChildren().isEmpty()) {
-            for (ASTNode child : node.getChildren()) {
-                child.accept(this);
-            }
+        for (ASTNode child : node.getChildren()) {
+            child.accept(this);
         }
     }
 
@@ -115,22 +91,18 @@ public class ExpressionAsTouchingOrColor implements IssueFinder, ScratchVisitor 
     public void visit(ColorTouchingColor node) {
         if (!(node.getOperand1() instanceof ColorLiteral)) {
             count++;
-            found = true;
             issues.add(new Issue(this, currentActor, node));
             addBlockComment((NonDataBlockMetadata) node.getMetadata(), currentActor, HINT_TEXT,
                     SHORT_NAME + count);
         }
         if (!(node.getOperand2() instanceof ColorLiteral)) {
             count++;
-            found = true;
             issues.add(new Issue(this, currentActor, node));
             addBlockComment((NonDataBlockMetadata) node.getMetadata(), currentActor, HINT_TEXT,
                     SHORT_NAME + count);
         }
-        if (!node.getChildren().isEmpty()) {
-            for (ASTNode child : node.getChildren()) {
-                child.accept(this);
-            }
+        for (ASTNode child : node.getChildren()) {
+            child.accept(this);
         }
     }
 
@@ -138,16 +110,13 @@ public class ExpressionAsTouchingOrColor implements IssueFinder, ScratchVisitor 
     public void visit(SpriteTouchingColor node) {
         if (!(node.getColor() instanceof ColorLiteral)) {
             count++;
-            found = true;
             issues.add(new Issue(this, currentActor, node));
             addBlockComment((NonDataBlockMetadata) node.getMetadata(), currentActor, HINT_TEXT,
                     SHORT_NAME + count);
         }
 
-        if (!node.getChildren().isEmpty()) {
-            for (ASTNode child : node.getChildren()) {
-                child.accept(this);
-            }
+        for (ASTNode child : node.getChildren()) {
+            child.accept(this);
         }
     }
 
@@ -157,7 +126,6 @@ public class ExpressionAsTouchingOrColor implements IssueFinder, ScratchVisitor 
                 && !(node.getTouchable() instanceof Edge)
                 && !(node.getTouchable() instanceof SpriteTouchable)) {
             count++;
-            found = true;
             issues.add(new Issue(this, currentActor, node));
             addBlockComment((NonDataBlockMetadata) node.getMetadata(), currentActor, HINT_TEXT,
                     SHORT_NAME + count);
