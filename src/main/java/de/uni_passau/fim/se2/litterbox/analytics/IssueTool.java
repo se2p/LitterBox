@@ -71,7 +71,7 @@ public class IssueTool {
         bugFinder.put(SameVariableDifferentSprite.SHORT_NAME, new SameVariableDifferentSprite());
         bugFinder.put(StutteringMovement.SHORT_NAME, new StutteringMovement());
 
-        //Smells
+        // Smells
         smellFinder.put(EmptyControlBody.SHORT_NAME, new EmptyControlBody());
         smellFinder.put(EmptyCustomBlock.SHORT_NAME, new EmptyCustomBlock());
         smellFinder.put(EmptyProject.SHORT_NAME, new EmptyProject());
@@ -83,7 +83,7 @@ public class IssueTool {
         smellFinder.put(UnusedVariable.SHORT_NAME, new UnusedVariable());
         smellFinder.put(UnusedCustomBlock.SHORT_NAME, new UnusedCustomBlock());
 
-        //UtilFinder
+        // Metrics
         metricAnalyzer.put(BlockCount.SHORT_NAME, new BlockCount());
         metricAnalyzer.put(SpriteCount.SHORT_NAME, new SpriteCount());
         metricAnalyzer.put(ProcedureCount.SHORT_NAME, new ProcedureCount());

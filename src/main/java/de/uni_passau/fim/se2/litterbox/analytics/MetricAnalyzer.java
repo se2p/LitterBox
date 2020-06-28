@@ -1,4 +1,4 @@
-package de.uni_passau.fim.se2.litterbox.analytics.metric;
+package de.uni_passau.fim.se2.litterbox.analytics;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 
