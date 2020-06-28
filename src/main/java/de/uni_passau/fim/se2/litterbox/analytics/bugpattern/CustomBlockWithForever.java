@@ -119,9 +119,11 @@ public class CustomBlockWithForever implements IssueFinder, ScratchVisitor {
 
     @Override
     public void visit(StmtList node) {
-        for(Stmt stmt : node.getStmts()) {
-            if(stmt instanceof CallStmt) {
-                calledProcedures.add((CallStmt)stmt);
+        List<Stmt> stmts = node.getStmts();
+        // TODO: Add note to explain why size() - 1
+        for (int i = 0; i < stmts.size() - 1; i++) {
+            if (stmts.get(i) instanceof CallStmt) {
+                calledProcedures.add((CallStmt) stmts.get(i));
             }
         }
         for (ASTNode child : node.getChildren()) {
