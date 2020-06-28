@@ -45,7 +45,7 @@ import java.util.Set;
  * Since this will lead to the same result in each execution this construct is unnecessary and can obscure the fact
  * that certain blocks will never or always be executed.
  */
-public class ComparingLiterals implements IssueFinder, ScratchVisitor {
+public class    ComparingLiterals implements IssueFinder, ScratchVisitor {
 
     public static final String NAME = "comparing_literals";
     public static final String SHORT_NAME = "compLit";

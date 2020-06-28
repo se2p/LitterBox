@@ -74,10 +74,8 @@ public class IllegalParameterRefactor implements IssueFinder, ScratchVisitor {
     public void visit(ActorDefinition actor) {
         currentActor = actor;
         procedureMap = program.getProcedureMapping().getProcedures().get(currentActor.getIdent().getName());
-        if (!actor.getChildren().isEmpty()) {
-            for (ASTNode child : actor.getChildren()) {
-                child.accept(this);
-            }
+        for (ASTNode child : actor.getChildren()) {
+            child.accept(this);
         }
     }
 

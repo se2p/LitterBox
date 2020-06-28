@@ -79,10 +79,8 @@ public class CustomBlockWithTermination implements ScratchVisitor, IssueFinder {
         calledProcedures = new ArrayList<>();
         proceduresWithForever = new ArrayList<>();
         procMap = program.getProcedureMapping().getProcedures().get(currentActor.getIdent().getName());
-        if (!actor.getChildren().isEmpty()) {
-            for (ASTNode child : actor.getChildren()) {
-                child.accept(this);
-            }
+        for (ASTNode child : actor.getChildren()) {
+            child.accept(this);
         }
         checkCalls();
     }

@@ -83,10 +83,8 @@ public class MissingPenDown implements IssueFinder {
             penUpSet = false;
             penDownSet = false;
             addComment = false;
-            if (!actor.getChildren().isEmpty()) {
-                for (ASTNode child : actor.getChildren()) {
-                    child.accept(this);
-                }
+            for (ASTNode child : actor.getChildren()) {
+                child.accept(this);
             }
 
             if (getResult()) {

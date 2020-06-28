@@ -107,10 +107,8 @@ public class MissingEraseAll implements IssueFinder {
         public void visit(PenDownStmt node) {
             if (!addComment) {
                 penDownSet = true;
-                if (!node.getChildren().isEmpty()) {
-                    for (ASTNode child : node.getChildren()) {
-                        child.accept(this);
-                    }
+                for (ASTNode child : node.getChildren()) {
+                    child.accept(this);
                 }
             } else if (getResult()) {
                 addBlockComment((NonDataBlockMetadata) node.getMetadata(), currentActor, HINT_TEXT,
@@ -122,10 +120,8 @@ public class MissingEraseAll implements IssueFinder {
         public void visit(PenClearStmt node) {
             if (!addComment) {
                 penClearSet = true;
-                if (!node.getChildren().isEmpty()) {
-                    for (ASTNode child : node.getChildren()) {
-                        child.accept(this);
-                    }
+                for (ASTNode child : node.getChildren()) {
+                    child.accept(this);
                 }
             }
         }

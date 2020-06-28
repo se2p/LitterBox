@@ -74,10 +74,8 @@ public class EndlessRecursion implements IssueFinder, ScratchVisitor {
         currentActor = actor;
         procMap = program.getProcedureMapping().getProcedures().get(currentActor.getIdent().getName());
         loopIfCounter = 0;
-        if (!actor.getChildren().isEmpty()) {
-            for (ASTNode child : actor.getChildren()) {
-                child.accept(this);
-            }
+        for (ASTNode child : actor.getChildren()) {
+            child.accept(this);
         }
     }
 

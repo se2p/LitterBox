@@ -63,10 +63,8 @@ public class AmbiguousCustomBlockSignature implements IssueFinder, ScratchVisito
     public void visit(ActorDefinition actor) {
         currentActor = actor;
         procMap = program.getProcedureMapping().getProcedures().get(currentActor.getIdent().getName());
-        if (!actor.getChildren().isEmpty()) {
-            for (ASTNode child : actor.getChildren()) {
-                child.accept(this);
-            }
+        for (ASTNode child : actor.getChildren()) {
+            child.accept(this);
         }
     }
 

@@ -101,10 +101,8 @@ public class AmbiguousParameterNameStrict implements IssueFinder, ScratchVisitor
     @Override
     public void visit(StmtList node) {
         inStmtList = true;
-        if (!node.getChildren().isEmpty()) {
-            for (ASTNode child : node.getChildren()) {
-                child.accept(this);
-            }
+        for (ASTNode child : node.getChildren()) {
+            child.accept(this);
         }
         inStmtList = false;
     }
