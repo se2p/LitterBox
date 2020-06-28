@@ -31,7 +31,7 @@ public class ActorDefinitionList extends AbstractNode {
         this.actorDefinitionList = Preconditions.checkNotNull(actorDefinitionList);
     }
 
-    public List<ActorDefinition> getDefintions() {
+    public List<ActorDefinition> getDefinitions() {
         return actorDefinitionList;
     }
 

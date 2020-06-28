@@ -93,7 +93,7 @@ public class GrammarPrintVisitor implements ScratchVisitor {
         appendIndentation();
         emitToken("program");
         program.getIdent().accept(this);
-        List<ActorDefinition> definitions = program.getActorDefinitionList().getDefintions();
+        List<ActorDefinition> definitions = program.getActorDefinitionList().getDefinitions();
         for (int i = 0; i < definitions.size(); i++) {
             definitions.get(i).accept(this);
             if (i < definitions.size() - 1) {

@@ -16,10 +16,11 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.uni_passau.fim.se2.litterbox.analytics;
+package de.uni_passau.fim.se2.litterbox.analytics.metric;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.uni_passau.fim.se2.litterbox.analytics.utils.WeightedMethodCount;
+import de.uni_passau.fim.se2.litterbox.analytics.Issue;
+import de.uni_passau.fim.se2.litterbox.analytics.metric.SpriteCount;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
@@ -31,8 +32,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-public class WeightedMethodCountTest {
-
+public class SpriteCountTest {
     private static Program empty;
     private static Program unusedProc;
     private static ObjectMapper mapper = new ObjectMapper();
@@ -42,21 +42,19 @@ public class WeightedMethodCountTest {
 
         File f = new File("./src/test/fixtures/emptyProject.json");
         empty = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
-        f = new File("./src/test/fixtures/weightedMethod.json");
+        f = new File("./src/test/fixtures/smells/unusedEmptyProcedure.json");
         unusedProc = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
     }
 
     @Test
     public void testEmptyProgram() {
-        WeightedMethodCount parameterName = new WeightedMethodCount();
-        Set<Issue> reports = parameterName.check(empty);
-        Assertions.assertEquals(0, reports.size());
+        SpriteCount parameterName = new SpriteCount();
+        Assertions.assertEquals(1, parameterName.calculateMetric(empty));
     }
 
     @Test
-    public void testMethodCount() {
-        WeightedMethodCount parameterName = new WeightedMethodCount();
-        Set<Issue> reports = parameterName.check(unusedProc);
-        Assertions.assertEquals(6, reports.size());
+    public void tesSpriteCount() {
+        SpriteCount parameterName = new SpriteCount();
+        Assertions.assertEquals(1, parameterName.calculateMetric(unusedProc));
     }
 }

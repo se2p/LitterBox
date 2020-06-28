@@ -23,7 +23,7 @@ import static de.uni_passau.fim.se2.litterbox.utils.GroupConstants.*;
 
 import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.*;
 import de.uni_passau.fim.se2.litterbox.analytics.smells.*;
-import de.uni_passau.fim.se2.litterbox.analytics.utils.*;
+import de.uni_passau.fim.se2.litterbox.analytics.metric.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
@@ -35,9 +35,9 @@ import java.util.*;
  */
 public class IssueTool {
 
-    private Map<String, IssueFinder> utilFinder = new HashMap<>();
-    private Map<String, IssueFinder> bugFinder = new HashMap<>();
-    private Map<String, IssueFinder> smellFinder = new HashMap<>();
+    private Map<String, MetricAnalyzer<?>> metricAnalyzer = new LinkedHashMap<>();
+    private Map<String, IssueFinder> bugFinder = new LinkedHashMap<>();
+    private Map<String, IssueFinder> smellFinder = new LinkedHashMap<>();
 
     public IssueTool() {
         bugFinder.put(AmbiguousCustomBlockSignature.SHORT_NAME, new AmbiguousCustomBlockSignature());
@@ -84,11 +84,11 @@ public class IssueTool {
         smellFinder.put(UnusedCustomBlock.SHORT_NAME, new UnusedCustomBlock());
 
         //UtilFinder
-        utilFinder.put(BlockCount.SHORT_NAME, new BlockCount());
-        utilFinder.put(SpriteCount.SHORT_NAME, new SpriteCount());
-        utilFinder.put(ProcedureCount.SHORT_NAME, new ProcedureCount());
-        utilFinder.put(ProgramUsingPen.SHORT_NAME, new ProgramUsingPen());
-        utilFinder.put(WeightedMethodCount.SHORT_NAME, new WeightedMethodCount());
+        metricAnalyzer.put(BlockCount.SHORT_NAME, new BlockCount());
+        metricAnalyzer.put(SpriteCount.SHORT_NAME, new SpriteCount());
+        metricAnalyzer.put(ProcedureCount.SHORT_NAME, new ProcedureCount());
+        metricAnalyzer.put(ProgramUsingPen.SHORT_NAME, new ProgramUsingPen());
+        metricAnalyzer.put(WeightedMethodCount.SHORT_NAME, new WeightedMethodCount());
 
     }
 
@@ -132,20 +132,23 @@ public class IssueTool {
 
     public Map<String, IssueFinder> getAllFinder() {
         Map<String, IssueFinder> returnMap = new HashMap<>(smellFinder);
-        returnMap.putAll(utilFinder);
+        // TODO: Handle metrics
+        // returnMap.putAll(metricAnalyzer);
         returnMap.putAll(bugFinder);
         return returnMap;
     }
 
     public Map<String, IssueFinder> getSmellFinder() {
         Map<String, IssueFinder> returnMap = new HashMap<>(smellFinder);
-        returnMap.putAll(utilFinder);
+        // TODO: Handle metrics
+        // returnMap.putAll(metricAnalyzer);
         return returnMap;
     }
 
     public Map<String, IssueFinder> getBugFinder() {
         Map<String, IssueFinder> returnMap = new HashMap<>(bugFinder);
-        returnMap.putAll(utilFinder);
+        // TODO: Handle metrics
+        // returnMap.putAll(metricAnalyzer);
         return returnMap;
     }
 }

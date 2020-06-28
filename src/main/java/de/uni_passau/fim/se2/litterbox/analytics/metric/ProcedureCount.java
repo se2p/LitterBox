@@ -16,35 +16,26 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.uni_passau.fim.se2.litterbox.analytics.utils;
+package de.uni_passau.fim.se2.litterbox.analytics.metric;
 
-import de.uni_passau.fim.se2.litterbox.analytics.Issue;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-import java.util.Collections;
-import java.util.Set;
-
-public class ProcedureCount implements IssueFinder, ScratchVisitor {
+public class ProcedureCount implements MetricAnalyzer<Integer>, ScratchVisitor {
     public static final String NAME = "procedure_count";
     public static final String SHORT_NAME = "procCnt";
 
     private int count = 0;
 
     @Override
-    public Set<Issue> check(Program program) {
+    public Integer calculateMetric(Program program) {
         Preconditions.checkNotNull(program);
         count = 0;
         program.accept(this);
-
-        // TODO: This is not an issue.
-        return Collections.emptySet();
-
-        //return new IssueReport(NAME, count, new ArrayList<>(), "");
+        return count;
     }
 
     @Override
@@ -55,10 +46,10 @@ public class ProcedureCount implements IssueFinder, ScratchVisitor {
     @Override
     public void visit(ProcedureDefinition node) {
         count++;
-        if (!node.getChildren().isEmpty()) {
-            for (ASTNode child : node.getChildren()) {
-                child.accept(this);
-            }
+        // TODO: Can ProcedureDefinitions be defined within ProcedureDefinitions?
+        //       Otherwise this is a waste of time
+        for (ASTNode child : node.getChildren()) {
+            child.accept(this);
         }
     }
 }

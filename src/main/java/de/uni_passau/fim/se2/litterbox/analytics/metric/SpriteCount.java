@@ -16,27 +16,19 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.uni_passau.fim.se2.litterbox.analytics.utils;
+package de.uni_passau.fim.se2.litterbox.analytics.metric;
 
-import de.uni_passau.fim.se2.litterbox.analytics.Issue;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
-import java.util.Collections;
-import java.util.Set;
-
-public class SpriteCount implements ScratchVisitor, IssueFinder {
+public class SpriteCount implements MetricAnalyzer<Integer>, ScratchVisitor {
     public static final String NAME = "sprite_count";
     public static final String SHORT_NAME = "spriteCnt";
 
     @Override
-    public Set<Issue> check(Program program) {
-        int count = program.getActorDefinitionList().getDefintions().size() - 1;
-        // TODO: This is not an issue.
-        return Collections.emptySet();
-
-        // return new IssueReport(NAME, count, new ArrayList<>(), "");
+    public Integer calculateMetric(Program program) {
+        int count = program.getActorDefinitionList().getDefinitions().size() - 1;
+        return count;
     }
 
     @Override

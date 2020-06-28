@@ -59,7 +59,7 @@ class ScratchListStmtParserTest {
     public void testAddToGlobal() {
         try {
             Program program = ProgramParser.parseProgram("ListExpr", project);
-            final ActorDefinition sprite = program.getActorDefinitionList().getDefintions().get(1);
+            final ActorDefinition sprite = program.getActorDefinitionList().getDefinitions().get(1);
             final Script script = sprite.getScripts().getScriptList().get(0);
 
             final Stmt stmt = script.getStmtList().getStmts().get(0);
@@ -78,7 +78,7 @@ class ScratchListStmtParserTest {
     public void testAddToLocal() {
         try {
             Program program = ProgramParser.parseProgram("ListExpr", project);
-            final ActorDefinition sprite = program.getActorDefinitionList().getDefintions().get(1);
+            final ActorDefinition sprite = program.getActorDefinitionList().getDefinitions().get(1);
             final Script script = sprite.getScripts().getScriptList().get(1);
 
             final Stmt stmt = script.getStmtList().getStmts().get(1);
@@ -97,7 +97,7 @@ class ScratchListStmtParserTest {
     public void testInsertGlobal() {
         try {
             Program program = ProgramParser.parseProgram("ListExpr", project);
-            final ActorDefinition sprite = program.getActorDefinitionList().getDefintions().get(1);
+            final ActorDefinition sprite = program.getActorDefinitionList().getDefinitions().get(1);
             final Script script = sprite.getScripts().getScriptList().get(0);
 
             final Stmt stmt = script.getStmtList().getStmts().get(3);
@@ -117,7 +117,7 @@ class ScratchListStmtParserTest {
     public void testReplaceItem() {
         try {
             Program program = ProgramParser.parseProgram("ListExpr", project);
-            final ActorDefinition sprite = program.getActorDefinitionList().getDefintions().get(1);
+            final ActorDefinition sprite = program.getActorDefinitionList().getDefinitions().get(1);
             final Script script = sprite.getScripts().getScriptList().get(0);
 
             final Stmt stmt = script.getStmtList().getStmts().get(4);
@@ -137,7 +137,7 @@ class ScratchListStmtParserTest {
     public void testDeleteOf() {
         try {
             Program program = ProgramParser.parseProgram("ListExpr", project);
-            final ActorDefinition sprite = program.getActorDefinitionList().getDefintions().get(1);
+            final ActorDefinition sprite = program.getActorDefinitionList().getDefinitions().get(1);
             final Script script = sprite.getScripts().getScriptList().get(0);
 
             final Stmt stmt = script.getStmtList().getStmts().get(5);
@@ -156,7 +156,7 @@ class ScratchListStmtParserTest {
     public void testDeleteAll() {
         try {
             Program program = ProgramParser.parseProgram("ListExpr", project);
-            final ActorDefinition sprite = program.getActorDefinitionList().getDefintions().get(1);
+            final ActorDefinition sprite = program.getActorDefinitionList().getDefinitions().get(1);
             final Script script = sprite.getScripts().getScriptList().get(0);
 
             final Stmt stmt = script.getStmtList().getStmts().get(6);

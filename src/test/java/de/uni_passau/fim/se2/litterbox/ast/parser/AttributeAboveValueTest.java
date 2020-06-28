@@ -48,11 +48,11 @@ public class AttributeAboveValueTest {
 
     @Test
     public void testEvent() {
-        Assertions.assertTrue(project.getActorDefinitionList().getDefintions().get(1).getScripts().getScriptList().get(0).getEvent() instanceof AttributeAboveValue);
+        Assertions.assertTrue(project.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(0).getEvent() instanceof AttributeAboveValue);
         Assertions.assertEquals("loudness",
-                ((AttributeAboveValue) project.getActorDefinitionList().getDefintions().get(1).getScripts().getScriptList().get(0).getEvent()).getAttribute().getType());
-        Assertions.assertTrue(project.getActorDefinitionList().getDefintions().get(1).getScripts().getScriptList().get(1).getEvent() instanceof AttributeAboveValue);
+                ((AttributeAboveValue) project.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(0).getEvent()).getAttribute().getType());
+        Assertions.assertTrue(project.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(1).getEvent() instanceof AttributeAboveValue);
         Assertions.assertEquals("timer",
-                ((AttributeAboveValue) project.getActorDefinitionList().getDefintions().get(1).getScripts().getScriptList().get(1).getEvent()).getAttribute().getType());
+                ((AttributeAboveValue) project.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(1).getEvent()).getAttribute().getType());
     }
 }

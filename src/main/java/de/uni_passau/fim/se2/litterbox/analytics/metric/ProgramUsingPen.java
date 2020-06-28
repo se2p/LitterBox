@@ -16,25 +16,17 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.uni_passau.fim.se2.litterbox.analytics.utils;
+package de.uni_passau.fim.se2.litterbox.analytics.metric;
 
-import de.uni_passau.fim.se2.litterbox.analytics.Issue;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.pen.*;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
-
-public class ProgramUsingPen implements IssueFinder, ScratchVisitor {
+public class ProgramUsingPen implements MetricAnalyzer<Integer>, ScratchVisitor {
     public static final String NAME = "using_pen";
     public static final String SHORT_NAME = "usingPen";
     private boolean found = false;
-    private List<String> actorNames = new LinkedList<>();
 
     @Override
     public String getName() {
@@ -42,19 +34,11 @@ public class ProgramUsingPen implements IssueFinder, ScratchVisitor {
     }
 
     @Override
-    public Set<Issue> check(Program program) {
+    public Integer calculateMetric(Program program) {
         Preconditions.checkNotNull(program);
         found = false;
-        actorNames = new LinkedList<>();
         program.accept(this);
-        int count = 0;
-        if (found) {
-            count = 1;
-        }
-        // TODO: This is not an issue.
-        return Collections.emptySet();
-
-        // return new IssueReport(NAME, count, actorNames, "");
+        return found ? 1 : 0;
     }
 
     @Override

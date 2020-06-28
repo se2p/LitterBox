@@ -62,7 +62,7 @@ public class ProcDefinitionParserTest {
     public void testNoInputTest() {
         try {
             Program program = ProgramParser.parseProgram("CustomBlockTest", project);
-            final List<ActorDefinition> defintions = program.getActorDefinitionList().getDefintions();
+            final List<ActorDefinition> defintions = program.getActorDefinitionList().getDefinitions();
             final List<ProcedureDefinition> list = defintions.get(1).getProcedureDefinitionList().getList();
             final String actorName = defintions.get(1).getIdent().getName();
             Truth.assertThat(list.get(0)).isInstanceOf(ProcedureDefinition.class);
@@ -82,7 +82,7 @@ public class ProcDefinitionParserTest {
     public void testInputTest() {
         try {
             Program program = ProgramParser.parseProgram("CustomBlockTest", project);
-            final List<ActorDefinition> defintions = program.getActorDefinitionList().getDefintions();
+            final List<ActorDefinition> defintions = program.getActorDefinitionList().getDefinitions();
             final List<ProcedureDefinition> list = defintions.get(1).getProcedureDefinitionList().getList();
             final String actorName = defintions.get(1).getIdent().getName();
 

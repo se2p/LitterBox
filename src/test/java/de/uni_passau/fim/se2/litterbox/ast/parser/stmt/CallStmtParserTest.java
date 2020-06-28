@@ -65,7 +65,7 @@ class CallStmtParserTest {
         try {
             Program program = ProgramParser.parseProgram("CommonStmts", project);
             ActorDefinitionList actorDefinitionList = program.getActorDefinitionList();
-            for (ActorDefinition definition : actorDefinitionList.getDefintions()) {
+            for (ActorDefinition definition : actorDefinitionList.getDefinitions()) {
                 if (definition.getActorType().equals(ActorType.SPRITE)) {
                     List<Script> scriptList = definition.getScripts().getScriptList();
                     Script script = scriptList.get(0);

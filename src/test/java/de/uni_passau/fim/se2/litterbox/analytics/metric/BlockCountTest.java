@@ -16,10 +16,11 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.uni_passau.fim.se2.litterbox.analytics;
+package de.uni_passau.fim.se2.litterbox.analytics.metric;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.uni_passau.fim.se2.litterbox.analytics.utils.BlockCount;
+import de.uni_passau.fim.se2.litterbox.analytics.Issue;
+import de.uni_passau.fim.se2.litterbox.analytics.metric.BlockCount;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
@@ -63,49 +64,42 @@ public class BlockCountTest {
     @Test
     public void testEmptyProgram() {
         BlockCount parameterName = new BlockCount();
-        Set<Issue> reports = parameterName.check(empty);
-        Assertions.assertEquals(0, reports.size());
+        Assertions.assertEquals(0, parameterName.calculateMetric(empty));
     }
 
     @Test
     public void testBlockCountNested() {
         BlockCount parameterName = new BlockCount();
-        Set<Issue> reports = parameterName.check(nestedLoops);
-        Assertions.assertEquals(14, reports.size());
+        Assertions.assertEquals(14, parameterName.calculateMetric(nestedLoops));
     }
 
     @Test
     public void testBlockproc() {
         BlockCount parameterName = new BlockCount();
-        Set<Issue> reports = parameterName.check(withproc);
-        Assertions.assertEquals(18, reports.size());
+        Assertions.assertEquals(18, parameterName.calculateMetric(withproc));
     }
 
     @Test
     public void testFixedStatements() {
         BlockCount parameterName = new BlockCount();
-        Set<Issue> reports = parameterName.check(fixedStatements);
-        Assertions.assertEquals(26, reports.size());
+        Assertions.assertEquals(26, parameterName.calculateMetric(fixedStatements));
     }
 
     @Test
     public void testFixedExpr() {
         BlockCount parameterName = new BlockCount();
-        Set<Issue> reports = parameterName.check(fixedExpressions);
-        Assertions.assertEquals(4, reports.size());
+        Assertions.assertEquals(4, parameterName.calculateMetric(fixedExpressions));
     }
 
     @Test
     public void testOnlyVariable() {
         BlockCount parameterName = new BlockCount();
-        Set<Issue> reports = parameterName.check(onlyVariable);
-        Assertions.assertEquals(1, reports.size());
+        Assertions.assertEquals(1, parameterName.calculateMetric(onlyVariable));
     }
 
     @Test
     public void testHalfFixedExpr() {
         BlockCount parameterName = new BlockCount();
-        Set<Issue> reports = parameterName.check(halfFixedExpr);
-        Assertions.assertEquals(5, reports.size()); //TODO does an empty string have to be an UnspecifiedExpr?
+        Assertions.assertEquals(5, parameterName.calculateMetric(halfFixedExpr)); //TODO does an empty string have to be an UnspecifiedExpr?
     }
 }

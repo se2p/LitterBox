@@ -65,7 +65,7 @@ public class CommonStmtParserTest {
         try {
             Program program = ProgramParser.parseProgram("CommonStmts", project);
             ActorDefinitionList list = program.getActorDefinitionList();
-            Truth.assertThat(list.getDefintions().size()).isEqualTo(2);
+            Truth.assertThat(list.getDefinitions().size()).isEqualTo(2);
         } catch (ParsingException e) {
             e.printStackTrace();
             fail();
@@ -77,7 +77,7 @@ public class CommonStmtParserTest {
         try {
             Program program = ProgramParser.parseProgram("CommonStmts", project);
             ActorDefinitionList list = program.getActorDefinitionList();
-            ActorDefinition sprite = list.getDefintions().get(1);
+            ActorDefinition sprite = list.getDefinitions().get(1);
 
             Script script = sprite.getScripts().getScriptList().get(0);
             List<Stmt> listOfStmt = script.getStmtList().getStmts();

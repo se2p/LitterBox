@@ -73,7 +73,7 @@ public class ProgramParserTest {
             Truth.assertThat(program.getChildren().get(1)).isInstanceOf(ActorDefinitionList.class);
 
             ActorDefinitionList list = program.getActorDefinitionList();
-            Truth.assertThat(list.getDefintions().size()).isEqualTo(2);
+            Truth.assertThat(list.getDefinitions().size()).isEqualTo(2);
         } catch (ParsingException e) {
             e.printStackTrace();
             fail();
@@ -84,7 +84,7 @@ public class ProgramParserTest {
     public void testSetStmts() {
         try {
             Program program = ProgramParser.parseProgram("Empty", project);
-            ActorDefinition stage = program.getActorDefinitionList().getDefintions().get(0);
+            ActorDefinition stage = program.getActorDefinitionList().getDefinitions().get(0);
             SetStmtList setStmtList = stage.getSetStmtList();
             List<SetStmt> stmts = setStmtList.getStmts();
             SetAttributeTo setAttr = (SetAttributeTo) stmts.get(0);
@@ -116,7 +116,7 @@ public class ProgramParserTest {
     public void testVariable() {
         try {
             Program program = ProgramParser.parseProgram("Empty", project);
-            ActorDefinition stage = program.getActorDefinitionList().getDefintions().get(0);
+            ActorDefinition stage = program.getActorDefinitionList().getDefinitions().get(0);
             List<DeclarationStmt> decls = stage.getDecls().getDeclarationStmtList();
             Assertions.assertTrue(((DeclarationIdentAsTypeStmt) decls.get(0)).getIdent() instanceof Variable);
             Truth.assertThat(((DeclarationIdentAsTypeStmt) decls.get(0)).getIdent()
@@ -130,7 +130,7 @@ public class ProgramParserTest {
                     "variable");
             Truth.assertThat(((NumberLiteral) setStmt.getExpr()).getValue()).isEqualTo(0);
 
-            ActorDefinition sprite = program.getActorDefinitionList().getDefintions().get(1);
+            ActorDefinition sprite = program.getActorDefinitionList().getDefinitions().get(1);
             List<SetStmt> spriteSetStmts = sprite.getSetStmtList().getStmts().stream()
                     .filter(t -> t instanceof SetVariableTo).collect(
                             Collectors.toList());
