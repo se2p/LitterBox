@@ -18,15 +18,11 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
-import static de.uni_passau.fim.se2.litterbox.analytics.CommentAdder.addBlockComment;
-
-
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatTimesStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
@@ -85,9 +81,8 @@ public class ForeverInsideLoop implements IssueFinder, ScratchVisitor {
     public void visit(RepeatForeverStmt node) {
         if (loopcounter > 0) {
             count++;
-            issues.add(new Issue(this, currentActor, node));
-            addBlockComment((NonDataBlockMetadata) node.getMetadata(), currentActor, HINT_TEXT,
-                    SHORT_NAME + count);
+            issues.add(new Issue(this, currentActor, node,
+                    HINT_TEXT, SHORT_NAME + count, node.getMetadata()));
         }
         loopcounter++;
         for (ASTNode child : node.getChildren()) {

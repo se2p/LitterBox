@@ -18,9 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
-import static de.uni_passau.fim.se2.litterbox.analytics.CommentAdder.addBlockComment;
-
-
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
@@ -28,7 +25,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.KeyPressed;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.ChangeXBy;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.ChangeYBy;
@@ -84,10 +80,9 @@ public class StutteringMovement implements IssueFinder, ScratchVisitor {
                 Stmt stmt = listOfStmt.get(0);
                 if (stmt instanceof MoveSteps || stmt instanceof ChangeXBy || stmt instanceof ChangeYBy) {
                     count++;
-                    issues.add(new Issue(this, currentActor, script));
                     KeyPressed keyPressed = (KeyPressed) script.getEvent();
-                    addBlockComment((NonDataBlockMetadata) keyPressed.getMetadata(), currentActor, HINT_TEXT,
-                            SHORT_NAME + count);
+                    issues.add(new Issue(this, currentActor, script,
+                            HINT_TEXT, SHORT_NAME + count, keyPressed.getMetadata()));
                 }
             }
         }

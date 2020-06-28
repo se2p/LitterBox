@@ -68,7 +68,8 @@ public class MissingInitialization implements IssueFinder {
                     .noneMatch(d -> d.getDefinitionSource().getScriptOrProcedure() != use.getUseTarget().getScriptOrProcedure())) {
                 violations++;
                 // TODO: Fix cast!
-                issues.add(new Issue(this, use.getUseTarget().getActor(), (AbstractNode) use.getUseTarget().getASTNode()));
+                issues.add(new Issue(this, use.getUseTarget().getActor(), (AbstractNode) use.getUseTarget().getASTNode(),
+                        "TODO -- hint text", SHORT_NAME + violations, null)); // TODO: What is the relevant metadata?
             }
         }
         return issues;

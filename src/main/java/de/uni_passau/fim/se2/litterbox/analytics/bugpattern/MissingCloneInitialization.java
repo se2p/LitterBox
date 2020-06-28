@@ -18,9 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
-import static de.uni_passau.fim.se2.litterbox.analytics.CommentAdder.addBlockComment;
-
-
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
@@ -31,7 +28,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.event.StartedAsClone;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.CloneOfMetadata;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.CreateCloneOf;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
@@ -104,10 +100,9 @@ public class MissingCloneInitialization implements IssueFinder, ScratchVisitor {
                     clonedActors.add(spriteName);
                 }
             } else if (notClonedActor.contains(spriteName)) {
-                addBlockComment((NonDataBlockMetadata) ((CloneOfMetadata) node.getMetadata()).getCloneBlockMetadata(), currentActor, HINT_TEXT,
-                        SHORT_NAME + identifierCounter);
+                issues.add(new Issue(this, currentActor, node, // TODO: Is this the right block?
+                        HINT_TEXT, SHORT_NAME + identifierCounter, ((CloneOfMetadata) node.getMetadata()).getCloneBlockMetadata()));
                 identifierCounter++;
-                issues.add(new Issue(this, currentActor, node));
             }
         }
     }

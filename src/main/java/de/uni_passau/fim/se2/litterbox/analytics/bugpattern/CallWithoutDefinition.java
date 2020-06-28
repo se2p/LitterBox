@@ -18,16 +18,12 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
-import static de.uni_passau.fim.se2.litterbox.analytics.CommentAdder.addBlockComment;
-
-
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ProcedureInfo;
@@ -85,9 +81,8 @@ public class CallWithoutDefinition implements IssueFinder, ScratchVisitor {
             if (!proceduresDef.contains(calledProcedure.getIdent().getName()) &&
                     !program.getProcedureMapping().checkIfMalformated(currentActor.getIdent().getName() + calledProcedure.getIdent().getName())) {
                 count++;
-                issues.add(new Issue(this, currentActor, calledProcedure));
-                addBlockComment((NonDataBlockMetadata) calledProcedure.getMetadata(), currentActor, HINT_TEXT,
-                        SHORT_NAME + count);
+                issues.add(new Issue(this, currentActor, calledProcedure,
+                        HINT_TEXT, SHORT_NAME + count, calledProcedure.getMetadata()));
             }
         }
     }

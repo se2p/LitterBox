@@ -18,9 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
-import static de.uni_passau.fim.se2.litterbox.analytics.CommentAdder.addBlockComment;
-
-
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
@@ -33,7 +30,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.event.BackdropSwitchTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.NextBackdrop;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.SwitchBackdrop;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.SwitchBackdropAndWait;
@@ -179,11 +175,10 @@ public class MissingBackdropSwitch implements IssueFinder, ScratchVisitor {
             if (!addComment) {
                 final String actorName = currentActor.getIdent().getName();
                 switchReceived.add(new Pair<>(actorName, msgName));
-            }else if (notSentMessages.contains(msgName)) {
-                addBlockComment((NonDataBlockMetadata) event.getMetadata(), currentActor, HINT_TEXT,
-                        SHORT_NAME + identifierCounter);
+            } else if (notSentMessages.contains(msgName)) {
+                issues.add(new Issue(this, currentActor, node, // TODO: node or event?
+                        HINT_TEXT, SHORT_NAME + identifierCounter, event.getMetadata()));
                 identifierCounter++;
-                issues.add(new Issue(this, currentActor, node));
             }
         }
         for (ASTNode child : node.getChildren()) {

@@ -18,15 +18,11 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
-import static de.uni_passau.fim.se2.litterbox.analytics.CommentAdder.addBlockComment;
-
-
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.pen.PenDownStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.pen.PenUpStmt;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
@@ -89,9 +85,7 @@ public class MissingPenDown implements IssueFinder {
 
             if (getResult()) {
                 count++;
-                issues.add(new Issue(issueFinder, currentActor, actor));
                 addComment = true;
-                // TODO: Why visit twice?
                 for (ASTNode child : actor.getChildren()) {
                     child.accept(this);
                 }
@@ -117,8 +111,8 @@ public class MissingPenDown implements IssueFinder {
                     child.accept(this);
                 }
             } else if(getResult()){
-                addBlockComment((NonDataBlockMetadata) node.getMetadata(), currentActor, HINT_TEXT,
-                        SHORT_NAME + count);
+                issues.add(new Issue(issueFinder, currentActor, node,
+                        HINT_TEXT, SHORT_NAME + count, node.getMetadata()));
             }
         }
 

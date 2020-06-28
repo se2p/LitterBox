@@ -18,9 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
-import static de.uni_passau.fim.se2.litterbox.analytics.CommentAdder.addBlockComment;
-
-
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
@@ -31,7 +28,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Equals;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.LessThan;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
@@ -45,7 +41,7 @@ import java.util.Set;
  * Since this will lead to the same result in each execution this construct is unnecessary and can obscure the fact
  * that certain blocks will never or always be executed.
  */
-public class    ComparingLiterals implements IssueFinder, ScratchVisitor {
+public class ComparingLiterals implements IssueFinder, ScratchVisitor {
 
     public static final String NAME = "comparing_literals";
     public static final String SHORT_NAME = "compLit";
@@ -81,8 +77,8 @@ public class    ComparingLiterals implements IssueFinder, ScratchVisitor {
         if ((node.getOperand1() instanceof StringLiteral || node.getOperand1() instanceof NumberLiteral)
                 && (node.getOperand2() instanceof StringLiteral || node.getOperand2() instanceof NumberLiteral)) {
             count++;
-            issues.add(new Issue(this, currentActor, node));
-            addBlockComment((NonDataBlockMetadata) node.getMetadata(), currentActor, HINT_TEXT, SHORT_NAME + count);
+            issues.add(new Issue(this, currentActor, node,
+                    HINT_TEXT, SHORT_NAME + count, node.getMetadata()));
         }
         for (ASTNode child : node.getChildren()) {
             child.accept(this);
@@ -95,8 +91,8 @@ public class    ComparingLiterals implements IssueFinder, ScratchVisitor {
         if ((node.getOperand1() instanceof StringLiteral || node.getOperand1() instanceof NumberLiteral)
                 && (node.getOperand2() instanceof StringLiteral || node.getOperand2() instanceof NumberLiteral)) {
             count++;
-            issues.add(new Issue(this, currentActor, node));
-            addBlockComment((NonDataBlockMetadata) node.getMetadata(), currentActor, HINT_TEXT, SHORT_NAME + count);
+            issues.add(new Issue(this, currentActor, node,
+                    HINT_TEXT, SHORT_NAME + count, node.getMetadata()));
         }
         for (ASTNode child : node.getChildren()) {
             child.accept(this);
@@ -108,8 +104,8 @@ public class    ComparingLiterals implements IssueFinder, ScratchVisitor {
         if ((node.getOperand1() instanceof StringLiteral || node.getOperand1() instanceof NumberLiteral)
                 && (node.getOperand2() instanceof StringLiteral || node.getOperand2() instanceof NumberLiteral)) {
             count++;
-            issues.add(new Issue(this, currentActor, node));
-            addBlockComment((NonDataBlockMetadata) node.getMetadata(), currentActor, HINT_TEXT, SHORT_NAME + count);
+            issues.add(new Issue(this, currentActor, node,
+                    HINT_TEXT, SHORT_NAME + count, node.getMetadata()));
         }
         for (ASTNode child : node.getChildren()) {
             child.accept(this);

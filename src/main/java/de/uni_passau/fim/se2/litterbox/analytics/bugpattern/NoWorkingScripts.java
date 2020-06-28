@@ -18,9 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
-import static de.uni_passau.fim.se2.litterbox.analytics.CommentAdder.addLooseComment;
-
-
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
@@ -77,8 +74,8 @@ public class NoWorkingScripts implements IssueFinder, ScratchVisitor {
 
         if (deadCodeFound && stillFullfilledEmptyScript && foundEvent) {
             count++;
-            issues.add(new Issue(this, currentActor, actor));
-            addLooseComment(currentActor, HINT_TEXT, SHORT_NAME + count);
+            issues.add(new Issue(this, currentActor, actor,
+                    HINT_TEXT, SHORT_NAME + count, null)); // TODO: Null to ensure loose comment
         }
     }
 

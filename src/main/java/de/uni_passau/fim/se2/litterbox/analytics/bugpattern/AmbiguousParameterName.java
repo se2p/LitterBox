@@ -18,16 +18,12 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
-import static de.uni_passau.fim.se2.litterbox.analytics.CommentAdder.addBlockComment;
-
-
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ArgumentInfo;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ProcedureInfo;
@@ -76,12 +72,10 @@ public class AmbiguousParameterName implements IssueFinder, ScratchVisitor {
             ArgumentInfo current = arguments[i];
             for (int j = 0; j < arguments.length; j++) {
                 if (i != j && current.getName().equals(arguments[j].getName())) {
-                    issues.add(new Issue(this, currentActor, node));
-                    count++;
                     // TODO: Does this add redundant comments?
-                    addBlockComment((NonDataBlockMetadata) node.getMetadata().getDefinition(), currentActor, HINT_TEXT,
-                            SHORT_NAME + count);
-
+                    issues.add(new Issue(this, currentActor, node,
+                            HINT_TEXT, SHORT_NAME + count, node.getMetadata().getDefinition()));
+                    count++;
                 }
             }
         }

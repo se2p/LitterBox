@@ -18,9 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
-import static de.uni_passau.fim.se2.litterbox.analytics.CommentAdder.addBlockComment;
-
-
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
@@ -30,7 +27,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.StartedAsClone;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.CreateCloneOf;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
@@ -109,11 +105,10 @@ public class MissingCloneCall implements IssueFinder, ScratchVisitor {
             if(!addComment) {
                 whenStartsAsCloneActors.add(currentActor.getIdent().getName());
             } else if (notClonedActor.contains(currentActor.getIdent().getName())) {
-                StartedAsClone event= (StartedAsClone) node.getEvent();
-                addBlockComment((NonDataBlockMetadata) event.getMetadata(), currentActor, HINT_TEXT,
-                        SHORT_NAME + identifierCounter);
+                StartedAsClone event = (StartedAsClone) node.getEvent();
+                issues.add(new Issue(this, currentActor, node, // TODO: node or event?
+                        HINT_TEXT, SHORT_NAME + identifierCounter, event.getMetadata()));
                 identifierCounter++;
-                issues.add(new Issue(this, currentActor, node));
             }
         }
         for (ASTNode child : node.getChildren()) {

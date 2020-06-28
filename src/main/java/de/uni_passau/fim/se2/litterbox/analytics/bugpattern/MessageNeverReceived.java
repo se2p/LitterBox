@@ -18,9 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
-import static de.uni_passau.fim.se2.litterbox.analytics.CommentAdder.addBlockComment;
-
-
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
@@ -28,7 +25,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.ReceptionOfMessage;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.Broadcast;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.BroadcastAndWait;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
@@ -108,10 +104,9 @@ public class MessageNeverReceived implements IssueFinder, ScratchVisitor {
                 final String actorName = currentActor.getIdent().getName();
                 messageSent.add(new Pair<>(actorName, msgName));
             } else if(notReceivedMessages.contains(msgName)){
-                addBlockComment((NonDataBlockMetadata) node.getMetadata(), currentActor, HINT_TEXT,
-                        SHORT_NAME + identifierCounter);
                 identifierCounter++;
-                issues.add(new Issue(this, currentActor, node));
+                issues.add(new Issue(this, currentActor, node,
+                        HINT_TEXT, SHORT_NAME + identifierCounter, node.getMetadata()));
             }
         }
     }
@@ -124,10 +119,9 @@ public class MessageNeverReceived implements IssueFinder, ScratchVisitor {
                 final String actorName = currentActor.getIdent().getName();
                 messageSent.add(new Pair<>(actorName, msgName));
             } else if(notReceivedMessages.contains(msgName)){
-                addBlockComment((NonDataBlockMetadata) node.getMetadata(), currentActor, HINT_TEXT,
-                        SHORT_NAME + identifierCounter);
+                issues.add(new Issue(this, currentActor, node,
+                        HINT_TEXT, SHORT_NAME + identifierCounter, node.getMetadata()));
                 identifierCounter++;
-                issues.add(new Issue(this, currentActor, node));
             }
         }
     }

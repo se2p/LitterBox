@@ -18,9 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
-import static de.uni_passau.fim.se2.litterbox.analytics.CommentAdder.addBlockComment;
-
-
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
@@ -86,10 +83,8 @@ public class AmbiguousCustomBlockSignature implements IssueFinder, ScratchVisito
         for (ProcedureInfo procedureInfo : procedureInfos) {
             if (procedureInfo != current && current.getName().equals(procedureInfo.getName())
                     && current.getActorName().equals(procedureInfo.getActorName())) {
-                issues.add(new Issue(this, currentActor, ident));
+                issues.add(new Issue(this, currentActor, ident, HINT_TEXT, SHORT_NAME + count, node.getMetadata().getDefinition()));
                 count++;
-                addBlockComment((NonDataBlockMetadata) node.getMetadata().getDefinition(), currentActor, HINT_TEXT,
-                        SHORT_NAME + count);
             }
         }
     }

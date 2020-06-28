@@ -1,39 +1,40 @@
 package de.uni_passau.fim.se2.litterbox.report;
 
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
+import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.CommentMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.Metadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
 
 import java.io.IOException;
 import java.util.Collection;
-
-import static de.uni_passau.fim.se2.litterbox.analytics.CommentAdder.addBlockComment;
 
 public class CommentGenerator implements ReportGenerator {
 
     @Override
     public void generateReport(Program program, Collection<Issue> issues) throws IOException {
 
-        // Create annotated version of program
-        // For each issue, add comment(s)
-
         for(Issue issue : issues) {
-
-            ActorDefinition currentActor = null;
+            ActorDefinition currentActor = issue.getActor();
             String hintText = issue.getHint();
-//            String commentId = issue.getID();
-//            addBlockComment((NonDataBlockMetadata) node.getMetadata().getDefinition(),
-//                    currentActor,
-//                    hintText,
-//                    commentId);
+            String commentId = issue.getHintID();
+            Metadata metaData = issue.getCodeMetadata();
+            if(metaData == null) {
+                addLooseComment(currentActor, hintText, commentId);
+            } else {
+                addBlockComment((NonDataBlockMetadata) metaData,
+                        currentActor,
+                        hintText,
+                        commentId);
+            }
         }
     }
 
     public void addBlockComment(NonDataBlockMetadata metadata, ActorDefinition currentActor, String hintText,
                                        String commentId) {
-        (metadata).setCommentId(commentId);
+        metadata.setCommentId(commentId);
         CommentMetadata comment = new CommentMetadata(commentId, metadata.getBlockId(), 500, 400, 100, 100, false,
                 hintText);
         currentActor.getMetadata().addComment(comment);

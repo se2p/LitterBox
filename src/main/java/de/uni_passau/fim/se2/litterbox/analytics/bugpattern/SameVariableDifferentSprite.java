@@ -18,9 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
-import static de.uni_passau.fim.se2.litterbox.analytics.CommentAdder.addLooseComment;
-
-
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
@@ -60,9 +57,9 @@ public class SameVariableDifferentSprite implements IssueFinder {
                 count++;
                 for (ActorDefinition actorDefinition : actorDefinitions) {
                     if (actorDefinition.getIdent().getName().equals(currentActor)) {
-                        issues.add(new Issue(this, actorDefinition, actorDefinition));
-                        addLooseComment(actorDefinition, HINT_TEXT + " Variable " + currentName,
-                                SHORT_NAME + count);
+                        issues.add(new Issue(this, actorDefinition, actorDefinition,
+                                HINT_TEXT + " Variable " + currentName,
+                                SHORT_NAME + count, null)); // TODO: Improve -- null ensurese loose comment
                         break;
                     }
                 }
@@ -85,9 +82,9 @@ public class SameVariableDifferentSprite implements IssueFinder {
                 count++;
                 for (ActorDefinition actorDefinition : actorDefinitions) {
                     if (actorDefinition.getIdent().getName().equals(currentActor)) {
-                        issues.add(new Issue(this, actorDefinition, actorDefinition));
-                        addLooseComment(actorDefinition, HINT_TEXT + " List " + currentName,
-                                SHORT_NAME + count);
+                        issues.add(new Issue(this, actorDefinition, actorDefinition,
+                                HINT_TEXT + " List " + currentName,
+                                SHORT_NAME + count, null)); // TODO: Improve -- null ensurese loose comment
                         break;
                     }
                 }

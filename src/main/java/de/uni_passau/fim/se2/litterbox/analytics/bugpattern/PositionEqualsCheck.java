@@ -18,9 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
-import static de.uni_passau.fim.se2.litterbox.analytics.CommentAdder.addBlockComment;
-
-
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
@@ -32,7 +29,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AttributeOf;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.AttributeFromFixed;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.FixedAttribute;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitUntil;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfElseStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
@@ -85,9 +81,8 @@ public class PositionEqualsCheck implements IssueFinder, ScratchVisitor {
             int currentCount = count;
             checkEquals((Equals) node.getUntil());
             if (currentCount < count) {
-                issues.add(new Issue(this, currentActor, node));
-                addBlockComment((NonDataBlockMetadata) node.getMetadata(), currentActor, HINT_TEXT,
-                        SHORT_NAME + count);
+                issues.add(new Issue(this, currentActor, node,
+                        HINT_TEXT, SHORT_NAME + count, node.getMetadata()));
             }
         }
         for (ASTNode child : node.getChildren()) {
@@ -120,9 +115,8 @@ public class PositionEqualsCheck implements IssueFinder, ScratchVisitor {
             int currentCount = count;
             checkEquals((Equals) node.getBoolExpr());
             if (currentCount < count) {
-                issues.add(new Issue(this, currentActor, node));
-                addBlockComment((NonDataBlockMetadata) node.getMetadata(), currentActor, HINT_TEXT,
-                        SHORT_NAME + count);
+                issues.add(new Issue(this, currentActor, node,
+                        HINT_TEXT, SHORT_NAME + count, node.getMetadata()));
             }
         }
         for (ASTNode child : node.getChildren()) {
@@ -136,9 +130,8 @@ public class PositionEqualsCheck implements IssueFinder, ScratchVisitor {
             int currentCount = count;
             checkEquals((Equals) node.getBoolExpr());
             if (currentCount < count) {
-                issues.add(new Issue(this, currentActor, node));
-                addBlockComment((NonDataBlockMetadata) node.getMetadata(), currentActor, HINT_TEXT,
-                        SHORT_NAME + count);
+                issues.add(new Issue(this, currentActor, node,
+                        HINT_TEXT, SHORT_NAME + count, node.getMetadata()));
             }
         }
         for (ASTNode child : node.getChildren()) {
@@ -152,9 +145,8 @@ public class PositionEqualsCheck implements IssueFinder, ScratchVisitor {
             int currentCount = count;
             checkEquals((Equals) node.getBoolExpr());
             if (currentCount < count) {
-                issues.add(new Issue(this, currentActor, node));
-                addBlockComment((NonDataBlockMetadata) node.getMetadata(), currentActor, HINT_TEXT,
-                        SHORT_NAME + count);
+                issues.add(new Issue(this, currentActor, node,
+                        HINT_TEXT, SHORT_NAME + count, node.getMetadata()));
             }
         }
         for (ASTNode child : node.getChildren()) {
