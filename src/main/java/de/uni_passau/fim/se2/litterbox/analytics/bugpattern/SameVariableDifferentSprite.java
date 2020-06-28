@@ -43,7 +43,6 @@ public class SameVariableDifferentSprite implements IssueFinder {
         Preconditions.checkNotNull(program);
         boolean found = false;
         count = 0;
-        // TODO: Fix typo in signature
         List<ActorDefinition> actorDefinitions = program.getActorDefinitionList().getDefinitions();
         Map<String, VariableInfo> variableInfoMap = program.getSymbolTable().getVariables();
         ArrayList<VariableInfo> varInfos = new ArrayList<>(variableInfoMap.values());
@@ -61,6 +60,7 @@ public class SameVariableDifferentSprite implements IssueFinder {
                 count++;
                 for (ActorDefinition actorDefinition : actorDefinitions) {
                     if (actorDefinition.getIdent().getName().equals(currentActor)) {
+                        issues.add(new Issue(this, actorDefinition, actorDefinition));
                         addLooseComment(actorDefinition, HINT_TEXT + " Variable " + currentName,
                                 SHORT_NAME + count);
                         break;
