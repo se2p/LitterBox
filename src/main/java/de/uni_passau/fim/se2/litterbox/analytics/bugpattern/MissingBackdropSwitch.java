@@ -39,6 +39,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.NextBackdro
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.SwitchBackdrop;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.SwitchBackdropAndWait;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
+import de.uni_passau.fim.se2.litterbox.utils.Pair;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 import java.util.*;
 
@@ -52,8 +53,8 @@ public class MissingBackdropSwitch implements IssueFinder, ScratchVisitor {
     public static final String NAME = "missing_backdrop_switch";
     public static final String SHORT_NAME = "mssBackdrSwitch";
     public static final String HINT_TEXT = "missing backdrop switch";
-    private List<Pair> switched = new ArrayList<>();
-    private List<Pair> switchReceived = new ArrayList<>();
+    private List<Pair<String>> switched = new ArrayList<>();
+    private List<Pair<String>> switchReceived = new ArrayList<>();
     private ActorDefinition currentActor;
     private Set<Issue> issues = new LinkedHashSet<>();
     private boolean nextRandPrev = false;
@@ -73,26 +74,26 @@ public class MissingBackdropSwitch implements IssueFinder, ScratchVisitor {
         notSentMessages = new LinkedHashSet<>();
         program.accept(this);
 
-        final LinkedHashSet<Pair> nonSyncedPairs = new LinkedHashSet<>();
+        final LinkedHashSet<Pair<String>> nonSyncedPairs = new LinkedHashSet<>();
         if (!nextRandPrev) {
-            for (Pair received : switchReceived) {
+            for (Pair<String> received : switchReceived) {
                 boolean isReceived = false;
-                for (Pair sent : switched) {
-                    if (received.msgName.equals(sent.msgName)) {
+                for (Pair<String> sent : switched) {
+                    if (received.getSnd().equals(sent.getSnd())) {
                         isReceived = true;
                         break;
                     }
                 }
                 if (!isReceived) {
                     nonSyncedPairs.add(received);
-                    notSentMessages.add(received.msgName);
+                    notSentMessages.add(received.getSnd());
                 }
             }
             addComment = true;
             program.accept(this);
         }
         final Set<String> actorNames = new LinkedHashSet<>();
-        nonSyncedPairs.forEach(p -> actorNames.add(p.getActorName()));
+        nonSyncedPairs.forEach(p -> actorNames.add(p.getFst()));
 
         return issues;
         // return new IssueReport(NAME, nonSyncedPairs.size(), new LinkedList<>(actorNames), "");
@@ -148,18 +149,18 @@ public class MissingBackdropSwitch implements IssueFinder, ScratchVisitor {
             nextRandPrev = true;
         } else if (msgName instanceof WithExpr) {
             if (((WithExpr) msgName).getExpression() instanceof StringLiteral) {
-                switched.add(new Pair(actorName, ((StringLiteral) ((WithExpr) msgName).getExpression()).getText()));
+                switched.add(new Pair<>(actorName, ((StringLiteral) ((WithExpr) msgName).getExpression()).getText()));
             }
             if (((WithExpr) msgName).getExpression() instanceof StrId) {
-                switched.add(new Pair(actorName, ((StrId) ((WithExpr) msgName).getExpression()).getName()));
+                switched.add(new Pair<>(actorName, ((StrId) ((WithExpr) msgName).getExpression()).getName()));
             }
             if (((WithExpr) msgName).getExpression() instanceof AsString) {
                 AsString expr = (AsString) ((WithExpr) msgName).getExpression();
                 if (expr.getOperand1() instanceof StrId) {
-                    switched.add(new Pair(actorName, ((StrId) expr.getOperand1()).getName()));
+                    switched.add(new Pair<>(actorName, ((StrId) expr.getOperand1()).getName()));
                 }
                 if (expr.getOperand1() instanceof StringLiteral) {
-                    switched.add(new Pair(actorName, ((StringLiteral) expr.getOperand1()).getText()));
+                    switched.add(new Pair<>(actorName, ((StringLiteral) expr.getOperand1()).getText()));
                 }
             }
         }}
@@ -180,7 +181,7 @@ public class MissingBackdropSwitch implements IssueFinder, ScratchVisitor {
 
             if (!addComment) {
                 final String actorName = currentActor.getIdent().getName();
-                switchReceived.add(new Pair(actorName, msgName));
+                switchReceived.add(new Pair<>(actorName, msgName));
             }else if (notSentMessages.contains(msgName)) {
                 addBlockComment((NonDataBlockMetadata) event.getMetadata(), currentActor, HINT_TEXT,
                         SHORT_NAME + identifierCounter);
@@ -192,51 +193,6 @@ public class MissingBackdropSwitch implements IssueFinder, ScratchVisitor {
             for (ASTNode child : node.getChildren()) {
                 child.accept(this);
             }
-        }
-    }
-
-    /**
-     * Helper class to map which messages are sent / received by which actor
-     */
-    private static class Pair {
-        String msgName;
-        private String actorName;
-
-        public Pair(String actorName, String msgName) {
-            this.setActorName(actorName);
-            this.msgName = msgName;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) {
-                return true;
-            }
-            if (o == null || getClass() != o.getClass()) {
-                return false;
-            }
-
-            Pair pair = (Pair) o;
-
-            if (!Objects.equals(getActorName(), pair.getActorName())) {
-                return false;
-            }
-            return Objects.equals(msgName, pair.msgName);
-        }
-
-        @Override
-        public int hashCode() {
-            int result = getActorName() != null ? getActorName().hashCode() : 0;
-            result = 31 * result + (msgName != null ? msgName.hashCode() : 0);
-            return result;
-        }
-
-        String getActorName() {
-            return actorName;
-        }
-
-        void setActorName(String actorName) {
-            this.actorName = actorName;
         }
     }
 }

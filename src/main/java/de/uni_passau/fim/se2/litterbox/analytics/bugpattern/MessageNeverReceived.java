@@ -33,6 +33,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMeta
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.Broadcast;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.BroadcastAndWait;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
+import de.uni_passau.fim.se2.litterbox.utils.Pair;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 import java.util.*;
 
@@ -46,8 +47,8 @@ public class MessageNeverReceived implements IssueFinder, ScratchVisitor {
     public static final String NAME = "message_never_received";
     public static final String SHORT_NAME = "messNeverRec";
     public static final String HINT_TEXT = "message never received";
-    private List<Pair> messageSent = new ArrayList<>();
-    private List<Pair> messageReceived = new ArrayList<>();
+    private List<Pair<String>> messageSent = new ArrayList<>();
+    private List<Pair<String>> messageReceived = new ArrayList<>();
     private ActorDefinition currentActor;
     private int identifierCounter;
     private boolean addComment;
@@ -64,18 +65,18 @@ public class MessageNeverReceived implements IssueFinder, ScratchVisitor {
         addComment = false;
         notReceivedMessages = new LinkedHashSet<>();
 
-        final LinkedHashSet<Pair> nonSyncedPairs = new LinkedHashSet<>();
-        for (Pair sent : messageSent) {
+        final LinkedHashSet<Pair<String>> nonSyncedPairs = new LinkedHashSet<>();
+        for (Pair<String> sent : messageSent) {
             boolean isReceived = false;
-            for (Pair received : messageReceived) {
-                if (sent.msgName.toLowerCase().equals(received.msgName.toLowerCase())) {
+            for (Pair<String> received : messageReceived) {
+                if (sent.getSnd().equalsIgnoreCase(received.getSnd())) {
                     isReceived = true;
                     break;
                 }
             }
             if (!isReceived) {
                 nonSyncedPairs.add(sent);
-                notReceivedMessages.add(sent.msgName);
+                notReceivedMessages.add(sent.getSnd());
             }
         }
 
@@ -83,7 +84,7 @@ public class MessageNeverReceived implements IssueFinder, ScratchVisitor {
         program.accept(this);
 
         final Set<String> actorNames = new LinkedHashSet<>();
-        nonSyncedPairs.forEach(p -> actorNames.add(p.getActorName()));
+        nonSyncedPairs.forEach(p -> actorNames.add(p.getFst()));
         return issues;
         // return new IssueReport(NAME, nonSyncedPairs.size(), new LinkedList<>(actorNames), "");
     }
@@ -109,7 +110,7 @@ public class MessageNeverReceived implements IssueFinder, ScratchVisitor {
             final String msgName = ((StringLiteral) node.getMessage().getMessage()).getText();
             if (!addComment) {
                 final String actorName = currentActor.getIdent().getName();
-                messageSent.add(new Pair(actorName, msgName));
+                messageSent.add(new Pair<>(actorName, msgName));
             } else if(notReceivedMessages.contains(msgName)){
                 addBlockComment((NonDataBlockMetadata) node.getMetadata(), currentActor, HINT_TEXT,
                         SHORT_NAME + identifierCounter);
@@ -125,7 +126,7 @@ public class MessageNeverReceived implements IssueFinder, ScratchVisitor {
             final String msgName = ((StringLiteral) node.getMessage().getMessage()).getText();
             if (!addComment) {
                 final String actorName = currentActor.getIdent().getName();
-                messageSent.add(new Pair(actorName, msgName));
+                messageSent.add(new Pair<>(actorName, msgName));
             } else if(notReceivedMessages.contains(msgName)){
                 addBlockComment((NonDataBlockMetadata) node.getMetadata(), currentActor, HINT_TEXT,
                         SHORT_NAME + identifierCounter);
@@ -141,53 +142,8 @@ public class MessageNeverReceived implements IssueFinder, ScratchVisitor {
             if (!addComment) {
                 final String actorName = currentActor.getIdent().getName();
                 final String msgName = ((StringLiteral) node.getMsg().getMessage()).getText();
-                messageReceived.add(new Pair(actorName, msgName));
+                messageReceived.add(new Pair<>(actorName, msgName));
             }
-        }
-    }
-
-    /**
-     * Helper class to map which messages are sent / received by which actor
-     */
-    private static class Pair {
-        String msgName;
-        private String actorName;
-
-        public Pair(String actorName, String msgName) {
-            this.setActorName(actorName);
-            this.msgName = msgName;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) {
-                return true;
-            }
-            if (o == null || getClass() != o.getClass()) {
-                return false;
-            }
-
-            Pair pair = (Pair) o;
-
-            if (!Objects.equals(getActorName(), pair.getActorName())) {
-                return false;
-            }
-            return Objects.equals(msgName, pair.msgName);
-        }
-
-        @Override
-        public int hashCode() {
-            int result = getActorName() != null ? getActorName().hashCode() : 0;
-            result = 31 * result + (msgName != null ? msgName.hashCode() : 0);
-            return result;
-        }
-
-        String getActorName() {
-            return actorName;
-        }
-
-        void setActorName(String actorName) {
-            this.actorName = actorName;
         }
     }
 }
