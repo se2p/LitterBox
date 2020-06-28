@@ -20,7 +20,6 @@ package de.uni_passau.fim.se2.litterbox.analytics.utils;
 
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueReport;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;

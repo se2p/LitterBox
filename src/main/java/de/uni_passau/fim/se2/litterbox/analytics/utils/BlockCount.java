@@ -20,7 +20,6 @@ package de.uni_passau.fim.se2.litterbox.analytics.utils;
 
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueReport;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
@@ -63,7 +62,6 @@ import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.Set;
 
 public class BlockCount implements IssueFinder, ScratchVisitor {

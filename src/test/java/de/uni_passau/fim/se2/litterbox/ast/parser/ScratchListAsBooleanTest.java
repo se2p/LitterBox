@@ -20,7 +20,6 @@ package de.uni_passau.fim.se2.litterbox.ast.parser;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueReport;
 import de.uni_passau.fim.se2.litterbox.analytics.utils.SpriteCount;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;

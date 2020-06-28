@@ -31,7 +31,6 @@ import de.uni_passau.fim.se2.litterbox.ast.visitor.GrammarPrintVisitor;
 import de.uni_passau.fim.se2.litterbox.jsonCreation.JSONFileCreator;
 import de.uni_passau.fim.se2.litterbox.report.CSVReportGenerator;
 import de.uni_passau.fim.se2.litterbox.report.ConsoleReportGenerator;
-import de.uni_passau.fim.se2.litterbox.utils.CSVWriter;
 import de.uni_passau.fim.se2.litterbox.utils.Downloader;
 import de.uni_passau.fim.se2.litterbox.utils.JsonParser;
 import de.uni_passau.fim.se2.litterbox.utils.ZipReader;
@@ -39,14 +38,11 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.logging.Logger;
-import org.apache.commons.csv.CSVPrinter;
+
 import org.apache.commons.io.FilenameUtils;
-import org.checkerframework.checker.units.qual.C;
 
 public class Scratch3Analyzer {
 
