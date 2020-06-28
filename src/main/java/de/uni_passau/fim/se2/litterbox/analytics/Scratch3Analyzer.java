@@ -203,38 +203,37 @@ public class Scratch3Analyzer {
      */
     private static void checkMultipleScratch3(File folder, String dtctrs, String csv, String annotatePath) {
 
-        CSVPrinter printer = null;
         try {
             IssueTool iT = new IssueTool();
-            printer = prepareCSVPrinter(dtctrs, iT, csv);
+            String[] detectorNames = getDetectors(iT, dtctrs);
             for (final File fileEntry : Objects.requireNonNull(folder.listFiles())) {
                 if (!fileEntry.isDirectory()) {
                     try {
                         log.info("Start: " + fileEntry.getName());
                         Program program = extractProgram(fileEntry);
-                        //System.out.println(project.toString());
-                        iT.check(program, dtctrs);
+                        Set<Issue> issues = iT.check(program, dtctrs);
 
-                        // TODO: Create outputs
+                        // TODO: Refactor error handling
+                        try {
+                            CSVReportGenerator reportGenerator = new CSVReportGenerator(csv, detectorNames);
+                            reportGenerator.generateReport(program, issues);
+                        } catch (IOException e) {
+                            log.warning(e.getMessage());
+                        }
 
                         log.info("Finished: " + fileEntry.getName());
                         if (annotatePath != null) {
                             createAnnotatedFile(fileEntry, program, annotatePath);
                         }
                     } catch (NullPointerException e) {
+                        // TODO: This needs to be fixed properly
                         log.info("Ignore due to NullPointerException: " + fileEntry.getName());
                     }
                 }
             }
         } catch (Exception e) {
+            // TODO: Proper error handling
             e.printStackTrace();
-        } finally {
-            try {
-                assert printer != null;
-                CSVWriter.flushCSV(printer);
-            } catch (IOException e) {
-                log.warning(e.getMessage());
-            }
         }
     }
 
