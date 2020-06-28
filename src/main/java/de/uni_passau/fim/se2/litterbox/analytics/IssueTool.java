@@ -124,8 +124,9 @@ public class IssueTool {
                 IssueFinder iF = getAllFinder().get(s);
                 if (program != null) {
                     Set<Issue> issues = iF.check(program);
-                    // TODO: Use some debug output backend
-                    System.out.println(issues);
+                    StringBuilder sb = new StringBuilder();
+                    sb.append("Issue ").append(s).append(" was found ").append(issues.size()).append(" time(s).");
+                    System.out.println(sb.toString());
                 }
             }
         }

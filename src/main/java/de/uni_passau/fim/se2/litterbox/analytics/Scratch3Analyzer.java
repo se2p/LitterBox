@@ -29,6 +29,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.GrammarPrintVisitor;
 import de.uni_passau.fim.se2.litterbox.jsonCreation.JSONFileCreator;
+import de.uni_passau.fim.se2.litterbox.report.CSVReportGenerator;
 import de.uni_passau.fim.se2.litterbox.utils.CSVWriter;
 import de.uni_passau.fim.se2.litterbox.utils.Downloader;
 import de.uni_passau.fim.se2.litterbox.utils.JsonParser;
@@ -40,6 +41,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.logging.Logger;
 import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.io.FilenameUtils;
@@ -85,22 +87,14 @@ public class Scratch3Analyzer {
             JsonNode projectNode = mapper.readTree(json);
             Program program = ProgramParser.parseProgram(projectName, projectNode);
 
-            //System.out.println(project.toString());
             IssueTool iT = new IssueTool();
             if (csv == null || csv.equals("")) {
                 iT.checkRaw(program, detectors);
             } else {
-                CSVPrinter printer = prepareCSVPrinter(detectors, iT, csv);
-                iT.check(program, detectors);
-                // TODO: Create outputs
-                log.info("Finished: " + projectName);
-                try {
-                    assert printer != null;
-                    CSVWriter.flushCSV(printer);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
+                String[] detectorNames = getDetectors(iT, detectors);
+                Set<Issue> issues = iT.check(program, detectors);
+                CSVReportGenerator reportGenerator = new CSVReportGenerator(csv, detectorNames);
+                reportGenerator.generateReport(program, issues);
             }
 
             if (annotatePath != null) {
@@ -151,6 +145,25 @@ public class Scratch3Analyzer {
         } else {
             JSONFileCreator.writeSb3FromProgram(program, annotatePath, fileEntry);
         }
+    }
+
+    private static String[] getDetectors(IssueTool iT, String detectorList) {
+        String[] detectors;
+        switch (detectorList) {
+            case ALL:
+                detectors = iT.getAllFinder().keySet().toArray(new String[0]);
+                break;
+            case BUGS:
+                detectors = iT.getBugFinder().keySet().toArray(new String[0]);
+                break;
+            case SMELLS:
+                detectors = iT.getSmellFinder().keySet().toArray(new String[0]);
+                break;
+            default:
+                detectors = detectorList.split(",");
+                break;
+        }
+        return detectors;
     }
 
     private static CSVPrinter prepareCSVPrinter(String dtctrs, IssueTool iT, String name) {
