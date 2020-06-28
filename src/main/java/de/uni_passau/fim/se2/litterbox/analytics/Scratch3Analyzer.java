@@ -30,6 +30,7 @@ import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.GrammarPrintVisitor;
 import de.uni_passau.fim.se2.litterbox.jsonCreation.JSONFileCreator;
 import de.uni_passau.fim.se2.litterbox.report.CSVReportGenerator;
+import de.uni_passau.fim.se2.litterbox.report.CommentGenerator;
 import de.uni_passau.fim.se2.litterbox.report.ConsoleReportGenerator;
 import de.uni_passau.fim.se2.litterbox.utils.Downloader;
 import de.uni_passau.fim.se2.litterbox.utils.JsonParser;
@@ -97,6 +98,8 @@ public class Scratch3Analyzer {
             }
 
             if (annotatePath != null) {
+                CommentGenerator commentGenerator = new CommentGenerator();
+                commentGenerator.generateReport(program, issues);
                 JSONFileCreator.writeJsonFromProgram(program, annotatePath);
             }
         } catch (Exception e) {
@@ -131,6 +134,8 @@ public class Scratch3Analyzer {
         }
         if (annotatePath != null) {
             try {
+                CommentGenerator commentGenerator = new CommentGenerator();
+                commentGenerator.generateReport(program, issues);
                 createAnnotatedFile(fileEntry, program, annotatePath);
             } catch (IOException e) {
                 log.warning(e.getMessage());
@@ -191,6 +196,8 @@ public class Scratch3Analyzer {
 
                         log.info("Finished: " + fileEntry.getName());
                         if (annotatePath != null) {
+                            CommentGenerator commentGenerator = new CommentGenerator();
+                            commentGenerator.generateReport(program, issues);
                             createAnnotatedFile(fileEntry, program, annotatePath);
                         }
                     } catch (NullPointerException e) {
@@ -214,6 +221,7 @@ public class Scratch3Analyzer {
                         ".") - 1),
                         mapper.readTree(fileEntry));
             } catch (ParsingException | IOException | RuntimeException e) {
+                // TODO: Proper error handling
                 e.printStackTrace();
             }
         } else {
@@ -221,12 +229,14 @@ public class Scratch3Analyzer {
             try {
                 node = JsonParser.getTargetsNodeFromJSONString(ZipReader.getJsonString(fileEntry.getPath()));
                 if (node == null) {
+                    // TODO: Proper error handling
                     log.info("[Error] project json did not contain root node");
                     return null;
                 }
                 program = ProgramParser.parseProgram(fileEntry.getName().substring(0, fileEntry.getName().lastIndexOf(
                         ".")), node);
             } catch (ParsingException | IOException | RuntimeException e) {
+                // TODO: Proper error handling
                 e.printStackTrace();
             }
         }
@@ -298,6 +308,7 @@ public class Scratch3Analyzer {
             }
             br.close();
         } catch (IOException e) {
+            // TODO: Proper error handling
             e.printStackTrace();
         }
     }
@@ -326,6 +337,7 @@ public class Scratch3Analyzer {
             }
             br.close();
         } catch (IOException e) {
+            // TODO: Proper error handling
             e.printStackTrace();
         }
     }
@@ -429,6 +441,7 @@ public class Scratch3Analyzer {
             }
             br.close();
         } catch (IOException e) {
+            // TODO: Proper error handling
             e.printStackTrace();
         }
     }
