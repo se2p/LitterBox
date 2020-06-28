@@ -1,7 +1,6 @@
 package de.uni_passau.fim.se2.litterbox.ast.visitor;
 
 
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.Color;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.BooleanType;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.NumberType;
@@ -34,7 +33,7 @@ public class ScratchBlocksVisitor implements ScratchVisitor {
      */
     @Override
     public void visit(StringType node) {
-
+        // TODO
     }
 
     /*
@@ -43,7 +42,7 @@ public class ScratchBlocksVisitor implements ScratchVisitor {
      */
     @Override
     public void visit(NumberType node) {
-
+        // TODO
     }
 
     /*
@@ -51,7 +50,7 @@ public class ScratchBlocksVisitor implements ScratchVisitor {
      */
     @Override
     public void visit(BooleanType node) {
-
+        // TODO
     }
 
     /*
@@ -59,7 +58,7 @@ public class ScratchBlocksVisitor implements ScratchVisitor {
      */
     @Override
     public void visit(Color node) {
-
+        // TODO
     }
 
     /*
@@ -80,6 +79,7 @@ public class ScratchBlocksVisitor implements ScratchVisitor {
      *
      */
 
+    // TODO: This is a dummy for now
     public String getScratchBlocks() {
         return "[scratchblocks]\n" +
                 "when green flag clicked\n" +
