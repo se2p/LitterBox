@@ -30,6 +30,7 @@ import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.GrammarPrintVisitor;
 import de.uni_passau.fim.se2.litterbox.jsonCreation.JSONFileCreator;
 import de.uni_passau.fim.se2.litterbox.report.CSVReportGenerator;
+import de.uni_passau.fim.se2.litterbox.report.ConsoleReportGenerator;
 import de.uni_passau.fim.se2.litterbox.utils.CSVWriter;
 import de.uni_passau.fim.se2.litterbox.utils.Downloader;
 import de.uni_passau.fim.se2.litterbox.utils.JsonParser;
@@ -45,6 +46,7 @@ import java.util.Set;
 import java.util.logging.Logger;
 import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.io.FilenameUtils;
+import org.checkerframework.checker.units.qual.C;
 
 public class Scratch3Analyzer {
 
@@ -88,11 +90,12 @@ public class Scratch3Analyzer {
             Program program = ProgramParser.parseProgram(projectName, projectNode);
 
             IssueTool iT = new IssueTool();
+            String[] detectorNames = getDetectors(iT, detectors);
+            Set<Issue> issues = iT.check(program, detectors);
             if (csv == null || csv.equals("")) {
-                iT.checkRaw(program, detectors);
+                ConsoleReportGenerator reportGenerator = new ConsoleReportGenerator(detectorNames);
+                reportGenerator.generateReport(program, issues);
             } else {
-                String[] detectorNames = getDetectors(iT, detectors);
-                Set<Issue> issues = iT.check(program, detectors);
                 CSVReportGenerator reportGenerator = new CSVReportGenerator(csv, detectorNames);
                 reportGenerator.generateReport(program, issues);
             }
@@ -116,18 +119,19 @@ public class Scratch3Analyzer {
         Program program = extractProgram(fileEntry);
 
         IssueTool iT = new IssueTool();
-        if (csv == null || csv.equals("")) {
-            iT.checkRaw(program, detectors);
-        } else {
-            String[] detectorNames = getDetectors(iT, detectors);
-            Set<Issue> issues = iT.check(program, detectors);
-            // TODO: Refactor error handling
-            try {
+        Set<Issue> issues = iT.check(program, detectors);
+        String[] detectorNames = getDetectors(iT, detectors);
+        // TODO: Refactor error handling
+        try {
+            if (csv == null || csv.isEmpty()) {
+                ConsoleReportGenerator reportGenerator = new ConsoleReportGenerator(detectorNames);
+                reportGenerator.generateReport(program, issues);
+            } else {
                 CSVReportGenerator reportGenerator = new CSVReportGenerator(csv, detectorNames);
                 reportGenerator.generateReport(program, issues);
-            } catch (IOException e) {
-                log.warning(e.getMessage());
             }
+        } catch (IOException e) {
+            log.warning(e.getMessage());
         }
         if (annotatePath != null) {
             try {
@@ -163,38 +167,6 @@ public class Scratch3Analyzer {
                 break;
         }
         return detectors;
-    }
-
-    private static CSVPrinter prepareCSVPrinter(String dtctrs, IssueTool iT, String name) {
-        List<String> heads = new ArrayList<>();
-        heads.add("project");
-        String[] detectors;
-        switch (dtctrs) {
-            case ALL:
-                detectors = iT.getAllFinder().keySet().toArray(new String[0]);
-                break;
-            case BUGS:
-                detectors = iT.getBugFinder().keySet().toArray(new String[0]);
-                break;
-            case SMELLS:
-                detectors = iT.getSmellFinder().keySet().toArray(new String[0]);
-                break;
-            default:
-                detectors = dtctrs.split(",");
-                break;
-        }
-        for (String s : detectors) {
-            if (iT.getAllFinder().containsKey(s)) {
-                IssueFinder iF = iT.getAllFinder().get(s);
-                heads.add(iF.getName());
-            }
-        }
-        try {
-            return CSVWriter.getNewPrinter(name, heads);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
     }
 
     /**

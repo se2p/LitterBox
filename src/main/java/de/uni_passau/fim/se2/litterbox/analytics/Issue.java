@@ -12,8 +12,24 @@ public class Issue {
         this.finder = finder;
     }
 
+    public IssueFinder getFinder() {
+        return finder;
+    }
+
+    public String getActorName() {
+        return null;
+    }
+
     public String getFinderName() {
         return finder.getName();
+    }
+
+    public String getHint() {
+        return ""; // TODO
+    }
+
+    public AbstractNode getCodeLocation() {
+        return null; // TODO
     }
 
 }

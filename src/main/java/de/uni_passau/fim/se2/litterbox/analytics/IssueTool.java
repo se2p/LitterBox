@@ -25,7 +25,6 @@ import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.*;
 import de.uni_passau.fim.se2.litterbox.analytics.smells.*;
 import de.uni_passau.fim.se2.litterbox.analytics.utils.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.report.ReportGenerator;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import java.util.*;
@@ -96,40 +95,6 @@ public class IssueTool {
     public static List<String> getOnlyUniqueActorList(List<String> foundSpritesWithIssues) {
         Set<String> uniqueSprites = new TreeSet<>(foundSpritesWithIssues);
         return new ArrayList<>(uniqueSprites);
-    }
-
-    /**
-     * Executes all checks. Only creates console output for a single project.
-     *
-     * @param program the project to check
-     */
-    public void checkRaw(Program program, String dtctrs) {
-        String[] detectors;
-        switch (dtctrs) {
-        case ALL:
-            detectors = getAllFinder().keySet().toArray(new String[0]);
-            break;
-        case BUGS:
-            detectors = getBugFinder().keySet().toArray(new String[0]);
-            break;
-        case SMELLS:
-            detectors = getSmellFinder().keySet().toArray(new String[0]);
-            break;
-        default:
-            detectors = dtctrs.split(",");
-            break;
-        }
-        for (String s : detectors) {
-            if (getAllFinder().containsKey(s)) {
-                IssueFinder iF = getAllFinder().get(s);
-                if (program != null) {
-                    Set<Issue> issues = iF.check(program);
-                    StringBuilder sb = new StringBuilder();
-                    sb.append("Issue ").append(s).append(" was found ").append(issues.size()).append(" time(s).");
-                    System.out.println(sb.toString());
-                }
-            }
-        }
     }
 
     /**
