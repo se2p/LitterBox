@@ -119,13 +119,12 @@ public class Scratch3Analyzer {
         if (csv == null || csv.equals("")) {
             iT.checkRaw(program, detectors);
         } else {
-            CSVPrinter printer = prepareCSVPrinter(detectors, iT, csv);
-            iT.check(program, detectors);
-            // TODO: Create outputs
-            System.out.println("Finished: " + fileEntry.getName());
+            String[] detectorNames = getDetectors(iT, detectors);
+            Set<Issue> issues = iT.check(program, detectors);
+            // TODO: Refactor error handling
             try {
-                assert printer != null;
-                CSVWriter.flushCSV(printer);
+                CSVReportGenerator reportGenerator = new CSVReportGenerator(csv, detectorNames);
+                reportGenerator.generateReport(program, issues);
             } catch (IOException e) {
                 log.warning(e.getMessage());
             }
