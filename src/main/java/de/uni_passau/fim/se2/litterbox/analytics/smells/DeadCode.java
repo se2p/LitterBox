@@ -18,47 +18,25 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.smells;
 
+import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
-import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
-import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
-import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
-
-import java.util.LinkedHashSet;
-import java.util.Set;
 
 /**
  * Checks if the project has loose blocks without a head.
  */
-public class DeadCode implements IssueFinder, ScratchVisitor {
+public class DeadCode extends AbstractIssueFinder {
 
     public static final String NAME = "dead_code";
     public static final String SHORT_NAME = "dcode";
-    private Set<Issue> issues = new LinkedHashSet<>();
-    private ActorDefinition currentActor;
-
-    @Override
-    public Set<Issue> check(Program program) {
-        Preconditions.checkNotNull(program);
-        program.accept(this);
-        return issues;
-    }
-
-    @Override
-    public void visit(ActorDefinition actor) {
-        currentActor = actor;
-        for (ASTNode child : actor.getChildren()) {
-            child.accept(this);
-        }
-    }
+    public static final String HINT_TEXT = "Unused blocks found";
 
     @Override
     public void visit(Script node) {
+        currentScript = node;
         if (node.getEvent() instanceof Never && node.getStmtList().getStmts().size() > 0) {
+            // TODO: Replace with proper issue (including script etc)
             issues.add(new Issue(this, currentActor, node));
         }
     }

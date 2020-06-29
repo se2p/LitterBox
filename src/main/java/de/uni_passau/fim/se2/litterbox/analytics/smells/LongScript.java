@@ -18,52 +18,29 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.smells;
 
+import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.ast.model.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
-import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
-
-import java.util.LinkedHashSet;
-import java.util.Set;
 
 /**
  * Checks for scripts with more than 12 blocks.
  */
-public class LongScript implements IssueFinder, ScratchVisitor {
+public class LongScript extends AbstractIssueFinder {
 
     public static final String NAME = "long_script";
     public static final String SHORT_NAME = "longScript";
     private static final int NUMBER_TOO_LONG = 12;
     private int localCount = 0;
-    private Set<Issue> issues = new LinkedHashSet<>();
-    private ActorDefinition currentActor;
-
-    @Override
-    public Set<Issue> check(Program program) {
-        Preconditions.checkNotNull(program);
-        program.accept(this);
-        return issues;
-    }
-
-    @Override
-    public void visit(ActorDefinition actor) {
-        currentActor = actor;
-        for (ASTNode child : actor.getChildren()) {
-            child.accept(this);
-        }
-    }
 
     @Override
     public void visit(Script node) {
+        currentScript = node;
         localCount = 0;
         if (!(node.getEvent() instanceof Never)) {
             localCount++;
         }
-        for (ASTNode child : node.getChildren()) {
-            child.accept(this);
-        }
+        visitChildren(node);
         if (localCount > NUMBER_TOO_LONG) {
             issues.add(new Issue(this, currentActor, node));
         }
@@ -72,9 +49,7 @@ public class LongScript implements IssueFinder, ScratchVisitor {
     @Override
     public void visit(StmtList node) {
         localCount = localCount + node.getStmts().size();
-        for (ASTNode child : node.getChildren()) {
-            child.accept(this);
-        }
+        visitChildren(node);
     }
 
     @Override

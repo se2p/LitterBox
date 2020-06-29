@@ -18,41 +18,24 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.smells;
 
+import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
-import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ProcedureInfo;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
-import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import java.util.*;
 
 /**
  * Checks if there are unused custom blocks in the project.
  */
-public class UnusedCustomBlock implements IssueFinder, ScratchVisitor {
+public class UnusedCustomBlock extends AbstractIssueFinder {
 
     public static final String NAME = "unused_custom_block";
     public static final String SHORT_NAME = "unusedCustBl";
-    private ActorDefinition currentActor;
     private List<ProcedureDefinition> proceduresDef;
     private List<String> calledProcedures;
-    private Map<LocalIdentifier, ProcedureInfo> procMap;
-    private Program program;
-    private Set<Issue> issues = new LinkedHashSet<>();
-
-    @Override
-    public Set<Issue> check(Program program) {
-        Preconditions.checkNotNull(program);
-        this.program = program;
-        program.accept(this);
-        return issues;
-    }
 
     @Override
     public String getName() {
@@ -61,13 +44,9 @@ public class UnusedCustomBlock implements IssueFinder, ScratchVisitor {
 
     @Override
     public void visit(ActorDefinition actor) {
-        currentActor = actor;
-        procMap = program.getProcedureMapping().getProcedures().get(currentActor.getIdent().getName());
         calledProcedures = new ArrayList<>();
         proceduresDef = new ArrayList<>();
-        for (ASTNode child : actor.getChildren()) {
-            child.accept(this);
-        }
+        super.visit(actor);
         checkCalls();
     }
 
@@ -83,17 +62,12 @@ public class UnusedCustomBlock implements IssueFinder, ScratchVisitor {
     @Override
     public void visit(ProcedureDefinition node) {
         proceduresDef.add(node);
-
-        for (ASTNode child : node.getChildren()) {
-            child.accept(this);
-        }
+        visitChildren(node);
     }
 
     @Override
     public void visit(CallStmt node) {
         calledProcedures.add(node.getIdent().getName());
-        for (ASTNode child : node.getChildren()) {
-            child.accept(this);
-        }
+        visitChildren(node);
     }
 }

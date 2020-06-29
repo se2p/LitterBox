@@ -18,43 +18,18 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.smells;
 
+import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
-import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
-import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
-import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
-
-import java.util.LinkedHashSet;
-import java.util.Set;
 
 /**
  * Checks if all Sprites have a starting point.
  */
-public class EmptyScript implements IssueFinder, ScratchVisitor {
+public class EmptyScript extends AbstractIssueFinder {
 
     public static final String NAME = "empty_script";
     public static final String SHORT_NAME = "empScript";
-    private Set<Issue> issues = new LinkedHashSet<>();
-    private ActorDefinition currentActor;
-
-    @Override
-    public Set<Issue> check(Program program) {
-        Preconditions.checkNotNull(program);
-        program.accept(this);
-        return issues;
-    }
-
-    @Override
-    public void visit(ActorDefinition actor) {
-        currentActor = actor;
-        for (ASTNode child : actor.getChildren()) {
-            child.accept(this);
-        }
-    }
 
     @Override
     public void visit(Script node) {

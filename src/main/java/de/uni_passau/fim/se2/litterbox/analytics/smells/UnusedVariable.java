@@ -18,23 +18,21 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.smells;
 
+import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
-import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ExpressionListInfo;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.VariableInfo;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 import java.util.*;
 
 /**
  * Checks if there are unused variables.
  */
-public class UnusedVariable implements IssueFinder, ScratchVisitor {
+public class UnusedVariable extends AbstractIssueFinder {
 
     public static final String NAME = "unused_variables";
     public static final String SHORT_NAME = "unusedVar";
@@ -58,6 +56,7 @@ public class UnusedVariable implements IssueFinder, ScratchVisitor {
     @Override
     public Set<Issue> check(Program program) {
         Preconditions.checkNotNull(program);
+        this.program = program;
         varMap = program.getSymbolTable().getVariables();
         listMap = program.getSymbolTable().getLists();
         variableCalls = new ArrayList<>();
@@ -112,18 +111,14 @@ public class UnusedVariable implements IssueFinder, ScratchVisitor {
     @Override
     public void visit(ProcedureDefinition node) {
         insideProcedure = true;
-        for (ASTNode child : node.getChildren()) {
-            child.accept(this);
-        }
+        visitChildren(node);
         insideProcedure = false;
     }
 
     @Override
     public void visit(Script node) {
         insideScript = true;
-        for (ASTNode child : node.getChildren()) {
-            child.accept(this);
-        }
+        super.visit(node);
         insideScript = false;
     }
 
@@ -132,8 +127,6 @@ public class UnusedVariable implements IssueFinder, ScratchVisitor {
         if (insideProcedure || insideScript) {
             variableCalls.add(node);
         }
-        for (ASTNode child : node.getChildren()) {
-            child.accept(this);
-        }
+        visitChildren(node);
     }
 }

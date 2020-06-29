@@ -18,39 +18,23 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.smells;
 
+import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
-import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
-import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatTimesStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
-import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Checks for nested loops.
  */
-public class NestedLoops implements IssueFinder, ScratchVisitor {
+public class NestedLoops extends AbstractIssueFinder {
 
     public static final String NAME = "nested_loops";
     public static final String SHORT_NAME = "nestLoop";
-   private ActorDefinition currentActor;
-    private Set<Issue> issues = new LinkedHashSet<>();
-
-    @Override
-    public Set<Issue> check(Program program) {
-        Preconditions.checkNotNull(program);
-        program.accept(this);
-        return issues;
-    }
 
     @Override
     public String getName() {
@@ -58,27 +42,15 @@ public class NestedLoops implements IssueFinder, ScratchVisitor {
     }
 
     @Override
-    public void visit(ActorDefinition actor) {
-        currentActor = actor;
-        for (ASTNode child : actor.getChildren()) {
-            child.accept(this);
-        }
-    }
-
-    @Override
     public void visit(UntilStmt node) {
         checkNested(node.getStmtList().getStmts());
-        for (ASTNode child : node.getChildren()) {
-            child.accept(this);
-        }
+        visitChildren(node);
     }
 
     @Override
     public void visit(RepeatForeverStmt node) {
         checkNested(node.getStmtList().getStmts());
-        for (ASTNode child : node.getChildren()) {
-            child.accept(this);
-        }
+        visitChildren(node);
     }
 
     private void checkNested(List<Stmt> stmts) {
@@ -91,8 +63,6 @@ public class NestedLoops implements IssueFinder, ScratchVisitor {
     @Override
     public void visit(RepeatTimesStmt node) {
         checkNested(node.getStmtList().getStmts());
-        for (ASTNode child : node.getChildren()) {
-            child.accept(this);
-        }
+        visitChildren(node);
     }
 }
