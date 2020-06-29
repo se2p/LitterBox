@@ -19,7 +19,6 @@
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
-import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.ComparableExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Equals;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
@@ -42,7 +41,6 @@ public class PositionEqualsCheck extends AbstractIssueFinder {
     public static final String NAME = "position_equals_check";
     public static final String SHORT_NAME = "posEqCheck";
     public static final String HINT_TEXT = "position equals check";
-    private int count = 0;
 
     @Override
     public String getName() {
@@ -52,44 +50,40 @@ public class PositionEqualsCheck extends AbstractIssueFinder {
     @Override
     public void visit(WaitUntil node) {
         if (node.getUntil() instanceof Equals) {
-            int currentCount = count;
-            checkEquals((Equals) node.getUntil());
-            if (currentCount < count) {
-                issues.add(new Issue(this, currentActor, node,
-                        HINT_TEXT, node.getMetadata()));
+            if(!checkEquals((Equals) node.getUntil())) {
+                addIssue(node, HINT_TEXT, node.getMetadata());
             }
         }
         visitChildren(node);
     }
 
-    private void checkEquals(Equals equals) {
-        checkOptions(equals.getOperand1());
-        checkOptions(equals.getOperand2());
+    private boolean checkEquals(Equals equals) {
+        if(!checkOptions(equals.getOperand1()))
+            return false;
+
+        return checkOptions(equals.getOperand2());
     }
 
-    private void checkOptions(ComparableExpr operand) {
+    private boolean checkOptions(ComparableExpr operand) {
         if (operand instanceof MouseX || operand instanceof MouseY || operand instanceof DistanceTo
                 || operand instanceof PositionX || operand instanceof PositionY) {
-            count++;
+            return false;
         } else if (operand instanceof AttributeOf) {
             if (((AttributeOf) operand).getAttribute() instanceof AttributeFromFixed) {
                 if (((AttributeFromFixed) ((AttributeOf) operand).getAttribute()).getAttribute() == FixedAttribute.X_POSITION
                         || ((AttributeFromFixed) ((AttributeOf) operand).getAttribute()).getAttribute() == FixedAttribute.Y_POSITION) {
-                    count++;
+                    return false;
                 }
             }
         }
+        return true;
     }
 
     @Override
     public void visit(UntilStmt node) {
         if (node.getBoolExpr() instanceof Equals) {
-            // TODO: There should be a nicer solution than indirect returns via count
-            int currentCount = count;
-            checkEquals((Equals) node.getBoolExpr());
-            if (currentCount < count) {
-                issues.add(new Issue(this, currentActor, node,
-                        HINT_TEXT, node.getMetadata()));
+            if(!checkEquals((Equals) node.getBoolExpr())) {
+                addIssue(node, HINT_TEXT, node.getMetadata());
             }
         }
         visitChildren(node);
@@ -98,11 +92,8 @@ public class PositionEqualsCheck extends AbstractIssueFinder {
     @Override
     public void visit(IfThenStmt node) {
         if (node.getBoolExpr() instanceof Equals) {
-            int currentCount = count;
-            checkEquals((Equals) node.getBoolExpr());
-            if (currentCount < count) {
-                issues.add(new Issue(this, currentActor, node,
-                        HINT_TEXT, node.getMetadata()));
+            if(!checkEquals((Equals) node.getBoolExpr())) {
+                addIssue(node, HINT_TEXT, node.getMetadata());
             }
         }
         visitChildren(node);
@@ -111,11 +102,8 @@ public class PositionEqualsCheck extends AbstractIssueFinder {
     @Override
     public void visit(IfElseStmt node) {
         if (node.getBoolExpr() instanceof Equals) {
-            int currentCount = count;
-            checkEquals((Equals) node.getBoolExpr());
-            if (currentCount < count) {
-                issues.add(new Issue(this, currentActor, node,
-                        HINT_TEXT, node.getMetadata()));
+            if(!checkEquals((Equals) node.getBoolExpr())) {
+                addIssue(node, HINT_TEXT, node.getMetadata());
             }
         }
         visitChildren(node);

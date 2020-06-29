@@ -10,6 +10,7 @@ public class Issue {
     private IssueFinder finder;
     private ActorDefinition actor;
     private AbstractNode node;
+    private Script script;
     private String helpText;
     private Metadata metaData;
 
@@ -19,10 +20,11 @@ public class Issue {
         this.node = currentNode;
     }
 
-    public Issue(IssueFinder finder, ActorDefinition actor, AbstractNode currentNode,
-                 String helpText, Metadata metaData) {
+    public Issue(IssueFinder finder, ActorDefinition actor, Script script,
+                 AbstractNode currentNode, String helpText, Metadata metaData) {
         this.finder = finder;
         this.actor = actor;
+        this.script = script;
         this.node = currentNode;
         this.helpText = helpText;
         this.metaData = metaData;
@@ -34,6 +36,10 @@ public class Issue {
 
     public ActorDefinition getActor() {
         return actor;
+    }
+
+    public Script getScript() {
+        return script;
     }
 
     public String getActorName() {

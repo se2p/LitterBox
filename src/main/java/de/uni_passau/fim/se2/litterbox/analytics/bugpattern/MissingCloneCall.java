@@ -71,18 +71,20 @@ public class MissingCloneCall extends AbstractIssueFinder {
 
     @Override
     public void visit(CreateCloneOf node) {
-        if(!addComment) {
-            if (node.getStringExpr() instanceof AsString
-                    && ((AsString) node.getStringExpr()).getOperand1() instanceof StrId) {
+        if(addComment)
+            return;
 
-                final String spriteName = ((StrId) ((AsString) node.getStringExpr()).getOperand1()).getName();
-                if (spriteName.equals("_myself_")) {
-                    clonedActors.add(currentActor.getIdent().getName());
-                } else {
-                    clonedActors.add(spriteName);
-                }
+        if (node.getStringExpr() instanceof AsString
+                && ((AsString) node.getStringExpr()).getOperand1() instanceof StrId) {
+
+            final String spriteName = ((StrId) ((AsString) node.getStringExpr()).getOperand1()).getName();
+            if (spriteName.equals("_myself_")) {
+                clonedActors.add(currentActor.getIdent().getName());
+            } else {
+                clonedActors.add(spriteName);
             }
         }
+
     }
 
     @Override
@@ -92,8 +94,8 @@ public class MissingCloneCall extends AbstractIssueFinder {
                 whenStartsAsCloneActors.add(currentActor.getIdent().getName());
             } else if (notClonedActor.contains(currentActor.getIdent().getName())) {
                 StartedAsClone event = (StartedAsClone) node.getEvent();
-                issues.add(new Issue(this, currentActor, node, // TODO: node or event?
-                        HINT_TEXT, event.getMetadata()));
+                addIssue(node, // TODO: node or event?
+                        HINT_TEXT, event.getMetadata());
             }
         }
         visitChildren(node);

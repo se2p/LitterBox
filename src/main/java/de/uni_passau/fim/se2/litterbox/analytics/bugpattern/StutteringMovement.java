@@ -19,7 +19,6 @@
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
-import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.KeyPressed;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
@@ -55,8 +54,7 @@ public class StutteringMovement extends AbstractIssueFinder {
                 Stmt stmt = listOfStmt.get(0);
                 if (stmt instanceof MoveSteps || stmt instanceof ChangeXBy || stmt instanceof ChangeYBy) {
                     KeyPressed keyPressed = (KeyPressed) script.getEvent();
-                    issues.add(new Issue(this, currentActor, script,
-                            HINT_TEXT, keyPressed.getMetadata()));
+                    addIssue(script, HINT_TEXT, keyPressed.getMetadata());
                 }
             }
         }

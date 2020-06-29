@@ -53,11 +53,10 @@ public class RecursiveCloning extends AbstractIssueFinder {
 
     @Override
     public void visit(Script node) {
-        currentScript = node;
         if (node.getEvent() instanceof StartedAsClone) {
             startAsClone = true;
         }
-        visitChildren(node);
+        super.visit(node);
         startAsClone = false;
     }
 
@@ -71,8 +70,7 @@ public class RecursiveCloning extends AbstractIssueFinder {
 
                 if (spriteName.equals("_myself_")) {
                     CloneOfMetadata metadata = (CloneOfMetadata) node.getMetadata();
-                    issues.add(new Issue(this, currentActor, node,
-                            HINT_TEXT, metadata.getCloneBlockMetadata()));
+                    addIssue(node, HINT_TEXT, metadata.getCloneBlockMetadata());
                 }
             }
         }

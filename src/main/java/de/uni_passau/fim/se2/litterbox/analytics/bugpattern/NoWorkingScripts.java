@@ -19,7 +19,6 @@
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
-import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
@@ -52,8 +51,7 @@ public class NoWorkingScripts extends AbstractIssueFinder {
         super.visit(actor);
 
         if (deadCodeFound && stillFullfilledEmptyScript && foundEvent) {
-            issues.add(new Issue(this, currentActor, actor,
-                    HINT_TEXT, null)); // TODO: Null to ensure loose comment
+            addIssueWithLooseComment(HINT_TEXT);
         }
     }
 

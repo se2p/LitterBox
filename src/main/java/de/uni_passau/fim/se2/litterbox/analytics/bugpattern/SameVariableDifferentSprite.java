@@ -22,6 +22,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ExpressionListInfo;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.VariableInfo;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
@@ -54,9 +55,14 @@ public class SameVariableDifferentSprite implements IssueFinder {
                 found = false;
                 for (ActorDefinition actorDefinition : actorDefinitions) {
                     if (actorDefinition.getIdent().getName().equals(currentActor)) {
-                        issues.add(new Issue(this, actorDefinition, actorDefinition,
-                                HINT_TEXT + " Variable " + currentName,
-                                null)); // TODO: Improve -- null ensurese loose comment
+                        Script script = actorDefinition.getScripts().getScriptList().isEmpty() ? null : actorDefinition.getScripts().getScriptList().get(0);
+
+                        issues.add(new Issue(this,
+                                actorDefinition,
+                                script, // TODO: What is the correct script?
+                                actorDefinition,
+                                HINT_TEXT,
+                                null)); // TODO: Improve -- null ensures loose comment
                         break;
                     }
                 }
@@ -78,9 +84,13 @@ public class SameVariableDifferentSprite implements IssueFinder {
                 found = false;
                 for (ActorDefinition actorDefinition : actorDefinitions) {
                     if (actorDefinition.getIdent().getName().equals(currentActor)) {
-                        issues.add(new Issue(this, actorDefinition, actorDefinition,
-                                HINT_TEXT + " List " + currentName,
-                                null)); // TODO: Improve -- null ensurese loose comment
+                        Script script = actorDefinition.getScripts().getScriptList().isEmpty() ? null : actorDefinition.getScripts().getScriptList().get(0);
+                        issues.add(new Issue(this,
+                                actorDefinition,
+                                script, // TODO: What is the correct script?
+                                actorDefinition,
+                                HINT_TEXT,
+                                null)); // TODO: Improve -- null ensures loose comment
                         break;
                     }
                 }

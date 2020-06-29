@@ -19,7 +19,6 @@
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
-import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatTimesStmt;
@@ -57,8 +56,7 @@ public class ForeverInsideLoop extends AbstractIssueFinder {
     @Override
     public void visit(RepeatForeverStmt node) {
         if (loopcounter > 0) {
-            issues.add(new Issue(this, currentActor, node,
-                    HINT_TEXT, node.getMetadata()));
+            addIssue(node, HINT_TEXT, node.getMetadata());
         }
         loopcounter++;
         visitChildren(node);

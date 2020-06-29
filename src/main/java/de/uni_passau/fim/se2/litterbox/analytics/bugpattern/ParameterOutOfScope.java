@@ -19,7 +19,6 @@
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
-import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Parameter;
 
@@ -48,8 +47,7 @@ public class ParameterOutOfScope extends AbstractIssueFinder {
     @Override
     public void visit(Parameter node) {
         if (!insideProcedure) {
-            issues.add(new Issue(this, currentActor, node,
-                    HINT_TEXT, node.getMetadata()));
+            addIssue(node, HINT_TEXT, node.getMetadata());
         }
         visitChildren(node);
     }

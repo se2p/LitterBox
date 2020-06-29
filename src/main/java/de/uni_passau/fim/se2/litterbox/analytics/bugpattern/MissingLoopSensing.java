@@ -19,7 +19,6 @@
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
-import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.GreenFlag;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.StartedAsClone;
@@ -46,7 +45,7 @@ public class MissingLoopSensing extends AbstractIssueFinder {
         if (node.getEvent() instanceof GreenFlag || node.getEvent() instanceof StartedAsClone) {
             insideGreenFlagClone = true;
         }
-        visitChildren(node);
+        super.visit(node);
         insideGreenFlagClone = false;
     }
 
@@ -69,8 +68,7 @@ public class MissingLoopSensing extends AbstractIssueFinder {
         if (insideGreenFlagClone && !insideLoop) {
             BoolExpr boolExpr = node.getBoolExpr();
             if (boolExpr instanceof IsKeyPressed || boolExpr instanceof Touching || boolExpr instanceof IsMouseDown || boolExpr instanceof ColorTouchingColor) {
-                issues.add(new Issue(this, currentActor, node,
-                        HINT_TEXT, node.getMetadata()));
+                addIssue(node, HINT_TEXT, node.getMetadata());
             }
         }
         visitChildren(node);
@@ -81,8 +79,7 @@ public class MissingLoopSensing extends AbstractIssueFinder {
         if (insideGreenFlagClone && !insideLoop) {
             BoolExpr boolExpr = node.getBoolExpr();
             if (boolExpr instanceof IsKeyPressed || boolExpr instanceof Touching || boolExpr instanceof IsMouseDown || boolExpr instanceof ColorTouchingColor) {
-                issues.add(new Issue(this, currentActor, node,
-                        HINT_TEXT, node.getMetadata()));
+                addIssue(node, HINT_TEXT, node.getMetadata());
             }
         }
         visitChildren(node);

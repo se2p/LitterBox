@@ -19,7 +19,6 @@
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
-import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ArgumentInfo;
 
@@ -40,8 +39,7 @@ public class AmbiguousParameterName extends AbstractIssueFinder {
             for (int j = 0; j < arguments.length; j++) {
                 if (i != j && current.getName().equals(arguments[j].getName())) {
                     // TODO: Does this add redundant comments?
-                    issues.add(new Issue(this, currentActor, node,
-                            HINT_TEXT, node.getMetadata().getDefinition()));
+                    addIssue(node, HINT_TEXT, node.getMetadata().getDefinition());
                 }
             }
         }

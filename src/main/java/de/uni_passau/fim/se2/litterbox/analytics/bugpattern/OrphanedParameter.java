@@ -19,7 +19,6 @@
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
-import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Parameter;
@@ -66,11 +65,11 @@ public class OrphanedParameter extends AbstractIssueFinder {
         for (int i = 0; i < currentParameterDefinitions.size() && !validParametername; i++) {
             if (name.equals(currentParameterDefinitions.get(i).getIdent().getName())) {
                 validParametername = true;
+                break;
             }
         }
         if (!validParametername) {
-            issues.add(new Issue(this, currentActor, node,
-                    HINT_TEXT, node.getMetadata()));
+            addIssue(node, HINT_TEXT, node.getMetadata());
         }
     }
 }

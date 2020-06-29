@@ -91,8 +91,7 @@ public class AmbiguousParameterNameStrict extends AbstractIssueFinder {
         visitChildren(node);
 
         if (used) {
-            issues.add(new Issue(this, currentActor, node,
-                    HINT_TEXT, node.getMetadata().getDefinition()));
+            addIssue(node, HINT_TEXT, node.getMetadata().getDefinition());
         }
 
         // TODO: This handling with used/found seems really error prone

@@ -19,7 +19,6 @@
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
-import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BiggerThan;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Equals;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.LessThan;
@@ -48,8 +47,7 @@ public class ComparingLiterals extends AbstractIssueFinder {
     public void visit(Equals node) {
         if ((node.getOperand1() instanceof StringLiteral || node.getOperand1() instanceof NumberLiteral)
                 && (node.getOperand2() instanceof StringLiteral || node.getOperand2() instanceof NumberLiteral)) {
-            issues.add(new Issue(this, currentActor, node,
-                    HINT_TEXT, node.getMetadata()));
+            addIssue(node, HINT_TEXT, node.getMetadata());
         }
         visitChildren(node);
     }
@@ -59,8 +57,7 @@ public class ComparingLiterals extends AbstractIssueFinder {
     public void visit(LessThan node) {
         if ((node.getOperand1() instanceof StringLiteral || node.getOperand1() instanceof NumberLiteral)
                 && (node.getOperand2() instanceof StringLiteral || node.getOperand2() instanceof NumberLiteral)) {
-            issues.add(new Issue(this, currentActor, node,
-                    HINT_TEXT, node.getMetadata()));
+            addIssue(node, HINT_TEXT, node.getMetadata());
         }
         visitChildren(node);
     }
@@ -69,8 +66,7 @@ public class ComparingLiterals extends AbstractIssueFinder {
     public void visit(BiggerThan node) {
         if ((node.getOperand1() instanceof StringLiteral || node.getOperand1() instanceof NumberLiteral)
                 && (node.getOperand2() instanceof StringLiteral || node.getOperand2() instanceof NumberLiteral)) {
-            issues.add(new Issue(this, currentActor, node,
-                    HINT_TEXT, node.getMetadata()));
+            addIssue(node, HINT_TEXT, node.getMetadata());
         }
         visitChildren(node);
     }

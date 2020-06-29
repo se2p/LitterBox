@@ -19,7 +19,6 @@
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
-import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.pen.PenDownStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.pen.PenUpStmt;
@@ -64,8 +63,7 @@ public class MissingPenUp extends AbstractIssueFinder {
             visitChildren(node);
         } else if (getResult()) {
             // TODO: Is this potentially added multiple times?
-            issues.add(new Issue(this, currentActor, node,
-                    HINT_TEXT, node.getMetadata()));
+            addIssue(node, HINT_TEXT, node.getMetadata());
         }
     }
 

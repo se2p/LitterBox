@@ -66,7 +66,9 @@ public class MissingInitialization implements IssueFinder {
                     .filter(d -> d.getDefinable().equals(use.getDefinable()))
                     .noneMatch(d -> d.getDefinitionSource().getScriptOrProcedure() != use.getUseTarget().getScriptOrProcedure())) {
                 // TODO: Fix cast!
-                issues.add(new Issue(this, use.getUseTarget().getActor(), (AbstractNode) use.getUseTarget().getASTNode(),
+                issues.add(new Issue(this, use.getUseTarget().getActor(),
+                        null, // TODO: Script
+                        (AbstractNode) use.getUseTarget().getASTNode(),
                         "TODO -- hint text", null)); // TODO: What is the relevant metadata?
             }
         }

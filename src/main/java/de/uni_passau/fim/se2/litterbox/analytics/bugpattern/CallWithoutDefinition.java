@@ -19,7 +19,6 @@
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
-import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
@@ -56,8 +55,7 @@ public class CallWithoutDefinition extends AbstractIssueFinder {
         for (CallStmt calledProcedure : calledProcedures) {
             if (!proceduresDef.contains(calledProcedure.getIdent().getName()) &&
                     !program.getProcedureMapping().checkIfMalformated(currentActor.getIdent().getName() + calledProcedure.getIdent().getName())) {
-                issues.add(new Issue(this, currentActor, calledProcedure,
-                        HINT_TEXT, calledProcedure.getMetadata()));
+                addIssue(calledProcedure, HINT_TEXT, calledProcedure.getMetadata());
             }
         }
     }

@@ -19,7 +19,6 @@
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
-import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.UnspecifiedBoolExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
 
@@ -36,8 +35,7 @@ public class MissingTerminationCondition extends AbstractIssueFinder {
     @Override
     public void visit(UntilStmt node) {
         if (node.getBoolExpr() instanceof UnspecifiedBoolExpr) {
-            issues.add(new Issue(this, currentActor, node,
-                    HINT_TEXT, node.getMetadata()));
+            addIssue(node, HINT_TEXT, node.getMetadata());
         }
         visitChildren(node);
     }
