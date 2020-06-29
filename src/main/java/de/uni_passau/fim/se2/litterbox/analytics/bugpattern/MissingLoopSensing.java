@@ -18,11 +18,8 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
+import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
-import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
-import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.GreenFlag;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.StartedAsClone;
@@ -31,67 +28,39 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfElseStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
-import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
-
-import java.util.LinkedHashSet;
-import java.util.Set;
 
 /**
  * A script should execute actions when an event occurs. Instead of continuously checking for the event to occur
  * inside a forever or until loop it is only checked once in a conditional construct, making it
  * unlikely that the timing is correct.
  */
-public class MissingLoopSensing implements IssueFinder, ScratchVisitor {
+public class MissingLoopSensing extends AbstractIssueFinder {
     public static final String NAME = "missing_loop_sensing";
     public static final String SHORT_NAME = "mssLoopSens";
     public static final String HINT_TEXT = "missing loop sensing";
     private boolean insideGreenFlagClone = false;
     private boolean insideLoop = false;
-    private Set<Issue> issues = new LinkedHashSet<>();
-    private ActorDefinition currentActor;
-
-    @Override
-    public Set<Issue> check(Program program) {
-        Preconditions.checkNotNull(program);
-        program.accept(this);
-        return issues;
-    }
-
-    @Override
-    public void visit(ActorDefinition actor) {
-        currentActor = actor;
-        for (ASTNode child : actor.getChildren()) {
-            child.accept(this);
-        }
-    }
 
     @Override
     public void visit(Script node) {
         if (node.getEvent() instanceof GreenFlag || node.getEvent() instanceof StartedAsClone) {
             insideGreenFlagClone = true;
         }
-        for (ASTNode child : node.getChildren()) {
-            child.accept(this);
-        }
+        visitChildren(node);
         insideGreenFlagClone = false;
     }
 
     @Override
     public void visit(RepeatForeverStmt node) {
         insideLoop = true;
-        for (ASTNode child : node.getChildren()) {
-            child.accept(this);
-        }
+        visitChildren(node);
         insideLoop = false;
     }
 
     @Override
     public void visit(UntilStmt node) {
         insideLoop = true;
-        for (ASTNode child : node.getChildren()) {
-            child.accept(this);
-        }
+        visitChildren(node);
         insideLoop = false;
     }
 
@@ -104,9 +73,7 @@ public class MissingLoopSensing implements IssueFinder, ScratchVisitor {
                         HINT_TEXT, node.getMetadata()));
             }
         }
-        for (ASTNode child : node.getChildren()) {
-            child.accept(this);
-        }
+        visitChildren(node);
     }
 
     @Override
@@ -118,9 +85,7 @@ public class MissingLoopSensing implements IssueFinder, ScratchVisitor {
                         HINT_TEXT, node.getMetadata()));
             }
         }
-        for (ASTNode child : node.getChildren()) {
-            child.accept(this);
-        }
+        visitChildren(node);
     }
 
     @Override

@@ -18,23 +18,16 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
+import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
-import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
-import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.KeyPressed;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.ChangeXBy;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.ChangeYBy;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.MoveSteps;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
-import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
 
 /**
  * A common way to move sprites in response to keyboard input is to use the specific event handler When key
@@ -42,20 +35,11 @@ import java.util.Set;
  * Compared to the alternative to use a forever loop with a conditional containing a key pressed?
  * expression, the first approach results in noticeably slower reaction and stuttering movement of the sprite moved.
  */
-public class StutteringMovement implements IssueFinder, ScratchVisitor {
+public class StutteringMovement extends AbstractIssueFinder {
 
     public static final String NAME = "stuttering_movement";
     public static final String SHORT_NAME = "stuttMove";
     public static final String HINT_TEXT = "stuttering movement";
-    private Set<Issue> issues = new LinkedHashSet<>();
-    private ActorDefinition currentActor;
-
-    @Override
-    public Set<Issue> check(Program program) {
-        Preconditions.checkNotNull(program);
-        program.accept(this);
-        return issues;
-    }
 
     @Override
     public String getName() {
@@ -63,15 +47,8 @@ public class StutteringMovement implements IssueFinder, ScratchVisitor {
     }
 
     @Override
-    public void visit(ActorDefinition actor) {
-        currentActor = actor;
-        for (ASTNode child : actor.getChildren()) {
-            child.accept(this);
-        }
-    }
-
-    @Override
     public void visit(Script script) {
+        currentScript = script;
         if (script.getEvent() instanceof KeyPressed) {
             List<Stmt> listOfStmt = script.getStmtList().getStmts();
             if (listOfStmt.size() == 1) {
@@ -83,9 +60,6 @@ public class StutteringMovement implements IssueFinder, ScratchVisitor {
                 }
             }
         }
-
-        for (ASTNode child : script.getChildren()) {
-            child.accept(this);
-        }
+        visitChildren(script);
     }
 }

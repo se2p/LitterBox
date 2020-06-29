@@ -18,20 +18,13 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
+import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
-import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
-import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Parameter;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
-import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
 
 /**
  * When custom blocks are created the user can define parameters, which can then be used in the body of the custom
@@ -40,21 +33,12 @@ import java.util.Set;
  * Any instances of deleted parameters are retained, and then evaluated with the standard value for the type of
  * parameter, since they are never initialised.
  */
-public class OrphanedParameter implements IssueFinder, ScratchVisitor {
+public class OrphanedParameter extends AbstractIssueFinder {
     public static final String NAME = "orphaned_parameter";
     public static final String SHORT_NAME = "orphParam";
     public static final String HINT_TEXT = "orphaned parameter";
-    private ActorDefinition currentActor;
     private List<ParameterDefinition> currentParameterDefinitions;
     private boolean insideProcedure;
-    private Set<Issue> issues = new LinkedHashSet<>();
-
-    @Override
-    public Set<Issue> check(Program program) {
-        Preconditions.checkNotNull(program);
-        program.accept(this);
-        return issues;
-    }
 
     @Override
     public String getName() {
@@ -62,20 +46,10 @@ public class OrphanedParameter implements IssueFinder, ScratchVisitor {
     }
 
     @Override
-    public void visit(ActorDefinition actor) {
-        currentActor = actor;
-        for (ASTNode child : actor.getChildren()) {
-            child.accept(this);
-        }
-    }
-
-    @Override
     public void visit(ProcedureDefinition node) {
         insideProcedure = true;
         currentParameterDefinitions = node.getParameterDefinitionList().getParameterDefinitions();
-        for (ASTNode child : node.getChildren()) {
-            child.accept(this);
-        }
+        visitChildren(node);
         insideProcedure = false;
     }
 
@@ -84,9 +58,7 @@ public class OrphanedParameter implements IssueFinder, ScratchVisitor {
         if (insideProcedure) {
             checkParameterNames(node.getName().getName(), node);
         }
-        for (ASTNode child : node.getChildren()) {
-            child.accept(this);
-        }
+        visitChildren(node);
     }
 
     private void checkParameterNames(String name, Parameter node) {

@@ -18,47 +18,20 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
+import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
-import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
-import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.UnspecifiedBoolExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
-import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
-
-import java.util.LinkedHashSet;
-import java.util.Set;
 
 /**
  * The repeat until blocks require a stopping condition.
  * If the condition is missing, the result is an infinite loop.
  * This will then prevent the execution of blocks following the loop in the script.
  */
-public class MissingTerminationCondition implements IssueFinder, ScratchVisitor {
+public class MissingTerminationCondition extends AbstractIssueFinder {
     public static final String NAME = "missing_termination";
     public static final String SHORT_NAME = "mssTerm";
     public static final String HINT_TEXT = "missing termination";
-    private Set<Issue> issues = new LinkedHashSet<>();
-    private Program program;
-    private ActorDefinition currentActor;
-
-    @Override
-    public Set<Issue> check(Program program) {
-        Preconditions.checkNotNull(program);
-        this.program = program;
-        program.accept(this);
-        return issues;
-    }
-
-    @Override
-    public void visit(ActorDefinition actor) {
-        currentActor = actor;
-        for (ASTNode child : actor.getChildren()) {
-            child.accept(this);
-        }
-    }
 
     @Override
     public void visit(UntilStmt node) {
@@ -66,9 +39,7 @@ public class MissingTerminationCondition implements IssueFinder, ScratchVisitor 
             issues.add(new Issue(this, currentActor, node,
                     HINT_TEXT, node.getMetadata()));
         }
-        for (ASTNode child : node.getChildren()) {
-            child.accept(this);
-        }
+        visitChildren(node);
     }
 
     @Override

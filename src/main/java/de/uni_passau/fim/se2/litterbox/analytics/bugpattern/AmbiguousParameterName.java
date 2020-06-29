@@ -18,19 +18,10 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
+import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
-import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
-import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ArgumentInfo;
-import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ProcedureInfo;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
-import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
-
-import java.util.*;
 
 
 /**
@@ -38,32 +29,10 @@ import java.util.*;
  * Therefore, when two parameters have the same name, no matter the type or which one is used inside the custom
  * block, it will always be evaluated as the last input to the block.
  */
-public class AmbiguousParameterName implements IssueFinder, ScratchVisitor {
+public class AmbiguousParameterName extends AbstractIssueFinder {
     public static final String NAME = "ambiguous_parameter_name";
     public static final String SHORT_NAME = "ambParamName";
     public static final String HINT_TEXT = "ambiguous parameter name";
-    private Set<Issue> issues = new LinkedHashSet<>();
-    private ActorDefinition currentActor;
-
-    private Map<LocalIdentifier, ProcedureInfo> procMap;
-    private Program program;
-
-    @Override
-    public Set<Issue> check(Program program) {
-        Preconditions.checkNotNull(program);
-        this.program = program;
-        program.accept(this);
-        return issues;
-    }
-
-    @Override
-    public void visit(ActorDefinition actor) {
-        currentActor = actor;
-        procMap = program.getProcedureMapping().getProcedures().get(currentActor.getIdent().getName());
-        for (ASTNode child : actor.getChildren()) {
-            child.accept(this);
-        }
-    }
 
     private void checkArguments(ArgumentInfo[] arguments, ProcedureDefinition node) {
         for (int i = 0; i < arguments.length; i++) {
@@ -81,13 +50,11 @@ public class AmbiguousParameterName implements IssueFinder, ScratchVisitor {
     @Override
     public void visit(ProcedureDefinition node) {
 
-        if (!node.getStmtList().getStmts().isEmpty()) {
+        if (node.getStmtList().hasStatements()) {
             checkArguments(procMap.get(node.getIdent()).getArguments(), node);
         }
 
-        for (ASTNode child : node.getChildren()) {
-            child.accept(this);
-        }
+        visitChildren(node);
     }
 
     @Override

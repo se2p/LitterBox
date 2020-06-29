@@ -18,16 +18,11 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
+import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
-import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
-import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ProcedureInfo;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
-import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import java.util.*;
 
@@ -37,41 +32,18 @@ import java.util.*;
  * When two blocks have the same name and parameter order, no matter which call block is used, the program will
  * always call the matching custom block which was defined earlier.
  */
-public class AmbiguousCustomBlockSignature implements IssueFinder, ScratchVisitor {
+public class AmbiguousCustomBlockSignature extends AbstractIssueFinder {
     public static final String NAME = "ambiguous_custom_block_signature";
     public static final String SHORT_NAME = "ambCustBlSign";
     public static final String HINT_TEXT = "ambiguous custom block signature";
-    private Set<Issue> issues = new LinkedHashSet<>();
-    private ActorDefinition currentActor;
-    private Map<LocalIdentifier, ProcedureInfo> procMap;
-    private Program program;
-
-    @Override
-    public Set<Issue> check(Program program) {
-        Preconditions.checkNotNull(program);
-        this.program = program;
-        program.accept(this);
-        return issues;
-    }
-
-    @Override
-    public void visit(ActorDefinition actor) {
-        currentActor = actor;
-        procMap = program.getProcedureMapping().getProcedures().get(currentActor.getIdent().getName());
-        for (ASTNode child : actor.getChildren()) {
-            child.accept(this);
-        }
-    }
 
     @Override
     public void visit(ProcedureDefinition node) {
-        if (!node.getStmtList().getStmts().isEmpty()) {
+        if (node.getStmtList().hasStatements()) {
             checkProc(node);
         }
 
-        for (ASTNode child : node.getChildren()) {
-            child.accept(this);
-        }
+        visitChildren(node);
     }
 
     private void checkProc(ProcedureDefinition node) {

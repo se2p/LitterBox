@@ -18,16 +18,13 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
+import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
-import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
-import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.ReceptionOfMessage;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.Broadcast;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.BroadcastAndWait;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Pair;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 import java.util.*;
@@ -37,21 +34,20 @@ import java.util.*;
  * when there are blocks to send messages, but the When I receive message event handler is missing. Since no
  * handler reacts to this event, the message stays unnoticed.
  */
-public class MessageNeverReceived implements IssueFinder, ScratchVisitor {
+public class MessageNeverReceived extends AbstractIssueFinder {
 
     public static final String NAME = "message_never_received";
     public static final String SHORT_NAME = "messNeverRec";
     public static final String HINT_TEXT = "message never received";
     private List<Pair<String>> messageSent = new ArrayList<>();
     private List<Pair<String>> messageReceived = new ArrayList<>();
-    private ActorDefinition currentActor;
-    private boolean addComment;
-    private Set<Issue> issues = new LinkedHashSet<>();
-    private Set<String> notReceivedMessages;
+    private boolean addComment = false;
+    private Set<String> notReceivedMessages = new LinkedHashSet<>();
 
     @Override
     public Set<Issue> check(Program program) {
         Preconditions.checkNotNull(program);
+        this.program = program;
         messageSent = new ArrayList<>();
         messageReceived = new ArrayList<>();
         program.accept(this);
@@ -84,14 +80,6 @@ public class MessageNeverReceived implements IssueFinder, ScratchVisitor {
     @Override
     public String getName() {
         return NAME;
-    }
-
-    @Override
-    public void visit(ActorDefinition actor) {
-        currentActor = actor;
-        for (ASTNode child : actor.getChildren()) {
-            child.accept(this);
-        }
     }
 
     @Override

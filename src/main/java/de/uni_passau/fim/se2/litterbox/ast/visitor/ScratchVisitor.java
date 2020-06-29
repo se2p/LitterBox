@@ -107,13 +107,14 @@ public interface ScratchVisitor {
      * @param node ASTNode of which the children will be iterated
      */
     default void visit(ASTNode node) {
-        if (!node.getChildren().isEmpty()) {
-            for (ASTNode child : node.getChildren()) {
-                child.accept(this);
-            }
-        }
+        visitChildren(node);
     }
 
+    default void visitChildren(ASTNode node) {
+        for (ASTNode child : node.getChildren()) {
+            child.accept(this);
+        }
+    }
     /**
      * Default implementation of visit method for ActorDefinition.
      *

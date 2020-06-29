@@ -18,18 +18,11 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
+import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
-import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.pen.PenDownStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.pen.PenUpStmt;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
-import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
-
-import java.util.LinkedHashSet;
-import java.util.Set;
 
 /**
  * Scripts of a sprite using a pen up block but never a pen down block fall in this category.
@@ -37,92 +30,63 @@ import java.util.Set;
  * something and does not, or later additions of pen down blocks may not lead to the desired results since remaining
  * pen up blocks could disrupt the project.
  */
-public class MissingPenDown implements IssueFinder {
+public class MissingPenDown extends AbstractIssueFinder {
 
     public static final String NAME = "missing_pen_down";
     public static final String SHORT_NAME = "mssPenDown";
     public static final String HINT_TEXT = "missing pen down";
 
-    @Override
-    public Set<Issue> check(Program program) {
-        Preconditions.checkNotNull(program);
-        CheckVisitor visitor = new CheckVisitor(this);
-        program.accept(visitor);
-        return visitor.getIssues();
-    }
+    private boolean penUpSet = false;
+    private boolean penDownSet = false;
+    private boolean addComment;
 
     @Override
     public String getName() {
         return NAME;
     }
 
-    private static class CheckVisitor implements ScratchVisitor {
-        private Set<Issue> issues = new LinkedHashSet<>();
-        private ActorDefinition currentActor;
-        private boolean penUpSet = false;
-        private boolean penDownSet = false;
-        private boolean addComment;
-        private IssueFinder issueFinder;
+    @Override
+    public void visit(ActorDefinition actor) {
+        penUpSet = false;
+        penDownSet = false;
+        addComment = false;
+        super.visit(actor);
 
-        public CheckVisitor(IssueFinder issueFinder) {
-            this.issueFinder = issueFinder;
-        }
-
-        public Set<Issue> getIssues() {
-            return issues;
-        }
-
-        @Override
-        public void visit(ActorDefinition actor) {
-            currentActor = actor;
-            penUpSet = false;
-            penDownSet = false;
-            addComment = false;
-            for (ASTNode child : actor.getChildren()) {
-                child.accept(this);
-            }
-
-            if (getResult()) {
-                addComment = true;
-                for (ASTNode child : actor.getChildren()) {
-                    child.accept(this);
-                }
-                reset();
-            }
-        }
-
-        @Override
-        public void visit(PenDownStmt node) {
-            if (!addComment) {
-                penDownSet = true;
-                for (ASTNode child : node.getChildren()) {
-                    child.accept(this);
-                }
-            }
-        }
-
-        @Override
-        public void visit(PenUpStmt node) {
-            if (!addComment) {
-                penUpSet = true;
-                for (ASTNode child : node.getChildren()) {
-                    child.accept(this);
-                }
-            } else if(getResult()){
-                issues.add(new Issue(issueFinder, currentActor, node,
-                        HINT_TEXT, node.getMetadata()));
-            }
-        }
-
-        void reset() {
-            penUpSet = false;
-            penDownSet = false;
-            currentActor = null;
-            addComment = false;
-        }
-
-        boolean getResult() {
-            return !penDownSet && penUpSet;
+        if (getResult()) {
+            addComment = true;
+            visitChildren(actor);
+            reset();
         }
     }
+
+    @Override
+    public void visit(PenDownStmt node) {
+        if (!addComment) {
+            penDownSet = true;
+            visitChildren(node);
+        }
+    }
+
+    @Override
+    public void visit(PenUpStmt node) {
+        if (!addComment) {
+            penUpSet = true;
+            visitChildren(node);
+        } else if(getResult()){
+            issues.add(new Issue(this, currentActor, node,
+                    HINT_TEXT, node.getMetadata()));
+        }
+    }
+
+    void reset() {
+        penUpSet = false;
+        penDownSet = false;
+        currentActor = null;
+        addComment = false;
+    }
+
+    boolean getResult() {
+        return !penDownSet && penUpSet;
+    }
+
 }

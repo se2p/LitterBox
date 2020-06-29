@@ -18,18 +18,11 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
+import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
-import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
-import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
-
-import java.util.LinkedHashSet;
-import java.util.Set;
 
 /**
  * The empty script smell occurs if an event handler has no other blocks attached to it.
@@ -38,22 +31,13 @@ import java.util.Set;
  * If both smells occur simultaneously without any other scripts in a sprite we consider it a bug.
  * We suppose that the complete script should consist of the event handler attached to the dead code.
  */
-public class NoWorkingScripts implements IssueFinder, ScratchVisitor {
+public class NoWorkingScripts extends AbstractIssueFinder {
     public static final String NAME = "no_working_scripts";
     public static final String SHORT_NAME = "noWorkScript";
     public static final String HINT_TEXT = "no working scripts";
-    private ActorDefinition currentActor;
     private boolean stillFullfilledEmptyScript = false;
     private boolean deadCodeFound = false;
     private boolean foundEvent = false;
-    private Set<Issue> issues = new LinkedHashSet<>();
-
-    @Override
-    public Set<Issue> check(Program program) {
-        Preconditions.checkNotNull(program);
-        program.accept(this);
-        return issues;
-    }
 
     @Override
     public String getName() {
@@ -62,13 +46,10 @@ public class NoWorkingScripts implements IssueFinder, ScratchVisitor {
 
     @Override
     public void visit(ActorDefinition actor) {
-        currentActor = actor;
         stillFullfilledEmptyScript = true;
         deadCodeFound = false;
         foundEvent = false;
-        for (ASTNode child : actor.getChildren()) {
-            child.accept(this);
-        }
+        super.visit(actor);
 
         if (deadCodeFound && stillFullfilledEmptyScript && foundEvent) {
             issues.add(new Issue(this, currentActor, actor,
@@ -78,6 +59,7 @@ public class NoWorkingScripts implements IssueFinder, ScratchVisitor {
 
     @Override
     public void visit(Script node) {
+        currentScript = node;
         if (stillFullfilledEmptyScript) {
             if (node.getEvent() instanceof Never) {
                 if (node.getStmtList().getStmts().size() > 0) {

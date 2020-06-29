@@ -18,39 +18,23 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
+import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
-import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatTimesStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
-import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
-
-import java.util.LinkedHashSet;
-import java.util.Set;
 
 /**
  * If two loops are nested and the inner loop is a forever loop, the inner loop will never terminate. Thus
  * the statements preceeding the inner loop are only executed once. Furthermore, the statements following the outer
  * loop can never be reached.
  */
-public class ForeverInsideLoop implements IssueFinder, ScratchVisitor {
+public class ForeverInsideLoop extends AbstractIssueFinder {
     public static final String NAME = "forever_inside_loop";
     public static final String SHORT_NAME = "foreverInLoop";
     public static final String HINT_TEXT = "forever inside loop";
-    private Set<Issue> issues = new LinkedHashSet<>();
-    private ActorDefinition currentActor;
     private int loopcounter;
-
-    @Override
-    public Set<Issue> check(Program program) {
-        Preconditions.checkNotNull(program);
-        program.accept(this);
-        return issues;
-    }
 
     @Override
     public String getName() {
@@ -59,19 +43,14 @@ public class ForeverInsideLoop implements IssueFinder, ScratchVisitor {
 
     @Override
     public void visit(ActorDefinition actor) {
-        currentActor = actor;
         loopcounter = 0;
-        for (ASTNode child : actor.getChildren()) {
-            child.accept(this);
-        }
+        super.visit(actor);
     }
 
     @Override
     public void visit(UntilStmt node) {
         loopcounter++;
-        for (ASTNode child : node.getChildren()) {
-            child.accept(this);
-        }
+        visitChildren(node);
         loopcounter--;
     }
 
@@ -82,18 +61,14 @@ public class ForeverInsideLoop implements IssueFinder, ScratchVisitor {
                     HINT_TEXT, node.getMetadata()));
         }
         loopcounter++;
-        for (ASTNode child : node.getChildren()) {
-            child.accept(this);
-        }
+        visitChildren(node);
         loopcounter--;
     }
 
     @Override
     public void visit(RepeatTimesStmt node) {
         loopcounter++;
-        for (ASTNode child : node.getChildren()) {
-            child.accept(this);
-        }
+        visitChildren(node);
         loopcounter--;
     }
 }

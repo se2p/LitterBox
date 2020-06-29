@@ -18,10 +18,8 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
+import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
-import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
-import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.Random;
@@ -33,7 +31,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.NextBackdrop;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.SwitchBackdrop;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.SwitchBackdropAndWait;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Pair;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 import java.util.*;
@@ -43,15 +40,13 @@ import java.util.*;
  * to the selected one,  the script is never executed. This does not apply to programs including at least one of the
  * switch options next, previous or random.
  */
-public class MissingBackdropSwitch implements IssueFinder, ScratchVisitor {
+public class MissingBackdropSwitch extends AbstractIssueFinder {
 
     public static final String NAME = "missing_backdrop_switch";
     public static final String SHORT_NAME = "mssBackdrSwitch";
     public static final String HINT_TEXT = "missing backdrop switch";
     private List<Pair<String>> switched = new ArrayList<>();
     private List<Pair<String>> switchReceived = new ArrayList<>();
-    private ActorDefinition currentActor;
-    private Set<Issue> issues = new LinkedHashSet<>();
     private boolean nextRandPrev = false;
     private boolean addComment;
     private Set<String> notSentMessages;
@@ -60,6 +55,7 @@ public class MissingBackdropSwitch implements IssueFinder, ScratchVisitor {
     @Override
     public Set<Issue> check(Program program) {
         Preconditions.checkNotNull(program);
+        this.program = program;
         switched = new ArrayList<>();
         switchReceived = new ArrayList<>();
         nextRandPrev = false;
@@ -94,14 +90,6 @@ public class MissingBackdropSwitch implements IssueFinder, ScratchVisitor {
     @Override
     public String getName() {
         return NAME;
-    }
-
-    @Override
-    public void visit(ActorDefinition actor) {
-        currentActor = actor;
-        for (ASTNode child : actor.getChildren()) {
-            child.accept(this);
-        }
     }
 
     @Override
@@ -178,8 +166,6 @@ public class MissingBackdropSwitch implements IssueFinder, ScratchVisitor {
                         HINT_TEXT, event.getMetadata()));
             }
         }
-        for (ASTNode child : node.getChildren()) {
-            child.accept(this);
-        }
+        visitChildren(node);
     }
 }

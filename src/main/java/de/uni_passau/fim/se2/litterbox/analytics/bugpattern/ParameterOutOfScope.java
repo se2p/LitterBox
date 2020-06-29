@@ -18,37 +18,20 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
+import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
-import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
-import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Parameter;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
-import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
-
-import java.util.LinkedHashSet;
-import java.util.Set;
 
 /**
  * The parameters of a custom block can be used anywhere inside the sprite that defines the custom block.
  * However, they will never be initialised outside the custom block, and will always have the default value.
  */
-public class ParameterOutOfScope implements IssueFinder, ScratchVisitor {
+public class ParameterOutOfScope extends AbstractIssueFinder {
     public static final String NAME = "parameter_out_of_scope";
     public static final String SHORT_NAME = "paramOutScope";
     public static final String HINT_TEXT = "parameter out of scope";
-    private ActorDefinition currentActor;
-    private Set<Issue> issues = new LinkedHashSet<>();
     private boolean insideProcedure;
-
-    @Override
-    public Set<Issue> check(Program program) {
-        Preconditions.checkNotNull(program);
-        program.accept(this);
-        return issues;
-    }
 
     @Override
     public String getName() {
@@ -56,19 +39,9 @@ public class ParameterOutOfScope implements IssueFinder, ScratchVisitor {
     }
 
     @Override
-    public void visit(ActorDefinition actor) {
-        currentActor = actor;
-        for (ASTNode child : actor.getChildren()) {
-            child.accept(this);
-        }
-    }
-
-    @Override
     public void visit(ProcedureDefinition node) {
         insideProcedure = true;
-        for (ASTNode child : node.getChildren()) {
-            child.accept(this);
-        }
+        visitChildren(node);
         insideProcedure = false;
     }
 
@@ -78,8 +51,6 @@ public class ParameterOutOfScope implements IssueFinder, ScratchVisitor {
             issues.add(new Issue(this, currentActor, node,
                     HINT_TEXT, node.getMetadata()));
         }
-        for (ASTNode child : node.getChildren()) {
-            child.accept(this);
-        }
+        visitChildren(node);
     }
 }

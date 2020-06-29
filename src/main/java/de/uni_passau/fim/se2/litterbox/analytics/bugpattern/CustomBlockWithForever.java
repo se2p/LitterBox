@@ -18,20 +18,15 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
+import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
-import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
-import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ProcedureInfo;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
-import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import java.util.*;
 
@@ -41,26 +36,14 @@ import java.util.*;
  * The forever loop in the custom block cannot be left, resulting in the calling script never being able to
  * proceed.
  */
-public class CustomBlockWithForever implements IssueFinder, ScratchVisitor {
+public class CustomBlockWithForever extends AbstractIssueFinder {
     public static final String NAME = "custom_block_with_forever";
     public static final String SHORT_NAME = "custBlWithForever";
     public static final String HINT_TEXT = "custom block with forever";
-    private Set<Issue> issues = new LinkedHashSet<>();
-    private ActorDefinition currentActor;
     private String currentProcedureName;
     private List<String> proceduresWithForever;
     private List<CallStmt> calledProcedures;
     private boolean insideProcedure;
-    private Map<LocalIdentifier, ProcedureInfo> procMap;
-    private Program program;
-
-    @Override
-    public Set<Issue> check(Program program) {
-        Preconditions.checkNotNull(program);
-        this.program = program;
-        program.accept(this);
-        return issues;
-    }
 
     @Override
     public String getName() {
@@ -69,13 +52,9 @@ public class CustomBlockWithForever implements IssueFinder, ScratchVisitor {
 
     @Override
     public void visit(ActorDefinition actor) {
-        currentActor = actor;
-        procMap = program.getProcedureMapping().getProcedures().get(currentActor.getIdent().getName());
         calledProcedures = new ArrayList<>();
         proceduresWithForever = new ArrayList<>();
-        for (ASTNode child : actor.getChildren()) {
-            child.accept(this);
-        }
+        super.visit(actor);
         checkCalls();
     }
 
@@ -92,10 +71,7 @@ public class CustomBlockWithForever implements IssueFinder, ScratchVisitor {
     public void visit(ProcedureDefinition node) {
         insideProcedure = true;
         currentProcedureName = procMap.get(node.getIdent()).getName();
-
-        for (ASTNode child : node.getChildren()) {
-            child.accept(this);
-        }
+        visitChildren(node);
         insideProcedure = false;
     }
 
@@ -104,9 +80,7 @@ public class CustomBlockWithForever implements IssueFinder, ScratchVisitor {
         if (insideProcedure) {
             proceduresWithForever.add(currentProcedureName);
         }
-        for (ASTNode child : node.getChildren()) {
-            child.accept(this);
-        }
+        visitChildren(node);
     }
 
     @Override
@@ -118,8 +92,6 @@ public class CustomBlockWithForever implements IssueFinder, ScratchVisitor {
                 calledProcedures.add((CallStmt) stmts.get(i));
             }
         }
-        for (ASTNode child : node.getChildren()) {
-            child.accept(this);
-        }
+        visitChildren(node);
     }
 }

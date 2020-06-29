@@ -18,11 +18,8 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
+import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
-import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
-import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.ColorTouchingColor;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.SpriteTouchingColor;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Touching;
@@ -31,41 +28,19 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.pen.SetPenColorToColo
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.Edge;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.MousePointer;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.SpriteTouchable;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
-import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
-
-import java.util.LinkedHashSet;
-import java.util.Set;
 
 /**
  * This happens when inside a block that expects a colour or sprite as parameter (e.g., set pen color to or
  * touching mouse-pointer?) a reporter block, or an expression with a string or number value is used.
  */
-public class ExpressionAsTouchingOrColor implements IssueFinder, ScratchVisitor {
+public class ExpressionAsTouchingOrColor extends AbstractIssueFinder {
     public static final String NAME = "expression_as_touching_or_color";
     public static final String SHORT_NAME = "exprTouchColor";
     public static final String HINT_TEXT = "expression as touching or color";
-    private Set<Issue> issues = new LinkedHashSet<>();
-    private ActorDefinition currentActor;
-
-    @Override
-    public Set<Issue> check(Program program) {
-        Preconditions.checkNotNull(program);
-        program.accept(this);
-        return issues;
-    }
 
     @Override
     public String getName() {
         return NAME;
-    }
-
-    @Override
-    public void visit(ActorDefinition actor) {
-        currentActor = actor;
-        for (ASTNode child : actor.getChildren()) {
-            child.accept(this);
-        }
     }
 
     @Override
@@ -74,9 +49,7 @@ public class ExpressionAsTouchingOrColor implements IssueFinder, ScratchVisitor 
             issues.add(new Issue(this, currentActor, node,
                     HINT_TEXT, node.getMetadata()));
         }
-        for (ASTNode child : node.getChildren()) {
-            child.accept(this);
-        }
+        visitChildren(node);
     }
 
     @Override
@@ -89,9 +62,7 @@ public class ExpressionAsTouchingOrColor implements IssueFinder, ScratchVisitor 
             issues.add(new Issue(this, currentActor, node,
                     HINT_TEXT, node.getMetadata()));
         }
-        for (ASTNode child : node.getChildren()) {
-            child.accept(this);
-        }
+        visitChildren(node);
     }
 
     @Override
@@ -100,10 +71,7 @@ public class ExpressionAsTouchingOrColor implements IssueFinder, ScratchVisitor 
             issues.add(new Issue(this, currentActor, node,
                     HINT_TEXT, node.getMetadata()));
         }
-
-        for (ASTNode child : node.getChildren()) {
-            child.accept(this);
-        }
+        visitChildren(node);
     }
 
     @Override

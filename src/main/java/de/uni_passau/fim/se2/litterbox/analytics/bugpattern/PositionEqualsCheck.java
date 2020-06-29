@@ -18,11 +18,8 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
+import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
-import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
-import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.ComparableExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Equals;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
@@ -33,11 +30,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitUntil;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfElseStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
-import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
-
-import java.util.LinkedHashSet;
-import java.util.Set;
 
 /**
  * When an equals comparison is used as check for an until loop or a wait until, it can occur that
@@ -46,33 +38,15 @@ import java.util.Set;
  * considered a bug since the blocks following the until / wait until will never be reached and
  * executed.
  */
-public class PositionEqualsCheck implements IssueFinder, ScratchVisitor {
+public class PositionEqualsCheck extends AbstractIssueFinder {
     public static final String NAME = "position_equals_check";
     public static final String SHORT_NAME = "posEqCheck";
     public static final String HINT_TEXT = "position equals check";
     private int count = 0;
-    private Set<Issue> issues = new LinkedHashSet<>();
-    private ActorDefinition currentActor;
-
-    @Override
-    public Set<Issue> check(Program program) {
-        Preconditions.checkNotNull(program);
-        count = 0;
-        program.accept(this);
-        return issues;
-    }
 
     @Override
     public String getName() {
         return NAME;
-    }
-
-    @Override
-    public void visit(ActorDefinition actor) {
-        currentActor = actor;
-        for (ASTNode child : actor.getChildren()) {
-            child.accept(this);
-        }
     }
 
     @Override
@@ -85,9 +59,7 @@ public class PositionEqualsCheck implements IssueFinder, ScratchVisitor {
                         HINT_TEXT, node.getMetadata()));
             }
         }
-        for (ASTNode child : node.getChildren()) {
-            child.accept(this);
-        }
+        visitChildren(node);
     }
 
     private void checkEquals(Equals equals) {
@@ -112,6 +84,7 @@ public class PositionEqualsCheck implements IssueFinder, ScratchVisitor {
     @Override
     public void visit(UntilStmt node) {
         if (node.getBoolExpr() instanceof Equals) {
+            // TODO: There should be a nicer solution than indirect returns via count
             int currentCount = count;
             checkEquals((Equals) node.getBoolExpr());
             if (currentCount < count) {
@@ -119,9 +92,7 @@ public class PositionEqualsCheck implements IssueFinder, ScratchVisitor {
                         HINT_TEXT, node.getMetadata()));
             }
         }
-        for (ASTNode child : node.getChildren()) {
-            child.accept(this);
-        }
+        visitChildren(node);
     }
 
     @Override
@@ -134,9 +105,7 @@ public class PositionEqualsCheck implements IssueFinder, ScratchVisitor {
                         HINT_TEXT, node.getMetadata()));
             }
         }
-        for (ASTNode child : node.getChildren()) {
-            child.accept(this);
-        }
+        visitChildren(node);
     }
 
     @Override
@@ -149,8 +118,6 @@ public class PositionEqualsCheck implements IssueFinder, ScratchVisitor {
                         HINT_TEXT, node.getMetadata()));
             }
         }
-        for (ASTNode child : node.getChildren()) {
-            child.accept(this);
-        }
+        visitChildren(node);
     }
 }

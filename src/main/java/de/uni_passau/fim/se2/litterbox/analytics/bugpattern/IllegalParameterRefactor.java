@@ -19,13 +19,9 @@
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
 
+import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
-import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
-import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.*;
-import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitUntil;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfElseStmt;
@@ -34,30 +30,13 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.BooleanType;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Parameter;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ArgumentInfo;
-import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ProcedureInfo;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
-import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-import java.util.*;
-
-public class IllegalParameterRefactor implements IssueFinder, ScratchVisitor {
+public class IllegalParameterRefactor extends AbstractIssueFinder {
     public static final String NAME = "illegal_parameter_refactor";
     public static final String SHORT_NAME = "illParamRefac";
     public static final String HINT_TEXT = "illegal parameter refactor";
-    private Set<Issue> issues = new LinkedHashSet<>();
-    private ActorDefinition currentActor;
-    private Map<LocalIdentifier, ProcedureInfo> procedureMap;
     private ArgumentInfo[] currentArguments;
     private boolean insideProcedure;
-    private Program program;
-
-    @Override
-    public Set<Issue> check(Program program) {
-        Preconditions.checkNotNull(program);
-        this.program = program;
-        program.accept(this);
-        return issues;
-    }
 
     @Override
     public String getName() {
@@ -65,21 +44,10 @@ public class IllegalParameterRefactor implements IssueFinder, ScratchVisitor {
     }
 
     @Override
-    public void visit(ActorDefinition actor) {
-        currentActor = actor;
-        procedureMap = program.getProcedureMapping().getProcedures().get(currentActor.getIdent().getName());
-        for (ASTNode child : actor.getChildren()) {
-            child.accept(this);
-        }
-    }
-
-    @Override
     public void visit(ProcedureDefinition node) {
         insideProcedure = true;
-        currentArguments = procedureMap.get(node.getIdent()).getArguments();
-        for (ASTNode child : node.getChildren()) {
-            child.accept(this);
-        }
+        currentArguments = procMap.get(node.getIdent()).getArguments();
+        visitChildren(node);
         insideProcedure = false;
     }
 
@@ -88,9 +56,7 @@ public class IllegalParameterRefactor implements IssueFinder, ScratchVisitor {
         if (insideProcedure) {
             checkBool(node.getBoolExpr());
         }
-        for (ASTNode child : node.getChildren()) {
-            child.accept(this);
-        }
+        visitChildren(node);
     }
 
     private void checkBool(BoolExpr boolExpr) {
@@ -112,9 +78,7 @@ public class IllegalParameterRefactor implements IssueFinder, ScratchVisitor {
         if (insideProcedure) {
             checkBool(node.getBoolExpr());
         }
-        for (ASTNode child : node.getChildren()) {
-            child.accept(this);
-        }
+        visitChildren(node);
     }
 
     @Override
@@ -122,9 +86,7 @@ public class IllegalParameterRefactor implements IssueFinder, ScratchVisitor {
         if (insideProcedure) {
             checkBool(node.getUntil());
         }
-        for (ASTNode child : node.getChildren()) {
-            child.accept(this);
-        }
+        visitChildren(node);
     }
 
     @Override
@@ -132,9 +94,7 @@ public class IllegalParameterRefactor implements IssueFinder, ScratchVisitor {
         if (insideProcedure) {
             checkBool(node.getBoolExpr());
         }
-        for (ASTNode child : node.getChildren()) {
-            child.accept(this);
-        }
+        visitChildren(node);
     }
 
     @Override
@@ -142,9 +102,7 @@ public class IllegalParameterRefactor implements IssueFinder, ScratchVisitor {
         if (insideProcedure) {
             checkBool(node.getOperand1());
         }
-        for (ASTNode child : node.getChildren()) {
-            child.accept(this);
-        }
+        visitChildren(node);
     }
 
     @Override
@@ -153,9 +111,7 @@ public class IllegalParameterRefactor implements IssueFinder, ScratchVisitor {
             checkBool(node.getOperand1());
             checkBool(node.getOperand2());
         }
-        for (ASTNode child : node.getChildren()) {
-            child.accept(this);
-        }
+        visitChildren(node);
     }
 
     @Override
@@ -164,8 +120,6 @@ public class IllegalParameterRefactor implements IssueFinder, ScratchVisitor {
             checkBool(node.getOperand1());
             checkBool(node.getOperand2());
         }
-        for (ASTNode child : node.getChildren()) {
-            child.accept(this);
-        }
+        visitChildren(node);
     }
 }

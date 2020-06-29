@@ -18,45 +18,25 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
+import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
-import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfElseStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
-import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ProcedureInfo;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
-import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
-
-import java.util.*;
 
 /**
  * If a custom block calls itself inside its body and has no condition to stop the recursion, it will run for an
  * indefinite amount of time.
  */
-public class EndlessRecursion implements IssueFinder, ScratchVisitor {
+public class EndlessRecursion extends AbstractIssueFinder {
     public static final String NAME = "endless_recursion";
     public static final String SHORT_NAME = "endlRec";
     public static final String HINT_TEXT = "endless recursion";
-    private Set<Issue> issues = new LinkedHashSet<>();
-    private ActorDefinition currentActor;
-    private Map<LocalIdentifier, ProcedureInfo> procMap;
     private String currentProcedureName;
     private boolean insideProcedure;
     private int loopIfCounter;
-    private Program program;
-
-    @Override
-    public Set<Issue> check(Program program) {
-        Preconditions.checkNotNull(program);
-        this.program = program;
-        program.accept(this);
-        return issues;
-    }
 
     @Override
     public String getName() {
@@ -65,21 +45,15 @@ public class EndlessRecursion implements IssueFinder, ScratchVisitor {
 
     @Override
     public void visit(ActorDefinition actor) {
-        currentActor = actor;
-        procMap = program.getProcedureMapping().getProcedures().get(currentActor.getIdent().getName());
         loopIfCounter = 0;
-        for (ASTNode child : actor.getChildren()) {
-            child.accept(this);
-        }
+        super.visit(actor);
     }
 
     @Override
     public void visit(ProcedureDefinition node) {
         insideProcedure = true;
         currentProcedureName = procMap.get(node.getIdent()).getName();
-        for (ASTNode child : node.getChildren()) {
-            child.accept(this);
-        }
+        visitChildren(node);
         insideProcedure = false;
     }
 
@@ -97,18 +71,14 @@ public class EndlessRecursion implements IssueFinder, ScratchVisitor {
     @Override
     public void visit(IfElseStmt node) {
         loopIfCounter++;
-        for (ASTNode child : node.getChildren()) {
-            child.accept(this);
-        }
+        visitChildren(node);
         loopIfCounter--;
     }
 
     @Override
     public void visit(IfThenStmt node) {
         loopIfCounter++;
-        for (ASTNode child : node.getChildren()) {
-            child.accept(this);
-        }
+        visitChildren(node);
         loopIfCounter--;
     }
 }

@@ -18,17 +18,15 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
+import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
-import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.ReceptionOfMessage;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.Broadcast;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.BroadcastAndWait;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Pair;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 import java.util.*;
@@ -38,22 +36,21 @@ import java.util.*;
  * there are blocks to receive messages but the corresponding broadcast message block is missing, that
  * script will never be executed.
  */
-public class MessageNeverSent implements IssueFinder, ScratchVisitor {
+public class MessageNeverSent extends AbstractIssueFinder {
 
     public static final String NAME = "message_Never_Sent";
     public static final String SHORT_NAME = "messNeverSent";
     public static final String HINT_TEXT = "message Never Sent";
     private List<Pair<String>> messageSent = new ArrayList<>();
     private List<Pair<String>> messageReceived = new ArrayList<>();
-    private ActorDefinition currentActor;
-    private boolean addComment;
-    private Set<Issue> issues = new LinkedHashSet<>();
-    private Set<String> notSentMessages;
+    private boolean addComment = false;
+    private Set<String> notSentMessages = new LinkedHashSet<>();
 
 
     @Override
     public Set<Issue> check(Program program) {
         Preconditions.checkNotNull(program);
+        this.program = program;
         messageSent = new ArrayList<>();
         messageReceived = new ArrayList<>();
         program.accept(this);
@@ -90,14 +87,6 @@ public class MessageNeverSent implements IssueFinder, ScratchVisitor {
     }
 
     @Override
-    public void visit(ActorDefinition actor) {
-        currentActor = actor;
-        for (ASTNode child : actor.getChildren()) {
-            child.accept(this);
-        }
-    }
-
-    @Override
     public void visit(Broadcast node) {
         if (node.getMessage().getMessage() instanceof StringLiteral) {
             if (!addComment) {
@@ -121,6 +110,7 @@ public class MessageNeverSent implements IssueFinder, ScratchVisitor {
 
     @Override
     public void visit(Script node) {
+        currentScript = node;
         if (node.getStmtList().getStmts().size() > 0 && node.getEvent() instanceof ReceptionOfMessage) {
             ReceptionOfMessage event = (ReceptionOfMessage) node.getEvent();
             if (event.getMsg().getMessage() instanceof StringLiteral) {
@@ -134,8 +124,6 @@ public class MessageNeverSent implements IssueFinder, ScratchVisitor {
                 }
             }
         }
-        for (ASTNode child : node.getChildren()) {
-            child.accept(this);
-        }
+        visitChildren(node);
     }
 }

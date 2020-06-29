@@ -18,17 +18,14 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
+import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
-import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
-import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.StartedAsClone;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.CreateCloneOf;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -40,20 +37,19 @@ import java.util.stream.Collectors;
  * If the When I start as a clone event handler is used to start a script, but the sprite is never cloned,
  * the event will never be triggered and the script is dead.
  */
-public class MissingCloneCall implements IssueFinder, ScratchVisitor {
+public class MissingCloneCall extends AbstractIssueFinder {
     public static final String NAME = "missing_clone_call";
     public static final String SHORT_NAME = "mssCloneCll";
     public static final String HINT_TEXT = "missing clone call";
     private List<String> whenStartsAsCloneActors = new ArrayList<>();
     private List<String> clonedActors = new ArrayList<>();
-    private ActorDefinition currentActor;
-    private Set<Issue> issues = new LinkedHashSet<>();
     private boolean addComment;
     private Set<String> notClonedActor;
 
     @Override
     public Set<Issue> check(Program program) {
         Preconditions.checkNotNull(program);
+        this.program = program;
         whenStartsAsCloneActors = new ArrayList<>();
         clonedActors = new ArrayList<>();
         addComment = false;
@@ -71,14 +67,6 @@ public class MissingCloneCall implements IssueFinder, ScratchVisitor {
     @Override
     public String getName() {
         return NAME;
-    }
-
-    @Override
-    public void visit(ActorDefinition actor) {
-        currentActor = actor;
-        for (ASTNode child : actor.getChildren()) {
-            child.accept(this);
-        }
     }
 
     @Override
@@ -108,8 +96,6 @@ public class MissingCloneCall implements IssueFinder, ScratchVisitor {
                         HINT_TEXT, event.getMetadata()));
             }
         }
-        for (ASTNode child : node.getChildren()) {
-            child.accept(this);
-        }
+        visitChildren(node);
     }
 }

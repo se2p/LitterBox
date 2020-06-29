@@ -18,10 +18,8 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
+import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
-import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
-import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.SpriteClicked;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.StartedAsClone;
@@ -29,7 +27,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.CloneOfMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.CreateCloneOf;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -45,7 +42,7 @@ import java.util.stream.Collectors;
  * are deleted by delete this clone blocks or the program is
  * restarted.
  */
-public class MissingCloneInitialization implements IssueFinder, ScratchVisitor {
+public class MissingCloneInitialization extends AbstractIssueFinder {
 
     public static final String NAME = "missing_clone_initialization";
     public static final String SHORT_NAME = "mssCloneInit";
@@ -53,14 +50,13 @@ public class MissingCloneInitialization implements IssueFinder, ScratchVisitor {
 
     private List<String> whenStartsAsCloneActors = new ArrayList<>();
     private List<String> clonedActors = new ArrayList<>();
-    private Set<Issue> issues = new LinkedHashSet<>();
-    private ActorDefinition currentActor;
     private boolean addComment;
     private Set<String> notClonedActor;
 
     @Override
     public Set<Issue> check(Program program) {
         Preconditions.checkNotNull(program);
+        this.program = program;
         whenStartsAsCloneActors = new ArrayList<>();
         clonedActors = new ArrayList<>();
         addComment = false;
@@ -77,14 +73,6 @@ public class MissingCloneInitialization implements IssueFinder, ScratchVisitor {
     @Override
     public String getName() {
         return NAME;
-    }
-
-    @Override
-    public void visit(ActorDefinition actor) {
-        currentActor = actor;
-        for (ASTNode child : actor.getChildren()) {
-            child.accept(this);
-        }
     }
 
     @Override

@@ -18,21 +18,13 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
+import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
-import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
-import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BiggerThan;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Equals;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.LessThan;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
-import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
-
-import java.util.LinkedHashSet;
-import java.util.Set;
 
 /**
  * Reporter blocks are used to evaluate the truth value of certain expressions.
@@ -41,33 +33,15 @@ import java.util.Set;
  * Since this will lead to the same result in each execution this construct is unnecessary and can obscure the fact
  * that certain blocks will never or always be executed.
  */
-public class ComparingLiterals implements IssueFinder, ScratchVisitor {
+public class ComparingLiterals extends AbstractIssueFinder {
 
     public static final String NAME = "comparing_literals";
     public static final String SHORT_NAME = "compLit";
     public static final String HINT_TEXT = "comparing literals";
 
-    private Set<Issue> issues = new LinkedHashSet<>();
-    private ActorDefinition currentActor;
-
-    @Override
-    public Set<Issue> check(Program program) {
-        Preconditions.checkNotNull(program);
-        program.accept(this);
-        return issues;
-    }
-
     @Override
     public String getName() {
         return NAME;
-    }
-
-    @Override
-    public void visit(ActorDefinition actor) {
-        currentActor = actor;
-        for (ASTNode child : actor.getChildren()) {
-            child.accept(this);
-        }
     }
 
     @Override
@@ -77,9 +51,7 @@ public class ComparingLiterals implements IssueFinder, ScratchVisitor {
             issues.add(new Issue(this, currentActor, node,
                     HINT_TEXT, node.getMetadata()));
         }
-        for (ASTNode child : node.getChildren()) {
-            child.accept(this);
-        }
+        visitChildren(node);
     }
 
 
@@ -90,9 +62,7 @@ public class ComparingLiterals implements IssueFinder, ScratchVisitor {
             issues.add(new Issue(this, currentActor, node,
                     HINT_TEXT, node.getMetadata()));
         }
-        for (ASTNode child : node.getChildren()) {
-            child.accept(this);
-        }
+        visitChildren(node);
     }
 
     @Override
@@ -102,8 +72,6 @@ public class ComparingLiterals implements IssueFinder, ScratchVisitor {
             issues.add(new Issue(this, currentActor, node,
                     HINT_TEXT, node.getMetadata()));
         }
-        for (ASTNode child : node.getChildren()) {
-            child.accept(this);
-        }
+        visitChildren(node);
     }
 }

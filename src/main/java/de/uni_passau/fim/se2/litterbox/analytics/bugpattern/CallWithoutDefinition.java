@@ -18,17 +18,11 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
+import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
-import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
-import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ProcedureInfo;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
-import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import java.util.*;
 
@@ -38,24 +32,12 @@ import java.util.*;
  * can still be used. 2) A script using a call to a custom block can be dragged and copied to another sprite,
  * probably no custom block with the same signature as the call exists here and thus the call has no definition.
  */
-public class CallWithoutDefinition implements IssueFinder, ScratchVisitor {
+public class CallWithoutDefinition extends AbstractIssueFinder {
     public static final String NAME = "call_without_definition";
     public static final String SHORT_NAME = "cllWithoutDef";
     public static final String HINT_TEXT = "call without definition";
-    private Set<Issue> issues = new LinkedHashSet<>();
-    private ActorDefinition currentActor;
     private List<String> proceduresDef;
     private List<CallStmt> calledProcedures;
-    private Map<LocalIdentifier, ProcedureInfo> procMap;
-    private Program program;
-
-    @Override
-    public Set<Issue> check(Program program) {
-        Preconditions.checkNotNull(program);
-        this.program = program;
-        program.accept(this);
-        return issues;
-    }
 
     @Override
     public String getName() {
@@ -64,13 +46,9 @@ public class CallWithoutDefinition implements IssueFinder, ScratchVisitor {
 
     @Override
     public void visit(ActorDefinition actor) {
-        currentActor = actor;
         calledProcedures = new ArrayList<>();
         proceduresDef = new ArrayList<>();
-        procMap = program.getProcedureMapping().getProcedures().get(currentActor.getIdent().getName());
-        for (ASTNode child : actor.getChildren()) {
-            child.accept(this);
-        }
+        super.visit(actor);
         checkCalls();
     }
 
@@ -87,18 +65,12 @@ public class CallWithoutDefinition implements IssueFinder, ScratchVisitor {
     @Override
     public void visit(ProcedureDefinition node) {
         proceduresDef.add(procMap.get(node.getIdent()).getName());
-
-        for (ASTNode child : node.getChildren()) {
-            child.accept(this);
-        }
+        visitChildren(node);
     }
 
     @Override
     public void visit(CallStmt node) {
         calledProcedures.add(node);
-
-        for (ASTNode child : node.getChildren()) {
-            child.accept(this);
-        }
+        visitChildren(node);
     }
 }
