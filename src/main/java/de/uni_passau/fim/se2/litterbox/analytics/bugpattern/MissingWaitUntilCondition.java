@@ -58,7 +58,6 @@ public class MissingWaitUntilCondition implements IssueFinder {
 
     private static class CheckVisitor implements ScratchVisitor {
         private ActorDefinition currentActor;
-        private int count = 0;
         private Set<Issue> issues = new LinkedHashSet<>();
         private IssueFinder issueFinder;
 
@@ -81,9 +80,8 @@ public class MissingWaitUntilCondition implements IssueFinder {
         @Override
         public void visit(WaitUntil node) {
             if (node.getUntil() instanceof UnspecifiedBoolExpr) {
-                count++;
                 issues.add(new Issue(issueFinder, currentActor, node,
-                        HINT_TEXT, SHORT_NAME + count, node.getMetadata()));
+                        HINT_TEXT, node.getMetadata()));
             }
         }
 

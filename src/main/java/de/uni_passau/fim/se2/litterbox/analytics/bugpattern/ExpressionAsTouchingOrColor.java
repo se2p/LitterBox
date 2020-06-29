@@ -45,14 +45,12 @@ public class ExpressionAsTouchingOrColor implements IssueFinder, ScratchVisitor 
     public static final String NAME = "expression_as_touching_or_color";
     public static final String SHORT_NAME = "exprTouchColor";
     public static final String HINT_TEXT = "expression as touching or color";
-    private int count = 0;
     private Set<Issue> issues = new LinkedHashSet<>();
     private ActorDefinition currentActor;
 
     @Override
     public Set<Issue> check(Program program) {
         Preconditions.checkNotNull(program);
-        count = 0;
         program.accept(this);
         return issues;
     }
@@ -73,9 +71,8 @@ public class ExpressionAsTouchingOrColor implements IssueFinder, ScratchVisitor 
     @Override
     public void visit(SetPenColorToColorStmt node) {
         if (!(node.getColorExpr() instanceof ColorLiteral)) {
-            count++;
             issues.add(new Issue(this, currentActor, node,
-                    HINT_TEXT, SHORT_NAME + count, node.getMetadata()));
+                    HINT_TEXT, node.getMetadata()));
         }
         for (ASTNode child : node.getChildren()) {
             child.accept(this);
@@ -85,14 +82,12 @@ public class ExpressionAsTouchingOrColor implements IssueFinder, ScratchVisitor 
     @Override
     public void visit(ColorTouchingColor node) {
         if (!(node.getOperand1() instanceof ColorLiteral)) {
-            count++;
             issues.add(new Issue(this, currentActor, node,
-                    HINT_TEXT, SHORT_NAME + count, node.getMetadata()));
+                    HINT_TEXT, node.getMetadata()));
         }
         if (!(node.getOperand2() instanceof ColorLiteral)) {
-            count++;
             issues.add(new Issue(this, currentActor, node,
-                    HINT_TEXT, SHORT_NAME + count, node.getMetadata()));
+                    HINT_TEXT, node.getMetadata()));
         }
         for (ASTNode child : node.getChildren()) {
             child.accept(this);
@@ -102,9 +97,8 @@ public class ExpressionAsTouchingOrColor implements IssueFinder, ScratchVisitor 
     @Override
     public void visit(SpriteTouchingColor node) {
         if (!(node.getColor() instanceof ColorLiteral)) {
-            count++;
             issues.add(new Issue(this, currentActor, node,
-                    HINT_TEXT, SHORT_NAME + count, node.getMetadata()));
+                    HINT_TEXT, node.getMetadata()));
         }
 
         for (ASTNode child : node.getChildren()) {
@@ -117,9 +111,8 @@ public class ExpressionAsTouchingOrColor implements IssueFinder, ScratchVisitor 
         if (!(node.getTouchable() instanceof MousePointer)
                 && !(node.getTouchable() instanceof Edge)
                 && !(node.getTouchable() instanceof SpriteTouchable)) {
-            count++;
             issues.add(new Issue(this, currentActor, node,
-                    HINT_TEXT, SHORT_NAME + count, node.getMetadata()));
+                    HINT_TEXT, node.getMetadata()));
         }
     }
 }

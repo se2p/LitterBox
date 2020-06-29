@@ -48,13 +48,11 @@ public class StutteringMovement implements IssueFinder, ScratchVisitor {
     public static final String SHORT_NAME = "stuttMove";
     public static final String HINT_TEXT = "stuttering movement";
     private Set<Issue> issues = new LinkedHashSet<>();
-    private int count = 0;
     private ActorDefinition currentActor;
 
     @Override
     public Set<Issue> check(Program program) {
         Preconditions.checkNotNull(program);
-        count = 0;
         program.accept(this);
         return issues;
     }
@@ -79,10 +77,9 @@ public class StutteringMovement implements IssueFinder, ScratchVisitor {
             if (listOfStmt.size() == 1) {
                 Stmt stmt = listOfStmt.get(0);
                 if (stmt instanceof MoveSteps || stmt instanceof ChangeXBy || stmt instanceof ChangeYBy) {
-                    count++;
                     KeyPressed keyPressed = (KeyPressed) script.getEvent();
                     issues.add(new Issue(this, currentActor, script,
-                            HINT_TEXT, SHORT_NAME + count, keyPressed.getMetadata()));
+                            HINT_TEXT, keyPressed.getMetadata()));
                 }
             }
         }

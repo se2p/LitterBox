@@ -48,13 +48,11 @@ public class ComparingLiterals implements IssueFinder, ScratchVisitor {
     public static final String HINT_TEXT = "comparing literals";
 
     private Set<Issue> issues = new LinkedHashSet<>();
-    private int count = 0;
     private ActorDefinition currentActor;
 
     @Override
     public Set<Issue> check(Program program) {
         Preconditions.checkNotNull(program);
-        count = 0;
         program.accept(this);
         return issues;
     }
@@ -76,9 +74,8 @@ public class ComparingLiterals implements IssueFinder, ScratchVisitor {
     public void visit(Equals node) {
         if ((node.getOperand1() instanceof StringLiteral || node.getOperand1() instanceof NumberLiteral)
                 && (node.getOperand2() instanceof StringLiteral || node.getOperand2() instanceof NumberLiteral)) {
-            count++;
             issues.add(new Issue(this, currentActor, node,
-                    HINT_TEXT, SHORT_NAME + count, node.getMetadata()));
+                    HINT_TEXT, node.getMetadata()));
         }
         for (ASTNode child : node.getChildren()) {
             child.accept(this);
@@ -90,9 +87,8 @@ public class ComparingLiterals implements IssueFinder, ScratchVisitor {
     public void visit(LessThan node) {
         if ((node.getOperand1() instanceof StringLiteral || node.getOperand1() instanceof NumberLiteral)
                 && (node.getOperand2() instanceof StringLiteral || node.getOperand2() instanceof NumberLiteral)) {
-            count++;
             issues.add(new Issue(this, currentActor, node,
-                    HINT_TEXT, SHORT_NAME + count, node.getMetadata()));
+                    HINT_TEXT, node.getMetadata()));
         }
         for (ASTNode child : node.getChildren()) {
             child.accept(this);
@@ -103,9 +99,8 @@ public class ComparingLiterals implements IssueFinder, ScratchVisitor {
     public void visit(BiggerThan node) {
         if ((node.getOperand1() instanceof StringLiteral || node.getOperand1() instanceof NumberLiteral)
                 && (node.getOperand2() instanceof StringLiteral || node.getOperand2() instanceof NumberLiteral)) {
-            count++;
             issues.add(new Issue(this, currentActor, node,
-                    HINT_TEXT, SHORT_NAME + count, node.getMetadata()));
+                    HINT_TEXT, node.getMetadata()));
         }
         for (ASTNode child : node.getChildren()) {
             child.accept(this);

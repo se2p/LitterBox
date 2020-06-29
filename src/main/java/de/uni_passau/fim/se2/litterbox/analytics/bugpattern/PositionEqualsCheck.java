@@ -82,7 +82,7 @@ public class PositionEqualsCheck implements IssueFinder, ScratchVisitor {
             checkEquals((Equals) node.getUntil());
             if (currentCount < count) {
                 issues.add(new Issue(this, currentActor, node,
-                        HINT_TEXT, SHORT_NAME + count, node.getMetadata()));
+                        HINT_TEXT, node.getMetadata()));
             }
         }
         for (ASTNode child : node.getChildren()) {
@@ -116,7 +116,7 @@ public class PositionEqualsCheck implements IssueFinder, ScratchVisitor {
             checkEquals((Equals) node.getBoolExpr());
             if (currentCount < count) {
                 issues.add(new Issue(this, currentActor, node,
-                        HINT_TEXT, SHORT_NAME + count, node.getMetadata()));
+                        HINT_TEXT, node.getMetadata()));
             }
         }
         for (ASTNode child : node.getChildren()) {
@@ -131,7 +131,7 @@ public class PositionEqualsCheck implements IssueFinder, ScratchVisitor {
             checkEquals((Equals) node.getBoolExpr());
             if (currentCount < count) {
                 issues.add(new Issue(this, currentActor, node,
-                        HINT_TEXT, SHORT_NAME + count, node.getMetadata()));
+                        HINT_TEXT, node.getMetadata()));
             }
         }
         for (ASTNode child : node.getChildren()) {
@@ -146,7 +146,7 @@ public class PositionEqualsCheck implements IssueFinder, ScratchVisitor {
             checkEquals((Equals) node.getBoolExpr());
             if (currentCount < count) {
                 issues.add(new Issue(this, currentActor, node,
-                        HINT_TEXT, SHORT_NAME + count, node.getMetadata()));
+                        HINT_TEXT, node.getMetadata()));
             }
         }
         for (ASTNode child : node.getChildren()) {

@@ -48,7 +48,6 @@ public class MissingCloneCall implements IssueFinder, ScratchVisitor {
     private List<String> clonedActors = new ArrayList<>();
     private ActorDefinition currentActor;
     private Set<Issue> issues = new LinkedHashSet<>();
-    private int identifierCounter;
     private boolean addComment;
     private Set<String> notClonedActor;
 
@@ -57,7 +56,6 @@ public class MissingCloneCall implements IssueFinder, ScratchVisitor {
         Preconditions.checkNotNull(program);
         whenStartsAsCloneActors = new ArrayList<>();
         clonedActors = new ArrayList<>();
-        identifierCounter = 1;
         addComment = false;
         notClonedActor = new LinkedHashSet<>();
         program.accept(this);
@@ -107,8 +105,7 @@ public class MissingCloneCall implements IssueFinder, ScratchVisitor {
             } else if (notClonedActor.contains(currentActor.getIdent().getName())) {
                 StartedAsClone event = (StartedAsClone) node.getEvent();
                 issues.add(new Issue(this, currentActor, node, // TODO: node or event?
-                        HINT_TEXT, SHORT_NAME + identifierCounter, event.getMetadata()));
-                identifierCounter++;
+                        HINT_TEXT, event.getMetadata()));
             }
         }
         for (ASTNode child : node.getChildren()) {

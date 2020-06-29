@@ -43,7 +43,6 @@ public class AmbiguousParameterName implements IssueFinder, ScratchVisitor {
     public static final String SHORT_NAME = "ambParamName";
     public static final String HINT_TEXT = "ambiguous parameter name";
     private Set<Issue> issues = new LinkedHashSet<>();
-    private int count = 0;
     private ActorDefinition currentActor;
 
     private Map<LocalIdentifier, ProcedureInfo> procMap;
@@ -53,7 +52,6 @@ public class AmbiguousParameterName implements IssueFinder, ScratchVisitor {
     public Set<Issue> check(Program program) {
         Preconditions.checkNotNull(program);
         this.program = program;
-        count = 0;
         program.accept(this);
         return issues;
     }
@@ -74,8 +72,7 @@ public class AmbiguousParameterName implements IssueFinder, ScratchVisitor {
                 if (i != j && current.getName().equals(arguments[j].getName())) {
                     // TODO: Does this add redundant comments?
                     issues.add(new Issue(this, currentActor, node,
-                            HINT_TEXT, SHORT_NAME + count, node.getMetadata().getDefinition()));
-                    count++;
+                            HINT_TEXT, node.getMetadata().getDefinition()));
                 }
             }
         }

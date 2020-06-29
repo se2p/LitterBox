@@ -32,14 +32,12 @@ public class SameVariableDifferentSprite implements IssueFinder {
     public static final String NAME = "same_variable_different_sprite";
     public static final String SHORT_NAME = "sameVarDiffSprite";
     public static final String HINT_TEXT = "same_variable different sprite";
-    private int count = 0;
     private Set<Issue> issues = new LinkedHashSet<>();
 
     @Override
     public Set<Issue> check(Program program) {
         Preconditions.checkNotNull(program);
         boolean found = false;
-        count = 0;
         List<ActorDefinition> actorDefinitions = program.getActorDefinitionList().getDefinitions();
         Map<String, VariableInfo> variableInfoMap = program.getSymbolTable().getVariables();
         ArrayList<VariableInfo> varInfos = new ArrayList<>(variableInfoMap.values());
@@ -54,12 +52,11 @@ public class SameVariableDifferentSprite implements IssueFinder {
             }
             if (found) {
                 found = false;
-                count++;
                 for (ActorDefinition actorDefinition : actorDefinitions) {
                     if (actorDefinition.getIdent().getName().equals(currentActor)) {
                         issues.add(new Issue(this, actorDefinition, actorDefinition,
                                 HINT_TEXT + " Variable " + currentName,
-                                SHORT_NAME + count, null)); // TODO: Improve -- null ensurese loose comment
+                                null)); // TODO: Improve -- null ensurese loose comment
                         break;
                     }
                 }
@@ -79,12 +76,11 @@ public class SameVariableDifferentSprite implements IssueFinder {
             }
             if (found) {
                 found = false;
-                count++;
                 for (ActorDefinition actorDefinition : actorDefinitions) {
                     if (actorDefinition.getIdent().getName().equals(currentActor)) {
                         issues.add(new Issue(this, actorDefinition, actorDefinition,
                                 HINT_TEXT + " List " + currentName,
-                                SHORT_NAME + count, null)); // TODO: Improve -- null ensurese loose comment
+                                null)); // TODO: Improve -- null ensurese loose comment
                         break;
                     }
                 }

@@ -45,7 +45,6 @@ public class MessageNeverReceived implements IssueFinder, ScratchVisitor {
     private List<Pair<String>> messageSent = new ArrayList<>();
     private List<Pair<String>> messageReceived = new ArrayList<>();
     private ActorDefinition currentActor;
-    private int identifierCounter;
     private boolean addComment;
     private Set<Issue> issues = new LinkedHashSet<>();
     private Set<String> notReceivedMessages;
@@ -56,7 +55,6 @@ public class MessageNeverReceived implements IssueFinder, ScratchVisitor {
         messageSent = new ArrayList<>();
         messageReceived = new ArrayList<>();
         program.accept(this);
-        identifierCounter = 1;
         addComment = false;
         notReceivedMessages = new LinkedHashSet<>();
 
@@ -104,9 +102,8 @@ public class MessageNeverReceived implements IssueFinder, ScratchVisitor {
                 final String actorName = currentActor.getIdent().getName();
                 messageSent.add(new Pair<>(actorName, msgName));
             } else if(notReceivedMessages.contains(msgName)){
-                identifierCounter++;
                 issues.add(new Issue(this, currentActor, node,
-                        HINT_TEXT, SHORT_NAME + identifierCounter, node.getMetadata()));
+                        HINT_TEXT, node.getMetadata()));
             }
         }
     }
@@ -120,8 +117,7 @@ public class MessageNeverReceived implements IssueFinder, ScratchVisitor {
                 messageSent.add(new Pair<>(actorName, msgName));
             } else if(notReceivedMessages.contains(msgName)){
                 issues.add(new Issue(this, currentActor, node,
-                        HINT_TEXT, SHORT_NAME + identifierCounter, node.getMetadata()));
-                identifierCounter++;
+                        HINT_TEXT, node.getMetadata()));
             }
         }
     }

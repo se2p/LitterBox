@@ -60,16 +60,14 @@ public class MissingInitialization implements IssueFinder {
         livenessAnalysis.applyAnalysis();
         Set<Use> initialUses = livenessAnalysis.getDataflowFacts(cfg.getEntryNode());
 
-        int violations = 0;
         for(Use use : initialUses) {
             // If there are no initial definitions of the same defineable in other scripts it's an anomaly
             if(initialDefinitions.stream()
                     .filter(d -> d.getDefinable().equals(use.getDefinable()))
                     .noneMatch(d -> d.getDefinitionSource().getScriptOrProcedure() != use.getUseTarget().getScriptOrProcedure())) {
-                violations++;
                 // TODO: Fix cast!
                 issues.add(new Issue(this, use.getUseTarget().getActor(), (AbstractNode) use.getUseTarget().getASTNode(),
-                        "TODO -- hint text", SHORT_NAME + violations, null)); // TODO: What is the relevant metadata?
+                        "TODO -- hint text", null)); // TODO: What is the relevant metadata?
             }
         }
         return issues;

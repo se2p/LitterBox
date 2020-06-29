@@ -41,7 +41,6 @@ public class ForeverInsideLoop implements IssueFinder, ScratchVisitor {
     public static final String NAME = "forever_inside_loop";
     public static final String SHORT_NAME = "foreverInLoop";
     public static final String HINT_TEXT = "forever inside loop";
-    private int count = 0;
     private Set<Issue> issues = new LinkedHashSet<>();
     private ActorDefinition currentActor;
     private int loopcounter;
@@ -49,7 +48,6 @@ public class ForeverInsideLoop implements IssueFinder, ScratchVisitor {
     @Override
     public Set<Issue> check(Program program) {
         Preconditions.checkNotNull(program);
-        count = 0;
         program.accept(this);
         return issues;
     }
@@ -80,9 +78,8 @@ public class ForeverInsideLoop implements IssueFinder, ScratchVisitor {
     @Override
     public void visit(RepeatForeverStmt node) {
         if (loopcounter > 0) {
-            count++;
             issues.add(new Issue(this, currentActor, node,
-                    HINT_TEXT, SHORT_NAME + count, node.getMetadata()));
+                    HINT_TEXT, node.getMetadata()));
         }
         loopcounter++;
         for (ASTNode child : node.getChildren()) {

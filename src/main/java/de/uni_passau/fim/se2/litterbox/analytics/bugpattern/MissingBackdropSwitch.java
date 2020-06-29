@@ -53,7 +53,6 @@ public class MissingBackdropSwitch implements IssueFinder, ScratchVisitor {
     private ActorDefinition currentActor;
     private Set<Issue> issues = new LinkedHashSet<>();
     private boolean nextRandPrev = false;
-    private int identifierCounter;
     private boolean addComment;
     private Set<String> notSentMessages;
 
@@ -64,7 +63,6 @@ public class MissingBackdropSwitch implements IssueFinder, ScratchVisitor {
         switched = new ArrayList<>();
         switchReceived = new ArrayList<>();
         nextRandPrev = false;
-        identifierCounter = 1;
         addComment = false;
         notSentMessages = new LinkedHashSet<>();
         program.accept(this);
@@ -177,8 +175,7 @@ public class MissingBackdropSwitch implements IssueFinder, ScratchVisitor {
                 switchReceived.add(new Pair<>(actorName, msgName));
             } else if (notSentMessages.contains(msgName)) {
                 issues.add(new Issue(this, currentActor, node, // TODO: node or event?
-                        HINT_TEXT, SHORT_NAME + identifierCounter, event.getMetadata()));
-                identifierCounter++;
+                        HINT_TEXT, event.getMetadata()));
             }
         }
         for (ASTNode child : node.getChildren()) {

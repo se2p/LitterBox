@@ -11,7 +11,6 @@ public class Issue {
     private ActorDefinition actor;
     private AbstractNode node;
     private String helpText;
-    private String hintID;
     private Metadata metaData;
 
     public Issue(IssueFinder finder, ActorDefinition actor, AbstractNode currentNode) {
@@ -21,12 +20,11 @@ public class Issue {
     }
 
     public Issue(IssueFinder finder, ActorDefinition actor, AbstractNode currentNode,
-                 String helpText, String hintID, Metadata metaData) {
+                 String helpText, Metadata metaData) {
         this.finder = finder;
         this.actor = actor;
         this.node = currentNode;
         this.helpText = helpText;
-        this.hintID = hintID;
         this.metaData = metaData;
     }
 
@@ -48,10 +46,6 @@ public class Issue {
 
     public String getHint() {
         return helpText;
-    }
-
-    public String getHintID() {
-        return hintID;
     }
 
     public AbstractNode getCodeLocation() {

@@ -42,7 +42,6 @@ public class EndlessRecursion implements IssueFinder, ScratchVisitor {
     public static final String NAME = "endless_recursion";
     public static final String SHORT_NAME = "endlRec";
     public static final String HINT_TEXT = "endless recursion";
-    private int count = 0;
     private Set<Issue> issues = new LinkedHashSet<>();
     private ActorDefinition currentActor;
     private Map<LocalIdentifier, ProcedureInfo> procMap;
@@ -54,7 +53,6 @@ public class EndlessRecursion implements IssueFinder, ScratchVisitor {
     @Override
     public Set<Issue> check(Program program) {
         Preconditions.checkNotNull(program);
-        count = 0;
         this.program = program;
         program.accept(this);
         return issues;
@@ -90,9 +88,8 @@ public class EndlessRecursion implements IssueFinder, ScratchVisitor {
         if (insideProcedure && loopIfCounter == 0) {
             String call = node.getIdent().getName();
             if (call.equals(currentProcedureName)) {
-                count++;
                 issues.add(new Issue(this, currentActor, node,
-                        HINT_TEXT, SHORT_NAME + count, node.getMetadata()));
+                        HINT_TEXT, node.getMetadata()));
             }
         }
     }

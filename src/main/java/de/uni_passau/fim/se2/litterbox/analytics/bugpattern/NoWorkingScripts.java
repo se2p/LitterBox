@@ -42,7 +42,6 @@ public class NoWorkingScripts implements IssueFinder, ScratchVisitor {
     public static final String NAME = "no_working_scripts";
     public static final String SHORT_NAME = "noWorkScript";
     public static final String HINT_TEXT = "no working scripts";
-    private int count = 0;
     private ActorDefinition currentActor;
     private boolean stillFullfilledEmptyScript = false;
     private boolean deadCodeFound = false;
@@ -52,7 +51,6 @@ public class NoWorkingScripts implements IssueFinder, ScratchVisitor {
     @Override
     public Set<Issue> check(Program program) {
         Preconditions.checkNotNull(program);
-        count = 0;
         program.accept(this);
         return issues;
     }
@@ -73,9 +71,8 @@ public class NoWorkingScripts implements IssueFinder, ScratchVisitor {
         }
 
         if (deadCodeFound && stillFullfilledEmptyScript && foundEvent) {
-            count++;
             issues.add(new Issue(this, currentActor, actor,
-                    HINT_TEXT, SHORT_NAME + count, null)); // TODO: Null to ensure loose comment
+                    HINT_TEXT, null)); // TODO: Null to ensure loose comment
         }
     }
 

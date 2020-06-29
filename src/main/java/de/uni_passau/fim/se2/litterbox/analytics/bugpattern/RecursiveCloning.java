@@ -44,7 +44,6 @@ public class RecursiveCloning implements ScratchVisitor, IssueFinder {
     public static final String SHORT_NAME = "recClone";
     public static final String HINT_TEXT = "recursive cloning";
     private boolean startAsClone = false;
-    private int count = 0;
     private Set<Issue> issues = new LinkedHashSet<>();
     private ActorDefinition currentActor;
 
@@ -52,7 +51,6 @@ public class RecursiveCloning implements ScratchVisitor, IssueFinder {
     public Set<Issue> check(Program program) {
         Preconditions.checkNotNull(program);
         startAsClone = false;
-        count = 0;
         program.accept(this);
         return issues;
     }
@@ -90,10 +88,9 @@ public class RecursiveCloning implements ScratchVisitor, IssueFinder {
                 final String spriteName = ((StrId) ((AsString) node.getStringExpr()).getOperand1()).getName();
 
                 if (spriteName.equals("_myself_")) {
-                    count++;
                     CloneOfMetadata metadata = (CloneOfMetadata) node.getMetadata();
                     issues.add(new Issue(this, currentActor, node,
-                            HINT_TEXT, SHORT_NAME + count, metadata.getCloneBlockMetadata()));
+                            HINT_TEXT, metadata.getCloneBlockMetadata()));
                 }
             }
         }

@@ -44,7 +44,6 @@ public class OrphanedParameter implements IssueFinder, ScratchVisitor {
     public static final String NAME = "orphaned_parameter";
     public static final String SHORT_NAME = "orphParam";
     public static final String HINT_TEXT = "orphaned parameter";
-    private int count = 0;
     private ActorDefinition currentActor;
     private List<ParameterDefinition> currentParameterDefinitions;
     private boolean insideProcedure;
@@ -53,7 +52,6 @@ public class OrphanedParameter implements IssueFinder, ScratchVisitor {
     @Override
     public Set<Issue> check(Program program) {
         Preconditions.checkNotNull(program);
-        count = 0;
         program.accept(this);
         return issues;
     }
@@ -99,9 +97,8 @@ public class OrphanedParameter implements IssueFinder, ScratchVisitor {
             }
         }
         if (!validParametername) {
-            count++;
             issues.add(new Issue(this, currentActor, node,
-                    HINT_TEXT, SHORT_NAME + count, node.getMetadata()));
+                    HINT_TEXT, node.getMetadata()));
         }
     }
 }

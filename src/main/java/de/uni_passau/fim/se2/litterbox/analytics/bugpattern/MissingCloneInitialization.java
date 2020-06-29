@@ -55,7 +55,6 @@ public class MissingCloneInitialization implements IssueFinder, ScratchVisitor {
     private List<String> clonedActors = new ArrayList<>();
     private Set<Issue> issues = new LinkedHashSet<>();
     private ActorDefinition currentActor;
-    private int identifierCounter;
     private boolean addComment;
     private Set<String> notClonedActor;
 
@@ -64,7 +63,6 @@ public class MissingCloneInitialization implements IssueFinder, ScratchVisitor {
         Preconditions.checkNotNull(program);
         whenStartsAsCloneActors = new ArrayList<>();
         clonedActors = new ArrayList<>();
-        identifierCounter = 1;
         addComment = false;
         notClonedActor = new LinkedHashSet<>();
         program.accept(this);
@@ -101,8 +99,7 @@ public class MissingCloneInitialization implements IssueFinder, ScratchVisitor {
                 }
             } else if (notClonedActor.contains(spriteName)) {
                 issues.add(new Issue(this, currentActor, node, // TODO: Is this the right block?
-                        HINT_TEXT, SHORT_NAME + identifierCounter, ((CloneOfMetadata) node.getMetadata()).getCloneBlockMetadata()));
-                identifierCounter++;
+                        HINT_TEXT, ((CloneOfMetadata) node.getMetadata()).getCloneBlockMetadata()));
             }
         }
     }

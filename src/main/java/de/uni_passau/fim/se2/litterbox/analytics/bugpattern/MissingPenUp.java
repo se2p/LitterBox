@@ -55,7 +55,6 @@ public class MissingPenUp implements IssueFinder {
     }
 
     private static class CheckVisitor implements ScratchVisitor {
-        private int count = 0;
         private Set<Issue> issues = new LinkedHashSet<>();
         private ActorDefinition currentActor;
         private boolean penUpSet = false;
@@ -82,7 +81,6 @@ public class MissingPenUp implements IssueFinder {
             }
 
             if (getResult()) {
-                count++;
                 addComment = true;
 
                 for (ASTNode child : actor.getChildren()) {
@@ -102,7 +100,7 @@ public class MissingPenUp implements IssueFinder {
             } else if (getResult()) {
                 // TODO: Is this potentially added multiple times?
                 issues.add(new Issue(issueFinder, currentActor, node,
-                        HINT_TEXT, SHORT_NAME + count, node.getMetadata()));
+                        HINT_TEXT, node.getMetadata()));
             }
         }
 

@@ -57,7 +57,6 @@ public class MissingPenDown implements IssueFinder {
     }
 
     private static class CheckVisitor implements ScratchVisitor {
-        private int count = 0;
         private Set<Issue> issues = new LinkedHashSet<>();
         private ActorDefinition currentActor;
         private boolean penUpSet = false;
@@ -84,7 +83,6 @@ public class MissingPenDown implements IssueFinder {
             }
 
             if (getResult()) {
-                count++;
                 addComment = true;
                 for (ASTNode child : actor.getChildren()) {
                     child.accept(this);
@@ -112,7 +110,7 @@ public class MissingPenDown implements IssueFinder {
                 }
             } else if(getResult()){
                 issues.add(new Issue(issueFinder, currentActor, node,
-                        HINT_TEXT, SHORT_NAME + count, node.getMetadata()));
+                        HINT_TEXT, node.getMetadata()));
             }
         }
 

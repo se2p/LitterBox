@@ -15,10 +15,11 @@ public class CommentGenerator implements ReportGenerator {
     @Override
     public void generateReport(Program program, Collection<Issue> issues) throws IOException {
 
+        int numIssue = 0;
         for(Issue issue : issues) {
             ActorDefinition currentActor = issue.getActor();
             String hintText = issue.getHint();
-            String commentId = issue.getHintID();
+            String commentId = issue.getFinderName() + numIssue++;
             Metadata metaData = issue.getCodeMetadata();
             if(metaData == null) {
                 addLooseComment(currentActor, hintText, commentId);

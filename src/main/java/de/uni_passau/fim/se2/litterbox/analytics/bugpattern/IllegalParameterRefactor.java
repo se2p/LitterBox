@@ -44,7 +44,6 @@ public class IllegalParameterRefactor implements IssueFinder, ScratchVisitor {
     public static final String NAME = "illegal_parameter_refactor";
     public static final String SHORT_NAME = "illParamRefac";
     public static final String HINT_TEXT = "illegal parameter refactor";
-    private int count = 0;
     private Set<Issue> issues = new LinkedHashSet<>();
     private ActorDefinition currentActor;
     private Map<LocalIdentifier, ProcedureInfo> procedureMap;
@@ -56,7 +55,6 @@ public class IllegalParameterRefactor implements IssueFinder, ScratchVisitor {
     public Set<Issue> check(Program program) {
         Preconditions.checkNotNull(program);
         this.program = program;
-        count = 0;
         program.accept(this);
         return issues;
     }
@@ -101,9 +99,8 @@ public class IllegalParameterRefactor implements IssueFinder, ScratchVisitor {
 
                 for (ArgumentInfo currentArgument : currentArguments) {
                     if (currentArgument.getName().equals(ident.getName().getName()) && !(currentArgument.getType() instanceof BooleanType)) {
-                        count++;
                         issues.add(new Issue(this, currentActor, ident,
-                                HINT_TEXT, SHORT_NAME + count, ident.getMetadata()));
+                                HINT_TEXT, ident.getMetadata()));
                     }
                 }
 

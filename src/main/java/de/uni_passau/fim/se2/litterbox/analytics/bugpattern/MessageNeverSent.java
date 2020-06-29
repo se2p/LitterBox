@@ -46,7 +46,6 @@ public class MessageNeverSent implements IssueFinder, ScratchVisitor {
     private List<Pair<String>> messageSent = new ArrayList<>();
     private List<Pair<String>> messageReceived = new ArrayList<>();
     private ActorDefinition currentActor;
-    private int identifierCounter;
     private boolean addComment;
     private Set<Issue> issues = new LinkedHashSet<>();
     private Set<String> notSentMessages;
@@ -58,7 +57,6 @@ public class MessageNeverSent implements IssueFinder, ScratchVisitor {
         messageSent = new ArrayList<>();
         messageReceived = new ArrayList<>();
         program.accept(this);
-        identifierCounter = 1;
         addComment = false;
         notSentMessages = new LinkedHashSet<>();
 
@@ -132,8 +130,7 @@ public class MessageNeverSent implements IssueFinder, ScratchVisitor {
                     messageReceived.add(new Pair<>(actorName, msgName));
                 } else if (notSentMessages.contains(msgName)) {
                     issues.add(new Issue(this, currentActor, node, // TODO: event or node?
-                            HINT_TEXT, SHORT_NAME + identifierCounter, event.getMetadata()));
-                    identifierCounter++;
+                            HINT_TEXT, event.getMetadata()));
                 }
             }
         }

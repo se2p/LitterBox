@@ -39,7 +39,6 @@ public class ParameterOutOfScope implements IssueFinder, ScratchVisitor {
     public static final String NAME = "parameter_out_of_scope";
     public static final String SHORT_NAME = "paramOutScope";
     public static final String HINT_TEXT = "parameter out of scope";
-    private int count = 0;
     private ActorDefinition currentActor;
     private Set<Issue> issues = new LinkedHashSet<>();
     private boolean insideProcedure;
@@ -47,7 +46,6 @@ public class ParameterOutOfScope implements IssueFinder, ScratchVisitor {
     @Override
     public Set<Issue> check(Program program) {
         Preconditions.checkNotNull(program);
-        count = 0;
         program.accept(this);
         return issues;
     }
@@ -77,9 +75,8 @@ public class ParameterOutOfScope implements IssueFinder, ScratchVisitor {
     @Override
     public void visit(Parameter node) {
         if (!insideProcedure) {
-            count++;
             issues.add(new Issue(this, currentActor, node,
-                    HINT_TEXT, SHORT_NAME + count, node.getMetadata()));
+                    HINT_TEXT, node.getMetadata()));
         }
         for (ASTNode child : node.getChildren()) {
             child.accept(this);

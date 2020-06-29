@@ -46,6 +46,7 @@ public class MissingEraseAll implements IssueFinder {
     public Set<Issue> check(Program program) {
         Preconditions.checkNotNull(program);
 
+        // TODO: Why does the visitor have a visitor...
         CheckVisitor visitor = new CheckVisitor(this);
         program.accept(visitor);
         return visitor.getIssues();
@@ -61,7 +62,6 @@ public class MissingEraseAll implements IssueFinder {
         private boolean penClearSet = false;
         private boolean penDownSet = false;
         private boolean addComment = false;
-        private int count = 0;
         private ActorDefinition currentActor;
         private Set<Issue> issues = new LinkedHashSet<>();
         private MissingEraseAll issueFinder;
@@ -85,7 +85,6 @@ public class MissingEraseAll implements IssueFinder {
             }
 
             if (getResult()) {
-                count++;
                 addComment = true;
                 for (ASTNode child : actor.getChildren()) {
                     child.accept(this);
@@ -104,7 +103,7 @@ public class MissingEraseAll implements IssueFinder {
                 }
             } else if (getResult()) {
                 issues.add(new Issue(issueFinder, currentActor, node,
-                        HINT_TEXT, SHORT_NAME + count, node.getMetadata()));
+                        HINT_TEXT, node.getMetadata()));
             }
         }
 

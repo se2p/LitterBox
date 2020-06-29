@@ -24,7 +24,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ProcedureInfo;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
@@ -42,7 +41,6 @@ public class AmbiguousCustomBlockSignature implements IssueFinder, ScratchVisito
     public static final String NAME = "ambiguous_custom_block_signature";
     public static final String SHORT_NAME = "ambCustBlSign";
     public static final String HINT_TEXT = "ambiguous custom block signature";
-    private int count = 0;
     private Set<Issue> issues = new LinkedHashSet<>();
     private ActorDefinition currentActor;
     private Map<LocalIdentifier, ProcedureInfo> procMap;
@@ -83,8 +81,7 @@ public class AmbiguousCustomBlockSignature implements IssueFinder, ScratchVisito
         for (ProcedureInfo procedureInfo : procedureInfos) {
             if (procedureInfo != current && current.getName().equals(procedureInfo.getName())
                     && current.getActorName().equals(procedureInfo.getActorName())) {
-                issues.add(new Issue(this, currentActor, ident, HINT_TEXT, SHORT_NAME + count, node.getMetadata().getDefinition()));
-                count++;
+                issues.add(new Issue(this, currentActor, ident, HINT_TEXT, node.getMetadata().getDefinition()));
             }
         }
     }

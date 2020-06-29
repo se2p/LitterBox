@@ -46,7 +46,6 @@ public class MissingLoopSensing implements IssueFinder, ScratchVisitor {
     public static final String NAME = "missing_loop_sensing";
     public static final String SHORT_NAME = "mssLoopSens";
     public static final String HINT_TEXT = "missing loop sensing";
-    private int count = 0;
     private boolean insideGreenFlagClone = false;
     private boolean insideLoop = false;
     private Set<Issue> issues = new LinkedHashSet<>();
@@ -55,7 +54,6 @@ public class MissingLoopSensing implements IssueFinder, ScratchVisitor {
     @Override
     public Set<Issue> check(Program program) {
         Preconditions.checkNotNull(program);
-        count = 0;
         program.accept(this);
         return issues;
     }
@@ -102,9 +100,8 @@ public class MissingLoopSensing implements IssueFinder, ScratchVisitor {
         if (insideGreenFlagClone && !insideLoop) {
             BoolExpr boolExpr = node.getBoolExpr();
             if (boolExpr instanceof IsKeyPressed || boolExpr instanceof Touching || boolExpr instanceof IsMouseDown || boolExpr instanceof ColorTouchingColor) {
-                count++;
                 issues.add(new Issue(this, currentActor, node,
-                        HINT_TEXT, SHORT_NAME + count, node.getMetadata()));
+                        HINT_TEXT, node.getMetadata()));
             }
         }
         for (ASTNode child : node.getChildren()) {
@@ -117,9 +114,8 @@ public class MissingLoopSensing implements IssueFinder, ScratchVisitor {
         if (insideGreenFlagClone && !insideLoop) {
             BoolExpr boolExpr = node.getBoolExpr();
             if (boolExpr instanceof IsKeyPressed || boolExpr instanceof Touching || boolExpr instanceof IsMouseDown || boolExpr instanceof ColorTouchingColor) {
-                count++;
                 issues.add(new Issue(this, currentActor, node,
-                        HINT_TEXT, SHORT_NAME + count, node.getMetadata()));
+                        HINT_TEXT, node.getMetadata()));
             }
         }
         for (ASTNode child : node.getChildren()) {

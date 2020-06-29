@@ -47,7 +47,6 @@ public class AmbiguousParameterNameStrict implements IssueFinder, ScratchVisitor
     private boolean inStmtList = false;
     private boolean found = false;
     private boolean used = false;
-    private int count = 0;
     private Set<Issue> issues = new LinkedHashSet<>();
     private LinkedList<String> paraNames = new LinkedList<>();
     private ActorDefinition currentActor;
@@ -60,7 +59,6 @@ public class AmbiguousParameterNameStrict implements IssueFinder, ScratchVisitor
         Preconditions.checkNotNull(program);
         this.program = program;
         found = false;
-        count = 0;
         program.accept(this);
         return issues;
     }
@@ -115,8 +113,7 @@ public class AmbiguousParameterNameStrict implements IssueFinder, ScratchVisitor
 
         if (used) {
             issues.add(new Issue(this, currentActor, node,
-                    HINT_TEXT, SHORT_NAME + count, node.getMetadata().getDefinition()));
-            count++;
+                    HINT_TEXT, node.getMetadata().getDefinition()));
         }
 
         // TODO: This handling with used/found seems really error prone

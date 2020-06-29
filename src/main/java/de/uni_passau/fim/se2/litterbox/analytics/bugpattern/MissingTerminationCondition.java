@@ -40,7 +40,6 @@ public class MissingTerminationCondition implements IssueFinder, ScratchVisitor 
     public static final String NAME = "missing_termination";
     public static final String SHORT_NAME = "mssTerm";
     public static final String HINT_TEXT = "missing termination";
-    private int count;
     private Set<Issue> issues = new LinkedHashSet<>();
     private Program program;
     private ActorDefinition currentActor;
@@ -48,7 +47,6 @@ public class MissingTerminationCondition implements IssueFinder, ScratchVisitor 
     @Override
     public Set<Issue> check(Program program) {
         Preconditions.checkNotNull(program);
-        count = 0;
         this.program = program;
         program.accept(this);
         return issues;
@@ -65,9 +63,8 @@ public class MissingTerminationCondition implements IssueFinder, ScratchVisitor 
     @Override
     public void visit(UntilStmt node) {
         if (node.getBoolExpr() instanceof UnspecifiedBoolExpr) {
-            count++;
             issues.add(new Issue(this, currentActor, node,
-                    HINT_TEXT, SHORT_NAME + count, node.getMetadata()));
+                    HINT_TEXT, node.getMetadata()));
         }
         for (ASTNode child : node.getChildren()) {
             child.accept(this);

@@ -44,7 +44,6 @@ public class CustomBlockWithTermination implements ScratchVisitor, IssueFinder {
     public static final String NAME = "custom_block_with_termination";
     public static final String SHORT_NAME = "custBlWithTerm";
     public static final String HINT_TEXT = "custom block with termination";
-    private int count = 0;
     private Set<Issue> issues = new LinkedHashSet<>();
     private ActorDefinition currentActor;
     private String currentProcedureName;
@@ -57,7 +56,6 @@ public class CustomBlockWithTermination implements ScratchVisitor, IssueFinder {
     @Override
     public Set<Issue> check(Program program) {
         Preconditions.checkNotNull(program);
-        count = 0;
         this.program = program;
         program.accept(this);
         return issues;
@@ -83,9 +81,8 @@ public class CustomBlockWithTermination implements ScratchVisitor, IssueFinder {
     private void checkCalls() {
         for (CallStmt calledProcedure : calledProcedures) {
             if (proceduresWithForever.contains(calledProcedure.getIdent().getName())) {
-                count++;
                 issues.add(new Issue(this, currentActor, calledProcedure,
-                        HINT_TEXT, SHORT_NAME + count, calledProcedure.getMetadata()));
+                        HINT_TEXT, calledProcedure.getMetadata()));
             }
         }
     }

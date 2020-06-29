@@ -42,7 +42,6 @@ public class CallWithoutDefinition implements IssueFinder, ScratchVisitor {
     public static final String NAME = "call_without_definition";
     public static final String SHORT_NAME = "cllWithoutDef";
     public static final String HINT_TEXT = "call without definition";
-    private int count = 0;
     private Set<Issue> issues = new LinkedHashSet<>();
     private ActorDefinition currentActor;
     private List<String> proceduresDef;
@@ -54,7 +53,6 @@ public class CallWithoutDefinition implements IssueFinder, ScratchVisitor {
     public Set<Issue> check(Program program) {
         Preconditions.checkNotNull(program);
         this.program = program;
-        count = 0;
         program.accept(this);
         return issues;
     }
@@ -80,9 +78,8 @@ public class CallWithoutDefinition implements IssueFinder, ScratchVisitor {
         for (CallStmt calledProcedure : calledProcedures) {
             if (!proceduresDef.contains(calledProcedure.getIdent().getName()) &&
                     !program.getProcedureMapping().checkIfMalformated(currentActor.getIdent().getName() + calledProcedure.getIdent().getName())) {
-                count++;
                 issues.add(new Issue(this, currentActor, calledProcedure,
-                        HINT_TEXT, SHORT_NAME + count, calledProcedure.getMetadata()));
+                        HINT_TEXT, calledProcedure.getMetadata()));
             }
         }
     }
