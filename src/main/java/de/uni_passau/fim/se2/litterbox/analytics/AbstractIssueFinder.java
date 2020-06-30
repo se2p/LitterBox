@@ -44,6 +44,7 @@ public abstract class AbstractIssueFinder implements IssueFinder, ScratchVisitor
     public Set<Issue> check(Program program) {
         Preconditions.checkNotNull(program);
         this.program = program;
+        issues = new LinkedHashSet<>();
         program.accept(this);
         return Collections.unmodifiableSet(issues);
     }
