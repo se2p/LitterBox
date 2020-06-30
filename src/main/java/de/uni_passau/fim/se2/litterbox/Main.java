@@ -35,26 +35,29 @@ import org.apache.commons.cli.*;
 public class Main {
 
     private static final String CHECK = "check";
+    private static final String CHECK_SHORT = "c";
     private static final String LEILA = "leila";
+    private static final String LEILA_SHORT = "l";
     private static final String STATS = "stats";
+    private static final String STATS_SHORT = "s";
+    private static final String HELP = "help";
+    private static final String HELP_SHORT = "h";
 
     private static final String PROJECTPATH = "path";
     private static final String PROJECTPATH_SHORT = "p";
     private static final String PROJECTID = "projectid";
     private static final String PROJECTID_SHORT = "i";
     private static final String PROJECTLIST = "projectlist";
-    private static final String PROJECTLIST_SHORT = "l";
+    private static final String PROJECTLIST_SHORT = "t";
 
     private static final String PROJECTOUT = "projectout";
-    private static final String PROJECTOUT_SHORT = "s"; //*s*ave to
+    private static final String PROJECTOUT_SHORT = "r";
     private static final String OUTPUT = "output";
     private static final String OUTPUT_SHORT = "o";
     private static final String ANNOTATE = "annotate";
     private static final String ANNOTATE_SHORT = "a";
     private static final String DETECTORS = "detectors";
     private static final String DETECTORS_SHORT = "d";
-    private static final String HELP = "help";
-    private static final String HELP_SHORT = "h";
 
     private Main() {
     }
@@ -63,42 +66,49 @@ public class Main {
         Options options = new Options();
 
         // Operation mode
-        options.addOption(CHECK, "Check specified Scratch projects for issues");
-        options.addOption(LEILA, "Translate specified Scratch projects to Leila");
-        options.addOption(STATS, "Extract metrics for Scratch projects");
-        options.addOption(HELP_SHORT, HELP, false, "print this message");
+        OptionGroup mainMode = new OptionGroup();
+        mainMode.addOption(new Option(CHECK_SHORT, CHECK, false,"Check specified Scratch projects for issues"));
+        mainMode.addOption(new Option(LEILA_SHORT, LEILA, false, "Translate specified Scratch projects to Leila"));
+        mainMode.addOption(new Option(STATS_SHORT, STATS, false, "Extract metrics for Scratch projects"));
+        mainMode.addOption(new Option(HELP_SHORT, HELP, false, "print this message"));
+        options.addOptionGroup(mainMode);
 
         // Target project(s)
-        options.addOption(PROJECTPATH_SHORT, PROJECTPATH, true, "path to folder or file that should be analyzed (required)");
-        options.addOption(PROJECTID_SHORT, PROJECTID, true,
-                "id of the project that should be downloaded and analysed.");
-        options.addOption(PROJECTLIST_SHORT, PROJECTLIST, true, "path to a file with a list of project ids of projects"
-                + " which should be downloaded and analysed.");
+        OptionGroup targetProject = new OptionGroup();
+        targetProject.addOption(new Option(PROJECTPATH_SHORT, PROJECTPATH, true, "path to folder or file that should be analyzed (required)"));
+        targetProject.addOption(new Option(PROJECTID_SHORT, PROJECTID, true,
+                "id of the project that should be downloaded and analysed."));
+        targetProject.addOption(new Option(PROJECTLIST_SHORT, PROJECTLIST, true, "path to a file with a list of project ids of projects"
+                + " which should be downloaded and analysed."));
+        options.addOptionGroup(targetProject);
 
         // Output options
         options.addOption(PROJECTOUT_SHORT, PROJECTOUT, true, "path where the downloaded project(s) should be stored");
         options.addOption(OUTPUT_SHORT, OUTPUT, true, "path with name of the csv file you want to save (required if " +
                 "path argument"
-                + " is a folder path)\nusage with --intermediate: Path to file or folder for the resulting .sc file(s);"
-                + "\nhas to be a folder if multiple projects are analysed"
-                + "\n(file will be created if not existing yet,\npath has to exist)");
+                + " is a folder path)\nusage with --leila: Path to file or folder for the resulting .sc file(s); "
+                + "has to be a folder if multiple projects are analysed "
+                + "(file will be created if not existing yet, path has to exist)");
         options.addOption(ANNOTATE_SHORT, ANNOTATE, true, "path where scratch files with hints to bug patterns should" +
                 " be created");
 
         // Parameters
         options.addOption(DETECTORS_SHORT, DETECTORS, true, "name all detectors you want to run separated by ',' "
-                + "\n(all detectors defined in the README)");
+                + " (all detectors defined in the README)");
 
         return options;
     }
 
     public static void printHelp() {
         HelpFormatter formatter = new HelpFormatter();
-        formatter.printHelp("LitterBox", getCommandLineOptions());
-        System.out.println("Example: " + "java -jar Litterbox.jar --path "
+        formatter.printHelp("LitterBox", getCommandLineOptions(), true);
+        System.out.println("Example: " + "java -jar Litterbox.jar --check --path "
                 + "C:\\scratchprojects\\files\\ --output C:\\scratchprojects\\files\\test.csv --detectors bugs\n");
-        System.out.println("Example for intermediate language output: "
-                + "java -jar Litterbox-1.0.jar --intermediate -o ~/path/to/folder/or/file/for/the/output --path " +
+        System.out.println("Example for metric output: "
+                + "java -jar Litterbox-1.0.jar --stats -o ~/path/to/folder/or/file/for/the/output --path " +
+                "~/path/to/json/project/or/folder/with/projects \n");
+        System.out.println("Example for Leila intermediate language output: "
+                + "java -jar Litterbox-1.0.jar --leila -o ~/path/to/folder/or/file/for/the/output --path " +
                 "~/path/to/json/project/or/folder/with/projects \n");
 
         System.out.println("Detectors:");
@@ -107,7 +117,7 @@ public class Main {
         System.out.printf("\t%-20s %-30s%n", ALL, messages.getString(ALL));
         System.out.printf("\t%-20s %-30s%n", BUGS, messages.getString(BUGS));
         System.out.printf("\t%-20s %-30s%n", SMELLS, messages.getString(SMELLS));
-        System.out.printf("\t%-20s %-30s%n", CTSCORE, messages.getString(CTSCORE));
+        // System.out.printf("\t%-20s %-30s%n", CTSCORE, messages.getString(CTSCORE));
         iT.getAllFinder().keySet().forEach(finder -> System.out.printf(
                 "\t%-20s %-30s%n",
                 finder,
