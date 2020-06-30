@@ -25,6 +25,7 @@ import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ProcedureInfo;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
+import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
@@ -42,7 +43,7 @@ public abstract class AbstractIssueFinder implements IssueFinder, ScratchVisitor
         Preconditions.checkNotNull(program);
         this.program = program;
         program.accept(this);
-        return issues;
+        return Collections.unmodifiableSet(issues);
     }
 
     @Override

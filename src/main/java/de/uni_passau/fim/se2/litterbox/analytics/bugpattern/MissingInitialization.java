@@ -31,14 +31,16 @@ import de.uni_passau.fim.se2.litterbox.dataflow.DataflowAnalysisBuilder;
 import de.uni_passau.fim.se2.litterbox.dataflow.InitialDefinitionTransferFunction;
 import de.uni_passau.fim.se2.litterbox.dataflow.LivenessTransferFunction;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
+
+import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
 public class MissingInitialization implements IssueFinder {
 
     public static final String NAME = "missing_initialization";
-    public static final String SHORT_NAME = "mssInit"; // TODO: Why do we need this?
-    private Set<Issue> issues = new LinkedHashSet<>();
+    public static final String SHORT_NAME = "mssInit";
+    private final Set<Issue> issues = new LinkedHashSet<>();
 
     @Override
     public Set<Issue> check(Program program) {
@@ -48,15 +50,16 @@ public class MissingInitialization implements IssueFinder {
         program.accept(visitor);
         ControlFlowGraph cfg = visitor.getControlFlowGraph();
 
-        DataflowAnalysisBuilder<Definition> builder = new DataflowAnalysisBuilder<>(cfg);
 
         // Initial definitions: All definitions that can be reached without a use before them
-        DataflowAnalysis<Definition> analysis = builder.withBackward().withMay().withTransferFunction(new InitialDefinitionTransferFunction()).build();
+        DataflowAnalysisBuilder<Definition> defBuilder = new DataflowAnalysisBuilder<>(cfg);
+        DataflowAnalysis<Definition> analysis = defBuilder.withBackward().withMay().withTransferFunction(new InitialDefinitionTransferFunction()).build();
         analysis.applyAnalysis();
         Set<Definition> initialDefinitions = analysis.getDataflowFacts(cfg.getEntryNode());
 
         // Initial uses: All uses that can be reached without a definition before them
-        DataflowAnalysis<Use> livenessAnalysis = builder.withBackward().withMay().withTransferFunction(new LivenessTransferFunction()).build();
+        DataflowAnalysisBuilder<Use> useBuilder = new DataflowAnalysisBuilder<>(cfg);
+        DataflowAnalysis<Use> livenessAnalysis = useBuilder.withBackward().withMay().withTransferFunction(new LivenessTransferFunction()).build();
         livenessAnalysis.applyAnalysis();
         Set<Use> initialUses = livenessAnalysis.getDataflowFacts(cfg.getEntryNode());
 
@@ -67,12 +70,12 @@ public class MissingInitialization implements IssueFinder {
                     .noneMatch(d -> d.getDefinitionSource().getScriptOrProcedure() != use.getUseTarget().getScriptOrProcedure())) {
                 // TODO: Fix cast!
                 issues.add(new Issue(this, use.getUseTarget().getActor(),
-                        null, // TODO: Script
-                        (AbstractNode) use.getUseTarget().getASTNode(),
-                        "TODO -- hint text", null)); // TODO: What is the relevant metadata?
+                        null, // TODO: Script in use.getUseTarget().getScriptOrProcedure() ...but...?
+                        (AbstractNode) use.getUseTarget().getASTNode(), // TODO: This can't be right
+                        "TODO -- hint text", null)); // TODO: Where is the relevant metadata?
             }
         }
-        return issues;
+        return Collections.unmodifiableSet(issues);
     }
 
     @Override
