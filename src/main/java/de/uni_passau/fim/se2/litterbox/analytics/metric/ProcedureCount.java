@@ -18,20 +18,20 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.metric;
 
-import de.uni_passau.fim.se2.litterbox.analytics.MetricAnalyzer;
+import de.uni_passau.fim.se2.litterbox.analytics.MetricExtractor;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-public class ProcedureCount implements MetricAnalyzer<Integer>, ScratchVisitor {
+public class ProcedureCount implements MetricExtractor, ScratchVisitor {
     public static final String NAME = "procedure_count";
     public static final String SHORT_NAME = "procCnt";
 
     private int count = 0;
 
     @Override
-    public Integer calculateMetric(Program program) {
+    public double calculateMetric(Program program) {
         Preconditions.checkNotNull(program);
         count = 0;
         program.accept(this);

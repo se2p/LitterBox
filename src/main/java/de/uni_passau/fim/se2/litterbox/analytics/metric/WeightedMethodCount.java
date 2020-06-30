@@ -18,7 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.metric;
 
-import de.uni_passau.fim.se2.litterbox.analytics.MetricAnalyzer;
+import de.uni_passau.fim.se2.litterbox.analytics.MetricExtractor;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitUntil;
@@ -26,13 +26,13 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.*;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-public class WeightedMethodCount implements MetricAnalyzer<Integer>, ScratchVisitor {
+public class WeightedMethodCount implements MetricExtractor, ScratchVisitor {
     public static final String NAME = "weighted_method_count";
     public static final String SHORT_NAME = "weightedMethCnt";
     private int count = 0;
 
     @Override
-    public Integer calculateMetric(Program program) {
+    public double calculateMetric(Program program) {
         Preconditions.checkNotNull(program);
         program.accept(this);
         return count;

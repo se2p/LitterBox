@@ -18,7 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.metric;
 
-import de.uni_passau.fim.se2.litterbox.analytics.MetricAnalyzer;
+import de.uni_passau.fim.se2.litterbox.analytics.MetricExtractor;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
@@ -60,7 +60,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.type.Type;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-public class BlockCount implements MetricAnalyzer<Integer>, ScratchVisitor {
+public class BlockCount implements MetricExtractor, ScratchVisitor {
     public static final String NAME = "block_count";
     public static final String SHORT_NAME = "blockCnt";
     private int count = 0;
@@ -70,7 +70,7 @@ public class BlockCount implements MetricAnalyzer<Integer>, ScratchVisitor {
     private boolean fixedBlock = false;
 
     @Override
-    public Integer calculateMetric(Program program) {
+    public double calculateMetric(Program program) {
         Preconditions.checkNotNull(program);
         count = 0;
         insideScript = false;

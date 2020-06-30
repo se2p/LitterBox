@@ -18,13 +18,13 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.metric;
 
-import de.uni_passau.fim.se2.litterbox.analytics.MetricAnalyzer;
+import de.uni_passau.fim.se2.litterbox.analytics.MetricExtractor;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.pen.*;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-public class ProgramUsingPen implements MetricAnalyzer<Integer>, ScratchVisitor {
+public class ProgramUsingPen implements MetricExtractor, ScratchVisitor {
     public static final String NAME = "using_pen";
     public static final String SHORT_NAME = "usingPen";
     private boolean found = false;
@@ -35,7 +35,7 @@ public class ProgramUsingPen implements MetricAnalyzer<Integer>, ScratchVisitor 
     }
 
     @Override
-    public Integer calculateMetric(Program program) {
+    public double calculateMetric(Program program) {
         Preconditions.checkNotNull(program);
         found = false;
         program.accept(this);

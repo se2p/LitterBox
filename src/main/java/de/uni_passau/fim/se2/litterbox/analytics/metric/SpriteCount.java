@@ -18,16 +18,16 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.metric;
 
-import de.uni_passau.fim.se2.litterbox.analytics.MetricAnalyzer;
+import de.uni_passau.fim.se2.litterbox.analytics.MetricExtractor;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
-public class SpriteCount implements MetricAnalyzer<Integer>, ScratchVisitor {
+public class SpriteCount implements MetricExtractor, ScratchVisitor {
     public static final String NAME = "sprite_count";
     public static final String SHORT_NAME = "spriteCnt";
 
     @Override
-    public Integer calculateMetric(Program program) {
+    public double calculateMetric(Program program) {
         int count = program.getActorDefinitionList().getDefinitions().size() - 1;
         return count;
     }

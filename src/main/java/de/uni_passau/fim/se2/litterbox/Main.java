@@ -25,21 +25,26 @@ import static de.uni_passau.fim.se2.litterbox.utils.GroupConstants.*;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueTool;
 import de.uni_passau.fim.se2.litterbox.analytics.Scratch3Analyzer;
 import java.io.File;
+import java.io.IOException;
 import java.util.Locale;
 import java.util.ResourceBundle;
-import java.util.logging.Logger;
+
+import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import org.apache.commons.cli.*;
 
 public class Main {
 
-    private static final String PATH = "path";
-    private static final String PATH_SHORT = "p";
-    private static final String INTERMEDIATE = "intermediate";
-    private static final String INTERMEDIATE_SHORT = "u"; // for *u*nicorn. didn't find a better char
+    private static final String CHECK = "check";
+    private static final String LEILA = "leila";
+    private static final String STATS = "stats";
+
+    private static final String PROJECTPATH = "path";
+    private static final String PROJECTPATH_SHORT = "p";
     private static final String PROJECTID = "projectid";
     private static final String PROJECTID_SHORT = "i";
     private static final String PROJECTLIST = "projectlist";
     private static final String PROJECTLIST_SHORT = "l";
+
     private static final String PROJECTOUT = "projectout";
     private static final String PROJECTOUT_SHORT = "s"; //*s*ave to
     private static final String OUTPUT = "output";
@@ -51,28 +56,26 @@ public class Main {
     private static final String HELP = "help";
     private static final String HELP_SHORT = "h";
 
-    private static final Logger log = Logger.getLogger(Main.class.getName());
-
     private Main() {
     }
 
-    /**
-     * Entry point to Litterbox where the arguments are parsed and the selected functionality is called.
-     *
-     * @param args Arguments that are parsed as options.
-     * @throws ParseException thrown when a Scratch Project cannot be parsed.
-     */
-    public static void main(String[] args) throws ParseException {
-
+    public static Options getCommandLineOptions() {
         Options options = new Options();
 
-        options.addOption(PATH_SHORT, PATH, true, "path to folder or file that should be analyzed (required)");
-        options.addOption(INTERMEDIATE_SHORT, INTERMEDIATE, false, "print json project files in the intermediate " +
-                "language");
+        // Operation mode
+        options.addOption(CHECK, "Check specified Scratch projects for issues");
+        options.addOption(LEILA, "Translate specified Scratch projects to Leila");
+        options.addOption(STATS, "Extract metrics for Scratch projects");
+        options.addOption(HELP_SHORT, HELP, false, "print this message");
+
+        // Target project(s)
+        options.addOption(PROJECTPATH_SHORT, PROJECTPATH, true, "path to folder or file that should be analyzed (required)");
         options.addOption(PROJECTID_SHORT, PROJECTID, true,
                 "id of the project that should be downloaded and analysed.");
         options.addOption(PROJECTLIST_SHORT, PROJECTLIST, true, "path to a file with a list of project ids of projects"
                 + " which should be downloaded and analysed.");
+
+        // Output options
         options.addOption(PROJECTOUT_SHORT, PROJECTOUT, true, "path where the downloaded project(s) should be stored");
         options.addOption(OUTPUT_SHORT, OUTPUT, true, "path with name of the csv file you want to save (required if " +
                 "path argument"
@@ -81,111 +84,17 @@ public class Main {
                 + "\n(file will be created if not existing yet,\npath has to exist)");
         options.addOption(ANNOTATE_SHORT, ANNOTATE, true, "path where scratch files with hints to bug patterns should" +
                 " be created");
+
+        // Parameters
         options.addOption(DETECTORS_SHORT, DETECTORS, true, "name all detectors you want to run separated by ',' "
                 + "\n(all detectors defined in the README)");
-        options.addOption(HELP_SHORT, HELP, false, "print this message");
-        CommandLineParser parser = new DefaultParser();
 
-        CommandLine cmd = parser.parse(options, args);
+        return options;
+    }
 
-        if (cmd.hasOption(INTERMEDIATE) && cmd.hasOption(OUTPUT)) {
-            if (cmd.hasOption(PROJECTOUT)) {
-                String projectOut = removeEndSeparator(cmd.getOptionValue(PROJECTOUT));
-                if (cmd.hasOption(PROJECTID)) {
-                    String projectId = cmd.getOptionValue(PROJECTID);
-                    Scratch3Analyzer.downloadAndPrint(projectId, projectOut,
-                            cmd.getOptionValue(OUTPUT));
-                } else if (cmd.hasOption(PROJECTLIST)) {
-                    String printPath = removeEndSeparator(cmd.getOptionValue(OUTPUT));
-                    Scratch3Analyzer.downloadAndPrintMultiple(
-                            cmd.getOptionValue(PROJECTLIST), projectOut, printPath);
-                }
-            } else if (cmd.hasOption(PATH)) {
-                Scratch3Analyzer.printIntermediate(cmd.getOptionValue(PATH), cmd.getOptionValue(OUTPUT));
-            }
-            return;
-        } else if (cmd.hasOption(PATH)) {
-            File folder = new File(cmd.getOptionValue(PATH));
-            if (cmd.hasOption(DETECTORS)) {
-                if (cmd.hasOption(ANNOTATE)) {
-                    Scratch3Analyzer.analyzeAndAnnotate(cmd.getOptionValue(DETECTORS),
-                            cmd.getOptionValue(OUTPUT), folder, cmd.getOptionValue(ANNOTATE));
-                } else {
-                    Scratch3Analyzer.analyze(cmd.getOptionValue(DETECTORS),
-                            cmd.getOptionValue(OUTPUT), folder);
-                }
-            } else {
-                if (cmd.hasOption(ANNOTATE)) {
-                    Scratch3Analyzer.analyzeAndAnnotate(cmd.getOptionValue(DETECTORS, ALL),
-                            cmd.getOptionValue(OUTPUT), folder, cmd.getOptionValue(ANNOTATE));
-                } else {
-                    Scratch3Analyzer.analyze(cmd.getOptionValue(DETECTORS, ALL),
-                            cmd.getOptionValue(OUTPUT), folder);
-                }
-            }
-            return;
-        } else if (cmd.hasOption(PROJECTID) || cmd.hasOption(PROJECTLIST)) {
-            if (cmd.hasOption(PROJECTID)) {
-                String projectid = cmd.getOptionValue(PROJECTID);
-                if (cmd.hasOption(DETECTORS)) {
-                    if (cmd.hasOption(ANNOTATE)) {
-                        Scratch3Analyzer.downloadAndAnalyze(projectid, cmd.getOptionValue(PROJECTOUT),
-                                cmd.getOptionValue(DETECTORS),
-                                cmd.getOptionValue(OUTPUT),cmd.getOptionValue(ANNOTATE));
-                    } else {
-                        Scratch3Analyzer.downloadAndAnalyze(projectid, cmd.getOptionValue(PROJECTOUT),
-                                cmd.getOptionValue(DETECTORS),
-                                cmd.getOptionValue(OUTPUT));
-                    }
-                } else {
-                    if (cmd.hasOption(ANNOTATE)) {
-                        Scratch3Analyzer.downloadAndAnalyze(projectid, cmd.getOptionValue(PROJECTOUT),
-                                cmd.getOptionValue(DETECTORS, ALL),
-                                cmd.getOptionValue(OUTPUT),cmd.getOptionValue(ANNOTATE));
-                    } else {
-                        Scratch3Analyzer.downloadAndAnalyze(projectid, cmd.getOptionValue(PROJECTOUT),
-                                cmd.getOptionValue(DETECTORS, ALL),
-                                cmd.getOptionValue(OUTPUT));
-                    }
-                }
-            }
-
-            if (cmd.hasOption(PROJECTLIST)) {
-                if (cmd.hasOption(DETECTORS)) {
-                    if (cmd.hasOption(ANNOTATE)) {
-                        Scratch3Analyzer.downloadAndAnalyzeMultiple(
-                                cmd.getOptionValue(PROJECTLIST),
-                                cmd.getOptionValue(PROJECTOUT),
-                                cmd.getOptionValue(DETECTORS),
-                                cmd.getOptionValue(OUTPUT), cmd.getOptionValue(ANNOTATE));
-                    } else {
-                        Scratch3Analyzer.downloadAndAnalyzeMultiple(
-                                cmd.getOptionValue(PROJECTLIST),
-                                cmd.getOptionValue(PROJECTOUT),
-                                cmd.getOptionValue(DETECTORS),
-                                cmd.getOptionValue(OUTPUT));
-                    }
-                } else {
-                    if (cmd.hasOption(ANNOTATE)) {
-                        Scratch3Analyzer.downloadAndAnalyzeMultiple(
-                                cmd.getOptionValue(PROJECTLIST),
-                                cmd.getOptionValue(PROJECTOUT),
-                                cmd.getOptionValue(DETECTORS, ALL),
-                                cmd.getOptionValue(OUTPUT), cmd.getOptionValue(ANNOTATE));
-                    } else {
-                        Scratch3Analyzer.downloadAndAnalyzeMultiple(
-                                cmd.getOptionValue(PROJECTLIST),
-                                cmd.getOptionValue(PROJECTOUT),
-                                cmd.getOptionValue(DETECTORS, ALL),
-                                cmd.getOptionValue(OUTPUT));
-                    }
-                }
-            }
-            return;
-        }
-
+    public static void printHelp() {
         HelpFormatter formatter = new HelpFormatter();
-        formatter.printHelp("LitterBox", options);
+        formatter.printHelp("LitterBox", getCommandLineOptions());
         System.out.println("Example: " + "java -jar Litterbox.jar --path "
                 + "C:\\scratchprojects\\files\\ --output C:\\scratchprojects\\files\\test.csv --detectors bugs\n");
         System.out.println("Example for intermediate language output: "
@@ -204,5 +113,107 @@ public class Main {
                 finder,
                 messages.getString(finder)
         ));
+    }
+
+    public static void checkPrograms(CommandLine cmd) throws ParseException, IOException {
+        String outputPath = removeEndSeparator(cmd.getOptionValue(OUTPUT));
+        String detectors = cmd.getOptionValue(DETECTORS, ALL);
+        String annotatePath = cmd.getOptionValue(ANNOTATE, "");
+
+        if (cmd.hasOption(PROJECTID)) {
+            String projectId = cmd.getOptionValue(PROJECTID);
+            Scratch3Analyzer.downloadAndAnalyze(projectId, cmd.getOptionValue(PROJECTOUT),
+                    detectors, outputPath, annotatePath);
+        } else if (cmd.hasOption(PROJECTLIST)) {
+            Scratch3Analyzer.downloadAndAnalyzeMultiple(
+                    cmd.getOptionValue(PROJECTLIST),
+                    cmd.getOptionValue(PROJECTOUT),
+                    detectors, outputPath, annotatePath);
+
+        } else if (cmd.hasOption(PROJECTPATH)) {
+            File folder = new File(cmd.getOptionValue(PROJECTPATH));
+            Scratch3Analyzer.analyze(detectors, outputPath, folder, annotatePath);
+        } else {
+            throw new ParseException("No projects specified");
+        }
+    }
+
+    public static void translatePrograms(CommandLine cmd) throws ParseException, IOException {
+
+        if(!cmd.hasOption(OUTPUT)) {
+            throw new ParseException("Output path option '"+OUTPUT+"' required");
+        }
+
+        String outputPath = removeEndSeparator(cmd.getOptionValue(OUTPUT));
+        if (cmd.hasOption(PROJECTID)) {
+            String projectId = cmd.getOptionValue(PROJECTID);
+            String projectOut = removeEndSeparator(cmd.getOptionValue(PROJECTOUT));
+            Scratch3Analyzer.downloadAndPrint(projectId, projectOut, outputPath);
+        } else if (cmd.hasOption(PROJECTLIST)) {
+            String projectOut = removeEndSeparator(cmd.getOptionValue(PROJECTOUT));
+            Scratch3Analyzer.downloadAndPrintMultiple(cmd.getOptionValue(PROJECTLIST), projectOut, outputPath);
+        } else if (cmd.hasOption(PROJECTPATH)) {
+            Scratch3Analyzer.printIntermediate(cmd.getOptionValue(PROJECTPATH), outputPath);
+        } else {
+            throw new ParseException("No projects specified");
+        }
+    }
+
+    public static void statsPrograms(CommandLine cmd) throws ParseException, IOException, ParsingException {
+        if(!cmd.hasOption(OUTPUT)) {
+            throw new ParseException("Output path option '"+OUTPUT+"' required");
+        }
+        String outputPath = removeEndSeparator(cmd.getOptionValue(OUTPUT));
+
+        if (cmd.hasOption(PROJECTID)) {
+            String projectId = cmd.getOptionValue(PROJECTID);
+            Scratch3Analyzer.downloadAndStats(projectId, cmd.getOptionValue(PROJECTOUT), outputPath);
+
+        } else if (cmd.hasOption(PROJECTLIST)) {
+            Scratch3Analyzer.downloadAndStatsMultiple(
+                    cmd.getOptionValue(PROJECTLIST),
+                    cmd.getOptionValue(PROJECTOUT),
+                    outputPath);
+
+        } else if (cmd.hasOption(PROJECTPATH)) {
+            File folder = new File(cmd.getOptionValue(PROJECTPATH));
+            Scratch3Analyzer.statsProject(outputPath, folder);
+        } else {
+            throw new ParseException("No projects specified");
+        }
+    }
+
+    public static void parseCommandLine(String[] args) {
+        Options options = getCommandLineOptions();
+        CommandLineParser parser = new DefaultParser();
+        try {
+            CommandLine cmd = parser.parse(options, args);
+            if(cmd.hasOption(CHECK)) {
+                checkPrograms(cmd);
+            } else if(cmd.hasOption(STATS)) {
+                statsPrograms(cmd);
+            } else if(cmd.hasOption(LEILA)) {
+                translatePrograms(cmd);
+            } else {
+                printHelp();
+            }
+
+        } catch(ParseException parseException) {
+            System.err.println("Invalid option: "+parseException.getMessage());
+            printHelp();
+        } catch(IOException ioException) {
+            System.err.println("Error while trying to read project: "+ioException.getMessage());
+        } catch(ParsingException parseException) {
+            System.err.println("Error while trying to parse project: "+parseException.getMessage());
+        }
+    }
+
+    /**
+     * Entry point to Litterbox where the arguments are parsed and the selected functionality is called.
+     *
+     * @param args Arguments that are parsed as options.
+     */
+    public static void main(String[] args) {
+        parseCommandLine(args);
     }
 }

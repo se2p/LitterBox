@@ -41,7 +41,7 @@ public class CSVReportGenerator implements ReportGenerator {
         printer.flush();
     }
 
-    private CSVPrinter getNewPrinter(String name, List<String> heads) throws IOException {
+    protected CSVPrinter getNewPrinter(String name, List<String> heads) throws IOException {
 
         if (Files.exists(Paths.get(name))) {
             BufferedWriter writer = Files.newBufferedWriter(
