@@ -168,6 +168,7 @@ public class MissingBackdropSwitch extends AbstractIssueFinder {
             }
         }
         visitChildren(node);
+        currentScript = null;
     }
 
     @Override

@@ -84,6 +84,7 @@ public class AmbiguousParameterNameStrict extends AbstractIssueFinder {
 
     @Override
     public void visit(ProcedureDefinition node) {
+        currentProcedure = node;
         if (node.getStmtList().getStmts().size() > 0) {
             checkArguments(procMap.get(node.getIdent()).getArguments());
         }
@@ -98,6 +99,7 @@ public class AmbiguousParameterNameStrict extends AbstractIssueFinder {
         used = false;
         found = false;
         paraNames.clear();
+        currentProcedure = null;
     }
 
     @Override

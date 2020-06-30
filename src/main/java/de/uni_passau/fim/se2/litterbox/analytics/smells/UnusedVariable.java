@@ -106,7 +106,7 @@ public class UnusedVariable extends AbstractIssueFinder {
     @Override
     public void visit(ProcedureDefinition node) {
         insideProcedure = true;
-        visitChildren(node);
+        super.visit(node);
         insideProcedure = false;
     }
 

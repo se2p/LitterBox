@@ -84,6 +84,7 @@ public class MissingCloneCall extends AbstractIssueFinder {
 
     @Override
     public void visit(Script node) {
+        currentScript = node;
         if (node.getStmtList().getStmts().size() > 0 && node.getEvent() instanceof StartedAsClone) {
             if(!addComment) {
                 whenStartsAsCloneActors.add(currentActor.getIdent().getName());
@@ -94,6 +95,7 @@ public class MissingCloneCall extends AbstractIssueFinder {
             }
         }
         visitChildren(node);
+        currentScript = null;
     }
 
     @Override

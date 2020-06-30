@@ -43,7 +43,7 @@ public class OrphanedParameter extends AbstractIssueFinder {
     public void visit(ProcedureDefinition node) {
         insideProcedure = true;
         currentParameterDefinitions = node.getParameterDefinitionList().getParameterDefinitions();
-        visitChildren(node);
+        super.visit(node);
         insideProcedure = false;
     }
 

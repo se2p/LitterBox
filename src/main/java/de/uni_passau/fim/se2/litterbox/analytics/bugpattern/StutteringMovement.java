@@ -54,6 +54,7 @@ public class StutteringMovement extends AbstractIssueFinder {
             }
         }
         visitChildren(script);
+        currentScript = null;
     }
 
     @Override

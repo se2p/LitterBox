@@ -41,7 +41,7 @@ public class IllegalParameterRefactor extends AbstractIssueFinder {
     public void visit(ProcedureDefinition node) {
         insideProcedure = true;
         currentArguments = procMap.get(node.getIdent()).getArguments();
-        visitChildren(node);
+        super.visit(node);
         insideProcedure = false;
     }
 

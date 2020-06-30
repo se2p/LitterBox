@@ -21,6 +21,7 @@ package de.uni_passau.fim.se2.litterbox.analytics;
 import de.uni_passau.fim.se2.litterbox.ast.model.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.Metadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ProcedureInfo;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
@@ -34,6 +35,7 @@ public abstract class AbstractIssueFinder implements IssueFinder, ScratchVisitor
 
     protected ActorDefinition currentActor;
     protected Script currentScript;
+    protected ProcedureDefinition currentProcedure;
     protected Set<Issue> issues = new LinkedHashSet<>();
     protected Map<LocalIdentifier, ProcedureInfo> procMap;
     protected Program program;
@@ -57,17 +59,31 @@ public abstract class AbstractIssueFinder implements IssueFinder, ScratchVisitor
     @Override
     public void visit(Script script) {
         currentScript = script;
+        currentProcedure = null;
         visitChildren(script);
     }
 
+    @Override
+    public void visit(ProcedureDefinition procedure) {
+        currentProcedure = procedure;
+        currentScript = null;
+        visitChildren(procedure);
+    }
+
     protected void addIssue(AbstractNode node, String hintText, Metadata metadata) {
-        issues.add(new Issue(this, currentActor, currentScript, node,
-                hintText, metadata));
+        if(currentScript != null) {
+            issues.add(new Issue(this, currentActor, currentScript, node,
+                    hintText, metadata));
+        } else {
+            assert(currentProcedure != null);
+            issues.add(new Issue(this, currentActor, currentProcedure, node,
+                    hintText, metadata));
+        }
     }
 
     protected void addIssueWithLooseComment(String hintText) {
         issues.add(new Issue(this, currentActor,
-                null, // TODO: There is no script
+                (Script) null, // TODO: There is no script
                 currentActor, // TODO: There is no node?
                 hintText,
                 null)); // TODO: There is no metadata

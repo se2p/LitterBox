@@ -47,12 +47,13 @@ public class AmbiguousParameterName extends AbstractIssueFinder {
 
     @Override
     public void visit(ProcedureDefinition node) {
-
+        currentProcedure = node;
         if (node.getStmtList().hasStatements()) {
             checkArguments(procMap.get(node.getIdent()).getArguments(), node);
         }
 
         visitChildren(node);
+        currentProcedure = null;
     }
 
     @Override

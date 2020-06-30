@@ -38,11 +38,13 @@ public class AmbiguousCustomBlockSignature extends AbstractIssueFinder {
 
     @Override
     public void visit(ProcedureDefinition node) {
+        currentProcedure = node;
         if (node.getStmtList().hasStatements()) {
             checkProc(node);
         }
 
         visitChildren(node);
+        currentProcedure = null;
     }
 
     private void checkProc(ProcedureDefinition node) {

@@ -46,6 +46,7 @@ public class MissingWaitUntilCondition extends AbstractIssueFinder {
         if (!(node.getEvent() instanceof Never)) {
             visitChildren(node);
         }
+        currentScript = null;
     }
 
     @Override

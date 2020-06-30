@@ -22,6 +22,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.Metadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 
 public class Issue {
 
@@ -29,6 +30,7 @@ public class Issue {
     private ActorDefinition actor;
     private AbstractNode node;
     private Script script;
+    private ProcedureDefinition procedure;
     private String helpText;
     private Metadata metaData;
 
@@ -48,6 +50,16 @@ public class Issue {
         this.metaData = metaData;
     }
 
+    public Issue(IssueFinder finder, ActorDefinition actor, ProcedureDefinition procedure,
+                 AbstractNode currentNode, String helpText, Metadata metaData) {
+        this.finder = finder;
+        this.actor = actor;
+        this.procedure = procedure;
+        this.node = currentNode;
+        this.helpText = helpText;
+        this.metaData = metaData;
+    }
+
     public IssueFinder getFinder() {
         return finder;
     }
@@ -58,6 +70,10 @@ public class Issue {
 
     public Script getScript() {
         return script;
+    }
+
+    public ProcedureDefinition getProcedure() {
+        return procedure;
     }
 
     public String getActorName() {

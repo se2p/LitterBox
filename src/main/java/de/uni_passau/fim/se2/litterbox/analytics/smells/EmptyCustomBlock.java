@@ -28,10 +28,12 @@ public class EmptyCustomBlock extends AbstractIssueFinder {
 
     @Override
     public void visit(ProcedureDefinition node) {
+        currentProcedure = node;
         if (node.getStmtList().getStmts().isEmpty()) {
             issues.add(new Issue(this, currentActor, node));
         }
         visitChildren(node);
+        currentProcedure = null;
     }
 
     @Override

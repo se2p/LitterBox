@@ -119,6 +119,7 @@ public class MessageNeverSent extends AbstractIssueFinder {
             }
         }
         visitChildren(node);
+        currentScript = null;
     }
 
     @Override

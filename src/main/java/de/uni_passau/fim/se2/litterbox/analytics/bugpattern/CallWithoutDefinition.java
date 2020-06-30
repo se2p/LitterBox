@@ -58,7 +58,7 @@ public class CallWithoutDefinition extends AbstractIssueFinder {
     @Override
     public void visit(ProcedureDefinition node) {
         proceduresDef.add(procMap.get(node.getIdent()).getName());
-        visitChildren(node);
+        super.visit(node);
     }
 
     @Override

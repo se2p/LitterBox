@@ -44,6 +44,7 @@ public class LongScript extends AbstractIssueFinder {
         if (localCount > NUMBER_TOO_LONG) {
             issues.add(new Issue(this, currentActor, node));
         }
+        currentScript = null;
     }
 
     @Override

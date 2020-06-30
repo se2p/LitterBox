@@ -22,6 +22,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.cfg.ControlFlowGraph;
 import de.uni_passau.fim.se2.litterbox.cfg.ControlFlowGraphVisitor;
 import de.uni_passau.fim.se2.litterbox.cfg.Definition;
@@ -70,7 +71,7 @@ public class MissingInitialization implements IssueFinder {
                     .noneMatch(d -> d.getDefinitionSource().getScriptOrProcedure() != use.getUseTarget().getScriptOrProcedure())) {
                 // TODO: Fix cast!
                 issues.add(new Issue(this, use.getUseTarget().getActor(),
-                        null, // TODO: Script in use.getUseTarget().getScriptOrProcedure() ...but...?
+                        (Script)null, // TODO: Script in use.getUseTarget().getScriptOrProcedure() ...but...?
                         (AbstractNode) use.getUseTarget().getASTNode(), // TODO: This can't be right
                         "TODO -- hint text", null)); // TODO: Where is the relevant metadata?
             }

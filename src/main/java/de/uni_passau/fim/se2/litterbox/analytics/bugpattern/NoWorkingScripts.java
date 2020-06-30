@@ -65,6 +65,7 @@ public class NoWorkingScripts extends AbstractIssueFinder {
                 }
             }
         }
+        currentScript = null;
     }
 
     @Override

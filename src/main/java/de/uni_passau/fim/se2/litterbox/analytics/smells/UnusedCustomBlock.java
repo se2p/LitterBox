@@ -57,7 +57,7 @@ public class UnusedCustomBlock extends AbstractIssueFinder {
     @Override
     public void visit(ProcedureDefinition node) {
         proceduresDef.add(node);
-        visitChildren(node);
+        super.visit(node);
     }
 
     @Override

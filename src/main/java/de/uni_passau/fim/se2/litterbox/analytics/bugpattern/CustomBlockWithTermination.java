@@ -62,7 +62,7 @@ public class CustomBlockWithTermination extends AbstractIssueFinder {
     public void visit(ProcedureDefinition node) {
         insideProcedure = true;
         currentProcedureName = procMap.get(node.getIdent()).getName();
-        visitChildren(node);
+        super.visit(node);
         insideProcedure = false;
     }
 

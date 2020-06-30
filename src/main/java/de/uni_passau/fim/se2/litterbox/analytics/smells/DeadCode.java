@@ -39,6 +39,7 @@ public class DeadCode extends AbstractIssueFinder {
             // TODO: Replace with proper issue (including script etc)
             issues.add(new Issue(this, currentActor, node));
         }
+        currentScript = null;
     }
 
 
