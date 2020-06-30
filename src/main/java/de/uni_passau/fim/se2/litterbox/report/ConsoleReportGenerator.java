@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class ConsoleReportGenerator implements ReportGenerator {
 
@@ -39,9 +40,17 @@ public class ConsoleReportGenerator implements ReportGenerator {
     @Override
     public void generateReport(Program program, Collection<Issue> issues) throws IOException {
 
+        if(issues.isEmpty()) {
+            System.out.println("No issues found.");
+            return;
+        }
+
         for(String detector : detectors) {
-            long numViolations = issues.stream().filter(i -> i.getFinderShortName().equals(detector)).count();
-            System.out.println("Issue "+detector + " was found " + numViolations + " time(s)");
+            List<Issue> relevantIssues = issues.stream().filter(i -> i.getFinderShortName().equals(detector)).collect(Collectors.toList());
+            if(!relevantIssues.isEmpty()) {
+                Issue firstIssue = relevantIssues.get(0);
+                System.out.println("Issue "+firstIssue.getFinderName() + " was found " + relevantIssues.size() + " time(s)");
+            }
         }
     }
 }
