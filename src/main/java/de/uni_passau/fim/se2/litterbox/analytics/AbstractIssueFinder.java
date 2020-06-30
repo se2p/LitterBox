@@ -50,17 +50,13 @@ public abstract class AbstractIssueFinder implements IssueFinder, ScratchVisitor
         Preconditions.checkNotNull(program);
         currentActor = actor;
         procMap = program.getProcedureMapping().getProcedures().get(currentActor.getIdent().getName());
-        for (ASTNode child : actor.getChildren()) {
-            child.accept(this);
-        }
+        visitChildren(actor);
     }
 
     @Override
     public void visit(Script script) {
         currentScript = script;
-        for (ASTNode child : script.getChildren()) {
-            child.accept(this);
-        }
+        visitChildren(script);
     }
 
     protected void addIssue(AbstractNode node, String hintText, Metadata metadata) {
