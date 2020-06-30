@@ -39,11 +39,6 @@ public class ComparingLiterals extends AbstractIssueFinder {
     public static final String HINT_TEXT = "comparing literals";
 
     @Override
-    public String getName() {
-        return NAME;
-    }
-
-    @Override
     public void visit(Equals node) {
         if ((node.getOperand1() instanceof StringLiteral || node.getOperand1() instanceof NumberLiteral)
                 && (node.getOperand2() instanceof StringLiteral || node.getOperand2() instanceof NumberLiteral)) {
@@ -69,5 +64,15 @@ public class ComparingLiterals extends AbstractIssueFinder {
             addIssue(node, HINT_TEXT, node.getMetadata());
         }
         visitChildren(node);
+    }
+
+    @Override
+    public String getName() {
+        return NAME;
+    }
+
+    @Override
+    public String getShortName() {
+        return SHORT_NAME;
     }
 }

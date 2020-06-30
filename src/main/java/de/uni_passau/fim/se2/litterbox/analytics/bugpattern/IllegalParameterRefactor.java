@@ -38,11 +38,6 @@ public class IllegalParameterRefactor extends AbstractIssueFinder {
     private boolean insideProcedure;
 
     @Override
-    public String getName() {
-        return NAME;
-    }
-
-    @Override
     public void visit(ProcedureDefinition node) {
         insideProcedure = true;
         currentArguments = procMap.get(node.getIdent()).getArguments();
@@ -119,5 +114,15 @@ public class IllegalParameterRefactor extends AbstractIssueFinder {
             checkBool(node.getOperand2());
         }
         visitChildren(node);
+    }
+
+    @Override
+    public String getName() {
+        return NAME;
+    }
+
+    @Override
+    public String getShortName() {
+        return SHORT_NAME;
     }
 }

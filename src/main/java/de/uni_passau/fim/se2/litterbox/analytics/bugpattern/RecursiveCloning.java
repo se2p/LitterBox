@@ -47,11 +47,6 @@ public class RecursiveCloning extends AbstractIssueFinder {
     }
 
     @Override
-    public String getName() {
-        return NAME;
-    }
-
-    @Override
     public void visit(Script node) {
         if (node.getEvent() instanceof StartedAsClone) {
             startAsClone = true;
@@ -75,5 +70,15 @@ public class RecursiveCloning extends AbstractIssueFinder {
             }
         }
         visitChildren(node);
+    }
+
+    @Override
+    public String getName() {
+        return NAME;
+    }
+
+    @Override
+    public String getShortName() {
+        return SHORT_NAME;
     }
 }

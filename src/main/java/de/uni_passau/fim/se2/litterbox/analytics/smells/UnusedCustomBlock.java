@@ -38,11 +38,6 @@ public class UnusedCustomBlock extends AbstractIssueFinder {
     private List<String> calledProcedures;
 
     @Override
-    public String getName() {
-        return NAME;
-    }
-
-    @Override
     public void visit(ActorDefinition actor) {
         calledProcedures = new ArrayList<>();
         proceduresDef = new ArrayList<>();
@@ -69,5 +64,15 @@ public class UnusedCustomBlock extends AbstractIssueFinder {
     public void visit(CallStmt node) {
         calledProcedures.add(node.getIdent().getName());
         visitChildren(node);
+    }
+
+    @Override
+    public String getName() {
+        return NAME;
+    }
+
+    @Override
+    public String getShortName() {
+        return SHORT_NAME;
     }
 }

@@ -27,15 +27,20 @@ public class EmptyCustomBlock extends AbstractIssueFinder {
     public static final String SHORT_NAME = "empCustBl";
 
     @Override
-    public String getName() {
-        return NAME;
-    }
-
-    @Override
     public void visit(ProcedureDefinition node) {
         if (node.getStmtList().getStmts().isEmpty()) {
             issues.add(new Issue(this, currentActor, node));
         }
         visitChildren(node);
+    }
+
+    @Override
+    public String getName() {
+        return NAME;
+    }
+
+    @Override
+    public String getShortName() {
+        return SHORT_NAME;
     }
 }

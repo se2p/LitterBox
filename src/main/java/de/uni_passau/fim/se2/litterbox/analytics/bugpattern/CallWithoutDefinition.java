@@ -39,11 +39,6 @@ public class CallWithoutDefinition extends AbstractIssueFinder {
     private List<CallStmt> calledProcedures;
 
     @Override
-    public String getName() {
-        return NAME;
-    }
-
-    @Override
     public void visit(ActorDefinition actor) {
         calledProcedures = new ArrayList<>();
         proceduresDef = new ArrayList<>();
@@ -70,5 +65,15 @@ public class CallWithoutDefinition extends AbstractIssueFinder {
     public void visit(CallStmt node) {
         calledProcedures.add(node);
         visitChildren(node);
+    }
+
+    @Override
+    public String getName() {
+        return NAME;
+    }
+
+    @Override
+    public String getShortName() {
+        return SHORT_NAME;
     }
 }

@@ -40,11 +40,6 @@ public class OrphanedParameter extends AbstractIssueFinder {
     private boolean insideProcedure;
 
     @Override
-    public String getName() {
-        return NAME;
-    }
-
-    @Override
     public void visit(ProcedureDefinition node) {
         insideProcedure = true;
         currentParameterDefinitions = node.getParameterDefinitionList().getParameterDefinitions();
@@ -71,5 +66,15 @@ public class OrphanedParameter extends AbstractIssueFinder {
         if (!validParametername) {
             addIssue(node, HINT_TEXT, node.getMetadata());
         }
+    }
+
+    @Override
+    public String getName() {
+        return NAME;
+    }
+
+    @Override
+    public String getShortName() {
+        return SHORT_NAME;
     }
 }

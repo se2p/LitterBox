@@ -36,11 +36,6 @@ public class ForeverInsideLoop extends AbstractIssueFinder {
     private int loopcounter;
 
     @Override
-    public String getName() {
-        return NAME;
-    }
-
-    @Override
     public void visit(ActorDefinition actor) {
         loopcounter = 0;
         super.visit(actor);
@@ -68,5 +63,15 @@ public class ForeverInsideLoop extends AbstractIssueFinder {
         loopcounter++;
         visitChildren(node);
         loopcounter--;
+    }
+
+    @Override
+    public String getName() {
+        return NAME;
+    }
+
+    @Override
+    public String getShortName() {
+        return SHORT_NAME;
     }
 }

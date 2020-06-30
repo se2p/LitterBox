@@ -44,4 +44,9 @@ public class MissingTerminationCondition extends AbstractIssueFinder {
     public String getName() {
         return NAME;
     }
+
+    @Override
+    public String getShortName() {
+        return SHORT_NAME;
+    }
 }

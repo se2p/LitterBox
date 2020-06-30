@@ -34,11 +34,6 @@ public class MissingWaitUntilCondition extends AbstractIssueFinder {
     public static final String HINT_TEXT = "missing wait condition";
 
     @Override
-    public String getName() {
-        return NAME;
-    }
-
-    @Override
     public void visit(WaitUntil node) {
         if (node.getUntil() instanceof UnspecifiedBoolExpr) {
             addIssue(node, HINT_TEXT, node.getMetadata());
@@ -51,5 +46,15 @@ public class MissingWaitUntilCondition extends AbstractIssueFinder {
         if (!(node.getEvent() instanceof Never)) {
             visitChildren(node);
         }
+    }
+
+    @Override
+    public String getName() {
+        return NAME;
+    }
+
+    @Override
+    public String getShortName() {
+        return SHORT_NAME;
     }
 }

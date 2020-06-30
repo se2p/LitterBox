@@ -65,11 +65,6 @@ public class UnusedVariable extends AbstractIssueFinder {
         return issues;
     }
 
-    @Override
-    public String getName() {
-        return NAME;
-    }
-
     private void checkVariables() {
 
         for (Map.Entry<String, VariableInfo> entry : varMap.entrySet()) {
@@ -128,5 +123,15 @@ public class UnusedVariable extends AbstractIssueFinder {
             variableCalls.add(node);
         }
         visitChildren(node);
+    }
+
+    @Override
+    public String getName() {
+        return NAME;
+    }
+
+    @Override
+    public String getShortName() {
+        return SHORT_NAME;
     }
 }

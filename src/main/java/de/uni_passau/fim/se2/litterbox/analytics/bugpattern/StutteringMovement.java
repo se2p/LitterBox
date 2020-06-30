@@ -41,11 +41,6 @@ public class StutteringMovement extends AbstractIssueFinder {
     public static final String HINT_TEXT = "stuttering movement";
 
     @Override
-    public String getName() {
-        return NAME;
-    }
-
-    @Override
     public void visit(Script script) {
         currentScript = script;
         if (script.getEvent() instanceof KeyPressed) {
@@ -59,5 +54,15 @@ public class StutteringMovement extends AbstractIssueFinder {
             }
         }
         visitChildren(script);
+    }
+
+    @Override
+    public String getName() {
+        return NAME;
+    }
+
+    @Override
+    public String getShortName() {
+        return SHORT_NAME;
     }
 }

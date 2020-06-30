@@ -88,11 +88,6 @@ public class MissingBackdropSwitch extends AbstractIssueFinder {
     }
 
     @Override
-    public String getName() {
-        return NAME;
-    }
-
-    @Override
     public void visit(SwitchBackdrop node) {
         if(addComment)
             return;
@@ -173,5 +168,15 @@ public class MissingBackdropSwitch extends AbstractIssueFinder {
             }
         }
         visitChildren(node);
+    }
+
+    @Override
+    public String getName() {
+        return NAME;
+    }
+
+    @Override
+    public String getShortName() {
+        return SHORT_NAME;
     }
 }

@@ -39,11 +39,6 @@ public class NoWorkingScripts extends AbstractIssueFinder {
     private boolean foundEvent = false;
 
     @Override
-    public String getName() {
-        return NAME;
-    }
-
-    @Override
     public void visit(ActorDefinition actor) {
         stillFullfilledEmptyScript = true;
         deadCodeFound = false;
@@ -70,5 +65,15 @@ public class NoWorkingScripts extends AbstractIssueFinder {
                 }
             }
         }
+    }
+
+    @Override
+    public String getName() {
+        return NAME;
+    }
+
+    @Override
+    public String getShortName() {
+        return SHORT_NAME;
     }
 }

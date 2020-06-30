@@ -65,11 +65,6 @@ public class MissingCloneCall extends AbstractIssueFinder {
     }
 
     @Override
-    public String getName() {
-        return NAME;
-    }
-
-    @Override
     public void visit(CreateCloneOf node) {
         if(addComment)
             return;
@@ -99,5 +94,15 @@ public class MissingCloneCall extends AbstractIssueFinder {
             }
         }
         visitChildren(node);
+    }
+
+    @Override
+    public String getName() {
+        return NAME;
+    }
+
+    @Override
+    public String getShortName() {
+        return SHORT_NAME;
     }
 }

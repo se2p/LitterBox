@@ -104,4 +104,9 @@ public class SameVariableDifferentSprite implements IssueFinder {
     public String getName() {
         return NAME;
     }
+
+    @Override
+    public String getShortName() {
+        return SHORT_NAME;
+    }
 }

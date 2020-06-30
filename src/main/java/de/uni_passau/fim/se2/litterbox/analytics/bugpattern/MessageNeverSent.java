@@ -81,11 +81,6 @@ public class MessageNeverSent extends AbstractIssueFinder {
     }
 
     @Override
-    public String getName() {
-        return NAME;
-    }
-
-    @Override
     public void visit(Broadcast node) {
         if (node.getMessage().getMessage() instanceof StringLiteral) {
             if (!addComment) {
@@ -124,5 +119,15 @@ public class MessageNeverSent extends AbstractIssueFinder {
             }
         }
         visitChildren(node);
+    }
+
+    @Override
+    public String getName() {
+        return NAME;
+    }
+
+    @Override
+    public String getShortName() {
+        return SHORT_NAME;
     }
 }

@@ -19,7 +19,9 @@
 package de.uni_passau.fim.se2.litterbox.report;
 
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
+import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -28,6 +30,28 @@ public class JSONReportGenerator implements ReportGenerator {
 
     @Override
     public void generateReport(Program program, Collection<Issue> issues) throws IOException {
-        // TODO
+        // TODO: Implement putting all this information in a JSON file 
+        StringBuilder builder = new StringBuilder();
+        for(Issue issue : issues) {
+            builder.append(issue.getFinderName());
+            builder.append(": ");
+            builder.append(System.lineSeparator());
+
+            builder.append(issue.getHint());
+            builder.append(System.lineSeparator());
+
+            builder.append("  Actor: ");
+            builder.append(issue.getActorName());
+            builder.append(System.lineSeparator());
+
+            builder.append("  Script: ");
+            AbstractNode location = issue.getCodeLocation();
+            ScratchBlocksVisitor blockVisitor = new ScratchBlocksVisitor();
+            // location.accept(blockVisitor); // TODO: Implement
+            String scratchBlockCode = blockVisitor.getScratchBlocks();
+            builder.append(scratchBlockCode);
+
+            builder.append(System.lineSeparator());
+        }
     }
 }

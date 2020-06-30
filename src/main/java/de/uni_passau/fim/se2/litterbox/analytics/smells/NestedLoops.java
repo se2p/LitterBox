@@ -37,11 +37,6 @@ public class NestedLoops extends AbstractIssueFinder {
     public static final String SHORT_NAME = "nestLoop";
 
     @Override
-    public String getName() {
-        return NAME;
-    }
-
-    @Override
     public void visit(UntilStmt node) {
         checkNested(node.getStmtList().getStmts());
         visitChildren(node);
@@ -64,5 +59,15 @@ public class NestedLoops extends AbstractIssueFinder {
     public void visit(RepeatTimesStmt node) {
         checkNested(node.getStmtList().getStmts());
         visitChildren(node);
+    }
+
+    @Override
+    public String getName() {
+        return NAME;
+    }
+
+    @Override
+    public String getShortName() {
+        return SHORT_NAME;
     }
 }

@@ -38,11 +38,6 @@ public class ExpressionAsTouchingOrColor extends AbstractIssueFinder {
     public static final String HINT_TEXT = "expression as touching or color";
 
     @Override
-    public String getName() {
-        return NAME;
-    }
-
-    @Override
     public void visit(SetPenColorToColorStmt node) {
         if (!(node.getColorExpr() instanceof ColorLiteral)) {
             addIssue(node, HINT_TEXT, node.getMetadata());
@@ -77,5 +72,15 @@ public class ExpressionAsTouchingOrColor extends AbstractIssueFinder {
                 && !(node.getTouchable() instanceof SpriteTouchable)) {
             addIssue(node, HINT_TEXT, node.getMetadata());
         }
+    }
+
+    @Override
+    public String getName() {
+        return NAME;
+    }
+
+    @Override
+    public String getShortName() {
+        return SHORT_NAME;
     }
 }

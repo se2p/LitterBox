@@ -80,4 +80,8 @@ public class MissingInitialization implements IssueFinder {
         return NAME;
     }
 
+    @Override
+    public String getShortName() {
+        return SHORT_NAME;
+    }
 }

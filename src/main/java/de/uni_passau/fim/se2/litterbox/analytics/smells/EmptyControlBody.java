@@ -30,11 +30,6 @@ public class EmptyControlBody extends AbstractIssueFinder {
     public static final String SHORT_NAME = "empCtrlBody";
 
     @Override
-    public String getName() {
-        return NAME;
-    }
-
-    @Override
     public void visit(IfElseStmt node) {
         if (node.getStmtList().getStmts().isEmpty()) {
             issues.add(new Issue(this, currentActor, node));
@@ -75,5 +70,15 @@ public class EmptyControlBody extends AbstractIssueFinder {
             issues.add(new Issue(this, currentActor, node));
         }
         visitChildren(node);
+    }
+
+    @Override
+    public String getName() {
+        return NAME;
+    }
+
+    @Override
+    public String getShortName() {
+        return SHORT_NAME;
     }
 }

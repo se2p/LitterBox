@@ -33,11 +33,6 @@ public class ParameterOutOfScope extends AbstractIssueFinder {
     private boolean insideProcedure;
 
     @Override
-    public String getName() {
-        return NAME;
-    }
-
-    @Override
     public void visit(ProcedureDefinition node) {
         insideProcedure = true;
         visitChildren(node);
@@ -50,5 +45,15 @@ public class ParameterOutOfScope extends AbstractIssueFinder {
             addIssue(node, HINT_TEXT, node.getMetadata());
         }
         visitChildren(node);
+    }
+
+    @Override
+    public String getName() {
+        return NAME;
+    }
+
+    @Override
+    public String getShortName() {
+        return SHORT_NAME;
     }
 }

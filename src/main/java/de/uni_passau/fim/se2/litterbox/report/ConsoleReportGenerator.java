@@ -38,34 +38,10 @@ public class ConsoleReportGenerator implements ReportGenerator {
 
     @Override
     public void generateReport(Program program, Collection<Issue> issues) throws IOException {
-        StringBuilder builder = new StringBuilder();
-        for(Issue issue : issues) {
-            builder.append(issue.getFinderName());
-            builder.append(": ");
-            builder.append(System.lineSeparator());
 
-            builder.append(issue.getHint());
-            builder.append(System.lineSeparator());
-
-            builder.append("  Actor: ");
-            builder.append(issue.getActorName());
-            builder.append(System.lineSeparator());
-
-            builder.append("  Script: ");
-            AbstractNode location = issue.getCodeLocation();
-            ScratchBlocksVisitor blockVisitor = new ScratchBlocksVisitor();
-            // location.accept(blockVisitor); // TODO: Implement
-            String scratchBlockCode = blockVisitor.getScratchBlocks();
-            builder.append(scratchBlockCode);
-
-            builder.append(System.lineSeparator());
-        }
-
-        String result = builder.toString();
-        if(result.isEmpty()) {
-            System.out.println("No issues found in project.");
-        } else {
-            System.out.println(result);
+        for(String detector : detectors) {
+            long numViolations = issues.stream().filter(i -> i.getFinderShortName().equals(detector)).count();
+            System.out.println("Issue "+detector + " was found " + numViolations + " time(s)");
         }
     }
 }

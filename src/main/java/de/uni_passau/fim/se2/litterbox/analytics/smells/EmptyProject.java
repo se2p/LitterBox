@@ -46,14 +46,19 @@ public class EmptyProject implements ScratchVisitor, IssueFinder {
     }
 
     @Override
+    public void visit(ActorDefinition actor) {
+        if (!(actor.getScripts().getScriptList().isEmpty() && actor.getProcedureDefinitionList().getList().isEmpty())) {
+            foundScript = true;
+        }
+    }
+
+    @Override
     public String getName() {
         return NAME;
     }
 
     @Override
-    public void visit(ActorDefinition actor) {
-        if (!(actor.getScripts().getScriptList().isEmpty() && actor.getProcedureDefinitionList().getList().isEmpty())) {
-            foundScript = true;
-        }
+    public String getShortName() {
+        return SHORT_NAME;
     }
 }

@@ -53,4 +53,9 @@ public class EmptySprite implements IssueFinder, ScratchVisitor {
     public String getName() {
         return NAME;
     }
+
+    @Override
+    public String getShortName() {
+        return SHORT_NAME;
+    }
 }

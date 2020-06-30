@@ -39,12 +39,6 @@ public class MissingEraseAll extends AbstractIssueFinder {
     private boolean addComment = false;
 
     @Override
-    public String getName() {
-        return NAME;
-    }
-
-
-    @Override
     public void visit(ActorDefinition actor) {
         currentActor = actor;
         addComment = false;
@@ -86,5 +80,15 @@ public class MissingEraseAll extends AbstractIssueFinder {
 
     public boolean getResult() {
         return penDownSet && !penClearSet;
+    }
+
+    @Override
+    public String getName() {
+        return NAME;
+    }
+
+    @Override
+    public String getShortName() {
+        return SHORT_NAME;
     }
 }

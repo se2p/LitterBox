@@ -38,11 +38,6 @@ public class EndlessRecursion extends AbstractIssueFinder {
     private int loopIfCounter;
 
     @Override
-    public String getName() {
-        return NAME;
-    }
-
-    @Override
     public void visit(ActorDefinition actor) {
         loopIfCounter = 0;
         super.visit(actor);
@@ -78,5 +73,15 @@ public class EndlessRecursion extends AbstractIssueFinder {
         loopIfCounter++;
         visitChildren(node);
         loopIfCounter--;
+    }
+
+    @Override
+    public String getName() {
+        return NAME;
+    }
+
+    @Override
+    public String getShortName() {
+        return SHORT_NAME;
     }
 }

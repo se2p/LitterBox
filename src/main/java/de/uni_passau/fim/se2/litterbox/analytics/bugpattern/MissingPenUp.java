@@ -38,11 +38,6 @@ public class MissingPenUp extends AbstractIssueFinder {
     private boolean addComment = false;
 
     @Override
-    public String getName() {
-        return NAME;
-    }
-
-    @Override
     public void visit(ActorDefinition actor) {
         penUpSet = false;
         penDownSet = false;
@@ -86,4 +81,14 @@ public class MissingPenUp extends AbstractIssueFinder {
         return penDownSet && !penUpSet;
     }
 
+
+    @Override
+    public String getName() {
+        return NAME;
+    }
+
+    @Override
+    public String getShortName() {
+        return SHORT_NAME;
+    }
 }

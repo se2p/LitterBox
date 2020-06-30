@@ -71,11 +71,6 @@ public class MissingCloneInitialization extends AbstractIssueFinder {
     }
 
     @Override
-    public String getName() {
-        return NAME;
-    }
-
-    @Override
     public void visit(CreateCloneOf node) {
         if (node.getStringExpr() instanceof AsString && ((AsString) node.getStringExpr()).getOperand1() instanceof StrId) {
             final String spriteName = ((StrId) ((AsString) node.getStringExpr()).getOperand1()).getName();
@@ -104,5 +99,15 @@ public class MissingCloneInitialization extends AbstractIssueFinder {
         if (!addComment) {
             whenStartsAsCloneActors.add(currentActor.getIdent().getName());
         }
+    }
+
+    @Override
+    public String getName() {
+        return NAME;
+    }
+
+    @Override
+    public String getShortName() {
+        return SHORT_NAME;
     }
 }

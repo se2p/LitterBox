@@ -68,6 +68,10 @@ public class Issue {
         return finder.getName();
     }
 
+    public String getFinderShortName() {
+        return finder.getShortName();
+    }
+
     public String getHint() {
         return helpText;
     }

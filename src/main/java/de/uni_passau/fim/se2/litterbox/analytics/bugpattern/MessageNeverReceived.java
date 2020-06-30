@@ -78,11 +78,6 @@ public class MessageNeverReceived extends AbstractIssueFinder {
     }
 
     @Override
-    public String getName() {
-        return NAME;
-    }
-
-    @Override
     public void visit(Broadcast node) {
         if (node.getMessage().getMessage() instanceof StringLiteral) {
             final String msgName = ((StringLiteral) node.getMessage().getMessage()).getText();
@@ -117,5 +112,15 @@ public class MessageNeverReceived extends AbstractIssueFinder {
                 messageReceived.add(new Pair<>(actorName, msgName));
             }
         }
+    }
+
+    @Override
+    public String getName() {
+        return NAME;
+    }
+
+    @Override
+    public String getShortName() {
+        return SHORT_NAME;
     }
 }

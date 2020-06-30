@@ -43,11 +43,6 @@ public class PositionEqualsCheck extends AbstractIssueFinder {
     public static final String HINT_TEXT = "position equals check";
 
     @Override
-    public String getName() {
-        return NAME;
-    }
-
-    @Override
     public void visit(WaitUntil node) {
         if (node.getUntil() instanceof Equals) {
             if(!checkEquals((Equals) node.getUntil())) {
@@ -107,5 +102,15 @@ public class PositionEqualsCheck extends AbstractIssueFinder {
             }
         }
         visitChildren(node);
+    }
+
+    @Override
+    public String getName() {
+        return NAME;
+    }
+
+    @Override
+    public String getShortName() {
+        return SHORT_NAME;
     }
 }

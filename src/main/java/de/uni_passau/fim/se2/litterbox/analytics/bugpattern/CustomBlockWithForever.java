@@ -44,11 +44,6 @@ public class CustomBlockWithForever extends AbstractIssueFinder {
     private boolean insideProcedure;
 
     @Override
-    public String getName() {
-        return NAME;
-    }
-
-    @Override
     public void visit(ActorDefinition actor) {
         calledProcedures = new ArrayList<>();
         proceduresWithForever = new ArrayList<>();
@@ -90,5 +85,15 @@ public class CustomBlockWithForever extends AbstractIssueFinder {
             }
         }
         visitChildren(node);
+    }
+
+    @Override
+    public String getName() {
+        return NAME;
+    }
+
+    @Override
+    public String getShortName() {
+        return SHORT_NAME;
     }
 }

@@ -38,9 +38,15 @@ public class EmptyScript extends AbstractIssueFinder {
         }
     }
 
+
     @Override
     public String getName() {
         return NAME;
+    }
+
+    @Override
+    public String getShortName() {
+        return SHORT_NAME;
     }
 }
 

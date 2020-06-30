@@ -56,4 +56,9 @@ public class LongScript extends AbstractIssueFinder {
     public String getName() {
         return NAME;
     }
+
+    @Override
+    public String getShortName() {
+        return SHORT_NAME;
+    }
 }
