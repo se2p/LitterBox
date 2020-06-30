@@ -19,7 +19,6 @@
 package de.uni_passau.fim.se2.litterbox.analytics.metric;
 
 import de.uni_passau.fim.se2.litterbox.analytics.MetricAnalyzer;
-import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
@@ -49,8 +48,6 @@ public class ProcedureCount implements MetricAnalyzer<Integer>, ScratchVisitor {
         count++;
         // TODO: Can ProcedureDefinitions be defined within ProcedureDefinitions?
         //       Otherwise this is a waste of time
-        for (ASTNode child : node.getChildren()) {
-            child.accept(this);
-        }
+        visitChildren(node);
     }
 }

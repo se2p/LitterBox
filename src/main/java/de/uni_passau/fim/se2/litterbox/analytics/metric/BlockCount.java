@@ -90,18 +90,14 @@ public class BlockCount implements MetricAnalyzer<Integer>, ScratchVisitor {
     public void visit(ProcedureDefinition node) {
         insideProcedure = true;
         count++;
-        for (ASTNode child : node.getChildren()) {
-            child.accept(this);
-        }
+        visitChildren(node);
         insideProcedure = false;
     }
 
     @Override
     public void visit(Script node) {
         insideScript = true;
-        for (ASTNode child : node.getChildren()) {
-            child.accept(this);
-        }
+        visitChildren(node);
         insideScript = false;
     }
 
@@ -110,9 +106,7 @@ public class BlockCount implements MetricAnalyzer<Integer>, ScratchVisitor {
         if ((insideScript || insideProcedure) && !fixedBlock) {
             count++;
         }
-        for (ASTNode child : node.getChildren()) {
-            child.accept(this);
-        }
+        visitChildren(node);
     }
 
     @Override
@@ -146,9 +140,7 @@ public class BlockCount implements MetricAnalyzer<Integer>, ScratchVisitor {
             count++;
         }
         fixedBlock = true;
-        for (ASTNode child : node.getChildren()) {
-            child.accept(this);
-        }
+        visitChildren(node);
         fixedBlock = false;
     }
 
@@ -158,9 +150,7 @@ public class BlockCount implements MetricAnalyzer<Integer>, ScratchVisitor {
             count++;
         }
         fixedBlock = true;
-        for (ASTNode child : node.getChildren()) {
-            child.accept(this);
-        }
+        visitChildren(node);
         fixedBlock = false;
     }
 
@@ -170,9 +160,7 @@ public class BlockCount implements MetricAnalyzer<Integer>, ScratchVisitor {
             count++;
         }
         fixedBlock = true;
-        for (ASTNode child : node.getChildren()) {
-            child.accept(this);
-        }
+        visitChildren(node);
         fixedBlock = false;
     }
 
@@ -182,9 +170,7 @@ public class BlockCount implements MetricAnalyzer<Integer>, ScratchVisitor {
             count++;
         }
         fixedBlock = true;
-        for (ASTNode child : node.getChildren()) {
-            child.accept(this);
-        }
+        visitChildren(node);
         fixedBlock = false;
     }
 
@@ -238,144 +224,104 @@ public class BlockCount implements MetricAnalyzer<Integer>, ScratchVisitor {
 
     @Override
     public void visit(WithExpr node) {
-        for (ASTNode child : node.getChildren()) {
-            child.accept(this);
-        }
+        visitChildren(node);
     }
 
     @Override
     public void visit(Qualified node) {
-        for (ASTNode child : node.getChildren()) {
-            child.accept(this);
-        }
+        visitChildren(node);
     }
 
     @Override
     public void visit(StringLiteral node) {
-        for (ASTNode child : node.getChildren()) {
-            child.accept(this);
-        }
+        visitChildren(node);
     }
 
     @Override
     public void visit(BoolLiteral node) {
-        for (ASTNode child : node.getChildren()) {
-            child.accept(this);
-        }
+        visitChildren(node);
     }
 
     @Override
     public void visit(NumberLiteral node) {
-        for (ASTNode child : node.getChildren()) {
-            child.accept(this);
-        }
+        visitChildren(node);
     }
 
     @Override
     public void visit(ColorLiteral node) {
-        for (ASTNode child : node.getChildren()) {
-            child.accept(this);
-        }
+        visitChildren(node);
     }
 
     @Override
     public void visit(LocalIdentifier node) {
-        for (ASTNode child : node.getChildren()) {
-            child.accept(this);
-        }
+        visitChildren(node);
     }
 
     @Override
     public void visit(Never node) {
-        for (ASTNode child : node.getChildren()) {
-            child.accept(this);
-        }
+        visitChildren(node);
     }
 
     @Override
     public void visit(StmtList node) {
-        for (ASTNode child : node.getChildren()) {
-            child.accept(this);
-        }
+        visitChildren(node);
     }
 
     @Override
     public void visit(ParameterDefinitionList node) {
         insideParameterList = true;
-        for (ASTNode child : node.getChildren()) {
-            child.accept(this);
-        }
+        visitChildren(node);
         insideParameterList = false;
     }
 
     @Override
     public void visit(ExpressionList node) {
-        for (ASTNode child : node.getChildren()) {
-            child.accept(this);
-        }
+        visitChildren(node);
     }
 
     @Override
     public void visit(Type node) {
-        for (ASTNode child : node.getChildren()) {
-            child.accept(this);
-        }
+        visitChildren(node);
     }
 
     @Override
     public void visit(ParameterDefinition node) {
-        for (ASTNode child : node.getChildren()) {
-            child.accept(this);
-        }
+        visitChildren(node);
     }
 
     @Override
     public void visit(AsNumber node) {
-        for (ASTNode child : node.getChildren()) {
-            child.accept(this);
-        }
+        visitChildren(node);
     }
 
     @Override
     public void visit(AsString node) {
-        for (ASTNode child : node.getChildren()) {
-            child.accept(this);
-        }
+        visitChildren(node);
     }
 
     @Override
     public void visit(AsBool node) {
-        for (ASTNode child : node.getChildren()) {
-            child.accept(this);
-        }
+        visitChildren(node);
     }
 
     @Override
     public void visit(AsTouchable node) {
-        for (ASTNode child : node.getChildren()) {
-            child.accept(this);
-        }
+        visitChildren(node);
     }
 
     @Override
     public void visit(AsListIndex node) {
-        for (ASTNode child : node.getChildren()) {
-            child.accept(this);
-        }
+        visitChildren(node);
     }
 
     @Override
     public void visit(ExpressionStmt node) {
-        for (ASTNode child : node.getChildren()) {
-            child.accept(this);
-        }
+        visitChildren(node);
     }
 
     @Override
     public void visit(NumFunct node) {
-        for (ASTNode child : node.getChildren()) {
-            child.accept(this);
-        }
+        visitChildren(node);
     }
 
     @Override
@@ -384,9 +330,7 @@ public class BlockCount implements MetricAnalyzer<Integer>, ScratchVisitor {
             count++;
         }
         fixedBlock = true;
-        for (ASTNode child : node.getChildren()) {
-            child.accept(this);
-        }
+        visitChildren(node);
         fixedBlock = false;
     }
 
@@ -407,9 +351,7 @@ public class BlockCount implements MetricAnalyzer<Integer>, ScratchVisitor {
             count++;
         }
         fixedBlock = true;
-        for (ASTNode child : node.getChildren()) {
-            child.accept(this);
-        }
+        visitChildren(node);
         fixedBlock = false;
     }
 
@@ -419,9 +361,7 @@ public class BlockCount implements MetricAnalyzer<Integer>, ScratchVisitor {
             count++;
         }
         fixedBlock = true;
-        for (ASTNode child : node.getChildren()) {
-            child.accept(this);
-        }
+        visitChildren(node);
         fixedBlock = false;
     }
 
@@ -431,9 +371,7 @@ public class BlockCount implements MetricAnalyzer<Integer>, ScratchVisitor {
             count++;
         }
         fixedBlock = true;
-        for (ASTNode child : node.getChildren()) {
-            child.accept(this);
-        }
+        visitChildren(node);
         fixedBlock = false;
     }
 
@@ -454,9 +392,7 @@ public class BlockCount implements MetricAnalyzer<Integer>, ScratchVisitor {
             count++;
         }
         fixedBlock = true;
-        for (ASTNode child : node.getChildren()) {
-            child.accept(this);
-        }
+        visitChildren(node);
         fixedBlock = false;
     }
 
@@ -466,9 +402,7 @@ public class BlockCount implements MetricAnalyzer<Integer>, ScratchVisitor {
             count++;
         }
         fixedBlock = true;
-        for (ASTNode child : node.getChildren()) {
-            child.accept(this);
-        }
+        visitChildren(node);
         fixedBlock = false;
     }
 
@@ -478,9 +412,7 @@ public class BlockCount implements MetricAnalyzer<Integer>, ScratchVisitor {
             count++;
         }
         fixedBlock = true;
-        for (ASTNode child : node.getChildren()) {
-            child.accept(this);
-        }
+        visitChildren(node);
         fixedBlock = false;
     }
 
@@ -490,9 +422,7 @@ public class BlockCount implements MetricAnalyzer<Integer>, ScratchVisitor {
             count++;
         }
         fixedBlock = true;
-        for (ASTNode child : node.getChildren()) {
-            child.accept(this);
-        }
+        visitChildren(node);
         fixedBlock = false;
     }
 
@@ -502,9 +432,7 @@ public class BlockCount implements MetricAnalyzer<Integer>, ScratchVisitor {
             count++;
         }
         fixedBlock = true;
-        for (ASTNode child : node.getChildren()) {
-            child.accept(this);
-        }
+        visitChildren(node);
         fixedBlock = false;
     }
 
@@ -514,9 +442,7 @@ public class BlockCount implements MetricAnalyzer<Integer>, ScratchVisitor {
             count++;
         }
         fixedBlock = true;
-        for (ASTNode child : node.getChildren()) {
-            child.accept(this);
-        }
+        visitChildren(node);
         fixedBlock = false;
     }
 
