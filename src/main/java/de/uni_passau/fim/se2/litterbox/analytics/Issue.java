@@ -77,7 +77,7 @@ public class Issue {
     }
 
     public String getActorName() {
-        return actor.getUniqueName(); // TODO
+        return actor.getIdent().getName(); // TODO
     }
 
     public String getFinderName() {
