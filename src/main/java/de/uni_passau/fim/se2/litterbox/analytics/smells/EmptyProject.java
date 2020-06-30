@@ -37,6 +37,7 @@ public class EmptyProject implements ScratchVisitor, IssueFinder {
     public Set<Issue> check(Program program) {
         Preconditions.checkNotNull(program);
         foundScript = false;
+        issues = new LinkedHashSet<>();
         program.accept(this);
         if (!foundScript) {
             // TODO -- there are no actors and no nodes, so what to pass in here?

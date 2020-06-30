@@ -36,6 +36,7 @@ public class EmptySprite implements IssueFinder, ScratchVisitor {
 
     @Override
     public Set<Issue> check(Program program) {
+        issues = new LinkedHashSet<>();
         Preconditions.checkNotNull(program);
         program.accept(this);
         return issues;
