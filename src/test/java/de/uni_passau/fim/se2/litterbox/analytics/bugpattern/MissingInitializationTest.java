@@ -19,13 +19,15 @@
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueReport;
+import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
 import de.uni_passau.fim.se2.litterbox.cfg.ControlFlowGraphVisitor;
 import java.io.File;
 import java.io.IOException;
+import java.util.Set;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -37,8 +39,8 @@ public class MissingInitializationTest {
         File f = new File("src/test/fixtures/bugpattern/missingVariableInitialization.json");
         Program program = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
 
-        IssueReport report = (new MissingInitialization()).check(program);
-        Assertions.assertEquals(1, report.getCount());
+        Set<Issue> reports = (new MissingInitialization()).check(program);
+        Assertions.assertEquals(1, reports.size());
     }
 
     @Test
@@ -46,8 +48,8 @@ public class MissingInitializationTest {
         File f = new File("src/test/fixtures/bugpattern/missingVariableInitializationInClone.json");
         Program program = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
 
-        IssueReport report = (new MissingInitialization()).check(program);
-        Assertions.assertEquals(1, report.getCount());
+        Set<Issue> reports = (new MissingInitialization()).check(program);
+        Assertions.assertEquals(1, reports.size());
     }
 
     @Test
@@ -55,8 +57,8 @@ public class MissingInitializationTest {
         File f = new File("src/test/fixtures/bugpattern/missingVariableInitializationWrongVarUsed.json");
         Program program = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
 
-        IssueReport report = (new MissingInitialization()).check(program);
-        Assertions.assertEquals(1, report.getCount());
+        Set<Issue> reports = (new MissingInitialization()).check(program);
+        Assertions.assertEquals(1, reports.size());
     }
 
     @Test
@@ -68,8 +70,8 @@ public class MissingInitializationTest {
         visitor.visit(program);
         System.out.println(visitor.getControlFlowGraph().toDotString());
 
-        IssueReport report = (new MissingInitialization()).check(program);
-        Assertions.assertEquals(1, report.getCount());
+        Set<Issue> reports = (new MissingInitialization()).check(program);
+        Assertions.assertEquals(1, reports.size());
     }
 
 
@@ -78,8 +80,8 @@ public class MissingInitializationTest {
         File f = new File("src/test/fixtures/bugpattern/missingVariableInitializationInBroadcast.json");
         Program program = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
 
-        IssueReport report = (new MissingInitialization()).check(program);
-        Assertions.assertEquals(1, report.getCount());
+        Set<Issue> reports = (new MissingInitialization()).check(program);
+        Assertions.assertEquals(1, reports.size());
     }
 
     @Test
@@ -87,8 +89,8 @@ public class MissingInitializationTest {
         File f = new File("src/test/fixtures/bugpattern/missingVariableInitializationInTwoBroadcasts.json");
         Program program = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
 
-        IssueReport report = (new MissingInitialization()).check(program);
-        Assertions.assertEquals(1, report.getCount());
+        Set<Issue> reports = (new MissingInitialization()).check(program);
+        Assertions.assertEquals(1, reports.size());
     }
 
     @Test
@@ -98,8 +100,8 @@ public class MissingInitializationTest {
 
         // Not an anomaly: The definition happens in the message receiver, and we don't know
         // if the execution of the receiver will be scheduled before the use
-        IssueReport report = (new MissingInitialization()).check(program);
-        Assertions.assertEquals(0, report.getCount());
+        Set<Issue> reports = (new MissingInitialization()).check(program);
+        Assertions.assertEquals(0, reports.size());
     }
 
     @Test
@@ -107,9 +109,9 @@ public class MissingInitializationTest {
         File f = new File("src/test/fixtures/bugpattern/missingVariableInitializationTwoVarReadChange.json");
         Program program = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
 
-        IssueReport report = (new MissingInitialization()).check(program);
+        Set<Issue> reports = (new MissingInitialization()).check(program);
         // 2 vars, each is first used in a say, then in a change
-        Assertions.assertEquals(4, report.getCount());
+        Assertions.assertEquals(4, reports.size());
     }
 
 
@@ -118,9 +120,9 @@ public class MissingInitializationTest {
         File f = new File("src/test/fixtures/bugpattern/missingVariableInitializationVariableOf.json");
         Program program = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
 
-        IssueReport report = (new MissingInitialization()).check(program);
+        Set<Issue> reports = (new MissingInitialization()).check(program);
         // One direct use, one us with AttributeOf
-        Assertions.assertEquals(2, report.getCount());
+        Assertions.assertEquals(2, reports.size());
     }
 
     @Test
@@ -129,8 +131,8 @@ public class MissingInitializationTest {
         Program program = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
 
         // This is not an anomaly: The initialization may happen before the use, depending on the scheduler
-        IssueReport report = (new MissingInitialization()).check(program);
-        Assertions.assertEquals(0, report.getCount());
+        Set<Issue> reports = (new MissingInitialization()).check(program);
+        Assertions.assertEquals(0, reports.size());
     }
 
     @Test
@@ -142,8 +144,8 @@ public class MissingInitializationTest {
         visitor.visit(program);
         System.out.println(visitor.getControlFlowGraph().toDotString());
 
-        IssueReport report = (new MissingInitialization()).check(program);
-        Assertions.assertEquals(2, report.getCount());
+        Set<Issue> reports = (new MissingInitialization()).check(program);
+        Assertions.assertEquals(2, reports.size());
     }
 
     @Test
@@ -151,8 +153,8 @@ public class MissingInitializationTest {
         File f = new File("src/test/fixtures/bugpattern/missingAttributeInitializationPosition.json");
         Program program = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
 
-        IssueReport report = (new MissingInitialization()).check(program);
-        Assertions.assertEquals(1, report.getCount());
+        Set<Issue> reports = (new MissingInitialization()).check(program);
+        Assertions.assertEquals(1, reports.size());
     }
 
     @Test
@@ -160,7 +162,7 @@ public class MissingInitializationTest {
         File f = new File("src/test/fixtures/cfg/listoperations.json");
         Program program = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
 
-        IssueReport report = (new MissingInitialization()).check(program);
-        Assertions.assertEquals(1, report.getCount());
+        Set<Issue> reports = (new MissingInitialization()).check(program);
+        Assertions.assertEquals(1, reports.size());
     }
 }

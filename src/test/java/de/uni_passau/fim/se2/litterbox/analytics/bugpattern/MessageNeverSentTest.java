@@ -23,12 +23,14 @@ import static junit.framework.TestCase.fail;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.truth.Truth;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueReport;
+import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
 import java.io.File;
 import java.io.IOException;
+import java.util.Set;
+
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -53,14 +55,14 @@ class MessageNeverSentTest {
     @Test
     public void testMessageNeverSent() {
         MessageNeverSent finder = new MessageNeverSent();
-        final IssueReport check = finder.check(program);
-        Truth.assertThat(check.getCount()).isEqualTo(0);
+        Set<Issue> reports = finder.check(program);
+        Truth.assertThat(reports).isEmpty();;
     }
 
     @Test
     public void testMessageRec() {
         MessageNeverSent finder = new MessageNeverSent();
-        final IssueReport check = finder.check(messageRec);
-        Truth.assertThat(check.getCount()).isEqualTo(1);
+        Set<Issue> reports = finder.check(messageRec);
+        Truth.assertThat(reports).hasSize(1);
     }
 }

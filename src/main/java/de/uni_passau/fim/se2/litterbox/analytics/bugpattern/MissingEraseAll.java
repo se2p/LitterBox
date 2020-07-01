@@ -18,39 +18,68 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
-import static de.uni_passau.fim.se2.litterbox.analytics.CommentAdder.addBlockComment;
-
-
-import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueReport;
-import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
+import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.pen.PenClearStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.pen.PenDownStmt;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
-import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
-import java.util.LinkedList;
-import java.util.List;
 
 /**
  * If a sprite uses a pen down block but never an erase all block, then all drawings from a
  * previous execution might remain, making it impossible to get a blank background without reloading the scratch
  * project.
  */
-public class MissingEraseAll implements IssueFinder {
+public class MissingEraseAll extends AbstractIssueFinder {
 
     public static final String NAME = "missing_erase_all";
     public static final String SHORT_NAME = "mssEraseAll";
     public static final String HINT_TEXT = "missing erase all";
 
+    private boolean penClearSet = false;
+    private boolean penDownSet = false;
+    private boolean addComment = false;
+
     @Override
-    public IssueReport check(Program program) {
-        Preconditions.checkNotNull(program);
-        CheckVisitor visitor = new CheckVisitor();
-        program.accept(visitor);
-        return new IssueReport(NAME, visitor.count, visitor.actorNames, "");
+    public void visit(ActorDefinition actor) {
+        currentActor = actor;
+        addComment = false;
+        penClearSet = false;
+        penDownSet = false;
+        visitChildren(actor);
+
+        if (getResult()) {
+            addComment = true;
+            visitChildren(actor);
+            reset();
+        }
+    }
+
+    @Override
+    public void visit(PenDownStmt node) {
+        if (!addComment) {
+            penDownSet = true;
+            visitChildren(node);
+        } else if (getResult()) {
+            addIssue(node, HINT_TEXT, node.getMetadata());
+        }
+    }
+
+    @Override
+    public void visit(PenClearStmt node) {
+        if (!addComment) {
+            penClearSet = true;
+            visitChildren(node);
+        }
+    }
+
+    void reset() {
+        penClearSet = false;
+        penDownSet = false;
+        currentActor = null;
+        addComment = false;
+    }
+
+    public boolean getResult() {
+        return penDownSet && !penClearSet;
     }
 
     @Override
@@ -58,84 +87,8 @@ public class MissingEraseAll implements IssueFinder {
         return NAME;
     }
 
-    private static class CheckVisitor implements ScratchVisitor {
-
-        private boolean penClearSet = false;
-        private boolean penDownSet = false;
-        private boolean addComment = false;
-        private int count = 0;
-        private List<String> actorNames = new LinkedList<>();
-        private ActorDefinition currentActor;
-
-        @Override
-        public void visit(ASTNode node) {
-            if (!node.getChildren().isEmpty()) {
-                for (ASTNode child : node.getChildren()) {
-                    child.accept(this);
-                }
-            }
-        }
-
-        @Override
-        public void visit(ActorDefinition actor) {
-            currentActor = actor;
-            addComment = false;
-            penClearSet = false;
-            penDownSet = false;
-            if (!actor.getChildren().isEmpty()) {
-                for (ASTNode child : actor.getChildren()) {
-                    child.accept(this);
-                }
-            }
-
-            if (getResult()) {
-                count++;
-                actorNames.add(currentActor.getIdent().getName());
-                addComment = true;
-                for (ASTNode child : actor.getChildren()) {
-                    child.accept(this);
-                }
-                reset();
-
-            }
-        }
-
-        @Override
-        public void visit(PenDownStmt node) {
-            if (!addComment) {
-                penDownSet = true;
-                if (!node.getChildren().isEmpty()) {
-                    for (ASTNode child : node.getChildren()) {
-                        child.accept(this);
-                    }
-                }
-            } else if (getResult()) {
-                addBlockComment((NonDataBlockMetadata) node.getMetadata(), currentActor, HINT_TEXT,
-                        SHORT_NAME + count);
-            }
-        }
-
-        @Override
-        public void visit(PenClearStmt node) {
-            if (!addComment) {
-                penClearSet = true;
-                if (!node.getChildren().isEmpty()) {
-                    for (ASTNode child : node.getChildren()) {
-                        child.accept(this);
-                    }
-                }
-            }
-        }
-
-        void reset() {
-            penClearSet = false;
-            penDownSet = false;
-            currentActor = null;
-            addComment = false;
-        }
-
-        public boolean getResult() {
-            return penDownSet && !penClearSet;
-        }
+    @Override
+    public String getShortName() {
+        return SHORT_NAME;
     }
 }

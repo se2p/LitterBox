@@ -60,9 +60,9 @@ class ColorParserTest {
         try {
             Program program = ProgramParser.parseProgram("Test", project);
             ActorDefinitionList list = program.getActorDefinitionList();
-            Truth.assertThat(list.getDefintions().size()).isEqualTo(2);
+            Truth.assertThat(list.getDefinitions().size()).isEqualTo(2);
 
-            final ActorDefinition first = list.getDefintions().get(1);
+            final ActorDefinition first = list.getDefinitions().get(1);
             final Script script = first.getScripts().getScriptList().get(0);
             final ExpressionStmt expressionStmt = (ExpressionStmt) script.getStmtList().getStmts()
                     .get(0);
@@ -82,9 +82,9 @@ class ColorParserTest {
         try {
             Program program = ProgramParser.parseProgram("Test", project);
             ActorDefinitionList list = program.getActorDefinitionList();
-            Truth.assertThat(list.getDefintions().size()).isEqualTo(2);
+            Truth.assertThat(list.getDefinitions().size()).isEqualTo(2);
 
-            final ActorDefinition first = list.getDefintions().get(1);
+            final ActorDefinition first = list.getDefinitions().get(1);
             final Script script = first.getScripts().getScriptList().get(1);
             final ExpressionStmt expressionStmt = (ExpressionStmt) script.getStmtList().getStmts()
                     .get(0);

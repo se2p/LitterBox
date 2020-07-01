@@ -19,13 +19,15 @@
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueReport;
+import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
 import de.uni_passau.fim.se2.litterbox.jsonCreation.JSONFileCreator;
 import java.io.File;
 import java.io.IOException;
+import java.util.Set;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -62,51 +64,50 @@ public class CallWithoutDefinitionWithHintTest {
     @Test
     public void testEmptyProgram() {
         CallWithoutDefinition parameterName = new CallWithoutDefinition();
-        IssueReport report = parameterName.check(empty);
-        Assertions.assertEquals(0, report.getCount());
+        Set<Issue> reports = parameterName.check(empty);
+        Assertions.assertEquals(0, reports.size());
     }
 
     @Test
     public void testCallWithoutDef() {
         CallWithoutDefinition parameterName = new CallWithoutDefinition();
-        IssueReport report = parameterName.check(callWithoutDef);
-        Assertions.assertEquals(1, report.getCount());
+        Set<Issue> reports = parameterName.check(callWithoutDef);
+        Assertions.assertEquals(1, reports.size());
         JSONFileCreator.writeJsonFromProgram(callWithoutDef);
     }
 
     @Test
     public void testSportPong() {
         CallWithoutDefinition parameterName = new CallWithoutDefinition();
-        IssueReport report = parameterName.check(sportPong);
-        Assertions.assertEquals(0, report.getCount());
+        Set<Issue> reports = parameterName.check(sportPong);
+        Assertions.assertEquals(0, reports.size());
     }
 
     @Test
     public void testWriteTheDraw() {
         CallWithoutDefinition parameterName = new CallWithoutDefinition();
-        IssueReport report = parameterName.check(writeTheDraw);
-        Assertions.assertEquals(0, report.getCount());
+        Set<Issue> reports = parameterName.check(writeTheDraw);
+        Assertions.assertEquals(0, reports.size());
     }
 
     @Test
     public void testHomeVideo() {
         CallWithoutDefinition parameterName = new CallWithoutDefinition();
-        IssueReport report = parameterName.check(scratchHomeVideo);
-        Assertions.assertEquals(0, report.getCount());
+        Set<Issue> reports = parameterName.check(scratchHomeVideo);
+        Assertions.assertEquals(0, reports.size());
     }
 
     @Test
     public void testDerpyAnimal() {
         CallWithoutDefinition parameterName = new CallWithoutDefinition();
-        IssueReport report = parameterName.check(derpyAnimal);
-        Assertions.assertEquals(0, report.getCount());
+        Set<Issue> reports = parameterName.check(derpyAnimal);
+        Assertions.assertEquals(0, reports.size());
     }
 
     @Test
     public void testMalformatedProc() {
         CallWithoutDefinition parameterName = new CallWithoutDefinition();
-        IssueReport report = parameterName.check(malformatedProc);
-        System.out.println(report.getPosition());
-        Assertions.assertEquals(0, report.getCount());
+        Set<Issue> reports = parameterName.check(malformatedProc);
+        Assertions.assertEquals(0, reports.size());
     }
 }

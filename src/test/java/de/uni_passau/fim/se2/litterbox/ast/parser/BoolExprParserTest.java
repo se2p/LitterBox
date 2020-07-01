@@ -66,7 +66,7 @@ public class BoolExprParserTest {
     @Test
     public void testContains() throws ParsingException {
         Program program = ProgramParser.parseProgram("ListExpr", project);
-        final ActorDefinition sprite = program.getActorDefinitionList().getDefintions().get(1);
+        final ActorDefinition sprite = program.getActorDefinitionList().getDefinitions().get(1);
         final Script script = sprite.getScripts().getScriptList().get(0);
 
         final Stmt stmt = script.getStmtList().getStmts().get(1);
@@ -81,7 +81,7 @@ public class BoolExprParserTest {
     @Test
     public void testOr() throws ParsingException {
         Program program = ProgramParser.parseProgram("ListExpr", project);
-        final ActorDefinition sprite = program.getActorDefinitionList().getDefintions().get(1);
+        final ActorDefinition sprite = program.getActorDefinitionList().getDefinitions().get(1);
         final Script script = sprite.getScripts().getScriptList().get(0);
 
         final Stmt stmt = script.getStmtList().getStmts().get(2);
@@ -102,7 +102,7 @@ public class BoolExprParserTest {
     @Test
     public void testWaitUntil() throws ParsingException {
         Program program = ProgramParser.parseProgram("ListExpr", project);
-        final ActorDefinition sprite = program.getActorDefinitionList().getDefintions().get(1);
+        final ActorDefinition sprite = program.getActorDefinitionList().getDefinitions().get(1);
         final Script script = sprite.getScripts().getScriptList().get(0);
 
         final Stmt stmt = script.getStmtList().getStmts().get(3);
@@ -116,7 +116,7 @@ public class BoolExprParserTest {
     @Test
     public void testAnd() throws ParsingException {
         Program program = ProgramParser.parseProgram("ListExpr", project);
-        final ActorDefinition sprite = program.getActorDefinitionList().getDefintions().get(1);
+        final ActorDefinition sprite = program.getActorDefinitionList().getDefinitions().get(1);
         final Script script = sprite.getScripts().getScriptList().get(0);
 
         final Stmt stmt = script.getStmtList().getStmts().get(4);
@@ -131,7 +131,7 @@ public class BoolExprParserTest {
     @Test
     public void testNot() throws ParsingException {
         Program program = ProgramParser.parseProgram("ListExpr", project);
-        final ActorDefinition sprite = program.getActorDefinitionList().getDefintions().get(1);
+        final ActorDefinition sprite = program.getActorDefinitionList().getDefinitions().get(1);
         final Script script = sprite.getScripts().getScriptList().get(0);
 
         final Stmt stmt = script.getStmtList().getStmts().get(5);
@@ -147,7 +147,7 @@ public class BoolExprParserTest {
     @Test
     public void testBTLiteral() throws ParsingException {
         Program program = ProgramParser.parseProgram("ListExpr", project);
-        final ActorDefinition sprite = program.getActorDefinitionList().getDefintions().get(1);
+        final ActorDefinition sprite = program.getActorDefinitionList().getDefinitions().get(1);
         final Script script = sprite.getScripts().getScriptList().get(1);
 
         final Stmt stmt = script.getStmtList().getStmts().get(0);
@@ -162,7 +162,7 @@ public class BoolExprParserTest {
     @Test
     public void testLTLiteral() throws ParsingException {
         Program program = ProgramParser.parseProgram("ListExpr", project);
-        final ActorDefinition sprite = program.getActorDefinitionList().getDefintions().get(1);
+        final ActorDefinition sprite = program.getActorDefinitionList().getDefinitions().get(1);
         final Script script = sprite.getScripts().getScriptList().get(1);
 
         final Stmt stmt = script.getStmtList().getStmts().get(1);
@@ -177,7 +177,7 @@ public class BoolExprParserTest {
     @Test
     public void testEqLiteral() throws ParsingException {
         Program program = ProgramParser.parseProgram("ListExpr", project);
-        final ActorDefinition sprite = program.getActorDefinitionList().getDefintions().get(1);
+        final ActorDefinition sprite = program.getActorDefinitionList().getDefinitions().get(1);
         final Script script = sprite.getScripts().getScriptList().get(1);
 
         final Stmt stmt = script.getStmtList().getStmts().get(2);
@@ -192,7 +192,7 @@ public class BoolExprParserTest {
     @Test
     public void testTouching() throws ParsingException {
         Program program = ProgramParser.parseProgram("ListExpr", project);
-        final ActorDefinition sprite = program.getActorDefinitionList().getDefintions().get(1);
+        final ActorDefinition sprite = program.getActorDefinitionList().getDefinitions().get(1);
         final Script script = sprite.getScripts().getScriptList().get(1);
 
         final Stmt stmt = script.getStmtList().getStmts().get(3);
@@ -206,7 +206,7 @@ public class BoolExprParserTest {
     @Test
     public void testTouchingTwoColors() throws ParsingException {
         Program program = ProgramParser.parseProgram("ListExpr", project);
-        final ActorDefinition sprite = program.getActorDefinitionList().getDefintions().get(1);
+        final ActorDefinition sprite = program.getActorDefinitionList().getDefinitions().get(1);
         final Script script = sprite.getScripts().getScriptList().get(1);
 
         final Stmt stmt = script.getStmtList().getStmts().get(4);
@@ -221,7 +221,7 @@ public class BoolExprParserTest {
     @Test
     public void testTouchingOneColor() throws ParsingException {
         Program program = ProgramParser.parseProgram("ListExpr", project);
-        final ActorDefinition sprite = program.getActorDefinitionList().getDefintions().get(1);
+        final ActorDefinition sprite = program.getActorDefinitionList().getDefinitions().get(1);
         final Script script = sprite.getScripts().getScriptList().get(1);
 
         final Stmt stmt = script.getStmtList().getStmts().get(5);

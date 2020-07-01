@@ -18,43 +18,28 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
-import static de.uni_passau.fim.se2.litterbox.analytics.CommentAdder.addLooseComment;
-
-
+import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueReport;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueTool;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ExpressionListInfo;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.VariableInfo;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+
+import java.util.*;
 
 public class SameVariableDifferentSprite implements IssueFinder {
     public static final String NAME = "same_variable_different_sprite";
     public static final String SHORT_NAME = "sameVarDiffSprite";
     public static final String HINT_TEXT = "same_variable different sprite";
-    private static final String NOTE1 = "There are no variables with the same name in your project.";
-    private static final String NOTE2 = "Some of the variables have the same name but are in different sprites.";
-    private boolean found = false;
-    private int count = 0;
-    private List<String> actorNames = new LinkedList<>();
+    private Set<Issue> issues = new LinkedHashSet<>();
 
     @Override
-    public IssueReport check(Program program) {
+    public Set<Issue> check(Program program) {
         Preconditions.checkNotNull(program);
-        found = false;
-        count = 0;
-        actorNames = new LinkedList<>();
-        List<ActorDefinition> actorDefinitions = program.getActorDefinitionList().getDefintions();
-        String notes = NOTE1;
-        if (count > 0) {
-            notes = NOTE2;
-        }
+        boolean found = false;
+        List<ActorDefinition> actorDefinitions = program.getActorDefinitionList().getDefinitions();
         Map<String, VariableInfo> variableInfoMap = program.getSymbolTable().getVariables();
         ArrayList<VariableInfo> varInfos = new ArrayList<>(variableInfoMap.values());
         for (int i = 0; i < varInfos.size(); i++) {
@@ -68,12 +53,16 @@ public class SameVariableDifferentSprite implements IssueFinder {
             }
             if (found) {
                 found = false;
-                count++;
-                actorNames.add(currentActor);
                 for (ActorDefinition actorDefinition : actorDefinitions) {
                     if (actorDefinition.getIdent().getName().equals(currentActor)) {
-                        addLooseComment(actorDefinition, HINT_TEXT + " Variable " + currentName,
-                                SHORT_NAME + count);
+                        Script script = actorDefinition.getScripts().getScriptList().isEmpty() ? null : actorDefinition.getScripts().getScriptList().get(0);
+
+                        issues.add(new Issue(this,
+                                actorDefinition,
+                                script, // TODO: What is the correct script?
+                                actorDefinition,
+                                HINT_TEXT,
+                                null)); // TODO: Improve -- null ensures loose comment
                         break;
                     }
                 }
@@ -93,23 +82,31 @@ public class SameVariableDifferentSprite implements IssueFinder {
             }
             if (found) {
                 found = false;
-                count++;
-                actorNames.add(currentActor);
                 for (ActorDefinition actorDefinition : actorDefinitions) {
                     if (actorDefinition.getIdent().getName().equals(currentActor)) {
-                        addLooseComment(actorDefinition, HINT_TEXT + " List " + currentName,
-                                SHORT_NAME + count);
+                        Script script = actorDefinition.getScripts().getScriptList().isEmpty() ? null : actorDefinition.getScripts().getScriptList().get(0);
+                        issues.add(new Issue(this,
+                                actorDefinition,
+                                script, // TODO: What is the correct script?
+                                actorDefinition,
+                                HINT_TEXT,
+                                null)); // TODO: Improve -- null ensures loose comment
                         break;
                     }
                 }
             }
         }
 
-        return new IssueReport(NAME, count, IssueTool.getOnlyUniqueActorList(actorNames), notes);
+        return issues;
     }
 
     @Override
     public String getName() {
         return NAME;
+    }
+
+    @Override
+    public String getShortName() {
+        return SHORT_NAME;
     }
 }

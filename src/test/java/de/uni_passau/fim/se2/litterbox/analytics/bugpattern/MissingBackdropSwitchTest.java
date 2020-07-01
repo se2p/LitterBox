@@ -19,12 +19,14 @@
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueReport;
+import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
 import java.io.File;
 import java.io.IOException;
+import java.util.Set;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -55,35 +57,35 @@ public class MissingBackdropSwitchTest {
     @Test
     public void testEmptyProgram() {
         MissingBackdropSwitch parameterName = new MissingBackdropSwitch();
-        IssueReport report = parameterName.check(empty);
-        Assertions.assertEquals(0, report.getCount());
+        Set<Issue> reports = parameterName.check(empty);
+        Assertions.assertEquals(0, reports.size());
     }
 
     @Test
     public void testMissingBackdropSwitchNext() {
         MissingBackdropSwitch parameterName = new MissingBackdropSwitch();
-        IssueReport report = parameterName.check(missingBackdropSwitchNext);
-        Assertions.assertEquals(0, report.getCount());
+        Set<Issue> reports = parameterName.check(missingBackdropSwitchNext);
+        Assertions.assertEquals(0, reports.size());
     }
 
     @Test
     public void testMissBackdrop() {
         MissingBackdropSwitch parameterName = new MissingBackdropSwitch();
-        IssueReport report = parameterName.check(missingBack);
-        Assertions.assertEquals(1, report.getCount());
+        Set<Issue> reports = parameterName.check(missingBack);
+        Assertions.assertEquals(1, reports.size());
     }
 
     @Test
     public void testRandomBack() {
         MissingBackdropSwitch parameterName = new MissingBackdropSwitch();
-        IssueReport report = parameterName.check(random);
-        Assertions.assertEquals(0, report.getCount());
+        Set<Issue> reports = parameterName.check(random);
+        Assertions.assertEquals(0, reports.size());
     }
 
     @Test
     public void testFischmampfer() {
         MissingBackdropSwitch parameterName = new MissingBackdropSwitch();
-        IssueReport report = parameterName.check(fischmampfer);
-        Assertions.assertEquals(0, report.getCount());
+        Set<Issue> reports = parameterName.check(fischmampfer);
+        Assertions.assertEquals(0, reports.size());
     }
 }

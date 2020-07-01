@@ -28,7 +28,7 @@ public class DataflowAnalysis<T extends DataflowFact> {
 
     private ControlFlowGraph cfg;
 
-    private TransferFunction transferFunction;
+    private TransferFunction<T> transferFunction;
 
     private FlowDirection flowDirection;
 

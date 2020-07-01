@@ -16,20 +16,23 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.uni_passau.fim.se2.litterbox.analytics;
+package de.uni_passau.fim.se2.litterbox.analytics.metric;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.uni_passau.fim.se2.litterbox.analytics.utils.SpriteCount;
+import de.uni_passau.fim.se2.litterbox.analytics.Issue;
+import de.uni_passau.fim.se2.litterbox.analytics.metric.ProcedureCount;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
 import java.io.File;
 import java.io.IOException;
+import java.util.Set;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-public class SpriteCountTest {
+public class ProcedureCountTest {
     private static Program empty;
     private static Program unusedProc;
     private static ObjectMapper mapper = new ObjectMapper();
@@ -45,15 +48,13 @@ public class SpriteCountTest {
 
     @Test
     public void testEmptyProgram() {
-        SpriteCount parameterName = new SpriteCount();
-        IssueReport report = parameterName.check(empty);
-        Assertions.assertEquals(1, report.getCount());
+        ProcedureCount parameterName = new ProcedureCount();
+        Assertions.assertEquals(0, parameterName.calculateMetric(empty));
     }
 
     @Test
-    public void tesSpriteCount() {
-        SpriteCount parameterName = new SpriteCount();
-        IssueReport report = parameterName.check(unusedProc);
-        Assertions.assertEquals(1, report.getCount());
+    public void testProcCount() {
+        ProcedureCount parameterName = new ProcedureCount();
+        Assertions.assertEquals(2, parameterName.calculateMetric(unusedProc));
     }
 }

@@ -19,12 +19,14 @@
 package de.uni_passau.fim.se2.litterbox.analytics.smells;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueReport;
+import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
 import java.io.File;
 import java.io.IOException;
+import java.util.Set;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -46,14 +48,14 @@ public class EmptyProjectTest {
     @Test
     public void testEmptyProgram() {
         EmptyProject parameterName = new EmptyProject();
-        IssueReport report = parameterName.check(empty);
-        Assertions.assertEquals(1, report.getCount());
+        Set<Issue> reports = parameterName.check(empty);
+        Assertions.assertEquals(1, reports.size());
     }
 
     @Test
     public void testEmptyBodies() {
         EmptyProject parameterName = new EmptyProject();
-        IssueReport report = parameterName.check(emptyBodies);
-        Assertions.assertEquals(0, report.getCount());
+        Set<Issue> reports = parameterName.check(emptyBodies);
+        Assertions.assertEquals(0, reports.size());
     }
 }

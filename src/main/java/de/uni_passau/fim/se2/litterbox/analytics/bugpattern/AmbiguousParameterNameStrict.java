@@ -18,26 +18,16 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
-import static de.uni_passau.fim.se2.litterbox.analytics.CommentAdder.addBlockComment;
-
-
-import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueReport;
-import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
+import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
+import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
-import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ArgumentInfo;
-import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ProcedureInfo;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
-import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+
+import java.util.*;
 
 /**
  * The parameter names in custom blocks do not have to be unique.
@@ -45,51 +35,27 @@ import java.util.Map;
  * block, it will always be evaluated as the last input to the block. For the strict version the parameters have to
  * be used to be counted.
  */
-public class AmbiguousParameterNameStrict implements IssueFinder, ScratchVisitor {
+public class AmbiguousParameterNameStrict extends AbstractIssueFinder {
     public static final String NAME = "ambiguous_parameter_name_strict";
     public static final String SHORT_NAME = "ambParamNameStrct";
     public static final String HINT_TEXT = "ambiguous parameter name strict";
-    private static final String NOTE1 = "There are no ambiguous parameter names in your project.";
-    private static final String NOTE2 = "Some of the procedures contain ambiguous parameter names.";
     private boolean inStmtList = false;
     private boolean found = false;
     private boolean used = false;
-    private int count = 0;
     private LinkedList<String> paraNames = new LinkedList<>();
-    private List<String> actorNames = new LinkedList<>();
-    private ActorDefinition currentActor;
-
-    private Map<LocalIdentifier, ProcedureInfo> procMap;
-    private Program program;
 
     @Override
-    public IssueReport check(Program program) {
-        Preconditions.checkNotNull(program);
-        this.program = program;
+    public Set<Issue> check(Program program) {
         found = false;
-        count = 0;
-        actorNames = new LinkedList<>();
-        program.accept(this);
-        String notes = NOTE1;
-        if (count > 0) {
-            notes = NOTE2;
-        }
-        return new IssueReport(NAME, count, actorNames, notes);
+        return super.check(program);
     }
 
     @Override
     public void visit(ActorDefinition actor) {
-        currentActor = actor;
-        procMap = program.getProcedureMapping().getProcedures().get(currentActor.getIdent().getName());
-        if (!actor.getChildren().isEmpty()) {
-            for (ASTNode child : actor.getChildren()) {
-                child.accept(this);
-            }
-        }
+        super.visit(actor);
 
         if (found) {
             found = false;
-            actorNames.add(currentActor.getIdent().getName());
         }
     }
 
@@ -112,35 +78,28 @@ public class AmbiguousParameterNameStrict implements IssueFinder, ScratchVisitor
     @Override
     public void visit(StmtList node) {
         inStmtList = true;
-        if (!node.getChildren().isEmpty()) {
-            for (ASTNode child : node.getChildren()) {
-                child.accept(this);
-            }
-        }
+        visitChildren(node);
         inStmtList = false;
     }
 
     @Override
     public void visit(ProcedureDefinition node) {
+        currentProcedure = node;
         if (node.getStmtList().getStmts().size() > 0) {
             checkArguments(procMap.get(node.getIdent()).getArguments());
         }
 
-        if (!node.getChildren().isEmpty()) {
-            for (ASTNode child : node.getChildren()) {
-                child.accept(this);
-            }
-        }
+        visitChildren(node);
 
         if (used) {
-            count++;
-            addBlockComment((NonDataBlockMetadata) node.getMetadata().getDefinition(), currentActor, HINT_TEXT,
-                    SHORT_NAME + count);
+            addIssue(node, HINT_TEXT, node.getMetadata().getDefinition());
         }
 
+        // TODO: This handling with used/found seems really error prone
         used = false;
         found = false;
         paraNames.clear();
+        currentProcedure = null;
     }
 
     @Override
@@ -148,16 +107,16 @@ public class AmbiguousParameterNameStrict implements IssueFinder, ScratchVisitor
         if (inStmtList && found && paraNames.contains(node.getName())) {
             used = true;
         }
-
-        if (!node.getChildren().isEmpty()) {
-            for (ASTNode child : node.getChildren()) {
-                child.accept(this);
-            }
-        }
+        visitChildren(node);
     }
 
     @Override
     public String getName() {
         return NAME;
+    }
+
+    @Override
+    public String getShortName() {
+        return SHORT_NAME;
     }
 }

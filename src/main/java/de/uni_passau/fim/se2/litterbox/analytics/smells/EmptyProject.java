@@ -18,30 +18,39 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.smells;
 
+import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueReport;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
-import java.util.ArrayList;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 public class EmptyProject implements ScratchVisitor, IssueFinder {
     public static final String NAME = "empty_project";
     public static final String SHORT_NAME = "empProj";
-    private int count = 0;
     private boolean foundScript = false;
+    private Set<Issue> issues = new LinkedHashSet<>();
 
     @Override
-    public IssueReport check(Program program) {
+    public Set<Issue> check(Program program) {
         Preconditions.checkNotNull(program);
-        count = 0;
         foundScript = false;
+        issues = new LinkedHashSet<>();
         program.accept(this);
         if (!foundScript) {
-            count++;
+            // TODO -- there are no actors and no nodes, so what to pass in here?
+            issues.add(new Issue(this, null, null));
         }
-        return new IssueReport(NAME, count, new ArrayList<>(), "");
+        return issues;
+    }
+
+    @Override
+    public void visit(ActorDefinition actor) {
+        if (!(actor.getScripts().getScriptList().isEmpty() && actor.getProcedureDefinitionList().getList().isEmpty())) {
+            foundScript = true;
+        }
     }
 
     @Override
@@ -50,9 +59,7 @@ public class EmptyProject implements ScratchVisitor, IssueFinder {
     }
 
     @Override
-    public void visit(ActorDefinition actor) {
-        if (!(actor.getScripts().getScriptList().isEmpty() && actor.getProcedureDefinitionList().getList().isEmpty())) {
-            foundScript = true;
-        }
+    public String getShortName() {
+        return SHORT_NAME;
     }
 }

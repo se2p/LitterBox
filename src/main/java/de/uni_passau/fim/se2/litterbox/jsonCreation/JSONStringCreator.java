@@ -37,7 +37,7 @@ public class JSONStringCreator {
         StringBuilder jsonString = new StringBuilder();
         jsonString.append("{");
         createField(jsonString, TARGETS_KEY).append("[");
-        List<ActorDefinition> actorDefinitionList = program.getActorDefinitionList().getDefintions();
+        List<ActorDefinition> actorDefinitionList = program.getActorDefinitionList().getDefinitions();
         for (int i = 0; i < actorDefinitionList.size() - 1; i++) {
             jsonString.append(ActorJSONCreator.createActorJSONString(actorDefinitionList.get(i),
                     program.getSymbolTable(), program.getProcedureMapping()));

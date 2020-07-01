@@ -24,35 +24,35 @@ import java.util.Set;
 
 public class DataflowAnalysisBuilder<T extends DataflowFact> {
 
-    private DataflowAnalysis analysis;
+    private final DataflowAnalysis<T> analysis;
 
     public DataflowAnalysisBuilder(ControlFlowGraph cfg) {
-        analysis = new DataflowAnalysis(cfg);
+        analysis = new DataflowAnalysis<>(cfg);
     }
 
-    public DataflowAnalysisBuilder withMay() {
-        analysis.setJoinFunction(new MayFunction());
+    public DataflowAnalysisBuilder<T> withMay() {
+        analysis.setJoinFunction(new MayFunction<T>());
         analysis.initializeMay();
         return this;
     }
 
-    public DataflowAnalysisBuilder withMust(Set<T> allFacts) {
-        analysis.setJoinFunction(new MustFunction());
+    public DataflowAnalysisBuilder<T> withMust(Set<T> allFacts) {
+        analysis.setJoinFunction(new MustFunction<T>());
         analysis.initializeMust(allFacts); // TODO: Need set of all facts!
         return this;
     }
 
-    public DataflowAnalysisBuilder withTransferFunction(TransferFunction t) {
+    public DataflowAnalysisBuilder<T> withTransferFunction(TransferFunction<T> t) {
         analysis.setTransferFunction(t);
         return this;
     }
 
-    public DataflowAnalysisBuilder withForward() {
+    public DataflowAnalysisBuilder<T> withForward() {
         analysis.setFlowDirection(new ForwardFlowDirection());
         return this;
     }
 
-    public DataflowAnalysisBuilder withBackward() {
+    public DataflowAnalysisBuilder<T> withBackward() {
         analysis.setFlowDirection(new BackwardFlowDirection());
         return this;
     }

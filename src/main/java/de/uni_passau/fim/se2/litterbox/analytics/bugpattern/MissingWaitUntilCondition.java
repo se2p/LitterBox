@@ -18,46 +18,35 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
-import static de.uni_passau.fim.se2.litterbox.analytics.CommentAdder.addBlockComment;
-
-
-import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueReport;
-import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
-import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.UnspecifiedBoolExpr;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitUntil;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
-import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
-import java.util.LinkedList;
-import java.util.List;
 
 /**
  * Checks for missing statements in repeat-until blocks.
  */
-public class MissingWaitUntilCondition implements IssueFinder {
+public class MissingWaitUntilCondition extends AbstractIssueFinder {
 
     public static final String NAME = "missing_wait_condition";
     public static final String SHORT_NAME = "mssWaitCond";
     public static final String HINT_TEXT = "missing wait condition";
 
+    @Override
+    public void visit(WaitUntil node) {
+        if (node.getUntil() instanceof UnspecifiedBoolExpr) {
+            addIssue(node, HINT_TEXT, node.getMetadata());
+        }
+    }
 
     @Override
-    public IssueReport check(Program program) {
-        Preconditions.checkNotNull(program);
-        CheckVisitor visitor = new CheckVisitor();
-
-        program.accept(visitor);
-        String notes = "All 'wait until' blocks terminating correctly.";
-        if (visitor.count > 0) {
-            notes = "Some 'wait until' blocks have no condition.";
+    public void visit(Script node) {
+        currentScript = node;
+        if (!(node.getEvent() instanceof Never)) {
+            visitChildren(node);
         }
-
-        return new IssueReport(NAME, visitor.count, visitor.actorNames, notes);
+        currentScript = null;
     }
 
     @Override
@@ -65,55 +54,8 @@ public class MissingWaitUntilCondition implements IssueFinder {
         return NAME;
     }
 
-    private static class CheckVisitor implements ScratchVisitor {
-        private ActorDefinition currentActor;
-        private int count = 0;
-        private boolean patternFound = false;
-        private List<String> actorNames = new LinkedList<>();
-
-        @Override
-        public void visit(ASTNode node) {
-            if (!node.getChildren().isEmpty()) {
-                for (ASTNode child : node.getChildren()) {
-                    child.accept(this);
-                }
-            }
-        }
-
-        @Override
-        public void visit(ActorDefinition actor) {
-            patternFound = false;
-            currentActor = actor;
-            if (!actor.getChildren().isEmpty()) {
-                for (ASTNode child : actor.getChildren()) {
-                    child.accept(this);
-                }
-            }
-
-            if (patternFound) {
-                actorNames.add(actor.getIdent().getName());
-            }
-        }
-
-        @Override
-        public void visit(WaitUntil node) {
-            if (node.getUntil() instanceof UnspecifiedBoolExpr) {
-                patternFound = true;
-                count++;
-                addBlockComment((NonDataBlockMetadata) node.getMetadata(), currentActor, HINT_TEXT,
-                        SHORT_NAME + count);
-            }
-        }
-
-        @Override
-        public void visit(Script node) {
-            if (!(node.getEvent() instanceof Never)) {
-                if (!node.getChildren().isEmpty()) {
-                    for (ASTNode child : node.getChildren()) {
-                        child.accept(this);
-                    }
-                }
-            }
-        }
+    @Override
+    public String getShortName() {
+        return SHORT_NAME;
     }
 }

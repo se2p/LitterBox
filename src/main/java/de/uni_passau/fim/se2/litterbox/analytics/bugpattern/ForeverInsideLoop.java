@@ -18,52 +18,51 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
-import static de.uni_passau.fim.se2.litterbox.analytics.CommentAdder.addBlockComment;
-
-
-import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueReport;
-import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
+import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatTimesStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
-import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
-import java.util.LinkedList;
-import java.util.List;
 
 /**
  * If two loops are nested and the inner loop is a forever loop, the inner loop will never terminate. Thus
  * the statements preceeding the inner loop are only executed once. Furthermore, the statements following the outer
  * loop can never be reached.
  */
-public class ForeverInsideLoop implements IssueFinder, ScratchVisitor {
+public class ForeverInsideLoop extends AbstractIssueFinder {
     public static final String NAME = "forever_inside_loop";
     public static final String SHORT_NAME = "foreverInLoop";
     public static final String HINT_TEXT = "forever inside loop";
-    private static final String NOTE1 = "There are no forever loops inside other loops in your project.";
-    private static final String NOTE2 = "Some of the sprites contain forever loops inside other loops.";
-    private boolean found = false;
-    private int count = 0;
-    private List<String> actorNames = new LinkedList<>();
-    private ActorDefinition currentActor;
     private int loopcounter;
 
     @Override
-    public IssueReport check(Program program) {
-        Preconditions.checkNotNull(program);
-        found = false;
-        count = 0;
-        actorNames = new LinkedList<>();
-        program.accept(this);
-        String notes = NOTE1;
-        if (count > 0) {
-            notes = NOTE2;
+    public void visit(ActorDefinition actor) {
+        loopcounter = 0;
+        super.visit(actor);
+    }
+
+    @Override
+    public void visit(UntilStmt node) {
+        loopcounter++;
+        visitChildren(node);
+        loopcounter--;
+    }
+
+    @Override
+    public void visit(RepeatForeverStmt node) {
+        if (loopcounter > 0) {
+            addIssue(node, HINT_TEXT, node.getMetadata());
         }
-        return new IssueReport(NAME, count, actorNames, notes);
+        loopcounter++;
+        visitChildren(node);
+        loopcounter--;
+    }
+
+    @Override
+    public void visit(RepeatTimesStmt node) {
+        loopcounter++;
+        visitChildren(node);
+        loopcounter--;
     }
 
     @Override
@@ -72,58 +71,7 @@ public class ForeverInsideLoop implements IssueFinder, ScratchVisitor {
     }
 
     @Override
-    public void visit(ActorDefinition actor) {
-        currentActor = actor;
-        loopcounter = 0;
-        if (!actor.getChildren().isEmpty()) {
-            for (ASTNode child : actor.getChildren()) {
-                child.accept(this);
-            }
-        }
-
-        if (found) {
-            found = false;
-            actorNames.add(currentActor.getIdent().getName());
-        }
-    }
-
-    @Override
-    public void visit(UntilStmt node) {
-        loopcounter++;
-        if (!node.getChildren().isEmpty()) {
-            for (ASTNode child : node.getChildren()) {
-                child.accept(this);
-            }
-        }
-        loopcounter--;
-    }
-
-    @Override
-    public void visit(RepeatForeverStmt node) {
-        if (loopcounter > 0) {
-            found = true;
-            count++;
-            addBlockComment((NonDataBlockMetadata) node.getMetadata(), currentActor, HINT_TEXT,
-                    SHORT_NAME + count);
-        }
-        loopcounter++;
-        if (!node.getChildren().isEmpty()) {
-            for (ASTNode child : node.getChildren()) {
-
-                child.accept(this);
-            }
-        }
-        loopcounter--;
-    }
-
-    @Override
-    public void visit(RepeatTimesStmt node) {
-        loopcounter++;
-        if (!node.getChildren().isEmpty()) {
-            for (ASTNode child : node.getChildren()) {
-                child.accept(this);
-            }
-        }
-        loopcounter--;
+    public String getShortName() {
+        return SHORT_NAME;
     }
 }

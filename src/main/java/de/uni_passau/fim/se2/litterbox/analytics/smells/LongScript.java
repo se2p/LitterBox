@@ -18,86 +18,48 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.smells;
 
-import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueReport;
+import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
+import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.model.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
-import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
-import java.util.LinkedList;
-import java.util.List;
 
 /**
  * Checks for scripts with more than 12 blocks.
  */
-public class LongScript implements IssueFinder, ScratchVisitor {
+public class LongScript extends AbstractIssueFinder {
 
     public static final String NAME = "long_script";
     public static final String SHORT_NAME = "longScript";
-    private static final String NOTE1 = "There are no long scripts.";
-    private static final String NOTE2 = "Some scripts are very long.";
     private static final int NUMBER_TOO_LONG = 12;
-    private boolean found = false;
-    private int count = 0;
     private int localCount = 0;
-    private List<String> actorNames = new LinkedList<>();
-
-    @Override
-    public IssueReport check(Program program) {
-        Preconditions.checkNotNull(program);
-        found = false;
-        count = 0;
-        actorNames = new LinkedList<>();
-        program.accept(this);
-        String notes = NOTE1;
-        if (count > 0) {
-            notes = NOTE2;
-        }
-        return new IssueReport(NAME, count, actorNames, notes);
-    }
-
-    @Override
-    public void visit(ActorDefinition actor) {
-        if (!actor.getChildren().isEmpty()) {
-            for (ASTNode child : actor.getChildren()) {
-                child.accept(this);
-            }
-        }
-        if (found) {
-            found = false;
-            actorNames.add(actor.getIdent().getName());
-        }
-    }
 
     @Override
     public void visit(Script node) {
+        currentScript = node;
         localCount = 0;
         if (!(node.getEvent() instanceof Never)) {
             localCount++;
         }
-        if (!node.getChildren().isEmpty()) {
-            for (ASTNode child : node.getChildren()) {
-                child.accept(this);
-            }
-        }
+        visitChildren(node);
         if (localCount > NUMBER_TOO_LONG) {
-            count++;
-            found = true;
+            issues.add(new Issue(this, currentActor, node));
         }
+        currentScript = null;
     }
 
     @Override
     public void visit(StmtList node) {
         localCount = localCount + node.getStmts().size();
-        if (!node.getChildren().isEmpty()) {
-            for (ASTNode child : node.getChildren()) {
-                child.accept(this);
-            }
-        }
+        visitChildren(node);
     }
 
     @Override
     public String getName() {
         return NAME;
+    }
+
+    @Override
+    public String getShortName() {
+        return SHORT_NAME;
     }
 }

@@ -58,7 +58,7 @@ public class TopLevelMetadataTest {
 
     @Test
     public void testVariablesProgram() {
-        List<Script> scripts = program.getActorDefinitionList().getDefintions().get(1).getScripts().getScriptList();
+        List<Script> scripts = program.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList();
         List<Stmt> stmtList = scripts.get(0).getStmtList().getStmts();
         Assertions.assertEquals(ExpressionStmt.class, stmtList.get(0).getClass());
         Expression expr = ((ExpressionStmt) stmtList.get(0)).getExpression();
@@ -75,7 +75,7 @@ public class TopLevelMetadataTest {
     @Test
     public void testProcedureProgram(){
         ProcedureDefinition def =
-                program.getActorDefinitionList().getDefintions().get(1).getProcedureDefinitionList().getList().get(0);
+                program.getActorDefinitionList().getDefinitions().get(1).getProcedureDefinitionList().getList().get(0);
         ProcedureMetadata meta = def.getMetadata();
         Assertions.assertEquals(TopNonDataBlockMetadata.class, meta.getDefinition().getClass());
         TopNonDataBlockMetadata defMet = (TopNonDataBlockMetadata) meta.getDefinition();

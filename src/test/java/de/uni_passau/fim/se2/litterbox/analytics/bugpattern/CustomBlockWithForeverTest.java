@@ -19,12 +19,14 @@
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueReport;
+import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
 import java.io.File;
 import java.io.IOException;
+import java.util.Set;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -52,28 +54,28 @@ public class CustomBlockWithForeverTest {
     @Test
     public void testEmptyProgram() {
         CustomBlockWithForever parameterName = new CustomBlockWithForever();
-        IssueReport report = parameterName.check(empty);
-        Assertions.assertEquals(0, report.getCount());
+        Set<Issue> reports = parameterName.check(empty);
+        Assertions.assertEquals(0, reports.size());
     }
 
     @Test
     public void testProcedureWithNoForever() {
         CustomBlockWithForever parameterName = new CustomBlockWithForever();
-        IssueReport report = parameterName.check(procedureWithNoForever);
-        Assertions.assertEquals(0, report.getCount());
+        Set<Issue> reports = parameterName.check(procedureWithNoForever);
+        Assertions.assertEquals(0, reports.size());
     }
 
     @Test
     public void testProcedureWithForever() {
         CustomBlockWithForever parameterName = new CustomBlockWithForever();
-        IssueReport report = parameterName.check(procedureWithForever);
-        Assertions.assertEquals(1, report.getCount());
+        Set<Issue> reports = parameterName.check(procedureWithForever);
+        Assertions.assertEquals(1, reports.size());
     }
 
     @Test
     public void testlastCall() {
         CustomBlockWithForever parameterName = new CustomBlockWithForever();
-        IssueReport report = parameterName.check(lastCall);
-        Assertions.assertEquals(0, report.getCount());
+        Set<Issue> reports = parameterName.check(lastCall);
+        Assertions.assertEquals(0, reports.size());
     }
 }

@@ -18,55 +18,60 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
-import static de.uni_passau.fim.se2.litterbox.analytics.CommentAdder.addBlockComment;
-
-
-import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueReport;
-import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
-import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.ColorTouchingColor;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.SpriteTouchingColor;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Touching;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.ColorLiteral;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.pen.SetPenColorToColorStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.Edge;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.MousePointer;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.SpriteTouchable;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
-import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
-import java.util.LinkedList;
-import java.util.List;
 
 /**
  * This happens when inside a block that expects a colour or sprite as parameter (e.g., set pen color to or
  * touching mouse-pointer?) a reporter block, or an expression with a string or number value is used.
  */
-public class ExpressionAsTouchingOrColor implements IssueFinder, ScratchVisitor {
+public class ExpressionAsTouchingOrColor extends AbstractIssueFinder {
     public static final String NAME = "expression_as_touching_or_color";
     public static final String SHORT_NAME = "exprTouchColor";
     public static final String HINT_TEXT = "expression as touching or color";
-    private static final String NOTE1 = "There are no expressions used as touching or colors in your project.";
-    private static final String NOTE2 = "Some of the sprites use expressions as touching or colors.";
-    private boolean found = false;
-    private int count = 0;
-    private List<String> actorNames = new LinkedList<>();
-    private ActorDefinition currentActor;
 
     @Override
-    public IssueReport check(Program program) {
-        Preconditions.checkNotNull(program);
-        found = false;
-        count = 0;
-        actorNames = new LinkedList<>();
-        program.accept(this);
-        String notes = NOTE1;
-        if (count > 0) {
-            notes = NOTE2;
+    public void visit(SetPenColorToColorStmt node) {
+        if (!(node.getColorExpr() instanceof ColorLiteral)) {
+            addIssue(node, HINT_TEXT, node.getMetadata());
         }
-        return new IssueReport(NAME, count, actorNames, notes);
+        visitChildren(node);
+    }
+
+    @Override
+    public void visit(ColorTouchingColor node) {
+        if (!(node.getOperand1() instanceof ColorLiteral)) {
+            addIssue(node, HINT_TEXT, node.getMetadata());
+        }
+        // TODO: Should this be an else-if rather than if, to avoid duplicate reports?
+        if (!(node.getOperand2() instanceof ColorLiteral)) {
+            addIssue(node, HINT_TEXT, node.getMetadata());
+        }
+        visitChildren(node);
+    }
+
+    @Override
+    public void visit(SpriteTouchingColor node) {
+        if (!(node.getColor() instanceof ColorLiteral)) {
+            addIssue(node, HINT_TEXT, node.getMetadata());
+        }
+        visitChildren(node);
+    }
+
+    @Override
+    public void visit(Touching node) {
+        if (!(node.getTouchable() instanceof MousePointer)
+                && !(node.getTouchable() instanceof Edge)
+                && !(node.getTouchable() instanceof SpriteTouchable)) {
+            addIssue(node, HINT_TEXT, node.getMetadata());
+        }
     }
 
     @Override
@@ -75,81 +80,7 @@ public class ExpressionAsTouchingOrColor implements IssueFinder, ScratchVisitor 
     }
 
     @Override
-    public void visit(ActorDefinition actor) {
-        currentActor = actor;
-        if (!actor.getChildren().isEmpty()) {
-            for (ASTNode child : actor.getChildren()) {
-                child.accept(this);
-            }
-        }
-
-        if (found) {
-            found = false;
-            actorNames.add(currentActor.getIdent().getName());
-        }
-    }
-
-    @Override
-    public void visit(SetPenColorToColorStmt node) {
-        if (!(node.getColorExpr() instanceof ColorLiteral)) {
-            count++;
-            found = true;
-            addBlockComment((NonDataBlockMetadata) node.getMetadata(), currentActor, HINT_TEXT,
-                    SHORT_NAME + count);
-        }
-        if (!node.getChildren().isEmpty()) {
-            for (ASTNode child : node.getChildren()) {
-                child.accept(this);
-            }
-        }
-    }
-
-    @Override
-    public void visit(ColorTouchingColor node) {
-        if (!(node.getOperand1() instanceof ColorLiteral)) {
-            count++;
-            found = true;
-            addBlockComment((NonDataBlockMetadata) node.getMetadata(), currentActor, HINT_TEXT,
-                    SHORT_NAME + count);
-        }
-        if (!(node.getOperand2() instanceof ColorLiteral)) {
-            count++;
-            found = true;
-            addBlockComment((NonDataBlockMetadata) node.getMetadata(), currentActor, HINT_TEXT,
-                    SHORT_NAME + count);
-        }
-        if (!node.getChildren().isEmpty()) {
-            for (ASTNode child : node.getChildren()) {
-                child.accept(this);
-            }
-        }
-    }
-
-    @Override
-    public void visit(SpriteTouchingColor node) {
-        if (!(node.getColor() instanceof ColorLiteral)) {
-            count++;
-            found = true;
-            addBlockComment((NonDataBlockMetadata) node.getMetadata(), currentActor, HINT_TEXT,
-                    SHORT_NAME + count);
-        }
-
-        if (!node.getChildren().isEmpty()) {
-            for (ASTNode child : node.getChildren()) {
-                child.accept(this);
-            }
-        }
-    }
-
-    @Override
-    public void visit(Touching node) {
-        if (!(node.getTouchable() instanceof MousePointer)
-                && !(node.getTouchable() instanceof Edge)
-                && !(node.getTouchable() instanceof SpriteTouchable)) {
-            count++;
-            found = true;
-            addBlockComment((NonDataBlockMetadata) node.getMetadata(), currentActor, HINT_TEXT,
-                    SHORT_NAME + count);
-        }
+    public String getShortName() {
+        return SHORT_NAME;
     }
 }

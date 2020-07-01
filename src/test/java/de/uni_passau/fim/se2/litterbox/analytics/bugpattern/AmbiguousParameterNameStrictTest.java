@@ -19,12 +19,14 @@
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueReport;
+import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
 import java.io.File;
 import java.io.IOException;
+import java.util.Set;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -52,28 +54,28 @@ public class AmbiguousParameterNameStrictTest {
     @Test
     public void testEmptyProgram() {
         AmbiguousParameterNameStrict parameterName = new AmbiguousParameterNameStrict();
-        IssueReport report = parameterName.check(empty);
-        Assertions.assertEquals(0, report.getCount());
+        Set<Issue> reports = parameterName.check(empty);
+        Assertions.assertEquals(0, reports.size());
     }
 
     @Test
     public void testAmbiguousParameters() {
         AmbiguousParameterNameStrict parameterName = new AmbiguousParameterNameStrict();
-        IssueReport report = parameterName.check(ambiguousParams);
-        Assertions.assertEquals(0, report.getCount());
+        Set<Issue> reports = parameterName.check(ambiguousParams);
+        Assertions.assertEquals(0, reports.size());
     }
 
     @Test
     public void testClans() {
         AmbiguousParameterNameStrict parameterName = new AmbiguousParameterNameStrict();
-        IssueReport report = parameterName.check(clans);
-        Assertions.assertEquals(0, report.getCount());
+        Set<Issue> reports = parameterName.check(clans);
+        Assertions.assertEquals(0, reports.size());
     }
 
     @Test
     public void testReal() {
         AmbiguousParameterNameStrict parameterName = new AmbiguousParameterNameStrict();
-        IssueReport report = parameterName.check(realAmbiguousParam);
-        Assertions.assertEquals(1, report.getCount());
+        Set<Issue> reports = parameterName.check(realAmbiguousParam);
+        Assertions.assertEquals(1, reports.size());
     }
 }

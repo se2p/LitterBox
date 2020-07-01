@@ -16,34 +16,26 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.uni_passau.fim.se2.litterbox.analytics.utils;
+package de.uni_passau.fim.se2.litterbox.analytics.metric;
 
-import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueReport;
-import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
+import de.uni_passau.fim.se2.litterbox.analytics.MetricExtractor;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitUntil;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.*;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
-import java.util.LinkedList;
-import java.util.List;
 
-public class WeightedMethodCount implements IssueFinder, ScratchVisitor {
+public class WeightedMethodCount implements MetricExtractor, ScratchVisitor {
     public static final String NAME = "weighted_method_count";
     public static final String SHORT_NAME = "weightedMethCnt";
     private int count = 0;
-    private List<String> actorNames = new LinkedList<>();
 
     @Override
-    public IssueReport check(Program program) {
+    public double calculateMetric(Program program) {
         Preconditions.checkNotNull(program);
-        actorNames = new LinkedList<>();
-
         program.accept(this);
-
-        return new IssueReport(NAME, count, actorNames, "");
+        return count;
     }
 
     @Override
@@ -53,70 +45,42 @@ public class WeightedMethodCount implements IssueFinder, ScratchVisitor {
 
     public void visit(Script node) {
         count++;
-        if (!node.getChildren().isEmpty()) {
-            for (ASTNode child : node.getChildren()) {
-                child.accept(this);
-            }
-        }
+        visitChildren(node);
     }
 
     @Override
     public void visit(IfElseStmt node) {
         count++;
-        if (!node.getChildren().isEmpty()) {
-            for (ASTNode child : node.getChildren()) {
-                child.accept(this);
-            }
-        }
+        visitChildren(node);
     }
 
     @Override
     public void visit(IfThenStmt node) {
         count++;
-        if (!node.getChildren().isEmpty()) {
-            for (ASTNode child : node.getChildren()) {
-                child.accept(this);
-            }
-        }
+        visitChildren(node);
     }
 
     @Override
     public void visit(WaitUntil node) {
         count++;
-        if (!node.getChildren().isEmpty()) {
-            for (ASTNode child : node.getChildren()) {
-                child.accept(this);
-            }
-        }
+        visitChildren(node);
     }
 
     @Override
     public void visit(UntilStmt node) {
         count++;
-        if (!node.getChildren().isEmpty()) {
-            for (ASTNode child : node.getChildren()) {
-                child.accept(this);
-            }
-        }
+        visitChildren(node);
     }
 
     @Override
     public void visit(RepeatForeverStmt node) {
         count++;
-        if (!node.getChildren().isEmpty()) {
-            for (ASTNode child : node.getChildren()) {
-                child.accept(this);
-            }
-        }
+        visitChildren(node);
     }
 
     @Override
     public void visit(RepeatTimesStmt node) {
         count++;
-        if (!node.getChildren().isEmpty()) {
-            for (ASTNode child : node.getChildren()) {
-                child.accept(this);
-            }
-        }
+        visitChildren(node);
     }
 }

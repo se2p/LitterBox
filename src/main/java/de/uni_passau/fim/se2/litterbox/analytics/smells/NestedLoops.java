@@ -18,46 +18,47 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.smells;
 
-import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueReport;
-import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
-import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
+import de.uni_passau.fim.se2.litterbox.analytics.Issue;
+import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatTimesStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
-import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
-import java.util.LinkedList;
+
 import java.util.List;
 
 /**
  * Checks for nested loops.
  */
-public class NestedLoops implements IssueFinder, ScratchVisitor {
+public class NestedLoops extends AbstractIssueFinder {
 
     public static final String NAME = "nested_loops";
     public static final String SHORT_NAME = "nestLoop";
-    private static final String NOTE1 = "There are no loops inside other loops in your project.";
-    private static final String NOTE2 = "Some of the sprites contain forever loops inside other loops.";
-    private boolean found = false;
-    private int count = 0;
-    private List<String> actorNames = new LinkedList<>();
-    private ActorDefinition currentActor;
 
     @Override
-    public IssueReport check(Program program) {
-        Preconditions.checkNotNull(program);
-        found = false;
-        count = 0;
-        actorNames = new LinkedList<>();
-        program.accept(this);
-        String notes = NOTE1;
-        if (count > 0) {
-            notes = NOTE2;
+    public void visit(UntilStmt node) {
+        checkNested(node.getStmtList().getStmts());
+        visitChildren(node);
+    }
+
+    @Override
+    public void visit(RepeatForeverStmt node) {
+        checkNested(node.getStmtList().getStmts());
+        visitChildren(node);
+    }
+
+    private void checkNested(List<Stmt> stmts) {
+        if (stmts.size() == 1 && ((stmts.get(0) instanceof UntilStmt) || (stmts.get(0) instanceof RepeatTimesStmt) || (stmts.get(0) instanceof RepeatForeverStmt))) {
+            // TODO: Cast is nasty
+            issues.add(new Issue(this, currentActor, (AbstractNode) stmts.get(0)));
         }
-        return new IssueReport(NAME, count, actorNames, notes);
+    }
+
+    @Override
+    public void visit(RepeatTimesStmt node) {
+        checkNested(node.getStmtList().getStmts());
+        visitChildren(node);
     }
 
     @Override
@@ -66,54 +67,7 @@ public class NestedLoops implements IssueFinder, ScratchVisitor {
     }
 
     @Override
-    public void visit(ActorDefinition actor) {
-        currentActor = actor;
-        if (!actor.getChildren().isEmpty()) {
-            for (ASTNode child : actor.getChildren()) {
-                child.accept(this);
-            }
-        }
-
-        if (found) {
-            found = false;
-            actorNames.add(currentActor.getIdent().getName());
-        }
-    }
-
-    @Override
-    public void visit(UntilStmt node) {
-        checkNested(node.getStmtList().getStmts());
-        if (!node.getChildren().isEmpty()) {
-            for (ASTNode child : node.getChildren()) {
-                child.accept(this);
-            }
-        }
-    }
-
-    @Override
-    public void visit(RepeatForeverStmt node) {
-        checkNested(node.getStmtList().getStmts());
-        if (!node.getChildren().isEmpty()) {
-            for (ASTNode child : node.getChildren()) {
-                child.accept(this);
-            }
-        }
-    }
-
-    private void checkNested(List<Stmt> stmts) {
-        if (stmts.size() == 1 && ((stmts.get(0) instanceof UntilStmt) || (stmts.get(0) instanceof RepeatTimesStmt) || (stmts.get(0) instanceof RepeatForeverStmt))) {
-            found = true;
-            count++;
-        }
-    }
-
-    @Override
-    public void visit(RepeatTimesStmt node) {
-        checkNested(node.getStmtList().getStmts());
-        if (!node.getChildren().isEmpty()) {
-            for (ASTNode child : node.getChildren()) {
-                child.accept(this);
-            }
-        }
+    public String getShortName() {
+        return SHORT_NAME;
     }
 }

@@ -20,6 +20,8 @@ package de.uni_passau.fim.se2.litterbox.analytics;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 
+import java.util.Set;
+
 /**
  * Interface for all IssueFinders.
  */
@@ -32,7 +34,9 @@ public interface IssueFinder {
      * @return a IssueReport object
      */
 
-    IssueReport check(Program program);
+    Set<Issue> check(Program program);
 
     String getName();
+
+    String getShortName();
 }

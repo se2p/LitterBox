@@ -18,28 +18,24 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.smells;
 
-import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueReport;
-import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
+import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
+import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ExpressionListInfo;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.VariableInfo;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 import java.util.*;
 
 /**
  * Checks if there are unused variables.
  */
-public class UnusedVariable implements IssueFinder, ScratchVisitor {
+public class UnusedVariable extends AbstractIssueFinder {
 
     public static final String NAME = "unused_variables";
     public static final String SHORT_NAME = "unusedVar";
-    private static final String NOTE1 = "There are no unused variables in your project.";
-    private static final String NOTE2 = "Some of the sprites contain unused variables.";
     private static final String[] MY_VARIABLE_LANGUAGES = {"meine Variable", "исхатәу аҽеиҭак", "my variable",
             "متغيري", "мая зменная", "моята променлива", "la meva variable", "گۆڕاوەکەم", "moje proměnná", "fy " +
             "newidyn", "min variabel", "η μεταβλητή μου", "mi variable", "minu muutuja", "nire aldagaia", "متغیر من",
@@ -50,35 +46,23 @@ public class UnusedVariable implements IssueFinder, ScratchVisitor {
             "variabila mea", "моя переменная", "premenná", "moja spremenljivka", "моја променљива", "min variabel",
             "kibadilika changu", "ตัวแปรของฉัน", "değişkenim", "моя змінна", "mening o'zgaruvchim", "biến của tôi",
             "我的变量", "i-variable yami"};
-    private int count = 0;
-    private List<String> actorNames = new LinkedList<>();
     private List<Qualified> variableCalls;
     private boolean insideProcedure;
     private boolean insideScript;
     private Map<String, VariableInfo> varMap;
     private Map<String, ExpressionListInfo> listMap;
+    private Set<Issue> issues = new LinkedHashSet<>();
 
     @Override
-    public IssueReport check(Program program) {
+    public Set<Issue> check(Program program) {
         Preconditions.checkNotNull(program);
-
-        count = 0;
-        actorNames = new LinkedList<>();
+        this.program = program;
         varMap = program.getSymbolTable().getVariables();
         listMap = program.getSymbolTable().getLists();
         variableCalls = new ArrayList<>();
         program.accept(this);
-        String notes = NOTE1;
         checkVariables();
-        if (count > 0) {
-            notes = NOTE2;
-        }
-        return new IssueReport(NAME, count, actorNames, notes);
-    }
-
-    @Override
-    public String getName() {
-        return NAME;
+        return issues;
     }
 
     private void checkVariables() {
@@ -96,7 +80,8 @@ public class UnusedVariable implements IssueFinder, ScratchVisitor {
             }
 
             if (!currFound && !Arrays.asList(MY_VARIABLE_LANGUAGES).contains(name)) {
-                count++;
+                // TODO: Retrieve actor and node
+                issues.add(new Issue(this, null, null));
             }
         }
 
@@ -112,7 +97,8 @@ public class UnusedVariable implements IssueFinder, ScratchVisitor {
                 }
             }
             if (!currFound) {
-                count++;
+                // TODO: Retrieve actor and node
+                issues.add(new Issue(this, null, null));
             }
         }
     }
@@ -120,22 +106,14 @@ public class UnusedVariable implements IssueFinder, ScratchVisitor {
     @Override
     public void visit(ProcedureDefinition node) {
         insideProcedure = true;
-        if (!node.getChildren().isEmpty()) {
-            for (ASTNode child : node.getChildren()) {
-                child.accept(this);
-            }
-        }
+        super.visit(node);
         insideProcedure = false;
     }
 
     @Override
     public void visit(Script node) {
         insideScript = true;
-        if (!node.getChildren().isEmpty()) {
-            for (ASTNode child : node.getChildren()) {
-                child.accept(this);
-            }
-        }
+        super.visit(node);
         insideScript = false;
     }
 
@@ -144,10 +122,16 @@ public class UnusedVariable implements IssueFinder, ScratchVisitor {
         if (insideProcedure || insideScript) {
             variableCalls.add(node);
         }
-        if (!node.getChildren().isEmpty()) {
-            for (ASTNode child : node.getChildren()) {
-                child.accept(this);
-            }
-        }
+        visitChildren(node);
+    }
+
+    @Override
+    public String getName() {
+        return NAME;
+    }
+
+    @Override
+    public String getShortName() {
+        return SHORT_NAME;
     }
 }

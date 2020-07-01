@@ -19,12 +19,14 @@
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueReport;
+import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
 import java.io.File;
 import java.io.IOException;
+import java.util.Set;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -49,21 +51,21 @@ public class ParameterOutOfScopeTest {
     @Test
     public void testEmptyProgram() {
         ParameterOutOfScope parameterName = new ParameterOutOfScope();
-        IssueReport report = parameterName.check(empty);
-        Assertions.assertEquals(0, report.getCount());
+        Set<Issue> reports = parameterName.check(empty);
+        Assertions.assertEquals(0, reports.size());
     }
 
     @Test
     public void testOrphanedParameter() {
         ParameterOutOfScope parameterName = new ParameterOutOfScope();
-        IssueReport report = parameterName.check(orphanedParam);
-        Assertions.assertEquals(0, report.getCount());
+        Set<Issue> reports = parameterName.check(orphanedParam);
+        Assertions.assertEquals(0, reports.size());
     }
 
     @Test
     public void testOutsideParameter() {
         ParameterOutOfScope parameterName = new ParameterOutOfScope();
-        IssueReport report = parameterName.check(outsideParam);
-        Assertions.assertEquals(1, report.getCount());
+        Set<Issue> reports = parameterName.check(outsideParam);
+        Assertions.assertEquals(1, reports.size());
     }
 }

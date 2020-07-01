@@ -16,10 +16,9 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.uni_passau.fim.se2.litterbox.analytics.utils;
+package de.uni_passau.fim.se2.litterbox.analytics.metric;
 
-import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueReport;
+import de.uni_passau.fim.se2.litterbox.analytics.MetricExtractor;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
@@ -60,9 +59,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.touchable.AsTouchable;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.Type;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
-import java.util.LinkedList;
 
-public class BlockCount implements IssueFinder, ScratchVisitor {
+public class BlockCount implements MetricExtractor, ScratchVisitor {
     public static final String NAME = "block_count";
     public static final String SHORT_NAME = "blockCnt";
     private int count = 0;
@@ -72,7 +70,7 @@ public class BlockCount implements IssueFinder, ScratchVisitor {
     private boolean fixedBlock = false;
 
     @Override
-    public IssueReport check(Program program) {
+    public double calculateMetric(Program program) {
         Preconditions.checkNotNull(program);
         count = 0;
         insideScript = false;
@@ -80,7 +78,7 @@ public class BlockCount implements IssueFinder, ScratchVisitor {
         insideParameterList = false;
         fixedBlock = false;
         program.accept(this);
-        return new IssueReport(NAME, count, new LinkedList<>(), "");
+        return count;
     }
 
     @Override
@@ -92,22 +90,14 @@ public class BlockCount implements IssueFinder, ScratchVisitor {
     public void visit(ProcedureDefinition node) {
         insideProcedure = true;
         count++;
-        if (!node.getChildren().isEmpty()) {
-            for (ASTNode child : node.getChildren()) {
-                child.accept(this);
-            }
-        }
+        visitChildren(node);
         insideProcedure = false;
     }
 
     @Override
     public void visit(Script node) {
         insideScript = true;
-        if (!node.getChildren().isEmpty()) {
-            for (ASTNode child : node.getChildren()) {
-                child.accept(this);
-            }
-        }
+        visitChildren(node);
         insideScript = false;
     }
 
@@ -116,11 +106,7 @@ public class BlockCount implements IssueFinder, ScratchVisitor {
         if ((insideScript || insideProcedure) && !fixedBlock) {
             count++;
         }
-        if (!node.getChildren().isEmpty()) {
-            for (ASTNode child : node.getChildren()) {
-                child.accept(this);
-            }
-        }
+        visitChildren(node);
     }
 
     @Override
@@ -154,11 +140,7 @@ public class BlockCount implements IssueFinder, ScratchVisitor {
             count++;
         }
         fixedBlock = true;
-        if (!node.getChildren().isEmpty()) {
-            for (ASTNode child : node.getChildren()) {
-                child.accept(this);
-            }
-        }
+        visitChildren(node);
         fixedBlock = false;
     }
 
@@ -168,11 +150,7 @@ public class BlockCount implements IssueFinder, ScratchVisitor {
             count++;
         }
         fixedBlock = true;
-        if (!node.getChildren().isEmpty()) {
-            for (ASTNode child : node.getChildren()) {
-                child.accept(this);
-            }
-        }
+        visitChildren(node);
         fixedBlock = false;
     }
 
@@ -182,11 +160,7 @@ public class BlockCount implements IssueFinder, ScratchVisitor {
             count++;
         }
         fixedBlock = true;
-        if (!node.getChildren().isEmpty()) {
-            for (ASTNode child : node.getChildren()) {
-                child.accept(this);
-            }
-        }
+        visitChildren(node);
         fixedBlock = false;
     }
 
@@ -196,11 +170,7 @@ public class BlockCount implements IssueFinder, ScratchVisitor {
             count++;
         }
         fixedBlock = true;
-        if (!node.getChildren().isEmpty()) {
-            for (ASTNode child : node.getChildren()) {
-                child.accept(this);
-            }
-        }
+        visitChildren(node);
         fixedBlock = false;
     }
 
@@ -254,184 +224,104 @@ public class BlockCount implements IssueFinder, ScratchVisitor {
 
     @Override
     public void visit(WithExpr node) {
-        if (!node.getChildren().isEmpty()) {
-            for (ASTNode child : node.getChildren()) {
-                child.accept(this);
-            }
-        }
+        visitChildren(node);
     }
 
     @Override
     public void visit(Qualified node) {
-        if (!node.getChildren().isEmpty()) {
-            for (ASTNode child : node.getChildren()) {
-                child.accept(this);
-            }
-        }
+        visitChildren(node);
     }
 
     @Override
     public void visit(StringLiteral node) {
-        if (!node.getChildren().isEmpty()) {
-            for (ASTNode child : node.getChildren()) {
-                child.accept(this);
-            }
-        }
+        visitChildren(node);
     }
 
     @Override
     public void visit(BoolLiteral node) {
-        if (!node.getChildren().isEmpty()) {
-            for (ASTNode child : node.getChildren()) {
-                child.accept(this);
-            }
-        }
+        visitChildren(node);
     }
 
     @Override
     public void visit(NumberLiteral node) {
-        if (!node.getChildren().isEmpty()) {
-            for (ASTNode child : node.getChildren()) {
-                child.accept(this);
-            }
-        }
+        visitChildren(node);
     }
 
     @Override
     public void visit(ColorLiteral node) {
-        if (!node.getChildren().isEmpty()) {
-            for (ASTNode child : node.getChildren()) {
-                child.accept(this);
-            }
-        }
+        visitChildren(node);
     }
 
     @Override
     public void visit(LocalIdentifier node) {
-        if (!node.getChildren().isEmpty()) {
-            for (ASTNode child : node.getChildren()) {
-                child.accept(this);
-            }
-        }
+        visitChildren(node);
     }
 
     @Override
     public void visit(Never node) {
-        if (!node.getChildren().isEmpty()) {
-            for (ASTNode child : node.getChildren()) {
-                child.accept(this);
-            }
-        }
+        visitChildren(node);
     }
 
     @Override
     public void visit(StmtList node) {
-        if (!node.getChildren().isEmpty()) {
-            for (ASTNode child : node.getChildren()) {
-                child.accept(this);
-            }
-        }
+        visitChildren(node);
     }
 
     @Override
     public void visit(ParameterDefinitionList node) {
         insideParameterList = true;
-        if (!node.getChildren().isEmpty()) {
-            for (ASTNode child : node.getChildren()) {
-                child.accept(this);
-            }
-        }
+        visitChildren(node);
         insideParameterList = false;
     }
 
     @Override
     public void visit(ExpressionList node) {
-        if (!node.getChildren().isEmpty()) {
-            for (ASTNode child : node.getChildren()) {
-                child.accept(this);
-            }
-        }
+        visitChildren(node);
     }
 
     @Override
     public void visit(Type node) {
-        if (!node.getChildren().isEmpty()) {
-            for (ASTNode child : node.getChildren()) {
-                child.accept(this);
-            }
-        }
+        visitChildren(node);
     }
 
     @Override
     public void visit(ParameterDefinition node) {
-        if (!node.getChildren().isEmpty()) {
-            for (ASTNode child : node.getChildren()) {
-                child.accept(this);
-            }
-        }
+        visitChildren(node);
     }
 
     @Override
     public void visit(AsNumber node) {
-        if (!node.getChildren().isEmpty()) {
-            for (ASTNode child : node.getChildren()) {
-                child.accept(this);
-            }
-        }
+        visitChildren(node);
     }
 
     @Override
     public void visit(AsString node) {
-        if (!node.getChildren().isEmpty()) {
-            for (ASTNode child : node.getChildren()) {
-                child.accept(this);
-            }
-        }
+        visitChildren(node);
     }
 
     @Override
     public void visit(AsBool node) {
-        if (!node.getChildren().isEmpty()) {
-            for (ASTNode child : node.getChildren()) {
-                child.accept(this);
-            }
-        }
+        visitChildren(node);
     }
 
     @Override
     public void visit(AsTouchable node) {
-        if (!node.getChildren().isEmpty()) {
-            for (ASTNode child : node.getChildren()) {
-                child.accept(this);
-            }
-        }
+        visitChildren(node);
     }
 
     @Override
     public void visit(AsListIndex node) {
-        if (!node.getChildren().isEmpty()) {
-            for (ASTNode child : node.getChildren()) {
-                child.accept(this);
-            }
-        }
+        visitChildren(node);
     }
 
     @Override
     public void visit(ExpressionStmt node) {
-        if (!node.getChildren().isEmpty()) {
-            for (ASTNode child : node.getChildren()) {
-                child.accept(this);
-            }
-        }
+        visitChildren(node);
     }
 
     @Override
     public void visit(NumFunct node) {
-        if (!node.getChildren().isEmpty()) {
-            for (ASTNode child : node.getChildren()) {
-                child.accept(this);
-            }
-        }
+        visitChildren(node);
     }
 
     @Override
@@ -440,11 +330,7 @@ public class BlockCount implements IssueFinder, ScratchVisitor {
             count++;
         }
         fixedBlock = true;
-        if (!node.getChildren().isEmpty()) {
-            for (ASTNode child : node.getChildren()) {
-                child.accept(this);
-            }
-        }
+        visitChildren(node);
         fixedBlock = false;
     }
 
@@ -465,11 +351,7 @@ public class BlockCount implements IssueFinder, ScratchVisitor {
             count++;
         }
         fixedBlock = true;
-        if (!node.getChildren().isEmpty()) {
-            for (ASTNode child : node.getChildren()) {
-                child.accept(this);
-            }
-        }
+        visitChildren(node);
         fixedBlock = false;
     }
 
@@ -479,11 +361,7 @@ public class BlockCount implements IssueFinder, ScratchVisitor {
             count++;
         }
         fixedBlock = true;
-        if (!node.getChildren().isEmpty()) {
-            for (ASTNode child : node.getChildren()) {
-                child.accept(this);
-            }
-        }
+        visitChildren(node);
         fixedBlock = false;
     }
 
@@ -493,11 +371,7 @@ public class BlockCount implements IssueFinder, ScratchVisitor {
             count++;
         }
         fixedBlock = true;
-        if (!node.getChildren().isEmpty()) {
-            for (ASTNode child : node.getChildren()) {
-                child.accept(this);
-            }
-        }
+        visitChildren(node);
         fixedBlock = false;
     }
 
@@ -518,11 +392,7 @@ public class BlockCount implements IssueFinder, ScratchVisitor {
             count++;
         }
         fixedBlock = true;
-        if (!node.getChildren().isEmpty()) {
-            for (ASTNode child : node.getChildren()) {
-                child.accept(this);
-            }
-        }
+        visitChildren(node);
         fixedBlock = false;
     }
 
@@ -532,11 +402,7 @@ public class BlockCount implements IssueFinder, ScratchVisitor {
             count++;
         }
         fixedBlock = true;
-        if (!node.getChildren().isEmpty()) {
-            for (ASTNode child : node.getChildren()) {
-                child.accept(this);
-            }
-        }
+        visitChildren(node);
         fixedBlock = false;
     }
 
@@ -546,11 +412,7 @@ public class BlockCount implements IssueFinder, ScratchVisitor {
             count++;
         }
         fixedBlock = true;
-        if (!node.getChildren().isEmpty()) {
-            for (ASTNode child : node.getChildren()) {
-                child.accept(this);
-            }
-        }
+        visitChildren(node);
         fixedBlock = false;
     }
 
@@ -560,11 +422,7 @@ public class BlockCount implements IssueFinder, ScratchVisitor {
             count++;
         }
         fixedBlock = true;
-        if (!node.getChildren().isEmpty()) {
-            for (ASTNode child : node.getChildren()) {
-                child.accept(this);
-            }
-        }
+        visitChildren(node);
         fixedBlock = false;
     }
 
@@ -574,11 +432,7 @@ public class BlockCount implements IssueFinder, ScratchVisitor {
             count++;
         }
         fixedBlock = true;
-        if (!node.getChildren().isEmpty()) {
-            for (ASTNode child : node.getChildren()) {
-                child.accept(this);
-            }
-        }
+        visitChildren(node);
         fixedBlock = false;
     }
 
@@ -588,11 +442,7 @@ public class BlockCount implements IssueFinder, ScratchVisitor {
             count++;
         }
         fixedBlock = true;
-        if (!node.getChildren().isEmpty()) {
-            for (ASTNode child : node.getChildren()) {
-                child.accept(this);
-            }
-        }
+        visitChildren(node);
         fixedBlock = false;
     }
 

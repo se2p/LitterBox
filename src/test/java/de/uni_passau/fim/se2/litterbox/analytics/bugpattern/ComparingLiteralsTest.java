@@ -23,12 +23,14 @@ import static junit.framework.TestCase.fail;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.truth.Truth;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueReport;
+import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
 import java.io.File;
 import java.io.IOException;
+import java.util.Set;
+
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -51,7 +53,7 @@ class ComparingLiteralsTest {
     @Test
     public void testComparingLiterals() {
         ComparingLiterals finder = new ComparingLiterals();
-        final IssueReport check = finder.check(program);
-        Truth.assertThat(check.getCount()).isEqualTo(2);
+        Set<Issue> reports = finder.check(program);
+        Truth.assertThat(reports).hasSize(2);
     }
 }

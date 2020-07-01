@@ -36,6 +36,10 @@ public class StmtList extends AbstractNode implements ASTNode {
         return stmts;
     }
 
+    public boolean hasStatements() {
+        return !stmts.isEmpty();
+    }
+
     @Override
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);

@@ -55,7 +55,7 @@ public class AttributeOfExpressionTest {
     @Test
     public void testContains() throws ParsingException {
         Program program = ProgramParser.parseProgram("AttributeOf", project);
-        final ActorDefinition sprite = program.getActorDefinitionList().getDefintions().get(0);
+        final ActorDefinition sprite = program.getActorDefinitionList().getDefinitions().get(0);
         final Script script = sprite.getScripts().getScriptList().get(0);
 
         final Stmt stmt = script.getStmtList().getStmts().get(0);

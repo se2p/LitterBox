@@ -16,49 +16,50 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.uni_passau.fim.se2.litterbox.utils;
+package de.uni_passau.fim.se2.litterbox.report;
 
-import de.uni_passau.fim.se2.litterbox.analytics.IssueReport;
+import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVPrinter;
+
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
-import java.util.ArrayList;
-import java.util.List;
-import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVPrinter;
+import java.util.*;
 
-/**
- * Util class for writing and saving the csv
- */
-public class CSVWriter {
 
-    /**
-     * Adds data to an existing CSVPrinter
-     *
-     * @param csvPrinter   the CSVPrinter to add the information
-     * @param issueReports all the issueReports found in the project
-     * @param program      the project with the information
-     * @throws IOException corrupt file path
-     */
-    public static void addData(CSVPrinter csvPrinter, List<IssueReport> issueReports, Program program) throws IOException {
-        List<String> data = new ArrayList<>();
-        data.add(program.getIdent().getName());
-        for (IssueReport is : issueReports) {
-            data.add(Integer.toString(is.getCount()));
-        }
-        csvPrinter.printRecord(data);
+public class CSVReportGenerator implements ReportGenerator {
+
+    private String fileName;
+    private List<String> headers = new ArrayList<>();
+    private List<String> detectors;
+    private CSVPrinter printer;
+
+    public CSVReportGenerator(String fileName, String[] detectors) throws IOException {
+        this.fileName = fileName;
+        this.detectors = Arrays.asList(detectors);
+        headers.add("project");
+        this.detectors.stream().forEach(headers::add);
+        printer = getNewPrinter(fileName, headers);
     }
 
-    /**
-     * Creates a new CSVPrinter with the correct head of all implemented issue names
-     *
-     * @return a new CSVPrinter
-     * @throws IOException corrupt file path
-     */
-    public static CSVPrinter getNewPrinter(String name, List<String> heads) throws IOException {
+    @Override
+    public void generateReport(Program program, Collection<Issue> issues) throws IOException {
+
+        List<String> row = new ArrayList<>();
+        row.add(program.getIdent().getName());
+        for(String finder : detectors) {
+            long numIssuesForFinder = issues.stream().filter(i -> i.getFinderShortName().equals(finder)).count();
+            row.add(Long.toString(numIssuesForFinder));
+        }
+        printer.printRecord(row);
+        printer.flush();
+    }
+
+    protected CSVPrinter getNewPrinter(String name, List<String> heads) throws IOException {
 
         if (Files.exists(Paths.get(name))) {
             BufferedWriter writer = Files.newBufferedWriter(
@@ -69,15 +70,5 @@ public class CSVWriter {
                     Paths.get(name), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
             return new CSVPrinter(writer, CSVFormat.DEFAULT.withHeader(heads.toArray(new String[0])));
         }
-    }
-
-    /**
-     * Saves the file
-     *
-     * @param csvPrinter the CSVPrinter to save the data
-     * @throws IOException corrupt file path
-     */
-    public static void flushCSV(CSVPrinter csvPrinter) throws IOException {
-        csvPrinter.flush();
     }
 }

@@ -16,23 +16,49 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.uni_passau.fim.se2.litterbox.analytics;
+package de.uni_passau.fim.se2.litterbox.report;
 
+import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
+import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.CommentMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.Metadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
 
-public abstract class CommentAdder {
+import java.io.IOException;
+import java.util.Collection;
 
-    public static void addBlockComment(NonDataBlockMetadata metadata, ActorDefinition currentActor, String hintText,
+public class CommentGenerator implements ReportGenerator {
+
+    @Override
+    public void generateReport(Program program, Collection<Issue> issues) throws IOException {
+
+        int numIssue = 0;
+        for(Issue issue : issues) {
+            ActorDefinition currentActor = issue.getActor();
+            String hintText = issue.getHint();
+            String commentId = issue.getFinderName() + numIssue++;
+            Metadata metaData = issue.getCodeMetadata();
+            if(metaData == null) {
+                addLooseComment(currentActor, hintText, commentId);
+            } else {
+                addBlockComment((NonDataBlockMetadata) metaData,
+                        currentActor,
+                        hintText,
+                        commentId);
+            }
+        }
+    }
+
+    private void addBlockComment(NonDataBlockMetadata metadata, ActorDefinition currentActor, String hintText,
                                        String commentId) {
-        (metadata).setCommentId(commentId);
+        metadata.setCommentId(commentId);
         CommentMetadata comment = new CommentMetadata(commentId, metadata.getBlockId(), 500, 400, 100, 100, false,
                 hintText);
         currentActor.getMetadata().addComment(comment);
     }
 
-    public static void addLooseComment(ActorDefinition currentActor, String hintText,
+    private void addLooseComment(ActorDefinition currentActor, String hintText,
                                        String commentId) {
         CommentMetadata comment = new CommentMetadata(commentId, null, 500, 400, 100, 100, false,
                 hintText);
