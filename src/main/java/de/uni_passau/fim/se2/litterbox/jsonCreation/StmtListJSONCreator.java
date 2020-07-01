@@ -892,13 +892,13 @@ public class StmtListJSONCreator implements ScratchVisitor {
 
     @Override
     public void visit(SetPenSizeTo node) {
-        createSingeNumExprBlock((NonDataBlockMetadata) node.getMetadata(), PEN_SIZE_KEY, node.getValue(),
+        createSingeNumExprBlock((NonDataBlockMetadata) node.getMetadata(), SIZE_KEY_CAP, node.getValue(),
                 MATH_NUM_PRIMITIVE);
     }
 
     @Override
     public void visit(ChangePenSizeBy node) {
-        createSingeNumExprBlock((NonDataBlockMetadata) node.getMetadata(), PEN_SIZE_KEY, node.getValue(),
+        createSingeNumExprBlock((NonDataBlockMetadata) node.getMetadata(), SIZE_KEY_CAP, node.getValue(),
                 MATH_NUM_PRIMITIVE);
     }
 

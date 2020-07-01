@@ -520,7 +520,7 @@ public class ExpressionJSONCreator implements ScratchVisitor {
         } else {
             IdJsonStringTuple tuple = fixedExprCreator.createFixedExpressionJSON(metadata.getBlockId(), key);
             finishedJSONStrings.add(tuple.getJsonString());
-            inputs.add(createReferenceInput(OBJECT_KEY, INPUT_SAME_BLOCK_SHADOW, tuple.getId(), false));
+            inputs.add(createReferenceInput(KEY_OPTION, INPUT_SAME_BLOCK_SHADOW, tuple.getId(), false));
         }
 
         finishedJSONStrings.add(createBlockWithoutMutationString(metadata, null,
