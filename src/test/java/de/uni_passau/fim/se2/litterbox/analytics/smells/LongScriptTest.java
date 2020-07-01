@@ -34,6 +34,7 @@ import org.junit.jupiter.api.Test;
 public class LongScriptTest {
     private static Program empty;
     private static Program longScript;
+    private static Program longProcedure;
     private static ObjectMapper mapper = new ObjectMapper();
 
     @BeforeAll
@@ -43,6 +44,8 @@ public class LongScriptTest {
         empty = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
         f = new File("./src/test/fixtures/smells/longScript.json");
         longScript = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
+        f = new File("./src/test/fixtures/smells/longProcedure.json");
+        longProcedure = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
     }
 
     @Test
@@ -57,5 +60,12 @@ public class LongScriptTest {
         LongScript parameterName = new LongScript();
         Set<Issue> reports = parameterName.check(longScript);
         Assertions.assertEquals(2, reports.size());
+    }
+
+    @Test
+    public void testLongProcedure() {
+        LongScript parameterName = new LongScript();
+        Set<Issue> reports = parameterName.check(longProcedure);
+        Assertions.assertEquals(1, reports.size());
     }
 }

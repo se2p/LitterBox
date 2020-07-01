@@ -22,6 +22,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.model.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
+import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 
 /**
  * Checks for scripts with more than 12 blocks.
@@ -45,6 +46,20 @@ public class LongScript extends AbstractIssueFinder {
             issues.add(new Issue(this, currentActor, node));
         }
         currentScript = null;
+    }
+
+    @Override
+    public void visit(ProcedureDefinition node) {
+        currentProcedure = node;
+        localCount = 0;
+
+        //this is for counting the definition block itself
+        localCount++;
+        visitChildren(node);
+        if (localCount > NUMBER_TOO_LONG) {
+            issues.add(new Issue(this, currentActor, node));
+        }
+        currentProcedure = null;
     }
 
     @Override
