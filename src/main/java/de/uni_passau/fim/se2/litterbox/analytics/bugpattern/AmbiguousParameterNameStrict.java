@@ -64,7 +64,7 @@ public class AmbiguousParameterNameStrict extends AbstractIssueFinder {
 
         for (int i = 0; i < arguments.length; i++) {
             ArgumentInfo current = arguments[i];
-            for (int j = 0; j < arguments.length; j++) {
+            for (int j = i + 1; j < arguments.length; j++) {
                 if (i != j && current.getName().equals(arguments[j].getName())) {
                     if (!paraNames.contains(current.getName())) {
                         paraNames.add(current.getName());

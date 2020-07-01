@@ -36,9 +36,8 @@ public class AmbiguousParameterName extends AbstractIssueFinder {
     private void checkArguments(ArgumentInfo[] arguments, ProcedureDefinition node) {
         for (int i = 0; i < arguments.length; i++) {
             ArgumentInfo current = arguments[i];
-            for (int j = 0; j < arguments.length; j++) {
+            for (int j = i + 1; j < arguments.length; j++) {
                 if (i != j && current.getName().equals(arguments[j].getName())) {
-                    // TODO: Does this add redundant comments?
                     addIssue(node, HINT_TEXT, node.getMetadata().getDefinition());
                 }
             }
