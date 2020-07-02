@@ -36,6 +36,7 @@ public class MissingLoopSensingTest {
     private static Program empty;
     private static Program codeHero;
     private static Program anina;
+    private static Program nestedMissingLoopSensing;
     private static ObjectMapper mapper = new ObjectMapper();
 
     @BeforeAll
@@ -47,6 +48,8 @@ public class MissingLoopSensingTest {
         codeHero = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
         f = new File("./src/test/fixtures/bugpattern/anina.json");
         anina = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
+        f = new File("./src/test/fixtures/bugpattern/nestedMissingLoopSensing.json");
+        nestedMissingLoopSensing = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
     }
 
     @Test
@@ -68,5 +71,12 @@ public class MissingLoopSensingTest {
         MissingLoopSensing parameterName = new MissingLoopSensing();
         Set<Issue> reports = parameterName.check(anina);
         Assertions.assertEquals(1, reports.size());
+    }
+
+    @Test
+    public void testMissingLoopSensingNested() {
+        MissingLoopSensing parameterName = new MissingLoopSensing();
+        Set<Issue> reports = parameterName.check(nestedMissingLoopSensing);
+        Assertions.assertEquals(2, reports.size());
     }
 }

@@ -23,6 +23,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.GreenFlag;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.StartedAsClone;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.DistanceTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfElseStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
@@ -39,12 +40,14 @@ public class MissingLoopSensing extends AbstractIssueFinder {
     public static final String HINT_TEXT = "missing loop sensing";
     private boolean insideGreenFlagClone = false;
     private boolean insideLoop = false;
+    private boolean inCondition = false;
 
     @Override
     public void visit(Script node) {
         if (node.getEvent() instanceof GreenFlag || node.getEvent() instanceof StartedAsClone) {
             insideGreenFlagClone = true;
         }
+        inCondition = false;
         super.visit(node);
         insideGreenFlagClone = false;
     }
@@ -66,23 +69,66 @@ public class MissingLoopSensing extends AbstractIssueFinder {
     @Override
     public void visit(IfThenStmt node) {
         if (insideGreenFlagClone && !insideLoop) {
+            inCondition = true;
             BoolExpr boolExpr = node.getBoolExpr();
-            if (boolExpr instanceof IsKeyPressed || boolExpr instanceof Touching || boolExpr instanceof IsMouseDown || boolExpr instanceof ColorTouchingColor) {
-                addIssue(node, HINT_TEXT, node.getMetadata());
-            }
+            boolExpr.accept(this);
+            inCondition = false;
         }
-        visitChildren(node);
+        node.getThenStmts().accept(this);
+    }
+
+    @Override
+    public void visit(IsKeyPressed node) {
+        if (insideGreenFlagClone && !insideLoop && inCondition) {
+            addIssue(node, HINT_TEXT, node.getMetadata());
+        }
+    }
+
+    @Override
+    public void visit(Touching node) {
+        if (insideGreenFlagClone && !insideLoop && inCondition) {
+            addIssue(node, HINT_TEXT, node.getMetadata());
+        }
+    }
+
+    @Override
+    public void visit(IsMouseDown node) {
+        if (insideGreenFlagClone && !insideLoop && inCondition) {
+            addIssue(node, HINT_TEXT, node.getMetadata());
+        }
+    }
+
+    @Override
+    public void visit(ColorTouchingColor node) {
+        if (insideGreenFlagClone && !insideLoop && inCondition) {
+            addIssue(node, HINT_TEXT, node.getMetadata());
+        }
+    }
+
+    @Override
+    public void visit(SpriteTouchingColor node) {
+        if (insideGreenFlagClone && !insideLoop && inCondition) {
+            addIssue(node, HINT_TEXT, node.getMetadata());
+        }
+    }
+
+    @Override
+    public void visit(DistanceTo node) {
+        if (insideGreenFlagClone && !insideLoop && inCondition) {
+            addIssue(node, HINT_TEXT, node.getMetadata());
+        }
     }
 
     @Override
     public void visit(IfElseStmt node) {
         if (insideGreenFlagClone && !insideLoop) {
+            inCondition = true;
             BoolExpr boolExpr = node.getBoolExpr();
-            if (boolExpr instanceof IsKeyPressed || boolExpr instanceof Touching || boolExpr instanceof IsMouseDown || boolExpr instanceof ColorTouchingColor) {
-                addIssue(node, HINT_TEXT, node.getMetadata());
-            }
+            boolExpr.accept(this);
+            inCondition = false;
         }
-        visitChildren(node);
+        node.getStmtList().accept(this);
+        node.getElseStmts().accept(this);
     }
 
     @Override
