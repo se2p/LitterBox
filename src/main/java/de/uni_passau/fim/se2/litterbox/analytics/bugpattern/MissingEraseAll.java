@@ -19,9 +19,16 @@
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
+import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
+import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.pen.PenClearStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.pen.PenDownStmt;
+import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
+
+import java.util.Collections;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 /**
  * If a sprite uses a pen down block but never an erase all block, then all drawings from a
@@ -39,18 +46,26 @@ public class MissingEraseAll extends AbstractIssueFinder {
     private boolean addComment = false;
 
     @Override
-    public void visit(ActorDefinition actor) {
-        currentActor = actor;
+    public Set<Issue> check(Program program) {
+        Preconditions.checkNotNull(program);
+        this.program = program;
+        issues = new LinkedHashSet<>();
         addComment = false;
         penClearSet = false;
         penDownSet = false;
-        visitChildren(actor);
-
+        program.accept(this);
         if (getResult()) {
             addComment = true;
-            visitChildren(actor);
+            visitChildren(program);
             reset();
         }
+        return Collections.unmodifiableSet(issues);
+    }
+
+    @Override
+    public void visit(ActorDefinition actor) {
+        currentActor = actor;
+        visitChildren(actor);
     }
 
     @Override
