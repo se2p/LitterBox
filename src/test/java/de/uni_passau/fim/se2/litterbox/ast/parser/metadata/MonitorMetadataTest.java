@@ -36,6 +36,7 @@ public class MonitorMetadataTest {
     private static ObjectMapper mapper = new ObjectMapper();
     private static JsonNode prog;
     private static JsonNode empty;
+    private static JsonNode monitorMetaAlternative;
 
     @BeforeAll
     public static void setUp() throws IOException {
@@ -43,6 +44,8 @@ public class MonitorMetadataTest {
         empty = mapper.readTree(f);
         f = new File("./src/test/fixtures/metadata/monitorMeta.json");
         prog = mapper.readTree(f);
+        f = new File("./src/test/fixtures/metadata/monitorMetaAlternative.json");
+        monitorMetaAlternative = mapper.readTree(f);
     }
 
     @Test
@@ -60,5 +63,11 @@ public class MonitorMetadataTest {
         Assertions.assertTrue(monitors.getList().get(2) instanceof MonitorSliderMetadata);
         Assertions.assertTrue(monitors.getList().get(3) instanceof MonitorSliderMetadata);
 
+    }
+
+    @Test
+    public void testMonitorsAlternativeProgram() {
+        MonitorMetadataList monitors = MonitorMetadataListParser.parse(monitorMetaAlternative.get(MONITORS_KEY));
+        Assertions.assertEquals(1, monitors.getList().size());
     }
 }
