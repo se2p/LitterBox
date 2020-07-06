@@ -105,6 +105,7 @@ public class ExpressionParser {
                 return new Qualified(new StrId(variableInfo.getActor()),
                         new ScratchList(new StrId(variableInfo.getVariableName()), metadata));
             }
+            throw new ParsingException("Id neither of List nor Variable.");
         } else {
             // it's a normal reporter block
             String opcode = exprBlock.get(OPCODE_KEY).asText();
@@ -118,7 +119,6 @@ public class ExpressionParser {
                 throw new ParsingException(opcode + " is an unexpected opcode for an expression");
             }
         }
-        throw new ParsingException("Calling parseExprBlock here went wrong");
     }
 
     static int getShadowIndicator(ArrayNode exprArray) {
