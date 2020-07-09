@@ -134,7 +134,7 @@ public class Main {
             String projectId = cmd.getOptionValue(PROJECTID);
             String projectFolder = cmd.getOptionValue(PROJECTOUT);
 
-            BugAnalyzer analyzer = new BugAnalyzer(projectFolder, outputPath, null);
+            BugAnalyzer analyzer = new BugAnalyzer(projectFolder, outputPath);
             analyzer.setDetectorNames(detectors);
             analyzer.analyzeSingle(projectId);
         } else if (cmd.hasOption(PROJECTLIST)) {
@@ -146,13 +146,13 @@ public class Main {
             String projectList = cmd.getOptionValue(PROJECTLIST);
             String projectFolder = cmd.getOptionValue(PROJECTOUT);
 
-            BugAnalyzer analyzer = new BugAnalyzer(projectFolder, outputPath, null);
+            BugAnalyzer analyzer = new BugAnalyzer(projectFolder, outputPath);
             analyzer.setDetectorNames(detectors);
             analyzer.analyzeMultiple(projectList);
         } else if (cmd.hasOption(PROJECTPATH)) {
             String path = cmd.getOptionValue(PROJECTPATH);
 
-            BugAnalyzer analyzer = new BugAnalyzer(path, outputPath, null);
+            BugAnalyzer analyzer = new BugAnalyzer(path, outputPath);
             analyzer.setDetectorNames(detectors);
             analyzer.analyzeFile();
         } else {
