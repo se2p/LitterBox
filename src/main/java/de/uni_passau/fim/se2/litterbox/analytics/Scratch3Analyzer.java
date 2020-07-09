@@ -18,47 +18,30 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics;
 
-import static de.uni_passau.fim.se2.litterbox.utils.GroupConstants.*;
-import static org.apache.commons.io.FilenameUtils.removeExtension;
-
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.GrammarPrintVisitor;
-import de.uni_passau.fim.se2.litterbox.jsonCreation.JSONFileCreator;
-import de.uni_passau.fim.se2.litterbox.report.CSVReportGenerator;
-import de.uni_passau.fim.se2.litterbox.report.CommentGenerator;
-import de.uni_passau.fim.se2.litterbox.report.ConsoleReportGenerator;
 import de.uni_passau.fim.se2.litterbox.utils.Downloader;
 import de.uni_passau.fim.se2.litterbox.utils.JsonParser;
 import de.uni_passau.fim.se2.litterbox.utils.ZipReader;
+import org.apache.commons.io.FilenameUtils;
+
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Objects;
-import java.util.Set;
 import java.util.logging.Logger;
 
-import org.apache.commons.io.FilenameUtils;
+import static org.apache.commons.io.FilenameUtils.removeExtension;
 
 public class Scratch3Analyzer {
 
     private static final Logger log = Logger.getLogger(Scratch3Analyzer.class.getName());
     private static final String INTERMEDIATE_EXTENSION = ".sc";
-
-    public static void analyze(String detectors, String output, File file, String annotatePath) {
-        if (file.exists() && file.isDirectory()) {
-            checkMultipleScratch3(file, detectors, output, annotatePath);
-        } else if (file.exists() && !file.isDirectory()) {
-            checkSingleScratch3(file, detectors, output, annotatePath);
-        } else {
-            log.info("Folder or file '" + file.getName() + "' does not exist");
-        }
-    }
 
     public static void statsProject(String output, File file) throws IOException {
         if (file.exists() && file.isDirectory()) {
@@ -99,147 +82,6 @@ public class Scratch3Analyzer {
         analyzer.createCSVFile(program, csv);
     }
 
-    /**
-     * The method for analyzing one Scratch project file (ZIP). It will produce only console output.
-     *
-     * @param json        string of the project ot analyze the file to analyze
-     * @param projectName name of the project to analyze
-     * @param detectors   to be executed
-     * @param csv         file where the results should be stored
-     */
-    public static void checkDownloaded(String json, String projectName, String detectors, String csv,
-                                       String annotatePath) {
-        try {
-
-            ObjectMapper mapper = new ObjectMapper();
-            JsonNode projectNode = mapper.readTree(json);
-            Program program = ProgramParser.parseProgram(projectName, projectNode);
-
-            IssueTool iT = new IssueTool();
-            String[] detectorNames = getDetectors(iT, detectors);
-            Set<Issue> issues = iT.check(program, detectors);
-            if (csv == null || csv.isEmpty()) {
-                ConsoleReportGenerator reportGenerator = new ConsoleReportGenerator(detectorNames);
-                reportGenerator.generateReport(program, issues);
-            } else {
-                CSVReportGenerator reportGenerator = new CSVReportGenerator(csv, detectorNames);
-                reportGenerator.generateReport(program, issues);
-            }
-
-            if (annotatePath != null && !annotatePath.isEmpty()) {
-                CommentGenerator commentGenerator = new CommentGenerator();
-                commentGenerator.generateReport(program, issues);
-                JSONFileCreator.writeJsonFromProgram(program, annotatePath);
-            }
-        } catch (Exception e) {
-            log.warning(e.getMessage());
-        }
-
-    }
-
-    /**
-     * The method for analyzing one Scratch project file (ZIP). It will produce only console output.
-     *
-     * @param fileEntry the file to analyze
-     * @param detectors
-     */
-    private static void checkSingleScratch3(File fileEntry, String detectors, String csv, String annotatePath) {
-        Program program = extractProgram(fileEntry);
-
-        IssueTool iT = new IssueTool();
-        Set<Issue> issues = iT.check(program, detectors);
-        String[] detectorNames = getDetectors(iT, detectors);
-        // TODO: Refactor error handling
-        try {
-            if (csv == null || csv.isEmpty()) {
-                ConsoleReportGenerator reportGenerator = new ConsoleReportGenerator(detectorNames);
-                reportGenerator.generateReport(program, issues);
-            } else {
-                CSVReportGenerator reportGenerator = new CSVReportGenerator(csv, detectorNames);
-                reportGenerator.generateReport(program, issues);
-            }
-        } catch (IOException e) {
-            log.warning(e.getMessage());
-        }
-        if (annotatePath != null && !annotatePath.isEmpty()) {
-            try {
-                CommentGenerator commentGenerator = new CommentGenerator();
-                commentGenerator.generateReport(program, issues);
-                createAnnotatedFile(fileEntry, program, annotatePath);
-            } catch (IOException e) {
-                log.warning(e.getMessage());
-            }
-        }
-    }
-
-    private static void createAnnotatedFile(File fileEntry, Program program, String annotatePath) throws IOException {
-        if ((FilenameUtils.getExtension(fileEntry.getPath())).toLowerCase().equals("json")) {
-            JSONFileCreator.writeJsonFromProgram(program, annotatePath);
-        } else {
-            JSONFileCreator.writeSb3FromProgram(program, annotatePath, fileEntry);
-        }
-    }
-
-    private static String[] getDetectors(IssueTool iT, String detectorList) {
-        String[] detectors;
-        switch (detectorList) {
-            case ALL:
-                detectors = iT.getAllFinder().keySet().toArray(new String[0]);
-                break;
-            case BUGS:
-                detectors = iT.getBugFinder().keySet().toArray(new String[0]);
-                break;
-            case SMELLS:
-                detectors = iT.getSmellFinder().keySet().toArray(new String[0]);
-                break;
-            default:
-                detectors = detectorList.split(",");
-                break;
-        }
-        return detectors;
-    }
-
-    /**
-     * The main method for analyzing all Scratch project files (ZIP) in the given folder location. It will produce a
-     * .csv file with all entries.
-     */
-    private static void checkMultipleScratch3(File folder, String dtctrs, String csv, String annotatePath) {
-
-        try {
-            IssueTool iT = new IssueTool();
-            String[] detectorNames = getDetectors(iT, dtctrs);
-            for (final File fileEntry : Objects.requireNonNull(folder.listFiles())) {
-                if (!fileEntry.isDirectory()) {
-                    try {
-                        log.info("Start: " + fileEntry.getName());
-                        Program program = extractProgram(fileEntry);
-                        Set<Issue> issues = iT.check(program, dtctrs);
-
-                        // TODO: Refactor error handling
-                        try {
-                            CSVReportGenerator reportGenerator = new CSVReportGenerator(csv, detectorNames);
-                            reportGenerator.generateReport(program, issues);
-                        } catch (IOException e) {
-                            log.warning(e.getMessage());
-                        }
-
-                        log.info("Finished: " + fileEntry.getName());
-                        if (annotatePath != null && !annotatePath.isEmpty()) {
-                            CommentGenerator commentGenerator = new CommentGenerator();
-                            commentGenerator.generateReport(program, issues);
-                            createAnnotatedFile(fileEntry, program, annotatePath);
-                        }
-                    } catch (NullPointerException e) {
-                        // TODO: This needs to be fixed properly
-                        log.info("Ignore due to NullPointerException: " + fileEntry.getName());
-                    }
-                }
-            }
-        } catch (Exception e) {
-            // TODO: Proper error handling
-            e.printStackTrace();
-        }
-    }
 
     private static Program extractProgram(File fileEntry) {
         ObjectMapper mapper = new ObjectMapper();
@@ -272,21 +114,6 @@ public class Scratch3Analyzer {
         return program;
     }
 
-    /**
-     * Downloads and analyzes a single project with the given id
-     *
-     * @param projectid  Id of the project which should be downloaded
-     * @param outfolder  Folder in which the project file will be stored
-     * @param detectors  IssueFinders which will be run for this project
-     * @param resultpath Path where the outputfile will be stored
-     * @param annotatePath Path where the annotated project will be stored
-     */
-    public static void downloadAndAnalyze(String projectid, String outfolder, String detectors, String resultpath,
-                                          String annotatePath) throws IOException {
-        String json = Downloader.downloadAndSaveProject(projectid, outfolder);
-        Scratch3Analyzer.checkDownloaded(json, projectid, //Name ProjectID is not the same as the Projectname
-                detectors, resultpath, annotatePath);
-    }
 
     public static void downloadAndStats(String projectid, String outfolder, String resultpath) throws IOException, ParsingException {
         String json = Downloader.downloadAndSaveProject(projectid, outfolder);
@@ -317,44 +144,6 @@ public class Scratch3Analyzer {
         }
         br.close();
     }
-
-    /**
-     * Downloads all projects with the ids in a file at the given path.
-     *
-     * <p>
-     * The file at the given path is expected to contain a list of project ids.
-     * The projects are then downloaded, stored and analyzed.
-     *
-     * @param projectListPath Path to the file with project ids.
-     * @param outfolder       Folder in which the project file will be stored
-     * @param detectors       IssueFinders which will be run for this project
-     * @param resultpath      Path where the outputfile will be stored
-     */
-    public static void downloadAndAnalyzeMultiple(String projectListPath,
-                                                  String outfolder,
-                                                  String detectors,
-                                                  String resultpath, String annotationPath) throws IOException {
-        File file = new File(projectListPath);
-
-        // TODO: Inconsistent error handling
-        if (!file.exists()) {
-            log.info("File " + projectListPath + " does not exist.");
-            return;
-        } else if (file.isDirectory()) {
-            log.info("File " + projectListPath + " is a directory.");
-            return;
-        }
-
-        BufferedReader br = new BufferedReader(new FileReader(file, StandardCharsets.UTF_8));
-        String line = br.readLine();
-        while (line != null) {
-            line = line.trim();
-            downloadAndAnalyze(line, outfolder, detectors, resultpath, annotationPath);
-            line = br.readLine();
-        }
-        br.close();
-    }
-
     /**
      * Prints the project given at {@code path} in the intermediate language.
      *
