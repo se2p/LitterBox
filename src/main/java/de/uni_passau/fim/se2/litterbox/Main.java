@@ -18,19 +18,19 @@
  */
 package de.uni_passau.fim.se2.litterbox;
 
-import static de.uni_passau.fim.se2.litterbox.analytics.Scratch3Analyzer.removeEndSeparator;
-import static de.uni_passau.fim.se2.litterbox.utils.GroupConstants.*;
-
-
+import de.uni_passau.fim.se2.litterbox.analytics.BugAnalyzer;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueTool;
 import de.uni_passau.fim.se2.litterbox.analytics.Scratch3Analyzer;
+import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
+import org.apache.commons.cli.*;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
-import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
-import org.apache.commons.cli.*;
+import static de.uni_passau.fim.se2.litterbox.analytics.Scratch3Analyzer.removeEndSeparator;
+import static de.uni_passau.fim.se2.litterbox.utils.GroupConstants.*;
 
 public class Main {
 
@@ -132,17 +132,29 @@ public class Main {
 
         if (cmd.hasOption(PROJECTID)) {
             String projectId = cmd.getOptionValue(PROJECTID);
-            Scratch3Analyzer.downloadAndAnalyze(projectId, cmd.getOptionValue(PROJECTOUT),
-                    detectors, outputPath, annotatePath);
+            String projectFolder = cmd.getOptionValue(PROJECTOUT);
+
+            BugAnalyzer analyzer = new BugAnalyzer(projectFolder, outputPath, null);
+            analyzer.setDetectorNames(detectors);
+            analyzer.analyzeSingle(projectId);
         } else if (cmd.hasOption(PROJECTLIST)) {
             Scratch3Analyzer.downloadAndAnalyzeMultiple(
                     cmd.getOptionValue(PROJECTLIST),
                     cmd.getOptionValue(PROJECTOUT),
                     detectors, outputPath, annotatePath);
 
+            String projectList = cmd.getOptionValue(PROJECTLIST);
+            String projectFolder = cmd.getOptionValue(PROJECTOUT);
+
+            BugAnalyzer analyzer = new BugAnalyzer(projectFolder, outputPath, null);
+            analyzer.setDetectorNames(detectors);
+            analyzer.analyzeMultiple(projectList);
         } else if (cmd.hasOption(PROJECTPATH)) {
-            File folder = new File(cmd.getOptionValue(PROJECTPATH));
-            Scratch3Analyzer.analyze(detectors, outputPath, folder, annotatePath);
+            String path = cmd.getOptionValue(PROJECTPATH);
+
+            BugAnalyzer analyzer = new BugAnalyzer(path, outputPath, null);
+            analyzer.setDetectorNames(detectors);
+            analyzer.analyzeFile();
         } else {
             throw new ParseException("No projects specified");
         }
