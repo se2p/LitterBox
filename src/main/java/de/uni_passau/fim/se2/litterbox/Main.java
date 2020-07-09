@@ -75,12 +75,14 @@ public class Main {
 
         // Target project(s)
         OptionGroup targetProject = new OptionGroup();
-        targetProject.addOption(new Option(PROJECTPATH_SHORT, PROJECTPATH, true, "path to folder or file that should be analyzed (required)"));
         targetProject.addOption(new Option(PROJECTID_SHORT, PROJECTID, true,
                 "id of the project that should be downloaded and analysed."));
         targetProject.addOption(new Option(PROJECTLIST_SHORT, PROJECTLIST, true, "path to a file with a list of project ids of projects"
                 + " which should be downloaded and analysed."));
         options.addOptionGroup(targetProject);
+
+        // Storage options
+        options.addOption(new Option(PROJECTPATH_SHORT, PROJECTPATH, true, "path to folder or file that should be analyzed (required)"));
 
         // Output options
         options.addOption(PROJECTOUT_SHORT, PROJECTOUT, true, "path where the downloaded project(s) should be stored");
@@ -128,31 +130,18 @@ public class Main {
     public static void checkPrograms(CommandLine cmd) throws ParseException, IOException {
         String outputPath = removeEndSeparator(cmd.getOptionValue(OUTPUT));
         String detectors = cmd.getOptionValue(DETECTORS, ALL);
-        String annotatePath = cmd.getOptionValue(ANNOTATE, "");
+        String path = cmd.getOptionValue(PROJECTPATH);
+        BugAnalyzer analyzer = new BugAnalyzer(path, outputPath);
 
         if (cmd.hasOption(PROJECTID)) {
             String projectId = cmd.getOptionValue(PROJECTID);
-            String projectFolder = cmd.getOptionValue(PROJECTOUT);
-
-            BugAnalyzer analyzer = new BugAnalyzer(projectFolder, outputPath);
             analyzer.setDetectorNames(detectors);
             analyzer.analyzeSingle(projectId);
         } else if (cmd.hasOption(PROJECTLIST)) {
-            Scratch3Analyzer.downloadAndAnalyzeMultiple(
-                    cmd.getOptionValue(PROJECTLIST),
-                    cmd.getOptionValue(PROJECTOUT),
-                    detectors, outputPath, annotatePath);
-
             String projectList = cmd.getOptionValue(PROJECTLIST);
-            String projectFolder = cmd.getOptionValue(PROJECTOUT);
-
-            BugAnalyzer analyzer = new BugAnalyzer(projectFolder, outputPath);
             analyzer.setDetectorNames(detectors);
             analyzer.analyzeMultiple(projectList);
         } else if (cmd.hasOption(PROJECTPATH)) {
-            String path = cmd.getOptionValue(PROJECTPATH);
-
-            BugAnalyzer analyzer = new BugAnalyzer(path, outputPath);
             analyzer.setDetectorNames(detectors);
             analyzer.analyzeFile();
         } else {

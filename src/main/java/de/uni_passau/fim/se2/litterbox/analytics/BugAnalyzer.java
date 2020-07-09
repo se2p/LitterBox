@@ -44,11 +44,11 @@ public class BugAnalyzer extends Analyzer {
         if (file.exists() && file.isDirectory()) {
             for (final File fileEntry : Objects.requireNonNull(file.listFiles())) {
                 if (!fileEntry.isDirectory()) {
-                    check(fileEntry, String.valueOf(output.getFileName()));
+                    check(fileEntry, String.valueOf(output));
                 }
             }
         } else if (file.exists() && !file.isDirectory()) {
-            check(file, String.valueOf(output.getFileName()));
+            check(file, String.valueOf(output));
         } else {
             log.info("Folder or file '" + file.getName() + "' does not exist");
         }
@@ -82,7 +82,7 @@ public class BugAnalyzer extends Analyzer {
             }
         }
 
-        check(projectFile, String.valueOf(output.getFileName()));
+        check(projectFile, output);
     }
 
     public void setDetectorNames(String detectorNames) {
@@ -146,7 +146,7 @@ public class BugAnalyzer extends Analyzer {
 
         try {
             if ((FilenameUtils.getExtension(fileEntry.getPath())).toLowerCase().equals("json")) {
-                mapper.readTree(fileEntry);
+                programNode = mapper.readTree(fileEntry);
             } else {
                 programNode = JsonParser.getTargetsNodeFromJSONString(ZipReader.getJsonString(fileEntry.getPath()));
             }

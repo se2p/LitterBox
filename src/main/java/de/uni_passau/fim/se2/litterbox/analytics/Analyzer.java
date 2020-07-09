@@ -6,11 +6,11 @@ import java.nio.file.Paths;
 public abstract class Analyzer {
 
     Path input;
-    Path output;
+    String output;
 
     public Analyzer(String input, String output) {
         this.input = Paths.get(input);
-        this.output = Paths.get(output);
+        this.output = output;
     }
 
     public abstract void analyzeFile();
