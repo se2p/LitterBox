@@ -38,11 +38,11 @@ public abstract class Analyzer {
         if (file.exists() && file.isDirectory()) {
             for (final File fileEntry : Objects.requireNonNull(file.listFiles())) {
                 if (!fileEntry.isDirectory()) {
-                    check(fileEntry, String.valueOf(output));
+                    check(fileEntry, output);
                 }
             }
         } else if (file.exists() && !file.isDirectory()) {
-            check(file, String.valueOf(output));
+            check(file, output);
         } else {
             log.info("Folder or file '" + file.getName() + "' does not exist");
         }

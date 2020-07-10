@@ -18,10 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox;
 
-import de.uni_passau.fim.se2.litterbox.analytics.BugAnalyzer;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueTool;
-import de.uni_passau.fim.se2.litterbox.analytics.MetricAnalyzer;
-import de.uni_passau.fim.se2.litterbox.analytics.Scratch3Analyzer;
+import de.uni_passau.fim.se2.litterbox.analytics.*;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import org.apache.commons.cli.*;
 
@@ -29,7 +26,6 @@ import java.io.IOException;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
-import static de.uni_passau.fim.se2.litterbox.analytics.Scratch3Analyzer.removeEndSeparator;
 import static de.uni_passau.fim.se2.litterbox.utils.GroupConstants.*;
 
 public class Main {
@@ -67,7 +63,7 @@ public class Main {
 
         // Operation mode
         OptionGroup mainMode = new OptionGroup();
-        mainMode.addOption(new Option(CHECK_SHORT, CHECK, false,"Check specified Scratch projects for issues"));
+        mainMode.addOption(new Option(CHECK_SHORT, CHECK, false, "Check specified Scratch projects for issues"));
         mainMode.addOption(new Option(LEILA_SHORT, LEILA, false, "Translate specified Scratch projects to Leila"));
         mainMode.addOption(new Option(STATS_SHORT, STATS, false, "Extract metrics for Scratch projects"));
         mainMode.addOption(new Option(HELP_SHORT, HELP, false, "print this message"));
@@ -136,40 +132,24 @@ public class Main {
         String detectors = cmd.getOptionValue(DETECTORS, ALL);
         String path = cmd.getOptionValue(PROJECTPATH);
         BugAnalyzer analyzer = new BugAnalyzer(path, outputPath);
-
-        if (cmd.hasOption(PROJECTID)) {
-            String projectId = cmd.getOptionValue(PROJECTID);
-            analyzer.setDetectorNames(detectors);
-            analyzer.analyzeSingle(projectId);
-        } else if (cmd.hasOption(PROJECTLIST)) {
-            String projectList = cmd.getOptionValue(PROJECTLIST);
-            analyzer.setDetectorNames(detectors);
-            analyzer.analyzeMultiple(projectList);
-        } else {
-            analyzer.setDetectorNames(detectors);
-            analyzer.analyzeFile();
-        }
+        analyzer.setDetectorNames(detectors);
+        runAnalysis(cmd, analyzer);
     }
 
     public static void translatePrograms(CommandLine cmd) throws ParseException, IOException {
+        if (!cmd.hasOption(OUTPUT)) {
+            throw new ParseException("Output path option '" + OUTPUT + "' required");
+        }
 
-        if(!cmd.hasOption(OUTPUT)) {
-            throw new ParseException("Output path option '"+OUTPUT+"' required");
+        if (!cmd.hasOption(PROJECTPATH)) {
+            throw new ParseException("Input path option '" + PROJECTPATH + "' required");
         }
 
         String outputPath = removeEndSeparator(cmd.getOptionValue(OUTPUT));
-        if (cmd.hasOption(PROJECTID)) {
-            String projectId = cmd.getOptionValue(PROJECTID);
-            String projectOut = removeEndSeparator(cmd.getOptionValue(PROJECTOUT));
-            Scratch3Analyzer.downloadAndPrint(projectId, projectOut, outputPath);
-        } else if (cmd.hasOption(PROJECTLIST)) {
-            String projectOut = removeEndSeparator(cmd.getOptionValue(PROJECTOUT));
-            Scratch3Analyzer.downloadAndPrintMultiple(cmd.getOptionValue(PROJECTLIST), projectOut, outputPath);
-        } else if (cmd.hasOption(PROJECTPATH)) {
-            Scratch3Analyzer.printIntermediate(cmd.getOptionValue(PROJECTPATH), outputPath);
-        } else {
-            throw new ParseException("No projects specified");
-        }
+        String input = cmd.getOptionValue(PROJECTPATH);
+
+        PrintAnalyzer analyzer = new PrintAnalyzer(input, outputPath);
+        runAnalysis(cmd, analyzer);
     }
 
     public static void statsPrograms(CommandLine cmd) throws ParseException, IOException, ParsingException {
@@ -183,9 +163,11 @@ public class Main {
 
         String outputPath = removeEndSeparator(cmd.getOptionValue(OUTPUT));
         String input = cmd.getOptionValue(PROJECTPATH);
-
         MetricAnalyzer analyzer = new MetricAnalyzer(input, outputPath);
+        runAnalysis(cmd, analyzer);
+    }
 
+    public static void runAnalysis(CommandLine cmd, Analyzer analyzer) {
         if (cmd.hasOption(PROJECTID)) {
             String projectId = cmd.getOptionValue(PROJECTID);
             analyzer.analyzeSingle(projectId);
@@ -202,23 +184,38 @@ public class Main {
         CommandLineParser parser = new DefaultParser();
         try {
             CommandLine cmd = parser.parse(options, args);
-            if(cmd.hasOption(CHECK)) {
+            if (cmd.hasOption(CHECK)) {
                 checkPrograms(cmd);
-            } else if(cmd.hasOption(STATS)) {
+            } else if (cmd.hasOption(STATS)) {
                 statsPrograms(cmd);
-            } else if(cmd.hasOption(LEILA)) {
+            } else if (cmd.hasOption(LEILA)) {
                 translatePrograms(cmd);
             } else {
                 printHelp();
             }
-
-        } catch(ParseException parseException) {
-            System.err.println("Invalid option: "+parseException.getMessage());
+        } catch (ParseException parseException) {
+            System.err.println("Invalid option: " + parseException.getMessage());
             printHelp();
-        } catch(IOException ioException) {
-            System.err.println("Error while trying to read project: "+ioException.getMessage());
-        } catch(ParsingException parseException) {
-            System.err.println("Error while trying to parse project: "+parseException.getMessage());
+        } catch (IOException ioException) {
+            System.err.println("Error while trying to read project: " + ioException.getMessage());
+        } catch (ParsingException parseException) {
+            System.err.println("Error while trying to parse project: " + parseException.getMessage());
+        }
+    }
+
+    /**
+     * Removes the end separator of the path if present.
+     *
+     * @param path The path.
+     * @return The path without its end separator.
+     */
+    public static String removeEndSeparator(String path) {
+        if (path == null) {
+            return null;
+        } else if (path.endsWith("/") || path.endsWith("\\")) {
+            return path.substring(0, path.length() - 1);
+        } else {
+            return path;
         }
     }
 
