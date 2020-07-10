@@ -128,7 +128,7 @@ public class Main {
             throw new ParseException("Input path option '" + PROJECTPATH + "' required");
         }
 
-        String outputPath = removeEndSeparator(cmd.getOptionValue(OUTPUT));
+        String outputPath = cmd.getOptionValue(OUTPUT);
         String detectors = cmd.getOptionValue(DETECTORS, ALL);
         String path = cmd.getOptionValue(PROJECTPATH);
         BugAnalyzer analyzer = new BugAnalyzer(path, outputPath);
@@ -151,7 +151,7 @@ public class Main {
             throw new ParseException("Input path option '" + PROJECTPATH + "' required");
         }
 
-        String outputPath = removeEndSeparator(cmd.getOptionValue(OUTPUT));
+        String outputPath = cmd.getOptionValue(OUTPUT);
         String input = cmd.getOptionValue(PROJECTPATH);
 
         PrintAnalyzer analyzer = new PrintAnalyzer(input, outputPath);
@@ -167,7 +167,7 @@ public class Main {
             throw new ParseException("Input path option '" + PROJECTPATH + "' required");
         }
 
-        String outputPath = removeEndSeparator(cmd.getOptionValue(OUTPUT));
+        String outputPath = cmd.getOptionValue(OUTPUT);
         String input = cmd.getOptionValue(PROJECTPATH);
         MetricAnalyzer analyzer = new MetricAnalyzer(input, outputPath);
         runAnalysis(cmd, analyzer);
@@ -206,22 +206,6 @@ public class Main {
             System.err.println("Error while trying to read project: " + ioException.getMessage());
         } catch (ParsingException parseException) {
             System.err.println("Error while trying to parse project: " + parseException.getMessage());
-        }
-    }
-
-    /**
-     * Removes the end separator of the path if present.
-     *
-     * @param path The path.
-     * @return The path without its end separator.
-     */
-    public static String removeEndSeparator(String path) {
-        if (path == null) {
-            return null;
-        } else if (path.endsWith("/") || path.endsWith("\\")) {
-            return path.substring(0, path.length() - 1);
-        } else {
-            return path;
         }
     }
 
