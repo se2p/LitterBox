@@ -1,9 +1,12 @@
 package de.uni_passau.fim.se2.litterbox.analytics;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.jsonCreation.JSONFileCreator;
 import de.uni_passau.fim.se2.litterbox.report.CSVReportGenerator;
+import de.uni_passau.fim.se2.litterbox.report.CommentGenerator;
 import de.uni_passau.fim.se2.litterbox.report.ConsoleReportGenerator;
 import de.uni_passau.fim.se2.litterbox.utils.GroupConstants;
+import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -16,8 +19,8 @@ public class BugAnalyzer extends Analyzer {
 
     private static final Logger log = Logger.getLogger(BugAnalyzer.class.getName());
     private final IssueTool issueTool;
-    private Set<Issue> issues;
     private String[] detectorNames;
+    private String annotationOutput;
 
     public BugAnalyzer(String input, String output) {
         super(input, output);
@@ -41,6 +44,10 @@ public class BugAnalyzer extends Analyzer {
         }
     }
 
+    public void setAnnotationOutput(String annotationOutput) {
+        this.annotationOutput = annotationOutput;
+    }
+
     /**
      * The method for analyzing one Scratch project file (ZIP). It will produce only console output.
      *
@@ -53,7 +60,7 @@ public class BugAnalyzer extends Analyzer {
             return;
         }
 
-        issues = issueTool.check(program, GroupConstants.ALL);
+        Set<Issue> issues = issueTool.check(program, GroupConstants.ALL);
 
         // TODO: Refactor error handling
         try {
@@ -67,5 +74,25 @@ public class BugAnalyzer extends Analyzer {
         } catch (IOException e) {
             log.warning(e.getMessage());
         }
+
+        if (annotationOutput != null && !annotationOutput.isEmpty()) {
+            try {
+                CommentGenerator commentGenerator = new CommentGenerator();
+                commentGenerator.generateReport(program, issues);
+                createAnnotatedFile(fileEntry, program, annotationOutput);
+            } catch (IOException e) {
+                log.warning(e.getMessage());
+            }
+        }
+    }
+
+    private void createAnnotatedFile(File fileEntry, Program program, String annotatePath) throws IOException {
+        if ((FilenameUtils.getExtension(fileEntry.getPath())).toLowerCase().equals("json")) {
+            JSONFileCreator.writeJsonFromProgram(program, annotatePath);
+        } else {
+            JSONFileCreator.writeSb3FromProgram(program, annotatePath, fileEntry);
+        }
     }
 }
+
+
