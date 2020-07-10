@@ -46,7 +46,8 @@ public class JSONFileCreator {
     public static void writeJsonFromProgram(Program program, String output) {
         String jsonString = JSONStringCreator.createProgramJSONString(program);
 
-        try (PrintWriter out = new PrintWriter(output + program.getIdent().getName() + "_annotated.json")) {
+        Path outPath = Paths.get(output, program.getIdent().getName() + "_annotated.json");
+        try (PrintWriter out = new PrintWriter(outPath.toString())) {
             out.println(jsonString);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
