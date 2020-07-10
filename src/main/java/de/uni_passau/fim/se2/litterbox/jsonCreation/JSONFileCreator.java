@@ -27,8 +27,10 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
-
-import java.nio.file.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.Arrays;
 
 
@@ -46,7 +48,8 @@ public class JSONFileCreator {
     public static void writeJsonFromProgram(Program program, String output) {
         String jsonString = JSONStringCreator.createProgramJSONString(program);
 
-        try (PrintWriter out = new PrintWriter(output + program.getIdent().getName() + "_annotated.json")) {
+        Path outPath = Paths.get(output, program.getIdent().getName() + "_annotated.json");
+        try (PrintWriter out = new PrintWriter(outPath.toString())) {
             out.println(jsonString);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -56,7 +59,7 @@ public class JSONFileCreator {
     public static void writeSb3FromProgram(Program program, String output, File file) throws IOException {
         String jsonString = JSONStringCreator.createProgramJSONString(program);
 
-        String destinationPath = output + program.getIdent().getName() + "_annotated.sb3";
+        String destinationPath = Paths.get(output, program.getIdent().getName() + "_annotated.sb3").toString();
         Path tmp = Files.createTempDirectory("litterbox_");
 
         try (PrintWriter out = new PrintWriter(program.getIdent().getName() + "_annotated.json")) {

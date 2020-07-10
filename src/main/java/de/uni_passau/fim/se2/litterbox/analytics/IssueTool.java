@@ -18,15 +18,14 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics;
 
-import static de.uni_passau.fim.se2.litterbox.utils.GroupConstants.*;
-
-
 import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.*;
 import de.uni_passau.fim.se2.litterbox.analytics.smells.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import java.util.*;
+
+import static de.uni_passau.fim.se2.litterbox.utils.GroupConstants.*;
 
 /**
  * Holds all IssueFinder and executes them.
@@ -87,23 +86,42 @@ public class IssueTool {
      *
      * @param program the project to check
      */
+    public Set<Issue> check(Program program, String[] detectors) {
+        Preconditions.checkNotNull(program);
+        Set<Issue> issues = new LinkedHashSet<>();
+        for (String s : detectors) {
+            // TODO: Why reconstruct this map all the time...
+            if (getAllFinder().containsKey(s)) {
+                IssueFinder iF = getAllFinder().get(s);
+                issues.addAll(iF.check(program));
+            }
+        }
+        return issues;
+    }
+
+    /**
+     * FIXME REMOVE ME AFTER SCRATCH3ANALYZER IS REMOVED
+     * Executes all checks
+     *
+     * @param program the project to check
+     */
     public Set<Issue> check(Program program, String dtctrs) {
         Preconditions.checkNotNull(program);
         Set<Issue> issues = new LinkedHashSet<>();
         String[] detectors;
         switch (dtctrs) {
-        case ALL:
-            detectors = getAllFinder().keySet().toArray(new String[0]);
-            break;
-        case BUGS:
-            detectors = getBugFinder().keySet().toArray(new String[0]);
-            break;
-        case SMELLS:
-            detectors = getSmellFinder().keySet().toArray(new String[0]);
-            break;
-        default:
-            detectors = dtctrs.split(",");
-            break;
+            case ALL:
+                detectors = getAllFinder().keySet().toArray(new String[0]);
+                break;
+            case BUGS:
+                detectors = getBugFinder().keySet().toArray(new String[0]);
+                break;
+            case SMELLS:
+                detectors = getSmellFinder().keySet().toArray(new String[0]);
+                break;
+            default:
+                detectors = dtctrs.split(",");
+                break;
         }
         for (String s : detectors) {
             // TODO: Why reconstruct this map all the time...
