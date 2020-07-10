@@ -20,11 +20,11 @@ package de.uni_passau.fim.se2.litterbox;
 
 import de.uni_passau.fim.se2.litterbox.analytics.BugAnalyzer;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueTool;
+import de.uni_passau.fim.se2.litterbox.analytics.MetricAnalyzer;
 import de.uni_passau.fim.se2.litterbox.analytics.Scratch3Analyzer;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import org.apache.commons.cli.*;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Locale;
 import java.util.ResourceBundle;
@@ -128,6 +128,10 @@ public class Main {
     }
 
     public static void checkPrograms(CommandLine cmd) throws ParseException, IOException {
+        if (!cmd.hasOption(PROJECTPATH)) {
+            throw new ParseException("Input path option '" + PROJECTPATH + "' required");
+        }
+
         String outputPath = removeEndSeparator(cmd.getOptionValue(OUTPUT));
         String detectors = cmd.getOptionValue(DETECTORS, ALL);
         String path = cmd.getOptionValue(PROJECTPATH);
@@ -141,11 +145,9 @@ public class Main {
             String projectList = cmd.getOptionValue(PROJECTLIST);
             analyzer.setDetectorNames(detectors);
             analyzer.analyzeMultiple(projectList);
-        } else if (cmd.hasOption(PROJECTPATH)) {
+        } else {
             analyzer.setDetectorNames(detectors);
             analyzer.analyzeFile();
-        } else {
-            throw new ParseException("No projects specified");
         }
     }
 
@@ -171,26 +173,27 @@ public class Main {
     }
 
     public static void statsPrograms(CommandLine cmd) throws ParseException, IOException, ParsingException {
-        if(!cmd.hasOption(OUTPUT)) {
-            throw new ParseException("Output path option '"+OUTPUT+"' required");
+        if (!cmd.hasOption(OUTPUT)) {
+            throw new ParseException("Output path option '" + OUTPUT + "' required");
         }
+
+        if (!cmd.hasOption(PROJECTPATH)) {
+            throw new ParseException("Input path option '" + PROJECTPATH + "' required");
+        }
+
         String outputPath = removeEndSeparator(cmd.getOptionValue(OUTPUT));
+        String input = cmd.getOptionValue(PROJECTPATH);
+
+        MetricAnalyzer analyzer = new MetricAnalyzer(input, outputPath);
 
         if (cmd.hasOption(PROJECTID)) {
             String projectId = cmd.getOptionValue(PROJECTID);
-            Scratch3Analyzer.downloadAndStats(projectId, cmd.getOptionValue(PROJECTOUT), outputPath);
-
+            analyzer.analyzeSingle(projectId);
         } else if (cmd.hasOption(PROJECTLIST)) {
-            Scratch3Analyzer.downloadAndStatsMultiple(
-                    cmd.getOptionValue(PROJECTLIST),
-                    cmd.getOptionValue(PROJECTOUT),
-                    outputPath);
-
-        } else if (cmd.hasOption(PROJECTPATH)) {
-            File folder = new File(cmd.getOptionValue(PROJECTPATH));
-            Scratch3Analyzer.statsProject(outputPath, folder);
+            String projectList = cmd.getOptionValue(PROJECTLIST);
+            analyzer.analyzeMultiple(projectList);
         } else {
-            throw new ParseException("No projects specified");
+            analyzer.analyzeFile();
         }
     }
 

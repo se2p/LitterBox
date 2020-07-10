@@ -43,46 +43,6 @@ public class Scratch3Analyzer {
     private static final Logger log = Logger.getLogger(Scratch3Analyzer.class.getName());
     private static final String INTERMEDIATE_EXTENSION = ".sc";
 
-    public static void statsProject(String output, File file) throws IOException {
-        if (file.exists() && file.isDirectory()) {
-            statsMultipleScratch3(file, output);
-        } else if (file.exists() && !file.isDirectory()) {
-            statsSingleScratch3(file, output);
-        } else {
-            log.info("Folder or file '" + file.getName() + "' does not exist");
-        }
-    }
-
-    private static void statsSingleScratch3(File fileEntry, String csv) throws IOException {
-        Program program = extractProgram(fileEntry);
-        MetricAnalyzer analyzer = new MetricAnalyzer();
-        analyzer.createCSVFile(program, csv);
-    }
-
-    private static void statsMultipleScratch3(File folder, String csv) throws IOException {
-
-        for (final File fileEntry : Objects.requireNonNull(folder.listFiles())) {
-            if (!fileEntry.isDirectory()) {
-                log.info("Start: " + fileEntry.getName());
-                Program program = extractProgram(fileEntry);
-                MetricAnalyzer analyzer = new MetricAnalyzer();
-                analyzer.createCSVFile(program, csv);
-                log.info("Finished: " + fileEntry.getName());
-            }
-        }
-    }
-
-    public static void statsDownloaded(String json, String projectName, String csv) throws ParsingException, IOException {
-
-        ObjectMapper mapper = new ObjectMapper();
-        JsonNode projectNode = mapper.readTree(json);
-        Program program = ProgramParser.parseProgram(projectName, projectNode);
-
-        MetricAnalyzer analyzer = new MetricAnalyzer();
-        analyzer.createCSVFile(program, csv);
-    }
-
-
     private static Program extractProgram(File fileEntry) {
         ObjectMapper mapper = new ObjectMapper();
         Program program = null;
@@ -114,36 +74,6 @@ public class Scratch3Analyzer {
         return program;
     }
 
-
-    public static void downloadAndStats(String projectid, String outfolder, String resultpath) throws IOException, ParsingException {
-        String json = Downloader.downloadAndSaveProject(projectid, outfolder);
-        Scratch3Analyzer.statsDownloaded(json, projectid, resultpath);
-    }
-
-    /**
-     * Downloads all projects with the ids in a file at the given path.
-     *
-     * <p>
-     * The file at the given path is expected to contain a list of project ids.
-     * The projects are then downloaded, stored and analyzed.
-     *
-     * @param projectListPath Path to the file with project ids.
-     * @param outfolder       Folder in which the project file will be stored
-     * @param resultpath      Path where the outputfile will be stored
-     */
-    public static void downloadAndStatsMultiple(String projectListPath,
-                                                  String outfolder,
-                                                  String resultpath) throws IOException, ParsingException {
-        File file = new File(projectListPath);
-        BufferedReader br = new BufferedReader(new FileReader(file, StandardCharsets.UTF_8));
-        String line = br.readLine();
-        while (line != null) {
-            line = line.trim();
-            downloadAndStats(line, outfolder, resultpath);
-            line = br.readLine();
-        }
-        br.close();
-    }
     /**
      * Prints the project given at {@code path} in the intermediate language.
      *
