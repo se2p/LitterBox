@@ -809,6 +809,11 @@ public class ScratchBlocksVisitor extends PrintVisitor {
     }
 
     @Override
+    public void visit(Answer node) {
+        emitNoSpace("(answer)");
+    }
+
+    @Override
     public void visit(MousePos node) {
         emitNoSpace("mouse-pointer");
     }
@@ -900,6 +905,8 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         if(node.getOperand1() instanceof SingularExpression) {
             node.getOperand1().accept(this);
         } else if(node.getOperand1() instanceof BoolExpr) {
+            node.getOperand1().accept(this);
+        } else if(node.getOperand1() instanceof NumExpr) {
             node.getOperand1().accept(this);
         } else {
             emitNoSpace("(");
@@ -1036,8 +1043,41 @@ public class ScratchBlocksVisitor extends PrintVisitor {
     }
 
     @Override
+    public void visit(StringContains node) {
+        emitNoSpace("<");
+        node.getContaining().accept(this);
+        emitNoSpace(" contains ");
+        node.getContained().accept(this);
+        emitNoSpace("?>");
+    }
+
+    @Override
     public void visit(UnspecifiedBoolExpr node) {
         emitNoSpace("<>");
+    }
+
+    @Override
+    public void visit(Join node) {
+        emitNoSpace("(join ");
+        node.getOperand1().accept(this);
+        node.getOperand2().accept(this);
+        emitNoSpace(")");
+    }
+
+    @Override
+    public void visit(LetterOf node) {
+        emitNoSpace("(letter ");
+        node.getNum().accept(this);
+        emitNoSpace(" of ");
+        node.getStringExpr().accept(this);
+        emitNoSpace(")");
+    }
+
+    @Override
+    public void visit(LengthOfString node) {
+        emitNoSpace("(length of ");
+        node.getStringExpr().accept(this);
+        emitNoSpace(")");
     }
 
     @Override
