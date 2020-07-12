@@ -119,4 +119,28 @@ public class ScratchBlocksVisitorTest {
                 "reset timer\n" +
                 "[/scratchblocks]\n", result);
     }
+
+    @Test
+    public void testVariableBlocks() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/scratchblocks/variableblocks.json");
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        PrintStream ps = new PrintStream(os);
+        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(ps);
+        program.accept(visitor);
+        String result = os.toString();
+        assertEquals("[scratchblocks]\n" +
+                "when green flag clicked\n" +
+                "set [my variable v] to (0)\n" +
+                "change [my variable v] by (1)\n" +
+                "show variable [my variable v]\n" +
+                "hide variable [my variable v]\n" +
+                "add [thing] to [foo v]\n" +
+                "delete (1) of [foo v]\n" +
+                "delete all of [foo v]\n" +
+                "insert [thing] at (1) of [foo v]\n" +
+                "replace item (1) of [foo v] with [thing]\n" +
+                "show list [foo v]\n" +
+                "hide list [foo v]\n" +
+                "[/scratchblocks]\n", result);
+    }
 }
