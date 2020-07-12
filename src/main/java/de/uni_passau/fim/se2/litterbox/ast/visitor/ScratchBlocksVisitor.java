@@ -19,15 +19,13 @@
 package de.uni_passau.fim.se2.litterbox.ast.visitor;
 
 
-import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
-import de.uni_passau.fim.se2.litterbox.ast.model.Key;
-import de.uni_passau.fim.se2.litterbox.ast.model.Message;
-import de.uni_passau.fim.se2.litterbox.ast.model.Script;
+import de.uni_passau.fim.se2.litterbox.ast.model.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.Next;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.Prev;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.Random;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.WithExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.SingularExpression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
@@ -45,6 +43,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.position.RandomPos;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterDefinitionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
+import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinitionList;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.*;
@@ -66,6 +66,7 @@ import de.uni_passau.fim.se2.litterbox.ast.opcodes.ProcedureOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
 import de.uni_passau.fim.se2.litterbox.jsonCreation.BlockJsonCreatorHelper;
 
+import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.List;
 
@@ -91,6 +92,8 @@ public class ScratchBlocksVisitor extends PrintVisitor {
 
     private boolean inScript = false;
 
+    private boolean hasContent = false;
+
     private ActorDefinition currentActor = null;
 
     public ScratchBlocksVisitor(PrintStream stream) {
@@ -105,21 +108,37 @@ public class ScratchBlocksVisitor extends PrintVisitor {
     }
 
     @Override
+    public void visit(ProcedureDefinitionList node) {
+        for(ProcedureDefinition procedureDefinition : node.getList()) {
+            if(hasContent) {
+                newLine();
+            }
+            procedureDefinition.accept(this);
+            hasContent = true;
+        }
+    }
+
+    @Override
+    public void visit(ScriptList node) {
+        for(Script script : node.getScriptList()) {
+            if(hasContent) {
+                newLine();
+            }
+            script.accept(this);
+            hasContent = true;
+        }
+    }
+
+    @Override
     public void visit(Script script) {
-        emitNoSpace("[scratchblocks]");
         inScript = true;
-        newLine();
         super.visit(script);
-        emitNoSpace("[/scratchblocks]");
         inScript = false;
-        newLine();
     }
 
     @Override
     public void visit(ProcedureDefinition node) {
-        emitNoSpace("[scratchblocks]");
         inScript = true;
-        newLine();
         emitNoSpace("define ");
         String actorName = currentActor.getIdent().getName();
         String procedureName = ProgramParser.procDefMap.getProcedures().get(actorName).get(node.getIdent()).getName();
@@ -133,21 +152,9 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         emitNoSpace(procedureName);
         newLine();
         visit(node.getStmtList());
-        emitNoSpace("[/scratchblocks]");
         inScript = false;
-        newLine();
     }
 
-    private String getParameterName(ParameterDefinition node) {
-        if (node.getType() instanceof StringType) {
-            return "[" + node.getIdent().getName() + "]";
-        } else if (node.getType() instanceof NumberType) {
-            return "(" + node.getIdent().getName() + ")";
-        } else if (node.getType() instanceof BooleanType) {
-            return "<" + node.getIdent().getName() + ">";
-        }
-        throw new IllegalArgumentException("Unknown type: "+node.getType());
-    }
 
     //---------------------------------------------------------------
     // Event blocks
@@ -201,7 +208,6 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         node.getValue().accept(this);
         newLine();
     }
-
 
     @Override
     public void visit(Broadcast node) {
@@ -1344,13 +1350,28 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         }
         emitNoSpace(strId.getName());
     }
-//
-//    @Override
-//    public void visit(BoolLiteral boolLiteral) {
-//        emitToken(String.valueOf(boolLiteral.getValue()));
-//    }
 
+    @Override
+    public void visit(CallStmt node) {
+        String procedureName = node.getIdent().getName();
+        List<Expression> parameters = node.getExpressions().getExpressions();
+        for(Expression param : parameters) {
+            int nextIndex = procedureName.indexOf('%');
+            procedureName = procedureName.substring(0, nextIndex) + getParameterName(param) + procedureName.substring(nextIndex + 2);
+        }
+        emitNoSpace(procedureName);
+        newLine();
+    }
 
+    public void begin() {
+        emitNoSpace("[scratchblocks]");
+        newLine();
+    }
+
+    public void end() {
+        emitNoSpace("[/scratchblocks]");
+        newLine();
+    }
 
     // TODO: This is a dummy for now
     public String getScratchBlocks() {
@@ -1358,5 +1379,28 @@ public class ScratchBlocksVisitor extends PrintVisitor {
                 "when green flag clicked\n" +
                 "todo\n" +
                 "[/scratchblocks]\n";
+    }
+
+
+    private String getParameterName(ParameterDefinition node) {
+        if (node.getType() instanceof StringType) {
+            return "[" + node.getIdent().getName() + "]";
+        } else if (node.getType() instanceof NumberType) {
+            return "(" + node.getIdent().getName() + ")";
+        } else if (node.getType() instanceof BooleanType) {
+            return "<" + node.getIdent().getName() + ">";
+        }
+        throw new IllegalArgumentException("Unknown type: "+node.getType());
+    }
+
+    private String getParameterName(Expression node) {
+        // FIXME: Terrible hack
+        PrintStream origStream = printStream;
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        printStream = new PrintStream(os);
+        node.accept(this);
+        String name = os.toString();
+        printStream = origStream;
+        return name;
     }
 }
