@@ -31,7 +31,9 @@ public class ScratchBlocksVisitorTest {
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         PrintStream ps = new PrintStream(os);
         ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(ps);
+        visitor.begin();
         program.accept(visitor);
+        visitor.end();
         String result = os.toString();
         assertEquals("[scratchblocks]\n" +
                 "when green flag clicked\n" +
@@ -59,7 +61,9 @@ public class ScratchBlocksVisitorTest {
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         PrintStream ps = new PrintStream(os);
         ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(ps);
+        visitor.begin();
         program.accept(visitor);
+        visitor.end();
         String result = os.toString();
         assertEquals("[scratchblocks]\n" +
                 "when green flag clicked\n" +
@@ -89,7 +93,9 @@ public class ScratchBlocksVisitorTest {
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         PrintStream ps = new PrintStream(os);
         ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(ps);
+        visitor.begin();
         program.accept(visitor);
+        visitor.end();
         String result = os.toString();
         assertEquals("[scratchblocks]\n" +
                 "when green flag clicked\n" +
@@ -110,7 +116,9 @@ public class ScratchBlocksVisitorTest {
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         PrintStream ps = new PrintStream(os);
         ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(ps);
+        visitor.begin();
         program.accept(visitor);
+        visitor.end();
         String result = os.toString();
         assertEquals("[scratchblocks]\n" +
                 "when [loudness v] > (10)\n" +
@@ -127,7 +135,9 @@ public class ScratchBlocksVisitorTest {
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         PrintStream ps = new PrintStream(os);
         ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(ps);
+        visitor.begin();
         program.accept(visitor);
+        visitor.end();
         String result = os.toString();
         assertEquals("[scratchblocks]\n" +
                 "when green flag clicked\n" +
@@ -143,7 +153,9 @@ public class ScratchBlocksVisitorTest {
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         PrintStream ps = new PrintStream(os);
         ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(ps);
+        visitor.begin();
         program.accept(visitor);
+        visitor.end();
         String result = os.toString();
         assertEquals("[scratchblocks]\n" +
                 "when green flag clicked\n" +
@@ -167,7 +179,9 @@ public class ScratchBlocksVisitorTest {
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         PrintStream ps = new PrintStream(os);
         ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(ps);
+        visitor.begin();
         program.accept(visitor);
+        visitor.end();
         String result = os.toString();
         assertEquals("[scratchblocks]\n" +
                 "when green flag clicked\n" +
@@ -195,7 +209,9 @@ public class ScratchBlocksVisitorTest {
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         PrintStream ps = new PrintStream(os);
         ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(ps);
+        visitor.begin();
         program.accept(visitor);
+        visitor.end();
         String result = os.toString();
         assertEquals("[scratchblocks]\n" +
                 "when I receive [message1 v]\n" +
@@ -210,7 +226,9 @@ public class ScratchBlocksVisitorTest {
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         PrintStream ps = new PrintStream(os);
         ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(ps);
+        visitor.begin();
         program.accept(visitor);
+        visitor.end();
         String result = os.toString();
         assertEquals("[scratchblocks]\n" +
                 "when I start as a clone \n" +
@@ -226,7 +244,9 @@ public class ScratchBlocksVisitorTest {
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         PrintStream ps = new PrintStream(os);
         ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(ps);
+        visitor.begin();
         program.accept(visitor);
+        visitor.end();
         String result = os.toString();
         assertEquals("[scratchblocks]\n" +
                 "when backdrop switches to [backdrop1 v]\n" +
@@ -246,7 +266,9 @@ public class ScratchBlocksVisitorTest {
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         PrintStream ps = new PrintStream(os);
         ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(ps);
+        visitor.begin();
         program.accept(visitor);
+        visitor.end();
         String result = os.toString();
         assertEquals("[scratchblocks]\n" +
                 "when [timer v] > (10)\n" +
@@ -261,7 +283,9 @@ public class ScratchBlocksVisitorTest {
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         PrintStream ps = new PrintStream(os);
         ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(ps);
+        visitor.begin();
         program.accept(visitor);
+        visitor.end();
         String result = os.toString();
         assertEquals("[scratchblocks]\n" +
                 "when green flag clicked\n" +
@@ -294,7 +318,9 @@ public class ScratchBlocksVisitorTest {
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         PrintStream ps = new PrintStream(os);
         ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(ps);
+        visitor.begin();
         program.accept(visitor);
+        visitor.end();
         String result = os.toString();
         assertEquals("[scratchblocks]\n" +
                 "when green flag clicked\n" +
@@ -322,7 +348,9 @@ public class ScratchBlocksVisitorTest {
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         PrintStream ps = new PrintStream(os);
         ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(ps);
+        visitor.begin();
         program.accept(visitor);
+        visitor.end();
         String result = os.toString();
         assertEquals("[scratchblocks]\n" +
                 "when green flag clicked\n" +
@@ -342,7 +370,9 @@ public class ScratchBlocksVisitorTest {
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         PrintStream ps = new PrintStream(os);
         ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(ps);
+        visitor.begin();
         program.accept(visitor);
+        visitor.end();
         String result = os.toString();
         assertEquals("[scratchblocks]\n" +
                 "when green flag clicked\n" +
@@ -374,7 +404,9 @@ public class ScratchBlocksVisitorTest {
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         PrintStream ps = new PrintStream(os);
         ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(ps);
+        visitor.begin();
         program.accept(visitor);
+        visitor.end();
         String result = os.toString();
         assertEquals("[scratchblocks]\n" +
                 "when green flag clicked\n" +
@@ -392,7 +424,9 @@ public class ScratchBlocksVisitorTest {
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         PrintStream ps = new PrintStream(os);
         ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(ps);
+        visitor.begin();
         program.accept(visitor);
+        visitor.end();
         String result = os.toString();
         assertEquals("[scratchblocks]\n" +
                 "when green flag clicked\n" +
@@ -411,7 +445,9 @@ public class ScratchBlocksVisitorTest {
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         PrintStream ps = new PrintStream(os);
         ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(ps);
+        visitor.begin();
         program.accept(visitor);
+        visitor.end();
         String result = os.toString();
         assertEquals("[scratchblocks]\n" +
                 "define fun_noargs\n" +
@@ -425,7 +461,9 @@ public class ScratchBlocksVisitorTest {
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         PrintStream ps = new PrintStream(os);
         ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(ps);
+        visitor.begin();
         program.accept(visitor);
+        visitor.end();
         String result = os.toString();
         assertEquals("[scratchblocks]\n" +
                 "define fun_numarg [num_param]\n" +
@@ -439,7 +477,9 @@ public class ScratchBlocksVisitorTest {
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         PrintStream ps = new PrintStream(os);
         ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(ps);
+        visitor.begin();
         program.accept(visitor);
+        visitor.end();
         String result = os.toString();
         assertEquals("[scratchblocks]\n" +
                 "define fun_numarg <boolean_param>\n" +
@@ -453,12 +493,34 @@ public class ScratchBlocksVisitorTest {
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         PrintStream ps = new PrintStream(os);
         ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(ps);
+        visitor.begin();
         program.accept(visitor);
+        visitor.end();
         String result = os.toString();
         assertEquals("[scratchblocks]\n" +
                 "define fun_numarg <boolean_param> [num_param] label\n" +
                 "say <boolean_param>\n" +
                 "say (num_param)\n" +
+                "[/scratchblocks]\n", result);
+    }
+
+    @Test
+    public void testCustomBlockCall() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/scratchblocks/customblock5.json");
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        PrintStream ps = new PrintStream(os);
+        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(ps);
+        visitor.begin();
+        program.accept(visitor);
+        visitor.end();
+        String result = os.toString();
+        assertEquals("[scratchblocks]\n" +
+                "define fun_numarg <boolean_param> [num_param] label\n" +
+                "say <boolean_param>\n" +
+                "say (num_param)\n" +
+                "\n" +
+                "when green flag clicked\n" +
+                "fun_numarg (username) <mouse down?> label\n" +
                 "[/scratchblocks]\n", result);
     }
 }
