@@ -248,6 +248,43 @@ public class ScratchBlocksVisitorTest {
         ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(ps);
         program.accept(visitor);
         String result = os.toString();
-        System.out.println(result);
+        assertEquals("[scratchblocks]\n" +
+                "when [timer v] > (10)\n" +
+                "say (timer) for (timer) seconds\n" +
+                "reset timer\n" +
+                "[/scratchblocks]\n", result);
+    }
+
+    @Test
+    public void testArithmeticBlocks() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/scratchblocks/arithmeticblocks.json");
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        PrintStream ps = new PrintStream(os);
+        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(ps);
+        program.accept(visitor);
+        String result = os.toString();
+        assertEquals("[scratchblocks]\n" +
+                "when green flag clicked\n" +
+                "set [x v] to (0)\n" +
+                "set [y v] to (0)\n" +
+                "set [z v] to ((x)+(y))\n" +
+                "say (z)\n" +
+                "set [z v] to ((x)-(y))\n" +
+                "say (z)\n" +
+                "set [z v] to ((x)*(y))\n" +
+                "say (z)\n" +
+                "set [z v] to ((x)/(y))\n" +
+                "say (z)\n" +
+                "set [z v] to (round (x))\n" +
+                "say (z)\n" +
+                "set [z v] to (pick random (1) to (10))\n" +
+                "say (z)\n" +
+                "set [z v] to ((x) mod (y))\n" +
+                "say (z)\n" +
+                "set [z v] to ([abs v] of (x))\n" +
+                "say (z)\n" +
+                "set [z v] to (((x)-(z))+([abs v] of (x)))\n" +
+                "say (z)\n" +
+                "[/scratchblocks]\n", result);
     }
 }
