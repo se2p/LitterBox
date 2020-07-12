@@ -26,6 +26,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.Prev;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.Random;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.WithExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.Timer;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.Volume;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.FixedAttribute;
@@ -803,6 +804,10 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         emitNoSpace("(volume)");
     }
 
+    @Override
+    public void visit(Timer node) {
+        emitNoSpace("(timer)");
+    }
 
     @Override
     public void visit(MousePos node) {
