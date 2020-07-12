@@ -523,7 +523,6 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         node.getNum().accept(this);
         emitNoSpace(") layers");
         newLine();
-
     }
 
 
@@ -532,35 +531,67 @@ public class ScratchBlocksVisitor extends PrintVisitor {
 
     @Override
     public void visit(PlaySoundUntilDone node) {
-
+        emitNoSpace("play sound (");
+        node.getElementChoice().accept(this);
+        emitNoSpace(" v) until done");
+        newLine();
     }
 
     @Override
-    public void visit(SoundEffect node) {
-
+    public void visit(StartSound node) {
+        emitNoSpace("start sound (");
+        node.getElementChoice().accept(this);
+        emitNoSpace(" v)");
+        newLine();
     }
 
     @Override
     public void visit(StopAllSounds node) {
-
+        emitNoSpace("stop all sounds");
+        newLine();
     }
 
     @Override
     public void visit(ChangeSoundEffectBy node) {
-
+        emitNoSpace("change [");
+        node.getEffect().accept(this);
+        emitNoSpace(" v] effect by (");
+        node.getValue().accept(this);
+        emitNoSpace(")");
+        newLine();
     }
 
     @Override
     public void visit(SetSoundEffectTo node) {
-
+        emitNoSpace("set [");
+        node.getEffect().accept(this);
+        emitNoSpace(" v] effect to (");
+        node.getValue().accept(this);
+        emitNoSpace(")");
+        newLine();
     }
 
     @Override
     public void visit(ClearSoundEffects node) {
-
+        emitNoSpace("clear sound effects");
+        newLine();
     }
 
+    @Override
+    public void visit(ChangeVolumeBy node) {
+        emitNoSpace("change volume by (");
+        node.getVolumeValue().accept(this);
+        emitNoSpace(")");
+        newLine();
+    }
 
+    @Override
+    public void visit(SetVolumeTo node) {
+        emitNoSpace("set volume to (");
+        node.getVolumeValue().accept(this);
+        emitNoSpace(") %");
+        newLine();
+    }
 
     //---------------------------------------------------------------
     // Sensing blocks
@@ -679,6 +710,11 @@ public class ScratchBlocksVisitor extends PrintVisitor {
 
     @Override
     public void visit(GraphicEffect node) {
+        emitNoSpace(node.getToken());
+    }
+
+    @Override
+    public void visit(SoundEffect node) {
         emitNoSpace(node.getToken());
     }
 
