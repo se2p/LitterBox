@@ -143,4 +143,31 @@ public class ScratchBlocksVisitorTest {
                 "hide list [foo v]\n" +
                 "[/scratchblocks]\n", result);
     }
+
+    @Test
+    public void testControlBlocks() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/scratchblocks/controlblocks.json");
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        PrintStream ps = new PrintStream(os);
+        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(ps);
+        program.accept(visitor);
+        String result = os.toString();
+        assertEquals("[scratchblocks]\n" +
+                "when green flag clicked\n" +
+                "wait (1) seconds\n" +
+                "repeat (10)\n" +
+                "end\n" +
+                "if <> then\n" +
+                "end\n" +
+                "if <> then\n" +
+                "else\n" +
+                "end\n" +
+                "wait until <>\n" +
+                "repeat until <>\n" +
+                "forever \n" +
+                "end\n" +
+                "end\n" +
+                "stop [all v]\n" +
+                "[/scratchblocks]\n", result);
+    }
 }
