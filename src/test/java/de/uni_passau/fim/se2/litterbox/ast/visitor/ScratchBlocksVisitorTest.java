@@ -404,4 +404,61 @@ public class ScratchBlocksVisitorTest {
                 "wait until <[foo v] contains [thing] ?>\n" +
                 "[/scratchblocks]\n", result);
     }
+
+    @Test
+    public void testCustomBlockNoArgs() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/scratchblocks/customblock1.json");
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        PrintStream ps = new PrintStream(os);
+        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(ps);
+        program.accept(visitor);
+        String result = os.toString();
+        assertEquals("[scratchblocks]\n" +
+                "define fun_noargs\n" +
+                "say [Hello!]\n" +
+                "[/scratchblocks]\n", result);
+    }
+
+    @Test
+    public void testCustomBlockNumArg() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/scratchblocks/customblock2.json");
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        PrintStream ps = new PrintStream(os);
+        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(ps);
+        program.accept(visitor);
+        String result = os.toString();
+        assertEquals("[scratchblocks]\n" +
+                "define fun_numarg [num_param]\n" +
+                "say (num_param)\n" +
+                "[/scratchblocks]\n", result);
+    }
+
+    @Test
+    public void testCustomBlockBooleanArg() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/scratchblocks/customblock3.json");
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        PrintStream ps = new PrintStream(os);
+        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(ps);
+        program.accept(visitor);
+        String result = os.toString();
+        assertEquals("[scratchblocks]\n" +
+                "define fun_numarg <boolean_param>\n" +
+                "say <boolean_param>\n" +
+                "[/scratchblocks]\n", result);
+    }
+
+    @Test
+    public void testCustomBlockMultipleArgs() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/scratchblocks/customblock4.json");
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        PrintStream ps = new PrintStream(os);
+        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(ps);
+        program.accept(visitor);
+        String result = os.toString();
+        assertEquals("[scratchblocks]\n" +
+                "define fun_numarg <boolean_param> [num_param] label\n" +
+                "say <boolean_param>\n" +
+                "say (num_param)\n" +
+                "[/scratchblocks]\n", result);
+    }
 }
