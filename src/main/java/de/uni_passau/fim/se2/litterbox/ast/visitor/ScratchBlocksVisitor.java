@@ -19,6 +19,7 @@
 package de.uni_passau.fim.se2.litterbox.ast.visitor;
 
 
+import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Key;
 import de.uni_passau.fim.se2.litterbox.ast.model.Message;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
@@ -37,8 +38,13 @@ import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.ColorLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.MousePos;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.RandomPos;
+import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterDefinition;
+import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterDefinitionList;
+import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.*;
@@ -52,12 +58,16 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopThisS
 import de.uni_passau.fim.se2.litterbox.ast.model.timecomp.TimeComp;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.Edge;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.MousePointer;
-import de.uni_passau.fim.se2.litterbox.ast.model.touchable.SpriteTouchable;
-import de.uni_passau.fim.se2.litterbox.ast.model.touchable.Touchable;
-import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.Color;
+import de.uni_passau.fim.se2.litterbox.ast.model.type.BooleanType;
+import de.uni_passau.fim.se2.litterbox.ast.model.type.NumberType;
+import de.uni_passau.fim.se2.litterbox.ast.model.type.StringType;
+import de.uni_passau.fim.se2.litterbox.ast.model.variable.Parameter;
+import de.uni_passau.fim.se2.litterbox.ast.opcodes.ProcedureOpcode;
+import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
 import de.uni_passau.fim.se2.litterbox.jsonCreation.BlockJsonCreatorHelper;
 
 import java.io.PrintStream;
+import java.util.List;
 
 /*
  * Documentation of syntax:
@@ -81,8 +91,17 @@ public class ScratchBlocksVisitor extends PrintVisitor {
 
     private boolean inScript = false;
 
+    private ActorDefinition currentActor = null;
+
     public ScratchBlocksVisitor(PrintStream stream) {
         super(stream);
+    }
+
+    @Override
+    public void visit(ActorDefinition node) {
+        currentActor = node;
+        super.visit(node);
+        currentActor = null;
     }
 
     @Override
@@ -94,6 +113,40 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         emitNoSpace("[/scratchblocks]");
         inScript = false;
         newLine();
+    }
+
+    @Override
+    public void visit(ProcedureDefinition node) {
+        emitNoSpace("[scratchblocks]");
+        inScript = true;
+        newLine();
+        emitNoSpace("define ");
+        String actorName = currentActor.getIdent().getName();
+        String procedureName = ProgramParser.procDefMap.getProcedures().get(actorName).get(node.getIdent()).getName();
+
+        List<ParameterDefinition> parameters = node.getParameterDefinitionList().getParameterDefinitions();
+        for(ParameterDefinition param : parameters) {
+            int nextIndex = procedureName.indexOf('%');
+            procedureName = procedureName.substring(0, nextIndex) + getParameterName(param) + procedureName.substring(nextIndex + 2);
+        }
+
+        emitNoSpace(procedureName);
+        newLine();
+        visit(node.getStmtList());
+        emitNoSpace("[/scratchblocks]");
+        inScript = false;
+        newLine();
+    }
+
+    private String getParameterName(ParameterDefinition node) {
+        if (node.getType() instanceof StringType) {
+            return "[" + node.getIdent().getName() + "]";
+        } else if (node.getType() instanceof NumberType) {
+            return "(" + node.getIdent().getName() + ")";
+        } else if (node.getType() instanceof BooleanType) {
+            return "<" + node.getIdent().getName() + ">";
+        }
+        throw new IllegalArgumentException("Unknown type: "+node.getType());
     }
 
     //---------------------------------------------------------------
@@ -812,7 +865,6 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         emitNoSpace(")");
     }
 
-
     @Override
     public void visit(AttributeOf node) {
         emitNoSpace("([");
@@ -1037,6 +1089,20 @@ public class ScratchBlocksVisitor extends PrintVisitor {
             node.getOperand1().accept(this);
         } else if(node.getOperand1() instanceof NumExpr) {
             node.getOperand1().accept(this);
+        } else if(node.getOperand1() instanceof Parameter) {
+            NonDataBlockMetadata metadata = (NonDataBlockMetadata)((Parameter) node.getOperand1()).getMetadata();
+            if(ProcedureOpcode.argument_reporter_boolean.name().equals(metadata.getOpcode())) {
+                emitNoSpace("<");
+                node.getOperand1().accept(this);
+                emitNoSpace(">");
+            } else if(ProcedureOpcode.argument_reporter_string_number.name().equals(metadata.getOpcode())) {
+                emitNoSpace("(");
+                node.getOperand1().accept(this);
+                emitNoSpace(")");
+            } else {
+                assert(false);
+            }
+
         } else {
             emitNoSpace("(");
             node.getOperand1().accept(this);
@@ -1235,6 +1301,16 @@ public class ScratchBlocksVisitor extends PrintVisitor {
     @Override
     public void visit(UnspecifiedBoolExpr node) {
         emitNoSpace("<>");
+    }
+
+    @Override
+    public void visit(UnspecifiedStringExpr node) {
+        emitNoSpace("[]");
+    }
+
+    @Override
+    public void visit(UnspecifiedNumExpr node) {
+        emitNoSpace("()");
     }
 
     @Override
