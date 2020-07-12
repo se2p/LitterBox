@@ -26,6 +26,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.Prev;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.Random;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.WithExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.Volume;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.FixedAttribute;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
@@ -129,7 +130,13 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         newLine();
     }
 
-    // TODO: When loudness
+    public void visit(AttributeAboveValue node) {
+        emitNoSpace("when [");
+        node.getAttribute().accept(this);
+        emitNoSpace(" v] > ");
+        node.getValue().accept(this);
+        newLine();
+    }
 
 
     @Override
@@ -792,8 +799,8 @@ public class ScratchBlocksVisitor extends PrintVisitor {
     }
 
     @Override
-    public void visit(WithExpr node) {
-        node.getExpression().accept(this);
+    public void visit(Volume node) {
+        emitNoSpace("(volume)");
     }
 
 
@@ -865,6 +872,11 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         } else {
             node.getMessage().accept(this);
         }
+    }
+
+    @Override
+    public void visit(EventAttribute node) {
+        emitNoSpace(node.getType());
     }
 
     @Override
