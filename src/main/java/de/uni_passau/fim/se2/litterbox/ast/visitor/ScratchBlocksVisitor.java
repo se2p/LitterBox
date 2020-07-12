@@ -67,6 +67,7 @@ import java.io.PrintStream;
  */
 public class ScratchBlocksVisitor extends PrintVisitor {
 
+    private boolean inScript = false;
 
     public ScratchBlocksVisitor(PrintStream stream) {
         super(stream);
@@ -74,10 +75,12 @@ public class ScratchBlocksVisitor extends PrintVisitor {
 
     @Override
     public void visit(Script script) {
-        emitToken("[scratchblocks]");
+        emitNoSpace("[scratchblocks]");
+        inScript = true;
         newLine();
         super.visit(script);
-        emitToken("[/scratchblocks]");
+        emitNoSpace("[/scratchblocks]");
+        inScript = false;
         newLine();
     }
 
@@ -86,7 +89,7 @@ public class ScratchBlocksVisitor extends PrintVisitor {
 
     @Override
     public void visit(GreenFlag greenFlag) {
-        emitToken("when green flag clicked");
+        emitNoSpace("when green flag clicked");
         newLine();
     }
 
@@ -370,7 +373,7 @@ public class ScratchBlocksVisitor extends PrintVisitor {
 
     @Override
     public void visit(IfOnEdgeBounce node) {
-        emitToken("if on edge, bounce");
+        emitNoSpace("if on edge, bounce");
         newLine();
     }
 
@@ -388,86 +391,138 @@ public class ScratchBlocksVisitor extends PrintVisitor {
 
     @Override
     public void visit(SayForSecs node) {
-
+        emitNoSpace("say [");
+        node.getString().accept(this);
+        emitNoSpace("] for (");
+        node.getSecs().accept(this);
+        emitNoSpace(") seconds");
+        newLine();
     }
 
     @Override
     public void visit(Say node) {
-
+        emitNoSpace("say [");
+        node.getString().accept(this);
+        emitNoSpace("]");
+        newLine();
     }
 
     @Override
     public void visit(ThinkForSecs node) {
-
+        emitNoSpace("think [");
+        node.getThought().accept(this);
+        emitNoSpace("] for (");
+        node.getSecs().accept(this);
+        emitNoSpace(") seconds");
+        newLine();
     }
 
     @Override
     public void visit(Think node) {
-
+        emitNoSpace("think [");
+        node.getThought().accept(this);
+        emitNoSpace("]");
+        newLine();
     }
 
     @Override
     public void visit(SwitchCostumeTo node) {
-
+        emitNoSpace("switch costume to (");
+        node.getCostumeChoice().accept(this);
+        emitNoSpace(" v)");
+        newLine();
     }
 
     @Override
     public void visit(NextCostume node) {
-
+        emitNoSpace("next costume");
+        newLine();
     }
 
     @Override
-    public void visit(BackdropSwitchTo node) {
-
+    public void visit(SwitchBackdrop node) {
+        emitNoSpace("switch backdrop to (");
+        node.getElementChoice().accept(this);
+        emitNoSpace(" v)");
+        newLine();
     }
 
     @Override
     public void visit(NextBackdrop node) {
-
+        emitNoSpace("next backdrop");
+        newLine();
     }
 
     @Override
     public void visit(ChangeSizeBy node) {
-
+        emitNoSpace("change size by (");
+        node.getNum().accept(this);
+        emitNoSpace(")");
+        newLine();
     }
 
     @Override
     public void visit(SetSizeTo node) {
-
+        emitNoSpace("set size to (");
+        node.getPercent().accept(this);
+        emitNoSpace(") %");
+        newLine();
     }
 
     @Override
     public void visit(ChangeGraphicEffectBy node) {
-
+        emitNoSpace("change [");
+        node.getEffect().accept(this);
+        emitNoSpace(" v] effect by (");
+        node.getValue().accept(this);
+        emitNoSpace(")");
+        newLine();
     }
 
     @Override
     public void visit(SetGraphicEffectTo node) {
-
+        emitNoSpace("set [");
+        node.getEffect().accept(this);
+        emitNoSpace(" v] effect to (");
+        node.getValue().accept(this);
+        emitNoSpace(")");
+        newLine();
     }
 
     @Override
     public void visit(ClearGraphicEffects node) {
-
+        emitNoSpace("clear graphic effects");
+        newLine();
     }
 
     @Override
     public void visit(Show node) {
-
+        emitNoSpace("show");
+        newLine();
     }
 
     @Override
     public void visit(Hide node) {
-
+        emitNoSpace("hide");
+        newLine();
     }
 
     @Override
     public void visit(GoToLayer node) {
-
+        emitNoSpace("go to [");
+        node.getLayerChoice().accept(this);
+        emitNoSpace(" v] layer");
+        newLine();
     }
 
     @Override
     public void visit(ChangeLayerBy node) {
+        emitNoSpace("go [");
+        node.getForwardBackwardChoice().accept(this);
+        emitNoSpace(" v] (");
+        node.getNum().accept(this);
+        emitNoSpace(") layers");
+        newLine();
 
     }
 
@@ -588,6 +643,10 @@ public class ScratchBlocksVisitor extends PrintVisitor {
 
     @Override
     public void visit(NumberLiteral number) {
+        if(!inScript) {
+            return;
+        }
+
         double num = number.getValue();
         if(num % 1 == 0) {
             emitNoSpace(Integer.toString((int)num));
@@ -598,24 +657,41 @@ public class ScratchBlocksVisitor extends PrintVisitor {
 
     @Override
     public void visit(MousePos node) {
-        emitToken("mouse-pointer");
+        emitNoSpace("mouse-pointer");
     }
 
     @Override
     public void visit(RandomPos node) {
-        emitToken("random position");
+        emitNoSpace("random position");
     }
 
     @Override
     public void visit(RotationStyle node) {
-        emitToken(node.getToken());
+        emitNoSpace(node.getToken());
     }
 
-//
-//    @Override
-//    public void visit(StringLiteral stringLiteral) {
-//        emitNoSpace(stringLiteral.getText());
-//    }
+    @Override
+    public void visit(StringLiteral stringLiteral) {
+        if(inScript) {
+            emitNoSpace(stringLiteral.getText());
+        }
+    }
+
+    @Override
+    public void visit(GraphicEffect node) {
+        emitNoSpace(node.getToken());
+    }
+
+    @Override
+    public void visit(LayerChoice node) {
+        emitNoSpace(node.getType());
+    }
+
+    @Override
+    public void visit(ForwardBackwardChoice node) {
+        emitNoSpace(node.getType());
+    }
+
 //
 //    @Override
 //    public void visit(StrId strId) {

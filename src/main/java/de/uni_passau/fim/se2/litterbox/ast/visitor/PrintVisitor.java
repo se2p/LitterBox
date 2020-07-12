@@ -47,6 +47,6 @@ public abstract class PrintVisitor implements ScratchVisitor {
     }
 
     protected void newLine() {
-        emitToken("\n");
+        emitNoSpace("\n");
     }
 }
