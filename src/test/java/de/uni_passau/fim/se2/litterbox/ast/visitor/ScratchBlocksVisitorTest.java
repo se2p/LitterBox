@@ -385,4 +385,23 @@ public class ScratchBlocksVisitorTest {
                 "wait until <mouse down?>\n" +
                 "[/scratchblocks]\n", result);
     }
+
+    @Test
+    public void testListAttributeBlocks() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/scratchblocks/listattributeblocks.json");
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        PrintStream ps = new PrintStream(os);
+        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(ps);
+        program.accept(visitor);
+        String result = os.toString();
+        assertEquals("[scratchblocks]\n" +
+                "when green flag clicked\n" +
+                "say (foo)\n" +
+                "add [thing] to [foo v]\n" +
+                "say (item (1) of [foo v])\n" +
+                "say (item # of [thing] in [foo v])\n" +
+                "say (length of [foo v])\n" +
+                "wait until <[foo v] contains [thing] ?>\n" +
+                "[/scratchblocks]\n", result);
+    }
 }
