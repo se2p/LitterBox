@@ -47,6 +47,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.DeleteClone;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopAll;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopThisScript;
+import de.uni_passau.fim.se2.litterbox.ast.model.timecomp.TimeComp;
 
 import java.io.PrintStream;
 
@@ -828,10 +829,18 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         emitNoSpace(node.getToken());
     }
 
+//    @Override
+//    public void visit(Backdrop node) {
+//        node.getType().accept(this);
+//    }
+
     @Override
     public void visit(Backdrop node) {
+        emitNoSpace("(backdrop [");
         node.getType().accept(this);
+        emitNoSpace(" v])");
     }
+
 
     @Override
     public void visit(NameNum node) {
@@ -891,6 +900,77 @@ public class ScratchBlocksVisitor extends PrintVisitor {
     @Override
     public void visit(Qualified node) {
         node.getSecond().accept(this);
+    }
+
+    @Override
+    public void visit(PositionX node) {
+        emitNoSpace("(x position)");
+    }
+
+    @Override
+    public void visit(PositionY node) {
+        emitNoSpace("(y position)");
+    }
+
+    @Override
+    public void visit(Direction node) {
+        emitNoSpace("(direction)");
+    }
+
+    @Override
+    public void visit(Size node) {
+        emitNoSpace("(size)");
+    }
+
+    @Override
+    public void visit(MouseX node) {
+        emitNoSpace("(mouse x)");
+    }
+
+    @Override
+    public void visit(MouseY node) {
+        emitNoSpace("(mouse y)");
+    }
+
+    @Override
+    public void visit(DaysSince2000 node) {
+        emitNoSpace("(days since 2000)");
+    }
+
+    @Override
+    public void visit(Username node) {
+        emitNoSpace("(username)");
+    }
+
+    @Override
+    public void visit(Loudness node) {
+        emitNoSpace("(loudness)");
+    }
+
+    @Override
+    public void visit(DistanceTo node) {
+        emitNoSpace("(distance to (");
+        node.getPosition().accept(this);
+        emitNoSpace(" v)");
+    }
+
+    @Override
+    public void visit(Current node) {
+        emitNoSpace("(current (");
+        node.getTimeComp().accept(this);
+        emitNoSpace(" v)");
+    }
+
+    @Override
+    public void visit(TimeComp node) {
+        emitNoSpace(node.getLabel());
+    }
+
+    @Override
+    public void visit(Costume node) {
+        emitNoSpace("(costume [");
+        node.getType().accept(this);
+        emitNoSpace(" v])");
     }
 
     @Override
