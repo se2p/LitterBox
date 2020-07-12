@@ -105,6 +105,23 @@ public class ScratchBlocksVisitorTest {
     }
 
     @Test
+    public void testMultipleSoundBlocks() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/scratchblocks/soundblocks2.json");
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        PrintStream ps = new PrintStream(os);
+        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(ps);
+        program.accept(visitor);
+        String result = os.toString();
+        assertEquals("[scratchblocks]\n" +
+                "when [loudness v] > (10)\n" +
+                "say (volume)\n" +
+                "change [pan left/right v] effect by (10)\n" +
+                "start sound (Meow v)\n" +
+                "start sound (B Trombone v)\n" +
+                "[/scratchblocks]\n", result);
+    }
+
+    @Test
     public void testSensingBlocks() throws IOException, ParsingException {
         Program program = getAST("src/test/fixtures/scratchblocks/sensingblocks.json");
         ByteArrayOutputStream os = new ByteArrayOutputStream();
