@@ -83,7 +83,6 @@ public class ScratchBlocksVisitorTest {
                 "[/scratchblocks]\n", result);
     }
 
-
     @Test
     public void testSoundBlocks() throws IOException, ParsingException {
         Program program = getAST("src/test/fixtures/scratchblocks/soundblocks.json");
@@ -102,6 +101,22 @@ public class ScratchBlocksVisitorTest {
                 "clear sound effects\n" +
                 "change volume by (-10)\n" +
                 "set volume to (100) %\n" +
+                "[/scratchblocks]\n", result);
+    }
+
+    @Test
+    public void testSensingBlocks() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/scratchblocks/sensingblocks.json");
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        PrintStream ps = new PrintStream(os);
+        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(ps);
+        program.accept(visitor);
+        String result = os.toString();
+        assertEquals("[scratchblocks]\n" +
+                "when green flag clicked\n" +
+                "ask [What's your name?] and wait\n" +
+                "set drag mode [draggable v]\n" +
+                "reset timer\n" +
                 "[/scratchblocks]\n", result);
     }
 }
