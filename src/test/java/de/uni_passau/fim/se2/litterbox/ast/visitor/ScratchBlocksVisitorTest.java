@@ -287,4 +287,32 @@ public class ScratchBlocksVisitorTest {
                 "say (z)\n" +
                 "[/scratchblocks]\n", result);
     }
+
+    @Test
+    public void testBooleanBlocks() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/scratchblocks/booleanblocks.json");
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        PrintStream ps = new PrintStream(os);
+        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(ps);
+        program.accept(visitor);
+        String result = os.toString();
+        assertEquals("[scratchblocks]\n" +
+                "when green flag clicked\n" +
+                "set [x v] to (0)\n" +
+                "set [y v] to (0)\n" +
+                "if <(x) > (50)> then\n" +
+                "end\n" +
+                "if <(x) < (y)> then\n" +
+                "end\n" +
+                "if <[Hello] = (x)> then\n" +
+                "end\n" +
+                "if <not <(x) > (y)>> then\n" +
+                "end\n" +
+                "if <<(x) > (50)> and <(x) > (y)>> then\n" +
+                "end\n" +
+                "if <<(x) > (50)> or <(x) > (y)>> then\n" +
+                "end\n" +
+                "say <not <(x) > (y)>>\n" +
+                "[/scratchblocks]\n", result);
+    }
 }
