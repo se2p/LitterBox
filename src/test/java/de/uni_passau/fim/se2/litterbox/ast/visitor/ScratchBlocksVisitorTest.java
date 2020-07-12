@@ -240,4 +240,14 @@ public class ScratchBlocksVisitorTest {
                 "[/scratchblocks]\n", result);
     }
 
+    @Test
+    public void testTimerBlocks() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/scratchblocks/timerblocks.json");
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        PrintStream ps = new PrintStream(os);
+        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(ps);
+        program.accept(visitor);
+        String result = os.toString();
+        System.out.println(result);
+    }
 }
