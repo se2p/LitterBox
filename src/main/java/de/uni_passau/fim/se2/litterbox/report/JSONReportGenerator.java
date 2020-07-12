@@ -46,7 +46,7 @@ public class JSONReportGenerator implements ReportGenerator {
 
             builder.append("  Script: ");
             AbstractNode location = issue.getCodeLocation();
-            ScratchBlocksVisitor blockVisitor = new ScratchBlocksVisitor();
+            ScratchBlocksVisitor blockVisitor = new ScratchBlocksVisitor(System.out);
             // location.accept(blockVisitor); // TODO: Implement
             String scratchBlockCode = blockVisitor.getScratchBlocks();
             builder.append(scratchBlockCode);

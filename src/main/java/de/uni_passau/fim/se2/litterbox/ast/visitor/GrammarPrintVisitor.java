@@ -70,17 +70,13 @@ import de.uni_passau.fim.se2.litterbox.ast.model.type.*;
 import java.io.PrintStream;
 import java.util.List;
 
-public class GrammarPrintVisitor implements ScratchVisitor {
+public class GrammarPrintVisitor extends PrintVisitor {
 
-    private static final String INDENT = "    ";
-    private PrintStream printStream;
-    private int level;
     private boolean emitAttributeType = false;
     private boolean volume = false;
 
     public GrammarPrintVisitor(PrintStream printStream) {
-        this.printStream = printStream;
-        level = 0;
+        super(printStream);
     }
 
     @Override
@@ -1216,41 +1212,5 @@ public class GrammarPrintVisitor implements ScratchVisitor {
         qualified.getFirst().accept(this);
         emitNoSpace(".");
         qualified.getSecond().accept(this);
-    }
-
-    private void emitToken(String string) {
-        emitNoSpace(string);
-        emitNoSpace(" ");
-    }
-
-    private void emitNoSpace(String string) {
-        printStream.append(string);
-    }
-
-    private void endIndentation() {
-        level--;
-    }
-
-    private void beginIndentation() {
-        level++;
-    }
-
-    private void appendIndentation() {
-        String currentIndent = new String(new char[level]).replace("\0", INDENT);
-        emitToken(currentIndent);
-    }
-
-    private void begin() {
-        emitToken(" begin");
-    }
-
-    private void end() {
-        newLine();
-        appendIndentation();
-        emitToken("end");
-    }
-
-    private void newLine() {
-        emitToken("\n");
     }
 }
