@@ -523,4 +523,21 @@ public class ScratchBlocksVisitorTest {
                 "fun_numarg (username) <mouse down?> label\n" +
                 "[/scratchblocks]\n", result);
     }
+
+    @Test
+    public void testUnconnectedBlocks() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/scratchblocks/unconnectedblocks.json");
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        PrintStream ps = new PrintStream(os);
+        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(ps);
+        visitor.begin();
+        program.accept(visitor);
+        visitor.end();
+        String result = os.toString();
+        assertEquals("[scratchblocks]\n" +
+                "repeat (10)\n" +
+                "say [Hello!] for (2) seconds\n" +
+                "end\n" +
+                "[/scratchblocks]\n", result);
+    }
 }
