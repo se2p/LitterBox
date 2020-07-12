@@ -19,6 +19,7 @@
 package de.uni_passau.fim.se2.litterbox.ast.visitor;
 
 
+import de.uni_passau.fim.se2.litterbox.ast.model.Key;
 import de.uni_passau.fim.se2.litterbox.ast.model.Message;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.Next;
@@ -33,6 +34,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.FixedAttribute;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
+import de.uni_passau.fim.se2.litterbox.ast.model.literals.ColorLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.MousePos;
@@ -48,6 +50,12 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.DeleteClo
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopAll;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopThisScript;
 import de.uni_passau.fim.se2.litterbox.ast.model.timecomp.TimeComp;
+import de.uni_passau.fim.se2.litterbox.ast.model.touchable.Edge;
+import de.uni_passau.fim.se2.litterbox.ast.model.touchable.MousePointer;
+import de.uni_passau.fim.se2.litterbox.ast.model.touchable.SpriteTouchable;
+import de.uni_passau.fim.se2.litterbox.ast.model.touchable.Touchable;
+import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.Color;
+import de.uni_passau.fim.se2.litterbox.jsonCreation.BlockJsonCreatorHelper;
 
 import java.io.PrintStream;
 
@@ -857,6 +865,15 @@ public class ScratchBlocksVisitor extends PrintVisitor {
     }
 
     @Override
+    public void visit(ColorLiteral colorLiteral) {
+        emitNoSpace("[#");
+        emitNoSpace(Long.toHexString(colorLiteral.getRed()));
+        emitNoSpace(Long.toHexString(colorLiteral.getGreen()));
+        emitNoSpace(Long.toHexString(colorLiteral.getBlue()));
+        emitNoSpace("]");
+    }
+
+    @Override
     public void visit(GraphicEffect node) {
         emitNoSpace(node.getToken());
     }
@@ -1129,6 +1146,58 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         emitNoSpace(" contains ");
         node.getContained().accept(this);
         emitNoSpace("?>");
+    }
+
+    @Override
+    public void visit(Touching node) {
+        emitNoSpace("<touching (");
+        node.getTouchable().accept(this);
+        emitNoSpace(" v) ?>");
+    }
+
+    @Override
+    public void visit(Edge node) {
+        emitNoSpace("edge");
+    }
+
+    @Override
+    public void visit(MousePointer node) {
+        emitNoSpace("mouse-pointer");
+    }
+
+    @Override
+    public void visit(SpriteTouchingColor node) {
+        emitNoSpace("<touching color ");
+        node.getColor().accept(this);
+        emitNoSpace(" ?>");
+    }
+
+    @Override
+    public void visit(ColorTouchingColor node) {
+        emitNoSpace("<color ");
+        node.getOperand1().accept(this);
+        emitNoSpace(" is touching ");
+        node.getOperand2().accept(this);
+        emitNoSpace(" ?>");
+    }
+
+    @Override
+    public void visit(IsKeyPressed node) {
+        emitNoSpace("<key (");
+        node.getKey().accept(this);
+        emitNoSpace(" v) pressed?>");
+    }
+
+    @Override
+    public void visit(Key node) {
+        assert(node.getKey() instanceof NumberLiteral);
+        NumberLiteral num = (NumberLiteral)node.getKey();
+        emitNoSpace(BlockJsonCreatorHelper.getKeyValue((int)num.getValue()));
+    }
+
+    @Override
+    public void visit(IsMouseDown node) {
+        emitNoSpace("<mouse down?>");
     }
 
     @Override
