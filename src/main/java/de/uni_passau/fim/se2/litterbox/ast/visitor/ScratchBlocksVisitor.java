@@ -21,17 +21,13 @@ package de.uni_passau.fim.se2.litterbox.ast.visitor;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.*;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
-import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Identifier;
-import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
-import de.uni_passau.fim.se2.litterbox.ast.model.literals.BoolLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.MousePos;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.RandomPos;
-import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.*;
@@ -42,12 +38,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.DeleteClone;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopAll;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopThisScript;
-import de.uni_passau.fim.se2.litterbox.ast.model.touchable.SpriteTouchable;
-import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.Color;
-import de.uni_passau.fim.se2.litterbox.ast.model.type.BooleanType;
-import de.uni_passau.fim.se2.litterbox.ast.model.type.NumberType;
-import de.uni_passau.fim.se2.litterbox.ast.model.type.StringType;
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 
 import java.io.PrintStream;
 
@@ -189,8 +179,22 @@ public class ScratchBlocksVisitor extends PrintVisitor {
 
     @Override
     public void visit(CreateCloneOf node) {
-        emitNoSpace("create clone of ");
-        node.getStringExpr().accept(this);
+        emitNoSpace("create clone of (");
+
+        // TODO: There must be a nicer way to do this...
+        if (node.getStringExpr() instanceof AsString
+                && ((AsString) node.getStringExpr()).getOperand1() instanceof StrId) {
+
+            final String spriteName = ((StrId) ((AsString) node.getStringExpr()).getOperand1()).getName();
+            if (spriteName.equals("_myself_")) {
+                emitNoSpace("myself");
+            } else {
+                node.getStringExpr().accept(this);
+            }
+        } else {
+            node.getStringExpr().accept(this);
+        }
+        emitNoSpace(" v)");
         newLine();
     }
 
@@ -810,6 +814,7 @@ public class ScratchBlocksVisitor extends PrintVisitor {
     public void visit(Qualified node) {
         node.getSecond().accept(this);
     }
+
 //
 //    @Override
 //    public void visit(StrId strId) {
