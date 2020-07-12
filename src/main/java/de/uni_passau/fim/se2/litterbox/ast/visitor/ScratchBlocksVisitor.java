@@ -22,6 +22,9 @@ package de.uni_passau.fim.se2.litterbox.ast.visitor;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Identifier;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.BoolLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
@@ -44,6 +47,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.Color;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.BooleanType;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.NumberType;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.StringType;
+import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 
 import java.io.PrintStream;
 
@@ -624,57 +628,109 @@ public class ScratchBlocksVisitor extends PrintVisitor {
 
     @Override
     public void visit(SetVariableTo node) {
-
+        if(!inScript) {
+            return;
+        }
+        emitNoSpace("set [");
+        node.getIdentifier().accept(this);
+        emitNoSpace(" v] to (");
+        node.getExpr().accept(this);
+        emitNoSpace(")");
+        newLine();
     }
 
     @Override
     public void visit(ChangeVariableBy node) {
-
+        emitNoSpace("change [");
+        node.getIdentifier().accept(this);
+        emitNoSpace(" v] by (");
+        node.getExpr().accept(this);
+        emitNoSpace(")");
+        newLine();
     }
 
     @Override
     public void visit(ShowVariable node) {
-
+        emitNoSpace("show variable [");
+        node.getIdentifier().accept(this);
+        emitNoSpace(" v]");
+        newLine();
     }
 
     @Override
     public void visit(HideVariable node) {
-
+        emitNoSpace("hide variable [");
+        node.getIdentifier().accept(this);
+        emitNoSpace(" v]");
+        newLine();
     }
 
     @Override
     public void visit(AddTo node) {
-
+        emitNoSpace("add [");
+        node.getString().accept(this);
+        emitNoSpace("] to [");
+        node.getIdentifier().accept(this);
+        emitNoSpace(" v]");
+        newLine();
     }
 
     @Override
     public void visit(DeleteOf node) {
-
+        emitNoSpace("delete (");
+        node.getNum().accept(this);
+        emitNoSpace(") of [");
+        node.getIdentifier().accept(this);
+        emitNoSpace(" v]");
+        newLine();
     }
 
     @Override
     public void visit(DeleteAllOf node) {
-
+        emitNoSpace("delete all of [");
+        node.getIdentifier().accept(this);
+        emitNoSpace(" v]");
+        newLine();
     }
 
     @Override
     public void visit(InsertAt node) {
-
+        emitNoSpace("insert [");
+        node.getString().accept(this);
+        emitNoSpace("] at (");
+        node.getIndex().accept(this);
+        emitNoSpace(") of [");
+        node.getIdentifier().accept(this);
+        emitNoSpace(" v]");
+        newLine();
     }
 
     @Override
     public void visit(ReplaceItem node) {
-
+        emitNoSpace("replace item (");
+        node.getIndex().accept(this);
+        emitNoSpace(") of [");
+        node.getIdentifier().accept(this);
+        emitNoSpace(" v] with [");
+        node.getString().accept(this);
+        emitNoSpace("]");
+        newLine();
     }
 
     @Override
     public void visit(ShowList node) {
-
+        emitNoSpace("show list [");
+        node.getIdentifier().accept(this);
+        emitNoSpace(" v]");
+        newLine();
     }
 
     @Override
     public void visit(HideList node) {
-
+        emitNoSpace("hide list [");
+        node.getIdentifier().accept(this);
+        emitNoSpace(" v]");
+        newLine();
     }
 
 
@@ -740,10 +796,15 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         emitNoSpace(node.getType());
     }
 
+
+    @Override
+    public void visit(Qualified node) {
+        node.getSecond().accept(this);
+    }
 //
 //    @Override
 //    public void visit(StrId strId) {
-//        emitNoSpace(strId.getName());
+//        emitNoSpace("Foo"+strId.getName());
 //    }
 //
 //    @Override
