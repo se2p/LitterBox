@@ -186,4 +186,20 @@ public class ScratchBlocksVisitorTest {
                 "broadcast (message1 v) and wait\n" +
                 "[/scratchblocks]\n", result);
     }
+
+    @Test
+    public void testCloneBlocks() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/scratchblocks/cloneblocks.json");
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        PrintStream ps = new PrintStream(os);
+        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(ps);
+        program.accept(visitor);
+        String result = os.toString();
+        assertEquals("[scratchblocks]\n" +
+                "when I start as a clone \n" +
+                "create clone of (myself v)\n" +
+                "create clone of (Fairy v)\n" +
+                "delete this clone \n" +
+                "[/scratchblocks]\n", result);
+    }
 }
