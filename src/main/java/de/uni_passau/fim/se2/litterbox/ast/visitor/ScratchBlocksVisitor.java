@@ -27,6 +27,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.Random;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.WithExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.SingularExpression;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.FixedAttribute;
@@ -171,9 +172,8 @@ public class ScratchBlocksVisitor extends PrintVisitor {
 
     @Override
     public void visit(WaitUntil node) {
-        emitNoSpace("wait until <");
+        emitNoSpace("wait until ");
         node.getUntil().accept(this);
-        emitNoSpace(">");
         newLine();
     }
 
@@ -237,9 +237,8 @@ public class ScratchBlocksVisitor extends PrintVisitor {
 
     @Override
     public void visit(UntilStmt untilStmt) {
-        emitNoSpace("repeat until <");
+        emitNoSpace("repeat until ");
         untilStmt.getBoolExpr().accept(this);
-        emitNoSpace(">");
         newLine();
         beginIndentation();
         untilStmt.getStmtList().accept(this);
@@ -262,9 +261,9 @@ public class ScratchBlocksVisitor extends PrintVisitor {
 
     @Override
     public void visit(IfThenStmt ifThenStmt) {
-        emitNoSpace("if <");
+        emitNoSpace("if ");
         ifThenStmt.getBoolExpr().accept(this);
-        emitNoSpace("> then");
+        emitNoSpace(" then");
         newLine();
         beginIndentation();
         ifThenStmt.getThenStmts().accept(this);
@@ -275,9 +274,9 @@ public class ScratchBlocksVisitor extends PrintVisitor {
 
     @Override
     public void visit(IfElseStmt ifElseStmt) {
-        emitNoSpace("if <");
+        emitNoSpace("if ");
         ifElseStmt.getBoolExpr().accept(this);
-        emitNoSpace("> then");
+        emitNoSpace(" then");
         newLine();
         beginIndentation();
         ifElseStmt.getStmtList().accept(this);
@@ -900,6 +899,8 @@ public class ScratchBlocksVisitor extends PrintVisitor {
     public void visit(AsString node) {
         if(node.getOperand1() instanceof SingularExpression) {
             node.getOperand1().accept(this);
+        } else if(node.getOperand1() instanceof BoolExpr) {
+            node.getOperand1().accept(this);
         } else {
             emitNoSpace("(");
             node.getOperand1().accept(this);
@@ -980,6 +981,63 @@ public class ScratchBlocksVisitor extends PrintVisitor {
     @Override
     public void visit(NumFunct node) {
         emitNoSpace(node.getFunction());
+    }
+
+    @Override
+    public void visit(BiggerThan node) {
+        emitNoSpace("<");
+        node.getOperand1().accept(this);
+        emitNoSpace(" > ");
+        node.getOperand2().accept(this);
+        emitNoSpace(">");
+    }
+
+    @Override
+    public void visit(LessThan node) {
+        emitNoSpace("<");
+        node.getOperand1().accept(this);
+        emitNoSpace(" < ");
+        node.getOperand2().accept(this);
+        emitNoSpace(">");
+    }
+
+    @Override
+    public void visit(Equals node) {
+        emitNoSpace("<");
+        node.getOperand1().accept(this);
+        emitNoSpace(" = ");
+        node.getOperand2().accept(this);
+        emitNoSpace(">");
+    }
+
+    @Override
+    public void visit(Not node) {
+        emitNoSpace("<not ");
+        node.getOperand1().accept(this);
+        emitNoSpace(">");
+    }
+
+    @Override
+    public void visit(And node) {
+        emitNoSpace("<");
+        node.getOperand1().accept(this);
+        emitNoSpace(" and ");
+        node.getOperand2().accept(this);
+        emitNoSpace(">");
+    }
+
+    @Override
+    public void visit(Or node) {
+        emitNoSpace("<");
+        node.getOperand1().accept(this);
+        emitNoSpace(" or ");
+        node.getOperand2().accept(this);
+        emitNoSpace(">");
+    }
+
+    @Override
+    public void visit(UnspecifiedBoolExpr node) {
+        emitNoSpace("<>");
     }
 
     @Override
