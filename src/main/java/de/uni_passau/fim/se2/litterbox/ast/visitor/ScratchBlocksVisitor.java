@@ -152,22 +152,23 @@ public class ScratchBlocksVisitor extends PrintVisitor {
 
     @Override
     public void visit(WaitSeconds node) {
-        emitNoSpace("wait ");
+        emitNoSpace("wait (");
         node.getSeconds().accept(this);
-        emitNoSpace(" seconds");
+        emitNoSpace(") seconds");
         newLine();
     }
 
     @Override
     public void visit(WaitUntil node) {
-        emitNoSpace("wait until ");
+        emitNoSpace("wait until <");
         node.getUntil().accept(this);
+        emitNoSpace(">");
         newLine();
     }
 
     @Override
     public void visit(StopAll node) {
-        emitToken("stop [all v]");
+        emitNoSpace("stop [all v]");
         newLine();
     }
 
@@ -201,62 +202,68 @@ public class ScratchBlocksVisitor extends PrintVisitor {
     @Override
     public void visit(RepeatForeverStmt repeatForeverStmt) {
         emitToken("forever");
+        newLine();
         beginIndentation();
         repeatForeverStmt.getStmtList().accept(this);
         endIndentation();
-        emitToken("end");
+        emitNoSpace("end");
         newLine();
     }
 
     @Override
     public void visit(UntilStmt untilStmt) {
-        emitToken("repeat until");
+        emitNoSpace("repeat until <");
         untilStmt.getBoolExpr().accept(this);
+        emitNoSpace(">");
+        newLine();
         beginIndentation();
         untilStmt.getStmtList().accept(this);
         endIndentation();
-        emitToken("end");
+        emitNoSpace("end");
         newLine();
     }
 
     @Override
     public void visit(RepeatTimesStmt repeatTimesStmt) {
-        emitToken("repeat");
-        emitNoSpace("(");
+        emitNoSpace("repeat (");
         repeatTimesStmt.getTimes().accept(this);
         emitNoSpace(")");
+        newLine();
         beginIndentation();
         repeatTimesStmt.getStmtList().accept(this);
         endIndentation();
-        emitToken("end");
+        emitNoSpace("end");
         newLine();
     }
 
     @Override
     public void visit(IfThenStmt ifThenStmt) {
-        emitToken("if");
+        emitNoSpace("if <");
         ifThenStmt.getBoolExpr().accept(this);
-        emitNoSpace(" then");
+        emitNoSpace("> then");
+        newLine();
         beginIndentation();
         ifThenStmt.getThenStmts().accept(this);
         endIndentation();
-        emitToken("end");
+        emitNoSpace("end");
         newLine();
     }
 
     @Override
     public void visit(IfElseStmt ifElseStmt) {
-        emitToken("if");
+        emitNoSpace("if <");
         ifElseStmt.getBoolExpr().accept(this);
-        emitNoSpace(" then");
+        emitNoSpace("> then");
+        newLine();
         beginIndentation();
         ifElseStmt.getStmtList().accept(this);
         endIndentation();
-        emitToken("else");
+        emitNoSpace("else");
+        newLine();
         beginIndentation();
         ifElseStmt.getElseStmts().accept(this);
         endIndentation();
-        emitToken("end");
+        emitNoSpace("end");
         newLine();
     }
 
