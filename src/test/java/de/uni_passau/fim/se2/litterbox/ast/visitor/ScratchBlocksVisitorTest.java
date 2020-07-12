@@ -169,5 +169,21 @@ public class ScratchBlocksVisitorTest {
                 "end\n" +
                 "stop [all v]\n" +
                 "[/scratchblocks]\n", result);
+        // TODO: Indentation needs fixing
+    }
+
+    @Test
+    public void testMessageBlocks() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/scratchblocks/messageblocks.json");
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        PrintStream ps = new PrintStream(os);
+        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(ps);
+        program.accept(visitor);
+        String result = os.toString();
+        assertEquals("[scratchblocks]\n" +
+                "when I receive [message1 v]\n" +
+                "broadcast (message1 v)\n" +
+                "broadcast (message1 v) and wait\n" +
+                "[/scratchblocks]\n", result);
     }
 }
