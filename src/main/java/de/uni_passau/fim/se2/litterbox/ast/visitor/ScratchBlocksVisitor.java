@@ -598,17 +598,24 @@ public class ScratchBlocksVisitor extends PrintVisitor {
 
     @Override
     public void visit(AskAndWait node) {
-
+        emitNoSpace("ask [");
+        node.getQuestion().accept(this);
+        emitNoSpace("] and wait");
+        newLine();
     }
 
     @Override
     public void visit(SetDragMode node) {
-
+        emitNoSpace("set drag mode [");
+        node.getDrag().accept(this);
+        emitNoSpace(" v]");
+        newLine();
     }
 
     @Override
     public void visit(ResetTimer node) {
-
+        emitNoSpace("reset timer");
+        newLine();
     }
 
 
@@ -721,6 +728,11 @@ public class ScratchBlocksVisitor extends PrintVisitor {
     @Override
     public void visit(LayerChoice node) {
         emitNoSpace(node.getType());
+    }
+
+    @Override
+    public void visit(DragMode node) {
+        emitNoSpace(node.getToken());
     }
 
     @Override
