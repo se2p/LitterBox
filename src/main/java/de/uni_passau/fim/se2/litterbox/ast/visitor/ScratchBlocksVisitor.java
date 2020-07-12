@@ -120,8 +120,9 @@ public class ScratchBlocksVisitor extends PrintVisitor {
 
     @Override
     public void visit(ReceptionOfMessage receptionOfMessage) {
-        emitNoSpace("when I receive ");
+        emitNoSpace("when I receive [");
         receptionOfMessage.getMsg().accept(this);
+        emitNoSpace(" v]");
         newLine();
     }
 
@@ -132,16 +133,17 @@ public class ScratchBlocksVisitor extends PrintVisitor {
 
     @Override
     public void visit(Broadcast node) {
-        emitNoSpace("broadcast ");
+        emitNoSpace("broadcast (");
         node.getMessage().accept(this);
+        emitNoSpace(" v)");
         newLine();
     }
 
     @Override
     public void visit(BroadcastAndWait node) {
-        emitNoSpace("broadcast ");
+        emitNoSpace("broadcast (");
         node.getMessage().accept(this);
-        emitNoSpace(" and wait");
+        emitNoSpace(" v) and wait");
         newLine();
     }
 
