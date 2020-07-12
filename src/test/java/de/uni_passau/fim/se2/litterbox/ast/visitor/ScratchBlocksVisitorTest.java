@@ -202,4 +202,25 @@ public class ScratchBlocksVisitorTest {
                 "delete this clone \n" +
                 "[/scratchblocks]\n", result);
     }
+
+    @Test
+    public void testBackdropBlocks() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/scratchblocks/backdropblocks.json");
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        PrintStream ps = new PrintStream(os);
+        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(ps);
+        program.accept(visitor);
+        String result = os.toString();
+        assertEquals("[scratchblocks]\n" +
+                "when backdrop switches to [backdrop1 v]\n" +
+                "switch backdrop to (backdrop1 v)\n" +
+                "switch backdrop to (Witch House v)\n" +
+                "switch backdrop to (next backdrop v)\n" +
+                "switch backdrop to (previous backdrop v)\n" +
+                "switch backdrop to (random backdrop v)\n" +
+                "say ([backdrop # v] of (Stage v)?)\n" +
+                "say ([backdrop name v] of (Stage v)?)\n" +
+                "[/scratchblocks]\n", result);
+    }
+
 }
