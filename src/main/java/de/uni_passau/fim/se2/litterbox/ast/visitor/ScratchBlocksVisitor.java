@@ -762,7 +762,39 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         newLine();
     }
 
+    @Override
+    public void visit(ItemOfVariable node) {
+        emitNoSpace("(item ");
+        node.getNum().accept(this);
+        emitNoSpace(" of [");
+        node.getIdentifier().accept(this);
+        emitNoSpace(" v])");
+    }
 
+    @Override
+    public void visit(IndexOf node) {
+        emitNoSpace("(item # of ");
+        node.getExpr().accept(this);
+        emitNoSpace(" in [");
+        node.getIdentifier().accept(this);
+        emitNoSpace(" v])");
+    }
+
+    @Override
+    public void visit(LengthOfVar node) {
+        emitNoSpace("(length of [");
+        node.getIdentifier().accept(this);
+        emitNoSpace(" v])");
+    }
+
+    @Override
+    public void visit(ListContains node) {
+        emitNoSpace("<[");
+        node.getIdentifier().accept(this);
+        emitNoSpace(" v] contains ");
+        node.getElement().accept(this);
+        emitNoSpace(" ?>");
+    }
 
     @Override
     public void visit(NumberLiteral number) {
