@@ -315,4 +315,15 @@ public class ScratchBlocksVisitorTest {
                 "say <not <(x) > (y)>>\n" +
                 "[/scratchblocks]\n", result);
     }
+
+    @Test
+    public void testStringBlocks() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/scratchblocks/stringblocks.json");
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        PrintStream ps = new PrintStream(os);
+        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(ps);
+        program.accept(visitor);
+        String result = os.toString();
+        System.out.println(result);
+    }
 }
