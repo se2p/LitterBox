@@ -19,9 +19,15 @@
 package de.uni_passau.fim.se2.litterbox.ast.visitor;
 
 
+import de.uni_passau.fim.se2.litterbox.ast.model.Message;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
+import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.Next;
+import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.Prev;
+import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.Random;
+import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.WithExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.*;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.FixedAttribute;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
@@ -116,7 +122,12 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         newLine();
     }
 
-    // TODO: When backdrop switches to?
+    public void visit(BackdropSwitchTo backdrop) {
+        emitNoSpace("when backdrop switches to [");
+        backdrop.getBackdrop().accept(this);
+        emitNoSpace(" v]");
+        newLine();
+    }
 
     // TODO: When loudness
 
@@ -144,9 +155,9 @@ public class ScratchBlocksVisitor extends PrintVisitor {
 
     @Override
     public void visit(WaitSeconds node) {
-        emitNoSpace("wait (");
+        emitNoSpace("wait ");
         node.getSeconds().accept(this);
-        emitNoSpace(") seconds");
+        emitNoSpace(" seconds");
         newLine();
     }
 
@@ -231,9 +242,8 @@ public class ScratchBlocksVisitor extends PrintVisitor {
 
     @Override
     public void visit(RepeatTimesStmt repeatTimesStmt) {
-        emitNoSpace("repeat (");
+        emitNoSpace("repeat ");
         repeatTimesStmt.getTimes().accept(this);
-        emitNoSpace(")");
         newLine();
         beginIndentation();
         repeatTimesStmt.getStmtList().accept(this);
@@ -278,25 +288,25 @@ public class ScratchBlocksVisitor extends PrintVisitor {
 
     @Override
     public void visit(MoveSteps node) {
-        emitNoSpace("move (");
+        emitNoSpace("move ");
         node.getSteps().accept(this);
-        emitNoSpace(") steps");
+        emitNoSpace(" steps");
         newLine();
     }
 
     @Override
     public void visit(TurnLeft node) {
-        emitNoSpace("turn left (");
+        emitNoSpace("turn left ");
         node.getDegrees().accept(this);
-        emitNoSpace(") degrees");
+        emitNoSpace(" degrees");
         newLine();
     }
 
     @Override
     public void visit(TurnRight node) {
-        emitNoSpace("turn right (");
+        emitNoSpace("turn right ");
         node.getDegrees().accept(this);
-        emitNoSpace(") degrees");
+        emitNoSpace(" degrees");
         newLine();
     }
 
@@ -310,19 +320,18 @@ public class ScratchBlocksVisitor extends PrintVisitor {
 
     @Override
     public void visit(GoToPosXY node) {
-        emitNoSpace("go to x: (");
+        emitNoSpace("go to x: ");
         node.getX().accept(this);
-        emitNoSpace(") y: (");
+        emitNoSpace(" y: ");
         node.getY().accept(this);
-        emitNoSpace(")");
         newLine();
     }
 
     @Override
     public void visit(GlideSecsTo node) {
-        emitNoSpace("glide (");
+        emitNoSpace("glide ");
         node.getSecs().accept(this);
-        emitNoSpace(") secs to (");
+        emitNoSpace(" secs to (");
         node.getPosition().accept(this);
         emitNoSpace(" v)");
         newLine();
@@ -330,21 +339,19 @@ public class ScratchBlocksVisitor extends PrintVisitor {
 
     @Override
     public void visit(GlideSecsToXY node) {
-        emitNoSpace("glide (");
+        emitNoSpace("glide ");
         node.getSecs().accept(this);
-        emitNoSpace(") secs to x: (");
+        emitNoSpace(" secs to x: ");
         node.getX().accept(this);
-        emitNoSpace(") y: (");
+        emitNoSpace(" y: ");
         node.getY().accept(this);
-        emitNoSpace(")");
         newLine();
     }
 
     @Override
     public void visit(PointInDirection node) {
-        emitNoSpace("point in direction (");
+        emitNoSpace("point in direction ");
         node.getDirection().accept(this);
-        emitNoSpace(")");
         newLine();
     }
 
@@ -358,33 +365,29 @@ public class ScratchBlocksVisitor extends PrintVisitor {
 
     @Override
     public void visit(ChangeXBy node) {
-        emitNoSpace("change x by (");
+        emitNoSpace("change x by ");
         node.getNum().accept(this);
-        emitNoSpace(")");
         newLine();
     }
 
     @Override
     public void visit(SetXTo node) {
-        emitNoSpace("set x to (");
+        emitNoSpace("set x to ");
         node.getNum().accept(this);
-        emitNoSpace(")");
         newLine();
     }
 
     @Override
     public void visit(ChangeYBy node) {
-        emitNoSpace("change y by (");
+        emitNoSpace("change y by ");
         node.getNum().accept(this);
-        emitNoSpace(")");
         newLine();
     }
 
     @Override
     public void visit(SetYTo node) {
-        emitNoSpace("set y to (");
+        emitNoSpace("set y to ");
         node.getNum().accept(this);
-        emitNoSpace(")");
         newLine();
     }
 
@@ -408,37 +411,35 @@ public class ScratchBlocksVisitor extends PrintVisitor {
 
     @Override
     public void visit(SayForSecs node) {
-        emitNoSpace("say [");
+        emitNoSpace("say ");
         node.getString().accept(this);
-        emitNoSpace("] for (");
+        emitNoSpace(" for ");
         node.getSecs().accept(this);
-        emitNoSpace(") seconds");
+        emitNoSpace(" seconds");
         newLine();
     }
 
     @Override
     public void visit(Say node) {
-        emitNoSpace("say [");
+        emitNoSpace("say ");
         node.getString().accept(this);
-        emitNoSpace("]");
         newLine();
     }
 
     @Override
     public void visit(ThinkForSecs node) {
-        emitNoSpace("think [");
+        emitNoSpace("think ");
         node.getThought().accept(this);
-        emitNoSpace("] for (");
+        emitNoSpace(" for ");
         node.getSecs().accept(this);
-        emitNoSpace(") seconds");
+        emitNoSpace(" seconds");
         newLine();
     }
 
     @Override
     public void visit(Think node) {
-        emitNoSpace("think [");
+        emitNoSpace("think ");
         node.getThought().accept(this);
-        emitNoSpace("]");
         newLine();
     }
 
@@ -459,7 +460,15 @@ public class ScratchBlocksVisitor extends PrintVisitor {
     @Override
     public void visit(SwitchBackdrop node) {
         emitNoSpace("switch backdrop to (");
-        node.getElementChoice().accept(this);
+        if(node.getElementChoice() instanceof Next) {
+            emitNoSpace("next backdrop");
+        } else if(node.getElementChoice() instanceof Prev) {
+            emitNoSpace("previous backdrop");
+        } else if(node.getElementChoice() instanceof Random) {
+            emitNoSpace("random backdrop");
+        } else {
+            node.getElementChoice().accept(this);
+        }
         emitNoSpace(" v)");
         newLine();
     }
@@ -472,17 +481,16 @@ public class ScratchBlocksVisitor extends PrintVisitor {
 
     @Override
     public void visit(ChangeSizeBy node) {
-        emitNoSpace("change size by (");
+        emitNoSpace("change size by ");
         node.getNum().accept(this);
-        emitNoSpace(")");
         newLine();
     }
 
     @Override
     public void visit(SetSizeTo node) {
-        emitNoSpace("set size to (");
+        emitNoSpace("set size to ");
         node.getPercent().accept(this);
-        emitNoSpace(") %");
+        emitNoSpace(" %");
         newLine();
     }
 
@@ -490,9 +498,8 @@ public class ScratchBlocksVisitor extends PrintVisitor {
     public void visit(ChangeGraphicEffectBy node) {
         emitNoSpace("change [");
         node.getEffect().accept(this);
-        emitNoSpace(" v] effect by (");
+        emitNoSpace(" v] effect by ");
         node.getValue().accept(this);
-        emitNoSpace(")");
         newLine();
     }
 
@@ -500,9 +507,8 @@ public class ScratchBlocksVisitor extends PrintVisitor {
     public void visit(SetGraphicEffectTo node) {
         emitNoSpace("set [");
         node.getEffect().accept(this);
-        emitNoSpace(" v] effect to (");
+        emitNoSpace(" v] effect to ");
         node.getValue().accept(this);
-        emitNoSpace(")");
         newLine();
     }
 
@@ -536,9 +542,9 @@ public class ScratchBlocksVisitor extends PrintVisitor {
     public void visit(ChangeLayerBy node) {
         emitNoSpace("go [");
         node.getForwardBackwardChoice().accept(this);
-        emitNoSpace(" v] (");
+        emitNoSpace(" v] ");
         node.getNum().accept(this);
-        emitNoSpace(") layers");
+        emitNoSpace(" layers");
         newLine();
     }
 
@@ -572,9 +578,8 @@ public class ScratchBlocksVisitor extends PrintVisitor {
     public void visit(ChangeSoundEffectBy node) {
         emitNoSpace("change [");
         node.getEffect().accept(this);
-        emitNoSpace(" v] effect by (");
+        emitNoSpace(" v] effect by ");
         node.getValue().accept(this);
-        emitNoSpace(")");
         newLine();
     }
 
@@ -582,9 +587,8 @@ public class ScratchBlocksVisitor extends PrintVisitor {
     public void visit(SetSoundEffectTo node) {
         emitNoSpace("set [");
         node.getEffect().accept(this);
-        emitNoSpace(" v] effect to (");
+        emitNoSpace(" v] effect to ");
         node.getValue().accept(this);
-        emitNoSpace(")");
         newLine();
     }
 
@@ -596,17 +600,16 @@ public class ScratchBlocksVisitor extends PrintVisitor {
 
     @Override
     public void visit(ChangeVolumeBy node) {
-        emitNoSpace("change volume by (");
+        emitNoSpace("change volume by ");
         node.getVolumeValue().accept(this);
-        emitNoSpace(")");
         newLine();
     }
 
     @Override
     public void visit(SetVolumeTo node) {
-        emitNoSpace("set volume to (");
+        emitNoSpace("set volume to ");
         node.getVolumeValue().accept(this);
-        emitNoSpace(") %");
+        emitNoSpace(" %");
         newLine();
     }
 
@@ -615,9 +618,9 @@ public class ScratchBlocksVisitor extends PrintVisitor {
 
     @Override
     public void visit(AskAndWait node) {
-        emitNoSpace("ask [");
+        emitNoSpace("ask ");
         node.getQuestion().accept(this);
-        emitNoSpace("] and wait");
+        emitNoSpace(" and wait");
         newLine();
     }
 
@@ -646,9 +649,8 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         }
         emitNoSpace("set [");
         node.getIdentifier().accept(this);
-        emitNoSpace(" v] to (");
+        emitNoSpace(" v] to ");
         node.getExpr().accept(this);
-        emitNoSpace(")");
         newLine();
     }
 
@@ -656,9 +658,8 @@ public class ScratchBlocksVisitor extends PrintVisitor {
     public void visit(ChangeVariableBy node) {
         emitNoSpace("change [");
         node.getIdentifier().accept(this);
-        emitNoSpace(" v] by (");
+        emitNoSpace(" v] by ");
         node.getExpr().accept(this);
-        emitNoSpace(")");
         newLine();
     }
 
@@ -680,9 +681,9 @@ public class ScratchBlocksVisitor extends PrintVisitor {
 
     @Override
     public void visit(AddTo node) {
-        emitNoSpace("add [");
+        emitNoSpace("add ");
         node.getString().accept(this);
-        emitNoSpace("] to [");
+        emitNoSpace(" to [");
         node.getIdentifier().accept(this);
         emitNoSpace(" v]");
         newLine();
@@ -690,9 +691,9 @@ public class ScratchBlocksVisitor extends PrintVisitor {
 
     @Override
     public void visit(DeleteOf node) {
-        emitNoSpace("delete (");
+        emitNoSpace("delete ");
         node.getNum().accept(this);
-        emitNoSpace(") of [");
+        emitNoSpace(" of [");
         node.getIdentifier().accept(this);
         emitNoSpace(" v]");
         newLine();
@@ -708,11 +709,11 @@ public class ScratchBlocksVisitor extends PrintVisitor {
 
     @Override
     public void visit(InsertAt node) {
-        emitNoSpace("insert [");
+        emitNoSpace("insert ");
         node.getString().accept(this);
-        emitNoSpace("] at (");
+        emitNoSpace(" at ");
         node.getIndex().accept(this);
-        emitNoSpace(") of [");
+        emitNoSpace(" of [");
         node.getIdentifier().accept(this);
         emitNoSpace(" v]");
         newLine();
@@ -720,13 +721,12 @@ public class ScratchBlocksVisitor extends PrintVisitor {
 
     @Override
     public void visit(ReplaceItem node) {
-        emitNoSpace("replace item (");
+        emitNoSpace("replace item ");
         node.getIndex().accept(this);
-        emitNoSpace(") of [");
+        emitNoSpace(" of [");
         node.getIdentifier().accept(this);
-        emitNoSpace(" v] with [");
+        emitNoSpace(" v] with ");
         node.getString().accept(this);
-        emitNoSpace("]");
         newLine();
     }
 
@@ -754,13 +754,48 @@ public class ScratchBlocksVisitor extends PrintVisitor {
             return;
         }
 
+        emitNoSpace("(");
         double num = number.getValue();
         if(num % 1 == 0) {
             emitNoSpace(Integer.toString((int)num));
         } else {
             emitNoSpace(String.valueOf(num));
         }
+        emitNoSpace(")");
     }
+
+
+    @Override
+    public void visit(AttributeOf node) {
+        emitNoSpace("([");
+        node.getAttribute().accept(this);
+        emitNoSpace(" v] of (");
+
+        // TODO: How to do this nicer?
+        if(node.getElementChoice() instanceof WithExpr && ((WithExpr)node.getElementChoice()).getExpression() instanceof StrId) {
+            StrId literal = (StrId) ((WithExpr)node.getElementChoice()).getExpression();
+            if(literal.getName().equals("_stage_")) {
+                emitNoSpace("Stage");
+            } else {
+                node.getElementChoice().accept(this);
+            }
+        } else {
+            node.getElementChoice().accept(this);
+        }
+        emitNoSpace(" v)?)");
+    }
+
+
+    @Override
+    public void visit(FixedAttribute node) {
+        emitNoSpace(node.getType());
+    }
+
+    @Override
+    public void visit(WithExpr node) {
+        node.getExpression().accept(this);
+    }
+
 
     @Override
     public void visit(MousePos node) {
@@ -778,9 +813,21 @@ public class ScratchBlocksVisitor extends PrintVisitor {
     }
 
     @Override
+    public void visit(Backdrop node) {
+        node.getType().accept(this);
+    }
+
+    @Override
+    public void visit(NameNum node) {
+        emitNoSpace(node.getType());
+    }
+
+    @Override
     public void visit(StringLiteral stringLiteral) {
         if(inScript) {
+            emitNoSpace("[");
             emitNoSpace(stringLiteral.getText());
+            emitNoSpace("]");
         }
     }
 
@@ -809,17 +856,29 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         emitNoSpace(node.getType());
     }
 
+    @Override
+    public void visit(Message node) {
+        StringExpr message = node.getMessage();
+        if (message instanceof StringLiteral) {
+            StringLiteral literal = (StringLiteral)message;
+            emitNoSpace(literal.getText());
+        } else {
+            node.getMessage().accept(this);
+        }
+    }
 
     @Override
     public void visit(Qualified node) {
         node.getSecond().accept(this);
     }
 
-//
-//    @Override
-//    public void visit(StrId strId) {
-//        emitNoSpace("Foo"+strId.getName());
-//    }
+    @Override
+    public void visit(StrId strId) {
+        if(!inScript) {
+            return;
+        }
+        emitNoSpace(strId.getName());
+    }
 //
 //    @Override
 //    public void visit(BoolLiteral boolLiteral) {
