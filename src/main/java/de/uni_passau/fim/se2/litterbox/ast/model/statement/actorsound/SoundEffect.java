@@ -26,7 +26,7 @@ import java.util.List;
 
 public enum SoundEffect implements ASTLeaf {
 
-    PAN("pan"), PITCH("pitch");
+    PAN("pan left/right"), PITCH("pitch");
 
     private final String token;
 
@@ -49,7 +49,7 @@ public enum SoundEffect implements ASTLeaf {
 
     public static SoundEffect fromString(String type) {
         for (SoundEffect f : values()) {
-            if (f.getToken().equals(type.toLowerCase())) {
+            if (f.getToken().startsWith(type.toLowerCase())) {
                 return f;
             }
         }
