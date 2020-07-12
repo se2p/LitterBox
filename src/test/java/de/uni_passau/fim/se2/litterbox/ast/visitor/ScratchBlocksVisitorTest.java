@@ -367,4 +367,22 @@ public class ScratchBlocksVisitorTest {
                 "say ([x position v] of (Prince v)?)\n" +
                 "[/scratchblocks]\n", result);
     }
+
+    @Test
+    public void testSensingConditionBlocks() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/scratchblocks/sensingconditionblocks.json");
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        PrintStream ps = new PrintStream(os);
+        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(ps);
+        program.accept(visitor);
+        String result = os.toString();
+        assertEquals("[scratchblocks]\n" +
+                "when green flag clicked\n" +
+                "wait until <touching (mouse-pointer v) ?>\n" +
+                "wait until <touching color [#fb9ff6] ?>\n" +
+                "wait until <color [#19a6d1] is touching [#7daf7d] ?>\n" +
+                "wait until <key (space v) pressed?>\n" +
+                "wait until <mouse down?>\n" +
+                "[/scratchblocks]\n", result);
+    }
 }
