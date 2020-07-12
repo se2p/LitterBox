@@ -36,12 +36,10 @@ import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.ColorLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.MousePos;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.RandomPos;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterDefinition;
-import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterDefinitionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinitionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
@@ -95,6 +93,14 @@ public class ScratchBlocksVisitor extends PrintVisitor {
     private boolean hasContent = false;
 
     private ActorDefinition currentActor = null;
+
+    private ByteArrayOutputStream byteStream = null;
+
+    public ScratchBlocksVisitor() {
+        super(null);
+        byteStream = new ByteArrayOutputStream();
+        printStream = new PrintStream(byteStream);
+    }
 
     public ScratchBlocksVisitor(PrintStream stream) {
         super(stream);
@@ -1373,12 +1379,12 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         newLine();
     }
 
-    // TODO: This is a dummy for now
+    // FIXME: Hacky because of PrintVisitor interface, maybe this shouldn't be extended after all?
     public String getScratchBlocks() {
-        return "[scratchblocks]\n" +
-                "when green flag clicked\n" +
-                "todo\n" +
-                "[/scratchblocks]\n";
+        if (byteStream == null) {
+            throw new IllegalArgumentException("To access this function, do not set a PrintStream in the constructor");
+        }
+        return byteStream.toString();
     }
 
 
