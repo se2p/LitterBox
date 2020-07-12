@@ -324,6 +324,47 @@ public class ScratchBlocksVisitorTest {
         ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(ps);
         program.accept(visitor);
         String result = os.toString();
-        System.out.println(result);
+        assertEquals("[scratchblocks]\n" +
+                "when green flag clicked\n" +
+                "say (join [apple ][banana])\n" +
+                "set [x v] to (letter (1) of (x))\n" +
+                "say (length of (x))\n" +
+                "ask [What's your name?] and wait\n" +
+                "if <(answer) contains [a]?> then\n" +
+                "say [Hello!]\n" +
+                "end\n" +
+                "[/scratchblocks]\n", result);
+    }
+
+    @Test
+    public void testAttributeBlocks() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/scratchblocks/attributeblocks.json");
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        PrintStream ps = new PrintStream(os);
+        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(ps);
+        program.accept(visitor);
+        String result = os.toString();
+        assertEquals("[scratchblocks]\n" +
+                "when green flag clicked\n" +
+                "say (x position)\n" +
+                "say (y position)\n" +
+                "say (direction)\n" +
+                "say (costume [number v])\n" +
+                "say (answer)\n" +
+                "say (timer)\n" +
+                "say (backdrop [number v])\n" +
+                "say (size)\n" +
+                "say (volume)\n" +
+                "say (username)\n" +
+                "say (loudness)\n" +
+                "say (distance to (mouse-pointer v)\n" +
+                "say (current (second v)\n" +
+                "say (current (year v)\n" +
+                "say (mouse x)\n" +
+                "say (mouse y)\n" +
+                "say (days since 2000)\n" +
+                "say ([volume v] of (Stage v)?)\n" +
+                "say ([x position v] of (Prince v)?)\n" +
+                "[/scratchblocks]\n", result);
     }
 }
