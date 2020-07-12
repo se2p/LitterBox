@@ -26,8 +26,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.Prev;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.Random;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.WithExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.*;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.Timer;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.Volume;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.SingularExpression;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.FixedAttribute;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
@@ -208,7 +208,7 @@ public class ScratchBlocksVisitor extends PrintVisitor {
             if (spriteName.equals("_myself_")) {
                 emitNoSpace("myself");
             } else {
-                node.getStringExpr().accept(this);
+                emitNoSpace(spriteName);
             }
         } else {
             node.getStringExpr().accept(this);
@@ -887,6 +887,99 @@ public class ScratchBlocksVisitor extends PrintVisitor {
     @Override
     public void visit(Qualified node) {
         node.getSecond().accept(this);
+    }
+
+    @Override
+    public void visit(AsNumber node) {
+        emitNoSpace("(");
+        node.getOperand1().accept(this);
+        emitNoSpace(")");
+    }
+
+    @Override
+    public void visit(AsString node) {
+        if(node.getOperand1() instanceof SingularExpression) {
+            node.getOperand1().accept(this);
+        } else {
+            emitNoSpace("(");
+            node.getOperand1().accept(this);
+            emitNoSpace(")");
+        }
+    }
+
+    @Override
+    public void visit(Add node) {
+        emitNoSpace("(");
+        node.getOperand1().accept(this);
+        emitNoSpace("+");
+        node.getOperand2().accept(this);
+        emitNoSpace(")");
+    }
+
+    @Override
+    public void visit(Minus node) {
+        emitNoSpace("(");
+        node.getOperand1().accept(this);
+        emitNoSpace("-");
+        node.getOperand2().accept(this);
+        emitNoSpace(")");
+    }
+
+    @Override
+    public void visit(Mult node) {
+        emitNoSpace("(");
+        node.getOperand1().accept(this);
+        emitNoSpace("*");
+        node.getOperand2().accept(this);
+        emitNoSpace(")");
+    }
+
+    @Override
+    public void visit(Div node) {
+        emitNoSpace("(");
+        node.getOperand1().accept(this);
+        emitNoSpace("/");
+        node.getOperand2().accept(this);
+        emitNoSpace(")");
+    }
+
+    @Override
+    public void visit(Round node) {
+        emitNoSpace("(round ");
+        node.getOperand1().accept(this);
+        emitNoSpace(")");
+    }
+
+    @Override
+    public void visit(PickRandom node) {
+        emitNoSpace("(pick random ");
+        node.getOperand1().accept(this);
+        emitNoSpace(" to ");
+        node.getOperand2().accept(this);
+        emitNoSpace(")");
+    }
+
+    @Override
+    public void visit(Mod node) {
+        emitNoSpace("(");
+        node.getOperand1().accept(this);
+        emitNoSpace(" mod ");
+        node.getOperand2().accept(this);
+        emitNoSpace(")");
+    }
+
+    @Override
+    public void visit(NumFunctOf node) {
+        emitNoSpace("([");
+        node.getOperand1().accept(this);
+        emitNoSpace(" v] of ");
+        node.getOperand2().accept(this);
+        emitNoSpace(")");
+    }
+
+    @Override
+    public void visit(NumFunct node) {
+        emitNoSpace(node.getFunction());
     }
 
     @Override
