@@ -18,15 +18,13 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.parser.stmt;
 
-import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
-
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import de.uni_passau.fim.se2.litterbox.ast.Constants;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.UnspecifiedBoolExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.ExpressionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
@@ -34,11 +32,13 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ExpressionParser;
 import de.uni_passau.fim.se2.litterbox.ast.parser.metadata.BlockMetadataParser;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map.Entry;
+
+import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 
 public class CallStmtParser {
 
@@ -57,17 +57,17 @@ public class CallStmtParser {
         Preconditions.checkArgument(argumentsNode.isArray());
         ArrayNode argumentsArray = (ArrayNode) argumentsNode;
         JsonNode inputNode = current.get(INPUTS_KEY);
-        Iterator<Entry<String, JsonNode>> entries = inputNode.fields();
-        while (entries.hasNext()) {
-            Entry<String, JsonNode> currentEntry = entries.next();
-            String inputName = currentEntry.getKey();
-            if (arrayNodeContains(argumentsArray, inputName)) {
-                expressions.add(ExpressionParser.parseExpr(current, inputName, blocks));
+        for (JsonNode id :
+                argumentsArray) {
+            if (inputNode.has(id.asText())) {
+                expressions.add(ExpressionParser.parseExpr(current, id.asText(), blocks));
+            } else {
+                expressions.add(new UnspecifiedBoolExpr());
             }
         }
 
         return new CallStmt(new StrId(current.get(Constants.MUTATION_KEY).get(Constants.PROCCODE_KEY).asText()),
-                new ExpressionList(expressions), BlockMetadataParser.parse(identifier,current));
+                new ExpressionList(expressions), BlockMetadataParser.parse(identifier, current));
     }
 
     /**

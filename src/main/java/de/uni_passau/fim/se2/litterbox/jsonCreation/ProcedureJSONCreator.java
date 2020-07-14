@@ -47,7 +47,6 @@ public class ProcedureJSONCreator {
         StmtList stmtList = definition.getStmtList();
         String nextId = null;
 
-        //TODO do procedure definition and prototype here
         if (stmtList.getStmts().size() > 0) {
             IdVisitor vis = new IdVisitor();
             nextId = vis.getBlockId(stmtList.getStmts().get(0));
