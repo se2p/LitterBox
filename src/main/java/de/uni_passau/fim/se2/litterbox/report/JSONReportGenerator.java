@@ -19,6 +19,7 @@
 package de.uni_passau.fim.se2.litterbox.report;
 
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
@@ -45,8 +46,8 @@ public class JSONReportGenerator implements ReportGenerator {
             builder.append(System.lineSeparator());
 
             builder.append("  Script: ");
-            AbstractNode location = issue.getCodeLocation();
-            ScratchBlocksVisitor blockVisitor = new ScratchBlocksVisitor();
+            ASTNode location = issue.getCodeLocation();
+            ScratchBlocksVisitor blockVisitor = new ScratchBlocksVisitor(issue);
             blockVisitor.begin();
             location.accept(blockVisitor);
             blockVisitor.end();

@@ -163,7 +163,7 @@ public class MissingBackdropSwitch extends AbstractIssueFinder {
                 final String actorName = currentActor.getIdent().getName();
                 switchReceived.add(new Pair<>(actorName, msgName));
             } else if (notSentMessages.contains(msgName)) {
-                addIssue(node, // TODO: node or event?
+                addIssue(event, // TODO: node or event?
                         HINT_TEXT, event.getMetadata());
             }
         }

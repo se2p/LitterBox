@@ -78,7 +78,7 @@ public class PositionEqualsCheck extends AbstractIssueFinder {
     public void visit(UntilStmt node) {
         if (node.getBoolExpr() instanceof Equals) {
             if(!checkEquals((Equals) node.getBoolExpr())) {
-                addIssue(node, HINT_TEXT, node.getMetadata());
+                addIssue(node.getBoolExpr(), HINT_TEXT, node.getMetadata());
             }
         }
         visitChildren(node);
@@ -88,7 +88,7 @@ public class PositionEqualsCheck extends AbstractIssueFinder {
     public void visit(IfThenStmt node) {
         if (node.getBoolExpr() instanceof Equals) {
             if(!checkEquals((Equals) node.getBoolExpr())) {
-                addIssue(node, HINT_TEXT, node.getMetadata());
+                addIssue(node.getBoolExpr(), HINT_TEXT, node.getMetadata());
             }
         }
         visitChildren(node);
@@ -98,7 +98,7 @@ public class PositionEqualsCheck extends AbstractIssueFinder {
     public void visit(IfElseStmt node) {
         if (node.getBoolExpr() instanceof Equals) {
             if(!checkEquals((Equals) node.getBoolExpr())) {
-                addIssue(node, HINT_TEXT, node.getMetadata());
+                addIssue(node.getBoolExpr(), HINT_TEXT, node.getMetadata());
             }
         }
         visitChildren(node);

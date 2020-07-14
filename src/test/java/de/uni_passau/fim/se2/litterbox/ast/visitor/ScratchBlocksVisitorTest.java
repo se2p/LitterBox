@@ -2,6 +2,8 @@ package de.uni_passau.fim.se2.litterbox.ast.visitor;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import de.uni_passau.fim.se2.litterbox.analytics.Issue;
+import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.*;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
@@ -11,6 +13,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -387,7 +390,7 @@ public class ScratchBlocksVisitorTest {
                 "say (volume)\n" +
                 "say (username)\n" +
                 "say (loudness)\n" +
-                "say (distance to (mouse-pointer v)\n" +
+                "say (distance to (mouse-pointer v))\n" +
                 "say (current (second v)\n" +
                 "say (current (year v)\n" +
                 "say (mouse x)\n" +
@@ -525,6 +528,32 @@ public class ScratchBlocksVisitorTest {
     }
 
     @Test
+    public void testPenBlocks() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/scratchblocks/penblocks.json");
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        PrintStream ps = new PrintStream(os);
+        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(ps);
+        visitor.begin();
+        program.accept(visitor);
+        visitor.end();
+        String result = os.toString();
+        System.out.println(result);
+        assertEquals("[scratchblocks]\n" +
+                "erase all\n" +
+                "stamp\n" +
+                "pen down\n" +
+                "pen up\n" +
+                "set pen color to [#23bb7]\n" +
+                "change pen (color v) by (10)\n" +
+                "change pen (brightness v) by (10)\n" +
+                "set pen (color v) to (50)\n" +
+                "set pen (saturation v) to (50)\n" +
+                "change pen size by (1)\n" +
+                "set pen size to (1)\n" +
+                "[/scratchblocks]\n", result);
+    }
+
+    @Test
     public void testUnconnectedBlocks() throws IOException, ParsingException {
         Program program = getAST("src/test/fixtures/scratchblocks/unconnectedblocks.json");
         ByteArrayOutputStream os = new ByteArrayOutputStream();
@@ -540,4 +569,560 @@ public class ScratchBlocksVisitorTest {
                 "end\n" +
                 "[/scratchblocks]\n", result);
     }
+
+    @Test
+    public void testComparingLiteralsIssueAnnotation() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/bugpattern/comparingLiterals.json");
+        ComparingLiterals finder = new ComparingLiterals();
+        Set<Issue> issues = finder.check(program);
+
+        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(issues);
+        visitor.begin();
+        program.accept(visitor);
+        visitor.end();
+        String output = visitor.getScratchBlocks();
+        assertEquals("[scratchblocks]\n" +
+                "when green flag clicked\n" +
+                "if <<[] > (50):: #ff0000> and <[] = []:: #ff0000>> then // Issue: comparing literals\n" +
+                "end\n" +
+                "[/scratchblocks]\n", output);
+    }
+
+    @Test
+    public void testStutteringMovementIssueAnnotation() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/bugpattern/stutteringMovement.json");
+        StutteringMovement finder = new StutteringMovement();
+        Set<Issue> issues = finder.check(program);
+        Issue issue = issues.iterator().next();
+
+        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(issue);
+        visitor.begin();
+        issue.getScript().accept(visitor);
+        visitor.end();
+        String output = visitor.getScratchBlocks();
+        assertEquals("[scratchblocks]\n" +
+                "when [space v] key pressed\n" +
+                "move (10) steps:: #ff0000 // Issue: stuttering movement\n" +
+                "[/scratchblocks]\n", output);
+    }
+
+    @Test
+    public void testEndlessRecursionIssueAnnotation() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/bugpattern/recursiveProcedure.json");
+        EndlessRecursion finder = new EndlessRecursion();
+        Set<Issue> issues = finder.check(program);
+        Issue issue = issues.iterator().next();
+
+        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(issue);
+        visitor.begin();
+        visitor.setCurrentActor(issue.getActor());
+        issue.getScriptOrProcedureDefinition().accept(visitor);
+        visitor.end();
+        String output = visitor.getScratchBlocks();
+        assertEquals("[scratchblocks]\n" +
+                "define block name [number or text]\n" +
+                "show variable [my variable v]\n" +
+                "block name [text]:: #ff0000 // Issue: endless recursion\n" +
+                "[/scratchblocks]\n", output);
+    }
+
+
+    @Test
+    public void testCustomBlockWithForeverIssueAnnotation() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/bugpattern/procedureWithForever.json");
+        CustomBlockWithForever finder = new CustomBlockWithForever();
+        Set<Issue> issues = finder.check(program);
+        Issue issue = issues.iterator().next();
+
+        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(issue);
+        visitor.begin();
+        visitor.setCurrentActor(issue.getActor());
+        issue.getScriptOrProcedureDefinition().accept(visitor);
+        visitor.end();
+        String output = visitor.getScratchBlocks();
+        System.out.println(output);
+        assertEquals("[scratchblocks]\n" +
+                "when green flag clicked\n" +
+                "block name [reed] %b:: #ff0000 // Issue: custom block with forever\n" +
+                "say [Hello!] for (2) seconds\n" +
+                "[/scratchblocks]\n", output);
+    }
+
+    @Test
+    public void testCustomBlockWithTerminationIssueAnnotation() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/bugpattern/procedureWithTermination.json");
+        CustomBlockWithTermination finder = new CustomBlockWithTermination();
+        Set<Issue> issues = finder.check(program);
+        Issue issue = issues.iterator().next();
+
+        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(issue);
+        visitor.begin();
+        visitor.setCurrentActor(issue.getActor());
+        issue.getScriptOrProcedureDefinition().accept(visitor);
+        visitor.end();
+        String output = visitor.getScratchBlocks();
+        System.out.println(output);
+        assertEquals("[scratchblocks]\n" +
+                "when green flag clicked\n" +
+                "block name:: #ff0000 // Issue: custom block with termination\n" +
+                "change size by (10)\n" +
+                "[/scratchblocks]\n", output);
+    }
+
+    @Test
+    public void testCallWithoutDefinitionIssueAnnotation() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/bugpattern/callWithoutDefinition.json");
+        CallWithoutDefinition finder = new CallWithoutDefinition();
+        Set<Issue> issues = finder.check(program);
+        Issue issue = issues.iterator().next();
+
+        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(issue);
+        visitor.begin();
+        visitor.setCurrentActor(issue.getActor());
+        issue.getScriptOrProcedureDefinition().accept(visitor);
+        visitor.end();
+        String output = visitor.getScratchBlocks();
+        System.out.println(output);
+        assertEquals("[scratchblocks]\n" +
+                "block name [] %b:: #ff0000 // Issue: call without definition\n" +
+                "[/scratchblocks]\n", output);
+    }
+
+    @Test
+    public void testAmbiguousParameterNameIssueAnnotation() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/bugpattern/realAmbiguousParameter.json");
+        AmbiguousParameterName finder = new AmbiguousParameterName();
+        Set<Issue> issues = finder.check(program);
+        Issue issue = issues.iterator().next();
+
+        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(issue);
+        visitor.begin();
+        visitor.setCurrentActor(issue.getActor());
+        issue.getScriptOrProcedureDefinition().accept(visitor);
+        visitor.end();
+        String output = visitor.getScratchBlocks();
+        assertEquals("[scratchblocks]\n" +
+                "define block name [number or text] [number or text]:: #ff0000 // Issue: ambiguous parameter name\n" +
+                "wait (number or text) seconds\n" +
+                "[/scratchblocks]\n", output);
+    }
+
+    @Test
+    public void testAmbiguousSignatureIssueAnnotation() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/bugpattern/ambiguousProcedureSignature.json");
+        AmbiguousCustomBlockSignature finder = new AmbiguousCustomBlockSignature();
+        Set<Issue> issues = finder.check(program);
+        Issue issue = issues.iterator().next();
+
+        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(issue);
+        visitor.begin();
+        visitor.setCurrentActor(issue.getActor());
+        issue.getScriptOrProcedureDefinition().accept(visitor);
+        visitor.end();
+        String output = visitor.getScratchBlocks();
+        assertEquals("[scratchblocks]\n" +
+                "define AmbiguousParameters [paramTest] [paramTest]:: #ff0000 // Issue: ambiguous custom block signature\n" +
+                "move (10) steps\n" +
+                "[/scratchblocks]\n", output);
+    }
+
+    @Test
+    public void testExpressionAsTouchingOrColorIssueAnnotation() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/bugpattern/touchingExpressions.json");
+        ExpressionAsTouchingOrColor finder = new ExpressionAsTouchingOrColor();
+        Set<Issue> issues = finder.check(program);
+        Issue issue = issues.iterator().next();
+
+        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(issue);
+        visitor.begin();
+        visitor.setCurrentActor(issue.getActor());
+        issue.getScriptOrProcedureDefinition().accept(visitor);
+        visitor.end();
+        String output = visitor.getScratchBlocks();
+        assertEquals("[scratchblocks]\n" +
+                "<touching color (my variable):: #ff0000 ?> // Issue: expression as touching or color\n" +
+                "[/scratchblocks]\n", output);
+    }
+
+
+    @Test
+    public void testForeverInsideLoopIssueAnnotation() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/bugpattern/foreverInLoop.json");
+        ForeverInsideLoop finder = new ForeverInsideLoop();
+        Set<Issue> issues = finder.check(program);
+        Issue issue = issues.iterator().next();
+
+        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(issue);
+        visitor.begin();
+        visitor.setCurrentActor(issue.getActor());
+        issue.getScriptOrProcedureDefinition().accept(visitor);
+        visitor.end();
+        String output = visitor.getScratchBlocks();
+        assertEquals("[scratchblocks]\n" +
+                "repeat (10)\n" +
+                "say [Hello!] for (2) seconds\n" +
+                "repeat (10)\n" +
+                "next costume\n" +
+                "end\n" +
+                "forever :: #ff0000 // Issue: forever inside loop\n" +
+                "point in direction (90)\n" +
+                "end\n" +
+                "end\n" +
+                "[/scratchblocks]\n", output);
+    }
+
+    @Test
+    public void testIllegalParameterRefactorIssueAnnotation() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/bugpattern/illegalParameterRefactor.json");
+        IllegalParameterRefactor finder = new IllegalParameterRefactor();
+        Set<Issue> issues = finder.check(program);
+        Issue issue = issues.iterator().next();
+
+        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(issue);
+        visitor.begin();
+        visitor.setCurrentActor(issue.getActor());
+        issue.getScriptOrProcedureDefinition().accept(visitor);
+        visitor.end();
+        String output = visitor.getScratchBlocks();
+        assertEquals("[scratchblocks]\n" +
+                "define block name [car] <boolean>\n" +
+                "if <car:: #ff0000> then // Issue: illegal parameter refactor\n" +
+                "move (10) steps\n" +
+                "end\n" +
+                "[/scratchblocks]\n", output);
+    }
+
+    @Test
+    public void testMessageNeverReceivedIssueAnnotation() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/bugpattern/broadcastSync.json");
+        MessageNeverReceived finder = new MessageNeverReceived();
+        Set<Issue> issues = finder.check(program);
+        Issue issue = issues.iterator().next();
+
+        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(issue);
+        visitor.begin();
+        visitor.setCurrentActor(issue.getActor());
+        issue.getScriptOrProcedureDefinition().accept(visitor);
+        visitor.end();
+        String output = visitor.getScratchBlocks();
+        System.out.println(output);
+        assertEquals("[scratchblocks]\n" +
+                "when green flag clicked\n" +
+                "broadcast (received v)\n" +
+                "broadcast (ignored v):: #ff0000 // Issue: message never received\n" +
+                "[/scratchblocks]\n", output);
+    }
+
+    @Test
+    public void testMessageNeverSentIssueAnnotation() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/bugpattern/messageRec.json");
+        MessageNeverSent finder = new MessageNeverSent();
+        Set<Issue> issues = finder.check(program);
+        Issue issue = issues.iterator().next();
+
+        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(issue);
+        visitor.begin();
+        visitor.setCurrentActor(issue.getActor());
+        issue.getScriptOrProcedureDefinition().accept(visitor);
+        visitor.end();
+        String output = visitor.getScratchBlocks();
+        assertEquals("[scratchblocks]\n" +
+                "when I receive [message1 v]:: #ff0000 // Issue: message Never Sent\n" +
+                "wait (1) seconds\n" +
+                "[/scratchblocks]\n", output);
+    }
+
+    @Test
+    public void testMissingBackdropSwitchIssueAnnotation() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/bugpattern/missBackdrop.json");
+        MissingBackdropSwitch finder = new MissingBackdropSwitch();
+        Set<Issue> issues = finder.check(program);
+        Issue issue = issues.iterator().next();
+
+        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(issue);
+        visitor.begin();
+        visitor.setCurrentActor(issue.getActor());
+        issue.getScriptOrProcedureDefinition().accept(visitor);
+        visitor.end();
+        String output = visitor.getScratchBlocks();
+        assertEquals("[scratchblocks]\n" +
+                "when backdrop switches to [backdrop1 v]:: #ff0000 // Issue: missing backdrop switch\n" +
+                "ask [What's your name?] and wait\n" +
+                "[/scratchblocks]\n", output);
+    }
+
+
+    @Test
+    public void testMissingCloneCallIssueAnnotation() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/bugpattern/missingCloneCall.json");
+        MissingCloneCall finder = new MissingCloneCall();
+        Set<Issue> issues = finder.check(program);
+        Issue issue = issues.iterator().next();
+
+        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(issue);
+        visitor.begin();
+        visitor.setCurrentActor(issue.getActor());
+        issue.getScriptOrProcedureDefinition().accept(visitor);
+        visitor.end();
+        String output = visitor.getScratchBlocks();
+        assertEquals("[scratchblocks]\n" +
+                "when I start as a clone :: #ff0000 // Issue: missing clone call\n" +
+                "wait (1) seconds\n" +
+                "[/scratchblocks]\n", output);
+    }
+
+
+    @Test
+    public void testMissingCloneInitializationIssueAnnotation() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/bugpattern/missingCloneInitialization.json");
+        MissingCloneInitialization finder = new MissingCloneInitialization();
+        Set<Issue> issues = finder.check(program);
+        Issue issue = issues.iterator().next();
+
+        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(issue);
+        visitor.begin();
+        visitor.setCurrentActor(issue.getActor());
+        issue.getScriptOrProcedureDefinition().accept(visitor);
+        visitor.end();
+        String output = visitor.getScratchBlocks();
+        assertEquals("[scratchblocks]\n" +
+                "when green flag clicked\n" +
+                "create clone of (myself v)\n" +
+                "create clone of (Anina Dance v):: #ff0000 // Issue: missing clone initialization\n" +
+                "[/scratchblocks]\n", output);
+    }
+
+    @Test
+    public void testMissingEraseAllIssueAnnotation() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/bugpattern/missingEraseAll.json");
+        MissingEraseAll finder = new MissingEraseAll();
+        Set<Issue> issues = finder.check(program);
+        Issue issue = issues.iterator().next();
+
+        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(issue);
+        visitor.begin();
+        visitor.setCurrentActor(issue.getActor());
+        issue.getScriptOrProcedureDefinition().accept(visitor);
+        visitor.end();
+        String output = visitor.getScratchBlocks();
+        assertEquals("[scratchblocks]\n" +
+                "when green flag clicked\n" +
+                "pen down:: #ff0000 // Issue: missing erase all\n" +
+                "pen up\n" +
+                "[/scratchblocks]\n", output);
+    }
+
+    @Test
+    public void testMissingInitializationIssueAnnotation() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/bugpattern/missingVariableInitialization.json");
+        MissingInitialization finder = new MissingInitialization();
+        Set<Issue> issues = finder.check(program);
+        Issue issue = issues.iterator().next();
+
+        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(issue);
+        visitor.begin();
+        visitor.setCurrentActor(issue.getActor());
+        issue.getScriptOrProcedureDefinition().accept(visitor);
+        visitor.end();
+        String output = visitor.getScratchBlocks();
+        System.out.println(output);
+        assertEquals("[scratchblocks]\n" +
+                "when green flag clicked\n" +
+                "pen down:: #ff0000 // Issue: missing erase all\n" +
+                "pen up\n" +
+                "[/scratchblocks]\n", output);
+    }
+
+
+    @Test
+    public void testMissingLoopSensingIssueAnnotation() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/bugpattern/nestedMissingLoopSensing.json");
+        MissingLoopSensing finder = new MissingLoopSensing();
+        Set<Issue> issues = finder.check(program);
+        Issue issue = issues.iterator().next();
+
+        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(issue);
+        visitor.begin();
+        visitor.setCurrentActor(issue.getActor());
+        issue.getScriptOrProcedureDefinition().accept(visitor);
+        visitor.end();
+        String output = visitor.getScratchBlocks();
+        assertEquals("[scratchblocks]\n" +
+                "when green flag clicked\n" +
+                "if <<not <touching (mouse-pointer v) ?:: #ff0000>> and <(distance to (mouse-pointer v)) > (50)>> then // Issue: missing loop sensing\n" +
+                "say [Hallo!] for (2) seconds\n" +
+                "end\n" +
+                "[/scratchblocks]\n", output);
+    }
+
+    @Test
+    public void testMissingPenDownIssueAnnotation() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/bugpattern/missingPenDown.json");
+        MissingPenDown finder = new MissingPenDown();
+        Set<Issue> issues = finder.check(program);
+        Issue issue = issues.iterator().next();
+
+        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(issue);
+        visitor.begin();
+        visitor.setCurrentActor(issue.getActor());
+        issue.getScriptOrProcedureDefinition().accept(visitor);
+        visitor.end();
+        String output = visitor.getScratchBlocks();
+        assertEquals("[scratchblocks]\n" +
+                "when green flag clicked\n" +
+                "pen up:: #ff0000 // Issue: missing pen down\n" +
+                "set pen color to [#c63f3f]\n" +
+                "say [Hello!]\n" +
+                "go to (random position v)\n" +
+                "[/scratchblocks]\n", output);
+    }
+
+    @Test
+    public void testMissingPenUpIssueAnnotation() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/bugpattern/missingPenUp.json");
+        MissingPenUp finder = new MissingPenUp();
+        Set<Issue> issues = finder.check(program);
+        Issue issue = issues.iterator().next();
+
+        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(issue);
+        visitor.begin();
+        visitor.setCurrentActor(issue.getActor());
+        issue.getScriptOrProcedureDefinition().accept(visitor);
+        visitor.end();
+        String output = visitor.getScratchBlocks();
+        assertEquals("[scratchblocks]\n" +
+                "when green flag clicked\n" +
+                "pen down:: #ff0000 // Issue: missing pen up\n" +
+                "say [Hello!]\n" +
+                "go to (random position v)\n" +
+                "[/scratchblocks]\n", output);
+    }
+
+    @Test
+    public void testMissingTerminationConditionIssueAnnotation() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/missingTermination/missingTermination.json");
+        MissingTerminationCondition finder = new MissingTerminationCondition();
+        Set<Issue> issues = finder.check(program);
+        Issue issue = issues.iterator().next();
+
+        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(issue);
+        visitor.begin();
+        visitor.setCurrentActor(issue.getActor());
+        issue.getScriptOrProcedureDefinition().accept(visitor);
+        visitor.end();
+        String output = visitor.getScratchBlocks();
+        assertEquals("[scratchblocks]\n" +
+                "when green flag clicked\n" +
+                "repeat until <>:: #ff0000 // Issue: missing termination\n" +
+                "say [Hello!] for (2) seconds\n" +
+                "end\n" +
+                "[/scratchblocks]\n", output);
+    }
+
+    @Test
+    public void testMissingWaitUntilConditionIssueAnnotation() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/bugpattern/missingWaitUntilCondition.json");
+        MissingWaitUntilCondition finder = new MissingWaitUntilCondition();
+        Set<Issue> issues = finder.check(program);
+        Issue issue = issues.iterator().next();
+
+        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(issue);
+        visitor.begin();
+        visitor.setCurrentActor(issue.getActor());
+        issue.getScriptOrProcedureDefinition().accept(visitor);
+        visitor.end();
+        String output = visitor.getScratchBlocks();
+        System.out.println(output);
+        assertEquals("[scratchblocks]\n" +
+                "when green flag clicked\n" +
+                "wait until <>:: #ff0000 // Issue: missing wait condition\n" +
+                "[/scratchblocks]\n", output);
+    }
+
+    @Test
+    public void testOrphanedParameterIssueAnnotation() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/bugpattern/orphanedParameter.json");
+        OrphanedParameter finder = new OrphanedParameter();
+        Set<Issue> issues = finder.check(program);
+        Issue issue = issues.iterator().next();
+
+        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(issue);
+        visitor.begin();
+        visitor.setCurrentActor(issue.getActor());
+        issue.getScriptOrProcedureDefinition().accept(visitor);
+        visitor.end();
+        String output = visitor.getScratchBlocks();
+        assertEquals("[scratchblocks]\n" +
+                "define block name <boolean>\n" +
+                "move (boolean) steps\n" +
+                "if <String:: #ff0000> then // Issue: orphaned parameter\n" +
+                "say [Hello!] for (2) seconds\n" +
+                "end\n" +
+                "[/scratchblocks]\n", output);
+    }
+
+    @Test
+    public void testParameterOutOfScopeIssueAnnotation() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/bugpattern/parameterOutsideScope.json");
+        ParameterOutOfScope finder = new ParameterOutOfScope();
+        Set<Issue> issues = finder.check(program);
+        Issue issue = issues.iterator().next();
+
+        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(issue);
+        visitor.begin();
+        visitor.setCurrentActor(issue.getActor());
+        issue.getScriptOrProcedureDefinition().accept(visitor);
+        visitor.end();
+        String output = visitor.getScratchBlocks();
+        assertEquals("[scratchblocks]\n" +
+                "turn right (boolean:: #ff0000) degrees // Issue: parameter out of scope\n" +
+                "[/scratchblocks]\n", output);
+    }
+
+    @Test
+    public void testRecursiveCloningIssueAnnotation() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/bugpattern/xPosEqual.json");
+        PositionEqualsCheck finder = new PositionEqualsCheck();
+        Set<Issue> issues = finder.check(program);
+        Issue issue = issues.iterator().next();
+
+        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(issue);
+        visitor.begin();
+        visitor.setCurrentActor(issue.getActor());
+        issue.getScriptOrProcedureDefinition().accept(visitor);
+        visitor.end();
+        String output = visitor.getScratchBlocks();
+        assertEquals("[scratchblocks]\n" +
+                "repeat until <(x position) = (50):: #ff0000> // Issue: position equals check\n" +
+                "end\n" +
+                "[/scratchblocks]\n", output);
+    }
+
+    @Test
+    public void testPositionEqualsIssueAnnotation() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/bugpattern/recursiveCloning.json");
+        RecursiveCloning finder = new RecursiveCloning();
+        Set<Issue> issues = finder.check(program);
+        Issue issue = issues.iterator().next();
+
+        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(issue);
+        visitor.begin();
+        visitor.setCurrentActor(issue.getActor());
+        issue.getScriptOrProcedureDefinition().accept(visitor);
+        visitor.end();
+        String output = visitor.getScratchBlocks();
+        System.out.println(output);
+        assertEquals("[scratchblocks]\n" +
+                "when I start as a clone \n" +
+                "play sound (Meow v) until done\n" +
+                "create clone of (myself v):: #ff0000 // Issue: recursive cloning\n" +
+                "[/scratchblocks]\n", output);
+    }
+
+
+
+    // TODO: No working scripts?
+    // TODO: SameIdentifierDifferentSprite
+
+
 }

@@ -19,6 +19,7 @@
 package de.uni_passau.fim.se2.litterbox.ast.visitor;
 
 
+import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.model.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.Next;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.Prev;
@@ -29,6 +30,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.SingularExpression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.Timer;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.FixedAttribute;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
@@ -48,6 +50,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.list.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.pen.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.DeleteClone;
@@ -66,7 +69,7 @@ import de.uni_passau.fim.se2.litterbox.jsonCreation.BlockJsonCreatorHelper;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
-import java.util.List;
+import java.util.*;
 
 /*
  * Documentation of syntax:
@@ -96,6 +99,12 @@ public class ScratchBlocksVisitor extends PrintVisitor {
 
     private ByteArrayOutputStream byteStream = null;
 
+    private boolean lineWrapped = true;
+
+    private Set<Issue> issues = new LinkedHashSet<>();
+
+    private Set<String> issueNote = new LinkedHashSet<>();
+
     public ScratchBlocksVisitor() {
         super(null);
         byteStream = new ByteArrayOutputStream();
@@ -104,6 +113,20 @@ public class ScratchBlocksVisitor extends PrintVisitor {
 
     public ScratchBlocksVisitor(PrintStream stream) {
         super(stream);
+    }
+
+    public ScratchBlocksVisitor(Issue... issues) {
+        this();
+        this.issues.addAll(Arrays.asList(issues));
+    }
+
+    public ScratchBlocksVisitor(Collection<Issue> issues) {
+        this();
+        this.issues.addAll(issues);
+    }
+
+    public void setCurrentActor(ActorDefinition node) {
+        currentActor = node;
     }
 
     @Override
@@ -139,6 +162,7 @@ public class ScratchBlocksVisitor extends PrintVisitor {
     public void visit(Script script) {
         inScript = true;
         super.visit(script);
+        storeNotesForIssue(script);
         inScript = false;
     }
 
@@ -156,6 +180,7 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         }
 
         emitNoSpace(procedureName);
+        storeNotesForIssue(node);
         newLine();
         visit(node.getStmtList());
         inScript = false;
@@ -168,6 +193,7 @@ public class ScratchBlocksVisitor extends PrintVisitor {
     @Override
     public void visit(GreenFlag greenFlag) {
         emitNoSpace("when green flag clicked");
+        storeNotesForIssue(greenFlag);
         newLine();
     }
 
@@ -175,20 +201,23 @@ public class ScratchBlocksVisitor extends PrintVisitor {
     @Override
     public void visit(Clicked clicked) {
         emitNoSpace("when this sprite clicked");
+        storeNotesForIssue(clicked);
         newLine();
     }
 
     @Override
     public void visit(KeyPressed keyPressed) {
-        emitNoSpace("when ");
+        emitNoSpace("when [");
         keyPressed.getKey().accept(this);
-        emitNoSpace(" key pressed");
+        emitNoSpace(" v] key pressed");
+        storeNotesForIssue(keyPressed);
         newLine();
     }
 
     @Override
     public void visit(StartedAsClone startedAsClone) {
         emitToken("when I start as a clone");
+        storeNotesForIssue(startedAsClone);
         newLine();
     }
 
@@ -197,6 +226,7 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         emitNoSpace("when I receive [");
         receptionOfMessage.getMsg().accept(this);
         emitNoSpace(" v]");
+        storeNotesForIssue(receptionOfMessage);
         newLine();
     }
 
@@ -204,6 +234,7 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         emitNoSpace("when backdrop switches to [");
         backdrop.getBackdrop().accept(this);
         emitNoSpace(" v]");
+        storeNotesForIssue(backdrop);
         newLine();
     }
 
@@ -212,6 +243,7 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         node.getAttribute().accept(this);
         emitNoSpace(" v] > ");
         node.getValue().accept(this);
+        storeNotesForIssue(node);
         newLine();
     }
 
@@ -220,6 +252,7 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         emitNoSpace("broadcast (");
         node.getMessage().accept(this);
         emitNoSpace(" v)");
+        storeNotesForIssue(node);
         newLine();
     }
 
@@ -228,6 +261,7 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         emitNoSpace("broadcast (");
         node.getMessage().accept(this);
         emitNoSpace(" v) and wait");
+        storeNotesForIssue(node);
         newLine();
     }
 
@@ -241,6 +275,7 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         emitNoSpace("wait ");
         node.getSeconds().accept(this);
         emitNoSpace(" seconds");
+        storeNotesForIssue(node);
         newLine();
     }
 
@@ -248,24 +283,28 @@ public class ScratchBlocksVisitor extends PrintVisitor {
     public void visit(WaitUntil node) {
         emitNoSpace("wait until ");
         node.getUntil().accept(this);
+        storeNotesForIssue(node);
         newLine();
     }
 
     @Override
     public void visit(StopAll node) {
         emitNoSpace("stop [all v]");
+        storeNotesForIssue(node);
         newLine();
     }
 
     @Override
     public void visit(StopOtherScriptsInSprite node) {
         emitToken("stop [other scripts in sprite v]");
+        storeNotesForIssue(node);
         newLine();
     }
 
     @Override
     public void visit(StopThisScript node) {
         emitToken("stop [this script v]");
+        storeNotesForIssue(node);
         newLine();
     }
 
@@ -288,12 +327,14 @@ public class ScratchBlocksVisitor extends PrintVisitor {
             node.getStringExpr().accept(this);
         }
         emitNoSpace(" v)");
+        storeNotesForIssue(node);
         newLine();
     }
 
     @Override
     public void visit(DeleteClone node) {
         emitToken("delete this clone");
+        storeNotesForIssue(node);
         newLine();
     }
 
@@ -301,6 +342,7 @@ public class ScratchBlocksVisitor extends PrintVisitor {
     @Override
     public void visit(RepeatForeverStmt repeatForeverStmt) {
         emitToken("forever");
+        storeNotesForIssue(repeatForeverStmt);
         newLine();
         beginIndentation();
         repeatForeverStmt.getStmtList().accept(this);
@@ -313,6 +355,7 @@ public class ScratchBlocksVisitor extends PrintVisitor {
     public void visit(UntilStmt untilStmt) {
         emitNoSpace("repeat until ");
         untilStmt.getBoolExpr().accept(this);
+        storeNotesForIssue(untilStmt);
         newLine();
         beginIndentation();
         untilStmt.getStmtList().accept(this);
@@ -325,6 +368,7 @@ public class ScratchBlocksVisitor extends PrintVisitor {
     public void visit(RepeatTimesStmt repeatTimesStmt) {
         emitNoSpace("repeat ");
         repeatTimesStmt.getTimes().accept(this);
+        storeNotesForIssue(repeatTimesStmt);
         newLine();
         beginIndentation();
         repeatTimesStmt.getStmtList().accept(this);
@@ -338,6 +382,7 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         emitNoSpace("if ");
         ifThenStmt.getBoolExpr().accept(this);
         emitNoSpace(" then");
+        storeNotesForIssue(ifThenStmt);
         newLine();
         beginIndentation();
         ifThenStmt.getThenStmts().accept(this);
@@ -351,6 +396,7 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         emitNoSpace("if ");
         ifElseStmt.getBoolExpr().accept(this);
         emitNoSpace(" then");
+        storeNotesForIssue(ifElseStmt);
         newLine();
         beginIndentation();
         ifElseStmt.getStmtList().accept(this);
@@ -372,6 +418,7 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         emitNoSpace("move ");
         node.getSteps().accept(this);
         emitNoSpace(" steps");
+        storeNotesForIssue(node);
         newLine();
     }
 
@@ -380,6 +427,7 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         emitNoSpace("turn left ");
         node.getDegrees().accept(this);
         emitNoSpace(" degrees");
+        storeNotesForIssue(node);
         newLine();
     }
 
@@ -388,6 +436,7 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         emitNoSpace("turn right ");
         node.getDegrees().accept(this);
         emitNoSpace(" degrees");
+        storeNotesForIssue(node);
         newLine();
     }
 
@@ -396,6 +445,7 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         emitNoSpace("go to (");
         node.getPosition().accept(this);
         emitNoSpace(" v)");
+        storeNotesForIssue(node);
         newLine();
     }
 
@@ -405,6 +455,7 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         node.getX().accept(this);
         emitNoSpace(" y: ");
         node.getY().accept(this);
+        storeNotesForIssue(node);
         newLine();
     }
 
@@ -415,6 +466,7 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         emitNoSpace(" secs to (");
         node.getPosition().accept(this);
         emitNoSpace(" v)");
+        storeNotesForIssue(node);
         newLine();
     }
 
@@ -426,6 +478,7 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         node.getX().accept(this);
         emitNoSpace(" y: ");
         node.getY().accept(this);
+        storeNotesForIssue(node);
         newLine();
     }
 
@@ -433,6 +486,7 @@ public class ScratchBlocksVisitor extends PrintVisitor {
     public void visit(PointInDirection node) {
         emitNoSpace("point in direction ");
         node.getDirection().accept(this);
+        storeNotesForIssue(node);
         newLine();
     }
 
@@ -441,6 +495,7 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         emitNoSpace("point towards (");
         node.getPosition().accept(this);
         emitNoSpace(" v)");
+        storeNotesForIssue(node);
         newLine();
     }
 
@@ -448,6 +503,7 @@ public class ScratchBlocksVisitor extends PrintVisitor {
     public void visit(ChangeXBy node) {
         emitNoSpace("change x by ");
         node.getNum().accept(this);
+        storeNotesForIssue(node);
         newLine();
     }
 
@@ -455,6 +511,7 @@ public class ScratchBlocksVisitor extends PrintVisitor {
     public void visit(SetXTo node) {
         emitNoSpace("set x to ");
         node.getNum().accept(this);
+        storeNotesForIssue(node);
         newLine();
     }
 
@@ -462,6 +519,7 @@ public class ScratchBlocksVisitor extends PrintVisitor {
     public void visit(ChangeYBy node) {
         emitNoSpace("change y by ");
         node.getNum().accept(this);
+        storeNotesForIssue(node);
         newLine();
     }
 
@@ -469,12 +527,14 @@ public class ScratchBlocksVisitor extends PrintVisitor {
     public void visit(SetYTo node) {
         emitNoSpace("set y to ");
         node.getNum().accept(this);
+        storeNotesForIssue(node);
         newLine();
     }
 
     @Override
     public void visit(IfOnEdgeBounce node) {
         emitNoSpace("if on edge, bounce");
+        storeNotesForIssue(node);
         newLine();
     }
 
@@ -483,6 +543,7 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         emitNoSpace("set rotation style [");
         node.getRotation().accept(this);
         emitNoSpace(" v]");
+        storeNotesForIssue(node);
         newLine();
     }
 
@@ -497,6 +558,7 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         emitNoSpace(" for ");
         node.getSecs().accept(this);
         emitNoSpace(" seconds");
+        storeNotesForIssue(node);
         newLine();
     }
 
@@ -504,6 +566,7 @@ public class ScratchBlocksVisitor extends PrintVisitor {
     public void visit(Say node) {
         emitNoSpace("say ");
         node.getString().accept(this);
+        storeNotesForIssue(node);
         newLine();
     }
 
@@ -514,6 +577,7 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         emitNoSpace(" for ");
         node.getSecs().accept(this);
         emitNoSpace(" seconds");
+        storeNotesForIssue(node);
         newLine();
     }
 
@@ -521,6 +585,7 @@ public class ScratchBlocksVisitor extends PrintVisitor {
     public void visit(Think node) {
         emitNoSpace("think ");
         node.getThought().accept(this);
+        storeNotesForIssue(node);
         newLine();
     }
 
@@ -529,12 +594,14 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         emitNoSpace("switch costume to (");
         node.getCostumeChoice().accept(this);
         emitNoSpace(" v)");
+        storeNotesForIssue(node);
         newLine();
     }
 
     @Override
     public void visit(NextCostume node) {
         emitNoSpace("next costume");
+        storeNotesForIssue(node);
         newLine();
     }
 
@@ -551,12 +618,14 @@ public class ScratchBlocksVisitor extends PrintVisitor {
             node.getElementChoice().accept(this);
         }
         emitNoSpace(" v)");
+        storeNotesForIssue(node);
         newLine();
     }
 
     @Override
     public void visit(NextBackdrop node) {
         emitNoSpace("next backdrop");
+        storeNotesForIssue(node);
         newLine();
     }
 
@@ -564,6 +633,7 @@ public class ScratchBlocksVisitor extends PrintVisitor {
     public void visit(ChangeSizeBy node) {
         emitNoSpace("change size by ");
         node.getNum().accept(this);
+        storeNotesForIssue(node);
         newLine();
     }
 
@@ -572,6 +642,7 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         emitNoSpace("set size to ");
         node.getPercent().accept(this);
         emitNoSpace(" %");
+        storeNotesForIssue(node);
         newLine();
     }
 
@@ -581,6 +652,7 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         node.getEffect().accept(this);
         emitNoSpace(" v] effect by ");
         node.getValue().accept(this);
+        storeNotesForIssue(node);
         newLine();
     }
 
@@ -590,24 +662,28 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         node.getEffect().accept(this);
         emitNoSpace(" v] effect to ");
         node.getValue().accept(this);
+        storeNotesForIssue(node);
         newLine();
     }
 
     @Override
     public void visit(ClearGraphicEffects node) {
         emitNoSpace("clear graphic effects");
+        storeNotesForIssue(node);
         newLine();
     }
 
     @Override
     public void visit(Show node) {
         emitNoSpace("show");
+        storeNotesForIssue(node);
         newLine();
     }
 
     @Override
     public void visit(Hide node) {
         emitNoSpace("hide");
+        storeNotesForIssue(node);
         newLine();
     }
 
@@ -616,6 +692,7 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         emitNoSpace("go to [");
         node.getLayerChoice().accept(this);
         emitNoSpace(" v] layer");
+        storeNotesForIssue(node);
         newLine();
     }
 
@@ -626,6 +703,7 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         emitNoSpace(" v] ");
         node.getNum().accept(this);
         emitNoSpace(" layers");
+        storeNotesForIssue(node);
         newLine();
     }
 
@@ -638,6 +716,7 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         emitNoSpace("play sound (");
         node.getElementChoice().accept(this);
         emitNoSpace(" v) until done");
+        storeNotesForIssue(node);
         newLine();
     }
 
@@ -646,12 +725,14 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         emitNoSpace("start sound (");
         node.getElementChoice().accept(this);
         emitNoSpace(" v)");
+        storeNotesForIssue(node);
         newLine();
     }
 
     @Override
     public void visit(StopAllSounds node) {
         emitNoSpace("stop all sounds");
+        storeNotesForIssue(node);
         newLine();
     }
 
@@ -661,6 +742,7 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         node.getEffect().accept(this);
         emitNoSpace(" v] effect by ");
         node.getValue().accept(this);
+        storeNotesForIssue(node);
         newLine();
     }
 
@@ -670,12 +752,14 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         node.getEffect().accept(this);
         emitNoSpace(" v] effect to ");
         node.getValue().accept(this);
+        storeNotesForIssue(node);
         newLine();
     }
 
     @Override
     public void visit(ClearSoundEffects node) {
         emitNoSpace("clear sound effects");
+        storeNotesForIssue(node);
         newLine();
     }
 
@@ -683,6 +767,7 @@ public class ScratchBlocksVisitor extends PrintVisitor {
     public void visit(ChangeVolumeBy node) {
         emitNoSpace("change volume by ");
         node.getVolumeValue().accept(this);
+        storeNotesForIssue(node);
         newLine();
     }
 
@@ -691,6 +776,7 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         emitNoSpace("set volume to ");
         node.getVolumeValue().accept(this);
         emitNoSpace(" %");
+        storeNotesForIssue(node);
         newLine();
     }
 
@@ -702,6 +788,7 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         emitNoSpace("ask ");
         node.getQuestion().accept(this);
         emitNoSpace(" and wait");
+        storeNotesForIssue(node);
         newLine();
     }
 
@@ -709,13 +796,93 @@ public class ScratchBlocksVisitor extends PrintVisitor {
     public void visit(SetDragMode node) {
         emitNoSpace("set drag mode [");
         node.getDrag().accept(this);
-        emitNoSpace(" v]");
+        emitNoSpace(" v");
+        storeNotesForIssue(node);
+        emitNoSpace("]");
         newLine();
     }
 
     @Override
     public void visit(ResetTimer node) {
         emitNoSpace("reset timer");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    //---------------------------------------------------------------
+    // Pen blocks
+    @Override
+    public void visit(PenClearStmt node) {
+        emitNoSpace("erase all");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(PenStampStmt node) {
+        emitNoSpace("stamp");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(PenDownStmt node) {
+        emitNoSpace("pen down");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(PenUpStmt node) {
+        emitNoSpace("pen up");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(SetPenColorToColorStmt node) {
+        emitNoSpace("set pen color to ");
+        node.getColorExpr().accept(this);
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(ChangePenColorParamBy node) {
+        emitNoSpace("change pen (");
+        StringLiteral literal = (StringLiteral)node.getParam();
+        emitNoSpace(literal.getText());
+        emitNoSpace(" v) by ");
+        node.getValue().accept(this);
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(SetPenColorParamTo node) {
+        emitNoSpace("set pen (");
+        StringLiteral literal = (StringLiteral)node.getParam();
+        emitNoSpace(literal.getText());
+        emitNoSpace(" v) to ");
+        node.getValue().accept(this);
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(ChangePenSizeBy node) {
+        emitNoSpace("change pen size by ");
+        node.getValue().accept(this);
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+
+    @Override
+    public void visit(SetPenSizeTo node) {
+        emitNoSpace("set pen size to ");
+        node.getValue().accept(this);
+        storeNotesForIssue(node);
         newLine();
     }
 
@@ -732,6 +899,7 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         node.getIdentifier().accept(this);
         emitNoSpace(" v] to ");
         node.getExpr().accept(this);
+        storeNotesForIssue(node);
         newLine();
     }
 
@@ -741,6 +909,7 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         node.getIdentifier().accept(this);
         emitNoSpace(" v] by ");
         node.getExpr().accept(this);
+        storeNotesForIssue(node);
         newLine();
     }
 
@@ -748,7 +917,9 @@ public class ScratchBlocksVisitor extends PrintVisitor {
     public void visit(ShowVariable node) {
         emitNoSpace("show variable [");
         node.getIdentifier().accept(this);
-        emitNoSpace(" v]");
+        emitNoSpace(" v");
+        storeNotesForIssue(node);
+        emitNoSpace("]");
         newLine();
     }
 
@@ -756,7 +927,9 @@ public class ScratchBlocksVisitor extends PrintVisitor {
     public void visit(HideVariable node) {
         emitNoSpace("hide variable [");
         node.getIdentifier().accept(this);
-        emitNoSpace(" v]");
+        emitNoSpace(" v");
+        storeNotesForIssue(node);
+        emitNoSpace("]");
         newLine();
     }
 
@@ -766,7 +939,9 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         node.getString().accept(this);
         emitNoSpace(" to [");
         node.getIdentifier().accept(this);
-        emitNoSpace(" v]");
+        emitNoSpace(" v");
+        storeNotesForIssue(node);
+        emitNoSpace("]");
         newLine();
     }
 
@@ -776,7 +951,9 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         node.getNum().accept(this);
         emitNoSpace(" of [");
         node.getIdentifier().accept(this);
-        emitNoSpace(" v]");
+        emitNoSpace(" v");
+        storeNotesForIssue(node);
+        emitNoSpace("]");
         newLine();
     }
 
@@ -784,7 +961,9 @@ public class ScratchBlocksVisitor extends PrintVisitor {
     public void visit(DeleteAllOf node) {
         emitNoSpace("delete all of [");
         node.getIdentifier().accept(this);
-        emitNoSpace(" v]");
+        emitNoSpace(" v");
+        storeNotesForIssue(node);
+        emitNoSpace("]");
         newLine();
     }
 
@@ -796,7 +975,9 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         node.getIndex().accept(this);
         emitNoSpace(" of [");
         node.getIdentifier().accept(this);
-        emitNoSpace(" v]");
+        emitNoSpace(" v");
+        storeNotesForIssue(node);
+        emitNoSpace("]");
         newLine();
     }
 
@@ -808,6 +989,7 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         node.getIdentifier().accept(this);
         emitNoSpace(" v] with ");
         node.getString().accept(this);
+        storeNotesForIssue(node);
         newLine();
     }
 
@@ -815,7 +997,9 @@ public class ScratchBlocksVisitor extends PrintVisitor {
     public void visit(ShowList node) {
         emitNoSpace("show list [");
         node.getIdentifier().accept(this);
-        emitNoSpace(" v]");
+        emitNoSpace(" v");
+        storeNotesForIssue(node);
+        emitNoSpace("]");
         newLine();
     }
 
@@ -823,7 +1007,9 @@ public class ScratchBlocksVisitor extends PrintVisitor {
     public void visit(HideList node) {
         emitNoSpace("hide list [");
         node.getIdentifier().accept(this);
-        emitNoSpace(" v]");
+        emitNoSpace(" v");
+        storeNotesForIssue(node);
+        emitNoSpace("]");
         newLine();
     }
 
@@ -833,7 +1019,9 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         node.getNum().accept(this);
         emitNoSpace(" of [");
         node.getIdentifier().accept(this);
-        emitNoSpace(" v])");
+        emitNoSpace(" v]");
+        storeNotesForIssue(node);
+        emitNoSpace(")");
     }
 
     @Override
@@ -842,14 +1030,18 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         node.getExpr().accept(this);
         emitNoSpace(" in [");
         node.getIdentifier().accept(this);
-        emitNoSpace(" v])");
+        emitNoSpace(" v]");
+        storeNotesForIssue(node);
+        emitNoSpace(")");
     }
 
     @Override
     public void visit(LengthOfVar node) {
         emitNoSpace("(length of [");
         node.getIdentifier().accept(this);
-        emitNoSpace(" v])");
+        emitNoSpace(" v]");
+        storeNotesForIssue(node);
+        emitNoSpace(")");
     }
 
     @Override
@@ -858,7 +1050,9 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         node.getIdentifier().accept(this);
         emitNoSpace(" v] contains ");
         node.getElement().accept(this);
-        emitNoSpace(" ?>");
+        emitNoSpace(" ?");
+        storeNotesForIssue(node);
+        emitNoSpace(">");
     }
 
     @Override
@@ -874,6 +1068,7 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         } else {
             emitNoSpace(String.valueOf(num));
         }
+        storeNotesForIssue(number);
         emitNoSpace(")");
     }
 
@@ -894,61 +1089,71 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         } else {
             node.getElementChoice().accept(this);
         }
-        emitNoSpace(" v)?)");
+        emitNoSpace(" v)?");
+        storeNotesForIssue(node);
+        emitNoSpace(")");
     }
 
 
     @Override
     public void visit(FixedAttribute node) {
         emitNoSpace(node.getType());
+        storeNotesForIssue(node);
     }
 
     @Override
     public void visit(Volume node) {
-        emitNoSpace("(volume)");
+        emitNoSpace("(volume");
+        storeNotesForIssue(node);
+        emitNoSpace(")");
     }
 
     @Override
     public void visit(Timer node) {
-        emitNoSpace("(timer)");
+        emitNoSpace("(timer");
+        storeNotesForIssue(node);
+        emitNoSpace(")");
     }
 
     @Override
     public void visit(Answer node) {
-        emitNoSpace("(answer)");
+        emitNoSpace("(answer");
+        storeNotesForIssue(node);
+        emitNoSpace(")");
     }
 
     @Override
     public void visit(MousePos node) {
         emitNoSpace("mouse-pointer");
+        storeNotesForIssue(node);
     }
 
     @Override
     public void visit(RandomPos node) {
         emitNoSpace("random position");
+        storeNotesForIssue(node);
     }
 
     @Override
     public void visit(RotationStyle node) {
         emitNoSpace(node.getToken());
+        storeNotesForIssue(node);
     }
-
-//    @Override
-//    public void visit(Backdrop node) {
-//        node.getType().accept(this);
-//    }
 
     @Override
     public void visit(Backdrop node) {
         emitNoSpace("(backdrop [");
         node.getType().accept(this);
-        emitNoSpace(" v])");
+        emitNoSpace(" v]");
+        storeNotesForIssue(node);
+        emitNoSpace(")");
     }
 
 
     @Override
     public void visit(NameNum node) {
         emitNoSpace(node.getType());
+        storeNotesForIssue(node);
     }
 
     @Override
@@ -957,6 +1162,7 @@ public class ScratchBlocksVisitor extends PrintVisitor {
             emitNoSpace("[");
             emitNoSpace(stringLiteral.getText());
             emitNoSpace("]");
+            storeNotesForIssue(stringLiteral);
         }
     }
 
@@ -967,31 +1173,37 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         emitNoSpace(Long.toHexString(colorLiteral.getGreen()));
         emitNoSpace(Long.toHexString(colorLiteral.getBlue()));
         emitNoSpace("]");
+        storeNotesForIssue(colorLiteral);
     }
 
     @Override
     public void visit(GraphicEffect node) {
         emitNoSpace(node.getToken());
+        storeNotesForIssue(node);
     }
 
     @Override
     public void visit(SoundEffect node) {
         emitNoSpace(node.getToken());
+        storeNotesForIssue(node);
     }
 
     @Override
     public void visit(LayerChoice node) {
         emitNoSpace(node.getType());
+        storeNotesForIssue(node);
     }
 
     @Override
     public void visit(DragMode node) {
         emitNoSpace(node.getToken());
+        storeNotesForIssue(node);
     }
 
     @Override
     public void visit(ForwardBackwardChoice node) {
         emitNoSpace(node.getType());
+        storeNotesForIssue(node);
     }
 
     @Override
@@ -1000,64 +1212,86 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         if (message instanceof StringLiteral) {
             StringLiteral literal = (StringLiteral)message;
             emitNoSpace(literal.getText());
+            storeNotesForIssue(node);
         } else {
             node.getMessage().accept(this);
+            storeNotesForIssue(node);
         }
     }
 
     @Override
     public void visit(EventAttribute node) {
         emitNoSpace(node.getType());
+        storeNotesForIssue(node);
     }
 
     @Override
     public void visit(Qualified node) {
         node.getSecond().accept(this);
+        storeNotesForIssue(node);
     }
 
     @Override
     public void visit(PositionX node) {
-        emitNoSpace("(x position)");
+        emitNoSpace("(x position");
+        storeNotesForIssue(node);
+        emitNoSpace(")");
     }
 
     @Override
     public void visit(PositionY node) {
-        emitNoSpace("(y position)");
+        emitNoSpace("(y position");
+        storeNotesForIssue(node);
+        emitNoSpace(")");
     }
 
     @Override
     public void visit(Direction node) {
-        emitNoSpace("(direction)");
+        emitNoSpace("(direction");
+        storeNotesForIssue(node);
+        emitNoSpace(")");
     }
 
     @Override
     public void visit(Size node) {
-        emitNoSpace("(size)");
+        emitNoSpace("(size");
+        storeNotesForIssue(node);
+        emitNoSpace(")");
     }
 
     @Override
     public void visit(MouseX node) {
-        emitNoSpace("(mouse x)");
+        emitNoSpace("(mouse x");
+        storeNotesForIssue(node);
+        emitNoSpace(")");
     }
 
     @Override
     public void visit(MouseY node) {
-        emitNoSpace("(mouse y)");
+        emitNoSpace("(mouse y");
+        storeNotesForIssue(node);
+        emitNoSpace(")");
     }
 
     @Override
     public void visit(DaysSince2000 node) {
-        emitNoSpace("(days since 2000)");
+        emitNoSpace("(days since 2000");
+        storeNotesForIssue(node);
+        emitNoSpace(")");
     }
 
     @Override
     public void visit(Username node) {
-        emitNoSpace("(username)");
+        emitNoSpace("(username");
+        storeNotesForIssue(node);
+        emitNoSpace(")");
     }
 
     @Override
     public void visit(Loudness node) {
-        emitNoSpace("(loudness)");
+        emitNoSpace("(loudness");
+        storeNotesForIssue(node);
+        emitNoSpace(")");
     }
 
     @Override
@@ -1065,32 +1299,48 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         emitNoSpace("(distance to (");
         node.getPosition().accept(this);
         emitNoSpace(" v)");
+        storeNotesForIssue(node);
+        emitNoSpace(")");
     }
 
     @Override
     public void visit(Current node) {
         emitNoSpace("(current (");
         node.getTimeComp().accept(this);
-        emitNoSpace(" v)");
+        emitNoSpace(" v");
+        storeNotesForIssue(node);
+        emitNoSpace(")");
     }
 
     @Override
     public void visit(TimeComp node) {
         emitNoSpace(node.getLabel());
+        storeNotesForIssue(node);
     }
 
     @Override
     public void visit(Costume node) {
         emitNoSpace("(costume [");
         node.getType().accept(this);
-        emitNoSpace(" v])");
+        emitNoSpace(" v]");
+        storeNotesForIssue(node);
+        emitNoSpace(")");
     }
 
     @Override
     public void visit(AsNumber node) {
         emitNoSpace("(");
         node.getOperand1().accept(this);
+        storeNotesForIssue(node);
         emitNoSpace(")");
+    }
+
+    @Override
+    public void visit(AsBool node) {
+        emitNoSpace("<");
+        node.getOperand1().accept(this);
+        storeNotesForIssue(node);
+        emitNoSpace(">");
     }
 
     @Override
@@ -1106,10 +1356,12 @@ public class ScratchBlocksVisitor extends PrintVisitor {
             if(ProcedureOpcode.argument_reporter_boolean.name().equals(metadata.getOpcode())) {
                 emitNoSpace("<");
                 node.getOperand1().accept(this);
+                storeNotesForIssue(node);
                 emitNoSpace(">");
             } else if(ProcedureOpcode.argument_reporter_string_number.name().equals(metadata.getOpcode())) {
                 emitNoSpace("(");
                 node.getOperand1().accept(this);
+                storeNotesForIssue(node);
                 emitNoSpace(")");
             } else {
                 assert(false);
@@ -1118,6 +1370,7 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         } else {
             emitNoSpace("(");
             node.getOperand1().accept(this);
+            storeNotesForIssue(node);
             emitNoSpace(")");
         }
     }
@@ -1128,6 +1381,7 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         node.getOperand1().accept(this);
         emitNoSpace("+");
         node.getOperand2().accept(this);
+        storeNotesForIssue(node);
         emitNoSpace(")");
     }
 
@@ -1137,6 +1391,7 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         node.getOperand1().accept(this);
         emitNoSpace("-");
         node.getOperand2().accept(this);
+        storeNotesForIssue(node);
         emitNoSpace(")");
     }
 
@@ -1146,6 +1401,7 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         node.getOperand1().accept(this);
         emitNoSpace("*");
         node.getOperand2().accept(this);
+        storeNotesForIssue(node);
         emitNoSpace(")");
     }
 
@@ -1155,6 +1411,7 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         node.getOperand1().accept(this);
         emitNoSpace("/");
         node.getOperand2().accept(this);
+        storeNotesForIssue(node);
         emitNoSpace(")");
     }
 
@@ -1162,6 +1419,7 @@ public class ScratchBlocksVisitor extends PrintVisitor {
     public void visit(Round node) {
         emitNoSpace("(round ");
         node.getOperand1().accept(this);
+        storeNotesForIssue(node);
         emitNoSpace(")");
     }
 
@@ -1171,6 +1429,7 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         node.getOperand1().accept(this);
         emitNoSpace(" to ");
         node.getOperand2().accept(this);
+        storeNotesForIssue(node);
         emitNoSpace(")");
     }
 
@@ -1180,6 +1439,7 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         node.getOperand1().accept(this);
         emitNoSpace(" mod ");
         node.getOperand2().accept(this);
+        storeNotesForIssue(node);
         emitNoSpace(")");
     }
 
@@ -1189,12 +1449,14 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         node.getOperand1().accept(this);
         emitNoSpace(" v] of ");
         node.getOperand2().accept(this);
+        storeNotesForIssue(node);
         emitNoSpace(")");
     }
 
     @Override
     public void visit(NumFunct node) {
         emitNoSpace(node.getFunction());
+        storeNotesForIssue(node);
     }
 
     @Override
@@ -1203,6 +1465,7 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         node.getOperand1().accept(this);
         emitNoSpace(" > ");
         node.getOperand2().accept(this);
+        storeNotesForIssue(node);
         emitNoSpace(">");
     }
 
@@ -1212,6 +1475,7 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         node.getOperand1().accept(this);
         emitNoSpace(" < ");
         node.getOperand2().accept(this);
+        storeNotesForIssue(node);
         emitNoSpace(">");
     }
 
@@ -1221,6 +1485,7 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         node.getOperand1().accept(this);
         emitNoSpace(" = ");
         node.getOperand2().accept(this);
+        storeNotesForIssue(node);
         emitNoSpace(">");
     }
 
@@ -1228,6 +1493,7 @@ public class ScratchBlocksVisitor extends PrintVisitor {
     public void visit(Not node) {
         emitNoSpace("<not ");
         node.getOperand1().accept(this);
+        storeNotesForIssue(node);
         emitNoSpace(">");
     }
 
@@ -1237,6 +1503,7 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         node.getOperand1().accept(this);
         emitNoSpace(" and ");
         node.getOperand2().accept(this);
+        storeNotesForIssue(node);
         emitNoSpace(">");
     }
 
@@ -1246,6 +1513,7 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         node.getOperand1().accept(this);
         emitNoSpace(" or ");
         node.getOperand2().accept(this);
+        storeNotesForIssue(node);
         emitNoSpace(">");
     }
 
@@ -1255,30 +1523,37 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         node.getContaining().accept(this);
         emitNoSpace(" contains ");
         node.getContained().accept(this);
-        emitNoSpace("?>");
+        emitNoSpace("?");
+        storeNotesForIssue(node);
+        emitNoSpace(">");
     }
 
     @Override
     public void visit(Touching node) {
         emitNoSpace("<touching (");
         node.getTouchable().accept(this);
-        emitNoSpace(" v) ?>");
+        emitNoSpace(" v) ?");
+        storeNotesForIssue(node);
+        emitNoSpace(">");
     }
 
     @Override
     public void visit(Edge node) {
         emitNoSpace("edge");
+        storeNotesForIssue(node);
     }
 
     @Override
     public void visit(MousePointer node) {
         emitNoSpace("mouse-pointer");
+        storeNotesForIssue(node);
     }
 
     @Override
     public void visit(SpriteTouchingColor node) {
         emitNoSpace("<touching color ");
         node.getColor().accept(this);
+        storeNotesForIssue(node);
         emitNoSpace(" ?>");
     }
 
@@ -1288,6 +1563,7 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         node.getOperand1().accept(this);
         emitNoSpace(" is touching ");
         node.getOperand2().accept(this);
+        storeNotesForIssue(node);
         emitNoSpace(" ?>");
     }
 
@@ -1295,7 +1571,9 @@ public class ScratchBlocksVisitor extends PrintVisitor {
     public void visit(IsKeyPressed node) {
         emitNoSpace("<key (");
         node.getKey().accept(this);
-        emitNoSpace(" v) pressed?>");
+        emitNoSpace(" v) pressed?");
+        storeNotesForIssue(node);
+        emitNoSpace(">");
     }
 
     @Override
@@ -1303,26 +1581,32 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         assert(node.getKey() instanceof NumberLiteral);
         NumberLiteral num = (NumberLiteral)node.getKey();
         emitNoSpace(BlockJsonCreatorHelper.getKeyValue((int)num.getValue()));
+        storeNotesForIssue(node);
     }
 
     @Override
     public void visit(IsMouseDown node) {
-        emitNoSpace("<mouse down?>");
+        emitNoSpace("<mouse down?");
+        storeNotesForIssue(node);
+        emitNoSpace(">");
     }
 
     @Override
     public void visit(UnspecifiedBoolExpr node) {
         emitNoSpace("<>");
+        storeNotesForIssue(node);
     }
 
     @Override
     public void visit(UnspecifiedStringExpr node) {
         emitNoSpace("[]");
+        storeNotesForIssue(node);
     }
 
     @Override
     public void visit(UnspecifiedNumExpr node) {
         emitNoSpace("()");
+        storeNotesForIssue(node);
     }
 
     @Override
@@ -1330,6 +1614,7 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         emitNoSpace("(join ");
         node.getOperand1().accept(this);
         node.getOperand2().accept(this);
+        storeNotesForIssue(node);
         emitNoSpace(")");
     }
 
@@ -1339,6 +1624,7 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         node.getNum().accept(this);
         emitNoSpace(" of ");
         node.getStringExpr().accept(this);
+        storeNotesForIssue(node);
         emitNoSpace(")");
     }
 
@@ -1346,7 +1632,14 @@ public class ScratchBlocksVisitor extends PrintVisitor {
     public void visit(LengthOfString node) {
         emitNoSpace("(length of ");
         node.getStringExpr().accept(this);
+        storeNotesForIssue(node);
         emitNoSpace(")");
+    }
+
+    @Override
+    public void visit(Parameter node) {
+        visitChildren(node);
+        storeNotesForIssue(node);
     }
 
     @Override
@@ -1355,6 +1648,7 @@ public class ScratchBlocksVisitor extends PrintVisitor {
             return;
         }
         emitNoSpace(strId.getName());
+        storeNotesForIssue(strId);
     }
 
     @Override
@@ -1363,20 +1657,32 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         List<Expression> parameters = node.getExpressions().getExpressions();
         for(Expression param : parameters) {
             int nextIndex = procedureName.indexOf('%');
+            String type = procedureName.substring(nextIndex, nextIndex + 1);
             procedureName = procedureName.substring(0, nextIndex) + getParameterName(param) + procedureName.substring(nextIndex + 2);
         }
         emitNoSpace(procedureName);
+        storeNotesForIssue(node);
         newLine();
     }
 
     public void begin() {
         emitNoSpace("[scratchblocks]");
         newLine();
+        lineWrapped = true;
     }
 
     public void end() {
+        if(!lineWrapped) {
+            newLine();
+        }
         emitNoSpace("[/scratchblocks]");
         newLine();
+        lineWrapped = true;
+    }
+
+    protected void emitNoSpace(String string) {
+        printStream.append(string);
+        lineWrapped = false;
     }
 
     // FIXME: Hacky because of PrintVisitor interface, maybe this shouldn't be extended after all?
@@ -1387,16 +1693,56 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         return byteStream.toString();
     }
 
+    protected void newLine() {
+        if(issueNote.size() == 1) {
+            emitNoSpace(" // Issue: ");
+            emitNoSpace(issueNote.iterator().next());
+            issueNote.clear();
+        }
+        else if(issueNote.size() > 1) {
+            emitNoSpace(" // Issues: ");
+            emitNoSpace(String.join(", ", issueNote));
+            issueNote.clear();
+        }
+        emitNoSpace("\n");
+        lineWrapped = true;
+    }
+
+    private void storeNotesForIssue(ASTNode node) {
+        for(Issue issue : issues) {
+            if(issue.getCodeLocation() == node) {
+                emitNoSpace(":: #ff0000");
+                issueNote.add(issue.getHint());
+            }
+        }
+    }
 
     private String getParameterName(ParameterDefinition node) {
+        // FIXME: Terrible hack
+        PrintStream origStream = printStream;
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        printStream = new PrintStream(os);
+
+
         if (node.getType() instanceof StringType) {
-            return "[" + node.getIdent().getName() + "]";
+            emitNoSpace("[");
+            node.getIdent().accept(this);
+            storeNotesForIssue(node);
+            emitNoSpace("]");
         } else if (node.getType() instanceof NumberType) {
-            return "(" + node.getIdent().getName() + ")";
+            emitNoSpace("(");
+            node.getIdent().accept(this);
+            storeNotesForIssue(node);
+            emitNoSpace(")");
         } else if (node.getType() instanceof BooleanType) {
-            return "<" + node.getIdent().getName() + ">";
+            emitNoSpace("<");
+            node.getIdent().accept(this);
+            storeNotesForIssue(node);
+            emitNoSpace(">");
         }
-        throw new IllegalArgumentException("Unknown type: "+node.getType());
+        String name = os.toString();
+        printStream = origStream;
+        return name;
     }
 
     private String getParameterName(Expression node) {
