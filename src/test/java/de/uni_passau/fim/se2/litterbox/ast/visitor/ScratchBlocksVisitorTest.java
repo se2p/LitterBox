@@ -928,8 +928,7 @@ public class ScratchBlocksVisitorTest {
         System.out.println(output);
         assertEquals("[scratchblocks]\n" +
                 "when green flag clicked\n" +
-                "pen down:: #ff0000 // Issue: missing erase all\n" +
-                "pen up\n" +
+                "say (meine Variable) for (2) seconds:: #ff0000 // Issue: missing initialization\n" +
                 "[/scratchblocks]\n", output);
     }
 

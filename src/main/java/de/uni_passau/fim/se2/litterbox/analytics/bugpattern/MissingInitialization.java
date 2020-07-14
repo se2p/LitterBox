@@ -20,9 +20,11 @@ package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
+import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.cfg.ControlFlowGraph;
 import de.uni_passau.fim.se2.litterbox.cfg.ControlFlowGraphVisitor;
 import de.uni_passau.fim.se2.litterbox.cfg.Definition;
@@ -41,6 +43,7 @@ public class MissingInitialization implements IssueFinder {
 
     public static final String NAME = "missing_initialization";
     public static final String SHORT_NAME = "mssInit";
+    public static final String HINT_TEXT = "missing initialization";
     private final Set<Issue> issues = new LinkedHashSet<>();
 
     @Override
@@ -69,11 +72,20 @@ public class MissingInitialization implements IssueFinder {
             if(initialDefinitions.stream()
                     .filter(d -> d.getDefinable().equals(use.getDefinable()))
                     .noneMatch(d -> d.getDefinitionSource().getScriptOrProcedure() != use.getUseTarget().getScriptOrProcedure())) {
-                // TODO: Fix cast!
-                issues.add(new Issue(this, use.getUseTarget().getActor(),
-                        (Script)null, // TODO: Script in use.getUseTarget().getScriptOrProcedure() ...but...?
-                        (AbstractNode) use.getUseTarget().getASTNode(), // TODO: This can't be right
-                        "TODO -- hint text", null)); // TODO: Where is the relevant metadata?
+
+                // TODO: The comment is attached to the statement, not the actual usage...
+                ASTNode containingScript = use.getUseTarget().getScriptOrProcedure();
+                if (containingScript instanceof Script) {
+                    issues.add(new Issue(this, use.getUseTarget().getActor(),
+                            (Script) containingScript,
+                            use.getUseTarget().getASTNode(),
+                            HINT_TEXT, null)); // TODO: Where is the relevant metadata?
+                } else {
+                    issues.add(new Issue(this, use.getUseTarget().getActor(),
+                            (ProcedureDefinition) containingScript,
+                            use.getUseTarget().getASTNode(),
+                            HINT_TEXT, null)); // TODO: Where is the relevant metadata
+                }
             }
         }
         return Collections.unmodifiableSet(issues);
