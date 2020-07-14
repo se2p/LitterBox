@@ -23,6 +23,7 @@ import de.uni_passau.fim.se2.litterbox.jsonCreation.JSONFileCreator;
 import de.uni_passau.fim.se2.litterbox.report.CSVReportGenerator;
 import de.uni_passau.fim.se2.litterbox.report.CommentGenerator;
 import de.uni_passau.fim.se2.litterbox.report.ConsoleReportGenerator;
+import de.uni_passau.fim.se2.litterbox.report.JSONReportGenerator;
 import de.uni_passau.fim.se2.litterbox.utils.GroupConstants;
 import org.apache.commons.io.FilenameUtils;
 
@@ -71,7 +72,7 @@ public class BugAnalyzer extends Analyzer {
      *
      * @param fileEntry the file to analyze
      */
-    void check(File fileEntry, String csv) {
+    void check(File fileEntry, String reportFileName) {
         Program program = extractProgram(fileEntry);
         if (program == null) {
             // Todo error message
@@ -82,12 +83,17 @@ public class BugAnalyzer extends Analyzer {
 
         // TODO: Refactor error handling
         try {
-            if (csv == null || csv.isEmpty()) {
+            if (reportFileName == null || reportFileName.isEmpty()) {
                 ConsoleReportGenerator reportGenerator = new ConsoleReportGenerator(detectorNames);
                 reportGenerator.generateReport(program, issues);
-            } else {
-                CSVReportGenerator reportGenerator = new CSVReportGenerator(csv, detectorNames);
+            } else if (reportFileName.endsWith(".json")) {
+                JSONReportGenerator reportGenerator = new JSONReportGenerator(reportFileName);
                 reportGenerator.generateReport(program, issues);
+            } else if (reportFileName.endsWith(".csv")) {
+                CSVReportGenerator reportGenerator = new CSVReportGenerator(reportFileName, detectorNames);
+                reportGenerator.generateReport(program, issues);
+            } else {
+                throw new IllegalArgumentException("Unknown file type: "+reportFileName);
             }
         } catch (IOException e) {
             log.warning(e.getMessage());

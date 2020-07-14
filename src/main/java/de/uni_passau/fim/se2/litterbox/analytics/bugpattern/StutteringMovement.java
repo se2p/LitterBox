@@ -43,13 +43,14 @@ public class StutteringMovement extends AbstractIssueFinder {
     @Override
     public void visit(Script script) {
         currentScript = script;
+        currentProcedure = null;
         if (script.getEvent() instanceof KeyPressed) {
             List<Stmt> listOfStmt = script.getStmtList().getStmts();
             if (listOfStmt.size() == 1) {
                 Stmt stmt = listOfStmt.get(0);
                 if (stmt instanceof MoveSteps || stmt instanceof ChangeXBy || stmt instanceof ChangeYBy) {
                     KeyPressed keyPressed = (KeyPressed) script.getEvent();
-                    addIssue(script, HINT_TEXT, keyPressed.getMetadata());
+                    addIssue(stmt, HINT_TEXT, keyPressed.getMetadata());
                 }
             }
         }

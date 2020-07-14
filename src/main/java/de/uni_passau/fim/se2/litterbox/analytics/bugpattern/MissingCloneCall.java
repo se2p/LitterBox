@@ -90,7 +90,7 @@ public class MissingCloneCall extends AbstractIssueFinder {
                 whenStartsAsCloneActors.add(currentActor.getIdent().getName());
             } else if (notClonedActor.contains(currentActor.getIdent().getName())) {
                 StartedAsClone event = (StartedAsClone) node.getEvent();
-                addIssue(node, // TODO: node or event?
+                addIssue(event, // TODO: node or event?
                         HINT_TEXT, event.getMetadata());
             }
         }

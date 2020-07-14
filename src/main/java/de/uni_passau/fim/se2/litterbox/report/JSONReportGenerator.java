@@ -18,40 +18,62 @@
  */
 package de.uni_passau.fim.se2.litterbox.report;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
-import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintStream;
 import java.util.Collection;
 
 public class JSONReportGenerator implements ReportGenerator {
 
+    private OutputStream outputStream = null;
+
+    private boolean closeStream = false;
+
+    public JSONReportGenerator(String fileName) throws IOException {
+        outputStream = new FileOutputStream(fileName);
+        closeStream = true;
+    }
+
+    public JSONReportGenerator(OutputStream stream) throws IOException {
+        this.outputStream = stream;
+    }
+
     @Override
     public void generateReport(Program program, Collection<Issue> issues) throws IOException {
-        // TODO: Implement putting all this information in a JSON file 
-        StringBuilder builder = new StringBuilder();
-        for(Issue issue : issues) {
-            builder.append(issue.getFinderName());
-            builder.append(": ");
-            builder.append(System.lineSeparator());
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode rootNode = mapper.createArrayNode();
 
-            builder.append(issue.getHint());
-            builder.append(System.lineSeparator());
+        for (Issue issue : issues) {
+            JsonNode childNode = mapper.createObjectNode();
+            ((ObjectNode) childNode).put("finder", issue.getFinderName());
+            ((ObjectNode) childNode).put("sprite", issue.getActorName());
+            ((ObjectNode) childNode).put("hint", issue.getHint());
 
-            builder.append("  Actor: ");
-            builder.append(issue.getActorName());
-            builder.append(System.lineSeparator());
-
-            builder.append("  Script: ");
-            AbstractNode location = issue.getCodeLocation();
-            ScratchBlocksVisitor blockVisitor = new ScratchBlocksVisitor();
-            // location.accept(blockVisitor); // TODO: Implement
+            ASTNode location = issue.getCodeLocation();
+            ScratchBlocksVisitor blockVisitor = new ScratchBlocksVisitor(issue);
+            blockVisitor.begin();
+            location.accept(blockVisitor);
+            blockVisitor.end();
             String scratchBlockCode = blockVisitor.getScratchBlocks();
-            builder.append(scratchBlockCode);
+            ((ObjectNode) childNode).put("code", scratchBlockCode);
+            ((ArrayNode) rootNode).add(childNode);
+        }
 
-            builder.append(System.lineSeparator());
+        String jsonString = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(rootNode);
+        final PrintStream printStream = new PrintStream(outputStream);
+        printStream.print(jsonString);
+        if (closeStream) {
+            outputStream.close();
         }
     }
 }

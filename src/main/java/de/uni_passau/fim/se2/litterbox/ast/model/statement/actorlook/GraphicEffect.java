@@ -26,8 +26,8 @@ import java.util.List;
 
 public enum GraphicEffect implements ASTLeaf {
 
-    COLOR("COLOR"), GHOST("GHOST"), BRIGHTNESS("BRIGHTNESS"), WHIRL("WHIRL"), FISHEYE("FISHEYE"), PIXELATE("PIXELATE"),
-    MOSAIC("MOSAIC");
+    COLOR("color"), GHOST("ghost"), BRIGHTNESS("brightness"), WHIRL("whirl"), FISHEYE("fisheye"), PIXELATE("pixelate"),
+    MOSAIC("mosaic");
 
     private final String token;
 
@@ -50,7 +50,7 @@ public enum GraphicEffect implements ASTLeaf {
 
     public static GraphicEffect fromString(String type) {
         for (GraphicEffect f : values()) {
-            if (f.getToken().equals(type.toUpperCase())) {
+            if (f.getToken().equals(type.toLowerCase())) {
                 return f;
             }
         }

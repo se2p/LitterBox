@@ -113,7 +113,7 @@ public class MessageNeverSent extends AbstractIssueFinder {
                     final String actorName = currentActor.getIdent().getName();
                     messageReceived.add(new Pair<>(actorName, msgName));
                 } else if (notSentMessages.contains(msgName)) {
-                    addIssue(node, // TODO: event or node?
+                    addIssue(event, // TODO: event or node?
                             HINT_TEXT, event.getMetadata());
                 }
             }

@@ -18,6 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics;
 
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
@@ -28,20 +29,20 @@ public class Issue {
 
     private IssueFinder finder;
     private ActorDefinition actor;
-    private AbstractNode node;
+    private ASTNode node;
     private Script script;
     private ProcedureDefinition procedure;
     private String helpText;
     private Metadata metaData;
 
-    public Issue(IssueFinder finder, ActorDefinition actor, AbstractNode currentNode) {
+    public Issue(IssueFinder finder, ActorDefinition actor, ASTNode currentNode) {
         this.finder = finder;
         this.actor = actor;
         this.node = currentNode;
     }
 
     public Issue(IssueFinder finder, ActorDefinition actor, Script script,
-                 AbstractNode currentNode, String helpText, Metadata metaData) {
+                 ASTNode currentNode, String helpText, Metadata metaData) {
         this.finder = finder;
         this.actor = actor;
         this.script = script;
@@ -51,7 +52,7 @@ public class Issue {
     }
 
     public Issue(IssueFinder finder, ActorDefinition actor, ProcedureDefinition procedure,
-                 AbstractNode currentNode, String helpText, Metadata metaData) {
+                 ASTNode currentNode, String helpText, Metadata metaData) {
         this.finder = finder;
         this.actor = actor;
         this.procedure = procedure;
@@ -76,6 +77,13 @@ public class Issue {
         return procedure;
     }
 
+    public ASTNode getScriptOrProcedureDefinition() {
+        if (script != null)
+            return script;
+        else
+            return procedure;
+    }
+
     public String getActorName() {
         return actor.getIdent().getName();
     }
@@ -92,7 +100,7 @@ public class Issue {
         return helpText;
     }
 
-    public AbstractNode getCodeLocation() {
+    public ASTNode getCodeLocation() {
         return node;
     }
 
