@@ -523,7 +523,7 @@ public class ScratchBlocksVisitorTest {
                 "say (num_param)\n" +
                 "\n" +
                 "when green flag clicked\n" +
-                "fun_numarg (username) <mouse down?> label\n" +
+                "fun_numarg <mouse down?> (username) label\n" +
                 "[/scratchblocks]\n", result);
     }
 
@@ -643,7 +643,7 @@ public class ScratchBlocksVisitorTest {
         System.out.println(output);
         assertEquals("[scratchblocks]\n" +
                 "when green flag clicked\n" +
-                "block name [reed] %b:: #ff0000 // Issue: custom block with forever\n" +
+                "block name [reed] <>:: #ff0000 // Issue: custom block with forever\n" +
                 "say [Hello!] for (2) seconds\n" +
                 "[/scratchblocks]\n", output);
     }
@@ -684,7 +684,7 @@ public class ScratchBlocksVisitorTest {
         String output = visitor.getScratchBlocks();
         System.out.println(output);
         assertEquals("[scratchblocks]\n" +
-                "block name [] %b:: #ff0000 // Issue: call without definition\n" +
+                "block name [] <>:: #ff0000 // Issue: call without definition\n" +
                 "[/scratchblocks]\n", output);
     }
 
