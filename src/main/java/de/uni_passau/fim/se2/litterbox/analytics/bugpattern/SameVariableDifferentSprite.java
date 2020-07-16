@@ -33,10 +33,10 @@ public class SameVariableDifferentSprite implements IssueFinder {
     public static final String NAME = "same_variable_different_sprite";
     public static final String SHORT_NAME = "sameVarDiffSprite";
     public static final String HINT_TEXT = "same_variable different sprite";
-    private Set<Issue> issues = new LinkedHashSet<>();
 
     @Override
     public Set<Issue> check(Program program) {
+        Set<Issue> issues = new LinkedHashSet<>();
         Preconditions.checkNotNull(program);
         boolean found = false;
         List<ActorDefinition> actorDefinitions = program.getActorDefinitionList().getDefinitions();
