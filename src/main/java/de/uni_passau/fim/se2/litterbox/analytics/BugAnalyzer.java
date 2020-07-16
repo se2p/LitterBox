@@ -92,6 +92,7 @@ public class BugAnalyzer extends Analyzer {
             } else if (reportFileName.endsWith(".csv")) {
                 CSVReportGenerator reportGenerator = new CSVReportGenerator(reportFileName, detectorNames);
                 reportGenerator.generateReport(program, issues);
+                reportGenerator.close();
             } else {
                 throw new IllegalArgumentException("Unknown file type: "+reportFileName);
             }
