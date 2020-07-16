@@ -59,7 +59,7 @@ public class IllegalParameterRefactor extends AbstractIssueFinder {
 
                 for (ArgumentInfo currentArgument : currentArguments) {
                     if (currentArgument.getName().equals(ident.getName().getName()) && !(currentArgument.getType() instanceof BooleanType)) {
-                        addIssue(ident, HINT_TEXT, ident.getMetadata());
+                        addIssue(boolExpr, HINT_TEXT, ident.getMetadata());
                     }
                 }
 
