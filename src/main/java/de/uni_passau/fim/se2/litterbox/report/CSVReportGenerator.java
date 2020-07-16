@@ -28,7 +28,10 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 
 
 public class CSVReportGenerator implements ReportGenerator {
@@ -51,12 +54,16 @@ public class CSVReportGenerator implements ReportGenerator {
 
         List<String> row = new ArrayList<>();
         row.add(program.getIdent().getName());
-        for(String finder : detectors) {
+        for (String finder : detectors) {
             long numIssuesForFinder = issues.stream().filter(i -> i.getFinderShortName().equals(finder)).count();
             row.add(Long.toString(numIssuesForFinder));
         }
         printer.printRecord(row);
         printer.flush();
+    }
+
+    public void close() throws IOException {
+        printer.close();
     }
 
     protected CSVPrinter getNewPrinter(String name, List<String> heads) throws IOException {

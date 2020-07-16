@@ -88,6 +88,7 @@ public class BugAnalyzer extends Analyzer {
             } else {
                 CSVReportGenerator reportGenerator = new CSVReportGenerator(csv, detectorNames);
                 reportGenerator.generateReport(program, issues);
+                reportGenerator.close();
             }
         } catch (IOException e) {
             log.warning(e.getMessage());
