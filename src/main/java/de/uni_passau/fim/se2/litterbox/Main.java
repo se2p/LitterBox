@@ -46,6 +46,8 @@ public class Main {
     private static final String PROJECTLIST = "projectlist";
     private static final String PROJECTLIST_SHORT = "t";
 
+    private static final String OUTPUT_LANG = "lang";
+    private static final String OUTPUT_LANG_SHORT = "k";
     private static final String PROJECTOUT = "projectout";
     private static final String PROJECTOUT_SHORT = "r";
     private static final String OUTPUT = "output";
@@ -93,6 +95,7 @@ public class Main {
         // Parameters
         options.addOption(DETECTORS_SHORT, DETECTORS, true, "name all detectors you want to run separated by ',' "
                 + " (all detectors defined in the README)");
+        options.addOption(OUTPUT_LANG_SHORT, OUTPUT_LANG, true, "language of hints in the output");
 
         return options;
     }
