@@ -126,11 +126,11 @@ public class MissingBackdropSwitch extends AbstractIssueFinder {
         if (msgName instanceof Next || msgName instanceof Prev || msgName instanceof Random) {
             nextRandPrev = true;
         } else if (msgName instanceof WithExpr) {
-            if (((WithExpr) msgName).getExpression() instanceof StringLiteral) {
-                switched.add(new Pair<>(actorName, ((StringLiteral) ((WithExpr) msgName).getExpression()).getText()));
-            }
-            else if (((WithExpr) msgName).getExpression() instanceof StrId) {
+            if (((WithExpr) msgName).getExpression() instanceof StrId) {
                 switched.add(new Pair<>(actorName, ((StrId) ((WithExpr) msgName).getExpression()).getName()));
+            }
+            else if (((WithExpr) msgName).getExpression() instanceof StringLiteral) {
+                switched.add(new Pair<>(actorName, ((StringLiteral) ((WithExpr) msgName).getExpression()).getText()));
             }
             else if (((WithExpr) msgName).getExpression() instanceof AsString) {
                 AsString expr = (AsString) ((WithExpr) msgName).getExpression();

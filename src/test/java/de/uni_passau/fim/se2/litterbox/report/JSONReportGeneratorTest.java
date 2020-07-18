@@ -7,13 +7,13 @@ import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.PositionEqualsCheck;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -78,5 +78,25 @@ public class JSONReportGeneratorTest {
                 "  \"hint\" : \"position equals check\",\n" +
                 "  \"code\" : \"[scratchblocks]\\nwait until <(mouse y) = >:: #ff0000 // Issue: position equals check\\n[/scratchblocks]\\n\"\n" +
                 "} ]", os.toString());
+    }
+
+    @Test
+    public void testFileOutput() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/bugpattern/xPosEqual.json");
+        PositionEqualsCheck finder = new PositionEqualsCheck();
+        Set<Issue> issues = finder.check(program);
+
+        Path tmpFile = Files.createTempFile(null, null);
+        JSONReportGenerator generator = new JSONReportGenerator(tmpFile.toString());
+        generator.generateReport(program, issues);
+
+        String result = Files.readString(tmpFile);
+        assertEquals("[ {\n" +
+                "  \"finder\" : \"position_equals_check\",\n" +
+                "  \"sprite\" : \"Sprite1\",\n" +
+                "  \"hint\" : \"position equals check\",\n" +
+                "  \"code\" : \"[scratchblocks]\\n<(x position) = :: #ff0000> // Issue: position equals check\\n[/scratchblocks]\\n\"\n" +
+                "} ]", result);
+        Files.delete(tmpFile);
     }
 }
