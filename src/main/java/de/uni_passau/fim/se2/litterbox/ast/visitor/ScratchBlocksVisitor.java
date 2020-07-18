@@ -249,18 +249,32 @@ public class ScratchBlocksVisitor extends PrintVisitor {
 
     @Override
     public void visit(Broadcast node) {
-        emitNoSpace("broadcast (");
+        emitNoSpace("broadcast ");
+
+        // TODO: This is a hack, there needs to be a proper fix for this case
+        if (!(node.getMessage().getMessage() instanceof AsString)) {
+            emitNoSpace("(");
+        }
         node.getMessage().accept(this);
-        emitNoSpace(" v)");
+        if (!(node.getMessage().getMessage() instanceof AsString)) {
+            emitNoSpace(" v)");
+        }
         storeNotesForIssue(node);
         newLine();
     }
 
     @Override
     public void visit(BroadcastAndWait node) {
-        emitNoSpace("broadcast (");
+        emitNoSpace("broadcast ");
+        // TODO: This is a hack, there needs to be a proper fix for this case
+        if (!(node.getMessage().getMessage() instanceof AsString)) {
+            emitNoSpace("(");
+        }
         node.getMessage().accept(this);
-        emitNoSpace(" v) and wait");
+        if (!(node.getMessage().getMessage() instanceof AsString)) {
+            emitNoSpace(" v)");
+        }
+        emitNoSpace(" and wait");
         storeNotesForIssue(node);
         newLine();
     }
@@ -1210,7 +1224,7 @@ public class ScratchBlocksVisitor extends PrintVisitor {
     public void visit(Message node) {
         StringExpr message = node.getMessage();
         if (message instanceof StringLiteral) {
-            StringLiteral literal = (StringLiteral)message;
+            StringLiteral literal = (StringLiteral) message;
             emitNoSpace(literal.getText());
             storeNotesForIssue(node);
         } else {
@@ -1352,21 +1366,20 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         } else if(node.getOperand1() instanceof NumExpr) {
             node.getOperand1().accept(this);
         } else if(node.getOperand1() instanceof Parameter) {
-            NonDataBlockMetadata metadata = (NonDataBlockMetadata)((Parameter) node.getOperand1()).getMetadata();
-            if(ProcedureOpcode.argument_reporter_boolean.name().equals(metadata.getOpcode())) {
+            NonDataBlockMetadata metadata = (NonDataBlockMetadata) ((Parameter) node.getOperand1()).getMetadata();
+            if (ProcedureOpcode.argument_reporter_boolean.name().equals(metadata.getOpcode())) {
                 emitNoSpace("<");
                 node.getOperand1().accept(this);
                 storeNotesForIssue(node);
                 emitNoSpace(">");
-            } else if(ProcedureOpcode.argument_reporter_string_number.name().equals(metadata.getOpcode())) {
+            } else if (ProcedureOpcode.argument_reporter_string_number.name().equals(metadata.getOpcode())) {
                 emitNoSpace("(");
                 node.getOperand1().accept(this);
                 storeNotesForIssue(node);
                 emitNoSpace(")");
             } else {
-                assert(false);
+                assert (false);
             }
-
         } else {
             emitNoSpace("(");
             node.getOperand1().accept(this);
@@ -1709,9 +1722,13 @@ public class ScratchBlocksVisitor extends PrintVisitor {
     }
 
     private void storeNotesForIssue(ASTNode node) {
+        boolean hasIssue = false;
         for(Issue issue : issues) {
             if(issue.getCodeLocation() == node) {
-                emitNoSpace(":: #ff0000");
+                if (!hasIssue) {
+                    emitNoSpace(":: #ff0000");
+                }
+                hasIssue = true;
                 issueNote.add(issue.getHint());
             }
         }

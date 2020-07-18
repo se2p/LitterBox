@@ -591,6 +591,24 @@ public class ScratchBlocksVisitorTest {
     }
 
     @Test
+    public void testSpriteClickedBlock() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/scratchblocks/spriteclickedblocks.json");
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        PrintStream ps = new PrintStream(os);
+        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(ps);
+        visitor.begin();
+        program.accept(visitor);
+        visitor.end();
+        String result = os.toString();
+        assertEquals("[scratchblocks]\n" +
+                "when this sprite clicked\n" +
+                "set [my variable v] to [message 1]\n" +
+                "broadcast (my variable)\n" +
+                "broadcast (message1 v)\n" +
+                "[/scratchblocks]\n", result);
+    }
+
+    @Test
     public void testComparingLiteralsIssueAnnotation() throws IOException, ParsingException {
         Program program = getAST("src/test/fixtures/bugpattern/comparingLiterals.json");
         ComparingLiterals finder = new ComparingLiterals();
@@ -604,6 +622,28 @@ public class ScratchBlocksVisitorTest {
         assertEquals("[scratchblocks]\n" +
                 "when green flag clicked\n" +
                 "if <<[] > (50):: #ff0000> and <[] = []:: #ff0000>> then // Issue: comparing literals\n" +
+                "end\n" +
+                "[/scratchblocks]\n", output);
+    }
+
+    @Test
+    public void testMultipleIssueAnnotation() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/bugpattern/comparingLiterals.json");
+        ComparingLiterals finder = new ComparingLiterals();
+        Set<Issue> issues = finder.check(program);
+
+        Issue firstIssue = issues.iterator().next();
+        Issue mockIssue = new Issue(firstIssue.getFinder(), firstIssue.getActor(), firstIssue.getScript(), firstIssue.getCodeLocation(), "FAKE TEXT", firstIssue.getCodeMetadata());
+
+
+        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(firstIssue, mockIssue);
+        visitor.begin();
+        program.accept(visitor);
+        visitor.end();
+        String output = visitor.getScratchBlocks();
+        assertEquals("[scratchblocks]\n" +
+                "when green flag clicked\n" +
+                "if <<[] > (50):: #ff0000> and <[] = []>> then // Issues: comparing literals, FAKE TEXT\n" +
                 "end\n" +
                 "[/scratchblocks]\n", output);
     }
@@ -832,6 +872,8 @@ public class ScratchBlocksVisitorTest {
                 "broadcast (ignored v):: #ff0000 // Issue: message never received\n" +
                 "[/scratchblocks]\n", output);
     }
+
+
 
     @Test
     public void testMessageNeverSentIssueAnnotation() throws IOException, ParsingException {
