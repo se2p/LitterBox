@@ -66,7 +66,7 @@ public class JSONReportGeneratorTest {
                 "  \"finder\" : \"position_equals_check\",\n" +
                 "  \"sprite\" : \"Figur1\",\n" +
                 "  \"hint\" : \"position equals check\",\n" +
-                "  \"code\" : \"[scratchblocks]\\n<(distance to (() v)) = :: #ff0000> // Issue: position equals check\\n[/scratchblocks]\\n\"\n" +
+                "  \"code\" : \"[scratchblocks]\\n<(distance to (Bat v)) = :: #ff0000> // Issue: position equals check\\n[/scratchblocks]\\n\"\n" +
                 "}, {\n" +
                 "  \"finder\" : \"position_equals_check\",\n" +
                 "  \"sprite\" : \"Figur1\",\n" +
