@@ -571,6 +571,26 @@ public class ScratchBlocksVisitorTest {
     }
 
     @Test
+    public void testStopScriptBlocks() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/scratchblocks/stopscriptblocks.json");
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        PrintStream ps = new PrintStream(os);
+        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(ps);
+        visitor.begin();
+        program.accept(visitor);
+        visitor.end();
+        String result = os.toString();
+        assertEquals("[scratchblocks]\n" +
+                "when green flag clicked\n" +
+                "if <key (space v) pressed?> then\n" +
+                "stop [this script v] \n" +
+                "else\n" +
+                "stop [other scripts in sprite v] \n" +
+                "end\n" +
+                "[/scratchblocks]\n", result);
+    }
+
+    @Test
     public void testComparingLiteralsIssueAnnotation() throws IOException, ParsingException {
         Program program = getAST("src/test/fixtures/bugpattern/comparingLiterals.json");
         ComparingLiterals finder = new ComparingLiterals();
