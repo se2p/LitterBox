@@ -609,6 +609,41 @@ public class ScratchBlocksVisitorTest {
     }
 
     @Test
+    public void testVariableBlocksInSelections() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/scratchblocks/variablesinchoiceblocks.json");
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        PrintStream ps = new PrintStream(os);
+        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(ps);
+        visitor.begin();
+        program.accept(visitor);
+        visitor.end();
+        String result = os.toString();
+        assertEquals("[scratchblocks]\n" +
+                "when green flag clicked\n" +
+                "go to (my variable)\n" +
+                "glide (1) secs to (my variable)\n" +
+                "point towards (my variable)\n" +
+                "switch costume to (my variable)\n" +
+                "switch backdrop to (my variable)\n" +
+                "play sound (my variable) until done\n" +
+                "start sound (my variable)\n" +
+                "broadcast (my variable)\n" +
+                "broadcast (my variable) and wait\n" +
+                "create clone of (my variable)\n" +
+                "wait until <key (my variable) pressed?>\n" +
+                "wait until <touching (my variable) ?>\n" +
+                "say ([backdrop # v] of (my variable)?)\n" +
+                "say (distance to (my variable))\n" +
+                "wait until <touching color (my variable) ?>\n" +
+                "wait until <color [#ffd824] is touching (my variable) ?>\n" +
+                "ask (my variable) and wait\n" +
+                "set pen color to (my variable)\n" +
+                "change pen (my variable) by (10)\n" +
+                "set pen (my variable) to (50)\n" +
+                "[/scratchblocks]\n", result);
+    }
+
+    @Test
     public void testComparingLiteralsIssueAnnotation() throws IOException, ParsingException {
         Program program = getAST("src/test/fixtures/bugpattern/comparingLiterals.json");
         ComparingLiterals finder = new ComparingLiterals();
@@ -1172,7 +1207,6 @@ public class ScratchBlocksVisitorTest {
         issue.getScriptOrProcedureDefinition().accept(visitor);
         visitor.end();
         String output = visitor.getScratchBlocks();
-        System.out.println(output);
         assertEquals("[scratchblocks]\n" +
                 "when I start as a clone \n" +
                 "play sound (Meow v) until done\n" +
