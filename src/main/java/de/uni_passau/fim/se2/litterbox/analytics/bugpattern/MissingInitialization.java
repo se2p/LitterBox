@@ -44,12 +44,11 @@ public class MissingInitialization implements IssueFinder {
     public static final String NAME = "missing_initialization";
     public static final String SHORT_NAME = "mssInit";
     public static final String HINT_TEXT = "missing initialization";
-    private final Set<Issue> issues = new LinkedHashSet<>();
 
     @Override
     public Set<Issue> check(Program program) {
         Preconditions.checkNotNull(program);
-
+        Set<Issue> issues = new LinkedHashSet<>();
         ControlFlowGraphVisitor visitor = new ControlFlowGraphVisitor();
         program.accept(visitor);
         ControlFlowGraph cfg = visitor.getControlFlowGraph();

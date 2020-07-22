@@ -39,11 +39,11 @@ public class JSONReportGeneratorTest {
         JSONReportGenerator generator = new JSONReportGenerator(os);
         generator.generateReport(program, issues);
         os.close();
-        assertEquals("[ {\n" +
-                "  \"finder\" : \"position_equals_check\",\n" +
-                "  \"sprite\" : \"Sprite1\",\n" +
-                "  \"hint\" : \"position equals check\",\n" +
-                "  \"code\" : \"[scratchblocks]\\n<(x position) = :: #ff0000> // Issue: position equals check\\n[/scratchblocks]\\n\"\n" +
+        assertEquals("[ {" + System.lineSeparator() +
+                "  \"finder\" : \"position_equals_check\"," + System.lineSeparator() +
+                "  \"sprite\" : \"Sprite1\"," + System.lineSeparator() +
+                "  \"hint\" : \"position equals check\"," + System.lineSeparator() +
+                "  \"code\" : \"[scratchblocks]\\n<(x position) = :: #ff0000> // Issue: position equals check\\n[/scratchblocks]\\n\"" + System.lineSeparator() +
                 "} ]", os.toString());
     }
 
@@ -57,26 +57,26 @@ public class JSONReportGeneratorTest {
         JSONReportGenerator generator = new JSONReportGenerator(os);
         generator.generateReport(program, issues);
         os.close();
-        assertEquals("[ {\n" +
-                "  \"finder\" : \"position_equals_check\",\n" +
-                "  \"sprite\" : \"Figur1\",\n" +
-                "  \"hint\" : \"position equals check\",\n" +
-                "  \"code\" : \"[scratchblocks]\\n<(distance to (mouse-pointer v)) = :: #ff0000> // Issue: position equals check\\n[/scratchblocks]\\n\"\n" +
-                "}, {\n" +
-                "  \"finder\" : \"position_equals_check\",\n" +
-                "  \"sprite\" : \"Figur1\",\n" +
-                "  \"hint\" : \"position equals check\",\n" +
-                "  \"code\" : \"[scratchblocks]\\n<(distance to (() v)) = :: #ff0000> // Issue: position equals check\\n[/scratchblocks]\\n\"\n" +
-                "}, {\n" +
-                "  \"finder\" : \"position_equals_check\",\n" +
-                "  \"sprite\" : \"Figur1\",\n" +
-                "  \"hint\" : \"position equals check\",\n" +
-                "  \"code\" : \"[scratchblocks]\\nwait until <(mouse x) = >:: #ff0000 // Issue: position equals check\\n[/scratchblocks]\\n\"\n" +
-                "}, {\n" +
-                "  \"finder\" : \"position_equals_check\",\n" +
-                "  \"sprite\" : \"Figur1\",\n" +
-                "  \"hint\" : \"position equals check\",\n" +
-                "  \"code\" : \"[scratchblocks]\\nwait until <(mouse y) = >:: #ff0000 // Issue: position equals check\\n[/scratchblocks]\\n\"\n" +
+        assertEquals("[ {" + System.lineSeparator() +
+                "  \"finder\" : \"position_equals_check\"," + System.lineSeparator() +
+                "  \"sprite\" : \"Figur1\"," + System.lineSeparator() +
+                "  \"hint\" : \"position equals check\"," + System.lineSeparator() +
+                "  \"code\" : \"[scratchblocks]\\n<(distance to (mouse-pointer v)) = :: #ff0000> // Issue: position equals check\\n[/scratchblocks]\\n\"" + System.lineSeparator() +
+                "}, {" + System.lineSeparator() +
+                "  \"finder\" : \"position_equals_check\"," + System.lineSeparator() +
+                "  \"sprite\" : \"Figur1\"," + System.lineSeparator() +
+                "  \"hint\" : \"position equals check\"," + System.lineSeparator() +
+                "  \"code\" : \"[scratchblocks]\\n<(distance to (Bat v)) = :: #ff0000> // Issue: position equals check\\n[/scratchblocks]\\n\"" + System.lineSeparator() +
+                "}, {" + System.lineSeparator() +
+                "  \"finder\" : \"position_equals_check\"," + System.lineSeparator() +
+                "  \"sprite\" : \"Figur1\"," + System.lineSeparator() +
+                "  \"hint\" : \"position equals check\"," + System.lineSeparator() +
+                "  \"code\" : \"[scratchblocks]\\nwait until <(mouse x) = >:: #ff0000 // Issue: position equals check\\n[/scratchblocks]\\n\"" + System.lineSeparator() +
+                "}, {" + System.lineSeparator() +
+                "  \"finder\" : \"position_equals_check\"," + System.lineSeparator() +
+                "  \"sprite\" : \"Figur1\"," + System.lineSeparator() +
+                "  \"hint\" : \"position equals check\"," + System.lineSeparator() +
+                "  \"code\" : \"[scratchblocks]\\nwait until <(mouse y) = >:: #ff0000 // Issue: position equals check\\n[/scratchblocks]\\n\"" + System.lineSeparator() +
                 "} ]", os.toString());
     }
 
@@ -91,11 +91,11 @@ public class JSONReportGeneratorTest {
         generator.generateReport(program, issues);
 
         String result = Files.readString(tmpFile);
-        assertEquals("[ {\n" +
-                "  \"finder\" : \"position_equals_check\",\n" +
-                "  \"sprite\" : \"Sprite1\",\n" +
-                "  \"hint\" : \"position equals check\",\n" +
-                "  \"code\" : \"[scratchblocks]\\n<(x position) = :: #ff0000> // Issue: position equals check\\n[/scratchblocks]\\n\"\n" +
+        assertEquals("[ {" + System.lineSeparator() +
+                "  \"finder\" : \"position_equals_check\"," + System.lineSeparator() +
+                "  \"sprite\" : \"Sprite1\"," + System.lineSeparator() +
+                "  \"hint\" : \"position equals check\"," + System.lineSeparator() +
+                "  \"code\" : \"[scratchblocks]\\n<(x position) = :: #ff0000> // Issue: position equals check\\n[/scratchblocks]\\n\"" + System.lineSeparator() +
                 "} ]", result);
         Files.delete(tmpFile);
     }
