@@ -165,4 +165,25 @@ public class MissingInitializationTest {
         Set<Issue> reports = (new MissingInitialization()).check(program);
         Assertions.assertEquals(1, reports.size());
     }
+
+
+    @Test
+    public void testMissingInitializationInCustomBlockWithCall() throws IOException, ParsingException {
+        File f = new File("src/test/fixtures/bugpattern/missingInitializationInCustomBlock.json");
+        Program program = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
+
+        Set<Issue> reports = (new MissingInitialization()).check(program);
+        Assertions.assertEquals(1, reports.size());
+    }
+
+    @Test
+    public void testMissingInitializationInCustomBlockWithoutCall() throws IOException, ParsingException {
+        File f = new File("src/test/fixtures/bugpattern/missingInitializationInCustomBlockNotCalled.json");
+        Program program = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
+
+        MissingInitialization initialization = new MissingInitialization();
+        Assertions.assertEquals(MissingInitialization.NAME, initialization.getName());
+        Set<Issue> reports = (initialization).check(program);
+        Assertions.assertEquals(0, reports.size());
+    }
 }
