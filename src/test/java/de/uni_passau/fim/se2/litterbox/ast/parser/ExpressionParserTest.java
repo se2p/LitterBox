@@ -18,27 +18,22 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.parser;
 
-import static de.uni_passau.fim.se2.litterbox.ast.Constants.STEPS_KEY;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.uni_passau.fim.se2.litterbox.analytics.Issue;
-import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.AmbiguousCustomBlockSignature;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.utils.JsonParser;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Set;
+
+import static de.uni_passau.fim.se2.litterbox.ast.Constants.STEPS_KEY;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class ExpressionParserTest {
 
@@ -133,5 +128,18 @@ public class ExpressionParserTest {
         assertTrue(NumExprParser.parseNumFunct(pow10Block.get("fields")) instanceof NumFunct);
 
         assertTrue((NumExprParser.parseNumFunct(pow10Block.get("fields"))).equals(NumFunct.POW10));
+    }
+
+    @Test
+    public void testStatement() throws IOException, ParsingException {
+        JsonNode script = JsonParser.getBlocksNodeFromJSON("./src/test/fixtures/bugpattern/missingLoopSensingMultiple.json");
+        JsonNode ifBlock = script.get(".-Id3Zrhoe,6;Z+v_;IB");
+
+        Exception exception = assertThrows(ParsingException.class, () -> {
+            ExpressionParser.parseExprBlock(".-Id3Zrhoe,6;Z+v_;IB",ifBlock, script);
+        });
+        String expectedMessage = " is an unexpected opcode for an expression";
+        String actualMessage = exception.getMessage();
+        assertTrue(actualMessage.contains(expectedMessage));
     }
 }

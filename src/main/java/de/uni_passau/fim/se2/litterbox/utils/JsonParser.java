@@ -36,7 +36,6 @@ public class JsonParser {
         JsonNode script = null;
         Path currentRelativePath = Paths.get("");
         String s = currentRelativePath.toAbsolutePath().toString();
-        System.out.println("Current relative path is: " + s);
 
         try {
             BufferedReader br = new BufferedReader(new FileReader(path, StandardCharsets.UTF_8));
