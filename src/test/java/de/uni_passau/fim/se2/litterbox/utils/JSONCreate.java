@@ -35,13 +35,13 @@ public class JSONCreate {
 
     @BeforeAll
     public static void setUp() throws IOException {
-        File f = new File("./src/test/fixtures/metadata/createBroadcast.json");
+        File f = new File("./src/test/fixtures/stmtParser/manipulatedBroadcast.json");
         prog = mapper.readTree(f);
     }
 
     @Test
     public void createJSON() throws ParsingException {
-        Program test = ProgramParser.parseProgram("testProg",prog);
+        Program test = ProgramParser.parseProgram("createBroadcast",prog);
         JSONFileCreator.writeJsonFromProgram(test);
     }
 }
