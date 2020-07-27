@@ -23,13 +23,13 @@ import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
-import java.io.File;
-import java.io.IOException;
-import java.util.Set;
-
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.Set;
 
 public class PositionEqualsCheckTest {
     private static Program empty;
@@ -37,6 +37,7 @@ public class PositionEqualsCheckTest {
     private static Program equalDirection;
     private static Program allChecks;
     private static Program xPositionEquals;
+    private static Program nested;
     private static ObjectMapper mapper = new ObjectMapper();
 
     @BeforeAll
@@ -56,6 +57,9 @@ public class PositionEqualsCheckTest {
 
         f = new File("./src/test/fixtures/bugpattern/xPositionEquals.json");
         xPositionEquals = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
+
+        f = new File("./src/test/fixtures/bugpattern/positionEqualsNested.json");
+        nested = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
     }
 
     @Test
@@ -91,5 +95,12 @@ public class PositionEqualsCheckTest {
         PositionEqualsCheck parameterName = new PositionEqualsCheck();
         Set<Issue> reports = parameterName.check(allChecks);
         Assertions.assertEquals(4, reports.size());
+    }
+
+    @Test
+    public void testNested() {
+        PositionEqualsCheck parameterName = new PositionEqualsCheck();
+        Set<Issue> reports = parameterName.check(nested);
+        Assertions.assertEquals(2, reports.size());
     }
 }
