@@ -18,8 +18,10 @@
  */
 package de.uni_passau.fim.se2.litterbox.utils;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.nio.charset.StandardCharsets;
@@ -47,26 +49,22 @@ public class JsonParser {
             script = buildScriptFromJSONString(sb.toString());
             br.close();
         } catch (Exception e) {
-            e.printStackTrace();
+
         }
         return script;
     }
 
-    private static JsonNode buildScriptFromJSONString(String json) {
+    private static JsonNode buildScriptFromJSONString(String json) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         JsonNode script = null;
-        try {
-            JsonNode rootNode = mapper.readTree(json);
-            Iterator<JsonNode> elements = rootNode.get("targets").elements();
-            while (elements.hasNext()) {
-                JsonNode c = elements.next();
-                if (c.has("isStage") && !c.get("isStage").asBoolean() && c.has("blocks")) {
-                    script = c.get("blocks");
-                    break;
-                }
+        JsonNode rootNode = mapper.readTree(json);
+        Iterator<JsonNode> elements = rootNode.get("targets").elements();
+        while (elements.hasNext()) {
+            JsonNode c = elements.next();
+            if (c.has("isStage") && !c.get("isStage").asBoolean() && c.has("blocks")) {
+                script = c.get("blocks");
+                break;
             }
-        } catch (Exception e) {
-            e.printStackTrace();
         }
         return script;
     }
