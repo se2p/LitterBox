@@ -21,7 +21,6 @@ package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
-import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
@@ -42,7 +41,6 @@ import java.util.Set;
 public class MissingInitialization implements IssueFinder {
 
     public static final String NAME = "missing_initialization";
-    public static final String SHORT_NAME = "mssInit";
     public static final String HINT_TEXT = "missing initialization";
 
     @Override
@@ -93,10 +91,5 @@ public class MissingInitialization implements IssueFinder {
     @Override
     public String getName() {
         return NAME;
-    }
-
-    @Override
-    public String getShortName() {
-        return SHORT_NAME;
     }
 }

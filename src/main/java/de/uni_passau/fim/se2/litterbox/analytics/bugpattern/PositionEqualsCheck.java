@@ -39,7 +39,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
  */
 public class PositionEqualsCheck extends AbstractIssueFinder {
     public static final String NAME = "position_equals_check";
-    public static final String SHORT_NAME = "posEqCheck";
     public static final String HINT_TEXT = "position equals check";
     private static boolean inCondition;
 
@@ -109,10 +108,5 @@ public class PositionEqualsCheck extends AbstractIssueFinder {
     @Override
     public String getName() {
         return NAME;
-    }
-
-    @Override
-    public String getShortName() {
-        return SHORT_NAME;
     }
 }

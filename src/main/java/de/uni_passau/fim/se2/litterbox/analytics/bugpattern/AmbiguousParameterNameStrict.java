@@ -27,7 +27,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ArgumentInfo;
 
-import java.util.*;
+import java.util.LinkedList;
+import java.util.Set;
 
 /**
  * The parameter names in custom blocks do not have to be unique.
@@ -37,7 +38,6 @@ import java.util.*;
  */
 public class AmbiguousParameterNameStrict extends AbstractIssueFinder {
     public static final String NAME = "ambiguous_parameter_name_strict";
-    public static final String SHORT_NAME = "ambParamNameStrct";
     public static final String HINT_TEXT = "ambiguous parameter name strict";
     private boolean inStmtList = false;
     private boolean found = false;
@@ -113,10 +113,5 @@ public class AmbiguousParameterNameStrict extends AbstractIssueFinder {
     @Override
     public String getName() {
         return NAME;
-    }
-
-    @Override
-    public String getShortName() {
-        return SHORT_NAME;
     }
 }

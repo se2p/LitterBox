@@ -27,7 +27,11 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.Broadcast;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.BroadcastAndWait;
 import de.uni_passau.fim.se2.litterbox.utils.Pair;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
-import java.util.*;
+
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * This pattern is a specialised version of unmatched broadcast and receive blocks. It occurs
@@ -37,7 +41,6 @@ import java.util.*;
 public class MessageNeverReceived extends AbstractIssueFinder {
 
     public static final String NAME = "message_never_received";
-    public static final String SHORT_NAME = "messNeverRec";
     public static final String HINT_TEXT = "message never received";
     private List<Pair<String>> messageSent = new ArrayList<>();
     private List<Pair<String>> messageReceived = new ArrayList<>();
@@ -117,10 +120,5 @@ public class MessageNeverReceived extends AbstractIssueFinder {
     @Override
     public String getName() {
         return NAME;
-    }
-
-    @Override
-    public String getShortName() {
-        return SHORT_NAME;
     }
 }

@@ -31,7 +31,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
  */
 public class EndlessRecursion extends AbstractIssueFinder {
     public static final String NAME = "endless_recursion";
-    public static final String SHORT_NAME = "endlRec";
     public static final String HINT_TEXT = "endless recursion";
     private String currentProcedureName;
     private boolean insideProcedure;
@@ -78,10 +77,5 @@ public class EndlessRecursion extends AbstractIssueFinder {
     @Override
     public String getName() {
         return NAME;
-    }
-
-    @Override
-    public String getShortName() {
-        return SHORT_NAME;
     }
 }

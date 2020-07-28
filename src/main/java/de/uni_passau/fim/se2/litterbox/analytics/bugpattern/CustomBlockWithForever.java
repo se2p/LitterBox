@@ -26,7 +26,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * If a custom block contains a forever loop and the custom block is used in the middle of another script,
@@ -36,7 +37,6 @@ import java.util.*;
  */
 public class CustomBlockWithForever extends AbstractIssueFinder {
     public static final String NAME = "custom_block_with_forever";
-    public static final String SHORT_NAME = "custBlWithForever";
     public static final String HINT_TEXT = "custom block with forever";
     private String currentProcedureName;
     private List<String> proceduresWithForever;
@@ -90,10 +90,5 @@ public class CustomBlockWithForever extends AbstractIssueFinder {
     @Override
     public String getName() {
         return NAME;
-    }
-
-    @Override
-    public String getShortName() {
-        return SHORT_NAME;
     }
 }

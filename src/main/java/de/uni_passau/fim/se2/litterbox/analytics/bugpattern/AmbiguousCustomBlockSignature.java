@@ -23,7 +23,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ProcedureInfo;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Names for custom blocks are non-unique. Two custom blocks with the same name can only be distinguished if they have a
@@ -33,7 +34,6 @@ import java.util.*;
  */
 public class AmbiguousCustomBlockSignature extends AbstractIssueFinder {
     public static final String NAME = "ambiguous_custom_block_signature";
-    public static final String SHORT_NAME = "ambCustBlSign";
     public static final String HINT_TEXT = "ambiguous custom block signature";
 
     @Override
@@ -62,10 +62,5 @@ public class AmbiguousCustomBlockSignature extends AbstractIssueFinder {
     @Override
     public String getName() {
         return NAME;
-    }
-
-    @Override
-    public String getShortName() {
-        return SHORT_NAME;
     }
 }

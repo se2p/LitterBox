@@ -32,7 +32,6 @@ import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ArgumentInfo;
 
 public class IllegalParameterRefactor extends AbstractIssueFinder {
     public static final String NAME = "illegal_parameter_refactor";
-    public static final String SHORT_NAME = "illParamRefac";
     public static final String HINT_TEXT = "illegal parameter refactor";
     private ArgumentInfo[] currentArguments;
     private boolean insideProcedure;
@@ -119,10 +118,5 @@ public class IllegalParameterRefactor extends AbstractIssueFinder {
     @Override
     public String getName() {
         return NAME;
-    }
-
-    @Override
-    public String getShortName() {
-        return SHORT_NAME;
     }
 }

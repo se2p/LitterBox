@@ -19,9 +19,7 @@
 package de.uni_passau.fim.se2.litterbox.report;
 
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
-import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -46,7 +44,7 @@ public class ConsoleReportGenerator implements ReportGenerator {
         }
 
         for(String detector : detectors) {
-            List<Issue> relevantIssues = issues.stream().filter(i -> i.getFinderShortName().equals(detector)).collect(Collectors.toList());
+            List<Issue> relevantIssues = issues.stream().filter(i -> i.getFinderName().equals(detector)).collect(Collectors.toList());
             if(!relevantIssues.isEmpty()) {
                 Issue firstIssue = relevantIssues.get(0);
                 System.out.println("Issue "+firstIssue.getFinderName() + " was found " + relevantIssues.size() + " time(s)");
