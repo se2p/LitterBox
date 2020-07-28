@@ -72,8 +72,6 @@ public class ExpressionParser {
             expr = BoolExprParser.parseBoolExpr(containingBlock, inputKey, allBlocks);
         } else if (parsableAsDataExpr(containingBlock, inputKey, allBlocks)) {
             expr = DataExprParser.parseDataExpr(containingBlock, inputKey, allBlocks);
-        } else if (parsableAsListExpr(containingBlock, inputKey)) {
-            expr = ListExprParser.parseListExpr(containingBlock, inputKey);
         }
         if (expr != null) {
             return expr;

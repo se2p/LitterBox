@@ -25,8 +25,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.AsListIndex;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.ListExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Identifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
@@ -55,21 +53,6 @@ public class ListExprParser {
         }
     }
 
-    public static ListExpr parseListExpr(JsonNode containingBlock, String inputKey) throws ParsingException { //TODO do we need this?
-        ArrayNode exprArray = ExpressionParser.getExprArray(containingBlock.get(INPUTS_KEY), inputKey);
-
-        if (ExpressionParser.getShadowIndicator(exprArray) == 1 || exprArray.get(POS_BLOCK_ID) instanceof TextNode) {
-            throw new ParsingException("Block does not contain a list");
-        }
-
-        String idString = exprArray.get(POS_DATA_ARRAY).get(POS_INPUT_ID).asText();
-        if (ProgramParser.symbolTable.getLists().containsKey(idString)) {
-            ExpressionListInfo variableInfo = ProgramParser.symbolTable.getLists().get(idString);
-            return new AsListIndex(new Qualified(new StrId(variableInfo.getActor()),
-                    new ScratchList(new StrId((variableInfo.getVariableName())))));
-        }
-        throw new ParsingException("Block does not contain a list");
-    }
 
     static Identifier parseVariableFromFields(JsonNode fields) throws ParsingException { //TODO do we need this?
         String identifier = fields.get(LIST_KEY).get(LIST_IDENTIFIER_POS).asText();

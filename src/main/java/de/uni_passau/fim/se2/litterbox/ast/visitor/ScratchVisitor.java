@@ -25,9 +25,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.ComparableExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.UnspecifiedExpression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.*;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.AsListIndex;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.ExpressionList;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.ListExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.Attribute;
@@ -606,7 +604,7 @@ public interface ScratchVisitor {
      * @param node ExpressionList Node of which the children will be iterated
      */
     default void visit(ExpressionList node) {
-        visit((ListExpr) node);
+        visit((Expression) node);
     }
 
     /**
@@ -1244,19 +1242,6 @@ public interface ScratchVisitor {
      */
     default void visit(Rgba node) {
         visit((Color) node);
-    }
-
-    /**
-     * Default implementation of visit method for {@link ListExpr}.
-     *
-     * <p>
-     * Iterates all children of this node without performing any action.
-     * </p>
-     *
-     * @param node ListExpr  Node of which the children will be iterated
-     */
-    default void visit(ListExpr node) {
-        visit((Expression) node);
     }
 
     /**
@@ -2622,19 +2607,6 @@ public interface ScratchVisitor {
      */
     default void visit(AsBool node) {
         visit((BoolExpr) node);
-    }
-
-    /**
-     * Default implementation of visit method for {@link AsListIndex}.
-     *
-     * <p>
-     * Iterates all children of this node without performing any action.
-     * </p>
-     *
-     * @param node AsListIndex Node of which the children will be iterated
-     */
-    default void visit(AsListIndex node) {
-        visit((ListExpr) node);
     }
 
     /**
