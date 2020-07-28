@@ -59,6 +59,49 @@ public class ScratchBlocksVisitorTest {
     }
 
     @Test
+    public void testTouchingEdgeBlock() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/scratchblocks/touchingedgeblock.json");
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        PrintStream ps = new PrintStream(os);
+        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(ps);
+        visitor.begin();
+        program.accept(visitor);
+        visitor.end();
+        String result = os.toString();
+        assertEquals("[scratchblocks]\n" +
+                "when green flag clicked\n" +
+                "forever \n" +
+                "if <touching (edge v) ?> then\n" +
+                "say [Hello!] for (2) seconds\n" +
+                "end\n" +
+                "end\n" +
+                "[/scratchblocks]\n", result);
+    }
+
+    @Test
+    public void testMultipleCustomBlocks() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/scratchblocks/multicustomblocks.json");
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        PrintStream ps = new PrintStream(os);
+        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(ps);
+        visitor.begin();
+        program.accept(visitor);
+        visitor.end();
+        String result = os.toString();
+        assertEquals("[scratchblocks]\n" +
+                "define block1\n" +
+                "say [Hello!]\n" +
+                "\n" +
+                "define block2\n" +
+                "say [Bye!]\n" +
+                "\n" +
+                "when green flag clicked\n" +
+                "block1\n" +
+                "block2\n" +
+                "[/scratchblocks]\n", result);
+    }
+
+    @Test
     public void testLookBlocks() throws IOException, ParsingException {
         Program program = getAST("src/test/fixtures/scratchblocks/lookblocks.json");
         ByteArrayOutputStream os = new ByteArrayOutputStream();
