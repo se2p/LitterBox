@@ -28,6 +28,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.CloneOfMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.CreateCloneOf;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
+
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -45,7 +46,6 @@ import java.util.stream.Collectors;
 public class MissingCloneInitialization extends AbstractIssueFinder {
 
     public static final String NAME = "missing_clone_initialization";
-    public static final String SHORT_NAME = "mssCloneInit";
     public static final String HINT_TEXT = "missing clone initialization";
 
     private List<String> whenStartsAsCloneActors = new ArrayList<>();
@@ -104,10 +104,5 @@ public class MissingCloneInitialization extends AbstractIssueFinder {
     @Override
     public String getName() {
         return NAME;
-    }
-
-    @Override
-    public String getShortName() {
-        return SHORT_NAME;
     }
 }

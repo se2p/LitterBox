@@ -27,7 +27,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.DeleteClone;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopAll;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * If a custom block contains a Stop all or Delete this clone and the custom block is called in the
@@ -35,7 +36,6 @@ import java.util.*;
  */
 public class CustomBlockWithTermination extends AbstractIssueFinder {
     public static final String NAME = "custom_block_with_termination";
-    public static final String SHORT_NAME = "custBlWithTerm";
     public static final String HINT_TEXT = "custom block with termination";
     private String currentProcedureName;
     private List<String> proceduresWithForever;
@@ -95,10 +95,5 @@ public class CustomBlockWithTermination extends AbstractIssueFinder {
     @Override
     public String getName() {
         return NAME;
-    }
-
-    @Override
-    public String getShortName() {
-        return SHORT_NAME;
     }
 }

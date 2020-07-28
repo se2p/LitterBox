@@ -30,7 +30,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitUntil;
 public class MissingWaitUntilCondition extends AbstractIssueFinder {
 
     public static final String NAME = "missing_wait_condition";
-    public static final String SHORT_NAME = "mssWaitCond";
     public static final String HINT_TEXT = "missing wait condition";
 
     @Override
@@ -52,10 +51,5 @@ public class MissingWaitUntilCondition extends AbstractIssueFinder {
     @Override
     public String getName() {
         return NAME;
-    }
-
-    @Override
-    public String getShortName() {
-        return SHORT_NAME;
     }
 }

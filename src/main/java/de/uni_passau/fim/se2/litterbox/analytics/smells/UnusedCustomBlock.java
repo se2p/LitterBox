@@ -25,7 +25,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ProcedureInfo;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Checks if there are unused custom blocks in the project.
@@ -33,7 +34,6 @@ import java.util.*;
 public class UnusedCustomBlock extends AbstractIssueFinder {
 
     public static final String NAME = "unused_custom_block";
-    public static final String SHORT_NAME = "unusedCustBl";
     private List<ProcedureDefinition> proceduresDef;
     private List<String> calledProcedures;
 
@@ -69,10 +69,5 @@ public class UnusedCustomBlock extends AbstractIssueFinder {
     @Override
     public String getName() {
         return NAME;
-    }
-
-    @Override
-    public String getShortName() {
-        return SHORT_NAME;
     }
 }
