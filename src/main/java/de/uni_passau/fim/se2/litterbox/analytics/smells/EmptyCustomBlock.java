@@ -24,7 +24,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 
 public class EmptyCustomBlock extends AbstractIssueFinder {
     public static final String NAME = "empty_custom_block";
-    public static final String SHORT_NAME = "empCustBl";
 
     @Override
     public void visit(ProcedureDefinition node) {
@@ -39,10 +38,5 @@ public class EmptyCustomBlock extends AbstractIssueFinder {
     @Override
     public String getName() {
         return NAME;
-    }
-
-    @Override
-    public String getShortName() {
-        return SHORT_NAME;
     }
 }

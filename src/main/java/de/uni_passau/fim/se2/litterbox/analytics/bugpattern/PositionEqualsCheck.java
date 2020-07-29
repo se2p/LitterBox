@@ -39,21 +39,27 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
  */
 public class PositionEqualsCheck extends AbstractIssueFinder {
     public static final String NAME = "position_equals_check";
-    public static final String SHORT_NAME = "posEqCheck";
     public static final String HINT_TEXT = "position equals check";
+    private static boolean inCondition;
 
     @Override
     public void visit(WaitUntil node) {
-        if (node.getUntil() instanceof Equals) {
-            if(!checkEquals((Equals) node.getUntil())) {
+        inCondition = true;
+        visitChildren(node);
+        inCondition = false;
+    }
+
+    @Override
+    public void visit(Equals node) {
+        if (inCondition) {
+            if (!checkEquals(node)) {
                 addIssue(node, HINT_TEXT, node.getMetadata());
             }
         }
-        visitChildren(node);
     }
 
     private boolean checkEquals(Equals equals) {
-        if(!checkOptions(equals.getOperand1()))
+        if (!checkOptions(equals.getOperand1()))
             return false;
 
         return checkOptions(equals.getOperand2());
@@ -76,41 +82,31 @@ public class PositionEqualsCheck extends AbstractIssueFinder {
 
     @Override
     public void visit(UntilStmt node) {
-        if (node.getBoolExpr() instanceof Equals) {
-            if(!checkEquals((Equals) node.getBoolExpr())) {
-                addIssue(node.getBoolExpr(), HINT_TEXT, node.getMetadata());
-            }
-        }
-        visitChildren(node);
+        inCondition = true;
+        node.getBoolExpr().accept(this);
+        inCondition = false;
+        node.getStmtList().accept(this);
     }
 
     @Override
     public void visit(IfThenStmt node) {
-        if (node.getBoolExpr() instanceof Equals) {
-            if(!checkEquals((Equals) node.getBoolExpr())) {
-                addIssue(node.getBoolExpr(), HINT_TEXT, node.getMetadata());
-            }
-        }
-        visitChildren(node);
+        inCondition = true;
+        node.getBoolExpr().accept(this);
+        inCondition = false;
+        node.getThenStmts().accept(this);
     }
 
     @Override
     public void visit(IfElseStmt node) {
-        if (node.getBoolExpr() instanceof Equals) {
-            if(!checkEquals((Equals) node.getBoolExpr())) {
-                addIssue(node.getBoolExpr(), HINT_TEXT, node.getMetadata());
-            }
-        }
-        visitChildren(node);
+        inCondition = true;
+        node.getBoolExpr().accept(this);
+        inCondition = false;
+        node.getStmtList().accept(this);
+        node.getElseStmts().accept(this);
     }
 
     @Override
     public String getName() {
         return NAME;
-    }
-
-    @Override
-    public String getShortName() {
-        return SHORT_NAME;
     }
 }

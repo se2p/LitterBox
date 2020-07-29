@@ -34,7 +34,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.touchable.SpriteTouchable;
  */
 public class ExpressionAsTouchingOrColor extends AbstractIssueFinder {
     public static final String NAME = "expression_as_touching_or_color";
-    public static final String SHORT_NAME = "exprTouchColor";
     public static final String HINT_TEXT = "expression as touching or color";
 
     @Override
@@ -77,10 +76,5 @@ public class ExpressionAsTouchingOrColor extends AbstractIssueFinder {
     @Override
     public String getName() {
         return NAME;
-    }
-
-    @Override
-    public String getShortName() {
-        return SHORT_NAME;
     }
 }

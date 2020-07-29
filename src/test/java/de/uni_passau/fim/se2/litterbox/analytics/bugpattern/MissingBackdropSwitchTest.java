@@ -34,9 +34,11 @@ import org.junit.jupiter.api.Test;
 public class MissingBackdropSwitchTest {
     private static Program empty;
     private static Program missingBackdropSwitchNext;
+    private static Program missingBackdropSwitchNext2;
     private static Program missingBack;
     private static Program random;
     private static Program fischmampfer;
+    private static Program fischmampferWithWait;
     private static ObjectMapper mapper = new ObjectMapper();
 
     @BeforeAll
@@ -46,12 +48,16 @@ public class MissingBackdropSwitchTest {
         empty = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
         f = new File("./src/test/fixtures/bugpattern/missingBackDropSwitchNext.json");
         missingBackdropSwitchNext = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
+        f = new File("./src/test/fixtures/bugpattern/missingBackDropSwitchNext2.json");
+        missingBackdropSwitchNext2 = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
         f = new File("./src/test/fixtures/bugpattern/missBackdrop.json");
         missingBack = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
         f = new File("./src/test/fixtures/bugpattern/randomBackdrop.json");
         random = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
         f = new File("./src/test/fixtures/bugpattern/missingBackdropSwitchAsString.json");
         fischmampfer = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
+        f = new File("./src/test/fixtures/bugpattern/missingBackdropSwitchAndWaitAsString.json");
+        fischmampferWithWait = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
     }
 
     @Test
@@ -65,6 +71,13 @@ public class MissingBackdropSwitchTest {
     public void testMissingBackdropSwitchNext() {
         MissingBackdropSwitch parameterName = new MissingBackdropSwitch();
         Set<Issue> reports = parameterName.check(missingBackdropSwitchNext);
+        Assertions.assertEquals(0, reports.size());
+    }
+
+    @Test
+    public void testMissingBackdropSwitchNextInSprite() {
+        MissingBackdropSwitch parameterName = new MissingBackdropSwitch();
+        Set<Issue> reports = parameterName.check(missingBackdropSwitchNext2);
         Assertions.assertEquals(0, reports.size());
     }
 
@@ -86,6 +99,13 @@ public class MissingBackdropSwitchTest {
     public void testFischmampfer() {
         MissingBackdropSwitch parameterName = new MissingBackdropSwitch();
         Set<Issue> reports = parameterName.check(fischmampfer);
+        Assertions.assertEquals(0, reports.size());
+    }
+
+    @Test
+    public void testSwitchAndWait() {
+        MissingBackdropSwitch parameterName = new MissingBackdropSwitch();
+        Set<Issue> reports = parameterName.check(fischmampferWithWait);
         Assertions.assertEquals(0, reports.size());
     }
 }

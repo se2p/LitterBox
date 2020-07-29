@@ -34,7 +34,6 @@ import java.util.List;
 public class NestedLoops extends AbstractIssueFinder {
 
     public static final String NAME = "nested_loops";
-    public static final String SHORT_NAME = "nestLoop";
 
     @Override
     public void visit(UntilStmt node) {
@@ -64,10 +63,5 @@ public class NestedLoops extends AbstractIssueFinder {
     @Override
     public String getName() {
         return NAME;
-    }
-
-    @Override
-    public String getShortName() {
-        return SHORT_NAME;
     }
 }

@@ -28,12 +28,13 @@ import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 public class WeightedMethodCount implements MetricExtractor, ScratchVisitor {
     public static final String NAME = "weighted_method_count";
-    public static final String SHORT_NAME = "weightedMethCnt";
     private int count = 0;
 
     @Override
     public double calculateMetric(Program program) {
         Preconditions.checkNotNull(program);
+        this.count = 0;
+
         program.accept(this);
         return count;
     }

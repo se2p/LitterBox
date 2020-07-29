@@ -23,7 +23,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * When a custom block is called without being defined nothing happens. This can occur in two different situations:
@@ -33,7 +34,6 @@ import java.util.*;
  */
 public class CallWithoutDefinition extends AbstractIssueFinder {
     public static final String NAME = "call_without_definition";
-    public static final String SHORT_NAME = "cllWithoutDef";
     public static final String HINT_TEXT = "call without definition";
     private List<String> proceduresDef;
     private List<CallStmt> calledProcedures;
@@ -70,10 +70,5 @@ public class CallWithoutDefinition extends AbstractIssueFinder {
     @Override
     public String getName() {
         return NAME;
-    }
-
-    @Override
-    public String getShortName() {
-        return SHORT_NAME;
     }
 }

@@ -37,6 +37,4 @@ public interface IssueFinder {
     Set<Issue> check(Program program);
 
     String getName();
-
-    String getShortName();
 }

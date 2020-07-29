@@ -26,7 +26,6 @@ import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 public class ProcedureCount implements MetricExtractor, ScratchVisitor {
     public static final String NAME = "procedure_count";
-    public static final String SHORT_NAME = "procCnt";
 
     private int count = 0;
 

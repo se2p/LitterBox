@@ -59,6 +59,49 @@ public class ScratchBlocksVisitorTest {
     }
 
     @Test
+    public void testTouchingEdgeBlock() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/scratchblocks/touchingedgeblock.json");
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        PrintStream ps = new PrintStream(os);
+        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(ps);
+        visitor.begin();
+        program.accept(visitor);
+        visitor.end();
+        String result = os.toString();
+        assertEquals("[scratchblocks]\n" +
+                "when green flag clicked\n" +
+                "forever \n" +
+                "if <touching (edge v) ?> then\n" +
+                "say [Hello!] for (2) seconds\n" +
+                "end\n" +
+                "end\n" +
+                "[/scratchblocks]\n", result);
+    }
+
+    @Test
+    public void testMultipleCustomBlocks() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/scratchblocks/multicustomblocks.json");
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        PrintStream ps = new PrintStream(os);
+        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(ps);
+        visitor.begin();
+        program.accept(visitor);
+        visitor.end();
+        String result = os.toString();
+        assertEquals("[scratchblocks]\n" +
+                "define block1\n" +
+                "say [Hello!]\n" +
+                "\n" +
+                "define block2\n" +
+                "say [Bye!]\n" +
+                "\n" +
+                "when green flag clicked\n" +
+                "block1\n" +
+                "block2\n" +
+                "[/scratchblocks]\n", result);
+    }
+
+    @Test
     public void testLookBlocks() throws IOException, ParsingException {
         Program program = getAST("src/test/fixtures/scratchblocks/lookblocks.json");
         ByteArrayOutputStream os = new ByteArrayOutputStream();
@@ -571,6 +614,79 @@ public class ScratchBlocksVisitorTest {
     }
 
     @Test
+    public void testStopScriptBlocks() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/scratchblocks/stopscriptblocks.json");
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        PrintStream ps = new PrintStream(os);
+        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(ps);
+        visitor.begin();
+        program.accept(visitor);
+        visitor.end();
+        String result = os.toString();
+        assertEquals("[scratchblocks]\n" +
+                "when green flag clicked\n" +
+                "if <key (space v) pressed?> then\n" +
+                "stop [this script v] \n" +
+                "else\n" +
+                "stop [other scripts in sprite v] \n" +
+                "end\n" +
+                "[/scratchblocks]\n", result);
+    }
+
+    @Test
+    public void testSpriteClickedBlock() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/scratchblocks/spriteclickedblocks.json");
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        PrintStream ps = new PrintStream(os);
+        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(ps);
+        visitor.begin();
+        program.accept(visitor);
+        visitor.end();
+        String result = os.toString();
+        assertEquals("[scratchblocks]\n" +
+                "when this sprite clicked\n" +
+                "set [my variable v] to [message 1]\n" +
+                "broadcast (my variable)\n" +
+                "broadcast (message1 v)\n" +
+                "[/scratchblocks]\n", result);
+    }
+
+    @Test
+    public void testVariableBlocksInSelections() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/scratchblocks/variablesinchoiceblocks.json");
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        PrintStream ps = new PrintStream(os);
+        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(ps);
+        visitor.begin();
+        program.accept(visitor);
+        visitor.end();
+        String result = os.toString();
+        assertEquals("[scratchblocks]\n" +
+                "when green flag clicked\n" +
+                "go to (my variable)\n" +
+                "glide (1) secs to (my variable)\n" +
+                "point towards (my variable)\n" +
+                "switch costume to (my variable)\n" +
+                "switch backdrop to (my variable)\n" +
+                "play sound (my variable) until done\n" +
+                "start sound (my variable)\n" +
+                "broadcast (my variable)\n" +
+                "broadcast (my variable) and wait\n" +
+                "create clone of (my variable)\n" +
+                "wait until <key (my variable) pressed?>\n" +
+                "wait until <touching (my variable) ?>\n" +
+                "say ([backdrop # v] of (my variable)?)\n" +
+                "say (distance to (my variable))\n" +
+                "wait until <touching color (my variable) ?>\n" +
+                "wait until <color [#ffd824] is touching (my variable) ?>\n" +
+                "ask (my variable) and wait\n" +
+                "set pen color to (my variable)\n" +
+                "change pen (my variable) by (10)\n" +
+                "set pen (my variable) to (50)\n" +
+                "[/scratchblocks]\n", result);
+    }
+
+    @Test
     public void testComparingLiteralsIssueAnnotation() throws IOException, ParsingException {
         Program program = getAST("src/test/fixtures/bugpattern/comparingLiterals.json");
         ComparingLiterals finder = new ComparingLiterals();
@@ -584,6 +700,28 @@ public class ScratchBlocksVisitorTest {
         assertEquals("[scratchblocks]\n" +
                 "when green flag clicked\n" +
                 "if <<[] > (50):: #ff0000> and <[] = []:: #ff0000>> then // Issue: comparing literals\n" +
+                "end\n" +
+                "[/scratchblocks]\n", output);
+    }
+
+    @Test
+    public void testMultipleIssueAnnotation() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/bugpattern/comparingLiterals.json");
+        ComparingLiterals finder = new ComparingLiterals();
+        Set<Issue> issues = finder.check(program);
+
+        Issue firstIssue = issues.iterator().next();
+        Issue mockIssue = new Issue(firstIssue.getFinder(), firstIssue.getActor(), firstIssue.getScript(), firstIssue.getCodeLocation(), "FAKE TEXT", firstIssue.getCodeMetadata());
+
+
+        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(firstIssue, mockIssue);
+        visitor.begin();
+        program.accept(visitor);
+        visitor.end();
+        String output = visitor.getScratchBlocks();
+        assertEquals("[scratchblocks]\n" +
+                "when green flag clicked\n" +
+                "if <<[] > (50):: #ff0000> and <[] = []>> then // Issues: comparing literals, FAKE TEXT\n" +
                 "end\n" +
                 "[/scratchblocks]\n", output);
     }
@@ -812,6 +950,8 @@ public class ScratchBlocksVisitorTest {
                 "broadcast (ignored v):: #ff0000 // Issue: message never received\n" +
                 "[/scratchblocks]\n", output);
     }
+
+
 
     @Test
     public void testMessageNeverSentIssueAnnotation() throws IOException, ParsingException {
@@ -1110,7 +1250,6 @@ public class ScratchBlocksVisitorTest {
         issue.getScriptOrProcedureDefinition().accept(visitor);
         visitor.end();
         String output = visitor.getScratchBlocks();
-        System.out.println(output);
         assertEquals("[scratchblocks]\n" +
                 "when I start as a clone \n" +
                 "play sound (Meow v) until done\n" +

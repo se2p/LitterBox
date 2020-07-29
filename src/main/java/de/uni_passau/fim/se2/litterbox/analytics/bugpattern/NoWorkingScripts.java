@@ -32,7 +32,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
  */
 public class NoWorkingScripts extends AbstractIssueFinder {
     public static final String NAME = "no_working_scripts";
-    public static final String SHORT_NAME = "noWorkScript";
     public static final String HINT_TEXT = "no working scripts";
     private boolean stillFullfilledEmptyScript = false;
     private boolean deadCodeFound = false;
@@ -71,10 +70,5 @@ public class NoWorkingScripts extends AbstractIssueFinder {
     @Override
     public String getName() {
         return NAME;
-    }
-
-    @Override
-    public String getShortName() {
-        return SHORT_NAME;
     }
 }

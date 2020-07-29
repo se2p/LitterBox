@@ -31,7 +31,6 @@ import java.util.Set;
 
 public class EmptySprite implements IssueFinder, ScratchVisitor {
     public static final String NAME = "empty_sprite";
-    public static final String SHORT_NAME = "empSprite";
     private Set<Issue> issues = new LinkedHashSet<>();
 
     @Override
@@ -53,10 +52,5 @@ public class EmptySprite implements IssueFinder, ScratchVisitor {
     @Override
     public String getName() {
         return NAME;
-    }
-
-    @Override
-    public String getShortName() {
-        return SHORT_NAME;
     }
 }

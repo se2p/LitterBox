@@ -29,7 +29,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.UnspecifiedExpressio
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.AsBool;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.ListContains;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.UnspecifiedBoolExpr;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.AsListIndex;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.ExpressionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.*;
@@ -62,7 +61,6 @@ import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 public class BlockCount implements MetricExtractor, ScratchVisitor {
     public static final String NAME = "block_count";
-    public static final String SHORT_NAME = "blockCnt";
     private int count = 0;
     private boolean insideScript = false;
     private boolean insideProcedure = false;
@@ -306,11 +304,6 @@ public class BlockCount implements MetricExtractor, ScratchVisitor {
 
     @Override
     public void visit(AsTouchable node) {
-        visitChildren(node);
-    }
-
-    @Override
-    public void visit(AsListIndex node) {
         visitChildren(node);
     }
 

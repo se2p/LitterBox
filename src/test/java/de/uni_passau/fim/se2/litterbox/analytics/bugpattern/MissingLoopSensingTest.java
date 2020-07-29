@@ -23,13 +23,13 @@ import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
-import java.io.File;
-import java.io.IOException;
-import java.util.Set;
-
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.Set;
 
 public class MissingLoopSensingTest {
 
@@ -37,6 +37,7 @@ public class MissingLoopSensingTest {
     private static Program codeHero;
     private static Program anina;
     private static Program nestedMissingLoopSensing;
+    private static Program missingLoopSensingMultiple;
     private static ObjectMapper mapper = new ObjectMapper();
 
     @BeforeAll
@@ -50,6 +51,8 @@ public class MissingLoopSensingTest {
         anina = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
         f = new File("./src/test/fixtures/bugpattern/nestedMissingLoopSensing.json");
         nestedMissingLoopSensing = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
+        f = new File("./src/test/fixtures/bugpattern/missingLoopSensingMultiple.json");
+        missingLoopSensingMultiple = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
     }
 
     @Test
@@ -78,5 +81,18 @@ public class MissingLoopSensingTest {
         MissingLoopSensing parameterName = new MissingLoopSensing();
         Set<Issue> reports = parameterName.check(nestedMissingLoopSensing);
         Assertions.assertEquals(2, reports.size());
+    }
+
+    @Test
+    public void testMissingLoopSensingMultiple() {
+        MissingLoopSensing parameterName = new MissingLoopSensing();
+        Set<Issue> reports = parameterName.check(missingLoopSensingMultiple);
+        Assertions.assertEquals(5, reports.size());
+    }
+
+    @Test
+    public void testGetName() {
+        MissingLoopSensing parameterName = new MissingLoopSensing();
+        Assertions.assertEquals("missing_loop_sensing", parameterName.getName());
     }
 }

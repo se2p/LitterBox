@@ -28,7 +28,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.variable.Parameter;
  */
 public class ParameterOutOfScope extends AbstractIssueFinder {
     public static final String NAME = "parameter_out_of_scope";
-    public static final String SHORT_NAME = "paramOutScope";
     public static final String HINT_TEXT = "parameter out of scope";
     private boolean insideProcedure;
 
@@ -50,10 +49,5 @@ public class ParameterOutOfScope extends AbstractIssueFinder {
     @Override
     public String getName() {
         return NAME;
-    }
-
-    @Override
-    public String getShortName() {
-        return SHORT_NAME;
     }
 }
