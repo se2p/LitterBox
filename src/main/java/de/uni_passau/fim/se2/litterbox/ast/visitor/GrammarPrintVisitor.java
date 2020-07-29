@@ -28,7 +28,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.UnspecifiedExpression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.ExpressionList;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.ListExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
@@ -1126,11 +1125,6 @@ public class GrammarPrintVisitor extends PrintVisitor {
     @Override
     public void visit(NumberLiteral number) {
         emitNoSpace(String.valueOf(number.getValue()));
-    }
-
-    @Override
-    public void visit(ListExpr listExpr) {
-        emitToken("ListExprTODO"); //FIXME but how
     }
 
     @Override

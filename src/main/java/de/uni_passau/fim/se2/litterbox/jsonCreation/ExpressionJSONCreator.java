@@ -29,7 +29,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.ElementChoice;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.WithExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.*;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.AsListIndex;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.Attribute;
@@ -611,11 +610,6 @@ public class ExpressionJSONCreator implements ScratchVisitor {
             }
         }
         finishedJSONStrings.add(jsonString.toString());
-    }
-
-    @Override
-    public void visit(AsListIndex node) {
-        node.getOperand1().accept(this);
     }
 
     @Override
