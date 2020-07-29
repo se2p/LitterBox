@@ -36,7 +36,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
  */
 public class MissingLoopSensing extends AbstractIssueFinder {
     public static final String NAME = "missing_loop_sensing";
-    public static final String HINT_TEXT = "missing loop sensing";
+    public static final String HINT_TEXT = "missing_loop_sensing_hint";
     private boolean insideGreenFlagClone = false;
     private boolean insideLoop = false;
     private boolean inCondition = false;

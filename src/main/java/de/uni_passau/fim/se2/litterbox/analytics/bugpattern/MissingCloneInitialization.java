@@ -46,7 +46,7 @@ import java.util.stream.Collectors;
 public class MissingCloneInitialization extends AbstractIssueFinder {
 
     public static final String NAME = "missing_clone_initialization";
-    public static final String HINT_TEXT = "missing clone initialization";
+    public static final String HINT_TEXT = "missing_clone_initialization_hint";
 
     private List<String> whenStartsAsCloneActors = new ArrayList<>();
     private List<String> clonedActors = new ArrayList<>();

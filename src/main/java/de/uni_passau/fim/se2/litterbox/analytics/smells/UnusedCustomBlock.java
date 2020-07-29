@@ -34,6 +34,7 @@ import java.util.List;
 public class UnusedCustomBlock extends AbstractIssueFinder {
 
     public static final String NAME = "unused_custom_block";
+    public static final String HINT_TEXT = "unused_custom_block_hint";
     private List<ProcedureDefinition> proceduresDef;
     private List<String> calledProcedures;
 

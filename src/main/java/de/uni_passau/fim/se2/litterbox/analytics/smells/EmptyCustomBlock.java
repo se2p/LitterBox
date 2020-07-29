@@ -24,6 +24,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 
 public class EmptyCustomBlock extends AbstractIssueFinder {
     public static final String NAME = "empty_custom_block";
+    public static final String HINT_TEXT = "empty_custom_block_hint";
 
     @Override
     public void visit(ProcedureDefinition node) {
