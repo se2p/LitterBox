@@ -34,6 +34,8 @@ public class WeightedMethodCount implements MetricExtractor, ScratchVisitor {
     @Override
     public double calculateMetric(Program program) {
         Preconditions.checkNotNull(program);
+        this.count = 0;
+
         program.accept(this);
         return count;
     }
