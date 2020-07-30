@@ -30,7 +30,7 @@ import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ArgumentInfo;
  */
 public class AmbiguousParameterName extends AbstractIssueFinder {
     public static final String NAME = "ambiguous_parameter_name";
-    public static final String HINT_TEXT = "ambiguous parameter name";
+    public static final String HINT_TEXT = "ambiguous_parameter_name_hint";
 
     private void checkArguments(ArgumentInfo[] arguments, ProcedureDefinition node) {
         for (int i = 0; i < arguments.length; i++) {

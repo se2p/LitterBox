@@ -47,7 +47,7 @@ public class ConsoleReportGenerator implements ReportGenerator {
             List<Issue> relevantIssues = issues.stream().filter(i -> i.getFinderName().equals(detector)).collect(Collectors.toList());
             if(!relevantIssues.isEmpty()) {
                 Issue firstIssue = relevantIssues.get(0);
-                System.out.println("Issue "+firstIssue.getFinderName() + " was found " + relevantIssues.size() + " time(s)");
+                System.out.println("Issue " + firstIssue.getHint() + " was found " + relevantIssues.size() + " time(s)");
             }
         }
     }

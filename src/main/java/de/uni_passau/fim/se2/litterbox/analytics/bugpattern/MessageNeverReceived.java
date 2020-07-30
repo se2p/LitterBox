@@ -41,7 +41,7 @@ import java.util.Set;
 public class MessageNeverReceived extends AbstractIssueFinder {
 
     public static final String NAME = "message_never_received";
-    public static final String HINT_TEXT = "message never received";
+    public static final String HINT_TEXT = "message_never_received_hint";
     private List<Pair<String>> messageSent = new ArrayList<>();
     private List<Pair<String>> messageReceived = new ArrayList<>();
     private boolean addComment = false;

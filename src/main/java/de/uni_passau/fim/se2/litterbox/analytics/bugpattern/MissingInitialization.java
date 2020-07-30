@@ -41,7 +41,7 @@ import java.util.Set;
 public class MissingInitialization implements IssueFinder {
 
     public static final String NAME = "missing_initialization";
-    public static final String HINT_TEXT = "missing initialization";
+    public static final String HINT_TEXT = "missing_initialization_hint";
 
     @Override
     public Set<Issue> check(Program program) {

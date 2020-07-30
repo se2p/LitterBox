@@ -31,6 +31,7 @@ import java.util.Set;
 
 public class EmptySprite implements IssueFinder, ScratchVisitor {
     public static final String NAME = "empty_sprite";
+    public static final String HINT_TEXT = "empty_sprite_hint";
     private Set<Issue> issues = new LinkedHashSet<>();
 
     @Override

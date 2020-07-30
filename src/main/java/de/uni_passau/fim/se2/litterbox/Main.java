@@ -24,6 +24,7 @@ import org.apache.commons.cli.*;
 
 import java.io.IOException;
 import java.util.Locale;
+import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 import static de.uni_passau.fim.se2.litterbox.utils.GroupConstants.*;
@@ -46,6 +47,8 @@ public class Main {
     private static final String PROJECTLIST = "projectlist";
     private static final String PROJECTLIST_SHORT = "t";
 
+    private static final String OUTPUT_LANG = "lang";
+    private static final String OUTPUT_LANG_SHORT = "k";
     private static final String PROJECTOUT = "projectout";
     private static final String PROJECTOUT_SHORT = "r";
     private static final String OUTPUT = "output";
@@ -54,6 +57,8 @@ public class Main {
     private static final String ANNOTATE_SHORT = "a";
     private static final String DETECTORS = "detectors";
     private static final String DETECTORS_SHORT = "d";
+
+    public static ResourceBundle resourceBundle;
 
     private Main() {
     }
@@ -93,6 +98,7 @@ public class Main {
         // Parameters
         options.addOption(DETECTORS_SHORT, DETECTORS, true, "name all detectors you want to run separated by ',' "
                 + " (all detectors defined in the README)");
+        options.addOption(OUTPUT_LANG_SHORT, OUTPUT_LANG, true, "language of hints in the output");
 
         return options;
     }
@@ -190,6 +196,16 @@ public class Main {
         CommandLineParser parser = new DefaultParser();
         try {
             CommandLine cmd = parser.parse(options, args);
+
+            String lang = cmd.getOptionValue(OUTPUT_LANG, "en");
+            Locale locale = Locale.forLanguageTag(lang);
+            try {
+                resourceBundle = ResourceBundle.getBundle("IssueDescriptions", locale);
+            } catch (MissingResourceException e) {
+                resourceBundle = ResourceBundle.getBundle("IssueDescriptions", Locale.ENGLISH);
+                System.err.println("Could not load resrouce bundle for language " + lang + "; Defaulting to english");
+            }
+
             if (cmd.hasOption(CHECK)) {
                 checkPrograms(cmd);
             } else if (cmd.hasOption(STATS)) {

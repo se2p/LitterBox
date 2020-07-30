@@ -29,7 +29,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 public class DeadCode extends AbstractIssueFinder {
 
     public static final String NAME = "dead_code";
-    public static final String HINT_TEXT = "Unused blocks found";
+    public static final String HINT_TEXT = "dead_code_hint";
 
     @Override
     public void visit(Script node) {

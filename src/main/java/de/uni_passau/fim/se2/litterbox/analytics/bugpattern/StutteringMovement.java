@@ -37,7 +37,7 @@ import java.util.List;
 public class StutteringMovement extends AbstractIssueFinder {
 
     public static final String NAME = "stuttering_movement";
-    public static final String HINT_TEXT = "stuttering movement";
+    public static final String HINT_TEXT = "stuttering_movement_hint";
 
     @Override
     public void visit(Script script) {

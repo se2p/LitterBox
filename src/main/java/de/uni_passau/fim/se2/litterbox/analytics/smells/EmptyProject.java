@@ -30,6 +30,7 @@ import java.util.Set;
 
 public class EmptyProject implements ScratchVisitor, IssueFinder {
     public static final String NAME = "empty_project";
+    public static final String HINT_TEXT = "empty_project_hint";
     private boolean foundScript = false;
     private Set<Issue> issues = new LinkedHashSet<>();
 
