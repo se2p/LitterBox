@@ -31,7 +31,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
  */
 public class EndlessRecursion extends AbstractIssueFinder {
     public static final String NAME = "endless_recursion";
-    public static final String HINT_TEXT = "endless recursion";
+    public static final String HINT_TEXT = "endless_recursion_hint";
     private String currentProcedureName;
     private boolean insideProcedure;
     private int loopIfCounter;
@@ -77,5 +77,10 @@ public class EndlessRecursion extends AbstractIssueFinder {
     @Override
     public String getName() {
         return NAME;
+    }
+
+    @Override
+    public IssueType getIssueType() {
+        return IssueType.BUG;
     }
 }

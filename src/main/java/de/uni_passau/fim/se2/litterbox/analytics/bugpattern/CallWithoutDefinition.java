@@ -34,7 +34,7 @@ import java.util.List;
  */
 public class CallWithoutDefinition extends AbstractIssueFinder {
     public static final String NAME = "call_without_definition";
-    public static final String HINT_TEXT = "call without definition";
+    public static final String HINT_TEXT = "call_without_definition_hint";
     private List<String> proceduresDef;
     private List<CallStmt> calledProcedures;
 
@@ -70,5 +70,10 @@ public class CallWithoutDefinition extends AbstractIssueFinder {
     @Override
     public String getName() {
         return NAME;
+    }
+
+    @Override
+    public IssueType getIssueType() {
+        return IssueType.BUG;
     }
 }

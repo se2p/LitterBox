@@ -40,7 +40,7 @@ import java.util.stream.Collectors;
  */
 public class MissingCloneCall extends AbstractIssueFinder {
     public static final String NAME = "missing_clone_call";
-    public static final String HINT_TEXT = "missing clone call";
+    public static final String HINT_TEXT = "missing_clone_call_hint";
     private List<String> whenStartsAsCloneActors = new ArrayList<>();
     private List<String> clonedActors = new ArrayList<>();
     private boolean addComment;
@@ -101,5 +101,10 @@ public class MissingCloneCall extends AbstractIssueFinder {
     @Override
     public String getName() {
         return NAME;
+    }
+
+    @Override
+    public IssueType getIssueType() {
+        return IssueType.BUG;
     }
 }

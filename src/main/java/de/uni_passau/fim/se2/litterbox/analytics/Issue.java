@@ -18,6 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics;
 
+import de.uni_passau.fim.se2.litterbox.Main;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
@@ -92,7 +93,13 @@ public class Issue {
     }
 
     public String getHint() {
-        return helpText;
+        if (Main.resourceBundle == null) {
+            return helpText;
+        } else if (helpText == null) {
+            return Main.resourceBundle.getString(getFinderName());
+        } else {
+            return Main.resourceBundle.getString(helpText);
+        }
     }
 
     public ASTNode getCodeLocation() {
@@ -103,4 +110,7 @@ public class Issue {
         return metaData;
     }
 
+    public String getFinderType() {
+        return finder.getIssueType().toString();
+    }
 }

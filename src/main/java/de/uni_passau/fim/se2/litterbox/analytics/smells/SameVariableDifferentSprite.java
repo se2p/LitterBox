@@ -31,7 +31,7 @@ import java.util.*;
 
 public class SameVariableDifferentSprite implements IssueFinder {
     public static final String NAME = "same_variable_different_sprite";
-    public static final String HINT_TEXT = "same_variable different sprite";
+    public static final String HINT_TEXT = "same_variable_different_sprite_hint";
 
     @Override
     public Set<Issue> check(Program program) {
@@ -102,5 +102,10 @@ public class SameVariableDifferentSprite implements IssueFinder {
     @Override
     public String getName() {
         return NAME;
+    }
+
+    @Override
+    public IssueType getIssueType() {
+        return IssueType.BUG;
     }
 }

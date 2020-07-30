@@ -39,7 +39,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
  */
 public class PositionEqualsCheck extends AbstractIssueFinder {
     public static final String NAME = "position_equals_check";
-    public static final String HINT_TEXT = "position equals check";
+    public static final String HINT_TEXT = "position_equals_check_hint";
     private static boolean inCondition;
 
     @Override
@@ -108,5 +108,10 @@ public class PositionEqualsCheck extends AbstractIssueFinder {
     @Override
     public String getName() {
         return NAME;
+    }
+
+    @Override
+    public IssueType getIssueType() {
+        return IssueType.BUG;
     }
 }

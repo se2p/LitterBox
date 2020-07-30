@@ -36,6 +36,7 @@ import java.util.*;
 public class UnusedVariable extends AbstractIssueFinder {
 
     public static final String NAME = "unused_variables";
+    public static final String HINT_TEXT = "unused_variables_hint";
     private static final String[] MY_VARIABLE_LANGUAGES = {"meine Variable", "исхатәу аҽеиҭак", "my variable",
             "متغيري", "мая зменная", "моята променлива", "la meva variable", "گۆڕاوەکەم", "moje proměnná", "fy " +
             "newidyn", "min variabel", "η μεταβλητή μου", "mi variable", "minu muutuja", "nire aldagaia", "متغیر من",
@@ -128,5 +129,10 @@ public class UnusedVariable extends AbstractIssueFinder {
     @Override
     public String getName() {
         return NAME;
+    }
+
+    @Override
+    public IssueType getIssueType() {
+        return IssueType.SMELL;
     }
 }

@@ -31,7 +31,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
  */
 public class ForeverInsideLoop extends AbstractIssueFinder {
     public static final String NAME = "forever_inside_loop";
-    public static final String HINT_TEXT = "forever inside loop";
+    public static final String HINT_TEXT = "forever_inside_loop_hint";
     private int loopcounter;
 
     @Override
@@ -67,5 +67,10 @@ public class ForeverInsideLoop extends AbstractIssueFinder {
     @Override
     public String getName() {
         return NAME;
+    }
+
+    @Override
+    public IssueType getIssueType() {
+        return IssueType.BUG;
     }
 }

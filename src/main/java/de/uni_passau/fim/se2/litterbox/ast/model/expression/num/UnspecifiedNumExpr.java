@@ -18,10 +18,11 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.model.expression.num;
 
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTLeaf;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.UnspecifiedExpression;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
-public class UnspecifiedNumExpr extends UnspecifiedExpression implements NumExpr {
+public class UnspecifiedNumExpr extends UnspecifiedExpression implements NumExpr, ASTLeaf {
     @Override
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);

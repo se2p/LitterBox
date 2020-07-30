@@ -34,6 +34,7 @@ import java.util.List;
 public class NestedLoops extends AbstractIssueFinder {
 
     public static final String NAME = "nested_loops";
+    public static final String HINT_TEXT = "nested_loops_hint";
 
     @Override
     public void visit(UntilStmt node) {
@@ -63,5 +64,10 @@ public class NestedLoops extends AbstractIssueFinder {
     @Override
     public String getName() {
         return NAME;
+    }
+
+    @Override
+    public IssueType getIssueType() {
+        return IssueType.SMELL;
     }
 }

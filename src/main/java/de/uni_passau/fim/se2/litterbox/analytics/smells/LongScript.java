@@ -31,6 +31,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 public class LongScript extends AbstractIssueFinder {
 
     public static final String NAME = "long_script";
+    public static final String HINT_TEXT = "long_script_hint";
     private static final int NUMBER_TOO_LONG = 12;
     private int localCount = 0;
 
@@ -71,5 +72,10 @@ public class LongScript extends AbstractIssueFinder {
     @Override
     public String getName() {
         return NAME;
+    }
+
+    @Override
+    public IssueType getIssueType() {
+        return IssueType.SMELL;
     }
 }
