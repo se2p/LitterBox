@@ -65,7 +65,6 @@ public class IssueTool {
         registerBugFinder(new ParameterOutOfScope());
         registerBugFinder(new PositionEqualsCheck());
         registerBugFinder(new RecursiveCloning());
-        registerBugFinder(new SameVariableDifferentSprite());
         registerBugFinder(new StutteringMovement());
 
         // Smells
@@ -77,6 +76,7 @@ public class IssueTool {
         registerSmellFinder(new DeadCode());
         registerSmellFinder(new LongScript());
         registerSmellFinder(new NestedLoops());
+        registerSmellFinder(new SameVariableDifferentSprite());
         registerSmellFinder(new UnusedVariable());
         registerSmellFinder(new UnusedCustomBlock());
     }

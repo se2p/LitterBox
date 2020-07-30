@@ -106,6 +106,6 @@ public class SameVariableDifferentSprite implements IssueFinder {
 
     @Override
     public IssueType getIssueType() {
-        return IssueType.BUG;
+        return IssueType.SMELL;
     }
 }
