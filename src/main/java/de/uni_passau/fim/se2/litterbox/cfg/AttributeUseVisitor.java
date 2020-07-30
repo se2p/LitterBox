@@ -158,32 +158,36 @@ public class AttributeUseVisitor implements DefinableCollector<Attribute> {
         // Name of owner
         Expression owner = ((WithExpr) node.getElementChoice()).getExpression();
 
-        assert(owner instanceof LocalIdentifier) : "This has to be a LocalIdentifier, no?";
-        LocalIdentifier localIdentifier = (LocalIdentifier)owner;
+        // Can only handle LocalIdentifier hier (i.e. value selected in dropdown)
+        // We lose precision here because it could also be a Parameter or else
+        // but we don't know the value of that statically
+        if (owner instanceof LocalIdentifier) {
+            LocalIdentifier localIdentifier = (LocalIdentifier)owner;
 
-        if(attribute instanceof AttributeFromFixed) {
-            AttributeFromFixed fixedAttribute = (AttributeFromFixed)attribute;
-            FixedAttribute at = fixedAttribute.getAttribute();
-            switch(at) {
-                case X_POSITION:
-                case Y_POSITION:
-                    uses.add(Attribute.positionOf(localIdentifier));
-                    break;
-                case SIZE:
-                    uses.add(Attribute.sizeOf(localIdentifier));
-                    break;
-                case DIRECTION:
-                    uses.add(Attribute.rotationOf(localIdentifier));
-                    break;
-                case COSTUME_NUMBER:
-                    uses.add(Attribute.costumeOf(localIdentifier));
-                    break;
-                case VOLUME:
-                case COSTUME_NAME:
-                case BACKDROP_NAME:
-                case BACKDROP_NUMBER:
-                    // Not handled yet
-                    break;
+            if(attribute instanceof AttributeFromFixed) {
+                AttributeFromFixed fixedAttribute = (AttributeFromFixed)attribute;
+                FixedAttribute at = fixedAttribute.getAttribute();
+                switch(at) {
+                    case X_POSITION:
+                    case Y_POSITION:
+                        uses.add(Attribute.positionOf(localIdentifier));
+                        break;
+                    case SIZE:
+                        uses.add(Attribute.sizeOf(localIdentifier));
+                        break;
+                    case DIRECTION:
+                        uses.add(Attribute.rotationOf(localIdentifier));
+                        break;
+                    case COSTUME_NUMBER:
+                        uses.add(Attribute.costumeOf(localIdentifier));
+                        break;
+                    case VOLUME:
+                    case COSTUME_NAME:
+                    case BACKDROP_NAME:
+                    case BACKDROP_NUMBER:
+                        // Not handled yet
+                        break;
+                }
             }
         }
 
