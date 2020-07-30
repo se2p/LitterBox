@@ -699,7 +699,7 @@ public class ScratchBlocksVisitorTest {
         String output = visitor.getScratchBlocks();
         assertEquals("[scratchblocks]\n" +
                 "when green flag clicked\n" +
-                "if <<[] > (50):: #ff0000> and <[] = []:: #ff0000>> then // Issue: comparing literals\n" +
+                "if <<[] > (50):: #ff0000> and <[] = []:: #ff0000>> then // Issue: comparing_literals\n" +
                 "end\n" +
                 "[/scratchblocks]\n", output);
     }
@@ -709,9 +709,10 @@ public class ScratchBlocksVisitorTest {
         Program program = getAST("src/test/fixtures/bugpattern/comparingLiterals.json");
         ComparingLiterals finder = new ComparingLiterals();
         Set<Issue> issues = finder.check(program);
+        StutteringMovement stuttMovement = new StutteringMovement();
 
         Issue firstIssue = issues.iterator().next();
-        Issue mockIssue = new Issue(firstIssue.getFinder(), firstIssue.getActor(), firstIssue.getScript(), firstIssue.getCodeLocation(), "FAKE TEXT", firstIssue.getCodeMetadata());
+        Issue mockIssue = new Issue(stuttMovement, firstIssue.getActor(), firstIssue.getScript(), firstIssue.getCodeLocation(), "FAKE TEXT", firstIssue.getCodeMetadata());
 
 
         ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(firstIssue, mockIssue);
@@ -721,7 +722,7 @@ public class ScratchBlocksVisitorTest {
         String output = visitor.getScratchBlocks();
         assertEquals("[scratchblocks]\n" +
                 "when green flag clicked\n" +
-                "if <<[] > (50):: #ff0000> and <[] = []>> then // Issues: comparing literals, FAKE TEXT\n" +
+                "if <<[] > (50):: #ff0000> and <[] = []>> then // Issues: comparing_literals, stuttering_movement\n" +
                 "end\n" +
                 "[/scratchblocks]\n", output);
     }
@@ -740,7 +741,7 @@ public class ScratchBlocksVisitorTest {
         String output = visitor.getScratchBlocks();
         assertEquals("[scratchblocks]\n" +
                 "when [space v] key pressed\n" +
-                "move (10) steps:: #ff0000 // Issue: stuttering movement\n" +
+                "move (10) steps:: #ff0000 // Issue: stuttering_movement\n" +
                 "[/scratchblocks]\n", output);
     }
 
@@ -760,7 +761,7 @@ public class ScratchBlocksVisitorTest {
         assertEquals("[scratchblocks]\n" +
                 "define block name [number or text]\n" +
                 "show variable [my variable v]\n" +
-                "block name [text]:: #ff0000 // Issue: endless recursion\n" +
+                "block name [text]:: #ff0000 // Issue: endless_recursion\n" +
                 "[/scratchblocks]\n", output);
     }
 
@@ -781,7 +782,7 @@ public class ScratchBlocksVisitorTest {
         System.out.println(output);
         assertEquals("[scratchblocks]\n" +
                 "when green flag clicked\n" +
-                "block name [reed] <>:: #ff0000 // Issue: custom block with forever\n" +
+                "block name [reed] <>:: #ff0000 // Issue: custom_block_with_forever\n" +
                 "say [Hello!] for (2) seconds\n" +
                 "[/scratchblocks]\n", output);
     }
@@ -802,7 +803,7 @@ public class ScratchBlocksVisitorTest {
         System.out.println(output);
         assertEquals("[scratchblocks]\n" +
                 "when green flag clicked\n" +
-                "block name:: #ff0000 // Issue: custom block with termination\n" +
+                "block name:: #ff0000 // Issue: custom_block_with_termination\n" +
                 "change size by (10)\n" +
                 "[/scratchblocks]\n", output);
     }
@@ -822,7 +823,7 @@ public class ScratchBlocksVisitorTest {
         String output = visitor.getScratchBlocks();
         System.out.println(output);
         assertEquals("[scratchblocks]\n" +
-                "block name [] <>:: #ff0000 // Issue: call without definition\n" +
+                "block name [] <>:: #ff0000 // Issue: call_without_definition\n" +
                 "[/scratchblocks]\n", output);
     }
 
@@ -840,7 +841,7 @@ public class ScratchBlocksVisitorTest {
         visitor.end();
         String output = visitor.getScratchBlocks();
         assertEquals("[scratchblocks]\n" +
-                "define block name [number or text] [number or text]:: #ff0000 // Issue: ambiguous parameter name\n" +
+                "define block name [number or text] [number or text]:: #ff0000 // Issue: ambiguous_parameter_name\n" +
                 "wait (number or text) seconds\n" +
                 "[/scratchblocks]\n", output);
     }
@@ -859,7 +860,7 @@ public class ScratchBlocksVisitorTest {
         visitor.end();
         String output = visitor.getScratchBlocks();
         assertEquals("[scratchblocks]\n" +
-                "define AmbiguousParameters [paramTest] [paramTest]:: #ff0000 // Issue: ambiguous custom block signature\n" +
+                "define AmbiguousParameters [paramTest] [paramTest]:: #ff0000 // Issue: ambiguous_custom_block_signature\n" +
                 "move (10) steps\n" +
                 "[/scratchblocks]\n", output);
     }
@@ -878,7 +879,7 @@ public class ScratchBlocksVisitorTest {
         visitor.end();
         String output = visitor.getScratchBlocks();
         assertEquals("[scratchblocks]\n" +
-                "<touching color (my variable):: #ff0000 ?> // Issue: expression as touching or color\n" +
+                "<touching color (my variable):: #ff0000 ?> // Issue: expression_as_touching_or_color\n" +
                 "[/scratchblocks]\n", output);
     }
 
@@ -902,7 +903,7 @@ public class ScratchBlocksVisitorTest {
                 "repeat (10)\n" +
                 "next costume\n" +
                 "end\n" +
-                "forever :: #ff0000 // Issue: forever inside loop\n" +
+                "forever :: #ff0000 // Issue: forever_inside_loop\n" +
                 "point in direction (90)\n" +
                 "end\n" +
                 "end\n" +
@@ -924,7 +925,7 @@ public class ScratchBlocksVisitorTest {
         String output = visitor.getScratchBlocks();
         assertEquals("[scratchblocks]\n" +
                 "define block name [car] <boolean>\n" +
-                "if <car:: #ff0000> then // Issue: illegal parameter refactor\n" +
+                "if <car:: #ff0000> then // Issue: illegal_parameter_refactor\n" +
                 "move (10) steps\n" +
                 "end\n" +
                 "[/scratchblocks]\n", output);
@@ -947,7 +948,7 @@ public class ScratchBlocksVisitorTest {
         assertEquals("[scratchblocks]\n" +
                 "when green flag clicked\n" +
                 "broadcast (received v)\n" +
-                "broadcast (ignored v):: #ff0000 // Issue: message never received\n" +
+                "broadcast (ignored v):: #ff0000 // Issue: message_never_received\n" +
                 "[/scratchblocks]\n", output);
     }
 
@@ -967,7 +968,7 @@ public class ScratchBlocksVisitorTest {
         visitor.end();
         String output = visitor.getScratchBlocks();
         assertEquals("[scratchblocks]\n" +
-                "when I receive [message1 v]:: #ff0000 // Issue: message Never Sent\n" +
+                "when I receive [message1 v]:: #ff0000 // Issue: message_never_sent\n" +
                 "wait (1) seconds\n" +
                 "[/scratchblocks]\n", output);
     }
@@ -986,7 +987,7 @@ public class ScratchBlocksVisitorTest {
         visitor.end();
         String output = visitor.getScratchBlocks();
         assertEquals("[scratchblocks]\n" +
-                "when backdrop switches to [backdrop1 v]:: #ff0000 // Issue: missing backdrop switch\n" +
+                "when backdrop switches to [backdrop1 v]:: #ff0000 // Issue: missing_backdrop_switch\n" +
                 "ask [What's your name?] and wait\n" +
                 "[/scratchblocks]\n", output);
     }
@@ -1006,7 +1007,7 @@ public class ScratchBlocksVisitorTest {
         visitor.end();
         String output = visitor.getScratchBlocks();
         assertEquals("[scratchblocks]\n" +
-                "when I start as a clone :: #ff0000 // Issue: missing clone call\n" +
+                "when I start as a clone :: #ff0000 // Issue: missing_clone_call\n" +
                 "wait (1) seconds\n" +
                 "[/scratchblocks]\n", output);
     }
@@ -1028,7 +1029,7 @@ public class ScratchBlocksVisitorTest {
         assertEquals("[scratchblocks]\n" +
                 "when green flag clicked\n" +
                 "create clone of (myself v)\n" +
-                "create clone of (Anina Dance v):: #ff0000 // Issue: missing clone initialization\n" +
+                "create clone of (Anina Dance v):: #ff0000 // Issue: missing_clone_initialization\n" +
                 "[/scratchblocks]\n", output);
     }
 
@@ -1047,7 +1048,7 @@ public class ScratchBlocksVisitorTest {
         String output = visitor.getScratchBlocks();
         assertEquals("[scratchblocks]\n" +
                 "when green flag clicked\n" +
-                "pen down:: #ff0000 // Issue: missing erase all\n" +
+                "pen down:: #ff0000 // Issue: missing_erase_all\n" +
                 "pen up\n" +
                 "[/scratchblocks]\n", output);
     }
@@ -1068,7 +1069,7 @@ public class ScratchBlocksVisitorTest {
         System.out.println(output);
         assertEquals("[scratchblocks]\n" +
                 "when green flag clicked\n" +
-                "say (meine Variable) for (2) seconds:: #ff0000 // Issue: missing initialization\n" +
+                "say (meine Variable) for (2) seconds:: #ff0000 // Issue: missing_initialization\n" +
                 "[/scratchblocks]\n", output);
     }
 
@@ -1088,7 +1089,7 @@ public class ScratchBlocksVisitorTest {
         String output = visitor.getScratchBlocks();
         assertEquals("[scratchblocks]\n" +
                 "when green flag clicked\n" +
-                "if <<not <touching (mouse-pointer v) ?:: #ff0000>> and <(distance to (mouse-pointer v)) > (50)>> then // Issue: missing loop sensing\n" +
+                "if <<not <touching (mouse-pointer v) ?:: #ff0000>> and <(distance to (mouse-pointer v)) > (50)>> then // Issue: missing_loop_sensing\n" +
                 "say [Hallo!] for (2) seconds\n" +
                 "end\n" +
                 "[/scratchblocks]\n", output);
@@ -1109,7 +1110,7 @@ public class ScratchBlocksVisitorTest {
         String output = visitor.getScratchBlocks();
         assertEquals("[scratchblocks]\n" +
                 "when green flag clicked\n" +
-                "pen up:: #ff0000 // Issue: missing pen down\n" +
+                "pen up:: #ff0000 // Issue: missing_pen_down\n" +
                 "set pen color to [#c63f3f]\n" +
                 "say [Hello!]\n" +
                 "go to (random position v)\n" +
@@ -1131,7 +1132,7 @@ public class ScratchBlocksVisitorTest {
         String output = visitor.getScratchBlocks();
         assertEquals("[scratchblocks]\n" +
                 "when green flag clicked\n" +
-                "pen down:: #ff0000 // Issue: missing pen up\n" +
+                "pen down:: #ff0000 // Issue: missing_pen_up\n" +
                 "say [Hello!]\n" +
                 "go to (random position v)\n" +
                 "[/scratchblocks]\n", output);
@@ -1152,7 +1153,7 @@ public class ScratchBlocksVisitorTest {
         String output = visitor.getScratchBlocks();
         assertEquals("[scratchblocks]\n" +
                 "when green flag clicked\n" +
-                "repeat until <>:: #ff0000 // Issue: missing termination\n" +
+                "repeat until <>:: #ff0000 // Issue: missing_termination\n" +
                 "say [Hello!] for (2) seconds\n" +
                 "end\n" +
                 "[/scratchblocks]\n", output);
@@ -1174,7 +1175,7 @@ public class ScratchBlocksVisitorTest {
         System.out.println(output);
         assertEquals("[scratchblocks]\n" +
                 "when green flag clicked\n" +
-                "wait until <>:: #ff0000 // Issue: missing wait condition\n" +
+                "wait until <>:: #ff0000 // Issue: missing_wait_condition\n" +
                 "[/scratchblocks]\n", output);
     }
 
@@ -1194,7 +1195,7 @@ public class ScratchBlocksVisitorTest {
         assertEquals("[scratchblocks]\n" +
                 "define block name <boolean>\n" +
                 "move (boolean) steps\n" +
-                "if <String:: #ff0000> then // Issue: orphaned parameter\n" +
+                "if <String:: #ff0000> then // Issue: orphaned_parameter\n" +
                 "say [Hello!] for (2) seconds\n" +
                 "end\n" +
                 "[/scratchblocks]\n", output);
@@ -1214,7 +1215,7 @@ public class ScratchBlocksVisitorTest {
         visitor.end();
         String output = visitor.getScratchBlocks();
         assertEquals("[scratchblocks]\n" +
-                "turn right (boolean:: #ff0000) degrees // Issue: parameter out of scope\n" +
+                "turn right (boolean:: #ff0000) degrees // Issue: parameter_out_of_scope\n" +
                 "[/scratchblocks]\n", output);
     }
 
@@ -1232,7 +1233,7 @@ public class ScratchBlocksVisitorTest {
         visitor.end();
         String output = visitor.getScratchBlocks();
         assertEquals("[scratchblocks]\n" +
-                "repeat until <(x position) = (50):: #ff0000> // Issue: position equals check\n" +
+                "repeat until <(x position) = (50):: #ff0000> // Issue: position_equals_check\n" +
                 "end\n" +
                 "[/scratchblocks]\n", output);
     }
@@ -1253,7 +1254,7 @@ public class ScratchBlocksVisitorTest {
         assertEquals("[scratchblocks]\n" +
                 "when I start as a clone \n" +
                 "play sound (Meow v) until done\n" +
-                "create clone of (myself v):: #ff0000 // Issue: recursive cloning\n" +
+                "create clone of (myself v):: #ff0000 // Issue: recursive_cloning\n" +
                 "[/scratchblocks]\n", output);
     }
 
