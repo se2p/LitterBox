@@ -18,10 +18,11 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.model.expression;
 
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTLeaf;
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
-public class UnspecifiedExpression extends AbstractNode implements Expression {
+public class UnspecifiedExpression extends AbstractNode implements Expression, ASTLeaf {
 
     public UnspecifiedExpression() {
         super();

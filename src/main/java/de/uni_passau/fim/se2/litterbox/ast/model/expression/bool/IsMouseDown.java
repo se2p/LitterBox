@@ -18,11 +18,12 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.model.expression.bool;
 
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTLeaf;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.SingularExpression;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
-public class IsMouseDown extends SingularExpression implements BoolExpr {
+public class IsMouseDown extends SingularExpression implements BoolExpr, ASTLeaf {
 
     public IsMouseDown(BlockMetadata metadata) {
         super(metadata);

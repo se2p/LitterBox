@@ -27,7 +27,7 @@ import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 /**
  * This metadata the basis for all other monitors.
  */
-public abstract class MonitorMetadata extends AbstractNode implements Metadata, ASTLeaf {
+public abstract class MonitorMetadata extends AbstractNode implements Metadata {
 
     private String id;
     private String mode;
