@@ -76,4 +76,9 @@ public class EmptyControlBody extends AbstractIssueFinder {
     public String getName() {
         return NAME;
     }
+
+    @Override
+    public IssueType getIssueType() {
+        return IssueType.SMELL;
+    }
 }

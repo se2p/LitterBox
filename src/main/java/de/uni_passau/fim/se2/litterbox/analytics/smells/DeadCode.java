@@ -41,9 +41,13 @@ public class DeadCode extends AbstractIssueFinder {
         currentScript = null;
     }
 
-
     @Override
     public String getName() {
         return NAME;
+    }
+
+    @Override
+    public IssueType getIssueType() {
+        return IssueType.SMELL;
     }
 }
