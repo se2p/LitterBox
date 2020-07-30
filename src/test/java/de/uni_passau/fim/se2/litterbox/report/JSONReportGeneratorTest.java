@@ -41,6 +41,7 @@ public class JSONReportGeneratorTest {
         os.close();
         assertEquals("[ {" + System.lineSeparator() +
                 "  \"finder\" : \"position_equals_check\"," + System.lineSeparator() +
+                "  \"type\" : \"BUG\"," + System.lineSeparator() +
                 "  \"sprite\" : \"Sprite1\"," + System.lineSeparator() +
                 "  \"hint\" : \"position_equals_check_hint\"," + System.lineSeparator() +
                 "  \"code\" : \"[scratchblocks]\\n<(x position) = :: #ff0000> // Issue: position_equals_check\\n[/scratchblocks]\\n\"" + System.lineSeparator() +
@@ -59,21 +60,25 @@ public class JSONReportGeneratorTest {
         os.close();
         assertEquals("[ {" + System.lineSeparator() +
                 "  \"finder\" : \"position_equals_check\"," + System.lineSeparator() +
+                "  \"type\" : \"BUG\"," + System.lineSeparator() +
                 "  \"sprite\" : \"Figur1\"," + System.lineSeparator() +
                 "  \"hint\" : \"position_equals_check_hint\"," + System.lineSeparator() +
                 "  \"code\" : \"[scratchblocks]\\n<(distance to (mouse-pointer v)) = :: #ff0000> // Issue: position_equals_check\\n[/scratchblocks]\\n\"" + System.lineSeparator() +
                 "}, {" + System.lineSeparator() +
                 "  \"finder\" : \"position_equals_check\"," + System.lineSeparator() +
+                "  \"type\" : \"BUG\"," + System.lineSeparator() +
                 "  \"sprite\" : \"Figur1\"," + System.lineSeparator() +
                 "  \"hint\" : \"position_equals_check_hint\"," + System.lineSeparator() +
                 "  \"code\" : \"[scratchblocks]\\n<(distance to (Bat v)) = :: #ff0000> // Issue: position_equals_check\\n[/scratchblocks]\\n\"" + System.lineSeparator() +
                 "}, {" + System.lineSeparator() +
                 "  \"finder\" : \"position_equals_check\"," + System.lineSeparator() +
+                "  \"type\" : \"BUG\"," + System.lineSeparator() +
                 "  \"sprite\" : \"Figur1\"," + System.lineSeparator() +
                 "  \"hint\" : \"position_equals_check_hint\"," + System.lineSeparator() +
                 "  \"code\" : \"[scratchblocks]\\n<(mouse x) = :: #ff0000> // Issue: position_equals_check\\n[/scratchblocks]\\n\"" + System.lineSeparator() +
                 "}, {" + System.lineSeparator() +
                 "  \"finder\" : \"position_equals_check\"," + System.lineSeparator() +
+                "  \"type\" : \"BUG\"," + System.lineSeparator() +
                 "  \"sprite\" : \"Figur1\"," + System.lineSeparator() +
                 "  \"hint\" : \"position_equals_check_hint\"," + System.lineSeparator() +
                 "  \"code\" : \"[scratchblocks]\\n<(mouse y) = :: #ff0000> // Issue: position_equals_check\\n[/scratchblocks]\\n\"" + System.lineSeparator() +
@@ -93,6 +98,7 @@ public class JSONReportGeneratorTest {
         String result = Files.readString(tmpFile);
         assertEquals("[ {" + System.lineSeparator() +
                 "  \"finder\" : \"position_equals_check\"," + System.lineSeparator() +
+                "  \"type\" : \"BUG\"," + System.lineSeparator() +
                 "  \"sprite\" : \"Sprite1\"," + System.lineSeparator() +
                 "  \"hint\" : \"position_equals_check_hint\"," + System.lineSeparator() +
                 "  \"code\" : \"[scratchblocks]\\n<(x position) = :: #ff0000> // Issue: position_equals_check\\n[/scratchblocks]\\n\"" + System.lineSeparator() +
