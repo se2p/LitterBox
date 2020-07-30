@@ -110,4 +110,7 @@ public class Issue {
         return metaData;
     }
 
+    public String getFinderType() {
+        return finder.getIssueType().toString();
+    }
 }

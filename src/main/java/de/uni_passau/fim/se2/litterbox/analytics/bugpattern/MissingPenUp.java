@@ -80,9 +80,13 @@ public class MissingPenUp extends AbstractIssueFinder {
         return penDownSet && !penUpSet;
     }
 
-
     @Override
     public String getName() {
         return NAME;
+    }
+
+    @Override
+    public IssueType getIssueType() {
+        return IssueType.BUG;
     }
 }

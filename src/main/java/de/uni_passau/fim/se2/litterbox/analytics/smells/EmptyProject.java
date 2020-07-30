@@ -58,4 +58,9 @@ public class EmptyProject implements ScratchVisitor, IssueFinder {
     public String getName() {
         return NAME;
     }
+
+    @Override
+    public IssueType getIssueType() {
+        return IssueType.SMELL;
+    }
 }

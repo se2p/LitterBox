@@ -50,4 +50,9 @@ public class ParameterOutOfScope extends AbstractIssueFinder {
     public String getName() {
         return NAME;
     }
+
+    @Override
+    public IssueType getIssueType() {
+        return IssueType.BUG;
+    }
 }
