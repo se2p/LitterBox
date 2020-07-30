@@ -65,7 +65,6 @@ public class IssueTool {
         bugFinder.put(ParameterOutOfScope.NAME, new ParameterOutOfScope());
         bugFinder.put(PositionEqualsCheck.NAME, new PositionEqualsCheck());
         bugFinder.put(RecursiveCloning.NAME, new RecursiveCloning());
-        bugFinder.put(SameVariableDifferentSprite.NAME, new SameVariableDifferentSprite());
         bugFinder.put(StutteringMovement.NAME, new StutteringMovement());
 
         // Smells
@@ -77,6 +76,7 @@ public class IssueTool {
         smellFinder.put(DeadCode.NAME, new DeadCode());
         smellFinder.put(LongScript.NAME, new LongScript());
         smellFinder.put(NestedLoops.NAME, new NestedLoops());
+        smellFinder.put(SameVariableDifferentSprite.NAME, new SameVariableDifferentSprite());
         smellFinder.put(UnusedVariable.NAME, new UnusedVariable());
         smellFinder.put(UnusedCustomBlock.NAME, new UnusedCustomBlock());
     }
