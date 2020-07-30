@@ -40,7 +40,8 @@ public class MetricTool {
             new SpriteCount(),
             new ProcedureCount(),
             new ProgramUsingPen(),
-            new WeightedMethodCount());
+            new WeightedMethodCount(),
+            new WeightedMethodCountStrict());
 
     public List<String> getMetricNames() {
         return metrics.stream().map(MetricExtractor::getName).collect(Collectors.toList());

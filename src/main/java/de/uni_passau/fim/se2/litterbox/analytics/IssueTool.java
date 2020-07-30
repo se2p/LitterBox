@@ -64,6 +64,7 @@ public class IssueTool {
         registerBugFinder(new OrphanedParameter());
         registerBugFinder(new ParameterOutOfScope());
         registerBugFinder(new PositionEqualsCheck());
+        registerBugFinder(new PositionEqualsCheckStrict());
         registerBugFinder(new RecursiveCloning());
         registerBugFinder(new StutteringMovement());
 
