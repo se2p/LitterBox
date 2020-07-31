@@ -73,7 +73,6 @@ public class CallWithoutDefinitionWithHintTest {
         CallWithoutDefinition parameterName = new CallWithoutDefinition();
         Set<Issue> reports = parameterName.check(callWithoutDef);
         Assertions.assertEquals(1, reports.size());
-        JSONFileCreator.writeJsonFromProgram(callWithoutDef);
     }
 
     @Test

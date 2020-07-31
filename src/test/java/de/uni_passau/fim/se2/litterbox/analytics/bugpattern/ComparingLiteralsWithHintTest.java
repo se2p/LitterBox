@@ -56,6 +56,5 @@ public class ComparingLiteralsWithHintTest {
         ComparingLiterals finder = new ComparingLiterals();
         Set<Issue> reports = finder.check(program);
         Truth.assertThat(reports).hasSize(2);
-        JSONFileCreator.writeJsonFromProgram(program);
     }
 }
