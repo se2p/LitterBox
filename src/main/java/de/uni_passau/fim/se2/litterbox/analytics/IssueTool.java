@@ -39,7 +39,6 @@ public class IssueTool {
     public IssueTool() {
         registerBugFinder(new AmbiguousCustomBlockSignature());
         registerBugFinder(new AmbiguousParameterName());
-        registerBugFinder(new AmbiguousParameterNameStrict());
         registerBugFinder(new CallWithoutDefinition());
         registerBugFinder(new ComparingLiterals());
         registerBugFinder(new CustomBlockWithForever());
