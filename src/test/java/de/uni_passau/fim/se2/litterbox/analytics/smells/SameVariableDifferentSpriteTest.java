@@ -31,7 +31,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Set;
 
-public class SameIdentifierDifferentSpriteTest {
+public class SameVariableDifferentSpriteTest {
     private static Program empty;
     private static Program variableDifferentSprite;
     private static ObjectMapper mapper = new ObjectMapper();
@@ -53,7 +53,7 @@ public class SameIdentifierDifferentSpriteTest {
     }
 
     @Test
-    public void testProcedureWithTermination() {
+    public void testSameVariableDifferentSprite() {
         SameVariableDifferentSprite parameterName = new SameVariableDifferentSprite();
         Set<Issue> reports = parameterName.check(variableDifferentSprite);
         Assertions.assertEquals(4, reports.size());
