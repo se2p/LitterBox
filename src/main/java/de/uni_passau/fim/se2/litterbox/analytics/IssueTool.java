@@ -39,7 +39,6 @@ public class IssueTool {
     public IssueTool() {
         registerBugFinder(new AmbiguousCustomBlockSignature());
         registerBugFinder(new AmbiguousParameterName());
-        registerBugFinder(new AmbiguousParameterNameStrict());
         registerBugFinder(new CallWithoutDefinition());
         registerBugFinder(new ComparingLiterals());
         registerBugFinder(new CustomBlockWithForever());
@@ -64,7 +63,6 @@ public class IssueTool {
         registerBugFinder(new OrphanedParameter());
         registerBugFinder(new ParameterOutOfScope());
         registerBugFinder(new PositionEqualsCheck());
-        registerBugFinder(new PositionEqualsCheckStrict());
         registerBugFinder(new RecursiveCloning());
         registerBugFinder(new StutteringMovement());
 

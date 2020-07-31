@@ -6,7 +6,11 @@ import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitUntil;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.*;
 
-public class WeightedMethodCountStrict extends WeightedMethodCount{
+/**
+ * This visitor calculates the weighted method count as a metric for Scratch projects.
+ * It only includes Scripts that do have an Event and can be triggered.
+ */
+public class WeightedMethodCountStrict extends WeightedMethodCount {
     public static final String NAME = "weighted_method_count_strict";
     private static boolean inScriptOrProcedure;
 
