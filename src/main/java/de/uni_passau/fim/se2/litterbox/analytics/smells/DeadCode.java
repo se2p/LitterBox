@@ -35,8 +35,7 @@ public class DeadCode extends AbstractIssueFinder {
     public void visit(Script node) {
         currentScript = node;
         if (node.getEvent() instanceof Never && node.getStmtList().getStmts().size() > 0) {
-            // TODO: Replace with proper issue (including script etc)
-            issues.add(new Issue(this, currentActor, node));
+           addIssueWithLooseComment(HINT_TEXT);
         }
         currentScript = null;
     }
