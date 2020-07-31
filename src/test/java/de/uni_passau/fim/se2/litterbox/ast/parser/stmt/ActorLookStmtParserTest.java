@@ -18,9 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.parser.stmt;
 
-import static junit.framework.TestCase.fail;
-
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.truth.Truth;
@@ -35,15 +32,20 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopAll;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
+
+import static junit.framework.TestCase.fail;
 
 public class ActorLookStmtParserTest {
 
@@ -142,6 +144,20 @@ public class ActorLookStmtParserTest {
     }
 
     @Test
+    public void testSwitchBackdropMetadata() throws ParsingException {
+        Program program = ProgramParser.parseProgram("ActorLookStmts", project);
+        ActorDefinitionList list = program.getActorDefinitionList();
+        ActorDefinition sprite = list.getDefinitions().get(1);
+
+        Script script = sprite.getScripts().getScriptList().get(0);
+        List<Stmt> listOfStmt = script.getStmtList().getStmts();
+
+        Stmt switchBackdrop = listOfStmt.get(1);
+        BlockMetadata metadata = ((SwitchBackdrop) switchBackdrop).getMetadata();
+        Truth.assertThat(metadata).isInstanceOf(NonDataBlockMetadata.class);
+    }
+
+    @Test
     public void testShowHideVar() {
         try {
             Program program = ProgramParser.parseProgram("ActorLookStmts", project);
@@ -190,7 +206,7 @@ public class ActorLookStmtParserTest {
             Truth.assertThat(((Qualified) ((HideList) hideVariable).getIdentifier()).getFirst().getName())
                     .isEqualTo("Stage");
             Truth.assertThat(((Qualified) ((HideList) hideVariable).getIdentifier()).getSecond().getName().getName())
-                    .isEqualTo( "List");
+                    .isEqualTo("List");
         } catch (ParsingException e) {
             e.printStackTrace();
             fail();
