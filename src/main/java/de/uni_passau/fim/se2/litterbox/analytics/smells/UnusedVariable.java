@@ -20,6 +20,7 @@ package de.uni_passau.fim.se2.litterbox.analytics.smells;
 
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
+import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
@@ -52,7 +53,6 @@ public class UnusedVariable extends AbstractIssueFinder {
     private boolean insideScript;
     private Map<String, VariableInfo> varMap;
     private Map<String, ExpressionListInfo> listMap;
-    private Set<Issue> issues = new LinkedHashSet<>();
 
     @Override
     public Set<Issue> check(Program program) {
@@ -67,7 +67,7 @@ public class UnusedVariable extends AbstractIssueFinder {
     }
 
     private void checkVariables() {
-
+        List<ActorDefinition> actors = program.getActorDefinitionList().getDefinitions();
         for (Map.Entry<String, VariableInfo> entry : varMap.entrySet()) {
             VariableInfo curr = entry.getValue();
             String actorName = curr.getActor();
@@ -81,8 +81,13 @@ public class UnusedVariable extends AbstractIssueFinder {
             }
 
             if (!currFound && !Arrays.asList(MY_VARIABLE_LANGUAGES).contains(name)) {
-                // TODO: Retrieve actor and node
-                issues.add(new Issue(this, null, null));
+                for (ActorDefinition actor : actors) {
+                    if (actor.getIdent().getName().equals(actorName)) {
+                        currentActor = actor;
+                        break;
+                    }
+                }
+                addIssueWithLooseComment(HINT_TEXT);
             }
         }
 
@@ -98,8 +103,13 @@ public class UnusedVariable extends AbstractIssueFinder {
                 }
             }
             if (!currFound) {
-                // TODO: Retrieve actor and node
-                issues.add(new Issue(this, null, null));
+                for (ActorDefinition actor : actors) {
+                    if (actor.getIdent().getName().equals(actorName)) {
+                        currentActor = actor;
+                        break;
+                    }
+                }
+                addIssueWithLooseComment(HINT_TEXT);
             }
         }
     }

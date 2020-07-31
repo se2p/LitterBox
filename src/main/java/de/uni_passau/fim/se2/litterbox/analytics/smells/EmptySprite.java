@@ -23,6 +23,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorType;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
@@ -46,7 +47,7 @@ public class EmptySprite implements IssueFinder, ScratchVisitor {
     public void visit(ActorDefinition actor) {
         if (actor.getProcedureDefinitionList().getList().size() == 0 && actor.getScripts().getScriptList().size() == 0
                 && !actor.getActorType().equals(ActorType.STAGE)) {
-            issues.add(new Issue(this, actor, actor));
+            issues.add(new Issue(this, actor, (Script) null, null, HINT_TEXT, null));
         }
     }
 
