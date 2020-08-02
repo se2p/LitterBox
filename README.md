@@ -1,12 +1,164 @@
 # LitterBox
 
-Static code analysis tool for detecting recurring bug patterns in Scratch projects. 
+LitterBox is a static code analysis tool for detecting bugs in
+[Scratch](https://scratch.mit.edu/) projects.
+
+Bugs in Scratch programs can spoil the fun and inhibit learning
+success. Many common bugs are the result of recurring patterns of bad
+code. LitterBox provides checks for a collection of common bug
+patterns. Given a Scratch project ID or a file, LitterBox retrieves
+and parses the source code of the project, and reports all instances
+of bug patterns identified.
+
+LitterBox is developed at the
+[Chair of Software Engineering II](https://www.fim.uni-passau.de/lehrstuhl-fuer-software-engineering-ii/)
+and the [Didactics of Informatics](https://ddi.fim.uni-passau.de/) of the [University of Passau](https://www.uni-passau.de).
+
+## Building LitterBox
+
+LitterBox is built using [Maven](https://maven.apache.org/). To
+produce an executable jar-file, run the following command:
+
+```
+mvn package
+```
+
+This will produce `target/Litterbox-1.1.jar`
+
+
+## Using LitterBox
+
+To see an overview of the command line options available in LitterBox type:
+
+```
+java -jar Litterbox-1.1.jar --help
+```
+
+### Basic usage
+
+LitterBox parses the JSON file of a Scratch project, which contains
+its source code. Given such a JSON file, LitterBox is invoked as follows:
+
+```
+java -jar Litterbox-1.1.jar --check --path <path/to/project.json>
+```
+
+As a result, LitterBox will report any occurrences of bug patterns in
+the project on the console.
+
+
+### Downloading projects
+
+If you want to check a specific project given its ID (which you can
+find in the URL of the project), you can use the following command:
+
+```
+java -jar Litterbox-1.1.jar --check --projectid <projectid>
+```
+
+When invoked this way, LitterBox will retrieve the JSON file
+automatically from the Scratch-website, and then run checks on
+it. Note that the Scratch project to be analyzed has to be shared
+publically for this.
+
+
+### Checking multiple projects
+
+If you want to check several projects at once, you can put a list of
+project IDs to check in a text file (one project ID per line) and
+invoke LitterBox as follows:
+
+```
+java -jar Litterbox-1.1.jar --check --projectlist <path/to/projectidlist.txt>
+```
+
+
+### Output options
+
+In addition to the console output, LitterBox can produce output in
+comma separated value (CSV) or JSON format. LitterBox uses the
+filename specified in order to decide whether to produce CSV or JSON
+output:
+
+```
+java -jar Litterbox-1.1.jar --check --path <path/to/project.json> --output <result.csv>
+```
+
+The CSV file will contain a high-level summary of the number of
+different bug patterns found in the project; the JSON file will
+contain a detailed list of all instances of the bug
+
+Furthermore, LitterBox can produce an annotated version of the
+analyzed Scratch-project, where all occurrences of bug patterns are
+highlighted with comments.
+
+```
+java -jar Litterbox-1.1.jar --check --path <path/to/project.json> --annotate <result.json>
+```
+
+
+You can choose the language used for hints and comments in the JSON
+and Scratch output with the `--lang` option.
+
+
+### Selecting bug finders
+
+Using the `--detectors` command line parameter it is possible to
+specify which bug patterns to check for. The option takes a
+comma-separated list of bug patterns, e.g.:
+
+
+```
+java -jar Litterbox-1.1.jar --check --path <path/to/project.json> --detectors endless_recursion,call_without_definition
+```
+
+A full list of available bug checkers can be retrieved using:
+
+
+```
+java -jar Litterbox-1.1.jar --help
+```
+
+
+
+
+### Collecting statistics
+
+LitterBox can produce statistics on a project (e.g., number of blocks,
+number of sprites, weighted method count):
+
+```
+java -jar Litterbox-1.1.jar --stats --project <path/to/project.json> --output <statsfile.csv>
+```
+
+
+
+## Adding new bug patterns
+
+To implement your own bug patterns, extend the `AbstractIssueFinder`
+class which implements an AST visitor. The `check` method is expected
+to return a set of all `Issue` instances encountered during the
+traversal. To enable the check, register it in the `IssueTool`
+constructor (`finder.add(new NewFinder()`) ).
+
+
+## Publications
+
+To learn more about LitterBox and its bug patterns, see the following paper:
+
+C. Frädrich, F. Obermüller, N. Körber, U. Heuer, and G. Fraser, “Common bugs in scratch programs,” in Proceedings of
+ the 25th Annual Conference on Innovation and Technology in Computer
+ Science Education (ITiCSE), pages 89-95, ACM, 2020. [https://doi.org/10.1145/3341525.3387389](https://doi.org/10.1145/3341525.3387389)
+
 
 ## Contributors 
 
-This project is developed at the Chair of Software Engineering II in Passau, Germany.
+LitterBox is developed at the
+[Chair of Software Engineering II](https://www.fim.uni-passau.de/lehrstuhl-fuer-software-engineering-ii/)
+and the [Didactics of Informatics](https://ddi.fim.uni-passau.de/) of
+the [University of Passau](https://www.uni-passau.de).
 
-List of contributors:
+Contributors:
 
 Christoph Frädrich  
 Gordon Fraser  
@@ -17,109 +169,4 @@ Florian Obermüller
 Andreas Stahlbauer  
 Florian Sulzmeier  
 
-LitterBox was created in the project FR 2955/3-1 funded by the "Deutsche Forschungsgemeinschaft".
-
-## Usage
-
-LitterBox can analyze a single project and produce console output for every single Issue.
-
-Also, there is a method that takes a folder path as an input and analyzes all Json files in the directory. 
-This method produces a csv file with all issue counts for every project.
-
-Finally it is possible to download one or multiple projects and analyze those.
-
-##
-To use LitterBox with the command line, build the Jar with mvn clean and mvn package.
-
-### Command Line Options:
-
-1. path - the Scratch projects path or a folder path with multiple Scratch projects
-2. projectid - id of the project that should be downloaded and analysed
-3. projectlist - path to a file with a list of project ids of projects which should be downloaded and analysed.
-4. projectout - path where downloaded projects should be stored
-5. output - path to the csv file where the results of the analysis should be stored
-6. detectors - all the detectors you want to run (short names separated by ","), if not set, all will be used
-
-#### Detectors short names:
-
-
-Detectors:
-  
-	all                  All issue finders               
-	bugs                 All issue finders for bug patterns      
-	smells               All issue finders for smells    
-	ctscore              All issue finders for ct scores
-	
-	Bugpatterns:
-	ambCustBlSign        Ambiguous Custom Block Signature 
-	ambParamName         Ambiguous Parameter Name
-	ambParamNameStrct    Ambiguous Parameter Name Strict
-	cllWithoutDef        Call Without Definition
-	compLit              Comparing Literals
-	custBlWithForever    Custom Block With Forever
-	custBlWithTerm       Custom Block With Termination  
-	endlRec              Endless Recursion
-	exprTouchColor       Expression As Touching Or Color
-	foreverInLoop        Forever inside Loop
-	illParamRefac        Illegal Parameter Refactor
-	messNeverSent        Message Never Sent
-	messNeverRec         Message Never Received  
-	mssBackdrSwitch      Missing Backdrop Switch
-	mssCloneCll          Missing Clone Call
-	mssCloneInit         Missing Clone Initialization
-	mssEraseAll          Missing Erase All
-	mssLoopSens          Missing Loop Sensing
-	mssPenDown           Missing Pen Down	
-	mssPenUp             Missing Pen Up
-	mssTerm              Missing Termination 
-	mssWaitCond          Missing Wait Until Condition
-	noWorkScript         No Working Script
-	orphParam            Orphaned Parameter
-	paramOutScope        Parameter out of Scope
-	posEqCheck           PositionEqualsCheck 
-	recClone             Recursive Cloning
-	sameVarDiffSprite    Same Variable used in Different Sprite    
-	stuttMove            Stuttering Movement	
-	
-	Smells:
-	empCtrlBody          Empty Control Body  
-	empCustBl            Empty Custom Block
-	empProj              Empty Project	
-	empScript            Empty Script
-	empSprite            Empty Sprite
-	dcode                Dead Code	
-	longScript           Long Script 
-	nestLoop             Nested Loops
-	unusedCustBl         Unused Custom Block               
-	unusedVar            Unused Variable 
-                  
-	CT-Score:  
-	flow                 Flow Control                
-	                          
-	Utils:   
-	blockCnt             Block Count
-	procCnt              Procedure Count
-	spriteCnt            Sprite Count 
-	usingPen             Using Pen
-	weightedMethCnt      Weighted Method Count           
-
-
-#### Example:
-
-java -cp C:\ScratchAnalytics-1.0.jar de.uni_passau.fim.se2.litterbox.Main -path C:\scratchprojects\files\ -output C:\scratchprojects\files\test.csv -detectors mssLoopSens,blockCnt
-
-This will run only Missing Loop Sensing and Block Count on all projects in C:\scratchprojects\files\; and it will also
- save the test.csv file in the same location.
-
-## Extendability
-
-First of all, create a new IssueFinder and implement the corresponding interface. 
-The check() method must return a IssueReport with the issue name, count for the current project, 
-the sprites of all issue occurrences and notes about the issue.
-Then, register the newly created IssueFinder in the IssueTool constructor ( finder.add(new NewFinder()) ).
-The finder name will automatically be added to the printed csv file.
-
-
-## Publications
-C. Frädrich, F. Obermüller, N. Körber, U. Heuer, and G. Fraser, “Common bugs in scratch programs,” in Proceedings of
- the 25th Annual Conference on Innovation and Technology in Computer Science Education (ITiCSE), 2020, to appear.
+LitterBox is supported by the project FR 2955/3-1 funded by the "Deutsche Forschungsgemeinschaft".
