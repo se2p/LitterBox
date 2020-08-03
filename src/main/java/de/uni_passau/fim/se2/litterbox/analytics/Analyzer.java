@@ -132,7 +132,7 @@ public abstract class Analyzer {
             program = ProgramParser.parseProgram(programName, programNode);
         } catch (ParsingException | RuntimeException e) {
             // TODO: Proper error handling
-            log.info("[Error] could not parse program");
+            log.info("[Error] could not parse program for file " + fileName);
             e.printStackTrace();
             return null;
         }
