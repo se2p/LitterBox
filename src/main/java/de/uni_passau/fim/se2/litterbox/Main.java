@@ -203,7 +203,7 @@ public class Main {
                 resourceBundle = ResourceBundle.getBundle("IssueDescriptions", locale);
             } catch (MissingResourceException e) {
                 resourceBundle = ResourceBundle.getBundle("IssueDescriptions", Locale.ENGLISH);
-                System.err.println("Could not load resrouce bundle for language " + lang + "; Defaulting to english");
+                System.err.println("Could not load resource bundle for language " + lang + "; Defaulting to english");
             }
 
             if (cmd.hasOption(CHECK)) {
