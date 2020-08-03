@@ -63,8 +63,7 @@ public class Main {
     private Main() {
     }
 
-    public static Options getCommandLineOptions() {
-        Options options = new Options();
+    static Options getCommandLineOptions() {
 
         // Operation mode
         OptionGroup mainMode = new OptionGroup();
@@ -72,28 +71,34 @@ public class Main {
         mainMode.addOption(new Option(LEILA_SHORT, LEILA, false, "Translate specified Scratch projects to Leila"));
         mainMode.addOption(new Option(STATS_SHORT, STATS, false, "Extract metrics for Scratch projects"));
         mainMode.addOption(new Option(HELP_SHORT, HELP, false, "print this message"));
+
+        Options options = new Options();
         options.addOptionGroup(mainMode);
 
         // Target project(s)
         OptionGroup targetProject = new OptionGroup();
         targetProject.addOption(new Option(PROJECTID_SHORT, PROJECTID, true,
                 "id of the project that should be downloaded and analysed."));
-        targetProject.addOption(new Option(PROJECTLIST_SHORT, PROJECTLIST, true, "path to a file with a list of project ids of projects"
-                + " which should be downloaded and analysed."));
+        targetProject.addOption(new Option(PROJECTLIST_SHORT, PROJECTLIST, true,
+                "path to a file with a list of project ids of projects"
+                        + " which should be downloaded and analysed."));
         options.addOptionGroup(targetProject);
 
         // Storage options
-        options.addOption(new Option(PROJECTPATH_SHORT, PROJECTPATH, true, "path to folder or file that should be analyzed (required)"));
+        options.addOption(new Option(PROJECTPATH_SHORT, PROJECTPATH, true,
+                "path to folder or file that should be analyzed (required)"));
 
         // Output options
         options.addOption(PROJECTOUT_SHORT, PROJECTOUT, true, "path where the downloaded project(s) should be stored");
-        options.addOption(OUTPUT_SHORT, OUTPUT, true, "path with name of the csv file you want to save (required if " +
-                "path argument"
-                + " is a folder path)\nusage with --leila: Path to file or folder for the resulting .sc file(s); "
-                + "has to be a folder if multiple projects are analysed "
-                + "(file will be created if not existing yet, path has to exist)");
-        options.addOption(ANNOTATE_SHORT, ANNOTATE, true, "path where scratch files with hints to bug patterns should" +
-                " be created");
+        options.addOption(OUTPUT_SHORT, OUTPUT, true,
+                "path with name of the csv file you want to save (required if "
+                        + "path argument"
+                        + " is a folder path)\nusage with --leila: "
+                        + "Path to file or folder for the resulting .sc file(s); "
+                        + "has to be a folder if multiple projects are analysed "
+                        + "(file will be created if not existing yet, path has to exist)");
+        options.addOption(ANNOTATE_SHORT, ANNOTATE, true, "path where scratch files with hints to bug patterns should"
+                + " be created");
 
         // Parameters
         options.addOption(DETECTORS_SHORT, DETECTORS, true, "name all detectors you want to run separated by ',' "
@@ -103,33 +108,33 @@ public class Main {
         return options;
     }
 
-    public static void printHelp() {
+    static void printHelp() {
         HelpFormatter formatter = new HelpFormatter();
         formatter.printHelp("LitterBox", getCommandLineOptions(), true);
         System.out.println("Example: " + "java -jar Litterbox.jar --check --path "
                 + "C:\\scratchprojects\\files\\ --output C:\\scratchprojects\\files\\test.csv --detectors bugs\n");
         System.out.println("Example for metric output: "
-                + "java -jar Litterbox-1.0.jar --stats -o ~/path/to/folder/or/file/for/the/output --path " +
-                "~/path/to/json/project/or/folder/with/projects \n");
+                + "java -jar Litterbox-1.0.jar --stats -o ~/path/to/folder/or/file/for/the/output --path "
+                + "~/path/to/json/project/or/folder/with/projects \n");
         System.out.println("Example for Leila intermediate language output: "
-                + "java -jar Litterbox-1.0.jar --leila -o ~/path/to/folder/or/file/for/the/output --path " +
-                "~/path/to/json/project/or/folder/with/projects \n");
+                + "java -jar Litterbox-1.0.jar --leila -o ~/path/to/folder/or/file/for/the/output --path "
+                + "~/path/to/json/project/or/folder/with/projects \n");
 
         System.out.println("Detectors:");
         ResourceBundle messages = ResourceBundle.getBundle("IssueDescriptions", Locale.ENGLISH);
-        IssueTool iT = new IssueTool();
         System.out.printf("\t%-20s %-30s%n", ALL, messages.getString(ALL));
         System.out.printf("\t%-20s %-30s%n", BUGS, messages.getString(BUGS));
         System.out.printf("\t%-20s %-30s%n", SMELLS, messages.getString(SMELLS));
-        // System.out.printf("\t%-20s %-30s%n", CTSCORE, messages.getString(CTSCORE));
-        iT.getAllFinder().keySet().forEach(finder -> System.out.printf(
+
+        IssueTool issueTool = new IssueTool();
+        issueTool.getAllFinder().keySet().forEach(finder -> System.out.printf(
                 "\t%-20s %-30s%n",
                 finder,
                 messages.getString(finder)
         ));
     }
 
-    public static void checkPrograms(CommandLine cmd) throws ParseException, IOException {
+    static void checkPrograms(CommandLine cmd) throws ParseException {
         if (!cmd.hasOption(PROJECTPATH)) {
             throw new ParseException("Input path option '" + PROJECTPATH + "' required");
         }
@@ -148,7 +153,7 @@ public class Main {
         runAnalysis(cmd, analyzer);
     }
 
-    public static void translatePrograms(CommandLine cmd) throws ParseException, IOException {
+    static void translatePrograms(CommandLine cmd) throws ParseException, IOException {
         if (!cmd.hasOption(OUTPUT)) {
             throw new ParseException("Output path option '" + OUTPUT + "' required");
         }
@@ -164,7 +169,7 @@ public class Main {
         runAnalysis(cmd, analyzer);
     }
 
-    public static void statsPrograms(CommandLine cmd) throws ParseException, IOException, ParsingException {
+    static void statsPrograms(CommandLine cmd) throws ParseException, IOException, ParsingException {
         if (!cmd.hasOption(OUTPUT)) {
             throw new ParseException("Output path option '" + OUTPUT + "' required");
         }
@@ -179,7 +184,7 @@ public class Main {
         runAnalysis(cmd, analyzer);
     }
 
-    public static void runAnalysis(CommandLine cmd, Analyzer analyzer) {
+    static void runAnalysis(CommandLine cmd, Analyzer analyzer) {
         if (cmd.hasOption(PROJECTID)) {
             String projectId = cmd.getOptionValue(PROJECTID);
             analyzer.analyzeSingle(projectId);
@@ -191,7 +196,7 @@ public class Main {
         }
     }
 
-    public static void parseCommandLine(String[] args) {
+    static void parseCommandLine(String[] args) {
         Options options = getCommandLineOptions();
         CommandLineParser parser = new DefaultParser();
         try {
