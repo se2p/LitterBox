@@ -62,7 +62,6 @@ import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 public class BlockCount implements MetricExtractor, ScratchVisitor {
     public static final String NAME = "block_count";
-    public static final String SHORT_NAME = "blockCnt";
     private int count = 0;
     private boolean insideScript = false;
     private boolean insideProcedure = false;

@@ -38,7 +38,6 @@ import java.util.Set;
 public class MissingEraseAll extends AbstractIssueFinder {
 
     public static final String NAME = "missing_erase_all";
-    public static final String SHORT_NAME = "mssEraseAll";
     public static final String HINT_TEXT = "missing erase all";
 
     private boolean penClearSet = false;
@@ -100,10 +99,5 @@ public class MissingEraseAll extends AbstractIssueFinder {
     @Override
     public String getName() {
         return NAME;
-    }
-
-    @Override
-    public String getShortName() {
-        return SHORT_NAME;
     }
 }

@@ -27,7 +27,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.*;
  */
 public class EmptyControlBody extends AbstractIssueFinder {
     public static final String NAME = "empty_control_body";
-    public static final String SHORT_NAME = "empCtrlBody";
 
     @Override
     public void visit(IfElseStmt node) {
@@ -75,10 +74,5 @@ public class EmptyControlBody extends AbstractIssueFinder {
     @Override
     public String getName() {
         return NAME;
-    }
-
-    @Override
-    public String getShortName() {
-        return SHORT_NAME;
     }
 }

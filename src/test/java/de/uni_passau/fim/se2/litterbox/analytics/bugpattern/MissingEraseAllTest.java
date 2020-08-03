@@ -49,22 +49,28 @@ public class MissingEraseAllTest {
 
     @Test
     public void testEmptyProgram() {
-        MissingEraseAll parameterName = new  MissingEraseAll();
+        MissingEraseAll parameterName = new MissingEraseAll();
         Set<Issue> reports = parameterName.check(empty);
         Assertions.assertTrue(reports.isEmpty());
     }
 
     @Test
     public void testEraseInOtherSprite() {
-        MissingEraseAll parameterName = new  MissingEraseAll();
+        MissingEraseAll parameterName = new MissingEraseAll();
         Set<Issue> reports = parameterName.check(eraseOtherSprite);
         Assertions.assertTrue(reports.isEmpty());
     }
 
     @Test
     public void testMissingEraseAll() {
-        MissingEraseAll parameterName = new  MissingEraseAll();
+        MissingEraseAll parameterName = new MissingEraseAll();
         Set<Issue> reports = parameterName.check(missingEraseAll);
         Assertions.assertEquals(1, reports.size());
+    }
+
+    @Test
+    public void testName() {
+        MissingEraseAll parameterName = new MissingEraseAll();
+        Assertions.assertEquals(parameterName.getName(), MissingEraseAll.NAME);
     }
 }

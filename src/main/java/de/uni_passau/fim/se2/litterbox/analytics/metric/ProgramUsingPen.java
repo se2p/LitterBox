@@ -26,7 +26,6 @@ import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 public class ProgramUsingPen implements MetricExtractor, ScratchVisitor {
     public static final String NAME = "using_pen";
-    public static final String SHORT_NAME = "usingPen";
     private boolean found = false;
 
     @Override

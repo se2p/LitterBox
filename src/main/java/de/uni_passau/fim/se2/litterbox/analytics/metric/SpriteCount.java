@@ -24,7 +24,6 @@ import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 public class SpriteCount implements MetricExtractor, ScratchVisitor {
     public static final String NAME = "sprite_count";
-    public static final String SHORT_NAME = "spriteCnt";
 
     @Override
     public double calculateMetric(Program program) {

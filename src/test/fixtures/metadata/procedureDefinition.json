@@ -11,7 +11,51 @@
       },
       "lists": {},
       "broadcasts": {},
-      "blocks": {},
+      "blocks": {
+        "=kNyJn`W.A5t$~BaYm5h": {
+          "opcode": "procedures_definition",
+          "next": "u2URKg;#M^stpx}L_8(Q",
+          "parent": null,
+          "inputs": {
+            "custom_block": [
+              1,
+              ":mEz1QI+6Kooz]~KHkcX"
+            ]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": true,
+          "x": 545,
+          "y": 326
+        },
+        ":mEz1QI+6Kooz]~KHkcX": {
+          "opcode": "procedures_prototype",
+          "next": null,
+          "parent": "=kNyJn`W.A5t$~BaYm5h",
+          "inputs": {},
+          "fields": {},
+          "shadow": true,
+          "topLevel": false,
+          "mutation": {
+            "tagName": "mutation",
+            "children": [],
+            "proccode": "TestBlock",
+            "argumentids": "[]",
+            "argumentnames": "[]",
+            "argumentdefaults": "[]",
+            "warp": "false"
+          }
+        },
+        "u2URKg;#M^stpx}L_8(Q": {
+          "opcode": "motion_ifonedgebounce",
+          "next": null,
+          "parent": "=kNyJn`W.A5t$~BaYm5h",
+          "inputs": {},
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        }
+      },
       "comments": {},
       "currentCostume": 0,
       "costumes": [

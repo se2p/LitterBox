@@ -22,7 +22,6 @@ import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
-import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.Random;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.BackdropSwitchTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
@@ -33,7 +32,11 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.SwitchBackd
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.SwitchBackdropAndWait;
 import de.uni_passau.fim.se2.litterbox.utils.Pair;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
-import java.util.*;
+
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * If the When backdrop switches to event handler is used to start a script and the backdrop never switches
@@ -43,7 +46,6 @@ import java.util.*;
 public class MissingBackdropSwitch extends AbstractIssueFinder {
 
     public static final String NAME = "missing_backdrop_switch";
-    public static final String SHORT_NAME = "mssBackdrSwitch";
     public static final String HINT_TEXT = "missing backdrop switch";
     private List<Pair<String>> switched = new ArrayList<>();
     private List<Pair<String>> switchReceived = new ArrayList<>();
@@ -174,10 +176,5 @@ public class MissingBackdropSwitch extends AbstractIssueFinder {
     @Override
     public String getName() {
         return NAME;
-    }
-
-    @Override
-    public String getShortName() {
-        return SHORT_NAME;
     }
 }

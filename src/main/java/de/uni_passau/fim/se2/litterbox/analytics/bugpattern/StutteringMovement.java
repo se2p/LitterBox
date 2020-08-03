@@ -37,7 +37,6 @@ import java.util.List;
 public class StutteringMovement extends AbstractIssueFinder {
 
     public static final String NAME = "stuttering_movement";
-    public static final String SHORT_NAME = "stuttMove";
     public static final String HINT_TEXT = "stuttering movement";
 
     @Override
@@ -61,10 +60,5 @@ public class StutteringMovement extends AbstractIssueFinder {
     @Override
     public String getName() {
         return NAME;
-    }
-
-    @Override
-    public String getShortName() {
-        return SHORT_NAME;
     }
 }

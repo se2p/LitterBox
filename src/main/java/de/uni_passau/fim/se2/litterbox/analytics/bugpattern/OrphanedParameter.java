@@ -34,7 +34,6 @@ import java.util.List;
  */
 public class OrphanedParameter extends AbstractIssueFinder {
     public static final String NAME = "orphaned_parameter";
-    public static final String SHORT_NAME = "orphParam";
     public static final String HINT_TEXT = "orphaned parameter";
     private List<ParameterDefinition> currentParameterDefinitions;
     private boolean insideProcedure;
@@ -71,10 +70,5 @@ public class OrphanedParameter extends AbstractIssueFinder {
     @Override
     public String getName() {
         return NAME;
-    }
-
-    @Override
-    public String getShortName() {
-        return SHORT_NAME;
     }
 }

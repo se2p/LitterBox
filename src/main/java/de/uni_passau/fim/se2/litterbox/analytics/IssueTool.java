@@ -37,48 +37,48 @@ public class IssueTool {
     private Map<String, IssueFinder> smellFinder = new LinkedHashMap<>();
 
     public IssueTool() {
-        bugFinder.put(AmbiguousCustomBlockSignature.SHORT_NAME, new AmbiguousCustomBlockSignature());
-        bugFinder.put(AmbiguousParameterName.SHORT_NAME, new AmbiguousParameterName());
-        bugFinder.put(AmbiguousParameterNameStrict.SHORT_NAME, new AmbiguousParameterNameStrict());
-        bugFinder.put(CallWithoutDefinition.SHORT_NAME, new CallWithoutDefinition());
-        bugFinder.put(ComparingLiterals.SHORT_NAME, new ComparingLiterals());
-        bugFinder.put(CustomBlockWithForever.SHORT_NAME, new CustomBlockWithForever());
-        bugFinder.put(CustomBlockWithTermination.SHORT_NAME, new CustomBlockWithTermination());
-        bugFinder.put(EndlessRecursion.SHORT_NAME, new EndlessRecursion());
-        bugFinder.put(ExpressionAsTouchingOrColor.SHORT_NAME, new ExpressionAsTouchingOrColor());
-        bugFinder.put(ForeverInsideLoop.SHORT_NAME, new ForeverInsideLoop());
-        bugFinder.put(IllegalParameterRefactor.SHORT_NAME, new IllegalParameterRefactor());
-        bugFinder.put(MessageNeverReceived.SHORT_NAME, new MessageNeverReceived());
-        bugFinder.put(MessageNeverSent.SHORT_NAME, new MessageNeverSent());
-        bugFinder.put(MissingBackdropSwitch.SHORT_NAME, new MissingBackdropSwitch());
-        bugFinder.put(MissingCloneCall.SHORT_NAME, new MissingCloneCall());
-        bugFinder.put(MissingCloneInitialization.SHORT_NAME, new MissingCloneInitialization());
-        bugFinder.put(MissingInitialization.SHORT_NAME, new MissingInitialization());
-        bugFinder.put(MissingEraseAll.SHORT_NAME, new MissingEraseAll());
-        bugFinder.put(MissingLoopSensing.SHORT_NAME, new MissingLoopSensing());
-        bugFinder.put(MissingPenDown.SHORT_NAME, new MissingPenDown());
-        bugFinder.put(MissingPenUp.SHORT_NAME, new MissingPenUp());
-        bugFinder.put(MissingTerminationCondition.SHORT_NAME, new MissingTerminationCondition());
-        bugFinder.put(MissingWaitUntilCondition.SHORT_NAME, new MissingWaitUntilCondition());
-        bugFinder.put(NoWorkingScripts.SHORT_NAME, new NoWorkingScripts());
-        bugFinder.put(OrphanedParameter.SHORT_NAME, new OrphanedParameter());
-        bugFinder.put(ParameterOutOfScope.SHORT_NAME, new ParameterOutOfScope());
-        bugFinder.put(PositionEqualsCheck.SHORT_NAME, new PositionEqualsCheck());
-        bugFinder.put(RecursiveCloning.SHORT_NAME, new RecursiveCloning());
-        bugFinder.put(SameVariableDifferentSprite.SHORT_NAME, new SameVariableDifferentSprite());
-        bugFinder.put(StutteringMovement.SHORT_NAME, new StutteringMovement());
+        bugFinder.put(AmbiguousCustomBlockSignature.NAME, new AmbiguousCustomBlockSignature());
+        bugFinder.put(AmbiguousParameterName.NAME, new AmbiguousParameterName());
+        bugFinder.put(AmbiguousParameterNameStrict.NAME, new AmbiguousParameterNameStrict());
+        bugFinder.put(CallWithoutDefinition.NAME, new CallWithoutDefinition());
+        bugFinder.put(ComparingLiterals.NAME, new ComparingLiterals());
+        bugFinder.put(CustomBlockWithForever.NAME, new CustomBlockWithForever());
+        bugFinder.put(CustomBlockWithTermination.NAME, new CustomBlockWithTermination());
+        bugFinder.put(EndlessRecursion.NAME, new EndlessRecursion());
+        bugFinder.put(ExpressionAsTouchingOrColor.NAME, new ExpressionAsTouchingOrColor());
+        bugFinder.put(ForeverInsideLoop.NAME, new ForeverInsideLoop());
+        bugFinder.put(IllegalParameterRefactor.NAME, new IllegalParameterRefactor());
+        bugFinder.put(MessageNeverReceived.NAME, new MessageNeverReceived());
+        bugFinder.put(MessageNeverSent.NAME, new MessageNeverSent());
+        bugFinder.put(MissingBackdropSwitch.NAME, new MissingBackdropSwitch());
+        bugFinder.put(MissingCloneCall.NAME, new MissingCloneCall());
+        bugFinder.put(MissingCloneInitialization.NAME, new MissingCloneInitialization());
+        bugFinder.put(MissingInitialization.NAME, new MissingInitialization());
+        bugFinder.put(MissingEraseAll.NAME, new MissingEraseAll());
+        bugFinder.put(MissingLoopSensing.NAME, new MissingLoopSensing());
+        bugFinder.put(MissingPenDown.NAME, new MissingPenDown());
+        bugFinder.put(MissingPenUp.NAME, new MissingPenUp());
+        bugFinder.put(MissingTerminationCondition.NAME, new MissingTerminationCondition());
+        bugFinder.put(MissingWaitUntilCondition.NAME, new MissingWaitUntilCondition());
+        bugFinder.put(NoWorkingScripts.NAME, new NoWorkingScripts());
+        bugFinder.put(OrphanedParameter.NAME, new OrphanedParameter());
+        bugFinder.put(ParameterOutOfScope.NAME, new ParameterOutOfScope());
+        bugFinder.put(PositionEqualsCheck.NAME, new PositionEqualsCheck());
+        bugFinder.put(RecursiveCloning.NAME, new RecursiveCloning());
+        bugFinder.put(SameVariableDifferentSprite.NAME, new SameVariableDifferentSprite());
+        bugFinder.put(StutteringMovement.NAME, new StutteringMovement());
 
         // Smells
-        smellFinder.put(EmptyControlBody.SHORT_NAME, new EmptyControlBody());
-        smellFinder.put(EmptyCustomBlock.SHORT_NAME, new EmptyCustomBlock());
-        smellFinder.put(EmptyProject.SHORT_NAME, new EmptyProject());
-        smellFinder.put(EmptyScript.SHORT_NAME, new EmptyScript());
-        smellFinder.put(EmptySprite.SHORT_NAME, new EmptySprite());
-        smellFinder.put(DeadCode.SHORT_NAME, new DeadCode());
-        smellFinder.put(LongScript.SHORT_NAME, new LongScript());
-        smellFinder.put(NestedLoops.SHORT_NAME, new NestedLoops());
-        smellFinder.put(UnusedVariable.SHORT_NAME, new UnusedVariable());
-        smellFinder.put(UnusedCustomBlock.SHORT_NAME, new UnusedCustomBlock());
+        smellFinder.put(EmptyControlBody.NAME, new EmptyControlBody());
+        smellFinder.put(EmptyCustomBlock.NAME, new EmptyCustomBlock());
+        smellFinder.put(EmptyProject.NAME, new EmptyProject());
+        smellFinder.put(EmptyScript.NAME, new EmptyScript());
+        smellFinder.put(EmptySprite.NAME, new EmptySprite());
+        smellFinder.put(DeadCode.NAME, new DeadCode());
+        smellFinder.put(LongScript.NAME, new LongScript());
+        smellFinder.put(NestedLoops.NAME, new NestedLoops());
+        smellFinder.put(UnusedVariable.NAME, new UnusedVariable());
+        smellFinder.put(UnusedCustomBlock.NAME, new UnusedCustomBlock());
     }
 
     /**

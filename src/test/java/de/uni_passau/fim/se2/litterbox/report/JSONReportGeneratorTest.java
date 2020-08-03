@@ -71,12 +71,12 @@ public class JSONReportGeneratorTest {
                 "  \"finder\" : \"position_equals_check\"," + System.lineSeparator() +
                 "  \"sprite\" : \"Figur1\"," + System.lineSeparator() +
                 "  \"hint\" : \"position equals check\"," + System.lineSeparator() +
-                "  \"code\" : \"[scratchblocks]\\nwait until <(mouse x) = >:: #ff0000 // Issue: position equals check\\n[/scratchblocks]\\n\"" + System.lineSeparator() +
+                "  \"code\" : \"[scratchblocks]\\n<(mouse x) = :: #ff0000> // Issue: position equals check\\n[/scratchblocks]\\n\"" + System.lineSeparator() +
                 "}, {" + System.lineSeparator() +
                 "  \"finder\" : \"position_equals_check\"," + System.lineSeparator() +
                 "  \"sprite\" : \"Figur1\"," + System.lineSeparator() +
                 "  \"hint\" : \"position equals check\"," + System.lineSeparator() +
-                "  \"code\" : \"[scratchblocks]\\nwait until <(mouse y) = >:: #ff0000 // Issue: position equals check\\n[/scratchblocks]\\n\"" + System.lineSeparator() +
+                "  \"code\" : \"[scratchblocks]\\n<(mouse y) = :: #ff0000> // Issue: position equals check\\n[/scratchblocks]\\n\"" + System.lineSeparator() +
                 "} ]", os.toString());
     }
 

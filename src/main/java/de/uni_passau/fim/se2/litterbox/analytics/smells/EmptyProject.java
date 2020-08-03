@@ -24,12 +24,12 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
+
 import java.util.LinkedHashSet;
 import java.util.Set;
 
 public class EmptyProject implements ScratchVisitor, IssueFinder {
     public static final String NAME = "empty_project";
-    public static final String SHORT_NAME = "empProj";
     private boolean foundScript = false;
     private Set<Issue> issues = new LinkedHashSet<>();
 
@@ -56,10 +56,5 @@ public class EmptyProject implements ScratchVisitor, IssueFinder {
     @Override
     public String getName() {
         return NAME;
-    }
-
-    @Override
-    public String getShortName() {
-        return SHORT_NAME;
     }
 }

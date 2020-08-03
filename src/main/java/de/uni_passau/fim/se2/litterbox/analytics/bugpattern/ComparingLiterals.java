@@ -35,7 +35,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 public class ComparingLiterals extends AbstractIssueFinder {
 
     public static final String NAME = "comparing_literals";
-    public static final String SHORT_NAME = "compLit";
     public static final String HINT_TEXT = "comparing literals";
 
     @Override
@@ -69,10 +68,5 @@ public class ComparingLiterals extends AbstractIssueFinder {
     @Override
     public String getName() {
         return NAME;
-    }
-
-    @Override
-    public String getShortName() {
-        return SHORT_NAME;
     }
 }

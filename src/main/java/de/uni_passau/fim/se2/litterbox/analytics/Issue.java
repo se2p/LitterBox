@@ -19,7 +19,6 @@
 package de.uni_passau.fim.se2.litterbox.analytics;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
-import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.Metadata;
@@ -90,10 +89,6 @@ public class Issue {
 
     public String getFinderName() {
         return finder.getName();
-    }
-
-    public String getFinderShortName() {
-        return finder.getShortName();
     }
 
     public String getHint() {

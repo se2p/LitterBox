@@ -94,6 +94,5 @@ public class MissingLoopSensingTest {
     public void testGetName() {
         MissingLoopSensing parameterName = new MissingLoopSensing();
         Assertions.assertEquals("missing_loop_sensing", parameterName.getName());
-        Assertions.assertEquals("mssLoopSens", parameterName.getShortName());
     }
 }
