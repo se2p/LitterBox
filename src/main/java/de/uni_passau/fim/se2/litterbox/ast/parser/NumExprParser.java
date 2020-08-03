@@ -18,10 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.parser;
 
-import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
-import static de.uni_passau.fim.se2.litterbox.ast.parser.ExpressionParser.*;
-
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.TextNode;
@@ -41,7 +37,11 @@ import de.uni_passau.fim.se2.litterbox.ast.opcodes.NumExprOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.parser.metadata.BlockMetadataParser;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ExpressionListInfo;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
+
 import java.lang.reflect.InvocationTargetException;
+
+import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
+import static de.uni_passau.fim.se2.litterbox.ast.parser.ExpressionParser.*;
 
 public class NumExprParser {
 

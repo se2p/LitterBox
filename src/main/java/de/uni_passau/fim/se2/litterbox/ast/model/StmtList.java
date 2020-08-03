@@ -21,6 +21,7 @@ package de.uni_passau.fim.se2.litterbox.ast.model;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
+
 import java.util.List;
 
 public class StmtList extends AbstractNode implements ASTNode {

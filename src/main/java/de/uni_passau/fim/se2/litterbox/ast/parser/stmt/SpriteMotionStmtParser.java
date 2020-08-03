@@ -18,9 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.parser.stmt;
 
-import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
-
-
 import com.fasterxml.jackson.databind.JsonNode;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
@@ -32,6 +29,8 @@ import de.uni_passau.fim.se2.litterbox.ast.parser.NumExprParser;
 import de.uni_passau.fim.se2.litterbox.ast.parser.PositionParser;
 import de.uni_passau.fim.se2.litterbox.ast.parser.metadata.BlockMetadataParser;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
+
+import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 
 public class SpriteMotionStmtParser {
 

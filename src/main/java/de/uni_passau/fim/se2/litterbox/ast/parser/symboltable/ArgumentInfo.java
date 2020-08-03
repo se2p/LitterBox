@@ -19,6 +19,7 @@
 package de.uni_passau.fim.se2.litterbox.ast.parser.symboltable;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.type.Type;
+
 import java.util.Objects;
 
 public class ArgumentInfo {

@@ -18,14 +18,12 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.parser.metadata;
 
-import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
-
-
 import com.fasterxml.jackson.databind.JsonNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.ressources.ImageMetadata;
 
-public class ImageMetadataParser {
+import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 
+public class ImageMetadataParser {
 
     public static ImageMetadata parse(JsonNode imageNode) {
 

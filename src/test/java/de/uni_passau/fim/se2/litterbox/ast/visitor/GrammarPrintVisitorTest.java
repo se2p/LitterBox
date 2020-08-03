@@ -18,19 +18,19 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.visitor;
 
-import static junit.framework.TestCase.fail;
-
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
+import org.junit.Ignore;
+import org.junit.jupiter.api.BeforeAll;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
-import org.junit.Ignore;
-import org.junit.jupiter.api.BeforeAll;
+
+import static junit.framework.TestCase.fail;
 
 public class GrammarPrintVisitorTest {
 

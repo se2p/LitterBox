@@ -18,9 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.cfg;
 
-import static com.google.common.truth.Truth.assertThat;
-
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
@@ -33,10 +30,13 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SayForSecs;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.MoveSteps;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
+import org.junit.jupiter.api.Test;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Set;
-import org.junit.jupiter.api.Test;
+
+import static com.google.common.truth.Truth.assertThat;
 
 public class DefinitionTest {
 

@@ -21,6 +21,7 @@ package de.uni_passau.fim.se2.litterbox.ast.parser.symboltable;
 import de.uni_passau.fim.se2.litterbox.ast.model.Message;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.ExpressionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.Type;
+
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;

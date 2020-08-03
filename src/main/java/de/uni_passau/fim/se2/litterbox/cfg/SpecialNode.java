@@ -19,6 +19,7 @@
 package de.uni_passau.fim.se2.litterbox.cfg;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
+
 import java.util.Objects;
 
 public class SpecialNode extends CFGNode {

@@ -18,10 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.jsonCreation;
 
-import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
-import static de.uni_passau.fim.se2.litterbox.jsonCreation.BlockJsonCreatorHelper.*;
-
-
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Key;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.Next;
@@ -47,9 +43,12 @@ import de.uni_passau.fim.se2.litterbox.ast.model.touchable.Edge;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.MousePointer;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.SpriteTouchable;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
+
 import java.util.ArrayList;
 import java.util.List;
 
+import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
+import static de.uni_passau.fim.se2.litterbox.jsonCreation.BlockJsonCreatorHelper.*;
 
 /**
  * This class is for creating the JSONs of predetermined drop downs, that could be replaced by expressions such as

@@ -18,9 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.parser.stmt;
 
-import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
-
-
 import com.fasterxml.jackson.databind.JsonNode;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
@@ -37,6 +34,8 @@ import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
 import de.uni_passau.fim.se2.litterbox.ast.parser.metadata.BlockMetadataParser;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.VariableInfo;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
+
+import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 
 public class SetStmtParser {
 

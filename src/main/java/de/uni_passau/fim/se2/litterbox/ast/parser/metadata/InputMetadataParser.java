@@ -18,9 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.parser.metadata;
 
-import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
-
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.NullNode;
@@ -30,6 +27,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.metadata.input.InputMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.input.ReferenceInputMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.input.TypeInputMetadata;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
+
+import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 
 public class InputMetadataParser {
     public static InputMetadata parse(String inputName, JsonNode inputNode) {

@@ -19,6 +19,7 @@
 package de.uni_passau.fim.se2.litterbox.cfg;
 
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
+
 import java.util.Set;
 
 public interface DefinableCollector<T extends Defineable> extends ScratchVisitor {

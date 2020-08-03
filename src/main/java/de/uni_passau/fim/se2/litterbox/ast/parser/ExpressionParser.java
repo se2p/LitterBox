@@ -18,15 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.parser;
 
-import static de.uni_passau.fim.se2.litterbox.ast.Constants.OPCODE_KEY;
-import static de.uni_passau.fim.se2.litterbox.ast.Constants.POS_DATA_ARRAY;
-import static de.uni_passau.fim.se2.litterbox.ast.parser.BoolExprParser.parsableAsBoolExpr;
-import static de.uni_passau.fim.se2.litterbox.ast.parser.DataExprParser.parsableAsDataExpr;
-import static de.uni_passau.fim.se2.litterbox.ast.parser.ListExprParser.parsableAsListExpr;
-import static de.uni_passau.fim.se2.litterbox.ast.parser.NumExprParser.parsableAsNumExpr;
-import static de.uni_passau.fim.se2.litterbox.ast.parser.StringExprParser.parsableAsStringExpr;
-
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.NullNode;
@@ -45,6 +36,13 @@ import de.uni_passau.fim.se2.litterbox.ast.opcodes.StringExprOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.parser.metadata.BlockMetadataParser;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ExpressionListInfo;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.VariableInfo;
+
+import static de.uni_passau.fim.se2.litterbox.ast.Constants.OPCODE_KEY;
+import static de.uni_passau.fim.se2.litterbox.ast.Constants.POS_DATA_ARRAY;
+import static de.uni_passau.fim.se2.litterbox.ast.parser.BoolExprParser.parsableAsBoolExpr;
+import static de.uni_passau.fim.se2.litterbox.ast.parser.DataExprParser.parsableAsDataExpr;
+import static de.uni_passau.fim.se2.litterbox.ast.parser.NumExprParser.parsableAsNumExpr;
+import static de.uni_passau.fim.se2.litterbox.ast.parser.StringExprParser.parsableAsStringExpr;
 
 public class ExpressionParser {
 

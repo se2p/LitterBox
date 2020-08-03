@@ -18,14 +18,14 @@
  */
 package de.uni_passau.fim.se2.litterbox.jsonCreation;
 
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.TopNonDataBlockMetadata;
+
+import java.util.List;
+
 import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 import static de.uni_passau.fim.se2.litterbox.ast.parser.KeyParser.*;
 import static de.uni_passau.fim.se2.litterbox.jsonCreation.JSONStringCreator.*;
-
-
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.TopNonDataBlockMetadata;
-import java.util.List;
 
 public abstract class BlockJsonCreatorHelper {
     public static final String DEFAULT_VALUE = "[10,\"\"]";

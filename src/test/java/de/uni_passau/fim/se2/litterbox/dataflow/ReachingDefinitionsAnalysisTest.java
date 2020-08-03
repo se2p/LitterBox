@@ -18,9 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.dataflow;
 
-import static com.google.common.truth.Truth.assertThat;
-
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
@@ -35,9 +32,12 @@ import de.uni_passau.fim.se2.litterbox.cfg.CFGNode;
 import de.uni_passau.fim.se2.litterbox.cfg.ControlFlowGraph;
 import de.uni_passau.fim.se2.litterbox.cfg.ControlFlowGraphVisitor;
 import de.uni_passau.fim.se2.litterbox.cfg.Definition;
+import org.junit.jupiter.api.Test;
+
 import java.io.File;
 import java.io.IOException;
-import org.junit.jupiter.api.Test;
+
+import static com.google.common.truth.Truth.assertThat;
 
 public class ReachingDefinitionsAnalysisTest {
 

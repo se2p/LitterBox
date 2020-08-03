@@ -22,6 +22,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ASTLeaf;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
+
 import java.util.Collections;
 import java.util.List;
 

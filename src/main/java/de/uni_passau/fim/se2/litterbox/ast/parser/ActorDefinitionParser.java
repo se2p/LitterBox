@@ -18,9 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.parser;
 
-import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
-
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
@@ -35,12 +32,15 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.declaration.Declarati
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.DependentBlockOpcodes;
 import de.uni_passau.fim.se2.litterbox.ast.parser.metadata.ActorMetadataParser;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
+
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
+
+import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 
 public class ActorDefinitionParser {
 

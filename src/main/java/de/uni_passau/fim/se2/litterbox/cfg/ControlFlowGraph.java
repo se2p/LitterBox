@@ -28,6 +28,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Message;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.AttributeAboveValue;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Event;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
+
 import java.util.Collections;
 import java.util.Set;
 import java.util.stream.Collectors;

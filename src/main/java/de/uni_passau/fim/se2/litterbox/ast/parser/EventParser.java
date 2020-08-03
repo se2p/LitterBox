@@ -18,10 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.parser;
 
-import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
-import static de.uni_passau.fim.se2.litterbox.ast.opcodes.EventOpcode.*;
-
-
 import com.fasterxml.jackson.databind.JsonNode;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Key;
@@ -35,6 +31,9 @@ import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.EventOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.parser.metadata.BlockMetadataParser;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
+
+import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
+import static de.uni_passau.fim.se2.litterbox.ast.opcodes.EventOpcode.*;
 
 public class EventParser {
 

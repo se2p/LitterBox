@@ -18,9 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.parser;
 
-import static junit.framework.TestCase.fail;
-
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.truth.Truth;
@@ -40,13 +37,16 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.declaration.Declarati
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.declaration.DeclarationStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.ScratchList;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
+
+import static junit.framework.TestCase.fail;
 
 public class ProgramParserTest {
 

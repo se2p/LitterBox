@@ -29,6 +29,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetVariableTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.DataExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.ScratchList;
+
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -76,7 +77,7 @@ public class VariableUseVisitor implements DefinableCollector<de.uni_passau.fim.
     @Override
     public void visit(AttributeOf node) {
         // TODO: Handle this properly
-        
+
         // Name of var or attribute
         Attribute attribute = node.getAttribute();
         // Name of owner

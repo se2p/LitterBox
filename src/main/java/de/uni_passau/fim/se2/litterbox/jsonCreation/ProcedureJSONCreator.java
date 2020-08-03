@@ -18,10 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.jsonCreation;
 
-import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
-import static de.uni_passau.fim.se2.litterbox.jsonCreation.BlockJsonCreatorHelper.*;
-
-
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
@@ -33,8 +29,12 @@ import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ProcedureDefinitio
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ProcedureInfo;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.SymbolTable;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
+
 import java.util.ArrayList;
 import java.util.List;
+
+import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
+import static de.uni_passau.fim.se2.litterbox.jsonCreation.BlockJsonCreatorHelper.*;
 
 public class ProcedureJSONCreator {
     public static String createProcedureJSONString(ProcedureDefinition definition,

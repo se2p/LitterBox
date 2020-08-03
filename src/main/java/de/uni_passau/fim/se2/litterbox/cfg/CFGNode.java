@@ -20,6 +20,7 @@ package de.uni_passau.fim.se2.litterbox.cfg;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
+
 import java.util.*;
 
 public abstract class CFGNode {

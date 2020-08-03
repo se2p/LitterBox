@@ -34,6 +34,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.DeleteClo
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopAll;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopThisScript;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
+
 import java.util.ArrayList;
 import java.util.List;
 

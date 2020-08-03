@@ -18,9 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.jsonCreation;
 
-import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
-
-
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorType;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
@@ -36,7 +33,10 @@ import de.uni_passau.fim.se2.litterbox.ast.model.metadata.ressources.SoundMetada
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ProcedureDefinitionNameMapping;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.SymbolTable;
+
 import java.util.List;
+
+import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 
 public class ActorJSONCreator {
 

@@ -18,11 +18,10 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.parser.metadata;
 
-import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
-
-
 import com.fasterxml.jackson.databind.JsonNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.MetaMetadata;
+
+import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 
 public class MetaMetadataParser {
 
@@ -30,7 +29,7 @@ public class MetaMetadataParser {
         String vm = "";
         String semver = "";
         String agent = "";
-        if (metaNode.has(SEMVER_KEY)){
+        if (metaNode.has(SEMVER_KEY)) {
             semver = metaNode.get(SEMVER_KEY).asText();
         }
         if (metaNode.has(VM_KEY)){

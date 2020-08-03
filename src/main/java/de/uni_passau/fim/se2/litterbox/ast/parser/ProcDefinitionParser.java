@@ -18,9 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.parser;
 
-import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
-
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -42,6 +39,7 @@ import de.uni_passau.fim.se2.litterbox.ast.opcodes.ProcedureOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.parser.metadata.BlockMetadataParser;
 import de.uni_passau.fim.se2.litterbox.ast.parser.metadata.ProcedureMetadataParser;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -49,6 +47,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.logging.Logger;
+
+import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 
 public class ProcDefinitionParser {
     private final static int PROTOTYPE_REFERENCE_POS = 1;

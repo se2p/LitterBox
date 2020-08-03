@@ -18,9 +18,9 @@
  */
 package de.uni_passau.fim.se2.litterbox.cfg;
 
-
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Identifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
+
 import java.util.Objects;
 
 public class Variable implements Defineable {

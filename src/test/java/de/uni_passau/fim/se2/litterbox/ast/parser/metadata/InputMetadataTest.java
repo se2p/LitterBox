@@ -18,9 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.parser.metadata;
 
-import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
-
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astLists.InputMetadataList;
@@ -28,11 +25,14 @@ import de.uni_passau.fim.se2.litterbox.ast.model.metadata.input.DataInputMetadat
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.input.InputMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.input.ReferenceInputMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.input.TypeInputMetadata;
-import java.io.File;
-import java.io.IOException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+
+import java.io.File;
+import java.io.IOException;
+
+import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 
 public class InputMetadataTest {
     private static ObjectMapper mapper = new ObjectMapper();

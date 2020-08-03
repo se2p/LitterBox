@@ -38,6 +38,7 @@ package de.uni_passau.fim.se2.litterbox.cfg;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Message;
+
 import java.util.Objects;
 
 public class MessageNode extends CFGNode {
