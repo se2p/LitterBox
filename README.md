@@ -167,13 +167,17 @@ the [University of Passau](https://www.uni-passau.de).
 
 Contributors:
 
-Christoph Frädrich  
-Gordon Fraser  
-Ute Heuer  
-Nina Körber  
-Stephan Lukasczyk  
-Florian Obermüller  
-Andreas Stahlbauer  
-Florian Sulzmeier  
+Christoph Frädrich
+Gordon Fraser
+Ute Heuer
+Nina Körber
+Stephan Lukasczyk
+Florian Obermüller
+Andreas Stahlbauer
+Florian Sulzmeier
+Ewald Wasmeier
 
-LitterBox is supported by the project FR 2955/3-1 funded by the "Deutsche Forschungsgemeinschaft".
+LitterBox is supported by the project FR 2955/3-1 funded by the
+"Deutsche Forschungsgemeinschaft" and BMBF project
+"primary::programming" as part of the Qualitätsoffensive
+Lehrerbildung.
