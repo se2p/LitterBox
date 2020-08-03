@@ -19,6 +19,7 @@
 package de.uni_passau.fim.se2.litterbox.analytics.smells;
 
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.*;
@@ -873,6 +874,15 @@ public class LongScript extends AbstractIssueFinder {
     public void visit(SetDragMode node) {
         if (setHint) {
             addIssue(node, HINT_TEXT, node.getMetadata());
+        } else {
+            visitChildren(node);
+        }
+    }
+
+    @Override
+    public void visit(ASTNode node) {
+        if (setHint) {
+            addIssueWithLooseComment(HINT_TEXT);
         } else {
             visitChildren(node);
         }

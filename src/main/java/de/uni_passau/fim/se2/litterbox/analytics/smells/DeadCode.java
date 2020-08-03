@@ -19,11 +19,14 @@
 package de.uni_passau.fim.se2.litterbox.analytics.smells;
 
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.CloneOfMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.PenWithParamMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
@@ -1198,6 +1201,20 @@ public class DeadCode extends AbstractIssueFinder {
     public void visit(ListContains node) {
         if (addHint) {
             addIssue(node, HINT_TEXT, node.getMetadata());
+        } else {
+            visitChildren(node);
+        }
+    }
+
+    @Override
+    public void visit(Qualified node) {
+        node.getSecond().accept(this);
+    }
+
+    @Override
+    public void visit(ASTNode node) {
+        if (addHint) {
+           addIssueWithLooseComment(HINT_TEXT);
         } else {
             visitChildren(node);
         }
