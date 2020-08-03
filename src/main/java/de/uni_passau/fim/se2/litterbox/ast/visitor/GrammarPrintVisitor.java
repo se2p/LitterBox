@@ -64,8 +64,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.touchable.SpriteTouchable;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.Touchable;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.Color;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.FromNumber;
-import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.Rgba;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.*;
+
 import java.io.PrintStream;
 import java.util.List;
 
@@ -1009,15 +1009,6 @@ public class GrammarPrintVisitor extends PrintVisitor {
         emitToken("key");
         isKeyPressed.getKey().accept(this);
         emitNoSpace(" pressed");
-    }
-
-    @Override
-    public void visit(Rgba rgba) {
-        emitToken("rgba");
-        rgba.getrValue().accept(this);
-        rgba.getgValue().accept(this);
-        rgba.getbValue().accept(this);
-        rgba.getaValue().accept(this);
     }
 
     @Override

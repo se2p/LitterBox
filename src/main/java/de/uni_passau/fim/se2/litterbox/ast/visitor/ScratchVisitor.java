@@ -86,7 +86,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.timecomp.TimeComp;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.Color;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.FromNumber;
-import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.Rgba;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.DataExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Parameter;
@@ -1231,18 +1230,6 @@ public interface ScratchVisitor {
         visit((Color) node);
     }
 
-    /**
-     * Default implementation of visit method for {@link Rgba}.
-     *
-     * <p>
-     * Iterates all children of this node without performing any action.
-     * </p>
-     *
-     * @param node Rgba  Node of which the children will be iterated
-     */
-    default void visit(Rgba node) {
-        visit((Color) node);
-    }
 
     /**
      * Default implementation of visit method for {@link NumExpr}.
