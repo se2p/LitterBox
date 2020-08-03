@@ -83,7 +83,8 @@ public class DataExprParser {
      * @param allBlocks       All blocks of the actor definition currently analysed.
      * @return The DataExpr - either a Parameter, Variable or ScratchList.
      */
-    public static Expression parseDataExpr(JsonNode containingBlock, String inputKey, JsonNode allBlocks) throws ParsingException {
+    public static Expression parseDataExpr(JsonNode containingBlock, String inputKey, JsonNode allBlocks)
+            throws ParsingException {
         Preconditions.checkArgument(parsableAsDataExpr(containingBlock, inputKey, allBlocks));
         ArrayNode exprArray = ExpressionParser.getExprArray(containingBlock.get(INPUTS_KEY), inputKey);
         if (exprArray.get(POS_BLOCK_ID) instanceof TextNode) {

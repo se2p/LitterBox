@@ -34,7 +34,8 @@ import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 
 public class SpriteMotionStmtParser {
 
-    public static SpriteMotionStmt parse(String identifier, JsonNode current, JsonNode allBlocks) throws ParsingException {
+    public static SpriteMotionStmt parse(String identifier, JsonNode current, JsonNode allBlocks)
+            throws ParsingException {
         Preconditions.checkNotNull(current);
         Preconditions.checkNotNull(allBlocks);
 

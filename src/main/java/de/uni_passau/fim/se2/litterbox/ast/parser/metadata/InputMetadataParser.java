@@ -39,12 +39,12 @@ public class InputMetadataParser {
         } else if (inputArray.get(POS_BLOCK_ID) instanceof NullNode) {
             return new ReferenceInputMetadata(inputName, null);
         } else {
-            Preconditions.checkArgument(inputNode.get(POS_BLOCK_ID) instanceof ArrayNode, "The entry at POS_BLOCK_ID " +
-                    "is not an " +
-                    "ArrayNode.");
+            Preconditions.checkArgument(inputNode.get(POS_BLOCK_ID) instanceof ArrayNode, "The entry at POS_BLOCK_ID "
+                    + "is not an "
+                    + "ArrayNode.");
             ArrayNode valueArray = (ArrayNode) inputNode.get(POS_BLOCK_ID);
             int type = valueArray.get(POS_INPUT_TYPE).asInt();
-            if (type == VAR_PRIMITIVE || type == LIST_PRIMITIVE|| type == BROADCAST_PRIMITIVE) {
+            if (type == VAR_PRIMITIVE || type == LIST_PRIMITIVE || type == BROADCAST_PRIMITIVE) {
                 String dataName = valueArray.get(DATA_INPUT_NAME_POS).asText();
                 String identifier = valueArray.get(DATA_INPUT_IDENTIFIER_POS).asText();
                 return new DataInputMetadata(inputName, type, dataName, identifier);

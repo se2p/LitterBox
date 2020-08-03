@@ -137,13 +137,12 @@ public class ExpressionJSONCreator implements ScratchVisitor {
     @Override
     public void visit(ColorLiteral node) {
         StringBuilder colorString = new StringBuilder();
-        colorString.append("#").append(String.format("0x%02x", node.getRed()).substring(2)).append(String.format("0x" +
-                "%02X", node.getGreen()).substring(2)).append(String.format("0x%02X",
+        colorString.append("#").append(String.format("0x%02x", node.getRed()).substring(2)).append(String.format("0x"
+                + "%02X", node.getGreen()).substring(2)).append(String.format("0x%02X",
                 node.getBlue()).substring(2));
         finishedJSONStrings.add(createTypeInput(INPUT_SAME_BLOCK_SHADOW, COLOR_PICKER_PRIMITIVE,
                 colorString.toString()));
     }
-
 
     private void createSimpleExpression(NonDataBlockMetadata metadata) {
         if (topExpressionId == null) {
@@ -157,7 +156,6 @@ public class ExpressionJSONCreator implements ScratchVisitor {
     @Override
     public void visit(Answer node) {
         createSimpleExpression((NonDataBlockMetadata) node.getMetadata());
-
     }
 
     @Override
@@ -404,7 +402,6 @@ public class ExpressionJSONCreator implements ScratchVisitor {
         previousBlockId = metadata.getBlockId();
     }
 
-
     @Override
     public void visit(Touching node) {
         NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
@@ -587,12 +584,16 @@ public class ExpressionJSONCreator implements ScratchVisitor {
                 DataBlockMetadata dataBlockMetadata = (DataBlockMetadata) metadata;
                 createField(jsonString, dataBlockMetadata.getBlockId()).append("[").append(LIST_PRIMITIVE);
                 jsonString.append(",\"").append(listName).append("\",\"");
-                jsonString.append(listId).append("\",").append(dataBlockMetadata.getX()).append(",").append(dataBlockMetadata.getY()).append("]");
+                jsonString.append(listId)
+                        .append("\",")
+                        .append(dataBlockMetadata.getX())
+                        .append(",")
+                        .append(dataBlockMetadata.getY())
+                        .append("]");
             } else {
                 jsonString.append(createReferenceType(INPUT_DIFF_BLOCK_SHADOW, LIST_PRIMITIVE, listName, listId,
                         true));
             }
-
         } else if (node.getSecond() instanceof Variable) {
             Variable variable = (Variable) node.getSecond();
             String variableName = variable.getName().getName();
@@ -602,7 +603,12 @@ public class ExpressionJSONCreator implements ScratchVisitor {
                 DataBlockMetadata dataBlockMetadata = (DataBlockMetadata) metadata;
                 createField(jsonString, dataBlockMetadata.getBlockId()).append("[").append(VAR_PRIMITIVE);
                 jsonString.append(",\"").append(variableName).append("\",\"");
-                jsonString.append(variableId).append("\",").append(dataBlockMetadata.getX()).append(",").append(dataBlockMetadata.getY()).append("]");
+                jsonString.append(variableId)
+                        .append("\",")
+                        .append(dataBlockMetadata.getX())
+                        .append(",")
+                        .append(dataBlockMetadata.getY())
+                        .append("]");
             } else {
                 jsonString.append(createReferenceType(INPUT_DIFF_BLOCK_SHADOW, VAR_PRIMITIVE, variableName, variableId,
                         true));
@@ -672,8 +678,7 @@ public class ExpressionJSONCreator implements ScratchVisitor {
     }
 
     private String createExpr(NonDataBlockMetadata metadata, ASTNode expr, String inputName, boolean withDefault) {
-        IdJsonStringTuple tuple = expressionJSONCreator.createExpressionJSON(metadata.getBlockId(), expr
-                , symbolTable);
+        IdJsonStringTuple tuple = expressionJSONCreator.createExpressionJSON(metadata.getBlockId(), expr, symbolTable);
         if (tuple.getId() == null) {
             StringBuilder jsonString = new StringBuilder();
             createField(jsonString, inputName).append(tuple.getJsonString());

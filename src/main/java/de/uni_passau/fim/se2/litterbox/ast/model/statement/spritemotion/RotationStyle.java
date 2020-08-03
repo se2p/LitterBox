@@ -37,10 +37,6 @@ public enum RotationStyle implements ASTLeaf {
         this.token = token;
     }
 
-    public String getToken() {
-        return token;
-    }
-
     public static RotationStyle fromString(String type) {
         for (RotationStyle f : values()) {
             if (f.getToken().equals(type.toLowerCase())) {
@@ -57,6 +53,10 @@ public enum RotationStyle implements ASTLeaf {
             }
         }
         return false;
+    }
+
+    public String getToken() {
+        return token;
     }
 
     @Override

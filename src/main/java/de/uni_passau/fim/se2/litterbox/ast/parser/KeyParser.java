@@ -55,9 +55,9 @@ public class KeyParser {
             current.get(Constants.INPUTS_KEY).elements().forEachRemaining(inputsList::add);
             if (getShadowIndicator((ArrayNode) inputsList.get(0)) == 1) {
                 // If there is only the menu in the inputs, we evaluate the menu
-                String menuBlockID = current.get(INPUTS_KEY).get(KEY_OPTION).get(POS_INPUT_VALUE).asText();
-                block = allBlocks.get(menuBlockID);
-                metadata = BlockMetadataParser.parse(menuBlockID, block);
+                String menuBlockId = current.get(INPUTS_KEY).get(KEY_OPTION).get(POS_INPUT_VALUE).asText();
+                block = allBlocks.get(menuBlockId);
+                metadata = BlockMetadataParser.parse(menuBlockId, block);
             } else {
                 // If there is a variable or expression we evaluate it and use it as key;
                 final NumExpr numExpr = NumExprParser.parseNumExpr(current, KEY_OPTION, allBlocks);

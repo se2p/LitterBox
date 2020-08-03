@@ -31,10 +31,10 @@ public class IndexOf extends AbstractNode implements NumExpr {
     private final BlockMetadata metadata;
 
     public IndexOf(Expression expr, Identifier identifier, BlockMetadata metadata) {
-        super(expr, identifier,metadata);
+        super(expr, identifier, metadata);
         this.expr = expr;
         this.identifier = identifier;
-        this.metadata=metadata;
+        this.metadata = metadata;
     }
 
     public BlockMetadata getMetadata() {

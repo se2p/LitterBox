@@ -29,7 +29,7 @@ public class BackdropSwitchTo extends AbstractNode implements Event {
     private final BlockMetadata metadata;
 
     public BackdropSwitchTo(LocalIdentifier backdrop, BlockMetadata metadata) {
-        super(backdrop,metadata);
+        super(backdrop, metadata);
         this.backdrop = backdrop;
         this.metadata = metadata;
     }

@@ -108,6 +108,7 @@ public class ControlFlowGraph {
         graph.addNode(cfgNode);
         return cfgNode;
     }
+
     public void addEdge(CFGNode from, CFGNode to) {
         graph.putEdge(from, to);
     }
@@ -121,7 +122,7 @@ public class ControlFlowGraph {
     }
 
     public void fixDetachedEntryExit() {
-        if(graph.degree(entryNode) == 0) {
+        if (graph.degree(entryNode) == 0) {
             graph.putEdge(entryNode, exitNode);
         }
     }
@@ -132,7 +133,7 @@ public class ControlFlowGraph {
         builder.append("digraph {");
         builder.append(System.lineSeparator());
 
-        for(EndpointPair<CFGNode> edge : graph.edges()) {
+        for (EndpointPair<CFGNode> edge : graph.edges()) {
             builder.append("  \"");
             builder.append(edge.nodeU());
             builder.append("\" -> \"");
@@ -160,5 +161,4 @@ public class ControlFlowGraph {
     public Iterable<CFGNode> traverse() {
         return Traverser.forGraph(graph).breadthFirst(entryNode);
     }
-
 }

@@ -87,7 +87,7 @@ public class MessageNeverReceived extends AbstractIssueFinder {
             if (!addComment) {
                 final String actorName = currentActor.getIdent().getName();
                 messageSent.add(new Pair<>(actorName, msgName));
-            } else if(notReceivedMessages.contains(msgName)){
+            } else if (notReceivedMessages.contains(msgName)) {
                 addIssue(node, HINT_TEXT, node.getMetadata());
             }
         }
@@ -100,7 +100,7 @@ public class MessageNeverReceived extends AbstractIssueFinder {
             if (!addComment) {
                 final String actorName = currentActor.getIdent().getName();
                 messageSent.add(new Pair<>(actorName, msgName));
-            } else if(notReceivedMessages.contains(msgName)){
+            } else if (notReceivedMessages.contains(msgName)) {
                 addIssue(node, HINT_TEXT, node.getMetadata());
             }
         }

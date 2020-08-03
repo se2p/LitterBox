@@ -37,8 +37,12 @@ public class Variable implements Defineable {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         Variable variable = (Variable) o;
         return Objects.equals(identifier, variable.identifier);
     }
@@ -50,15 +54,15 @@ public class Variable implements Defineable {
 
     @Override
     public String toString() {
-        if(identifier instanceof Qualified) {
-            Qualified q = (Qualified)identifier;
-            return "Variable{" +
-                    "identifier=" + q.getFirst().getName()+"." + q.getSecond().getName().getName() +
-                    '}';
+        if (identifier instanceof Qualified) {
+            Qualified q = (Qualified) identifier;
+            return "Variable{"
+                    + "identifier=" + q.getFirst().getName() + "." + q.getSecond().getName().getName()
+                    + '}';
         } else {
-            return "Variable{" +
-                    "identifier=" + identifier +
-                    '}';
+            return "Variable{"
+                    + "identifier=" + identifier
+                    + '}';
         }
     }
 }

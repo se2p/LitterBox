@@ -35,12 +35,12 @@ public class Program extends AbstractNode {
 
     public Program(LocalIdentifier ident, ActorDefinitionList actorDefinitionList, SymbolTable symbolTable,
                    ProcedureDefinitionNameMapping procedureMapping, ProgramMetadata metadata) {
-        super(ident, actorDefinitionList,metadata);
+        super(ident, actorDefinitionList, metadata);
         this.ident = Preconditions.checkNotNull(ident);
         this.actorDefinitionList = Preconditions.checkNotNull(actorDefinitionList);
         this.procedureMapping = procedureMapping;
         this.symbolTable = symbolTable;
-        this.metadata=metadata;
+        this.metadata = metadata;
     }
 
     public ProgramMetadata getMetadata() {

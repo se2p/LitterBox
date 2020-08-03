@@ -110,11 +110,13 @@ public class ActorSoundStmtParser {
         return exprArray.get(Constants.POS_INPUT_SHADOW).asInt();
     }
 
-    private static ActorSoundStmt parseSetVolumeTo(JsonNode current, JsonNode allBlocks, BlockMetadata metadata) throws ParsingException {
+    private static ActorSoundStmt parseSetVolumeTo(JsonNode current, JsonNode allBlocks, BlockMetadata metadata)
+            throws ParsingException {
         return new SetVolumeTo(NumExprParser.parseNumExpr(current, VOLUME_KEY_CAPS, allBlocks), metadata);
     }
 
-    private static ActorSoundStmt parseSetSoundEffect(JsonNode current, JsonNode allBlocks, BlockMetadata metadata) throws ParsingException {
+    private static ActorSoundStmt parseSetSoundEffect(JsonNode current, JsonNode allBlocks, BlockMetadata metadata)
+            throws ParsingException {
         String effect = current.get(FIELDS_KEY).get(EFFECT_KEY).get(0).asText();
         Preconditions.checkArgument(SoundEffect.contains(effect));
         return new SetSoundEffectTo(SoundEffect.fromString(effect), NumExprParser.parseNumExpr(current, VALUE_KEY,

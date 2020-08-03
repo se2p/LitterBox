@@ -49,7 +49,7 @@ public class GrammarPrintVisitorTest {
     }
 
     @Ignore // This is not really a test, it's a convenience method for showing what the visitor does or does not
-   // @Test
+    // @Test
     public void testVisitor() {
         PrintStream stream = new PrintStream(System.out);
         GrammarPrintVisitor visitor = new GrammarPrintVisitor(stream);
@@ -63,7 +63,7 @@ public class GrammarPrintVisitorTest {
     }
 
     @Ignore // This is not really a test, it's a convenience method for showing what the visitor does or does not
-   // @Test
+    // @Test
     public void testVisitorBig() {
         String path = "src/test/fixtures/printvisitor/grammarvisitorbig.json";
         File file = new File(path);

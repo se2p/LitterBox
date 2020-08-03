@@ -25,13 +25,10 @@ import java.util.*;
 
 public abstract class CFGNode {
 
-    private Set<Definition> definitions = null;
-
-    private Set<Use> uses = null;
-
     protected ActorDefinition actor = null;
-
     protected ASTNode scriptOrProcedure = null;
+    private Set<Definition> definitions = null;
+    private Set<Use> uses = null;
 
     public abstract ASTNode getASTNode();
 
@@ -39,10 +36,12 @@ public abstract class CFGNode {
         return actor;
     }
 
-    public ASTNode getScriptOrProcedure() { return scriptOrProcedure; }
+    public ASTNode getScriptOrProcedure() {
+        return scriptOrProcedure;
+    }
 
     public Set<Definition> getDefinitions() {
-        if(definitions == null) {
+        if (definitions == null) {
             definitions = calculateDefinitions();
         }
 
@@ -50,7 +49,7 @@ public abstract class CFGNode {
     }
 
     public Set<Use> getUses() {
-        if(uses == null) {
+        if (uses == null) {
             uses = calculateUses();
         }
 
@@ -58,7 +57,7 @@ public abstract class CFGNode {
     }
 
     private Set<Definition> calculateDefinitions() {
-        if(getASTNode() == null) {
+        if (getASTNode() == null) {
             return Collections.emptySet();
         }
 
@@ -68,12 +67,11 @@ public abstract class CFGNode {
                 new ListDefinitionVisitor()
         ));
 
-
-        if(getActor() != null) {
+        if (getActor() != null) {
             collectors.add(new AttributeDefinitionVisitor(getActor()));
         }
 
-        for(DefinableCollector collector : collectors) {
+        for (DefinableCollector collector : collectors) {
             getASTNode().accept(collector);
             Set<Defineable> defineables = collector.getDefineables();
             defineables.forEach(d -> definitions.add(new Definition(this, d)));
@@ -83,7 +81,7 @@ public abstract class CFGNode {
     }
 
     private Set<Use> calculateUses() {
-        if(getASTNode() == null) {
+        if (getASTNode() == null) {
             return Collections.emptySet();
         }
 
@@ -93,16 +91,15 @@ public abstract class CFGNode {
                 new ListUseVisitor()
         ));
 
-        if(getActor() != null) {
+        if (getActor() != null) {
             collectors.add(new AttributeUseVisitor(getActor()));
         }
 
-         for(DefinableCollector collector : collectors) {
+        for (DefinableCollector collector : collectors) {
             getASTNode().accept(collector);
             Set<Defineable> defineables = collector.getDefineables();
             defineables.forEach(d -> uses.add(new Use(this, d)));
-         }
-         return uses;
+        }
+        return uses;
     }
-
 }

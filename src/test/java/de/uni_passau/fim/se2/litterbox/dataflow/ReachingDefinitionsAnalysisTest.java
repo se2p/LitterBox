@@ -41,7 +41,6 @@ import static com.google.common.truth.Truth.assertThat;
 
 public class ReachingDefinitionsAnalysisTest {
 
-
     private Program getAST(String fileName) throws IOException, ParsingException {
         File file = new File(fileName);
         ObjectMapper objectMapper = new ObjectMapper();
@@ -55,7 +54,6 @@ public class ReachingDefinitionsAnalysisTest {
         visitor.visit(getAST(fileName));
         return visitor.getControlFlowGraph();
     }
-
 
     @Test
     public void testReachingDefinition() throws IOException, ParsingException {
@@ -103,7 +101,6 @@ public class ReachingDefinitionsAnalysisTest {
         assertThat(analysis.getDataflowFacts(sayNode)).containsExactly(firstDefinition, secondDefinition);
         assertThat(analysis.getDataflowFacts(exitNode)).containsExactly(firstDefinition, secondDefinition);
     }
-
 
     @Test
     public void testReachingDefinitionsInClone() throws IOException, ParsingException {

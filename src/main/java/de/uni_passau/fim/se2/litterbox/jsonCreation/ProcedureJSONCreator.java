@@ -73,16 +73,16 @@ public class ProcedureJSONCreator {
         //create prototype
         PrototypeMutationMetadata protoMutationMeta = (PrototypeMutationMetadata) protoMetadata.getMutation();
         List<String> argumentIds = protoMutationMeta.getArgumentIds();
-        Preconditions.checkArgument(argumentIds.size() >= parameterInfos.size(), "Number of parameters is not equal " +
-                "to the number of argument ids");
+        Preconditions.checkArgument(argumentIds.size() >= parameterInfos.size(), "Number of parameters is not equal "
+                + "to the number of argument ids");
         inputs = new ArrayList<>();
         for (int i = 0; i < argumentIds.size(); i++) {
             inputs.add(createReferenceInput(argumentIds.get(i), INPUT_SAME_BLOCK_SHADOW, parameterInfos.get(i).getId(),
                     false));
         }
 
-        String mutationString = createPrototypeMetadata(protoMutationMeta.getTagName(), procInfo.getName(), argumentIds
-                , parameterInfos, protoMutationMeta.isWarp());
+        String mutationString = createPrototypeMetadata(protoMutationMeta.getTagName(), procInfo.getName(),
+                argumentIds, parameterInfos, protoMutationMeta.isWarp());
         jsonString.append(createBlockWithMutationString(protoMetadata, null, defMetadata.getBlockId(),
                 createInputs(inputs), EMPTY_VALUE, mutationString));
 
@@ -95,16 +95,15 @@ public class ProcedureJSONCreator {
         return jsonString.toString();
     }
 
-    private static ParameterInfo createParameters(StringBuilder jsonString, String prototypeID,
+    private static ParameterInfo createParameters(StringBuilder jsonString, String prototypeId,
                                                   ParameterDefinition parameterDefinition) {
         NonDataBlockMetadata metadata = (NonDataBlockMetadata) parameterDefinition.getMetadata();
         jsonString.append(createBlockWithoutMutationString(metadata,
                 null,
-                prototypeID, EMPTY_VALUE, createFields(metadata.getFields().getList().get(0).getFieldsName(),
+                prototypeId, EMPTY_VALUE, createFields(metadata.getFields().getList().get(0).getFieldsName(),
                         parameterDefinition.getIdent().getName(), null)));
         return new ParameterInfo(parameterDefinition.getIdent().getName(), metadata.getBlockId(),
                 parameterDefinition.getType());
-
     }
 }
 

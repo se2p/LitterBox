@@ -51,12 +51,18 @@ public class Qualified extends AbstractNode implements Identifier {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        if (!super.equals(o)) {
+            return false;
+        }
         Qualified qualified = (Qualified) o;
-        return Objects.equals(first, qualified.first) &&
-                Objects.equals(second, qualified.second);
+        return Objects.equals(first, qualified.first)
+                && Objects.equals(second, qualified.second);
     }
 
     @Override

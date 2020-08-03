@@ -27,5 +27,4 @@ public class UnspecifiedStringExpr extends UnspecifiedExpression implements Stri
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);
     }
-
 }

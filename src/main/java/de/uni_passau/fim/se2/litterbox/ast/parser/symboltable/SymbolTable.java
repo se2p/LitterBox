@@ -67,8 +67,8 @@ public class SymbolTable {
         messages.put(name, info);
     }
 
-    public String getListIdentifierFromActorAndName(String actor, String name){
-        Set<Entry<String,ExpressionListInfo>> entries = lists.entrySet();
+    public String getListIdentifierFromActorAndName(String actor, String name) {
+        Set<Entry<String, ExpressionListInfo>> entries = lists.entrySet();
         for (Entry<String, ExpressionListInfo> current : entries) {
             ExpressionListInfo info = current.getValue();
             if (info.getVariableName().equals(name) && info.getActor().equals(actor)) {
@@ -78,8 +78,8 @@ public class SymbolTable {
         return null;
     }
 
-    public String getVariableIdentifierFromActorAndName(String actor, String name){
-        Set<Entry<String,VariableInfo>> entries = variables.entrySet();
+    public String getVariableIdentifierFromActorAndName(String actor, String name) {
+        Set<Entry<String, VariableInfo>> entries = variables.entrySet();
         for (Entry<String, VariableInfo> current : entries) {
             VariableInfo info = current.getValue();
             if (info.getVariableName().equals(name) && info.getActor().equals(actor)) {

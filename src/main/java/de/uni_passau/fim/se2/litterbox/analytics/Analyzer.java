@@ -98,7 +98,7 @@ public abstract class Analyzer {
     abstract void check(File fileEntry, String csv);
 
     /**
-     * Extracts a Scratch Program from a Json or sb3 file
+     * Extracts a Scratch Program from a Json or sb3 file.
      *
      * @param fileEntry of the json or sb3 file
      * @return the parsed program or null in case the program could not be loaded or parsed

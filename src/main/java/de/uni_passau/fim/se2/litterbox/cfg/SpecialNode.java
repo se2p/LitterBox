@@ -41,8 +41,12 @@ public class SpecialNode extends CFGNode {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         SpecialNode that = (SpecialNode) o;
         return Objects.equals(name, that.name);
     }

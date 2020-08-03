@@ -20,7 +20,6 @@ package de.uni_passau.fim.se2.litterbox.analytics.smells;
 
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
-import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatTimesStmt;
@@ -36,6 +35,15 @@ public class NestedLoops extends AbstractIssueFinder {
     public static final String NAME = "nested_loops";
     public static final String HINT_TEXT = "nested_loops_hint";
 
+    private void checkNested(List<Stmt> stmts) {
+        if (stmts.size() == 1 && ((stmts.get(0) instanceof UntilStmt)
+                || (stmts.get(0) instanceof RepeatTimesStmt)
+                || (stmts.get(0) instanceof RepeatForeverStmt))) {
+            // TODO: Cast is nasty
+            issues.add(new Issue(this, currentActor, stmts.get(0)));
+        }
+    }
+
     @Override
     public void visit(UntilStmt node) {
         checkNested(node.getStmtList().getStmts());
@@ -46,13 +54,6 @@ public class NestedLoops extends AbstractIssueFinder {
     public void visit(RepeatForeverStmt node) {
         checkNested(node.getStmtList().getStmts());
         visitChildren(node);
-    }
-
-    private void checkNested(List<Stmt> stmts) {
-        if (stmts.size() == 1 && ((stmts.get(0) instanceof UntilStmt) || (stmts.get(0) instanceof RepeatTimesStmt) || (stmts.get(0) instanceof RepeatForeverStmt))) {
-            // TODO: Cast is nasty
-            issues.add(new Issue(this, currentActor, (AbstractNode) stmts.get(0)));
-        }
     }
 
     @Override

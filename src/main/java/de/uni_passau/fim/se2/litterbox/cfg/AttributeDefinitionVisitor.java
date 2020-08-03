@@ -120,7 +120,6 @@ public class AttributeDefinitionVisitor implements DefinableCollector<Attribute>
         definitions.add(Attribute.rotationOf(currentActor.getIdent()));
     }
 
-
     //---------------------------------------------------------------
     // Costume
 
@@ -147,17 +146,16 @@ public class AttributeDefinitionVisitor implements DefinableCollector<Attribute>
         definitions.add(Attribute.sizeOf(currentActor.getIdent()));
     }
 
-
     //---------------------------------------------------------------
     // Backdrop
-//
-//    @Override
-//    public void visit(NextBackdrop node) {
-//        definitions.add(Attribute.backdropOf(stageActor));
-//    }
-//
-//    @Override
-//    public void visit(BackdropSwitchTo node) {
-//        definitions.add(Attribute.backdropOf(stageActor));
-//    }
+    //
+    //    @Override
+    //    public void visit(NextBackdrop node) {
+    //        definitions.add(Attribute.backdropOf(stageActor));
+    //    }
+    //
+    //    @Override
+    //    public void visit(BackdropSwitchTo node) {
+    //        definitions.add(Attribute.backdropOf(stageActor));
+    //    }
 }

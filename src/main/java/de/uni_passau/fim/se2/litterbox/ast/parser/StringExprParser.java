@@ -68,8 +68,8 @@ public class StringExprParser {
         int shadowIndicator = getShadowIndicator(exprArray);
 
         boolean parsableAsStringLiteral = false;
-        if (shadowIndicator == INPUT_SAME_BLOCK_SHADOW ||
-                (shadowIndicator == INPUT_BLOCK_NO_SHADOW && !(exprArray.get(POS_BLOCK_ID) instanceof TextNode))) {
+        if (shadowIndicator == INPUT_SAME_BLOCK_SHADOW
+                || (shadowIndicator == INPUT_BLOCK_NO_SHADOW && !(exprArray.get(POS_BLOCK_ID) instanceof TextNode))) {
             try {
                 ExpressionParser.getDataArrayByName(inputs, inputKey).get(POS_INPUT_VALUE);
                 parsableAsStringLiteral = true;
@@ -109,7 +109,8 @@ public class StringExprParser {
             ArrayNode exprArray = ExpressionParser.getExprArray(containingBlock.get(INPUTS_KEY), inputKey);
             int shadowIndicator = ExpressionParser.getShadowIndicator(exprArray);
             if (shadowIndicator == INPUT_SAME_BLOCK_SHADOW
-                    || (shadowIndicator == INPUT_BLOCK_NO_SHADOW && !(exprArray.get(POS_BLOCK_ID) instanceof TextNode))) {
+                    || (shadowIndicator == INPUT_BLOCK_NO_SHADOW
+                    && !(exprArray.get(POS_BLOCK_ID) instanceof TextNode))) {
                 try {
                     return parseStr(containingBlock.get(INPUTS_KEY), inputKey);
                 } catch (ParsingException e) {
@@ -135,7 +136,8 @@ public class StringExprParser {
      * @throws ParsingException If the opcode of the block is no StringExprOpcode
      *                          or if parsing inputs of the block fails.
      */
-    static StringExpr parseBlockStringExpr(String blockId, JsonNode exprBlock, JsonNode allBlocks) throws ParsingException {
+    static StringExpr parseBlockStringExpr(String blockId, JsonNode exprBlock, JsonNode allBlocks)
+            throws ParsingException {
         String opcodeString = exprBlock.get(OPCODE_KEY).asText();
         Preconditions
                 .checkArgument(StringExprOpcode.contains(opcodeString), opcodeString + " is not a StringExprOpcode.");

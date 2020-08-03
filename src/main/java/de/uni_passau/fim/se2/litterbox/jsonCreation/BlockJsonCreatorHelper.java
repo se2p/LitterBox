@@ -201,7 +201,6 @@ public abstract class BlockJsonCreatorHelper {
         return jsonString;
     }
 
-
     public static String getKeyValue(int numberValue) {
         String key;
         switch (numberValue) {
@@ -268,7 +267,13 @@ public abstract class BlockJsonCreatorHelper {
     public static String createTypeInput(int shadowIndicator, int typeNumber,
                                          String value) {
         StringBuilder jsonString = new StringBuilder();
-        jsonString.append("[").append(shadowIndicator).append(",").append("[").append(typeNumber).append(",\"").append(value).append("\"]]");
+        jsonString.append("[")
+                .append(shadowIndicator)
+                .append(",").append("[")
+                .append(typeNumber)
+                .append(",\"")
+                .append(value)
+                .append("\"]]");
         return jsonString.toString();
     }
 
@@ -283,7 +288,16 @@ public abstract class BlockJsonCreatorHelper {
     public static String createReferenceType(int shadowIndicator, int typeNumber,
                                              String value, String reference, boolean withDefault) {
         StringBuilder jsonString = new StringBuilder();
-        jsonString.append("[").append(shadowIndicator).append(",").append("[").append(typeNumber).append(",\"").append(value).append("\",\"").append(reference).append("\"]");
+        jsonString.append("[").append(shadowIndicator)
+                .append(",")
+                .append("[")
+                .append(typeNumber)
+                .append(",\"")
+                .append(value)
+                .append("\",\"")
+                .append(reference)
+                .append("\"]");
+
         if (withDefault) {
             jsonString.append(",").append(DEFAULT_VALUE);
         }

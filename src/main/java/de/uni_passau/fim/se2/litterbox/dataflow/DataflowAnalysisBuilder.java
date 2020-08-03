@@ -61,5 +61,4 @@ public class DataflowAnalysisBuilder<T extends DataflowFact> {
     public DataflowAnalysis<T> build() {
         return analysis;
     }
-
 }

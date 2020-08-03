@@ -75,7 +75,6 @@ public class LivenessAnalysisTest {
         assertThat(analysis.getDataflowFacts(exitNode)).containsExactly();
     }
 
-
     @Test
     public void testMultipleUses() throws IOException, ParsingException {
         ControlFlowGraph cfg = getCFG("src/test/fixtures/dataflow/variabletwouses.json");
@@ -89,7 +88,7 @@ public class LivenessAnalysisTest {
         CFGNode sayNode1 = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof SayForSecs).findFirst().get();
         CFGNode sayNode2 = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof SayForSecs).filter(n -> n != sayNode1).findFirst().get();
 
-        Use firstUse  = sayNode1.getUses().iterator().next();
+        Use firstUse = sayNode1.getUses().iterator().next();
         Use secondUse = sayNode2.getUses().iterator().next();
 
         assertThat(analysis.getDataflowFacts(entryNode)).isEmpty();
@@ -113,9 +112,9 @@ public class LivenessAnalysisTest {
         CFGNode ifNode = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof IfThenStmt).findFirst().get();
         CFGNode sayNode = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof SayForSecs).findFirst().get();
 
-        Use firstUse  = ifNode.getUses().iterator().next();
+        Use firstUse = ifNode.getUses().iterator().next();
         Use secondUse = changeNode.getUses().iterator().next();
-        Use thirdUse  = sayNode.getUses().iterator().next();
+        Use thirdUse = sayNode.getUses().iterator().next();
 
         assertThat(analysis.getDataflowFacts(entryNode)).isEmpty();
         assertThat(analysis.getDataflowFacts(setNode)).containsExactly(firstUse, secondUse, thirdUse);
@@ -124,7 +123,6 @@ public class LivenessAnalysisTest {
         assertThat(analysis.getDataflowFacts(sayNode)).containsExactly();
         assertThat(analysis.getDataflowFacts(exitNode)).containsExactly();
     }
-
 
     @Test
     public void testMultipleUsesInClone() throws IOException, ParsingException {
@@ -141,9 +139,9 @@ public class LivenessAnalysisTest {
         CFGNode cloneNode = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof CreateCloneOf).findFirst().get();
         CFGNode sayNode = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof SayForSecs).findFirst().get();
 
-        Use firstUse  = ifNode.getUses().iterator().next(); // var1
+        Use firstUse = ifNode.getUses().iterator().next(); // var1
         Use secondUse = changeNode.getUses().iterator().next(); // var1
-        Use thirdUse  = sayNode.getUses().iterator().next(); // var2
+        Use thirdUse = sayNode.getUses().iterator().next(); // var2
 
         assertThat(analysis.getDataflowFacts(entryNode)).containsExactly(thirdUse);
         assertThat(analysis.getDataflowFacts(setNode)).containsExactly(firstUse, secondUse, thirdUse);
@@ -153,5 +151,4 @@ public class LivenessAnalysisTest {
         assertThat(analysis.getDataflowFacts(sayNode)).containsExactly();
         assertThat(analysis.getDataflowFacts(exitNode)).containsExactly();
     }
-
 }

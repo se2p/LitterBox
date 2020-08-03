@@ -86,7 +86,8 @@ public class ExpressionParser {
      * @return The parsed expression.
      * @throws ParsingException If the block is not parsable.
      */
-    public static Expression parseExprBlock(String blockId, JsonNode exprBlock, JsonNode allBlocks) throws ParsingException {
+    public static Expression parseExprBlock(String blockId, JsonNode exprBlock, JsonNode allBlocks)
+            throws ParsingException {
         if (exprBlock instanceof ArrayNode) {
             // it's a list or variable
             String idString = exprBlock.get(2).asText();

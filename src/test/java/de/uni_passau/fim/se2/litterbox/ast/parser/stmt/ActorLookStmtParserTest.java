@@ -190,7 +190,7 @@ public class ActorLookStmtParserTest {
             Truth.assertThat(((Qualified) ((HideList) hideVariable).getIdentifier()).getFirst().getName())
                     .isEqualTo("Stage");
             Truth.assertThat(((Qualified) ((HideList) hideVariable).getIdentifier()).getSecond().getName().getName())
-                    .isEqualTo( "List");
+                    .isEqualTo("List");
         } catch (ParsingException e) {
             e.printStackTrace();
             fail();

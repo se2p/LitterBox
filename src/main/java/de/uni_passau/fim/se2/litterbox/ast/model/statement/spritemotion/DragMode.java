@@ -45,10 +45,6 @@ public enum DragMode implements ASTLeaf {
         return false;
     }
 
-    public String getToken() {
-        return token;
-    }
-
     public static DragMode fromString(String type) {
         for (DragMode f : values()) {
             if (f.getToken().equals(type.toLowerCase())) {
@@ -56,6 +52,10 @@ public enum DragMode implements ASTLeaf {
             }
         }
         throw new IllegalArgumentException("Unknown DragMode: " + type);
+    }
+
+    public String getToken() {
+        return token;
     }
 
     @Override

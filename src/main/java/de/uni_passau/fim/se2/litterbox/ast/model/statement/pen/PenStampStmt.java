@@ -28,7 +28,7 @@ public class PenStampStmt extends AbstractNode implements PenStmt, ASTLeaf {
 
     public PenStampStmt(BlockMetadata metadata) {
         super(metadata);
-        this.metadata=metadata;
+        this.metadata = metadata;
     }
 
     public BlockMetadata getMetadata() {

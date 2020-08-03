@@ -44,10 +44,6 @@ public enum SoundEffect implements ASTLeaf {
         return false;
     }
 
-    public String getToken() {
-        return token;
-    }
-
     public static SoundEffect fromString(String type) {
         for (SoundEffect f : values()) {
             if (f.getToken().startsWith(type.toLowerCase())) {
@@ -55,6 +51,10 @@ public enum SoundEffect implements ASTLeaf {
             }
         }
         throw new IllegalArgumentException("Unknown SoundEffect: " + type);
+    }
+
+    public String getToken() {
+        return token;
     }
 
     @Override

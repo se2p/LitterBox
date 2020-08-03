@@ -42,6 +42,27 @@ public class PositionEqualsCheck extends AbstractIssueFinder {
     public static final String HINT_TEXT = "position_equals_check_hint";
     static boolean inCondition;
 
+    boolean checkEquals(Equals equals) {
+        if (!checkOptions(equals.getOperand1())) {
+            return false;
+        }
+
+        return checkOptions(equals.getOperand2());
+    }
+
+    private boolean checkOptions(ComparableExpr operand) {
+        if (operand instanceof MouseX || operand instanceof MouseY || operand instanceof DistanceTo
+                || operand instanceof PositionX || operand instanceof PositionY) {
+            return false;
+        } else if (operand instanceof AttributeOf) {
+            if (((AttributeOf) operand).getAttribute() instanceof AttributeFromFixed) {
+                return ((AttributeFromFixed) ((AttributeOf) operand).getAttribute()).getAttribute() != FixedAttribute.X_POSITION
+                        && ((AttributeFromFixed) ((AttributeOf) operand).getAttribute()).getAttribute() != FixedAttribute.Y_POSITION;
+            }
+        }
+        return true;
+    }
+
     @Override
     public void visit(WaitUntil node) {
         inCondition = true;
@@ -56,28 +77,6 @@ public class PositionEqualsCheck extends AbstractIssueFinder {
                 addIssue(node, HINT_TEXT, node.getMetadata());
             }
         }
-    }
-
-    boolean checkEquals(Equals equals) {
-        if (!checkOptions(equals.getOperand1()))
-            return false;
-
-        return checkOptions(equals.getOperand2());
-    }
-
-    private boolean checkOptions(ComparableExpr operand) {
-        if (operand instanceof MouseX || operand instanceof MouseY || operand instanceof DistanceTo
-                || operand instanceof PositionX || operand instanceof PositionY) {
-            return false;
-        } else if (operand instanceof AttributeOf) {
-            if (((AttributeOf) operand).getAttribute() instanceof AttributeFromFixed) {
-                if (((AttributeFromFixed) ((AttributeOf) operand).getAttribute()).getAttribute() == FixedAttribute.X_POSITION
-                        || ((AttributeFromFixed) ((AttributeOf) operand).getAttribute()).getAttribute() == FixedAttribute.Y_POSITION) {
-                    return false;
-                }
-            }
-        }
-        return true;
     }
 
     @Override

@@ -32,10 +32,10 @@ public class MetaMetadataParser {
         if (metaNode.has(SEMVER_KEY)) {
             semver = metaNode.get(SEMVER_KEY).asText();
         }
-        if (metaNode.has(VM_KEY)){
+        if (metaNode.has(VM_KEY)) {
             vm = metaNode.get(VM_KEY).asText();
         }
-        if (metaNode.has(AGENT_KEY)){
+        if (metaNode.has(AGENT_KEY)) {
             agent = metaNode.get(AGENT_KEY).asText();
         }
         return new MetaMetadata(semver, vm, agent);

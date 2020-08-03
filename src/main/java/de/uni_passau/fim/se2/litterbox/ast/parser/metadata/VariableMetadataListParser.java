@@ -37,7 +37,9 @@ public class VariableMetadataListParser {
         Iterator<Map.Entry<String, JsonNode>> entries = variablesNode.fields();
         while (entries.hasNext()) {
             Map.Entry<String, JsonNode> current = entries.next();
-            variableMetadataList.add(new VariableMetadata(current.getKey(), current.getValue().get(DECLARATION_VARIABLE_NAME_POS).asText(),
+            variableMetadataList.add(new VariableMetadata(
+                    current.getKey(),
+                    current.getValue().get(DECLARATION_VARIABLE_NAME_POS).asText(),
                     current.getValue().get(DECLARATION_VARIABLE_VALUE_POS).asText()));
         }
         return new VariableMetadataList(variableMetadataList);

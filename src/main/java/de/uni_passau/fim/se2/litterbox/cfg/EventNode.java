@@ -43,8 +43,12 @@ public class EventNode extends CFGNode {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         EventNode eventNode = (EventNode) o;
         return Objects.equals(event, eventNode.event);
     }

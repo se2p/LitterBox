@@ -18,7 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
-
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
@@ -36,6 +35,19 @@ public class IllegalParameterRefactor extends AbstractIssueFinder {
     private ArgumentInfo[] currentArguments;
     private boolean insideProcedure;
 
+    private void checkBool(BoolExpr boolExpr) {
+        if (boolExpr instanceof AsBool && ((AsBool) boolExpr).getOperand1() instanceof Parameter) {
+            Parameter ident = (Parameter) ((AsBool) boolExpr).getOperand1();
+
+            for (ArgumentInfo currentArgument : currentArguments) {
+                if (currentArgument.getName().equals(ident.getName().getName())
+                        && !(currentArgument.getType() instanceof BooleanType)) {
+                    addIssue(boolExpr, HINT_TEXT, ident.getMetadata());
+                }
+            }
+        }
+    }
+
     @Override
     public void visit(ProcedureDefinition node) {
         insideProcedure = true;
@@ -50,19 +62,6 @@ public class IllegalParameterRefactor extends AbstractIssueFinder {
             checkBool(node.getBoolExpr());
         }
         visitChildren(node);
-    }
-
-    private void checkBool(BoolExpr boolExpr) {
-        if (boolExpr instanceof AsBool && ((AsBool) boolExpr).getOperand1() instanceof Parameter) {
-           Parameter ident = (Parameter) ((AsBool) boolExpr).getOperand1();
-
-                for (ArgumentInfo currentArgument : currentArguments) {
-                    if (currentArgument.getName().equals(ident.getName().getName()) && !(currentArgument.getType() instanceof BooleanType)) {
-                        addIssue(boolExpr, HINT_TEXT, ident.getMetadata());
-                    }
-                }
-
-        }
     }
 
     @Override

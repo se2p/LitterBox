@@ -55,6 +55,4 @@ public class ImageMetadataTest {
         Assertions.assertEquals(240, meta.getList().get(0).getRotationCenterX());
         Assertions.assertEquals(180, meta.getList().get(0).getRotationCenterY());
     }
-
-
 }

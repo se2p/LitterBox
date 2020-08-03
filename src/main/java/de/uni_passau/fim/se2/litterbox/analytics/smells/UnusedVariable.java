@@ -38,12 +38,12 @@ public class UnusedVariable extends AbstractIssueFinder {
     public static final String NAME = "unused_variables";
     public static final String HINT_TEXT = "unused_variables_hint";
     private static final String[] MY_VARIABLE_LANGUAGES = {"meine Variable", "исхатәу аҽеиҭак", "my variable",
-            "متغيري", "мая зменная", "моята променлива", "la meva variable", "گۆڕاوەکەم", "moje proměnná", "fy " +
-            "newidyn", "min variabel", "η μεταβλητή μου", "mi variable", "minu muutuja", "nire aldagaia", "متغیر من",
-            "muuttujani", "ma variable", "m'athróg", "an caochladair agam", "a miña variábel", "המשתנה שלי", "moja " +
-            "varijabla", "az én változóm", "variabel saya", "la mia variabile", "へんすう", "変数", "ჩემი ცვლადი",
-            "អថេរខ្ញុំ", "나의 변수", "mano kintamasis", "mans mainīgais", "taku taurangi", "min variabel", "mijn " +
-            "variabele", "min variabel", "moja zmienna", "minha variável", "a minha variável", "toʾoku variable",
+            "متغيري", "мая зменная", "моята променлива", "la meva variable", "گۆڕاوەکەم", "moje proměnná", "fy "
+            + "newidyn", "min variabel", "η μεταβλητή μου", "mi variable", "minu muutuja", "nire aldagaia", "متغیر من",
+            "muuttujani", "ma variable", "m'athróg", "an caochladair agam", "a miña variábel", "המשתנה שלי", "moja "
+            + "varijabla", "az én változóm", "variabel saya", "la mia variabile", "へんすう", "変数", "ჩემი ცვლადი",
+            "អថេរខ្ញុំ", "나의 변수", "mano kintamasis", "mans mainīgais", "taku taurangi", "min variabel", "mijn "
+            + "variabele", "min variabel", "moja zmienna", "minha variável", "a minha variável", "toʾoku variable",
             "variabila mea", "моя переменная", "premenná", "moja spremenljivka", "моја променљива", "min variabel",
             "kibadilika changu", "ตัวแปรของฉัน", "değişkenim", "моя змінна", "mening o'zgaruvchim", "biến của tôi",
             "我的变量", "i-variable yami"};

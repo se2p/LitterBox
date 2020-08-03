@@ -22,7 +22,6 @@ import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ArgumentInfo;
 
-
 /**
  * The parameter names in custom blocks do not have to be unique.
  * Therefore, when two parameters have the same name, no matter the type or which one is used inside the custom

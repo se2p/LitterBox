@@ -39,7 +39,10 @@ public class LivenessTransferFunction implements TransferFunction<Use> {
         Set<Use> result = new LinkedHashSet<>(inFacts);
 
         // Remove all uses of variables that are modified here
-        Set<Defineable> definitions = node.getDefinitions().stream().map(Definition::getDefinable).collect(Collectors.toSet());
+        Set<Defineable> definitions = node.getDefinitions()
+                .stream()
+                .map(Definition::getDefinable)
+                .collect(Collectors.toSet());
         result.removeIf(d -> definitions.contains(d.getDefinable()));
 
         // Add new uses of variables that are used here

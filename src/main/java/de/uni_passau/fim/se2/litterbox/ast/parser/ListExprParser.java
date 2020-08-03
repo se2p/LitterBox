@@ -52,7 +52,6 @@ public class ListExprParser {
         }
     }
 
-
     static Identifier parseVariableFromFields(JsonNode fields) throws ParsingException { //TODO do we need this?
         String identifier = fields.get(LIST_KEY).get(LIST_IDENTIFIER_POS).asText();
         if (ProgramParser.symbolTable.getLists().containsKey(identifier)) {

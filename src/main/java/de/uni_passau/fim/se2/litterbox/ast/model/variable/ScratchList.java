@@ -31,7 +31,6 @@ public class ScratchList extends DataExpr {
 
     public ScratchList(LocalIdentifier name, BlockMetadata metadata) {
         super(name, metadata);
-
     }
 
     @Override

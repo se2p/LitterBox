@@ -53,7 +53,6 @@ public class MissingBackdropSwitch extends AbstractIssueFinder {
     private boolean addComment;
     private Set<String> notSentMessages;
 
-
     @Override
     public Set<Issue> check(Program program) {
         Preconditions.checkNotNull(program);
@@ -91,8 +90,9 @@ public class MissingBackdropSwitch extends AbstractIssueFinder {
 
     @Override
     public void visit(SwitchBackdrop node) {
-        if(addComment)
+        if (addComment) {
             return;
+        }
 
         final String actorName = currentActor.getIdent().getName();
         final ElementChoice msgName = node.getElementChoice();
@@ -101,27 +101,24 @@ public class MissingBackdropSwitch extends AbstractIssueFinder {
         } else if (msgName instanceof WithExpr) {
             if (((WithExpr) msgName).getExpression() instanceof StrId) {
                 switched.add(new Pair(actorName, ((StrId) ((WithExpr) msgName).getExpression()).getName()));
-            }
-            else if (((WithExpr) msgName).getExpression() instanceof StringLiteral) {
+            } else if (((WithExpr) msgName).getExpression() instanceof StringLiteral) {
                 switched.add(new Pair(actorName, ((StringLiteral) ((WithExpr) msgName).getExpression()).getText()));
-            }
-            else if (((WithExpr) msgName).getExpression() instanceof AsString) {
+            } else if (((WithExpr) msgName).getExpression() instanceof AsString) {
                 AsString expr = (AsString) ((WithExpr) msgName).getExpression();
                 if (expr.getOperand1() instanceof StrId) {
                     switched.add(new Pair(actorName, ((StrId) expr.getOperand1()).getName()));
-                }
-                else if (expr.getOperand1() instanceof StringLiteral) {
+                } else if (expr.getOperand1() instanceof StringLiteral) {
                     switched.add(new Pair(actorName, ((StringLiteral) expr.getOperand1()).getText()));
                 }
             }
         }
-
     }
 
     @Override
     public void visit(SwitchBackdropAndWait node) {
-        if(addComment)
+        if (addComment) {
             return;
+        }
 
         final String actorName = currentActor.getIdent().getName();
         final ElementChoice msgName = node.getElementChoice();
@@ -130,21 +127,17 @@ public class MissingBackdropSwitch extends AbstractIssueFinder {
         } else if (msgName instanceof WithExpr) {
             if (((WithExpr) msgName).getExpression() instanceof StrId) {
                 switched.add(new Pair<>(actorName, ((StrId) ((WithExpr) msgName).getExpression()).getName()));
-            }
-            else if (((WithExpr) msgName).getExpression() instanceof StringLiteral) {
+            } else if (((WithExpr) msgName).getExpression() instanceof StringLiteral) {
                 switched.add(new Pair<>(actorName, ((StringLiteral) ((WithExpr) msgName).getExpression()).getText()));
-            }
-            else if (((WithExpr) msgName).getExpression() instanceof AsString) {
+            } else if (((WithExpr) msgName).getExpression() instanceof AsString) {
                 AsString expr = (AsString) ((WithExpr) msgName).getExpression();
                 if (expr.getOperand1() instanceof StrId) {
                     switched.add(new Pair<>(actorName, ((StrId) expr.getOperand1()).getName()));
-                }
-                else if (expr.getOperand1() instanceof StringLiteral) {
+                } else if (expr.getOperand1() instanceof StringLiteral) {
                     switched.add(new Pair<>(actorName, ((StringLiteral) expr.getOperand1()).getText()));
                 }
             }
         }
-
     }
 
     @Override

@@ -79,7 +79,11 @@ public class ActorJSONCreator {
         List<BroadcastMetadata> broadcasts = meta.getBroadcasts().getList();
         for (int i = 0; i < broadcasts.size() - 1; i++) {
             BroadcastMetadata current = broadcasts.get(i);
-            JSONStringCreator.createFieldValue(jsonString, current.getBroadcastID(), current.getBroadcastName()).append(",");
+            JSONStringCreator.createFieldValue(
+                    jsonString,
+                    current.getBroadcastID(),
+                    current.getBroadcastName()
+            ).append(",");
         }
         if (broadcasts.size() > 0) {
             BroadcastMetadata current = broadcasts.get(broadcasts.size() - 1);
@@ -152,7 +156,8 @@ public class ActorJSONCreator {
         if (isStage) {
             StageMetadata stageMetadata = (StageMetadata) meta;
             JSONStringCreator.createFieldValue(jsonString, TEMPO_KEY, stageMetadata.getTempo()).append(",");
-            JSONStringCreator.createFieldValue(jsonString, VIDTRANSPARENCY_KEY, stageMetadata.getVideoTransparency()).append(",");
+            JSONStringCreator.createFieldValue(jsonString, VIDTRANSPARENCY_KEY, stageMetadata.getVideoTransparency())
+                    .append(",");
             JSONStringCreator.createFieldValue(jsonString, VIDSTATE_KEY, stageMetadata.getVideoState()).append(",");
             if (stageMetadata.getTextToSpeechLanguage() == null) {
                 JSONStringCreator.createFieldValueNull(jsonString, TEXT_TO_SPEECH_KEY);

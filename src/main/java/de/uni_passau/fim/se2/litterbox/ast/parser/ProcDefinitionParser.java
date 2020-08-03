@@ -51,8 +51,8 @@ import java.util.logging.Logger;
 import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 
 public class ProcDefinitionParser {
-    private final static int PROTOTYPE_REFERENCE_POS = 1;
-    private final static int PARAMETER_REFERENCE_POS = 1;
+    private static final int PROTOTYPE_REFERENCE_POS = 1;
+    private static final int PARAMETER_REFERENCE_POS = 1;
 
     public static ProcedureDefinitionList parse(JsonNode blocks, String actorName) throws ParsingException {
         Preconditions.checkNotNull(blocks);
@@ -92,7 +92,8 @@ public class ProcDefinitionParser {
         return new ProcedureDefinitionList(procdecls);
     }
 
-    private static ProcedureDefinition parseProcDecl(JsonNode def, JsonNode blocks, String actorName) throws ParsingException {
+    private static ProcedureDefinition parseProcDecl(JsonNode def, JsonNode blocks, String actorName)
+            throws ParsingException {
         JsonNode input = def.get(Constants.INPUTS_KEY).get(CUSTOM_BLOCK_KEY);
         Preconditions.checkArgument(input.isArray());
         ArrayNode inputArray = (ArrayNode) input;
@@ -153,8 +154,8 @@ public class ProcDefinitionParser {
 
         if (!(arguments.length == paraTypes.size())) {
             ProgramParser.procDefMap.addMalformated(actorName + methodName);
-            throw new ParsingException("A procedure in this project does have malformated code, where inputs or " +
-                    "parameternames are missing.");
+            throw new ParsingException("A procedure in this project does have malformated code, where inputs or "
+                    + "parameternames are missing.");
         }
         Type[] typeArray = new Type[paraTypes.size()];
         ProgramParser.procDefMap.addProcedure(ident, actorName, methodName, arguments, paraTypes.toArray(typeArray));

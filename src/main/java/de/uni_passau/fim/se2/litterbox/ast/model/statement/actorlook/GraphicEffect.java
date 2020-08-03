@@ -45,10 +45,6 @@ public enum GraphicEffect implements ASTLeaf {
         return false;
     }
 
-    public String getToken() {
-        return token;
-    }
-
     public static GraphicEffect fromString(String type) {
         for (GraphicEffect f : values()) {
             if (f.getToken().equals(type.toLowerCase())) {
@@ -56,6 +52,10 @@ public enum GraphicEffect implements ASTLeaf {
             }
         }
         throw new IllegalArgumentException("Unknown GraphicEffect: " + type);
+    }
+
+    public String getToken() {
+        return token;
     }
 
     @Override

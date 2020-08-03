@@ -48,7 +48,7 @@ public class InitialDefinitionTransferFunction implements TransferFunction<Defin
 
         // Remove all defs of variables that are used here
         Set<Defineable> uses = node.getUses().parallelStream().map(Use::getDefinable).collect(Collectors.toSet());
-        if(!uses.isEmpty()) {
+        if (!uses.isEmpty()) {
             result.removeIf(d -> uses.contains(d.getDefinable()));
         }
 

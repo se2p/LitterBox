@@ -55,7 +55,6 @@ public class TopLevelMetadataTest {
         program = ProgramParser.parseProgram("Test", prog);
     }
 
-
     @Test
     public void testVariablesProgram() {
         List<Script> scripts = program.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList();
@@ -73,7 +72,7 @@ public class TopLevelMetadataTest {
     }
 
     @Test
-    public void testProcedureProgram(){
+    public void testProcedureProgram() {
         ProcedureDefinition def =
                 program.getActorDefinitionList().getDefinitions().get(1).getProcedureDefinitionList().getList().get(0);
         ProcedureMetadata meta = def.getMetadata();

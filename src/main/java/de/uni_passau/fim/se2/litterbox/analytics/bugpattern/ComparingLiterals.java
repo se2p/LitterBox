@@ -46,7 +46,6 @@ public class ComparingLiterals extends AbstractIssueFinder {
         visitChildren(node);
     }
 
-
     @Override
     public void visit(LessThan node) {
         if ((node.getOperand1() instanceof StringLiteral || node.getOperand1() instanceof NumberLiteral)

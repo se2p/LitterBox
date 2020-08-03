@@ -54,9 +54,9 @@ public class ProcedureInfo {
             return false;
         }
         ProcedureInfo that = (ProcedureInfo) o;
-        return Objects.equals(name, that.name) &&
-                Objects.equals(actorName, that.actorName) &&
-                Arrays.equals(arguments, that.arguments);
+        return Objects.equals(name, that.name)
+                && Objects.equals(actorName, that.actorName)
+                && Arrays.equals(arguments, that.arguments);
     }
 
     @Override

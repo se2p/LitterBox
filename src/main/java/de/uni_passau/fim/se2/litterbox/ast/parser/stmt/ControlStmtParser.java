@@ -50,7 +50,8 @@ public class ControlStmtParser {
         final JsonNode inputs = current.get(Constants.INPUTS_KEY);
 
         BoolExpr boolExpr;
-        StmtList stmtList, elseStmtList;
+        StmtList stmtList;
+        StmtList elseStmtList;
         BlockMetadata metadata = BlockMetadataParser.parse(identifier, current);
 
         switch (opcode) {

@@ -49,8 +49,8 @@ public class ArgumentInfo {
             return false;
         }
         ArgumentInfo that = (ArgumentInfo) o;
-        return Objects.equals(name, that.name) &&
-                Objects.equals(type, that.type);
+        return Objects.equals(name, that.name)
+                && Objects.equals(type, that.type);
     }
 
     @Override

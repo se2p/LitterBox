@@ -42,20 +42,20 @@ public class CustomBlockWithTermination extends AbstractIssueFinder {
     private List<CallStmt> calledProcedures;
     private boolean insideProcedure;
 
-    @Override
-    public void visit(ActorDefinition actor) {
-        calledProcedures = new ArrayList<>();
-        proceduresWithForever = new ArrayList<>();
-        super.visit(actor);
-        checkCalls();
-    }
-
     private void checkCalls() {
         for (CallStmt calledProcedure : calledProcedures) {
             if (proceduresWithForever.contains(calledProcedure.getIdent().getName())) {
                 addIssue(calledProcedure, HINT_TEXT, calledProcedure.getMetadata());
             }
         }
+    }
+
+    @Override
+    public void visit(ActorDefinition actor) {
+        calledProcedures = new ArrayList<>();
+        proceduresWithForever = new ArrayList<>();
+        super.visit(actor);
+        checkCalls();
     }
 
     @Override
@@ -84,8 +84,8 @@ public class CustomBlockWithTermination extends AbstractIssueFinder {
 
     @Override
     public void visit(StmtList node) {
-        for(Stmt stmt : node.getStmts()) {
-            if(stmt instanceof CallStmt) {
+        for (Stmt stmt : node.getStmts()) {
+            if (stmt instanceof CallStmt) {
                 calledProcedures.add((CallStmt) stmt);
             }
         }

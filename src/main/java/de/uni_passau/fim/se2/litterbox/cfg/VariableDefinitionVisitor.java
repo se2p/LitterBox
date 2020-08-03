@@ -55,6 +55,4 @@ public class VariableDefinitionVisitor implements DefinableCollector<Variable> {
     public void visit(Qualified node) {
         definitions.add(new Variable(node));
     }
-
-
 }

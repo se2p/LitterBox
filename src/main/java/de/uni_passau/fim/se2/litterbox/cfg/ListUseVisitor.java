@@ -96,9 +96,8 @@ public class ListUseVisitor implements DefinableCollector<ListVariable> {
 
     @Override
     public void visit(Qualified node) {
-        if(node.getSecond() instanceof ScratchList) {
+        if (node.getSecond() instanceof ScratchList) {
             defineables.add(new ListVariable(node));
         }
     }
-
 }

@@ -36,7 +36,6 @@ public class SoundMetadataListParser {
             soundMetadataList.add(SoundMetadataParser.parse(soundsArray.get(i)));
         }
 
-
         return new SoundMetadataList(soundMetadataList);
     }
 }

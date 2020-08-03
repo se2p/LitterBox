@@ -65,8 +65,9 @@ public class NumExprParser {
 
         // parsable as NumberLiteral
         boolean parsableAsNumberLiteral = false;
-        if (shadowIndicator == INPUT_SAME_BLOCK_SHADOW ||
-                (shadowIndicator == INPUT_BLOCK_NO_SHADOW && !(exprArray.get(POS_BLOCK_ID) instanceof TextNode))) {
+        if (shadowIndicator == INPUT_SAME_BLOCK_SHADOW
+                || (shadowIndicator == INPUT_BLOCK_NO_SHADOW
+                && !(exprArray.get(POS_BLOCK_ID) instanceof TextNode))) {
             try {
                 String valueString =
                         ExpressionParser.getDataArrayByName(inputs, inputKey).get(POS_INPUT_VALUE).asText();
@@ -108,8 +109,9 @@ public class NumExprParser {
         if (parsableAsNumExpr(containingBlock, inputKey, allBlocks)) {
             ArrayNode exprArray = getExprArray(containingBlock.get(INPUTS_KEY), inputKey);
             int shadowIndicator = getShadowIndicator(exprArray);
-            if (shadowIndicator == INPUT_SAME_BLOCK_SHADOW ||
-                    (shadowIndicator == INPUT_BLOCK_NO_SHADOW && !(exprArray.get(POS_BLOCK_ID) instanceof TextNode))) {
+            if (shadowIndicator == INPUT_SAME_BLOCK_SHADOW
+                    || (shadowIndicator == INPUT_BLOCK_NO_SHADOW
+                    && !(exprArray.get(POS_BLOCK_ID) instanceof TextNode))) {
                 try {
                     return parseNumber(containingBlock.get(INPUTS_KEY), inputKey);
                 } catch (NumberFormatException | ParsingException e) {
@@ -237,13 +239,16 @@ public class NumExprParser {
                                                                                 String firstInputName,
                                                                                 String secondInputName,
                                                                                 JsonNode allBlocks,
-                                                                                BlockMetadata metadata) throws ParsingException {
+                                                                                BlockMetadata metadata)
+            throws ParsingException {
+
         NumExpr first = parseNumExpr(exprBlock, firstInputName, allBlocks);
         NumExpr second = parseNumExpr(exprBlock, secondInputName, allBlocks);
         try {
             return clazz.getConstructor(NumExpr.class, NumExpr.class, BlockMetadata.class).newInstance(first, second,
                     metadata);
-        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+        } catch (InstantiationException | IllegalAccessException
+                | InvocationTargetException | NoSuchMethodException e) {
             throw new ParsingException(e);
         }
     }
@@ -252,11 +257,11 @@ public class NumExprParser {
      * Returns the number at the position in the inputs node. For example, if script is the JsonNode holding all blocks
      * and "EU(l=G6)z8NGlJFcx|fS" is a blockID of a block with an input called "STEPS",
      * you can parse the STEPS to a Number like this:
-     * <p>
-     * JsonNode inputs = script.get("EU(l=G6)z8NGlJFcx|fS").get("inputs");
+     *
+     * <p>JsonNode inputs = script.get("EU(l=G6)z8NGlJFcx|fS").get("inputs");
      * Number result = ExpressionParser.parseNumber(inputs, "STEPS");
-     * <p>
-     * Note that this method only works if the inputs node has the key specified
+     *
+     * <p>Note that this method only works if the inputs node has the key specified
      * in the inputKey parameter.
      *
      * @param inputs   The JsonNode holding all inputs of a block.

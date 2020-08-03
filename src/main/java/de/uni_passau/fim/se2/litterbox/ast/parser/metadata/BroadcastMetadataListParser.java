@@ -29,7 +29,7 @@ import java.util.Map;
 
 public class BroadcastMetadataListParser {
 
-    public static BroadcastMetadataList parse(JsonNode broadcastsNode){
+    public static BroadcastMetadataList parse(JsonNode broadcastsNode) {
         List<BroadcastMetadata> broadcastMetadataList = new ArrayList<>();
         Iterator<Map.Entry<String, JsonNode>> entries = broadcastsNode.fields();
         while (entries.hasNext()) {

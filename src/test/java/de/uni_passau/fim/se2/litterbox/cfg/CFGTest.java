@@ -132,7 +132,6 @@ public class CFGTest {
         assertThat(cfg.getNumEdges()).isEqualTo(11);
     }
 
-
     @Test
     public void testTwoEvents() throws IOException, ParsingException {
         ControlFlowGraph cfg = getCFG("src/test/fixtures/cfg/twoevents.json");
@@ -146,7 +145,6 @@ public class CFGTest {
         assertThat(cfg.getNumNodes()).isEqualTo(5); // Entry, Exit, Greenflag, Broadcast, Message
         assertThat(cfg.getNumEdges()).isEqualTo(6);
     }
-
 
     // TODO: This is a bug pattern?
     @Test
@@ -206,7 +204,6 @@ public class CFGTest {
         assertThat(cfg.getNumEdges()).isEqualTo(13);
     }
 
-
     @Test
     public void testVariable() throws IOException, ParsingException {
         ControlFlowGraph cfg = getCFG("src/test/fixtures/cfg/variable.json");
@@ -239,10 +236,9 @@ public class CFGTest {
     public void testTwoCallsCustomBlock() throws IOException, ParsingException {
         ControlFlowGraph cfg = getCFG("src/test/fixtures/cfg/customblocktwocalls.json");
         assertThat(cfg.getNumNodes()).isEqualTo(9); // Entry, Exit, Greenflag, move, callx2
-                                                             // Returnx2, custom block
+        // Returnx2, custom block
         assertThat(cfg.getNumEdges()).isEqualTo(10);
     }
-
 
     @Test
     public void testCallCustomBlockWithCode() throws IOException, ParsingException {
@@ -279,5 +275,4 @@ public class CFGTest {
         assertThat(cfg.getNumNodes()).isEqualTo(14);
         assertThat(cfg.getNumEdges()).isEqualTo(14);
     }
-
 }

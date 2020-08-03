@@ -59,9 +59,9 @@ public class TouchableParser {
     }
 
     private static Touchable getTouchableMenuOption(JsonNode current, JsonNode allBlocks) throws ParsingException {
-        String menuID = current.get(INPUTS_KEY).get(TOUCHINGOBJECTMENU).get(POS_INPUT_VALUE).asText();
-        String touchingObject = allBlocks.get(menuID).get(FIELDS_KEY).get(TOUCHINGOBJECTMENU).get(0).asText();
-        BlockMetadata metadata = BlockMetadataParser.parse(menuID, allBlocks.get(menuID));
+        String menuId = current.get(INPUTS_KEY).get(TOUCHINGOBJECTMENU).get(POS_INPUT_VALUE).asText();
+        String touchingObject = allBlocks.get(menuId).get(FIELDS_KEY).get(TOUCHINGOBJECTMENU).get(0).asText();
+        BlockMetadata metadata = BlockMetadataParser.parse(menuId, allBlocks.get(menuId));
 
         if (touchingObject.equals(MOUSE)) {
             return new MousePointer(metadata);

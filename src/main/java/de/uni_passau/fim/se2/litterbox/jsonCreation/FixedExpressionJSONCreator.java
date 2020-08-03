@@ -117,7 +117,6 @@ public class FixedExpressionJSONCreator implements ScratchVisitor {
             createFieldsExpression((NonDataBlockMetadata) node.getMetadata(),
                     ((StrId) node.getExpression()).getName());
         }
-
     }
 
     @Override

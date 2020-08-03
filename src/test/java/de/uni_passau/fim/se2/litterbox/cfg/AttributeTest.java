@@ -55,7 +55,6 @@ public class AttributeTest {
         return visitor.getControlFlowGraph();
     }
 
-
     @Test
     public void testSingleDefinitionAndUse() throws IOException, ParsingException {
         ControlFlowGraph cfg = getCFG("src/test/fixtures/cfg/move.json");
@@ -74,14 +73,13 @@ public class AttributeTest {
         assertThat(uses.iterator().next().getAttributeType()).isEqualTo(POSITION);
     }
 
-
     @Test
     public void testPositionDefinitions() throws IOException, ParsingException {
         ControlFlowGraph cfg = getCFG("src/test/fixtures/cfg/positiondefinitions.json");
-        Set<CFGNode> nodes = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof SpriteMotionStmt).collect(Collectors.toSet());;
+        Set<CFGNode> nodes = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof SpriteMotionStmt).collect(Collectors.toSet());
 
         assertThat(nodes.size()).isEqualTo(9);
-        for(CFGNode node : nodes) {
+        for (CFGNode node : nodes) {
             AttributeDefinitionVisitor visitor = new AttributeDefinitionVisitor(node.getActor());
             node.getASTNode().accept(visitor);
             Set<Attribute> definitions = visitor.getDefineables();
@@ -93,10 +91,10 @@ public class AttributeTest {
     @Test
     public void testRotationDefinitions() throws IOException, ParsingException {
         ControlFlowGraph cfg = getCFG("src/test/fixtures/cfg/rotationdefinitions.json");
-        Set<CFGNode> nodes = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof SpriteMotionStmt).collect(Collectors.toSet());;
+        Set<CFGNode> nodes = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof SpriteMotionStmt).collect(Collectors.toSet());
 
         assertThat(nodes.size()).isEqualTo(4);
-        for(CFGNode node : nodes) {
+        for (CFGNode node : nodes) {
             AttributeDefinitionVisitor visitor = new AttributeDefinitionVisitor(node.getActor());
             node.getASTNode().accept(visitor);
             Set<Attribute> definitions = visitor.getDefineables();
@@ -108,10 +106,10 @@ public class AttributeTest {
     @Test
     public void testPositionUses() throws IOException, ParsingException {
         ControlFlowGraph cfg = getCFG("src/test/fixtures/cfg/positionuses.json");
-        Set<CFGNode> nodes = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof SpriteMotionStmt || n.getASTNode() instanceof SpriteLookStmt).collect(Collectors.toSet());;
+        Set<CFGNode> nodes = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof SpriteMotionStmt || n.getASTNode() instanceof SpriteLookStmt).collect(Collectors.toSet());
 
         assertThat(nodes.size()).isEqualTo(5);
-        for(CFGNode node : nodes) {
+        for (CFGNode node : nodes) {
             AttributeUseVisitor visitor = new AttributeUseVisitor(node.getActor());
             node.getASTNode().accept(visitor);
             Set<Attribute> uses = visitor.getDefineables();
@@ -123,10 +121,10 @@ public class AttributeTest {
     @Test
     public void testRotationUses() throws IOException, ParsingException {
         ControlFlowGraph cfg = getCFG("src/test/fixtures/cfg/rotationuses.json");
-        Set<CFGNode> nodes = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof SpriteMotionStmt || n.getASTNode() instanceof SpriteLookStmt).collect(Collectors.toSet());;
+        Set<CFGNode> nodes = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof SpriteMotionStmt || n.getASTNode() instanceof SpriteLookStmt).collect(Collectors.toSet());
 
         assertThat(nodes.size()).isEqualTo(3);
-        for(CFGNode node : nodes) {
+        for (CFGNode node : nodes) {
             AttributeUseVisitor visitor = new AttributeUseVisitor(node.getActor());
             node.getASTNode().accept(visitor);
             Set<Attribute> uses = visitor.getDefineables();
@@ -135,15 +133,14 @@ public class AttributeTest {
         }
     }
 
-
     @Test
     public void testCostumeDefinitions() throws IOException, ParsingException {
         ControlFlowGraph cfg = getCFG("src/test/fixtures/cfg/costumedefuses.json");
 
-        Set<CFGNode> nodes = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof NextCostume || n.getASTNode() instanceof SwitchCostumeTo).collect(Collectors.toSet());;
+        Set<CFGNode> nodes = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof NextCostume || n.getASTNode() instanceof SwitchCostumeTo).collect(Collectors.toSet());
 
         assertThat(nodes.size()).isEqualTo(2);
-        for(CFGNode node : nodes) {
+        for (CFGNode node : nodes) {
             AttributeDefinitionVisitor visitor = new AttributeDefinitionVisitor(node.getActor());
             node.getASTNode().accept(visitor);
             Set<Attribute> definitions = visitor.getDefineables();
@@ -156,10 +153,10 @@ public class AttributeTest {
     public void testCostumeUses() throws IOException, ParsingException {
         ControlFlowGraph cfg = getCFG("src/test/fixtures/cfg/costumedefuses.json");
 
-        Set<CFGNode> nodes = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof NextCostume || n.getASTNode() instanceof Say).collect(Collectors.toSet());;
+        Set<CFGNode> nodes = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof NextCostume || n.getASTNode() instanceof Say).collect(Collectors.toSet());
 
         assertThat(nodes.size()).isEqualTo(3);
-        for(CFGNode node : nodes) {
+        for (CFGNode node : nodes) {
             AttributeUseVisitor visitor = new AttributeUseVisitor(node.getActor());
             node.getASTNode().accept(visitor);
             Set<Attribute> uses = visitor.getDefineables();
@@ -172,10 +169,10 @@ public class AttributeTest {
     public void testSizeDefinitions() throws IOException, ParsingException {
         ControlFlowGraph cfg = getCFG("src/test/fixtures/cfg/sizedefuses.json");
 
-        Set<CFGNode> nodes = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof SetSizeTo || n.getASTNode() instanceof ChangeSizeBy).collect(Collectors.toSet());;
+        Set<CFGNode> nodes = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof SetSizeTo || n.getASTNode() instanceof ChangeSizeBy).collect(Collectors.toSet());
 
         assertThat(nodes.size()).isEqualTo(2);
-        for(CFGNode node : nodes) {
+        for (CFGNode node : nodes) {
             AttributeDefinitionVisitor visitor = new AttributeDefinitionVisitor(node.getActor());
             node.getASTNode().accept(visitor);
             Set<Attribute> definitions = visitor.getDefineables();
@@ -188,10 +185,10 @@ public class AttributeTest {
     public void testSizeUses() throws IOException, ParsingException {
         ControlFlowGraph cfg = getCFG("src/test/fixtures/cfg/sizedefuses.json");
 
-        Set<CFGNode> nodes = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof ChangeSizeBy || n.getASTNode() instanceof Say).collect(Collectors.toSet());;
+        Set<CFGNode> nodes = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof ChangeSizeBy || n.getASTNode() instanceof Say).collect(Collectors.toSet());
 
         assertThat(nodes.size()).isEqualTo(2);
-        for(CFGNode node : nodes) {
+        for (CFGNode node : nodes) {
             AttributeUseVisitor visitor = new AttributeUseVisitor(node.getActor());
             node.getASTNode().accept(visitor);
             Set<Attribute> uses = visitor.getDefineables();
@@ -238,7 +235,6 @@ public class AttributeTest {
         assertThat(defVisitor.getDefineables()).hasSize(1);
     }
 
-
     @Test
     public void testNextBackdrop() throws IOException, ParsingException {
         ControlFlowGraph cfg = getCFG("src/test/fixtures/cfg/nextbackdroponstage.json");
@@ -254,7 +250,6 @@ public class AttributeTest {
         // TODO: Attributes on backdrop are not yet implemented
         assertThat(getDefinedAttributes(node)).hasSize(0);
     }
-
 
     @Test
     public void testUseOfOtherSprite() throws IOException, ParsingException {
@@ -276,5 +271,4 @@ public class AttributeTest {
         node.getASTNode().accept(visitor);
         return visitor.getDefineables();
     }
-
 }

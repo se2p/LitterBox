@@ -46,9 +46,9 @@ public class PositionParser {
     public static Position parse(JsonNode current, JsonNode allBlocks) throws ParsingException {
         Preconditions.checkNotNull(current);
         Preconditions.checkNotNull(allBlocks);
-        if (current.get(Constants.INPUTS_KEY).has(TO_KEY) ||
-                current.get(Constants.INPUTS_KEY).has(TOWARDS_KEY) ||
-                current.get(Constants.INPUTS_KEY).has(DISTANCETOMENU_KEY)) {
+        if (current.get(Constants.INPUTS_KEY).has(TO_KEY)
+                || current.get(Constants.INPUTS_KEY).has(TOWARDS_KEY)
+                || current.get(Constants.INPUTS_KEY).has(DISTANCETOMENU_KEY)) {
             return parseRelativePos(current, allBlocks);
         } else {
             throw new ParsingException("Could not parse block " + current.toString());
@@ -72,7 +72,8 @@ public class PositionParser {
                 menuID = inputsArray.get(positionInputKey).get(POS_INPUT_VALUE);
             } else {
                 throw new ParsingException(
-                        "Cannot parse relative coordinates for a block with opcode " + current.get(Constants.OPCODE_KEY));
+                        "Cannot parse relative coordinates for a block with opcode "
+                                + current.get(Constants.OPCODE_KEY));
             }
         } else if (NumExprOpcode.sensing_distanceto.toString().equals(opcodeString)) {
             positionInputKey = DISTANCETOMENU_KEY;
@@ -93,7 +94,7 @@ public class PositionParser {
             } else if (posString.equals(RANDOM)) {
                 return new RandomPos(metadata);
             } else {
-                return new FromExpression(new AsString(new StrId(posString)),metadata);
+                return new FromExpression(new AsString(new StrId(posString)), metadata);
             }
         } else {
             String posName = "";
@@ -106,7 +107,7 @@ public class PositionParser {
             }
 
             final StringExpr stringExpr = StringExprParser.parseStringExpr(current, posName, allBlocks);
-            return new FromExpression(stringExpr,new NoBlockMetadata());
+            return new FromExpression(stringExpr, new NoBlockMetadata());
         }
     }
 

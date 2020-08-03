@@ -37,7 +37,8 @@ import static de.uni_passau.fim.se2.litterbox.ast.opcodes.SpriteLookStmtOpcode.l
 
 public class SpriteLookStmtParser {
 
-    public static SpriteLookStmt parse(String identifier, JsonNode current, JsonNode allBlocks) throws ParsingException {
+    public static SpriteLookStmt parse(String identifier, JsonNode current, JsonNode allBlocks)
+            throws ParsingException {
         Preconditions.checkNotNull(current);
         Preconditions.checkNotNull(allBlocks);
 
@@ -97,10 +98,11 @@ public class SpriteLookStmtParser {
         NumExpr num = NumExprParser.parseNumExpr(current, NUM_KEY, allBlocks);
 
         String layerOption = front_back.asText();
-        return new ChangeLayerBy(num, ForwardBackwardChoice.fromString(layerOption),metadata);
+        return new ChangeLayerBy(num, ForwardBackwardChoice.fromString(layerOption), metadata);
     }
 
-    private static SpriteLookStmt parseGoToLayer(JsonNode current, JsonNode allBlocks, BlockMetadata metadata) throws ParsingException {
+    private static SpriteLookStmt parseGoToLayer(JsonNode current, JsonNode allBlocks, BlockMetadata metadata)
+            throws ParsingException {
         Preconditions.checkArgument(current.get(OPCODE_KEY).asText().equals(looks_gotofrontback.toString()));
 
         JsonNode front_back = current.get(FIELDS_KEY).get("FRONT_BACK").get(FIELD_VALUE);

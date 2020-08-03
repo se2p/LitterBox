@@ -81,7 +81,7 @@ public class IssueTool {
     }
 
     /**
-     * Executes all checks
+     * Executes all checks.
      *
      * @param program the project to check
      */
@@ -99,8 +99,8 @@ public class IssueTool {
     }
 
     /**
-     * FIXME REMOVE ME AFTER SCRATCH3ANALYZER IS REMOVED
-     * Executes all checks
+     * FIXME REMOVE ME AFTER SCRATCH3ANALYZER IS REMOVED.
+     * Executes all checks.
      *
      * @param program the project to check
      */
@@ -150,7 +150,9 @@ public class IssueTool {
 
     public void registerSmellFinder(IssueFinder finder) {
         if (finder.getIssueType() != IssueFinder.IssueType.SMELL) {
-            throw new RuntimeException("Cannot register IssueFinder of Type " + finder.getIssueType() + " as Smell IssueFinder");
+            throw new RuntimeException("Cannot register IssueFinder of Type "
+                    + finder.getIssueType()
+                    + " as Smell IssueFinder");
         }
 
         smellFinder.put(finder.getName(), finder);
@@ -158,7 +160,9 @@ public class IssueTool {
 
     public void registerBugFinder(IssueFinder finder) {
         if (finder.getIssueType() != IssueFinder.IssueType.BUG) {
-            throw new RuntimeException("Cannot register IssueFinder of Type " + finder.getIssueType() + " as Bug IssueFinder");
+            throw new RuntimeException("Cannot register IssueFinder of Type "
+                    + finder.getIssueType()
+                    + " as Bug IssueFinder");
         }
 
         bugFinder.put(finder.getName(), finder);

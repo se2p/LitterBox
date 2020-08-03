@@ -87,7 +87,7 @@ class ScratchListStmtParserTest {
             final AddTo addTo = (AddTo) stmt;
             Truth.assertThat(((StringLiteral) addTo.getString()).getText()).isEqualTo("localThing");
             Truth.assertThat(((Qualified) addTo.getIdentifier()).getFirst().getName()).isEqualTo("Sprite1");
-            Truth.assertThat(((Qualified) addTo.getIdentifier()).getSecond().getName().getName()).isEqualTo( "TestListLocal");
+            Truth.assertThat(((Qualified) addTo.getIdentifier()).getSecond().getName().getName()).isEqualTo("TestListLocal");
         } catch (ParsingException e) {
             fail();
         }
@@ -127,7 +127,7 @@ class ScratchListStmtParserTest {
             Truth.assertThat(((StringLiteral) insertAt.getString()).getText()).isEqualTo("thing2");
             Truth.assertThat(((NumberLiteral) insertAt.getIndex()).getValue()).isEqualTo(1);
             Truth.assertThat(((Qualified) insertAt.getIdentifier()).getFirst().getName()).isEqualTo("Stage");
-            Truth.assertThat(((Qualified) insertAt.getIdentifier()).getSecond().getName().getName()).isEqualTo( "TestList");
+            Truth.assertThat(((Qualified) insertAt.getIdentifier()).getSecond().getName().getName()).isEqualTo("TestList");
         } catch (ParsingException e) {
             fail();
         }
@@ -164,7 +164,7 @@ class ScratchListStmtParserTest {
 
             final DeleteAllOf deleteAllOf = (DeleteAllOf) stmt;
             Truth.assertThat(((Qualified) deleteAllOf.getIdentifier()).getFirst().getName()).isEqualTo("Stage");
-            Truth.assertThat(((Qualified) deleteAllOf.getIdentifier()).getSecond().getName().getName()).isEqualTo( "TestList");
+            Truth.assertThat(((Qualified) deleteAllOf.getIdentifier()).getSecond().getName().getName()).isEqualTo("TestList");
         } catch (ParsingException e) {
             fail();
         }

@@ -53,13 +53,13 @@ public class MutationMetadataTest {
         PrototypeMutationMetadata existing = (PrototypeMutationMetadata) mutationMetadata;
         Assertions.assertFalse(existing.isWarp());
         Assertions.assertEquals(0, existing.getChild().size());
-        Assertions.assertEquals("mutation",existing.getTagName());
-        Assertions.assertEquals("TestMethod %s",existing.getProcCode());
+        Assertions.assertEquals("mutation", existing.getTagName());
+        Assertions.assertEquals("TestMethod %s", existing.getProcCode());
         List<String> list = new ArrayList<>();
         list.add("k~QZ.p5)uSGZZ]?@TWD$");
-        Assertions.assertEquals(list,existing.getArgumentIds());
-        Assertions.assertEquals("[\"number or text\"]",existing.getArgumentNames());
-        Assertions.assertEquals("[\"\"]",existing.getArgumentDefaults());
+        Assertions.assertEquals(list, existing.getArgumentIds());
+        Assertions.assertEquals("[\"number or text\"]", existing.getArgumentNames());
+        Assertions.assertEquals("[\"\"]", existing.getArgumentDefaults());
     }
 
     @Test
@@ -70,10 +70,10 @@ public class MutationMetadataTest {
         CallMutationMetadata existing = (CallMutationMetadata) mutationMetadata;
         Assertions.assertFalse(existing.isWarp());
         Assertions.assertEquals(0, existing.getChild().size());
-        Assertions.assertEquals("mutation",existing.getTagName());
-        Assertions.assertEquals("TestMethod %s",existing.getProcCode());
+        Assertions.assertEquals("mutation", existing.getTagName());
+        Assertions.assertEquals("TestMethod %s", existing.getProcCode());
         List<String> list = new ArrayList<>();
         list.add("k~QZ.p5)uSGZZ]?@TWD$");
-        Assertions.assertEquals(list,existing.getArgumentIds());
+        Assertions.assertEquals(list, existing.getArgumentIds());
     }
 }

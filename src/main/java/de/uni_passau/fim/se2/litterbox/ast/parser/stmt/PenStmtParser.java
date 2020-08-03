@@ -117,7 +117,8 @@ public class PenStmtParser {
         return exprArray.get(Constants.POS_INPUT_SHADOW).asInt();
     }
 
-    private static PenStmt parseSetPenSizeTo(JsonNode current, JsonNode allBlocks, BlockMetadata metadata) throws ParsingException {
+    private static PenStmt parseSetPenSizeTo(JsonNode current, JsonNode allBlocks, BlockMetadata metadata)
+            throws ParsingException {
         return new SetPenSizeTo(NumExprParser.parseNumExpr(current, "SIZE",
                 allBlocks), metadata);
     }

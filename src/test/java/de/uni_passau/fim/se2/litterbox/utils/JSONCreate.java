@@ -42,7 +42,7 @@ public class JSONCreate {
 
     @Test
     public void createJSON() throws ParsingException {
-        Program test = ProgramParser.parseProgram("createBroadcast",prog);
+        Program test = ProgramParser.parseProgram("createBroadcast", prog);
         JSONFileCreator.writeJsonFromProgram(test);
     }
 }

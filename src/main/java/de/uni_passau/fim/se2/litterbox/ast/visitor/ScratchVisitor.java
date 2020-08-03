@@ -94,6 +94,12 @@ import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 
 public interface ScratchVisitor {
 
+    default void visitChildren(ASTNode node) {
+        for (ASTNode child : node.getChildren()) {
+            child.accept(this);
+        }
+    }
+
     /**
      * Default implementation of visit method for ASTNode.
      *
@@ -107,11 +113,6 @@ public interface ScratchVisitor {
         visitChildren(node);
     }
 
-    default void visitChildren(ASTNode node) {
-        for (ASTNode child : node.getChildren()) {
-            child.accept(this);
-        }
-    }
     /**
      * Default implementation of visit method for ActorDefinition.
      *
@@ -1229,7 +1230,6 @@ public interface ScratchVisitor {
     default void visit(FromNumber node) {
         visit((Color) node);
     }
-
 
     /**
      * Default implementation of visit method for {@link NumExpr}.
@@ -3488,7 +3488,7 @@ public interface ScratchVisitor {
     }
 
     /**
-     * Default implementation of visit method for {@link }.
+     * Default implementation of visit method for {@link PrototypeMutationMetadata}.
      *
      * <p>
      * Iterates all children of this node without performing any action.

@@ -54,10 +54,11 @@ public class CostumeChoiceParser {
         }
     }
 
-    private static ElementChoice getCostumeChoiceFromMenu(JsonNode allBlocks, JsonNode inputsNode) throws ParsingException {
-        String blockMenuID = inputsNode.get(Constants.POS_INPUT_VALUE).asText();
-        JsonNode menu = allBlocks.get(blockMenuID);
-        BlockMetadata metadata = BlockMetadataParser.parse(blockMenuID, menu);
+    private static ElementChoice getCostumeChoiceFromMenu(JsonNode allBlocks, JsonNode inputsNode)
+            throws ParsingException {
+        String blockMenuId = inputsNode.get(Constants.POS_INPUT_VALUE).asText();
+        JsonNode menu = allBlocks.get(blockMenuId);
+        BlockMetadata metadata = BlockMetadataParser.parse(blockMenuId, menu);
 
         List<JsonNode> fieldsList = new ArrayList<>();
         menu.get(FIELDS_KEY).elements().forEachRemaining(fieldsList::add);

@@ -11,17 +11,16 @@ import static com.google.common.truth.Truth.assertThat;
 
 public class CommandlineTest {
 
-    @Test
-    public void testInvalidOptionPrintsAnError() {
-        Main.parseCommandLine(new String[] {"--optionthatdefinitelydoesntexist"});
-        assertThat(mockErr.toString()).isNotEmpty();
-    }
-
     private PrintStream out = System.out;
     private PrintStream err = System.err;
-
     private ByteArrayOutputStream mockOut = new ByteArrayOutputStream();
     private ByteArrayOutputStream mockErr = new ByteArrayOutputStream();
+
+    @Test
+    public void testInvalidOptionPrintsAnError() {
+        Main.parseCommandLine(new String[]{"--optionthatdefinitelydoesntexist"});
+        assertThat(mockErr.toString()).isNotEmpty();
+    }
 
     @AfterEach
     public void restoreStreams() {

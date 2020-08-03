@@ -32,13 +32,17 @@ public class CloneEventNode extends CFGNode {
 
     @Override
     public String toString() {
-        return "Clone: "+actorName;
+        return "Clone: " + actorName;
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         CloneEventNode that = (CloneEventNode) o;
         return Objects.equals(actorName, that.actorName);
     }

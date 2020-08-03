@@ -43,7 +43,8 @@ public class JSONStringCreator {
                     program.getSymbolTable(), program.getProcedureMapping()));
             jsonString.append(",");
         }
-        jsonString.append(ActorJSONCreator.createActorJSONString(actorDefinitionList.get(actorDefinitionList.size() - 1), program.getSymbolTable(), program.getProcedureMapping()));
+        jsonString.append(ActorJSONCreator.createActorJSONString(actorDefinitionList.get(actorDefinitionList.size() - 1)
+                , program.getSymbolTable(), program.getProcedureMapping()));
         jsonString.append("],");
         createMonitorListJSONString(jsonString, program).append(",");
         createExtensionJSONString(jsonString, program).append(",");

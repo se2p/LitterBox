@@ -34,12 +34,12 @@ public class CommentGenerator implements ReportGenerator {
     public void generateReport(Program program, Collection<Issue> issues) throws IOException {
 
         int numIssue = 0;
-        for(Issue issue : issues) {
+        for (Issue issue : issues) {
             ActorDefinition currentActor = issue.getActor();
             String hintText = issue.getHint();
             String commentId = issue.getFinderName() + numIssue++;
             Metadata metaData = issue.getCodeMetadata();
-            if(metaData == null) {
+            if (metaData == null) {
                 addLooseComment(currentActor, hintText, commentId);
             } else {
                 addBlockComment((NonDataBlockMetadata) metaData,
@@ -51,7 +51,7 @@ public class CommentGenerator implements ReportGenerator {
     }
 
     private void addBlockComment(NonDataBlockMetadata metadata, ActorDefinition currentActor, String hintText,
-                                       String commentId) {
+                                 String commentId) {
         metadata.setCommentId(commentId);
         CommentMetadata comment = new CommentMetadata(commentId, metadata.getBlockId(), 500, 400, 100, 100, false,
                 hintText);
@@ -59,7 +59,7 @@ public class CommentGenerator implements ReportGenerator {
     }
 
     private void addLooseComment(ActorDefinition currentActor, String hintText,
-                                       String commentId) {
+                                 String commentId) {
         CommentMetadata comment = new CommentMetadata(commentId, null, 500, 400, 100, 100, false,
                 hintText);
         currentActor.getMetadata().addComment(comment);

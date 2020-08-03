@@ -36,15 +36,14 @@ import static com.google.common.truth.Truth.assertThat;
 
 public class ListVariableTest {
 
-
     @Test
     public void testAllListUses() throws IOException, ParsingException {
         ControlFlowGraph cfg = getCFG("src/test/fixtures/cfg/listoperations.json");
 
         CFGNode node = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof AddTo).findFirst().get();
-        ListVariable theList = new ListVariable(((AddTo)node.getASTNode()).getIdentifier());
+        ListVariable theList = new ListVariable(((AddTo) node.getASTNode()).getIdentifier());
 
-        for(CFGNode sayNode : cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof SayForSecs).collect(Collectors.toSet())) {
+        for (CFGNode sayNode : cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof SayForSecs).collect(Collectors.toSet())) {
             assertThat(getUsedLists(sayNode)).containsExactly(theList);
         }
 
@@ -60,9 +59,9 @@ public class ListVariableTest {
         ControlFlowGraph cfg = getCFG("src/test/fixtures/cfg/listoperations.json");
 
         CFGNode node = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof AddTo).findFirst().get();
-        ListVariable theList = new ListVariable(((AddTo)node.getASTNode()).getIdentifier());
+        ListVariable theList = new ListVariable(((AddTo) node.getASTNode()).getIdentifier());
 
-        for(CFGNode sayNode : cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof SayForSecs).collect(Collectors.toSet())) {
+        for (CFGNode sayNode : cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof SayForSecs).collect(Collectors.toSet())) {
             assertThat(getDefinedLists(sayNode)).isEmpty();
         }
 

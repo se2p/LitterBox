@@ -43,22 +43,22 @@ public class EventParser {
     public static final String GREATER_THAN_MENU = "WHENGREATERTHANMENU";
     public static final String BACKDROP = "BACKDROP";
 
-    public static Event parse(String blockID, JsonNode allBlocks) throws ParsingException {
-        Preconditions.checkNotNull(blockID);
+    public static Event parse(String blockId, JsonNode allBlocks) throws ParsingException {
+        Preconditions.checkNotNull(blockId);
         Preconditions.checkNotNull(allBlocks);
 
-        JsonNode current = allBlocks.get(blockID);
+        JsonNode current = allBlocks.get(blockId);
         String opcodeString = current.get(OPCODE_KEY).asText();
         Preconditions
-                .checkArgument(EventOpcode.contains(opcodeString), "Given blockID does not point to an event block.");
+                .checkArgument(EventOpcode.contains(opcodeString), "Given blockId does not point to an event block.");
 
         EventOpcode opcode = EventOpcode.valueOf(opcodeString);
-        BlockMetadata metadata = BlockMetadataParser.parse(blockID, current);
+        BlockMetadata metadata = BlockMetadataParser.parse(blockId, current);
         if (opcode.equals(event_whenflagclicked)) {
             return new GreenFlag(metadata);
         } else if (opcode.equals(event_whenkeypressed)) {
             Key key = KeyParser.parse(current, allBlocks);
-            return new KeyPressed(key,metadata);
+            return new KeyPressed(key, metadata);
         } else if (opcode.equals(event_whenthisspriteclicked)) {
             return new SpriteClicked(metadata);
         } else if (opcode.equals(event_whenstageclicked)) {
@@ -67,20 +67,20 @@ public class EventParser {
             JsonNode fields = current.get(FIELDS_KEY);
             String msgValue = fields.get(BCAST_OPTION).get(FIELD_VALUE).asText();
             Message msg = new Message(new StringLiteral(msgValue));
-            return new ReceptionOfMessage(msg,metadata);
+            return new ReceptionOfMessage(msg, metadata);
         } else if (opcode.equals(control_start_as_clone)) {
             return new StartedAsClone(metadata);
         } else if (opcode.equals(event_whengreaterthan)) {
             String variableValue = current.get(FIELDS_KEY).get(GREATER_THAN_MENU).get(0).asText();
             EventAttribute attr = EventAttribute.fromString(variableValue.toLowerCase());
             NumExpr fieldValue = NumExprParser.parseNumExpr(current, VALUE_KEY, allBlocks);
-            return new AttributeAboveValue(attr, fieldValue,metadata);
+            return new AttributeAboveValue(attr, fieldValue, metadata);
         } else if (opcode.equals(event_whenbackdropswitchesto)) {
             JsonNode fields = current.get(FIELDS_KEY);
             JsonNode backdropArray = fields.get(BACKDROP);
             String backdropName = backdropArray.get(FIELD_VALUE).asText();
             LocalIdentifier id = new StrId(backdropName);
-            return new BackdropSwitchTo(id,metadata);
+            return new BackdropSwitchTo(id, metadata);
         } else {
             throw new IllegalStateException("EventBlock with opcode " + opcode + " was not parsed");
         }

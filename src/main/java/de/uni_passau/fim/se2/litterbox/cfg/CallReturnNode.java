@@ -31,6 +31,7 @@ public class CallReturnNode extends CFGNode {
     public CallReturnNode(CallStmt callNode) {
         this.originalCall = callNode;
     }
+
     @Override
     public ASTNode getASTNode() {
         return originalCall;
@@ -48,6 +49,6 @@ public class CallReturnNode extends CFGNode {
 
     @Override
     public String toString() {
-        return "Return "+originalCall.getIdent().getName()+"@" + System.identityHashCode(originalCall);
+        return "Return " + originalCall.getIdent().getName() + "@" + System.identityHashCode(originalCall);
     }
 }

@@ -58,7 +58,11 @@ public class ControlFlowGraphBuilder {
     }
 
     public void addEndOfProcedure(ProcedureDefinition node, List<CFGNode> endOfProcedure) {
-        ProcedureInfo procDef = ProgramParser.procDefMap.getProcedureForHash(currentActor.getIdent().getName(), node.getIdent().getName());
+        ProcedureInfo procDef = ProgramParser.procDefMap
+                .getProcedureForHash(
+                        currentActor.getIdent().getName(),
+                        node.getIdent().getName()
+                );
 
         ProcedureNode customBlockNode = new ProcedureNode(procDef.getName(), procDef.getActorName());
 
@@ -66,13 +70,12 @@ public class ControlFlowGraphBuilder {
     }
 
     private void connectCustomBlockCalls() {
-        for(Map.Entry<CFGNode, CFGNode> entry : procedureCallMap.entrySet()) {
+        for (Map.Entry<CFGNode, CFGNode> entry : procedureCallMap.entrySet()) {
             CFGNode callNode = entry.getKey();
             CFGNode procedureNode = entry.getValue();
-            if(procedureMap.containsKey(procedureNode)) {
+            if (procedureMap.containsKey(procedureNode)) {
                 List<CFGNode> endNodes = procedureMap.get(procedureNode);
                 endNodes.forEach(n -> cfg.addEdge(n, callNode));
-
             } else {
                 cfg.addEdge(procedureNode, callNode);
             }
@@ -158,7 +161,6 @@ public class ControlFlowGraphBuilder {
         setCurrentNode(eventNode);
     }
 
-
     public void addBroadcastHandler(Message message) {
 
         CFGNode handlerNode = cfg.addNode(message);
@@ -190,9 +192,9 @@ public class ControlFlowGraphBuilder {
             }
         });
 
-        assert(names.size() == 1);
+        assert (names.size() == 1);
         String name = names.get(0);
-        if(name.equals(Identifier.MYSELF.getValue())) {
+        if (name.equals(Identifier.MYSELF.getValue())) {
             name = currentActor.getIdent().getName();
         }
 
@@ -211,7 +213,9 @@ public class ControlFlowGraphBuilder {
 
     public void addProcedure(ProcedureDefinition node) {
 
-        ProcedureInfo procDef = ProgramParser.procDefMap.getProcedureForHash(currentActor.getIdent().getName(), node.getIdent().getName());
+        ProcedureInfo procDef = ProgramParser.procDefMap.getProcedureForHash(
+                currentActor.getIdent().getName(),
+                node.getIdent().getName());
         ProcedureNode customBlockNode = new ProcedureNode(procDef.getName(), procDef.getActorName());
         setCurrentNode(customBlockNode);
     }

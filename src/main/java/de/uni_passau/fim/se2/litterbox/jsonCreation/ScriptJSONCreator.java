@@ -125,7 +125,7 @@ public class ScriptJSONCreator {
                 if (symbol.getMessages().containsKey(messageText)) {
                     id = symbol.getMessages().get(messageText).getIdentifier();
                 } else {
-                    id = "unspecified"+messageText;
+                    id = "unspecified" + messageText;
                 }
                 String fields = createFields(fieldsMetadata.getFieldsName(), messageText, id);
                 jsonString.append(createBlockWithoutMutationString(meta, nextId, null, EMPTY_VALUE, fields));

@@ -53,7 +53,6 @@ public class VariableUseVisitor implements DefinableCollector<de.uni_passau.fim.
         node.getBoolExpr().accept(this);
     }
 
-
     @Override
     public void visit(IfElseStmt node) {
         node.getBoolExpr().accept(this);
@@ -87,10 +86,10 @@ public class VariableUseVisitor implements DefinableCollector<de.uni_passau.fim.
         // We lose precision here because it could also be a Parameter or else
         // but we don't know the value of that statically
         if (owner instanceof LocalIdentifier) {
-            LocalIdentifier localIdentifier = (LocalIdentifier)owner;
+            LocalIdentifier localIdentifier = (LocalIdentifier) owner;
 
-            if(attribute instanceof AttributeFromVariable) {
-                AttributeFromVariable varAttribute = (AttributeFromVariable)attribute;
+            if (attribute instanceof AttributeFromVariable) {
+                AttributeFromVariable varAttribute = (AttributeFromVariable) attribute;
                 DataExpr e = varAttribute.getVariable();
                 Qualified q = new Qualified(localIdentifier, e);
                 uses.add(new de.uni_passau.fim.se2.litterbox.cfg.Variable(q));
@@ -100,7 +99,7 @@ public class VariableUseVisitor implements DefinableCollector<de.uni_passau.fim.
 
     @Override
     public void visit(Qualified node) {
-        if(!(node.getSecond() instanceof ScratchList)) {
+        if (!(node.getSecond() instanceof ScratchList)) {
             uses.add(new de.uni_passau.fim.se2.litterbox.cfg.Variable(node));
         }
     }

@@ -67,9 +67,9 @@ public class ColorLiteral extends AbstractNode implements Color, ASTLeaf {
             return false;
         }
         ColorLiteral that = (ColorLiteral) o;
-        return red == that.red &&
-                green == that.green &&
-                blue == that.blue;
+        return red == that.red
+                && green == that.green
+                && blue == that.blue;
     }
 
     @Override

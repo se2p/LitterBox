@@ -30,7 +30,7 @@ public abstract class LocalIdentifier extends AbstractNode implements Identifier
 
     public LocalIdentifier(StringLiteral name) {
         super(name);
-        this.name=name;
+        this.name = name;
     }
 
     public String getName() {
@@ -44,9 +44,15 @@ public abstract class LocalIdentifier extends AbstractNode implements Identifier
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof LocalIdentifier)) return false;
-        if (!super.equals(o)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof LocalIdentifier)) {
+            return false;
+        }
+        if (!super.equals(o)) {
+            return false;
+        }
         LocalIdentifier that = (LocalIdentifier) o;
         return Objects.equals(name, that.name);
     }

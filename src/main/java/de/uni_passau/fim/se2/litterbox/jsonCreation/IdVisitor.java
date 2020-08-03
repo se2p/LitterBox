@@ -446,5 +446,4 @@ public class IdVisitor implements ScratchVisitor {
     public void visit(ClearGraphicEffects node) {
         id = ((NonDataBlockMetadata) node.getMetadata()).getBlockId();
     }
-
 }

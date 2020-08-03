@@ -84,33 +84,34 @@ public class ScriptParser {
         return false;
     }
 
-    public static StmtList parseStmtList(String blockID, JsonNode blocks) throws ParsingException {
+    public static StmtList parseStmtList(String blockId, JsonNode blocks) throws ParsingException {
         List<Stmt> list = new LinkedList<>();
-        JsonNode current = blocks.get(blockID);
+        JsonNode current = blocks.get(blockId);
 
         if (current instanceof ArrayNode) {
-            Stmt stmt = StmtParser.parse(blockID, blocks);
+            Stmt stmt = StmtParser.parse(blockId, blocks);
             list.add(stmt);
         } else {
 
             while (current != null && !current.isNull()) {
                 try {
-                    if (ProcedureOpcode.contains(blocks.get(blockID).get(OPCODE_KEY).asText()) || DependentBlockOpcodes.contains(blocks.get(blockID).get(OPCODE_KEY).asText())) {
+                    if (ProcedureOpcode.contains(blocks.get(blockId).get(OPCODE_KEY).asText())
+                            || DependentBlockOpcodes.contains(blocks.get(blockId).get(OPCODE_KEY).asText())) {
                         //Ignore ProcedureOpcodes
-//                    blockID = current.get(NEXT_KEY).asText();
-//                    current = blocks.get(blockID);
+                        //                    blockId = current.get(NEXT_KEY).asText();
+                        //                    current = blocks.get(blockId);
                         return null;
                     }
 
-                    Stmt stmt = StmtParser.parse(blockID, blocks);
+                    Stmt stmt = StmtParser.parse(blockId, blocks);
                     list.add(stmt);
                 } catch (ParsingException e) {
                     // and needs to be removed
-                    Logger.getGlobal().warning("Could not parse block with ID " + blockID + " and opcode "
+                    Logger.getGlobal().warning("Could not parse block with ID " + blockId + " and opcode "
                             + current.get(OPCODE_KEY));
                 }
-                blockID = current.get(NEXT_KEY).asText();
-                current = blocks.get(blockID);
+                blockId = current.get(NEXT_KEY).asText();
+                current = blocks.get(blockId);
             }
         }
         return new StmtList(list);

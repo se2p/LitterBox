@@ -17,7 +17,6 @@ import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-
 public class ScratchBlocksVisitorTest {
 
     private Program getAST(String fileName) throws IOException, ParsingException {
@@ -714,7 +713,6 @@ public class ScratchBlocksVisitorTest {
         Issue firstIssue = issues.iterator().next();
         Issue mockIssue = new Issue(stuttMovement, firstIssue.getActor(), firstIssue.getScript(), firstIssue.getCodeLocation(), "FAKE TEXT", firstIssue.getCodeMetadata());
 
-
         ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(firstIssue, mockIssue);
         visitor.begin();
         program.accept(visitor);
@@ -764,7 +762,6 @@ public class ScratchBlocksVisitorTest {
                 "block name [text]:: #ff0000 // Issue: endless_recursion\n" +
                 "[/scratchblocks]\n", output);
     }
-
 
     @Test
     public void testCustomBlockWithForeverIssueAnnotation() throws IOException, ParsingException {
@@ -883,7 +880,6 @@ public class ScratchBlocksVisitorTest {
                 "[/scratchblocks]\n", output);
     }
 
-
     @Test
     public void testForeverInsideLoopIssueAnnotation() throws IOException, ParsingException {
         Program program = getAST("src/test/fixtures/bugpattern/foreverInLoop.json");
@@ -952,8 +948,6 @@ public class ScratchBlocksVisitorTest {
                 "[/scratchblocks]\n", output);
     }
 
-
-
     @Test
     public void testMessageNeverSentIssueAnnotation() throws IOException, ParsingException {
         Program program = getAST("src/test/fixtures/bugpattern/messageRec.json");
@@ -992,7 +986,6 @@ public class ScratchBlocksVisitorTest {
                 "[/scratchblocks]\n", output);
     }
 
-
     @Test
     public void testMissingCloneCallIssueAnnotation() throws IOException, ParsingException {
         Program program = getAST("src/test/fixtures/bugpattern/missingCloneCall.json");
@@ -1011,7 +1004,6 @@ public class ScratchBlocksVisitorTest {
                 "wait (1) seconds\n" +
                 "[/scratchblocks]\n", output);
     }
-
 
     @Test
     public void testMissingCloneInitializationIssueAnnotation() throws IOException, ParsingException {
@@ -1072,7 +1064,6 @@ public class ScratchBlocksVisitorTest {
                 "say (meine Variable) for (2) seconds:: #ff0000 // Issue: missing_initialization\n" +
                 "[/scratchblocks]\n", output);
     }
-
 
     @Test
     public void testMissingLoopSensingIssueAnnotation() throws IOException, ParsingException {
@@ -1258,10 +1249,6 @@ public class ScratchBlocksVisitorTest {
                 "[/scratchblocks]\n", output);
     }
 
-
-
     // TODO: No working scripts?
     // TODO: SameIdentifierDifferentSprite
-
-
 }

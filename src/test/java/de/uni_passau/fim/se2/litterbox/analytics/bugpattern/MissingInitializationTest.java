@@ -74,7 +74,6 @@ public class MissingInitializationTest {
         Assertions.assertEquals(1, reports.size());
     }
 
-
     @Test
     public void testMissingInitializationInBroadcast() throws IOException, ParsingException {
         File f = new File("src/test/fixtures/bugpattern/missingVariableInitializationInBroadcast.json");
@@ -113,7 +112,6 @@ public class MissingInitializationTest {
         // 2 vars, each is first used in a say, then in a change
         Assertions.assertEquals(4, reports.size());
     }
-
 
     @Test
     public void testMissingInitializationVariableOfAndVar() throws IOException, ParsingException {
@@ -165,7 +163,6 @@ public class MissingInitializationTest {
         Set<Issue> reports = (new MissingInitialization()).check(program);
         Assertions.assertEquals(1, reports.size());
     }
-
 
     @Test
     public void testMissingInitializationInCustomBlockWithCall() throws IOException, ParsingException {

@@ -97,7 +97,7 @@ public class ActorSoundStmtParserTest {
             Truth.assertThat(listOfStmt.get(4).getClass()).isEqualTo(StopAll.class);
             StopAll stop = (StopAll) listOfStmt.get(4);
             Truth.assertThat(stop.getMetadata().getClass()).isEqualTo(NonDataBlockMetadata.class);
-            Truth.assertThat(((NonDataBlockMetadata)stop.getMetadata()).getMutation() instanceof StopMutationMetadata);
+            Truth.assertThat(((NonDataBlockMetadata) stop.getMetadata()).getMutation() instanceof StopMutationMetadata);
         } catch (ParsingException e) {
             e.printStackTrace();
             fail();

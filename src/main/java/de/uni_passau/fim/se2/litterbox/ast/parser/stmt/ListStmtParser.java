@@ -47,8 +47,8 @@ public class ListStmtParser {
 
         final String opcodeString = current.get(OPCODE_KEY).asText();
         Preconditions
-                .checkArgument(ListStmtOpcode.contains(opcodeString), "Given blockID does not point to a list " +
-                        "statement block.");
+                .checkArgument(ListStmtOpcode.contains(opcodeString), "Given blockID does not point to a list "
+                        + "statement block.");
 
         final ListStmtOpcode opcode = ListStmtOpcode.valueOf(opcodeString);
         BlockMetadata metadata = BlockMetadataParser.parse(blockId, current);
@@ -73,7 +73,8 @@ public class ListStmtParser {
         }
     }
 
-    private static ListStmt parseAddToList(JsonNode current, JsonNode allBlocks, BlockMetadata metadata) throws ParsingException {
+    private static ListStmt parseAddToList(JsonNode current, JsonNode allBlocks, BlockMetadata metadata)
+            throws ParsingException {
         Preconditions.checkNotNull(current);
         Preconditions.checkNotNull(allBlocks);
         StringExpr expr = StringExprParser.parseStringExpr(current, ITEM_KEY, allBlocks);
@@ -99,7 +100,8 @@ public class ListStmtParser {
         return info;
     }
 
-    private static ListStmt parseDeleteOfList(JsonNode current, JsonNode allBlocks, BlockMetadata metadata) throws ParsingException {
+    private static ListStmt parseDeleteOfList(JsonNode current, JsonNode allBlocks, BlockMetadata metadata)
+            throws ParsingException {
         Preconditions.checkNotNull(current);
         Preconditions.checkNotNull(allBlocks);
         NumExpr expr = NumExprParser.parseNumExpr(current, INDEX_KEY, allBlocks);
@@ -123,7 +125,8 @@ public class ListStmtParser {
                 new ScratchList(new StrId(info.getVariableName()))), metadata);
     }
 
-    private static ListStmt parseInsertAtList(JsonNode current, JsonNode allBlocks, BlockMetadata metadata) throws ParsingException {
+    private static ListStmt parseInsertAtList(JsonNode current, JsonNode allBlocks, BlockMetadata metadata)
+            throws ParsingException {
         Preconditions.checkNotNull(current);
         Preconditions.checkNotNull(allBlocks);
         StringExpr stringExpr = StringExprParser.parseStringExpr(current, ITEM_KEY, allBlocks);
@@ -137,7 +140,8 @@ public class ListStmtParser {
                 new ScratchList(new StrId(info.getVariableName()))), metadata);
     }
 
-    private static ListStmt parseReplaceItemOfList(JsonNode current, JsonNode allBlocks, BlockMetadata metadata) throws ParsingException {
+    private static ListStmt parseReplaceItemOfList(JsonNode current, JsonNode allBlocks, BlockMetadata metadata)
+            throws ParsingException {
         Preconditions.checkNotNull(current);
         Preconditions.checkNotNull(allBlocks);
         StringExpr stringExpr = StringExprParser.parseStringExpr(current, ITEM_KEY, allBlocks);

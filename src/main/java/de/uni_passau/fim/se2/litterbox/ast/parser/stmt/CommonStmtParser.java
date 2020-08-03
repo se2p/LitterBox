@@ -61,8 +61,8 @@ public class CommonStmtParser {
 
         final String opcodeString = current.get(OPCODE_KEY).asText();
         Preconditions
-                .checkArgument(CommonStmtOpcode.contains(opcodeString), "Given blockID does not point to a common " +
-                        "block.");
+                .checkArgument(CommonStmtOpcode.contains(opcodeString), "Given blockID does not point to a common "
+                        + "block.");
 
         final CommonStmtOpcode opcode = CommonStmtOpcode.valueOf(opcodeString);
         BlockMetadata metadata = BlockMetadataParser.parse(blockId, current);
@@ -96,15 +96,17 @@ public class CommonStmtParser {
         }
     }
 
-    private static CommonStmt parseChangeVariableBy(JsonNode current, JsonNode allBlocks, BlockMetadata metadata) throws ParsingException {
+    private static CommonStmt parseChangeVariableBy(JsonNode current, JsonNode allBlocks, BlockMetadata metadata)
+            throws ParsingException {
+
         Expression numExpr = NumExprParser.parseNumExpr(current, VALUE_KEY, allBlocks);
         Identifier var;
         String variableName = current.get(FIELDS_KEY).get(VARIABLE_KEY).get(VARIABLE_NAME_POS).asText();
-        String variableID = current.get(FIELDS_KEY).get(VARIABLE_KEY).get(VARIABLE_IDENTIFIER_POS).asText();
-        if (!ProgramParser.symbolTable.getVariables().containsKey(variableID)) {
+        String variableId = current.get(FIELDS_KEY).get(VARIABLE_KEY).get(VARIABLE_IDENTIFIER_POS).asText();
+        if (!ProgramParser.symbolTable.getVariables().containsKey(variableId)) {
             var = new UnspecifiedId();
         } else {
-            VariableInfo variableInfo = ProgramParser.symbolTable.getVariables().get(variableID);
+            VariableInfo variableInfo = ProgramParser.symbolTable.getVariables().get(variableId);
             String actorName = variableInfo.getActor();
             var = new Qualified(new StrId(actorName), new Variable(new StrId(variableName)));
         }
@@ -112,7 +114,8 @@ public class CommonStmtParser {
         return new ChangeVariableBy(var, numExpr, metadata);
     }
 
-    private static CommonStmt parseBroadcast(JsonNode current, JsonNode allBlocks, BlockMetadata metadata) throws ParsingException {
+    private static CommonStmt parseBroadcast(JsonNode current, JsonNode allBlocks, BlockMetadata metadata)
+            throws ParsingException {
         Preconditions.checkArgument(current.get(INPUTS_KEY).get(BROADCAST_INPUT_KEY).isArray());
 
         // The inputs contains array itself,
@@ -122,7 +125,9 @@ public class CommonStmtParser {
         return new Broadcast(message, metadata);
     }
 
-    private static CommonStmt parseBroadcastAndWait(JsonNode current, JsonNode allBlocks, BlockMetadata metadata) throws ParsingException {
+    private static CommonStmt parseBroadcastAndWait(JsonNode current, JsonNode allBlocks, BlockMetadata metadata)
+            throws ParsingException {
+
         Preconditions.checkArgument(current.get(INPUTS_KEY).get(BROADCAST_INPUT_KEY).isArray());
 
         // The inputs contains array itself,
@@ -133,7 +138,8 @@ public class CommonStmtParser {
         return broadcast;
     }
 
-    private static CommonStmt parseCreateCloneOf(JsonNode current, JsonNode allBlocks, BlockMetadata metadata) throws ParsingException {
+    private static CommonStmt parseCreateCloneOf(JsonNode current, JsonNode allBlocks, BlockMetadata metadata)
+            throws ParsingException {
         JsonNode inputs = current.get(INPUTS_KEY);
         List<JsonNode> inputsList = new ArrayList<>();
         inputs.elements().forEachRemaining(inputsList::add);
@@ -151,7 +157,8 @@ public class CommonStmtParser {
         }
     }
 
-    private static WaitUntil parseWaitUntil(JsonNode current, JsonNode allBlocks, BlockMetadata metadata) throws ParsingException {
+    private static WaitUntil parseWaitUntil(JsonNode current, JsonNode allBlocks, BlockMetadata metadata)
+            throws ParsingException {
         JsonNode inputs = current.get(INPUTS_KEY);
         if (inputs.has(CONDITION_KEY)) {
             BoolExpr boolExpr = BoolExprParser.parseBoolExpr(current, CONDITION_KEY, allBlocks);
@@ -161,12 +168,13 @@ public class CommonStmtParser {
         }
     }
 
-    private static WaitSeconds parseWaitSeconds(JsonNode current, JsonNode allBlocks, BlockMetadata metadata) throws ParsingException {
+    private static WaitSeconds parseWaitSeconds(JsonNode current, JsonNode allBlocks, BlockMetadata metadata)
+            throws ParsingException {
         NumExpr numExpr = NumExprParser.parseNumExpr(current, DURATION_KEY, allBlocks);
         return new WaitSeconds(numExpr, metadata);
     }
 
-    private static CommonStmt parseControlStop(JsonNode current, BlockMetadata metadata) throws ParsingException {
+    private static CommonStmt parseControlStop(JsonNode current, BlockMetadata metadata) {
         CommonStmt stmt;
         String stopOptionValue =
                 current.get(Constants.FIELDS_KEY).get(STOP_OPTION).get(Constants.FIELD_VALUE)

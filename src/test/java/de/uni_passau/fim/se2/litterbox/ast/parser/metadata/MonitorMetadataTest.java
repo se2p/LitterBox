@@ -62,7 +62,6 @@ public class MonitorMetadataTest {
         Assertions.assertTrue(monitors.getList().get(1) instanceof MonitorSliderMetadata);
         Assertions.assertTrue(monitors.getList().get(2) instanceof MonitorSliderMetadata);
         Assertions.assertTrue(monitors.getList().get(3) instanceof MonitorSliderMetadata);
-
     }
 
     @Test

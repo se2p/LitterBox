@@ -48,7 +48,6 @@ public class MessageNeverSent extends AbstractIssueFinder {
     private boolean addComment = false;
     private Set<String> notSentMessages = new LinkedHashSet<>();
 
-
     @Override
     public Set<Issue> check(Program program) {
         Preconditions.checkNotNull(program);

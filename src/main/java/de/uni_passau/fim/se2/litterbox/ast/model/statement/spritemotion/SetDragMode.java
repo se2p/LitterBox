@@ -23,8 +23,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 public class SetDragMode extends AbstractNode implements SpriteMotionStmt {
-    private DragMode drag;
     private final BlockMetadata metadata;
+    private DragMode drag;
 
     public SetDragMode(DragMode drag, BlockMetadata metadata) {
         super(drag, metadata);
@@ -44,5 +44,4 @@ public class SetDragMode extends AbstractNode implements SpriteMotionStmt {
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);
     }
-
 }

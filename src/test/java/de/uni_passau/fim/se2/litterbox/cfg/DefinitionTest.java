@@ -54,7 +54,6 @@ public class DefinitionTest {
         return visitor.getControlFlowGraph();
     }
 
-
     @Test
     public void testSingleDefinition() throws IOException, ParsingException {
         ControlFlowGraph cfg = getCFG("src/test/fixtures/dataflow/onedef.json");
@@ -110,7 +109,6 @@ public class DefinitionTest {
         node.getASTNode().accept(visitor);
         definitions = visitor.getDefineables();
         assertThat(definitions).hasSize(1);
-
     }
 
     @Test
@@ -131,7 +129,6 @@ public class DefinitionTest {
         node = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof SayForSecs).findFirst().get();
         assertThat(getDefinitions(node)).isEmpty();
     }
-
 
     @Test
     public void testNoDefInIf() throws IOException, ParsingException {

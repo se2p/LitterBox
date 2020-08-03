@@ -55,7 +55,7 @@ class MessageNeverSentTest {
     public void testMessageNeverSent() {
         MessageNeverSent finder = new MessageNeverSent();
         Set<Issue> reports = finder.check(program);
-        Truth.assertThat(reports).isEmpty();;
+        Truth.assertThat(reports).isEmpty();
     }
 
     @Test

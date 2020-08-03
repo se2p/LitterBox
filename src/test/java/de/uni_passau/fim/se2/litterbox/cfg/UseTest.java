@@ -92,7 +92,6 @@ public class UseTest {
         assertThat(uses).hasSize(1);
     }
 
-
     @Test
     public void testVariableReferenceIsAUse() throws IOException, ParsingException {
         ControlFlowGraph cfg = getCFG("src/test/fixtures/dataflow/variableref.json");
@@ -103,7 +102,6 @@ public class UseTest {
         Set<Variable> uses = visitor.getDefineables();
         assertThat(uses).hasSize(1);
     }
-
 
     @Test
     public void testVariableUsedInAttributeOf() throws IOException, ParsingException {
@@ -158,7 +156,6 @@ public class UseTest {
         assertThat(getUses(node)).isEmpty();
     }
 
-
     @Test
     public void testUseOfOtherSprite() throws IOException, ParsingException {
         ControlFlowGraph cfg = getCFG("src/test/fixtures/cfg/uselocalvarfromothersprite.json");
@@ -169,7 +166,6 @@ public class UseTest {
         node = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof SayForSecs).findFirst().get();
         assertThat(getUses(node)).containsExactly(var);
     }
-
 
     @Test
     public void testAttributeOfVariable() throws IOException, ParsingException {

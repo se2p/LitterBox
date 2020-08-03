@@ -13,7 +13,6 @@ public abstract class PrintVisitor implements ScratchVisitor {
         level = 0;
     }
 
-
     protected void emitToken(String string) {
         emitNoSpace(string);
         emitNoSpace(" ");

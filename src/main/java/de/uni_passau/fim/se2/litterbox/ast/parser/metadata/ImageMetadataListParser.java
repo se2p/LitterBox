@@ -27,7 +27,6 @@ import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 import java.util.ArrayList;
 import java.util.List;
 
-
 public class ImageMetadataListParser {
 
     public static ImageMetadataList parse(JsonNode imagesNode) {
@@ -37,7 +36,6 @@ public class ImageMetadataListParser {
         for (int i = 0; i < imagesArray.size(); i++) {
             imageMetadataList.add(ImageMetadataParser.parse(imagesArray.get(i)));
         }
-
 
         return new ImageMetadataList(imageMetadataList);
     }

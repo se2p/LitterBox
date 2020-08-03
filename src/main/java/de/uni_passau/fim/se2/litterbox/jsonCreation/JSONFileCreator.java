@@ -33,7 +33,6 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.Arrays;
 
-
 public class JSONFileCreator {
 
     public static void writeJsonFromProgram(Program program) {
@@ -75,13 +74,12 @@ public class JSONFileCreator {
             e.printStackTrace();
         }
 
-        File tempProj = new File(tmp +"/project.json");
+        File tempProj = new File(tmp + "/project.json");
         File annotatedJson = new File(program.getIdent().getName() + "_annotated.json");
-
 
         Files.copy(annotatedJson.toPath(), tempProj.toPath(), StandardCopyOption.REPLACE_EXISTING);
         Files.delete(annotatedJson.toPath());
-        File tempDir= new File(String.valueOf(tmp));
+        File tempDir = new File(String.valueOf(tmp));
 
         File[] files = tempDir.listFiles();
 

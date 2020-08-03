@@ -41,4 +41,3 @@ public class ListMetadataList extends AbstractNode {
         visitor.visit(this);
     }
 }
-
