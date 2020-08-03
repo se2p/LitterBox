@@ -23,17 +23,18 @@ import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
-import java.io.File;
-import java.io.IOException;
-import java.util.Set;
-
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.Set;
+
 public class DeadCodeTest {
     private static Program empty;
     private static Program deadCode;
+    private static Program deadVariable;
     private static ObjectMapper mapper = new ObjectMapper();
 
     @BeforeAll
@@ -43,6 +44,8 @@ public class DeadCodeTest {
         empty = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
         f = new File("./src/test/fixtures/smells/deadCode.json");
         deadCode = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
+        f = new File("./src/test/fixtures/smells/deadVariable.json");
+        deadVariable = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
     }
 
     @Test
@@ -57,5 +60,12 @@ public class DeadCodeTest {
         DeadCode parameterName = new DeadCode();
         Set<Issue> reports = parameterName.check(deadCode);
         Assertions.assertEquals(3, reports.size());
+    }
+
+    @Test
+    public void testDeadVariable() {
+        DeadCode parameterName = new DeadCode();
+        Set<Issue> reports = parameterName.check(deadVariable);
+        Assertions.assertEquals(2, reports.size());
     }
 }

@@ -81,7 +81,7 @@ public class MissingCloneInitialization extends AbstractIssueFinder {
                     clonedActors.add(spriteName);
                 }
             } else if (notClonedActor.contains(spriteName)) {
-                addIssue(node, // TODO: Is this the right block?
+                addIssue(node,
                         HINT_TEXT, ((CloneOfMetadata) node.getMetadata()).getCloneBlockMetadata());
             }
         }
