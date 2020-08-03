@@ -18,10 +18,11 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.model.expression.bool;
 
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTLeaf;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.UnspecifiedExpression;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
-public class UnspecifiedBoolExpr extends UnspecifiedExpression implements BoolExpr {
+public class UnspecifiedBoolExpr extends UnspecifiedExpression implements BoolExpr, ASTLeaf {
 
     @Override
     public void accept(ScratchVisitor visitor) {

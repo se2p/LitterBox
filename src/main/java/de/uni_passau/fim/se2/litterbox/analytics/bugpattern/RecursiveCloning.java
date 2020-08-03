@@ -36,7 +36,7 @@ import java.util.Set;
  */
 public class RecursiveCloning extends AbstractIssueFinder {
     public static final String NAME = "recursive_cloning";
-    public static final String HINT_TEXT = "recursive cloning";
+    public static final String HINT_TEXT = "recursive_cloning_hint";
     private boolean startAsClone = false;
 
     @Override
@@ -74,5 +74,10 @@ public class RecursiveCloning extends AbstractIssueFinder {
     @Override
     public String getName() {
         return NAME;
+    }
+
+    @Override
+    public IssueType getIssueType() {
+        return IssueType.BUG;
     }
 }

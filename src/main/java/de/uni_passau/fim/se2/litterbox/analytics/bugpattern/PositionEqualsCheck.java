@@ -39,8 +39,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
  */
 public class PositionEqualsCheck extends AbstractIssueFinder {
     public static final String NAME = "position_equals_check";
-    public static final String HINT_TEXT = "position equals check";
-    private static boolean inCondition;
+    public static final String HINT_TEXT = "position_equals_check_hint";
+    static boolean inCondition;
 
     @Override
     public void visit(WaitUntil node) {
@@ -58,7 +58,7 @@ public class PositionEqualsCheck extends AbstractIssueFinder {
         }
     }
 
-    private boolean checkEquals(Equals equals) {
+    boolean checkEquals(Equals equals) {
         if (!checkOptions(equals.getOperand1()))
             return false;
 
@@ -108,5 +108,10 @@ public class PositionEqualsCheck extends AbstractIssueFinder {
     @Override
     public String getName() {
         return NAME;
+    }
+
+    @Override
+    public IssueType getIssueType() {
+        return IssueType.BUG;
     }
 }

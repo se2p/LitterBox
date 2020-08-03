@@ -16,26 +16,27 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
+package de.uni_passau.fim.se2.litterbox.analytics.smells;
 
+import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ExpressionListInfo;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.VariableInfo;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
-public class SameVariableDifferentSprite implements IssueFinder {
+public class SameVariableDifferentSprite extends AbstractIssueFinder {
     public static final String NAME = "same_variable_different_sprite";
-    public static final String HINT_TEXT = "same_variable different sprite";
+    public static final String HINT_TEXT = "same_variable_different_sprite_hint";
 
     @Override
     public Set<Issue> check(Program program) {
-        Set<Issue> issues = new LinkedHashSet<>();
         Preconditions.checkNotNull(program);
         boolean found = false;
         List<ActorDefinition> actorDefinitions = program.getActorDefinitionList().getDefinitions();
@@ -43,9 +44,9 @@ public class SameVariableDifferentSprite implements IssueFinder {
         ArrayList<VariableInfo> varInfos = new ArrayList<>(variableInfoMap.values());
         for (int i = 0; i < varInfos.size(); i++) {
             String currentName = varInfos.get(i).getVariableName();
-            String currentActor = varInfos.get(i).getActor();
+            String currentActorName = varInfos.get(i).getActor();
             for (int j = 0; j < varInfos.size(); j++) {
-                if (i != j && currentName.equals(varInfos.get(j).getVariableName()) && !currentActor.equals(varInfos.get(j).getActor())) {
+                if (i != j && currentName.equals(varInfos.get(j).getVariableName()) && !currentActorName.equals(varInfos.get(j).getActor())) {
                     found = true;
                     break;
                 }
@@ -53,15 +54,9 @@ public class SameVariableDifferentSprite implements IssueFinder {
             if (found) {
                 found = false;
                 for (ActorDefinition actorDefinition : actorDefinitions) {
-                    if (actorDefinition.getIdent().getName().equals(currentActor)) {
-                        Script script = actorDefinition.getScripts().getScriptList().isEmpty() ? null : actorDefinition.getScripts().getScriptList().get(0);
-
-                        issues.add(new Issue(this,
-                                actorDefinition,
-                                script, // TODO: What is the correct script?
-                                actorDefinition,
-                                HINT_TEXT,
-                                null)); // TODO: Improve -- null ensures loose comment
+                    currentActor = actorDefinition;
+                    if (actorDefinition.getIdent().getName().equals(currentActorName)) {
+                        addIssueWithLooseComment(HINT_TEXT);
                         break;
                     }
                 }
@@ -72,9 +67,9 @@ public class SameVariableDifferentSprite implements IssueFinder {
         ArrayList<ExpressionListInfo> listInfos = new ArrayList<>(listInfoMap.values());
         for (int i = 0; i < listInfos.size(); i++) {
             String currentName = listInfos.get(i).getVariableName();
-            String currentActor = listInfos.get(i).getActor();
+            String currentActorName = listInfos.get(i).getActor();
             for (int j = 0; j < listInfos.size(); j++) {
-                if (i != j && currentName.equals(listInfos.get(j).getVariableName()) && !currentActor.equals(listInfos.get(j).getActor())) {
+                if (i != j && currentName.equals(listInfos.get(j).getVariableName()) && !currentActorName.equals(listInfos.get(j).getActor())) {
                     found = true;
                     break;
                 }
@@ -82,14 +77,9 @@ public class SameVariableDifferentSprite implements IssueFinder {
             if (found) {
                 found = false;
                 for (ActorDefinition actorDefinition : actorDefinitions) {
-                    if (actorDefinition.getIdent().getName().equals(currentActor)) {
-                        Script script = actorDefinition.getScripts().getScriptList().isEmpty() ? null : actorDefinition.getScripts().getScriptList().get(0);
-                        issues.add(new Issue(this,
-                                actorDefinition,
-                                script, // TODO: What is the correct script?
-                                actorDefinition,
-                                HINT_TEXT,
-                                null)); // TODO: Improve -- null ensures loose comment
+                    if (actorDefinition.getIdent().getName().equals(currentActorName)) {
+                        currentActor = actorDefinition;
+                        addIssueWithLooseComment(HINT_TEXT);
                         break;
                     }
                 }
@@ -102,5 +92,10 @@ public class SameVariableDifferentSprite implements IssueFinder {
     @Override
     public String getName() {
         return NAME;
+    }
+
+    @Override
+    public IssueType getIssueType() {
+        return IssueType.SMELL;
     }
 }

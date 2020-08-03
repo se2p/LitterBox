@@ -46,7 +46,7 @@ import java.util.Set;
 public class MissingBackdropSwitch extends AbstractIssueFinder {
 
     public static final String NAME = "missing_backdrop_switch";
-    public static final String HINT_TEXT = "missing backdrop switch";
+    public static final String HINT_TEXT = "missing_backdrop_switch_hint";
     private List<Pair<String>> switched = new ArrayList<>();
     private List<Pair<String>> switchReceived = new ArrayList<>();
     private boolean nextRandPrev = false;
@@ -176,5 +176,10 @@ public class MissingBackdropSwitch extends AbstractIssueFinder {
     @Override
     public String getName() {
         return NAME;
+    }
+
+    @Override
+    public IssueType getIssueType() {
+        return IssueType.BUG;
     }
 }

@@ -16,24 +16,23 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
+package de.uni_passau.fim.se2.litterbox.analytics.metric;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
-import java.io.File;
-import java.io.IOException;
-import java.util.Set;
-
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-public class SameIdentifierDifferentSpriteTest {
+import java.io.File;
+import java.io.IOException;
+
+public class WeightedMethodCountStrictTest {
+
     private static Program empty;
-    private static Program variableDifferentSprite;
+    private static Program unusedProc;
     private static ObjectMapper mapper = new ObjectMapper();
 
     @BeforeAll
@@ -41,21 +40,19 @@ public class SameIdentifierDifferentSpriteTest {
 
         File f = new File("./src/test/fixtures/emptyProject.json");
         empty = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
-        f = new File("./src/test/fixtures/bugpattern/variableDifferentSprite.json");
-        variableDifferentSprite = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
+        f = new File("./src/test/fixtures/bugpattern/weightedMethodCountStrict.json");
+        unusedProc = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
     }
 
     @Test
     public void testEmptyProgram() {
-        SameVariableDifferentSprite parameterName = new SameVariableDifferentSprite();
-        Set<Issue> reports = parameterName.check(empty);
-        Assertions.assertEquals(0, reports.size());
+        WeightedMethodCount parameterName = new WeightedMethodCountStrict();
+        Assertions.assertEquals(0, parameterName.calculateMetric(empty));
     }
 
     @Test
-    public void testProcedureWithTermination() {
-        SameVariableDifferentSprite parameterName = new SameVariableDifferentSprite();
-        Set<Issue> reports = parameterName.check(variableDifferentSprite);
-        Assertions.assertEquals(4, reports.size());
+    public void testMethodCount() {
+        WeightedMethodCount parameterName = new WeightedMethodCountStrict();
+        Assertions.assertEquals(2, parameterName.calculateMetric(unusedProc));
     }
 }

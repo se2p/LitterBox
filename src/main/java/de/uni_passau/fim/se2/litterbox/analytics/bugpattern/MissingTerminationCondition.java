@@ -29,7 +29,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
  */
 public class MissingTerminationCondition extends AbstractIssueFinder {
     public static final String NAME = "missing_termination";
-    public static final String HINT_TEXT = "missing termination";
+    public static final String HINT_TEXT = "missing_termination_hint";
 
     @Override
     public void visit(UntilStmt node) {
@@ -42,5 +42,10 @@ public class MissingTerminationCondition extends AbstractIssueFinder {
     @Override
     public String getName() {
         return NAME;
+    }
+
+    @Override
+    public IssueType getIssueType() {
+        return IssueType.BUG;
     }
 }

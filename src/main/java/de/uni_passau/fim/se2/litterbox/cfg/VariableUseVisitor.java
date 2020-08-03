@@ -82,15 +82,18 @@ public class VariableUseVisitor implements DefinableCollector<de.uni_passau.fim.
         // Name of owner
         Expression owner = ((WithExpr) node.getElementChoice()).getExpression();
 
-        assert(owner instanceof LocalIdentifier) : "This has to be a LocalIdentifier, no? If not another block was " +
-                "inserted into the ElementChoice";
-        LocalIdentifier localIdentifier = (LocalIdentifier)owner;
+        // Can only handle LocalIdentifier hier (i.e. value selected in dropdown)
+        // We lose precision here because it could also be a Parameter or else
+        // but we don't know the value of that statically
+        if (owner instanceof LocalIdentifier) {
+            LocalIdentifier localIdentifier = (LocalIdentifier)owner;
 
-        if(attribute instanceof AttributeFromVariable) {
-            AttributeFromVariable varAttribute = (AttributeFromVariable)attribute;
-            DataExpr e = varAttribute.getVariable();
-            Qualified q = new Qualified(localIdentifier, e);
-            uses.add(new de.uni_passau.fim.se2.litterbox.cfg.Variable(q));
+            if(attribute instanceof AttributeFromVariable) {
+                AttributeFromVariable varAttribute = (AttributeFromVariable)attribute;
+                DataExpr e = varAttribute.getVariable();
+                Qualified q = new Qualified(localIdentifier, e);
+                uses.add(new de.uni_passau.fim.se2.litterbox.cfg.Variable(q));
+            }
         }
     }
 

@@ -38,7 +38,7 @@ import java.util.Set;
  */
 public class AmbiguousParameterNameStrict extends AbstractIssueFinder {
     public static final String NAME = "ambiguous_parameter_name_strict";
-    public static final String HINT_TEXT = "ambiguous parameter name strict";
+    public static final String HINT_TEXT = "ambiguous_parameter_name_strict_hint";
     private boolean inStmtList = false;
     private boolean found = false;
     private boolean used = false;
@@ -113,5 +113,10 @@ public class AmbiguousParameterNameStrict extends AbstractIssueFinder {
     @Override
     public String getName() {
         return NAME;
+    }
+
+    @Override
+    public IssueType getIssueType() {
+        return IssueType.BUG;
     }
 }

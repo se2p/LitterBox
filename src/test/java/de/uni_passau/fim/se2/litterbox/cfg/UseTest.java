@@ -170,6 +170,19 @@ public class UseTest {
         assertThat(getUses(node)).containsExactly(var);
     }
 
+
+    @Test
+    public void testAttributeOfVariable() throws IOException, ParsingException {
+        // If the dropdown contains a variable or parameter we don't statically know what sprite
+        // we're referring to, so for now we skip these definitions/uses...
+        ControlFlowGraph cfg = getCFG("src/test/fixtures/cfg/nouseattributewithvariable.json");
+        List<CFGNode> nodes = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof SayForSecs).collect(Collectors.toList());
+        for (CFGNode node : nodes) {
+            assertThat(node.getDefinitions()).isEmpty();
+            assertThat(node.getUses()).isEmpty();
+        }
+    }
+
     @Test
     public void testUseOfVariablesInDifferentScopes() throws IOException, ParsingException {
         ControlFlowGraph cfg = getCFG("src/test/fixtures/cfg/variablescopes.json");

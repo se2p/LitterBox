@@ -27,14 +27,19 @@ import java.util.Set;
  */
 public interface IssueFinder {
 
+    IssueType getIssueType();
+
     /**
      * Checks the given program for a specific issue.
      *
      * @param program The project to check
      * @return a IssueReport object
      */
-
     Set<Issue> check(Program program);
 
     String getName();
+
+    enum IssueType {
+        BUG, SMELL
+    }
 }

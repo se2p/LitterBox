@@ -32,7 +32,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.pen.PenUpStmt;
 public class MissingPenDown extends AbstractIssueFinder {
 
     public static final String NAME = "missing_pen_down";
-    public static final String HINT_TEXT = "missing pen down";
+    public static final String HINT_TEXT = "missing_pen_down_hint";
 
     private boolean penUpSet = false;
     private boolean penDownSet = false;
@@ -80,10 +80,14 @@ public class MissingPenDown extends AbstractIssueFinder {
     boolean getResult() {
         return !penDownSet && penUpSet;
     }
-    
+
     @Override
     public String getName() {
         return NAME;
     }
 
+    @Override
+    public IssueType getIssueType() {
+        return IssueType.BUG;
+    }
 }

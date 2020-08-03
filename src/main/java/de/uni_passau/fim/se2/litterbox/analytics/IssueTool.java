@@ -37,48 +37,47 @@ public class IssueTool {
     private Map<String, IssueFinder> smellFinder = new LinkedHashMap<>();
 
     public IssueTool() {
-        bugFinder.put(AmbiguousCustomBlockSignature.NAME, new AmbiguousCustomBlockSignature());
-        bugFinder.put(AmbiguousParameterName.NAME, new AmbiguousParameterName());
-        bugFinder.put(AmbiguousParameterNameStrict.NAME, new AmbiguousParameterNameStrict());
-        bugFinder.put(CallWithoutDefinition.NAME, new CallWithoutDefinition());
-        bugFinder.put(ComparingLiterals.NAME, new ComparingLiterals());
-        bugFinder.put(CustomBlockWithForever.NAME, new CustomBlockWithForever());
-        bugFinder.put(CustomBlockWithTermination.NAME, new CustomBlockWithTermination());
-        bugFinder.put(EndlessRecursion.NAME, new EndlessRecursion());
-        bugFinder.put(ExpressionAsTouchingOrColor.NAME, new ExpressionAsTouchingOrColor());
-        bugFinder.put(ForeverInsideLoop.NAME, new ForeverInsideLoop());
-        bugFinder.put(IllegalParameterRefactor.NAME, new IllegalParameterRefactor());
-        bugFinder.put(MessageNeverReceived.NAME, new MessageNeverReceived());
-        bugFinder.put(MessageNeverSent.NAME, new MessageNeverSent());
-        bugFinder.put(MissingBackdropSwitch.NAME, new MissingBackdropSwitch());
-        bugFinder.put(MissingCloneCall.NAME, new MissingCloneCall());
-        bugFinder.put(MissingCloneInitialization.NAME, new MissingCloneInitialization());
-        bugFinder.put(MissingInitialization.NAME, new MissingInitialization());
-        bugFinder.put(MissingEraseAll.NAME, new MissingEraseAll());
-        bugFinder.put(MissingLoopSensing.NAME, new MissingLoopSensing());
-        bugFinder.put(MissingPenDown.NAME, new MissingPenDown());
-        bugFinder.put(MissingPenUp.NAME, new MissingPenUp());
-        bugFinder.put(MissingTerminationCondition.NAME, new MissingTerminationCondition());
-        bugFinder.put(MissingWaitUntilCondition.NAME, new MissingWaitUntilCondition());
-        bugFinder.put(NoWorkingScripts.NAME, new NoWorkingScripts());
-        bugFinder.put(OrphanedParameter.NAME, new OrphanedParameter());
-        bugFinder.put(ParameterOutOfScope.NAME, new ParameterOutOfScope());
-        bugFinder.put(PositionEqualsCheck.NAME, new PositionEqualsCheck());
-        bugFinder.put(RecursiveCloning.NAME, new RecursiveCloning());
-        bugFinder.put(SameVariableDifferentSprite.NAME, new SameVariableDifferentSprite());
-        bugFinder.put(StutteringMovement.NAME, new StutteringMovement());
+        registerBugFinder(new AmbiguousCustomBlockSignature());
+        registerBugFinder(new AmbiguousParameterName());
+        registerBugFinder(new CallWithoutDefinition());
+        registerBugFinder(new ComparingLiterals());
+        registerBugFinder(new CustomBlockWithForever());
+        registerBugFinder(new CustomBlockWithTermination());
+        registerBugFinder(new EndlessRecursion());
+        registerBugFinder(new ExpressionAsTouchingOrColor());
+        registerBugFinder(new ForeverInsideLoop());
+        registerBugFinder(new IllegalParameterRefactor());
+        registerBugFinder(new MessageNeverReceived());
+        registerBugFinder(new MessageNeverSent());
+        registerBugFinder(new MissingBackdropSwitch());
+        registerBugFinder(new MissingCloneCall());
+        registerBugFinder(new MissingCloneInitialization());
+        registerBugFinder(new MissingInitialization());
+        registerBugFinder(new MissingEraseAll());
+        registerBugFinder(new MissingLoopSensing());
+        registerBugFinder(new MissingPenDown());
+        registerBugFinder(new MissingPenUp());
+        registerBugFinder(new MissingTerminationCondition());
+        registerBugFinder(new MissingWaitUntilCondition());
+        registerBugFinder(new NoWorkingScripts());
+        registerBugFinder(new OrphanedParameter());
+        registerBugFinder(new ParameterOutOfScope());
+        registerBugFinder(new PositionEqualsCheck());
+        registerBugFinder(new RecursiveCloning());
+        registerBugFinder(new StutteringMovement());
 
         // Smells
-        smellFinder.put(EmptyControlBody.NAME, new EmptyControlBody());
-        smellFinder.put(EmptyCustomBlock.NAME, new EmptyCustomBlock());
-        smellFinder.put(EmptyProject.NAME, new EmptyProject());
-        smellFinder.put(EmptyScript.NAME, new EmptyScript());
-        smellFinder.put(EmptySprite.NAME, new EmptySprite());
-        smellFinder.put(DeadCode.NAME, new DeadCode());
-        smellFinder.put(LongScript.NAME, new LongScript());
-        smellFinder.put(NestedLoops.NAME, new NestedLoops());
-        smellFinder.put(UnusedVariable.NAME, new UnusedVariable());
-        smellFinder.put(UnusedCustomBlock.NAME, new UnusedCustomBlock());
+        registerSmellFinder(new EmptyControlBody());
+        registerSmellFinder(new EmptyCustomBlock());
+        registerSmellFinder(new EmptyProject());
+        registerSmellFinder(new EmptyScript());
+        registerSmellFinder(new EmptySprite());
+        registerSmellFinder(new DeadCode());
+        registerSmellFinder(new LongScript());
+        registerSmellFinder(new NestedLoops());
+        registerSmellFinder(new SameVariableDifferentSprite());
+        registerSmellFinder(new UnusedVariable());
+        registerSmellFinder(new UnusedCustomBlock());
     }
 
     /**
@@ -147,5 +146,21 @@ public class IssueTool {
     public Map<String, IssueFinder> getBugFinder() {
         Map<String, IssueFinder> returnMap = new HashMap<>(bugFinder);
         return returnMap;
+    }
+
+    public void registerSmellFinder(IssueFinder finder) {
+        if (finder.getIssueType() != IssueFinder.IssueType.SMELL) {
+            throw new RuntimeException("Cannot register IssueFinder of Type " + finder.getIssueType() + " as Smell IssueFinder");
+        }
+
+        smellFinder.put(finder.getName(), finder);
+    }
+
+    public void registerBugFinder(IssueFinder finder) {
+        if (finder.getIssueType() != IssueFinder.IssueType.BUG) {
+            throw new RuntimeException("Cannot register IssueFinder of Type " + finder.getIssueType() + " as Bug IssueFinder");
+        }
+
+        bugFinder.put(finder.getName(), finder);
     }
 }

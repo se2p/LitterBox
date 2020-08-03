@@ -29,6 +29,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 public class EmptyScript extends AbstractIssueFinder {
 
     public static final String NAME = "empty_script";
+    public static final String HINT_TEXT = "empty_script_hint";
 
     @Override
     public void visit(Script node) {
@@ -37,10 +38,14 @@ public class EmptyScript extends AbstractIssueFinder {
         }
     }
 
-
     @Override
     public String getName() {
         return NAME;
+    }
+
+    @Override
+    public IssueType getIssueType() {
+        return IssueType.SMELL;
     }
 }
 

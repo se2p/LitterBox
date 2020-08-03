@@ -18,43 +18,45 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
-import static junit.framework.TestCase.fail;
-
-
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.truth.Truth;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
-import de.uni_passau.fim.se2.litterbox.jsonCreation.JSONFileCreator;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Set;
 
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-
-public class ComparingLiteralsWithHintTest {
-
-    private static Program program;
+public class PositionEqualsCheckStrictTest {
+    private static Program empty;
+    private static Program equalXStrict;
+    private static ObjectMapper mapper = new ObjectMapper();
 
     @BeforeAll
-    public static void setup() {
-        String path = "src/test/fixtures/bugpattern/comparingLiterals.json";
-        File file = new File(path);
-        ObjectMapper objectMapper = new ObjectMapper();
-        try {
-            program = ProgramParser.parseProgram("comparing literals", objectMapper.readTree(file));
-        } catch (IOException | ParsingException e) {
-            fail();
-        }
+    public static void setUp() throws IOException, ParsingException {
+
+        File f = new File("./src/test/fixtures/emptyProject.json");
+        empty = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
+
+        f = new File("./src/test/fixtures/bugpattern/positionEqualsCheckStrict.json");
+        equalXStrict = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
     }
 
     @Test
-    public void testComparingLiterals() {
-        ComparingLiterals finder = new ComparingLiterals();
-        Set<Issue> reports = finder.check(program);
-        Truth.assertThat(reports).hasSize(2);
+    public void testEmptyProgram() {
+        PositionEqualsCheck parameterName = new PositionEqualsCheckStrict();
+        Set<Issue> reports = parameterName.check(empty);
+        Assertions.assertEquals(0, reports.size());
+    }
+
+    @Test
+    public void testEqualCond() {
+        PositionEqualsCheck parameterName = new PositionEqualsCheckStrict();
+        Set<Issue> reports = parameterName.check(equalXStrict);
+        Assertions.assertEquals(1, reports.size());
     }
 }
