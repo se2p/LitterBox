@@ -8,7 +8,8 @@ success. Many common bugs are the result of recurring patterns of bad
 code. LitterBox provides checks for a collection of common bug
 patterns. Given a Scratch project ID or a file, LitterBox retrieves
 and parses the source code of the project, and reports all instances
-of bug patterns identified.
+of bug patterns identified. LitterBox can also check for code smells
+and provide metrics about selected Scratch projects.
 
 LitterBox is developed at the
 [Chair of Software Engineering II](https://www.fim.uni-passau.de/lehrstuhl-fuer-software-engineering-ii/)
@@ -43,8 +44,8 @@ its source code. Given such a JSON file, LitterBox is invoked as follows:
 java -jar Litterbox-1.1.jar --check --path <path/to/project.json>
 ```
 
-As a result, LitterBox will report any occurrences of bug patterns in
-the project on the console.
+As a result, LitterBox will report any occurrences of bug patterns or
+code smells in the project on the console.
 
 
 ### Downloading projects
@@ -119,13 +120,15 @@ A full list of available bug checkers can be retrieved using:
 java -jar Litterbox-1.1.jar --help
 ```
 
+To select all bug patterns, you can also use the term `bugs` in the
+list; to select all code smell checks use `smells`.
 
 
 
 ### Collecting statistics
 
-LitterBox can produce statistics on a project (e.g., number of blocks,
-number of sprites, weighted method count):
+LitterBox can produce statistics on code metrics of a project (e.g.,
+number of blocks, number of sprites, weighted method count):
 
 ```
 java -jar Litterbox-1.1.jar --stats --project <path/to/project.json> --output <statsfile.csv>
@@ -133,7 +136,7 @@ java -jar Litterbox-1.1.jar --stats --project <path/to/project.json> --output <s
 
 
 
-## Adding new bug patterns
+## Adding new bug patterns or code smells
 
 To implement your own bug patterns, extend the `AbstractIssueFinder`
 class which implements an AST visitor. The `check` method is expected
