@@ -18,9 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.parser.stmt;
 
-import static junit.framework.TestCase.fail;
-
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.truth.Truth;
@@ -28,16 +25,21 @@ import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Identifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.UnspecifiedId;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.list.*;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
-import java.io.File;
-import java.io.IOException;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+
+import java.io.File;
+import java.io.IOException;
+
+import static junit.framework.TestCase.fail;
 
 class ScratchListStmtParserTest {
 
@@ -75,6 +77,21 @@ class ScratchListStmtParserTest {
     }
 
     @Test
+    public void testAddToWithMissingListId() throws Exception {
+        String path = "src/test/fixtures/stmtParser/missingId.json";
+        File file = new File(path);
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode project = objectMapper.readTree(file);
+        Program program = ProgramParser.parseProgram("MissingId", project);
+        final ActorDefinition actorDefinition = program.getActorDefinitionList().getDefinitions().get(1);
+        final Script script = actorDefinition.getScripts().getScriptList().get(0);
+        Stmt stmt = script.getStmtList().getStmts().get(0);
+        Truth.assertThat(stmt).isInstanceOf(AddTo.class);
+        Identifier identifier = ((AddTo) stmt).getIdentifier();
+        Truth.assertThat(identifier).isInstanceOf(UnspecifiedId.class);
+    }
+
+    @Test
     public void testAddToLocal() {
         try {
             Program program = ProgramParser.parseProgram("ListExpr", project);
@@ -87,7 +104,7 @@ class ScratchListStmtParserTest {
             final AddTo addTo = (AddTo) stmt;
             Truth.assertThat(((StringLiteral) addTo.getString()).getText()).isEqualTo("localThing");
             Truth.assertThat(((Qualified) addTo.getIdentifier()).getFirst().getName()).isEqualTo("Sprite1");
-            Truth.assertThat(((Qualified) addTo.getIdentifier()).getSecond().getName().getName()).isEqualTo( "TestListLocal");
+            Truth.assertThat(((Qualified) addTo.getIdentifier()).getSecond().getName().getName()).isEqualTo("TestListLocal");
         } catch (ParsingException e) {
             fail();
         }
@@ -127,7 +144,7 @@ class ScratchListStmtParserTest {
             Truth.assertThat(((StringLiteral) insertAt.getString()).getText()).isEqualTo("thing2");
             Truth.assertThat(((NumberLiteral) insertAt.getIndex()).getValue()).isEqualTo(1);
             Truth.assertThat(((Qualified) insertAt.getIdentifier()).getFirst().getName()).isEqualTo("Stage");
-            Truth.assertThat(((Qualified) insertAt.getIdentifier()).getSecond().getName().getName()).isEqualTo( "TestList");
+            Truth.assertThat(((Qualified) insertAt.getIdentifier()).getSecond().getName().getName()).isEqualTo("TestList");
         } catch (ParsingException e) {
             fail();
         }
@@ -164,7 +181,7 @@ class ScratchListStmtParserTest {
 
             final DeleteAllOf deleteAllOf = (DeleteAllOf) stmt;
             Truth.assertThat(((Qualified) deleteAllOf.getIdentifier()).getFirst().getName()).isEqualTo("Stage");
-            Truth.assertThat(((Qualified) deleteAllOf.getIdentifier()).getSecond().getName().getName()).isEqualTo( "TestList");
+            Truth.assertThat(((Qualified) deleteAllOf.getIdentifier()).getSecond().getName().getName()).isEqualTo("TestList");
         } catch (ParsingException e) {
             fail();
         }

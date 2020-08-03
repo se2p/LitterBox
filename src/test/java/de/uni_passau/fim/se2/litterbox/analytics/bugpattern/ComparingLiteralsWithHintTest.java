@@ -18,22 +18,20 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
-import static junit.framework.TestCase.fail;
-
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.truth.Truth;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
-import de.uni_passau.fim.se2.litterbox.jsonCreation.JSONFileCreator;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Set;
 
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
+import static junit.framework.TestCase.fail;
 
 public class ComparingLiteralsWithHintTest {
 
@@ -55,6 +53,6 @@ public class ComparingLiteralsWithHintTest {
     public void testComparingLiterals() {
         ComparingLiterals finder = new ComparingLiterals();
         Set<Issue> reports = finder.check(program);
-        Truth.assertThat(reports).hasSize(2);
+        Truth.assertThat(reports).hasSize(3);
     }
 }
