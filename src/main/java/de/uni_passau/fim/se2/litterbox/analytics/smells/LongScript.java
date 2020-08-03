@@ -23,6 +23,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.CloneOfMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.PenWithParamMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.*;
@@ -376,7 +377,7 @@ public class LongScript extends AbstractIssueFinder {
     @Override
     public void visit(ChangePenColorParamBy node) {
         if (setHint) {
-            addIssue(node, HINT_TEXT, node.getMetadata());
+            addIssue(node, HINT_TEXT, ((PenWithParamMetadata)node.getMetadata()).getPenBlockMetadata());
         } else {
             visitChildren(node);
         }
@@ -385,7 +386,7 @@ public class LongScript extends AbstractIssueFinder {
     @Override
     public void visit(SetPenColorParamTo node) {
         if (setHint) {
-            addIssue(node, HINT_TEXT, node.getMetadata());
+            addIssue(node, HINT_TEXT, ((PenWithParamMetadata)node.getMetadata()).getPenBlockMetadata());
         } else {
             visitChildren(node);
         }
