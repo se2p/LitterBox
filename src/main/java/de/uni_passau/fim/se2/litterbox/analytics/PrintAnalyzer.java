@@ -19,7 +19,7 @@
 package de.uni_passau.fim.se2.litterbox.analytics;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.GrammarPrintVisitor;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.LeilaVisitor;
 
 import java.io.File;
 import java.io.IOException;
@@ -56,7 +56,7 @@ public class PrintAnalyzer extends Analyzer {
             return;
         }
         log.info("Starting to print " + fileEntry.getName() + " to file " + out);
-        GrammarPrintVisitor visitor = new GrammarPrintVisitor(stream);
+        LeilaVisitor visitor = new LeilaVisitor(stream);
         Program program = extractProgram(fileEntry);
         visitor.visit(program);
         stream.close();

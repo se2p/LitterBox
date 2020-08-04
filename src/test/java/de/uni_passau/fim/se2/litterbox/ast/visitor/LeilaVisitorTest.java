@@ -32,7 +32,7 @@ import java.io.PrintStream;
 
 import static junit.framework.TestCase.fail;
 
-public class GrammarPrintVisitorTest {
+public class LeilaVisitorTest {
 
     private static JsonNode project;
 
@@ -52,7 +52,7 @@ public class GrammarPrintVisitorTest {
     // @Test
     public void testVisitor() {
         PrintStream stream = new PrintStream(System.out);
-        GrammarPrintVisitor visitor = new GrammarPrintVisitor(stream);
+        LeilaVisitor visitor = new LeilaVisitor(stream);
         try {
             Program program = ProgramParser.parseProgram("Small", project);
             visitor.visit(program);
@@ -75,7 +75,7 @@ public class GrammarPrintVisitorTest {
             fail();
         }
         PrintStream stream = new PrintStream(System.out);
-        GrammarPrintVisitor visitor = new GrammarPrintVisitor(stream);
+        LeilaVisitor visitor = new LeilaVisitor(stream);
         try {
             Program program = ProgramParser.parseProgram("Small", project);
             visitor.visit(program);

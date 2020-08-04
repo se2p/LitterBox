@@ -69,12 +69,12 @@ import de.uni_passau.fim.se2.litterbox.ast.model.type.*;
 import java.io.PrintStream;
 import java.util.List;
 
-public class GrammarPrintVisitor extends PrintVisitor {
+public class LeilaVisitor extends PrintVisitor {
 
     private boolean emitAttributeType = false;
     private boolean volume = false;
 
-    public GrammarPrintVisitor(PrintStream printStream) {
+    public LeilaVisitor(PrintStream printStream) {
         super(printStream);
     }
 
