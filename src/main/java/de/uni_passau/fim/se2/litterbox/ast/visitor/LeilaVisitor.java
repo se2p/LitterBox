@@ -1192,4 +1192,14 @@ public class LeilaVisitor extends PrintVisitor {
         emitNoSpace(".");
         qualified.getSecond().accept(this);
     }
+
+    @Override
+    public void visit(GoToPosXY goToPosXY) {
+        emitToken("go to");
+        openParentheses();
+        goToPosXY.getX().accept(this);
+        comma();
+        goToPosXY.getY().accept(this);
+        closeParentheses();
+    }
 }
