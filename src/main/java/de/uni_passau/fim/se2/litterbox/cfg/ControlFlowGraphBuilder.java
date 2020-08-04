@@ -53,9 +53,14 @@ public class ControlFlowGraphBuilder {
 
     private Map<CFGNode, CFGNode> procedureCallMap = new LinkedHashMap<>();
 
+    private List<CFGNode> expressionBroadcasts  = new ArrayList<>();
+
+    private List<CFGNode> receivedMessages = new ArrayList<>();
+
     public ControlFlowGraph getControlFlowGraph() {
         addMissingEdgesToExit();
         connectCustomBlockCalls();
+        connectBroadcastExpressions();
         cfg.fixDetachedEntryExit();
         return cfg;
     }
@@ -83,6 +88,19 @@ public class ControlFlowGraphBuilder {
                 cfg.addEdge(procedureNode, callNode);
             }
         }
+    }
+
+    /**
+     * For all broadcasts that are not using strings, we need to overapproximate
+     */
+    private void connectBroadcastExpressions() {
+        for (CFGNode broadcastNode : expressionBroadcasts) {
+            for (CFGNode handlerNode : receivedMessages) {
+                cfg.addEdgeToExit(handlerNode);
+                cfg.addEdge(broadcastNode, handlerNode);
+            }
+        }
+
     }
 
     public void setActors(Collection<ActorDefinition> actors) {
@@ -172,6 +190,7 @@ public class ControlFlowGraphBuilder {
     public void addBroadcastHandler(Message message) {
 
         CFGNode handlerNode = cfg.addNode(message);
+        receivedMessages.add(handlerNode);
         cfg.addEdgeToExit(handlerNode);
         setCurrentNode(handlerNode);
     }
@@ -180,12 +199,17 @@ public class ControlFlowGraphBuilder {
         // Add node and edge from current
         CFGNode node = addStatement(stmt);
 
-        // Retrieve broadcast handler, or create if it doesn't exist yet
-        CFGNode handlerNode = cfg.addNode(message);
-        cfg.addEdgeToExit(handlerNode); // Broadcasts need a second edge to exit
+        if (message.getMessage() instanceof StringLiteral) {
+            // Message selected via dropdown
+            // Retrieve broadcast handler, or create if it doesn't exist yet
+            CFGNode handlerNode = cfg.addNode(message);
+            cfg.addEdgeToExit(handlerNode); // Broadcasts need a second edge to exit
 
-        // Add edge from node to broadcast handler
-        cfg.addEdge(node, handlerNode);
+            // Add edge from node to broadcast handler
+            cfg.addEdge(node, handlerNode);
+        } else {
+            expressionBroadcasts.add(node);
+        }
     }
 
     public void addCreateClone(CreateCloneOf stmt) {
