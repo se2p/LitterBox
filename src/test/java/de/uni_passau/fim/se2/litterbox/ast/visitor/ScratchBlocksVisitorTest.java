@@ -698,7 +698,7 @@ public class ScratchBlocksVisitorTest {
         String output = visitor.getScratchBlocks();
         assertEquals("[scratchblocks]\n" +
                 "when green flag clicked\n" +
-                "if <<[] > (50):: #ff0000> and <[] = []:: #ff0000>> then // Issue: comparing_literals\n" +
+                "if <<<[] = (50):: #ff0000> and <[] < (50):: #ff0000>> and <[] > (50):: #ff0000>> then // Issue: comparing_literals\n" +
                 "end\n" +
                 "[/scratchblocks]\n", output);
     }
@@ -720,7 +720,7 @@ public class ScratchBlocksVisitorTest {
         String output = visitor.getScratchBlocks();
         assertEquals("[scratchblocks]\n" +
                 "when green flag clicked\n" +
-                "if <<[] > (50):: #ff0000> and <[] = []>> then // Issues: comparing_literals, stuttering_movement\n" +
+                "if <<<[] = (50):: #ff0000> and <[] < (50)>> and <[] > (50)>> then // Issues: comparing_literals, stuttering_movement\n" +
                 "end\n" +
                 "[/scratchblocks]\n", output);
     }

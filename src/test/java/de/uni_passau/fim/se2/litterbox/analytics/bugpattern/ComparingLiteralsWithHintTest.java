@@ -53,6 +53,6 @@ public class ComparingLiteralsWithHintTest {
     public void testComparingLiterals() {
         ComparingLiterals finder = new ComparingLiterals();
         Set<Issue> reports = finder.check(program);
-        Truth.assertThat(reports).hasSize(2);
+        Truth.assertThat(reports).hasSize(3);
     }
 }

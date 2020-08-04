@@ -25,7 +25,9 @@ import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Identifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.UnspecifiedId;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
@@ -72,6 +74,21 @@ class ScratchListStmtParserTest {
         } catch (ParsingException e) {
             fail();
         }
+    }
+
+    @Test
+    public void testAddToWithMissingListId() throws Exception {
+        String path = "src/test/fixtures/stmtParser/missingId.json";
+        File file = new File(path);
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode project = objectMapper.readTree(file);
+        Program program = ProgramParser.parseProgram("MissingId", project);
+        final ActorDefinition actorDefinition = program.getActorDefinitionList().getDefinitions().get(1);
+        final Script script = actorDefinition.getScripts().getScriptList().get(0);
+        Stmt stmt = script.getStmtList().getStmts().get(0);
+        Truth.assertThat(stmt).isInstanceOf(AddTo.class);
+        Identifier identifier = ((AddTo) stmt).getIdentifier();
+        Truth.assertThat(identifier).isInstanceOf(UnspecifiedId.class);
     }
 
     @Test

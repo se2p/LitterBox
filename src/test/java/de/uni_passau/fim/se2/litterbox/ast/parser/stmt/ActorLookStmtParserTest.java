@@ -32,6 +32,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopAll;
@@ -139,6 +141,20 @@ public class ActorLookStmtParserTest {
             e.printStackTrace();
             fail();
         }
+    }
+
+    @Test
+    public void testSwitchBackdropMetadata() throws ParsingException {
+        Program program = ProgramParser.parseProgram("ActorLookStmts", project);
+        ActorDefinitionList list = program.getActorDefinitionList();
+        ActorDefinition sprite = list.getDefinitions().get(1);
+
+        Script script = sprite.getScripts().getScriptList().get(0);
+        List<Stmt> listOfStmt = script.getStmtList().getStmts();
+
+        Stmt switchBackdrop = listOfStmt.get(1);
+        BlockMetadata metadata = ((SwitchBackdrop) switchBackdrop).getMetadata();
+        Truth.assertThat(metadata).isInstanceOf(NonDataBlockMetadata.class);
     }
 
     @Test
