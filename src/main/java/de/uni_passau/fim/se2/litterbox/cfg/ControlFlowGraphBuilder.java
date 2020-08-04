@@ -20,6 +20,7 @@ package de.uni_passau.fim.se2.litterbox.cfg;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
+import de.uni_passau.fim.se2.litterbox.ast.model.ActorType;
 import de.uni_passau.fim.se2.litterbox.ast.model.Message;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.AttributeAboveValue;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Event;
@@ -43,6 +44,8 @@ public class ControlFlowGraphBuilder {
     private java.util.List<CFGNode> currentNodes = new ArrayList<>();
 
     private ActorDefinition currentActor = null;
+
+    private List<ActorDefinition> allActors = new ArrayList<>();
 
     private ASTNode currentScriptOrProcedure = null;
 
@@ -80,6 +83,11 @@ public class ControlFlowGraphBuilder {
                 cfg.addEdge(procedureNode, callNode);
             }
         }
+    }
+
+    public void setActors(Collection<ActorDefinition> actors) {
+        allActors.clear();
+        allActors.addAll(actors);
     }
 
     public void setCurrentActor(ActorDefinition actor) {
@@ -192,17 +200,31 @@ public class ControlFlowGraphBuilder {
             }
         });
 
-        assert (names.size() == 1);
-        String name = names.get(0);
-        if (name.equals(Identifier.MYSELF.getValue())) {
-            name = currentActor.getIdent().getName();
+        if (names.size() == 1) {
+            // If a name is specified, add an edge to that actor
+
+            String name = names.get(0);
+            if (name.equals(Identifier.MYSELF.getValue())) {
+                name = currentActor.getIdent().getName();
+            }
+
+            CloneEventNode handlerNode = new CloneEventNode(name);
+            cfg.addEdgeToExit(handlerNode);
+
+            // Add edge from node to clone handler
+            cfg.addEdge(node, handlerNode);
+        } else {
+            // If the name is an expression, add edges to *all* actors
+
+            for (ActorDefinition actor : allActors) {
+                if (actor.getActorType().equals(ActorType.STAGE)) {
+                    continue;
+                }
+                CloneEventNode handlerNode = new CloneEventNode(actor.getIdent().getName());
+                cfg.addEdgeToExit(handlerNode);
+                cfg.addEdge(node, handlerNode);
+            }
         }
-
-        CloneEventNode handlerNode = new CloneEventNode(name);
-        cfg.addEdgeToExit(handlerNode);
-
-        // Add edge from node to clone handler
-        cfg.addEdge(node, handlerNode);
     }
 
     public void addCloneHandler(StartedAsClone node) {
