@@ -38,8 +38,7 @@ public class CallWithoutDefinitionWithHintTest {
     private static Program writeTheDraw;
     private static Program scratchHomeVideo;
     private static Program derpyAnimal;
-    private static Program malformatedProc;
-    private static ObjectMapper mapper = new ObjectMapper();
+    private static final ObjectMapper mapper = new ObjectMapper();
 
     @BeforeAll
     public static void setUp() throws IOException, ParsingException {
@@ -56,8 +55,6 @@ public class CallWithoutDefinitionWithHintTest {
         scratchHomeVideo = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
         f = new File("./src/test/fixtures/bugpattern/derpyAnimal.json");
         derpyAnimal = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
-        f = new File("./src/test/fixtures/bugpattern/malformatedProc.json");
-        malformatedProc = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
     }
 
     @Test
@@ -99,13 +96,6 @@ public class CallWithoutDefinitionWithHintTest {
     public void testDerpyAnimal() {
         CallWithoutDefinition parameterName = new CallWithoutDefinition();
         Set<Issue> reports = parameterName.check(derpyAnimal);
-        Assertions.assertEquals(0, reports.size());
-    }
-
-    @Test
-    public void testMalformatedProc() {
-        CallWithoutDefinition parameterName = new CallWithoutDefinition();
-        Set<Issue> reports = parameterName.check(malformatedProc);
         Assertions.assertEquals(0, reports.size());
     }
 }

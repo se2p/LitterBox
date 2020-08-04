@@ -23,6 +23,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import de.uni_passau.fim.se2.litterbox.ast.Constants;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
+import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
@@ -44,9 +45,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
-import java.util.logging.Logger;
 
 import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 
@@ -54,6 +53,16 @@ public class ProcDefinitionParser {
     private static final int PROTOTYPE_REFERENCE_POS = 1;
     private static final int PARAMETER_REFERENCE_POS = 1;
 
+    /**
+     * This method creates the {@link ProcedureDefinition}s for one {@link ActorDefinition} in a Scratch project.
+     *
+     * @param blocks    The blocks node of the targeted Actor.
+     * @param actorName The name of the targeted Actor.
+     * @return ProcedureDefinitionList containing all procedures that are specified in the blocks node
+     * @throws ParsingException when a procedure is malformated. This can be the case when the procedure has more
+     *                          argument ids defined than it has inputs or when the procedure definition does not
+     *                          have a prototype attached or vice versa.
+     */
     public static ProcedureDefinitionList parse(JsonNode blocks, String actorName) throws ParsingException {
         Preconditions.checkNotNull(blocks);
         Iterator<JsonNode> iter = blocks.elements();
@@ -82,11 +91,7 @@ public class ProcDefinitionParser {
 
         List<ProcedureDefinition> procdecls = new ArrayList<>();
         for (JsonNode jsonNode : defBlock) {
-            try {
-                procdecls.add(parseProcDecl(jsonNode, blocks, actorName));
-            } catch (ParsingException e) {
-                Logger.getGlobal().warning(e.getMessage());
-            }
+            procdecls.add(parseProcDecl(jsonNode, blocks, actorName));
         }
 
         return new ProcedureDefinitionList(procdecls);
@@ -101,12 +106,23 @@ public class ProcDefinitionParser {
         JsonNode proto = blocks.get(protoReference);
         ArrayList<ParameterDefinition> inputs = new ArrayList<>();
 
-        Iterator<Map.Entry<String, JsonNode>> iter = proto.get(INPUTS_KEY).fields();
+        JsonNode argumentIds = proto.get(MUTATION_KEY).get(ARGUMENTIDS_KEY);
+        ObjectMapper mapper = new ObjectMapper();
+        final ArrayNode argumentIdsNode;
+        try {
+            argumentIdsNode = (ArrayNode) mapper.readTree(argumentIds.asText());
+        } catch (IOException e) {
+            throw new ParsingException("Could not read argument names of a procedure");
+        }
+
         List<Type> paraTypes = new ArrayList<>();
         List<BlockMetadata> paramMeta = new ArrayList<>();
-        while (iter.hasNext()) {
-            final Entry<String, JsonNode> current = iter.next();
-            JsonNode currentInput = current.getValue();
+        JsonNode prototypeInputs = proto.get(INPUTS_KEY);
+        for (int i = 0; i < argumentIdsNode.size(); i++) {
+            if (!prototypeInputs.has(argumentIdsNode.get(i).asText())) {
+                throw new ParsingException("Argument id has no corresponding input");
+            }
+            JsonNode currentInput = prototypeInputs.get(argumentIdsNode.get(i).asText());
             Preconditions.checkArgument(currentInput.isArray());
             ArrayNode currentAsArray = (ArrayNode) currentInput;
 
@@ -134,7 +150,6 @@ public class ProcDefinitionParser {
             throw new ParsingException("Procedure prototype is missing its parent identifier and could not be parsed.");
         }
         JsonNode argumentNamesNode = proto.get(MUTATION_KEY).get(ARGUMENTNAMES_KEY);
-        ObjectMapper mapper = new ObjectMapper();
 
         final JsonNode argumentsNode;
         try {
@@ -152,11 +167,6 @@ public class ProcDefinitionParser {
             arguments[i] = argumentsArray.get(i).asText();
         }
 
-        if (!(arguments.length == paraTypes.size())) {
-            ProgramParser.procDefMap.addMalformated(actorName + methodName);
-            throw new ParsingException("A procedure in this project does have malformated code, where inputs or "
-                    + "parameternames are missing.");
-        }
         Type[] typeArray = new Type[paraTypes.size()];
         ProgramParser.procDefMap.addProcedure(ident, actorName, methodName, arguments, paraTypes.toArray(typeArray));
 
