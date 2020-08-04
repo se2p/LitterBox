@@ -18,21 +18,20 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
-import static junit.framework.TestCase.fail;
-
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.truth.Truth;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Set;
 
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
+import static junit.framework.TestCase.fail;
 
 class MessageNeverSentTest {
     private static Program program;
@@ -56,7 +55,7 @@ class MessageNeverSentTest {
     public void testMessageNeverSent() {
         MessageNeverSent finder = new MessageNeverSent();
         Set<Issue> reports = finder.check(program);
-        Truth.assertThat(reports).isEmpty();;
+        Truth.assertThat(reports).isEmpty();
     }
 
     @Test

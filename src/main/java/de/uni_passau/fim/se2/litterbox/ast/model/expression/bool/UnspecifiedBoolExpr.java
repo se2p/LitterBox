@@ -28,5 +28,4 @@ public class UnspecifiedBoolExpr extends UnspecifiedExpression implements BoolEx
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);
     }
-
 }

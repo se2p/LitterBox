@@ -18,12 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.parser;
 
-import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
-import static de.uni_passau.fim.se2.litterbox.ast.opcodes.DependentBlockOpcodes.sensing_of_object_menu;
-import static de.uni_passau.fim.se2.litterbox.ast.parser.ExpressionParser.getExprArray;
-import static de.uni_passau.fim.se2.litterbox.ast.parser.ExpressionParser.getShadowIndicator;
-
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.TextNode;
@@ -50,6 +44,11 @@ import de.uni_passau.fim.se2.litterbox.ast.parser.metadata.BlockMetadataParser;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ExpressionListInfo;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
+import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
+import static de.uni_passau.fim.se2.litterbox.ast.opcodes.DependentBlockOpcodes.sensing_of_object_menu;
+import static de.uni_passau.fim.se2.litterbox.ast.parser.ExpressionParser.getExprArray;
+import static de.uni_passau.fim.se2.litterbox.ast.parser.ExpressionParser.getShadowIndicator;
+
 public class StringExprParser {
 
     /**
@@ -69,8 +68,8 @@ public class StringExprParser {
         int shadowIndicator = getShadowIndicator(exprArray);
 
         boolean parsableAsStringLiteral = false;
-        if (shadowIndicator == INPUT_SAME_BLOCK_SHADOW ||
-                (shadowIndicator == INPUT_BLOCK_NO_SHADOW && !(exprArray.get(POS_BLOCK_ID) instanceof TextNode))) {
+        if (shadowIndicator == INPUT_SAME_BLOCK_SHADOW
+                || (shadowIndicator == INPUT_BLOCK_NO_SHADOW && !(exprArray.get(POS_BLOCK_ID) instanceof TextNode))) {
             try {
                 ExpressionParser.getDataArrayByName(inputs, inputKey).get(POS_INPUT_VALUE);
                 parsableAsStringLiteral = true;
@@ -110,7 +109,8 @@ public class StringExprParser {
             ArrayNode exprArray = ExpressionParser.getExprArray(containingBlock.get(INPUTS_KEY), inputKey);
             int shadowIndicator = ExpressionParser.getShadowIndicator(exprArray);
             if (shadowIndicator == INPUT_SAME_BLOCK_SHADOW
-                    || (shadowIndicator == INPUT_BLOCK_NO_SHADOW && !(exprArray.get(POS_BLOCK_ID) instanceof TextNode))) {
+                    || (shadowIndicator == INPUT_BLOCK_NO_SHADOW
+                    && !(exprArray.get(POS_BLOCK_ID) instanceof TextNode))) {
                 try {
                     return parseStr(containingBlock.get(INPUTS_KEY), inputKey);
                 } catch (ParsingException e) {
@@ -136,7 +136,8 @@ public class StringExprParser {
      * @throws ParsingException If the opcode of the block is no StringExprOpcode
      *                          or if parsing inputs of the block fails.
      */
-    static StringExpr parseBlockStringExpr(String blockId, JsonNode exprBlock, JsonNode allBlocks) throws ParsingException {
+    static StringExpr parseBlockStringExpr(String blockId, JsonNode exprBlock, JsonNode allBlocks)
+            throws ParsingException {
         String opcodeString = exprBlock.get(OPCODE_KEY).asText();
         Preconditions
                 .checkArgument(StringExprOpcode.contains(opcodeString), opcodeString + " is not a StringExprOpcode.");

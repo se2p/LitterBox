@@ -66,8 +66,9 @@ public class MissingCloneCall extends AbstractIssueFinder {
 
     @Override
     public void visit(CreateCloneOf node) {
-        if(addComment)
+        if (addComment) {
             return;
+        }
 
         if (node.getStringExpr() instanceof AsString
                 && ((AsString) node.getStringExpr()).getOperand1() instanceof StrId) {
@@ -79,14 +80,13 @@ public class MissingCloneCall extends AbstractIssueFinder {
                 clonedActors.add(spriteName);
             }
         }
-
     }
 
     @Override
     public void visit(Script node) {
         currentScript = node;
         if (node.getStmtList().getStmts().size() > 0 && node.getEvent() instanceof StartedAsClone) {
-            if(!addComment) {
+            if (!addComment) {
                 whenStartsAsCloneActors.add(currentActor.getIdent().getName());
             } else if (notClonedActor.contains(currentActor.getIdent().getName())) {
                 StartedAsClone event = (StartedAsClone) node.getEvent();

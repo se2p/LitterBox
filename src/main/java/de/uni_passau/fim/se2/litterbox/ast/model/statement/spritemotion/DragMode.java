@@ -21,6 +21,7 @@ package de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTLeaf;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
+
 import java.util.Collections;
 import java.util.List;
 
@@ -44,10 +45,6 @@ public enum DragMode implements ASTLeaf {
         return false;
     }
 
-    public String getToken() {
-        return token;
-    }
-
     public static DragMode fromString(String type) {
         for (DragMode f : values()) {
             if (f.getToken().equals(type.toLowerCase())) {
@@ -55,6 +52,10 @@ public enum DragMode implements ASTLeaf {
             }
         }
         throw new IllegalArgumentException("Unknown DragMode: " + type);
+    }
+
+    public String getToken() {
+        return token;
     }
 
     @Override

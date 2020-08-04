@@ -22,6 +22,7 @@ import de.uni_passau.fim.se2.litterbox.cfg.CFGNode;
 import de.uni_passau.fim.se2.litterbox.cfg.Defineable;
 import de.uni_passau.fim.se2.litterbox.cfg.Definition;
 import de.uni_passau.fim.se2.litterbox.cfg.Use;
+
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -38,7 +39,10 @@ public class LivenessTransferFunction implements TransferFunction<Use> {
         Set<Use> result = new LinkedHashSet<>(inFacts);
 
         // Remove all uses of variables that are modified here
-        Set<Defineable> definitions = node.getDefinitions().stream().map(Definition::getDefinable).collect(Collectors.toSet());
+        Set<Defineable> definitions = node.getDefinitions()
+                .stream()
+                .map(Definition::getDefinable)
+                .collect(Collectors.toSet());
         result.removeIf(d -> definitions.contains(d.getDefinable()));
 
         // Add new uses of variables that are used here

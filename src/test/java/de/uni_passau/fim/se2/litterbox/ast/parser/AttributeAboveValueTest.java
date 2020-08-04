@@ -18,18 +18,18 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.parser;
 
-import static junit.framework.TestCase.fail;
-
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.AttributeAboveValue;
-import java.io.File;
-import java.io.IOException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+
+import java.io.File;
+import java.io.IOException;
+
+import static junit.framework.TestCase.fail;
 
 public class AttributeAboveValueTest {
     private static Program project;

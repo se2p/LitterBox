@@ -38,11 +38,10 @@ public class ProcedureJSONCreatorTest {
                 , jsonString);
     }
 
-
     @Test
     public void testProcedureWithStmts() {
         ActorDefinition stage = procedure.getActorDefinitionList().getDefinitions().get(0);
         String jsonString = ProcedureJSONCreator.createProcedureJSONString(stage.getProcedureDefinitionList().getList().get(0), stage.getIdent().getName(), procedure.getSymbolTable(), procedure.getProcedureMapping());
-        Assertions.assertEquals("\"=kNyJn`W.A5t$~BaYm5h\": {\"opcode\": \"procedures_definition\",\"next\": \"u2URKg;#M^stpx}L_8(Q\",\"parent\": null,\"inputs\": {\"custom_block\": [1,\":mEz1QI+6Kooz]~KHkcX\"]},\"fields\": {},\"shadow\": false,\"topLevel\": true,\"x\": 545.0,\"y\": 326.0},\":mEz1QI+6Kooz]~KHkcX\": {\"opcode\": \"procedures_prototype\",\"next\": null,\"parent\": \"=kNyJn`W.A5t$~BaYm5h\",\"inputs\": {},\"fields\": {},\"shadow\": true,\"topLevel\": false,\"mutation\": {\"tagName\": \"mutation\",\"children\": [],\"proccode\": \"TestBlock\",\"argumentids\": \"[]\",\"argumentnames\": \"[]\",\"argumentdefaults\": \"[]\",\"warp\": false}},\"u2URKg;#M^stpx}L_8(Q\": {\"opcode\": \"motion_ifonedgebounce\",\"next\": null,\"parent\": \"=kNyJn`W.A5t$~BaYm5h\",\"inputs\": {},\"fields\": {},\"shadow\": false,\"topLevel\": false}",jsonString);
+        Assertions.assertEquals("\"=kNyJn`W.A5t$~BaYm5h\": {\"opcode\": \"procedures_definition\",\"next\": \"u2URKg;#M^stpx}L_8(Q\",\"parent\": null,\"inputs\": {\"custom_block\": [1,\":mEz1QI+6Kooz]~KHkcX\"]},\"fields\": {},\"shadow\": false,\"topLevel\": true,\"x\": 545.0,\"y\": 326.0},\":mEz1QI+6Kooz]~KHkcX\": {\"opcode\": \"procedures_prototype\",\"next\": null,\"parent\": \"=kNyJn`W.A5t$~BaYm5h\",\"inputs\": {},\"fields\": {},\"shadow\": true,\"topLevel\": false,\"mutation\": {\"tagName\": \"mutation\",\"children\": [],\"proccode\": \"TestBlock\",\"argumentids\": \"[]\",\"argumentnames\": \"[]\",\"argumentdefaults\": \"[]\",\"warp\": false}},\"u2URKg;#M^stpx}L_8(Q\": {\"opcode\": \"motion_ifonedgebounce\",\"next\": null,\"parent\": \"=kNyJn`W.A5t$~BaYm5h\",\"inputs\": {},\"fields\": {},\"shadow\": false,\"topLevel\": false}", jsonString);
     }
 }

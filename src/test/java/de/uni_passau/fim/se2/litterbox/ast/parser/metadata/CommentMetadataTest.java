@@ -18,18 +18,18 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.parser.metadata;
 
-import static de.uni_passau.fim.se2.litterbox.ast.Constants.COMMENTS_KEY;
-import static de.uni_passau.fim.se2.litterbox.ast.Constants.TARGETS_KEY;
-
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astLists.CommentMetadataList;
-import java.io.File;
-import java.io.IOException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+
+import java.io.File;
+import java.io.IOException;
+
+import static de.uni_passau.fim.se2.litterbox.ast.Constants.COMMENTS_KEY;
+import static de.uni_passau.fim.se2.litterbox.ast.Constants.TARGETS_KEY;
 
 public class CommentMetadataTest {
     private static ObjectMapper mapper = new ObjectMapper();

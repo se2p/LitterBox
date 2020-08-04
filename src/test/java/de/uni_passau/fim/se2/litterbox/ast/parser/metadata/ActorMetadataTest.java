@@ -18,19 +18,19 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.parser.metadata;
 
-import static de.uni_passau.fim.se2.litterbox.ast.Constants.TARGETS_KEY;
-
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.actor.ActorMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.actor.SpriteMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.actor.StageMetadata;
-import java.io.File;
-import java.io.IOException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+
+import java.io.File;
+import java.io.IOException;
+
+import static de.uni_passau.fim.se2.litterbox.ast.Constants.TARGETS_KEY;
 
 public class ActorMetadataTest {
     private static ObjectMapper mapper = new ObjectMapper();
@@ -59,11 +59,11 @@ public class ActorMetadataTest {
         Assertions.assertNotNull(stage.getLists());
         Assertions.assertNull(stage.getTextToSpeechLanguage());
         Assertions.assertEquals("on", stage.getVideoState());
-        Assertions.assertEquals(0,stage.getCurrentCostume());
-        Assertions.assertEquals(60,stage.getTempo());
-        Assertions.assertEquals(50,stage.getVideoTransparency());
-        Assertions.assertEquals(0,stage.getLayerOrder());
-        Assertions.assertEquals(100,stage.getVolume());
+        Assertions.assertEquals(0, stage.getCurrentCostume());
+        Assertions.assertEquals(60, stage.getTempo());
+        Assertions.assertEquals(50, stage.getVideoTransparency());
+        Assertions.assertEquals(0, stage.getLayerOrder());
+        Assertions.assertEquals(100, stage.getVolume());
 
         Assertions.assertTrue(sprite.isVisible());
         Assertions.assertFalse(sprite.isDraggable());
@@ -72,7 +72,7 @@ public class ActorMetadataTest {
         Assertions.assertEquals(0, sprite.getY());
         Assertions.assertEquals(100, sprite.getSize());
         Assertions.assertEquals(90, sprite.getDirection());
-        Assertions.assertEquals(1,sprite.getLayerOrder());
+        Assertions.assertEquals(1, sprite.getLayerOrder());
     }
 }
 

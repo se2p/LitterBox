@@ -18,9 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.parser.stmt;
 
-import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
-
-
 import com.fasterxml.jackson.databind.JsonNode;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.ElementChoice;
@@ -44,6 +41,8 @@ import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ExpressionListInfo
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.VariableInfo;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
+import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
+
 public class ActorLookStmtParser {
 
     public static ActorLookStmt parse(String blockId, JsonNode current, JsonNode allBlocks) throws ParsingException {
@@ -52,14 +51,14 @@ public class ActorLookStmtParser {
 
         final String opcodeString = current.get(OPCODE_KEY).asText();
         Preconditions
-                .checkArgument(ActorLookStmtOpcode.contains(opcodeString), "Given blockID does not point to an event " +
-                        "block.");
+                .checkArgument(ActorLookStmtOpcode.contains(opcodeString),
+                        "Given blockId does not point to an event block.");
 
         final ActorLookStmtOpcode opcode = ActorLookStmtOpcode.valueOf(opcodeString);
         BlockMetadata metadata = BlockMetadataParser.parse(blockId, current);
 
         String variableName;
-        String variableID;
+        String variableId;
         VariableInfo variableInfo;
         String actorName;
         Identifier var;
@@ -85,11 +84,11 @@ public class ActorLookStmtParser {
 
             case data_hidevariable:
                 variableName = current.get(FIELDS_KEY).get(VARIABLE_KEY).get(VARIABLE_NAME_POS).asText();
-                variableID = current.get(FIELDS_KEY).get(VARIABLE_KEY).get(VARIABLE_IDENTIFIER_POS).asText();
-                if (!ProgramParser.symbolTable.getVariables().containsKey(variableID)) {
+                variableId = current.get(FIELDS_KEY).get(VARIABLE_KEY).get(VARIABLE_IDENTIFIER_POS).asText();
+                if (!ProgramParser.symbolTable.getVariables().containsKey(variableId)) {
                     var = new UnspecifiedId();
                 } else {
-                    variableInfo = ProgramParser.symbolTable.getVariables().get(variableID);
+                    variableInfo = ProgramParser.symbolTable.getVariables().get(variableId);
                     actorName = variableInfo.getActor();
                     var = new Qualified(new StrId(actorName), new Variable(new StrId(variableName)));
                 }
@@ -97,11 +96,11 @@ public class ActorLookStmtParser {
 
             case data_showvariable:
                 variableName = current.get(FIELDS_KEY).get(VARIABLE_KEY).get(VARIABLE_NAME_POS).asText();
-                variableID = current.get(FIELDS_KEY).get(VARIABLE_KEY).get(VARIABLE_IDENTIFIER_POS).asText();
-                if (!ProgramParser.symbolTable.getVariables().containsKey(variableID)) {
+                variableId = current.get(FIELDS_KEY).get(VARIABLE_KEY).get(VARIABLE_IDENTIFIER_POS).asText();
+                if (!ProgramParser.symbolTable.getVariables().containsKey(variableId)) {
                     var = new UnspecifiedId();
                 } else {
-                    variableInfo = ProgramParser.symbolTable.getVariables().get(variableID);
+                    variableInfo = ProgramParser.symbolTable.getVariables().get(variableId);
                     actorName = variableInfo.getActor();
                     var = new Qualified(new StrId(actorName),
                             new Variable(new StrId(variableName)));
@@ -110,11 +109,11 @@ public class ActorLookStmtParser {
 
             case data_showlist:
                 variableName = current.get(FIELDS_KEY).get(LIST_KEY).get(LIST_NAME_POS).asText();
-                variableID = current.get(FIELDS_KEY).get(LIST_KEY).get(LIST_IDENTIFIER_POS).asText();
-                if (!ProgramParser.symbolTable.getLists().containsKey(variableID)) {
+                variableId = current.get(FIELDS_KEY).get(LIST_KEY).get(LIST_IDENTIFIER_POS).asText();
+                if (!ProgramParser.symbolTable.getLists().containsKey(variableId)) {
                     var = new UnspecifiedId();
                 } else {
-                    expressionListInfo = ProgramParser.symbolTable.getLists().get(variableID);
+                    expressionListInfo = ProgramParser.symbolTable.getLists().get(variableId);
                     actorName = expressionListInfo.getActor();
                     var = new Qualified(new StrId(actorName), new ScratchList(new StrId(variableName)));
                 }
@@ -122,11 +121,11 @@ public class ActorLookStmtParser {
 
             case data_hidelist:
                 variableName = current.get(FIELDS_KEY).get(LIST_KEY).get(LIST_NAME_POS).asText();
-                variableID = current.get(FIELDS_KEY).get(LIST_KEY).get(LIST_IDENTIFIER_POS).asText();
-                if (!ProgramParser.symbolTable.getLists().containsKey(variableID)) {
+                variableId = current.get(FIELDS_KEY).get(LIST_KEY).get(LIST_IDENTIFIER_POS).asText();
+                if (!ProgramParser.symbolTable.getLists().containsKey(variableId)) {
                     var = new UnspecifiedId();
                 } else {
-                    expressionListInfo = ProgramParser.symbolTable.getLists().get(variableID);
+                    expressionListInfo = ProgramParser.symbolTable.getLists().get(variableId);
                     actorName = expressionListInfo.getActor();
                     var = new Qualified(new StrId(actorName), new ScratchList(new StrId(variableName)));
                 }
@@ -144,7 +143,9 @@ public class ActorLookStmtParser {
         }
     }
 
-    private static ActorLookStmt parseSetLookEffect(JsonNode current, JsonNode allBlocks, BlockMetadata metadata) throws ParsingException {
+    private static ActorLookStmt parseSetLookEffect(JsonNode current, JsonNode allBlocks, BlockMetadata metadata)
+            throws ParsingException {
+
         String effect = current.get(FIELDS_KEY).get(EFFECT_KEY).get(0).asText();
         Preconditions.checkArgument(GraphicEffect.contains(effect));
         return new SetGraphicEffectTo(GraphicEffect.fromString(effect), NumExprParser.parseNumExpr(current, VALUE_KEY,

@@ -22,6 +22,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.ChangeVariableBy;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetVariableTo;
+
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -54,6 +55,4 @@ public class VariableDefinitionVisitor implements DefinableCollector<Variable> {
     public void visit(Qualified node) {
         definitions.add(new Variable(node));
     }
-
-
 }

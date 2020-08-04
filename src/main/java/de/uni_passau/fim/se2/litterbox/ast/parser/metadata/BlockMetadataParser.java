@@ -18,9 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.parser.metadata;
 
-import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
-
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.NullNode;
@@ -29,6 +26,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astLists.FieldsMetadat
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astLists.InputMetadataList;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.*;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
+
+import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 
 public class BlockMetadataParser {
     public static BlockMetadata parse(String blockId, JsonNode blockNode) throws ParsingException {
@@ -69,11 +68,11 @@ public class BlockMetadataParser {
                     shadow,
                     mutation, x, y);
         } else {
-            Preconditions.checkArgument(blockNode instanceof ArrayNode, "This is neither a variable or list nor a " +
-                    "NonDataBlock. ID: " + blockId);
+            Preconditions.checkArgument(blockNode instanceof ArrayNode, "This is neither a variable or list nor a "
+                    + "NonDataBlock. ID: " + blockId);
             ArrayNode data = (ArrayNode) blockNode;
-            Preconditions.checkArgument(data.size() == 5, "This data block does not have the required length for a " +
-                    "top level data block. ID: " + blockId);
+            Preconditions.checkArgument(data.size() == 5, "This data block does not have the required length for a "
+                    + "top level data block. ID: " + blockId);
             int type = data.get(POS_INPUT_TYPE).asInt();
             String dataName = data.get(DATA_INPUT_NAME_POS).asText();
             String dataReference = data.get(DATA_INPUT_IDENTIFIER_POS).asText();

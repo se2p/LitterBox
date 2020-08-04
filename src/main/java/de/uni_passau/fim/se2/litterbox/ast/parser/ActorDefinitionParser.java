@@ -18,9 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.parser;
 
-import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
-
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
@@ -35,12 +32,15 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.declaration.Declarati
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.DependentBlockOpcodes;
 import de.uni_passau.fim.se2.litterbox.ast.parser.metadata.ActorMetadataParser;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
+
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
+
+import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 
 public class ActorDefinitionParser {
 
@@ -71,7 +71,6 @@ public class ActorDefinitionParser {
                 localIdentifier.getName(),
                 actorDefinitionNode.get(IS_STAGE_KEY).asBoolean()));
         decls.addAll(DeclarationStmtParser.parseAttributeDeclarations(actorDefinitionNode));
-        DeclarationStmtList declarations = new DeclarationStmtList(decls);
 
         JsonNode allBlocks = actorDefinitionNode.get(BLOCKS_KEY);
         Iterator<String> fieldIterator = allBlocks.fieldNames();
@@ -82,15 +81,15 @@ public class ActorDefinitionParser {
         // the reason for this is, that menues count as topLevel in the Json File
         // if the menu is replaced by another expression
         List<String> topLevelNodes = stream.filter(fieldName ->
-                (allBlocks.get(fieldName).has(TOPLEVEL_KEY) &&
-                        allBlocks.get(fieldName).get(TOPLEVEL_KEY).asBoolean()) &&
-                        !DependentBlockOpcodes.contains(allBlocks.get(fieldName).get(OPCODE_KEY).asText())
-                || allBlocks.get(fieldName) instanceof ArrayNode)
+                (allBlocks.get(fieldName).has(TOPLEVEL_KEY)
+                        && allBlocks.get(fieldName).get(TOPLEVEL_KEY).asBoolean())
+                        && !DependentBlockOpcodes.contains(allBlocks.get(fieldName).get(OPCODE_KEY).asText())
+                        || allBlocks.get(fieldName) instanceof ArrayNode)
                 .collect(Collectors.toList());
 
         List<Script> scripts = new LinkedList<>();
-        for (String topLevelID : topLevelNodes) {
-            Script script = ScriptParser.parse(topLevelID, allBlocks);
+        for (String topLevelid : topLevelNodes) {
+            Script script = ScriptParser.parse(topLevelid, allBlocks);
             if (script != null) {
                 scripts.add(script);
             }
@@ -102,15 +101,17 @@ public class ActorDefinitionParser {
         List<SetStmt> setStmtList = DeclarationStmtParser.parseAttributeDeclarationSetStmts(actorDefinitionNode);
         setStmtList.addAll(DeclarationStmtParser.parseListDeclarationSetStmts(actorDefinitionNode.get(LISTS_KEY),
                 localIdentifier.getName()));
-        setStmtList.addAll(DeclarationStmtParser.parseVariableDeclarationSetStmts(actorDefinitionNode.get(VARIABLES_KEY),
-                localIdentifier.getName()));
+        setStmtList.addAll(DeclarationStmtParser.parseVariableDeclarationSetStmts(
+                actorDefinitionNode.get(VARIABLES_KEY), localIdentifier.getName()));
         ActorMetadata metadata = ActorMetadataParser.parse(actorDefinitionNode);
+
+        DeclarationStmtList declarations = new DeclarationStmtList(decls);
         return new ActorDefinition(actorType, localIdentifier, declarations, new SetStmtList(setStmtList),
                 procDeclList, scriptList, metadata);
     }
 
     /**
-     * This may be a temporary solution
+     * This may be a temporary solution.
      *
      * @return
      */

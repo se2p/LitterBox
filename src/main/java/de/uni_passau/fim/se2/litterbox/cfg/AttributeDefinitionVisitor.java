@@ -25,6 +25,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.NextCostum
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SetSizeTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SwitchCostumeTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.*;
+
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -119,7 +120,6 @@ public class AttributeDefinitionVisitor implements DefinableCollector<Attribute>
         definitions.add(Attribute.rotationOf(currentActor.getIdent()));
     }
 
-
     //---------------------------------------------------------------
     // Costume
 
@@ -146,17 +146,16 @@ public class AttributeDefinitionVisitor implements DefinableCollector<Attribute>
         definitions.add(Attribute.sizeOf(currentActor.getIdent()));
     }
 
-
     //---------------------------------------------------------------
     // Backdrop
-//
-//    @Override
-//    public void visit(NextBackdrop node) {
-//        definitions.add(Attribute.backdropOf(stageActor));
-//    }
-//
-//    @Override
-//    public void visit(BackdropSwitchTo node) {
-//        definitions.add(Attribute.backdropOf(stageActor));
-//    }
+    //
+    //    @Override
+    //    public void visit(NextBackdrop node) {
+    //        definitions.add(Attribute.backdropOf(stageActor));
+    //    }
+    //
+    //    @Override
+    //    public void visit(BackdropSwitchTo node) {
+    //        definitions.add(Attribute.backdropOf(stageActor));
+    //    }
 }

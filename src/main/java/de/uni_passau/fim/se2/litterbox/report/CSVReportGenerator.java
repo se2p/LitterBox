@@ -33,7 +33,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-
 public class CSVReportGenerator implements ReportGenerator {
 
     private String fileName;

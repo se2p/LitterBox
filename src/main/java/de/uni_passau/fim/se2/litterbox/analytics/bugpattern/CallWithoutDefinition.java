@@ -38,21 +38,23 @@ public class CallWithoutDefinition extends AbstractIssueFinder {
     private List<String> proceduresDef;
     private List<CallStmt> calledProcedures;
 
+    private void checkCalls() {
+        for (CallStmt calledProcedure : calledProcedures) {
+            if (!proceduresDef.contains(calledProcedure.getIdent().getName())
+                    && !program.getProcedureMapping().checkIfMalformated(
+                    currentActor.getIdent().getName() + calledProcedure.getIdent().getName())) {
+
+                addIssue(calledProcedure, HINT_TEXT, calledProcedure.getMetadata());
+            }
+        }
+    }
+
     @Override
     public void visit(ActorDefinition actor) {
         calledProcedures = new ArrayList<>();
         proceduresDef = new ArrayList<>();
         super.visit(actor);
         checkCalls();
-    }
-
-    private void checkCalls() {
-        for (CallStmt calledProcedure : calledProcedures) {
-            if (!proceduresDef.contains(calledProcedure.getIdent().getName()) &&
-                    !program.getProcedureMapping().checkIfMalformated(currentActor.getIdent().getName() + calledProcedure.getIdent().getName())) {
-                addIssue(calledProcedure, HINT_TEXT, calledProcedure.getMetadata());
-            }
-        }
     }
 
     @Override

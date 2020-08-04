@@ -23,17 +23,17 @@ import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 public class BroadcastMetadata extends AbstractNode implements Metadata, ASTLeaf {
-    private String broadcastID;
+    private String broadcastId;
     private String broadcastName;
 
-    public BroadcastMetadata( String broadcastID, String broadcastName) {
+    public BroadcastMetadata(String broadcastId, String broadcastName) {
         super();
-        this.broadcastID = broadcastID;
+        this.broadcastId = broadcastId;
         this.broadcastName = broadcastName;
     }
 
     public String getBroadcastID() {
-        return broadcastID;
+        return broadcastId;
     }
 
     public String getBroadcastName() {

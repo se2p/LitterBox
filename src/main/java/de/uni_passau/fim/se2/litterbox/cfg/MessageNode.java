@@ -38,6 +38,7 @@ package de.uni_passau.fim.se2.litterbox.cfg;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Message;
+
 import java.util.Objects;
 
 public class MessageNode extends CFGNode {
@@ -50,7 +51,7 @@ public class MessageNode extends CFGNode {
 
     @Override
     public String toString() {
-        return "Message: "+message.getMessage().toString();
+        return "Message: " + message.getMessage().toString();
     }
 
     @Override
@@ -60,8 +61,12 @@ public class MessageNode extends CFGNode {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         MessageNode that = (MessageNode) o;
         return Objects.equals(message, that.message);
     }

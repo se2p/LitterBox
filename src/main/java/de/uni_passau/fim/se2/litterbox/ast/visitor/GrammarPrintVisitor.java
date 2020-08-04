@@ -753,7 +753,6 @@ public class GrammarPrintVisitor extends PrintVisitor {
         asString.getOperand1().accept(this);
     }
 
-
     @Override
     public void visit(Join join) {
         emitToken("join");

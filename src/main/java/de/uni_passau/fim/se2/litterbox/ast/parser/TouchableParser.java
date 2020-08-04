@@ -18,9 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.parser;
 
-import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
-
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import de.uni_passau.fim.se2.litterbox.ast.Constants;
@@ -32,8 +29,11 @@ import de.uni_passau.fim.se2.litterbox.ast.model.touchable.*;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.BoolExprOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.parser.metadata.BlockMetadataParser;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
+
 import java.util.ArrayList;
 import java.util.List;
+
+import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 
 public class TouchableParser {
 
@@ -59,9 +59,9 @@ public class TouchableParser {
     }
 
     private static Touchable getTouchableMenuOption(JsonNode current, JsonNode allBlocks) throws ParsingException {
-        String menuID = current.get(INPUTS_KEY).get(TOUCHINGOBJECTMENU).get(POS_INPUT_VALUE).asText();
-        String touchingObject = allBlocks.get(menuID).get(FIELDS_KEY).get(TOUCHINGOBJECTMENU).get(0).asText();
-        BlockMetadata metadata = BlockMetadataParser.parse(menuID, allBlocks.get(menuID));
+        String menuId = current.get(INPUTS_KEY).get(TOUCHINGOBJECTMENU).get(POS_INPUT_VALUE).asText();
+        String touchingObject = allBlocks.get(menuId).get(FIELDS_KEY).get(TOUCHINGOBJECTMENU).get(0).asText();
+        BlockMetadata metadata = BlockMetadataParser.parse(menuId, allBlocks.get(menuId));
 
         if (touchingObject.equals(MOUSE)) {
             return new MousePointer(metadata);

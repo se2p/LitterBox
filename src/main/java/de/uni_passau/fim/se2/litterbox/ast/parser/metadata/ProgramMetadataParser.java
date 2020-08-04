@@ -18,14 +18,13 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.parser.metadata;
 
-import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
-
-
 import com.fasterxml.jackson.databind.JsonNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.ExtensionMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.MetaMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.ProgramMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astLists.MonitorMetadataList;
+
+import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 
 public class ProgramMetadataParser {
     public static ProgramMetadata parse(JsonNode program) {

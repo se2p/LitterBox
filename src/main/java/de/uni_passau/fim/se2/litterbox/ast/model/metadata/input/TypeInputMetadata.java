@@ -21,7 +21,7 @@ package de.uni_passau.fim.se2.litterbox.ast.model.metadata.input;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 /**
- * This input consists of directly entered literals
+ * This input consists of directly entered literals.
  */
 public class TypeInputMetadata extends InputMetadata {
     private int type;

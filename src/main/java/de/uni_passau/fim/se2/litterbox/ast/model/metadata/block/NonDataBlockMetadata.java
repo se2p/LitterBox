@@ -55,6 +55,10 @@ public class NonDataBlockMetadata extends AbstractNode implements BlockMetadata 
         return commentId;
     }
 
+    public void setCommentId(String commentId) {
+        this.commentId = commentId;
+    }
+
     public String getBlockId() {
         return blockId;
     }
@@ -85,10 +89,6 @@ public class NonDataBlockMetadata extends AbstractNode implements BlockMetadata 
 
     public boolean isShadow() {
         return shadow;
-    }
-
-    public void setCommentId(String commentId) {
-        this.commentId = commentId;
     }
 
     public MutationMetadata getMutation() {

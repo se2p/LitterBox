@@ -34,6 +34,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.DeleteClo
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopAll;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopThisScript;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -65,7 +66,7 @@ public class ControlFlowGraphVisitor implements ScratchVisitor {
 
     @Override
     public void visit(Stmt node) {
-        if(!isInScript()) {
+        if (!isInScript()) {
             // Variable declarations outside of scripts are irrelevant for the CFG
             return;
         }
@@ -90,7 +91,6 @@ public class ControlFlowGraphVisitor implements ScratchVisitor {
         inScript = false;
         builder.addEndOfProcedure(node, builder.getCurrentStatements());
     }
-
 
     //---------------------------------------------------------------
     // Clone statements
@@ -147,7 +147,6 @@ public class ControlFlowGraphVisitor implements ScratchVisitor {
         builder.addEdge(node);
     }
 
-
     @Override
     public void visit(UntilStmt stmt) {
         CFGNode node = builder.addStatement(stmt);
@@ -157,7 +156,6 @@ public class ControlFlowGraphVisitor implements ScratchVisitor {
         // Edge back to loop header, and update current node
         builder.addEdge(node);
     }
-
 
     @Override
     public void visit(IfElseStmt stmt) {
@@ -187,7 +185,6 @@ public class ControlFlowGraphVisitor implements ScratchVisitor {
         builder.addCurrentStatement(node);
     }
 
-
     //---------------------------------------------------------------
     // Termination statements
 
@@ -205,7 +202,6 @@ public class ControlFlowGraphVisitor implements ScratchVisitor {
     public void visit(StopThisScript node) {
         builder.addStopStatement(node);
     }
-
 
     //---------------------------------------------------------------
     // Events

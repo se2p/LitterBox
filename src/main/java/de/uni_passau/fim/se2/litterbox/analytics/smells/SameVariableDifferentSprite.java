@@ -46,7 +46,8 @@ public class SameVariableDifferentSprite extends AbstractIssueFinder {
             String currentName = varInfos.get(i).getVariableName();
             String currentActorName = varInfos.get(i).getActor();
             for (int j = 0; j < varInfos.size(); j++) {
-                if (i != j && currentName.equals(varInfos.get(j).getVariableName()) && !currentActorName.equals(varInfos.get(j).getActor())) {
+                if (i != j && currentName.equals(varInfos.get(j).getVariableName())
+                        && !currentActorName.equals(varInfos.get(j).getActor())) {
                     found = true;
                     break;
                 }
@@ -69,7 +70,8 @@ public class SameVariableDifferentSprite extends AbstractIssueFinder {
             String currentName = listInfos.get(i).getVariableName();
             String currentActorName = listInfos.get(i).getActor();
             for (int j = 0; j < listInfos.size(); j++) {
-                if (i != j && currentName.equals(listInfos.get(j).getVariableName()) && !currentActorName.equals(listInfos.get(j).getActor())) {
+                if (i != j && currentName.equals(listInfos.get(j).getVariableName())
+                        && !currentActorName.equals(listInfos.get(j).getActor())) {
                     found = true;
                     break;
                 }

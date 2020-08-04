@@ -18,9 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.parser.metadata;
 
-import static de.uni_passau.fim.se2.litterbox.ast.Constants.VAR_PRIMITIVE;
-
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
@@ -36,13 +33,16 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.DataExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
+
+import static de.uni_passau.fim.se2.litterbox.ast.Constants.VAR_PRIMITIVE;
 
 public class TopLevelMetadataTest {
     private static ObjectMapper mapper = new ObjectMapper();
@@ -54,7 +54,6 @@ public class TopLevelMetadataTest {
         JsonNode prog = mapper.readTree(f);
         program = ProgramParser.parseProgram("Test", prog);
     }
-
 
     @Test
     public void testVariablesProgram() {
@@ -73,7 +72,7 @@ public class TopLevelMetadataTest {
     }
 
     @Test
-    public void testProcedureProgram(){
+    public void testProcedureProgram() {
         ProcedureDefinition def =
                 program.getActorDefinitionList().getDefinitions().get(1).getProcedureDefinitionList().getList().get(0);
         ProcedureMetadata meta = def.getMetadata();

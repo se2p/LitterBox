@@ -37,14 +37,6 @@ public class UnusedCustomBlock extends AbstractIssueFinder {
     private List<ProcedureDefinition> proceduresDef;
     private List<String> calledProcedures;
 
-    @Override
-    public void visit(ActorDefinition actor) {
-        calledProcedures = new ArrayList<>();
-        proceduresDef = new ArrayList<>();
-        super.visit(actor);
-        checkCalls();
-    }
-
     private void checkCalls() {
         for (ProcedureDefinition procedureDef : proceduresDef) {
             ProcedureInfo info = procMap.get(procedureDef.getIdent());
@@ -52,6 +44,14 @@ public class UnusedCustomBlock extends AbstractIssueFinder {
                 addIssue(procedureDef, HINT_TEXT, procedureDef.getMetadata().getDefinition());
             }
         }
+    }
+
+    @Override
+    public void visit(ActorDefinition actor) {
+        calledProcedures = new ArrayList<>();
+        proceduresDef = new ArrayList<>();
+        super.visit(actor);
+        checkCalls();
     }
 
     @Override

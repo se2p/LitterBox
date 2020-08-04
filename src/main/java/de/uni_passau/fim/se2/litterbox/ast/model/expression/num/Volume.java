@@ -23,9 +23,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.SingularExpression;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
-
 public class Volume extends SingularExpression implements NumExpr, ASTLeaf {
-
 
     public Volume(BlockMetadata metadata) {
         super(metadata);

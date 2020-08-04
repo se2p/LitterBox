@@ -78,10 +78,11 @@ public class Issue {
     }
 
     public ASTNode getScriptOrProcedureDefinition() {
-        if (script != null)
+        if (script != null) {
             return script;
-        else
+        } else {
             return procedure;
+        }
     }
 
     public String getActorName() {

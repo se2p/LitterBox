@@ -20,6 +20,7 @@ package de.uni_passau.fim.se2.litterbox.dataflow;
 
 import de.uni_passau.fim.se2.litterbox.cfg.CFGNode;
 import de.uni_passau.fim.se2.litterbox.cfg.ControlFlowGraph;
+
 import java.util.Set;
 
 public class ForwardFlowDirection implements FlowDirection {

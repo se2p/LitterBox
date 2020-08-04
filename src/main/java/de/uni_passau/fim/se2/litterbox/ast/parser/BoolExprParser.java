@@ -18,9 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.parser;
 
-import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
-
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.NullNode;
@@ -46,6 +43,8 @@ import de.uni_passau.fim.se2.litterbox.ast.opcodes.BoolExprOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.parser.metadata.BlockMetadataParser;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ExpressionListInfo;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
+
+import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 
 public class BoolExprParser {
 
@@ -89,7 +88,9 @@ public class BoolExprParser {
      * @return The expression identified by the inputKey.
      * @throws ParsingException If parsing fails.
      */
-    public static BoolExpr parseBoolExpr(JsonNode containingBlock, String inputKey, JsonNode allBlocks) throws ParsingException {
+    public static BoolExpr parseBoolExpr(JsonNode containingBlock, String inputKey, JsonNode allBlocks)
+            throws ParsingException {
+
         if (parsableAsBoolExpr(containingBlock, inputKey, allBlocks)) {
             ArrayNode exprArray = ExpressionParser.getExprArray(containingBlock.get(INPUTS_KEY), inputKey);
             if (exprArray == null || exprArray.get(POS_INPUT_VALUE) instanceof NullNode) {
@@ -97,7 +98,8 @@ public class BoolExprParser {
             }
             int shadowIndicator = ExpressionParser.getShadowIndicator(exprArray);
             if (shadowIndicator == INPUT_SAME_BLOCK_SHADOW
-                    || (shadowIndicator == INPUT_BLOCK_NO_SHADOW && !(exprArray.get(POS_BLOCK_ID) instanceof TextNode))) {
+                    || (shadowIndicator == INPUT_BLOCK_NO_SHADOW
+                    && !(exprArray.get(POS_BLOCK_ID) instanceof TextNode))) {
                 try {
                     return parseBool(containingBlock.get(INPUTS_KEY), inputKey);
                 } catch (ParsingException e) {
@@ -127,14 +129,14 @@ public class BoolExprParser {
      * @throws ParsingException If the opcode of the block is no NumExprOpcode
      *                          or if parsing inputs of the block fails.
      */
-    static BoolExpr parseBlockBoolExpr(String blockID, JsonNode exprBlock, JsonNode allBlocks)
+    static BoolExpr parseBlockBoolExpr(String blockId, JsonNode exprBlock, JsonNode allBlocks)
             throws ParsingException {
         final String opcodeString = exprBlock.get(OPCODE_KEY).asText();
         Preconditions
                 .checkArgument(BoolExprOpcode.contains(opcodeString),
                         opcodeString + " is not a BoolExprOpcode.");
         final BoolExprOpcode opcode = BoolExprOpcode.valueOf(opcodeString);
-        BlockMetadata metadata = BlockMetadataParser.parse(blockID, exprBlock);
+        BlockMetadata metadata = BlockMetadataParser.parse(blockId, exprBlock);
         switch (opcode) {
 
             case sensing_touchingcolor:
@@ -268,7 +270,9 @@ public class BoolExprParser {
      * the input can be empty and is then returned as UnspecifiedBoolExpr - directly calling parseBoolExpr()
      * would result in a ParsingException.
      */
-    private static BoolExpr parseCondition(JsonNode exprBlock, String fieldName, JsonNode allBlocks) throws ParsingException {
+    private static BoolExpr parseCondition(JsonNode exprBlock, String fieldName, JsonNode allBlocks)
+            throws ParsingException {
+
         if (exprBlock.get(INPUTS_KEY).has(fieldName)) {
             return parseBoolExpr(exprBlock, fieldName, allBlocks);
         } else {

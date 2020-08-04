@@ -19,6 +19,7 @@
 package de.uni_passau.fim.se2.litterbox.ast.parser.symboltable;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.type.Type;
+
 import java.util.Objects;
 
 public class ArgumentInfo {
@@ -48,8 +49,8 @@ public class ArgumentInfo {
             return false;
         }
         ArgumentInfo that = (ArgumentInfo) o;
-        return Objects.equals(name, that.name) &&
-                Objects.equals(type, that.type);
+        return Objects.equals(name, that.name)
+                && Objects.equals(type, that.type);
     }
 
     @Override

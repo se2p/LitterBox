@@ -50,15 +50,6 @@ public class AmbiguousParameterNameStrict extends AbstractIssueFinder {
         return super.check(program);
     }
 
-    @Override
-    public void visit(ActorDefinition actor) {
-        super.visit(actor);
-
-        if (found) {
-            found = false;
-        }
-    }
-
     private void checkArguments(ArgumentInfo[] arguments) {
         paraNames = new LinkedList<>();
 
@@ -72,6 +63,15 @@ public class AmbiguousParameterNameStrict extends AbstractIssueFinder {
                     found = true;
                 }
             }
+        }
+    }
+
+    @Override
+    public void visit(ActorDefinition actor) {
+        super.visit(actor);
+
+        if (found) {
+            found = false;
         }
     }
 

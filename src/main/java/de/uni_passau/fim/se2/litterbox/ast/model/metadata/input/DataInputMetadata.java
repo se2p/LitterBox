@@ -24,7 +24,7 @@ import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
  * This class is for input that consists either of a list or a variable.
  */
 public class DataInputMetadata extends InputMetadata {
-    private int  dataType;
+    private int dataType;
     private String dataName;
     private String dataReference;
 

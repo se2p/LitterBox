@@ -19,6 +19,7 @@
 package de.uni_passau.fim.se2.litterbox.cfg;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
+
 import java.util.Objects;
 
 /**
@@ -28,36 +29,12 @@ public class Attribute implements Defineable {
 
     // TODO: This should be replaced with a FixedAttribute?
 
-    public enum AttributeType {
-        POSITION, ROTATION, COSTUME, SIZE //, BACKDROP // VOLUME?
-        // VISIBILITY, LAYER, EFFECT
-    };
-
     private LocalIdentifier actorIdentifier;
-
     private AttributeType attribute;
 
     public Attribute(LocalIdentifier actorIdentifier, AttributeType attribute) {
         this.actorIdentifier = actorIdentifier;
         this.attribute = attribute;
-    }
-
-    public AttributeType getAttributeType() {
-        return attribute;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Attribute)) return false;
-        Attribute attribute1 = (Attribute) o;
-        return Objects.equals(actorIdentifier, attribute1.actorIdentifier) &&
-                attribute == attribute1.attribute;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(actorIdentifier, attribute);
     }
 
     public static Attribute positionOf(LocalIdentifier actorIdentifier) {
@@ -76,8 +53,34 @@ public class Attribute implements Defineable {
         return new Attribute(actorIdentifier, AttributeType.SIZE);
     }
 
-//    public static Attribute backdropOf(ActorDefinition actor) {
-//        return new Attribute(actor, AttributeType.BACKDROP);
-//    }
+    public AttributeType getAttributeType() {
+        return attribute;
+    }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Attribute)) {
+            return false;
+        }
+        Attribute attribute1 = (Attribute) o;
+        return Objects.equals(actorIdentifier, attribute1.actorIdentifier)
+                && attribute == attribute1.attribute;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(actorIdentifier, attribute);
+    }
+
+    public enum AttributeType {
+        POSITION, ROTATION, COSTUME, SIZE //, BACKDROP // VOLUME?
+        // VISIBILITY, LAYER, EFFECT
+    }
+
+    //public static Attribute backdropOf(ActorDefinition actor) {
+    //    return new Attribute(actor, AttributeType.BACKDROP);
+    //}
 }

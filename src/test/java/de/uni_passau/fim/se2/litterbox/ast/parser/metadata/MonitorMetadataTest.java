@@ -18,19 +18,19 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.parser.metadata;
 
-import static de.uni_passau.fim.se2.litterbox.ast.Constants.MONITORS_KEY;
-
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astLists.MonitorMetadataList;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.monitor.MonitorListMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.monitor.MonitorSliderMetadata;
-import java.io.File;
-import java.io.IOException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+
+import java.io.File;
+import java.io.IOException;
+
+import static de.uni_passau.fim.se2.litterbox.ast.Constants.MONITORS_KEY;
 
 public class MonitorMetadataTest {
     private static ObjectMapper mapper = new ObjectMapper();
@@ -62,7 +62,6 @@ public class MonitorMetadataTest {
         Assertions.assertTrue(monitors.getList().get(1) instanceof MonitorSliderMetadata);
         Assertions.assertTrue(monitors.getList().get(2) instanceof MonitorSliderMetadata);
         Assertions.assertTrue(monitors.getList().get(3) instanceof MonitorSliderMetadata);
-
     }
 
     @Test

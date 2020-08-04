@@ -23,8 +23,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 public class SetRotationStyle extends AbstractNode implements SpriteMotionStmt {
-    private RotationStyle rotation;
     private final BlockMetadata metadata;
+    private RotationStyle rotation;
 
     public SetRotationStyle(RotationStyle rotation, BlockMetadata metadata) {
         super(rotation, metadata);

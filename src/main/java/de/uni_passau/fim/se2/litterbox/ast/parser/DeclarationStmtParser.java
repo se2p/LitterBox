@@ -18,9 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.parser;
 
-import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
-
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Message;
@@ -49,7 +46,10 @@ import de.uni_passau.fim.se2.litterbox.ast.model.type.StringType;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.ScratchList;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
+
 import java.util.*;
+
+import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 
 public class DeclarationStmtParser {
 
@@ -171,7 +171,7 @@ public class DeclarationStmtParser {
             Map.Entry<String, JsonNode> current = iter.next();
             ProgramParser.symbolTable.addMessage(current.getValue().asText(),
                     new Message(new StringLiteral(current.getValue().asText())), isStage,
-                    actorName,current.getKey());
+                    actorName, current.getKey());
             parsedBroadcasts.add(new DeclarationBroadcastStmt(new StrId(current.getValue().asText()),
                     new StringType()));
         }

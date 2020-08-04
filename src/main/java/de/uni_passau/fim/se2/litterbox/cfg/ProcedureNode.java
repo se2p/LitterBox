@@ -19,6 +19,7 @@
 package de.uni_passau.fim.se2.litterbox.cfg;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
+
 import java.util.Objects;
 
 public class ProcedureNode extends CFGNode {
@@ -39,16 +40,20 @@ public class ProcedureNode extends CFGNode {
 
     @Override
     public String toString() {
-        return "Custom Block: "+actorName+"."+procedureName;
+        return "Custom Block: " + actorName + "." + procedureName;
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof ProcedureNode)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof ProcedureNode)) {
+            return false;
+        }
         ProcedureNode that = (ProcedureNode) o;
-        return Objects.equals(procedureName, that.procedureName) &&
-                Objects.equals(actorName, that.actorName);
+        return Objects.equals(procedureName, that.procedureName)
+                && Objects.equals(actorName, that.actorName);
     }
 
     @Override

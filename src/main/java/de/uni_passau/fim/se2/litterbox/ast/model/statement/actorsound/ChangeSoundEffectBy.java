@@ -32,7 +32,7 @@ public class ChangeSoundEffectBy extends AbstractNode implements ActorSoundStmt 
         super(effect, value, metadata);
         this.value = value;
         this.effect = effect;
-        this.metadata=metadata;
+        this.metadata = metadata;
     }
 
     public BlockMetadata getMetadata() {

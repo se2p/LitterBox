@@ -20,6 +20,7 @@ package de.uni_passau.fim.se2.litterbox.dataflow;
 
 import de.uni_passau.fim.se2.litterbox.cfg.ControlFlowGraph;
 import de.uni_passau.fim.se2.litterbox.cfg.DataflowFact;
+
 import java.util.Set;
 
 public class DataflowAnalysisBuilder<T extends DataflowFact> {
@@ -60,5 +61,4 @@ public class DataflowAnalysisBuilder<T extends DataflowFact> {
     public DataflowAnalysis<T> build() {
         return analysis;
     }
-
 }

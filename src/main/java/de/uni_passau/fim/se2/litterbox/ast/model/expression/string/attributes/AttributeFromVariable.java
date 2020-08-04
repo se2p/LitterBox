@@ -25,13 +25,13 @@ import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 public class AttributeFromVariable extends AbstractNode implements Attribute {
     private Variable id;
 
-    public Variable getVariable() {
-        return id;
-    }
-
     public AttributeFromVariable(Variable id) {
         super(id);
         this.id = id;
+    }
+
+    public Variable getVariable() {
+        return id;
     }
 
     @Override

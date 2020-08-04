@@ -46,19 +46,6 @@ public final class Pair<T> extends AbstractCollection<T> {
     private final T snd;
 
     /**
-     * Creates a new pair containing the specified elements.
-     *
-     * @param fst the first component
-     * @param snd the second component
-     * @param <T> the type of the elements
-     * @return a pair containing the specified elements
-     * @throws NullPointerException if one of the element is {@code null}
-     */
-    public static <T> Pair<T> of(final T fst, final T snd) {
-        return new Pair<>(fst, snd);
-    }
-
-    /**
      * Creates a new pair that contains the same elements as the given pair.
      *
      * @param copy the pair whose elements to place into the new pair
@@ -80,6 +67,19 @@ public final class Pair<T> extends AbstractCollection<T> {
     public Pair(final T fst, final T snd) {
         this.fst = Objects.requireNonNull(fst);
         this.snd = Objects.requireNonNull(snd);
+    }
+
+    /**
+     * Creates a new pair containing the specified elements.
+     *
+     * @param fst the first component
+     * @param snd the second component
+     * @param <T> the type of the elements
+     * @return a pair containing the specified elements
+     * @throws NullPointerException if one of the element is {@code null}
+     */
+    public static <T> Pair<T> of(final T fst, final T snd) {
+        return new Pair<>(fst, snd);
     }
 
     /**
@@ -211,7 +211,7 @@ public final class Pair<T> extends AbstractCollection<T> {
      *
      * @param other the pair to compare to
      * @return {@code true} if the elements of the given pair are equal to this one, {@code false}
-     * otherwise
+     *       otherwise
      */
     @Override
     public boolean equals(final Object other) {

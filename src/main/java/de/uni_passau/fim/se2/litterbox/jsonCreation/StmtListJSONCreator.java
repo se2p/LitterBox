@@ -73,8 +73,8 @@ public class StmtListJSONCreator implements ScratchVisitor {
     private ExpressionJSONCreator exprCreator;
     private FixedExpressionJSONCreator fixedExprCreator;
 
-    public StmtListJSONCreator(String parentID, StmtList stmtList, SymbolTable symbolTable) {
-        previousBlockId = parentID;
+    public StmtListJSONCreator(String parentId, StmtList stmtList, SymbolTable symbolTable) {
+        previousBlockId = parentId;
         finishedJSONStrings = new ArrayList<>();
         this.stmtList = stmtList.getStmts();
         counter = 0;
@@ -826,8 +826,8 @@ public class StmtListJSONCreator implements ScratchVisitor {
         List<String> inputs = new ArrayList<>();
         IdJsonStringTuple tuple;
         List<Expression> expressionList = node.getExpressions().getExpressions();
-        Preconditions.checkArgument(argumentIds.size() >= expressionList.size(), "Number of parameters is not equal " +
-                "to the number of argument ids");
+        Preconditions.checkArgument(argumentIds.size() >= expressionList.size(), "Number of parameters is not equal "
+                + "to the number of argument ids");
 
         for (int i = 0; i < expressionList.size(); i++) {
             Expression current = expressionList.get(i);

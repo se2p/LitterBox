@@ -63,7 +63,9 @@ public class MissingCloneInitialization extends AbstractIssueFinder {
         notClonedActor = new LinkedHashSet<>();
         program.accept(this);
         final List<String> uninitializingActors
-                = clonedActors.stream().filter(s -> !whenStartsAsCloneActors.contains(s)).collect(Collectors.toList());
+                = clonedActors.stream()
+                .filter(s -> !whenStartsAsCloneActors.contains(s))
+                .collect(Collectors.toList());
         notClonedActor = new LinkedHashSet<>(uninitializingActors);
         addComment = true;
         program.accept(this);
@@ -72,7 +74,9 @@ public class MissingCloneInitialization extends AbstractIssueFinder {
 
     @Override
     public void visit(CreateCloneOf node) {
-        if (node.getStringExpr() instanceof AsString && ((AsString) node.getStringExpr()).getOperand1() instanceof StrId) {
+        if (node.getStringExpr() instanceof AsString
+                && ((AsString) node.getStringExpr()).getOperand1() instanceof StrId) {
+
             final String spriteName = ((StrId) ((AsString) node.getStringExpr()).getOperand1()).getName();
             if (!addComment) {
                 if (spriteName.equals("_myself_")) {

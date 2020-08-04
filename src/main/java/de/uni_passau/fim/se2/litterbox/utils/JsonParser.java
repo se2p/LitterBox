@@ -30,14 +30,14 @@ import java.nio.file.Paths;
 import java.util.Iterator;
 
 /**
- * Util class for parsing the JSON files
+ * Util class for parsing the JSON files.
  */
 public class JsonParser {
 
     public static JsonNode getBlocksNodeFromJSON(String path) {
         JsonNode script = null;
         Path currentRelativePath = Paths.get("");
-        String s = currentRelativePath.toAbsolutePath().toString();
+        String sPath = currentRelativePath.toAbsolutePath().toString(); // Todo unused variable?
 
         try {
             BufferedReader br = new BufferedReader(new FileReader(path, StandardCharsets.UTF_8));
@@ -49,7 +49,7 @@ public class JsonParser {
             script = buildScriptFromJSONString(sb.toString());
             br.close();
         } catch (Exception e) {
-
+            // FIXME Empty Catch block?
         }
         return script;
     }
@@ -60,9 +60,9 @@ public class JsonParser {
         JsonNode rootNode = mapper.readTree(json);
         Iterator<JsonNode> elements = rootNode.get("targets").elements();
         while (elements.hasNext()) {
-            JsonNode c = elements.next();
-            if (c.has("isStage") && !c.get("isStage").asBoolean() && c.has("blocks")) {
-                script = c.get("blocks");
+            JsonNode node = elements.next();
+            if (node.has("isStage") && !node.get("isStage").asBoolean() && node.has("blocks")) {
+                script = node.get("blocks");
                 break;
             }
         }

@@ -31,7 +31,7 @@ public class ReceptionOfMessage extends AbstractNode implements Event {
     public ReceptionOfMessage(Message msg, BlockMetadata metadata) {
         super(msg, metadata);
         this.msg = msg;
-        this.metadata=metadata;
+        this.metadata = metadata;
     }
 
     public BlockMetadata getMetadata() {

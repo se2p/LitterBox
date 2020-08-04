@@ -28,7 +28,7 @@ public class Prev extends AbstractNode implements ElementChoice, ASTLeaf {
 
     public Prev(BlockMetadata metadata) {
         super(metadata);
-        this.metadata=metadata;
+        this.metadata = metadata;
     }
 
     public BlockMetadata getMetadata() {

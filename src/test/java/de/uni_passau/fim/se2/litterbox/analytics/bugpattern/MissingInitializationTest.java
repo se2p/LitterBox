@@ -24,12 +24,12 @@ import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
 import de.uni_passau.fim.se2.litterbox.cfg.ControlFlowGraphVisitor;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Set;
-
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 
 public class MissingInitializationTest {
     private static ObjectMapper mapper = new ObjectMapper();
@@ -74,7 +74,6 @@ public class MissingInitializationTest {
         Assertions.assertEquals(1, reports.size());
     }
 
-
     @Test
     public void testMissingInitializationInBroadcast() throws IOException, ParsingException {
         File f = new File("src/test/fixtures/bugpattern/missingVariableInitializationInBroadcast.json");
@@ -113,7 +112,6 @@ public class MissingInitializationTest {
         // 2 vars, each is first used in a say, then in a change
         Assertions.assertEquals(4, reports.size());
     }
-
 
     @Test
     public void testMissingInitializationVariableOfAndVar() throws IOException, ParsingException {
@@ -165,7 +163,6 @@ public class MissingInitializationTest {
         Set<Issue> reports = (new MissingInitialization()).check(program);
         Assertions.assertEquals(1, reports.size());
     }
-
 
     @Test
     public void testMissingInitializationInCustomBlockWithCall() throws IOException, ParsingException {

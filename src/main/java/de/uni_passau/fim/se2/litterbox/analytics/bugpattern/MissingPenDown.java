@@ -65,7 +65,7 @@ public class MissingPenDown extends AbstractIssueFinder {
         if (!addComment) {
             penUpSet = true;
             visitChildren(node);
-        } else if(getResult()){
+        } else if (getResult()) {
             addIssue(node, HINT_TEXT, node.getMetadata());
         }
     }

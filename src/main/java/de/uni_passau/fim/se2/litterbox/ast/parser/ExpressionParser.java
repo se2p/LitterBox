@@ -45,6 +45,13 @@ import de.uni_passau.fim.se2.litterbox.ast.parser.metadata.BlockMetadataParser;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ExpressionListInfo;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.VariableInfo;
 
+import static de.uni_passau.fim.se2.litterbox.ast.Constants.OPCODE_KEY;
+import static de.uni_passau.fim.se2.litterbox.ast.Constants.POS_DATA_ARRAY;
+import static de.uni_passau.fim.se2.litterbox.ast.parser.BoolExprParser.parsableAsBoolExpr;
+import static de.uni_passau.fim.se2.litterbox.ast.parser.DataExprParser.parsableAsDataExpr;
+import static de.uni_passau.fim.se2.litterbox.ast.parser.NumExprParser.parsableAsNumExpr;
+import static de.uni_passau.fim.se2.litterbox.ast.parser.StringExprParser.parsableAsStringExpr;
+
 public class ExpressionParser {
 
     /**
@@ -87,7 +94,8 @@ public class ExpressionParser {
      * @return The parsed expression.
      * @throws ParsingException If the block is not parsable.
      */
-    public static Expression parseExprBlock(String blockId, JsonNode exprBlock, JsonNode allBlocks) throws ParsingException {
+    public static Expression parseExprBlock(String blockId, JsonNode exprBlock, JsonNode allBlocks)
+            throws ParsingException {
         if (exprBlock instanceof ArrayNode) {
             // it's a list or variable
             String idString = exprBlock.get(2).asText();
