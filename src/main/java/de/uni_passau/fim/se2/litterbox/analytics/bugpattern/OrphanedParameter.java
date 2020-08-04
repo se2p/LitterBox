@@ -34,7 +34,6 @@ import java.util.List;
  */
 public class OrphanedParameter extends AbstractIssueFinder {
     public static final String NAME = "orphaned_parameter";
-    public static final String HINT_TEXT = "orphaned_parameter_hint";
     private List<ParameterDefinition> currentParameterDefinitions;
     private boolean insideProcedure;
 
@@ -63,7 +62,7 @@ public class OrphanedParameter extends AbstractIssueFinder {
             }
         }
         if (!validParametername) {
-            addIssue(node, HINT_TEXT, node.getMetadata());
+            addIssue(node, node.getMetadata());
         }
     }
 

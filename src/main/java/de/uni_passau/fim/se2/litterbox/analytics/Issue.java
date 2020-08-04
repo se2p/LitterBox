@@ -18,13 +18,16 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics;
 
-import de.uni_passau.fim.se2.litterbox.Main;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.Metadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
+import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 
+/**
+ * The Issue represents issues that are identified in Scratch Projects.
+ */
 public class Issue {
 
     private IssueFinder finder;
@@ -32,32 +35,57 @@ public class Issue {
     private ASTNode node;
     private Script script;
     private ProcedureDefinition procedure;
-    private String helpText;
     private Metadata metaData;
 
+    /**
+     * Creates a new issue the contains the finder that created this issue, the actor in which the issue was found and
+     * the ASTNode that is most specific to this issue.
+     *
+     * @param finder      that created this issue
+     * @param actor       in which this issue was found
+     * @param currentNode that is closest to the issue origin
+     */
     public Issue(IssueFinder finder, ActorDefinition actor, ASTNode currentNode) {
         this.finder = finder;
         this.actor = actor;
         this.node = currentNode;
     }
 
+    /**
+     * Creates a new issue the contains the finder that created this issue, the actor in which the issue was found and
+     * the ASTNode that is most specific to this issue.
+     *
+     * @param finder      that created this issue
+     * @param actor       in which this issue was found
+     * @param script      in which this issue was found
+     * @param currentNode that is closest to the issue origin
+     * @param metaData    that contains references for comments
+     */
     public Issue(IssueFinder finder, ActorDefinition actor, Script script,
-                 ASTNode currentNode, String helpText, Metadata metaData) {
+                 ASTNode currentNode, Metadata metaData) {
         this.finder = finder;
         this.actor = actor;
         this.script = script;
         this.node = currentNode;
-        this.helpText = helpText;
         this.metaData = metaData;
     }
 
+    /**
+     * Creates a new issue the contains the finder that created this issue, the actor in which the issue was found and
+     * the ASTNode that is most specific to this issue.
+     *
+     * @param finder      that created this issue
+     * @param actor       in which this issue was found
+     * @param procedure   in which this issue was found
+     * @param currentNode that is closest to the issue origin
+     * @param metaData    that contains references for comments
+     */
     public Issue(IssueFinder finder, ActorDefinition actor, ProcedureDefinition procedure,
-                 ASTNode currentNode, String helpText, Metadata metaData) {
+                 ASTNode currentNode, Metadata metaData) {
         this.finder = finder;
         this.actor = actor;
         this.procedure = procedure;
         this.node = currentNode;
-        this.helpText = helpText;
         this.metaData = metaData;
     }
 
@@ -77,6 +105,18 @@ public class Issue {
         return procedure;
     }
 
+    public String getActorName() {
+        return actor.getIdent().getName();
+    }
+
+    /**
+     * Returns the script or procedure definition that is set.
+     * <p>
+     * The issue contains either a script or a procedure definition.
+     * If a script is set, the script is returned, if no script is present a procedure definition is returned
+     *
+     * @return an astNode that represents a script or procedure-definition
+     */
     public ASTNode getScriptOrProcedureDefinition() {
         if (script != null) {
             return script;
@@ -85,22 +125,12 @@ public class Issue {
         }
     }
 
-    public String getActorName() {
-        return actor.getIdent().getName();
-    }
-
     public String getFinderName() {
-        return finder.getName();
+        return IssueTranslator.getInstance().getName(this.finder.getName());
     }
 
     public String getHint() {
-        if (Main.resourceBundle == null) {
-            return helpText;
-        } else if (helpText == null) {
-            return Main.resourceBundle.getString(getFinderName());
-        } else {
-            return Main.resourceBundle.getString(helpText);
-        }
+        return IssueTranslator.getInstance().getHint(this.finder.getName());
     }
 
     public ASTNode getCodeLocation() {

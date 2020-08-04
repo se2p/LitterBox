@@ -19,18 +19,16 @@
 package de.uni_passau.fim.se2.litterbox.analytics.smells;
 
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
-import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 
 public class EmptyCustomBlock extends AbstractIssueFinder {
     public static final String NAME = "empty_custom_block";
-    public static final String HINT_TEXT = "empty_custom_block_hint";
 
     @Override
     public void visit(ProcedureDefinition node) {
         currentProcedure = node;
         if (node.getStmtList().getStmts().isEmpty()) {
-            addIssue(node,HINT_TEXT,node.getMetadata().getDefinition());
+            addIssue(node, node.getMetadata().getDefinition());
         }
         visitChildren(node);
         currentProcedure = null;

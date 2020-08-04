@@ -37,7 +37,6 @@ import java.util.List;
 public class StutteringMovement extends AbstractIssueFinder {
 
     public static final String NAME = "stuttering_movement";
-    public static final String HINT_TEXT = "stuttering_movement_hint";
 
     @Override
     public void visit(Script script) {
@@ -49,7 +48,7 @@ public class StutteringMovement extends AbstractIssueFinder {
                 Stmt stmt = listOfStmt.get(0);
                 if (stmt instanceof MoveSteps || stmt instanceof ChangeXBy || stmt instanceof ChangeYBy) {
                     KeyPressed keyPressed = (KeyPressed) script.getEvent();
-                    addIssue(stmt, HINT_TEXT, keyPressed.getMetadata());
+                    addIssue(stmt, keyPressed.getMetadata());
                 }
             }
         }

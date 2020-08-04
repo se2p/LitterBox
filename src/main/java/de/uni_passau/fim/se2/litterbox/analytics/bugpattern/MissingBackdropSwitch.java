@@ -46,7 +46,6 @@ import java.util.Set;
 public class MissingBackdropSwitch extends AbstractIssueFinder {
 
     public static final String NAME = "missing_backdrop_switch";
-    public static final String HINT_TEXT = "missing_backdrop_switch_hint";
     private List<Pair<String>> switched = new ArrayList<>();
     private List<Pair<String>> switchReceived = new ArrayList<>();
     private boolean nextRandPrev = false;
@@ -158,8 +157,7 @@ public class MissingBackdropSwitch extends AbstractIssueFinder {
                 final String actorName = currentActor.getIdent().getName();
                 switchReceived.add(new Pair<>(actorName, msgName));
             } else if (notSentMessages.contains(msgName)) {
-                addIssue(event, // TODO: node or event?
-                        HINT_TEXT, event.getMetadata());
+                addIssue(event, event.getMetadata());
             }
         }
         visitChildren(node);

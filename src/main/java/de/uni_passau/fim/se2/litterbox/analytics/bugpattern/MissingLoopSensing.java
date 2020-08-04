@@ -36,7 +36,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
  */
 public class MissingLoopSensing extends AbstractIssueFinder {
     public static final String NAME = "missing_loop_sensing";
-    public static final String HINT_TEXT = "missing_loop_sensing_hint";
     private boolean insideGreenFlagClone = false;
     private boolean insideLoop = false;
     private boolean inCondition = false;
@@ -79,42 +78,42 @@ public class MissingLoopSensing extends AbstractIssueFinder {
     @Override
     public void visit(IsKeyPressed node) {
         if (insideGreenFlagClone && !insideLoop && inCondition) {
-            addIssue(node, HINT_TEXT, node.getMetadata());
+            addIssue(node, node.getMetadata());
         }
     }
 
     @Override
     public void visit(Touching node) {
         if (insideGreenFlagClone && !insideLoop && inCondition) {
-            addIssue(node, HINT_TEXT, node.getMetadata());
+            addIssue(node, node.getMetadata());
         }
     }
 
     @Override
     public void visit(IsMouseDown node) {
         if (insideGreenFlagClone && !insideLoop && inCondition) {
-            addIssue(node, HINT_TEXT, node.getMetadata());
+            addIssue(node, node.getMetadata());
         }
     }
 
     @Override
     public void visit(ColorTouchingColor node) {
         if (insideGreenFlagClone && !insideLoop && inCondition) {
-            addIssue(node, HINT_TEXT, node.getMetadata());
+            addIssue(node, node.getMetadata());
         }
     }
 
     @Override
     public void visit(SpriteTouchingColor node) {
         if (insideGreenFlagClone && !insideLoop && inCondition) {
-            addIssue(node, HINT_TEXT, node.getMetadata());
+            addIssue(node, node.getMetadata());
         }
     }
 
     @Override
     public void visit(DistanceTo node) {
         if (insideGreenFlagClone && !insideLoop && inCondition) {
-            addIssue(node, HINT_TEXT, node.getMetadata());
+            addIssue(node, node.getMetadata());
         }
     }
 

@@ -29,7 +29,6 @@ import java.util.Set;
 
 public class EmptyProject extends AbstractIssueFinder {
     public static final String NAME = "empty_project";
-    public static final String HINT_TEXT = "empty_project_hint";
     private boolean foundScript = false;
 
     @Override
@@ -40,7 +39,7 @@ public class EmptyProject extends AbstractIssueFinder {
         program.accept(this);
         if (!foundScript) {
             currentActor = program.getActorDefinitionList().getDefinitions().get(0); //stage has to exist
-            addIssueWithLooseComment(HINT_TEXT);
+            addIssueWithLooseComment();
         }
         return issues;
     }

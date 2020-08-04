@@ -33,7 +33,6 @@ import java.util.Set;
 
 public class SameVariableDifferentSprite extends AbstractIssueFinder {
     public static final String NAME = "same_variable_different_sprite";
-    public static final String HINT_TEXT = "same_variable_different_sprite_hint";
 
     @Override
     public Set<Issue> check(Program program) {
@@ -57,7 +56,7 @@ public class SameVariableDifferentSprite extends AbstractIssueFinder {
                 for (ActorDefinition actorDefinition : actorDefinitions) {
                     currentActor = actorDefinition;
                     if (actorDefinition.getIdent().getName().equals(currentActorName)) {
-                        addIssueWithLooseComment(HINT_TEXT);
+                        addIssueWithLooseComment();
                         break;
                     }
                 }
@@ -81,7 +80,7 @@ public class SameVariableDifferentSprite extends AbstractIssueFinder {
                 for (ActorDefinition actorDefinition : actorDefinitions) {
                     if (actorDefinition.getIdent().getName().equals(currentActorName)) {
                         currentActor = actorDefinition;
-                        addIssueWithLooseComment(HINT_TEXT);
+                        addIssueWithLooseComment();
                         break;
                     }
                 }

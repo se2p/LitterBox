@@ -32,12 +32,11 @@ import java.util.List;
 public class NestedLoops extends AbstractIssueFinder {
 
     public static final String NAME = "nested_loops";
-    public static final String HINT_TEXT = "nested_loops_hint";
 
     @Override
     public void visit(UntilStmt node) {
         if (checkNested(node.getStmtList().getStmts())) {
-            addIssue(node, HINT_TEXT, node.getMetadata());
+            addIssue(node, node.getMetadata());
         }
         visitChildren(node);
     }
@@ -45,7 +44,7 @@ public class NestedLoops extends AbstractIssueFinder {
     @Override
     public void visit(RepeatForeverStmt node) {
         if (checkNested(node.getStmtList().getStmts())) {
-            addIssue(node, HINT_TEXT, node.getMetadata());
+            addIssue(node, node.getMetadata());
         }
         visitChildren(node);
     }
@@ -57,7 +56,7 @@ public class NestedLoops extends AbstractIssueFinder {
     @Override
     public void visit(RepeatTimesStmt node) {
         if (checkNested(node.getStmtList().getStmts())) {
-            addIssue(node, HINT_TEXT, node.getMetadata());
+            addIssue(node, node.getMetadata());
         }
         visitChildren(node);
     }

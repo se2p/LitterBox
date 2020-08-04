@@ -41,7 +41,6 @@ import java.util.Set;
 public class MissingInitialization implements IssueFinder {
 
     public static final String NAME = "missing_initialization";
-    public static final String HINT_TEXT = "missing_initialization_hint";
 
     @Override
     public Set<Issue> check(Program program) {
@@ -79,12 +78,12 @@ public class MissingInitialization implements IssueFinder {
                     issues.add(new Issue(this, use.getUseTarget().getActor(),
                             (Script) containingScript,
                             use.getUseTarget().getASTNode(),
-                            HINT_TEXT, null)); // TODO: Where is the relevant metadata?
+                            null)); // TODO: Where is the relevant metadata?
                 } else {
                     issues.add(new Issue(this, use.getUseTarget().getActor(),
                             (ProcedureDefinition) containingScript,
                             use.getUseTarget().getASTNode(),
-                            HINT_TEXT, null)); // TODO: Where is the relevant metadata
+                            null)); // TODO: Where is the relevant metadata
                 }
             }
         }
