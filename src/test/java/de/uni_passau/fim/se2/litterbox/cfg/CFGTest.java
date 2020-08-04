@@ -22,11 +22,14 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.CreateCloneOf;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Optional;
+import java.util.Set;
 
 import static com.google.common.truth.Truth.assertThat;
 
@@ -275,4 +278,47 @@ public class CFGTest {
         assertThat(cfg.getNumNodes()).isEqualTo(14);
         assertThat(cfg.getNumEdges()).isEqualTo(14);
     }
+
+    @Test
+    public void testCloneMyself() throws IOException, ParsingException {
+        ControlFlowGraph cfg = getCFG("src/test/fixtures/cfg/clonemyself.json");
+        Optional<CFGNode> createCloneNode = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof CreateCloneOf).findFirst();
+        assertThat(createCloneNode.isPresent());
+        Set<CFGNode> successors = cfg.getSuccessors(createCloneNode.get());
+        assertThat(successors).hasSize(2);
+        assertThat(successors).contains(cfg.getExitNode());
+    }
+
+    @Test
+    public void testCloneOther() throws IOException, ParsingException {
+        ControlFlowGraph cfg = getCFG("src/test/fixtures/cfg/cloneother.json");
+        Optional<CFGNode> createCloneNode = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof CreateCloneOf).findFirst();
+        assertThat(createCloneNode.isPresent());
+        Set<CFGNode> successors = cfg.getSuccessors(createCloneNode.get());
+        assertThat(successors).hasSize(2);
+        assertThat(successors).contains(cfg.getExitNode());
+    }
+
+    @Test
+    public void testCloneVariable() throws IOException, ParsingException {
+        ControlFlowGraph cfg = getCFG("src/test/fixtures/cfg/clonevariable.json");
+        Optional<CFGNode> createCloneNode = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof CreateCloneOf).findFirst();
+        assertThat(createCloneNode.isPresent());
+        Set<CFGNode> successors = cfg.getSuccessors(createCloneNode.get());
+        // Overapproximate by adding edges to all sprites except stage
+        assertThat(successors).hasSize(3);
+        assertThat(successors).contains(cfg.getExitNode());
+    }
+
+    @Test
+    public void testCloneExpression() throws IOException, ParsingException {
+        ControlFlowGraph cfg = getCFG("src/test/fixtures/cfg/cloneexpression.json");
+        Optional<CFGNode> createCloneNode = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof CreateCloneOf).findFirst();
+        assertThat(createCloneNode.isPresent());
+        Set<CFGNode> successors = cfg.getSuccessors(createCloneNode.get());
+        // Overapproximate by adding edges to all sprites except stage
+        assertThat(successors).hasSize(3);
+        assertThat(successors).contains(cfg.getExitNode());
+    }
+
 }
