@@ -22,8 +22,8 @@ public class IssueTranslator {
 
     /**
      * Returns an instance of this Singleton.
-     * <p>
-     * If not instance exists yet a new one will be created
+     *
+     * <p>If not instance exists yet a new one will be created
      *
      * @return singleton instance of the IssueTranslator
      */
@@ -107,8 +107,8 @@ public class IssueTranslator {
 
     /**
      * Returns a translated version of an info keyword.
-     * <p>
-     * These translations are used for general information, such as help-texts.
+     *
+     * <p>These translations are used for general information, such as help-texts.
      *
      * @param keyword for general information
      * @return translated name
