@@ -366,8 +366,9 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(GoToLayer goToLayer) {
-        emitToken("go to layer");
+        emitToken("go to");
         goToLayer.getLayerChoice().accept(this);
+        emitToken("layer");
     }
 
     @Override
@@ -1212,54 +1213,47 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(ScratchList scratchList) {
-        emitToken("show variable");
         scratchList.getName().accept(this);
     }
 
     @Override
-    public void visit(AttributeOf node) {
-//        StringExpr attribute = attributeOf.getAttribute();
-//        boolean done = false;
-//        if (attribute instanceof StringLiteral) {
-//            String attributeText = ((StringLiteral) attribute).getText();
-//            if (attributeText.equalsIgnoreCase("backdrop_number")) {
-//                emitNoSpace("backdropNumber()");
-//                done = true;
-//            } else if (attributeText.equalsIgnoreCase("backdrop_name")) {
-//                emitNoSpace("backdropName()");
-//                done = true;
-//            } else if (attributeText.equalsIgnoreCase("sound_volume")) {
-//                emitNoSpace("volume()");
-//                done = true;
-//            }
-//        }
-//        if (!done) {
-//            emitToken("attribute");
-//            attributeOf.getAttribute().accept(this);
-//            of();
-//            attributeOf.getIdentifier().accept(this);
-//        }
-        emitToken("TODO"); // TODO
+    public void visit(AttributeOf node) { // TODO check -- the old version had different ways of handling backdrop number etc.
+        emitToken("attribute");
+        node.getAttribute().accept(this);
+        emitToken("of");
+        node.getElementChoice().accept(this);
     }
 
     @Override
     public void visit(GlideSecsToXY glideSecsToXY) {
-        emitToken("TODO"); // TODO
+        emitToken("glide");
+        glideSecsToXY.getSecs().accept(this);
+        emitToken("to (");
+        glideSecsToXY.getX().accept(this); // TODO probably we'll have to prevent a space here
+        comma();
+        glideSecsToXY.getY().accept(this);
+        closeParentheses();
     }
 
     @Override
     public void visit(NextCostume nextCostume) {
-        emitToken("TODO"); // TODO
+        emitToken("TODO"); // TODO -- switch costume to next?
     }
 
     @Override
     public void visit(ChangeGraphicEffectBy changeGraphicEffectBy) {
-        emitToken("TODO"); // TODO
+        emitToken("change graphic effect");
+        changeGraphicEffectBy.getEffect().accept(this);
+        emitToken("by");
+        changeGraphicEffectBy.getValue().accept(this);
     }
 
     @Override
     public void visit(SetGraphicEffectTo setGraphicEffectTo) {
-        emitToken("TODO"); // TODO
+        emitToken("set graphic effect");
+        setGraphicEffectTo.getEffect().accept(this);
+        emitToken("to");
+        setGraphicEffectTo.getValue().accept(this);
     }
 
     @Override
@@ -1269,97 +1263,108 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(LayerChoice layerChoice) {
-        emitToken("TODO"); // TODO
+        emitToken(layerChoice.getType());
     }
 
     @Override
     public void visit(Backdrop backdrop) {
-        emitToken("TODO"); // TODO
+        emitToken("TODO"); // TODO -- grammar?
     }
 
     @Override
     public void visit(Size size) {
-        emitToken("TODO"); // TODO
+        emitToken("size"); // TODO -- not in grammar
     }
 
     @Override
     public void visit(EventAttribute eventAttribute) {
-        emitToken("TODO"); // TODO
+        emitToken(eventAttribute.getType()); // TODO -- loudness is not in grammar?
     }
 
     @Override
     public void visit(PositionX positionX) {
-        emitToken("TODO"); // TODO
+        emitToken("TODO"); // TODO -- grammar?
+        // maybe:   | 'attribute'  stringExpr 'of' actorExpr  # StringAttributeOfExpression
+        // query an attribute value of an actor (sprites, the stage)
     }
 
     @Override
     public void visit(Direction direction) {
-        emitToken("TODO"); // TODO
+        emitToken("TODO"); // TODO -- grammar?
     }
 
     @Override
     public void visit(SetSoundEffectTo setSoundEffectTo) {
-        emitToken("TODO"); // TODO
+        emitToken("set sound effect");
+        setSoundEffectTo.getEffect().accept(this);
+        emitToken("to");
+        setSoundEffectTo.getValue().accept(this);
     }
 
     @Override
     public void visit(ChangeVolumeBy changeVolumeBy) {
-        emitToken("TODO"); // TODO
+        emitToken("TODO"); // TODO -- grammar?
     }
 
     @Override
     public void visit(SpriteTouchingColor spriteTouchingColor) {
-        emitToken("TODO"); // TODO
+        emitToken("touching");
+        spriteTouchingColor.getColor().accept(this);
     }
 
     @Override
     public void visit(PositionY positionY) {
-        emitToken("TODO"); // TODO
+        emitToken("TODO"); // TODO -- grammar?
     }
 
     @Override
     public void visit(SetRotationStyle setRotationStyle) {
-        emitToken("TODO"); // TODO
+        emitToken("TODO"); // TODO -- grammar?
     }
 
     @Override
     public void visit(ChangeSoundEffectBy changeSoundEffectBy) {
-        emitToken("TODO"); // TODO
+        emitToken("change sound effect");
+        changeSoundEffectBy.getEffect().accept(this);
+        emitToken("by");
+        changeSoundEffectBy.getValue().accept(this);
     }
 
     @Override
     public void visit(SetVolumeTo setVolumeTo) {
-        emitToken("TODO"); // TODO
+        emitToken("TODO"); // TODO -- grammar?
     }
 
     @Override
     public void visit(SetDragMode setDragMode) {
-        emitToken("TODO"); // TODO
+        emitToken("TODO"); // TODO -- grammar?
     }
 
     @Override
     public void visit(Answer answer) {
-        emitToken("TODO"); // TODO
+        emitToken("TODO"); // TODO -- grammar?
     }
 
     @Override
     public void visit(HideList hideList) {
-        emitToken("TODO"); // TODO
+        emitToken("hide variable");
+        hideList.getIdentifier().accept(this);
     }
 
     @Override
     public void visit(ShowList showList) {
-        emitToken("TODO"); // TODO
+        emitToken("show variable");
+        showList.getIdentifier().accept(this);
     }
 
     @Override
     public void visit(ListContains listContains) {
-        emitToken("TODO"); // TODO
+        emitToken("TODO"); // TODO -- grammar?
     }
 
     @Override
     public void visit(DeclarationBroadcastStmt listContains) {
-        emitToken("TODO"); // TODO
+        emitToken("TODO"); // TODO -- grammar?
     }
 
 }
