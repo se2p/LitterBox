@@ -9,6 +9,7 @@ public class IssueTranslator {
     private static IssueTranslator instance;
     private ResourceBundle hints;
     private ResourceBundle names;
+    private ResourceBundle general;
     private Locale locale;
 
     /**
@@ -58,9 +59,18 @@ public class IssueTranslator {
         }
 
         try {
-            names = ResourceBundle.getBundle("IssueHints", locale);
+            hints = ResourceBundle.getBundle("IssueHints", locale);
         } catch (MissingResourceException e) {
-            names = ResourceBundle.getBundle("IssueHints", Locale.ENGLISH);
+            hints = ResourceBundle.getBundle("IssueHints", Locale.ENGLISH);
+            System.err.println("Could not load resource bundle for language "
+                    + locale.toLanguageTag()
+                    + "; Defaulting to english");
+        }
+
+        try {
+            general = ResourceBundle.getBundle("IssueHints", locale);
+        } catch (MissingResourceException e) {
+            general = ResourceBundle.getBundle("IssueHints", Locale.ENGLISH);
             System.err.println("Could not load resource bundle for language "
                     + locale.toLanguageTag()
                     + "; Defaulting to english");
@@ -74,8 +84,8 @@ public class IssueTranslator {
      * @return translated hint for a given finder name
      */
     public String getHint(String finderName) {
-        if (names.containsKey(finderName)) {
-            return names.getString(finderName);
+        if (hints.containsKey(finderName)) {
+            return hints.getString(finderName);
         } else {
             return finderName;
         }
@@ -92,6 +102,22 @@ public class IssueTranslator {
             return names.getString(finderName);
         } else {
             return finderName;
+        }
+    }
+
+    /**
+     * Returns a translated version of an info keyword.
+     * <p>
+     * These translations are used for general information, such as help-texts.
+     *
+     * @param keyword for general information
+     * @return translated name
+     */
+    public String getInfo(String keyword) {
+        if (names.containsKey(keyword)) {
+            return names.getString(keyword);
+        } else {
+            return keyword;
         }
     }
 }
