@@ -65,6 +65,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.touchable.Touchable;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.Color;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.FromNumber;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.variable.ScratchList;
+import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 
 import java.io.PrintStream;
 import java.util.List;
@@ -80,7 +82,7 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(ASTNode node) {
-        System.err.println(node.getClass().getName());
+        throw new RuntimeException("Visit method not implemented for class: " + node.getClass());
     }
 
     @Override
@@ -1202,4 +1204,162 @@ public class LeilaVisitor extends PrintVisitor {
         goToPosXY.getY().accept(this);
         closeParentheses();
     }
+
+    @Override
+    public void visit(Variable variable) {
+        variable.getName().accept(this);
+    }
+
+    @Override
+    public void visit(ScratchList scratchList) {
+        emitToken("show variable");
+        scratchList.getName().accept(this);
+    }
+
+    @Override
+    public void visit(AttributeOf node) {
+//        StringExpr attribute = attributeOf.getAttribute();
+//        boolean done = false;
+//        if (attribute instanceof StringLiteral) {
+//            String attributeText = ((StringLiteral) attribute).getText();
+//            if (attributeText.equalsIgnoreCase("backdrop_number")) {
+//                emitNoSpace("backdropNumber()");
+//                done = true;
+//            } else if (attributeText.equalsIgnoreCase("backdrop_name")) {
+//                emitNoSpace("backdropName()");
+//                done = true;
+//            } else if (attributeText.equalsIgnoreCase("sound_volume")) {
+//                emitNoSpace("volume()");
+//                done = true;
+//            }
+//        }
+//        if (!done) {
+//            emitToken("attribute");
+//            attributeOf.getAttribute().accept(this);
+//            of();
+//            attributeOf.getIdentifier().accept(this);
+//        }
+        emitToken("TODO"); // TODO
+    }
+
+    @Override
+    public void visit(GlideSecsToXY glideSecsToXY) {
+        emitToken("TODO"); // TODO
+    }
+
+    @Override
+    public void visit(NextCostume nextCostume) {
+        emitToken("TODO"); // TODO
+    }
+
+    @Override
+    public void visit(ChangeGraphicEffectBy changeGraphicEffectBy) {
+        emitToken("TODO"); // TODO
+    }
+
+    @Override
+    public void visit(SetGraphicEffectTo setGraphicEffectTo) {
+        emitToken("TODO"); // TODO
+    }
+
+    @Override
+    public void visit(Costume costume) {
+        emitToken("TODO"); // TODO
+    }
+
+    @Override
+    public void visit(LayerChoice layerChoice) {
+        emitToken("TODO"); // TODO
+    }
+
+    @Override
+    public void visit(Backdrop backdrop) {
+        emitToken("TODO"); // TODO
+    }
+
+    @Override
+    public void visit(Size size) {
+        emitToken("TODO"); // TODO
+    }
+
+    @Override
+    public void visit(EventAttribute eventAttribute) {
+        emitToken("TODO"); // TODO
+    }
+
+    @Override
+    public void visit(PositionX positionX) {
+        emitToken("TODO"); // TODO
+    }
+
+    @Override
+    public void visit(Direction direction) {
+        emitToken("TODO"); // TODO
+    }
+
+    @Override
+    public void visit(SetSoundEffectTo setSoundEffectTo) {
+        emitToken("TODO"); // TODO
+    }
+
+    @Override
+    public void visit(ChangeVolumeBy changeVolumeBy) {
+        emitToken("TODO"); // TODO
+    }
+
+    @Override
+    public void visit(SpriteTouchingColor spriteTouchingColor) {
+        emitToken("TODO"); // TODO
+    }
+
+    @Override
+    public void visit(PositionY positionY) {
+        emitToken("TODO"); // TODO
+    }
+
+    @Override
+    public void visit(SetRotationStyle setRotationStyle) {
+        emitToken("TODO"); // TODO
+    }
+
+    @Override
+    public void visit(ChangeSoundEffectBy changeSoundEffectBy) {
+        emitToken("TODO"); // TODO
+    }
+
+    @Override
+    public void visit(SetVolumeTo setVolumeTo) {
+        emitToken("TODO"); // TODO
+    }
+
+    @Override
+    public void visit(SetDragMode setDragMode) {
+        emitToken("TODO"); // TODO
+    }
+
+    @Override
+    public void visit(Answer answer) {
+        emitToken("TODO"); // TODO
+    }
+
+    @Override
+    public void visit(HideList hideList) {
+        emitToken("TODO"); // TODO
+    }
+
+    @Override
+    public void visit(ShowList showList) {
+        emitToken("TODO"); // TODO
+    }
+
+    @Override
+    public void visit(ListContains listContains) {
+        emitToken("TODO"); // TODO
+    }
+
+    @Override
+    public void visit(DeclarationBroadcastStmt listContains) {
+        emitToken("TODO"); // TODO
+    }
+
 }
