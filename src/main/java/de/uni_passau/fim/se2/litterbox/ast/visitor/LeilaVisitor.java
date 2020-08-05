@@ -1108,7 +1108,11 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(NumberLiteral number) {
-        emitNoSpace(String.valueOf(number.getValue()));
+        if (number.getValue() >= 0) {
+            emitNoSpace(String.valueOf(number.getValue()));
+        } else {
+            emitNoSpace("(0" + number.getValue() + ")");
+        }
     }
 
     @Override
@@ -1362,5 +1366,4 @@ public class LeilaVisitor extends PrintVisitor {
     public void visit(DeclarationBroadcastStmt listContains) {
         emitToken("TODO"); // TODO -- grammar?
     }
-
 }
