@@ -747,14 +747,16 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(AsString asString) {
-        emitToken("as string");
+        emitToken("cast");
         asString.getOperand1().accept(this);
+        emitToken(" to string");
     }
 
     @Override
-    public void visit(AsBool asString) {
-        emitToken("as bool");
-        asString.getOperand1().accept(this);
+    public void visit(AsBool asBool) {
+        emitToken("cast");
+        asBool.getOperand1().accept(this);
+        emitToken(" to boolean");
     }
 
     @Override
@@ -1022,8 +1024,9 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(AsNumber asNumber) {
-        emitToken("as number");
+        emitToken("cast");
         asNumber.getOperand1().accept(this);
+        emitToken(" to int"); //TODO distinguish between int and float?
     }
 
     @Override
@@ -1108,10 +1111,11 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(NumberLiteral number) {
-        if (number.getValue() >= 0) {
-            emitNoSpace(String.valueOf(number.getValue()));
+        double value = number.getValue();
+        if (value >= 0) {
+            emitNoSpace(String.valueOf(value));
         } else {
-            emitNoSpace("(0" + number.getValue() + ")");
+            emitNoSpace("(0" + value + ")");
         }
     }
 
