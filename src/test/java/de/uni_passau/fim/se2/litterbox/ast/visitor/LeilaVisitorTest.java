@@ -25,6 +25,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
 import org.junit.Ignore;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
@@ -63,9 +64,9 @@ public class LeilaVisitorTest {
     }
 
     @Ignore // This is not really a test, it's a convenience method for showing what the visitor does or does not
-    // @Test
+    @Test
     public void testVisitorBig() {
-        String path = "src/test/fixtures/printvisitor/grammarvisitorbig.json";
+        String path = "src/test/fixtures/printvisitor/fruitCatch.json";
         File file = new File(path);
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode project = null;
