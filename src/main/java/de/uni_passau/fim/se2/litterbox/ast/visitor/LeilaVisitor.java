@@ -229,6 +229,8 @@ public class LeilaVisitor extends PrintVisitor {
         begin();
         beginIndentation();
         for (Stmt stmt : stmtList.getStmts()) {
+            newLine();
+            appendIndentation();
             stmt.accept(this);
         }
         endIndentation();
