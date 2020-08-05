@@ -1986,6 +1986,19 @@ public interface ScratchVisitor {
     }
 
     /**
+     * Default implementation of visit method for {@link DeclarationBroadcastStmt}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node DeclarationStmtList  Node of which the children will be iterated
+     */
+    default void visit(DeclarationBroadcastStmt node) {
+        visit((ASTNode) node);
+    }
+
+    /**
      * Default implementation of visit method for {@link ListStmt}.
      *
      * <p>
