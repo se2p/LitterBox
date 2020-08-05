@@ -180,7 +180,7 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(GreenFlag greenFlag) {
-        emitNoSpace("green flag");
+        emitNoSpace("startup");
     }
 
     @Override
