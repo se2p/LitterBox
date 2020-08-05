@@ -20,6 +20,7 @@ package de.uni_passau.fim.se2.litterbox.cfg;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
+import de.uni_passau.fim.se2.litterbox.ast.model.ActorType;
 import de.uni_passau.fim.se2.litterbox.ast.model.Message;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.AttributeAboveValue;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Event;
@@ -44,15 +45,22 @@ public class ControlFlowGraphBuilder {
 
     private ActorDefinition currentActor = null;
 
+    private List<ActorDefinition> allActors = new ArrayList<>();
+
     private ASTNode currentScriptOrProcedure = null;
 
     private Map<CFGNode, List<CFGNode>> procedureMap = new LinkedHashMap<>();
 
     private Map<CFGNode, CFGNode> procedureCallMap = new LinkedHashMap<>();
 
+    private List<CFGNode> expressionBroadcasts  = new ArrayList<>();
+
+    private List<CFGNode> receivedMessages = new ArrayList<>();
+
     public ControlFlowGraph getControlFlowGraph() {
         addMissingEdgesToExit();
         connectCustomBlockCalls();
+        connectBroadcastExpressions();
         cfg.fixDetachedEntryExit();
         return cfg;
     }
@@ -80,6 +88,24 @@ public class ControlFlowGraphBuilder {
                 cfg.addEdge(procedureNode, callNode);
             }
         }
+    }
+
+    /**
+     * For all broadcasts that are not using strings, we need to overapproximate
+     */
+    private void connectBroadcastExpressions() {
+        for (CFGNode broadcastNode : expressionBroadcasts) {
+            for (CFGNode handlerNode : receivedMessages) {
+                cfg.addEdgeToExit(handlerNode);
+                cfg.addEdge(broadcastNode, handlerNode);
+            }
+        }
+
+    }
+
+    public void setActors(Collection<ActorDefinition> actors) {
+        allActors.clear();
+        allActors.addAll(actors);
     }
 
     public void setCurrentActor(ActorDefinition actor) {
@@ -164,6 +190,7 @@ public class ControlFlowGraphBuilder {
     public void addBroadcastHandler(Message message) {
 
         CFGNode handlerNode = cfg.addNode(message);
+        receivedMessages.add(handlerNode);
         cfg.addEdgeToExit(handlerNode);
         setCurrentNode(handlerNode);
     }
@@ -172,12 +199,17 @@ public class ControlFlowGraphBuilder {
         // Add node and edge from current
         CFGNode node = addStatement(stmt);
 
-        // Retrieve broadcast handler, or create if it doesn't exist yet
-        CFGNode handlerNode = cfg.addNode(message);
-        cfg.addEdgeToExit(handlerNode); // Broadcasts need a second edge to exit
+        if (message.getMessage() instanceof StringLiteral) {
+            // Message selected via dropdown
+            // Retrieve broadcast handler, or create if it doesn't exist yet
+            CFGNode handlerNode = cfg.addNode(message);
+            cfg.addEdgeToExit(handlerNode); // Broadcasts need a second edge to exit
 
-        // Add edge from node to broadcast handler
-        cfg.addEdge(node, handlerNode);
+            // Add edge from node to broadcast handler
+            cfg.addEdge(node, handlerNode);
+        } else {
+            expressionBroadcasts.add(node);
+        }
     }
 
     public void addCreateClone(CreateCloneOf stmt) {
@@ -192,17 +224,31 @@ public class ControlFlowGraphBuilder {
             }
         });
 
-        assert (names.size() == 1);
-        String name = names.get(0);
-        if (name.equals(Identifier.MYSELF.getValue())) {
-            name = currentActor.getIdent().getName();
+        if (names.size() == 1) {
+            // If a name is specified, add an edge to that actor
+
+            String name = names.get(0);
+            if (name.equals(Identifier.MYSELF.getValue())) {
+                name = currentActor.getIdent().getName();
+            }
+
+            CloneEventNode handlerNode = new CloneEventNode(name);
+            cfg.addEdgeToExit(handlerNode);
+
+            // Add edge from node to clone handler
+            cfg.addEdge(node, handlerNode);
+        } else {
+            // If the name is an expression, add edges to *all* actors
+
+            for (ActorDefinition actor : allActors) {
+                if (actor.getActorType().equals(ActorType.STAGE)) {
+                    continue;
+                }
+                CloneEventNode handlerNode = new CloneEventNode(actor.getIdent().getName());
+                cfg.addEdgeToExit(handlerNode);
+                cfg.addEdge(node, handlerNode);
+            }
         }
-
-        CloneEventNode handlerNode = new CloneEventNode(name);
-        cfg.addEdgeToExit(handlerNode);
-
-        // Add edge from node to clone handler
-        cfg.addEdge(node, handlerNode);
     }
 
     public void addCloneHandler(StartedAsClone node) {

@@ -22,11 +22,16 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.Broadcast;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.BroadcastAndWait;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.CreateCloneOf;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Optional;
+import java.util.Set;
 
 import static com.google.common.truth.Truth.assertThat;
 
@@ -274,5 +279,89 @@ public class CFGTest {
         ControlFlowGraph cfg = getCFG("src/test/fixtures/cfg/listoperations.json");
         assertThat(cfg.getNumNodes()).isEqualTo(14);
         assertThat(cfg.getNumEdges()).isEqualTo(14);
+    }
+
+    @Test
+    public void testCloneMyself() throws IOException, ParsingException {
+        ControlFlowGraph cfg = getCFG("src/test/fixtures/cfg/clonemyself.json");
+        Optional<CFGNode> createCloneNode = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof CreateCloneOf).findFirst();
+        assertThat(createCloneNode.isPresent());
+        Set<CFGNode> successors = cfg.getSuccessors(createCloneNode.get());
+        assertThat(successors).hasSize(2);
+        assertThat(successors).contains(cfg.getExitNode());
+    }
+
+    @Test
+    public void testCloneOther() throws IOException, ParsingException {
+        ControlFlowGraph cfg = getCFG("src/test/fixtures/cfg/cloneother.json");
+        Optional<CFGNode> createCloneNode = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof CreateCloneOf).findFirst();
+        assertThat(createCloneNode.isPresent());
+        Set<CFGNode> successors = cfg.getSuccessors(createCloneNode.get());
+        assertThat(successors).hasSize(2);
+        assertThat(successors).contains(cfg.getExitNode());
+    }
+
+    @Test
+    public void testCloneVariable() throws IOException, ParsingException {
+        ControlFlowGraph cfg = getCFG("src/test/fixtures/cfg/clonevariable.json");
+        Optional<CFGNode> createCloneNode = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof CreateCloneOf).findFirst();
+        assertThat(createCloneNode.isPresent());
+        Set<CFGNode> successors = cfg.getSuccessors(createCloneNode.get());
+        // Overapproximate by adding edges to all sprites except stage
+        assertThat(successors).hasSize(3);
+        assertThat(successors).contains(cfg.getExitNode());
+    }
+
+    @Test
+    public void testCloneExpression() throws IOException, ParsingException {
+        ControlFlowGraph cfg = getCFG("src/test/fixtures/cfg/cloneexpression.json");
+        Optional<CFGNode> createCloneNode = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof CreateCloneOf).findFirst();
+        assertThat(createCloneNode.isPresent());
+        Set<CFGNode> successors = cfg.getSuccessors(createCloneNode.get());
+        // Overapproximate by adding edges to all sprites except stage
+        assertThat(successors).hasSize(3);
+        assertThat(successors).contains(cfg.getExitNode());
+    }
+
+    @Test
+    public void testBroadcastMessage() throws IOException, ParsingException {
+        ControlFlowGraph cfg = getCFG("src/test/fixtures/cfg/broadcastmessage.json");
+        Optional<CFGNode> broadcastNode = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof Broadcast).findFirst();
+        assertThat(broadcastNode.isPresent());
+        Set<CFGNode> successors = cfg.getSuccessors(broadcastNode.get());
+        assertThat(successors).hasSize(2);
+        assertThat(successors).contains(cfg.getExitNode());
+    }
+
+    @Test
+    public void testBroadcastAndWaitMessage() throws IOException, ParsingException {
+        ControlFlowGraph cfg = getCFG("src/test/fixtures/cfg/broadcastmessageandwait.json");
+        Optional<CFGNode> broadcastNode = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof BroadcastAndWait).findFirst();
+        assertThat(broadcastNode.isPresent());
+        Set<CFGNode> successors = cfg.getSuccessors(broadcastNode.get());
+        assertThat(successors).hasSize(2);
+        assertThat(successors).contains(cfg.getExitNode());
+    }
+
+    @Test
+    public void testBroadcastVariable() throws IOException, ParsingException {
+        ControlFlowGraph cfg = getCFG("src/test/fixtures/cfg/broadcastvariable.json");
+        Optional<CFGNode> broadcastNode = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof Broadcast).findFirst();
+        assertThat(broadcastNode.isPresent());
+        Set<CFGNode> successors = cfg.getSuccessors(broadcastNode.get());
+        // If the message is an expression (e.g. a variable) we need to overapproximate
+        assertThat(successors).hasSize(3);
+        assertThat(successors).contains(cfg.getExitNode());
+    }
+
+    @Test
+    public void testBroadcastAndWaitVariable() throws IOException, ParsingException {
+        ControlFlowGraph cfg = getCFG("src/test/fixtures/cfg/broadcastvariableandwait.json");
+        Optional<CFGNode> broadcastNode = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof BroadcastAndWait).findFirst();
+        assertThat(broadcastNode.isPresent());
+        Set<CFGNode> successors = cfg.getSuccessors(broadcastNode.get());
+        // If the message is an expression (e.g. a variable) we need to overapproximate
+        assertThat(successors).hasSize(3);
+        assertThat(successors).contains(cfg.getExitNode());
     }
 }
