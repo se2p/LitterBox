@@ -985,19 +985,6 @@ public interface ScratchVisitor {
     }
 
     /**
-     * Default implementation of visit method for {@link URI}.
-     *
-     * <p>
-     * Iterates all children of this node without performing any action.
-     * </p>
-     *
-     * @param node URI  Node of which the children will be iterated
-     */
-    default void visit(URI node) {
-        visit((ASTNode) node);
-    }
-
-    /**
      * Default implementation of visit method for {@link ElementChoice}.
      *
      * <p>

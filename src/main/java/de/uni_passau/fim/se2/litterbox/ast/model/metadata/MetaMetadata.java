@@ -27,6 +27,13 @@ public class MetaMetadata extends AbstractNode implements Metadata, ASTLeaf {
     private String vm;
     private String agent;
 
+    /**
+     * The constructor needs the semver, vm and agent attributes that are stated in the meta node of the json.
+     *
+     * @param semver semver of the project
+     * @param vm     version of the scratch virtual machine
+     * @param agent  information about the browser that was used for creating the project
+     */
     public MetaMetadata(String semver, String vm, String agent) {
         super();
         this.semver = semver;

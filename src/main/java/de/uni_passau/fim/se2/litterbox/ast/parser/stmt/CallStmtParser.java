@@ -28,21 +28,30 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.UnspecifiedBool
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.ExpressionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ExpressionParser;
 import de.uni_passau.fim.se2.litterbox.ast.parser.metadata.BlockMetadataParser;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 
 public class CallStmtParser {
 
-    public static Stmt parse(String identifier, JsonNode current, JsonNode blocks) throws ParsingException {
+    /**
+     * This method parses the call to a procedure.
+     *
+     * @param identifier the id of the call block in the JSON.
+     * @param current    the call block in the JSON.
+     * @param blocks     the whole blocks node of the current Actor.
+     * @return the constructed CallStmt
+     * @throws ParsingException when a call is malformated. This can be the case when the call has more
+     *                          argument ids defined than it has inputs or the parsing of used expressions
+     *                          does not work.
+     */
+    public static CallStmt parse(String identifier, JsonNode current, JsonNode blocks) throws ParsingException {
         List<Expression> expressions = new ArrayList<>();
         JsonNode argumentIds = current.get(MUTATION_KEY).get(ARGUMENTIDS_KEY);
         ObjectMapper mapper = new ObjectMapper();
@@ -68,28 +77,5 @@ public class CallStmtParser {
 
         return new CallStmt(new StrId(current.get(Constants.MUTATION_KEY).get(Constants.PROCCODE_KEY).asText()),
                 new ExpressionList(expressions), BlockMetadataParser.parse(identifier, current));
-    }
-
-    /**
-     * Returns true if the array node contains a node which equals the key.
-     *
-     * @param node Array node to check.
-     * @param key  The string existence of which will be checked.
-     * @return True iff there is a TextNode the text of which equals the key.
-     */
-    private static boolean arrayNodeContains(ArrayNode node, String key) {
-        Preconditions.checkNotNull(node);
-        Preconditions.checkNotNull(key);
-        Iterator<JsonNode> elements = node.elements();
-        while (elements.hasNext()) {
-            JsonNode next = elements.next();
-            String nextText = next.asText();
-            if (nextText != null) {
-                if (nextText.equals(key)) {
-                    return true;
-                }
-            }
-        }
-        return false;
     }
 }

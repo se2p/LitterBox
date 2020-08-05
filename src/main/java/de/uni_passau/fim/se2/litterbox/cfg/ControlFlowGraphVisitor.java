@@ -18,10 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.cfg;
 
-import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
-import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
-import de.uni_passau.fim.se2.litterbox.ast.model.Script;
-import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
+import de.uni_passau.fim.se2.litterbox.ast.model.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
@@ -46,6 +43,13 @@ public class ControlFlowGraphVisitor implements ScratchVisitor {
 
     public ControlFlowGraph getControlFlowGraph() {
         return builder.getControlFlowGraph();
+    }
+
+    @Override
+    public void visit(Program node) {
+        List<ActorDefinition> actors = node.getActorDefinitionList().getDefinitions();
+        builder.setActors(actors);
+        visit((ASTNode) node);
     }
 
     @Override

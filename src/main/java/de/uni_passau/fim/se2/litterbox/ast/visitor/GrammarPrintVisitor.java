@@ -847,11 +847,6 @@ public class GrammarPrintVisitor extends PrintVisitor {
     }
 
     @Override
-    public void visit(URI uri) {
-        emitNoSpace(uri.getUri().getText());
-    }
-
-    @Override
     public void visit(ActorType actorType) {
         if (actorType.equals(ActorType.STAGE)) {
             emitNoSpace("ScratchStage");
