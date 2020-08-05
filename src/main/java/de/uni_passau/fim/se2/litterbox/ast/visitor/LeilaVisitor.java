@@ -710,7 +710,6 @@ public class LeilaVisitor extends PrintVisitor {
     @Override
     public void visit(DeclarationAttributeAsTypeStmt declarationAttributeAsTypeStmt) {
         declare();
-        emitToken("attribute");
         declarationAttributeAsTypeStmt.getStringExpr().accept(this);
         as();
         declarationAttributeAsTypeStmt.getType().accept(this);
@@ -813,7 +812,6 @@ public class LeilaVisitor extends PrintVisitor {
     @Override
     public void visit(SetAttributeTo setAttributeTo) {
         emitToken("define");
-        attribute();
         setAttributeTo.getStringExpr().accept(this);
         as();
         setAttributeTo.getExpr().accept(this);
@@ -821,10 +819,6 @@ public class LeilaVisitor extends PrintVisitor {
 
     private void to() {
         emitToken(" to");
-    }
-
-    private void attribute() {
-        emitToken("attribute");
     }
 
     private void set() {
