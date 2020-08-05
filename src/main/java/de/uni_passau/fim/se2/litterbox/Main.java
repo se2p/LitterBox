@@ -20,12 +20,10 @@ package de.uni_passau.fim.se2.litterbox;
 
 import de.uni_passau.fim.se2.litterbox.analytics.*;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
+import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 import org.apache.commons.cli.*;
 
 import java.io.IOException;
-import java.util.Locale;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
 
 import static de.uni_passau.fim.se2.litterbox.utils.GroupConstants.*;
 
@@ -57,8 +55,6 @@ public class Main {
     private static final String ANNOTATE_SHORT = "a";
     private static final String DETECTORS = "detectors";
     private static final String DETECTORS_SHORT = "d";
-
-    public static ResourceBundle resourceBundle;
 
     private Main() {
     }
@@ -121,16 +117,16 @@ public class Main {
                 + "~/path/to/json/project/or/folder/with/projects \n");
 
         System.out.println("Detectors:");
-        ResourceBundle messages = ResourceBundle.getBundle("IssueDescriptions", Locale.ENGLISH);
-        System.out.printf("\t%-20s %-30s%n", ALL, messages.getString(ALL));
-        System.out.printf("\t%-20s %-30s%n", BUGS, messages.getString(BUGS));
-        System.out.printf("\t%-20s %-30s%n", SMELLS, messages.getString(SMELLS));
+        IssueTranslator messages = IssueTranslator.getInstance();
+        System.out.printf("\t%-20s %-30s%n", ALL, messages.getInfo(ALL));
+        System.out.printf("\t%-20s %-30s%n", BUGS, messages.getInfo(BUGS));
+        System.out.printf("\t%-20s %-30s%n", SMELLS, messages.getInfo(SMELLS));
 
         IssueTool issueTool = new IssueTool();
         issueTool.getAllFinder().keySet().forEach(finder -> System.out.printf(
                 "\t%-20s %-30s%n",
                 finder,
-                messages.getString(finder)
+                messages.getName(finder)
         ));
     }
 
@@ -203,13 +199,7 @@ public class Main {
             CommandLine cmd = parser.parse(options, args);
 
             String lang = cmd.getOptionValue(OUTPUT_LANG, "en");
-            Locale locale = Locale.forLanguageTag(lang);
-            try {
-                resourceBundle = ResourceBundle.getBundle("IssueDescriptions", locale);
-            } catch (MissingResourceException e) {
-                resourceBundle = ResourceBundle.getBundle("IssueDescriptions", Locale.ENGLISH);
-                System.err.println("Could not load resource bundle for language " + lang + "; Defaulting to english");
-            }
+            IssueTranslator.getInstance().setLanguage(lang);
 
             if (cmd.hasOption(CHECK)) {
                 checkPrograms(cmd);

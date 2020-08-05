@@ -39,7 +39,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
  */
 public class PositionEqualsCheck extends AbstractIssueFinder {
     public static final String NAME = "position_equals_check";
-    public static final String HINT_TEXT = "position_equals_check_hint";
     static boolean inCondition;
 
     boolean checkEquals(Equals equals) {
@@ -56,8 +55,10 @@ public class PositionEqualsCheck extends AbstractIssueFinder {
             return false;
         } else if (operand instanceof AttributeOf) {
             if (((AttributeOf) operand).getAttribute() instanceof AttributeFromFixed) {
-                return ((AttributeFromFixed) ((AttributeOf) operand).getAttribute()).getAttribute() != FixedAttribute.X_POSITION
-                        && ((AttributeFromFixed) ((AttributeOf) operand).getAttribute()).getAttribute() != FixedAttribute.Y_POSITION;
+                return ((AttributeFromFixed) ((AttributeOf) operand).getAttribute()).getAttribute()
+                        != FixedAttribute.X_POSITION
+                        && ((AttributeFromFixed) ((AttributeOf) operand).getAttribute()).getAttribute()
+                        != FixedAttribute.Y_POSITION;
             }
         }
         return true;
@@ -74,7 +75,7 @@ public class PositionEqualsCheck extends AbstractIssueFinder {
     public void visit(Equals node) {
         if (inCondition) {
             if (!checkEquals(node)) {
-                addIssue(node, HINT_TEXT, node.getMetadata());
+                addIssue(node, node.getMetadata());
             }
         }
     }

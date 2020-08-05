@@ -34,12 +34,11 @@ import de.uni_passau.fim.se2.litterbox.ast.model.touchable.SpriteTouchable;
  */
 public class ExpressionAsTouchingOrColor extends AbstractIssueFinder {
     public static final String NAME = "expression_as_touching_or_color";
-    public static final String HINT_TEXT = "expression_as_touching_or_color_hint";
 
     @Override
     public void visit(SetPenColorToColorStmt node) {
         if (!(node.getColorExpr() instanceof ColorLiteral)) {
-            addIssue(node, HINT_TEXT, node.getMetadata());
+            addIssue(node, node.getMetadata());
         }
         visitChildren(node);
     }
@@ -47,11 +46,11 @@ public class ExpressionAsTouchingOrColor extends AbstractIssueFinder {
     @Override
     public void visit(ColorTouchingColor node) {
         if (!(node.getOperand1() instanceof ColorLiteral)) {
-            addIssue(node, HINT_TEXT, node.getMetadata());
+            addIssue(node, node.getMetadata());
         }
         // TODO: Should this be an else-if rather than if, to avoid duplicate reports?
         if (!(node.getOperand2() instanceof ColorLiteral)) {
-            addIssue(node, HINT_TEXT, node.getMetadata());
+            addIssue(node, node.getMetadata());
         }
         visitChildren(node);
     }
@@ -59,7 +58,7 @@ public class ExpressionAsTouchingOrColor extends AbstractIssueFinder {
     @Override
     public void visit(SpriteTouchingColor node) {
         if (!(node.getColor() instanceof ColorLiteral)) {
-            addIssue(node, HINT_TEXT, node.getMetadata());
+            addIssue(node, node.getMetadata());
         }
         visitChildren(node);
     }
@@ -69,7 +68,7 @@ public class ExpressionAsTouchingOrColor extends AbstractIssueFinder {
         if (!(node.getTouchable() instanceof MousePointer)
                 && !(node.getTouchable() instanceof Edge)
                 && !(node.getTouchable() instanceof SpriteTouchable)) {
-            addIssue(node, HINT_TEXT, node.getMetadata());
+            addIssue(node, node.getMetadata());
         }
     }
 

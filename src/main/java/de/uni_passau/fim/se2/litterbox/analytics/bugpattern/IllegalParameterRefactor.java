@@ -31,7 +31,6 @@ import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ArgumentInfo;
 
 public class IllegalParameterRefactor extends AbstractIssueFinder {
     public static final String NAME = "illegal_parameter_refactor";
-    public static final String HINT_TEXT = "illegal_parameter_refactor_hint";
     private ArgumentInfo[] currentArguments;
     private boolean insideProcedure;
 
@@ -42,7 +41,7 @@ public class IllegalParameterRefactor extends AbstractIssueFinder {
             for (ArgumentInfo currentArgument : currentArguments) {
                 if (currentArgument.getName().equals(ident.getName().getName())
                         && !(currentArgument.getType() instanceof BooleanType)) {
-                    addIssue(boolExpr, HINT_TEXT, ident.getMetadata());
+                    addIssue(boolExpr, ident.getMetadata());
                 }
             }
         }

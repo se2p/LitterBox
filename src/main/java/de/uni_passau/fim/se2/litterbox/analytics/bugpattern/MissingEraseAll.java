@@ -38,7 +38,6 @@ import java.util.Set;
 public class MissingEraseAll extends AbstractIssueFinder {
 
     public static final String NAME = "missing_erase_all";
-    public static final String HINT_TEXT = "missing_erase_all_hint";
 
     private boolean penClearSet = false;
     private boolean penDownSet = false;
@@ -73,7 +72,7 @@ public class MissingEraseAll extends AbstractIssueFinder {
             penDownSet = true;
             visitChildren(node);
         } else if (getResult()) {
-            addIssue(node, HINT_TEXT, node.getMetadata());
+            addIssue(node, node.getMetadata());
         }
     }
 

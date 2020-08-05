@@ -34,7 +34,6 @@ import java.util.List;
  */
 public class CallWithoutDefinition extends AbstractIssueFinder {
     public static final String NAME = "call_without_definition";
-    public static final String HINT_TEXT = "call_without_definition_hint";
     private List<String> proceduresDef;
     private List<CallStmt> calledProcedures;
 
@@ -44,7 +43,7 @@ public class CallWithoutDefinition extends AbstractIssueFinder {
                     && !program.getProcedureMapping().checkIfMalformated(
                     currentActor.getIdent().getName() + calledProcedure.getIdent().getName())) {
 
-                addIssue(calledProcedure, HINT_TEXT, calledProcedure.getMetadata());
+                addIssue(calledProcedure, calledProcedure.getMetadata());
             }
         }
     }

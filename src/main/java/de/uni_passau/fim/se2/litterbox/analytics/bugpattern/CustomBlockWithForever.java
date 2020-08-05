@@ -37,7 +37,6 @@ import java.util.List;
  */
 public class CustomBlockWithForever extends AbstractIssueFinder {
     public static final String NAME = "custom_block_with_forever";
-    public static final String HINT_TEXT = "custom_block_with_forever_hint";
     private String currentProcedureName;
     private List<String> proceduresWithForever;
     private List<CallStmt> calledProcedures;
@@ -46,7 +45,7 @@ public class CustomBlockWithForever extends AbstractIssueFinder {
     private void checkCalls() {
         for (CallStmt calledProcedure : calledProcedures) {
             if (proceduresWithForever.contains(calledProcedure.getIdent().getName())) {
-                addIssue(calledProcedure, HINT_TEXT, calledProcedure.getMetadata());
+                addIssue(calledProcedure, calledProcedure.getMetadata());
             }
         }
     }

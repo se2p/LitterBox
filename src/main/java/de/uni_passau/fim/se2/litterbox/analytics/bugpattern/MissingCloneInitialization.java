@@ -46,7 +46,6 @@ import java.util.stream.Collectors;
 public class MissingCloneInitialization extends AbstractIssueFinder {
 
     public static final String NAME = "missing_clone_initialization";
-    public static final String HINT_TEXT = "missing_clone_initialization_hint";
 
     private List<String> whenStartsAsCloneActors = new ArrayList<>();
     private List<String> clonedActors = new ArrayList<>();
@@ -85,8 +84,7 @@ public class MissingCloneInitialization extends AbstractIssueFinder {
                     clonedActors.add(spriteName);
                 }
             } else if (notClonedActor.contains(spriteName)) {
-                addIssue(node,
-                        HINT_TEXT, ((CloneOfMetadata) node.getMetadata()).getCloneBlockMetadata());
+                addIssue(node, ((CloneOfMetadata) node.getMetadata()).getCloneBlockMetadata());
             }
         }
     }

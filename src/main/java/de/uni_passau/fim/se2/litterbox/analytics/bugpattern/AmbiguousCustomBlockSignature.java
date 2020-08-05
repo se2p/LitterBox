@@ -34,7 +34,6 @@ import java.util.List;
  */
 public class AmbiguousCustomBlockSignature extends AbstractIssueFinder {
     public static final String NAME = "ambiguous_custom_block_signature";
-    public static final String HINT_TEXT = "ambiguous_custom_block_signature_hint";
 
     @Override
     public void visit(ProcedureDefinition node) {
@@ -54,7 +53,7 @@ public class AmbiguousCustomBlockSignature extends AbstractIssueFinder {
         for (ProcedureInfo procedureInfo : procedureInfos) {
             if (procedureInfo != current && current.getName().equals(procedureInfo.getName())
                     && current.getActorName().equals(procedureInfo.getActorName())) {
-                addIssue(node, HINT_TEXT, node.getMetadata().getDefinition());
+                addIssue(node, node.getMetadata().getDefinition());
             }
         }
     }
