@@ -38,6 +38,8 @@ import de.uni_passau.fim.se2.litterbox.ast.parser.metadata.BlockMetadataParser;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ExpressionListInfo;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
+import java.util.Optional;
+
 import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 
 public class ListStmtParser {
@@ -97,9 +99,15 @@ public class ListStmtParser {
         if (ProgramParser.symbolTable.getList(identifier, currentActorName).isEmpty()) {
             return null;
         }
-        ExpressionListInfo info = ProgramParser.symbolTable.getList(identifier, currentActorName).get();
-        Preconditions.checkArgument(info.getVariableName().equals(listArray.get(LIST_NAME_POS).asText()));
-        return info;
+        Optional<ExpressionListInfo> info = ProgramParser.symbolTable.getList(identifier, currentActorName);
+        if (info.isPresent() && !info.get().getVariableName().equals(listArray.get(LIST_NAME_POS).asText())) {
+            if (ProgramParser.symbolTable.getList(identifier, "STAGE").isPresent()) {
+                info = ProgramParser.symbolTable.getList(identifier, "STAGE");
+            }
+        }
+
+        Preconditions.checkArgument(info.get().getVariableName().equals(listArray.get(LIST_NAME_POS).asText()));
+        return info.get();
     }
 
     private static ListStmt parseDeleteOfList(JsonNode current, JsonNode allBlocks, BlockMetadata metadata)
