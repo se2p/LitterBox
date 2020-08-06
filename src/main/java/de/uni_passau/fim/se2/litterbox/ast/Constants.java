@@ -310,4 +310,7 @@ public class Constants {
     public static final String KEY_OPTION = "KEY_OPTION";
     public static final String CUSTOM_BLOCK_KEY = "custom_block";
     public static final String EMPTY_VALUE = "{}";
+    public static final String BOOLEAN_DEFAULT = "false";
+    public static final String STRING_NUMBER_DEFAULT = "";
+    public static final String NUMBER_DEFAULT = "1";
 }

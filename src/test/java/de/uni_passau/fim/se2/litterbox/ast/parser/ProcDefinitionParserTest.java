@@ -41,8 +41,6 @@ import java.io.IOException;
 import java.util.List;
 
 import static junit.framework.TestCase.fail;
-import static org.junit.Assert.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class ProcDefinitionParserTest {
 
@@ -121,17 +119,5 @@ public class ProcDefinitionParserTest {
             e.printStackTrace();
             fail();
         }
-    }
-
-    @Test
-    public void testMalformated() {
-        File f = new File("./src/test/fixtures/bugpattern/malformatedProc.json");
-        ObjectMapper mapper = new ObjectMapper();
-        Exception exception = assertThrows(ParsingException.class, () -> {
-            ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
-        });
-        String expectedMessage = "Argument id has no corresponding input";
-        String actualMessage = exception.getMessage();
-        assertTrue(actualMessage.contains(expectedMessage));
     }
 }

@@ -42,7 +42,7 @@ public class MissingPenDown extends AbstractIssueFinder {
         penUpSet = false;
         penDownSet = false;
         addComment = false;
-        super.visit(actor);
+        visitChildren(actor);
 
         if (getResult()) {
             addComment = true;

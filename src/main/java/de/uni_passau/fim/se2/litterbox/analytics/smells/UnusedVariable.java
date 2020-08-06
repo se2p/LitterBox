@@ -57,6 +57,7 @@ public class UnusedVariable extends AbstractIssueFinder {
     public Set<Issue> check(Program program) {
         Preconditions.checkNotNull(program);
         this.program = program;
+        issues = new LinkedHashSet<>();
         varMap = program.getSymbolTable().getVariables();
         listMap = program.getSymbolTable().getLists();
         variableCalls = new ArrayList<>();

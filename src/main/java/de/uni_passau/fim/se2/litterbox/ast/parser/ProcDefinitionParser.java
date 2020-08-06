@@ -29,6 +29,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.ProcedureMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterDefinitionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
@@ -112,7 +113,15 @@ public class ProcDefinitionParser {
         try {
             argumentIdsNode = (ArrayNode) mapper.readTree(argumentIds.asText());
         } catch (IOException e) {
-            throw new ParsingException("Could not read argument names of a procedure");
+            throw new ParsingException("Could not read argument ids of a procedure");
+        }
+
+        JsonNode argumentDefaults = proto.get(MUTATION_KEY).get(ARGUMENT_DEFAULTS_KEY);
+        final ArrayNode argumentDefaultsNode;
+        try {
+            argumentDefaultsNode = (ArrayNode) mapper.readTree(argumentDefaults.asText());
+        } catch (IOException e) {
+            throw new ParsingException("Could not read argument defaults of a procedure");
         }
 
         List<Type> paraTypes = new ArrayList<>();
@@ -120,14 +129,23 @@ public class ProcDefinitionParser {
         JsonNode prototypeInputs = proto.get(INPUTS_KEY);
         for (int i = 0; i < argumentIdsNode.size(); i++) {
             if (!prototypeInputs.has(argumentIdsNode.get(i).asText())) {
-                throw new ParsingException("Argument id has no corresponding input");
-            }
-            JsonNode currentInput = prototypeInputs.get(argumentIdsNode.get(i).asText());
-            Preconditions.checkArgument(currentInput.isArray());
-            ArrayNode currentAsArray = (ArrayNode) currentInput;
+                paramMeta.add(new NoBlockMetadata());
+                if (argumentDefaultsNode.get(i).asText().equals(BOOLEAN_DEFAULT)) {
+                    paraTypes.add(new BooleanType());
+                } else if (argumentDefaultsNode.get(i).asText().equals(STRING_NUMBER_DEFAULT)
+                        || argumentDefaultsNode.get(i).asText().equals(NUMBER_DEFAULT)) {
+                    paraTypes.add(new StringType());
+                } else {
+                    throw new ParsingException("Procedure has unknown default type");
+                }
+            } else {
+                JsonNode currentInput = prototypeInputs.get(argumentIdsNode.get(i).asText());
+                Preconditions.checkArgument(currentInput.isArray());
+                ArrayNode currentAsArray = (ArrayNode) currentInput;
 
-            if (!currentAsArray.get(PARAMETER_REFERENCE_POS).asText().equals("null")) {
-                addType(blocks, paraTypes, paramMeta, currentAsArray.get(PARAMETER_REFERENCE_POS).asText());
+                if (!currentAsArray.get(PARAMETER_REFERENCE_POS).asText().equals("null")) {
+                    addType(blocks, paraTypes, paramMeta, currentAsArray.get(PARAMETER_REFERENCE_POS).asText());
+                }
             }
         }
 
@@ -180,9 +198,9 @@ public class ProcDefinitionParser {
     }
 
     private static void addType(JsonNode blocks, List<Type> types,
-                                List<BlockMetadata> paramMetadata, String textValue) throws ParsingException {
-        JsonNode param = blocks.get(textValue);
-        paramMetadata.add(BlockMetadataParser.parse(textValue, param));
+                                List<BlockMetadata> paramMetadata, String paramId) throws ParsingException {
+        JsonNode param = blocks.get(paramId);
+        paramMetadata.add(BlockMetadataParser.parse(paramId, param));
         final String opcodeString = param.get(OPCODE_KEY).asText();
         if (opcodeString.equals(ProcedureOpcode.argument_reporter_boolean.name())) {
             types.add(new BooleanType());
