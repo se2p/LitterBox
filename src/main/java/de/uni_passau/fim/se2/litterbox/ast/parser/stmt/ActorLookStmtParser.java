@@ -32,10 +32,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.ScratchList;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.ActorLookStmtOpcode;
-import de.uni_passau.fim.se2.litterbox.ast.parser.ElementChoiceParser;
-import de.uni_passau.fim.se2.litterbox.ast.parser.NumExprParser;
-import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
-import de.uni_passau.fim.se2.litterbox.ast.parser.StringExprParser;
+import de.uni_passau.fim.se2.litterbox.ast.parser.*;
 import de.uni_passau.fim.se2.litterbox.ast.parser.metadata.BlockMetadataParser;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ExpressionListInfo;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.VariableInfo;
@@ -64,6 +61,8 @@ public class ActorLookStmtParser {
         Identifier var;
         ExpressionListInfo expressionListInfo;
 
+        String currentActorName = ActorDefinitionParser.getCurrentActor().getName();
+
         switch (opcode) {
             case sensing_askandwait:
                 StringExpr question = StringExprParser.parseStringExpr(current, QUESTION_KEY, allBlocks);
@@ -85,10 +84,10 @@ public class ActorLookStmtParser {
             case data_hidevariable:
                 variableName = current.get(FIELDS_KEY).get(VARIABLE_KEY).get(VARIABLE_NAME_POS).asText();
                 variableId = current.get(FIELDS_KEY).get(VARIABLE_KEY).get(VARIABLE_IDENTIFIER_POS).asText();
-                if (!ProgramParser.symbolTable.getVariables().containsKey(variableId)) {
+                if (ProgramParser.symbolTable.getVariable(variableId, currentActorName).isEmpty()) {
                     var = new UnspecifiedId();
                 } else {
-                    variableInfo = ProgramParser.symbolTable.getVariables().get(variableId);
+                    variableInfo = ProgramParser.symbolTable.getVariable(variableId, currentActorName).get();
                     actorName = variableInfo.getActor();
                     var = new Qualified(new StrId(actorName), new Variable(new StrId(variableName)));
                 }
@@ -97,10 +96,10 @@ public class ActorLookStmtParser {
             case data_showvariable:
                 variableName = current.get(FIELDS_KEY).get(VARIABLE_KEY).get(VARIABLE_NAME_POS).asText();
                 variableId = current.get(FIELDS_KEY).get(VARIABLE_KEY).get(VARIABLE_IDENTIFIER_POS).asText();
-                if (!ProgramParser.symbolTable.getVariables().containsKey(variableId)) {
+                if (ProgramParser.symbolTable.getVariable(variableId, currentActorName).isEmpty()) {
                     var = new UnspecifiedId();
                 } else {
-                    variableInfo = ProgramParser.symbolTable.getVariables().get(variableId);
+                    variableInfo = ProgramParser.symbolTable.getVariable(variableId, currentActorName).get();
                     actorName = variableInfo.getActor();
                     var = new Qualified(new StrId(actorName),
                             new Variable(new StrId(variableName)));
@@ -110,10 +109,10 @@ public class ActorLookStmtParser {
             case data_showlist:
                 variableName = current.get(FIELDS_KEY).get(LIST_KEY).get(LIST_NAME_POS).asText();
                 variableId = current.get(FIELDS_KEY).get(LIST_KEY).get(LIST_IDENTIFIER_POS).asText();
-                if (!ProgramParser.symbolTable.getLists().containsKey(variableId)) {
+                if (ProgramParser.symbolTable.getList(variableId, currentActorName).isEmpty()) {
                     var = new UnspecifiedId();
                 } else {
-                    expressionListInfo = ProgramParser.symbolTable.getLists().get(variableId);
+                    expressionListInfo = ProgramParser.symbolTable.getList(variableId, currentActorName).get();
                     actorName = expressionListInfo.getActor();
                     var = new Qualified(new StrId(actorName), new ScratchList(new StrId(variableName)));
                 }
@@ -122,10 +121,10 @@ public class ActorLookStmtParser {
             case data_hidelist:
                 variableName = current.get(FIELDS_KEY).get(LIST_KEY).get(LIST_NAME_POS).asText();
                 variableId = current.get(FIELDS_KEY).get(LIST_KEY).get(LIST_IDENTIFIER_POS).asText();
-                if (!ProgramParser.symbolTable.getLists().containsKey(variableId)) {
+                if (ProgramParser.symbolTable.getList(variableId, currentActorName).isEmpty()) {
                     var = new UnspecifiedId();
                 } else {
-                    expressionListInfo = ProgramParser.symbolTable.getLists().get(variableId);
+                    expressionListInfo = ProgramParser.symbolTable.getList(variableId, currentActorName).get();
                     actorName = expressionListInfo.getActor();
                     var = new Qualified(new StrId(actorName), new ScratchList(new StrId(variableName)));
                 }

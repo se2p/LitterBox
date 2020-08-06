@@ -30,6 +30,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.list.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.ScratchList;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.ListStmtOpcode;
+import de.uni_passau.fim.se2.litterbox.ast.parser.ActorDefinitionParser;
 import de.uni_passau.fim.se2.litterbox.ast.parser.NumExprParser;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
 import de.uni_passau.fim.se2.litterbox.ast.parser.StringExprParser;
@@ -92,10 +93,11 @@ public class ListStmtParser {
         Preconditions.checkArgument(listNode.isArray());
         ArrayNode listArray = (ArrayNode) listNode;
         String identifier = listArray.get(LIST_IDENTIFIER_POS).asText();
-        if (!ProgramParser.symbolTable.getLists().containsKey(identifier)) {
+        String currentActorName = ActorDefinitionParser.getCurrentActor().getName();
+        if (ProgramParser.symbolTable.getList(identifier, currentActorName).isEmpty()) {
             return null;
         }
-        ExpressionListInfo info = ProgramParser.symbolTable.getLists().get(identifier);
+        ExpressionListInfo info = ProgramParser.symbolTable.getList(identifier, currentActorName).get();
         Preconditions.checkArgument(info.getVariableName().equals(listArray.get(LIST_NAME_POS).asText()));
         return info;
     }

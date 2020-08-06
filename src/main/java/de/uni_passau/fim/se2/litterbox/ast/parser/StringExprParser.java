@@ -44,6 +44,8 @@ import de.uni_passau.fim.se2.litterbox.ast.parser.metadata.BlockMetadataParser;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ExpressionListInfo;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
+import java.util.Optional;
+
 import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 import static de.uni_passau.fim.se2.litterbox.ast.opcodes.DependentBlockOpcodes.sensing_of_object_menu;
 import static de.uni_passau.fim.se2.litterbox.ast.parser.ExpressionParser.getExprArray;
@@ -159,8 +161,10 @@ public class StringExprParser {
                 String id =
                         exprBlock.get(FIELDS_KEY).get(LIST_KEY).get(LIST_IDENTIFIER_POS).asText();
                 Identifier var;
-                if (ProgramParser.symbolTable.getLists().containsKey(id)) {
-                    ExpressionListInfo variableInfo = ProgramParser.symbolTable.getLists().get(id);
+                String currentActorName = ActorDefinitionParser.getCurrentActor().getName();
+                Optional<ExpressionListInfo> list = ProgramParser.symbolTable.getList(id, currentActorName);
+                if (list.isPresent()) {
+                    ExpressionListInfo variableInfo = list.get();
                     var = new Qualified(new StrId(variableInfo.getActor()),
                             new ScratchList(new StrId((variableInfo.getVariableName()))));
                 } else {

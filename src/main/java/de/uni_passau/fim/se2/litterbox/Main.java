@@ -221,7 +221,7 @@ public class Main {
     }
 
     /**
-     * Entry point to Litterbox where the arguments are parsed and the selected functionality is called.
+     * Entry point to LitterBox where the arguments are parsed and the selected functionality is called.
      *
      * @param args Arguments that are parsed as options.
      */

@@ -39,6 +39,7 @@ import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ExpressionListInfo
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Optional;
 
 import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 import static de.uni_passau.fim.se2.litterbox.ast.parser.ExpressionParser.*;
@@ -144,6 +145,7 @@ public class NumExprParser {
                 opcodeString + " is not a NumExprOpcode.");
         NumExprOpcode opcode = NumExprOpcode.valueOf(opcodeString);
         BlockMetadata metadata = BlockMetadataParser.parse(blockID, exprBlock);
+        String currentActorName = ActorDefinitionParser.getCurrentActor().getName();
         switch (opcode) {
             case sound_volume:
                 return new Volume(metadata);
@@ -174,8 +176,9 @@ public class NumExprParser {
                 String identifier =
                         exprBlock.get(FIELDS_KEY).get(LIST_KEY).get(LIST_IDENTIFIER_POS).asText();
                 Identifier var;
-                if (ProgramParser.symbolTable.getLists().containsKey(identifier)) {
-                    ExpressionListInfo variableInfo = ProgramParser.symbolTable.getLists().get(identifier);
+                Optional<ExpressionListInfo> list = ProgramParser.symbolTable.getList(identifier, currentActorName);
+                if (list.isPresent()) {
+                    ExpressionListInfo variableInfo = list.get();
                     var = new Qualified(new StrId(variableInfo.getActor()),
                             new ScratchList(new StrId(variableInfo.getVariableName())));
                 } else {
@@ -210,8 +213,9 @@ public class NumExprParser {
                 Expression item = parseExpr(exprBlock, ITEM_KEY, allBlocks);
                 identifier =
                         exprBlock.get(FIELDS_KEY).get(LIST_KEY).get(LIST_IDENTIFIER_POS).asText();
-                if (ProgramParser.symbolTable.getLists().containsKey(identifier)) {
-                    ExpressionListInfo variableInfo = ProgramParser.symbolTable.getLists().get(identifier);
+                list = ProgramParser.symbolTable.getList(identifier, currentActorName);
+                if (list.isPresent()) {
+                    ExpressionListInfo variableInfo = list.get();
                     var = new Qualified(new StrId(variableInfo.getActor()),
                             new ScratchList(new StrId(variableInfo.getVariableName())));
                 } else {

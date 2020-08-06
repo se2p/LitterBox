@@ -37,6 +37,8 @@ import de.uni_passau.fim.se2.litterbox.ast.parser.metadata.BlockMetadataParser;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ExpressionListInfo;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.VariableInfo;
 
+import java.util.Optional;
+
 import static de.uni_passau.fim.se2.litterbox.ast.Constants.OPCODE_KEY;
 import static de.uni_passau.fim.se2.litterbox.ast.Constants.POS_DATA_ARRAY;
 import static de.uni_passau.fim.se2.litterbox.ast.parser.BoolExprParser.parsableAsBoolExpr;
@@ -92,13 +94,16 @@ public class ExpressionParser {
             // it's a list or variable
             String idString = exprBlock.get(2).asText();
             BlockMetadata metadata = BlockMetadataParser.parse(blockId, exprBlock);
-            if (ProgramParser.symbolTable.getVariables().containsKey(idString)) {
-                VariableInfo variableInfo = ProgramParser.symbolTable.getVariables().get(idString);
+
+            String currentActorName = ActorDefinitionParser.getCurrentActor().getName();
+            if (ProgramParser.symbolTable.getVariable(idString, currentActorName).isPresent()) {
+                VariableInfo variableInfo = ProgramParser.symbolTable.getVariable(idString, currentActorName).get();
 
                 return new Qualified(new StrId(variableInfo.getActor()),
                         new Variable(new StrId(variableInfo.getVariableName()), metadata));
-            } else if (ProgramParser.symbolTable.getLists().containsKey(idString)) {
-                ExpressionListInfo variableInfo = ProgramParser.symbolTable.getLists().get(idString);
+            } else if (ProgramParser.symbolTable.getList(idString, currentActorName).isPresent()) {
+                Optional<ExpressionListInfo> listOptional = ProgramParser.symbolTable.getList(idString, currentActorName);
+                ExpressionListInfo variableInfo = listOptional.get();
                 return new Qualified(new StrId(variableInfo.getActor()),
                         new ScratchList(new StrId(variableInfo.getVariableName()), metadata));
             }
