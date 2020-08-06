@@ -95,17 +95,14 @@ public class ListStmtParser {
         Preconditions.checkArgument(listNode.isArray());
         ArrayNode listArray = (ArrayNode) listNode;
         String identifier = listArray.get(LIST_IDENTIFIER_POS).asText();
+        String idName = listArray.get(LIST_NAME_POS).asText();
         String currentActorName = ActorDefinitionParser.getCurrentActor().getName();
-        if (ProgramParser.symbolTable.getList(identifier, currentActorName).isEmpty()) {
+        if (ProgramParser.symbolTable.getList(identifier, idName, currentActorName).isEmpty()) {
             return null;
         }
-        Optional<ExpressionListInfo> info = ProgramParser.symbolTable.getList(identifier, currentActorName);
-        if (info.isPresent() && !info.get().getVariableName().equals(listArray.get(LIST_NAME_POS).asText())) {
-            if (ProgramParser.symbolTable.getList(identifier, "STAGE").isPresent()) {
-                info = ProgramParser.symbolTable.getList(identifier, "STAGE");
-            }
-        }
+        Optional<ExpressionListInfo> info = ProgramParser.symbolTable.getList(identifier, idName, currentActorName);
 
+        Preconditions.checkArgument(info.isPresent());
         Preconditions.checkArgument(info.get().getVariableName().equals(listArray.get(LIST_NAME_POS).asText()));
         return info.get();
     }

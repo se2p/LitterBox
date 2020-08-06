@@ -101,10 +101,10 @@ public class CommonStmtParser {
         String variableName = current.get(FIELDS_KEY).get(VARIABLE_KEY).get(VARIABLE_NAME_POS).asText();
         String variableId = current.get(FIELDS_KEY).get(VARIABLE_KEY).get(VARIABLE_IDENTIFIER_POS).asText();
         String currentActorName = ActorDefinitionParser.getCurrentActor().getName();
-        if (ProgramParser.symbolTable.getVariable(variableId, currentActorName).isEmpty()) {
+        if (ProgramParser.symbolTable.getVariable(variableId, variableName, currentActorName).isEmpty()) {
             var = new UnspecifiedId();
         } else {
-            VariableInfo variableInfo = ProgramParser.symbolTable.getVariable(variableId, currentActorName).get();
+            VariableInfo variableInfo = ProgramParser.symbolTable.getVariable(variableId, variableName, currentActorName).get();
             String actorName = variableInfo.getActor();
             var = new Qualified(new StrId(actorName), new Variable(new StrId(variableName)));
         }

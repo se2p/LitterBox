@@ -160,9 +160,10 @@ public class StringExprParser {
                 NumExpr index = NumExprParser.parseNumExpr(exprBlock, INDEX_KEY, allBlocks);
                 String id =
                         exprBlock.get(FIELDS_KEY).get(LIST_KEY).get(LIST_IDENTIFIER_POS).asText();
+                String idName = exprBlock.get(FIELDS_KEY).get(LIST_KEY).get(LIST_NAME_POS).asText();
                 Identifier var;
                 String currentActorName = ActorDefinitionParser.getCurrentActor().getName();
-                Optional<ExpressionListInfo> list = ProgramParser.symbolTable.getList(id, currentActorName);
+                Optional<ExpressionListInfo> list = ProgramParser.symbolTable.getList(id, idName, currentActorName);
                 if (list.isPresent()) {
                     ExpressionListInfo variableInfo = list.get();
                     var = new Qualified(new StrId(variableInfo.getActor()),

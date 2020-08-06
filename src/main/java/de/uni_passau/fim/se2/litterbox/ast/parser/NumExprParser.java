@@ -175,8 +175,9 @@ public class NumExprParser {
             case data_lengthoflist:
                 String identifier =
                         exprBlock.get(FIELDS_KEY).get(LIST_KEY).get(LIST_IDENTIFIER_POS).asText();
+                String idName = exprBlock.get(FIELDS_KEY).get(LIST_KEY).get(LIST_NAME_POS).asText();
                 Identifier var;
-                Optional<ExpressionListInfo> list = ProgramParser.symbolTable.getList(identifier, currentActorName);
+                Optional<ExpressionListInfo> list = ProgramParser.symbolTable.getList(identifier, idName, currentActorName);
                 if (list.isPresent()) {
                     ExpressionListInfo variableInfo = list.get();
                     var = new Qualified(new StrId(variableInfo.getActor()),
@@ -213,7 +214,8 @@ public class NumExprParser {
                 Expression item = parseExpr(exprBlock, ITEM_KEY, allBlocks);
                 identifier =
                         exprBlock.get(FIELDS_KEY).get(LIST_KEY).get(LIST_IDENTIFIER_POS).asText();
-                list = ProgramParser.symbolTable.getList(identifier, currentActorName);
+                idName = exprBlock.get(FIELDS_KEY).get(LIST_KEY).get(LIST_NAME_POS).asText();
+                list = ProgramParser.symbolTable.getList(identifier, idName, currentActorName);
                 if (list.isPresent()) {
                     ExpressionListInfo variableInfo = list.get();
                     var = new Qualified(new StrId(variableInfo.getActor()),

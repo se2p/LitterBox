@@ -59,12 +59,13 @@ public class SetStmtParser {
     private static SetStmt parseSetVariable(JsonNode current, JsonNode allBlocks, BlockMetadata metadata)
             throws ParsingException {
         String unique = current.get(FIELDS_KEY).get(VARIABLE_KEY).get(VARIABLE_IDENTIFIER_POS).asText();
+        String variableName = current.get(FIELDS_KEY).get(VARIABLE_KEY).get(VARIABLE_NAME_POS).asText();
         String currentActorName = ActorDefinitionParser.getCurrentActor().getName();
-        if (ProgramParser.symbolTable.getVariable(unique, currentActorName).isEmpty()) {
+        if (ProgramParser.symbolTable.getVariable(unique, variableName, currentActorName).isEmpty()) {
             return new SetVariableTo(new UnspecifiedId(), ExpressionParser.parseExpr(current,
                     VALUE_KEY, allBlocks), metadata);
         }
-        VariableInfo info = ProgramParser.symbolTable.getVariable(unique, currentActorName).get();
+        VariableInfo info = ProgramParser.symbolTable.getVariable(unique, variableName, currentActorName).get();
         return new SetVariableTo(new Qualified(new StrId(info.getActor()),
                 new Variable(new StrId(info.getVariableName()))), ExpressionParser.parseExpr(current,
                 VALUE_KEY, allBlocks), metadata);

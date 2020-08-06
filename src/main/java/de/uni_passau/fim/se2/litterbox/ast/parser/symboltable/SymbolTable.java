@@ -72,7 +72,7 @@ public class SymbolTable {
      */
     public void addVariable(String ident, String variableName, Type type, boolean global, String actorName) {
         VariableInfo info = new VariableInfo(global, actorName, ident, type, variableName);
-        variables.put(ident + actorName, info);
+        variables.put(ident + variableName + actorName, info);
     }
 
     /**
@@ -89,7 +89,7 @@ public class SymbolTable {
     public void addExpressionListInfo(String ident, String listName, ExpressionList expressionList, boolean global,
                                       String actorName) {
         ExpressionListInfo info = new ExpressionListInfo(global, actorName, ident, expressionList, listName);
-        lists.put(ident + actorName, info);
+        lists.put(ident + listName + actorName, info);
     }
 
     public void addMessage(String name, Message message, boolean global, String actorName, String identifier) {
@@ -110,12 +110,12 @@ public class SymbolTable {
      * @param actorName which defines the variable
      * @return
      */
-    public Optional<VariableInfo> getVariable(String ident, String actorName) {
-        String key = ident + actorName;
+    public Optional<VariableInfo> getVariable(String ident, String variableName, String actorName) {
+        String key = ident + variableName + actorName;
         if (variables.containsKey(key)) {
             return Optional.of(variables.get(key));
         }
-        String stageKey = ident + "Stage";
+        String stageKey = ident + variableName + "Stage";
         if (variables.containsKey(stageKey)) {
             return Optional.of(variables.get(stageKey));
         }
@@ -136,12 +136,12 @@ public class SymbolTable {
      * @param actorName which defines the variable
      * @return
      */
-    public Optional<ExpressionListInfo> getList(String ident, String actorName) {
-        String key = ident + actorName;
+    public Optional<ExpressionListInfo> getList(String ident, String listName, String actorName) {
+        String key = ident + listName + actorName;
         if (lists.containsKey(key)) {
             return Optional.of(lists.get(key));
         }
-        String stageKey = ident + "Stage";
+        String stageKey = ident + listName + "Stage";
         if (lists.containsKey(stageKey)) {
             return Optional.of(lists.get(stageKey));
         }

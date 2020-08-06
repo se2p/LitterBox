@@ -99,9 +99,10 @@ public class DataExprParser {
             }
         } else if (exprArray.get(POS_DATA_ARRAY) instanceof ArrayNode) {
             String idString = exprArray.get(POS_DATA_ARRAY).get(POS_INPUT_ID).asText();
+            String idName = exprArray.get(POS_DATA_ARRAY).get(POS_INPUT_VALUE).asText();
             String currentActorName = ActorDefinitionParser.getCurrentActor().getName();
-            Optional<ExpressionListInfo> list = ProgramParser.symbolTable.getList(idString, currentActorName);
-            Optional<VariableInfo> variable = ProgramParser.symbolTable.getVariable(idString, currentActorName);
+            Optional<ExpressionListInfo> list = ProgramParser.symbolTable.getList(idString, idName, currentActorName);
+            Optional<VariableInfo> variable = ProgramParser.symbolTable.getVariable(idString, idName, currentActorName);
             boolean isVariable = variable.isPresent();
             boolean isList = list.isPresent();
             if (isVariable) {
@@ -138,8 +139,9 @@ public class DataExprParser {
      */
     private static Qualified parseScratchList(ArrayNode exprArray) {
         String idString = exprArray.get(POS_DATA_ARRAY).get(POS_INPUT_ID).asText();
+        String idName = exprArray.get(POS_DATA_ARRAY).get(POS_INPUT_VALUE).asText();
         String currentActorName = ActorDefinitionParser.getCurrentActor().getName();
-        Optional<ExpressionListInfo> list = ProgramParser.symbolTable.getList(idString, currentActorName);
+        Optional<ExpressionListInfo> list = ProgramParser.symbolTable.getList(idString, idName, currentActorName);
         Preconditions.checkArgument(list.isPresent());
         ExpressionListInfo variableInfo = list.get();
         return new Qualified(
@@ -155,8 +157,9 @@ public class DataExprParser {
      */
     private static Qualified parseVariable(ArrayNode exprArray) {
         String idString = exprArray.get(POS_DATA_ARRAY).get(POS_INPUT_ID).asText();
+        String idName = exprArray.get(POS_DATA_ARRAY).get(POS_INPUT_VALUE).asText();
         String currentActorName = ActorDefinitionParser.getCurrentActor().getName();
-        Optional<VariableInfo> infoOptional = ProgramParser.symbolTable.getVariable(idString, currentActorName);
+        Optional<VariableInfo> infoOptional = ProgramParser.symbolTable.getVariable(idString, idName, currentActorName);
         Preconditions.checkArgument(infoOptional.isPresent());
         VariableInfo variableInfo = infoOptional.get();
         return new Qualified(

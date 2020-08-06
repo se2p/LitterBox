@@ -92,17 +92,18 @@ public class ExpressionParser {
             throws ParsingException {
         if (exprBlock instanceof ArrayNode) {
             // it's a list or variable
-            String idString = exprBlock.get(2).asText();
+            String idString = exprBlock.get(2).asText(); // TODO: 2 is identifier pos
+            String idName = exprBlock.get(1).asText(); // TODO: 1 is identifier name
             BlockMetadata metadata = BlockMetadataParser.parse(blockId, exprBlock);
 
             String currentActorName = ActorDefinitionParser.getCurrentActor().getName();
-            if (ProgramParser.symbolTable.getVariable(idString, currentActorName).isPresent()) {
-                VariableInfo variableInfo = ProgramParser.symbolTable.getVariable(idString, currentActorName).get();
+            if (ProgramParser.symbolTable.getVariable(idString, idName, currentActorName).isPresent()) {
+                VariableInfo variableInfo = ProgramParser.symbolTable.getVariable(idString, idName, currentActorName).get();
 
                 return new Qualified(new StrId(variableInfo.getActor()),
                         new Variable(new StrId(variableInfo.getVariableName()), metadata));
-            } else if (ProgramParser.symbolTable.getList(idString, currentActorName).isPresent()) {
-                Optional<ExpressionListInfo> listOptional = ProgramParser.symbolTable.getList(idString, currentActorName);
+            } else if (ProgramParser.symbolTable.getList(idString, idName, currentActorName).isPresent()) {
+                Optional<ExpressionListInfo> listOptional = ProgramParser.symbolTable.getList(idString, idName, currentActorName);
                 ExpressionListInfo variableInfo = listOptional.get();
                 return new Qualified(new StrId(variableInfo.getActor()),
                         new ScratchList(new StrId(variableInfo.getVariableName()), metadata));
