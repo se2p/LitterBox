@@ -250,7 +250,9 @@ public class BoolExprParser {
                         exprBlock.get(FIELDS_KEY).get(LIST_KEY).get(LIST_NAME_POS).asText();
                 Identifier containingVar;
                 String currentActorName = ActorDefinitionParser.getCurrentActor().getName();
-                Optional<ExpressionListInfo> list = ProgramParser.symbolTable.getList(identifier, listName, currentActorName);
+                Optional<ExpressionListInfo> list
+                        = ProgramParser.symbolTable.getList(identifier, listName, currentActorName);
+
                 if (list.isPresent()) {
                     ExpressionListInfo variableInfo = list.get();
                     containingVar = new Qualified(new StrId(variableInfo.getActor()),

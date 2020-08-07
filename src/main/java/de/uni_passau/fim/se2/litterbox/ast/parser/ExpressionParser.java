@@ -98,12 +98,14 @@ public class ExpressionParser {
 
             String currentActorName = ActorDefinitionParser.getCurrentActor().getName();
             if (ProgramParser.symbolTable.getVariable(idString, idName, currentActorName).isPresent()) {
-                VariableInfo variableInfo = ProgramParser.symbolTable.getVariable(idString, idName, currentActorName).get();
+                VariableInfo variableInfo
+                        = ProgramParser.symbolTable.getVariable(idString, idName, currentActorName).get();
 
                 return new Qualified(new StrId(variableInfo.getActor()),
                         new Variable(new StrId(variableInfo.getVariableName()), metadata));
             } else if (ProgramParser.symbolTable.getList(idString, idName, currentActorName).isPresent()) {
-                Optional<ExpressionListInfo> listOptional = ProgramParser.symbolTable.getList(idString, idName, currentActorName);
+                Optional<ExpressionListInfo> listOptional
+                        = ProgramParser.symbolTable.getList(idString, idName, currentActorName);
                 ExpressionListInfo variableInfo = listOptional.get();
                 return new Qualified(new StrId(variableInfo.getActor()),
                         new ScratchList(new StrId(variableInfo.getVariableName()), metadata));

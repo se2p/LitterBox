@@ -44,6 +44,15 @@ import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 
 public class ListStmtParser {
 
+    /**
+     * Parses a ListStmt for a given block id.
+     *
+     * @param blockId   of the block to be parsed
+     * @param current   JsonNode the contains the ListStmt
+     * @param allBlocks of this program
+     * @return the parsed ListStmt
+     * @throws ParsingException if the block cannot be parsed into an ListStmt
+     */
     public static ListStmt parse(String blockId, JsonNode current, JsonNode allBlocks) throws ParsingException {
         Preconditions.checkNotNull(current);
         Preconditions.checkNotNull(allBlocks);

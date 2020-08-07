@@ -52,6 +52,15 @@ public class CommonStmtParser {
     private static final String STOP_OTHER = "other scripts in sprite";
     private static final String STOP_OTHER_IN_STAGE = "other scripts in stage";
 
+    /**
+     * Parses a CommonStmt for a given block id.
+     *
+     * @param blockId   of the block to be parsed
+     * @param current   JsonNode the contains the CommonStmt
+     * @param allBlocks of this program
+     * @return the parsed CommonStmt
+     * @throws ParsingException if the block cannot be parsed into an CommonStmt
+     */
     public static CommonStmt parse(String blockId, JsonNode current, JsonNode allBlocks) throws ParsingException {
         Preconditions.checkNotNull(current);
         Preconditions.checkNotNull(allBlocks);
@@ -104,7 +113,8 @@ public class CommonStmtParser {
         if (ProgramParser.symbolTable.getVariable(variableId, variableName, currentActorName).isEmpty()) {
             var = new UnspecifiedId();
         } else {
-            VariableInfo variableInfo = ProgramParser.symbolTable.getVariable(variableId, variableName, currentActorName).get();
+            VariableInfo variableInfo
+                    = ProgramParser.symbolTable.getVariable(variableId, variableName, currentActorName).get();
             String actorName = variableInfo.getActor();
             var = new Qualified(new StrId(actorName), new Variable(new StrId(variableName)));
         }

@@ -138,13 +138,13 @@ public class NumExprParser {
      * @throws ParsingException If the opcode of the block is no NumExprOpcode
      *                          or if parsing inputs of the block fails.
      */
-    static NumExpr parseBlockNumExpr(String blockID, JsonNode exprBlock, JsonNode allBlocks)
+    static NumExpr parseBlockNumExpr(String blockId, JsonNode exprBlock, JsonNode allBlocks)
             throws ParsingException {
         String opcodeString = exprBlock.get(OPCODE_KEY).asText();
         Preconditions.checkArgument(NumExprOpcode.contains(opcodeString),
                 opcodeString + " is not a NumExprOpcode.");
         NumExprOpcode opcode = NumExprOpcode.valueOf(opcodeString);
-        BlockMetadata metadata = BlockMetadataParser.parse(blockID, exprBlock);
+        BlockMetadata metadata = BlockMetadataParser.parse(blockId, exprBlock);
         String currentActorName = ActorDefinitionParser.getCurrentActor().getName();
         switch (opcode) {
             case sound_volume:
@@ -177,7 +177,8 @@ public class NumExprParser {
                         exprBlock.get(FIELDS_KEY).get(LIST_KEY).get(LIST_IDENTIFIER_POS).asText();
                 String idName = exprBlock.get(FIELDS_KEY).get(LIST_KEY).get(LIST_NAME_POS).asText();
                 Identifier var;
-                Optional<ExpressionListInfo> list = ProgramParser.symbolTable.getList(identifier, idName, currentActorName);
+                Optional<ExpressionListInfo> list
+                        = ProgramParser.symbolTable.getList(identifier, idName, currentActorName);
                 if (list.isPresent()) {
                     ExpressionListInfo variableInfo = list.get();
                     var = new Qualified(new StrId(variableInfo.getActor()),

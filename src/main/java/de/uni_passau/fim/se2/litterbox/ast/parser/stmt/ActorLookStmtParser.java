@@ -42,6 +42,15 @@ import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 
 public class ActorLookStmtParser {
 
+    /**
+     * Parses an ActorLookStmt for a given block id.
+     *
+     * @param blockId   of the block to be parsed
+     * @param current   JsonNode the contains the ActorLookStmt
+     * @param allBlocks of this program
+     * @return the parsed ActorLookStmt
+     * @throws ParsingException if the block cannot be parsed into an ActorLookStmt
+     */
     public static ActorLookStmt parse(String blockId, JsonNode current, JsonNode allBlocks) throws ParsingException {
         Preconditions.checkNotNull(current);
         Preconditions.checkNotNull(allBlocks);
@@ -87,7 +96,8 @@ public class ActorLookStmtParser {
                 if (ProgramParser.symbolTable.getVariable(variableId, variableName, currentActorName).isEmpty()) {
                     var = new UnspecifiedId();
                 } else {
-                    variableInfo = ProgramParser.symbolTable.getVariable(variableId, variableName, currentActorName).get();
+                    variableInfo
+                            = ProgramParser.symbolTable.getVariable(variableId, variableName, currentActorName).get();
                     actorName = variableInfo.getActor();
                     var = new Qualified(new StrId(actorName), new Variable(new StrId(variableName)));
                 }
@@ -99,7 +109,8 @@ public class ActorLookStmtParser {
                 if (ProgramParser.symbolTable.getVariable(variableId, variableName, currentActorName).isEmpty()) {
                     var = new UnspecifiedId();
                 } else {
-                    variableInfo = ProgramParser.symbolTable.getVariable(variableId, variableName, currentActorName).get();
+                    variableInfo
+                            = ProgramParser.symbolTable.getVariable(variableId, variableName, currentActorName).get();
                     actorName = variableInfo.getActor();
                     var = new Qualified(new StrId(actorName),
                             new Variable(new StrId(variableName)));
@@ -112,7 +123,8 @@ public class ActorLookStmtParser {
                 if (ProgramParser.symbolTable.getList(variableId, variableName, currentActorName).isEmpty()) {
                     var = new UnspecifiedId();
                 } else {
-                    expressionListInfo = ProgramParser.symbolTable.getList(variableId, variableName, currentActorName).get();
+                    expressionListInfo
+                            = ProgramParser.symbolTable.getList(variableId, variableName, currentActorName).get();
                     actorName = expressionListInfo.getActor();
                     var = new Qualified(new StrId(actorName), new ScratchList(new StrId(variableName)));
                 }
@@ -124,7 +136,8 @@ public class ActorLookStmtParser {
                 if (ProgramParser.symbolTable.getList(variableId, variableName, currentActorName).isEmpty()) {
                     var = new UnspecifiedId();
                 } else {
-                    expressionListInfo = ProgramParser.symbolTable.getList(variableId, variableName, currentActorName).get();
+                    expressionListInfo
+                            = ProgramParser.symbolTable.getList(variableId, variableName, currentActorName).get();
                     actorName = expressionListInfo.getActor();
                     var = new Qualified(new StrId(actorName), new ScratchList(new StrId(variableName)));
                 }
