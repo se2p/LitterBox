@@ -54,7 +54,7 @@ public class CSVReportGenerator implements ReportGenerator {
         List<String> row = new ArrayList<>();
         row.add(program.getIdent().getName());
         for (String finder : detectors) {
-            long numIssuesForFinder = issues.stream().filter(i -> i.getFinderName().equals(finder)).count();
+            long numIssuesForFinder = issues.stream().filter(i -> i.getFinder().getName().equals(finder)).count();
             row.add(Long.toString(numIssuesForFinder));
         }
         printer.printRecord(row);
