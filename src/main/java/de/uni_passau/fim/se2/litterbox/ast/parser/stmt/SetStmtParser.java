@@ -29,6 +29,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetVariableTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.SetStmtOpcode;
+import de.uni_passau.fim.se2.litterbox.ast.parser.ActorDefinitionParser;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ExpressionParser;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
 import de.uni_passau.fim.se2.litterbox.ast.parser.metadata.BlockMetadataParser;
@@ -58,11 +59,13 @@ public class SetStmtParser {
     private static SetStmt parseSetVariable(JsonNode current, JsonNode allBlocks, BlockMetadata metadata)
             throws ParsingException {
         String unique = current.get(FIELDS_KEY).get(VARIABLE_KEY).get(VARIABLE_IDENTIFIER_POS).asText();
-        if (!ProgramParser.symbolTable.getVariables().containsKey(unique)) {
+        String variableName = current.get(FIELDS_KEY).get(VARIABLE_KEY).get(VARIABLE_NAME_POS).asText();
+        String currentActorName = ActorDefinitionParser.getCurrentActor().getName();
+        if (ProgramParser.symbolTable.getVariable(unique, variableName, currentActorName).isEmpty()) {
             return new SetVariableTo(new UnspecifiedId(), ExpressionParser.parseExpr(current,
                     VALUE_KEY, allBlocks), metadata);
         }
-        VariableInfo info = ProgramParser.symbolTable.getVariables().get(unique);
+        VariableInfo info = ProgramParser.symbolTable.getVariable(unique, variableName, currentActorName).get();
         return new SetVariableTo(new Qualified(new StrId(info.getActor()),
                 new Variable(new StrId(info.getVariableName()))), ExpressionParser.parseExpr(current,
                 VALUE_KEY, allBlocks), metadata);

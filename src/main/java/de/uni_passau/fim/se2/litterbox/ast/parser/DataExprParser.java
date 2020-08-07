@@ -35,10 +35,11 @@ import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ExpressionListInfo
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.VariableInfo;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
+import java.util.Optional;
+
 import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 import static de.uni_passau.fim.se2.litterbox.ast.opcodes.ProcedureOpcode.argument_reporter_boolean;
 import static de.uni_passau.fim.se2.litterbox.ast.opcodes.ProcedureOpcode.argument_reporter_string_number;
-import static de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser.symbolTable;
 
 public class DataExprParser {
 
@@ -98,8 +99,12 @@ public class DataExprParser {
             }
         } else if (exprArray.get(POS_DATA_ARRAY) instanceof ArrayNode) {
             String idString = exprArray.get(POS_DATA_ARRAY).get(POS_INPUT_ID).asText();
-            boolean isVariable = symbolTable.getVariables().containsKey(idString);
-            boolean isList = symbolTable.getLists().containsKey(idString);
+            String idName = exprArray.get(POS_DATA_ARRAY).get(POS_INPUT_VALUE).asText();
+            String currentActorName = ActorDefinitionParser.getCurrentActor().getName();
+            Optional<ExpressionListInfo> list = ProgramParser.symbolTable.getList(idString, idName, currentActorName);
+            Optional<VariableInfo> variable = ProgramParser.symbolTable.getVariable(idString, idName, currentActorName);
+            boolean isVariable = variable.isPresent();
+            boolean isList = list.isPresent();
             if (isVariable) {
                 return parseVariable(exprArray);
             } else if (isList) {
@@ -134,8 +139,11 @@ public class DataExprParser {
      */
     private static Qualified parseScratchList(ArrayNode exprArray) {
         String idString = exprArray.get(POS_DATA_ARRAY).get(POS_INPUT_ID).asText();
-        Preconditions.checkArgument(symbolTable.getLists().containsKey(idString));
-        ExpressionListInfo variableInfo = symbolTable.getLists().get(idString);
+        String idName = exprArray.get(POS_DATA_ARRAY).get(POS_INPUT_VALUE).asText();
+        String currentActorName = ActorDefinitionParser.getCurrentActor().getName();
+        Optional<ExpressionListInfo> list = ProgramParser.symbolTable.getList(idString, idName, currentActorName);
+        Preconditions.checkArgument(list.isPresent());
+        ExpressionListInfo variableInfo = list.get();
         return new Qualified(
                 new StrId(variableInfo.getActor()),
                 new ScratchList(new StrId((variableInfo.getVariableName()))));
@@ -149,8 +157,11 @@ public class DataExprParser {
      */
     private static Qualified parseVariable(ArrayNode exprArray) {
         String idString = exprArray.get(POS_DATA_ARRAY).get(POS_INPUT_ID).asText();
-        Preconditions.checkArgument(symbolTable.getVariables().containsKey(idString));
-        VariableInfo variableInfo = symbolTable.getVariables().get(idString);
+        String idName = exprArray.get(POS_DATA_ARRAY).get(POS_INPUT_VALUE).asText();
+        String currentActorName = ActorDefinitionParser.getCurrentActor().getName();
+        Optional<VariableInfo> infoOptional = ProgramParser.symbolTable.getVariable(idString, idName, currentActorName);
+        Preconditions.checkArgument(infoOptional.isPresent());
+        VariableInfo variableInfo = infoOptional.get();
         return new Qualified(
                 new StrId(variableInfo.getActor()),
                 new Variable(new StrId((variableInfo.getVariableName()))));

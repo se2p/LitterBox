@@ -36,10 +36,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.CommonStmtOpcode;
-import de.uni_passau.fim.se2.litterbox.ast.parser.BoolExprParser;
-import de.uni_passau.fim.se2.litterbox.ast.parser.NumExprParser;
-import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
-import de.uni_passau.fim.se2.litterbox.ast.parser.StringExprParser;
+import de.uni_passau.fim.se2.litterbox.ast.parser.*;
 import de.uni_passau.fim.se2.litterbox.ast.parser.metadata.BlockMetadataParser;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.VariableInfo;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
@@ -55,6 +52,15 @@ public class CommonStmtParser {
     private static final String STOP_OTHER = "other scripts in sprite";
     private static final String STOP_OTHER_IN_STAGE = "other scripts in stage";
 
+    /**
+     * Parses a CommonStmt for a given block id.
+     *
+     * @param blockId   of the block to be parsed
+     * @param current   JsonNode the contains the CommonStmt
+     * @param allBlocks of this program
+     * @return the parsed CommonStmt
+     * @throws ParsingException if the block cannot be parsed into an CommonStmt
+     */
     public static CommonStmt parse(String blockId, JsonNode current, JsonNode allBlocks) throws ParsingException {
         Preconditions.checkNotNull(current);
         Preconditions.checkNotNull(allBlocks);
@@ -103,10 +109,12 @@ public class CommonStmtParser {
         Identifier var;
         String variableName = current.get(FIELDS_KEY).get(VARIABLE_KEY).get(VARIABLE_NAME_POS).asText();
         String variableId = current.get(FIELDS_KEY).get(VARIABLE_KEY).get(VARIABLE_IDENTIFIER_POS).asText();
-        if (!ProgramParser.symbolTable.getVariables().containsKey(variableId)) {
+        String currentActorName = ActorDefinitionParser.getCurrentActor().getName();
+        if (ProgramParser.symbolTable.getVariable(variableId, variableName, currentActorName).isEmpty()) {
             var = new UnspecifiedId();
         } else {
-            VariableInfo variableInfo = ProgramParser.symbolTable.getVariables().get(variableId);
+            VariableInfo variableInfo
+                    = ProgramParser.symbolTable.getVariable(variableId, variableName, currentActorName).get();
             String actorName = variableInfo.getActor();
             var = new Qualified(new StrId(actorName), new Variable(new StrId(variableName)));
         }

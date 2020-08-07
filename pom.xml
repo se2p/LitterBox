@@ -80,6 +80,8 @@
                         <exclude>**/README</exclude>
                         <exclude>**/.gitlab-ci.yml</exclude>
                         <exclude>**/pom.xml</exclude>
+                        <exclude>**/.editorconfig</exclude>
+                        <exclude>**/Jenkinsfile</exclude>
                         <exclude>src/test/resources/**</exclude>
                         <exclude>src/main/resources/**</exclude>
                     </excludes>

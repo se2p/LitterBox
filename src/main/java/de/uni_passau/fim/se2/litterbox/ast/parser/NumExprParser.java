@@ -39,6 +39,7 @@ import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ExpressionListInfo
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Optional;
 
 import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 import static de.uni_passau.fim.se2.litterbox.ast.parser.ExpressionParser.*;
@@ -137,13 +138,14 @@ public class NumExprParser {
      * @throws ParsingException If the opcode of the block is no NumExprOpcode
      *                          or if parsing inputs of the block fails.
      */
-    static NumExpr parseBlockNumExpr(String blockID, JsonNode exprBlock, JsonNode allBlocks)
+    static NumExpr parseBlockNumExpr(String blockId, JsonNode exprBlock, JsonNode allBlocks)
             throws ParsingException {
         String opcodeString = exprBlock.get(OPCODE_KEY).asText();
         Preconditions.checkArgument(NumExprOpcode.contains(opcodeString),
                 opcodeString + " is not a NumExprOpcode.");
         NumExprOpcode opcode = NumExprOpcode.valueOf(opcodeString);
-        BlockMetadata metadata = BlockMetadataParser.parse(blockID, exprBlock);
+        BlockMetadata metadata = BlockMetadataParser.parse(blockId, exprBlock);
+        String currentActorName = ActorDefinitionParser.getCurrentActor().getName();
         switch (opcode) {
             case sound_volume:
                 return new Volume(metadata);
@@ -173,9 +175,12 @@ public class NumExprParser {
             case data_lengthoflist:
                 String identifier =
                         exprBlock.get(FIELDS_KEY).get(LIST_KEY).get(LIST_IDENTIFIER_POS).asText();
+                String idName = exprBlock.get(FIELDS_KEY).get(LIST_KEY).get(LIST_NAME_POS).asText();
                 Identifier var;
-                if (ProgramParser.symbolTable.getLists().containsKey(identifier)) {
-                    ExpressionListInfo variableInfo = ProgramParser.symbolTable.getLists().get(identifier);
+                Optional<ExpressionListInfo> list
+                        = ProgramParser.symbolTable.getList(identifier, idName, currentActorName);
+                if (list.isPresent()) {
+                    ExpressionListInfo variableInfo = list.get();
                     var = new Qualified(new StrId(variableInfo.getActor()),
                             new ScratchList(new StrId(variableInfo.getVariableName())));
                 } else {
@@ -210,8 +215,10 @@ public class NumExprParser {
                 Expression item = parseExpr(exprBlock, ITEM_KEY, allBlocks);
                 identifier =
                         exprBlock.get(FIELDS_KEY).get(LIST_KEY).get(LIST_IDENTIFIER_POS).asText();
-                if (ProgramParser.symbolTable.getLists().containsKey(identifier)) {
-                    ExpressionListInfo variableInfo = ProgramParser.symbolTable.getLists().get(identifier);
+                idName = exprBlock.get(FIELDS_KEY).get(LIST_KEY).get(LIST_NAME_POS).asText();
+                list = ProgramParser.symbolTable.getList(identifier, idName, currentActorName);
+                if (list.isPresent()) {
+                    ExpressionListInfo variableInfo = list.get();
                     var = new Qualified(new StrId(variableInfo.getActor()),
                             new ScratchList(new StrId(variableInfo.getVariableName())));
                 } else {

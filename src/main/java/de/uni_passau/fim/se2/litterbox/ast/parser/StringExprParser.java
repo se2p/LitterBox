@@ -44,6 +44,8 @@ import de.uni_passau.fim.se2.litterbox.ast.parser.metadata.BlockMetadataParser;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ExpressionListInfo;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
+import java.util.Optional;
+
 import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 import static de.uni_passau.fim.se2.litterbox.ast.opcodes.DependentBlockOpcodes.sensing_of_object_menu;
 import static de.uni_passau.fim.se2.litterbox.ast.parser.ExpressionParser.getExprArray;
@@ -158,9 +160,12 @@ public class StringExprParser {
                 NumExpr index = NumExprParser.parseNumExpr(exprBlock, INDEX_KEY, allBlocks);
                 String id =
                         exprBlock.get(FIELDS_KEY).get(LIST_KEY).get(LIST_IDENTIFIER_POS).asText();
+                String idName = exprBlock.get(FIELDS_KEY).get(LIST_KEY).get(LIST_NAME_POS).asText();
                 Identifier var;
-                if (ProgramParser.symbolTable.getLists().containsKey(id)) {
-                    ExpressionListInfo variableInfo = ProgramParser.symbolTable.getLists().get(id);
+                String currentActorName = ActorDefinitionParser.getCurrentActor().getName();
+                Optional<ExpressionListInfo> list = ProgramParser.symbolTable.getList(id, idName, currentActorName);
+                if (list.isPresent()) {
+                    ExpressionListInfo variableInfo = list.get();
                     var = new Qualified(new StrId(variableInfo.getActor()),
                             new ScratchList(new StrId((variableInfo.getVariableName()))));
                 } else {
@@ -168,11 +173,11 @@ public class StringExprParser {
                 }
                 return new ItemOfVariable(index, var, metadata);
             case looks_costumenumbername:
-                String number_name = exprBlock.get(FIELDS_KEY).get(NUMBER_NAME_KEY).get(0).asText();
-                return new Costume(NameNum.fromString(number_name), metadata);
+                String numberName = exprBlock.get(FIELDS_KEY).get(NUMBER_NAME_KEY).get(0).asText();
+                return new Costume(NameNum.fromString(numberName), metadata);
             case looks_backdropnumbername:
-                number_name = exprBlock.get(FIELDS_KEY).get(NUMBER_NAME_KEY).get(0).asText();
-                return new Backdrop(NameNum.fromString(number_name), metadata);
+                numberName = exprBlock.get(FIELDS_KEY).get(NUMBER_NAME_KEY).get(0).asText();
+                return new Backdrop(NameNum.fromString(numberName), metadata);
             case sensing_answer:
                 return new Answer(metadata);
             case sensing_of:

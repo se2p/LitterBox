@@ -44,6 +44,8 @@ import de.uni_passau.fim.se2.litterbox.ast.parser.metadata.BlockMetadataParser;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ExpressionListInfo;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
+import java.util.Optional;
+
 import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 
 public class BoolExprParser {
@@ -244,9 +246,15 @@ public class BoolExprParser {
             case data_listcontainsitem:
                 String identifier =
                         exprBlock.get(FIELDS_KEY).get(LIST_KEY).get(LIST_IDENTIFIER_POS).asText();
+                String listName =
+                        exprBlock.get(FIELDS_KEY).get(LIST_KEY).get(LIST_NAME_POS).asText();
                 Identifier containingVar;
-                if (ProgramParser.symbolTable.getLists().containsKey(identifier)) {
-                    ExpressionListInfo variableInfo = ProgramParser.symbolTable.getLists().get(identifier);
+                String currentActorName = ActorDefinitionParser.getCurrentActor().getName();
+                Optional<ExpressionListInfo> list
+                        = ProgramParser.symbolTable.getList(identifier, listName, currentActorName);
+
+                if (list.isPresent()) {
+                    ExpressionListInfo variableInfo = list.get();
                     containingVar = new Qualified(new StrId(variableInfo.getActor()),
                             new ScratchList(new StrId((variableInfo.getVariableName()))));
                 } else {

@@ -927,8 +927,8 @@ public class StmtListJSONCreator implements ScratchVisitor {
         if (stringExpr instanceof StringLiteral) {
             String message = ((StringLiteral) stringExpr).getText();
             String messageId;
-            if (symbolTable.getMessages().containsKey(message)) {
-                messageId = symbolTable.getMessages().get(message).getIdentifier();
+            if (symbolTable.getMessage(message).isPresent()) {
+                messageId = symbolTable.getMessage(message).get().getIdentifier();
             } else {
                 messageId = "unspecified" + message;
             }
