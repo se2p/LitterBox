@@ -35,16 +35,21 @@ import java.util.List;
 
 public class CSVReportGenerator implements ReportGenerator {
 
-    private String fileName;
     private List<String> headers = new ArrayList<>();
     private List<String> detectors;
     private CSVPrinter printer;
 
+    /**
+     * CSVReportGenerator writes the results of an analyses for a given list of detectors to a file.
+     *
+     * @param fileName  of the file to which the report is written.
+     * @param detectors list of detectors that should be included in the report.
+     * @throws IOException is thrown if the file cannot be opened
+     */
     public CSVReportGenerator(String fileName, String[] detectors) throws IOException {
-        this.fileName = fileName;
         this.detectors = Arrays.asList(detectors);
         headers.add("project");
-        this.detectors.stream().forEach(headers::add);
+        headers.addAll(this.detectors);
         printer = getNewPrinter(fileName, headers);
     }
 
