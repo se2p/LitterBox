@@ -173,11 +173,11 @@ public class StringExprParser {
                 }
                 return new ItemOfVariable(index, var, metadata);
             case looks_costumenumbername:
-                String number_name = exprBlock.get(FIELDS_KEY).get(NUMBER_NAME_KEY).get(0).asText();
-                return new Costume(NameNum.fromString(number_name), metadata);
+                String numberName = exprBlock.get(FIELDS_KEY).get(NUMBER_NAME_KEY).get(0).asText();
+                return new Costume(NameNum.fromString(numberName), metadata);
             case looks_backdropnumbername:
-                number_name = exprBlock.get(FIELDS_KEY).get(NUMBER_NAME_KEY).get(0).asText();
-                return new Backdrop(NameNum.fromString(number_name), metadata);
+                numberName = exprBlock.get(FIELDS_KEY).get(NUMBER_NAME_KEY).get(0).asText();
+                return new Backdrop(NameNum.fromString(numberName), metadata);
             case sensing_answer:
                 return new Answer(metadata);
             case sensing_of:
