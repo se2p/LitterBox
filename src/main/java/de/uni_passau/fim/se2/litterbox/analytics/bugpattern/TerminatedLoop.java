@@ -3,7 +3,6 @@ package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.StopOtherScriptsInSprite;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopAll;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopThisScript;
@@ -80,13 +79,6 @@ public class TerminatedLoop extends AbstractIssueFinder {
 
     @Override
     public void visit(StopAll node) {
-        if (inLoop && !inIf) {
-            addIssue(node, node.getMetadata());
-        }
-    }
-
-    @Override
-    public void visit(StopOtherScriptsInSprite node) {
         if (inLoop && !inIf) {
             addIssue(node, node.getMetadata());
         }
