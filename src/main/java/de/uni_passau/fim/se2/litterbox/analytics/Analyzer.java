@@ -76,7 +76,6 @@ public abstract class Analyzer {
             }
         } catch (IOException e) {
             log.warning("Could not read project list at " + projectList.toString());
-            e.printStackTrace();
         }
     }
 
@@ -88,7 +87,6 @@ public abstract class Analyzer {
                 Downloader.downloadAndSaveProject(pid, input.toString());
             } catch (IOException e) {
                 log.warning("Could not download project with PID: " + pid);
-                e.printStackTrace();
             }
         }
 
@@ -118,8 +116,7 @@ public abstract class Analyzer {
                 programNode = JsonParser.getTargetsNodeFromJSONString(ZipReader.getJsonString(fileEntry.getPath()));
             }
         } catch (IOException e) {
-            log.info("[Error] could not load program from file");
-            e.printStackTrace();
+            log.info("[Error] could not load program from file " + fileName);
         }
 
         if (programNode == null) {
@@ -133,7 +130,6 @@ public abstract class Analyzer {
         } catch (ParsingException | RuntimeException e) {
             // TODO: Proper error handling
             log.info("[Error] could not parse program for file " + fileName);
-            e.printStackTrace();
             return null;
         }
 
