@@ -10,6 +10,11 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopThisS
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+/**
+ * TerminatedLoop is a bug pattern which occurs if a loop contains a StopAll or StopThisScript block which
+ * is not guarded by some condition. If that is the case the loop will only execute once and all blocks succeeding
+ * the loop (in the case of a "repeat times" or "repeat until") will not be executed either.
+ */
 public class TerminatedLoop extends AbstractIssueFinder {
 
     private static final String NAME = "terminated_loop";
