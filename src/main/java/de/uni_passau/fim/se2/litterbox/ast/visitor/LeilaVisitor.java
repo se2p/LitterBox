@@ -978,7 +978,7 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(SpriteTouchable spriteTouchable) {
-        emitToken("actor");
+        emitToken("locate actor");
         spriteTouchable.getStringExpr().accept(this);
     }
 
