@@ -881,6 +881,21 @@ public class LeilaVisitor extends PrintVisitor {
     }
 
     @Override
+    public void visit(GraphicEffect graphicEffect) {
+        System.err.println("TODO Graphic Effect"); // FIXME handle this
+    }
+
+    @Override
+    public void visit(SoundEffect soundEffect) {
+        System.err.println("TODO Sound Effect"); // FIXME handle this
+    }
+
+    @Override
+    public void visit(AttributeFromFixed attributeFromFixed) {
+        System.err.println("TODO AttributeFromFixed"); // FIXME handle this
+    }
+
+    @Override
     public void visit(StrId strId) {
         emitToken("strid");
         emitNoSpace("\"" + strId.getName() + "\"");
