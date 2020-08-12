@@ -78,6 +78,19 @@ public class LeilaVisitor extends PrintVisitor {
     private boolean emitAttributeType = false;
     private boolean volume = false;
 
+    private enum STANDARDVAR {
+        X, Y, VOLUME, TEMPO, VISIBLE, DRAGGABLE, SIZE, DIRECTION, ROTATIONSTYLE;
+
+        public static boolean contains(String varname) {
+            for (STANDARDVAR value : STANDARDVAR.values()) {
+                if (value.name().toLowerCase().equals(varname.toLowerCase())) {
+                    return true;
+                }
+            }
+            return false;
+        }
+    }
+
     public LeilaVisitor(PrintStream printStream, boolean nonDet) {
         super(printStream);
         this.nonDet = nonDet;
@@ -118,8 +131,6 @@ public class LeilaVisitor extends PrintVisitor {
             newLine();
         }
         for (DeclarationStmt declarationStmt : declarationStmtList) {
-            newLine();
-            appendIndentation();
             declarationStmt.accept(this);
         }
 
@@ -714,6 +725,16 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(DeclarationAttributeAsTypeStmt declarationAttributeAsTypeStmt) {
+
+        StringExpr stringExpr = declarationAttributeAsTypeStmt.getStringExpr();
+        if (stringExpr instanceof StringLiteral) {
+            String text = ((StringLiteral) stringExpr).getText();
+            if (STANDARDVAR.contains(text)) {
+                return;
+            }
+        }
+        newLine();
+        appendIndentation();
         declare();
         declarationAttributeAsTypeStmt.getStringExpr().accept(this);
         as();
@@ -799,6 +820,8 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(DeclarationIdentAsTypeStmt declarationIdentAsTypeStmt) {
+        newLine();
+        appendIndentation();
         declare();
         declarationIdentAsTypeStmt.getIdent().accept(this);
         as();
@@ -807,6 +830,8 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(DeclarationAttributeOfIdentAsTypeStmt declarationAttributeOfIdentAsTypeStmt) {
+        newLine();
+        appendIndentation();
         declare();
         emitToken("attribute");
         declarationAttributeOfIdentAsTypeStmt.getStringExpr().accept(this);
