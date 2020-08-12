@@ -33,9 +33,12 @@ public class PrintAnalyzer extends Analyzer {
 
     private static final String INTERMEDIATE_EXTENSION = ".sc";
     private static final Logger log = Logger.getLogger(MetricAnalyzer.class.getName());
+    private final boolean nonDet;
 
-    public PrintAnalyzer(String input, String output) {
+    public PrintAnalyzer(String input, String output, boolean nonDet) {
         super(input, output);
+        this.nonDet = nonDet;
+
     }
 
     @Override
@@ -56,7 +59,7 @@ public class PrintAnalyzer extends Analyzer {
             return;
         }
         log.info("Starting to print " + fileEntry.getName() + " to file " + out);
-        LeilaVisitor visitor = new LeilaVisitor(stream);
+        LeilaVisitor visitor = new LeilaVisitor(stream, nonDet);
         Program program = extractProgram(fileEntry);
         visitor.visit(program);
         stream.close();

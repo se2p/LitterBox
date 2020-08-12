@@ -33,6 +33,8 @@ public class Main {
     private static final String CHECK_SHORT = "c";
     private static final String LEILA = "leila";
     private static final String LEILA_SHORT = "l";
+    private static final String NONDET = "nondet";
+    private static final String NONDET_SHORT = "n";
     private static final String STATS = "stats";
     private static final String STATS_SHORT = "s";
     private static final String HELP = "help";
@@ -99,6 +101,8 @@ public class Main {
         // Parameters
         options.addOption(DETECTORS_SHORT, DETECTORS, true, "name all detectors you want to run separated by ',' "
                 + " (all detectors defined in the README)");
+        options.addOption(NONDET_SHORT, NONDET, false, "flag whether attributes in intermediate " +
+                "language should be non deterministic (i.e. not initialized)");
         options.addOption(OUTPUT_LANG_SHORT, OUTPUT_LANG, true, "language of hints in the output");
 
         return options;
@@ -160,8 +164,9 @@ public class Main {
 
         String outputPath = cmd.getOptionValue(OUTPUT);
         String input = cmd.getOptionValue(PROJECTPATH);
+        boolean nonDet = cmd.hasOption(NONDET);
 
-        PrintAnalyzer analyzer = new PrintAnalyzer(input, outputPath);
+        PrintAnalyzer analyzer = new PrintAnalyzer(input, outputPath, nonDet);
         runAnalysis(cmd, analyzer);
     }
 

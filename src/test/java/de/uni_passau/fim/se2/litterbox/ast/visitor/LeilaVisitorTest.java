@@ -53,7 +53,7 @@ public class LeilaVisitorTest {
     // @Test
     public void testVisitor() {
         PrintStream stream = new PrintStream(System.out);
-        LeilaVisitor visitor = new LeilaVisitor(stream);
+        LeilaVisitor visitor = new LeilaVisitor(stream, false);
         try {
             Program program = ProgramParser.parseProgram("Small", project);
             visitor.visit(program);
@@ -76,7 +76,7 @@ public class LeilaVisitorTest {
             fail();
         }
         PrintStream stream = new PrintStream(System.out);
-        LeilaVisitor visitor = new LeilaVisitor(stream);
+        LeilaVisitor visitor = new LeilaVisitor(stream, false);
         try {
             Program program = ProgramParser.parseProgram("Small", project);
             visitor.visit(program);

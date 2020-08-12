@@ -30,6 +30,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.ExpressionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.AttributeFromFixed;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.BoolLiteral;
@@ -73,11 +74,13 @@ import java.util.List;
 
 public class LeilaVisitor extends PrintVisitor {
 
+    private final boolean nonDet; // indicates whether attributes should be initialized or not
     private boolean emitAttributeType = false;
     private boolean volume = false;
 
-    public LeilaVisitor(PrintStream printStream) {
+    public LeilaVisitor(PrintStream printStream, boolean nonDet) {
         super(printStream);
+        this.nonDet = nonDet;
     }
 
     @Override
@@ -126,9 +129,11 @@ public class LeilaVisitor extends PrintVisitor {
             newLine();
         }
         for (SetStmt stmt : stmts) {
-            newLine();
-            appendIndentation();
-            stmt.accept(this);
+            if (!nonDet) {
+                newLine();
+                appendIndentation();
+                stmt.accept(this);
+            }
         }
 
         ProcedureDefinitionList procDefList = def.getProcedureDefinitionList();
