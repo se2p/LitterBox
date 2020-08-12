@@ -31,6 +31,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.ExpressionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.AttributeFromFixed;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Identifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.BoolLiteral;
@@ -590,9 +591,12 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(ChangeVariableBy changeVariableBy) {
-        emitToken("change");
-        changeVariableBy.getIdentifier().accept(this);
-        emitToken(" by");
+        define();
+        Identifier identifier = changeVariableBy.getIdentifier();
+        identifier.accept(this);
+        as();
+        identifier.accept(this);
+        emitToken(" +");
         changeVariableBy.getExpr().accept(this);
     }
 
@@ -843,7 +847,7 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(SetAttributeTo setAttributeTo) {
-        emitToken("define");
+        define();
         setAttributeTo.getStringExpr().accept(this);
         as();
         setAttributeTo.getExpr().accept(this);
@@ -859,15 +863,20 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(SetVariableTo setVariableTo) {
-        set();
+        define();
         setVariableTo.getIdentifier().accept(this);
-        to();
+        as();
         setVariableTo.getExpr().accept(this);
     }
 
     private void declare() {
         emitToken("declare");
     }
+
+    private void define() {
+        emitToken("define");
+    }
+
 
     private void of() {
         emitToken(" of");
