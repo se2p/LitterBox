@@ -80,7 +80,8 @@ public class LeilaVisitor extends PrintVisitor {
     private boolean volume = false;
 
     private enum STANDARDVAR {
-        X, Y, VOLUME, TEMPO, VISIBLE, DRAGGABLE, SIZE, DIRECTION, ROTATIONSTYLE;
+        X, Y, VOLUME, TEMPO, VISIBLE, DRAGGABLE, SIZE, DIRECTION, ROTATIONSTYLE, LAYERORDER, VIDEOTRANSPARENCY, VIDEOSTATE;
+        ;
 
         public static boolean contains(String varname) {
             for (STANDARDVAR value : STANDARDVAR.values()) {
