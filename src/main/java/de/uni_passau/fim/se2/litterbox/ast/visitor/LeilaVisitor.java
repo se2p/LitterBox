@@ -211,7 +211,6 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(Key key) {
-        emitToken("key");
         key.getKey().accept(this);
     }
 
@@ -1080,7 +1079,7 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(IsKeyPressed isKeyPressed) {
-        emitNoSpace("isKeyPressed(");
+        emitNoSpace("keyPressedByCode(");
         isKeyPressed.getKey().accept(this);
         closeParentheses();
     }
