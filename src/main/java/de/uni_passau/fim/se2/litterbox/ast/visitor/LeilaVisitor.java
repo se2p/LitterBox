@@ -770,7 +770,7 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(NumberType numberType) {
-        emitNoSpace("int");
+        emitNoSpace("integer");
     }
 
     @Override
@@ -1107,7 +1107,7 @@ public class LeilaVisitor extends PrintVisitor {
     public void visit(AsNumber asNumber) {
         emitToken("cast");
         asNumber.getOperand1().accept(this);
-        emitToken(" to int"); //TODO distinguish between int and float?
+        emitToken(" to integer"); //TODO distinguish between int and float?
     }
 
     @Override
