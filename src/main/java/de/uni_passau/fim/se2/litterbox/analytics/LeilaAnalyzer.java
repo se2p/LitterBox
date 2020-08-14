@@ -29,13 +29,23 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.logging.Logger;
 
-public class PrintAnalyzer extends Analyzer {
+public class LeilaAnalyzer extends Analyzer {
 
     private static final String INTERMEDIATE_EXTENSION = ".sc";
     private static final Logger log = Logger.getLogger(MetricAnalyzer.class.getName());
     private final boolean nonDet;
 
-    public PrintAnalyzer(String input, String output, boolean nonDet) {
+    /**
+     * Constructor for the leila analyzer.
+     *
+     * @param input path to folder or file that should be analyzed
+     * @param output Path to file or folder for the resulting .sc file(s);
+     *               has to be a folder if multiple projects are analysed
+     *               (file will be created if not existing yet, path has to exist
+     * @param nonDet flag whether attributes in intermediate language should be
+     *               non deterministic (i.e. not initialized)
+     */
+    public LeilaAnalyzer(String input, String output, boolean nonDet) {
         super(input, output);
         this.nonDet = nonDet;
 

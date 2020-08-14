@@ -101,8 +101,8 @@ public class Main {
         // Parameters
         options.addOption(DETECTORS_SHORT, DETECTORS, true, "name all detectors you want to run separated by ',' "
                 + " (all detectors defined in the README)");
-        options.addOption(NONDET_SHORT, NONDET, false, "flag whether attributes in intermediate " +
-                "language should be non deterministic (i.e. not initialized)");
+        options.addOption(NONDET_SHORT, NONDET, false, "flag whether attributes in intermediate "
+                + "language should be non deterministic (i.e. not initialized)");
         options.addOption(OUTPUT_LANG_SHORT, OUTPUT_LANG, true, "language of hints in the output");
 
         return options;
@@ -166,7 +166,7 @@ public class Main {
         String input = cmd.getOptionValue(PROJECTPATH);
         boolean nonDet = cmd.hasOption(NONDET);
 
-        PrintAnalyzer analyzer = new PrintAnalyzer(input, outputPath, nonDet);
+        LeilaAnalyzer analyzer = new LeilaAnalyzer(input, outputPath, nonDet);
         runAnalysis(cmd, analyzer);
     }
 

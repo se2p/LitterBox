@@ -82,12 +82,12 @@ public class LeilaVisitor extends PrintVisitor {
     private int skippedDeclarations = 0;
     private boolean noCast = false;
 
-    private enum STANDARDVAR {
-        X, Y, VOLUME, TEMPO, VISIBLE, DRAGGABLE, SIZE, DIRECTION, ROTATIONSTYLE, LAYERORDER, VIDEOTRANSPARENCY, VIDEOSTATE;
-        ;
+    private enum STANDARD_VAR {
+        X, Y, VOLUME, TEMPO, VISIBLE, DRAGGABLE, SIZE, DIRECTION, ROTATIONSTYLE, LAYERORDER, VIDEOTRANSPARENCY,
+        VIDEOSTATE;
 
         public static boolean contains(String varname) {
-            for (STANDARDVAR value : STANDARDVAR.values()) {
+            for (STANDARD_VAR value : STANDARD_VAR.values()) {
                 if (value.name().toLowerCase().equals(varname.toLowerCase())) {
                     return true;
                 }
@@ -737,7 +737,7 @@ public class LeilaVisitor extends PrintVisitor {
         StringExpr stringExpr = declarationAttributeAsTypeStmt.getStringExpr();
         if (stringExpr instanceof StringLiteral) {
             String text = ((StringLiteral) stringExpr).getText();
-            if (STANDARDVAR.contains(text)) {
+            if (STANDARD_VAR.contains(text)) {
                 skippedDeclarations++;
                 return;
             }
@@ -918,19 +918,19 @@ public class LeilaVisitor extends PrintVisitor {
     public void visit(StringLiteral stringLiteral) {
         if (!emitAttributeType) {
             emitNoSpace("\"" + stringLiteral.getText() + "\"");
-        } else if (stringLiteral.getText().equalsIgnoreCase(String.valueOf(STANDARDVAR.LAYERORDER))) {
+        } else if (stringLiteral.getText().equalsIgnoreCase(String.valueOf(STANDARD_VAR.LAYERORDER))) {
             emitNoSpace("layer");
         } else {
             emitNoSpace(stringLiteral.getText());
-//            String text = stringLiteral.getText();
-//            if (GraphicEffect.contains(text)) {
-//                emitNoSpace("GraphicEffect");
-//            } else if (SoundEffect.contains(text)) {
-//                emitNoSpace("SoundEffect");
-//            } else if (text.equalsIgnoreCase("VOLUME")) {
-//                emitNoSpace("Volume");
-//                volume = true;
-//            }
+            // String text = stringLiteral.getText();
+            // if (GraphicEffect.contains(text)) {
+            //     emitNoSpace("GraphicEffect");
+            // } else if (SoundEffect.contains(text)) {
+            //     emitNoSpace("SoundEffect");
+            // } else if (text.equalsIgnoreCase("VOLUME")) {
+            //     emitNoSpace("Volume");
+            //     volume = true;
+            // }
         }
     }
 
@@ -1307,7 +1307,8 @@ public class LeilaVisitor extends PrintVisitor {
     }
 
     @Override
-    public void visit(AttributeOf node) { // TODO check -- the old version had different ways of handling backdrop number etc.
+    public void visit(AttributeOf node) { // TODO check -- the old version had different ways of handling
+        // TODO backdrop number etc.
         emitToken("attribute");
         node.getAttribute().accept(this);
         emitToken("of");
