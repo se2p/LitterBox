@@ -637,28 +637,22 @@ public class LeilaVisitor extends PrintVisitor {
     }
 
     @Override
-    public void visit(IfThenStmt ifThenStmt) { // FIXME format?
-        emitToken("if");
+    public void visit(IfThenStmt ifThenStmt) {
+        emitNoSpace("if (");
         ifThenStmt.getBoolExpr().accept(this);
-        emitNoSpace(" then");
+        emitNoSpace(") then");
         ifThenStmt.getThenStmts().accept(this);
     }
 
     @Override
-    public void visit(IfElseStmt ifElseStmt) { //FIXME format?
-        emitToken("if");
+    public void visit(IfElseStmt ifElseStmt) {
+        emitNoSpace("if (");
         ifElseStmt.getBoolExpr().accept(this);
-        emitNoSpace(" then");
-        beginIndentation();
+        emitNoSpace(") then");
         ifElseStmt.getStmtList().accept(this);
-        endIndentation();
 
-        newLine();
-        appendIndentation();
         emitNoSpace("else");
-        beginIndentation();
         ifElseStmt.getElseStmts().accept(this);
-        endIndentation();
     }
 
     @Override
