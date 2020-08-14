@@ -918,6 +918,8 @@ public class LeilaVisitor extends PrintVisitor {
     public void visit(StringLiteral stringLiteral) {
         if (!emitAttributeType) {
             emitNoSpace("\"" + stringLiteral.getText() + "\"");
+        } else if (stringLiteral.getText().equalsIgnoreCase(String.valueOf(STANDARDVAR.LAYERORDER))) {
+            emitNoSpace("layer");
         } else {
             emitNoSpace(stringLiteral.getText());
 //            String text = stringLiteral.getText();
