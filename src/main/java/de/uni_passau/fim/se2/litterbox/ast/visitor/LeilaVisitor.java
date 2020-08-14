@@ -80,6 +80,7 @@ public class LeilaVisitor extends PrintVisitor {
     private boolean emitAttributeType = false;
     private boolean volume = false;
     private int skippedDeclarations = 0;
+    private boolean noCast = false;
 
     private enum STANDARDVAR {
         X, Y, VOLUME, TEMPO, VISIBLE, DRAGGABLE, SIZE, DIRECTION, ROTATIONSTYLE, LAYERORDER, VIDEOTRANSPARENCY, VIDEOSTATE;
@@ -444,8 +445,11 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(FromExpression fromExpression) {
-        emitToken("pivot of");
+        emitNoSpace("locate actor \"");
+        noCast = true;
         fromExpression.getStringExpr().accept(this);
+        noCast = false;
+        emitNoSpace("\"");
     }
 
     @Override
@@ -785,9 +789,13 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(AsString asString) {
-        emitToken("cast");
-        asString.getOperand1().accept(this);
-        emitToken(" to string");
+        if (noCast) {
+            asString.getOperand1().accept(this);
+        } else {
+            emitToken("cast");
+            asString.getOperand1().accept(this);
+            emitToken(" to string");
+        }
     }
 
     @Override
