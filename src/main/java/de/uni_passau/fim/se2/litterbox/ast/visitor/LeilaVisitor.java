@@ -1416,7 +1416,13 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(SetRotationStyle setRotationStyle) {
-        emitToken("TODO"); // TODO -- grammar?
+        emitToken("define rotationStyle as");
+        setRotationStyle.getRotation().accept(this);
+    }
+
+    @Override
+    public void visit(RotationStyle rotationStyle) {
+        emitNoSpace("\"" + rotationStyle.getToken() + "\"");
     }
 
     @Override
