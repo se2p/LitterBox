@@ -174,6 +174,7 @@ public class LeilaVisitor extends PrintVisitor {
             script.accept(this);
         }
         endIndentation();
+        newLine();
         end();
     }
 
