@@ -1060,12 +1060,15 @@ public class LeilaVisitor extends PrintVisitor {
         spriteTouchable.getStringExpr().accept(this);
     }
 
-    @Override //TODO this is not specified in the grammar
+    @Override
     public void visit(ColorLiteral colorLiteral) {
-        emitToken("rgb");
-        emitToken(String.valueOf(colorLiteral.getRed()));
-        emitToken(String.valueOf(colorLiteral.getGreen()));
+        emitNoSpace("rgb(");
+        emitNoSpace(String.valueOf(colorLiteral.getRed()));
+        comma();
+        emitNoSpace(String.valueOf(colorLiteral.getGreen()));
+        comma();
         emitNoSpace(String.valueOf(colorLiteral.getBlue()));
+        closeParentheses();
     }
 
     @Override
@@ -1395,8 +1398,9 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(SpriteTouchingColor spriteTouchingColor) {
-        emitToken("touching");
+        emitNoSpace("touchingColor(");
         spriteTouchingColor.getColor().accept(this);
+        closeParentheses();
     }
 
     @Override
