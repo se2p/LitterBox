@@ -1400,7 +1400,9 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(ChangeVolumeBy changeVolumeBy) {
-        emitToken("TODO"); // TODO -- grammar?
+        emitNoSpace("changeVolumeBy(");
+        changeVolumeBy.getVolumeValue().accept(this);
+        closeParentheses();
     }
 
     @Override
