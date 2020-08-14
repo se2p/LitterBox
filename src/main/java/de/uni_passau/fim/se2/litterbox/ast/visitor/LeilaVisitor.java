@@ -107,7 +107,6 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(Program program) {
-        appendIndentation();
         emitToken("program");
         program.getIdent().accept(this);
         List<ActorDefinition> definitions = program.getActorDefinitionList().getDefinitions();
@@ -123,7 +122,6 @@ public class LeilaVisitor extends PrintVisitor {
     public void visit(ActorDefinition def) {
         skippedDeclarations = 0;
         newLine();
-        appendIndentation();
         emitToken("actor");
         def.getIdent().accept(this);
         emitToken(" is");
