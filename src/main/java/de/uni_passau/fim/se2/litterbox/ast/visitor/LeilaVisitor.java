@@ -936,7 +936,7 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(GraphicEffect graphicEffect) {
-        System.err.println("TODO Graphic Effect"); // FIXME handle this
+        emitNoSpace("\"" + graphicEffect.getToken() + "\"");
     }
 
     @Override
@@ -1332,10 +1332,11 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(ChangeGraphicEffectBy changeGraphicEffectBy) {
-        emitToken("change graphic effect");
+        emitNoSpace("changeGraphicEffectBy(");
         changeGraphicEffectBy.getEffect().accept(this);
-        emitToken("by");
+        comma();
         changeGraphicEffectBy.getValue().accept(this);
+        closeParentheses();
     }
 
     @Override
