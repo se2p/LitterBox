@@ -82,12 +82,12 @@ public class LeilaVisitor extends PrintVisitor {
     private int skippedDeclarations = 0;
     private boolean noCast = false;
 
-    private enum STANDARD_VAR {
+    private enum STDVAR {
         X, Y, VOLUME, TEMPO, VISIBLE, DRAGGABLE, SIZE, DIRECTION, ROTATIONSTYLE, LAYERORDER, VIDEOTRANSPARENCY,
         VIDEOSTATE;
 
         public static boolean contains(String varname) {
-            for (STANDARD_VAR value : STANDARD_VAR.values()) {
+            for (STDVAR value : STDVAR.values()) {
                 if (value.name().toLowerCase().equals(varname.toLowerCase())) {
                     return true;
                 }
@@ -737,7 +737,7 @@ public class LeilaVisitor extends PrintVisitor {
         StringExpr stringExpr = declarationAttributeAsTypeStmt.getStringExpr();
         if (stringExpr instanceof StringLiteral) {
             String text = ((StringLiteral) stringExpr).getText();
-            if (STANDARD_VAR.contains(text)) {
+            if (STDVAR.contains(text)) {
                 skippedDeclarations++;
                 return;
             }
@@ -918,7 +918,7 @@ public class LeilaVisitor extends PrintVisitor {
     public void visit(StringLiteral stringLiteral) {
         if (!emitAttributeType) {
             emitNoSpace("\"" + stringLiteral.getText() + "\"");
-        } else if (stringLiteral.getText().equalsIgnoreCase(String.valueOf(STANDARD_VAR.LAYERORDER))) {
+        } else if (stringLiteral.getText().equalsIgnoreCase(String.valueOf(STDVAR.LAYERORDER))) {
             emitNoSpace("layer");
         } else {
             emitNoSpace(stringLiteral.getText());
