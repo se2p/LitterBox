@@ -1031,21 +1031,18 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(Touching touching) {
-        boolean done = false;
         Touchable touchable = touching.getTouchable();
         if (touchable instanceof Edge) {
             emitNoSpace("touchingEdge(");
         } else if (touchable instanceof MousePointer) {
             emitNoSpace("touchingMousePointer()");
-            done = true;
+            return;
         } else if (touchable instanceof Color) {
             emitNoSpace("touchingColor(");
         } else {
             emitNoSpace("touchingObject(");
         }
-        if (!done) {
-            touching.getTouchable().accept(this);
-        }
+        touching.getTouchable().accept(this);
         closeParentheses();
     }
 
