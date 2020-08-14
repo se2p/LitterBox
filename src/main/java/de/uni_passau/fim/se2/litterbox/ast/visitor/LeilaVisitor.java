@@ -555,9 +555,9 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(WaitSeconds waitSeconds) {
-        emitToken("wait");
+        emitNoSpace("waitSeconds(");
         waitSeconds.getSeconds().accept(this);
-        emitToken(" seconds");
+        closeParentheses();
     }
 
     @Override
