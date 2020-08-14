@@ -747,7 +747,9 @@ public class LeilaVisitor extends PrintVisitor {
         newLine();
         appendIndentation();
         declare();
+        emitAttributeType = true;
         declarationAttributeAsTypeStmt.getStringExpr().accept(this);
+        emitAttributeType = false;
         as();
         declarationAttributeAsTypeStmt.getType().accept(this);
     }
@@ -834,7 +836,9 @@ public class LeilaVisitor extends PrintVisitor {
         newLine();
         appendIndentation();
         declare();
+        emitAttributeType = true;
         declarationIdentAsTypeStmt.getIdent().accept(this);
+        emitAttributeType = false;
         as();
         declarationIdentAsTypeStmt.getType().accept(this);
     }
@@ -845,7 +849,9 @@ public class LeilaVisitor extends PrintVisitor {
         appendIndentation();
         declare();
         emitToken("attribute");
+        emitAttributeType = true;
         declarationAttributeOfIdentAsTypeStmt.getStringExpr().accept(this);
+        emitAttributeType = false;
         of();
         declarationAttributeOfIdentAsTypeStmt.getIdent().accept(this);
         as();
@@ -855,7 +861,9 @@ public class LeilaVisitor extends PrintVisitor {
     @Override
     public void visit(SetAttributeTo setAttributeTo) {
         define();
+        emitAttributeType = true;
         setAttributeTo.getStringExpr().accept(this);
+        emitAttributeType = false;
         as();
         setAttributeTo.getExpr().accept(this);
     }
@@ -907,17 +915,18 @@ public class LeilaVisitor extends PrintVisitor {
     @Override
     public void visit(StringLiteral stringLiteral) {
         if (!emitAttributeType) {
-            emitNoSpace(stringLiteral.getText());
+            emitNoSpace("\"" + stringLiteral.getText() + "\"");
         } else {
-            String text = stringLiteral.getText();
-            if (GraphicEffect.contains(text)) {
-                emitNoSpace("GraphicEffect");
-            } else if (SoundEffect.contains(text)) {
-                emitNoSpace("SoundEffect");
-            } else if (text.equalsIgnoreCase("VOLUME")) {
-                emitNoSpace("Volume");
-                volume = true;
-            }
+            emitNoSpace(stringLiteral.getText());
+//            String text = stringLiteral.getText();
+//            if (GraphicEffect.contains(text)) {
+//                emitNoSpace("GraphicEffect");
+//            } else if (SoundEffect.contains(text)) {
+//                emitNoSpace("SoundEffect");
+//            } else if (text.equalsIgnoreCase("VOLUME")) {
+//                emitNoSpace("Volume");
+//                volume = true;
+//            }
         }
     }
 
