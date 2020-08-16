@@ -37,11 +37,18 @@ import java.util.List;
  */
 public class CustomBlockWithForever extends AbstractIssueFinder {
     public static final String NAME = "custom_block_with_forever";
-    public static final String HINT_TEXT = "custom_block_with_forever_hint";
     private String currentProcedureName;
     private List<String> proceduresWithForever;
     private List<CallStmt> calledProcedures;
     private boolean insideProcedure;
+
+    private void checkCalls() {
+        for (CallStmt calledProcedure : calledProcedures) {
+            if (proceduresWithForever.contains(calledProcedure.getIdent().getName())) {
+                addIssue(calledProcedure, calledProcedure.getMetadata());
+            }
+        }
+    }
 
     @Override
     public void visit(ActorDefinition actor) {
@@ -49,14 +56,6 @@ public class CustomBlockWithForever extends AbstractIssueFinder {
         proceduresWithForever = new ArrayList<>();
         super.visit(actor);
         checkCalls();
-    }
-
-    private void checkCalls() {
-        for (CallStmt calledProcedure : calledProcedures) {
-            if (proceduresWithForever.contains(calledProcedure.getIdent().getName())) {
-                addIssue(calledProcedure, HINT_TEXT, calledProcedure.getMetadata());
-            }
-        }
     }
 
     @Override

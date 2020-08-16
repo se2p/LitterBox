@@ -35,23 +35,21 @@ import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 public class ComparingLiterals extends AbstractIssueFinder {
 
     public static final String NAME = "comparing_literals";
-    public static final String HINT_TEXT = "comparing_literals_hint";
 
     @Override
     public void visit(Equals node) {
         if ((node.getOperand1() instanceof StringLiteral || node.getOperand1() instanceof NumberLiteral)
                 && (node.getOperand2() instanceof StringLiteral || node.getOperand2() instanceof NumberLiteral)) {
-            addIssue(node, HINT_TEXT, node.getMetadata());
+            addIssue(node, node.getMetadata());
         }
         visitChildren(node);
     }
-
 
     @Override
     public void visit(LessThan node) {
         if ((node.getOperand1() instanceof StringLiteral || node.getOperand1() instanceof NumberLiteral)
                 && (node.getOperand2() instanceof StringLiteral || node.getOperand2() instanceof NumberLiteral)) {
-            addIssue(node, HINT_TEXT, node.getMetadata());
+            addIssue(node, node.getMetadata());
         }
         visitChildren(node);
     }
@@ -60,7 +58,7 @@ public class ComparingLiterals extends AbstractIssueFinder {
     public void visit(BiggerThan node) {
         if ((node.getOperand1() instanceof StringLiteral || node.getOperand1() instanceof NumberLiteral)
                 && (node.getOperand2() instanceof StringLiteral || node.getOperand2() instanceof NumberLiteral)) {
-            addIssue(node, HINT_TEXT, node.getMetadata());
+            addIssue(node, node.getMetadata());
         }
         visitChildren(node);
     }

@@ -22,7 +22,6 @@ import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ArgumentInfo;
 
-
 /**
  * The parameter names in custom blocks do not have to be unique.
  * Therefore, when two parameters have the same name, no matter the type or which one is used inside the custom
@@ -30,14 +29,13 @@ import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ArgumentInfo;
  */
 public class AmbiguousParameterName extends AbstractIssueFinder {
     public static final String NAME = "ambiguous_parameter_name";
-    public static final String HINT_TEXT = "ambiguous_parameter_name_hint";
 
     private void checkArguments(ArgumentInfo[] arguments, ProcedureDefinition node) {
         for (int i = 0; i < arguments.length; i++) {
             ArgumentInfo current = arguments[i];
             for (int j = i + 1; j < arguments.length; j++) {
                 if (i != j && current.getName().equals(arguments[j].getName())) {
-                    addIssue(node, HINT_TEXT, node.getMetadata().getDefinition());
+                    addIssue(node, node.getMetadata().getDefinition());
                 }
             }
         }

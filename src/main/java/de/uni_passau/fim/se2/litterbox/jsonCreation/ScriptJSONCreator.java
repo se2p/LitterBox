@@ -122,10 +122,10 @@ public class ScriptJSONCreator {
                 String messageText = ((StringLiteral) expr).getText();
                 FieldsMetadata fieldsMetadata = meta.getFields().getList().get(0);
                 String id;
-                if (symbol.getMessages().containsKey(messageText)) {
-                    id = symbol.getMessages().get(messageText).getIdentifier();
+                if (symbol.getMessage(messageText).isPresent()) {
+                    id = symbol.getMessage(messageText).get().getIdentifier();
                 } else {
-                    id = "unspecified"+messageText;
+                    id = "unspecified" + messageText;
                 }
                 String fields = createFields(fieldsMetadata.getFieldsName(), messageText, id);
                 jsonString.append(createBlockWithoutMutationString(meta, nextId, null, EMPTY_VALUE, fields));

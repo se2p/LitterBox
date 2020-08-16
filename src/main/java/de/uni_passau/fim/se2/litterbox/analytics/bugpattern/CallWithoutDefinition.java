@@ -34,9 +34,19 @@ import java.util.List;
  */
 public class CallWithoutDefinition extends AbstractIssueFinder {
     public static final String NAME = "call_without_definition";
-    public static final String HINT_TEXT = "call_without_definition_hint";
     private List<String> proceduresDef;
     private List<CallStmt> calledProcedures;
+
+    private void checkCalls() {
+        for (CallStmt calledProcedure : calledProcedures) {
+            if (!proceduresDef.contains(calledProcedure.getIdent().getName())
+                    && !program.getProcedureMapping().checkIfMalformated(
+                    currentActor.getIdent().getName() + calledProcedure.getIdent().getName())) {
+
+                addIssue(calledProcedure, calledProcedure.getMetadata());
+            }
+        }
+    }
 
     @Override
     public void visit(ActorDefinition actor) {
@@ -44,15 +54,6 @@ public class CallWithoutDefinition extends AbstractIssueFinder {
         proceduresDef = new ArrayList<>();
         super.visit(actor);
         checkCalls();
-    }
-
-    private void checkCalls() {
-        for (CallStmt calledProcedure : calledProcedures) {
-            if (!proceduresDef.contains(calledProcedure.getIdent().getName()) &&
-                    !program.getProcedureMapping().checkIfMalformated(currentActor.getIdent().getName() + calledProcedure.getIdent().getName())) {
-                addIssue(calledProcedure, HINT_TEXT, calledProcedure.getMetadata());
-            }
-        }
     }
 
     @Override

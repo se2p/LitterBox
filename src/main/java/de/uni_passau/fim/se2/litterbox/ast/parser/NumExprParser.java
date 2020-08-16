@@ -18,10 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.parser;
 
-import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
-import static de.uni_passau.fim.se2.litterbox.ast.parser.ExpressionParser.*;
-
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.TextNode;
@@ -41,7 +37,12 @@ import de.uni_passau.fim.se2.litterbox.ast.opcodes.NumExprOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.parser.metadata.BlockMetadataParser;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ExpressionListInfo;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
+
 import java.lang.reflect.InvocationTargetException;
+import java.util.Optional;
+
+import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
+import static de.uni_passau.fim.se2.litterbox.ast.parser.ExpressionParser.*;
 
 public class NumExprParser {
 
@@ -65,8 +66,9 @@ public class NumExprParser {
 
         // parsable as NumberLiteral
         boolean parsableAsNumberLiteral = false;
-        if (shadowIndicator == INPUT_SAME_BLOCK_SHADOW ||
-                (shadowIndicator == INPUT_BLOCK_NO_SHADOW && !(exprArray.get(POS_BLOCK_ID) instanceof TextNode))) {
+        if (shadowIndicator == INPUT_SAME_BLOCK_SHADOW
+                || (shadowIndicator == INPUT_BLOCK_NO_SHADOW
+                && !(exprArray.get(POS_BLOCK_ID) instanceof TextNode))) {
             try {
                 String valueString =
                         ExpressionParser.getDataArrayByName(inputs, inputKey).get(POS_INPUT_VALUE).asText();
@@ -108,8 +110,9 @@ public class NumExprParser {
         if (parsableAsNumExpr(containingBlock, inputKey, allBlocks)) {
             ArrayNode exprArray = getExprArray(containingBlock.get(INPUTS_KEY), inputKey);
             int shadowIndicator = getShadowIndicator(exprArray);
-            if (shadowIndicator == INPUT_SAME_BLOCK_SHADOW ||
-                    (shadowIndicator == INPUT_BLOCK_NO_SHADOW && !(exprArray.get(POS_BLOCK_ID) instanceof TextNode))) {
+            if (shadowIndicator == INPUT_SAME_BLOCK_SHADOW
+                    || (shadowIndicator == INPUT_BLOCK_NO_SHADOW
+                    && !(exprArray.get(POS_BLOCK_ID) instanceof TextNode))) {
                 try {
                     return parseNumber(containingBlock.get(INPUTS_KEY), inputKey);
                 } catch (NumberFormatException | ParsingException e) {
@@ -135,13 +138,14 @@ public class NumExprParser {
      * @throws ParsingException If the opcode of the block is no NumExprOpcode
      *                          or if parsing inputs of the block fails.
      */
-    static NumExpr parseBlockNumExpr(String blockID, JsonNode exprBlock, JsonNode allBlocks)
+    static NumExpr parseBlockNumExpr(String blockId, JsonNode exprBlock, JsonNode allBlocks)
             throws ParsingException {
         String opcodeString = exprBlock.get(OPCODE_KEY).asText();
         Preconditions.checkArgument(NumExprOpcode.contains(opcodeString),
                 opcodeString + " is not a NumExprOpcode.");
         NumExprOpcode opcode = NumExprOpcode.valueOf(opcodeString);
-        BlockMetadata metadata = BlockMetadataParser.parse(blockID, exprBlock);
+        BlockMetadata metadata = BlockMetadataParser.parse(blockId, exprBlock);
+        String currentActorName = ActorDefinitionParser.getCurrentActor().getName();
         switch (opcode) {
             case sound_volume:
                 return new Volume(metadata);
@@ -171,9 +175,12 @@ public class NumExprParser {
             case data_lengthoflist:
                 String identifier =
                         exprBlock.get(FIELDS_KEY).get(LIST_KEY).get(LIST_IDENTIFIER_POS).asText();
+                String idName = exprBlock.get(FIELDS_KEY).get(LIST_KEY).get(LIST_NAME_POS).asText();
                 Identifier var;
-                if (ProgramParser.symbolTable.getLists().containsKey(identifier)) {
-                    ExpressionListInfo variableInfo = ProgramParser.symbolTable.getLists().get(identifier);
+                Optional<ExpressionListInfo> list
+                        = ProgramParser.symbolTable.getList(identifier, idName, currentActorName);
+                if (list.isPresent()) {
+                    ExpressionListInfo variableInfo = list.get();
                     var = new Qualified(new StrId(variableInfo.getActor()),
                             new ScratchList(new StrId(variableInfo.getVariableName())));
                 } else {
@@ -208,8 +215,10 @@ public class NumExprParser {
                 Expression item = parseExpr(exprBlock, ITEM_KEY, allBlocks);
                 identifier =
                         exprBlock.get(FIELDS_KEY).get(LIST_KEY).get(LIST_IDENTIFIER_POS).asText();
-                if (ProgramParser.symbolTable.getLists().containsKey(identifier)) {
-                    ExpressionListInfo variableInfo = ProgramParser.symbolTable.getLists().get(identifier);
+                idName = exprBlock.get(FIELDS_KEY).get(LIST_KEY).get(LIST_NAME_POS).asText();
+                list = ProgramParser.symbolTable.getList(identifier, idName, currentActorName);
+                if (list.isPresent()) {
+                    ExpressionListInfo variableInfo = list.get();
                     var = new Qualified(new StrId(variableInfo.getActor()),
                             new ScratchList(new StrId(variableInfo.getVariableName())));
                 } else {
@@ -237,13 +246,16 @@ public class NumExprParser {
                                                                                 String firstInputName,
                                                                                 String secondInputName,
                                                                                 JsonNode allBlocks,
-                                                                                BlockMetadata metadata) throws ParsingException {
+                                                                                BlockMetadata metadata)
+            throws ParsingException {
+
         NumExpr first = parseNumExpr(exprBlock, firstInputName, allBlocks);
         NumExpr second = parseNumExpr(exprBlock, secondInputName, allBlocks);
         try {
             return clazz.getConstructor(NumExpr.class, NumExpr.class, BlockMetadata.class).newInstance(first, second,
                     metadata);
-        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+        } catch (InstantiationException | IllegalAccessException
+                | InvocationTargetException | NoSuchMethodException e) {
             throw new ParsingException(e);
         }
     }
@@ -252,11 +264,11 @@ public class NumExprParser {
      * Returns the number at the position in the inputs node. For example, if script is the JsonNode holding all blocks
      * and "EU(l=G6)z8NGlJFcx|fS" is a blockID of a block with an input called "STEPS",
      * you can parse the STEPS to a Number like this:
-     * <p>
-     * JsonNode inputs = script.get("EU(l=G6)z8NGlJFcx|fS").get("inputs");
+     *
+     * <p>JsonNode inputs = script.get("EU(l=G6)z8NGlJFcx|fS").get("inputs");
      * Number result = ExpressionParser.parseNumber(inputs, "STEPS");
-     * <p>
-     * Note that this method only works if the inputs node has the key specified
+     *
+     * <p>Note that this method only works if the inputs node has the key specified
      * in the inputKey parameter.
      *
      * @param inputs   The JsonNode holding all inputs of a block.

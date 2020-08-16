@@ -1,3 +1,21 @@
+/*
+ * Copyright (C) 2020 LitterBox contributors
+ *
+ * This file is part of LitterBox.
+ *
+ * LitterBox is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or (at
+ * your option) any later version.
+ *
+ * LitterBox is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
+ */
 package de.uni_passau.fim.se2.litterbox.jsonCreation;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -38,11 +56,10 @@ public class ProcedureJSONCreatorTest {
                 , jsonString);
     }
 
-
     @Test
     public void testProcedureWithStmts() {
         ActorDefinition stage = procedure.getActorDefinitionList().getDefinitions().get(0);
         String jsonString = ProcedureJSONCreator.createProcedureJSONString(stage.getProcedureDefinitionList().getList().get(0), stage.getIdent().getName(), procedure.getSymbolTable(), procedure.getProcedureMapping());
-        Assertions.assertEquals("\"=kNyJn`W.A5t$~BaYm5h\": {\"opcode\": \"procedures_definition\",\"next\": \"u2URKg;#M^stpx}L_8(Q\",\"parent\": null,\"inputs\": {\"custom_block\": [1,\":mEz1QI+6Kooz]~KHkcX\"]},\"fields\": {},\"shadow\": false,\"topLevel\": true,\"x\": 545.0,\"y\": 326.0},\":mEz1QI+6Kooz]~KHkcX\": {\"opcode\": \"procedures_prototype\",\"next\": null,\"parent\": \"=kNyJn`W.A5t$~BaYm5h\",\"inputs\": {},\"fields\": {},\"shadow\": true,\"topLevel\": false,\"mutation\": {\"tagName\": \"mutation\",\"children\": [],\"proccode\": \"TestBlock\",\"argumentids\": \"[]\",\"argumentnames\": \"[]\",\"argumentdefaults\": \"[]\",\"warp\": false}},\"u2URKg;#M^stpx}L_8(Q\": {\"opcode\": \"motion_ifonedgebounce\",\"next\": null,\"parent\": \"=kNyJn`W.A5t$~BaYm5h\",\"inputs\": {},\"fields\": {},\"shadow\": false,\"topLevel\": false}",jsonString);
+        Assertions.assertEquals("\"=kNyJn`W.A5t$~BaYm5h\": {\"opcode\": \"procedures_definition\",\"next\": \"u2URKg;#M^stpx}L_8(Q\",\"parent\": null,\"inputs\": {\"custom_block\": [1,\":mEz1QI+6Kooz]~KHkcX\"]},\"fields\": {},\"shadow\": false,\"topLevel\": true,\"x\": 545.0,\"y\": 326.0},\":mEz1QI+6Kooz]~KHkcX\": {\"opcode\": \"procedures_prototype\",\"next\": null,\"parent\": \"=kNyJn`W.A5t$~BaYm5h\",\"inputs\": {},\"fields\": {},\"shadow\": true,\"topLevel\": false,\"mutation\": {\"tagName\": \"mutation\",\"children\": [],\"proccode\": \"TestBlock\",\"argumentids\": \"[]\",\"argumentnames\": \"[]\",\"argumentdefaults\": \"[]\",\"warp\": false}},\"u2URKg;#M^stpx}L_8(Q\": {\"opcode\": \"motion_ifonedgebounce\",\"next\": null,\"parent\": \"=kNyJn`W.A5t$~BaYm5h\",\"inputs\": {},\"fields\": {},\"shadow\": false,\"topLevel\": false}", jsonString);
     }
 }

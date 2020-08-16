@@ -18,9 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.parser.stmt;
 
-import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
-
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import de.uni_passau.fim.se2.litterbox.ast.Constants;
@@ -38,8 +35,11 @@ import de.uni_passau.fim.se2.litterbox.ast.parser.ExpressionParser;
 import de.uni_passau.fim.se2.litterbox.ast.parser.NumExprParser;
 import de.uni_passau.fim.se2.litterbox.ast.parser.metadata.BlockMetadataParser;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
+
 import java.util.ArrayList;
 import java.util.List;
+
+import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 
 public class ActorSoundStmtParser {
 
@@ -110,11 +110,13 @@ public class ActorSoundStmtParser {
         return exprArray.get(Constants.POS_INPUT_SHADOW).asInt();
     }
 
-    private static ActorSoundStmt parseSetVolumeTo(JsonNode current, JsonNode allBlocks, BlockMetadata metadata) throws ParsingException {
+    private static ActorSoundStmt parseSetVolumeTo(JsonNode current, JsonNode allBlocks, BlockMetadata metadata)
+            throws ParsingException {
         return new SetVolumeTo(NumExprParser.parseNumExpr(current, VOLUME_KEY_CAPS, allBlocks), metadata);
     }
 
-    private static ActorSoundStmt parseSetSoundEffect(JsonNode current, JsonNode allBlocks, BlockMetadata metadata) throws ParsingException {
+    private static ActorSoundStmt parseSetSoundEffect(JsonNode current, JsonNode allBlocks, BlockMetadata metadata)
+            throws ParsingException {
         String effect = current.get(FIELDS_KEY).get(EFFECT_KEY).get(0).asText();
         Preconditions.checkArgument(SoundEffect.contains(effect));
         return new SetSoundEffectTo(SoundEffect.fromString(effect), NumExprParser.parseNumExpr(current, VALUE_KEY,

@@ -35,7 +35,6 @@ public abstract class InputMetadata extends AbstractNode implements Metadata, AS
         return inputName;
     }
 
-
     @Override
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);

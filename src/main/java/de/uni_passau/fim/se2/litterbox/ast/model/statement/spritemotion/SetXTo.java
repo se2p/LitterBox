@@ -26,8 +26,8 @@ import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 public class SetXTo extends AbstractNode implements SpriteMotionStmt {
 
-    private NumExpr num;
     private final BlockMetadata metadata;
+    private NumExpr num;
 
     public SetXTo(NumExpr num, BlockMetadata metadata) {
         super(num, metadata);

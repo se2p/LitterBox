@@ -18,9 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.cfg;
 
-import static com.google.common.truth.Truth.assertThat;
-
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
@@ -28,23 +25,25 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.list.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SayForSecs;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
+import org.junit.jupiter.api.Test;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Set;
 import java.util.stream.Collectors;
-import org.junit.jupiter.api.Test;
+
+import static com.google.common.truth.Truth.assertThat;
 
 public class ListVariableTest {
-
 
     @Test
     public void testAllListUses() throws IOException, ParsingException {
         ControlFlowGraph cfg = getCFG("src/test/fixtures/cfg/listoperations.json");
 
         CFGNode node = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof AddTo).findFirst().get();
-        ListVariable theList = new ListVariable(((AddTo)node.getASTNode()).getIdentifier());
+        ListVariable theList = new ListVariable(((AddTo) node.getASTNode()).getIdentifier());
 
-        for(CFGNode sayNode : cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof SayForSecs).collect(Collectors.toSet())) {
+        for (CFGNode sayNode : cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof SayForSecs).collect(Collectors.toSet())) {
             assertThat(getUsedLists(sayNode)).containsExactly(theList);
         }
 
@@ -60,9 +59,9 @@ public class ListVariableTest {
         ControlFlowGraph cfg = getCFG("src/test/fixtures/cfg/listoperations.json");
 
         CFGNode node = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof AddTo).findFirst().get();
-        ListVariable theList = new ListVariable(((AddTo)node.getASTNode()).getIdentifier());
+        ListVariable theList = new ListVariable(((AddTo) node.getASTNode()).getIdentifier());
 
-        for(CFGNode sayNode : cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof SayForSecs).collect(Collectors.toSet())) {
+        for (CFGNode sayNode : cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof SayForSecs).collect(Collectors.toSet())) {
             assertThat(getDefinedLists(sayNode)).isEmpty();
         }
 

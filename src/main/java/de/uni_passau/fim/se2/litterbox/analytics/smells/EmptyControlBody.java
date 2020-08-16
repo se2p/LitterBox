@@ -19,7 +19,6 @@
 package de.uni_passau.fim.se2.litterbox.analytics.smells;
 
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
-import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.*;
 
 /**
@@ -27,15 +26,14 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.*;
  */
 public class EmptyControlBody extends AbstractIssueFinder {
     public static final String NAME = "empty_control_body";
-    public static final String HINT_TEXT = "empty_control_body_hint";
 
     @Override
     public void visit(IfElseStmt node) {
         if (node.getStmtList().getStmts().isEmpty()) {
-            issues.add(new Issue(this, currentActor, node));
+            addIssue(node, node.getMetadata());
         }
         if (node.getElseStmts().getStmts().isEmpty()) {
-            issues.add(new Issue(this, currentActor, node));
+            addIssue(node, node.getMetadata());
         }
         visitChildren(node);
     }
@@ -43,7 +41,7 @@ public class EmptyControlBody extends AbstractIssueFinder {
     @Override
     public void visit(IfThenStmt node) {
         if (node.getThenStmts().getStmts().isEmpty()) {
-            issues.add(new Issue(this, currentActor, node));
+            addIssue(node, node.getMetadata());
         }
         visitChildren(node);
     }
@@ -51,7 +49,7 @@ public class EmptyControlBody extends AbstractIssueFinder {
     @Override
     public void visit(UntilStmt node) {
         if (node.getStmtList().getStmts().isEmpty()) {
-            issues.add(new Issue(this, currentActor, node));
+            addIssue(node, node.getMetadata());
         }
         visitChildren(node);
     }
@@ -59,7 +57,7 @@ public class EmptyControlBody extends AbstractIssueFinder {
     @Override
     public void visit(RepeatForeverStmt node) {
         if (node.getStmtList().getStmts().isEmpty()) {
-            issues.add(new Issue(this, currentActor, node));
+            addIssue(node, node.getMetadata());
         }
         visitChildren(node);
     }
@@ -67,7 +65,7 @@ public class EmptyControlBody extends AbstractIssueFinder {
     @Override
     public void visit(RepeatTimesStmt node) {
         if (node.getStmtList().getStmts().isEmpty()) {
-            issues.add(new Issue(this, currentActor, node));
+            addIssue(node, node.getMetadata());
         }
         visitChildren(node);
     }

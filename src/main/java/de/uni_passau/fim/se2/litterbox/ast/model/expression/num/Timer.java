@@ -27,7 +27,6 @@ public class Timer extends SingularExpression implements NumExpr, ASTLeaf {
 
     public Timer(BlockMetadata metadata) {
         super(metadata);
-
     }
 
     @Override

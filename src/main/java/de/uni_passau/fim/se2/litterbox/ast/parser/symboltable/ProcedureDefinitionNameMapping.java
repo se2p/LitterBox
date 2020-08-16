@@ -21,6 +21,7 @@ package de.uni_passau.fim.se2.litterbox.ast.parser.symboltable;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.Type;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
+
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -36,8 +37,12 @@ public class ProcedureDefinitionNameMapping {
         malformatedProcedures = new ArrayList<>();
     }
 
-    public void addProcedure(LocalIdentifier localIdentifier, String actorName, String procedureName, String[] argumentNames,
+    public void addProcedure(LocalIdentifier localIdentifier,
+                             String actorName,
+                             String procedureName,
+                             String[] argumentNames,
                              Type[] types) {
+
         Map<LocalIdentifier, ProcedureInfo> currentMap;
         if (procedures.containsKey(actorName)) {
             currentMap = procedures.get(actorName);
@@ -45,7 +50,8 @@ public class ProcedureDefinitionNameMapping {
             currentMap = new LinkedHashMap<>();
             procedures.put(actorName, currentMap);
         }
-        currentMap.put(localIdentifier, new ProcedureInfo(procedureName, makeArguments(argumentNames, types), actorName));
+        currentMap.put(localIdentifier,
+                new ProcedureInfo(procedureName, makeArguments(argumentNames, types), actorName));
     }
 
     private ArgumentInfo[] makeArguments(String[] argumentNames, Type[] types) {
@@ -63,7 +69,11 @@ public class ProcedureDefinitionNameMapping {
 
     public ProcedureInfo getProcedureForHash(String actorName, String jsonHash) {
         Map<LocalIdentifier, ProcedureInfo> procedureMap = getProcedures().get(actorName);
-        return procedureMap.entrySet().stream().filter(e -> e.getKey().getName().equals(jsonHash)).map(Map.Entry::getValue).findFirst().get();
+        return procedureMap.entrySet()
+                .stream()
+                .filter(e -> e.getKey().getName().equals(jsonHash))
+                .map(Map.Entry::getValue)
+                .findFirst().get();
     }
 
     public ProcedureInfo getProcedureForName(String actorName, String jsonHash) {
@@ -71,11 +81,11 @@ public class ProcedureDefinitionNameMapping {
         return procedureMap.values().stream().filter(p -> p.getName().equals(jsonHash)).findFirst().get();
     }
 
-    public void addMalformated(String malformated){
+    public void addMalformated(String malformated) {
         malformatedProcedures.add(malformated);
     }
 
-    public boolean checkIfMalformated(String toCheck){
+    public boolean checkIfMalformated(String toCheck) {
         return malformatedProcedures.contains(toCheck);
     }
 }

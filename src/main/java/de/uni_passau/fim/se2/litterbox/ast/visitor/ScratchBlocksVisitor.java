@@ -138,8 +138,8 @@ public class ScratchBlocksVisitor extends PrintVisitor {
 
     @Override
     public void visit(ProcedureDefinitionList node) {
-        for(ProcedureDefinition procedureDefinition : node.getList()) {
-            if(hasContent) {
+        for (ProcedureDefinition procedureDefinition : node.getList()) {
+            if (hasContent) {
                 newLine();
             }
             procedureDefinition.accept(this);
@@ -149,8 +149,8 @@ public class ScratchBlocksVisitor extends PrintVisitor {
 
     @Override
     public void visit(ScriptList node) {
-        for(Script script : node.getScriptList()) {
-            if(hasContent) {
+        for (Script script : node.getScriptList()) {
+            if (hasContent) {
                 newLine();
             }
             script.accept(this);
@@ -174,9 +174,11 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         String procedureName = ProgramParser.procDefMap.getProcedures().get(actorName).get(node.getIdent()).getName();
 
         List<ParameterDefinition> parameters = node.getParameterDefinitionList().getParameterDefinitions();
-        for(ParameterDefinition param : parameters) {
+        for (ParameterDefinition param : parameters) {
             int nextIndex = procedureName.indexOf('%');
-            procedureName = procedureName.substring(0, nextIndex) + getParameterName(param) + procedureName.substring(nextIndex + 2);
+            procedureName = procedureName.substring(0, nextIndex)
+                    + getParameterName(param)
+                    + procedureName.substring(nextIndex + 2);
         }
 
         emitNoSpace(procedureName);
@@ -185,7 +187,6 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         visit(node.getStmtList());
         inScript = false;
     }
-
 
     //---------------------------------------------------------------
     // Event blocks
@@ -196,7 +197,6 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         storeNotesForIssue(greenFlag);
         newLine();
     }
-
 
     @Override
     public void visit(Clicked clicked) {
@@ -272,8 +272,6 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         newLine();
     }
 
-
-
     //---------------------------------------------------------------
     // Control blocks
 
@@ -315,7 +313,6 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         newLine();
     }
 
-
     @Override
     public void visit(CreateCloneOf node) {
         emitNoSpace("create clone of ");
@@ -330,7 +327,6 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         storeNotesForIssue(node);
         newLine();
     }
-
 
     @Override
     public void visit(RepeatForeverStmt repeatForeverStmt) {
@@ -537,7 +533,6 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         newLine();
     }
 
-
     //---------------------------------------------------------------
     // Looks blocks
 
@@ -597,11 +592,11 @@ public class ScratchBlocksVisitor extends PrintVisitor {
     @Override
     public void visit(SwitchBackdrop node) {
         emitNoSpace("switch backdrop to ");
-        if(node.getElementChoice() instanceof Next) {
+        if (node.getElementChoice() instanceof Next) {
             emitNoSpace("(next backdrop v)");
-        } else if(node.getElementChoice() instanceof Prev) {
+        } else if (node.getElementChoice() instanceof Prev) {
             emitNoSpace("(previous backdrop v)");
-        } else if(node.getElementChoice() instanceof Random) {
+        } else if (node.getElementChoice() instanceof Random) {
             emitNoSpace("(random backdrop v)");
         } else {
             node.getElementChoice().accept(this);
@@ -694,7 +689,6 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         storeNotesForIssue(node);
         newLine();
     }
-
 
     //---------------------------------------------------------------
     // Sound blocks
@@ -877,7 +871,6 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         newLine();
     }
 
-
     @Override
     public void visit(SetPenSizeTo node) {
         emitNoSpace("set pen size to ");
@@ -886,13 +879,12 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         newLine();
     }
 
-
     //---------------------------------------------------------------
     // Variables blocks
 
     @Override
     public void visit(SetVariableTo node) {
-        if(!inScript) {
+        if (!inScript) {
             return;
         }
         emitNoSpace("set [");
@@ -1057,14 +1049,14 @@ public class ScratchBlocksVisitor extends PrintVisitor {
 
     @Override
     public void visit(NumberLiteral number) {
-        if(!inScript) {
+        if (!inScript) {
             return;
         }
 
         emitNoSpace("(");
         double num = number.getValue();
-        if(num % 1 == 0) {
-            emitNoSpace(Integer.toString((int)num));
+        if (num % 1 == 0) {
+            emitNoSpace(Integer.toString((int) num));
         } else {
             emitNoSpace(String.valueOf(num));
         }
@@ -1083,8 +1075,6 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         storeNotesForIssue(node);
         emitNoSpace(")");
     }
-
-
 
     @Override
     public void visit(WithExpr node) {
@@ -1160,7 +1150,6 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         emitNoSpace(")");
     }
 
-
     @Override
     public void visit(NameNum node) {
         emitNoSpace(node.getType());
@@ -1169,7 +1158,7 @@ public class ScratchBlocksVisitor extends PrintVisitor {
 
     @Override
     public void visit(StringLiteral stringLiteral) {
-        if(inScript) {
+        if (inScript) {
             emitNoSpace("[");
             emitNoSpace(stringLiteral.getText());
             emitNoSpace("]");
@@ -1365,13 +1354,13 @@ public class ScratchBlocksVisitor extends PrintVisitor {
 
     @Override
     public void visit(AsString node) {
-        if(node.getOperand1() instanceof SingularExpression) {
+        if (node.getOperand1() instanceof SingularExpression) {
             node.getOperand1().accept(this);
-        } else if(node.getOperand1() instanceof BoolExpr) {
+        } else if (node.getOperand1() instanceof BoolExpr) {
             node.getOperand1().accept(this);
-        } else if(node.getOperand1() instanceof NumExpr) {
+        } else if (node.getOperand1() instanceof NumExpr) {
             node.getOperand1().accept(this);
-        } else if(node.getOperand1() instanceof Parameter) {
+        } else if (node.getOperand1() instanceof Parameter) {
             NonDataBlockMetadata metadata = (NonDataBlockMetadata) ((Parameter) node.getOperand1()).getMetadata();
             if (ProcedureOpcode.argument_reporter_boolean.name().equals(metadata.getOpcode())) {
                 emitNoSpace("<");
@@ -1677,7 +1666,7 @@ public class ScratchBlocksVisitor extends PrintVisitor {
 
     @Override
     public void visit(StrId strId) {
-        if(!inScript) {
+        if (!inScript) {
             return;
         }
         emitNoSpace(strId.getName());
@@ -1688,10 +1677,12 @@ public class ScratchBlocksVisitor extends PrintVisitor {
     public void visit(CallStmt node) {
         String procedureName = node.getIdent().getName();
         List<Expression> parameters = node.getExpressions().getExpressions();
-        for(Expression param : parameters) {
+        for (Expression param : parameters) {
             int nextIndex = procedureName.indexOf('%');
-            String type = procedureName.substring(nextIndex, nextIndex + 1);
-            procedureName = procedureName.substring(0, nextIndex) + getParameterName(param) + procedureName.substring(nextIndex + 2);
+            String type = procedureName.substring(nextIndex, nextIndex + 1); // Todo: Unused variable?
+            procedureName = procedureName.substring(0, nextIndex)
+                    + getParameterName(param)
+                    + procedureName.substring(nextIndex + 2);
         }
         emitNoSpace(procedureName);
         storeNotesForIssue(node);
@@ -1705,7 +1696,7 @@ public class ScratchBlocksVisitor extends PrintVisitor {
     }
 
     public void end() {
-        if(!lineWrapped) {
+        if (!lineWrapped) {
             newLine();
         }
         emitNoSpace("[/scratchblocks]");
@@ -1727,12 +1718,11 @@ public class ScratchBlocksVisitor extends PrintVisitor {
     }
 
     protected void newLine() {
-        if(issueNote.size() == 1) {
+        if (issueNote.size() == 1) {
             emitNoSpace(" // Issue: ");
             emitNoSpace(issueNote.iterator().next());
             issueNote.clear();
-        }
-        else if(issueNote.size() > 1) {
+        } else if (issueNote.size() > 1) {
             emitNoSpace(" // Issues: ");
             emitNoSpace(String.join(", ", issueNote));
             issueNote.clear();
@@ -1743,8 +1733,8 @@ public class ScratchBlocksVisitor extends PrintVisitor {
 
     private void storeNotesForIssue(ASTNode node) {
         boolean hasIssue = false;
-        for(Issue issue : issues) {
-            if(issue.getCodeLocation() == node) {
+        for (Issue issue : issues) {
+            if (issue.getCodeLocation() == node) {
                 if (!hasIssue) {
                     emitNoSpace(":: #ff0000");
                 }
@@ -1759,7 +1749,6 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         PrintStream origStream = printStream;
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         printStream = new PrintStream(os);
-
 
         if (node.getType() instanceof StringType) {
             emitNoSpace("[");
@@ -1792,5 +1781,4 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         printStream = origStream;
         return name;
     }
-
 }

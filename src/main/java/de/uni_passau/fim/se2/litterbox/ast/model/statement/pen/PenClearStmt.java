@@ -28,7 +28,7 @@ public class PenClearStmt extends AbstractNode implements PenStmt, ASTLeaf {
 
     public PenClearStmt(BlockMetadata metadata) {
         super(metadata);
-        this.metadata=metadata;
+        this.metadata = metadata;
     }
 
     public BlockMetadata getMetadata() {

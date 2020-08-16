@@ -18,7 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.model.identifier;
 
-
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 

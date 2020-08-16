@@ -42,12 +42,10 @@ import java.util.Set;
 public class MessageNeverSent extends AbstractIssueFinder {
 
     public static final String NAME = "message_never_sent";
-    public static final String HINT_TEXT = "message_never_sent_hint";
     private List<Pair<String>> messageSent = new ArrayList<>();
     private List<Pair<String>> messageReceived = new ArrayList<>();
     private boolean addComment = false;
     private Set<String> notSentMessages = new LinkedHashSet<>();
-
 
     @Override
     public Set<Issue> check(Program program) {
@@ -116,8 +114,7 @@ public class MessageNeverSent extends AbstractIssueFinder {
                     final String actorName = currentActor.getIdent().getName();
                     messageReceived.add(new Pair<>(actorName, msgName));
                 } else if (notSentMessages.contains(msgName)) {
-                    addIssue(event, // TODO: event or node?
-                            HINT_TEXT, event.getMetadata());
+                    addIssue(event, event.getMetadata());
                 }
             }
         }

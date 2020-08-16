@@ -18,22 +18,22 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.parser.metadata;
 
-import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
-
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.CallMutationMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.MutationMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.PrototypeMutationMetadata;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
+
+import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 
 public class MutationMetadataTest {
     private static ObjectMapper mapper = new ObjectMapper();
@@ -53,13 +53,13 @@ public class MutationMetadataTest {
         PrototypeMutationMetadata existing = (PrototypeMutationMetadata) mutationMetadata;
         Assertions.assertFalse(existing.isWarp());
         Assertions.assertEquals(0, existing.getChild().size());
-        Assertions.assertEquals("mutation",existing.getTagName());
-        Assertions.assertEquals("TestMethod %s",existing.getProcCode());
+        Assertions.assertEquals("mutation", existing.getTagName());
+        Assertions.assertEquals("TestMethod %s", existing.getProcCode());
         List<String> list = new ArrayList<>();
         list.add("k~QZ.p5)uSGZZ]?@TWD$");
-        Assertions.assertEquals(list,existing.getArgumentIds());
-        Assertions.assertEquals("[\"number or text\"]",existing.getArgumentNames());
-        Assertions.assertEquals("[\"\"]",existing.getArgumentDefaults());
+        Assertions.assertEquals(list, existing.getArgumentIds());
+        Assertions.assertEquals("[\"number or text\"]", existing.getArgumentNames());
+        Assertions.assertEquals("[\"\"]", existing.getArgumentDefaults());
     }
 
     @Test
@@ -70,10 +70,10 @@ public class MutationMetadataTest {
         CallMutationMetadata existing = (CallMutationMetadata) mutationMetadata;
         Assertions.assertFalse(existing.isWarp());
         Assertions.assertEquals(0, existing.getChild().size());
-        Assertions.assertEquals("mutation",existing.getTagName());
-        Assertions.assertEquals("TestMethod %s",existing.getProcCode());
+        Assertions.assertEquals("mutation", existing.getTagName());
+        Assertions.assertEquals("TestMethod %s", existing.getProcCode());
         List<String> list = new ArrayList<>();
         list.add("k~QZ.p5)uSGZZ]?@TWD$");
-        Assertions.assertEquals(list,existing.getArgumentIds());
+        Assertions.assertEquals(list, existing.getArgumentIds());
     }
 }

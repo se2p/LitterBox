@@ -31,5 +31,4 @@ public class NoMetadata extends AbstractNode implements Metadata {
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);
     }
-
 }

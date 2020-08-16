@@ -18,9 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.parser.stmt;
 
-import static junit.framework.TestCase.fail;
-
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.truth.Truth;
@@ -40,11 +37,14 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.StartSound
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.StopAllSounds;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopAll;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
+
+import static junit.framework.TestCase.fail;
 
 public class ActorSoundStmtParserTest {
 
@@ -97,7 +97,7 @@ public class ActorSoundStmtParserTest {
             Truth.assertThat(listOfStmt.get(4).getClass()).isEqualTo(StopAll.class);
             StopAll stop = (StopAll) listOfStmt.get(4);
             Truth.assertThat(stop.getMetadata().getClass()).isEqualTo(NonDataBlockMetadata.class);
-            Truth.assertThat(((NonDataBlockMetadata)stop.getMetadata()).getMutation() instanceof StopMutationMetadata);
+            Truth.assertThat(((NonDataBlockMetadata) stop.getMetadata()).getMutation() instanceof StopMutationMetadata);
         } catch (ParsingException e) {
             e.printStackTrace();
             fail();

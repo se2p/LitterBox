@@ -18,9 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.jsonCreation;
 
-import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
-
-
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.MetaMetadata;
@@ -28,7 +25,10 @@ import de.uni_passau.fim.se2.litterbox.ast.model.metadata.monitor.MonitorListMet
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.monitor.MonitorMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.monitor.MonitorParamMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.monitor.MonitorSliderMetadata;
+
 import java.util.List;
+
+import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 
 public class JSONStringCreator {
     private static final String NULL_VALUE = null;
@@ -43,7 +43,8 @@ public class JSONStringCreator {
                     program.getSymbolTable(), program.getProcedureMapping()));
             jsonString.append(",");
         }
-        jsonString.append(ActorJSONCreator.createActorJSONString(actorDefinitionList.get(actorDefinitionList.size() - 1), program.getSymbolTable(), program.getProcedureMapping()));
+        jsonString.append(ActorJSONCreator.createActorJSONString(actorDefinitionList.get(actorDefinitionList.size() - 1)
+                , program.getSymbolTable(), program.getProcedureMapping()));
         jsonString.append("],");
         createMonitorListJSONString(jsonString, program).append(",");
         createExtensionJSONString(jsonString, program).append(",");

@@ -25,9 +25,9 @@ import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 public class Round extends UnaryExpression<NumExpr> implements NumExpr {
 
     public Round(NumExpr num, BlockMetadata metadata) {
-        super(num,metadata);
-
+        super(num, metadata);
     }
+
     @Override
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);

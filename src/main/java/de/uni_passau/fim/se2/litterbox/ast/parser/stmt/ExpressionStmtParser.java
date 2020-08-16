@@ -37,7 +37,7 @@ public class ExpressionStmtParser {
      * @param current   The JsonNode of the reporter block.
      * @param allBlocks The JsonNode holding all blocks of the actor definition currently analysed.
      * @return A new ExpressionStmt holding the expression corresponding to the
-     * reporter block.
+     *       reporter block.
      * @throws ParsingException If the block is not parsable.
      */
     public static Stmt parse(String blockId, JsonNode current, JsonNode allBlocks) throws ParsingException {

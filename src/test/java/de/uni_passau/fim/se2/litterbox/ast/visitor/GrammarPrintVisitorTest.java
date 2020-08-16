@@ -18,19 +18,19 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.visitor;
 
-import static junit.framework.TestCase.fail;
-
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
+import org.junit.Ignore;
+import org.junit.jupiter.api.BeforeAll;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
-import org.junit.Ignore;
-import org.junit.jupiter.api.BeforeAll;
+
+import static junit.framework.TestCase.fail;
 
 public class GrammarPrintVisitorTest {
 
@@ -49,7 +49,7 @@ public class GrammarPrintVisitorTest {
     }
 
     @Ignore // This is not really a test, it's a convenience method for showing what the visitor does or does not
-   // @Test
+    // @Test
     public void testVisitor() {
         PrintStream stream = new PrintStream(System.out);
         GrammarPrintVisitor visitor = new GrammarPrintVisitor(stream);
@@ -63,7 +63,7 @@ public class GrammarPrintVisitorTest {
     }
 
     @Ignore // This is not really a test, it's a convenience method for showing what the visitor does or does not
-   // @Test
+    // @Test
     public void testVisitorBig() {
         String path = "src/test/fixtures/printvisitor/grammarvisitorbig.json";
         File file = new File(path);

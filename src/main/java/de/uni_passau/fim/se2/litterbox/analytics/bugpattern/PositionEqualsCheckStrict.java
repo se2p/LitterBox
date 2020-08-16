@@ -32,7 +32,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
  */
 public class PositionEqualsCheckStrict extends PositionEqualsCheck {
     public static final String NAME = "position_equals_check_strict";
-    public static final String HINT_TEXT = "position_equals_check_strict_hint";
     private static boolean inScriptOrProcedure;
 
     @Override
@@ -59,7 +58,7 @@ public class PositionEqualsCheckStrict extends PositionEqualsCheck {
     public void visit(Equals node) {
         if (inCondition && inScriptOrProcedure) {
             if (!checkEquals(node)) {
-                addIssue(node, HINT_TEXT, node.getMetadata());
+                addIssue(node, node.getMetadata());
             }
         }
     }

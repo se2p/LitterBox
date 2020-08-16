@@ -30,12 +30,11 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitUntil;
 public class MissingWaitUntilCondition extends AbstractIssueFinder {
 
     public static final String NAME = "missing_wait_condition";
-    public static final String HINT_TEXT = "missing_wait_condition_hint";
 
     @Override
     public void visit(WaitUntil node) {
         if (node.getUntil() instanceof UnspecifiedBoolExpr) {
-            addIssue(node, HINT_TEXT, node.getMetadata());
+            addIssue(node, node.getMetadata());
         }
     }
 

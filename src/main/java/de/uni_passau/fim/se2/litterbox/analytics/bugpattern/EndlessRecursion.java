@@ -31,7 +31,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
  */
 public class EndlessRecursion extends AbstractIssueFinder {
     public static final String NAME = "endless_recursion";
-    public static final String HINT_TEXT = "endless_recursion_hint";
     private String currentProcedureName;
     private boolean insideProcedure;
     private int loopIfCounter;
@@ -55,7 +54,7 @@ public class EndlessRecursion extends AbstractIssueFinder {
         if (insideProcedure && loopIfCounter == 0) {
             String call = node.getIdent().getName();
             if (call.equals(currentProcedureName)) {
-                addIssue(node, HINT_TEXT, node.getMetadata());
+                addIssue(node, node.getMetadata());
             }
         }
     }

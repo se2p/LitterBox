@@ -23,14 +23,13 @@ import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
-import de.uni_passau.fim.se2.litterbox.jsonCreation.JSONFileCreator;
-import java.io.File;
-import java.io.IOException;
-import java.util.Set;
-
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.Set;
 
 public class CallWithoutDefinitionWithHintTest {
     private static Program empty;
@@ -39,8 +38,7 @@ public class CallWithoutDefinitionWithHintTest {
     private static Program writeTheDraw;
     private static Program scratchHomeVideo;
     private static Program derpyAnimal;
-    private static Program malformatedProc;
-    private static ObjectMapper mapper = new ObjectMapper();
+    private static final ObjectMapper mapper = new ObjectMapper();
 
     @BeforeAll
     public static void setUp() throws IOException, ParsingException {
@@ -57,8 +55,6 @@ public class CallWithoutDefinitionWithHintTest {
         scratchHomeVideo = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
         f = new File("./src/test/fixtures/bugpattern/derpyAnimal.json");
         derpyAnimal = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
-        f = new File("./src/test/fixtures/bugpattern/malformatedProc.json");
-        malformatedProc = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
     }
 
     @Test
@@ -100,13 +96,6 @@ public class CallWithoutDefinitionWithHintTest {
     public void testDerpyAnimal() {
         CallWithoutDefinition parameterName = new CallWithoutDefinition();
         Set<Issue> reports = parameterName.check(derpyAnimal);
-        Assertions.assertEquals(0, reports.size());
-    }
-
-    @Test
-    public void testMalformatedProc() {
-        CallWithoutDefinition parameterName = new CallWithoutDefinition();
-        Set<Issue> reports = parameterName.check(malformatedProc);
         Assertions.assertEquals(0, reports.size());
     }
 }

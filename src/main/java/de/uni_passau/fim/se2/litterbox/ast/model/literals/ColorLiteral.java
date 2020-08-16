@@ -22,6 +22,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ASTLeaf;
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.Color;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
+
 import java.util.Objects;
 
 public class ColorLiteral extends AbstractNode implements Color, ASTLeaf {
@@ -66,9 +67,9 @@ public class ColorLiteral extends AbstractNode implements Color, ASTLeaf {
             return false;
         }
         ColorLiteral that = (ColorLiteral) o;
-        return red == that.red &&
-                green == that.green &&
-                blue == that.blue;
+        return red == that.red
+                && green == that.green
+                && blue == that.blue;
     }
 
     @Override

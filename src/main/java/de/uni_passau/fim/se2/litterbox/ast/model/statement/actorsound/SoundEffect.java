@@ -21,6 +21,7 @@ package de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTLeaf;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
+
 import java.util.Collections;
 import java.util.List;
 
@@ -43,10 +44,6 @@ public enum SoundEffect implements ASTLeaf {
         return false;
     }
 
-    public String getToken() {
-        return token;
-    }
-
     public static SoundEffect fromString(String type) {
         for (SoundEffect f : values()) {
             if (f.getToken().startsWith(type.toLowerCase())) {
@@ -54,6 +51,10 @@ public enum SoundEffect implements ASTLeaf {
             }
         }
         throw new IllegalArgumentException("Unknown SoundEffect: " + type);
+    }
+
+    public String getToken() {
+        return token;
     }
 
     @Override

@@ -86,7 +86,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.timecomp.TimeComp;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.Color;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.FromNumber;
-import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.Rgba;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.DataExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Parameter;
@@ -94,6 +93,12 @@ import de.uni_passau.fim.se2.litterbox.ast.model.variable.ScratchList;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 
 public interface ScratchVisitor {
+
+    default void visitChildren(ASTNode node) {
+        for (ASTNode child : node.getChildren()) {
+            child.accept(this);
+        }
+    }
 
     /**
      * Default implementation of visit method for ASTNode.
@@ -108,11 +113,6 @@ public interface ScratchVisitor {
         visitChildren(node);
     }
 
-    default void visitChildren(ASTNode node) {
-        for (ASTNode child : node.getChildren()) {
-            child.accept(this);
-        }
-    }
     /**
      * Default implementation of visit method for ActorDefinition.
      *
@@ -985,19 +985,6 @@ public interface ScratchVisitor {
     }
 
     /**
-     * Default implementation of visit method for {@link URI}.
-     *
-     * <p>
-     * Iterates all children of this node without performing any action.
-     * </p>
-     *
-     * @param node URI  Node of which the children will be iterated
-     */
-    default void visit(URI node) {
-        visit((ASTNode) node);
-    }
-
-    /**
      * Default implementation of visit method for {@link ElementChoice}.
      *
      * <p>
@@ -1228,19 +1215,6 @@ public interface ScratchVisitor {
      * @param node FromNumber  Node of which the children will be iterated
      */
     default void visit(FromNumber node) {
-        visit((Color) node);
-    }
-
-    /**
-     * Default implementation of visit method for {@link Rgba}.
-     *
-     * <p>
-     * Iterates all children of this node without performing any action.
-     * </p>
-     *
-     * @param node Rgba  Node of which the children will be iterated
-     */
-    default void visit(Rgba node) {
         visit((Color) node);
     }
 
@@ -2008,6 +1982,19 @@ public interface ScratchVisitor {
      * @param node DeclarationStmtList  Node of which the children will be iterated
      */
     default void visit(DeclarationStmtList node) {
+        visit((ASTNode) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link DeclarationBroadcastStmt}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node DeclarationStmtList  Node of which the children will be iterated
+     */
+    default void visit(DeclarationBroadcastStmt node) {
         visit((ASTNode) node);
     }
 
@@ -3501,7 +3488,7 @@ public interface ScratchVisitor {
     }
 
     /**
-     * Default implementation of visit method for {@link }.
+     * Default implementation of visit method for {@link PrototypeMutationMetadata}.
      *
      * <p>
      * Iterates all children of this node without performing any action.

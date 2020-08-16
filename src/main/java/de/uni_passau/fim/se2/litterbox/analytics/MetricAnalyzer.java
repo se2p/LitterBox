@@ -50,7 +50,6 @@ public class MetricAnalyzer extends Analyzer {
             issueTool.createCSVFile(program, csv);
         } catch (IOException e) {
             log.warning("Could not create CSV File: " + csv);
-            e.printStackTrace();
         }
     }
 }

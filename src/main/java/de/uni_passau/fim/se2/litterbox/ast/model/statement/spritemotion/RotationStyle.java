@@ -21,6 +21,7 @@ package de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTLeaf;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
+
 import java.util.Collections;
 import java.util.List;
 
@@ -34,10 +35,6 @@ public enum RotationStyle implements ASTLeaf {
 
     RotationStyle(String token) {
         this.token = token;
-    }
-
-    public String getToken() {
-        return token;
     }
 
     public static RotationStyle fromString(String type) {
@@ -56,6 +53,10 @@ public enum RotationStyle implements ASTLeaf {
             }
         }
         return false;
+    }
+
+    public String getToken() {
+        return token;
     }
 
     @Override

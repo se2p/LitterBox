@@ -19,6 +19,7 @@
 package de.uni_passau.fim.se2.litterbox.ast.model;
 
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
+
 import java.util.List;
 
 public interface ASTNode {

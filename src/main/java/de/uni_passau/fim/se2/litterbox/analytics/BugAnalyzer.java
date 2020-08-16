@@ -94,7 +94,7 @@ public class BugAnalyzer extends Analyzer {
                 reportGenerator.generateReport(program, issues);
                 reportGenerator.close();
             } else {
-                throw new IllegalArgumentException("Unknown file type: "+reportFileName);
+                throw new IllegalArgumentException("Unknown file type: " + reportFileName);
             }
         } catch (IOException e) {
             log.warning(e.getMessage());

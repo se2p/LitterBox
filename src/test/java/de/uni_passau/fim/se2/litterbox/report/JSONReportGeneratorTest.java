@@ -1,3 +1,21 @@
+/*
+ * Copyright (C) 2020 LitterBox contributors
+ *
+ * This file is part of LitterBox.
+ *
+ * LitterBox is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or (at
+ * your option) any later version.
+ *
+ * LitterBox is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
+ */
 package de.uni_passau.fim.se2.litterbox.report;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -40,11 +58,13 @@ public class JSONReportGeneratorTest {
         generator.generateReport(program, issues);
         os.close();
         assertEquals("[ {" + System.lineSeparator() +
-                "  \"finder\" : \"position_equals_check\"," + System.lineSeparator() +
+                "  \"finder\" : \"Position Equals Check\"," + System.lineSeparator() +
                 "  \"type\" : \"BUG\"," + System.lineSeparator() +
                 "  \"sprite\" : \"Sprite1\"," + System.lineSeparator() +
-                "  \"hint\" : \"position_equals_check_hint\"," + System.lineSeparator() +
-                "  \"code\" : \"[scratchblocks]\\n<(x position) = :: #ff0000> // Issue: position_equals_check\\n[/scratchblocks]\\n\"" + System.lineSeparator() +
+                "  \"hint\" : \"When an equals comparison is used as check for an until loop or a wait until, "
+                + "it can occur that the condition is never met exactly. "
+                + "Therefore use '<' or '>' for the comparison.\"," + System.lineSeparator() +
+                "  \"code\" : \"[scratchblocks]\\n<(x position) = :: #ff0000> // Issue: Position Equals Check\\n[/scratchblocks]\\n\"" + System.lineSeparator() +
                 "} ]", os.toString());
     }
 
@@ -59,29 +79,37 @@ public class JSONReportGeneratorTest {
         generator.generateReport(program, issues);
         os.close();
         assertEquals("[ {" + System.lineSeparator() +
-                "  \"finder\" : \"position_equals_check\"," + System.lineSeparator() +
+                "  \"finder\" : \"Position Equals Check\"," + System.lineSeparator() +
                 "  \"type\" : \"BUG\"," + System.lineSeparator() +
                 "  \"sprite\" : \"Figur1\"," + System.lineSeparator() +
-                "  \"hint\" : \"position_equals_check_hint\"," + System.lineSeparator() +
-                "  \"code\" : \"[scratchblocks]\\n<(distance to (mouse-pointer v)) = :: #ff0000> // Issue: position_equals_check\\n[/scratchblocks]\\n\"" + System.lineSeparator() +
+                "  \"hint\" : \"When an equals comparison is used as check for an until loop or a wait until, "
+                + "it can occur that the condition is never met exactly. "
+                + "Therefore use '<' or '>' for the comparison.\"," + System.lineSeparator() +
+                "  \"code\" : \"[scratchblocks]\\n<(distance to (mouse-pointer v)) = :: #ff0000> // Issue: Position Equals Check\\n[/scratchblocks]\\n\"" + System.lineSeparator() +
                 "}, {" + System.lineSeparator() +
-                "  \"finder\" : \"position_equals_check\"," + System.lineSeparator() +
+                "  \"finder\" : \"Position Equals Check\"," + System.lineSeparator() +
                 "  \"type\" : \"BUG\"," + System.lineSeparator() +
                 "  \"sprite\" : \"Figur1\"," + System.lineSeparator() +
-                "  \"hint\" : \"position_equals_check_hint\"," + System.lineSeparator() +
-                "  \"code\" : \"[scratchblocks]\\n<(distance to (Bat v)) = :: #ff0000> // Issue: position_equals_check\\n[/scratchblocks]\\n\"" + System.lineSeparator() +
+                "  \"hint\" : \"When an equals comparison is used as check for an until loop or a wait until, "
+                + "it can occur that the condition is never met exactly. "
+                + "Therefore use '<' or '>' for the comparison.\"," + System.lineSeparator() +
+                "  \"code\" : \"[scratchblocks]\\n<(distance to (Bat v)) = :: #ff0000> // Issue: Position Equals Check\\n[/scratchblocks]\\n\"" + System.lineSeparator() +
                 "}, {" + System.lineSeparator() +
-                "  \"finder\" : \"position_equals_check\"," + System.lineSeparator() +
+                "  \"finder\" : \"Position Equals Check\"," + System.lineSeparator() +
                 "  \"type\" : \"BUG\"," + System.lineSeparator() +
                 "  \"sprite\" : \"Figur1\"," + System.lineSeparator() +
-                "  \"hint\" : \"position_equals_check_hint\"," + System.lineSeparator() +
-                "  \"code\" : \"[scratchblocks]\\n<(mouse x) = :: #ff0000> // Issue: position_equals_check\\n[/scratchblocks]\\n\"" + System.lineSeparator() +
+                "  \"hint\" : \"When an equals comparison is used as check for an until loop or a wait until, "
+                + "it can occur that the condition is never met exactly. "
+                + "Therefore use '<' or '>' for the comparison.\"," + System.lineSeparator() +
+                "  \"code\" : \"[scratchblocks]\\n<(mouse x) = :: #ff0000> // Issue: Position Equals Check\\n[/scratchblocks]\\n\"" + System.lineSeparator() +
                 "}, {" + System.lineSeparator() +
-                "  \"finder\" : \"position_equals_check\"," + System.lineSeparator() +
+                "  \"finder\" : \"Position Equals Check\"," + System.lineSeparator() +
                 "  \"type\" : \"BUG\"," + System.lineSeparator() +
                 "  \"sprite\" : \"Figur1\"," + System.lineSeparator() +
-                "  \"hint\" : \"position_equals_check_hint\"," + System.lineSeparator() +
-                "  \"code\" : \"[scratchblocks]\\n<(mouse y) = :: #ff0000> // Issue: position_equals_check\\n[/scratchblocks]\\n\"" + System.lineSeparator() +
+                "  \"hint\" : \"When an equals comparison is used as check for an until loop or a wait until, "
+                + "it can occur that the condition is never met exactly. "
+                + "Therefore use '<' or '>' for the comparison.\"," + System.lineSeparator() +
+                "  \"code\" : \"[scratchblocks]\\n<(mouse y) = :: #ff0000> // Issue: Position Equals Check\\n[/scratchblocks]\\n\"" + System.lineSeparator() +
                 "} ]", os.toString());
     }
 
@@ -97,11 +125,14 @@ public class JSONReportGeneratorTest {
 
         String result = Files.readString(tmpFile);
         assertEquals("[ {" + System.lineSeparator() +
-                "  \"finder\" : \"position_equals_check\"," + System.lineSeparator() +
+                "  \"finder\" : \"Position Equals Check\"," + System.lineSeparator() +
                 "  \"type\" : \"BUG\"," + System.lineSeparator() +
                 "  \"sprite\" : \"Sprite1\"," + System.lineSeparator() +
-                "  \"hint\" : \"position_equals_check_hint\"," + System.lineSeparator() +
-                "  \"code\" : \"[scratchblocks]\\n<(x position) = :: #ff0000> // Issue: position_equals_check\\n[/scratchblocks]\\n\"" + System.lineSeparator() +
+                "  \"hint\" : \"When an equals comparison is used as check for an until loop or a wait until, "
+                + "it can occur that the condition is never met exactly. "
+                + "Therefore use '<' or '>' for the comparison.\"," + System.lineSeparator() +
+                "  \"code\" : \"[scratchblocks]\\n<(x position) = :: #ff0000> "
+                + "// Issue: Position Equals Check\\n[/scratchblocks]\\n\"" + System.lineSeparator() +
                 "} ]", result);
         Files.delete(tmpFile);
     }

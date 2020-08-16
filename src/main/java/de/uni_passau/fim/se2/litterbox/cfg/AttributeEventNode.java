@@ -40,7 +40,7 @@ public class AttributeEventNode extends CFGNode {
     @Override
     public String toString() {
         // TODO: Actual variable name?
-        return "Variable above value: "+attribute.getType();
+        return "Variable above value: " + attribute.getType();
     }
 
     @Override

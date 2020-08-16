@@ -54,13 +54,13 @@ If you want to check a specific project given its ID (which you can
 find in the URL of the project), you can use the following command:
 
 ```
-java -jar Litterbox-1.1.jar --check --projectid <projectid>
+java -jar Litterbox-1.1.jar --check --projectid <projectid> --path <path/to/store/downloaded/project>
 ```
 
 When invoked this way, LitterBox will retrieve the JSON file
-automatically from the Scratch-website, and then run checks on
-it. Note that the Scratch project to be analyzed has to be shared
-publically for this.
+automatically from the Scratch-website, store it at the given path, 
+and then run checks on it. Note that the Scratch project to be 
+analyzed has to be shared publically for this.
 
 
 ### Checking multiple projects
@@ -70,9 +70,13 @@ project IDs to check in a text file (one project ID per line) and
 invoke LitterBox as follows:
 
 ```
-java -jar Litterbox-1.1.jar --check --projectlist <path/to/projectidlist.txt>
+java -jar Litterbox-1.1.jar --check --projectlist <path/to/projectidlist.txt> --path <path/to/projects>
 ```
 
+LitterBox will check the given path for the projects.
+If a project is not found at the given path, LitterBox 
+will download and store it at the given path, and then perform 
+the checks.
 
 ### Output options
 
@@ -171,5 +175,9 @@ Stephan Lukasczyk
 Florian Obermüller  
 Andreas Stahlbauer  
 Florian Sulzmeier  
+Ewald Wasmeier
 
-LitterBox is supported by the project FR 2955/3-1 funded by the "Deutsche Forschungsgemeinschaft".
+LitterBox is supported by the project FR 2955/3-1 funded by the
+"Deutsche Forschungsgemeinschaft" and BMBF project
+"primary::programming" as part of the Qualitätsoffensive
+Lehrerbildung.

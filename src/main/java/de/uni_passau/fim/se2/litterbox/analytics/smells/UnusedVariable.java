@@ -20,6 +20,7 @@ package de.uni_passau.fim.se2.litterbox.analytics.smells;
 
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
+import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
@@ -36,14 +37,13 @@ import java.util.*;
 public class UnusedVariable extends AbstractIssueFinder {
 
     public static final String NAME = "unused_variables";
-    public static final String HINT_TEXT = "unused_variables_hint";
     private static final String[] MY_VARIABLE_LANGUAGES = {"meine Variable", "исхатәу аҽеиҭак", "my variable",
-            "متغيري", "мая зменная", "моята променлива", "la meva variable", "گۆڕاوەکەم", "moje proměnná", "fy " +
-            "newidyn", "min variabel", "η μεταβλητή μου", "mi variable", "minu muutuja", "nire aldagaia", "متغیر من",
-            "muuttujani", "ma variable", "m'athróg", "an caochladair agam", "a miña variábel", "המשתנה שלי", "moja " +
-            "varijabla", "az én változóm", "variabel saya", "la mia variabile", "へんすう", "変数", "ჩემი ცვლადი",
-            "អថេរខ្ញុំ", "나의 변수", "mano kintamasis", "mans mainīgais", "taku taurangi", "min variabel", "mijn " +
-            "variabele", "min variabel", "moja zmienna", "minha variável", "a minha variável", "toʾoku variable",
+            "متغيري", "мая зменная", "моята променлива", "la meva variable", "گۆڕاوەکەم", "moje proměnná", "fy "
+            + "newidyn", "min variabel", "η μεταβλητή μου", "mi variable", "minu muutuja", "nire aldagaia", "متغیر من",
+            "muuttujani", "ma variable", "m'athróg", "an caochladair agam", "a miña variábel", "המשתנה שלי", "moja "
+            + "varijabla", "az én változóm", "variabel saya", "la mia variabile", "へんすう", "変数", "ჩემი ცვლადი",
+            "អថេរខ្ញុំ", "나의 변수", "mano kintamasis", "mans mainīgais", "taku taurangi", "min variabel", "mijn "
+            + "variabele", "min variabel", "moja zmienna", "minha variável", "a minha variável", "toʾoku variable",
             "variabila mea", "моя переменная", "premenná", "moja spremenljivka", "моја променљива", "min variabel",
             "kibadilika changu", "ตัวแปรของฉัน", "değişkenim", "моя змінна", "mening o'zgaruvchim", "biến của tôi",
             "我的变量", "i-variable yami"};
@@ -52,12 +52,12 @@ public class UnusedVariable extends AbstractIssueFinder {
     private boolean insideScript;
     private Map<String, VariableInfo> varMap;
     private Map<String, ExpressionListInfo> listMap;
-    private Set<Issue> issues = new LinkedHashSet<>();
 
     @Override
     public Set<Issue> check(Program program) {
         Preconditions.checkNotNull(program);
         this.program = program;
+        issues = new LinkedHashSet<>();
         varMap = program.getSymbolTable().getVariables();
         listMap = program.getSymbolTable().getLists();
         variableCalls = new ArrayList<>();
@@ -67,7 +67,7 @@ public class UnusedVariable extends AbstractIssueFinder {
     }
 
     private void checkVariables() {
-
+        List<ActorDefinition> actors = program.getActorDefinitionList().getDefinitions();
         for (Map.Entry<String, VariableInfo> entry : varMap.entrySet()) {
             VariableInfo curr = entry.getValue();
             String actorName = curr.getActor();
@@ -81,8 +81,13 @@ public class UnusedVariable extends AbstractIssueFinder {
             }
 
             if (!currFound && !Arrays.asList(MY_VARIABLE_LANGUAGES).contains(name)) {
-                // TODO: Retrieve actor and node
-                issues.add(new Issue(this, null, null));
+                for (ActorDefinition actor : actors) {
+                    if (actor.getIdent().getName().equals(actorName)) {
+                        currentActor = actor;
+                        break;
+                    }
+                }
+                addIssueWithLooseComment();
             }
         }
 
@@ -98,8 +103,13 @@ public class UnusedVariable extends AbstractIssueFinder {
                 }
             }
             if (!currFound) {
-                // TODO: Retrieve actor and node
-                issues.add(new Issue(this, null, null));
+                for (ActorDefinition actor : actors) {
+                    if (actor.getIdent().getName().equals(actorName)) {
+                        currentActor = actor;
+                        break;
+                    }
+                }
+                addIssueWithLooseComment();
             }
         }
     }

@@ -31,6 +31,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.ChangeSizeBy;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.NextCostume;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.*;
+
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -54,7 +55,6 @@ public class AttributeUseVisitor implements DefinableCollector<Attribute> {
         node.getBoolExpr().accept(this);
     }
 
-
     @Override
     public void visit(IfElseStmt node) {
         node.getBoolExpr().accept(this);
@@ -74,7 +74,6 @@ public class AttributeUseVisitor implements DefinableCollector<Attribute> {
     public void visit(UntilStmt node) {
         node.getBoolExpr().accept(this);
     }
-
 
     @Override
     public void visit(ChangeXBy node) {
@@ -121,7 +120,6 @@ public class AttributeUseVisitor implements DefinableCollector<Attribute> {
         uses.add(Attribute.rotationOf(currentActor.getIdent()));
     }
 
-
     //---------------------------------------------------------------
     // Costume
 
@@ -148,13 +146,13 @@ public class AttributeUseVisitor implements DefinableCollector<Attribute> {
         uses.add(Attribute.sizeOf(currentActor.getIdent()));
     }
 
-
     @Override
     public void visit(AttributeOf node) {
         // TODO: Handle this
 
         // Name of var or attribute
-        de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.Attribute attribute = node.getAttribute();
+        de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.Attribute attribute
+                = node.getAttribute();
         // Name of owner
         Expression owner = ((WithExpr) node.getElementChoice()).getExpression();
 
@@ -162,12 +160,12 @@ public class AttributeUseVisitor implements DefinableCollector<Attribute> {
         // We lose precision here because it could also be a Parameter or else
         // but we don't know the value of that statically
         if (owner instanceof LocalIdentifier) {
-            LocalIdentifier localIdentifier = (LocalIdentifier)owner;
+            LocalIdentifier localIdentifier = (LocalIdentifier) owner;
 
-            if(attribute instanceof AttributeFromFixed) {
-                AttributeFromFixed fixedAttribute = (AttributeFromFixed)attribute;
+            if (attribute instanceof AttributeFromFixed) {
+                AttributeFromFixed fixedAttribute = (AttributeFromFixed) attribute;
                 FixedAttribute at = fixedAttribute.getAttribute();
-                switch(at) {
+                switch (at) {
                     case X_POSITION:
                     case Y_POSITION:
                         uses.add(Attribute.positionOf(localIdentifier));
@@ -187,10 +185,10 @@ public class AttributeUseVisitor implements DefinableCollector<Attribute> {
                     case BACKDROP_NUMBER:
                         // Not handled yet
                         break;
+                    default:
+                        // TODO: What should happen in the default case?
                 }
             }
         }
-
     }
-
 }

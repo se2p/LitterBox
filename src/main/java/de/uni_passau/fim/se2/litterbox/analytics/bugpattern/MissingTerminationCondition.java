@@ -29,12 +29,11 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
  */
 public class MissingTerminationCondition extends AbstractIssueFinder {
     public static final String NAME = "missing_termination";
-    public static final String HINT_TEXT = "missing_termination_hint";
 
     @Override
     public void visit(UntilStmt node) {
         if (node.getBoolExpr() instanceof UnspecifiedBoolExpr) {
-            addIssue(node, HINT_TEXT, node.getMetadata());
+            addIssue(node, node.getMetadata());
         }
         visitChildren(node);
     }

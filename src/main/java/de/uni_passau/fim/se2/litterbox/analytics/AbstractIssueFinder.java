@@ -74,22 +74,19 @@ public abstract class AbstractIssueFinder implements IssueFinder, ScratchVisitor
         visitChildren(procedure);
     }
 
-    protected void addIssue(ASTNode node, String hintText, Metadata metadata) {
-        if(currentScript != null) {
-            issues.add(new Issue(this, currentActor, currentScript, node,
-                    hintText, metadata));
+    protected void addIssue(ASTNode node, Metadata metadata) {
+        if (currentScript != null) {
+            issues.add(new Issue(this, currentActor, currentScript, node, metadata));
         } else {
-            assert(currentProcedure != null);
-            issues.add(new Issue(this, currentActor, currentProcedure, node,
-                    hintText, metadata));
+            assert (currentProcedure != null);
+            issues.add(new Issue(this, currentActor, currentProcedure, node, metadata));
         }
     }
 
-    protected void addIssueWithLooseComment(String hintText) {
+    protected void addIssueWithLooseComment() {
         issues.add(new Issue(this, currentActor,
                 (Script) null, // TODO: There is no script
                 currentActor, // TODO: There is no node?
-                hintText,
                 null)); // TODO: There is no metadata
     }
 

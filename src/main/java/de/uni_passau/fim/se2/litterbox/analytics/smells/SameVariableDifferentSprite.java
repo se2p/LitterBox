@@ -26,19 +26,16 @@ import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ExpressionListInfo
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.VariableInfo;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class SameVariableDifferentSprite extends AbstractIssueFinder {
     public static final String NAME = "same_variable_different_sprite";
-    public static final String HINT_TEXT = "same_variable_different_sprite_hint";
 
     @Override
     public Set<Issue> check(Program program) {
         Preconditions.checkNotNull(program);
         boolean found = false;
+        issues = new LinkedHashSet<>();
         List<ActorDefinition> actorDefinitions = program.getActorDefinitionList().getDefinitions();
         Map<String, VariableInfo> variableInfoMap = program.getSymbolTable().getVariables();
         ArrayList<VariableInfo> varInfos = new ArrayList<>(variableInfoMap.values());
@@ -46,7 +43,8 @@ public class SameVariableDifferentSprite extends AbstractIssueFinder {
             String currentName = varInfos.get(i).getVariableName();
             String currentActorName = varInfos.get(i).getActor();
             for (int j = 0; j < varInfos.size(); j++) {
-                if (i != j && currentName.equals(varInfos.get(j).getVariableName()) && !currentActorName.equals(varInfos.get(j).getActor())) {
+                if (i != j && currentName.equals(varInfos.get(j).getVariableName())
+                        && !currentActorName.equals(varInfos.get(j).getActor())) {
                     found = true;
                     break;
                 }
@@ -56,7 +54,7 @@ public class SameVariableDifferentSprite extends AbstractIssueFinder {
                 for (ActorDefinition actorDefinition : actorDefinitions) {
                     currentActor = actorDefinition;
                     if (actorDefinition.getIdent().getName().equals(currentActorName)) {
-                        addIssueWithLooseComment(HINT_TEXT);
+                        addIssueWithLooseComment();
                         break;
                     }
                 }
@@ -69,7 +67,8 @@ public class SameVariableDifferentSprite extends AbstractIssueFinder {
             String currentName = listInfos.get(i).getVariableName();
             String currentActorName = listInfos.get(i).getActor();
             for (int j = 0; j < listInfos.size(); j++) {
-                if (i != j && currentName.equals(listInfos.get(j).getVariableName()) && !currentActorName.equals(listInfos.get(j).getActor())) {
+                if (i != j && currentName.equals(listInfos.get(j).getVariableName())
+                        && !currentActorName.equals(listInfos.get(j).getActor())) {
                     found = true;
                     break;
                 }
@@ -79,7 +78,7 @@ public class SameVariableDifferentSprite extends AbstractIssueFinder {
                 for (ActorDefinition actorDefinition : actorDefinitions) {
                     if (actorDefinition.getIdent().getName().equals(currentActorName)) {
                         currentActor = actorDefinition;
-                        addIssueWithLooseComment(HINT_TEXT);
+                        addIssueWithLooseComment();
                         break;
                     }
                 }

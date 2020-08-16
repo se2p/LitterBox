@@ -31,7 +31,7 @@ public class ChangePenSizeBy extends AbstractNode implements PenStmt {
     public ChangePenSizeBy(NumExpr value, BlockMetadata metadata) {
         super(value, metadata);
         this.value = Preconditions.checkNotNull(value);
-        this.metadata=metadata;
+        this.metadata = metadata;
     }
 
     public BlockMetadata getMetadata() {

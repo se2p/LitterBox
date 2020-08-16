@@ -36,11 +36,18 @@ import java.util.List;
  */
 public class CustomBlockWithTermination extends AbstractIssueFinder {
     public static final String NAME = "custom_block_with_termination";
-    public static final String HINT_TEXT = "custom_block_with_termination_hint";
     private String currentProcedureName;
     private List<String> proceduresWithForever;
     private List<CallStmt> calledProcedures;
     private boolean insideProcedure;
+
+    private void checkCalls() {
+        for (CallStmt calledProcedure : calledProcedures) {
+            if (proceduresWithForever.contains(calledProcedure.getIdent().getName())) {
+                addIssue(calledProcedure, calledProcedure.getMetadata());
+            }
+        }
+    }
 
     @Override
     public void visit(ActorDefinition actor) {
@@ -48,14 +55,6 @@ public class CustomBlockWithTermination extends AbstractIssueFinder {
         proceduresWithForever = new ArrayList<>();
         super.visit(actor);
         checkCalls();
-    }
-
-    private void checkCalls() {
-        for (CallStmt calledProcedure : calledProcedures) {
-            if (proceduresWithForever.contains(calledProcedure.getIdent().getName())) {
-                addIssue(calledProcedure, HINT_TEXT, calledProcedure.getMetadata());
-            }
-        }
     }
 
     @Override
@@ -84,8 +83,8 @@ public class CustomBlockWithTermination extends AbstractIssueFinder {
 
     @Override
     public void visit(StmtList node) {
-        for(Stmt stmt : node.getStmts()) {
-            if(stmt instanceof CallStmt) {
+        for (Stmt stmt : node.getStmts()) {
+            if (stmt instanceof CallStmt) {
                 calledProcedures.add((CallStmt) stmt);
             }
         }

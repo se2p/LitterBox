@@ -18,9 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.cfg;
 
-import static com.google.common.truth.Truth.assertThat;
-
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
@@ -37,12 +34,15 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Think;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.ThinkForSecs;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.MoveSteps;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
+import org.junit.jupiter.api.Test;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-import org.junit.jupiter.api.Test;
+
+import static com.google.common.truth.Truth.assertThat;
 
 public class UseTest {
 
@@ -92,7 +92,6 @@ public class UseTest {
         assertThat(uses).hasSize(1);
     }
 
-
     @Test
     public void testVariableReferenceIsAUse() throws IOException, ParsingException {
         ControlFlowGraph cfg = getCFG("src/test/fixtures/dataflow/variableref.json");
@@ -103,7 +102,6 @@ public class UseTest {
         Set<Variable> uses = visitor.getDefineables();
         assertThat(uses).hasSize(1);
     }
-
 
     @Test
     public void testVariableUsedInAttributeOf() throws IOException, ParsingException {
@@ -158,7 +156,6 @@ public class UseTest {
         assertThat(getUses(node)).isEmpty();
     }
 
-
     @Test
     public void testUseOfOtherSprite() throws IOException, ParsingException {
         ControlFlowGraph cfg = getCFG("src/test/fixtures/cfg/uselocalvarfromothersprite.json");
@@ -169,7 +166,6 @@ public class UseTest {
         node = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof SayForSecs).findFirst().get();
         assertThat(getUses(node)).containsExactly(var);
     }
-
 
     @Test
     public void testAttributeOfVariable() throws IOException, ParsingException {

@@ -18,20 +18,23 @@
  */
 package de.uni_passau.fim.se2.litterbox.dataflow;
 
-import static com.google.common.truth.Truth.assertThat;
-
-
 import de.uni_passau.fim.se2.litterbox.cfg.DataflowFact;
-import java.util.Set;
 import org.junit.jupiter.api.Test;
+
+import java.util.Set;
+
+import static com.google.common.truth.Truth.assertThat;
 
 public class MustFunctionTest {
 
     @Test
     public void testIntersection() {
-        DataflowFact fact1 = new DataflowFact() {};
-        DataflowFact fact2 = new DataflowFact() {};
-        DataflowFact fact3 = new DataflowFact() {};
+        DataflowFact fact1 = new DataflowFact() {
+        };
+        DataflowFact fact2 = new DataflowFact() {
+        };
+        DataflowFact fact3 = new DataflowFact() {
+        };
 
         Set<DataflowFact> set1 = Set.of(fact1, fact2);
         Set<DataflowFact> set2 = Set.of(fact2, fact3);

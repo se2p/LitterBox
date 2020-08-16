@@ -40,7 +40,6 @@ import java.util.stream.Collectors;
  */
 public class MissingCloneCall extends AbstractIssueFinder {
     public static final String NAME = "missing_clone_call";
-    public static final String HINT_TEXT = "missing_clone_call_hint";
     private List<String> whenStartsAsCloneActors = new ArrayList<>();
     private List<String> clonedActors = new ArrayList<>();
     private boolean addComment;
@@ -50,6 +49,7 @@ public class MissingCloneCall extends AbstractIssueFinder {
     public Set<Issue> check(Program program) {
         Preconditions.checkNotNull(program);
         this.program = program;
+        issues = new LinkedHashSet<>();
         whenStartsAsCloneActors = new ArrayList<>();
         clonedActors = new ArrayList<>();
         addComment = false;
@@ -66,8 +66,9 @@ public class MissingCloneCall extends AbstractIssueFinder {
 
     @Override
     public void visit(CreateCloneOf node) {
-        if(addComment)
+        if (addComment) {
             return;
+        }
 
         if (node.getStringExpr() instanceof AsString
                 && ((AsString) node.getStringExpr()).getOperand1() instanceof StrId) {
@@ -79,19 +80,17 @@ public class MissingCloneCall extends AbstractIssueFinder {
                 clonedActors.add(spriteName);
             }
         }
-
     }
 
     @Override
     public void visit(Script node) {
         currentScript = node;
         if (node.getStmtList().getStmts().size() > 0 && node.getEvent() instanceof StartedAsClone) {
-            if(!addComment) {
+            if (!addComment) {
                 whenStartsAsCloneActors.add(currentActor.getIdent().getName());
             } else if (notClonedActor.contains(currentActor.getIdent().getName())) {
                 StartedAsClone event = (StartedAsClone) node.getEvent();
-                addIssue(event, // TODO: node or event?
-                        HINT_TEXT, event.getMetadata());
+                addIssue(event, event.getMetadata());
             }
         }
         visitChildren(node);

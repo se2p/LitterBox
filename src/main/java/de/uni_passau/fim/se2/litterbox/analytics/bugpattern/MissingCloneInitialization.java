@@ -46,7 +46,6 @@ import java.util.stream.Collectors;
 public class MissingCloneInitialization extends AbstractIssueFinder {
 
     public static final String NAME = "missing_clone_initialization";
-    public static final String HINT_TEXT = "missing_clone_initialization_hint";
 
     private List<String> whenStartsAsCloneActors = new ArrayList<>();
     private List<String> clonedActors = new ArrayList<>();
@@ -57,13 +56,16 @@ public class MissingCloneInitialization extends AbstractIssueFinder {
     public Set<Issue> check(Program program) {
         Preconditions.checkNotNull(program);
         this.program = program;
+        issues = new LinkedHashSet<>();
         whenStartsAsCloneActors = new ArrayList<>();
         clonedActors = new ArrayList<>();
         addComment = false;
         notClonedActor = new LinkedHashSet<>();
         program.accept(this);
         final List<String> uninitializingActors
-                = clonedActors.stream().filter(s -> !whenStartsAsCloneActors.contains(s)).collect(Collectors.toList());
+                = clonedActors.stream()
+                .filter(s -> !whenStartsAsCloneActors.contains(s))
+                .collect(Collectors.toList());
         notClonedActor = new LinkedHashSet<>(uninitializingActors);
         addComment = true;
         program.accept(this);
@@ -72,7 +74,9 @@ public class MissingCloneInitialization extends AbstractIssueFinder {
 
     @Override
     public void visit(CreateCloneOf node) {
-        if (node.getStringExpr() instanceof AsString && ((AsString) node.getStringExpr()).getOperand1() instanceof StrId) {
+        if (node.getStringExpr() instanceof AsString
+                && ((AsString) node.getStringExpr()).getOperand1() instanceof StrId) {
+
             final String spriteName = ((StrId) ((AsString) node.getStringExpr()).getOperand1()).getName();
             if (!addComment) {
                 if (spriteName.equals("_myself_")) {
@@ -81,8 +85,7 @@ public class MissingCloneInitialization extends AbstractIssueFinder {
                     clonedActors.add(spriteName);
                 }
             } else if (notClonedActor.contains(spriteName)) {
-                addIssue(node, // TODO: Is this the right block?
-                        HINT_TEXT, ((CloneOfMetadata) node.getMetadata()).getCloneBlockMetadata());
+                addIssue(node, ((CloneOfMetadata) node.getMetadata()).getCloneBlockMetadata());
             }
         }
     }

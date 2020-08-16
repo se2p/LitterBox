@@ -76,7 +76,6 @@ public abstract class Analyzer {
             }
         } catch (IOException e) {
             log.warning("Could not read project list at " + projectList.toString());
-            e.printStackTrace();
         }
     }
 
@@ -88,7 +87,6 @@ public abstract class Analyzer {
                 Downloader.downloadAndSaveProject(pid, input.toString());
             } catch (IOException e) {
                 log.warning("Could not download project with PID: " + pid);
-                e.printStackTrace();
             }
         }
 
@@ -98,7 +96,7 @@ public abstract class Analyzer {
     abstract void check(File fileEntry, String csv);
 
     /**
-     * Extracts a Scratch Program from a Json or sb3 file
+     * Extracts a Scratch Program from a Json or sb3 file.
      *
      * @param fileEntry of the json or sb3 file
      * @return the parsed program or null in case the program could not be loaded or parsed
@@ -118,8 +116,7 @@ public abstract class Analyzer {
                 programNode = JsonParser.getTargetsNodeFromJSONString(ZipReader.getJsonString(fileEntry.getPath()));
             }
         } catch (IOException e) {
-            log.info("[Error] could not load program from file");
-            e.printStackTrace();
+            log.info("[Error] could not load program from file " + fileName);
         }
 
         if (programNode == null) {
@@ -132,8 +129,7 @@ public abstract class Analyzer {
             program = ProgramParser.parseProgram(programName, programNode);
         } catch (ParsingException | RuntimeException e) {
             // TODO: Proper error handling
-            log.info("[Error] could not parse program");
-            e.printStackTrace();
+            log.info("[Error] could not parse program for file " + fileName);
             return null;
         }
 

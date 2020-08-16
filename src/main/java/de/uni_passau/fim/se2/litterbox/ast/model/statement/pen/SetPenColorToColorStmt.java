@@ -31,7 +31,7 @@ public class SetPenColorToColorStmt extends AbstractNode implements PenStmt {
     public SetPenColorToColorStmt(Color color, BlockMetadata metadata) {
         super(color, metadata);
         this.color = Preconditions.checkNotNull(color);
-        this.metadata=metadata;
+        this.metadata = metadata;
     }
 
     public BlockMetadata getMetadata() {

@@ -18,10 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.parser;
 
-import static de.uni_passau.fim.se2.litterbox.ast.Constants.IS_STAGE_KEY;
-import static de.uni_passau.fim.se2.litterbox.ast.Constants.TARGETS_KEY;
-
-
 import com.fasterxml.jackson.databind.JsonNode;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
@@ -34,12 +30,16 @@ import de.uni_passau.fim.se2.litterbox.ast.parser.metadata.ProgramMetadataParser
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ProcedureDefinitionNameMapping;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.SymbolTable;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
+
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
+
+import static de.uni_passau.fim.se2.litterbox.ast.Constants.IS_STAGE_KEY;
+import static de.uni_passau.fim.se2.litterbox.ast.Constants.TARGETS_KEY;
 
 public class ProgramParser {
 

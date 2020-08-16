@@ -19,9 +19,8 @@
 package de.uni_passau.fim.se2.litterbox.analytics.smells;
 
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
-import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
-import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
+import de.uni_passau.fim.se2.litterbox.ast.model.event.*;
 
 /**
  * Checks if all Sprites have a starting point.
@@ -29,12 +28,71 @@ import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 public class EmptyScript extends AbstractIssueFinder {
 
     public static final String NAME = "empty_script";
-    public static final String HINT_TEXT = "empty_script_hint";
+    private boolean isEmpty;
 
     @Override
     public void visit(Script node) {
+        currentScript = node;
+        isEmpty = false;
         if (!(node.getEvent() instanceof Never) && node.getStmtList().getStmts().size() == 0) {
-            issues.add(new Issue(this, currentActor, node));
+            isEmpty = true;
+        }
+        visitChildren(node);
+    }
+
+    @Override
+    public void visit(AttributeAboveValue node) {
+        if (isEmpty) {
+            addIssue(node, node.getMetadata());
+        }
+    }
+
+    @Override
+    public void visit(BackdropSwitchTo node) {
+        if (isEmpty) {
+            addIssue(node, node.getMetadata());
+        }
+    }
+
+    @Override
+    public void visit(GreenFlag node) {
+        if (isEmpty) {
+            addIssue(node, node.getMetadata());
+        }
+    }
+
+    @Override
+    public void visit(KeyPressed node) {
+        if (isEmpty) {
+            addIssue(node, node.getMetadata());
+        }
+    }
+
+    @Override
+    public void visit(ReceptionOfMessage node) {
+        if (isEmpty) {
+            addIssue(node, node.getMetadata());
+        }
+    }
+
+    @Override
+    public void visit(SpriteClicked node) {
+        if (isEmpty) {
+            addIssue(node, node.getMetadata());
+        }
+    }
+
+    @Override
+    public void visit(StageClicked node) {
+        if (isEmpty) {
+            addIssue(node, node.getMetadata());
+        }
+    }
+
+    @Override
+    public void visit(StartedAsClone node) {
+        if (isEmpty) {
+            addIssue(node, node.getMetadata());
         }
     }
 

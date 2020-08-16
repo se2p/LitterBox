@@ -19,7 +19,6 @@
 package de.uni_passau.fim.se2.litterbox.analytics.smells;
 
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
-import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
@@ -34,9 +33,17 @@ import java.util.List;
 public class UnusedCustomBlock extends AbstractIssueFinder {
 
     public static final String NAME = "unused_custom_block";
-    public static final String HINT_TEXT = "unused_custom_block_hint";
     private List<ProcedureDefinition> proceduresDef;
     private List<String> calledProcedures;
+
+    private void checkCalls() {
+        for (ProcedureDefinition procedureDef : proceduresDef) {
+            ProcedureInfo info = procMap.get(procedureDef.getIdent());
+            if (!calledProcedures.contains(info.getName())) {
+                addIssue(procedureDef, procedureDef.getMetadata().getDefinition());
+            }
+        }
+    }
 
     @Override
     public void visit(ActorDefinition actor) {
@@ -44,15 +51,6 @@ public class UnusedCustomBlock extends AbstractIssueFinder {
         proceduresDef = new ArrayList<>();
         super.visit(actor);
         checkCalls();
-    }
-
-    private void checkCalls() {
-        for (ProcedureDefinition procedureDef : proceduresDef) {
-            ProcedureInfo info = procMap.get(procedureDef.getIdent());
-            if (!calledProcedures.contains(info.getName())) {
-                issues.add(new Issue(this, currentActor, procedureDef));
-            }
-        }
     }
 
     @Override

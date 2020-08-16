@@ -27,5 +27,4 @@ import java.util.Collection;
 public interface ReportGenerator {
 
     void generateReport(Program program, Collection<Issue> issues) throws IOException;
-
 }

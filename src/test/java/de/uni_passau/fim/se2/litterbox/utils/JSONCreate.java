@@ -24,10 +24,11 @@ import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
 import de.uni_passau.fim.se2.litterbox.jsonCreation.JSONFileCreator;
-import java.io.File;
-import java.io.IOException;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+
+import java.io.File;
+import java.io.IOException;
 
 public class JSONCreate {
     private static ObjectMapper mapper = new ObjectMapper();
@@ -41,7 +42,7 @@ public class JSONCreate {
 
     @Test
     public void createJSON() throws ParsingException {
-        Program test = ProgramParser.parseProgram("createBroadcast",prog);
+        Program test = ProgramParser.parseProgram("createBroadcast", prog);
         JSONFileCreator.writeJsonFromProgram(test);
     }
 }

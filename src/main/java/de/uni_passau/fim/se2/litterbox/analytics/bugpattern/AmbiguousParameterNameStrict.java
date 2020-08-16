@@ -38,7 +38,6 @@ import java.util.Set;
  */
 public class AmbiguousParameterNameStrict extends AbstractIssueFinder {
     public static final String NAME = "ambiguous_parameter_name_strict";
-    public static final String HINT_TEXT = "ambiguous_parameter_name_strict_hint";
     private boolean inStmtList = false;
     private boolean found = false;
     private boolean used = false;
@@ -48,15 +47,6 @@ public class AmbiguousParameterNameStrict extends AbstractIssueFinder {
     public Set<Issue> check(Program program) {
         found = false;
         return super.check(program);
-    }
-
-    @Override
-    public void visit(ActorDefinition actor) {
-        super.visit(actor);
-
-        if (found) {
-            found = false;
-        }
     }
 
     private void checkArguments(ArgumentInfo[] arguments) {
@@ -72,6 +62,15 @@ public class AmbiguousParameterNameStrict extends AbstractIssueFinder {
                     found = true;
                 }
             }
+        }
+    }
+
+    @Override
+    public void visit(ActorDefinition actor) {
+        super.visit(actor);
+
+        if (found) {
+            found = false;
         }
     }
 
@@ -92,7 +91,7 @@ public class AmbiguousParameterNameStrict extends AbstractIssueFinder {
         visitChildren(node);
 
         if (used) {
-            addIssue(node, HINT_TEXT, node.getMetadata().getDefinition());
+            addIssue(node, node.getMetadata().getDefinition());
         }
 
         // TODO: This handling with used/found seems really error prone

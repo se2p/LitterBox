@@ -18,10 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.parser;
 
-import static de.uni_passau.fim.se2.litterbox.ast.Constants.BACKDROP_INPUT;
-import static de.uni_passau.fim.se2.litterbox.ast.Constants.FIELDS_KEY;
-
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import de.uni_passau.fim.se2.litterbox.ast.Constants;
@@ -33,8 +29,12 @@ import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.parser.metadata.BlockMetadataParser;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
+
 import java.util.ArrayList;
 import java.util.List;
+
+import static de.uni_passau.fim.se2.litterbox.ast.Constants.BACKDROP_INPUT;
+import static de.uni_passau.fim.se2.litterbox.ast.Constants.FIELDS_KEY;
 
 public class ElementChoiceParser {
 
@@ -56,10 +56,11 @@ public class ElementChoiceParser {
         }
     }
 
-    private static ElementChoice getElementChoiceFromMenu(JsonNode allBlocks, JsonNode inputsNode) throws ParsingException {
-        String blockMenuID = inputsNode.get(Constants.POS_INPUT_VALUE).asText();
-        JsonNode menu = allBlocks.get(blockMenuID);
-        BlockMetadata metadata = BlockMetadataParser.parse(blockMenuID, menu);
+    private static ElementChoice getElementChoiceFromMenu(JsonNode allBlocks, JsonNode inputsNode)
+            throws ParsingException {
+        String blockMenuId = inputsNode.get(Constants.POS_INPUT_VALUE).asText();
+        JsonNode menu = allBlocks.get(blockMenuId);
+        BlockMetadata metadata = BlockMetadataParser.parse(blockMenuId, menu);
 
         List<JsonNode> fieldsList = new ArrayList<>();
         menu.get(FIELDS_KEY).elements().forEachRemaining(fieldsList::add);

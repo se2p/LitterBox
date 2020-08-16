@@ -41,7 +41,6 @@ import java.util.Set;
 public class MissingInitialization implements IssueFinder {
 
     public static final String NAME = "missing_initialization";
-    public static final String HINT_TEXT = "missing_initialization_hint";
 
     @Override
     public Set<Issue> check(Program program) {
@@ -51,24 +50,27 @@ public class MissingInitialization implements IssueFinder {
         program.accept(visitor);
         ControlFlowGraph cfg = visitor.getControlFlowGraph();
 
-
         // Initial definitions: All definitions that can be reached without a use before them
         DataflowAnalysisBuilder<Definition> defBuilder = new DataflowAnalysisBuilder<>(cfg);
-        DataflowAnalysis<Definition> analysis = defBuilder.withBackward().withMay().withTransferFunction(new InitialDefinitionTransferFunction()).build();
+        DataflowAnalysis<Definition> analysis
+                = defBuilder.withBackward().withMay().withTransferFunction(
+                new InitialDefinitionTransferFunction()).build();
         analysis.applyAnalysis();
         Set<Definition> initialDefinitions = analysis.getDataflowFacts(cfg.getEntryNode());
 
         // Initial uses: All uses that can be reached without a definition before them
         DataflowAnalysisBuilder<Use> useBuilder = new DataflowAnalysisBuilder<>(cfg);
-        DataflowAnalysis<Use> livenessAnalysis = useBuilder.withBackward().withMay().withTransferFunction(new LivenessTransferFunction()).build();
+        DataflowAnalysis<Use> livenessAnalysis
+                = useBuilder.withBackward().withMay().withTransferFunction(new LivenessTransferFunction()).build();
         livenessAnalysis.applyAnalysis();
         Set<Use> initialUses = livenessAnalysis.getDataflowFacts(cfg.getEntryNode());
 
-        for(Use use : initialUses) {
+        for (Use use : initialUses) {
             // If there are no initial definitions of the same defineable in other scripts it's an anomaly
-            if(initialDefinitions.stream()
+            if (initialDefinitions.stream()
                     .filter(d -> d.getDefinable().equals(use.getDefinable()))
-                    .noneMatch(d -> d.getDefinitionSource().getScriptOrProcedure() != use.getUseTarget().getScriptOrProcedure())) {
+                    .noneMatch(d -> d.getDefinitionSource().getScriptOrProcedure()
+                            != use.getUseTarget().getScriptOrProcedure())) {
 
                 // TODO: The comment is attached to the statement, not the actual usage...
                 ASTNode containingScript = use.getUseTarget().getScriptOrProcedure();
@@ -76,12 +78,12 @@ public class MissingInitialization implements IssueFinder {
                     issues.add(new Issue(this, use.getUseTarget().getActor(),
                             (Script) containingScript,
                             use.getUseTarget().getASTNode(),
-                            HINT_TEXT, null)); // TODO: Where is the relevant metadata?
+                            null)); // TODO: Where is the relevant metadata?
                 } else {
                     issues.add(new Issue(this, use.getUseTarget().getActor(),
                             (ProcedureDefinition) containingScript,
                             use.getUseTarget().getASTNode(),
-                            HINT_TEXT, null)); // TODO: Where is the relevant metadata
+                            null)); // TODO: Where is the relevant metadata
                 }
             }
         }

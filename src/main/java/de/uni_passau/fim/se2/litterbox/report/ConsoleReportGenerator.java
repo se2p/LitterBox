@@ -38,16 +38,24 @@ public class ConsoleReportGenerator implements ReportGenerator {
     @Override
     public void generateReport(Program program, Collection<Issue> issues) throws IOException {
 
-        if(issues.isEmpty()) {
+        if (issues.isEmpty()) {
             System.out.println("No issues found.");
             return;
         }
 
-        for(String detector : detectors) {
-            List<Issue> relevantIssues = issues.stream().filter(i -> i.getFinderName().equals(detector)).collect(Collectors.toList());
-            if(!relevantIssues.isEmpty()) {
+        for (String detector : detectors) {
+            List<Issue> relevantIssues = issues
+                    .stream()
+                    .filter(i -> i.getFinderName().equals(detector))
+                    .collect(Collectors.toList());
+
+            if (!relevantIssues.isEmpty()) {
                 Issue firstIssue = relevantIssues.get(0);
-                System.out.println("Issue " + firstIssue.getHint() + " was found " + relevantIssues.size() + " time(s)");
+                System.out.println("Issue "
+                        + firstIssue.getHint()
+                        + " was found "
+                        + relevantIssues.size()
+                        + " time(s)");
             }
         }
     }
