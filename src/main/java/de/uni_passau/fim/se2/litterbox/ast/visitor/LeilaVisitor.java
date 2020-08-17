@@ -1458,7 +1458,13 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(SetDragMode setDragMode) {
-        emitNoSpace("TODO"); // TODO -- grammar?
+        emitToken("define draggable as");
+        setDragMode.getDrag().accept(this);
+    }
+
+    @Override
+    public void visit(DragMode dragMode) {
+        emitNoSpace("\"" + dragMode.getToken() + "\"");
     }
 
     @Override
