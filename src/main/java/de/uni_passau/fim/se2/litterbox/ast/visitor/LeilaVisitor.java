@@ -1490,8 +1490,11 @@ public class LeilaVisitor extends PrintVisitor {
     }
 
     @Override
-    public void visit(DeclarationBroadcastStmt listContains) {
-        emitNoSpace("TODO"); // TODO -- grammar?
+    public void visit(DeclarationBroadcastStmt declarationBroadcastStmt) {
+        declare();
+        declarationBroadcastStmt.getIdent().accept(this);
+        as();
+        declarationBroadcastStmt.getType().accept(this);
     }
 
     @Override public void visit(Volume volume) {
