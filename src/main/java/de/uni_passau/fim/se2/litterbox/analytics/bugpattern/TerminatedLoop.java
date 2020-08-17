@@ -1,8 +1,6 @@
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
-import de.uni_passau.fim.se2.litterbox.analytics.Issue;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
@@ -11,9 +9,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopAll;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopThisScript;
 
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
 
 /**
  * TerminatedLoop is a bug pattern which occurs if a loop contains a StopAll or StopThisScript block which
@@ -24,13 +20,6 @@ import java.util.Set;
 public class TerminatedLoop extends AbstractIssueFinder {
 
     private static final String NAME = "terminated_loop";
-
-    @Override
-    public Set<Issue> check(Program program) {
-        issues = new LinkedHashSet<>();
-
-        return super.check(program);
-    }
 
     @Override
     public IssueType getIssueType() {
