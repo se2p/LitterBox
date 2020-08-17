@@ -1382,7 +1382,7 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(Size size) {
-        emitToken("size"); // TODO -- not in grammar
+        emitNoSpace("size");
     }
 
     @Override
