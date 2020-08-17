@@ -31,6 +31,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.ExpressionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.AttributeFromFixed;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.FixedAttribute;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Identifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
@@ -410,7 +411,6 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(WithExpr withExpr) {
-        emitToken("with_name");
         withExpr.getExpression().accept(this);
     }
 
@@ -624,7 +624,7 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(ExpressionList expressionList) {
-        openParentheses();
+        emitNoSpace("[");
         List<Expression> expressions = expressionList.getExpressions();
         if (expressions.size() > 0) {
             for (int i = 0; i < expressions.size() - 1; i++) {
@@ -633,7 +633,7 @@ public class LeilaVisitor extends PrintVisitor {
             }
             expressions.get(expressions.size() - 1).accept(this);
         }
-        closeParentheses();
+        emitNoSpace("]");
     }
 
     @Override
@@ -789,7 +789,7 @@ public class LeilaVisitor extends PrintVisitor {
         } else {
             emitToken("cast");
             asString.getOperand1().accept(this);
-            emitToken(" to string");
+            emitNoSpace(" to string");
         }
     }
 
@@ -946,7 +946,12 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(AttributeFromFixed attributeFromFixed) {
-        System.err.println("TODO AttributeFromFixed"); // FIXME handle this
+        attributeFromFixed.getAttribute().accept(this);
+    }
+
+    @Override
+    public void visit(FixedAttribute fixedAttribute) {
+        emitToken(fixedAttribute.getType());
     }
 
     @Override
@@ -1325,7 +1330,7 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(NextCostume nextCostume) {
-        emitToken("TODO"); // TODO -- switch costume to next?
+        emitNoSpace("TODO"); // TODO -- switch costume to next?
     }
 
     @Override
@@ -1347,7 +1352,7 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(Costume costume) {
-        emitToken("TODO"); // TODO
+        emitNoSpace("TODO"); // TODO
     }
 
     @Override
@@ -1362,7 +1367,7 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(Backdrop backdrop) {
-        emitToken("TODO"); // TODO -- grammar?
+        emitNoSpace("TODO"); // TODO -- grammar?
     }
 
     @Override
@@ -1377,14 +1382,14 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(PositionX positionX) {
-        emitToken("TODO"); // TODO -- grammar?
+        emitNoSpace("TODO"); // TODO -- grammar?
         // maybe:   | 'attribute'  stringExpr 'of' actorExpr  # StringAttributeOfExpression
         // query an attribute value of an actor (sprites, the stage)
     }
 
     @Override
     public void visit(Direction direction) {
-        emitToken("TODO"); // TODO -- grammar?
+        emitNoSpace("TODO"); // TODO -- grammar?
     }
 
     @Override
@@ -1411,7 +1416,7 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(PositionY positionY) {
-        emitToken("TODO"); // TODO -- grammar?
+        emitNoSpace("TODO"); // TODO -- grammar?
     }
 
     @Override
@@ -1435,17 +1440,17 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(SetVolumeTo setVolumeTo) {
-        emitToken("TODO"); // TODO -- grammar?
+        emitNoSpace("TODO"); // TODO -- grammar?
     }
 
     @Override
     public void visit(SetDragMode setDragMode) {
-        emitToken("TODO"); // TODO -- grammar?
+        emitNoSpace("TODO"); // TODO -- grammar?
     }
 
     @Override
     public void visit(Answer answer) {
-        emitToken("TODO"); // TODO -- grammar?
+        emitNoSpace("TODO"); // TODO -- grammar?
     }
 
     @Override
@@ -1462,11 +1467,15 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(ListContains listContains) {
-        emitToken("TODO"); // TODO -- grammar?
+        emitNoSpace("TODO"); // TODO -- grammar?
     }
 
     @Override
     public void visit(DeclarationBroadcastStmt listContains) {
-        emitToken("TODO"); // TODO -- grammar?
+        emitNoSpace("TODO"); // TODO -- grammar?
+    }
+
+    @Override public void visit(Volume volume) {
+        // TODO
     }
 }
