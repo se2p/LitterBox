@@ -1461,7 +1461,7 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(Answer answer) {
-        emitNoSpace("TODO"); // TODO -- grammar?
+        emitNoSpace("answer()");
     }
 
     @Override
@@ -1487,6 +1487,6 @@ public class LeilaVisitor extends PrintVisitor {
     }
 
     @Override public void visit(Volume volume) {
-        // TODO
+        emitNoSpace("volume()");
     }
 }
