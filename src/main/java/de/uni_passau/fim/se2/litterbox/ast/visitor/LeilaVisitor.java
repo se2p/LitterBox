@@ -764,7 +764,7 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(ListType listType) {
-        emitNoSpace("list string"); // TODO is this correct
+        emitNoSpace("list of string");
     }
 
     @Override
