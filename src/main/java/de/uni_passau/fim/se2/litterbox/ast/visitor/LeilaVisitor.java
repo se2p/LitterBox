@@ -941,7 +941,12 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(SoundEffect soundEffect) {
-        System.err.println("TODO Sound Effect"); // FIXME handle this
+        String effect = soundEffect.getToken();
+        if (effect.equals(SoundEffect.PITCH.getToken())) {
+            emitNoSpace("\"pitch\"");
+        } else {
+            emitNoSpace("\"pan_left_right\"");
+        }
     }
 
     @Override
@@ -1432,10 +1437,11 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(ChangeSoundEffectBy changeSoundEffectBy) {
-        emitToken("change sound effect");
+        emitNoSpace("changeSoundEffectBy(");
         changeSoundEffectBy.getEffect().accept(this);
-        emitToken("by");
+        comma();
         changeSoundEffectBy.getValue().accept(this);
+        closeParentheses();
     }
 
     @Override
