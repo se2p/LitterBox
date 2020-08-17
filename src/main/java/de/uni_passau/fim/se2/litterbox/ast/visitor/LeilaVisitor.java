@@ -1327,7 +1327,7 @@ public class LeilaVisitor extends PrintVisitor {
         emitToken("glide");
         glideSecsToXY.getSecs().accept(this);
         emitNoSpace("to (");
-        glideSecsToXY.getX().accept(this); // TODO probably we'll have to prevent a space here
+        glideSecsToXY.getX().accept(this);
         comma();
         glideSecsToXY.getY().accept(this);
         closeParentheses();
@@ -1372,7 +1372,12 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(Backdrop backdrop) {
-        emitNoSpace("TODO"); // TODO -- grammar?
+        NameNum type = backdrop.getType();
+        if (type.equals(NameNum.NAME)) {
+            emitNoSpace("backdropName()");
+        } else {
+            emitNoSpace("backdropNumber()");
+        }
     }
 
     @Override
