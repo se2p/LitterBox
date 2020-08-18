@@ -1335,7 +1335,7 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(NextCostume nextCostume) {
-        emitNoSpace("TODO"); // TODO -- switch costume to next?
+        emitNoSpace("nextCostume()");
     }
 
     @Override
@@ -1357,7 +1357,11 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(Costume costume) {
-        emitNoSpace("TODO"); // TODO
+        if (costume.getType().equals(NameNum.NAME)) {
+            emitNoSpace("costumeName()");
+        } else {
+            emitNoSpace("costumeNumber()");
+        }
     }
 
     @Override
