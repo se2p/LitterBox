@@ -936,16 +936,16 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(GraphicEffect graphicEffect) {
-        emitNoSpace("\"" + graphicEffect.getToken() + "\"");
+        emitNoSpace(graphicEffect.getToken());
     }
 
     @Override
     public void visit(SoundEffect soundEffect) {
         String effect = soundEffect.getToken();
         if (effect.equals(SoundEffect.PITCH.getToken())) {
-            emitNoSpace("\"pitch\"");
+            emitNoSpace("pitch");
         } else {
-            emitNoSpace("\"pan_left_right\"");
+            emitNoSpace("pan_left_right");
         }
     }
 
@@ -1340,8 +1340,9 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(ChangeGraphicEffectBy changeGraphicEffectBy) {
-        emitNoSpace("changeGraphicEffectBy(");
+        emitNoSpace("changeGraphicEffectBy(\"");
         changeGraphicEffectBy.getEffect().accept(this);
+        emitNoSpace("\"");
         comma();
         changeGraphicEffectBy.getValue().accept(this);
         closeParentheses();
@@ -1349,9 +1350,9 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(SetGraphicEffectTo setGraphicEffectTo) {
-        emitToken("set graphic effect");
+        define();
         setGraphicEffectTo.getEffect().accept(this);
-        emitToken("to");
+        emitToken("_effect_value as");
         setGraphicEffectTo.getValue().accept(this);
     }
 
@@ -1408,9 +1409,9 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(SetSoundEffectTo setSoundEffectTo) {
-        emitToken("set sound effect");
+        define();
         setSoundEffectTo.getEffect().accept(this);
-        emitToken("to");
+        emitToken("_effect_value as");
         setSoundEffectTo.getValue().accept(this);
     }
 
@@ -1446,8 +1447,9 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(ChangeSoundEffectBy changeSoundEffectBy) {
-        emitNoSpace("changeSoundEffectBy(");
+        emitNoSpace("changeSoundEffectBy(\"");
         changeSoundEffectBy.getEffect().accept(this);
+        emitNoSpace("\"");
         comma();
         changeSoundEffectBy.getValue().accept(this);
         closeParentheses();
