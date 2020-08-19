@@ -68,7 +68,7 @@ public class LeilaVisitorTest {
         String path = file.getAbsolutePath();
         LeilaAnalyzer analyzer = new LeilaAnalyzer(path, "does not exist", false);
         analyzer.analyzeFile();
-        assertThat(mockErr.toString()).contains("Output path must be a folder");
+        assertThat(mockOut.toString()).contains("Output path must be a folder");
     }
 
     @BeforeAll
