@@ -44,10 +44,10 @@ public class CommandlineTest {
         assertThat(mockErr.toString()).isNotEmpty();
     }
 
-    //@Test
+    @Test
     public void testLeilaWithInvalidDownloadOption() {
-        Main.parseCommandLine(new String[] {"-leila", "--path", "foobar", "-o", "barfoo", "--projectid", "123456"});
-        assertThat(mockErr.toString()).contains("WARNING: Could not download project with PID: 123456");
+        Main.parseCommandLine(new String[] {"-leila", "--path", "foobar", "-o", "barfoo", "--projectid", "I am not a number"});
+        assertThat(mockErr.toString()).contains("WARNING: Could not download project with PID: I am not a number");
     }
 
     @Test
