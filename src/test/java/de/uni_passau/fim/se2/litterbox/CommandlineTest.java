@@ -46,6 +46,12 @@ public class CommandlineTest {
         assertThat(mockErr.toString()).contains("WARNING: Could not download project with PID: 123456");
     }
 
+    @Test
+    public void testLeilaWithoutOutput() {
+        Main.parseCommandLine(new String[] {"-leila"});
+        assertThat(mockErr.toString()).contains("Invalid option: Output path option 'output' required");
+    }
+
     @AfterEach
     public void restoreStreams() {
         System.setOut(out);
