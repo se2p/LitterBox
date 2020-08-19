@@ -21,9 +21,13 @@ package de.uni_passau.fim.se2.litterbox;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.PrintStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 import static com.google.common.truth.Truth.assertThat;
 
@@ -50,6 +54,16 @@ public class CommandlineTest {
     public void testLeilaWithoutOutput() {
         Main.parseCommandLine(new String[] {"-leila"});
         assertThat(mockErr.toString()).contains("Invalid option: Output path option 'output' required");
+    }
+
+    @Test
+    public void testLeilaValidOptions(@TempDir File tempFile) throws Exception {
+        File file = new File("./src/test/fixtures/emptyProject.json");
+        String path = file.getAbsolutePath();
+        String outFile = tempFile.getAbsolutePath();
+        Main.parseCommandLine(new String[] {"-leila", "--path", path, "-o", outFile});
+        String output = Files.readString(Paths.get(outFile, "emptyProject..sc"));
+        assertThat(output.contains("program emptyProject"));
     }
 
     @AfterEach
