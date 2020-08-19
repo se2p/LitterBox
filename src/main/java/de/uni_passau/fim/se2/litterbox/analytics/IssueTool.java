@@ -25,8 +25,6 @@ import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import java.util.*;
 
-import static de.uni_passau.fim.se2.litterbox.utils.GroupConstants.*;
-
 /**
  * Holds all IssueFinder and executes them.
  * Register new implemented checks here.
@@ -35,6 +33,7 @@ public class IssueTool {
 
     private final Map<String, IssueFinder> bugFinder = new LinkedHashMap<>();
     private final Map<String, IssueFinder> smellFinder = new LinkedHashMap<>();
+    private final Map<String, IssueFinder> allFinder;
 
     public IssueTool() {
         registerBugFinder(new AmbiguousCustomBlockSignature());
@@ -81,6 +80,9 @@ public class IssueTool {
         registerSmellFinder(new SameVariableDifferentSprite());
         registerSmellFinder(new UnusedVariable());
         registerSmellFinder(new UnusedCustomBlock());
+
+        allFinder = new LinkedHashMap<>(bugFinder);
+        allFinder.putAll(smellFinder);
     }
 
     /**
@@ -92,40 +94,6 @@ public class IssueTool {
         Preconditions.checkNotNull(program);
         Set<Issue> issues = new LinkedHashSet<>();
         for (String s : detectors) {
-            // TODO: Why reconstruct this map all the time...
-            if (getAllFinder().containsKey(s)) {
-                IssueFinder iF = getAllFinder().get(s);
-                issues.addAll(iF.check(program));
-            }
-        }
-        return issues;
-    }
-
-    /**
-     * Executes all checks.
-     *
-     * @param program the project to check
-     */
-    public Set<Issue> check(Program program, String dtctrs) {
-        Preconditions.checkNotNull(program);
-        Set<Issue> issues = new LinkedHashSet<>();
-        String[] detectors;
-        switch (dtctrs) {
-            case ALL:
-                detectors = getAllFinder().keySet().toArray(new String[0]);
-                break;
-            case BUGS:
-                detectors = getBugFinder().keySet().toArray(new String[0]);
-                break;
-            case SMELLS:
-                detectors = getSmellFinder().keySet().toArray(new String[0]);
-                break;
-            default:
-                detectors = dtctrs.split(",");
-                break;
-        }
-        for (String s : detectors) {
-            // TODO: Why reconstruct this map all the time...
             if (getAllFinder().containsKey(s)) {
                 IssueFinder iF = getAllFinder().get(s);
                 issues.addAll(iF.check(program));
@@ -135,8 +103,7 @@ public class IssueTool {
     }
 
     public Map<String, IssueFinder> getAllFinder() {
-        Map<String, IssueFinder> returnMap = new HashMap<>(smellFinder);
-        returnMap.putAll(bugFinder);
+        Map<String, IssueFinder> returnMap = new HashMap<>(allFinder);
         return returnMap;
     }
 
