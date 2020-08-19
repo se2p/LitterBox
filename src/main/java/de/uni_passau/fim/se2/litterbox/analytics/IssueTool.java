@@ -102,7 +102,6 @@ public class IssueTool {
     }
 
     /**
-     * FIXME REMOVE ME AFTER SCRATCH3ANALYZER IS REMOVED.
      * Executes all checks.
      *
      * @param program the project to check
