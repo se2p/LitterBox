@@ -138,8 +138,7 @@ public class Main {
         String outputPath = cmd.getOptionValue(OUTPUT);
         String detectors = cmd.getOptionValue(DETECTORS, ALL);
         String path = cmd.getOptionValue(PROJECTPATH);
-        BugAnalyzer analyzer = new BugAnalyzer(path, outputPath);
-        analyzer.setDetectorNames(detectors);
+        BugAnalyzer analyzer = new BugAnalyzer(path, outputPath, detectors);
 
         if (cmd.hasOption(ANNOTATE)) {
             String annotationPath = cmd.getOptionValue(ANNOTATE);

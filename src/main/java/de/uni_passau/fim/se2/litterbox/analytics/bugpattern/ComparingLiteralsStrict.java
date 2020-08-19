@@ -73,4 +73,9 @@ public class ComparingLiteralsStrict extends ComparingLiterals {
             visitChildren(node);
         }
     }
+
+    @Override
+    public String getName() {
+        return NAME;
+    }
 }

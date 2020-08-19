@@ -62,4 +62,9 @@ public class PositionEqualsCheckStrict extends PositionEqualsCheck {
             }
         }
     }
+
+    @Override
+    public String getName() {
+        return NAME;
+    }
 }

@@ -24,7 +24,6 @@ import de.uni_passau.fim.se2.litterbox.report.CSVReportGenerator;
 import de.uni_passau.fim.se2.litterbox.report.CommentGenerator;
 import de.uni_passau.fim.se2.litterbox.report.ConsoleReportGenerator;
 import de.uni_passau.fim.se2.litterbox.report.JSONReportGenerator;
-import de.uni_passau.fim.se2.litterbox.utils.GroupConstants;
 import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
@@ -41,9 +40,10 @@ public class BugAnalyzer extends Analyzer {
     private String[] detectorNames;
     private String annotationOutput;
 
-    public BugAnalyzer(String input, String output) {
+    public BugAnalyzer(String input, String output, String detectors) {
         super(input, output);
         this.issueTool = new IssueTool();
+        setDetectorNames(detectors);
     }
 
     public void setDetectorNames(String detectorNames) {
@@ -79,7 +79,7 @@ public class BugAnalyzer extends Analyzer {
             return;
         }
 
-        Set<Issue> issues = issueTool.check(program, GroupConstants.ALL);
+        Set<Issue> issues = issueTool.check(program, detectorNames);
 
         // TODO: Refactor error handling
         try {

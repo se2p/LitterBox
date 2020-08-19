@@ -33,14 +33,16 @@ import static de.uni_passau.fim.se2.litterbox.utils.GroupConstants.*;
  */
 public class IssueTool {
 
-    private Map<String, IssueFinder> bugFinder = new LinkedHashMap<>();
-    private Map<String, IssueFinder> smellFinder = new LinkedHashMap<>();
+    private final Map<String, IssueFinder> bugFinder = new LinkedHashMap<>();
+    private final Map<String, IssueFinder> smellFinder = new LinkedHashMap<>();
 
     public IssueTool() {
         registerBugFinder(new AmbiguousCustomBlockSignature());
         registerBugFinder(new AmbiguousParameterName());
+        registerBugFinder(new AmbiguousParameterNameStrict());
         registerBugFinder(new CallWithoutDefinition());
         registerBugFinder(new ComparingLiterals());
+        registerBugFinder(new ComparingLiteralsStrict());
         registerBugFinder(new CustomBlockWithForever());
         registerBugFinder(new CustomBlockWithTermination());
         registerBugFinder(new EndlessRecursion());
@@ -63,6 +65,7 @@ public class IssueTool {
         registerBugFinder(new OrphanedParameter());
         registerBugFinder(new ParameterOutOfScope());
         registerBugFinder(new PositionEqualsCheck());
+        registerBugFinder(new PositionEqualsCheckStrict());
         registerBugFinder(new RecursiveCloning());
         registerBugFinder(new StutteringMovement());
 
@@ -86,6 +89,7 @@ public class IssueTool {
      * @param program the project to check
      */
     public Set<Issue> check(Program program, String[] detectors) {
+        System.out.println(Arrays.toString(detectors));
         Preconditions.checkNotNull(program);
         Set<Issue> issues = new LinkedHashSet<>();
         for (String s : detectors) {
@@ -164,7 +168,6 @@ public class IssueTool {
                     + finder.getIssueType()
                     + " as Bug IssueFinder");
         }
-
         bugFinder.put(finder.getName(), finder);
     }
 }
