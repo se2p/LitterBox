@@ -123,7 +123,7 @@ public class Main {
         System.out.printf("\t%-20s %-30s%n", SMELLS, messages.getInfo(SMELLS));
 
         IssueTool issueTool = new IssueTool();
-        issueTool.getAllFinder().keySet().forEach(finder -> System.out.printf(
+        issueTool.getAllFinders().keySet().forEach(finder -> System.out.printf(
                 "\t%-20s %-30s%n",
                 finder,
                 messages.getName(finder)

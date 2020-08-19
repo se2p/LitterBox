@@ -31,9 +31,9 @@ import java.util.*;
  */
 public class IssueTool {
 
-    private final Map<String, IssueFinder> bugFinder = new LinkedHashMap<>();
-    private final Map<String, IssueFinder> smellFinder = new LinkedHashMap<>();
-    private final Map<String, IssueFinder> allFinder;
+    private final Map<String, IssueFinder> bugFinders = new LinkedHashMap<>();
+    private final Map<String, IssueFinder> smellFinders = new LinkedHashMap<>();
+    private final Map<String, IssueFinder> allFinders;
 
     public IssueTool() {
         registerBugFinder(new AmbiguousCustomBlockSignature());
@@ -81,8 +81,8 @@ public class IssueTool {
         registerSmellFinder(new UnusedVariable());
         registerSmellFinder(new UnusedCustomBlock());
 
-        allFinder = new LinkedHashMap<>(bugFinder);
-        allFinder.putAll(smellFinder);
+        allFinders = new LinkedHashMap<>(bugFinders);
+        allFinders.putAll(smellFinders);
     }
 
     /**
@@ -90,31 +90,28 @@ public class IssueTool {
      *
      * @param program the project to check
      */
-    public Set<Issue> check(Program program, String[] detectors) {
+    public Set<Issue> check(Program program, List<String> detectors) {
         Preconditions.checkNotNull(program);
         Set<Issue> issues = new LinkedHashSet<>();
         for (String s : detectors) {
-            if (getAllFinder().containsKey(s)) {
-                IssueFinder iF = getAllFinder().get(s);
+            if (allFinders.containsKey(s)) {
+                IssueFinder iF = getAllFinders().get(s);
                 issues.addAll(iF.check(program));
             }
         }
         return issues;
     }
 
-    public Map<String, IssueFinder> getAllFinder() {
-        Map<String, IssueFinder> returnMap = new HashMap<>(allFinder);
-        return returnMap;
+    public Map<String, IssueFinder> getAllFinders() {
+        return Collections.unmodifiableMap(allFinders);
     }
 
-    public Map<String, IssueFinder> getSmellFinder() {
-        Map<String, IssueFinder> returnMap = new HashMap<>(smellFinder);
-        return returnMap;
+    public Map<String, IssueFinder> getSmellFinders() {
+        return Collections.unmodifiableMap(smellFinders);
     }
 
-    public Map<String, IssueFinder> getBugFinder() {
-        Map<String, IssueFinder> returnMap = new HashMap<>(bugFinder);
-        return returnMap;
+    public Map<String, IssueFinder> getBugFinders() {
+        return Collections.unmodifiableMap(bugFinders);
     }
 
     public void registerSmellFinder(IssueFinder finder) {
@@ -124,7 +121,7 @@ public class IssueTool {
                     + " as Smell IssueFinder");
         }
 
-        smellFinder.put(finder.getName(), finder);
+        smellFinders.put(finder.getName(), finder);
     }
 
     public void registerBugFinder(IssueFinder finder) {
@@ -133,6 +130,6 @@ public class IssueTool {
                     + finder.getIssueType()
                     + " as Bug IssueFinder");
         }
-        bugFinder.put(finder.getName(), finder);
+        bugFinders.put(finder.getName(), finder);
     }
 }

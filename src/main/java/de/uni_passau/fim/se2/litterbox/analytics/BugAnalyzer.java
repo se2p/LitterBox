@@ -28,6 +28,9 @@ import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
 
@@ -37,7 +40,7 @@ public class BugAnalyzer extends Analyzer {
 
     private static final Logger log = Logger.getLogger(BugAnalyzer.class.getName());
     private final IssueTool issueTool;
-    private String[] detectorNames;
+    private List<String> detectorNames;
     private String annotationOutput;
 
     public BugAnalyzer(String input, String output, String detectors) {
@@ -49,16 +52,16 @@ public class BugAnalyzer extends Analyzer {
     public void setDetectorNames(String detectorNames) {
         switch (detectorNames) {
             case ALL:
-                this.detectorNames = issueTool.getAllFinder().keySet().toArray(new String[0]);
+                this.detectorNames = new ArrayList<>(issueTool.getAllFinders().keySet());
                 break;
             case BUGS:
-                this.detectorNames = issueTool.getBugFinder().keySet().toArray(new String[0]);
+                this.detectorNames = new ArrayList<>(issueTool.getBugFinders().keySet());
                 break;
             case SMELLS:
-                this.detectorNames = issueTool.getSmellFinder().keySet().toArray(new String[0]);
+                this.detectorNames = new ArrayList<>(issueTool.getSmellFinders().keySet());
                 break;
             default:
-                this.detectorNames = detectorNames.split(",");
+                this.detectorNames = Arrays.asList(detectorNames.split(","));
                 break;
         }
     }
