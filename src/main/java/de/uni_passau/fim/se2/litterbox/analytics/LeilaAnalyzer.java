@@ -78,10 +78,6 @@ public class LeilaAnalyzer extends Analyzer {
 
     private String getIntermediateFileName(String name) {
         String programName = name.substring(0, name.lastIndexOf("."));
-        StringBuilder builder = new StringBuilder();
-        builder.append(programName);
-        builder.append(".");
-        builder.append(INTERMEDIATE_EXTENSION);
-        return builder.toString();
+        return programName + INTERMEDIATE_EXTENSION;
     }
 }

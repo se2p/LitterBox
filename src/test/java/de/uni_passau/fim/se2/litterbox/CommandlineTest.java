@@ -62,7 +62,7 @@ public class CommandlineTest {
         String path = file.getAbsolutePath();
         String outFile = tempFile.getAbsolutePath();
         Main.parseCommandLine(new String[] {"-leila", "--path", path, "-o", outFile});
-        String output = Files.readString(Paths.get(outFile, "emptyProject..sc"));
+        String output = Files.readString(Paths.get(outFile, "emptyProject.sc"));
         assertThat(output.contains("program emptyProject"));
     }
 
