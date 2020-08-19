@@ -20,11 +20,14 @@ package de.uni_passau.fim.se2.litterbox.ast.visitor;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import de.uni_passau.fim.se2.litterbox.analytics.LeilaAnalyzer;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
 import org.junit.Ignore;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
@@ -38,6 +41,10 @@ import static junit.framework.TestCase.fail;
 public class LeilaVisitorTest {
 
     private static JsonNode project;
+    private PrintStream out = System.out;
+    private PrintStream err = System.err;
+    private ByteArrayOutputStream mockOut = new ByteArrayOutputStream();
+    private ByteArrayOutputStream mockErr = new ByteArrayOutputStream();
 
     @Test
     public void testSetRotationStyle() throws Exception {
@@ -53,6 +60,15 @@ public class LeilaVisitorTest {
         assertThat(out.toString()).contains("define rotationStyle as \"don't rotate\"");
         assertThat(out.toString()).contains("define rotationStyle as \"left-right\"");
         assertThat(out.toString()).contains("define rotationStyle as \"all around\"");
+    }
+
+    @Test
+    public void testCheckFailsForFolder() {
+        File file = new File("./src/test/fixtures/emptyProject.json");
+        String path = file.getAbsolutePath();
+        LeilaAnalyzer analyzer = new LeilaAnalyzer(path, "does not exist", false);
+        analyzer.analyzeFile();
+        assertThat(mockErr.toString()).contains("Output path must be a folder");
     }
 
     @BeforeAll
@@ -102,5 +118,22 @@ public class LeilaVisitorTest {
             e.printStackTrace();
             fail();
         }
+    }
+
+    @AfterEach
+    public void restoreStreams() {
+        System.setOut(out);
+        System.setErr(err);
+    }
+
+    @BeforeEach
+    public void replaceStreams() {
+        out = System.out;
+        err = System.err;
+        mockErr.reset();
+        mockOut.reset();
+
+        System.setOut(new PrintStream(mockOut));
+        System.setErr(new PrintStream(mockErr));
     }
 }
