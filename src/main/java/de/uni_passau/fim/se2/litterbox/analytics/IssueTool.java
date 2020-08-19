@@ -89,7 +89,6 @@ public class IssueTool {
      * @param program the project to check
      */
     public Set<Issue> check(Program program, String[] detectors) {
-        System.out.println(Arrays.toString(detectors));
         Preconditions.checkNotNull(program);
         Set<Issue> issues = new LinkedHashSet<>();
         for (String s : detectors) {
