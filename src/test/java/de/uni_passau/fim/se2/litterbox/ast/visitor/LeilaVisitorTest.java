@@ -78,6 +78,14 @@ public class LeilaVisitorTest {
         assertThat(output).contains("join \"apple \" \"banana\"");
     }
 
+    @Test
+    public void testTurnRight() throws Exception {
+        String path = "src/test/fixtures/printvisitor/turnRight.json";
+        String output = getLeilaForProject(path);
+
+        assertThat(output).contains("turnRight(15)");
+    }
+
     private String getLeilaForProject(String path) throws IOException, ParsingException {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         File file = new File(path);
