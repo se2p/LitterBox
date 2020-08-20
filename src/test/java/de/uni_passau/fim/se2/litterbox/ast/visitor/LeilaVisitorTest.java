@@ -70,6 +70,14 @@ public class LeilaVisitorTest {
         assertThat(output).contains("mouseDown()");
     }
 
+    @Test
+    public void testJoin() throws Exception {
+        String path = "src/test/fixtures/printvisitor/join.json";
+        String output = getLeilaForProject(path);
+
+        assertThat(output).contains("join \"apple \" \"banana\"");
+    }
+
     private String getLeilaForProject(String path) throws IOException, ParsingException {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         File file = new File(path);

@@ -804,6 +804,7 @@ public class LeilaVisitor extends PrintVisitor {
     public void visit(Join join) {
         emitToken("join");
         join.getOperand1().accept(this);
+        emitNoSpace(" ");
         join.getOperand2().accept(this);
     }
 
