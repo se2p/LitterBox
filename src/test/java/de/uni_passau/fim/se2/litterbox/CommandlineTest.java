@@ -27,6 +27,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.PrintStream;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import static com.google.common.truth.Truth.assertThat;
@@ -44,10 +45,13 @@ public class CommandlineTest {
         assertThat(mockErr.toString()).isNotEmpty();
     }
 
-    // @Test FIXME this fails on gitlab, but why?
-    public void testLeilaWithInvalidDownloadOption() {
-        Main.parseCommandLine(new String[] {"-leila", "--path", "foobar", "-o", "barfoo", "--projectid", "I am not a number"});
-        assertThat(mockErr.toString()).contains("WARNING: Could not download project with PID: I am not a number");
+    @Test
+    public void testLeilaWithInvalidDownloadOption(@TempDir File tempFile) {
+        String inputPath = tempFile.getAbsolutePath();
+        Main.parseCommandLine(new String[] {"-leila", "--path", inputPath, "-o", "barfoo", "--projectid", "I am not a number"});
+        Path path = Paths.get(inputPath, "I am not a number" + ".json");
+        File file = new File(path.toString());
+        assertThat(file.exists()).isFalse();
     }
 
     @Test
