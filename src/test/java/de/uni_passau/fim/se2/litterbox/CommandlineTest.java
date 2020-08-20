@@ -40,6 +40,12 @@ public class CommandlineTest {
         assertThat(mockErr.toString()).isNotEmpty();
     }
 
+    @Test
+    public void testPrintHelp() {
+        Main.parseCommandLine(new String[]{"--output", "foobar"});
+        assertThat(mockOut.toString()).contains("usage: LitterBox");
+    }
+
     @AfterEach
     public void restoreStreams() {
         System.setOut(out);
