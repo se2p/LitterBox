@@ -41,10 +41,6 @@ import static junit.framework.TestCase.fail;
 public class LeilaVisitorTest {
 
     private static JsonNode project;
-    private PrintStream out = System.out;
-    private PrintStream err = System.err;
-    private ByteArrayOutputStream mockOut = new ByteArrayOutputStream();
-    private ByteArrayOutputStream mockErr = new ByteArrayOutputStream();
 
     @Test
     public void testSetRotationStyle() throws Exception {
@@ -120,22 +116,5 @@ public class LeilaVisitorTest {
             e.printStackTrace();
             fail();
         }
-    }
-
-    //@AfterEach
-    public void restoreStreams() {
-        System.setOut(out);
-        System.setErr(err);
-    }
-
-    //@BeforeEach
-    public void replaceStreams() {
-        out = System.out;
-        err = System.err;
-        mockErr.reset();
-        mockOut.reset();
-
-        System.setOut(new PrintStream(mockOut));
-        System.setErr(new PrintStream(mockErr));
     }
 }
