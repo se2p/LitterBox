@@ -61,6 +61,12 @@ public class CommandlineTest {
     }
 
     @Test
+    public void testLeilaWithoutPath() {
+        Main.parseCommandLine(new String[] {"-leila", "--output", "foobar"});
+        assertThat(mockErr.toString()).contains("Input path option 'path' required");
+    }
+
+    @Test
     public void testLeilaValidOptions(@TempDir File tempFile) throws Exception {
         File file = new File("./src/test/fixtures/emptyProject.json");
         String path = file.getAbsolutePath();
