@@ -45,15 +45,7 @@ public class LeilaVisitorTest {
     @Test
     public void testSetRotationStyle() throws Exception {
         String path = "src/test/fixtures/printvisitor/setRotationStyle.json";
-        File file = new File(path);
-        ObjectMapper objectMapper = new ObjectMapper();
-        JsonNode project = objectMapper.readTree(file);
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        PrintStream stream = new PrintStream(out);
-        LeilaVisitor visitor = new LeilaVisitor(stream, false);
-        Program program = ProgramParser.parseProgram("Small", project);
-        visitor.visit(program);
-        String output = out.toString();
+        String output = getLeilaForProject(path);
         assertThat(output).contains("define rotationStyle as \"don't rotate\"");
         assertThat(output).contains("define rotationStyle as \"left-right\"");
         assertThat(output).contains("define rotationStyle as \"all around\"");
@@ -62,20 +54,32 @@ public class LeilaVisitorTest {
     @Test
     public void testTouching() throws Exception {
         String path = "src/test/fixtures/printvisitor/touching.json";
-        File file = new File(path);
-        ObjectMapper objectMapper = new ObjectMapper();
-        JsonNode project = objectMapper.readTree(file);
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        PrintStream stream = new PrintStream(out);
-        LeilaVisitor visitor = new LeilaVisitor(stream, false);
-        Program program = ProgramParser.parseProgram("Small", project);
-        visitor.visit(program);
+        String output = getLeilaForProject(path);
 
-        String output = out.toString();
         assertThat(output).contains("touchingMousePointer()");
         assertThat(output).contains("touchingEdge()");
         assertThat(output).contains("touchingColor(rgb(88, 192, 228))");
         assertThat(output).contains("touchingObject(locate actor \"Apple\")");
+    }
+
+    @Test
+    public void testMouseDown() throws Exception {
+        String path = "src/test/fixtures/printvisitor/mouseDown.json";
+        String output = getLeilaForProject(path);
+
+        assertThat(output).contains("mouseDown()");
+    }
+
+    private String getLeilaForProject(String path) throws IOException, ParsingException {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        File file = new File(path);
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode project = objectMapper.readTree(file);
+        PrintStream stream = new PrintStream(out);
+        LeilaVisitor visitor = new LeilaVisitor(stream, false);
+        Program program = ProgramParser.parseProgram("Small", project);
+        visitor.visit(program);
+        return out.toString();
     }
 
     @Test
