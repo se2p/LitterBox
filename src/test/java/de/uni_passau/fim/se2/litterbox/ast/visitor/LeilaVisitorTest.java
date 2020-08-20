@@ -94,6 +94,14 @@ public class LeilaVisitorTest {
         assertThat(output).contains("define Sprite1.myvar as Sprite1.myvar + 1");
     }
 
+    @Test
+    public void testFromNumber() throws Exception {
+        String path = "src/test/fixtures/printvisitor/fromNumber.json";
+        String output = getLeilaForProject(path);
+
+        assertThat(output).contains("touchingColor((0 + 0))");
+    }
+
     private String getLeilaForProject(String path) throws IOException, ParsingException {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         File file = new File(path);

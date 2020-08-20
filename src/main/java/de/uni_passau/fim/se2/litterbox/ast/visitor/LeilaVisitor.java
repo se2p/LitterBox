@@ -1103,7 +1103,6 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(FromNumber fromNumber) {
-        emitToken("from number");
         fromNumber.getValue().accept(this);
     }
 
