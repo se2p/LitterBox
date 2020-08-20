@@ -582,9 +582,9 @@ public class LeilaVisitor extends PrintVisitor {
         waitUntil.getUntil().accept(this);
     }
 
-    @Override //FIXME inconsistency between Litterbox and Grammar
+    @Override
     public void visit(StopOtherScriptsInSprite stopOtherScriptsInSprite) {
-        emitToken("stop other scripts in sprite");
+        emitToken("stop other scripts in actor");
     }
 
     @Override
