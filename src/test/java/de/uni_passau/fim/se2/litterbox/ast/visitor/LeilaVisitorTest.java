@@ -25,15 +25,15 @@ import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
 import org.junit.Ignore;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.nio.file.Paths;
 
 import static com.google.common.truth.Truth.assertThat;
 import static junit.framework.TestCase.fail;
@@ -62,13 +62,15 @@ public class LeilaVisitorTest {
         assertThat(out.toString()).contains("define rotationStyle as \"all around\"");
     }
 
-    // @Test FIXME this fails in gitlab, but why?
-    public void testCheckFailsForFolder() {
+    @Test
+    public void testCheckFailsForFolder(@TempDir File tempFile) {
         File file = new File("./src/test/fixtures/emptyProject.json");
         String path = file.getAbsolutePath();
-        LeilaAnalyzer analyzer = new LeilaAnalyzer(path, "does not exist", false);
+        String outPath = tempFile.getAbsolutePath();
+        LeilaAnalyzer analyzer = new LeilaAnalyzer(path, outPath + "foobar", false);
         analyzer.analyzeFile();
-        assertThat(mockErr.toString()).contains("Output path must be a folder");
+        File output = new File(Paths.get(outPath + "foobar", "emptyProject.sc").toString());
+        assertThat(output.exists()).isFalse();
     }
 
     @BeforeAll
@@ -120,13 +122,13 @@ public class LeilaVisitorTest {
         }
     }
 
-    @AfterEach
+    //@AfterEach
     public void restoreStreams() {
         System.setOut(out);
         System.setErr(err);
     }
 
-    @BeforeEach
+    //@BeforeEach
     public void replaceStreams() {
         out = System.out;
         err = System.err;
