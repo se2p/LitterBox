@@ -86,6 +86,14 @@ public class LeilaVisitorTest {
         assertThat(output).contains("turnRight(15)");
     }
 
+    @Test
+    public void testChangeVariableBy() throws Exception {
+        String path = "src/test/fixtures/printvisitor/changeVariableBy.json";
+        String output = getLeilaForProject(path);
+
+        assertThat(output).contains("define Sprite1.myvar as Sprite1.myvar + 1");
+    }
+
     private String getLeilaForProject(String path) throws IOException, ParsingException {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         File file = new File(path);
