@@ -49,12 +49,14 @@ import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinitionLi
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.ExpressionStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.UnspecifiedStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.declaration.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.list.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.pen.PenStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.DeleteClone;
@@ -105,6 +107,16 @@ public class LeilaVisitor extends PrintVisitor {
     @Override
     public void visit(ASTNode node) {
         throw new RuntimeException("Visit method not implemented for class: " + node.getClass());
+    }
+
+    @Override
+    public void visit(PenStmt stmt) {
+        throw new RuntimeException("Pen statements are not supported.");
+    }
+
+    @Override
+    public void visit(UnspecifiedStmt stmt) {
+        throw new RuntimeException("Unspecified statements are not supported.");
     }
 
     @Override
@@ -742,6 +754,7 @@ public class LeilaVisitor extends PrintVisitor {
                 return;
             }
         }
+        // TODO these lines seem to be unreachable
         newLine();
         appendIndentation();
         declare();
