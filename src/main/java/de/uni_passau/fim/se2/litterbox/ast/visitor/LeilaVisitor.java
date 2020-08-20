@@ -1043,7 +1043,8 @@ public class LeilaVisitor extends PrintVisitor {
     public void visit(Touching touching) {
         Touchable touchable = touching.getTouchable();
         if (touchable instanceof Edge) {
-            emitNoSpace("touchingEdge(");
+            emitNoSpace("touchingEdge()");
+            return;
         } else if (touchable instanceof MousePointer) {
             emitNoSpace("touchingMousePointer()");
             return;

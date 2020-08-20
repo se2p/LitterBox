@@ -53,9 +53,29 @@ public class LeilaVisitorTest {
         LeilaVisitor visitor = new LeilaVisitor(stream, false);
         Program program = ProgramParser.parseProgram("Small", project);
         visitor.visit(program);
-        assertThat(out.toString()).contains("define rotationStyle as \"don't rotate\"");
-        assertThat(out.toString()).contains("define rotationStyle as \"left-right\"");
-        assertThat(out.toString()).contains("define rotationStyle as \"all around\"");
+        String output = out.toString();
+        assertThat(output).contains("define rotationStyle as \"don't rotate\"");
+        assertThat(output).contains("define rotationStyle as \"left-right\"");
+        assertThat(output).contains("define rotationStyle as \"all around\"");
+    }
+
+    @Test
+    public void testTouching() throws Exception {
+        String path = "src/test/fixtures/printvisitor/touching.json";
+        File file = new File(path);
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode project = objectMapper.readTree(file);
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        PrintStream stream = new PrintStream(out);
+        LeilaVisitor visitor = new LeilaVisitor(stream, false);
+        Program program = ProgramParser.parseProgram("Small", project);
+        visitor.visit(program);
+
+        String output = out.toString();
+        assertThat(output).contains("touchingMousePointer()");
+        assertThat(output).contains("touchingEdge()");
+        assertThat(output).contains("touchingColor(rgb(88, 192, 228))");
+        assertThat(output).contains("touchingObject(locate actor \"Apple\")");
     }
 
     @Test
