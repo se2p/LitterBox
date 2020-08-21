@@ -33,10 +33,11 @@ import java.io.IOException;
 import static de.uni_passau.fim.se2.litterbox.ast.Constants.MONITORS_KEY;
 
 public class MonitorMetadataTest {
-    private static ObjectMapper mapper = new ObjectMapper();
+    private static final ObjectMapper mapper = new ObjectMapper();
     private static JsonNode prog;
     private static JsonNode empty;
     private static JsonNode monitorMetaAlternative;
+    private static JsonNode monitorMetaManipulated;
     private static JsonNode sliderMetadata;
 
     @BeforeAll
@@ -47,6 +48,8 @@ public class MonitorMetadataTest {
         prog = mapper.readTree(f);
         f = new File("./src/test/fixtures/metadata/monitorMetaAlternative.json");
         monitorMetaAlternative = mapper.readTree(f);
+        f = new File("./src/test/fixtures/metadata/monitorMetaManipulated.json");
+        monitorMetaManipulated = mapper.readTree(f);
         f = new File("./src/test/fixtures/metadata/sliderMetadata.json");
         sliderMetadata = mapper.readTree(f);
     }
@@ -71,6 +74,15 @@ public class MonitorMetadataTest {
     public void testMonitorsAlternativeProgram() {
         MonitorMetadataList monitors = MonitorMetadataListParser.parse(monitorMetaAlternative.get(MONITORS_KEY));
         Assertions.assertEquals(1, monitors.getList().size());
+    }
+
+    @Test
+    public void testMonitorsManipulatedProgram() {
+        MonitorMetadataList monitors = MonitorMetadataListParser.parse(monitorMetaManipulated.get(MONITORS_KEY));
+        Assertions.assertEquals(1, monitors.getList().size());
+        Assertions.assertTrue(monitors.getList().get(0) instanceof MonitorSliderMetadata);
+        Assertions.assertFalse(monitors.getList().get(0).isVisible());
+        Assertions.assertEquals(0, ((MonitorSliderMetadata) monitors.getList().get(0)).getSliderMin());
     }
 
     @Test
