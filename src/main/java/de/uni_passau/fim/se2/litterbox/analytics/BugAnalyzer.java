@@ -56,9 +56,14 @@ public class BugAnalyzer extends Analyzer {
                 break;
             case BUGS:
                 this.detectorNames = new ArrayList<>(issueTool.getBugFinders().keySet());
+                this.detectorNames.removeIf(detector -> detector.contains("strict"));
                 break;
             case SMELLS:
                 this.detectorNames = new ArrayList<>(issueTool.getSmellFinders().keySet());
+                break;
+            case DEFAULT:
+                this.detectorNames = new ArrayList<>(issueTool.getAllFinders().keySet());
+                this.detectorNames.removeIf(detector -> detector.contains("strict"));
                 break;
             default:
                 this.detectorNames = Arrays.asList(detectorNames.split(","));

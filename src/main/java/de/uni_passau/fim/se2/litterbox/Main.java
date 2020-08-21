@@ -136,7 +136,7 @@ public class Main {
         }
 
         String outputPath = cmd.getOptionValue(OUTPUT);
-        String detectors = cmd.getOptionValue(DETECTORS, ALL);
+        String detectors = cmd.getOptionValue(DETECTORS, DEFAULT);
         String path = cmd.getOptionValue(PROJECTPATH);
         BugAnalyzer analyzer = new BugAnalyzer(path, outputPath, detectors);
 
