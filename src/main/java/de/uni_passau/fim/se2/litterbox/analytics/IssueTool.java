@@ -20,10 +20,13 @@ package de.uni_passau.fim.se2.litterbox.analytics;
 
 import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.*;
 import de.uni_passau.fim.se2.litterbox.analytics.smells.*;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.stream.Collectors;
+
+import static de.uni_passau.fim.se2.litterbox.utils.GroupConstants.*;
 
 /**
  * Holds all IssueFinder and executes them.
@@ -31,17 +34,18 @@ import java.util.*;
  */
 public class IssueTool {
 
-    private final Map<String, IssueFinder> bugFinders = new LinkedHashMap<>();
-    private final Map<String, IssueFinder> smellFinders = new LinkedHashMap<>();
-    private final Map<String, IssueFinder> allFinders;
+    private static final Logger log = Logger.getLogger(BugAnalyzer.class.getName());
 
-    public IssueTool() {
+    private final static Map<String, IssueFinder> bugFinders = new LinkedHashMap<>();
+    private final static Map<String, IssueFinder> smellFinders = new LinkedHashMap<>();
+    private final static Map<String, IssueFinder> allFinders;
+
+    static {
         registerBugFinder(new AmbiguousCustomBlockSignature());
         registerBugFinder(new AmbiguousParameterName());
         registerBugFinder(new AmbiguousParameterNameStrict());
         registerBugFinder(new CallWithoutDefinition());
         registerBugFinder(new ComparingLiterals());
-        registerBugFinder(new ComparingLiteralsStrict());
         registerBugFinder(new CustomBlockWithForever());
         registerBugFinder(new CustomBlockWithTermination());
         registerBugFinder(new EndlessRecursion());
@@ -64,7 +68,6 @@ public class IssueTool {
         registerBugFinder(new OrphanedParameter());
         registerBugFinder(new ParameterOutOfScope());
         registerBugFinder(new PositionEqualsCheck());
-        registerBugFinder(new PositionEqualsCheckStrict());
         registerBugFinder(new RecursiveCloning());
         registerBugFinder(new StutteringMovement());
 
@@ -85,36 +88,49 @@ public class IssueTool {
         allFinders.putAll(smellFinders);
     }
 
-    /**
-     * Executes all checks.
-     *
-     * @param program the project to check
-     */
-    public Set<Issue> check(Program program, List<String> detectors) {
-        Preconditions.checkNotNull(program);
-        Set<Issue> issues = new LinkedHashSet<>();
-        for (String s : detectors) {
-            if (allFinders.containsKey(s)) {
-                IssueFinder iF = getAllFinders().get(s);
-                issues.addAll(iF.check(program));
-            }
+    public static List<IssueFinder> getFinders(String commandString) {
+        List<IssueFinder> finders = new ArrayList<>();
+
+        switch (commandString) {
+            case ALL:
+                finders.addAll(allFinders.values());
+                break;
+            case BUGS:
+                finders.addAll(bugFinders.values());
+                break;
+            case SMELLS:
+                finders.addAll(smellFinders.values());
+                break;
+            case DEFAULT:
+                finders.addAll(allFinders.values().stream().filter(f -> !f.getName().toLowerCase().endsWith("strict")).collect(Collectors.toList()));
+                break;
+            default:
+                for (String detectorName : commandString.split(",")) {
+                    if (!allFinders.containsKey(detectorName)) {
+                        // TODO: Hard crash might be more appropriate to notify user
+                        log.log(Level.SEVERE, "Unknown finder: "+detectorName);
+                        continue;
+                    }
+                    finders.add(allFinders.get(detectorName));
+                }
+                break;
         }
-        return issues;
+        return finders;
     }
 
-    public Map<String, IssueFinder> getAllFinders() {
-        return Collections.unmodifiableMap(allFinders);
+    public static Collection<String> getAllFinderNames() {
+        return Collections.unmodifiableSet(allFinders.keySet());
     }
 
-    public Map<String, IssueFinder> getSmellFinders() {
-        return Collections.unmodifiableMap(smellFinders);
+    public static Collection<String> getBugFinderNames() {
+        return Collections.unmodifiableSet(bugFinders.keySet());
     }
 
-    public Map<String, IssueFinder> getBugFinders() {
-        return Collections.unmodifiableMap(bugFinders);
+    public static Collection<String> getSmellFinderNames() {
+        return Collections.unmodifiableSet(smellFinders.keySet());
     }
 
-    public void registerSmellFinder(IssueFinder finder) {
+    static void registerSmellFinder(IssueFinder finder) {
         if (finder.getIssueType() != IssueFinder.IssueType.SMELL) {
             throw new RuntimeException("Cannot register IssueFinder of Type "
                     + finder.getIssueType()
@@ -124,7 +140,7 @@ public class IssueTool {
         smellFinders.put(finder.getName(), finder);
     }
 
-    public void registerBugFinder(IssueFinder finder) {
+    static void registerBugFinder(IssueFinder finder) {
         if (finder.getIssueType() != IssueFinder.IssueType.BUG) {
             throw new RuntimeException("Cannot register IssueFinder of Type "
                     + finder.getIssueType()

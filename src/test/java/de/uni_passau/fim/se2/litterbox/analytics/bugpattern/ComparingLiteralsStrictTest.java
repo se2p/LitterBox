@@ -32,21 +32,24 @@ public class ComparingLiteralsStrictTest {
 
     @Test
     public void testEmptyProgram() {
-        ComparingLiteralsStrict parameterName = new ComparingLiteralsStrict();
+        ComparingLiterals parameterName = new ComparingLiterals();
+        parameterName.setIgnoreLooseBlocks(true);
         Set<Issue> reports = parameterName.check(empty);
         Assertions.assertEquals(0, reports.size());
     }
 
     @Test
     public void testDeadProgram() {
-        ComparingLiteralsStrict parameterName = new ComparingLiteralsStrict();
+        ComparingLiterals parameterName = new ComparingLiterals();
+        parameterName.setIgnoreLooseBlocks(true);
         Set<Issue> reports = parameterName.check(deadCompare);
         Assertions.assertEquals(0, reports.size());
     }
 
     @Test
     public void testNormalProgram() {
-        ComparingLiteralsStrict parameterName = new ComparingLiteralsStrict();
+        ComparingLiterals parameterName = new ComparingLiterals();
+        parameterName.setIgnoreLooseBlocks(true);
         Set<Issue> reports = parameterName.check(normal);
         Assertions.assertEquals(3, reports.size());
     }

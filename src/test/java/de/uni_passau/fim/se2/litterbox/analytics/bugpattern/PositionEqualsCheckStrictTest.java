@@ -51,21 +51,21 @@ public class PositionEqualsCheckStrictTest {
 
     @Test
     public void testEmptyProgram() {
-        PositionEqualsCheckStrict parameterName = new PositionEqualsCheckStrict();
+        PositionEqualsCheck parameterName = new PositionEqualsCheck();
         Set<Issue> reports = parameterName.check(empty);
         Assertions.assertEquals(0, reports.size());
     }
 
     @Test
     public void testEqualCond() {
-        PositionEqualsCheckStrict parameterName = new PositionEqualsCheckStrict();
+        PositionEqualsCheck parameterName = new PositionEqualsCheck();
         Set<Issue> reports = parameterName.check(equalXStrict);
         Assertions.assertEquals(1, reports.size());
     }
 
     @Test
     public void testEqualDistCond() {
-        PositionEqualsCheckStrict parameterName = new PositionEqualsCheckStrict();
+        PositionEqualsCheck parameterName = new PositionEqualsCheck();
         Set<Issue> reports = parameterName.check(equalstrict);
         Assertions.assertEquals(2, reports.size());
     }

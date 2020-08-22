@@ -55,6 +55,8 @@ public class Main {
     private static final String ANNOTATE_SHORT = "a";
     private static final String DETECTORS = "detectors";
     private static final String DETECTORS_SHORT = "d";
+    private static final String IGNORE_LOOSE_BLOCKS = "ignoreloose";
+    private static final String IGNORE_LOOSE_BLOCKS_SHORT = "g";
 
     private Main() {
     }
@@ -101,6 +103,8 @@ public class Main {
                 + " (all detectors defined in the README)");
         options.addOption(OUTPUT_LANG_SHORT, OUTPUT_LANG, true, "language of hints in the output");
 
+        options.addOption(IGNORE_LOOSE_BLOCKS_SHORT, IGNORE_LOOSE_BLOCKS, false, "ignore loose blocks when checking bug patterns");
+
         return options;
     }
 
@@ -122,8 +126,7 @@ public class Main {
         System.out.printf("\t%-20s %-30s%n", BUGS, messages.getInfo(BUGS));
         System.out.printf("\t%-20s %-30s%n", SMELLS, messages.getInfo(SMELLS));
 
-        IssueTool issueTool = new IssueTool();
-        issueTool.getAllFinders().keySet().forEach(finder -> System.out.printf(
+        IssueTool.getAllFinderNames().forEach(finder -> System.out.printf(
                 "\t%-20s %-30s%n",
                 finder,
                 messages.getName(finder)
@@ -138,7 +141,8 @@ public class Main {
         String outputPath = cmd.getOptionValue(OUTPUT);
         String detectors = cmd.getOptionValue(DETECTORS, DEFAULT);
         String path = cmd.getOptionValue(PROJECTPATH);
-        BugAnalyzer analyzer = new BugAnalyzer(path, outputPath, detectors);
+        boolean ignoreLooseBlocks = cmd.hasOption(IGNORE_LOOSE_BLOCKS);
+        BugAnalyzer analyzer = new BugAnalyzer(path, outputPath, detectors, ignoreLooseBlocks);
 
         if (cmd.hasOption(ANNOTATE)) {
             String annotationPath = cmd.getOptionValue(ANNOTATE);
