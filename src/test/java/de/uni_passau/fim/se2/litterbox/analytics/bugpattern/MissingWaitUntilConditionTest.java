@@ -53,7 +53,7 @@ class MissingWaitUntilConditionTest {
     public void testMissingPenUp() {
         MissingWaitUntilCondition finder = new MissingWaitUntilCondition();
         Set<Issue> reports = finder.check(program);
-        Truth.assertThat(reports).hasSize(2);
+        Truth.assertThat(reports).hasSize(4);
 
         // TODO: Restore checks
 //        Truth.assertThat(result.getPosition().get(1)).isEqualTo("Sprite1");
