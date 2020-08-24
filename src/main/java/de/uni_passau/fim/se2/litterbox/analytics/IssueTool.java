@@ -36,11 +36,13 @@ public class IssueTool {
 
     private static final Logger log = Logger.getLogger(BugAnalyzer.class.getName());
 
-    private final static Map<String, IssueFinder> bugFinders = new LinkedHashMap<>();
-    private final static Map<String, IssueFinder> smellFinders = new LinkedHashMap<>();
-    private final static Map<String, IssueFinder> allFinders;
+    private static Map<String, IssueFinder> bugFinders = new LinkedHashMap<>();
+    private static Map<String, IssueFinder> smellFinders = new LinkedHashMap<>();
+    private static Map<String, IssueFinder> allFinders;
 
-    static {
+    private static void generateFinders() {
+        bugFinders = new LinkedHashMap<>();
+        smellFinders = new LinkedHashMap<>();
         registerBugFinder(new AmbiguousCustomBlockSignature());
         registerBugFinder(new AmbiguousParameterName());
         registerBugFinder(new AmbiguousParameterNameStrict());
@@ -93,19 +95,24 @@ public class IssueTool {
 
         switch (commandString) {
             case ALL:
+                generateFinders();
                 finders.addAll(allFinders.values());
                 break;
             case BUGS:
+                generateFinders();
                 finders.addAll(bugFinders.values());
                 break;
             case SMELLS:
+                generateFinders();
                 finders.addAll(smellFinders.values());
                 break;
             case DEFAULT:
+                generateFinders();
                 finders.addAll(allFinders.values().stream().filter(f -> !f.getName().toLowerCase().endsWith("strict")).collect(Collectors.toList()));
                 break;
             default:
                 for (String detectorName : commandString.split(",")) {
+                    generateFinders();
                     if (!allFinders.containsKey(detectorName)) {
                         // TODO: Hard crash might be more appropriate to notify user
                         log.log(Level.SEVERE, "Unknown finder: "+detectorName);
@@ -115,18 +122,21 @@ public class IssueTool {
                 }
                 break;
         }
-        return finders;
+        return Collections.unmodifiableList(finders);
     }
 
     public static Collection<String> getAllFinderNames() {
+        generateFinders();
         return Collections.unmodifiableSet(allFinders.keySet());
     }
 
     public static Collection<String> getBugFinderNames() {
+        generateFinders();
         return Collections.unmodifiableSet(bugFinders.keySet());
     }
 
     public static Collection<String> getSmellFinderNames() {
+        generateFinders();
         return Collections.unmodifiableSet(smellFinders.keySet());
     }
 
