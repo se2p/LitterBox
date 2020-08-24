@@ -63,6 +63,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.touchable.MousePointer;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.BooleanType;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.NumberType;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.StringType;
+import de.uni_passau.fim.se2.litterbox.ast.model.variable.DataExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Parameter;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.ScratchList;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
@@ -1146,16 +1147,21 @@ public class ScratchBlocksVisitor extends PrintVisitor {
 
     @Override
     public void visit(ExpressionStmt node) {
-        if (node.getExpression() instanceof Variable ||
-                node.getExpression() instanceof ScratchList) {
-            emitNoSpace("(");
+        if (node.getExpression() instanceof Qualified) {
+            DataExpr dataExpr = ((Qualified)node.getExpression()).getSecond();
+            if (dataExpr instanceof Variable || dataExpr instanceof ScratchList) {
+                emitNoSpace("(");
+            }
         }
         node.getExpression().accept(this);
-        if (node.getExpression() instanceof Variable) {
-            emitNoSpace(")");
-        } else if (node.getExpression() instanceof ScratchList) {
-            emitNoSpace(" :: list");
-            emitNoSpace(")");
+        if (node.getExpression() instanceof Qualified) {
+            DataExpr dataExpr = ((Qualified)node.getExpression()).getSecond();
+            if (dataExpr instanceof Variable) {
+                emitNoSpace(")");
+            } else if (dataExpr instanceof ScratchList) {
+                emitNoSpace(" :: list");
+                emitNoSpace(")");
+            }
         }
         storeNotesForIssue(node);
     }

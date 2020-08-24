@@ -25,12 +25,12 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.ExpressionStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.DataExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.ScratchList;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ExpressionListInfo;
@@ -96,7 +96,8 @@ public class UnusedVariable extends AbstractIssueFinder {
                         break;
                     }
                 }
-                addScriptWithIssueFor(new Variable(new StrId(name)));
+                Qualified qualified = new Qualified(new StrId(actorName), new Variable(new StrId(name)));
+                addScriptWithIssueFor(qualified);
             }
         }
 
@@ -119,14 +120,15 @@ public class UnusedVariable extends AbstractIssueFinder {
                         break;
                     }
                 }
-                addScriptWithIssueFor(new ScratchList(new StrId(name)));
+                Qualified qualified = new Qualified(new StrId(actorName), new ScratchList(new StrId(name)));
+                addScriptWithIssueFor(qualified);
             }
         }
     }
 
-    private void addScriptWithIssueFor(DataExpr dataExpr) {
-        Script theScript = new Script(new Never(), new StmtList(Arrays.asList(new ExpressionStmt(dataExpr))));
-        addIssueForSynthesizedScript(theScript, dataExpr, new NoBlockMetadata());
+    private void addScriptWithIssueFor(Expression expr) {
+        Script theScript = new Script(new Never(), new StmtList(Arrays.asList(new ExpressionStmt(expr))));
+        addIssueForSynthesizedScript(theScript, expr, new NoBlockMetadata());
     }
 
     @Override
