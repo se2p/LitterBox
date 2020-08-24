@@ -18,6 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.report;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
@@ -34,7 +35,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static com.google.common.truth.Truth.assertThat;
 
 public class JSONReportGeneratorTest {
 
@@ -47,6 +48,20 @@ public class JSONReportGeneratorTest {
         return program;
     }
 
+    private void assertValidJsonIssue(String issueText, int numIssues) throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode rootNode = mapper.readTree(issueText);
+        assertThat(rootNode.size()).isEqualTo(numIssues);
+
+        for (JsonNode node : rootNode) {
+            assertThat(node.has("finder")).isTrue();
+            assertThat(node.has("type")).isTrue();;
+            assertThat(node.has("sprite")).isTrue();;
+            assertThat(node.has("hint")).isTrue();;
+            assertThat(node.has("code")).isTrue();;
+        }
+    }
+
     @Test
     public void testSingleIssue() throws IOException, ParsingException {
         Program program = getAST("src/test/fixtures/bugpattern/xPosEqual.json");
@@ -57,16 +72,29 @@ public class JSONReportGeneratorTest {
         JSONReportGenerator generator = new JSONReportGenerator(os);
         generator.generateReport(program, issues);
         os.close();
-        assertEquals("[ {" + System.lineSeparator() +
-                "  \"finder\" : \"Position Equals Check\"," + System.lineSeparator() +
-                "  \"type\" : \"BUG\"," + System.lineSeparator() +
-                "  \"sprite\" : \"Sprite1\"," + System.lineSeparator() +
-                "  \"hint\" : \"When an equals comparison is used as check for an until loop or a wait until, "
-                + "it can occur that the condition is never met exactly. "
-                + "Therefore use '<' or '>' for the comparison.\"," + System.lineSeparator() +
-                "  \"code\" : \"[scratchblocks]\\n<(x position) = :: #ff0000> // Issue: Position Equals Check\\n[/scratchblocks]\\n\"" + System.lineSeparator() +
-                "} ]", os.toString());
+        assertValidJsonIssue(os.toString(), 1);
     }
+
+    @Test
+    public void testCodeField() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/bugpattern/xPosEqual.json");
+        PositionEqualsCheck finder = new PositionEqualsCheck();
+        Set<Issue> issues = finder.check(program);
+
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        JSONReportGenerator generator = new JSONReportGenerator(os);
+        generator.generateReport(program, issues);
+        os.close();
+        String jsonText = os.toString();
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode rootNode = mapper.readTree(jsonText);
+        String code = rootNode.get(0).get("code").asText();
+        assertThat(code).isEqualTo("[scratchblocks]" + System.lineSeparator() +
+                "repeat until <(x position) = (50):: #ff0000> // Issue: Position Equals Check"  + System.lineSeparator() +
+                "end"  + System.lineSeparator() +
+                "[/scratchblocks]" + System.lineSeparator());
+    }
+
 
     @Test
     public void testMultipleIssues() throws IOException, ParsingException {
@@ -78,39 +106,7 @@ public class JSONReportGeneratorTest {
         JSONReportGenerator generator = new JSONReportGenerator(os);
         generator.generateReport(program, issues);
         os.close();
-        assertEquals("[ {" + System.lineSeparator() +
-                "  \"finder\" : \"Position Equals Check\"," + System.lineSeparator() +
-                "  \"type\" : \"BUG\"," + System.lineSeparator() +
-                "  \"sprite\" : \"Figur1\"," + System.lineSeparator() +
-                "  \"hint\" : \"When an equals comparison is used as check for an until loop or a wait until, "
-                + "it can occur that the condition is never met exactly. "
-                + "Therefore use '<' or '>' for the comparison.\"," + System.lineSeparator() +
-                "  \"code\" : \"[scratchblocks]\\n<(distance to (mouse-pointer v)) = :: #ff0000> // Issue: Position Equals Check\\n[/scratchblocks]\\n\"" + System.lineSeparator() +
-                "}, {" + System.lineSeparator() +
-                "  \"finder\" : \"Position Equals Check\"," + System.lineSeparator() +
-                "  \"type\" : \"BUG\"," + System.lineSeparator() +
-                "  \"sprite\" : \"Figur1\"," + System.lineSeparator() +
-                "  \"hint\" : \"When an equals comparison is used as check for an until loop or a wait until, "
-                + "it can occur that the condition is never met exactly. "
-                + "Therefore use '<' or '>' for the comparison.\"," + System.lineSeparator() +
-                "  \"code\" : \"[scratchblocks]\\n<(distance to (Bat v)) = :: #ff0000> // Issue: Position Equals Check\\n[/scratchblocks]\\n\"" + System.lineSeparator() +
-                "}, {" + System.lineSeparator() +
-                "  \"finder\" : \"Position Equals Check\"," + System.lineSeparator() +
-                "  \"type\" : \"BUG\"," + System.lineSeparator() +
-                "  \"sprite\" : \"Figur1\"," + System.lineSeparator() +
-                "  \"hint\" : \"When an equals comparison is used as check for an until loop or a wait until, "
-                + "it can occur that the condition is never met exactly. "
-                + "Therefore use '<' or '>' for the comparison.\"," + System.lineSeparator() +
-                "  \"code\" : \"[scratchblocks]\\n<(mouse x) = :: #ff0000> // Issue: Position Equals Check\\n[/scratchblocks]\\n\"" + System.lineSeparator() +
-                "}, {" + System.lineSeparator() +
-                "  \"finder\" : \"Position Equals Check\"," + System.lineSeparator() +
-                "  \"type\" : \"BUG\"," + System.lineSeparator() +
-                "  \"sprite\" : \"Figur1\"," + System.lineSeparator() +
-                "  \"hint\" : \"When an equals comparison is used as check for an until loop or a wait until, "
-                + "it can occur that the condition is never met exactly. "
-                + "Therefore use '<' or '>' for the comparison.\"," + System.lineSeparator() +
-                "  \"code\" : \"[scratchblocks]\\n<(mouse y) = :: #ff0000> // Issue: Position Equals Check\\n[/scratchblocks]\\n\"" + System.lineSeparator() +
-                "} ]", os.toString());
+        assertValidJsonIssue(os.toString(), 4);
     }
 
     @Test
@@ -124,16 +120,7 @@ public class JSONReportGeneratorTest {
         generator.generateReport(program, issues);
 
         String result = Files.readString(tmpFile);
-        assertEquals("[ {" + System.lineSeparator() +
-                "  \"finder\" : \"Position Equals Check\"," + System.lineSeparator() +
-                "  \"type\" : \"BUG\"," + System.lineSeparator() +
-                "  \"sprite\" : \"Sprite1\"," + System.lineSeparator() +
-                "  \"hint\" : \"When an equals comparison is used as check for an until loop or a wait until, "
-                + "it can occur that the condition is never met exactly. "
-                + "Therefore use '<' or '>' for the comparison.\"," + System.lineSeparator() +
-                "  \"code\" : \"[scratchblocks]\\n<(x position) = :: #ff0000> "
-                + "// Issue: Position Equals Check\\n[/scratchblocks]\\n\"" + System.lineSeparator() +
-                "} ]", result);
+        assertValidJsonIssue(result, 1);
         Files.delete(tmpFile);
     }
 }

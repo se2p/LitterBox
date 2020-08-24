@@ -16,39 +16,33 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.uni_passau.fim.se2.litterbox.ast.parser;
+package de.uni_passau.fim.se2.litterbox.ast.parser.stmt;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import org.junit.jupiter.api.BeforeAll;
+import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
 
-import static junit.framework.TestCase.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
-public class ExtensionUsageTest {
+public class InvalidRotationStyleTest {
 
-    private static JsonNode project;
-
-    @BeforeAll
-    public static void setup() {
-        String path = "src/test/fixtures/testExtension.json";
-        File file = new File(path);
-        ObjectMapper objectMapper = new ObjectMapper();
-        try {
-            project = objectMapper.readTree(file);
-        } catch (IOException e) {
-            fail();
-        }
-    }
+    private static ObjectMapper mapper = new ObjectMapper();
 
     @Test
-    public void testContains() throws ParsingException {
-        //Todo what does this test do?
-        Program program = ProgramParser.parseProgram("Extension", project);
+    public void testInvalidRotationStyle() {
+        File f = new File("./src/test/fixtures/stmtParser/invalidRotationStyle.json");
+        try {
+            Program invalidRotationSTyle = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
+            fail();
+        } catch (IllegalArgumentException e) {
+            // expected
+        } catch (ParsingException | IOException e) {
+            e.printStackTrace();
+        }
     }
 }

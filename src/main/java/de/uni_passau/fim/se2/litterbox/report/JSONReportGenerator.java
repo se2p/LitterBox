@@ -60,7 +60,7 @@ public class JSONReportGenerator implements ReportGenerator {
             ((ObjectNode) childNode).put("sprite", issue.getActorName());
             ((ObjectNode) childNode).put("hint", issue.getHint());
 
-            ASTNode location = issue.getCodeLocation();
+            ASTNode location = issue.getScriptOrProcedureDefinition();
             ScratchBlocksVisitor blockVisitor = new ScratchBlocksVisitor(issue);
             blockVisitor.begin();
             location.accept(blockVisitor);

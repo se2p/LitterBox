@@ -46,6 +46,12 @@ public class CommandlineTest {
     }
 
     @Test
+    public void testPrintHelp() {
+        Main.parseCommandLine(new String[]{"--output", "foobar"});
+        assertThat(mockOut.toString()).contains("usage: LitterBox");
+    }
+
+    @Test
     public void testLeilaWithInvalidDownloadOption(@TempDir File tempFile) {
         String inputPath = tempFile.getAbsolutePath();
         Main.parseCommandLine(new String[] {"-leila", "--path", inputPath, "-o", "barfoo", "--projectid", "I am not a number"});
