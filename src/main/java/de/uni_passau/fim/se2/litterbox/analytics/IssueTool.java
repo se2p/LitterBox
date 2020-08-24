@@ -36,58 +36,64 @@ public class IssueTool {
 
     private static final Logger log = Logger.getLogger(BugAnalyzer.class.getName());
 
-    private static Map<String, IssueFinder> bugFinders = new LinkedHashMap<>();
-    private static Map<String, IssueFinder> smellFinders = new LinkedHashMap<>();
-    private static Map<String, IssueFinder> allFinders;
+    private static Map<String, IssueFinder> generateBugFinders() {
+        Map<String, IssueFinder> bugFinders = new LinkedHashMap<>();
+        registerBugFinder(new AmbiguousCustomBlockSignature(), bugFinders);
+        registerBugFinder(new AmbiguousParameterName(), bugFinders);
+        registerBugFinder(new AmbiguousParameterNameStrict(), bugFinders);
+        registerBugFinder(new CallWithoutDefinition(), bugFinders);
+        registerBugFinder(new ComparingLiterals(), bugFinders);
+        registerBugFinder(new CustomBlockWithForever(), bugFinders);
+        registerBugFinder(new CustomBlockWithTermination(), bugFinders);
+        registerBugFinder(new EndlessRecursion(), bugFinders);
+        registerBugFinder(new ExpressionAsTouchingOrColor(), bugFinders);
+        registerBugFinder(new ForeverInsideLoop(), bugFinders);
+        registerBugFinder(new IllegalParameterRefactor(), bugFinders);
+        registerBugFinder(new MessageNeverReceived(), bugFinders);
+        registerBugFinder(new MessageNeverSent(), bugFinders);
+        registerBugFinder(new MissingBackdropSwitch(), bugFinders);
+        registerBugFinder(new MissingCloneCall(), bugFinders);
+        registerBugFinder(new MissingCloneInitialization(), bugFinders);
+        registerBugFinder(new MissingInitialization(), bugFinders);
+        registerBugFinder(new MissingEraseAll(), bugFinders);
+        registerBugFinder(new MissingLoopSensing(), bugFinders);
+        registerBugFinder(new MissingPenDown(), bugFinders);
+        registerBugFinder(new MissingPenUp(), bugFinders);
+        registerBugFinder(new MissingTerminationCondition(), bugFinders);
+        registerBugFinder(new MissingWaitUntilCondition(), bugFinders);
+        registerBugFinder(new NoWorkingScripts(), bugFinders);
+        registerBugFinder(new OrphanedParameter(), bugFinders);
+        registerBugFinder(new ParameterOutOfScope(), bugFinders);
+        registerBugFinder(new PositionEqualsCheck(), bugFinders);
+        registerBugFinder(new RecursiveCloning(), bugFinders);
+        registerBugFinder(new StutteringMovement(), bugFinders);
 
-    private static void generateFinders() {
-        bugFinders = new LinkedHashMap<>();
-        smellFinders = new LinkedHashMap<>();
-        registerBugFinder(new AmbiguousCustomBlockSignature());
-        registerBugFinder(new AmbiguousParameterName());
-        registerBugFinder(new AmbiguousParameterNameStrict());
-        registerBugFinder(new CallWithoutDefinition());
-        registerBugFinder(new ComparingLiterals());
-        registerBugFinder(new CustomBlockWithForever());
-        registerBugFinder(new CustomBlockWithTermination());
-        registerBugFinder(new EndlessRecursion());
-        registerBugFinder(new ExpressionAsTouchingOrColor());
-        registerBugFinder(new ForeverInsideLoop());
-        registerBugFinder(new IllegalParameterRefactor());
-        registerBugFinder(new MessageNeverReceived());
-        registerBugFinder(new MessageNeverSent());
-        registerBugFinder(new MissingBackdropSwitch());
-        registerBugFinder(new MissingCloneCall());
-        registerBugFinder(new MissingCloneInitialization());
-        registerBugFinder(new MissingInitialization());
-        registerBugFinder(new MissingEraseAll());
-        registerBugFinder(new MissingLoopSensing());
-        registerBugFinder(new MissingPenDown());
-        registerBugFinder(new MissingPenUp());
-        registerBugFinder(new MissingTerminationCondition());
-        registerBugFinder(new MissingWaitUntilCondition());
-        registerBugFinder(new NoWorkingScripts());
-        registerBugFinder(new OrphanedParameter());
-        registerBugFinder(new ParameterOutOfScope());
-        registerBugFinder(new PositionEqualsCheck());
-        registerBugFinder(new RecursiveCloning());
-        registerBugFinder(new StutteringMovement());
+        return bugFinders;
+    }
+
+    private static Map<String, IssueFinder> generateAllFinders() {
+        Map<String, IssueFinder> allFinders = new LinkedHashMap<>(generateBugFinders());
+        allFinders.putAll(generateSmellFinders());
+        return allFinders;
+    }
+
+    private static Map<String, IssueFinder> generateSmellFinders() {
+        Map<String, IssueFinder> smellFinders = new LinkedHashMap<>();
 
         // Smells
-        registerSmellFinder(new EmptyControlBody());
-        registerSmellFinder(new EmptyCustomBlock());
-        registerSmellFinder(new EmptyProject());
-        registerSmellFinder(new EmptyScript());
-        registerSmellFinder(new EmptySprite());
-        registerSmellFinder(new DeadCode());
-        registerSmellFinder(new LongScript());
-        registerSmellFinder(new NestedLoops());
-        registerSmellFinder(new SameVariableDifferentSprite());
-        registerSmellFinder(new UnusedVariable());
-        registerSmellFinder(new UnusedCustomBlock());
+        registerSmellFinder(new EmptyControlBody(), smellFinders);
+        registerSmellFinder(new EmptyCustomBlock(), smellFinders);
+        registerSmellFinder(new EmptyProject(), smellFinders);
+        registerSmellFinder(new EmptyScript(), smellFinders);
+        registerSmellFinder(new EmptySprite(), smellFinders);
+        registerSmellFinder(new DeadCode(), smellFinders);
+        registerSmellFinder(new LongScript(), smellFinders);
+        registerSmellFinder(new NestedLoops(), smellFinders);
+        registerSmellFinder(new SameVariableDifferentSprite(), smellFinders);
+        registerSmellFinder(new UnusedVariable(), smellFinders);
+        registerSmellFinder(new UnusedCustomBlock(), smellFinders);
 
-        allFinders = new LinkedHashMap<>(bugFinders);
-        allFinders.putAll(smellFinders);
+        return smellFinders;
     }
 
     public static List<IssueFinder> getFinders(String commandString) {
@@ -95,27 +101,23 @@ public class IssueTool {
 
         switch (commandString) {
             case ALL:
-                generateFinders();
-                finders.addAll(allFinders.values());
+                finders = new ArrayList<>(generateAllFinders().values());
                 break;
             case BUGS:
-                generateFinders();
-                finders.addAll(bugFinders.values());
+                finders = new ArrayList<>(generateBugFinders().values());
                 break;
             case SMELLS:
-                generateFinders();
-                finders.addAll(smellFinders.values());
+                finders = new ArrayList<>(generateSmellFinders().values());
                 break;
             case DEFAULT:
-                generateFinders();
-                finders.addAll(allFinders.values().stream().filter(f -> !f.getName().toLowerCase().endsWith("strict")).collect(Collectors.toList()));
+                finders.addAll(generateAllFinders().values().stream().filter(f -> !f.getName().toLowerCase().endsWith("strict")).collect(Collectors.toList()));
                 break;
             default:
                 for (String detectorName : commandString.split(",")) {
-                    generateFinders();
+                    Map<String, IssueFinder> allFinders = generateAllFinders();
                     if (!allFinders.containsKey(detectorName)) {
                         // TODO: Hard crash might be more appropriate to notify user
-                        log.log(Level.SEVERE, "Unknown finder: "+detectorName);
+                        log.log(Level.SEVERE, "Unknown finder: " + detectorName);
                         continue;
                     }
                     finders.add(allFinders.get(detectorName));
@@ -126,21 +128,18 @@ public class IssueTool {
     }
 
     public static Collection<String> getAllFinderNames() {
-        generateFinders();
-        return Collections.unmodifiableSet(allFinders.keySet());
+        return Collections.unmodifiableSet(generateAllFinders().keySet());
     }
 
     public static Collection<String> getBugFinderNames() {
-        generateFinders();
-        return Collections.unmodifiableSet(bugFinders.keySet());
+        return Collections.unmodifiableSet(generateBugFinders().keySet());
     }
 
     public static Collection<String> getSmellFinderNames() {
-        generateFinders();
-        return Collections.unmodifiableSet(smellFinders.keySet());
+        return Collections.unmodifiableSet(generateSmellFinders().keySet());
     }
 
-    static void registerSmellFinder(IssueFinder finder) {
+    static void registerSmellFinder(IssueFinder finder, Map<String, IssueFinder> smellFinders) {
         if (finder.getIssueType() != IssueFinder.IssueType.SMELL) {
             throw new RuntimeException("Cannot register IssueFinder of Type "
                     + finder.getIssueType()
@@ -150,7 +149,7 @@ public class IssueTool {
         smellFinders.put(finder.getName(), finder);
     }
 
-    static void registerBugFinder(IssueFinder finder) {
+    static void registerBugFinder(IssueFinder finder, Map<String, IssueFinder> bugFinders) {
         if (finder.getIssueType() != IssueFinder.IssueType.BUG) {
             throw new RuntimeException("Cannot register IssueFinder of Type "
                     + finder.getIssueType()

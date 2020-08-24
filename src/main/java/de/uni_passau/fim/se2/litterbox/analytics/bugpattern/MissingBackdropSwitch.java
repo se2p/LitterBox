@@ -57,6 +57,7 @@ public class MissingBackdropSwitch extends AbstractIssueFinder {
     public Set<Issue> check(Program program) {
         Preconditions.checkNotNull(program);
         this.program = program;
+        issues = new LinkedHashSet<>();
         switched = new ArrayList<>();
         switchReceived = new ArrayList<>();
         nextRandPrev = false;
