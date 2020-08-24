@@ -105,9 +105,9 @@ public class ScratchBlocksVisitor extends PrintVisitor {
 
     private boolean lineWrapped = true;
 
-    private Set<Issue> issues = new LinkedHashSet<>();
+    private final Set<Issue> issues = new LinkedHashSet<>();
 
-    private Set<String> issueNote = new LinkedHashSet<>();
+    private final Set<String> issueNote = new LinkedHashSet<>();
 
     public ScratchBlocksVisitor() {
         super(null);
