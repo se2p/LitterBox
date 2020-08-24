@@ -20,6 +20,11 @@ package de.uni_passau.fim.se2.litterbox.analytics;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
+import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.model.Script;
+import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.Metadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
@@ -39,6 +44,7 @@ public abstract class AbstractIssueFinder implements IssueFinder, ScratchVisitor
     protected Set<Issue> issues = new LinkedHashSet<>();
     protected Map<LocalIdentifier, ProcedureInfo> procMap;
     protected Program program;
+    protected boolean ignoreLooseBlocks = false;
 
     @Override
     public Set<Issue> check(Program program) {
@@ -59,6 +65,10 @@ public abstract class AbstractIssueFinder implements IssueFinder, ScratchVisitor
 
     @Override
     public void visit(Script script) {
+        if (ignoreLooseBlocks && script.getEvent() instanceof Never) {
+            // Ignore unconnected blocks
+            return;
+        }
         currentScript = script;
         currentProcedure = null;
         visitChildren(script);
@@ -89,6 +99,10 @@ public abstract class AbstractIssueFinder implements IssueFinder, ScratchVisitor
                 (Script) null, // TODO: There is no script
                 currentActor, // TODO: There is no node?
                 null)); // TODO: There is no metadata
+    }
+
+    public void setIgnoreLooseBlocks(boolean value) {
+        ignoreLooseBlocks = value;
     }
 
     public abstract IssueType getIssueType();

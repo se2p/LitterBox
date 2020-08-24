@@ -59,4 +59,9 @@ public class EmptySprite implements IssueFinder, ScratchVisitor {
     public IssueType getIssueType() {
         return IssueType.SMELL;
     }
+
+    @Override
+    public void setIgnoreLooseBlocks(boolean value) {
+        // Irrelevant for this finder
+    }
 }

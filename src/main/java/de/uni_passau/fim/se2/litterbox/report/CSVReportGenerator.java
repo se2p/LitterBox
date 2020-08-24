@@ -30,7 +30,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -47,8 +46,8 @@ public class CSVReportGenerator implements ReportGenerator {
      * @param detectors list of detectors that should be included in the report.
      * @throws IOException is thrown if the file cannot be opened
      */
-    public CSVReportGenerator(String fileName, String[] detectors) throws IOException {
-        this.detectors = Arrays.asList(detectors);
+    public CSVReportGenerator(String fileName, List<String> detectors) throws IOException {
+        this.detectors = new ArrayList<>(detectors);
         headers.add("project");
         headers.addAll(this.detectors);
         printer = getNewPrinter(fileName);

@@ -21,6 +21,7 @@ package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.KeyPressed;
+import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.ChangeXBy;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.ChangeYBy;
@@ -40,6 +41,10 @@ public class StutteringMovement extends AbstractIssueFinder {
 
     @Override
     public void visit(Script script) {
+        if (ignoreLooseBlocks && script.getEvent() instanceof Never) {
+            // Ignore unconnected blocks
+            return;
+        }
         currentScript = script;
         currentProcedure = null;
         if (script.getEvent() instanceof KeyPressed) {

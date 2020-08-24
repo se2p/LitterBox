@@ -13,6 +13,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -36,7 +37,9 @@ public class CSVReportGeneratorTest {
         Set<Issue> issues = finder.check(program);
 
         Path tmpFile = Files.createTempFile("foo", "bar");
-        CSVReportGenerator reportGenerator = new CSVReportGenerator(tmpFile.toString(), new String[] {EndlessRecursion.NAME} );
+        List<String> finders = new ArrayList<>();
+        finders.add(EndlessRecursion.NAME);
+        CSVReportGenerator reportGenerator = new CSVReportGenerator(tmpFile.toString(), finders);
         reportGenerator.generateReport(program, issues);
         reportGenerator.close();
 
@@ -55,12 +58,16 @@ public class CSVReportGeneratorTest {
         Set<Issue> issues = finder.check(program);
 
         Path tmpFile = Files.createTempFile("foo", "bar");
-        CSVReportGenerator reportGenerator = new CSVReportGenerator(tmpFile.toString(), new String[] {EndlessRecursion.NAME} );
+        List<String> finders = new ArrayList<>();
+        finders.add(EndlessRecursion.NAME);
+        CSVReportGenerator reportGenerator = new CSVReportGenerator(tmpFile.toString(), finders);
         reportGenerator.generateReport(program, issues);
         reportGenerator.close();
 
         // Now write same issue again, which should only append
-        reportGenerator = new CSVReportGenerator(tmpFile.toString(), new String[] {EndlessRecursion.NAME} );
+        finders = new ArrayList<>();
+        finders.add(EndlessRecursion.NAME);
+        reportGenerator = new CSVReportGenerator(tmpFile.toString(), finders);
         reportGenerator.generateReport(program, issues);
         reportGenerator.close();
 

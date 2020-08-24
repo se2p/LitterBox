@@ -22,6 +22,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
+import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.StartedAsClone;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
@@ -84,6 +85,10 @@ public class MissingCloneCall extends AbstractIssueFinder {
 
     @Override
     public void visit(Script node) {
+        if (ignoreLooseBlocks && node.getEvent() instanceof Never) {
+            // Ignore unconnected blocks
+            return;
+        }
         currentScript = node;
         if (node.getStmtList().getStmts().size() > 0 && node.getEvent() instanceof StartedAsClone) {
             if (!addComment) {

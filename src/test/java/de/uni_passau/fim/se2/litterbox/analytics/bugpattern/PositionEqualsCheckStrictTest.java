@@ -34,7 +34,9 @@ import java.util.Set;
 public class PositionEqualsCheckStrictTest {
     private static Program empty;
     private static Program equalXStrict;
-    private static ObjectMapper mapper = new ObjectMapper();
+    private static final ObjectMapper mapper = new ObjectMapper();
+    private static Program equalstrict;
+    private static Program deadEquals;
 
     @BeforeAll
     public static void setUp() throws IOException, ParsingException {
@@ -44,19 +46,41 @@ public class PositionEqualsCheckStrictTest {
 
         f = new File("./src/test/fixtures/bugpattern/positionEqualsCheckStrict.json");
         equalXStrict = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
+        f = new File("./src/test/fixtures/bugpattern/positionEqualsCheckStrict2.json");
+        equalstrict = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
+        f = new File("./src/test/fixtures/bugpattern/deadPositionEquals.json");
+        deadEquals = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
     }
 
     @Test
     public void testEmptyProgram() {
-        PositionEqualsCheck parameterName = new PositionEqualsCheckStrict();
+        PositionEqualsCheck parameterName = new PositionEqualsCheck();
+        parameterName.setIgnoreLooseBlocks(true);
         Set<Issue> reports = parameterName.check(empty);
         Assertions.assertEquals(0, reports.size());
     }
 
     @Test
     public void testEqualCond() {
-        PositionEqualsCheck parameterName = new PositionEqualsCheckStrict();
+        PositionEqualsCheck parameterName = new PositionEqualsCheck();
+        parameterName.setIgnoreLooseBlocks(true);
         Set<Issue> reports = parameterName.check(equalXStrict);
+        Assertions.assertEquals(1, reports.size());
+    }
+
+    @Test
+    public void testEqualDistCond() {
+        PositionEqualsCheck parameterName = new PositionEqualsCheck();
+        parameterName.setIgnoreLooseBlocks(true);
+        Set<Issue> reports = parameterName.check(equalstrict);
+        Assertions.assertEquals(2, reports.size());
+    }
+
+    @Test
+    public void testDeadEquals() {
+        PositionEqualsCheck parameterName = new PositionEqualsCheck();
+        parameterName.setIgnoreLooseBlocks(true);
+        Set<Issue> reports = parameterName.check(deadEquals);
         Assertions.assertEquals(1, reports.size());
     }
 }

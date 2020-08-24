@@ -55,10 +55,10 @@ public class JSONReportGeneratorTest {
 
         for (JsonNode node : rootNode) {
             assertThat(node.has("finder")).isTrue();
-            assertThat(node.has("type")).isTrue();;
-            assertThat(node.has("sprite")).isTrue();;
-            assertThat(node.has("hint")).isTrue();;
-            assertThat(node.has("code")).isTrue();;
+            assertThat(node.has("type")).isTrue();
+            assertThat(node.has("sprite")).isTrue();
+            assertThat(node.has("hint")).isTrue();
+            assertThat(node.has("code")).isTrue();
         }
     }
 
@@ -89,10 +89,10 @@ public class JSONReportGeneratorTest {
         ObjectMapper mapper = new ObjectMapper();
         JsonNode rootNode = mapper.readTree(jsonText);
         String code = rootNode.get(0).get("code").asText();
-        assertThat(code).isEqualTo("[scratchblocks]" + System.lineSeparator() +
-                "repeat until <(x position) = (50):: #ff0000> // Issue: Position Equals Check"  + System.lineSeparator() +
-                "end"  + System.lineSeparator() +
-                "[/scratchblocks]" + System.lineSeparator());
+        assertThat(code).isEqualTo("[scratchblocks]" + "\n" +
+                "repeat until <(x position) = (50):: #ff0000> // Issue: Position Equals Check" + "\n" +
+                "end" + "\n" +
+                "[/scratchblocks]" + "\n");
     }
 
 
