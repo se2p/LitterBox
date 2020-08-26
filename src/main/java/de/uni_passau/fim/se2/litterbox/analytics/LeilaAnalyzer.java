@@ -34,6 +34,7 @@ public class LeilaAnalyzer extends Analyzer {
     private static final String INTERMEDIATE_EXTENSION = ".sc";
     private static final Logger log = Logger.getLogger(MetricAnalyzer.class.getName());
     private final boolean nonDet;
+    private final boolean onNever;
 
     /**
      * Constructor for the leila analyzer.
@@ -45,9 +46,10 @@ public class LeilaAnalyzer extends Analyzer {
      * @param nonDet flag whether attributes in intermediate language should be
      *               non deterministic (i.e. not initialized)
      */
-    public LeilaAnalyzer(String input, String output, boolean nonDet) {
+    public LeilaAnalyzer(String input, String output, boolean nonDet, boolean onNever) {
         super(input, output);
         this.nonDet = nonDet;
+        this.onNever = onNever;
 
     }
 
@@ -69,7 +71,7 @@ public class LeilaAnalyzer extends Analyzer {
             return;
         }
         log.info("Starting to print " + fileEntry.getName() + " to file " + out);
-        LeilaVisitor visitor = new LeilaVisitor(stream, nonDet);
+        LeilaVisitor visitor = new LeilaVisitor(stream, nonDet, onNever);
         Program program = extractProgram(fileEntry);
         visitor.visit(program);
         stream.close();

@@ -80,6 +80,7 @@ import java.util.regex.Pattern;
 public class LeilaVisitor extends PrintVisitor {
 
     private final boolean nonDet; // indicates whether attributes should be initialized or not
+    private final boolean onNever;
     private boolean emitAttributeType = false;
     private boolean volume = false;
     private int skippedDeclarations = 0;
@@ -99,9 +100,10 @@ public class LeilaVisitor extends PrintVisitor {
         }
     }
 
-    public LeilaVisitor(PrintStream printStream, boolean nonDet) {
+    public LeilaVisitor(PrintStream printStream, boolean nonDet, boolean onNever) {
         super(printStream);
         this.nonDet = nonDet;
+        this.onNever = onNever;
     }
 
     @Override
@@ -123,6 +125,8 @@ public class LeilaVisitor extends PrintVisitor {
     public void visit(Program program) {
         emitToken("program");
         program.getIdent().accept(this);
+        newLine();
+
         List<ActorDefinition> definitions = program.getActorDefinitionList().getDefinitions();
         for (int i = 0; i < definitions.size(); i++) {
             definitions.get(i).accept(this);
@@ -212,11 +216,13 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(Script script) {
-        emitToken("script");
-        emitToken("on");
-        script.getEvent().accept(this);
-        emitNoSpace(" do");
-        script.getStmtList().accept(this);
+        if (!(script.getEvent() instanceof Never) || onNever) {
+            emitToken("script");
+            emitToken("on");
+            script.getEvent().accept(this);
+            emitNoSpace(" do");
+            script.getStmtList().accept(this);
+        }
     }
 
     @Override
@@ -316,9 +322,9 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(AskAndWait askAndWait) {
-        emitToken("ask");
+        emitNoSpace("askAndWait(");
         askAndWait.getQuestion().accept(this);
-        emitToken(" and wait");
+        closeParentheses();
     }
 
     @Override

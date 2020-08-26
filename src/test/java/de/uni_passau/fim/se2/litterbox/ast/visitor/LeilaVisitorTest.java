@@ -108,7 +108,7 @@ public class LeilaVisitorTest {
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode project = objectMapper.readTree(file);
         PrintStream stream = new PrintStream(out);
-        LeilaVisitor visitor = new LeilaVisitor(stream, false);
+        LeilaVisitor visitor = new LeilaVisitor(stream, false, true);
         Program program = ProgramParser.parseProgram("Small", project);
         visitor.visit(program);
         return out.toString();
@@ -119,7 +119,7 @@ public class LeilaVisitorTest {
         File file = new File("./src/test/fixtures/emptyProject.json");
         String path = file.getAbsolutePath();
         String outPath = tempFile.getAbsolutePath();
-        LeilaAnalyzer analyzer = new LeilaAnalyzer(path, outPath + "foobar", false);
+        LeilaAnalyzer analyzer = new LeilaAnalyzer(path, outPath + "foobar", false, true);
         analyzer.analyzeFile();
         File output = new File(Paths.get(outPath + "foobar", "emptyProject.sc").toString());
         assertThat(output.exists()).isFalse();
@@ -141,7 +141,7 @@ public class LeilaVisitorTest {
     // @Test
     public void testVisitor() {
         PrintStream stream = new PrintStream(System.out);
-        LeilaVisitor visitor = new LeilaVisitor(stream, false);
+        LeilaVisitor visitor = new LeilaVisitor(stream, false, true);
         try {
             Program program = ProgramParser.parseProgram("Small", project);
             visitor.visit(program);
@@ -164,7 +164,7 @@ public class LeilaVisitorTest {
             fail();
         }
         PrintStream stream = new PrintStream(System.out);
-        LeilaVisitor visitor = new LeilaVisitor(stream, false);
+        LeilaVisitor visitor = new LeilaVisitor(stream, false, true);
         try {
             Program program = ProgramParser.parseProgram("Small", project);
             visitor.visit(program);
