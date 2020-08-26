@@ -379,9 +379,17 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(SwitchBackdrop switchBackdrop) {
-        emitNoSpace("switchBackdropTo(");
-        switchBackdrop.getElementChoice().accept(this);
-        closeParentheses();
+        if (switchBackdrop.getElementChoice() instanceof Next) {
+            emitNoSpace("switchBackdropToNext()");
+        } else if (switchBackdrop.getElementChoice() instanceof Prev) {
+            emitNoSpace("switchBackdropToPrev()");
+        } else if (switchBackdrop.getElementChoice() instanceof Random) {
+            emitNoSpace("switchBackdropToRandom()");
+        } else {
+            emitNoSpace("switchBackdropTo(");
+            switchBackdrop.getElementChoice().accept(this);
+            closeParentheses();
+        }
     }
 
     @Override
@@ -436,17 +444,18 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(ThinkForSecs thinkForSecs) {
-        emitToken("think");
+        emitToken("thinkTextFor(");
         thinkForSecs.getThought().accept(this);
-        emitToken(" for");
+        emitToken(",");
         thinkForSecs.getSecs().accept(this);
-        emitToken(" secs");
+        closeParentheses();
     }
 
     @Override
     public void visit(Think think) {
-        emitToken("think");
+        emitToken("thinkTextFor(");
         think.getThought().accept(this);
+        closeParentheses();
     }
 
     @Override
@@ -550,20 +559,12 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(FromExpression fromExpression) {
-        emitNoSpace("locate actor \"");
-        noCast = true;
-        if (fromExpression.getStringExpr() instanceof StrId) {
-            emitToken(((StrId)fromExpression.getStringExpr()).getName());
-        } else {
-            fromExpression.getStringExpr().accept(this);
-        }
-        noCast = false;
-        emitNoSpace("\"");
+        emitActorExpression(fromExpression.getStringExpr());
     }
 
     @Override
     public void visit(RandomPos randomPos) {
-        emitNoSpace("random_pos");
+        emitNoSpace("randomIntegerBetween(0-240, 240), randomIntegerBetween(0-180, 180)");
     }
 
     @Override
@@ -588,16 +589,37 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(PointTowards pointTowards) {
-        emitNoSpace("pointTowards(");
-        if (pointTowards.getPosition() instanceof FromExpression) {
-            StringExpr strExpr = ((FromExpression) pointTowards.getPosition()).getStringExpr();
-            if (strExpr instanceof StrId) {
-                emitNoSpace("\"" + ((StrId) strExpr).getName() + "\"");
+        if (pointTowards.getPosition() instanceof MousePos) {
+            emitNoSpace("pointTowardsPos(");
+            pointTowards.getPosition().accept(this);
+            closeParentheses();
+        } else if (pointTowards.getPosition() instanceof FromExpression) {
+            // A sprite
+            emitNoSpace("pointTowards(");
+            StringExpr strExpr = ((FromExpression)pointTowards.getPosition()).getStringExpr();
+            emitActorExpression(strExpr);
+            closeParentheses();
+        } else if (pointTowards.getPosition() instanceof RandomPos) {
+            emitNoSpace("pointTowardsPos(");
+            pointTowards.getPosition().accept(this);
+            closeParentheses();
+        }
+    }
+
+    private void emitActorExpression(Expression expr) {
+        emitNoSpace("locate actor ");
+        if (expr instanceof LocalIdentifier) {
+            emitNoSpace("\"" + ((LocalIdentifier) expr).getName() + "\"");
+        } else if (expr instanceof AsString) {
+            Expression op1 = ((AsString) expr).getOperand1();
+            if (op1 instanceof LocalIdentifier) {
+                emitNoSpace("\"" + ((LocalIdentifier) op1).getName() + "\"");
+            } else {
+                op1.accept(this);
             }
         } else {
-            pointTowards.getPosition().accept(this);
+            emitToken(expr.getClass().getSimpleName());
         }
-        closeParentheses();
     }
 
     @Override
