@@ -235,7 +235,7 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(Clicked clicked) {
-        emitNoSpace("clicked");
+        emitNoSpace("message \"SPRITE_CLICK\" ()");
     }
 
     @Override
@@ -245,8 +245,9 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(KeyPressed keyPressed) {
-        keyPressed.getKey().accept(this);
-        emitNoSpace("pressed");
+        emitNoSpace("message \"KEY_");
+        keyPressed.getKey().getKey().accept(this);
+        emitNoSpace("_PRESSED\" ()");
     }
 
     @Override
@@ -518,7 +519,14 @@ public class LeilaVisitor extends PrintVisitor {
     @Override
     public void visit(PointTowards pointTowards) {
         emitNoSpace("pointTowards(");
-        pointTowards.getPosition().accept(this);
+        if (pointTowards.getPosition() instanceof FromExpression) {
+            StringExpr strExpr = ((FromExpression) pointTowards.getPosition()).getStringExpr();
+            if (strExpr instanceof StrId) {
+                emitNoSpace("\"" + ((StrId) strExpr).getName() + "\"");
+            }
+        } else {
+            pointTowards.getPosition().accept(this);
+        }
         closeParentheses();
     }
 
