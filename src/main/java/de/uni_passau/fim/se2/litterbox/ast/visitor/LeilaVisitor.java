@@ -33,6 +33,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.AttributeFromFixed;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.FixedAttribute;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Identifier;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.BoolLiteral;
@@ -451,7 +452,16 @@ public class LeilaVisitor extends PrintVisitor {
     @Override
     public void visit(SwitchCostumeTo switchCostumeTo) {
         emitNoSpace("changeCostumeTo(");
-        switchCostumeTo.getCostumeChoice().accept(this);
+        if (switchCostumeTo.getCostumeChoice() instanceof WithExpr) {
+            final Expression expr = ((WithExpr) switchCostumeTo.getCostumeChoice()).getExpression();
+            if (expr instanceof LocalIdentifier) {
+                emitNoSpace("\"");
+                emitNoSpace(((LocalIdentifier) expr).getName());
+                emitNoSpace("\"");
+            }
+        } else {
+            switchCostumeTo.getCostumeChoice().accept(this);
+        }
         closeParentheses();
     }
 
@@ -542,7 +552,11 @@ public class LeilaVisitor extends PrintVisitor {
     public void visit(FromExpression fromExpression) {
         emitNoSpace("locate actor \"");
         noCast = true;
-        fromExpression.getStringExpr().accept(this);
+        if (fromExpression.getStringExpr() instanceof StrId) {
+            emitToken(((StrId)fromExpression.getStringExpr()).getName());
+        } else {
+            fromExpression.getStringExpr().accept(this);
+        }
         noCast = false;
         emitNoSpace("\"");
     }
