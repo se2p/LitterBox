@@ -542,7 +542,7 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(IfOnEdgeBounce ifOnEdgeBounce) {
-        emitToken("if on edge bounce");
+        emitToken("ifOnEdgeBounce()");
     }
 
     @Override
