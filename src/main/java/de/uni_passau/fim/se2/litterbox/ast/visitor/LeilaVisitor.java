@@ -39,6 +39,10 @@ import de.uni_passau.fim.se2.litterbox.ast.model.literals.BoolLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.ColorLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.actor.ActorMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.ressources.ImageMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.ressources.ResourceMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.ressources.SoundMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.FromExpression;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.MousePos;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.RandomPos;
@@ -146,6 +150,9 @@ public class LeilaVisitor extends PrintVisitor {
         def.getActorType().accept(this);
         begin();
         beginIndentation();
+
+        emitResourceListsOf(def);
+
         DeclarationStmtList declarations = def.getDecls();
         List<DeclarationStmt> declarationStmtList = declarations.getDeclarationStmtList();
         int numDeclarations = declarationStmtList.size();
@@ -196,6 +203,43 @@ public class LeilaVisitor extends PrintVisitor {
         end();
     }
 
+    private void emitResourceListsOf(ActorDefinition def) {
+        List<ImageMetadata> images = def.getMetadata().getCostumes().getList();
+        emitResourceList(images);
+
+        List<SoundMetadata> sounds = def.getMetadata().getSounds().getList();
+        emitResourceList(sounds);
+    }
+
+    private void emitResourceList(List<? extends ResourceMetadata> images) {
+        int i = 0;
+        int size = images.size();
+        if (size > 0) {
+            newLine();
+        }
+        for (ResourceMetadata res : images) {
+            appendIndentation();
+            if (res instanceof SoundMetadata) {
+                emitToken("sound");
+            } else if (res instanceof ImageMetadata) {
+                emitToken("image");
+            } else {
+                throw new RuntimeException("Unknown resource type: " + res.getClass());
+            }
+            emitStrId(res.getName());
+            emitNoSpace(" ");
+            emitString(res.getMd5ext());
+            i++;
+            if (i < size) {
+                newLine();
+            }
+        }
+    }
+
+    private void emitString(String str) {
+        emitToken("\"" + str + "\"");
+    }
+
     private void initialiseCostume(ActorDefinition def) {
         newLine();
         newLine();
@@ -206,7 +250,10 @@ public class LeilaVisitor extends PrintVisitor {
         appendIndentation();
         // using 'changeActiveGraphicTo' instead of 'changeCostumeTo' since also available for the stage
         emitNoSpace("changeActiveGraphicTo(");
-        emitNoSpace("\"" + def.getMetadata().getCurrentCostume() + "\"");
+        ActorMetadata metadata = def.getMetadata();
+        int currentCostume = metadata.getCurrentCostume();
+        String currentCostumeName = metadata.getCostumes().getList().get(currentCostume).getName();
+        emitString(currentCostumeName);
         closeParentheses();
         newLine();
         endIndentation();
@@ -596,7 +643,7 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(WaitSeconds waitSeconds) {
-        emitToken("wait ");
+        emitToken("wait");
         waitSeconds.getSeconds().accept(this);
         emitToken(" seconds");
     }
@@ -956,7 +1003,7 @@ public class LeilaVisitor extends PrintVisitor {
     @Override
     public void visit(StringLiteral stringLiteral) {
         if (!emitAttributeType) {
-            emitNoSpace("\"" + stringLiteral.getText() + "\"");
+            emitString(stringLiteral.getText());
         } else if (stringLiteral.getText().equalsIgnoreCase(String.valueOf(STDVAR.LAYERORDER))) {
             emitNoSpace("layer");
         } else {
@@ -1001,6 +1048,10 @@ public class LeilaVisitor extends PrintVisitor {
     @Override
     public void visit(StrId strId) {
         String name = strId.getName();
+        emitStrId(name);
+    }
+
+    private void emitStrId(String name) {
         if (name.contains("\"")) {
             throw new RuntimeException("Ids containing \" are not allowed here.");
         } else {
@@ -1008,7 +1059,7 @@ public class LeilaVisitor extends PrintVisitor {
                 emitNoSpace(name);
             } else {
                 emitToken("strid");
-                emitNoSpace("\"" + name + "\"");
+                emitString(name);
             }
         }
     }
@@ -1481,7 +1532,7 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(RotationStyle rotationStyle) {
-        emitNoSpace("\"" + rotationStyle.getToken() + "\"");
+        emitString(rotationStyle.getToken());
     }
 
     @Override
@@ -1509,7 +1560,7 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(DragMode dragMode) {
-        emitNoSpace("\"" + dragMode.getToken() + "\"");
+        emitString(dragMode.getToken());
     }
 
     @Override
