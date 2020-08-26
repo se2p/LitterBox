@@ -164,6 +164,7 @@ public class LeilaVisitor extends PrintVisitor {
                 stmt.accept(this);
             }
         }
+        initialiseCostume(def);
 
         ProcedureDefinitionList procDefList = def.getProcedureDefinitionList();
         List<ProcedureDefinition> procDefs = procDefList.getList();
@@ -189,6 +190,23 @@ public class LeilaVisitor extends PrintVisitor {
         endIndentation();
         newLine();
         end();
+    }
+
+    private void initialiseCostume(ActorDefinition def) {
+        newLine();
+        newLine();
+        appendIndentation();
+        emitToken("script on bootstrap do begin");
+        beginIndentation();
+        newLine();
+        appendIndentation();
+        emitNoSpace("changeCostumeTo(");
+        emitNoSpace("\"" + def.getMetadata().getCurrentCostume() + "\"");
+        closeParentheses();
+        newLine();
+        endIndentation();
+        appendIndentation();
+        emitToken("end");
     }
 
     @Override
