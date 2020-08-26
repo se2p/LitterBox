@@ -45,6 +45,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.metadata.ressources.ResourceMet
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.ressources.SoundMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.FromExpression;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.MousePos;
+import de.uni_passau.fim.se2.litterbox.ast.model.position.Position;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.RandomPos;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterDefinitionList;
@@ -522,11 +523,19 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(GoToPos goToPos) {
-        if (goToPos.getPosition() instanceof RandomPos) {
+        Position position = goToPos.getPosition();
+        if (position instanceof RandomPos) {
             emitToken("goToRandomPosition()");
-        }
-        // emitToken("go to"); TODO
-        // goToPos.getPosition().accept(this);
+        } else if (position instanceof FromExpression) {
+            emitToken("declare o as actor");
+            newLine();
+            appendIndentation();
+            emitToken("define o as");
+            position.accept(this);
+            newLine();
+            appendIndentation();
+            emitToken("goToSprite(o)");
+        } // TODO go to mouse pointer?
     }
 
     @Override
