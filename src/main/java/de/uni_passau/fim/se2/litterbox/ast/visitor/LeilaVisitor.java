@@ -237,7 +237,7 @@ public class LeilaVisitor extends PrintVisitor {
     }
 
     private void emitString(String str) {
-        emitToken("\"" + str + "\"");
+        emitNoSpace("\"" + str + "\"");
     }
 
     private void initialiseCostume(ActorDefinition def) {
