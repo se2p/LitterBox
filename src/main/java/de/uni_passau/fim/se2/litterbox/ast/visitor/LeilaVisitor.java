@@ -200,7 +200,8 @@ public class LeilaVisitor extends PrintVisitor {
         beginIndentation();
         newLine();
         appendIndentation();
-        emitNoSpace("changeCostumeTo(");
+        // using 'changeActiveGraphicTo' instead of 'changeCostumeTo' since also available for the stage
+        emitNoSpace("changeActiveGraphicTo(");
         emitNoSpace("\"" + def.getMetadata().getCurrentCostume() + "\"");
         closeParentheses();
         newLine();
@@ -589,9 +590,9 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(WaitSeconds waitSeconds) {
-        emitNoSpace("waitSeconds(");
+        emitToken("wait ");
         waitSeconds.getSeconds().accept(this);
-        closeParentheses();
+        emitToken(" seconds");
     }
 
     @Override
