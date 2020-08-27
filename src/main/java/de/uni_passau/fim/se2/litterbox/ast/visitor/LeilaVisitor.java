@@ -554,7 +554,11 @@ public class LeilaVisitor extends PrintVisitor {
             newLine();
             appendIndentation();
             emitToken("goToSprite(o)");
-        } // TODO go to mouse pointer?
+        } else if (position instanceof MousePos) {
+            emitToken("goTo(");
+            position.accept(this);
+            closeParentheses();
+        }
     }
 
     @Override
