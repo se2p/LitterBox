@@ -577,15 +577,35 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(GlideSecsTo glideSecsTo) {
-        emitToken("glide");
-        glideSecsTo.getSecs().accept(this);
-        emitToken(" secs to");
-        glideSecsTo.getPosition().accept(this);
+        Position position = glideSecsTo.getPosition();
+        if (position instanceof RandomPos) {
+            emitNoSpace("glideSecondsToRandomPos(");
+            glideSecsTo.getSecs().accept(this);
+            closeParentheses();
+        } else if (position instanceof FromExpression) {
+            emitToken("declare o as actor");
+            newLine();
+            appendIndentation();
+            emitToken("define o as");
+            position.accept(this);
+            newLine();
+            appendIndentation();
+            emitNoSpace("glideSecsToSprite(");
+            glideSecsTo.getSecs().accept(this);
+            comma();
+            emitNoSpace("o)");
+        } else if (position instanceof MousePos) {
+            emitToken("glideSecondsTo(");
+            glideSecsTo.getSecs().accept(this);
+            comma();
+            position.accept(this);
+            closeParentheses();
+        }
     }
 
     @Override
     public void visit(PointInDirection pointInDirection) {
-        emitToken("pointInDirection(");
+        emitNoSpace("pointInDirection(");
         pointInDirection.getDirection().accept(this);
         closeParentheses();
     }
@@ -1460,9 +1480,9 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(GlideSecsToXY glideSecsToXY) {
-        emitToken("glide");
+        emitNoSpace("glideSecondsTo(");
         glideSecsToXY.getSecs().accept(this);
-        emitNoSpace("to (");
+        comma();
         glideSecsToXY.getX().accept(this);
         comma();
         glideSecsToXY.getY().accept(this);
