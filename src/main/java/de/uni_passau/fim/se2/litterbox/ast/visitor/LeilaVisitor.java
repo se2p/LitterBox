@@ -817,8 +817,6 @@ public class LeilaVisitor extends PrintVisitor {
         repeatForeverStmt.getStmtList().accept(this);
     }
 
-    //@Override
-    //public void visit(StmtListPlain) FIXME
     @Override
     public void visit(ProcedureDefinition procedureDefinition) {
         emitToken("define");
