@@ -1549,7 +1549,7 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(Direction direction) {
-        emitNoSpace("TODO"); // TODO -- grammar?
+        emitNoSpace("direction");
     }
 
     @Override
