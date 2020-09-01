@@ -88,7 +88,6 @@ public class LeilaVisitor extends PrintVisitor {
     private final boolean nonDet; // indicates whether attributes should be initialized or not
     private final boolean onNever;
     private boolean emitAttributeType = false;
-    private boolean volume = false;
     private int skippedDeclarations = 0;
     private boolean noCast = false;
 
@@ -1011,14 +1010,6 @@ public class LeilaVisitor extends PrintVisitor {
         emitAttributeType = false;
         as();
         setAttributeTo.getExpr().accept(this);
-    }
-
-    private void to() {
-        emitToken(" to");
-    }
-
-    private void set() {
-        emitToken("set");
     }
 
     @Override
