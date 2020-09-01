@@ -1544,9 +1544,7 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(PositionX positionX) {
-        emitNoSpace("TODO"); // TODO -- grammar?
-        // maybe:   | 'attribute'  stringExpr 'of' actorExpr  # StringAttributeOfExpression
-        // query an attribute value of an actor (sprites, the stage)
+        emitNoSpace("x");
     }
 
     @Override
@@ -1578,7 +1576,7 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(PositionY positionY) {
-        emitNoSpace("TODO"); // TODO -- grammar?
+        emitNoSpace("y");
     }
 
     @Override
