@@ -443,7 +443,7 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(ThinkForSecs thinkForSecs) {
-        emitToken("thinkTextFor(");
+        emitNoSpace("thinkTextFor(");
         thinkForSecs.getThought().accept(this);
         emitToken(",");
         thinkForSecs.getSecs().accept(this);
@@ -475,7 +475,7 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(ChangeSizeBy changeSizeBy) {
-        emitToken("change size by");
+        emitToken("define size as size +");
         changeSizeBy.getNum().accept(this);
     }
 
@@ -493,9 +493,12 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(GoToLayer goToLayer) {
-        emitToken("go to");
-        goToLayer.getLayerChoice().accept(this);
-        emitToken("layer");
+        LayerChoice layerChoice = goToLayer.getLayerChoice();
+        if (LayerChoice.BACK.equals(layerChoice)) {
+            emitToken("goToBackLayer()");
+        } else {
+            emitToken("goToFrontLayer()");
+        }
     }
 
     @Override
