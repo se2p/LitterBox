@@ -76,6 +76,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.touchable.Touchable;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.Color;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.FromNumber;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.variable.Parameter;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.ScratchList;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 
@@ -849,6 +850,11 @@ public class LeilaVisitor extends PrintVisitor {
     }
 
     @Override
+    public void visit(Parameter param) {
+        param.getName().accept(this);
+    }
+
+    @Override
     public void visit(StopAll stopAll) {
         emitToken("stop all");
     }
@@ -959,7 +965,7 @@ public class LeilaVisitor extends PrintVisitor {
     public void visit(AsBool asBool) {
         emitToken("cast");
         asBool.getOperand1().accept(this);
-        emitToken(" to boolean");
+        emitNoSpace(" to boolean");
     }
 
     @Override
@@ -1278,7 +1284,7 @@ public class LeilaVisitor extends PrintVisitor {
     public void visit(AsNumber asNumber) {
         emitToken("cast");
         asNumber.getOperand1().accept(this);
-        emitToken(" to integer"); //TODO distinguish between int and float?
+        emitNoSpace(" to integer"); //TODO distinguish between int and float?
     }
 
     @Override
@@ -1349,10 +1355,11 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(PickRandom pickRandom) {
-        emitToken("pick random");
+        emitNoSpace("randomBetween(");
         pickRandom.getOperand1().accept(this);
-        emitToken(" of");
+        comma();
         pickRandom.getOperand2().accept(this);
+        closeParentheses();
     }
 
     @Override
