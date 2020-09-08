@@ -1425,7 +1425,7 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(Loudness loudness) {
-        emitNoSpace("loudness");
+        emitNoSpace("loudness()");
     }
 
     @Override
@@ -1715,7 +1715,7 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(EventAttribute eventAttribute) {
-        emitToken(eventAttribute.getType()); // TODO -- loudness is not in grammar?
+        emitToken(eventAttribute.getType());
     }
 
     @Override
