@@ -1393,13 +1393,19 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(Current current) {
-        emitToken("current");
         current.getTimeComp().accept(this);
     }
 
     @Override
     public void visit(TimeComp timeComp) {
-        emitNoSpace(timeComp.getLabel());
+        emitNoSpace("current");
+        String label = timeComp.getLabel();
+        if (label.equalsIgnoreCase(TimeComp.DAY_OF_WEEK.getLabel())) {
+            emitNoSpace("DayOfWeek");
+        } else {
+            emitNoSpace(label.substring(0, 1).toUpperCase() + label.substring(1));
+        }
+        emitNoSpace("()");
     }
 
     @Override
