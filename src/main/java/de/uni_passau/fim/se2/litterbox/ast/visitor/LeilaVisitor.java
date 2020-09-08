@@ -1388,7 +1388,7 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(DaysSince2000 daysSince2000) {
-        emitNoSpace("days since millennium");
+        emitNoSpace("daysSinceMillennium()");
     }
 
     @Override
