@@ -911,7 +911,9 @@ public class LeilaVisitor extends PrintVisitor {
     @Override
     public void visit(RepeatTimesStmt repeatTimesStmt) {
         emitToken("repeat");
+        expectInteger();
         repeatTimesStmt.getTimes().accept(this);
+        endExpectation();
         emitNoSpace(" times");
         repeatTimesStmt.getStmtList().accept(this);
     }
