@@ -94,6 +94,7 @@ public class LeilaVisitor extends PrintVisitor {
     private boolean emitAttributeType = false;
     private int skippedDeclarations = 0;
     private boolean noCast = false;
+    private boolean showHideVar = false;
     private Stack<EXPECTED_TYPE> expectedTypes = new Stack<>();
 
     enum EXPECTED_TYPE {
@@ -436,14 +437,22 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(ShowVariable showVariable) {
-        emitToken("show variable");
+        emitNoSpace("showVariable(\"");
+        showHideVar = true;
         showVariable.getIdentifier().accept(this);
+        showHideVar = false;
+        emitNoSpace("\"");
+        closeParentheses();
     }
 
     @Override
     public void visit(HideVariable hideVariable) {
-        emitToken("hide variable");
+        emitNoSpace("hideVariable(\"");
+        showHideVar = true;
         hideVariable.getIdentifier().accept(this);
+        showHideVar = false;
+        emitNoSpace("\"");
+        closeParentheses();
     }
 
     @Override
@@ -1209,7 +1218,11 @@ public class LeilaVisitor extends PrintVisitor {
     @Override
     public void visit(StrId strId) {
         String name = strId.getName();
-        emitStrId(name);
+        if (!showHideVar) {
+            emitStrId(name);
+        } else {
+            emitNoSpace(name);
+        }
     }
 
     private void emitStrId(String name) {
@@ -1817,14 +1830,22 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(HideList hideList) {
-        emitToken("hide variable");
+        emitNoSpace("hideVariable(\"");
+        showHideVar = true;
         hideList.getIdentifier().accept(this);
+        showHideVar = false;
+        emitNoSpace("\"");
+        closeParentheses();
     }
 
     @Override
     public void visit(ShowList showList) {
-        emitToken("show variable");
+        emitNoSpace("showVariable(\"");
+        showHideVar = true;
         showList.getIdentifier().accept(this);
+        showHideVar = false;
+        emitNoSpace("\"");
+        closeParentheses();
     }
 
     @Override
