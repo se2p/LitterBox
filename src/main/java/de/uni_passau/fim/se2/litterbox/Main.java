@@ -169,7 +169,7 @@ public class Main {
         String input = cmd.getOptionValue(PROJECTPATH);
         boolean nonDet = cmd.hasOption(NONDET);
 
-        LeilaAnalyzer analyzer = new LeilaAnalyzer(input, outputPath, nonDet);
+        LeilaAnalyzer analyzer = new LeilaAnalyzer(input, outputPath, nonDet, false);
         runAnalysis(cmd, analyzer);
     }
 

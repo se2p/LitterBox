@@ -33,14 +33,20 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.AttributeFromFixed;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.FixedAttribute;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Identifier;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.BoolLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.ColorLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.actor.ActorMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.ressources.ImageMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.ressources.ResourceMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.ressources.SoundMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.FromExpression;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.MousePos;
+import de.uni_passau.fim.se2.litterbox.ast.model.position.Position;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.RandomPos;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterDefinitionList;
@@ -70,20 +76,30 @@ import de.uni_passau.fim.se2.litterbox.ast.model.touchable.Touchable;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.Color;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.FromNumber;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.variable.Parameter;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.ScratchList;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 
 import java.io.PrintStream;
 import java.util.List;
+import java.util.Stack;
 import java.util.regex.Pattern;
+
+import static de.uni_passau.fim.se2.litterbox.ast.visitor.LeilaVisitor.TYPE.*;
 
 public class LeilaVisitor extends PrintVisitor {
 
     private final boolean nonDet; // indicates whether attributes should be initialized or not
+    private final boolean onNever;
     private boolean emitAttributeType = false;
-    private boolean volume = false;
     private int skippedDeclarations = 0;
     private boolean noCast = false;
+    private boolean showHideVar = false;
+    private Stack<TYPE> expectedTypes = new Stack<>();
+
+    enum TYPE {
+        INTEGER, FLOAT, ORIGINAL
+    }
 
     private enum STDVAR {
         X, Y, VOLUME, TEMPO, VISIBLE, DRAGGABLE, SIZE, DIRECTION, ROTATIONSTYLE, LAYERORDER, VIDEOTRANSPARENCY,
@@ -99,9 +115,33 @@ public class LeilaVisitor extends PrintVisitor {
         }
     }
 
-    public LeilaVisitor(PrintStream printStream, boolean nonDet) {
+    /**
+     * Creates a new LeILa visitor that prints the LeILa equivalent of the programs to the {@code printStream}.
+     *
+     * @param printStream The stream to which the LeILa output will be printed.
+     * @param nonDet Indicates whether attributes should be initialized or not.
+     * @param onNever Indicates whether "Never" events are printed or not.
+     */
+    public LeilaVisitor(PrintStream printStream, boolean nonDet, boolean onNever) {
         super(printStream);
         this.nonDet = nonDet;
+        this.onNever = onNever;
+    }
+
+    private void endExpectation() {
+        expectedTypes.pop();
+    }
+
+    private void expectInteger() {
+        expectedTypes.push(INTEGER);
+    }
+
+    private void expectOriginal() {
+        expectedTypes.push(ORIGINAL);
+    }
+
+    private void expectFloat() {
+        expectedTypes.push(FLOAT);
     }
 
     @Override
@@ -123,6 +163,8 @@ public class LeilaVisitor extends PrintVisitor {
     public void visit(Program program) {
         emitToken("program");
         program.getIdent().accept(this);
+        newLine();
+
         List<ActorDefinition> definitions = program.getActorDefinitionList().getDefinitions();
         for (int i = 0; i < definitions.size(); i++) {
             definitions.get(i).accept(this);
@@ -142,6 +184,9 @@ public class LeilaVisitor extends PrintVisitor {
         def.getActorType().accept(this);
         begin();
         beginIndentation();
+
+        emitResourceListsOf(def);
+
         DeclarationStmtList declarations = def.getDecls();
         List<DeclarationStmt> declarationStmtList = declarations.getDeclarationStmtList();
         int numDeclarations = declarationStmtList.size();
@@ -164,6 +209,7 @@ public class LeilaVisitor extends PrintVisitor {
                 stmt.accept(this);
             }
         }
+        initialiseCostume(def);
 
         ProcedureDefinitionList procDefList = def.getProcedureDefinitionList();
         List<ProcedureDefinition> procDefs = procDefList.getList();
@@ -191,13 +237,73 @@ public class LeilaVisitor extends PrintVisitor {
         end();
     }
 
+    private void emitResourceListsOf(ActorDefinition def) {
+        List<ImageMetadata> images = def.getMetadata().getCostumes().getList();
+        emitResourceList(images);
+
+        List<SoundMetadata> sounds = def.getMetadata().getSounds().getList();
+        emitResourceList(sounds);
+    }
+
+    private void emitResourceList(List<? extends ResourceMetadata> images) {
+        int i = 0;
+        int size = images.size();
+        if (size > 0) {
+            newLine();
+        }
+        for (ResourceMetadata res : images) {
+            appendIndentation();
+            if (res instanceof SoundMetadata) {
+                emitToken("sound");
+            } else if (res instanceof ImageMetadata) {
+                emitToken("image");
+            } else {
+                throw new RuntimeException("Unknown resource type: " + res.getClass());
+            }
+            emitStrId(res.getName());
+            emitNoSpace(" ");
+            emitString(res.getMd5ext());
+            i++;
+            if (i < size) {
+                newLine();
+            }
+        }
+    }
+
+    private void emitString(String str) {
+        emitNoSpace("\"" + str + "\"");
+    }
+
+    private void initialiseCostume(ActorDefinition def) {
+        newLine();
+        newLine();
+        appendIndentation();
+        emitToken("script on bootstrap do begin");
+        beginIndentation();
+        newLine();
+        appendIndentation();
+        // using 'changeActiveGraphicTo' instead of 'changeCostumeTo' since also available for the stage
+        emitNoSpace("changeActiveGraphicTo(");
+        ActorMetadata metadata = def.getMetadata();
+        int currentCostume = metadata.getCurrentCostume();
+        String currentCostumeName = metadata.getCostumes().getList().get(currentCostume).getName();
+        emitString(currentCostumeName);
+        closeParentheses();
+        newLine();
+        endIndentation();
+        appendIndentation();
+        emitToken("end");
+    }
+
     @Override
     public void visit(Script script) {
-        emitToken("script");
-        emitToken("on");
-        script.getEvent().accept(this);
-        emitNoSpace(" do");
-        script.getStmtList().accept(this);
+        if (!(script.getEvent() instanceof Never) || onNever) {
+            emitToken("script");
+            emitToken("on");
+            script.getEvent().accept(this);
+            emitNoSpace(" do");
+            script.getStmtList().accept(this);
+        }
     }
 
     @Override
@@ -210,7 +316,7 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(Clicked clicked) {
-        emitNoSpace("clicked");
+        emitNoSpace("message \"SPRITE_CLICK\" ()");
     }
 
     @Override
@@ -220,13 +326,18 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(KeyPressed keyPressed) {
-        keyPressed.getKey().accept(this);
-        emitNoSpace("pressed");
+        emitNoSpace("message \"KEY_");
+        expectInteger();
+        keyPressed.getKey().getKey().accept(this);
+        endExpectation();
+        emitNoSpace("_PRESSED\" ()");
     }
 
     @Override
     public void visit(Key key) {
+        expectInteger();
         key.getKey().accept(this);
+        endExpectation();
     }
 
     @Override
@@ -255,7 +366,9 @@ public class LeilaVisitor extends PrintVisitor {
         emitToken("value of");
         attributeAboveValue.getAttribute().accept(this);
         emitToken(" above");
+        expectOriginal();
         attributeAboveValue.getValue().accept(this);
+        endExpectation();
     }
 
     @Override
@@ -297,16 +410,24 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(AskAndWait askAndWait) {
-        emitToken("ask");
+        emitNoSpace("askAndWait(");
         askAndWait.getQuestion().accept(this);
-        emitToken(" and wait");
+        closeParentheses();
     }
 
     @Override
     public void visit(SwitchBackdrop switchBackdrop) {
-        emitNoSpace("switchBackdropTo(");
-        switchBackdrop.getElementChoice().accept(this);
-        closeParentheses();
+        if (switchBackdrop.getElementChoice() instanceof Next) {
+            emitNoSpace("switchBackdropToNext()");
+        } else if (switchBackdrop.getElementChoice() instanceof Prev) {
+            emitNoSpace("switchBackdropToPrev()");
+        } else if (switchBackdrop.getElementChoice() instanceof Random) {
+            emitNoSpace("switchBackdropToRandom()");
+        } else {
+            emitNoSpace("switchBackdropTo(");
+            switchBackdrop.getElementChoice().accept(this);
+            closeParentheses();
+        }
     }
 
     @Override
@@ -323,14 +444,22 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(ShowVariable showVariable) {
-        emitToken("show variable");
+        emitNoSpace("showVariable(\"");
+        showHideVar = true;
         showVariable.getIdentifier().accept(this);
+        showHideVar = false;
+        emitNoSpace("\"");
+        closeParentheses();
     }
 
     @Override
     public void visit(HideVariable hideVariable) {
-        emitToken("hide variable");
+        emitNoSpace("hideVariable(\"");
+        showHideVar = true;
         hideVariable.getIdentifier().accept(this);
+        showHideVar = false;
+        emitNoSpace("\"");
+        closeParentheses();
     }
 
     @Override
@@ -348,7 +477,9 @@ public class LeilaVisitor extends PrintVisitor {
         emitNoSpace("sayTextFor(");
         sayForSecs.getString().accept(this);
         comma();
+        expectInteger();
         sayForSecs.getSecs().accept(this);
+        endExpectation();
         closeParentheses();
     }
 
@@ -361,49 +492,71 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(ThinkForSecs thinkForSecs) {
-        emitToken("think");
+        emitNoSpace("thinkTextFor(");
         thinkForSecs.getThought().accept(this);
-        emitToken(" for");
+        emitToken(",");
+        expectInteger();
         thinkForSecs.getSecs().accept(this);
-        emitToken(" secs");
+        endExpectation();
+        closeParentheses();
     }
 
     @Override
     public void visit(Think think) {
-        emitToken("think");
+        emitToken("thinkText(");
         think.getThought().accept(this);
+        closeParentheses();
     }
 
     @Override
     public void visit(SwitchCostumeTo switchCostumeTo) {
         emitNoSpace("changeCostumeTo(");
-        switchCostumeTo.getCostumeChoice().accept(this);
+        if (switchCostumeTo.getCostumeChoice() instanceof WithExpr) {
+            final Expression expr = ((WithExpr) switchCostumeTo.getCostumeChoice()).getExpression();
+            if (expr instanceof LocalIdentifier) {
+                emitNoSpace("\"");
+                emitNoSpace(((LocalIdentifier) expr).getName());
+                emitNoSpace("\"");
+            }
+        } else {
+            switchCostumeTo.getCostumeChoice().accept(this);
+        }
         closeParentheses();
     }
 
     @Override
     public void visit(ChangeSizeBy changeSizeBy) {
-        emitToken("change size by");
+        emitToken("define size as size +");
+        expectInteger();
         changeSizeBy.getNum().accept(this);
+        endExpectation();
     }
 
     @Override
     public void visit(SetSizeTo setSizeTo) {
         emitToken("define size as");
+        expectInteger();
         setSizeTo.getPercent().accept(this);
+        endExpectation();
     }
 
     @Override
     public void visit(ChangeLayerBy changeLayerBy) {
-        emitToken("change layer by");
+        emitToken("changeLayerBy(");
+        expectInteger();
         changeLayerBy.getNum().accept(this);
+        endExpectation();
+        closeParentheses();
     }
 
     @Override
     public void visit(GoToLayer goToLayer) {
-        emitToken("go to");
-        goToLayer.getLayerChoice().accept(this);
-        emitToken("layer");
+        LayerChoice layerChoice = goToLayer.getLayerChoice();
+        if (LayerChoice.BACK.equals(layerChoice)) {
+            emitToken("goToBackLayer()");
+        } else {
+            emitToken("goToFrontLayer()");
+        }
     }
 
     @Override
@@ -423,51 +576,67 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(WithExpr withExpr) {
+        expectOriginal();
         withExpr.getExpression().accept(this);
+        endExpectation();
     }
 
     @Override
     public void visit(MoveSteps moveSteps) {
         emitNoSpace("moveSteps(");
+        expectInteger();
         moveSteps.getSteps().accept(this);
+        endExpectation();
         closeParentheses();
     }
 
     @Override
     public void visit(TurnRight turnRight) {
         emitNoSpace("turnRight(");
+        expectInteger();
         turnRight.getDegrees().accept(this);
+        endExpectation();
         closeParentheses();
     }
 
     @Override
     public void visit(TurnLeft turnLeft) {
         emitNoSpace("turnLeft(");
+        expectInteger();
         turnLeft.getDegrees().accept(this);
+        endExpectation();
         closeParentheses();
     }
 
     @Override
     public void visit(GoToPos goToPos) {
-        if (goToPos.getPosition() instanceof RandomPos) {
+        Position position = goToPos.getPosition();
+        if (position instanceof RandomPos) {
             emitToken("goToRandomPosition()");
+        } else if (position instanceof FromExpression) {
+            emitToken("declare o as actor");
+            newLine();
+            appendIndentation();
+            emitToken("define o as");
+            position.accept(this);
+            newLine();
+            appendIndentation();
+            emitToken("goToSprite(o)");
+        } else if (position instanceof MousePos) {
+            emitToken("goTo(");
+            position.accept(this);
+            closeParentheses();
         }
-        // emitToken("go to"); TODO
-        // goToPos.getPosition().accept(this);
     }
 
     @Override
     public void visit(FromExpression fromExpression) {
-        emitNoSpace("locate actor \"");
-        noCast = true;
-        fromExpression.getStringExpr().accept(this);
-        noCast = false;
-        emitNoSpace("\"");
+        emitActorExpression(fromExpression.getStringExpr());
     }
 
     @Override
     public void visit(RandomPos randomPos) {
-        emitNoSpace("random_pos");
+        emitNoSpace("randomIntegerBetween(0-240, 240), randomIntegerBetween(0-180, 180)");
     }
 
     @Override
@@ -477,54 +646,120 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(GlideSecsTo glideSecsTo) {
-        emitToken("glide");
-        glideSecsTo.getSecs().accept(this);
-        emitToken(" secs to");
-        glideSecsTo.getPosition().accept(this);
+        Position position = glideSecsTo.getPosition();
+        if (position instanceof RandomPos) {
+            emitNoSpace("glideSecondsToRandomPos(");
+            expectInteger();
+            glideSecsTo.getSecs().accept(this);
+            endExpectation();
+            closeParentheses();
+        } else if (position instanceof FromExpression) {
+            emitToken("declare o as actor");
+            newLine();
+            appendIndentation();
+            emitToken("define o as");
+            position.accept(this);
+            newLine();
+            appendIndentation();
+            emitNoSpace("glideSecsToSprite(");
+            expectInteger();
+            glideSecsTo.getSecs().accept(this);
+            endExpectation();
+            comma();
+            emitNoSpace("o)");
+        } else if (position instanceof MousePos) {
+            emitToken("glideSecondsTo(");
+            expectInteger();
+            glideSecsTo.getSecs().accept(this);
+            endExpectation();
+            comma();
+            position.accept(this);
+            closeParentheses();
+        }
     }
 
     @Override
     public void visit(PointInDirection pointInDirection) {
-        emitToken("pointInDirection(");
+        emitNoSpace("pointInDirection(");
+        expectInteger();
         pointInDirection.getDirection().accept(this);
+        endExpectation();
         closeParentheses();
     }
 
     @Override
     public void visit(PointTowards pointTowards) {
-        emitNoSpace("pointTowards(");
-        pointTowards.getPosition().accept(this);
-        closeParentheses();
+        if (pointTowards.getPosition() instanceof MousePos) {
+            emitNoSpace("pointTowardsPos(");
+            pointTowards.getPosition().accept(this);
+            closeParentheses();
+        } else if (pointTowards.getPosition() instanceof FromExpression) {
+            // A sprite
+            emitNoSpace("pointTowards(");
+            StringExpr strExpr = ((FromExpression)pointTowards.getPosition()).getStringExpr();
+            emitActorExpression(strExpr);
+            closeParentheses();
+        } else if (pointTowards.getPosition() instanceof RandomPos) {
+            emitNoSpace("pointTowardsPos(");
+            pointTowards.getPosition().accept(this);
+            closeParentheses();
+        }
+    }
+
+    private void emitActorExpression(Expression expr) {
+        emitNoSpace("locate actor ");
+        expectOriginal();
+        if (expr instanceof LocalIdentifier) {
+            emitNoSpace("\"" + ((LocalIdentifier) expr).getName() + "\"");
+        } else if (expr instanceof AsString) {
+            Expression op1 = ((AsString) expr).getOperand1();
+            if (op1 instanceof LocalIdentifier) {
+                emitNoSpace("\"" + ((LocalIdentifier) op1).getName() + "\"");
+            } else {
+                op1.accept(this);
+            }
+        } else {
+            emitToken(expr.getClass().getSimpleName());
+        }
+        endExpectation();
     }
 
     @Override
     public void visit(ChangeXBy changeXBy) {
         emitNoSpace("changeXBy(");
+        expectInteger();
         changeXBy.getNum().accept(this);
+        endExpectation();
         closeParentheses();
     }
 
     @Override
     public void visit(ChangeYBy changeYBy) {
         emitToken("define y as y +");
+        expectInteger();
         changeYBy.getNum().accept(this);
+        endExpectation();
     }
 
     @Override
     public void visit(SetXTo setXTo) {
         emitToken("define x as x +");
+        expectInteger();
         setXTo.getNum().accept(this);
+        endExpectation();
     }
 
     @Override
     public void visit(SetYTo setYTo) {
         emitToken("define y as");
+        expectInteger();
         setYTo.getNum().accept(this);
+        endExpectation();
     }
 
     @Override
     public void visit(IfOnEdgeBounce ifOnEdgeBounce) {
-        emitToken("if on edge bounce");
+        emitToken("ifOnEdgeBounce()");
     }
 
     @Override
@@ -536,7 +771,9 @@ public class LeilaVisitor extends PrintVisitor {
     @Override
     public void visit(DeleteOf deleteOf) {
         emitToken("delete");
+        expectInteger();
         deleteOf.getNum().accept(this);
+        endExpectation();
         emitToken(" of");
         deleteOf.getIdentifier().accept(this);
     }
@@ -554,7 +791,9 @@ public class LeilaVisitor extends PrintVisitor {
         emitToken("insert");
         insertAt.getString().accept(this);
         emitToken(" at");
+        expectInteger();
         insertAt.getIndex().accept(this);
+        endExpectation();
         emitToken(" of");
         insertAt.getIdentifier().accept(this);
     }
@@ -562,7 +801,9 @@ public class LeilaVisitor extends PrintVisitor {
     @Override
     public void visit(ReplaceItem replaceItem) {
         emitToken("replace item");
+        expectInteger();
         replaceItem.getIndex().accept(this);
+        endExpectation();
         emitToken(" of");
         replaceItem.getIdentifier().accept(this);
         emitToken(" by");
@@ -571,9 +812,11 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(WaitSeconds waitSeconds) {
-        emitNoSpace("waitSeconds(");
+        emitToken("wait");
+        expectInteger();
         waitSeconds.getSeconds().accept(this);
-        closeParentheses();
+        endExpectation();
+        emitToken(" seconds");
     }
 
     @Override
@@ -619,13 +862,17 @@ public class LeilaVisitor extends PrintVisitor {
         as();
         identifier.accept(this);
         emitToken(" +");
+        expectOriginal();
         changeVariableBy.getExpr().accept(this);
+        endExpectation();
     }
 
     @Override
     public void visit(ExpressionStmt expressionStmt) {
         emitToken("evaluate");
+        expectOriginal();
         expressionStmt.getExpression().accept(this);
+        endExpectation();
     }
 
     @Override
@@ -639,11 +886,13 @@ public class LeilaVisitor extends PrintVisitor {
         emitNoSpace("[");
         List<Expression> expressions = expressionList.getExpressions();
         if (expressions.size() > 0) {
+            expectOriginal();
             for (int i = 0; i < expressions.size() - 1; i++) {
                 expressions.get(i).accept(this);
                 comma();
             }
             expressions.get(expressions.size() - 1).accept(this);
+            endExpectation();
         }
         emitNoSpace("]");
     }
@@ -678,7 +927,9 @@ public class LeilaVisitor extends PrintVisitor {
     @Override
     public void visit(RepeatTimesStmt repeatTimesStmt) {
         emitToken("repeat");
+        expectInteger();
         repeatTimesStmt.getTimes().accept(this);
+        endExpectation();
         emitNoSpace(" times");
         repeatTimesStmt.getStmtList().accept(this);
     }
@@ -689,14 +940,17 @@ public class LeilaVisitor extends PrintVisitor {
         repeatForeverStmt.getStmtList().accept(this);
     }
 
-    //@Override
-    //public void visit(StmtListPlain) FIXME
     @Override
     public void visit(ProcedureDefinition procedureDefinition) {
         emitToken("define");
         procedureDefinition.getIdent().accept(this);
         procedureDefinition.getParameterDefinitionList().accept(this);
         procedureDefinition.getStmtList().accept(this);
+    }
+
+    @Override
+    public void visit(Parameter param) {
+        param.getName().accept(this);
     }
 
     @Override
@@ -800,17 +1054,21 @@ public class LeilaVisitor extends PrintVisitor {
         if (noCast) {
             asString.getOperand1().accept(this);
         } else {
+            expectOriginal();
             emitToken("cast");
             asString.getOperand1().accept(this);
             emitNoSpace(" to string");
+            endExpectation();
         }
     }
 
     @Override
     public void visit(AsBool asBool) {
+        expectOriginal();
         emitToken("cast");
         asBool.getOperand1().accept(this);
-        emitToken(" to boolean");
+        emitNoSpace(" to boolean");
+        endExpectation();
     }
 
     @Override
@@ -824,20 +1082,24 @@ public class LeilaVisitor extends PrintVisitor {
     @Override
     public void visit(LetterOf letterOf) {
         emitToken("letter");
+        expectInteger();
         letterOf.getNum().accept(this);
+        endExpectation();
         of();
         letterOf.getStringExpr().accept(this);
     }
 
     @Override
     public void visit(Username username) {
-        emitNoSpace("username");
+        emitNoSpace("username()");
     }
 
     @Override
     public void visit(ItemOfVariable itemOfVariable) {
         emitToken("item");
+        expectInteger();
         itemOfVariable.getNum().accept(this);
+        endExpectation();
         of();
         itemOfVariable.getIdentifier().accept(this);
     }
@@ -881,15 +1143,9 @@ public class LeilaVisitor extends PrintVisitor {
         setAttributeTo.getStringExpr().accept(this);
         emitAttributeType = false;
         as();
+        expectOriginal();
         setAttributeTo.getExpr().accept(this);
-    }
-
-    private void to() {
-        emitToken(" to");
-    }
-
-    private void set() {
-        emitToken("set");
+        endExpectation();
     }
 
     @Override
@@ -897,7 +1153,9 @@ public class LeilaVisitor extends PrintVisitor {
         define();
         setVariableTo.getIdentifier().accept(this);
         as();
+        expectOriginal();
         setVariableTo.getExpr().accept(this);
+        endExpectation();
     }
 
     private void declare() {
@@ -931,20 +1189,11 @@ public class LeilaVisitor extends PrintVisitor {
     @Override
     public void visit(StringLiteral stringLiteral) {
         if (!emitAttributeType) {
-            emitNoSpace("\"" + stringLiteral.getText() + "\"");
+            emitString(stringLiteral.getText());
         } else if (stringLiteral.getText().equalsIgnoreCase(String.valueOf(STDVAR.LAYERORDER))) {
             emitNoSpace("layer");
         } else {
             emitNoSpace(stringLiteral.getText());
-            // String text = stringLiteral.getText();
-            // if (GraphicEffect.contains(text)) {
-            //     emitNoSpace("GraphicEffect");
-            // } else if (SoundEffect.contains(text)) {
-            //     emitNoSpace("SoundEffect");
-            // } else if (text.equalsIgnoreCase("VOLUME")) {
-            //     emitNoSpace("Volume");
-            //     volume = true;
-            // }
         }
     }
 
@@ -976,6 +1225,14 @@ public class LeilaVisitor extends PrintVisitor {
     @Override
     public void visit(StrId strId) {
         String name = strId.getName();
+        if (!showHideVar) {
+            emitStrId(name);
+        } else {
+            emitNoSpace(name);
+        }
+    }
+
+    private void emitStrId(String name) {
         if (name.contains("\"")) {
             throw new RuntimeException("Ids containing \" are not allowed here.");
         } else {
@@ -983,7 +1240,7 @@ public class LeilaVisitor extends PrintVisitor {
                 emitNoSpace(name);
             } else {
                 emitToken("strid");
-                emitNoSpace("\"" + name + "\"");
+                emitString(name);
             }
         }
     }
@@ -1022,27 +1279,33 @@ public class LeilaVisitor extends PrintVisitor {
     @Override
     public void visit(BiggerThan biggerThan) {
         openParentheses();
+        expectOriginal();
         biggerThan.getOperand1().accept(this);
         emitToken(" >");
         biggerThan.getOperand2().accept(this);
+        endExpectation();
         closeParentheses();
     }
 
     @Override
     public void visit(LessThan lessThan) {
         openParentheses();
+        expectOriginal();
         lessThan.getOperand1().accept(this);
         emitToken(" <");
         lessThan.getOperand1().accept(this);
+        endExpectation();
         closeParentheses();
     }
 
     @Override
     public void visit(Equals equals) {
         openParentheses();
+        expectOriginal();
         equals.getOperand1().accept(this);
         emitToken(" =");
         equals.getOperand2().accept(this);
+        endExpectation();
         closeParentheses();
     }
 
@@ -1115,8 +1378,10 @@ public class LeilaVisitor extends PrintVisitor {
     }
 
     @Override
-    public void visit(FromNumber fromNumber) {
+    public void visit(FromNumber fromNumber) { // TODO look up how Scratch handles this internally
+        expectOriginal();
         fromNumber.getValue().accept(this);
+        endExpectation();
     }
 
     @Override
@@ -1132,8 +1397,10 @@ public class LeilaVisitor extends PrintVisitor {
     @Override
     public void visit(AsNumber asNumber) {
         emitToken("cast");
+        expectOriginal(); // This should in theory not be necessary, but does not hurt and guarantees correctness here
         asNumber.getOperand1().accept(this);
-        emitToken(" to integer"); //TODO distinguish between int and float?
+        endExpectation();
+        emitNoSpace(" to integer"); //TODO distinguish between int and float?
     }
 
     @Override
@@ -1143,18 +1410,24 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(DaysSince2000 daysSince2000) {
-        emitNoSpace("days since millennium");
+        emitNoSpace("daysSinceMillennium()");
     }
 
     @Override
     public void visit(Current current) {
-        emitToken("current");
         current.getTimeComp().accept(this);
     }
 
     @Override
     public void visit(TimeComp timeComp) {
-        emitNoSpace(timeComp.getLabel());
+        emitNoSpace("current");
+        String label = timeComp.getLabel();
+        if (label.equalsIgnoreCase(TimeComp.DAY_OF_WEEK.getLabel())) {
+            emitNoSpace("DayOfWeek");
+        } else {
+            emitNoSpace(label.substring(0, 1).toUpperCase() + label.substring(1));
+        }
+        emitNoSpace("()");
     }
 
     @Override
@@ -1162,8 +1435,9 @@ public class LeilaVisitor extends PrintVisitor {
         if (distanceTo.getPosition() instanceof MousePos) {
             emitNoSpace("distanceToMousePointer()");
         } else {
-            emitToken("distanceTo()");
+            emitToken("distanceTo("); // FIXME there is no method in BASTET that handles distances to sprites
             distanceTo.getPosition().accept(this);
+            closeParentheses();
         }
     }
 
@@ -1179,7 +1453,7 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(Loudness loudness) {
-        emitNoSpace("loudness");
+        emitNoSpace("loudness()");
     }
 
     @Override
@@ -1197,29 +1471,72 @@ public class LeilaVisitor extends PrintVisitor {
     @Override
     public void visit(IndexOf indexOf) {
         emitToken("index of");
+        expectOriginal();
         indexOf.getExpr().accept(this);
+        endExpectation();
         emitToken(" in");
         indexOf.getIdentifier().accept(this);
     }
 
     @Override
-    public void visit(PickRandom pickRandom) {
-        emitToken("pick random");
+    public void visit(PickRandom pickRandom) { // FIXME distinguish between random float and random integer
+        emitNoSpace("randomBetween(");
         pickRandom.getOperand1().accept(this);
-        emitToken(" of");
+        comma();
         pickRandom.getOperand2().accept(this);
+        closeParentheses();
     }
 
     @Override
     public void visit(Round round) {
         emitToken("round");
+        expectOriginal();
         round.getOperand1().accept(this);
+        endExpectation();
     }
 
     @Override
     public void visit(NumberLiteral number) {
+        TYPE expectedType = expectedTypes.peek();
         double value = number.getValue();
-        String val = String.valueOf((int) value);
+        switch (expectedType) {
+            case ORIGINAL:
+                if (isInteger(value)) {
+                    emitAsLong(value);
+                } else {
+                    emitAsDouble(value);
+                }
+                break;
+            case INTEGER:
+                if (isInteger(value)) {
+                    emitAsLong(value);
+                } else {
+                    throw new RuntimeException("Expected type integer but got " + value);
+                }
+                break;
+            case FLOAT:
+                emitAsDouble(value);
+                break;
+            default:
+                throw new RuntimeException("Unknown expected type: " + expectedType);
+        }
+    }
+
+    private boolean isInteger(double value) {
+        return (value == Math.floor(value)) && !Double.isInfinite(value);
+    }
+
+    private void emitAsLong(double value) {
+        long intValue = (long) value;
+        if (value >= 0) {
+            emitNoSpace(String.valueOf(intValue));
+        } else {
+            emitNoSpace("(0" + intValue + ")");
+        }
+    }
+
+    private void emitAsDouble(double value) {
+        String val = String.valueOf(value);
         if (value >= 0) {
             emitNoSpace(val);
         } else {
@@ -1230,51 +1547,63 @@ public class LeilaVisitor extends PrintVisitor {
     @Override
     public void visit(NumFunctOf numFunctOf) {
         numFunctOf.getOperand1().accept(this);
+        expectOriginal();
         numFunctOf.getOperand2().accept(this);
+        endExpectation();
     }
 
     @Override
     public void visit(Mult mult) {
         openParentheses();
+        expectOriginal();
         mult.getOperand1().accept(this);
         emitToken(" *");
         mult.getOperand2().accept(this);
+        endExpectation();
         closeParentheses();
     }
 
     @Override
     public void visit(Div div) {
         openParentheses();
+        expectOriginal();
         div.getOperand1().accept(this);
         emitToken(" /");
         div.getOperand2().accept(this);
+        endExpectation();
         closeParentheses();
     }
 
     @Override
     public void visit(Mod mod) {
         openParentheses();
+        expectOriginal();
         mod.getOperand1().accept(this);
         emitToken(" mod");
         mod.getOperand2().accept(this);
+        endExpectation();
         closeParentheses();
     }
 
     @Override
     public void visit(Add add) {
         openParentheses();
+        expectOriginal();
         add.getOperand1().accept(this);
         emitToken(" +");
         add.getOperand2().accept(this);
+        endExpectation();
         closeParentheses();
     }
 
     @Override
     public void visit(Minus minus) {
         openParentheses();
+        expectOriginal();
         minus.getOperand1().accept(this);
         emitToken(" -");
         minus.getOperand2().accept(this);
+        endExpectation();
         closeParentheses();
     }
 
@@ -1292,7 +1621,7 @@ public class LeilaVisitor extends PrintVisitor {
     }
 
     @Override
-    public void visit(NumFunct numFunct) {
+    public void visit(NumFunct numFunct) { // TODO use library functions
         emitNoSpace(numFunct.getFunction());
     }
 
@@ -1311,9 +1640,11 @@ public class LeilaVisitor extends PrintVisitor {
     @Override
     public void visit(GoToPosXY goToPosXY) {
         emitNoSpace("goTo(");
+        expectInteger();
         goToPosXY.getX().accept(this);
         comma();
         goToPosXY.getY().accept(this);
+        endExpectation();
         closeParentheses();
     }
 
@@ -1338,12 +1669,14 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(GlideSecsToXY glideSecsToXY) {
-        emitToken("glide");
+        emitNoSpace("glideSecondsTo(");
+        expectInteger();
         glideSecsToXY.getSecs().accept(this);
-        emitNoSpace("to (");
+        comma();
         glideSecsToXY.getX().accept(this);
         comma();
         glideSecsToXY.getY().accept(this);
+        endExpectation();
         closeParentheses();
     }
 
@@ -1358,7 +1691,9 @@ public class LeilaVisitor extends PrintVisitor {
         changeGraphicEffectBy.getEffect().accept(this);
         emitNoSpace("\"");
         comma();
+        expectInteger();
         changeGraphicEffectBy.getValue().accept(this);
+        endExpectation();
         closeParentheses();
     }
 
@@ -1367,7 +1702,9 @@ public class LeilaVisitor extends PrintVisitor {
         define();
         setGraphicEffectTo.getEffect().accept(this);
         emitToken("_effect_value as");
+        expectFloat();
         setGraphicEffectTo.getValue().accept(this);
+        endExpectation();
     }
 
     @Override
@@ -1406,19 +1743,17 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(EventAttribute eventAttribute) {
-        emitToken(eventAttribute.getType()); // TODO -- loudness is not in grammar?
+        emitToken(eventAttribute.getType());
     }
 
     @Override
     public void visit(PositionX positionX) {
-        emitNoSpace("TODO"); // TODO -- grammar?
-        // maybe:   | 'attribute'  stringExpr 'of' actorExpr  # StringAttributeOfExpression
-        // query an attribute value of an actor (sprites, the stage)
+        emitNoSpace("x");
     }
 
     @Override
     public void visit(Direction direction) {
-        emitNoSpace("TODO"); // TODO -- grammar?
+        emitNoSpace("direction");
     }
 
     @Override
@@ -1426,13 +1761,17 @@ public class LeilaVisitor extends PrintVisitor {
         define();
         setSoundEffectTo.getEffect().accept(this);
         emitToken("_effect_value as");
+        expectFloat();
         setSoundEffectTo.getValue().accept(this);
+        endExpectation();
     }
 
     @Override
     public void visit(ChangeVolumeBy changeVolumeBy) {
         emitNoSpace("changeVolumeBy(");
+        expectInteger();
         changeVolumeBy.getVolumeValue().accept(this);
+        endExpectation();
         closeParentheses();
     }
 
@@ -1445,7 +1784,7 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(PositionY positionY) {
-        emitNoSpace("TODO"); // TODO -- grammar?
+        emitNoSpace("y");
     }
 
     @Override
@@ -1456,7 +1795,7 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(RotationStyle rotationStyle) {
-        emitNoSpace("\"" + rotationStyle.getToken() + "\"");
+        emitString(rotationStyle.getToken());
     }
 
     @Override
@@ -1465,14 +1804,18 @@ public class LeilaVisitor extends PrintVisitor {
         changeSoundEffectBy.getEffect().accept(this);
         emitNoSpace("\"");
         comma();
+        expectInteger();
         changeSoundEffectBy.getValue().accept(this);
+        endExpectation();
         closeParentheses();
     }
 
     @Override
     public void visit(SetVolumeTo setVolumeTo) {
         emitNoSpace("setVolumeTo(");
+        expectInteger();
         setVolumeTo.getVolumeValue().accept(this);
+        endExpectation();
         closeParentheses();
     }
 
@@ -1484,7 +1827,7 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(DragMode dragMode) {
-        emitNoSpace("\"" + dragMode.getToken() + "\"");
+        emitString(dragMode.getToken());
     }
 
     @Override
@@ -1494,14 +1837,22 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(HideList hideList) {
-        emitToken("hide variable");
+        emitNoSpace("hideVariable(\"");
+        showHideVar = true;
         hideList.getIdentifier().accept(this);
+        showHideVar = false;
+        emitNoSpace("\"");
+        closeParentheses();
     }
 
     @Override
     public void visit(ShowList showList) {
-        emitToken("show variable");
+        emitNoSpace("showVariable(\"");
+        showHideVar = true;
         showList.getIdentifier().accept(this);
+        showHideVar = false;
+        emitNoSpace("\"");
+        closeParentheses();
     }
 
     @Override

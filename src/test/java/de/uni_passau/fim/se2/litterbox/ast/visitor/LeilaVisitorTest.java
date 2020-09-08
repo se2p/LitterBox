@@ -44,7 +44,7 @@ public class LeilaVisitorTest {
 
     @Test
     public void testSetRotationStyle() throws Exception {
-        String path = "src/test/fixtures/printvisitor/setRotationStyle.json";
+        String path = "src/test/fixtures/leilaVisitor/setRotationStyle.json";
         String output = getLeilaForProject(path);
         assertThat(output).contains("define rotationStyle as \"don't rotate\"");
         assertThat(output).contains("define rotationStyle as \"left-right\"");
@@ -53,7 +53,7 @@ public class LeilaVisitorTest {
 
     @Test
     public void testTouching() throws Exception {
-        String path = "src/test/fixtures/printvisitor/touching.json";
+        String path = "src/test/fixtures/leilaVisitor/touching.json";
         String output = getLeilaForProject(path);
 
         assertThat(output).contains("touchingMousePointer()");
@@ -64,7 +64,7 @@ public class LeilaVisitorTest {
 
     @Test
     public void testMouseDown() throws Exception {
-        String path = "src/test/fixtures/printvisitor/mouseDown.json";
+        String path = "src/test/fixtures/leilaVisitor/mouseDown.json";
         String output = getLeilaForProject(path);
 
         assertThat(output).contains("mouseDown()");
@@ -72,7 +72,7 @@ public class LeilaVisitorTest {
 
     @Test
     public void testJoin() throws Exception {
-        String path = "src/test/fixtures/printvisitor/join.json";
+        String path = "src/test/fixtures/leilaVisitor/join.json";
         String output = getLeilaForProject(path);
 
         assertThat(output).contains("join \"apple \" \"banana\"");
@@ -80,7 +80,7 @@ public class LeilaVisitorTest {
 
     @Test
     public void testTurnRight() throws Exception {
-        String path = "src/test/fixtures/printvisitor/turnRight.json";
+        String path = "src/test/fixtures/leilaVisitor/turnRight.json";
         String output = getLeilaForProject(path);
 
         assertThat(output).contains("turnRight(15)");
@@ -88,7 +88,7 @@ public class LeilaVisitorTest {
 
     @Test
     public void testChangeVariableBy() throws Exception {
-        String path = "src/test/fixtures/printvisitor/changeVariableBy.json";
+        String path = "src/test/fixtures/leilaVisitor/changeVariableBy.json";
         String output = getLeilaForProject(path);
 
         assertThat(output).contains("define Sprite1.myvar as Sprite1.myvar + 1");
@@ -96,7 +96,7 @@ public class LeilaVisitorTest {
 
     @Test
     public void testFromNumber() throws Exception {
-        String path = "src/test/fixtures/printvisitor/fromNumber.json";
+        String path = "src/test/fixtures/leilaVisitor/fromNumber.json";
         String output = getLeilaForProject(path);
 
         assertThat(output).contains("touchingColor((0 + 0))");
@@ -108,7 +108,7 @@ public class LeilaVisitorTest {
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode project = objectMapper.readTree(file);
         PrintStream stream = new PrintStream(out);
-        LeilaVisitor visitor = new LeilaVisitor(stream, false);
+        LeilaVisitor visitor = new LeilaVisitor(stream, false, true);
         Program program = ProgramParser.parseProgram("Small", project);
         visitor.visit(program);
         return out.toString();
@@ -119,7 +119,7 @@ public class LeilaVisitorTest {
         File file = new File("./src/test/fixtures/emptyProject.json");
         String path = file.getAbsolutePath();
         String outPath = tempFile.getAbsolutePath();
-        LeilaAnalyzer analyzer = new LeilaAnalyzer(path, outPath + "foobar", false);
+        LeilaAnalyzer analyzer = new LeilaAnalyzer(path, outPath + "foobar", false, true);
         analyzer.analyzeFile();
         File output = new File(Paths.get(outPath + "foobar", "emptyProject.sc").toString());
         assertThat(output.exists()).isFalse();
@@ -127,7 +127,7 @@ public class LeilaVisitorTest {
 
     @BeforeAll
     public static void setup() {
-        String path = "src/test/fixtures/printvisitor/grammarvisitorsmall.json";
+        String path = "src/test/fixtures/leilaVisitor/grammarvisitorsmall.json";
         File file = new File(path);
         ObjectMapper objectMapper = new ObjectMapper();
         try {
@@ -141,7 +141,7 @@ public class LeilaVisitorTest {
     // @Test
     public void testVisitor() {
         PrintStream stream = new PrintStream(System.out);
-        LeilaVisitor visitor = new LeilaVisitor(stream, false);
+        LeilaVisitor visitor = new LeilaVisitor(stream, false, true);
         try {
             Program program = ProgramParser.parseProgram("Small", project);
             visitor.visit(program);
@@ -154,7 +154,7 @@ public class LeilaVisitorTest {
     @Ignore // This is not really a test, it's a convenience method for showing what the visitor does or does not
     //@Test
     public void testVisitorBig() {
-        String path = "src/test/fixtures/printvisitor/fruitCatch.json";
+        String path = "src/test/fixtures/leilaVisitor/fruitCatch.json";
         File file = new File(path);
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode project = null;
@@ -164,7 +164,7 @@ public class LeilaVisitorTest {
             fail();
         }
         PrintStream stream = new PrintStream(System.out);
-        LeilaVisitor visitor = new LeilaVisitor(stream, false);
+        LeilaVisitor visitor = new LeilaVisitor(stream, false, true);
         try {
             Program program = ProgramParser.parseProgram("Small", project);
             visitor.visit(program);
