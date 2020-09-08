@@ -1073,7 +1073,7 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(Username username) {
-        emitNoSpace("username");
+        emitNoSpace("username()");
     }
 
     @Override
