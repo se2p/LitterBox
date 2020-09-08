@@ -85,7 +85,7 @@ import java.util.List;
 import java.util.Stack;
 import java.util.regex.Pattern;
 
-import static de.uni_passau.fim.se2.litterbox.ast.visitor.LeilaVisitor.EXPECTED_TYPE.*;
+import static de.uni_passau.fim.se2.litterbox.ast.visitor.LeilaVisitor.TYPE.*;
 
 public class LeilaVisitor extends PrintVisitor {
 
@@ -95,9 +95,9 @@ public class LeilaVisitor extends PrintVisitor {
     private int skippedDeclarations = 0;
     private boolean noCast = false;
     private boolean showHideVar = false;
-    private Stack<EXPECTED_TYPE> expectedTypes = new Stack<>();
+    private Stack<TYPE> expectedTypes = new Stack<>();
 
-    enum EXPECTED_TYPE {
+    enum TYPE {
         INTEGER, FLOAT, ORIGINAL
     }
 
@@ -115,6 +115,13 @@ public class LeilaVisitor extends PrintVisitor {
         }
     }
 
+    /**
+     * Creates a new LeILa visitor that prints the LeILa equivalent of the programs to the {@code printStream}.
+     *
+     * @param printStream The stream to which the LeILa output will be printed.
+     * @param nonDet Indicates whether attributes should be initialized or not.
+     * @param onNever Indicates whether "Never" events are printed or not.
+     */
     public LeilaVisitor(PrintStream printStream, boolean nonDet, boolean onNever) {
         super(printStream);
         this.nonDet = nonDet;
@@ -1490,7 +1497,7 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(NumberLiteral number) {
-        EXPECTED_TYPE expectedType = expectedTypes.peek();
+        TYPE expectedType = expectedTypes.peek();
         double value = number.getValue();
         switch (expectedType) {
             case ORIGINAL:
