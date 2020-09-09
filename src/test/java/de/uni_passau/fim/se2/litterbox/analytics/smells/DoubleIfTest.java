@@ -21,6 +21,7 @@ public class DoubleIfTest {
     private static Program doubleIfConditionOnDifferentVariable;
     private static Program doubleIfIfElse;
     private static Program doubleIfWithStatementBetween;
+    private static Program doubleIfWithDifferentBody;
     private static ObjectMapper mapper = new ObjectMapper();
 
     @BeforeAll
@@ -38,6 +39,8 @@ public class DoubleIfTest {
         doubleIfIfElse = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
         f = new File("./src/test/fixtures/smells/doubleIfWithStatementBetween.json");
         doubleIfWithStatementBetween = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
+        f = new File("./src/test/fixtures/smells/doubleIfWithDifferentBody.json");
+        doubleIfWithDifferentBody = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
     }
 
     @Test
@@ -81,4 +84,13 @@ public class DoubleIfTest {
         Set<Issue> reports = finder.check(doubleIfWithStatementBetween);
         Assertions.assertEquals(0, reports.size());
     }
+
+    @Test
+    public void testDoubleIfWithDifferentBody() {
+        DoubleIf finder = new DoubleIf();
+        // The body of the condition doesn't matter
+        Set<Issue> reports = finder.check(doubleIfWithDifferentBody);
+        Assertions.assertEquals(1, reports.size());
+    }
+
 }
