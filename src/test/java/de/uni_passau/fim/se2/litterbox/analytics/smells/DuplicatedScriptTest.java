@@ -17,6 +17,10 @@ class DuplicatedScriptTest {
 
     private static Program empty;
     private static Program duplicatedScript;
+    private static Program duplicatedScriptMinimalDifference;
+    private static Program duplicatedScriptDifferentEvent;
+    private static Program duplicatedScriptMultipleBlocks;
+    private static Program duplicatedScriptOtherSprite;
     private static ObjectMapper mapper = new ObjectMapper();
 
     @BeforeAll
@@ -25,6 +29,14 @@ class DuplicatedScriptTest {
         empty = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
         f = new File("./src/test/fixtures/smells/duplicatedScript.json");
         duplicatedScript = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
+        f = new File("./src/test/fixtures/smells/duplicatedScriptMinimalDifference.json");
+        duplicatedScriptMinimalDifference = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
+        f = new File("./src/test/fixtures/smells/duplicatedScriptDifferentEvent.json");
+        duplicatedScriptDifferentEvent = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
+        f = new File("./src/test/fixtures/smells/duplicatedScriptMultipleBlocks.json");
+        duplicatedScriptMultipleBlocks = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
+        f = new File("./src/test/fixtures/smells/duplicatedScriptOtherSprite.json");
+        duplicatedScriptOtherSprite = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
     }
 
     @Test
@@ -39,5 +51,34 @@ class DuplicatedScriptTest {
         DuplicatedScript finder = new DuplicatedScript();
         Set<Issue> reports = finder.check(duplicatedScript);
         Assertions.assertEquals(1, reports.size());
+    }
+
+    @Test
+    public void testDuplicatedScriptMinimalDifference() {
+        DuplicatedScript finder = new DuplicatedScript();
+        Set<Issue> reports = finder.check(duplicatedScriptMinimalDifference);
+        // x-position and y-position sensing blocks are replaced
+        Assertions.assertEquals(0, reports.size());
+    }
+
+    @Test
+    public void testDuplicatedScriptDifferentEvent() {
+        DuplicatedScript finder = new DuplicatedScript();
+        Set<Issue> reports = finder.check(duplicatedScriptDifferentEvent);
+        Assertions.assertEquals(0, reports.size());
+    }
+
+    @Test
+    public void testDuplicatedScriptMultipleBlocks() {
+        DuplicatedScript finder = new DuplicatedScript();
+        Set<Issue> reports = finder.check(duplicatedScriptMultipleBlocks);
+        Assertions.assertEquals(1, reports.size());
+    }
+
+    @Test
+    public void testDuplicatedScriptOtherSprite() {
+        DuplicatedScript finder = new DuplicatedScript();
+        Set<Issue> reports = finder.check(duplicatedScriptOtherSprite);
+        Assertions.assertEquals(0, reports.size());
     }
 }
