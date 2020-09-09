@@ -13,7 +13,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Set;
 
-public class MutliAttributeModificationTest {
+public class MultiAttributeModificationTest {
 
     private static Program empty;
     private static Program program;
@@ -36,7 +36,7 @@ public class MutliAttributeModificationTest {
 
     @Test
     public void testMultiAttributeModification() {
-        MutliAttributeModification finder = new MutliAttributeModification();
+        MultiAttributeModification finder = new MultiAttributeModification();
         Set<Issue> reports = finder.check(program);
         Assertions.assertEquals(22, reports.size());
     }

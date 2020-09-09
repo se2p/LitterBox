@@ -44,7 +44,7 @@ import java.util.Set;
 /**
  * Checks if a variable is changed multiple times in a row.
  */
-public class MutliAttributeModification extends AbstractIssueFinder {
+public class MultiAttributeModification extends AbstractIssueFinder {
 
     public static final String NAME = "multiple_attribute_modifications";
 
