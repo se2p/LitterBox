@@ -99,4 +99,9 @@ public class MissingInitialization implements IssueFinder {
     public IssueType getIssueType() {
         return IssueType.BUG;
     }
+
+    @Override
+    public void setIgnoreLooseBlocks(boolean value) {
+        // Irrelevant for this finder
+    }
 }

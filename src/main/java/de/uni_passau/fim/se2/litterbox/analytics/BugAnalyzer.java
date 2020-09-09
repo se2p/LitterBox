@@ -24,43 +24,28 @@ import de.uni_passau.fim.se2.litterbox.report.CSVReportGenerator;
 import de.uni_passau.fim.se2.litterbox.report.CommentGenerator;
 import de.uni_passau.fim.se2.litterbox.report.ConsoleReportGenerator;
 import de.uni_passau.fim.se2.litterbox.report.JSONReportGenerator;
-import de.uni_passau.fim.se2.litterbox.utils.GroupConstants;
+import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Set;
+import java.util.*;
 import java.util.logging.Logger;
-
-import static de.uni_passau.fim.se2.litterbox.utils.GroupConstants.*;
+import java.util.stream.Collectors;
 
 public class BugAnalyzer extends Analyzer {
 
     private static final Logger log = Logger.getLogger(BugAnalyzer.class.getName());
-    private final IssueTool issueTool;
-    private String[] detectorNames;
+    private List<String> detectorNames;
+    private List<IssueFinder> issueFinders;
     private String annotationOutput;
+    private boolean ignoreLooseBlocks;
 
-    public BugAnalyzer(String input, String output) {
+    public BugAnalyzer(String input, String output, String detectors, boolean ignoreLooseBlocks) {
         super(input, output);
-        this.issueTool = new IssueTool();
-    }
-
-    public void setDetectorNames(String detectorNames) {
-        switch (detectorNames) {
-            case ALL:
-                this.detectorNames = issueTool.getAllFinder().keySet().toArray(new String[0]);
-                break;
-            case BUGS:
-                this.detectorNames = issueTool.getBugFinder().keySet().toArray(new String[0]);
-                break;
-            case SMELLS:
-                this.detectorNames = issueTool.getSmellFinder().keySet().toArray(new String[0]);
-                break;
-            default:
-                this.detectorNames = detectorNames.split(",");
-                break;
-        }
+        issueFinders = IssueTool.getFinders(detectors);
+        detectorNames = issueFinders.stream().map(IssueFinder::getName).collect(Collectors.toList());
+        this.ignoreLooseBlocks = ignoreLooseBlocks;
     }
 
     public void setAnnotationOutput(String annotationOutput) {
@@ -71,6 +56,7 @@ public class BugAnalyzer extends Analyzer {
      * The method for analyzing one Scratch project file (ZIP). It will produce only console output.
      *
      * @param fileEntry the file to analyze
+     * @param reportFileName the file in which to write the results
      */
     void check(File fileEntry, String reportFileName) {
         Program program = extractProgram(fileEntry);
@@ -79,9 +65,22 @@ public class BugAnalyzer extends Analyzer {
             return;
         }
 
-        Set<Issue> issues = issueTool.check(program, GroupConstants.ALL);
+        Set<Issue> issues = runFinders(program);
+        generateOutput(program, issues, reportFileName);
+        createAnnotatedFile(fileEntry, program, issues, annotationOutput);
+    }
 
-        // TODO: Refactor error handling
+    private Set<Issue> runFinders(Program program) {
+        Preconditions.checkNotNull(program);
+        Set<Issue> issues = new LinkedHashSet<>();
+        for (IssueFinder iF : issueFinders) {
+            iF.setIgnoreLooseBlocks(ignoreLooseBlocks);
+            issues.addAll(iF.check(program));
+        }
+        return issues;
+    }
+
+    private void generateOutput(Program program, Set<Issue> issues, String reportFileName) {
         try {
             if (reportFileName == null || reportFileName.isEmpty()) {
                 ConsoleReportGenerator reportGenerator = new ConsoleReportGenerator(detectorNames);
@@ -100,22 +99,21 @@ public class BugAnalyzer extends Analyzer {
             log.warning(e.getMessage());
         }
 
+    }
+
+    private void createAnnotatedFile(File fileEntry, Program program, Set<Issue> issues, String annotatePath)  {
         if (annotationOutput != null && !annotationOutput.isEmpty()) {
             try {
                 CommentGenerator commentGenerator = new CommentGenerator();
                 commentGenerator.generateReport(program, issues);
-                createAnnotatedFile(fileEntry, program, annotationOutput);
+                if ((FilenameUtils.getExtension(fileEntry.getPath())).toLowerCase().equals("json")) {
+                    JSONFileCreator.writeJsonFromProgram(program, annotatePath);
+                } else {
+                    JSONFileCreator.writeSb3FromProgram(program, annotatePath, fileEntry);
+                }
             } catch (IOException e) {
                 log.warning(e.getMessage());
             }
-        }
-    }
-
-    private void createAnnotatedFile(File fileEntry, Program program, String annotatePath) throws IOException {
-        if ((FilenameUtils.getExtension(fileEntry.getPath())).toLowerCase().equals("json")) {
-            JSONFileCreator.writeJsonFromProgram(program, annotatePath);
-        } else {
-            JSONFileCreator.writeSb3FromProgram(program, annotatePath, fileEntry);
         }
     }
 }

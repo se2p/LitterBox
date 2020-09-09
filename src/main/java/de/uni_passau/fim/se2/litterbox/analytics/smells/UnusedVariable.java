@@ -23,8 +23,16 @@ import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
+import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
+import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.ExpressionStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.variable.ScratchList;
+import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ExpressionListInfo;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.VariableInfo;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
@@ -77,6 +85,7 @@ public class UnusedVariable extends AbstractIssueFinder {
                 if (variableCalls.get(i).getFirst().getName().equals(actorName)
                         && variableCalls.get(i).getSecond().getName().getName().equals(name)) {
                     currFound = true;
+                    break;
                 }
             }
 
@@ -87,7 +96,8 @@ public class UnusedVariable extends AbstractIssueFinder {
                         break;
                     }
                 }
-                addIssueWithLooseComment();
+                Qualified qualified = new Qualified(new StrId(actorName), new Variable(new StrId(name)));
+                addScriptWithIssueFor(qualified);
             }
         }
 
@@ -100,6 +110,7 @@ public class UnusedVariable extends AbstractIssueFinder {
                 if (variableCalls.get(i).getFirst().getName().equals(actorName)
                         && variableCalls.get(i).getSecond().getName().getName().equals(name)) {
                     currFound = true;
+                    break;
                 }
             }
             if (!currFound) {
@@ -109,9 +120,15 @@ public class UnusedVariable extends AbstractIssueFinder {
                         break;
                     }
                 }
-                addIssueWithLooseComment();
+                Qualified qualified = new Qualified(new StrId(actorName), new ScratchList(new StrId(name)));
+                addScriptWithIssueFor(qualified);
             }
         }
+    }
+
+    private void addScriptWithIssueFor(Expression expr) {
+        Script theScript = new Script(new Never(), new StmtList(Arrays.asList(new ExpressionStmt(expr))));
+        addIssueForSynthesizedScript(theScript, expr, new NoBlockMetadata());
     }
 
     @Override

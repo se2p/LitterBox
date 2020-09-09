@@ -39,6 +39,8 @@ public interface IssueFinder {
 
     String getName();
 
+    void setIgnoreLooseBlocks(boolean value);
+
     enum IssueType {
         BUG, SMELL
     }

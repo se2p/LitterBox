@@ -40,10 +40,12 @@ public class MissingWaitUntilCondition extends AbstractIssueFinder {
 
     @Override
     public void visit(Script node) {
-        currentScript = node;
-        if (!(node.getEvent() instanceof Never)) {
-            visitChildren(node);
+        if (ignoreLooseBlocks && node.getEvent() instanceof Never) {
+            // Ignore unconnected blocks
+            return;
         }
+        currentScript = node;
+        visitChildren(node);
         currentScript = null;
     }
 

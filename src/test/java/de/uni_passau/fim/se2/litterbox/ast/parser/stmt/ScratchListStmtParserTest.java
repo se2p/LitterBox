@@ -186,4 +186,49 @@ class ScratchListStmtParserTest {
             fail();
         }
     }
+
+    @Test
+    public void testAddInvalid() throws Exception {
+        String path = "src/test/fixtures/stmtParser/invalidList.json";
+        File file = new File(path);
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode project = objectMapper.readTree(file);
+        Program program = ProgramParser.parseProgram("InvalidId", project);
+        final ActorDefinition actorDefinition = program.getActorDefinitionList().getDefinitions().get(1);
+        final Script script = actorDefinition.getScripts().getScriptList().get(0);
+        Stmt stmt = script.getStmtList().getStmts().get(0);
+        Truth.assertThat(stmt).isInstanceOf(AddTo.class);
+        Identifier identifier = ((AddTo) stmt).getIdentifier();
+        Truth.assertThat(identifier).isInstanceOf(UnspecifiedId.class);
+    }
+
+    @Test
+    public void testDeleteInvalid() throws Exception {
+        String path = "src/test/fixtures/stmtParser/invalidList.json";
+        File file = new File(path);
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode project = objectMapper.readTree(file);
+        Program program = ProgramParser.parseProgram("InvalidId", project);
+        final ActorDefinition actorDefinition = program.getActorDefinitionList().getDefinitions().get(1);
+        final Script script = actorDefinition.getScripts().getScriptList().get(0);
+        Stmt stmt = script.getStmtList().getStmts().get(2);
+        Truth.assertThat(stmt).isInstanceOf(DeleteAllOf.class);
+        Identifier identifier = ((DeleteAllOf) stmt).getIdentifier();
+        Truth.assertThat(identifier).isInstanceOf(UnspecifiedId.class);
+    }
+
+    @Test
+    public void testInsertInvalid() throws Exception {
+        String path = "src/test/fixtures/stmtParser/invalidList.json";
+        File file = new File(path);
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode project = objectMapper.readTree(file);
+        Program program = ProgramParser.parseProgram("InvalidId", project);
+        final ActorDefinition actorDefinition = program.getActorDefinitionList().getDefinitions().get(1);
+        final Script script = actorDefinition.getScripts().getScriptList().get(0);
+        Stmt stmt = script.getStmtList().getStmts().get(3);
+        Truth.assertThat(stmt).isInstanceOf(InsertAt.class);
+        Identifier identifier = ((InsertAt) stmt).getIdentifier();
+        Truth.assertThat(identifier).isInstanceOf(UnspecifiedId.class);
+    }
 }
