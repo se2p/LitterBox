@@ -1,0 +1,243 @@
+{
+    "targets": [
+        {
+            "isStage": true,
+            "name": "Stage",
+            "variables": {
+                "`jEk@4|i[#Fk?(8x)AV.-my variable": [
+                    "my variable",
+                    0
+                ]
+            },
+            "lists": {
+                "AI`=rY_w-c.u*,RtTd}v": [
+                    "InvalidList",
+                    []
+                ]
+            },
+            "broadcasts": {},
+            "blocks": {},
+            "comments": {},
+            "currentCostume": 0,
+            "costumes": [
+                {
+                    "assetId": "cd21514d0531fdffb22204e0ec5ed84a",
+                    "name": "backdrop1",
+                    "md5ext": "cd21514d0531fdffb22204e0ec5ed84a.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 240,
+                    "rotationCenterY": 180
+                }
+            ],
+            "sounds": [
+                {
+                    "assetId": "83a9787d4cb6f3b7632b4ddfebf74367",
+                    "name": "pop",
+                    "dataFormat": "wav",
+                    "format": "",
+                    "rate": 44100,
+                    "sampleCount": 1032,
+                    "md5ext": "83a9787d4cb6f3b7632b4ddfebf74367.wav"
+                }
+            ],
+            "volume": 100,
+            "layerOrder": 0,
+            "tempo": 60,
+            "videoTransparency": 50,
+            "videoState": "on",
+            "textToSpeechLanguage": null
+        },
+        {
+            "isStage": false,
+            "name": "Sprite1",
+            "variables": {},
+            "lists": {},
+            "broadcasts": {},
+            "blocks": {
+                "kNVe(KGui)f1XFhA;T5C": {
+                    "opcode": "data_addtolist",
+                    "next": "CarMzM_J7a]g?i|_5IX8",
+                    "parent": null,
+                    "inputs": {
+                        "ITEM": [
+                            1,
+                            [
+                                10,
+                                "thing"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "LIST": [
+                            "InvalidList",
+                            "tI`=rY_w-c.u*,RtTd}v"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 701,
+                    "y": 386
+                },
+                "CarMzM_J7a]g?i|_5IX8": {
+                    "opcode": "data_deleteoflist",
+                    "next": "!e{fegGOt(iZe,_qHw)k",
+                    "parent": "kNVe(KGui)f1XFhA;T5C",
+                    "inputs": {
+                        "INDEX": [
+                            1,
+                            [
+                                7,
+                                "1"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "LIST": [
+                            "InvalidList",
+                            "tI`=rY_w-c.u*,RtTd}v"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "!e{fegGOt(iZe,_qHw)k": {
+                    "opcode": "data_deletealloflist",
+                    "next": "L%ZJi*|*ek;|L,hY=Rjv",
+                    "parent": "CarMzM_J7a]g?i|_5IX8",
+                    "inputs": {},
+                    "fields": {
+                        "LIST": [
+                            "InvalidList",
+                            "tI`=rY_w-c.u*,RtTd}v"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "L%ZJi*|*ek;|L,hY=Rjv": {
+                    "opcode": "data_insertatlist",
+                    "next": "z3znuvn6;)YiadmUh1-`",
+                    "parent": "!e{fegGOt(iZe,_qHw)k",
+                    "inputs": {
+                        "ITEM": [
+                            1,
+                            [
+                                10,
+                                "thing"
+                            ]
+                        ],
+                        "INDEX": [
+                            1,
+                            [
+                                7,
+                                "1"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "LIST": [
+                            "InvalidList",
+                            "tI`=rY_w-c.u*,RtTd}v"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "z3znuvn6;)YiadmUh1-`": {
+                    "opcode": "data_replaceitemoflist",
+                    "next": null,
+                    "parent": "L%ZJi*|*ek;|L,hY=Rjv",
+                    "inputs": {
+                        "INDEX": [
+                            1,
+                            [
+                                7,
+                                "1"
+                            ]
+                        ],
+                        "ITEM": [
+                            1,
+                            [
+                                10,
+                                "thing"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "LIST": [
+                            "InvalidList",
+                            "tI`=rY_w-c.u*,RtTd}v"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                }
+            },
+            "comments": {},
+            "currentCostume": 0,
+            "costumes": [
+                {
+                    "assetId": "b7853f557e4426412e64bb3da6531a99",
+                    "name": "costume1",
+                    "bitmapResolution": 1,
+                    "md5ext": "b7853f557e4426412e64bb3da6531a99.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 48,
+                    "rotationCenterY": 50
+                },
+                {
+                    "assetId": "e6ddc55a6ddd9cc9d84fe0b4c21e016f",
+                    "name": "costume2",
+                    "bitmapResolution": 1,
+                    "md5ext": "e6ddc55a6ddd9cc9d84fe0b4c21e016f.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 46,
+                    "rotationCenterY": 53
+                }
+            ],
+            "sounds": [
+                {
+                    "assetId": "83c36d806dc92327b9e7049a565c6bff",
+                    "name": "Meow",
+                    "dataFormat": "wav",
+                    "format": "",
+                    "rate": 44100,
+                    "sampleCount": 37376,
+                    "md5ext": "83c36d806dc92327b9e7049a565c6bff.wav"
+                }
+            ],
+            "volume": 100,
+            "layerOrder": 1,
+            "visible": true,
+            "x": 0,
+            "y": 0,
+            "size": 100,
+            "direction": 90,
+            "draggable": false,
+            "rotationStyle": "all around"
+        }
+    ],
+    "monitors": [
+        {
+            "id": "AI`=rY_w-c.u*,RtTd}v",
+            "mode": "list",
+            "opcode": "data_listcontents",
+            "params": {
+                "LIST": "InvalidList"
+            },
+            "spriteName": null,
+            "value": [],
+            "width": 0,
+            "height": 0,
+            "x": 5,
+            "y": 5,
+            "visible": true
+        }
+    ],
+    "extensions": [],
+    "meta": {
+        "semver": "3.0.0",
+        "vm": "0.2.0-prerelease.20200720182258",
+        "agent": "Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101 Firefox/68.0"
+    }
+}

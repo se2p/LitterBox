@@ -19,7 +19,7 @@
 package de.uni_passau.fim.se2.litterbox.analytics;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.GrammarPrintVisitor;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.LeilaVisitor;
 
 import java.io.File;
 import java.io.IOException;
@@ -29,13 +29,28 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.logging.Logger;
 
-public class PrintAnalyzer extends Analyzer {
+public class LeilaAnalyzer extends Analyzer {
 
     private static final String INTERMEDIATE_EXTENSION = ".sc";
     private static final Logger log = Logger.getLogger(MetricAnalyzer.class.getName());
+    private final boolean nonDet;
+    private final boolean onNever;
 
-    public PrintAnalyzer(String input, String output) {
+    /**
+     * Constructor for the leila analyzer.
+     *
+     * @param input path to folder or file that should be analyzed
+     * @param output Path to file or folder for the resulting .sc file(s);
+     *               has to be a folder if multiple projects are analysed
+     *               (file will be created if not existing yet, path has to exist
+     * @param nonDet flag whether attributes in intermediate language should be
+     *               non deterministic (i.e. not initialized)
+     */
+    public LeilaAnalyzer(String input, String output, boolean nonDet, boolean onNever) {
         super(input, output);
+        this.nonDet = nonDet;
+        this.onNever = onNever;
+
     }
 
     @Override
@@ -56,7 +71,7 @@ public class PrintAnalyzer extends Analyzer {
             return;
         }
         log.info("Starting to print " + fileEntry.getName() + " to file " + out);
-        GrammarPrintVisitor visitor = new GrammarPrintVisitor(stream);
+        LeilaVisitor visitor = new LeilaVisitor(stream, nonDet, onNever);
         Program program = extractProgram(fileEntry);
         visitor.visit(program);
         stream.close();
@@ -65,10 +80,6 @@ public class PrintAnalyzer extends Analyzer {
 
     private String getIntermediateFileName(String name) {
         String programName = name.substring(0, name.lastIndexOf("."));
-        StringBuilder builder = new StringBuilder();
-        builder.append(programName);
-        builder.append(".");
-        builder.append(INTERMEDIATE_EXTENSION);
-        return builder.toString();
+        return programName + INTERMEDIATE_EXTENSION;
     }
 }

@@ -21,9 +21,14 @@ package de.uni_passau.fim.se2.litterbox;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.PrintStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import static com.google.common.truth.Truth.assertThat;
 
@@ -38,6 +43,43 @@ public class CommandlineTest {
     public void testInvalidOptionPrintsAnError() {
         Main.parseCommandLine(new String[]{"--optionthatdefinitelydoesntexist"});
         assertThat(mockErr.toString()).isNotEmpty();
+    }
+
+    @Test
+    public void testPrintHelp() {
+        Main.parseCommandLine(new String[]{"--output", "foobar"});
+        assertThat(mockOut.toString()).contains("usage: LitterBox");
+    }
+
+    @Test
+    public void testLeilaWithInvalidDownloadOption(@TempDir File tempFile) {
+        String inputPath = tempFile.getAbsolutePath();
+        Main.parseCommandLine(new String[] {"-leila", "--path", inputPath, "-o", "barfoo", "--projectid", "I am not a number"});
+        Path path = Paths.get(inputPath, "I am not a number" + ".json");
+        File file = new File(path.toString());
+        assertThat(file.exists()).isFalse();
+    }
+
+    @Test
+    public void testLeilaWithoutOutput() {
+        Main.parseCommandLine(new String[] {"-leila"});
+        assertThat(mockErr.toString()).contains("Invalid option: Output path option 'output' required");
+    }
+
+    @Test
+    public void testLeilaWithoutPath() {
+        Main.parseCommandLine(new String[] {"-leila", "--output", "foobar"});
+        assertThat(mockErr.toString()).contains("Input path option 'path' required");
+    }
+
+    @Test
+    public void testLeilaValidOptions(@TempDir File tempFile) throws Exception {
+        File file = new File("./src/test/fixtures/emptyProject.json");
+        String path = file.getAbsolutePath();
+        String outFile = tempFile.getAbsolutePath();
+        Main.parseCommandLine(new String[] {"-leila", "--path", path, "-o", outFile});
+        String output = Files.readString(Paths.get(outFile, "emptyProject.sc"));
+        assertThat(output.contains("program emptyProject"));
     }
 
     @AfterEach

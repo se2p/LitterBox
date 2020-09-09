@@ -26,10 +26,10 @@ import org.apache.commons.csv.CSVPrinter;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -46,11 +46,11 @@ public class CSVReportGenerator implements ReportGenerator {
      * @param detectors list of detectors that should be included in the report.
      * @throws IOException is thrown if the file cannot be opened
      */
-    public CSVReportGenerator(String fileName, String[] detectors) throws IOException {
-        this.detectors = Arrays.asList(detectors);
+    public CSVReportGenerator(String fileName, List<String> detectors) throws IOException {
+        this.detectors = new ArrayList<>(detectors);
         headers.add("project");
         headers.addAll(this.detectors);
-        printer = getNewPrinter(fileName, headers);
+        printer = getNewPrinter(fileName);
     }
 
     @Override
@@ -70,16 +70,17 @@ public class CSVReportGenerator implements ReportGenerator {
         printer.close();
     }
 
-    protected CSVPrinter getNewPrinter(String name, List<String> heads) throws IOException {
+    protected CSVPrinter getNewPrinter(String name) throws IOException {
 
-        if (Files.exists(Paths.get(name))) {
+        Path filePath = Paths.get(name);
+        if (filePath.toFile().length() > 0) {
             BufferedWriter writer = Files.newBufferedWriter(
-                    Paths.get(name), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+                    filePath, StandardOpenOption.CREATE, StandardOpenOption.APPEND);
             return new CSVPrinter(writer, CSVFormat.DEFAULT.withSkipHeaderRecord());
         } else {
             BufferedWriter writer = Files.newBufferedWriter(
-                    Paths.get(name), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
-            return new CSVPrinter(writer, CSVFormat.DEFAULT.withHeader(heads.toArray(new String[0])));
+                    filePath, StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+            return new CSVPrinter(writer, CSVFormat.DEFAULT.withHeader(headers.toArray(new String[0])));
         }
     }
 }
