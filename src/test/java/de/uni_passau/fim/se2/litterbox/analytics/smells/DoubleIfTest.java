@@ -17,6 +17,10 @@ public class DoubleIfTest {
 
     private static Program empty;
     private static Program doubleIf;
+    private static Program doubleIfConditionOnVariable;
+    private static Program doubleIfConditionOnDifferentVariable;
+    private static Program doubleIfIfElse;
+    private static Program doubleIfWithStatementBetween;
     private static ObjectMapper mapper = new ObjectMapper();
 
     @BeforeAll
@@ -26,6 +30,21 @@ public class DoubleIfTest {
         empty = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
         f = new File("./src/test/fixtures/smells/doubleIf.json");
         doubleIf = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
+        f = new File("./src/test/fixtures/smells/doubleIfCondition.json");
+        doubleIfConditionOnVariable = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
+        f = new File("./src/test/fixtures/smells/doubleIfConditionDifferentVariable.json");
+        doubleIfConditionOnDifferentVariable = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
+        f = new File("./src/test/fixtures/smells/doubleIfIfElse.json");
+        doubleIfIfElse = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
+        f = new File("./src/test/fixtures/smells/doubleIfWithStatementBetween.json");
+        doubleIfWithStatementBetween = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
+    }
+
+    @Test
+    public void testEmptyProgram() {
+        DoubleIf finder = new DoubleIf();
+        Set<Issue> reports = finder.check(empty);
+        Assertions.assertEquals(0, reports.size());
     }
 
     @Test
@@ -33,5 +52,33 @@ public class DoubleIfTest {
         DoubleIf finder = new DoubleIf();
         Set<Issue> reports = finder.check(doubleIf);
         Assertions.assertEquals(2, reports.size());
+    }
+
+    @Test
+    public void testDuplicateConditionOnVariable() {
+        DoubleIf finder = new DoubleIf();
+        Set<Issue> reports = finder.check(doubleIfConditionOnVariable);
+        Assertions.assertEquals(1, reports.size());
+    }
+
+    @Test
+    public void testDuplicateConditionOnDifferentVariable() {
+        DoubleIf finder = new DoubleIf();
+        Set<Issue> reports = finder.check(doubleIfConditionOnDifferentVariable);
+        Assertions.assertEquals(0, reports.size());
+    }
+
+    @Test
+    public void testIfThenFollowedByIfElse() {
+        DoubleIf finder = new DoubleIf();
+        Set<Issue> reports = finder.check(doubleIfIfElse);
+        Assertions.assertEquals(1, reports.size());
+    }
+
+    @Test
+    public void testStatementBetweenIfs() {
+        DoubleIf finder = new DoubleIf();
+        Set<Issue> reports = finder.check(doubleIfWithStatementBetween);
+        Assertions.assertEquals(0, reports.size());
     }
 }
