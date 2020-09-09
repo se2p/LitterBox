@@ -35,7 +35,9 @@ public class DeadCodeTest {
     private static Program empty;
     private static Program deadCode;
     private static Program deadVariable;
-    private static ObjectMapper mapper = new ObjectMapper();
+    private static final ObjectMapper mapper = new ObjectMapper();
+    private static Program deadParam;
+    private static Program allDead;
 
     @BeforeAll
     public static void setUp() throws IOException, ParsingException {
@@ -46,6 +48,10 @@ public class DeadCodeTest {
         deadCode = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
         f = new File("./src/test/fixtures/smells/deadVariable.json");
         deadVariable = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
+        f = new File("./src/test/fixtures/smells/allBlocksDead.json");
+        allDead = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
+        f = new File("./src/test/fixtures/smells/deadParam.json");
+        deadParam = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
     }
 
     @Test
@@ -67,5 +73,19 @@ public class DeadCodeTest {
         DeadCode parameterName = new DeadCode();
         Set<Issue> reports = parameterName.check(deadVariable);
         Assertions.assertEquals(2, reports.size());
+    }
+
+    @Test
+    public void testDeadParam() {
+        DeadCode parameterName = new DeadCode();
+        Set<Issue> reports = parameterName.check(deadParam);
+        Assertions.assertEquals(1, reports.size());
+    }
+
+    @Test
+    public void testAllDead() {
+        DeadCode parameterName = new DeadCode();
+        Set<Issue> reports = parameterName.check(allDead);
+        Assertions.assertEquals(125, reports.size());
     }
 }

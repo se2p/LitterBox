@@ -22,7 +22,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 
 import java.io.IOException;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -31,8 +31,8 @@ public class ConsoleReportGenerator implements ReportGenerator {
 
     private List<String> detectors;
 
-    public ConsoleReportGenerator(String[] detectors) {
-        this.detectors = Arrays.asList(detectors);
+    public ConsoleReportGenerator(List<String> detectors) {
+        this.detectors = new ArrayList<>(detectors);
     }
 
     @Override

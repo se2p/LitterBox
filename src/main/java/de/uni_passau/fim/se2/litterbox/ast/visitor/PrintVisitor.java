@@ -50,7 +50,7 @@ public abstract class PrintVisitor implements ScratchVisitor {
 
     protected void appendIndentation() {
         String currentIndent = new String(new char[level]).replace("\0", INDENT);
-        emitToken(currentIndent);
+        emitNoSpace(currentIndent);
     }
 
     protected void begin() {

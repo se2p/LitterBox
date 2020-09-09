@@ -44,6 +44,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinitionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.ExpressionStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.*;
@@ -62,7 +63,10 @@ import de.uni_passau.fim.se2.litterbox.ast.model.touchable.MousePointer;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.BooleanType;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.NumberType;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.StringType;
+import de.uni_passau.fim.se2.litterbox.ast.model.variable.DataExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Parameter;
+import de.uni_passau.fim.se2.litterbox.ast.model.variable.ScratchList;
+import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.ProcedureOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
 import de.uni_passau.fim.se2.litterbox.jsonCreation.BlockJsonCreatorHelper;
@@ -101,9 +105,9 @@ public class ScratchBlocksVisitor extends PrintVisitor {
 
     private boolean lineWrapped = true;
 
-    private Set<Issue> issues = new LinkedHashSet<>();
+    private final Set<Issue> issues = new LinkedHashSet<>();
 
-    private Set<String> issueNote = new LinkedHashSet<>();
+    private final Set<String> issueNote = new LinkedHashSet<>();
 
     public ScratchBlocksVisitor() {
         super(null);
@@ -1138,6 +1142,45 @@ public class ScratchBlocksVisitor extends PrintVisitor {
     @Override
     public void visit(RotationStyle node) {
         emitNoSpace(node.getToken());
+        storeNotesForIssue(node);
+    }
+
+    @Override
+    public void visit(ExpressionStmt node) {
+        if (node.getExpression() instanceof Qualified) {
+            DataExpr dataExpr = ((Qualified)node.getExpression()).getSecond();
+            if (dataExpr instanceof Variable || dataExpr instanceof ScratchList) {
+                emitNoSpace("(");
+            }
+        }
+        node.getExpression().accept(this);
+        if (node.getExpression() instanceof Qualified) {
+            DataExpr dataExpr = ((Qualified)node.getExpression()).getSecond();
+            if (dataExpr instanceof Variable) {
+                emitNoSpace(")");
+            } else if (dataExpr instanceof ScratchList) {
+                emitNoSpace(" :: list");
+                emitNoSpace(")");
+            }
+        }
+        storeNotesForIssue(node);
+    }
+
+    @Override
+    public void visit(ScratchList node) {
+        if (!inScript) {
+            return;
+        }
+        node.getName().accept(this);
+        storeNotesForIssue(node);
+    }
+
+    @Override
+    public void visit(Variable node) {
+        if (!inScript) {
+            return;
+        }
+        node.getName().accept(this);
         storeNotesForIssue(node);
     }
 
