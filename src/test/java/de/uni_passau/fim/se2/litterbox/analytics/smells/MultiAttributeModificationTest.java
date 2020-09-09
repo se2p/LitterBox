@@ -17,6 +17,7 @@ public class MultiAttributeModificationTest {
 
     private static Program empty;
     private static Program program;
+    private static Program duplicateVariableIncrement;
     private static ObjectMapper mapper = new ObjectMapper();
 
     @BeforeAll
@@ -25,12 +26,22 @@ public class MultiAttributeModificationTest {
         empty = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
         f = new File("./src/test/fixtures/smells/multipleAttributeModification.json");
         program = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
+        f = new File("./src/test/fixtures/smells/multipleValidVariableModifications.json");
+        duplicateVariableIncrement = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
     }
 
     @Test
     public void testEmptyProgram() {
         LongScript parameterName = new LongScript();
         Set<Issue> reports = parameterName.check(empty);
+        Assertions.assertEquals(0, reports.size());
+    }
+
+    @Test
+    public void testMultiVariableIncrement() {
+        MultiAttributeModification finder = new MultiAttributeModification();
+        Set<Issue> reports = finder.check(duplicateVariableIncrement);
+        // If the two variables modified are different, no warning should be produced
         Assertions.assertEquals(0, reports.size());
     }
 
