@@ -22,6 +22,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
+import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.StartedAsClone;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
@@ -46,6 +47,10 @@ public class RecursiveCloning extends AbstractIssueFinder {
 
     @Override
     public void visit(Script node) {
+        if (ignoreLooseBlocks && node.getEvent() instanceof Never) {
+            // Ignore unconnected blocks
+            return;
+        }
         if (node.getEvent() instanceof StartedAsClone) {
             startAsClone = true;
         }

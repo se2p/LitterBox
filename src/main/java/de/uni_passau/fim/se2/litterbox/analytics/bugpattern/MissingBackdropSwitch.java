@@ -24,6 +24,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.BackdropSwitchTo;
+import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
@@ -56,6 +57,7 @@ public class MissingBackdropSwitch extends AbstractIssueFinder {
     public Set<Issue> check(Program program) {
         Preconditions.checkNotNull(program);
         this.program = program;
+        issues = new LinkedHashSet<>();
         switched = new ArrayList<>();
         switchReceived = new ArrayList<>();
         nextRandPrev = false;
@@ -148,6 +150,10 @@ public class MissingBackdropSwitch extends AbstractIssueFinder {
 
     @Override
     public void visit(Script node) {
+        if (ignoreLooseBlocks && node.getEvent() instanceof Never) {
+            // Ignore unconnected blocks
+            return;
+        }
         currentScript = node;
         if (node.getStmtList().hasStatements() && node.getEvent() instanceof BackdropSwitchTo) {
             BackdropSwitchTo event = (BackdropSwitchTo) node.getEvent();

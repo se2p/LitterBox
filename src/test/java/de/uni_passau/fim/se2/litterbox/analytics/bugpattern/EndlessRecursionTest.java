@@ -31,6 +31,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Set;
 
+import static com.google.common.truth.Truth.assertThat;
+
 public class EndlessRecursionTest {
     private static Program empty;
     private static Program endlessRecursion;
@@ -60,6 +62,10 @@ public class EndlessRecursionTest {
         EndlessRecursion parameterName = new EndlessRecursion();
         Set<Issue> reports = parameterName.check(endlessRecursion);
         Assertions.assertEquals(1, reports.size());
+
+        // Check the procedure is correctly set
+        Issue issue = reports.iterator().next();
+        assertThat(issue.getProcedure().getIdent().getName()).isEqualTo("u(.tD,]^yo1^B?8TSwez");
     }
 
     @Test

@@ -22,6 +22,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.*;
+import de.uni_passau.fim.se2.litterbox.analytics.smells.UnusedVariable;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
@@ -1264,6 +1265,44 @@ public class ScratchBlocksVisitorTest {
                 "when I start as a clone \n" +
                 "play sound (Meow v) until done\n" +
                 "create clone of (myself v):: #ff0000 // Issue: Recursive Cloning\n" +
+                "[/scratchblocks]\n", output);
+    }
+
+
+    @Test
+    public void testUnusedVariableIssueAnnotation() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/smells/unusedVariables.json");
+        UnusedVariable finder = new UnusedVariable();
+        Set<Issue> issues = finder.check(program);
+        Issue issue = issues.iterator().next();
+
+        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(issue);
+        visitor.begin();
+        visitor.setCurrentActor(issue.getActor());
+        issue.getScriptOrProcedureDefinition().accept(visitor);
+        visitor.end();
+        String output = visitor.getScratchBlocks();
+        assertEquals("[scratchblocks]\n" +
+                "(tryvar:: #ff0000) // Issue: Unused Variable\n" +
+                "[/scratchblocks]\n", output);
+    }
+
+    @Test
+    public void testUnusedListIssueAnnotation() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/smells/listunused.json");
+        UnusedVariable finder = new UnusedVariable();
+        Set<Issue> issues = finder.check(program);
+        Issue issue = issues.iterator().next();
+
+        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(issue);
+        visitor.begin();
+        visitor.setCurrentActor(issue.getActor());
+        issue.getScriptOrProcedureDefinition().accept(visitor);
+        visitor.end();
+        String output = visitor.getScratchBlocks();
+        System.out.println(output);
+        assertEquals("[scratchblocks]\n" +
+                "(the list:: #ff0000 :: list) // Issue: Unused Variable\n" +
                 "[/scratchblocks]\n", output);
     }
 

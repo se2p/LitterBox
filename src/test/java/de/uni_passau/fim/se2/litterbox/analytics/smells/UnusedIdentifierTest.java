@@ -35,6 +35,8 @@ public class UnusedIdentifierTest {
     private static Program empty;
     private static Program unusedVariables;
     private static Program oneUsedVariables;
+    private static Program usedList;
+    private static Program unusedList;
     private static ObjectMapper mapper = new ObjectMapper();
 
     @BeforeAll
@@ -46,6 +48,10 @@ public class UnusedIdentifierTest {
         unusedVariables = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
         f = new File("./src/test/fixtures/smells/oneUsedVariable.json");
         oneUsedVariables = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
+        f = new File("./src/test/fixtures/smells/listunused.json");
+        unusedList = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
+        f = new File("./src/test/fixtures/smells/listused.json");
+        usedList = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
     }
 
     @Test
@@ -67,5 +73,19 @@ public class UnusedIdentifierTest {
         UnusedVariable parameterName = new UnusedVariable();
         Set<Issue> reports = parameterName.check(oneUsedVariables);
         Assertions.assertEquals(2, reports.size());
+    }
+
+    @Test
+    public void testUnusedList() {
+        UnusedVariable parameterName = new UnusedVariable();
+        Set<Issue> reports = parameterName.check(unusedList);
+        Assertions.assertEquals(1, reports.size());
+    }
+
+    @Test
+    public void testUsedList() {
+        UnusedVariable parameterName = new UnusedVariable();
+        Set<Issue> reports = parameterName.check(usedList);
+        Assertions.assertEquals(0, reports.size());
     }
 }

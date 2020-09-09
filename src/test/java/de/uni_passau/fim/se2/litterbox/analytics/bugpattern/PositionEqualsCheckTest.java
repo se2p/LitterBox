@@ -38,7 +38,8 @@ public class PositionEqualsCheckTest {
     private static Program allChecks;
     private static Program xPositionEquals;
     private static Program nested;
-    private static ObjectMapper mapper = new ObjectMapper();
+    private static final ObjectMapper mapper = new ObjectMapper();
+    private static Program deadEquals;
 
     @BeforeAll
     public static void setUp() throws IOException, ParsingException {
@@ -60,6 +61,9 @@ public class PositionEqualsCheckTest {
 
         f = new File("./src/test/fixtures/bugpattern/positionEqualsNested.json");
         nested = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
+
+        f = new File("./src/test/fixtures/bugpattern/deadPositionEquals.json");
+        deadEquals = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
     }
 
     @Test
@@ -101,6 +105,13 @@ public class PositionEqualsCheckTest {
     public void testNested() {
         PositionEqualsCheck parameterName = new PositionEqualsCheck();
         Set<Issue> reports = parameterName.check(nested);
+        Assertions.assertEquals(2, reports.size());
+    }
+
+    @Test
+    public void testDeadEquals() {
+        PositionEqualsCheck parameterName = new PositionEqualsCheck();
+        Set<Issue> reports = parameterName.check(deadEquals);
         Assertions.assertEquals(2, reports.size());
     }
 }
