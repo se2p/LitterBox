@@ -31,6 +31,7 @@ public class StageClicked extends AbstractNode implements Clicked, ASTLeaf {
         this.metadata = metadata;
     }
 
+    @Override
     public BlockMetadata getMetadata() {
         return metadata;
     }

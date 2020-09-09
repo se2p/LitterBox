@@ -44,6 +44,7 @@ public class AttributeAboveValue extends AbstractNode implements Event {
         return value;
     }
 
+    @Override
     public BlockMetadata getMetadata() {
         return metadata;
     }

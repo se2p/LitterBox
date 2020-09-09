@@ -19,7 +19,9 @@
 package de.uni_passau.fim.se2.litterbox.ast.model.event;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 
 public interface Event extends ASTNode {
 
+    BlockMetadata getMetadata();
 }

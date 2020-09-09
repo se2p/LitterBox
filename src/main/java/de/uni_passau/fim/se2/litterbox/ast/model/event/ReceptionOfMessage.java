@@ -34,6 +34,7 @@ public class ReceptionOfMessage extends AbstractNode implements Event {
         this.metadata = metadata;
     }
 
+    @Override
     public BlockMetadata getMetadata() {
         return metadata;
     }
