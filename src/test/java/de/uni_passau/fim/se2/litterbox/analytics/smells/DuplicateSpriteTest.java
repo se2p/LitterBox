@@ -24,7 +24,6 @@ import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -47,7 +46,6 @@ public class DuplicateSpriteTest {
         Assertions.assertEquals(0, reports.size());
     }
 
-    @Disabled // Need to decide what to do about local variables
     @Test
     public void testDuplicateSprite() throws IOException, ParsingException {
         Program duplicateSprite = loadProgram("./src/test/fixtures/smells/duplicateSprite.json");
@@ -113,7 +111,6 @@ public class DuplicateSpriteTest {
         Assertions.assertEquals(1, reports.size());
     }
 
-    @Disabled // Need to decide what to do about local variables
     @Test
     public void testDuplicatedSpriteWithLocalVariable() throws IOException, ParsingException {
         Program duplicatedSpriteWithLocalVariable = loadProgram("./src/test/fixtures/smells/duplicatedSpriteWithLocalVariable.json");
@@ -121,4 +118,29 @@ public class DuplicateSpriteTest {
         Set<Issue> reports = finder.check(duplicatedSpriteWithLocalVariable);
         Assertions.assertEquals(1, reports.size());
     }
+
+    @Test
+    public void testDuplicatedSpriteWithLocalAttributes() throws IOException, ParsingException {
+        Program duplicatedSpriteWithLocalVariable = loadProgram("./src/test/fixtures/smells/duplicatedSpriteWithLocalAttributes.json");
+        DuplicateSprite finder = new DuplicateSprite();
+        Set<Issue> reports = finder.check(duplicatedSpriteWithLocalVariable);
+        Assertions.assertEquals(1, reports.size());
+    }
+
+    @Test
+    public void testDuplicatedSpriteWithSameAttributeOfOtherSprite() throws IOException, ParsingException {
+        Program duplicatedSpriteWithLocalVariable = loadProgram("./src/test/fixtures/smells/duplicatedSpriteWithSameAttributeOfOtherSprite.json");
+        DuplicateSprite finder = new DuplicateSprite();
+        Set<Issue> reports = finder.check(duplicatedSpriteWithLocalVariable);
+        Assertions.assertEquals(1, reports.size());
+    }
+
+    @Test
+    public void testDuplicatedSpriteWithSameAttributeOfDifferentSprite() throws IOException, ParsingException {
+        Program duplicatedSpriteWithLocalVariable = loadProgram("./src/test/fixtures/smells/duplicatedSpriteWithOtherAttributeOfOtherSprite.json");
+        DuplicateSprite finder = new DuplicateSprite();
+        Set<Issue> reports = finder.check(duplicatedSpriteWithLocalVariable);
+        Assertions.assertEquals(0, reports.size());
+    }
+
 }
