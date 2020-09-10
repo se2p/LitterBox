@@ -79,9 +79,12 @@ import de.uni_passau.fim.se2.litterbox.ast.model.type.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Parameter;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.ScratchList;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
+import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
+import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ProcedureInfo;
 
 import java.io.PrintStream;
 import java.util.List;
+import java.util.Map;
 import java.util.Stack;
 import java.util.regex.Pattern;
 
@@ -948,7 +951,14 @@ public class LeilaVisitor extends PrintVisitor {
     @Override
     public void visit(ProcedureDefinition procedureDefinition) {
         emitToken("define");
-        procedureDefinition.getIdent().accept(this);
+        Map<String, Map<LocalIdentifier, ProcedureInfo>> procedures = ProgramParser.procDefMap.getProcedures();
+        String procedureName = procedures.get(currentActor).get(procedureDefinition.getIdent()).getName();
+        int paramIndex = procedureName.indexOf('%');
+        if (paramIndex > 0) {
+            procedureName = procedureName.substring(0, paramIndex);
+        }
+        emitToken(procedureName); // FIXME that does not work with method names that aren't unique
+        // or contain whitespaces
         procedureDefinition.getParameterDefinitionList().accept(this);
         procedureDefinition.getStmtList().accept(this);
     }
@@ -1405,7 +1415,8 @@ public class LeilaVisitor extends PrintVisitor {
         expectOriginal(); // This should in theory not be necessary, but does not hurt and guarantees correctness here
         asNumber.getOperand1().accept(this);
         endExpectation();
-        emitNoSpace(" to integer"); //TODO distinguish between int and float?
+        emitNoSpace(" to int"); //TODO distinguish between int and float?
+        // TODO update this to integer as soon as the grammar has been updated
     }
 
     @Override
