@@ -37,6 +37,7 @@ public class ChangeLayerBy extends AbstractNode implements SpriteLookStmt {
         this.metadata = metadata;
     }
 
+    @Override
     public BlockMetadata getMetadata() {
         return metadata;
     }

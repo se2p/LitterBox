@@ -35,6 +35,7 @@ public class PlaySoundUntilDone extends AbstractNode implements ActorSoundStmt {
         this.metadata = metadata;
     }
 
+    @Override
     public BlockMetadata getMetadata() {
         return metadata;
     }

@@ -43,6 +43,7 @@ public class SetXTo extends AbstractNode implements SpriteMotionStmt {
         this.num = num;
     }
 
+    @Override
     public BlockMetadata getMetadata() {
         return metadata;
     }

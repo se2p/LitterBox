@@ -31,6 +31,7 @@ public class PenDownStmt extends AbstractNode implements PenStmt, ASTLeaf {
         this.metadata = metadata;
     }
 
+    @Override
     public BlockMetadata getMetadata() {
         return metadata;
     }

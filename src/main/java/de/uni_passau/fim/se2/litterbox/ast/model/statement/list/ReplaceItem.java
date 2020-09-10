@@ -41,6 +41,7 @@ public class ReplaceItem extends AbstractNode implements ListStmt {
         this.metadata = metadata;
     }
 
+    @Override
     public BlockMetadata getMetadata() {
         return metadata;
     }

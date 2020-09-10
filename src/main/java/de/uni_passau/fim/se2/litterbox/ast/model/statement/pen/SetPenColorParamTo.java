@@ -36,6 +36,7 @@ public class SetPenColorParamTo extends AbstractNode implements PenStmt {
         this.metadata = metadata;
     }
 
+    @Override
     public BlockMetadata getMetadata() {
         return metadata;
     }

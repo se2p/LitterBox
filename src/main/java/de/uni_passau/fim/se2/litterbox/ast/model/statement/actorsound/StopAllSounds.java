@@ -31,6 +31,7 @@ public class StopAllSounds extends AbstractNode implements ActorSoundStmt, ASTLe
         this.metadata = metadata;
     }
 
+    @Override
     public BlockMetadata getMetadata() {
         return metadata;
     }

@@ -46,6 +46,7 @@ public class ThinkForSecs extends AbstractNode implements SpriteLookStmt {
         return secs;
     }
 
+    @Override
     public BlockMetadata getMetadata() {
         return metadata;
     }
