@@ -91,7 +91,7 @@ public class LeilaVisitorTest {
         String path = "src/test/fixtures/leilaVisitor/changeVariableBy.json";
         String output = getLeilaForProject(path);
 
-        assertThat(output).contains("define Sprite1.myvar as Sprite1.myvar + 1");
+        assertThat(output).contains("define myvar as myvar + 1");
     }
 
     @Test

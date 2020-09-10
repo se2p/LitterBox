@@ -95,6 +95,7 @@ public class LeilaVisitor extends PrintVisitor {
     private int skippedDeclarations = 0;
     private boolean noCast = false;
     private boolean showHideVar = false;
+    private String currentActor = null;
     private Stack<TYPE> expectedTypes = new Stack<>();
 
     enum TYPE {
@@ -176,6 +177,7 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(ActorDefinition def) {
+        currentActor = def.getIdent().getName();
         skippedDeclarations = 0;
         newLine();
         emitToken("actor");
@@ -235,6 +237,7 @@ public class LeilaVisitor extends PrintVisitor {
         endIndentation();
         newLine();
         end();
+        currentActor = null;
     }
 
     private void emitResourceListsOf(ActorDefinition def) {
@@ -1632,8 +1635,10 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(Qualified qualified) {
-        qualified.getFirst().accept(this);
-        emitNoSpace(".");
+        if (!qualified.getFirst().getName().equals(currentActor)) {
+            qualified.getFirst().accept(this);
+            emitNoSpace(".");
+        }
         qualified.getSecond().accept(this);
     }
 
