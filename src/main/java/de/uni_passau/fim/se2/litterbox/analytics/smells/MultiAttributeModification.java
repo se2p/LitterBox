@@ -34,8 +34,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.SetVolumeT
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.ChangeVariableBy;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetVariableTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.pen.*;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.ChangeSizeBy;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SetSizeTo;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.*;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
@@ -275,6 +274,105 @@ public class MultiAttributeModification extends AbstractIssueFinder {
     @Override
     public void visit(SetRotationStyle node) {
         if (prevNode != null && (prevNode instanceof SetRotationStyle)) {
+            addIssue(node, node.getMetadata());
+        }
+
+        prevNode = node;
+    }
+
+    @Override
+    public void visit(Hide node) {
+        if (prevNode != null && (prevNode instanceof Hide || prevNode instanceof Show)) {
+            addIssue(node, node.getMetadata());
+        }
+
+        prevNode = node;
+    }
+
+    @Override
+    public void visit(Show node) {
+        if (prevNode != null && (prevNode instanceof Hide || prevNode instanceof Show)) {
+            addIssue(node, node.getMetadata());
+        }
+
+        prevNode = node;
+    }
+
+    @Override
+    public void visit(SwitchCostumeTo node) {
+        if (prevNode != null && (prevNode instanceof SwitchCostumeTo || prevNode instanceof NextCostume)) {
+            addIssue(node, node.getMetadata());
+        }
+
+        prevNode = node;
+    }
+
+    @Override
+    public void visit(NextCostume node) {
+        if (prevNode != null && (prevNode instanceof SwitchCostumeTo || prevNode instanceof NextCostume)) {
+            addIssue(node, node.getMetadata());
+        }
+
+        prevNode = node;
+    }
+
+    @Override
+    public void visit(GoToLayer node) {
+        if (prevNode != null && (prevNode instanceof GoToLayer || prevNode instanceof ChangeLayerBy)) {
+            addIssue(node, node.getMetadata());
+        }
+
+        prevNode = node;
+    }
+
+    @Override
+    public void visit(ChangeLayerBy node) {
+        if (prevNode != null && (prevNode instanceof GoToLayer || prevNode instanceof ChangeLayerBy)) {
+            addIssue(node, node.getMetadata());
+        }
+
+        prevNode = node;
+    }
+
+    @Override
+    public void visit(Say node) {
+        if (prevNode != null && (prevNode instanceof Say || prevNode instanceof Think)) {
+            addIssue(node, node.getMetadata());
+        }
+
+        prevNode = node;
+    }
+
+    @Override
+    public void visit(Think node) {
+        if (prevNode != null && (prevNode instanceof Say || prevNode instanceof Think)) {
+            addIssue(node, node.getMetadata());
+        }
+
+        prevNode = node;
+    }
+
+    @Override
+    public void visit(PointInDirection node) {
+        if (prevNode != null && (prevNode instanceof TurnLeft || prevNode instanceof TurnRight || prevNode instanceof PointInDirection)) {
+            addIssue(node, node.getMetadata());
+        }
+
+        prevNode = node;
+    }
+
+    @Override
+    public void visit(TurnLeft node) {
+        if (prevNode != null && (prevNode instanceof TurnLeft || prevNode instanceof TurnRight || prevNode instanceof PointInDirection)) {
+            addIssue(node, node.getMetadata());
+        }
+
+        prevNode = node;
+    }
+
+    @Override
+    public void visit(TurnRight node) {
+        if (prevNode != null && (prevNode instanceof TurnLeft || prevNode instanceof TurnRight || prevNode instanceof PointInDirection)) {
             addIssue(node, node.getMetadata());
         }
 
