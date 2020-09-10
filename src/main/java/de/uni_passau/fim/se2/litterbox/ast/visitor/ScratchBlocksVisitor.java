@@ -1782,7 +1782,7 @@ public class ScratchBlocksVisitor extends PrintVisitor {
                     emitNoSpace(":: #ff0000");
                 }
                 hasIssue = true;
-                issueNote.add(issue.getFinderName());
+                issueNote.add(issue.getTranslatedFinderName());
             }
         }
     }
