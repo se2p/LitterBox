@@ -87,6 +87,7 @@ public class IssueTool {
         registerSmellFinder(new EmptyScript(), smellFinders);
         registerSmellFinder(new EmptySprite(), smellFinders);
         registerSmellFinder(new DeadCode(), smellFinders);
+        registerSmellFinder(new DuplicateSprite(), smellFinders);
         registerSmellFinder(new LongScript(), smellFinders);
         registerSmellFinder(new NestedLoops(), smellFinders);
         registerSmellFinder(new SameVariableDifferentSprite(), smellFinders);
