@@ -32,6 +32,7 @@ import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class CSVReportGenerator implements ReportGenerator {
 
@@ -59,7 +60,10 @@ public class CSVReportGenerator implements ReportGenerator {
         List<String> row = new ArrayList<>();
         row.add(program.getIdent().getName());
         for (String finder : detectors) {
-            long numIssuesForFinder = issues.stream().filter(i -> i.getFinder().getName().equals(finder)).count();
+            long numIssuesForFinder = issues
+                    .stream()
+                    .filter(i -> i.getFinderName().equals(finder))
+                    .count();
             row.add(Long.toString(numIssuesForFinder));
         }
         printer.printRecord(row);
