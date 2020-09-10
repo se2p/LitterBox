@@ -2506,19 +2506,6 @@ public interface ScratchVisitor {
     }
 
     /**
-     * Default implementation of visit method for {@link ImageType}.
-     *
-     * <p>
-     * Iterates all children of this node without performing any action.
-     * </p>
-     *
-     * @param node ImageType  Node of which the children will be iterated
-     */
-    default void visit(ImageType node) {
-        visit((Type) node);
-    }
-
-    /**
      * Default implementation of visit method for {@link ListType}.
      *
      * <p>
@@ -2541,19 +2528,6 @@ public interface ScratchVisitor {
      * @param node NumberType  Node of which the children will be iterated
      */
     default void visit(NumberType node) {
-        visit((Type) node);
-    }
-
-    /**
-     * Default implementation of visit method for {@link SoundType}.
-     *
-     * <p>
-     * Iterates all children of this node without performing any action.
-     * </p>
-     *
-     * @param node SoundType  Node of which the children will be iterated
-     */
-    default void visit(SoundType node) {
         visit((Type) node);
     }
 
