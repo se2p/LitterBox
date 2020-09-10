@@ -1040,11 +1040,6 @@ public class LeilaVisitor extends PrintVisitor {
     }
 
     @Override
-    public void visit(ImageType imageType) {
-        emitNoSpace("image");
-    }
-
-    @Override
     public void visit(ListType listType) {
         emitNoSpace("list of string");
     }
@@ -1052,11 +1047,6 @@ public class LeilaVisitor extends PrintVisitor {
     @Override
     public void visit(NumberType numberType) {
         emitNoSpace("integer");
-    }
-
-    @Override
-    public void visit(SoundType soundType) {
-        emitNoSpace("sound");
     }
 
     @Override
