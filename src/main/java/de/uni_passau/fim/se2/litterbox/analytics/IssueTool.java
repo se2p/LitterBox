@@ -92,6 +92,7 @@ public class IssueTool {
         registerSmellFinder(new SameVariableDifferentSprite(), smellFinders);
         registerSmellFinder(new UnusedVariable(), smellFinders);
         registerSmellFinder(new UnusedCustomBlock(), smellFinders);
+        registerSmellFinder(new MiddleMan(), smellFinders);
 
         return smellFinders;
     }
