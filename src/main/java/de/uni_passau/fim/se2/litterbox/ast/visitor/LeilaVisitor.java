@@ -1551,10 +1551,73 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(NumFunctOf numFunctOf) {
-        numFunctOf.getOperand1().accept(this);
-        expectOriginal();
-        numFunctOf.getOperand2().accept(this);
+        NumExpr operand2 = numFunctOf.getOperand2();
+        boolean expectationSet = false;
+        switch (numFunctOf.getOperand1()) {
+            case ABS:
+                emitNoSpace("mathAbsF(");
+                expectFloat(); // TODO there is also mathAbs for integers but finding out whether a NumExpr evaluates to an int or float is nearly impossible
+                expectationSet = true;
+                break;
+            case LN:
+                emitNoSpace("mathLn(");
+                break;
+            case ACOS:
+                emitNoSpace("mathAcos(");
+                break;
+            case ASIN:
+                emitNoSpace("mathAsin(");
+                break;
+            case ATAN:
+                emitNoSpace("mathAtan(");
+                expectFloat();
+                expectationSet = true;
+                break;
+            case CEILING:
+                emitNoSpace("mathCeiling("); // FIXME expecting the default integer here is what makes BASTET parse the
+                // program, but this does not make sense for the ceiling function?
+                break;
+            case COS:
+                emitNoSpace("mathCos(");
+                expectFloat();
+                expectationSet = true;
+                break;
+            case FLOOR:
+                emitNoSpace("mathFloor(");
+                expectFloat();
+                expectationSet = true;
+                break;
+            case LOG:
+                emitNoSpace("mathLog(");
+                break;
+            case POW10:
+                emitNoSpace("mathPowten(");
+                break;
+            case POWE:
+                emitNoSpace("mathPowe(");
+                break;
+            case SIN:
+                emitNoSpace("mathSin(");
+                expectFloat();
+                expectationSet = true;
+                break;
+            case SQRT:
+                emitNoSpace("mathSqrt(");
+                expectFloat();
+                expectationSet = true;
+                break;
+            case TAN:
+                emitNoSpace("mathTan(");
+                break;
+            case UNKNOWN:
+                throw new RuntimeException("Unknown numerical function");
+        }
+        if (!expectationSet) {
+            expectInteger();
+        }
+        operand2.accept(this);
         endExpectation();
+        closeParentheses();
     }
 
     @Override
