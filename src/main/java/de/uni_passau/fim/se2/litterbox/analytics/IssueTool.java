@@ -51,6 +51,7 @@ public class IssueTool {
         registerBugFinder(new IllegalParameterRefactor(), bugFinders);
         registerBugFinder(new MessageNeverReceived(), bugFinders);
         registerBugFinder(new MessageNeverSent(), bugFinders);
+        registerBugFinder(new MissingAsk(), bugFinders);
         registerBugFinder(new MissingBackdropSwitch(), bugFinders);
         registerBugFinder(new MissingCloneCall(), bugFinders);
         registerBugFinder(new MissingCloneInitialization(), bugFinders);
