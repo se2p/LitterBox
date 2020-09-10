@@ -427,16 +427,18 @@ public class LeilaVisitor extends PrintVisitor {
         } else if (switchBackdrop.getElementChoice() instanceof Random) {
             emitNoSpace("switchBackdropToRandom()");
         } else {
-            emitNoSpace("switchBackdropTo(");
+            emitNoSpace("switchBackdropToId(\"");
             switchBackdrop.getElementChoice().accept(this);
+            emitNoSpace("\"");
             closeParentheses();
         }
     }
 
     @Override
     public void visit(SwitchBackdropAndWait switchBackdropAndWait) {
-        emitNoSpace("switchBackdropToAndWait(");
+        emitNoSpace("switchBackdropToAndWait(\"");
         switchBackdropAndWait.getElementChoice().accept(this);
+        emitNoSpace("\"");
         closeParentheses();
     }
 
