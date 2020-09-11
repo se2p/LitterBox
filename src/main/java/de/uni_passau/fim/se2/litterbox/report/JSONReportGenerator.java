@@ -25,6 +25,8 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.actor.ActorMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.ressources.ImageMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 
 import java.io.FileOutputStream;
@@ -59,6 +61,12 @@ public class JSONReportGenerator implements ReportGenerator {
             ((ObjectNode) childNode).put("type", issue.getFinderType());
             ((ObjectNode) childNode).put("sprite", issue.getActorName());
             ((ObjectNode) childNode).put("hint", issue.getHint());
+            ArrayNode arrayNode = ((ObjectNode) childNode).putArray("costumes");
+            ActorMetadata actorMetadata = issue.getActor().getMetadata();
+            for (ImageMetadata image : actorMetadata.getCostumes().getList()) {
+                arrayNode.add(image.getAssetId());
+            }
+            ((ObjectNode) childNode).put("currentCostume", actorMetadata.getCurrentCostume());
 
             ASTNode location = issue.getScriptOrProcedureDefinition();
             ScratchBlocksVisitor blockVisitor = new ScratchBlocksVisitor(issue);
