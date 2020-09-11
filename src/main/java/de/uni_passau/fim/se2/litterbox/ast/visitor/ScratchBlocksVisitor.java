@@ -1762,11 +1762,11 @@ public class ScratchBlocksVisitor extends PrintVisitor {
 
     protected void newLine() {
         if (issueNote.size() == 1) {
-            emitNoSpace(" // Issue: ");
+            emitNoSpace(" // ");
             emitNoSpace(issueNote.iterator().next());
             issueNote.clear();
         } else if (issueNote.size() > 1) {
-            emitNoSpace(" // Issues: ");
+            emitNoSpace(" // ");
             emitNoSpace(String.join(", ", issueNote));
             issueNote.clear();
         }
