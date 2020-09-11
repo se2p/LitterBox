@@ -19,5 +19,4 @@
 package de.uni_passau.fim.se2.litterbox.ast.model.statement.common;
 
 public interface SetStmt extends CommonStmt {
-
 }
