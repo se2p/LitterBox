@@ -24,6 +24,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.event.Event;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.ReceptionOfMessage;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.Broadcast;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.BroadcastAndWait;
 
 import java.util.List;
 
@@ -37,7 +38,7 @@ public class MiddleMan extends AbstractIssueFinder {
         Event event = script.getEvent();
         if (event instanceof ReceptionOfMessage) {
             List<Stmt> stmts = script.getStmtList().getStmts();
-            if (stmts.size() == 1 && stmts.get(0) instanceof Broadcast) {
+            if (stmts.size() == 1 && (stmts.get(0) instanceof Broadcast || stmts.get(0) instanceof BroadcastAndWait)) {
                 addIssue(event, ((ReceptionOfMessage) event).getMetadata());
             }
         }
