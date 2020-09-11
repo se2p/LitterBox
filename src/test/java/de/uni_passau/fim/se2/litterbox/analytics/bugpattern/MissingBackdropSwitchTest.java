@@ -108,4 +108,13 @@ public class MissingBackdropSwitchTest {
         Set<Issue> reports = parameterName.check(fischmampferWithWait);
         Assertions.assertEquals(0, reports.size());
     }
+
+    @Test
+    public void testSwitchWithNumericExpression() throws IOException, ParsingException {
+        File f = new File("./src/test/fixtures/bugpattern/missingBackDropSwitchShouldIgnoreNumericExpr.json");
+        Program programWithSwitch = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
+        MissingBackdropSwitch parameterName = new MissingBackdropSwitch();
+        Set<Issue> reports = parameterName.check(programWithSwitch);
+        Assertions.assertEquals(0, reports.size());
+    }
 }
