@@ -37,7 +37,7 @@ public class TerminatedLoopTest {
     }
 
     @Test
-    public void testEmptyLoop() throws IOException, ParsingException {
+    public void testEmptyLoopAndOneIssue() throws IOException, ParsingException {
         File f = new File("./src/test/fixtures/bugpattern/emptyLoopAndOneIssue.json");
         Program empty = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
 
