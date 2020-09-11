@@ -19,8 +19,8 @@
 package de.uni_passau.fim.se2.litterbox.analytics.smells;
 
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
-import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
+import de.uni_passau.fim.se2.litterbox.ast.model.event.Event;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.ReceptionOfMessage;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.Broadcast;
@@ -33,10 +33,12 @@ public class MiddleMan extends AbstractIssueFinder {
 
     @Override
     public void visit(Script script) {
-        if (script.getEvent() instanceof ReceptionOfMessage) {
+        currentScript = script;
+        Event event = script.getEvent();
+        if (event instanceof ReceptionOfMessage) {
             List<Stmt> stmts = script.getStmtList().getStmts();
             if (stmts.size() == 1 && stmts.get(0) instanceof Broadcast) {
-                issues.add(new Issue(this, currentActor, script));
+                addIssue(event, ((ReceptionOfMessage) event).getMetadata());
             }
         }
     }
