@@ -145,7 +145,7 @@ java -jar Litterbox-1.1.jar --stats --project <path/to/project.json> --output <s
 To implement your own bug patterns, extend the `AbstractIssueFinder`
 class which implements an AST visitor. The `check` method is expected
 to return a set of all `Issue` instances encountered during the
-traversal. To enable ScratchBlocks output, use the `addIssue` method provided in the `AbstractIssueFinder`.
+traversal. Please use the `addIssue` method provided in the `AbstractIssueFinder`.
 
 To enable the check, register it in the `IssueTool` class.
 Add it to the `generateSmellFinders()` method via `registerSmellFinder(new NewFinder, smellFinders)` for smell finders or to the`generateBugFinders()` for bug finders via `registerBugFinder(new NewFinder, bugFinders)`.
