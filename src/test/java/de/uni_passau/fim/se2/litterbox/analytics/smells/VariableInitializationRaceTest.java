@@ -123,4 +123,24 @@ public class VariableInitializationRaceTest {
         Set<Issue> reports = finder.check(program);
         Assertions.assertEquals(0, reports.size());
     }
+
+    @Test
+    public void testVariableAfterInitializationInLoop() throws IOException, ParsingException {
+        File f = new File("./src/test/fixtures/smells/raceConditionAfterInitialization.json");
+        Program program = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
+
+        VariableInitializationRace finder = new VariableInitializationRace();
+        Set<Issue> reports = finder.check(program);
+        Assertions.assertEquals(0, reports.size());
+    }
+    
+    @Test
+    public void testVariableAfterInitialization() throws IOException, ParsingException {
+        File f = new File("./src/test/fixtures/smells/raceConditionAfterInitialization2.json");
+        Program program = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
+
+        VariableInitializationRace finder = new VariableInitializationRace();
+        Set<Issue> reports = finder.check(program);
+        Assertions.assertEquals(0, reports.size());
+    }
 }
