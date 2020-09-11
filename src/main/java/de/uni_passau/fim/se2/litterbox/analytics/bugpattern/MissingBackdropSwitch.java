@@ -25,6 +25,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.BackdropSwitchTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
@@ -111,6 +112,8 @@ public class MissingBackdropSwitch extends AbstractIssueFinder {
                 } else if (expr.getOperand1() instanceof StringLiteral) {
                     switched.add(new Pair(actorName, ((StringLiteral) expr.getOperand1()).getText()));
                 }
+            } else if (((WithExpr) msgName).getExpression() instanceof NumExpr) {
+                nextRandPrev = true;
             }
         }
     }
@@ -137,6 +140,8 @@ public class MissingBackdropSwitch extends AbstractIssueFinder {
                 } else if (expr.getOperand1() instanceof StringLiteral) {
                     switched.add(new Pair<>(actorName, ((StringLiteral) expr.getOperand1()).getText()));
                 }
+            } else if (((WithExpr) msgName).getExpression() instanceof NumExpr) {
+                nextRandPrev = true;
             }
         }
     }
