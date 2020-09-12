@@ -95,18 +95,17 @@ public class ScriptParser {
 
             while (current != null && !current.isNull()) {
                 try {
-                    if (ProcedureOpcode.contains(blocks.get(blockId).get(OPCODE_KEY).asText())
-                            || DependentBlockOpcodes.contains(blocks.get(blockId).get(OPCODE_KEY).asText())) {
-                        //Ignore ProcedureOpcodes
-                        //                    blockId = current.get(NEXT_KEY).asText();
-                        //                    current = blocks.get(blockId);
+                    String opcode = blocks.get(blockId).get(OPCODE_KEY).asText();
+                    if (DependentBlockOpcodes.contains(opcode)
+                            || ProcedureOpcode.procedures_definition.name().equals(opcode)
+                            || ProcedureOpcode.procedures_prototype.name().equals(opcode)) {
+                        // Don't parse these blocks (here)
                         return null;
+                    } else {
+                        Stmt stmt = StmtParser.parse(blockId, blocks);
+                        list.add(stmt);
                     }
-
-                    Stmt stmt = StmtParser.parse(blockId, blocks);
-                    list.add(stmt);
                 } catch (ParsingException e) {
-                    // and needs to be removed
                     Logger.getGlobal().warning("Could not parse block with ID " + blockId + " and opcode "
                             + current.get(OPCODE_KEY));
                 }
