@@ -196,6 +196,11 @@ public class ScratchBlocksVisitor extends PrintVisitor {
     // Event blocks
 
     @Override
+    public void visit(Never never) {
+        // No-op
+    }
+
+    @Override
     public void visit(GreenFlag greenFlag) {
         emitNoSpace("when green flag clicked");
         storeNotesForIssue(greenFlag);

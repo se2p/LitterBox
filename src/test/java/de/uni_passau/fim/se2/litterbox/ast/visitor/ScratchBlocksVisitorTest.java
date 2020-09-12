@@ -632,6 +632,25 @@ public class ScratchBlocksVisitorTest {
     }
 
     @Test
+    public void testMultipleUnconnectedBlocks() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/scratchblocks/multipleunconnectedblocks.json");
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        PrintStream ps = new PrintStream(os);
+        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(ps);
+        visitor.begin();
+        program.accept(visitor);
+        visitor.end();
+        String result = os.toString();
+        assertEquals("[scratchblocks]\n" +
+                "show\n" +
+                "\n" +
+                "say [Hallo!] for (2) seconds\n" +
+                "\n" +
+                "hide\n" +
+                "[/scratchblocks]\n", result);
+    }
+
+    @Test
     public void testStopScriptBlocks() throws IOException, ParsingException {
         Program program = getAST("src/test/fixtures/scratchblocks/stopscriptblocks.json");
         ByteArrayOutputStream os = new ByteArrayOutputStream();
