@@ -90,7 +90,7 @@ public class JSONReportGeneratorTest {
         JsonNode rootNode = mapper.readTree(jsonText);
         String code = rootNode.get(0).get("code").asText();
         assertThat(code).isEqualTo("[scratchblocks]" + "\n" +
-                "repeat until <(x position) = (50):: #ff0000> // Issue: Position Equals Check" + "\n" +
+                "repeat until <(x position) = (50):: #ff0000> // Position Equals Check" + "\n" +
                 "end" + "\n" +
                 "[/scratchblocks]" + "\n");
     }
