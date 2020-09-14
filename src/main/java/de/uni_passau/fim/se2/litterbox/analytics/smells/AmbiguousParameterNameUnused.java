@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
+package de.uni_passau.fim.se2.litterbox.analytics.smells;
 
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
@@ -33,19 +33,19 @@ import java.util.Set;
 /**
  * The parameter names in custom blocks do not have to be unique.
  * Therefore, when two parameters have the same name, no matter the type or which one is used inside the custom
- * block, it will always be evaluated as the last input to the block. For the strict version the parameters have to
- * be used to be counted.
+ * block, it will always be evaluated as the last input to the block. The ambiguous parameter is not used though.
  */
-public class AmbiguousParameterNameStrict extends AbstractIssueFinder {
-    public static final String NAME = "ambiguous_parameter_name_strict";
+public class AmbiguousParameterNameUnused extends AbstractIssueFinder {
+    public static final String NAME = "ambiguous_parameter_name_unused";
+
     private boolean inStmtList = false;
-    private boolean found = false;
+    private boolean foundAmbiguousParam = false;
     private boolean used = false;
     private LinkedList<String> paraNames = new LinkedList<>();
 
     @Override
     public Set<Issue> check(Program program) {
-        found = false;
+        foundAmbiguousParam = false;
         return super.check(program);
     }
 
@@ -59,7 +59,7 @@ public class AmbiguousParameterNameStrict extends AbstractIssueFinder {
                     if (!paraNames.contains(current.getName())) {
                         paraNames.add(current.getName());
                     }
-                    found = true;
+                    foundAmbiguousParam = true;
                 }
             }
         }
@@ -69,8 +69,8 @@ public class AmbiguousParameterNameStrict extends AbstractIssueFinder {
     public void visit(ActorDefinition actor) {
         super.visit(actor);
 
-        if (found) {
-            found = false;
+        if (foundAmbiguousParam) {
+            foundAmbiguousParam = false;
         }
     }
 
@@ -90,20 +90,20 @@ public class AmbiguousParameterNameStrict extends AbstractIssueFinder {
 
         visitChildren(node);
 
-        if (used) {
+        if (!used) {
             addIssue(node, node.getMetadata().getDefinition());
         }
 
         // TODO: This handling with used/found seems really error prone
         used = false;
-        found = false;
+        foundAmbiguousParam = false;
         paraNames.clear();
         currentProcedure = null;
     }
 
     @Override
     public void visit(StrId node) {
-        if (inStmtList && found && paraNames.contains(node.getName())) {
+        if (inStmtList && foundAmbiguousParam && paraNames.contains(node.getName())) {
             used = true;
         }
         visitChildren(node);
@@ -116,6 +116,6 @@ public class AmbiguousParameterNameStrict extends AbstractIssueFinder {
 
     @Override
     public IssueType getIssueType() {
-        return IssueType.BUG;
+        return IssueType.SMELL;
     }
 }
