@@ -39,8 +39,7 @@ public class IssueTool {
     private static Map<String, IssueFinder> generateBugFinders() {
         Map<String, IssueFinder> bugFinders = new LinkedHashMap<>();
         registerBugFinder(new AmbiguousCustomBlockSignature(), bugFinders);
-        registerBugFinder(new AmbiguousParameterName(), bugFinders);
-        registerBugFinder(new AmbiguousParameterNameStrict(), bugFinders);
+        registerBugFinder(new AmbiguousParameterNameUsed(), bugFinders);
         registerBugFinder(new CallWithoutDefinition(), bugFinders);
         registerBugFinder(new ComparingLiterals(), bugFinders);
         registerBugFinder(new CustomBlockWithForever(), bugFinders);
@@ -83,6 +82,7 @@ public class IssueTool {
         Map<String, IssueFinder> smellFinders = new LinkedHashMap<>();
 
         // Smells
+        registerSmellFinder(new AmbiguousParameterNameUnused(), smellFinders);
         registerSmellFinder(new DeadCode(), smellFinders);
         registerSmellFinder(new EmptyControlBody(), smellFinders);
         registerSmellFinder(new EmptyCustomBlock(), smellFinders);

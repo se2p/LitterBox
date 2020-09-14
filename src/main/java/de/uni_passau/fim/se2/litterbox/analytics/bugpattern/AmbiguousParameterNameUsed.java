@@ -33,11 +33,11 @@ import java.util.Set;
 /**
  * The parameter names in custom blocks do not have to be unique.
  * Therefore, when two parameters have the same name, no matter the type or which one is used inside the custom
- * block, it will always be evaluated as the last input to the block. For the strict version the parameters have to
+ * block, it will always be evaluated as the last input to the block. The parameters have to
  * be used to be counted.
  */
-public class AmbiguousParameterNameStrict extends AbstractIssueFinder {
-    public static final String NAME = "ambiguous_parameter_name_strict";
+public class AmbiguousParameterNameUsed extends AbstractIssueFinder {
+    public static final String NAME = "ambiguous_parameter_name_used";
     private boolean inStmtList = false;
     private boolean found = false;
     private boolean used = false;

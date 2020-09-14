@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
+package de.uni_passau.fim.se2.litterbox.analytics.smells;
 
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
@@ -25,10 +25,10 @@ import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ArgumentInfo;
 /**
  * The parameter names in custom blocks do not have to be unique.
  * Therefore, when two parameters have the same name, no matter the type or which one is used inside the custom
- * block, it will always be evaluated as the last input to the block.
+ * block, it will always be evaluated as the last input to the block. The ambiguous parameter is not used though.
  */
-public class AmbiguousParameterName extends AbstractIssueFinder {
-    public static final String NAME = "ambiguous_parameter_name";
+public class AmbiguousParameterNameUnused extends AbstractIssueFinder {
+    public static final String NAME = "ambiguous_parameter_name_unused";
 
     private void checkArguments(ArgumentInfo[] arguments, ProcedureDefinition node) {
         for (int i = 0; i < arguments.length; i++) {
@@ -59,6 +59,6 @@ public class AmbiguousParameterName extends AbstractIssueFinder {
 
     @Override
     public IssueType getIssueType() {
-        return IssueType.BUG;
+        return IssueType.SMELL;
     }
 }

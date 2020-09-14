@@ -31,12 +31,12 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Set;
 
-public class AmbiguousParameterNameTest {
+public class AmbiguousParameterNameUsedTest {
     private static Program empty;
     private static Program ambiguousParams;
     private static Program clans;
     private static Program realAmbiguousParam;
-    private static ObjectMapper mapper = new ObjectMapper();
+    private static final ObjectMapper mapper = new ObjectMapper();
 
     @BeforeAll
     public static void setUp() throws IOException, ParsingException {
@@ -53,28 +53,28 @@ public class AmbiguousParameterNameTest {
 
     @Test
     public void testEmptyProgram() {
-        AmbiguousParameterName parameterName = new AmbiguousParameterName();
+        AmbiguousParameterNameUsed parameterName = new AmbiguousParameterNameUsed();
         Set<Issue> reports = parameterName.check(empty);
         Assertions.assertEquals(0, reports.size());
     }
 
     @Test
     public void testAmbiguousParameters() {
-        AmbiguousParameterName parameterName = new AmbiguousParameterName();
+        AmbiguousParameterNameUsed parameterName = new AmbiguousParameterNameUsed();
         Set<Issue> reports = parameterName.check(ambiguousParams);
         Assertions.assertEquals(0, reports.size());
     }
 
     @Test
     public void testClans() {
-        AmbiguousParameterName parameterName = new AmbiguousParameterName();
+        AmbiguousParameterNameUsed parameterName = new AmbiguousParameterNameUsed();
         Set<Issue> reports = parameterName.check(clans);
         Assertions.assertEquals(0, reports.size());
     }
 
     @Test
     public void testReal() {
-        AmbiguousParameterName parameterName = new AmbiguousParameterName();
+        AmbiguousParameterNameUsed parameterName = new AmbiguousParameterNameUsed();
         Set<Issue> reports = parameterName.check(realAmbiguousParam);
         Assertions.assertEquals(1, reports.size());
     }

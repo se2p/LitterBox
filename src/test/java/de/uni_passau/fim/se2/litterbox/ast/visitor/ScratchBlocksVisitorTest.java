@@ -22,6 +22,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.*;
+import de.uni_passau.fim.se2.litterbox.analytics.smells.AmbiguousParameterNameUnused;
 import de.uni_passau.fim.se2.litterbox.analytics.smells.UnusedVariable;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
@@ -865,7 +866,7 @@ public class ScratchBlocksVisitorTest {
     @Test
     public void testAmbiguousParameterNameIssueAnnotation() throws IOException, ParsingException {
         Program program = getAST("src/test/fixtures/bugpattern/realAmbiguousParameter.json");
-        AmbiguousParameterName finder = new AmbiguousParameterName();
+        AmbiguousParameterNameUnused finder = new AmbiguousParameterNameUnused();
         Set<Issue> issues = finder.check(program);
         Issue issue = issues.iterator().next();
 

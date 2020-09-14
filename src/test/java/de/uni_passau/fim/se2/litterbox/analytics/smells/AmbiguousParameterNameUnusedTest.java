@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
+package de.uni_passau.fim.se2.litterbox.analytics.smells;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
@@ -31,12 +31,12 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Set;
 
-public class AmbiguousParameterNameStrictTest {
+public class AmbiguousParameterNameUnusedTest {
     private static Program empty;
     private static Program ambiguousParams;
     private static Program clans;
     private static Program realAmbiguousParam;
-    private static ObjectMapper mapper = new ObjectMapper();
+    private static final ObjectMapper mapper = new ObjectMapper();
 
     @BeforeAll
     public static void setUp() throws IOException, ParsingException {
@@ -53,28 +53,28 @@ public class AmbiguousParameterNameStrictTest {
 
     @Test
     public void testEmptyProgram() {
-        AmbiguousParameterNameStrict parameterName = new AmbiguousParameterNameStrict();
+        AmbiguousParameterNameUnused parameterName = new AmbiguousParameterNameUnused();
         Set<Issue> reports = parameterName.check(empty);
         Assertions.assertEquals(0, reports.size());
     }
 
     @Test
     public void testAmbiguousParameters() {
-        AmbiguousParameterNameStrict parameterName = new AmbiguousParameterNameStrict();
+        AmbiguousParameterNameUnused parameterName = new AmbiguousParameterNameUnused();
         Set<Issue> reports = parameterName.check(ambiguousParams);
         Assertions.assertEquals(0, reports.size());
     }
 
     @Test
     public void testClans() {
-        AmbiguousParameterNameStrict parameterName = new AmbiguousParameterNameStrict();
+        AmbiguousParameterNameUnused parameterName = new AmbiguousParameterNameUnused();
         Set<Issue> reports = parameterName.check(clans);
         Assertions.assertEquals(0, reports.size());
     }
 
     @Test
     public void testReal() {
-        AmbiguousParameterNameStrict parameterName = new AmbiguousParameterNameStrict();
+        AmbiguousParameterNameUnused parameterName = new AmbiguousParameterNameUnused();
         Set<Issue> reports = parameterName.check(realAmbiguousParam);
         Assertions.assertEquals(1, reports.size());
     }
