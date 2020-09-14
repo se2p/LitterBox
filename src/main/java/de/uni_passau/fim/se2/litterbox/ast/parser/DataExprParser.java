@@ -117,17 +117,31 @@ public class DataExprParser {
     }
 
     /**
-     * Parses the ScratchList stored in the expression array.
+     * Parses the Parameter referenced in the expression array.
      *
-     * @param exprArray The expression array containing the ScratchList.
+     * @param exprArray The expression array containing the Parameter.
      * @param allBlocks All blocks of the actor definition currently analysed.
-     * @return The ScratchList wrapped as Qualified.
+     * @return The Parameter referenced in the expression array.
      */
     private static Parameter parseParameter(ArrayNode
                                                     exprArray, JsonNode allBlocks) throws ParsingException {
         JsonNode paramBlock = allBlocks.get(exprArray.get(POS_BLOCK_ID).asText());
         String name = paramBlock.get(FIELDS_KEY).get(VALUE_KEY).get(VARIABLE_NAME_POS).asText();
         BlockMetadata metadata = BlockMetadataParser.parse(exprArray.get(POS_BLOCK_ID).asText(), paramBlock);
+        return new Parameter(new StrId(name), metadata);
+    }
+
+    /**
+     * Parses a dead parameter which is not inside of a script.
+     *
+     * @param blockId The id of the param node.
+     * @param paramNode The node holding the name of the parameter.
+     * @return The parameter corresponding to the param node.
+     * @throws ParsingException If parsing the metadata fails.
+     */
+    public static Parameter parseDeadParameter(String blockId, JsonNode paramNode) throws ParsingException {
+        String name = paramNode.get(FIELDS_KEY).get(VALUE_KEY).get(VARIABLE_NAME_POS).asText();
+        BlockMetadata metadata = BlockMetadataParser.parse(blockId, paramNode);
         return new Parameter(new StrId(name), metadata);
     }
 

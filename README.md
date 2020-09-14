@@ -58,8 +58,8 @@ java -jar Litterbox-1.1.jar --check --projectid <projectid> --path <path/to/stor
 ```
 
 When invoked this way, LitterBox will retrieve the JSON file
-automatically from the Scratch-website, store it at the given path, 
-and then run checks on it. Note that the Scratch project to be 
+automatically from the Scratch-website, store it at the given path,
+and then run checks on it. Note that the Scratch project to be
 analyzed has to be shared publically for this.
 
 
@@ -74,8 +74,8 @@ java -jar Litterbox-1.1.jar --check --projectlist <path/to/projectidlist.txt> --
 ```
 
 LitterBox will check the given path for the projects.
-If a project is not found at the given path, LitterBox 
-will download and store it at the given path, and then perform 
+If a project is not found at the given path, LitterBox
+will download and store it at the given path, and then perform
 the checks.
 
 ### Output options
@@ -145,9 +145,13 @@ java -jar Litterbox-1.1.jar --stats --project <path/to/project.json> --output <s
 To implement your own bug patterns, extend the `AbstractIssueFinder`
 class which implements an AST visitor. The `check` method is expected
 to return a set of all `Issue` instances encountered during the
-traversal. To enable the check, register it in the `IssueTool`
-constructor (`finder.add(new NewFinder()`) ).
+traversal. Please use the `addIssue` method provided in the `AbstractIssueFinder`.
 
+To enable the check, register it in the `IssueTool` class.
+Add it to the `generateSmellFinders()` method via `registerSmellFinder(new NewFinder, smellFinders)` for smell finders or to the`generateBugFinders()` for bug finders via `registerBugFinder(new NewFinder, bugFinders)`.
+
+Please also add the name of the finder to `IssueNames_de.properties` / `IssueNames_en.properties` and
+provide hints in `IssueHints_de.properties` / `IssueHints_en.properties`, so that your finder helps programmers understand how to resolve the issue in their code to improve code quality.
 
 ## Publications
 
@@ -158,7 +162,7 @@ C. Frädrich, F. Obermüller, N. Körber, U. Heuer, and G. Fraser, “Common bug
  Science Education (ITiCSE), pages 89-95, ACM, 2020. [https://doi.org/10.1145/3341525.3387389](https://doi.org/10.1145/3341525.3387389)
 
 
-## Contributors 
+## Contributors
 
 LitterBox is developed at the
 [Chair of Software Engineering II](https://www.fim.uni-passau.de/lehrstuhl-fuer-software-engineering-ii/)
@@ -167,14 +171,14 @@ the [University of Passau](https://www.uni-passau.de).
 
 Contributors:
 
-Christoph Frädrich  
-Gordon Fraser  
-Ute Heuer  
-Nina Körber  
-Stephan Lukasczyk  
-Florian Obermüller  
-Andreas Stahlbauer  
-Florian Sulzmeier  
+Christoph Frädrich\
+Gordon Fraser\
+Ute Heuer\
+Nina Körber\
+Stephan Lukasczyk\
+Florian Obermüller\
+Andreas Stahlbauer\
+Florian Sulzmeier\
 Ewald Wasmeier
 
 LitterBox is supported by the project FR 2955/3-1 funded by the
