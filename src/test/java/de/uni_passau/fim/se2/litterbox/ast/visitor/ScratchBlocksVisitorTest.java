@@ -865,7 +865,7 @@ public class ScratchBlocksVisitorTest {
     @Test
     public void testAmbiguousParameterNameIssueAnnotation() throws IOException, ParsingException {
         Program program = getAST("src/test/fixtures/bugpattern/realAmbiguousParameter.json");
-        AmbiguousParameterName finder = new AmbiguousParameterName();
+        AmbiguousParameterNameUsed finder = new AmbiguousParameterNameUsed();
         Set<Issue> issues = finder.check(program);
         Issue issue = issues.iterator().next();
 
@@ -876,7 +876,7 @@ public class ScratchBlocksVisitorTest {
         visitor.end();
         String output = visitor.getScratchBlocks();
         assertEquals("[scratchblocks]\n" +
-                "define block name [number or text] [number or text]:: #ff0000 // Ambiguous Parameter Name\n" +
+                "define block name [number or text] [number or text]:: #ff0000 // Ambiguous Parameter Name Used\n" +
                 "wait (number or text) seconds\n" +
                 "[/scratchblocks]\n", output);
     }
