@@ -37,8 +37,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Logger;
 
-import static de.uni_passau.fim.se2.litterbox.ast.Constants.NEXT_KEY;
-import static de.uni_passau.fim.se2.litterbox.ast.Constants.OPCODE_KEY;
+import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 
 public class ScriptParser {
 
@@ -95,18 +94,20 @@ public class ScriptParser {
 
             while (current != null && !current.isNull()) {
                 try {
-                    if (ProcedureOpcode.contains(blocks.get(blockId).get(OPCODE_KEY).asText())
-                            || DependentBlockOpcodes.contains(blocks.get(blockId).get(OPCODE_KEY).asText())) {
-                        //Ignore ProcedureOpcodes
-                        //                    blockId = current.get(NEXT_KEY).asText();
-                        //                    current = blocks.get(blockId);
+                    String opcode = blocks.get(blockId).get(OPCODE_KEY).asText();
+                    if (DependentBlockOpcodes.contains(opcode)
+                            || ProcedureOpcode.procedures_definition.name().equals(opcode)
+                            || ProcedureOpcode.procedures_prototype.name().equals(opcode)) {
+                        // Don't parse these blocks (here)
                         return null;
+                    } else if (isShadowParameter(opcode, current)) {
+                        // Only parameters that are not shadows are dead code
+                        return null;
+                    } else {
+                        Stmt stmt = StmtParser.parse(blockId, blocks);
+                        list.add(stmt);
                     }
-
-                    Stmt stmt = StmtParser.parse(blockId, blocks);
-                    list.add(stmt);
                 } catch (ParsingException e) {
-                    // and needs to be removed
                     Logger.getGlobal().warning("Could not parse block with ID " + blockId + " and opcode "
                             + current.get(OPCODE_KEY));
                 }
@@ -115,5 +116,11 @@ public class ScriptParser {
             }
         }
         return new StmtList(list);
+    }
+
+    private static boolean isShadowParameter(String opcode, JsonNode current) {
+        return (ProcedureOpcode.argument_reporter_string_number.name().equals(opcode)
+                || ProcedureOpcode.argument_reporter_boolean.name().equals(opcode))
+                && (current.get(SHADOW_KEY).asBoolean());
     }
 }

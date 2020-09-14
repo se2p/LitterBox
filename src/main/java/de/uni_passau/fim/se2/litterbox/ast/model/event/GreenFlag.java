@@ -31,6 +31,7 @@ public class GreenFlag extends AbstractNode implements Event, ASTLeaf {
         this.metadata = metadata;
     }
 
+    @Override
     public BlockMetadata getMetadata() {
         return metadata;
     }
