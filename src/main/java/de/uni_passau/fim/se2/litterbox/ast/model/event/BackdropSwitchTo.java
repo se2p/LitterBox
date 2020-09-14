@@ -38,6 +38,7 @@ public class BackdropSwitchTo extends AbstractNode implements Event {
         return backdrop;
     }
 
+    @Override
     public BlockMetadata getMetadata() {
         return metadata;
     }
