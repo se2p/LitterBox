@@ -22,7 +22,10 @@ import com.fasterxml.jackson.databind.JsonNode;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.ExpressionStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.variable.Parameter;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ExpressionParser;
+
+import static de.uni_passau.fim.se2.litterbox.ast.parser.DataExprParser.parseDeadParameter;
 
 /**
  * This parser parses expressions, in this case reporter blocks, which are not
@@ -42,5 +45,18 @@ public class ExpressionStmtParser {
      */
     public static Stmt parse(String blockId, JsonNode current, JsonNode allBlocks) throws ParsingException {
         return new ExpressionStmt(ExpressionParser.parseExprBlock(blockId, current, allBlocks));
+    }
+
+    /**
+     * Parses a dead parameter which is not inside of a script and wraps it into an ExpressionStmt.
+     *
+     * @param blockId The id of the param node.
+     * @param paramNode The node holding the name of the parameter.
+     * @return The parameter corresponding to the param node wrapped into an ExpressionStmt.
+     * @throws ParsingException If parsing the metadata fails.
+     */
+    public static ExpressionStmt parseParameter(String blockId, JsonNode paramNode) throws ParsingException {
+        Parameter parameter = parseDeadParameter(blockId, paramNode);
+        return new ExpressionStmt(parameter);
     }
 }
