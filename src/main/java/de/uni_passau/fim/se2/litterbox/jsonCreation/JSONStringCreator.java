@@ -55,7 +55,7 @@ public class JSONStringCreator {
 
     private static StringBuilder createExtensionJSONString(StringBuilder jsonString, Program program) {
         createField(jsonString, EXTENSIONS_KEY).append("[");
-        List<String> ext = program.getMetadata().getExtension().getExtensionNames();
+        List<String> ext = program.getProgramMetadata().getExtension().getExtensionNames();
         for (int i = 0; i < ext.size() - 1; i++) {
             jsonString.append("\"").append(ext.get(i)).append("\"").append(",");
         }
@@ -67,7 +67,7 @@ public class JSONStringCreator {
     }
 
     private static StringBuilder createMetaJSONString(StringBuilder jsonString, Program program) {
-        MetaMetadata meta = program.getMetadata().getMeta();
+        MetaMetadata meta = program.getProgramMetadata().getMeta();
         createField(jsonString, META_KEY).append("{");
         createFieldValue(jsonString, SEMVER_KEY, meta.getSemver()).append(",");
         createFieldValue(jsonString, VM_KEY, meta.getVm()).append(",");
@@ -101,7 +101,7 @@ public class JSONStringCreator {
     }
 
     private static StringBuilder createMonitorListJSONString(StringBuilder jsonString, Program program) {
-        List<MonitorMetadata> monitorMetadataList = program.getMetadata().getMonitor().getList();
+        List<MonitorMetadata> monitorMetadataList = program.getProgramMetadata().getMonitor().getList();
         createField(jsonString, MONITORS_KEY).append("[");
         for (int i = 0; i < monitorMetadataList.size() - 1; i++) {
             createMonitorJSONString(jsonString, monitorMetadataList.get(i)).append(",");

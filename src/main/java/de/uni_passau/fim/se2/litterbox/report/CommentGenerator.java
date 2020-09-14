@@ -55,13 +55,13 @@ public class CommentGenerator implements ReportGenerator {
         metadata.setCommentId(commentId);
         CommentMetadata comment = new CommentMetadata(commentId, metadata.getBlockId(), 500, 400, 100, 100, false,
                 hintText);
-        currentActor.getMetadata().addComment(comment);
+        currentActor.getActorMetadata().addComment(comment);
     }
 
     private void addLooseComment(ActorDefinition currentActor, String hintText,
                                  String commentId) {
         CommentMetadata comment = new CommentMetadata(commentId, null, 500, 400, 100, 100, false,
                 hintText);
-        currentActor.getMetadata().addComment(comment);
+        currentActor.getActorMetadata().addComment(comment);
     }
 }

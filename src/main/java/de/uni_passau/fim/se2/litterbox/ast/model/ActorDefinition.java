@@ -50,7 +50,7 @@ public class ActorDefinition extends AbstractNode {
         this.metadata = metadata;
     }
 
-    public ActorMetadata getMetadata() {
+    public ActorMetadata getActorMetadata() {
         return metadata;
     }
 

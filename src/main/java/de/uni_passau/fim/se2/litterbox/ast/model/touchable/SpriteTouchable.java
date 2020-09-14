@@ -34,6 +34,7 @@ public class SpriteTouchable extends AbstractNode implements Touchable {
         this.metadata = metadata;
     }
 
+    @Override
     public BlockMetadata getMetadata() {
         return metadata;
     }

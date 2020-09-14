@@ -19,6 +19,7 @@
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.ProcedureMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ArgumentInfo;
 
@@ -35,7 +36,7 @@ public class AmbiguousParameterName extends AbstractIssueFinder {
             ArgumentInfo current = arguments[i];
             for (int j = i + 1; j < arguments.length; j++) {
                 if (i != j && current.getName().equals(arguments[j].getName())) {
-                    addIssue(node, node.getMetadata().getDefinition());
+                    addIssue(node, ((ProcedureMetadata) node.getMetadata()).getDefinition());
                 }
             }
         }

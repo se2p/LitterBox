@@ -20,6 +20,7 @@ package de.uni_passau.fim.se2.litterbox.analytics.smells;
 
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.ProcedureMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ProcedureInfo;
@@ -40,7 +41,7 @@ public class UnusedCustomBlock extends AbstractIssueFinder {
         for (ProcedureDefinition procedureDef : proceduresDef) {
             ProcedureInfo info = procMap.get(procedureDef.getIdent());
             if (!calledProcedures.contains(info.getName())) {
-                addIssue(procedureDef, procedureDef.getMetadata().getDefinition());
+                addIssue(procedureDef, ((ProcedureMetadata) procedureDef.getMetadata()).getDefinition());
             }
         }
     }

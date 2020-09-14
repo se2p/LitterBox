@@ -25,6 +25,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.ProcedureMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.PrototypeMutationMetadata;
@@ -58,8 +59,8 @@ public class ProcedureJSONCreator {
                                                    String actorName, SymbolTable symbol,
                                                    ProcedureDefinitionNameMapping procDefNameMapping) {
         StringBuilder jsonString = new StringBuilder();
-        TopNonDataBlockMetadata defMetadata = (TopNonDataBlockMetadata) definition.getMetadata().getDefinition();
-        NonDataBlockMetadata protoMetadata = (NonDataBlockMetadata) definition.getMetadata().getPrototype();
+        TopNonDataBlockMetadata defMetadata = (TopNonDataBlockMetadata) ((ProcedureMetadata) definition.getMetadata()).getDefinition();
+        NonDataBlockMetadata protoMetadata = (NonDataBlockMetadata) ((ProcedureMetadata) definition.getMetadata()).getPrototype();
         String protoId = protoMetadata.getBlockId();
         StmtList stmtList = definition.getStmtList();
         String nextId = null;

@@ -20,6 +20,8 @@ package de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTLeaf;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 import java.util.Collections;
@@ -77,5 +79,10 @@ public enum SoundEffect implements ASTLeaf {
         String[] result = new String[1];
         result[0] = token;
         return result;
+    }
+
+    @Override
+    public BlockMetadata getMetadata() {
+        return new NoBlockMetadata();
     }
 }

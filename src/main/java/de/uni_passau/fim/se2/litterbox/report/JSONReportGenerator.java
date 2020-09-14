@@ -62,7 +62,7 @@ public class JSONReportGenerator implements ReportGenerator {
             ((ObjectNode) childNode).put("sprite", issue.getActorName());
             ((ObjectNode) childNode).put("hint", issue.getHint());
             ArrayNode arrayNode = ((ObjectNode) childNode).putArray("costumes");
-            ActorMetadata actorMetadata = issue.getActor().getMetadata();
+            ActorMetadata actorMetadata = issue.getActor().getActorMetadata();
             for (ImageMetadata image : actorMetadata.getCostumes().getList()) {
                 arrayNode.add(image.getAssetId());
             }

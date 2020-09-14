@@ -44,6 +44,7 @@ public abstract class BinaryExpression<A extends ASTNode, B extends ASTNode> ext
         return operand2;
     }
 
+    @Override
     public BlockMetadata getMetadata() {
         return metadata;
     }

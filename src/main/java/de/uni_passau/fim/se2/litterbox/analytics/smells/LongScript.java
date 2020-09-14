@@ -21,6 +21,7 @@ package de.uni_passau.fim.se2.litterbox.analytics.smells;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.ProcedureMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 
 /**
@@ -62,7 +63,7 @@ public class LongScript extends TopBlockFinder {
         localCount++;
         visitChildren(node);
         if (localCount > NUMBER_TOO_LONG) {
-            addIssue(node, node.getMetadata().getDefinition());
+            addIssue(node, ((ProcedureMetadata) node.getMetadata()).getDefinition());
         }
         currentProcedure = null;
     }

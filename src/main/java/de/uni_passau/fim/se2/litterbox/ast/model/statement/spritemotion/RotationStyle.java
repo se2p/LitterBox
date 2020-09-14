@@ -20,6 +20,8 @@ package de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTLeaf;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 import java.util.Collections;
@@ -84,5 +86,10 @@ public enum RotationStyle implements ASTLeaf {
     @Override
     public String toString() {
         return token;
+    }
+
+    @Override
+    public BlockMetadata getMetadata() {
+        return new NoBlockMetadata();
     }
 }

@@ -34,6 +34,7 @@ public class Key extends AbstractNode {
         this.metadata = metadata;
     }
 
+    @Override
     public BlockMetadata getMetadata() {
         return metadata;
     }
