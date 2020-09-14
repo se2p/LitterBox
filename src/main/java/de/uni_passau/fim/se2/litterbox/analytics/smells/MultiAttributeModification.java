@@ -19,9 +19,7 @@
 package de.uni_passau.fim.se2.litterbox.analytics.smells;
 
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
-import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Identifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
@@ -36,9 +34,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetVariableTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.pen.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.*;
-import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
-
-import java.util.Set;
 
 /**
  * Checks if a variable is changed multiple times in a row.
@@ -46,17 +41,8 @@ import java.util.Set;
 public class MultiAttributeModification extends AbstractIssueFinder {
 
     public static final String NAME = "multiple_attribute_modifications";
-
     private Identifier prevIdent = null;
     private ASTNode prevNode = null;
-
-    @Override
-    public Set<Issue> check(Program program) {
-        Preconditions.checkNotNull(program);
-        this.program = program;
-        program.accept(this);
-        return issues;
-    }
 
     @Override
     public void visit(Script script) {
