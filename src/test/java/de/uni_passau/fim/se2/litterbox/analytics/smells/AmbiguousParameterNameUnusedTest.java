@@ -62,20 +62,20 @@ public class AmbiguousParameterNameUnusedTest {
     public void testAmbiguousParameters() {
         AmbiguousParameterNameUnused parameterName = new AmbiguousParameterNameUnused();
         Set<Issue> reports = parameterName.check(ambiguousParams);
-        Assertions.assertEquals(0, reports.size());
+        Assertions.assertEquals(2, reports.size());
     }
 
     @Test
     public void testClans() {
         AmbiguousParameterNameUnused parameterName = new AmbiguousParameterNameUnused();
         Set<Issue> reports = parameterName.check(clans);
-        Assertions.assertEquals(0, reports.size());
+        Assertions.assertEquals(1, reports.size());
     }
 
     @Test
     public void testReal() {
         AmbiguousParameterNameUnused parameterName = new AmbiguousParameterNameUnused();
         Set<Issue> reports = parameterName.check(realAmbiguousParam);
-        Assertions.assertEquals(1, reports.size());
+        Assertions.assertEquals(0, reports.size());
     }
 }

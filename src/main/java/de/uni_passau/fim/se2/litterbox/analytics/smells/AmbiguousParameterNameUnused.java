@@ -19,8 +19,16 @@
 package de.uni_passau.fim.se2.litterbox.analytics.smells;
 
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
+import de.uni_passau.fim.se2.litterbox.analytics.Issue;
+import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
+import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ArgumentInfo;
+
+import java.util.LinkedList;
+import java.util.Set;
 
 /**
  * The parameter names in custom blocks do not have to be unique.
@@ -30,26 +38,75 @@ import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ArgumentInfo;
 public class AmbiguousParameterNameUnused extends AbstractIssueFinder {
     public static final String NAME = "ambiguous_parameter_name_unused";
 
-    private void checkArguments(ArgumentInfo[] arguments, ProcedureDefinition node) {
+    private boolean inStmtList = false;
+    private boolean foundAmbiguousParam = false;
+    private boolean used = false;
+    private LinkedList<String> paraNames = new LinkedList<>();
+
+    @Override
+    public Set<Issue> check(Program program) {
+        foundAmbiguousParam = false;
+        return super.check(program);
+    }
+
+    private void checkArguments(ArgumentInfo[] arguments) {
+        paraNames = new LinkedList<>();
+
         for (int i = 0; i < arguments.length; i++) {
             ArgumentInfo current = arguments[i];
             for (int j = i + 1; j < arguments.length; j++) {
                 if (i != j && current.getName().equals(arguments[j].getName())) {
-                    addIssue(node, node.getMetadata().getDefinition());
+                    if (!paraNames.contains(current.getName())) {
+                        paraNames.add(current.getName());
+                    }
+                    foundAmbiguousParam = true;
                 }
             }
         }
     }
 
     @Override
+    public void visit(ActorDefinition actor) {
+        super.visit(actor);
+
+        if (foundAmbiguousParam) {
+            foundAmbiguousParam = false;
+        }
+    }
+
+    @Override
+    public void visit(StmtList node) {
+        inStmtList = true;
+        visitChildren(node);
+        inStmtList = false;
+    }
+
+    @Override
     public void visit(ProcedureDefinition node) {
         currentProcedure = node;
-        if (node.getStmtList().hasStatements()) {
-            checkArguments(procMap.get(node.getIdent()).getArguments(), node);
+        if (node.getStmtList().getStmts().size() > 0) {
+            checkArguments(procMap.get(node.getIdent()).getArguments());
         }
 
         visitChildren(node);
+
+        if (!used) {
+            addIssue(node, node.getMetadata().getDefinition());
+        }
+
+        // TODO: This handling with used/found seems really error prone
+        used = false;
+        foundAmbiguousParam = false;
+        paraNames.clear();
         currentProcedure = null;
+    }
+
+    @Override
+    public void visit(StrId node) {
+        if (inStmtList && foundAmbiguousParam && paraNames.contains(node.getName())) {
+            used = true;
+        }
+        visitChildren(node);
     }
 
     @Override
