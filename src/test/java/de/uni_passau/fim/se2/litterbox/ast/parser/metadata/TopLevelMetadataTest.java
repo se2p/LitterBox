@@ -45,7 +45,7 @@ import java.util.List;
 import static de.uni_passau.fim.se2.litterbox.ast.Constants.VAR_PRIMITIVE;
 
 public class TopLevelMetadataTest {
-    private static ObjectMapper mapper = new ObjectMapper();
+    private static final ObjectMapper mapper = new ObjectMapper();
     private static Program program;
 
     @BeforeAll
@@ -75,7 +75,7 @@ public class TopLevelMetadataTest {
     public void testProcedureProgram() {
         ProcedureDefinition def =
                 program.getActorDefinitionList().getDefinitions().get(1).getProcedureDefinitionList().getList().get(0);
-        ProcedureMetadata meta = def.getMetadata();
+        ProcedureMetadata meta = (ProcedureMetadata) def.getMetadata();
         Assertions.assertEquals(TopNonDataBlockMetadata.class, meta.getDefinition().getClass());
         TopNonDataBlockMetadata defMet = (TopNonDataBlockMetadata) meta.getDefinition();
         Assertions.assertEquals(NoMutationMetadata.class, defMet.getMutation().getClass());

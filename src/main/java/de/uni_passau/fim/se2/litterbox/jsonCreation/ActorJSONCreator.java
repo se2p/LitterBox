@@ -43,7 +43,7 @@ public class ActorJSONCreator {
     public static String createActorJSONString(ActorDefinition actor, SymbolTable symbol,
                                                ProcedureDefinitionNameMapping procDefNameMapping) {
         StringBuilder jsonString = new StringBuilder();
-        ActorMetadata meta = actor.getMetadata();
+        ActorMetadata meta = actor.getActorMetadata();
         boolean isStage = false;
         if (actor.getActorType().equals(ActorType.STAGE)) {
             isStage = true;

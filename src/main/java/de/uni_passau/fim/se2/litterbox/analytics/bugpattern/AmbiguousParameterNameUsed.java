@@ -24,6 +24,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.ProcedureMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ArgumentInfo;
 
@@ -91,7 +92,7 @@ public class AmbiguousParameterNameUsed extends AbstractIssueFinder {
         visitChildren(node);
 
         if (used) {
-            addIssue(node, node.getMetadata().getDefinition());
+            addIssue(node, ((ProcedureMetadata) node.getMetadata()).getDefinition());
         }
 
         // TODO: This handling with used/found seems really error prone

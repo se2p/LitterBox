@@ -21,7 +21,6 @@ package de.uni_passau.fim.se2.litterbox.ast.model.statement;
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
@@ -45,6 +44,6 @@ public class ExpressionStmt extends AbstractNode implements Stmt {
 
     @Override
     public BlockMetadata getMetadata() {
-        return new NoBlockMetadata();
+        return expression.getMetadata();
     }
 }

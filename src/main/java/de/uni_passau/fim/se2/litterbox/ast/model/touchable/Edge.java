@@ -31,6 +31,7 @@ public class Edge extends AbstractNode implements Touchable, ASTLeaf {
         this.metadata = metadata;
     }
 
+    @Override
     public BlockMetadata getMetadata() {
         return metadata;
     }

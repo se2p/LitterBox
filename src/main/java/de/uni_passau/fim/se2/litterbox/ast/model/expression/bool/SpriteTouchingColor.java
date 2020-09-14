@@ -34,6 +34,7 @@ public class SpriteTouchingColor extends AbstractNode implements BoolExpr {
         this.metadata = metadata;
     }
 
+    @Override
     public BlockMetadata getMetadata() {
         return metadata;
     }

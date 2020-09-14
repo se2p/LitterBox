@@ -30,6 +30,7 @@ public abstract class SingularExpression extends AbstractNode {
         this.metadata = metadata;
     }
 
+    @Override
     public BlockMetadata getMetadata() {
         return metadata;
     }
