@@ -68,7 +68,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.variable.Parameter;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.ScratchList;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.ProcedureOpcode;
-import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
 import de.uni_passau.fim.se2.litterbox.jsonCreation.BlockJsonCreatorHelper;
 
 import java.io.ByteArrayOutputStream;
@@ -99,6 +98,8 @@ public class ScratchBlocksVisitor extends PrintVisitor {
 
     private boolean hasContent = false;
 
+    private Program program = null;
+
     private ActorDefinition currentActor = null;
 
     private ByteArrayOutputStream byteStream = null;
@@ -122,11 +123,19 @@ public class ScratchBlocksVisitor extends PrintVisitor {
     public ScratchBlocksVisitor(Issue... issues) {
         this();
         this.issues.addAll(Arrays.asList(issues));
+        if (issues.length > 0) {
+            // TODO: This assumes all issues are reported on the same program
+            this.program = issues[0].getProgram();
+        }
     }
 
     public ScratchBlocksVisitor(Collection<Issue> issues) {
         this();
         this.issues.addAll(issues);
+        if (!issues.isEmpty()) {
+            // TODO: This assumes all issues are reported on the same program
+            this.program = issues.iterator().next().getProgram();
+        }
     }
 
     public void setCurrentActor(ActorDefinition node) {
@@ -163,6 +172,13 @@ public class ScratchBlocksVisitor extends PrintVisitor {
     }
 
     @Override
+    public void visit(Program program) {
+        this.program = program;
+        super.visit(program);
+    }
+
+
+    @Override
     public void visit(Script script) {
         inScript = true;
         super.visit(script);
@@ -175,7 +191,7 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         inScript = true;
         emitNoSpace("define ");
         String actorName = currentActor.getIdent().getName();
-        String procedureName = ProgramParser.procDefMap.getProcedures().get(actorName).get(node.getIdent()).getName();
+        String procedureName = program.getProcedureMapping().getProcedures().get(actorName).get(node.getIdent()).getName();
 
         List<ParameterDefinition> parameters = node.getParameterDefinitionList().getParameterDefinitions();
         for (ParameterDefinition param : parameters) {

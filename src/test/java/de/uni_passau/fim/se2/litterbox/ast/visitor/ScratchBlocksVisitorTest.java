@@ -749,7 +749,7 @@ public class ScratchBlocksVisitorTest {
         StutteringMovement stuttMovement = new StutteringMovement();
 
         Issue firstIssue = issues.iterator().next();
-        Issue mockIssue = new Issue(stuttMovement, firstIssue.getActor(), firstIssue.getScript(), firstIssue.getCodeLocation(), firstIssue.getCodeMetadata());
+        Issue mockIssue = new Issue(stuttMovement, program, firstIssue.getActor(), firstIssue.getScript(), firstIssue.getCodeLocation(), firstIssue.getCodeMetadata());
 
         ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(firstIssue, mockIssue);
         visitor.begin();

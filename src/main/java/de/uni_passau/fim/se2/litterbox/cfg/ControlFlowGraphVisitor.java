@@ -41,12 +41,15 @@ public class ControlFlowGraphVisitor implements ScratchVisitor {
 
     private boolean inScript = false;
 
+    private Program program = null;
+
     public ControlFlowGraph getControlFlowGraph() {
         return builder.getControlFlowGraph();
     }
 
     @Override
     public void visit(Program node) {
+        this.program = node;
         List<ActorDefinition> actors = node.getActorDefinitionList().getDefinitions();
         builder.setActors(actors);
         visit((ASTNode) node);
@@ -88,12 +91,12 @@ public class ControlFlowGraphVisitor implements ScratchVisitor {
 
     @Override
     public void visit(ProcedureDefinition node) {
-        builder.addProcedure(node);
+        builder.addProcedure(program, node);
         builder.setCurrentScriptOrProcedure(node);
         inScript = true;
         node.getStmtList().accept(this);
         inScript = false;
-        builder.addEndOfProcedure(node, builder.getCurrentStatements());
+        builder.addEndOfProcedure(program, node, builder.getCurrentStatements());
     }
 
     //---------------------------------------------------------------

@@ -33,11 +33,13 @@ import java.util.Set;
 public class EmptySprite implements IssueFinder, ScratchVisitor {
     public static final String NAME = "empty_sprite";
     private Set<Issue> issues = new LinkedHashSet<>();
+    private Program program = null;
 
     @Override
     public Set<Issue> check(Program program) {
         issues = new LinkedHashSet<>();
         Preconditions.checkNotNull(program);
+        this.program = program;
         program.accept(this);
         return issues;
     }
@@ -46,7 +48,7 @@ public class EmptySprite implements IssueFinder, ScratchVisitor {
     public void visit(ActorDefinition actor) {
         if (actor.getProcedureDefinitionList().getList().size() == 0 && actor.getScripts().getScriptList().size() == 0
                 && !actor.getActorType().equals(ActorType.STAGE)) {
-            issues.add(new Issue(this, actor, (Script) null, null, null));
+            issues.add(new Issue(this, program, actor, (Script) null, null, null));
         }
     }
 

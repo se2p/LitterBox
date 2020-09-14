@@ -18,10 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.cfg;
 
-import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
-import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
-import de.uni_passau.fim.se2.litterbox.ast.model.ActorType;
-import de.uni_passau.fim.se2.litterbox.ast.model.Message;
+import de.uni_passau.fim.se2.litterbox.ast.model.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.AttributeAboveValue;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Event;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.StartedAsClone;
@@ -30,7 +27,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.CreateCloneOf;
-import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ProcedureInfo;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Identifier;
@@ -65,8 +61,9 @@ public class ControlFlowGraphBuilder {
         return cfg;
     }
 
-    public void addEndOfProcedure(ProcedureDefinition node, List<CFGNode> endOfProcedure) {
-        ProcedureInfo procDef = ProgramParser.procDefMap
+    public void addEndOfProcedure(Program program, ProcedureDefinition node, List<CFGNode> endOfProcedure) {
+
+        ProcedureInfo procDef = program.getProcedureMapping()
                 .getProcedureForHash(
                         currentActor.getIdent().getName(),
                         node.getIdent().getName()
@@ -257,9 +254,9 @@ public class ControlFlowGraphBuilder {
         setCurrentNode(handlerNode);
     }
 
-    public void addProcedure(ProcedureDefinition node) {
+    public void addProcedure(Program program, ProcedureDefinition node) {
 
-        ProcedureInfo procDef = ProgramParser.procDefMap.getProcedureForHash(
+        ProcedureInfo procDef = program.getProcedureMapping().getProcedureForHash(
                 currentActor.getIdent().getName(),
                 node.getIdent().getName());
         ProcedureNode customBlockNode = new ProcedureNode(procDef.getName(), procDef.getActorName());
