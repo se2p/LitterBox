@@ -1078,7 +1078,7 @@ public class ScratchBlocksVisitorTest {
         String output = visitor.getScratchBlocks();
         assertEquals("[scratchblocks]\n" +
                 "when green flag clicked\n" +
-                "pen down:: #ff0000 // Missing erase all\n" +
+                "pen down:: #ff0000 // Missing Erase All\n" +
                 "pen up\n" +
                 "[/scratchblocks]\n", output);
     }
@@ -1161,7 +1161,7 @@ public class ScratchBlocksVisitorTest {
         String output = visitor.getScratchBlocks();
         assertEquals("[scratchblocks]\n" +
                 "when green flag clicked\n" +
-                "pen down:: #ff0000 // Missing Pen UP\n" +
+                "pen down:: #ff0000 // Missing Pen Up\n" +
                 "say [Hello!]\n" +
                 "go to (random position v)\n" +
                 "[/scratchblocks]\n", output);
