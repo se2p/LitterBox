@@ -38,6 +38,7 @@ public class SetVariableTo extends AbstractNode implements SetStmt {
         this.metadata = metadata;
     }
 
+    @Override
     public BlockMetadata getMetadata() {
         return metadata;
     }

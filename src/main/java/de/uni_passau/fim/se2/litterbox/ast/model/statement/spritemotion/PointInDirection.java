@@ -35,6 +35,7 @@ public class PointInDirection extends AbstractNode implements SpriteMotionStmt {
         this.metadata = metadata;
     }
 
+    @Override
     public BlockMetadata getMetadata() {
         return metadata;
     }

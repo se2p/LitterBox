@@ -31,6 +31,7 @@ public class ResetTimer extends AbstractNode implements CommonStmt, ASTLeaf {
         this.metadata = metadata;
     }
 
+    @Override
     public BlockMetadata getMetadata() {
         return metadata;
     }

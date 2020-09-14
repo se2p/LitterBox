@@ -38,6 +38,7 @@ public class RepeatTimesStmt extends AbstractNode implements ControlStmt {
         this.metadata = metadata;
     }
 
+    @Override
     public BlockMetadata getMetadata() {
         return metadata;
     }

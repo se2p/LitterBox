@@ -30,6 +30,7 @@ public class DeleteClone extends AbstractNode implements TerminationStmt {
         this.metadata = metadata;
     }
 
+    @Override
     public BlockMetadata getMetadata() {
         return metadata;
     }

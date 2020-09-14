@@ -40,6 +40,7 @@ public class IfElseStmt extends AbstractNode implements IfStmt {
         this.metadata = metadata;
     }
 
+    @Override
     public BlockMetadata getMetadata() {
         return metadata;
     }

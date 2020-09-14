@@ -31,6 +31,7 @@ public class NextBackdrop extends AbstractNode implements ActorLookStmt, ASTLeaf
         this.metadata = metadata;
     }
 
+    @Override
     public BlockMetadata getMetadata() {
         return metadata;
     }
