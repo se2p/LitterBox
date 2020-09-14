@@ -37,7 +37,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class VariableAsLiteralTest {
 
-    private static ObjectMapper mapper = new ObjectMapper();
+    private static final ObjectMapper mapper = new ObjectMapper();
 
     @Test
     public void testEmpty() throws IOException, ParsingException {
@@ -102,7 +102,7 @@ public class VariableAsLiteralTest {
         String output = visitor.getScratchBlocks();
         assertEquals("[scratchblocks]\n" +
                 "when green flag clicked\n" +
-                "if <[thelist] > (50)> then:: #ff0000 // Issue: Variable Used as Literal\n" +
+                "if <[thelist] > (50)> then:: #ff0000 // Variable Used as Literal\n" +
                 "say [thelist]\n" +
                 "end\n" +
                 "[/scratchblocks]\n", output);
@@ -118,7 +118,7 @@ public class VariableAsLiteralTest {
         assertEquals("[scratchblocks]\n" +
                 "when green flag clicked\n" +
                 "if <[thelist] > (50)> then\n" +
-                "say [thelist]:: #ff0000 // Issue: Variable Used as Literal\n" +
+                "say [thelist]:: #ff0000 // Variable Used as Literal\n" +
                 "end\n" +
                 "[/scratchblocks]\n", output);
 
