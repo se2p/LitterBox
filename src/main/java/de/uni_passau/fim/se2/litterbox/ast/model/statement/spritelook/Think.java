@@ -39,6 +39,7 @@ public class Think extends AbstractNode implements SpriteLookStmt {
         return thought;
     }
 
+    @Override
     public BlockMetadata getMetadata() {
         return metadata;
     }

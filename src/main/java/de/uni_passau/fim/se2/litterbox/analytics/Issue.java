@@ -126,6 +126,10 @@ public class Issue {
     }
 
     public String getFinderName() {
+        return finder.getName();
+    }
+
+    public String getTranslatedFinderName() {
         return IssueTranslator.getInstance().getName(this.finder.getName());
     }
 

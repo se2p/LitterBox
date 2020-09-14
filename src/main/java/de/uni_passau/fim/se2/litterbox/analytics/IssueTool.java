@@ -51,6 +51,7 @@ public class IssueTool {
         registerBugFinder(new IllegalParameterRefactor(), bugFinders);
         registerBugFinder(new MessageNeverReceived(), bugFinders);
         registerBugFinder(new MessageNeverSent(), bugFinders);
+        registerBugFinder(new MissingAsk(), bugFinders);
         registerBugFinder(new MissingBackdropSwitch(), bugFinders);
         registerBugFinder(new MissingCloneCall(), bugFinders);
         registerBugFinder(new MissingCloneInitialization(), bugFinders);
@@ -67,6 +68,7 @@ public class IssueTool {
         registerBugFinder(new PositionEqualsCheck(), bugFinders);
         registerBugFinder(new RecursiveCloning(), bugFinders);
         registerBugFinder(new StutteringMovement(), bugFinders);
+        registerBugFinder(new VariableAsLiteral(), bugFinders);
 
         return bugFinders;
     }
@@ -87,10 +89,16 @@ public class IssueTool {
         registerSmellFinder(new EmptyProject(), smellFinders);
         registerSmellFinder(new EmptyScript(), smellFinders);
         registerSmellFinder(new EmptySprite(), smellFinders);
+        registerSmellFinder(new DeadCode(), smellFinders);
+        registerSmellFinder(new DuplicateSprite(), smellFinders);
+        registerSmellFinder(new DoubleIf(), smellFinders);
+        registerSmellFinder(new DuplicatedScript(), smellFinders);
         registerSmellFinder(new LongScript(), smellFinders);
+        registerSmellFinder(new MultiAttributeModification(), smellFinders);
         registerSmellFinder(new MiddleMan(), smellFinders);
         registerSmellFinder(new NestedLoops(), smellFinders);
         registerSmellFinder(new SameVariableDifferentSprite(), smellFinders);
+        registerSmellFinder(new SequentialActions(), smellFinders);
         registerSmellFinder(new UnusedCustomBlock(), smellFinders);
         registerSmellFinder(new UnusedVariable(), smellFinders);
         registerSmellFinder(new VariableInitializationRace(), smellFinders);

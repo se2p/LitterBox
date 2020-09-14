@@ -31,6 +31,7 @@ public class ClearSoundEffects extends AbstractNode implements ActorSoundStmt, A
         this.metadata = metadata;
     }
 
+    @Override
     public BlockMetadata getMetadata() {
         return metadata;
     }

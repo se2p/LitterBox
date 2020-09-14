@@ -39,6 +39,7 @@ public class SetYTo extends AbstractNode implements SpriteMotionStmt {
         return num;
     }
 
+    @Override
     public BlockMetadata getMetadata() {
         return metadata;
     }

@@ -39,6 +39,7 @@ public class KeyPressed extends AbstractNode implements Event {
         return key;
     }
 
+    @Override
     public BlockMetadata getMetadata() {
         return metadata;
     }

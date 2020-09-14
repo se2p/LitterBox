@@ -196,6 +196,11 @@ public class ScratchBlocksVisitor extends PrintVisitor {
     // Event blocks
 
     @Override
+    public void visit(Never never) {
+        // No-op
+    }
+
+    @Override
     public void visit(GreenFlag greenFlag) {
         emitNoSpace("when green flag clicked");
         storeNotesForIssue(greenFlag);
@@ -1762,11 +1767,11 @@ public class ScratchBlocksVisitor extends PrintVisitor {
 
     protected void newLine() {
         if (issueNote.size() == 1) {
-            emitNoSpace(" // Issue: ");
+            emitNoSpace(" // ");
             emitNoSpace(issueNote.iterator().next());
             issueNote.clear();
         } else if (issueNote.size() > 1) {
-            emitNoSpace(" // Issues: ");
+            emitNoSpace(" // ");
             emitNoSpace(String.join(", ", issueNote));
             issueNote.clear();
         }
@@ -1782,7 +1787,7 @@ public class ScratchBlocksVisitor extends PrintVisitor {
                     emitNoSpace(":: #ff0000");
                 }
                 hasIssue = true;
-                issueNote.add(issue.getFinderName());
+                issueNote.add(issue.getTranslatedFinderName());
             }
         }
     }
