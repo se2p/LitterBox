@@ -123,13 +123,11 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         super(stream);
     }
 
-    public ScratchBlocksVisitor(Issue... issues) {
+    public ScratchBlocksVisitor(Issue issue) {
         this();
-        this.issues.addAll(Arrays.asList(issues));
-        if (issues.length > 0) {
-            // TODO: This assumes all issues are reported on the same program
-            this.program = issues[0].getProgram();
-        }
+        this.issues.add(issue);
+        this.program = issue.getProgram();
+        this.currentActor = issue.getActor();
     }
 
     public ScratchBlocksVisitor(Collection<Issue> issues) {
@@ -138,6 +136,11 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         if (!issues.isEmpty()) {
             // TODO: This assumes all issues are reported on the same program
             this.program = issues.iterator().next().getProgram();
+
+            // TODO: Probably we should use preconditions to ensure that the program
+            //       itself is used as entry point for the visitor when using multiple
+            //       issues, as this is an implicit assumption here. Otherwise
+            //       variables such as currentActor may not be initialised
         }
     }
 

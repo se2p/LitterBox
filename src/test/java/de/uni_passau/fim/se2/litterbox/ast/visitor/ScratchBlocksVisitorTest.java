@@ -32,6 +32,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.util.Arrays;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -751,7 +752,7 @@ public class ScratchBlocksVisitorTest {
         Issue firstIssue = issues.iterator().next();
         Issue mockIssue = new Issue(stuttMovement, program, firstIssue.getActor(), firstIssue.getScript(), firstIssue.getCodeLocation(), firstIssue.getCodeMetadata());
 
-        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(firstIssue, mockIssue);
+        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(Arrays.asList(firstIssue, mockIssue));
         visitor.begin();
         program.accept(visitor);
         visitor.end();
