@@ -343,6 +343,49 @@ public class ScratchBlocksVisitorTest {
     }
 
     @Test
+    public void testTimerBlockWithVariable() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/dataflow/timerBlock.json");
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        PrintStream ps = new PrintStream(os);
+        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(ps);
+        visitor.begin();
+        program.accept(visitor);
+        visitor.end();
+        String result = os.toString();
+        assertEquals("[scratchblocks]\n" +
+                "when [timer v] > (my variable)\n" +
+                "set [my variable v] to (0)\n" +
+                "\n" +
+                "when green flag clicked\n" +
+                "set [my variable v] to (60)\n" +
+                "forever \n" +
+                "say (timer) for (2) seconds\n" +
+                "say (my variable) for (2) seconds\n" +
+                "change [my variable v] by (1)\n" +
+                "end\n" +
+                "[/scratchblocks]\n", result);
+    }
+
+    @Test
+    public void testTimerBlockWithExpression() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/scratchblocks/mathExprInTimerBlock.json");
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        PrintStream ps = new PrintStream(os);
+        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(ps);
+        visitor.begin();
+        program.accept(visitor);
+        visitor.end();
+        String result = os.toString();
+        assertEquals("[scratchblocks]\n" +
+                "when green flag clicked\n" +
+                "set [my variable v] to (0)\n" +
+                "\n" +
+                "when [timer v] > ([abs v] of (my variable))\n" +
+                "say [Hello!]\n" +
+                "[/scratchblocks]\n", result);
+    }
+
+    @Test
     public void testArithmeticBlocks() throws IOException, ParsingException {
         Program program = getAST("src/test/fixtures/scratchblocks/arithmeticblocks.json");
         ByteArrayOutputStream os = new ByteArrayOutputStream();

@@ -19,6 +19,7 @@
 package de.uni_passau.fim.se2.litterbox.cfg;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.AttributeAboveValue;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.EventAttribute;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
@@ -31,8 +32,9 @@ public class AttributeEventNode extends CFGNode {
 
     private AttributeAboveValue node;
 
-    public AttributeEventNode(AttributeAboveValue node) {
+    public AttributeEventNode(AttributeAboveValue node, ActorDefinition actor) {
         this.node = node;
+        this.actor = actor;
         this.attribute = node.getAttribute();
         this.expression = node.getValue();
     }

@@ -18,6 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.cfg;
 
+import de.uni_passau.fim.se2.litterbox.ast.model.event.AttributeAboveValue;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.ChangeVariableBy;
@@ -36,6 +37,11 @@ public class VariableDefinitionVisitor implements DefinableCollector<Variable> {
 
     @Override
     public void visit(Stmt node) {
+        // Nop
+    }
+
+    @Override
+    public void visit(AttributeAboveValue node) {
         // Nop
     }
 
