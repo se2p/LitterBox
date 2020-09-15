@@ -22,6 +22,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.UnspecifiedStmt;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -48,7 +50,8 @@ public class ExtensionUsageTest {
 
     @Test
     public void testContains() throws ParsingException {
-        //Todo what does this test do?
         Program program = ProgramParser.parseProgram("Extension", project);
+        //check if the used extension that LitterBox can not parse is an UnspecifiedStmt
+        Assertions.assertTrue(program.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(0).getStmtList().getStmts().get(0) instanceof UnspecifiedStmt);
     }
 }

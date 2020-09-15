@@ -20,6 +20,8 @@ package de.uni_passau.fim.se2.litterbox.ast.model.event;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTLeaf;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
@@ -60,6 +62,11 @@ public enum EventAttribute implements ASTLeaf {
     @Override
     public String getUniqueName() {
         return this.getClass().getSimpleName();
+    }
+
+    @Override
+    public BlockMetadata getMetadata() {
+        return new NoBlockMetadata();
     }
 
     @Override

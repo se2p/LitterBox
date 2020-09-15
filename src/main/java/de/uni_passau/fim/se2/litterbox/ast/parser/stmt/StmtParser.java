@@ -73,6 +73,10 @@ public class StmtParser {
                 return SetStmtParser.parse(blockId, current, blocks);
             } else if (PenOpcode.contains(opcode)) {
                 return PenStmtParser.parse(blockId, current, blocks);
+            } else if (ProcedureOpcode.argument_reporter_boolean.name().equals(opcode)
+                    || ProcedureOpcode.argument_reporter_string_number.name().equals(opcode)) {
+
+                return ExpressionStmtParser.parseParameter(blockId, current);
             } else {
                 return new UnspecifiedStmt();
             }

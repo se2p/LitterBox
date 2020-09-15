@@ -31,6 +31,7 @@ public class ClearGraphicEffects extends AbstractNode implements ActorLookStmt, 
         this.metadata = metadata;
     }
 
+    @Override
     public BlockMetadata getMetadata() {
         return metadata;
     }

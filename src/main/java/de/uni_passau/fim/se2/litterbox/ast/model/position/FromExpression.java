@@ -34,6 +34,7 @@ public class FromExpression extends AbstractNode implements Position {
         this.metadata = metadata;
     }
 
+    @Override
     public BlockMetadata getMetadata() {
         return metadata;
     }

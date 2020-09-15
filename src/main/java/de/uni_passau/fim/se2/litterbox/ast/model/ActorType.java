@@ -18,6 +18,8 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.model;
 
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 import java.util.Collections;
@@ -41,6 +43,11 @@ public enum ActorType implements ASTLeaf {
     @Override
     public String getUniqueName() {
         return getClass().getSimpleName();
+    }
+
+    @Override
+    public BlockMetadata getMetadata() {
+        return new NoBlockMetadata();
     }
 
     @Override

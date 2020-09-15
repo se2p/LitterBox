@@ -43,7 +43,7 @@ public class Program extends AbstractNode {
         this.metadata = metadata;
     }
 
-    public ProgramMetadata getMetadata() {
+    public ProgramMetadata getProgramMetadata() {
         return metadata;
     }
 

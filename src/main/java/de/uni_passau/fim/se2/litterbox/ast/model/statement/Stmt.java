@@ -21,5 +21,4 @@ package de.uni_passau.fim.se2.litterbox.ast.model.statement;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 
 public interface Stmt extends ASTNode {
-
 }

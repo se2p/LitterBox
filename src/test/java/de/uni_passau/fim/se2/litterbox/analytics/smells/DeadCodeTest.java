@@ -79,13 +79,13 @@ public class DeadCodeTest {
     public void testDeadParam() {
         DeadCode parameterName = new DeadCode();
         Set<Issue> reports = parameterName.check(deadParam);
-        Assertions.assertEquals(1, reports.size());
+        Assertions.assertEquals(2, reports.size());
     }
 
     @Test
     public void testAllDead() {
         DeadCode parameterName = new DeadCode();
         Set<Issue> reports = parameterName.check(allDead);
-        Assertions.assertEquals(125, reports.size());
+        Assertions.assertEquals(126, reports.size());
     }
 }

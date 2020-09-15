@@ -31,6 +31,7 @@ public class NextCostume extends AbstractNode implements SpriteLookStmt, ASTLeaf
         this.metadata = metadata;
     }
 
+    @Override
     public BlockMetadata getMetadata() {
         return metadata;
     }

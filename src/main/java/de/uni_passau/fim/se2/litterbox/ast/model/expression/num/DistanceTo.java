@@ -34,6 +34,7 @@ public class DistanceTo extends AbstractNode implements NumExpr {
         this.metadata = metadata;
     }
 
+    @Override
     public BlockMetadata getMetadata() {
         return metadata;
     }

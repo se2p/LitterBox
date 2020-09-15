@@ -36,6 +36,7 @@ public class LetterOf extends AbstractNode implements StringExpr {
         this.metadata = metadata;
     }
 
+    @Override
     public BlockMetadata getMetadata() {
         return metadata;
     }

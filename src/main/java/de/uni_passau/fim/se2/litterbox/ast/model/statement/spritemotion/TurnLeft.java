@@ -38,6 +38,7 @@ public class TurnLeft extends AbstractNode implements SpriteMotionStmt {
         return degrees;
     }
 
+    @Override
     public BlockMetadata getMetadata() {
         return metadata;
     }

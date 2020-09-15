@@ -52,7 +52,7 @@ public class ConsoleReportGenerator implements ReportGenerator {
             if (!relevantIssues.isEmpty()) {
                 Issue firstIssue = relevantIssues.get(0);
                 System.out.println("Issue "
-                        + firstIssue.getHint()
+                        + firstIssue.getFinderName()
                         + " was found "
                         + relevantIssues.size()
                         + " time(s)");

@@ -18,11 +18,13 @@
  */
 package de.uni_passau.fim.se2.litterbox;
 
+import com.google.common.io.Files;
 import de.uni_passau.fim.se2.litterbox.analytics.*;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 import org.apache.commons.cli.*;
 
+import java.io.File;
 import java.io.IOException;
 
 import static de.uni_passau.fim.se2.litterbox.utils.GroupConstants.*;
@@ -49,8 +51,6 @@ public class Main {
 
     private static final String OUTPUT_LANG = "lang";
     private static final String OUTPUT_LANG_SHORT = "k";
-    private static final String PROJECTOUT = "projectout";
-    private static final String PROJECTOUT_SHORT = "r";
     private static final String OUTPUT = "output";
     private static final String OUTPUT_SHORT = "o";
     private static final String ANNOTATE = "annotate";
@@ -86,10 +86,9 @@ public class Main {
 
         // Storage options
         options.addOption(new Option(PROJECTPATH_SHORT, PROJECTPATH, true,
-                "path to folder or file that should be analyzed (required)"));
+                "path to folder or file that should be analyzed, or path in which to store downloaded projects"));
 
         // Output options
-        options.addOption(PROJECTOUT_SHORT, PROJECTOUT, true, "path where the downloaded project(s) should be stored");
         options.addOption(OUTPUT_SHORT, OUTPUT, true,
                 "path with name of the csv file you want to save (required if "
                         + "path argument"
@@ -138,13 +137,14 @@ public class Main {
     }
 
     static void checkPrograms(CommandLine cmd) throws ParseException {
-        if (!cmd.hasOption(PROJECTPATH)) {
-            throw new ParseException("Input path option '" + PROJECTPATH + "' required");
-        }
-
         String outputPath = cmd.getOptionValue(OUTPUT);
         String detectors = cmd.getOptionValue(DETECTORS, DEFAULT);
-        String path = cmd.getOptionValue(PROJECTPATH);
+        String path;
+        if (cmd.hasOption(PROJECTPATH)) {
+            path = cmd.getOptionValue(PROJECTPATH);
+        } else {
+            path = Files.createTempDir().getPath();
+        }
         boolean ignoreLooseBlocks = cmd.hasOption(IGNORE_LOOSE_BLOCKS);
         BugAnalyzer analyzer = new BugAnalyzer(path, outputPath, detectors, ignoreLooseBlocks);
 

@@ -50,6 +50,12 @@ public abstract class Analyzer {
         this.output = output;
     }
 
+    /**
+     * Analyzes the file or directory this analyzer was initialized with.
+     *
+     * <p>If the input is a file it will be directly analyzed, if it is a director all files in the
+     * directory will be analyzed one after another.</p>
+     */
     public void analyzeFile() {
         File file = input.toFile();
 
@@ -66,6 +72,11 @@ public abstract class Analyzer {
         }
     }
 
+    /**
+     * Analzed multiple files based on a list of projectids in the given file.
+     *
+     * @param listPath is the path to a file containing all the ids of projects that should be analyzed.
+     */
     public void analyzeMultiple(String listPath) {
         Path projectList = Paths.get(listPath);
 
@@ -79,6 +90,14 @@ public abstract class Analyzer {
         }
     }
 
+    /**
+     * Analyzes a single project based on the given project id.
+     *
+     * <p>If a file with the given projectid exists in the path with which this analyzer was initialized, the project
+     * will be directly analyzed, otherwise it will be downloaded to the configured path and analyzed afterwards.</p>
+     *
+     * @param pid is the id of the project that should be analyzed.
+     */
     public void analyzeSingle(String pid) {
         Path path = Paths.get(input.toString(), pid + ".json");
         File projectFile = path.toFile();
@@ -86,7 +105,8 @@ public abstract class Analyzer {
             try {
                 Downloader.downloadAndSaveProject(pid, input.toString());
             } catch (IOException e) {
-                log.warning("Could not download project with PID: " + pid);
+                log.warning("[Error] Could not download project with PID: " + pid);
+                return;
             }
         }
 

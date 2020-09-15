@@ -39,8 +39,7 @@ public class IssueTool {
     private static Map<String, IssueFinder> generateBugFinders() {
         Map<String, IssueFinder> bugFinders = new LinkedHashMap<>();
         registerBugFinder(new AmbiguousCustomBlockSignature(), bugFinders);
-        registerBugFinder(new AmbiguousParameterName(), bugFinders);
-        registerBugFinder(new AmbiguousParameterNameStrict(), bugFinders);
+        registerBugFinder(new AmbiguousParameterNameUsed(), bugFinders);
         registerBugFinder(new CallWithoutDefinition(), bugFinders);
         registerBugFinder(new ComparingLiterals(), bugFinders);
         registerBugFinder(new CustomBlockWithForever(), bugFinders);
@@ -51,6 +50,7 @@ public class IssueTool {
         registerBugFinder(new IllegalParameterRefactor(), bugFinders);
         registerBugFinder(new MessageNeverReceived(), bugFinders);
         registerBugFinder(new MessageNeverSent(), bugFinders);
+        registerBugFinder(new MissingAsk(), bugFinders);
         registerBugFinder(new MissingBackdropSwitch(), bugFinders);
         registerBugFinder(new MissingCloneCall(), bugFinders);
         registerBugFinder(new MissingCloneInitialization(), bugFinders);
@@ -67,6 +67,7 @@ public class IssueTool {
         registerBugFinder(new PositionEqualsCheck(), bugFinders);
         registerBugFinder(new RecursiveCloning(), bugFinders);
         registerBugFinder(new StutteringMovement(), bugFinders);
+        registerBugFinder(new VariableAsLiteral(), bugFinders);
 
         return bugFinders;
     }
@@ -81,18 +82,26 @@ public class IssueTool {
         Map<String, IssueFinder> smellFinders = new LinkedHashMap<>();
 
         // Smells
+        registerSmellFinder(new AmbiguousParameterNameUnused(), smellFinders);
         registerSmellFinder(new DeadCode(), smellFinders);
         registerSmellFinder(new EmptyControlBody(), smellFinders);
         registerSmellFinder(new EmptyCustomBlock(), smellFinders);
         registerSmellFinder(new EmptyProject(), smellFinders);
         registerSmellFinder(new EmptyScript(), smellFinders);
         registerSmellFinder(new EmptySprite(), smellFinders);
+        registerSmellFinder(new DeadCode(), smellFinders);
+        registerSmellFinder(new DoubleIf(), smellFinders);
+        registerSmellFinder(new DuplicatedScript(), smellFinders);
+        registerSmellFinder(new DuplicateSprite(), smellFinders);
         registerSmellFinder(new LongScript(), smellFinders);
         registerSmellFinder(new MiddleMan(), smellFinders);
+        registerSmellFinder(new MultiAttributeModification(), smellFinders);
         registerSmellFinder(new NestedLoops(), smellFinders);
         registerSmellFinder(new SameVariableDifferentSprite(), smellFinders);
+        registerSmellFinder(new SequentialActions(), smellFinders);
         registerSmellFinder(new UnusedCustomBlock(), smellFinders);
         registerSmellFinder(new UnusedVariable(), smellFinders);
+        registerSmellFinder(new VariableInitializationRace(), smellFinders);
 
         return smellFinders;
     }

@@ -19,6 +19,7 @@
 package de.uni_passau.fim.se2.litterbox.analytics.smells;
 
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.ProcedureMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 
 public class EmptyCustomBlock extends AbstractIssueFinder {
@@ -28,7 +29,7 @@ public class EmptyCustomBlock extends AbstractIssueFinder {
     public void visit(ProcedureDefinition node) {
         currentProcedure = node;
         if (node.getStmtList().getStmts().isEmpty()) {
-            addIssue(node, node.getMetadata().getDefinition());
+            addIssue(node, ((ProcedureMetadata) node.getMetadata()).getDefinition());
         }
         visitChildren(node);
         currentProcedure = null;

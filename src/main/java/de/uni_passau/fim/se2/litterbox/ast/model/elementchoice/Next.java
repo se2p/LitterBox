@@ -31,6 +31,7 @@ public class Next extends AbstractNode implements ElementChoice, ASTLeaf {
         this.metadata = metadata;
     }
 
+    @Override
     public BlockMetadata getMetadata() {
         return metadata;
     }

@@ -68,7 +68,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.variable.Parameter;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.ScratchList;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.ProcedureOpcode;
-import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
 import de.uni_passau.fim.se2.litterbox.jsonCreation.BlockJsonCreatorHelper;
 
 import java.io.ByteArrayOutputStream;
@@ -95,9 +94,14 @@ import java.util.*;
  */
 public class ScratchBlocksVisitor extends PrintVisitor {
 
+    public static final String SCRATCHBLOCKS_START = "[scratchblocks]";
+    public static final String SCRATCHBLOCKS_END = "[/scratchblocks]";
+
     private boolean inScript = false;
 
     private boolean hasContent = false;
+
+    private Program program = null;
 
     private ActorDefinition currentActor = null;
 
@@ -119,14 +123,25 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         super(stream);
     }
 
-    public ScratchBlocksVisitor(Issue... issues) {
+    public ScratchBlocksVisitor(Issue issue) {
         this();
-        this.issues.addAll(Arrays.asList(issues));
+        this.issues.add(issue);
+        this.program = issue.getProgram();
+        this.currentActor = issue.getActor();
     }
 
     public ScratchBlocksVisitor(Collection<Issue> issues) {
         this();
         this.issues.addAll(issues);
+        if (!issues.isEmpty()) {
+            // TODO: This assumes all issues are reported on the same program
+            this.program = issues.iterator().next().getProgram();
+
+            // TODO: Probably we should use preconditions to ensure that the program
+            //       itself is used as entry point for the visitor when using multiple
+            //       issues, as this is an implicit assumption here. Otherwise
+            //       variables such as currentActor may not be initialised
+        }
     }
 
     public void setCurrentActor(ActorDefinition node) {
@@ -163,6 +178,13 @@ public class ScratchBlocksVisitor extends PrintVisitor {
     }
 
     @Override
+    public void visit(Program program) {
+        this.program = program;
+        super.visit(program);
+    }
+
+
+    @Override
     public void visit(Script script) {
         inScript = true;
         super.visit(script);
@@ -175,7 +197,7 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         inScript = true;
         emitNoSpace("define ");
         String actorName = currentActor.getIdent().getName();
-        String procedureName = ProgramParser.procDefMap.getProcedures().get(actorName).get(node.getIdent()).getName();
+        String procedureName = program.getProcedureMapping().getProcedures().get(actorName).get(node.getIdent()).getName();
 
         List<ParameterDefinition> parameters = node.getParameterDefinitionList().getParameterDefinitions();
         for (ParameterDefinition param : parameters) {
@@ -194,6 +216,11 @@ public class ScratchBlocksVisitor extends PrintVisitor {
 
     //---------------------------------------------------------------
     // Event blocks
+
+    @Override
+    public void visit(Never never) {
+        // No-op
+    }
 
     @Override
     public void visit(GreenFlag greenFlag) {
@@ -1733,7 +1760,7 @@ public class ScratchBlocksVisitor extends PrintVisitor {
     }
 
     public void begin() {
-        emitNoSpace("[scratchblocks]");
+        emitNoSpace(SCRATCHBLOCKS_START);
         newLine();
         lineWrapped = true;
     }
@@ -1742,7 +1769,7 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         if (!lineWrapped) {
             newLine();
         }
-        emitNoSpace("[/scratchblocks]");
+        emitNoSpace(SCRATCHBLOCKS_END);
         newLine();
         lineWrapped = true;
     }
@@ -1762,11 +1789,11 @@ public class ScratchBlocksVisitor extends PrintVisitor {
 
     protected void newLine() {
         if (issueNote.size() == 1) {
-            emitNoSpace(" // Issue: ");
+            emitNoSpace(" // ");
             emitNoSpace(issueNote.iterator().next());
             issueNote.clear();
         } else if (issueNote.size() > 1) {
-            emitNoSpace(" // Issues: ");
+            emitNoSpace(" // ");
             emitNoSpace(String.join(", ", issueNote));
             issueNote.clear();
         }
@@ -1782,7 +1809,7 @@ public class ScratchBlocksVisitor extends PrintVisitor {
                     emitNoSpace(":: #ff0000");
                 }
                 hasIssue = true;
-                issueNote.add(issue.getFinderName());
+                issueNote.add(issue.getTranslatedFinderName());
             }
         }
     }

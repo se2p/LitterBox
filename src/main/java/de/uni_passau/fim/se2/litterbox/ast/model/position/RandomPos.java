@@ -31,6 +31,7 @@ public class RandomPos extends AbstractNode implements Position, ASTLeaf {
         this.metadata = metadata;
     }
 
+    @Override
     public BlockMetadata getMetadata() {
         return metadata;
     }

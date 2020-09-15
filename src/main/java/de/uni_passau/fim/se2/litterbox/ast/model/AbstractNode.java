@@ -18,6 +18,8 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.model;
 
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 import de.uni_passau.fim.se2.litterbox.utils.UnmodifiableListBuilder;
@@ -50,6 +52,11 @@ public abstract class AbstractNode implements ASTNode {
 
     public String getUniqueName() {
         return this.getClass().getSimpleName();
+    }
+
+    @Override
+    public BlockMetadata getMetadata() {
+        return new NoBlockMetadata();
     }
 
     @Override

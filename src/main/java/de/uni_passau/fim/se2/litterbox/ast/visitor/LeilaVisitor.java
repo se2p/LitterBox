@@ -75,7 +75,10 @@ import de.uni_passau.fim.se2.litterbox.ast.model.touchable.SpriteTouchable;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.Touchable;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.Color;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.FromNumber;
-import de.uni_passau.fim.se2.litterbox.ast.model.type.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.type.BooleanType;
+import de.uni_passau.fim.se2.litterbox.ast.model.type.ListType;
+import de.uni_passau.fim.se2.litterbox.ast.model.type.NumberType;
+import de.uni_passau.fim.se2.litterbox.ast.model.type.StringType;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Parameter;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.ScratchList;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
@@ -96,7 +99,7 @@ public class LeilaVisitor extends PrintVisitor {
     private final boolean onNever;
     private boolean emitAttributeType = false;
     private int skippedDeclarations = 0;
-    private boolean noCast = false;
+    private final boolean noCast = false;
     private boolean showHideVar = false;
     private String currentActor = null;
     private Stack<TYPE> expectedTypes = new Stack<>();
@@ -244,10 +247,10 @@ public class LeilaVisitor extends PrintVisitor {
     }
 
     private void emitResourceListsOf(ActorDefinition def) {
-        List<ImageMetadata> images = def.getMetadata().getCostumes().getList();
+        List<ImageMetadata> images = def.getActorMetadata().getCostumes().getList();
         emitResourceList(images);
 
-        List<SoundMetadata> sounds = def.getMetadata().getSounds().getList();
+        List<SoundMetadata> sounds = def.getActorMetadata().getSounds().getList();
         emitResourceList(sounds);
     }
 
@@ -290,7 +293,7 @@ public class LeilaVisitor extends PrintVisitor {
         appendIndentation();
         // using 'changeActiveGraphicTo' instead of 'changeCostumeTo' since also available for the stage
         emitNoSpace("changeActiveGraphicTo(");
-        ActorMetadata metadata = def.getMetadata();
+        ActorMetadata metadata = def.getActorMetadata();
         int currentCostume = metadata.getCurrentCostume();
         String currentCostumeName = metadata.getCostumes().getList().get(currentCostume).getName();
         emitString(currentCostumeName);

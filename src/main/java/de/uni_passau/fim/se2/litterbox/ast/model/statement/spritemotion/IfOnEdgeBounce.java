@@ -31,6 +31,7 @@ public class IfOnEdgeBounce extends AbstractNode implements SpriteMotionStmt, AS
         this.metadata = metadata;
     }
 
+    @Override
     public BlockMetadata getMetadata() {
         return metadata;
     }

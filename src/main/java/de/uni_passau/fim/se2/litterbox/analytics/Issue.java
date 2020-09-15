@@ -20,6 +20,7 @@ package de.uni_passau.fim.se2.litterbox.analytics;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
+import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.Metadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
@@ -35,6 +36,7 @@ public class Issue {
     private ASTNode node;
     private Script script;
     private ProcedureDefinition procedure;
+    private Program program;
     private Metadata metaData;
 
     /**
@@ -42,28 +44,16 @@ public class Issue {
      * the ASTNode that is most specific to this issue.
      *
      * @param finder      that created this issue
-     * @param actor       in which this issue was found
-     * @param currentNode that is closest to the issue origin
-     */
-    public Issue(IssueFinder finder, ActorDefinition actor, ASTNode currentNode) {
-        this.finder = finder;
-        this.actor = actor;
-        this.node = currentNode;
-    }
-
-    /**
-     * Creates a new issue the contains the finder that created this issue, the actor in which the issue was found and
-     * the ASTNode that is most specific to this issue.
-     *
-     * @param finder      that created this issue
+     * @param program     in which this issue was found
      * @param actor       in which this issue was found
      * @param script      in which this issue was found
      * @param currentNode that is closest to the issue origin
      * @param metaData    that contains references for comments
      */
-    public Issue(IssueFinder finder, ActorDefinition actor, Script script,
+    public Issue(IssueFinder finder, Program program, ActorDefinition actor, Script script,
                  ASTNode currentNode, Metadata metaData) {
         this.finder = finder;
+        this.program = program;
         this.actor = actor;
         this.script = script;
         this.node = currentNode;
@@ -75,14 +65,16 @@ public class Issue {
      * the ASTNode that is most specific to this issue.
      *
      * @param finder      that created this issue
+     * @param program     in which this issue was found
      * @param actor       in which this issue was found
      * @param procedure   in which this issue was found
      * @param currentNode that is closest to the issue origin
      * @param metaData    that contains references for comments
      */
-    public Issue(IssueFinder finder, ActorDefinition actor, ProcedureDefinition procedure,
+    public Issue(IssueFinder finder, Program program, ActorDefinition actor, ProcedureDefinition procedure,
                  ASTNode currentNode, Metadata metaData) {
         this.finder = finder;
+        this.program = program;
         this.actor = actor;
         this.procedure = procedure;
         this.node = currentNode;
@@ -105,6 +97,8 @@ public class Issue {
         return procedure;
     }
 
+    public Program getProgram() { return program; }
+
     public String getActorName() {
         return actor.getIdent().getName();
     }
@@ -126,6 +120,10 @@ public class Issue {
     }
 
     public String getFinderName() {
+        return finder.getName();
+    }
+
+    public String getTranslatedFinderName() {
         return IssueTranslator.getInstance().getName(this.finder.getName());
     }
 
