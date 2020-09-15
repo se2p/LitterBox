@@ -105,7 +105,8 @@ public abstract class Analyzer {
             try {
                 Downloader.downloadAndSaveProject(pid, input.toString());
             } catch (IOException e) {
-                log.warning("Could not download project with PID: " + pid);
+                log.warning("[Error] Could not download project with PID: " + pid);
+                return;
             }
         }
 
