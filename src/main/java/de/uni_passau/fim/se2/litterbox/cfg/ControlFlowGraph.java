@@ -103,8 +103,8 @@ public class ControlFlowGraph {
         return cfgNode;
     }
 
-    public AttributeEventNode addNode(AttributeAboveValue node) {
-        AttributeEventNode cfgNode = new AttributeEventNode(node);
+    public AttributeEventNode addNode(AttributeAboveValue node, ActorDefinition actor) {
+        AttributeEventNode cfgNode = new AttributeEventNode(node, actor);
         graph.addNode(cfgNode);
         return cfgNode;
     }
