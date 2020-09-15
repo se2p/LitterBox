@@ -87,7 +87,6 @@ public class MissingEraseAll extends AbstractIssueFinder {
     void reset() {
         penClearSet = false;
         penDownSet = false;
-        currentActor = null;
         addComment = false;
     }
 

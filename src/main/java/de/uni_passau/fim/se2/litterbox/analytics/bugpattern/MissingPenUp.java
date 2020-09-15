@@ -40,6 +40,7 @@ public class MissingPenUp extends AbstractIssueFinder {
         penUpSet = false;
         penDownSet = false;
         addComment = false;
+        currentActor = actor;
         super.visit(actor);
 
         if (getResult()) {
@@ -71,7 +72,6 @@ public class MissingPenUp extends AbstractIssueFinder {
     void reset() {
         penUpSet = false;
         penDownSet = false;
-        currentActor = null;
         addComment = false;
     }
 
