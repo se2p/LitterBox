@@ -94,6 +94,9 @@ import java.util.*;
  */
 public class ScratchBlocksVisitor extends PrintVisitor {
 
+    public static final String SCRATCHBLOCKS_START = "[scratchblocks]";
+    public static final String SCRATCHBLOCKS_END = "[/scratchblocks]";
+
     private boolean inScript = false;
 
     private boolean hasContent = false;
@@ -1754,7 +1757,7 @@ public class ScratchBlocksVisitor extends PrintVisitor {
     }
 
     public void begin() {
-        emitNoSpace("[scratchblocks]");
+        emitNoSpace(SCRATCHBLOCKS_START);
         newLine();
         lineWrapped = true;
     }
@@ -1763,7 +1766,7 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         if (!lineWrapped) {
             newLine();
         }
-        emitNoSpace("[/scratchblocks]");
+        emitNoSpace(SCRATCHBLOCKS_END);
         newLine();
         lineWrapped = true;
     }

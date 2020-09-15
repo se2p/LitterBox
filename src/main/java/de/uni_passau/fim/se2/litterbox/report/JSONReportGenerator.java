@@ -69,12 +69,18 @@ public class JSONReportGenerator implements ReportGenerator {
             ((ObjectNode) childNode).put("currentCostume", actorMetadata.getCurrentCostume());
 
             ASTNode location = issue.getScriptOrProcedureDefinition();
-            ScratchBlocksVisitor blockVisitor = new ScratchBlocksVisitor(issue);
-            blockVisitor.begin();
-            location.accept(blockVisitor);
-            blockVisitor.end();
-            String scratchBlockCode = blockVisitor.getScratchBlocks();
-            ((ObjectNode) childNode).put("code", scratchBlockCode);
+            if (location == null) {
+                String emptyScript = ScratchBlocksVisitor.SCRATCHBLOCKS_START + System.lineSeparator() +
+                        ScratchBlocksVisitor.SCRATCHBLOCKS_END + System.lineSeparator();
+                ((ObjectNode) childNode).put("code", emptyScript);
+            } else {
+                ScratchBlocksVisitor blockVisitor = new ScratchBlocksVisitor(issue);
+                blockVisitor.begin();
+                location.accept(blockVisitor);
+                blockVisitor.end();
+                String scratchBlockCode = blockVisitor.getScratchBlocks();
+                ((ObjectNode) childNode).put("code", scratchBlockCode);
+            }
             ((ArrayNode) rootNode).add(childNode);
         }
 

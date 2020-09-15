@@ -23,9 +23,11 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.PositionEqualsCheck;
+import de.uni_passau.fim.se2.litterbox.analytics.smells.EmptySprite;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
@@ -122,5 +124,20 @@ public class JSONReportGeneratorTest {
         String result = Files.readString(tmpFile);
         assertValidJsonIssue(result, 1);
         Files.delete(tmpFile);
+    }
+
+    @Test
+    public void testReportWithLooseComment() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/smells/emptySprite.json");
+
+        EmptySprite emptySprite = new EmptySprite();
+        Assertions.assertEquals(emptySprite.NAME, emptySprite.getName());
+        Set<Issue> issues = emptySprite.check(program);
+
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        JSONReportGenerator generator = new JSONReportGenerator(os);
+        generator.generateReport(program, issues);
+        os.close();
+        assertValidJsonIssue(os.toString(), 1);
     }
 }
