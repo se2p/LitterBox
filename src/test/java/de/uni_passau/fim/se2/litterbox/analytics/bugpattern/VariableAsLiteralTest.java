@@ -123,4 +123,13 @@ public class VariableAsLiteralTest {
                 "[/scratchblocks]\n", output);
 
     }
+
+    @Test
+    public void testBlocksThatShouldNotBeRecognisedAsStrings() throws IOException, ParsingException {
+        File f = new File("src/test/fixtures/smells/attributesThatAreNotStrings.json");
+        Program program = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
+
+        Set<Issue> reports = (new VariableAsLiteral()).check(program);
+        Assertions.assertEquals(0, reports.size());
+    }
 }

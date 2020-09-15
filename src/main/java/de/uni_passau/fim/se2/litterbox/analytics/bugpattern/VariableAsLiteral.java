@@ -21,11 +21,14 @@ package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
+import de.uni_passau.fim.se2.litterbox.ast.model.Message;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.Metadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.variable.Parameter;
+import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ArgumentInfo;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ExpressionListInfo;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ProcedureInfo;
@@ -70,6 +73,21 @@ public class VariableAsLiteral extends AbstractIssueFinder {
     }
 
     @Override
+    public void visit(Variable node) {
+        // No-op
+    }
+
+    @Override
+    public void visit(Parameter node) {
+        // No-op
+    }
+
+    @Override
+    public void visit(Message node) {
+        // No-op
+    }
+
+    @Override
     public void visit(Stmt node) {
         currentStatement = node;
         super.visit(node);
@@ -105,7 +123,8 @@ public class VariableAsLiteral extends AbstractIssueFinder {
                 }
             }
         }
-        visitChildren(actor);
+        actor.getScripts().accept(this);
+        actor.getProcedureDefinitionList().accept(this);
     }
 
     @Override
