@@ -18,18 +18,14 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics;
 
-import de.uni_passau.fim.se2.litterbox.ast.model.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
-import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.Metadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.DataExpr;
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ProcedureInfo;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
@@ -83,19 +79,19 @@ public abstract class AbstractIssueFinder implements IssueFinder, ScratchVisitor
 
     protected void addIssue(ASTNode node, Metadata metadata) {
         if (currentScript != null) {
-            issues.add(new Issue(this, currentActor, currentScript, node, metadata));
+            issues.add(new Issue(this, program, currentActor, currentScript, node, metadata));
         } else {
             assert (currentProcedure != null);
-            issues.add(new Issue(this, currentActor, currentProcedure, node, metadata));
+            issues.add(new Issue(this, program, currentActor, currentProcedure, node, metadata));
         }
     }
 
     protected void addIssueForSynthesizedScript(Script theScript, ASTNode node, Metadata metadata) {
-        issues.add(new Issue(this, currentActor, theScript, node, metadata));
+        issues.add(new Issue(this, program, currentActor, theScript, node, metadata));
     }
 
     protected void addIssueWithLooseComment() {
-        issues.add(new Issue(this, currentActor,
+        issues.add(new Issue(this, program, currentActor,
                 (Script) null, // TODO: There is no script
                 currentActor, // TODO: There is no node?
                 null)); // TODO: There is no metadata
