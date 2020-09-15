@@ -1123,7 +1123,7 @@ public class ScratchBlocksVisitor extends PrintVisitor {
             node.getExpression().accept(this);
             emitNoSpace(")");
         } else {
-            assert (false);
+            node.getExpression().accept(this);
         }
     }
 
