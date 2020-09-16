@@ -85,13 +85,11 @@ public class AmbiguousParameterNameUnused extends AbstractIssueFinder {
     @Override
     public void visit(ProcedureDefinition node) {
         currentProcedure = node;
-        if (node.getStmtList().getStmts().size() > 0) {
-            checkArguments(procMap.get(node.getIdent()).getArguments());
-        }
+        checkArguments(procMap.get(node.getIdent()).getArguments());
 
         visitChildren(node);
 
-        if (!used) {
+        if (!used && foundAmbiguousParam) {
             addIssue(node, ((ProcedureMetadata) node.getMetadata()).getDefinition());
         }
 
