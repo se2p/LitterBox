@@ -634,7 +634,7 @@ public class LeilaVisitor extends PrintVisitor {
             appendIndentation();
             emitToken("goToSprite(o)");
         } else if (position instanceof MousePos) {
-            emitToken("goTo(");
+            emitNoSpace("goTo(");
             position.accept(this);
             closeParentheses();
         }
@@ -1265,7 +1265,7 @@ public class LeilaVisitor extends PrintVisitor {
         if (effect.equals(SoundEffect.PITCH.getToken())) {
             emitNoSpace("pitch");
         } else {
-            emitNoSpace("pan_left_right");
+            emitNoSpace("panLeftRight");
         }
     }
 
@@ -1826,7 +1826,7 @@ public class LeilaVisitor extends PrintVisitor {
     public void visit(SetGraphicEffectTo setGraphicEffectTo) {
         define();
         setGraphicEffectTo.getEffect().accept(this);
-        emitToken("_effect_value as");
+        emitToken("EffectValue as");
         expectFloat();
         setGraphicEffectTo.getValue().accept(this);
         endExpectation();
@@ -1885,7 +1885,7 @@ public class LeilaVisitor extends PrintVisitor {
     public void visit(SetSoundEffectTo setSoundEffectTo) {
         define();
         setSoundEffectTo.getEffect().accept(this);
-        emitToken("_effect_value as");
+        emitToken("EffectValue as");
         expectFloat();
         setSoundEffectTo.getValue().accept(this);
         endExpectation();
