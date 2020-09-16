@@ -29,6 +29,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.UnspecifiedExpressio
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.ExpressionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.Timer;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.AttributeFromFixed;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.FixedAttribute;
@@ -82,10 +83,11 @@ import de.uni_passau.fim.se2.litterbox.ast.model.type.StringType;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Parameter;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.ScratchList;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
+import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ProcedureDefinitionNameMapping;
+import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ProcedureInfo;
 
 import java.io.PrintStream;
-import java.util.List;
-import java.util.Stack;
+import java.util.*;
 import java.util.regex.Pattern;
 
 import static de.uni_passau.fim.se2.litterbox.ast.visitor.LeilaVisitor.TYPE.*;
@@ -98,7 +100,10 @@ public class LeilaVisitor extends PrintVisitor {
     private int skippedDeclarations = 0;
     private final boolean noCast = false;
     private boolean showHideVar = false;
-    private final Stack<TYPE> expectedTypes = new Stack<>();
+    private boolean methodCall = false;
+    private String currentActor = null;
+    private Program program = null;
+    private Stack<TYPE> expectedTypes = new Stack<>();
 
     enum TYPE {
         INTEGER, FLOAT, ORIGINAL
@@ -164,6 +169,7 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(Program program) {
+        this.program = program;
         emitToken("program");
         program.getIdent().accept(this);
         newLine();
@@ -175,10 +181,12 @@ public class LeilaVisitor extends PrintVisitor {
                 newLine();
             }
         }
+        this.program = null;
     }
 
     @Override
     public void visit(ActorDefinition def) {
+        currentActor = def.getIdent().getName();
         skippedDeclarations = 0;
         newLine();
         emitToken("actor");
@@ -216,10 +224,8 @@ public class LeilaVisitor extends PrintVisitor {
 
         ProcedureDefinitionList procDefList = def.getProcedureDefinitionList();
         List<ProcedureDefinition> procDefs = procDefList.getList();
-        if (procDefs.size() > 0) {
-            newLine();
-        }
         for (ProcedureDefinition procDef : procDefs) {
+            newLine();
             newLine();
             appendIndentation();
             procDef.accept(this);
@@ -227,10 +233,8 @@ public class LeilaVisitor extends PrintVisitor {
 
         ScriptList scripts = def.getScripts();
         List<Script> scriptList = scripts.getScriptList();
-        if (scriptList.size() > 0) {
-            newLine();
-        }
         for (Script script : scriptList) {
+            newLine();
             newLine();
             appendIndentation();
             script.accept(this);
@@ -238,6 +242,7 @@ public class LeilaVisitor extends PrintVisitor {
         endIndentation();
         newLine();
         end();
+        currentActor = null;
     }
 
     private void emitResourceListsOf(ActorDefinition def) {
@@ -427,16 +432,18 @@ public class LeilaVisitor extends PrintVisitor {
         } else if (switchBackdrop.getElementChoice() instanceof Random) {
             emitNoSpace("switchBackdropToRandom()");
         } else {
-            emitNoSpace("switchBackdropTo(");
+            emitNoSpace("switchBackdropToId(\"");
             switchBackdrop.getElementChoice().accept(this);
+            emitNoSpace("\"");
             closeParentheses();
         }
     }
 
     @Override
     public void visit(SwitchBackdropAndWait switchBackdropAndWait) {
-        emitNoSpace("switchBackdropToAndWait(");
+        emitNoSpace("switchBackdropToAndWait(\"");
         switchBackdropAndWait.getElementChoice().accept(this);
+        emitNoSpace("\"");
         closeParentheses();
     }
 
@@ -506,7 +513,7 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(Think think) {
-        emitToken("thinkText(");
+        emitNoSpace("thinkText(");
         think.getThought().accept(this);
         closeParentheses();
     }
@@ -879,14 +886,10 @@ public class LeilaVisitor extends PrintVisitor {
     }
 
     @Override
-    public void visit(CallStmt callStmt) {
-        callStmt.getIdent().accept(this);
-        callStmt.getExpressions().accept(this);
-    }
-
-    @Override
     public void visit(ExpressionList expressionList) {
-        emitNoSpace("[");
+        if (!methodCall) {
+            emitNoSpace("[");
+        }
         List<Expression> expressions = expressionList.getExpressions();
         if (expressions.size() > 0) {
             expectOriginal();
@@ -897,7 +900,9 @@ public class LeilaVisitor extends PrintVisitor {
             expressions.get(expressions.size() - 1).accept(this);
             endExpectation();
         }
-        emitNoSpace("]");
+        if (!methodCall) {
+            emitNoSpace("]");
+        }
     }
 
     @Override
@@ -946,9 +951,67 @@ public class LeilaVisitor extends PrintVisitor {
     @Override
     public void visit(ProcedureDefinition procedureDefinition) {
         emitToken("define");
-        procedureDefinition.getIdent().accept(this);
+        Map<LocalIdentifier, ProcedureInfo> proceduresOfSprite = getProceduresOfCurrentSprite();
+        String procedureName = proceduresOfSprite.get(procedureDefinition.getIdent()).getName();
+
+        if (isUniqueProcedureName(procedureName, proceduresOfSprite)) {
+            emitToken(prepareName(procedureName));
+        } else {
+            String identifier = procedureDefinition.getIdent().getName();
+            emitToken(generateProcedureName(procedureName, identifier));
+        }
         procedureDefinition.getParameterDefinitionList().accept(this);
         procedureDefinition.getStmtList().accept(this);
+    }
+
+    @Override
+    public void visit(CallStmt callStmt) {
+        String procedureName = callStmt.getIdent().getName();
+        Map<LocalIdentifier, ProcedureInfo> procedures = getProceduresOfCurrentSprite();
+        if (isUniqueProcedureName(procedureName, procedures)) {
+            emitNoSpace(prepareName(procedureName));
+        } else {
+            Set<Map.Entry<LocalIdentifier, ProcedureInfo>> entries = procedures.entrySet();
+            Map.Entry<LocalIdentifier, ProcedureInfo> procedureInfo = entries
+                    .stream()
+                    .filter(entry -> entry.getValue().getName().equals(procedureName))
+                    .findFirst()
+                    .get();
+            emitNoSpace(generateProcedureName(procedureName, procedureInfo.getKey().getName()));
+        }
+        openParentheses();
+        methodCall = true;
+        callStmt.getExpressions().accept(this);
+        methodCall = false;
+        closeParentheses();
+    }
+
+    private String prepareName(String procedureName) {
+        return procedureName.trim().replace(" ", "").replace("\"", "").replace("%s", "").replace("%b", "");
+    }
+
+    private String generateProcedureName(String procedureName, String identifier) {
+        procedureName = prepareName(procedureName);
+        procedureName = procedureName + "_" + identifier; // FIXME handle unsupported chars in identifiers
+        return procedureName;
+    }
+
+    private Map<LocalIdentifier, ProcedureInfo> getProceduresOfCurrentSprite() {
+        ProcedureDefinitionNameMapping procedureMapping = program.getProcedureMapping();
+        Map<String, Map<LocalIdentifier, ProcedureInfo>> procedures = procedureMapping.getProcedures();
+        return procedures.get(currentActor);
+    }
+
+    private boolean isUniqueProcedureName(String procedureName, Map<LocalIdentifier, ProcedureInfo> procedures) {
+        Collection<ProcedureInfo> procedureInfos = procedures.values();
+        int proceduresWithGivenName = 0;
+        for (ProcedureInfo procedureInfo : procedureInfos) {
+            String name = procedureInfo.getName();
+            if (name.equals(procedureName)) {
+                proceduresWithGivenName++;
+            }
+        }
+        return proceduresWithGivenName == 1;
     }
 
     @Override
@@ -1393,7 +1456,8 @@ public class LeilaVisitor extends PrintVisitor {
         expectOriginal(); // This should in theory not be necessary, but does not hurt and guarantees correctness here
         asNumber.getOperand1().accept(this);
         endExpectation();
-        emitNoSpace(" to integer"); //TODO distinguish between int and float?
+        emitNoSpace(" to int"); //TODO distinguish between int and float?
+        // TODO update this to integer as soon as the grammar has been updated
     }
 
     @Override
@@ -1539,10 +1603,75 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(NumFunctOf numFunctOf) {
-        numFunctOf.getOperand1().accept(this);
-        expectOriginal();
-        numFunctOf.getOperand2().accept(this);
+        NumExpr operand2 = numFunctOf.getOperand2();
+        boolean expectationSet = false;
+        switch (numFunctOf.getOperand1()) {
+            case ABS:
+                emitNoSpace("mathAbsF(");
+                expectFloat(); // TODO there is also mathAbs for integers but finding out whether a NumExpr evaluates to
+                // an int or float is nearly impossible
+                expectationSet = true;
+                break;
+            case LN:
+                emitNoSpace("mathLn(");
+                break;
+            case ACOS:
+                emitNoSpace("mathAcos(");
+                break;
+            case ASIN:
+                emitNoSpace("mathAsin(");
+                break;
+            case ATAN:
+                emitNoSpace("mathAtan(");
+                expectFloat();
+                expectationSet = true;
+                break;
+            case CEILING:
+                emitNoSpace("mathCeiling("); // FIXME expecting the default integer here is what makes BASTET parse the
+                // program, but this does not make sense for the ceiling function?
+                break;
+            case COS:
+                emitNoSpace("mathCos(");
+                expectFloat();
+                expectationSet = true;
+                break;
+            case FLOOR:
+                emitNoSpace("mathFloor(");
+                expectFloat();
+                expectationSet = true;
+                break;
+            case LOG:
+                emitNoSpace("mathLog(");
+                break;
+            case POW10:
+                emitNoSpace("mathPowten(");
+                break;
+            case POWE:
+                emitNoSpace("mathPowe(");
+                break;
+            case SIN:
+                emitNoSpace("mathSin(");
+                expectFloat();
+                expectationSet = true;
+                break;
+            case SQRT:
+                emitNoSpace("mathSqrt(");
+                expectFloat();
+                expectationSet = true;
+                break;
+            case TAN:
+                emitNoSpace("mathTan(");
+                break;
+            case UNKNOWN:
+            default:
+                throw new RuntimeException("Unknown numerical function");
+        }
+        if (!expectationSet) {
+            expectInteger();
+        }
+        operand2.accept(this);
         endExpectation();
+        closeParentheses();
     }
 
     @Override
@@ -1625,8 +1754,10 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(Qualified qualified) {
-        qualified.getFirst().accept(this);
-        emitNoSpace(".");
+        if (!qualified.getFirst().getName().equals(currentActor)) {
+            qualified.getFirst().accept(this);
+            emitNoSpace(".");
+        }
         qualified.getSecond().accept(this);
     }
 

@@ -24,7 +24,6 @@ import de.uni_passau.fim.se2.litterbox.analytics.LeilaAnalyzer;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
-import org.junit.Ignore;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -91,7 +90,7 @@ public class LeilaVisitorTest {
         String path = "src/test/fixtures/leilaVisitor/changeVariableBy.json";
         String output = getLeilaForProject(path);
 
-        assertThat(output).contains("define Sprite1.myvar as Sprite1.myvar + 1");
+        assertThat(output).contains("define myvar as myvar + 1");
     }
 
     @Test
@@ -100,6 +99,26 @@ public class LeilaVisitorTest {
         String output = getLeilaForProject(path);
 
         assertThat(output).contains("touchingColor((0 + 0))");
+    }
+
+    @Test
+    public void testProcedureCombinedTextAndParams() throws Exception {
+        String path = "src/test/fixtures/leilaVisitor/ambiguousProcedureAndCombinedTextSignature.json";
+        String output = getLeilaForProject(path);
+
+        assertThat(output).contains("define myMethodWithParamsText (aParam: string, bParam: boolean) begin");
+    }
+
+    @Test
+    public void testAmbiguousProcedureName() throws Exception {
+        String path = "src/test/fixtures/leilaVisitor/ambiguousProcedureAndCombinedTextSignature.json";
+        String output = getLeilaForProject(path);
+
+        assertThat(output).contains("define myMethod_,y4+jC!5_KL#z]ByYJ^H () begin");
+        assertThat(output).contains("define myMethod_LxW~gi,I]9)6;-1DnDd) () begin");
+        assertThat(output).contains("define myMethod_LxW~gi,I]9)6;-1DnDd) () begin");
+        assertThat(output).contains("myMethod_,y4+jC!5_KL#z]ByYJ^H()");
+        assertThat(output).doesNotContain("myMethod_LxW~gi,I]9)6;-1DnDd)()");
     }
 
     private String getLeilaForProject(String path) throws IOException, ParsingException {
@@ -133,43 +152,6 @@ public class LeilaVisitorTest {
         try {
             project = objectMapper.readTree(file);
         } catch (IOException e) {
-            fail();
-        }
-    }
-
-    @Ignore // This is not really a test, it's a convenience method for showing what the visitor does or does not
-    // @Test
-    public void testVisitor() {
-        PrintStream stream = new PrintStream(System.out);
-        LeilaVisitor visitor = new LeilaVisitor(stream, false, true);
-        try {
-            Program program = ProgramParser.parseProgram("Small", project);
-            visitor.visit(program);
-        } catch (ParsingException e) {
-            e.printStackTrace();
-            fail();
-        }
-    }
-
-    @Ignore // This is not really a test, it's a convenience method for showing what the visitor does or does not
-    //@Test
-    public void testVisitorBig() {
-        String path = "src/test/fixtures/leilaVisitor/fruitCatch.json";
-        File file = new File(path);
-        ObjectMapper objectMapper = new ObjectMapper();
-        JsonNode project = null;
-        try {
-            project = objectMapper.readTree(file);
-        } catch (IOException e) {
-            fail();
-        }
-        PrintStream stream = new PrintStream(System.out);
-        LeilaVisitor visitor = new LeilaVisitor(stream, false, true);
-        try {
-            Program program = ProgramParser.parseProgram("Small", project);
-            visitor.visit(program);
-        } catch (ParsingException e) {
-            e.printStackTrace();
             fail();
         }
     }
