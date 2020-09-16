@@ -28,8 +28,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.UnspecifiedExpression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.ExpressionList;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.Timer;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.AttributeFromFixed;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.FixedAttribute;
@@ -127,8 +127,8 @@ public class LeilaVisitor extends PrintVisitor {
      * Creates a new LeILa visitor that prints the LeILa equivalent of the programs to the {@code printStream}.
      *
      * @param printStream The stream to which the LeILa output will be printed.
-     * @param nonDet Indicates whether attributes should be initialized or not.
-     * @param onNever Indicates whether "Never" events are printed or not.
+     * @param nonDet      Indicates whether attributes should be initialized or not.
+     * @param onNever     Indicates whether "Never" events are printed or not.
      */
     public LeilaVisitor(PrintStream printStream, boolean nonDet, boolean onNever) {
         super(printStream);
@@ -707,7 +707,7 @@ public class LeilaVisitor extends PrintVisitor {
         } else if (pointTowards.getPosition() instanceof FromExpression) {
             // A sprite
             emitNoSpace("pointTowards(");
-            StringExpr strExpr = ((FromExpression)pointTowards.getPosition()).getStringExpr();
+            StringExpr strExpr = ((FromExpression) pointTowards.getPosition()).getStringExpr();
             emitActorExpression(strExpr);
             closeParentheses();
         } else if (pointTowards.getPosition() instanceof RandomPos) {
@@ -1222,7 +1222,6 @@ public class LeilaVisitor extends PrintVisitor {
     private void define() {
         emitToken("define");
     }
-
 
     private void of() {
         emitToken(" of");
@@ -1993,7 +1992,8 @@ public class LeilaVisitor extends PrintVisitor {
         declarationBroadcastStmt.getType().accept(this);
     }
 
-    @Override public void visit(Volume volume) {
+    @Override
+    public void visit(Volume volume) {
         emitNoSpace("volume()");
     }
 }
