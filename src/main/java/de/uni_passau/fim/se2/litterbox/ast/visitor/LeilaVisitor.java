@@ -972,7 +972,11 @@ public class LeilaVisitor extends PrintVisitor {
             emitNoSpace(prepareName(procedureName));
         } else {
             Set<Map.Entry<LocalIdentifier, ProcedureInfo>> entries = procedures.entrySet();
-            Map.Entry<LocalIdentifier, ProcedureInfo> procedureInfo = entries.stream().filter(entry -> entry.getValue().getName().equals(procedureName)).findFirst().get();
+            Map.Entry<LocalIdentifier, ProcedureInfo> procedureInfo = entries
+                    .stream()
+                    .filter(entry -> entry.getValue().getName().equals(procedureName))
+                    .findFirst()
+                    .get();
             emitNoSpace(generateProcedureName(procedureName, procedureInfo.getKey().getName()));
         }
         openParentheses();
@@ -988,7 +992,7 @@ public class LeilaVisitor extends PrintVisitor {
 
     private String generateProcedureName(String procedureName, String identifier) {
         procedureName = prepareName(procedureName);
-        procedureName = procedureName + "_" + identifier; // FIXME BASTET will not parse this as the identifiers have a bunch of unsupported characters for method definitions
+        procedureName = procedureName + "_" + identifier; // FIXME handle unsupported chars in identifiers
         return procedureName;
     }
 
@@ -998,8 +1002,8 @@ public class LeilaVisitor extends PrintVisitor {
         return procedures.get(currentActor);
     }
 
-    private boolean isUniqueProcedureName(String procedureName, Map<LocalIdentifier, ProcedureInfo> proceduresOfSprite) {
-        Collection<ProcedureInfo> procedureInfos = proceduresOfSprite.values();
+    private boolean isUniqueProcedureName(String procedureName, Map<LocalIdentifier, ProcedureInfo> procedures) {
+        Collection<ProcedureInfo> procedureInfos = procedures.values();
         int proceduresWithGivenName = 0;
         for (ProcedureInfo procedureInfo : procedureInfos) {
             String name = procedureInfo.getName();
@@ -1604,7 +1608,8 @@ public class LeilaVisitor extends PrintVisitor {
         switch (numFunctOf.getOperand1()) {
             case ABS:
                 emitNoSpace("mathAbsF(");
-                expectFloat(); // TODO there is also mathAbs for integers but finding out whether a NumExpr evaluates to an int or float is nearly impossible
+                expectFloat(); // TODO there is also mathAbs for integers but finding out whether a NumExpr evaluates to
+                // an int or float is nearly impossible
                 expectationSet = true;
                 break;
             case LN:
