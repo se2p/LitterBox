@@ -1663,6 +1663,7 @@ public class LeilaVisitor extends PrintVisitor {
                 emitNoSpace("mathTan(");
                 break;
             case UNKNOWN:
+            default:
                 throw new RuntimeException("Unknown numerical function");
         }
         if (!expectationSet) {
