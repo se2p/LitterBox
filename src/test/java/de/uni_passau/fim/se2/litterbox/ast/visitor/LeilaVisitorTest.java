@@ -102,11 +102,11 @@ public class LeilaVisitorTest {
     }
 
     @Test
-    public void testProcedureCombinedText() throws Exception {
+    public void testProcedureCombinedTextAndParams() throws Exception {
         String path = "src/test/fixtures/leilaVisitor/ambiguousProcedureAndCombinedTextSignature.json";
         String output = getLeilaForProject(path);
 
-        assertThat(output).contains("myMethodWithParamsText");
+        assertThat(output).contains("define myMethodWithParamsText (aParam: string, bParam: boolean) begin");
     }
 
     @Test
