@@ -315,7 +315,7 @@ public class LeilaVisitor extends PrintVisitor {
     }
 
     @Override
-    public void visit(BackdropSwitchTo backdropSwitchTo) {
+    public void visit(BackdropSwitchTo backdropSwitchTo) { // TODO update - ConditionReachedEvent?
         emitToken("backdrop");
         emitToken("switched");
         emitToken("to");
@@ -357,6 +357,7 @@ public class LeilaVisitor extends PrintVisitor {
     public void visit(ReceptionOfMessage receptionOfMessage) {
         emitToken("message");
         receptionOfMessage.getMsg().accept(this);
+        emitToken("()");
     }
 
     @Override
@@ -370,7 +371,7 @@ public class LeilaVisitor extends PrintVisitor {
     }
 
     @Override
-    public void visit(AttributeAboveValue attributeAboveValue) {
+    public void visit(AttributeAboveValue attributeAboveValue) { // TODO update - ConditionReachedEvent?
         emitToken("value of");
         attributeAboveValue.getAttribute().accept(this);
         emitToken(" above");
