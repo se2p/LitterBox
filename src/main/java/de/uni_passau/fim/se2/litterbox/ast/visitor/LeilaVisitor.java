@@ -29,6 +29,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.UnspecifiedExpressio
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.ExpressionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.Timer;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.AttributeFromFixed;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.FixedAttribute;
@@ -82,13 +83,11 @@ import de.uni_passau.fim.se2.litterbox.ast.model.type.StringType;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Parameter;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.ScratchList;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
-import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
+import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ProcedureDefinitionNameMapping;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ProcedureInfo;
 
 import java.io.PrintStream;
-import java.util.List;
-import java.util.Map;
-import java.util.Stack;
+import java.util.*;
 import java.util.regex.Pattern;
 
 import static de.uni_passau.fim.se2.litterbox.ast.visitor.LeilaVisitor.TYPE.*;
@@ -101,7 +100,9 @@ public class LeilaVisitor extends PrintVisitor {
     private int skippedDeclarations = 0;
     private final boolean noCast = false;
     private boolean showHideVar = false;
+    private boolean methodCall = false;
     private String currentActor = null;
+    private Program program = null;
     private Stack<TYPE> expectedTypes = new Stack<>();
 
     enum TYPE {
@@ -168,6 +169,7 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(Program program) {
+        this.program = program;
         emitToken("program");
         program.getIdent().accept(this);
         newLine();
@@ -179,6 +181,7 @@ public class LeilaVisitor extends PrintVisitor {
                 newLine();
             }
         }
+        this.program = null;
     }
 
     @Override
@@ -221,10 +224,8 @@ public class LeilaVisitor extends PrintVisitor {
 
         ProcedureDefinitionList procDefList = def.getProcedureDefinitionList();
         List<ProcedureDefinition> procDefs = procDefList.getList();
-        if (procDefs.size() > 0) {
-            newLine();
-        }
         for (ProcedureDefinition procDef : procDefs) {
+            newLine();
             newLine();
             appendIndentation();
             procDef.accept(this);
@@ -232,10 +233,8 @@ public class LeilaVisitor extends PrintVisitor {
 
         ScriptList scripts = def.getScripts();
         List<Script> scriptList = scripts.getScriptList();
-        if (scriptList.size() > 0) {
-            newLine();
-        }
         for (Script script : scriptList) {
+            newLine();
             newLine();
             appendIndentation();
             script.accept(this);
@@ -514,7 +513,7 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(Think think) {
-        emitToken("thinkText(");
+        emitNoSpace("thinkText(");
         think.getThought().accept(this);
         closeParentheses();
     }
@@ -887,14 +886,10 @@ public class LeilaVisitor extends PrintVisitor {
     }
 
     @Override
-    public void visit(CallStmt callStmt) {
-        callStmt.getIdent().accept(this);
-        callStmt.getExpressions().accept(this);
-    }
-
-    @Override
     public void visit(ExpressionList expressionList) {
-        emitNoSpace("[");
+        if (!methodCall) {
+            emitNoSpace("[");
+        }
         List<Expression> expressions = expressionList.getExpressions();
         if (expressions.size() > 0) {
             expectOriginal();
@@ -905,7 +900,9 @@ public class LeilaVisitor extends PrintVisitor {
             expressions.get(expressions.size() - 1).accept(this);
             endExpectation();
         }
-        emitNoSpace("]");
+        if (!methodCall) {
+            emitNoSpace("]");
+        }
     }
 
     @Override
@@ -954,16 +951,64 @@ public class LeilaVisitor extends PrintVisitor {
     @Override
     public void visit(ProcedureDefinition procedureDefinition) {
         emitToken("define");
-        Map<String, Map<LocalIdentifier, ProcedureInfo>> procedures = ProgramParser.procDefMap.getProcedures();
-        String procedureName = procedures.get(currentActor).get(procedureDefinition.getIdent()).getName();
-        int paramIndex = procedureName.indexOf('%');
-        if (paramIndex > 0) {
-            procedureName = procedureName.substring(0, paramIndex);
+        Map<LocalIdentifier, ProcedureInfo> proceduresOfSprite = getProceduresOfCurrentSprite();
+        String procedureName = proceduresOfSprite.get(procedureDefinition.getIdent()).getName();
+
+        if (isUniqueProcedureName(procedureName, proceduresOfSprite)) {
+            emitToken(prepareName(procedureName));
+        } else {
+            String identifier = procedureDefinition.getIdent().getName();
+            emitToken(generateProcedureName(procedureName, identifier));
         }
-        emitToken(procedureName); // FIXME that does not work with method names that aren't unique
         // or contain whitespaces
         procedureDefinition.getParameterDefinitionList().accept(this);
         procedureDefinition.getStmtList().accept(this);
+    }
+
+    @Override
+    public void visit(CallStmt callStmt) {
+        String procedureName = callStmt.getIdent().getName();
+        Map<LocalIdentifier, ProcedureInfo> procedures = getProceduresOfCurrentSprite();
+        if (isUniqueProcedureName(procedureName, procedures)) {
+            emitNoSpace(prepareName(procedureName));
+        } else {
+            Set<Map.Entry<LocalIdentifier, ProcedureInfo>> entries = procedures.entrySet();
+            Map.Entry<LocalIdentifier, ProcedureInfo> procedureInfo = entries.stream().filter(entry -> entry.getValue().getName().equals(procedureName)).findFirst().get();
+            emitNoSpace(generateProcedureName(procedureName, procedureInfo.getKey().getName()));
+        }
+        openParentheses();
+        methodCall = true;
+        callStmt.getExpressions().accept(this);
+        methodCall = false;
+        closeParentheses();
+    }
+
+    private String prepareName(String procedureName) {
+        return procedureName.trim().replace(" ", "").replace("\"", "").replace("%s", "").replace("%b", "");
+    }
+
+    private String generateProcedureName(String procedureName, String identifier) {
+        procedureName = prepareName(procedureName);
+        procedureName = procedureName + "_" + identifier; // FIXME BASTET will not parse this as the identifiers have a bunch of unsupported characters for method definitions
+        return procedureName;
+    }
+
+    private Map<LocalIdentifier, ProcedureInfo> getProceduresOfCurrentSprite() {
+        ProcedureDefinitionNameMapping procedureMapping = program.getProcedureMapping();
+        Map<String, Map<LocalIdentifier, ProcedureInfo>> procedures = procedureMapping.getProcedures();
+        return procedures.get(currentActor);
+    }
+
+    private boolean isUniqueProcedureName(String procedureName, Map<LocalIdentifier, ProcedureInfo> proceduresOfSprite) {
+        Collection<ProcedureInfo> procedureInfos = proceduresOfSprite.values();
+        int proceduresWithGivenName = 0;
+        for (ProcedureInfo procedureInfo : procedureInfos) {
+            String name = procedureInfo.getName();
+            if (name.equals(procedureName)) {
+                proceduresWithGivenName++;
+            }
+        }
+        return proceduresWithGivenName == 1;
     }
 
     @Override

@@ -102,6 +102,26 @@ public class LeilaVisitorTest {
         assertThat(output).contains("touchingColor((0 + 0))");
     }
 
+    @Test
+    public void testProcedureCombinedText() throws Exception {
+        String path = "src/test/fixtures/leilaVisitor/ambiguousProcedureAndCombinedTextSignature.json";
+        String output = getLeilaForProject(path);
+
+        assertThat(output).contains("myMethodWithParamsText");
+    }
+
+    @Test
+    public void testAmbiguousProcedureName() throws Exception {
+        String path = "src/test/fixtures/leilaVisitor/ambiguousProcedureAndCombinedTextSignature.json";
+        String output = getLeilaForProject(path);
+
+        assertThat(output).contains("define myMethod_,y4+jC!5_KL#z]ByYJ^H () begin");
+        assertThat(output).contains("define myMethod_LxW~gi,I]9)6;-1DnDd) () begin");
+        assertThat(output).contains("define myMethod_LxW~gi,I]9)6;-1DnDd) () begin");
+        assertThat(output).contains("myMethod_,y4+jC!5_KL#z]ByYJ^H()");
+        assertThat(output).doesNotContain("myMethod_LxW~gi,I]9)6;-1DnDd)()");
+    }
+
     private String getLeilaForProject(String path) throws IOException, ParsingException {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         File file = new File(path);
