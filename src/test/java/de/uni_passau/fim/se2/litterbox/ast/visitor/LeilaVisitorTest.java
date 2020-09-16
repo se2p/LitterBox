@@ -24,7 +24,6 @@ import de.uni_passau.fim.se2.litterbox.analytics.LeilaAnalyzer;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
-import org.junit.Ignore;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -153,43 +152,6 @@ public class LeilaVisitorTest {
         try {
             project = objectMapper.readTree(file);
         } catch (IOException e) {
-            fail();
-        }
-    }
-
-    @Ignore // This is not really a test, it's a convenience method for showing what the visitor does or does not
-    // @Test
-    public void testVisitor() {
-        PrintStream stream = new PrintStream(System.out);
-        LeilaVisitor visitor = new LeilaVisitor(stream, false, true);
-        try {
-            Program program = ProgramParser.parseProgram("Small", project);
-            visitor.visit(program);
-        } catch (ParsingException e) {
-            e.printStackTrace();
-            fail();
-        }
-    }
-
-    @Ignore // This is not really a test, it's a convenience method for showing what the visitor does or does not
-    //@Test
-    public void testVisitorBig() {
-        String path = "src/test/fixtures/leilaVisitor/fruitCatch.json";
-        File file = new File(path);
-        ObjectMapper objectMapper = new ObjectMapper();
-        JsonNode project = null;
-        try {
-            project = objectMapper.readTree(file);
-        } catch (IOException e) {
-            fail();
-        }
-        PrintStream stream = new PrintStream(System.out);
-        LeilaVisitor visitor = new LeilaVisitor(stream, false, true);
-        try {
-            Program program = ProgramParser.parseProgram("Small", project);
-            visitor.visit(program);
-        } catch (ParsingException e) {
-            e.printStackTrace();
             fail();
         }
     }

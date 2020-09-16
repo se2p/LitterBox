@@ -960,7 +960,6 @@ public class LeilaVisitor extends PrintVisitor {
             String identifier = procedureDefinition.getIdent().getName();
             emitToken(generateProcedureName(procedureName, identifier));
         }
-        // or contain whitespaces
         procedureDefinition.getParameterDefinitionList().accept(this);
         procedureDefinition.getStmtList().accept(this);
     }
