@@ -176,7 +176,7 @@ public class ControlFlowGraphBuilder {
     }
 
     public void addVariableEventHandler(AttributeAboveValue node) {
-        CFGNode eventNode = cfg.addNode(node);
+        CFGNode eventNode = cfg.addNode(node, currentActor);
         cfg.addEdgeFromEntry(eventNode);
         cfg.addEdgeToExit(eventNode);
 

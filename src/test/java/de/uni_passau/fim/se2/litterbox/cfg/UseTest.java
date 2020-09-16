@@ -22,6 +22,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.model.event.AttributeAboveValue;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.ShowVariable;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.ChangeVariableBy;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetVariableTo;
@@ -177,6 +178,17 @@ public class UseTest {
             assertThat(node.getDefinitions()).isEmpty();
             assertThat(node.getUses()).isEmpty();
         }
+    }
+
+    @Test
+    public void testTimerUses() throws IOException, ParsingException {
+        ControlFlowGraph cfg = getCFG("src/test/fixtures/dataflow/timerBlock.json");
+        List<CFGNode> nodes = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof AttributeAboveValue).collect(Collectors.toList());
+        assertThat(nodes).hasSize(1);
+        CFGNode node = nodes.iterator().next();
+
+        assertThat(node.getUses()).hasSize(1);
+        assertThat(node.getDefinitions()).isEmpty();
     }
 
     @Test

@@ -20,6 +20,7 @@ package de.uni_passau.fim.se2.litterbox.cfg;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.WithExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.event.AttributeAboveValue;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AttributeOf;
@@ -147,6 +148,12 @@ public class AttributeUseVisitor implements DefinableCollector<Attribute> {
     }
 
     @Override
+    public void visit(AttributeAboveValue node) {
+        // TODO: Handle use of timer and volume attributes here once implemented (#210)
+        node.getValue().accept(this);
+    }
+
+    @Override
     public void visit(AttributeOf node) {
         // TODO: Handle this
 
@@ -189,6 +196,14 @@ public class AttributeUseVisitor implements DefinableCollector<Attribute> {
                         // TODO: What should happen in the default case?
                 }
             }
+            // TODO: Once we handle parameters:
+            //        } else if (owner instanceof Parameter) {
+            //            Parameter parameter = (Parameter) owner;
+            //            if (attribute instanceof AttributeFromFixed) {
+            //                AttributeFromFixed fixedAttribute = (AttributeFromFixed) attribute;
+            //
+            //            }
+            // }
         }
     }
 }

@@ -68,7 +68,6 @@ public class MissingInitializationTest {
 
         ControlFlowGraphVisitor visitor = new ControlFlowGraphVisitor();
         visitor.visit(program);
-        System.out.println(visitor.getControlFlowGraph().toDotString());
 
         Set<Issue> reports = (new MissingInitialization()).check(program);
         Assertions.assertEquals(1, reports.size());
