@@ -74,7 +74,7 @@ public class LeilaVisitorTest {
         String path = "src/test/fixtures/leilaVisitor/join.json";
         String output = getLeilaForProject(path);
 
-        assertThat(output).contains("join \"apple \" \"banana\"");
+        assertThat(output).contains("joinStrings(\"apple \", \"banana\")");
     }
 
     @Test
