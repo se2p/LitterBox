@@ -114,11 +114,10 @@ public class LeilaVisitorTest {
         String path = "src/test/fixtures/leilaVisitor/ambiguousProcedureAndCombinedTextSignature.json";
         String output = getLeilaForProject(path);
 
-        assertThat(output).contains("define myMethod_,y4+jC!5_KL#z]ByYJ^H () begin");
-        assertThat(output).contains("define myMethod_LxW~gi,I]9)6;-1DnDd) () begin");
-        assertThat(output).contains("define myMethod_LxW~gi,I]9)6;-1DnDd) () begin");
-        assertThat(output).contains("myMethod_,y4+jC!5_KL#z]ByYJ^H()");
-        assertThat(output).doesNotContain("myMethod_LxW~gi,I]9)6;-1DnDd)()");
+        assertThat(output).contains("define myMethod_LHk0K2pDITVfS0wjel1CeVlKXkg () begin");
+        assertThat(output).contains("define myMethod_THhXfmdpLEldOSk2Oy0xRG5EZCk () begin");
+        assertThat(output).contains("myMethod_LHk0K2pDITVfS0wjel1CeVlKXkg()");
+        assertThat(output).doesNotContain("myMethod_THhXfmdpLEldOSk2Oy0xRG5EZCk()");
     }
 
     private String getLeilaForProject(String path) throws IOException, ParsingException {

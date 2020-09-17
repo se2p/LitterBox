@@ -959,7 +959,7 @@ public class LeilaVisitor extends PrintVisitor {
             emitToken(prepareName(procedureName));
         } else {
             String identifier = procedureDefinition.getIdent().getName();
-            emitToken(generateProcedureName(procedureName, identifier));
+            emitToken(generateUniqueProcedureName(procedureName, identifier));
         }
         procedureDefinition.getParameterDefinitionList().accept(this);
         procedureDefinition.getStmtList().accept(this);
@@ -978,7 +978,7 @@ public class LeilaVisitor extends PrintVisitor {
                     .filter(entry -> entry.getValue().getName().equals(procedureName))
                     .findFirst()
                     .get();
-            emitNoSpace(generateProcedureName(procedureName, procedureInfo.getKey().getName()));
+            emitNoSpace(generateUniqueProcedureName(procedureName, procedureInfo.getKey().getName()));
         }
         openParentheses();
         methodCall = true;
@@ -991,10 +991,17 @@ public class LeilaVisitor extends PrintVisitor {
         return procedureName.trim().replace(" ", "").replace("\"", "").replace("%s", "").replace("%b", "");
     }
 
-    private String generateProcedureName(String procedureName, String identifier) {
+    private String generateUniqueProcedureName(String procedureName, String identifier) {
         procedureName = prepareName(procedureName);
-        procedureName = procedureName + "_" + identifier; // FIXME handle unsupported chars in identifiers
+        procedureName = procedureName + "_" + prepareIdentifier(identifier);
         return procedureName;
+    }
+
+    private String prepareIdentifier(String identifier) {
+        return Base64.getEncoder().encodeToString(identifier.getBytes())
+                .replace("+", "")
+                .replace("/", "")
+                .replace("=", "");
     }
 
     private Map<LocalIdentifier, ProcedureInfo> getProceduresOfCurrentSprite() {
