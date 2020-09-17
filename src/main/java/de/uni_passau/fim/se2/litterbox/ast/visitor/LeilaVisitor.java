@@ -1105,7 +1105,7 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(NumberType numberType) {
-        emitNoSpace("integer");
+        emitNoSpace("float");
     }
 
     @Override
