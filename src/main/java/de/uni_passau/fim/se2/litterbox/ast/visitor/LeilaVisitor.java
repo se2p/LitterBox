@@ -832,8 +832,9 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(WaitUntil waitUntil) {
-        emitToken("wait until");
+        emitNoSpace("waitUntil(");
         waitUntil.getUntil().accept(this);
+        closeParentheses();
     }
 
     @Override
@@ -843,8 +844,9 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(CreateCloneOf createCloneOf) {
-        emitToken("create clone of");
+        emitNoSpace("createCloneOf(");
         createCloneOf.getStringExpr().accept(this);
+        closeParentheses();
     }
 
     @Override
@@ -862,7 +864,7 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(ResetTimer resetTimer) {
-        emitToken("reset timer");
+        emitToken("resetTimer()");
     }
 
     @Override
@@ -1137,20 +1139,22 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(Join join) {
-        emitToken("join");
+        emitNoSpace("joinStrings(");
         join.getOperand1().accept(this);
-        emitNoSpace(" ");
+        comma();
         join.getOperand2().accept(this);
+        closeParentheses();
     }
 
     @Override
     public void visit(LetterOf letterOf) {
-        emitToken("letter");
+        emitNoSpace("letterOf(");
         expectInteger();
         letterOf.getNum().accept(this);
         endExpectation();
-        of();
+        comma();
         letterOf.getStringExpr().accept(this);
+        closeParentheses();
     }
 
     @Override
@@ -1469,7 +1473,7 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(Timer timer) {
-        emitNoSpace("timer");
+        emitNoSpace("timerValue()");
     }
 
     @Override
