@@ -238,6 +238,10 @@ public class LeilaVisitor extends PrintVisitor {
             newLine();
             appendIndentation();
             script.accept(this);
+            Event event = script.getEvent();
+            if (event instanceof BackdropSwitchTo) {
+                emitSwitchListener((BackdropSwitchTo) event);
+            }
         }
         endIndentation();
         newLine();
@@ -315,11 +319,45 @@ public class LeilaVisitor extends PrintVisitor {
     }
 
     @Override
-    public void visit(BackdropSwitchTo backdropSwitchTo) { // TODO update - ConditionReachedEvent?
-        emitToken("backdrop");
-        emitToken("switched");
-        emitToken("to");
+    public void visit(BackdropSwitchTo backdropSwitchTo) {
+        emitNoSpace("message \"BACKDROP_SWITCHED_TO_");
         backdropSwitchTo.getBackdrop().accept(this);
+        emitNoSpace("\" ()");
+    }
+
+    private void emitNewLineWithIndentation(String content) {
+        newLine();
+        appendIndentation();
+        emitNoSpace(content);
+    }
+
+    private void emitSwitchListener(BackdropSwitchTo backdropSwitchTo) {
+        newLine();
+        newLine();
+        appendIndentation();
+        emitNoSpace("script on startup do");
+        begin();
+        beginIndentation();
+        emitNewLineWithIndentation("declare oldBackdrop as string");
+        emitNewLineWithIndentation("define oldBackdrop as backdropName()");
+        emitNewLineWithIndentation("declare currentBackdrop as string");
+        emitNewLineWithIndentation("define currentBackdrop as backdropName()");
+        emitNewLineWithIndentation("forever");
+        beginIndentation();
+        String backdrop = backdropSwitchTo.getBackdrop().getName();
+        emitNewLineWithIndentation("if ((not (oldBackdrop = \"" + backdrop + "\")) "
+                + "and (currentBackdrop = \"" + backdrop + "\")) then");
+        begin();
+        beginIndentation();
+        emitNewLineWithIndentation("broadcast \"BACKDROP_SWITCHED_TO_" + backdrop + "\" ()");
+        endIndentation();
+        end();
+        emitNewLineWithIndentation("define oldBackdrop as currentBackdrop");
+        emitNewLineWithIndentation("define currentBackdrop as backdropName()");
+        endIndentation();
+        end();
+        endIndentation();
+        end();
     }
 
     @Override
@@ -626,13 +664,9 @@ public class LeilaVisitor extends PrintVisitor {
             emitToken("goToRandomPosition()");
         } else if (position instanceof FromExpression) {
             emitToken("declare o as actor");
-            newLine();
-            appendIndentation();
-            emitToken("define o as");
+            emitNewLineWithIndentation("define o as");
             position.accept(this);
-            newLine();
-            appendIndentation();
-            emitToken("goToSprite(o)");
+            emitNewLineWithIndentation("goToSprite(o)");
         } else if (position instanceof MousePos) {
             emitNoSpace("goTo(");
             position.accept(this);
@@ -666,9 +700,7 @@ public class LeilaVisitor extends PrintVisitor {
             closeParentheses();
         } else if (position instanceof FromExpression) {
             emitToken("declare o as actor");
-            newLine();
-            appendIndentation();
-            emitToken("define o as");
+            emitNewLineWithIndentation("define o as");
             position.accept(this);
             newLine();
             appendIndentation();

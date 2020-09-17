@@ -120,6 +120,32 @@ public class LeilaVisitorTest {
         assertThat(output).doesNotContain("myMethod_THhXfmdpLEldOSk2Oy0xRG5EZCk()");
     }
 
+    @Test
+    public void testBackdropSwitchEvent() throws Exception {
+        String path = "src/test/fixtures/leilaVisitor/backdropSwitchEvent.json";
+        String output = getLeilaForProject(path);
+
+        assertThat(output).contains("script on message \"BACKDROP_SWITCHED_TO_backdrop1\" () do begin \n"
+                + "        moveSteps(10)\n"
+                + "    end \n"
+                + "\n"
+                + "    script on startup do begin \n"
+                + "        declare oldBackdrop as string\n"
+                + "        define oldBackdrop as backdropName()\n"
+                + "        declare currentBackdrop as string\n"
+                + "        define currentBackdrop as backdropName()\n"
+                + "        forever\n"
+                + "            if ((not (oldBackdrop = \"backdrop1\")) and (currentBackdrop = \"backdrop1\")) then begin \n"
+                + "                broadcast \"BACKDROP_SWITCHED_TO_backdrop1\" ()\n"
+                + "            end \n"
+                + "            define oldBackdrop as currentBackdrop\n"
+                + "            define currentBackdrop as backdropName()\n"
+                + "        end \n"
+                + "    end \n"
+                + "\n"
+                + "end ");
+    }
+
     private String getLeilaForProject(String path) throws IOException, ParsingException {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         File file = new File(path);
