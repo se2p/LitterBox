@@ -121,6 +121,37 @@ public class LeilaVisitorTest {
     }
 
     @Test
+    public void testAttributeAboveValue() throws Exception {
+        String path = "src/test/fixtures/leilaVisitor/attributeAboveValue.json";
+        String output = getLeilaForProject(path);
+
+        assertThat(output).contains("\n"
+                + "    script on message \"loudness_ABOVE_10\" do begin \n"
+                + "        moveSteps(10)\n"
+                + "    end \n"
+                + "\n"
+                + "    script on startup do begin \n"
+                + "        forever\n"
+                + "            if (loudness > 10) begin \n"
+                + "                broadcast \"loudness_ABOVE_10\"\n"
+                + "            end \n"
+                + "        end \n"
+                + "    end \n"
+                + "\n"
+                + "    script on message \"timer_ABOVE_10\" do begin \n"
+                + "        moveSteps(10)\n"
+                + "    end \n"
+                + "\n"
+                + "    script on startup do begin \n"
+                + "        forever\n"
+                + "            if (timer > 10) begin \n"
+                + "                broadcast \"timer_ABOVE_10\"\n"
+                + "            end \n"
+                + "        end \n"
+                + "    end ");
+    }
+
+    @Test
     public void testBackdropSwitchEvent() throws Exception {
         String path = "src/test/fixtures/leilaVisitor/backdropSwitchEvent.json";
         String output = getLeilaForProject(path);

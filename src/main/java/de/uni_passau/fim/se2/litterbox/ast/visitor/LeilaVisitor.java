@@ -241,6 +241,8 @@ public class LeilaVisitor extends PrintVisitor {
             Event event = script.getEvent();
             if (event instanceof BackdropSwitchTo) {
                 emitSwitchListener((BackdropSwitchTo) event);
+            } else if (event instanceof AttributeAboveValue) {
+                emitAttributeValueListener((AttributeAboveValue) event);
             }
         }
         endIndentation();
@@ -409,12 +411,46 @@ public class LeilaVisitor extends PrintVisitor {
     }
 
     @Override
-    public void visit(AttributeAboveValue attributeAboveValue) { // TODO update - ConditionReachedEvent?
-        emitToken("value of");
+    public void visit(AttributeAboveValue attributeAboveValue) {
+        emitNoSpace("message \"");
         attributeAboveValue.getAttribute().accept(this);
-        emitToken(" above");
+        emitNoSpace("_ABOVE_");
         expectOriginal();
         attributeAboveValue.getValue().accept(this);
+        endExpectation();
+        emitNoSpace("\"");
+    }
+
+    private void emitAttributeValueListener(AttributeAboveValue attributeAboveValue) {
+        expectOriginal();
+        newLine();
+        newLine();
+        appendIndentation();
+        emitNoSpace("script on startup do");
+        begin();
+        beginIndentation();
+        emitNewLineWithIndentation("forever");
+        beginIndentation();
+        emitNewLineWithIndentation("if (");
+        attributeAboveValue.getAttribute().accept(this);
+        emitNoSpace(" > ");
+        attributeAboveValue.getValue().accept(this);
+        closeParentheses();
+        begin();
+        beginIndentation();
+        emitNewLineWithIndentation("broadcast \"");
+        attributeAboveValue.getAttribute().accept(this);
+        emitNoSpace("_ABOVE_");
+        expectOriginal();
+        attributeAboveValue.getValue().accept(this);
+        endExpectation();
+        emitNoSpace("\"");
+        endIndentation();
+        end();
+        endIndentation();
+        end();
+        endIndentation();
+        end();
         endExpectation();
     }
 
@@ -1910,7 +1946,7 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(EventAttribute eventAttribute) {
-        emitToken(eventAttribute.getType());
+        emitNoSpace(eventAttribute.getType());
     }
 
     @Override
