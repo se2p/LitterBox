@@ -838,7 +838,7 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(StopOtherScriptsInSprite stopOtherScriptsInSprite) {
-        emitToken("stop other scripts in actor");
+        emitToken("stopOtherScriptsInActor()");
     }
 
     @Override
@@ -1029,12 +1029,12 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(StopAll stopAll) {
-        emitToken("stop all");
+        emitToken("stopAll()");
     }
 
     @Override
     public void visit(StopThisScript stopThisScript) {
-        emitToken("stop this script");
+        emitToken("stopThisScript()");
     }
 
     @Override
