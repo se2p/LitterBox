@@ -642,7 +642,6 @@ public class ScratchBlocksVisitorTest {
         program.accept(visitor);
         visitor.end();
         String result = os.toString();
-        System.out.println(result);
         assertEquals("[scratchblocks]\n" +
                 "erase all\n" +
                 "stamp\n" +
@@ -858,7 +857,6 @@ public class ScratchBlocksVisitorTest {
         issue.getScriptOrProcedureDefinition().accept(visitor);
         visitor.end();
         String output = visitor.getScratchBlocks();
-        System.out.println(output);
         assertEquals("[scratchblocks]\n" +
                 "when green flag clicked\n" +
                 "block name [reed] <>:: #ff0000 // Custom Block With Forever\n" +
@@ -879,7 +877,6 @@ public class ScratchBlocksVisitorTest {
         issue.getScriptOrProcedureDefinition().accept(visitor);
         visitor.end();
         String output = visitor.getScratchBlocks();
-        System.out.println(output);
         assertEquals("[scratchblocks]\n" +
                 "when green flag clicked\n" +
                 "block name:: #ff0000 // Custom Block with Termination\n" +
@@ -900,7 +897,6 @@ public class ScratchBlocksVisitorTest {
         issue.getScriptOrProcedureDefinition().accept(visitor);
         visitor.end();
         String output = visitor.getScratchBlocks();
-        System.out.println(output);
         assertEquals("[scratchblocks]\n" +
                 "block name [] <>:: #ff0000 // Call Without Definition\n" +
                 "[/scratchblocks]\n", output);
@@ -1022,7 +1018,6 @@ public class ScratchBlocksVisitorTest {
         issue.getScriptOrProcedureDefinition().accept(visitor);
         visitor.end();
         String output = visitor.getScratchBlocks();
-        System.out.println(output);
         assertEquals("[scratchblocks]\n" +
                 "when green flag clicked\n" +
                 "broadcast (received v)\n" +
@@ -1140,7 +1135,6 @@ public class ScratchBlocksVisitorTest {
         issue.getScriptOrProcedureDefinition().accept(visitor);
         visitor.end();
         String output = visitor.getScratchBlocks();
-        System.out.println(output);
         assertEquals("[scratchblocks]\n" +
                 "when green flag clicked\n" +
                 "say (meine Variable) for (2) seconds:: #ff0000 // Missing Initialization\n" +
@@ -1245,7 +1239,6 @@ public class ScratchBlocksVisitorTest {
         issue.getScriptOrProcedureDefinition().accept(visitor);
         visitor.end();
         String output = visitor.getScratchBlocks();
-        System.out.println(output);
         assertEquals("[scratchblocks]\n" +
                 "when green flag clicked\n" +
                 "wait until <>:: #ff0000 // Missing Wait Until Condition\n" +
@@ -1363,7 +1356,6 @@ public class ScratchBlocksVisitorTest {
         issue.getScriptOrProcedureDefinition().accept(visitor);
         visitor.end();
         String output = visitor.getScratchBlocks();
-        System.out.println(output);
         assertEquals("[scratchblocks]\n" +
                 "(the list:: #ff0000 :: list) // Unused Variable\n" +
                 "[/scratchblocks]\n", output);
