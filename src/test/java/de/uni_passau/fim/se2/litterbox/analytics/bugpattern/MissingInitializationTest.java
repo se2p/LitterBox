@@ -137,10 +137,6 @@ public class MissingInitializationTest {
         File f = new File("src/test/fixtures/bugpattern/missingVariableAndAttributeInitialization.json");
         Program program = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
 
-        ControlFlowGraphVisitor visitor = new ControlFlowGraphVisitor();
-        visitor.visit(program);
-        System.out.println(visitor.getControlFlowGraph().toDotString());
-
         Set<Issue> reports = (new MissingInitialization()).check(program);
         Assertions.assertEquals(2, reports.size());
     }

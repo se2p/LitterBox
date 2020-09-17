@@ -69,7 +69,7 @@ public class AmbiguousParameterNameUnusedTest {
     public void testClans() {
         AmbiguousParameterNameUnused parameterName = new AmbiguousParameterNameUnused();
         Set<Issue> reports = parameterName.check(clans);
-        Assertions.assertEquals(1, reports.size());
+        Assertions.assertEquals(0, reports.size());
     }
 
     @Test
