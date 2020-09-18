@@ -344,7 +344,7 @@ public class LeilaVisitor extends PrintVisitor {
         emitNewLineWithIndentation("define oldBackdrop as backdropName()");
         emitNewLineWithIndentation("declare currentBackdrop as string");
         emitNewLineWithIndentation("define currentBackdrop as backdropName()");
-        emitNewLineWithIndentation("forever");
+        emitNewLineWithIndentation("repeat forever");
         beginIndentation();
         String backdrop = backdropSwitchTo.getBackdrop().getName();
         emitNewLineWithIndentation("if ((not (oldBackdrop = \"" + backdrop + "\")) "
@@ -429,7 +429,7 @@ public class LeilaVisitor extends PrintVisitor {
         emitNoSpace("script on startup do");
         begin();
         beginIndentation();
-        emitNewLineWithIndentation("forever");
+        emitNewLineWithIndentation("repeat forever");
         beginIndentation();
         emitNewLineWithIndentation("if (");
         attributeAboveValue.getAttribute().accept(this);
@@ -814,10 +814,11 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(ChangeYBy changeYBy) {
-        emitToken("define y as y +");
+        emitNoSpace("changeYBy(");
         expectInteger();
         changeYBy.getNum().accept(this);
         endExpectation();
+        closeParentheses();
     }
 
     @Override
@@ -1687,8 +1688,7 @@ public class LeilaVisitor extends PrintVisitor {
         switch (numFunctOf.getOperand1()) {
             case ABS:
                 emitNoSpace("mathAbsF(");
-                expectFloat(); // TODO there is also mathAbs for integers but finding out whether a NumExpr evaluates to
-                // an int or float is nearly impossible
+                expectFloat();
                 expectationSet = true;
                 break;
             case LN:
@@ -1711,7 +1711,7 @@ public class LeilaVisitor extends PrintVisitor {
                 expectationSet = true;
                 break;
             case COS:
-                emitNoSpace("mathCos(");
+                emitNoSpace("mathCosDegree(");
                 expectFloat();
                 expectationSet = true;
                 break;
@@ -1730,7 +1730,7 @@ public class LeilaVisitor extends PrintVisitor {
                 emitNoSpace("mathPowe(");
                 break;
             case SIN:
-                emitNoSpace("mathSin(");
+                emitNoSpace("mathSinDegree(");
                 expectFloat();
                 expectationSet = true;
                 break;
