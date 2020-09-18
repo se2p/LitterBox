@@ -700,7 +700,7 @@ public class LeilaVisitor extends PrintVisitor {
             emitToken("goToRandomPosition()");
         } else if (position instanceof FromExpression) {
             emitToken("declare o as actor");
-            emitNewLineWithIndentation("define o as");
+            emitNewLineWithIndentation("define o as ");
             position.accept(this);
             emitNewLineWithIndentation("goToSprite(o)");
         } else if (position instanceof MousePos) {
