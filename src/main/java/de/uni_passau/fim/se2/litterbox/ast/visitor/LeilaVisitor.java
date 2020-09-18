@@ -28,8 +28,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.UnspecifiedExpression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.ExpressionList;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.Timer;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.AttributeFromFixed;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.FixedAttribute;
@@ -127,8 +127,8 @@ public class LeilaVisitor extends PrintVisitor {
      * Creates a new LeILa visitor that prints the LeILa equivalent of the programs to the {@code printStream}.
      *
      * @param printStream The stream to which the LeILa output will be printed.
-     * @param nonDet Indicates whether attributes should be initialized or not.
-     * @param onNever Indicates whether "Never" events are printed or not.
+     * @param nonDet      Indicates whether attributes should be initialized or not.
+     * @param onNever     Indicates whether "Never" events are printed or not.
      */
     public LeilaVisitor(PrintStream printStream, boolean nonDet, boolean onNever) {
         super(printStream);
@@ -238,6 +238,12 @@ public class LeilaVisitor extends PrintVisitor {
             newLine();
             appendIndentation();
             script.accept(this);
+            Event event = script.getEvent();
+            if (event instanceof BackdropSwitchTo) {
+                emitSwitchListener((BackdropSwitchTo) event);
+            } else if (event instanceof AttributeAboveValue) {
+                emitAttributeValueListener((AttributeAboveValue) event);
+            }
         }
         endIndentation();
         newLine();
@@ -316,10 +322,44 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(BackdropSwitchTo backdropSwitchTo) {
-        emitToken("backdrop");
-        emitToken("switched");
-        emitToken("to");
+        emitNoSpace("message \"BACKDROP_SWITCHED_TO_");
         backdropSwitchTo.getBackdrop().accept(this);
+        emitNoSpace("\" ()");
+    }
+
+    private void emitNewLineWithIndentation(String content) {
+        newLine();
+        appendIndentation();
+        emitNoSpace(content);
+    }
+
+    private void emitSwitchListener(BackdropSwitchTo backdropSwitchTo) {
+        newLine();
+        newLine();
+        appendIndentation();
+        emitNoSpace("script on startup do");
+        begin();
+        beginIndentation();
+        emitNewLineWithIndentation("declare oldBackdrop as string");
+        emitNewLineWithIndentation("define oldBackdrop as backdropName()");
+        emitNewLineWithIndentation("declare currentBackdrop as string");
+        emitNewLineWithIndentation("define currentBackdrop as backdropName()");
+        emitNewLineWithIndentation("repeat forever");
+        beginIndentation();
+        String backdrop = backdropSwitchTo.getBackdrop().getName();
+        emitNewLineWithIndentation("if ((not (oldBackdrop = \"" + backdrop + "\")) "
+                + "and (currentBackdrop = \"" + backdrop + "\")) then");
+        begin();
+        beginIndentation();
+        emitNewLineWithIndentation("broadcast \"BACKDROP_SWITCHED_TO_" + backdrop + "\" ()");
+        endIndentation();
+        end();
+        emitNewLineWithIndentation("define oldBackdrop as currentBackdrop");
+        emitNewLineWithIndentation("define currentBackdrop as backdropName()");
+        endIndentation();
+        end();
+        endIndentation();
+        end();
     }
 
     @Override
@@ -357,6 +397,7 @@ public class LeilaVisitor extends PrintVisitor {
     public void visit(ReceptionOfMessage receptionOfMessage) {
         emitToken("message");
         receptionOfMessage.getMsg().accept(this);
+        emitToken("()");
     }
 
     @Override
@@ -371,11 +412,45 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(AttributeAboveValue attributeAboveValue) {
-        emitToken("value of");
+        emitNoSpace("message \"");
         attributeAboveValue.getAttribute().accept(this);
-        emitToken(" above");
+        emitNoSpace("_ABOVE_");
         expectOriginal();
         attributeAboveValue.getValue().accept(this);
+        endExpectation();
+        emitNoSpace("\"");
+    }
+
+    private void emitAttributeValueListener(AttributeAboveValue attributeAboveValue) {
+        expectOriginal();
+        newLine();
+        newLine();
+        appendIndentation();
+        emitNoSpace("script on startup do");
+        begin();
+        beginIndentation();
+        emitNewLineWithIndentation("repeat forever");
+        beginIndentation();
+        emitNewLineWithIndentation("if (");
+        attributeAboveValue.getAttribute().accept(this);
+        emitNoSpace(" > ");
+        attributeAboveValue.getValue().accept(this);
+        closeParentheses();
+        begin();
+        beginIndentation();
+        emitNewLineWithIndentation("broadcast \"");
+        attributeAboveValue.getAttribute().accept(this);
+        emitNoSpace("_ABOVE_");
+        expectOriginal();
+        attributeAboveValue.getValue().accept(this);
+        endExpectation();
+        emitNoSpace("\"");
+        endIndentation();
+        end();
+        endIndentation();
+        end();
+        endIndentation();
+        end();
         endExpectation();
     }
 
@@ -625,15 +700,11 @@ public class LeilaVisitor extends PrintVisitor {
             emitToken("goToRandomPosition()");
         } else if (position instanceof FromExpression) {
             emitToken("declare o as actor");
-            newLine();
-            appendIndentation();
-            emitToken("define o as");
+            emitNewLineWithIndentation("define o as ");
             position.accept(this);
-            newLine();
-            appendIndentation();
-            emitToken("goToSprite(o)");
+            emitNewLineWithIndentation("goToSprite(o)");
         } else if (position instanceof MousePos) {
-            emitToken("goTo(");
+            emitNoSpace("goTo(");
             position.accept(this);
             closeParentheses();
         }
@@ -665,9 +736,7 @@ public class LeilaVisitor extends PrintVisitor {
             closeParentheses();
         } else if (position instanceof FromExpression) {
             emitToken("declare o as actor");
-            newLine();
-            appendIndentation();
-            emitToken("define o as");
+            emitNewLineWithIndentation("define o as ");
             position.accept(this);
             newLine();
             appendIndentation();
@@ -706,7 +775,7 @@ public class LeilaVisitor extends PrintVisitor {
         } else if (pointTowards.getPosition() instanceof FromExpression) {
             // A sprite
             emitNoSpace("pointTowards(");
-            StringExpr strExpr = ((FromExpression)pointTowards.getPosition()).getStringExpr();
+            StringExpr strExpr = ((FromExpression) pointTowards.getPosition()).getStringExpr();
             emitActorExpression(strExpr);
             closeParentheses();
         } else if (pointTowards.getPosition() instanceof RandomPos) {
@@ -745,10 +814,11 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(ChangeYBy changeYBy) {
-        emitToken("define y as y +");
+        emitNoSpace("changeYBy(");
         expectInteger();
         changeYBy.getNum().accept(this);
         endExpectation();
+        closeParentheses();
     }
 
     @Override
@@ -831,19 +901,21 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(WaitUntil waitUntil) {
-        emitToken("wait until");
+        emitNoSpace("waitUntil(");
         waitUntil.getUntil().accept(this);
+        closeParentheses();
     }
 
     @Override
     public void visit(StopOtherScriptsInSprite stopOtherScriptsInSprite) {
-        emitToken("stop other scripts in actor");
+        emitToken("stopOtherScriptsInActor()");
     }
 
     @Override
     public void visit(CreateCloneOf createCloneOf) {
-        emitToken("create clone of");
+        emitNoSpace("createCloneOf(");
         createCloneOf.getStringExpr().accept(this);
+        closeParentheses();
     }
 
     @Override
@@ -861,7 +933,7 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(ResetTimer resetTimer) {
-        emitToken("reset timer");
+        emitToken("resetTimer()");
     }
 
     @Override
@@ -958,7 +1030,7 @@ public class LeilaVisitor extends PrintVisitor {
             emitToken(prepareName(procedureName));
         } else {
             String identifier = procedureDefinition.getIdent().getName();
-            emitToken(generateProcedureName(procedureName, identifier));
+            emitToken(generateUniqueProcedureName(procedureName, identifier));
         }
         procedureDefinition.getParameterDefinitionList().accept(this);
         procedureDefinition.getStmtList().accept(this);
@@ -977,7 +1049,7 @@ public class LeilaVisitor extends PrintVisitor {
                     .filter(entry -> entry.getValue().getName().equals(procedureName))
                     .findFirst()
                     .get();
-            emitNoSpace(generateProcedureName(procedureName, procedureInfo.getKey().getName()));
+            emitNoSpace(generateUniqueProcedureName(procedureName, procedureInfo.getKey().getName()));
         }
         openParentheses();
         methodCall = true;
@@ -990,10 +1062,17 @@ public class LeilaVisitor extends PrintVisitor {
         return procedureName.trim().replace(" ", "").replace("\"", "").replace("%s", "").replace("%b", "");
     }
 
-    private String generateProcedureName(String procedureName, String identifier) {
+    private String generateUniqueProcedureName(String procedureName, String identifier) {
         procedureName = prepareName(procedureName);
-        procedureName = procedureName + "_" + identifier; // FIXME handle unsupported chars in identifiers
+        procedureName = procedureName + "_" + prepareIdentifier(identifier);
         return procedureName;
+    }
+
+    private String prepareIdentifier(String identifier) {
+        return Base64.getEncoder().encodeToString(identifier.getBytes())
+                .replace("+", "")
+                .replace("/", "")
+                .replace("=", "");
     }
 
     private Map<LocalIdentifier, ProcedureInfo> getProceduresOfCurrentSprite() {
@@ -1021,12 +1100,12 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(StopAll stopAll) {
-        emitToken("stop all");
+        emitToken("stopAll()");
     }
 
     @Override
     public void visit(StopThisScript stopThisScript) {
-        emitToken("stop this script");
+        emitToken("stopThisScript()");
     }
 
     @Override
@@ -1097,7 +1176,7 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(NumberType numberType) {
-        emitNoSpace("integer");
+        emitNoSpace("float");
     }
 
     @Override
@@ -1129,20 +1208,22 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(Join join) {
-        emitToken("join");
+        emitNoSpace("joinStrings(");
         join.getOperand1().accept(this);
-        emitNoSpace(" ");
+        comma();
         join.getOperand2().accept(this);
+        closeParentheses();
     }
 
     @Override
     public void visit(LetterOf letterOf) {
-        emitToken("letter");
+        emitNoSpace("letterOf(");
         expectInteger();
         letterOf.getNum().accept(this);
         endExpectation();
-        of();
+        comma();
         letterOf.getStringExpr().accept(this);
+        closeParentheses();
     }
 
     @Override
@@ -1222,7 +1303,6 @@ public class LeilaVisitor extends PrintVisitor {
         emitToken("define");
     }
 
-
     private void of() {
         emitToken(" of");
     }
@@ -1264,7 +1344,7 @@ public class LeilaVisitor extends PrintVisitor {
         if (effect.equals(SoundEffect.PITCH.getToken())) {
             emitNoSpace("pitch");
         } else {
-            emitNoSpace("pan_left_right");
+            emitNoSpace("panLeftRight");
         }
     }
 
@@ -1462,7 +1542,7 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(Timer timer) {
-        emitNoSpace("timer");
+        emitNoSpace("timerValue()");
     }
 
     @Override
@@ -1536,7 +1616,7 @@ public class LeilaVisitor extends PrintVisitor {
     }
 
     @Override
-    public void visit(PickRandom pickRandom) { // FIXME distinguish between random float and random integer
+    public void visit(PickRandom pickRandom) { // TODO distinguish between random float and random integer
         emitNoSpace("randomBetween(");
         pickRandom.getOperand1().accept(this);
         comma();
@@ -1608,8 +1688,7 @@ public class LeilaVisitor extends PrintVisitor {
         switch (numFunctOf.getOperand1()) {
             case ABS:
                 emitNoSpace("mathAbsF(");
-                expectFloat(); // TODO there is also mathAbs for integers but finding out whether a NumExpr evaluates to
-                // an int or float is nearly impossible
+                expectFloat();
                 expectationSet = true;
                 break;
             case LN:
@@ -1627,11 +1706,12 @@ public class LeilaVisitor extends PrintVisitor {
                 expectationSet = true;
                 break;
             case CEILING:
-                emitNoSpace("mathCeiling("); // FIXME expecting the default integer here is what makes BASTET parse the
-                // program, but this does not make sense for the ceiling function?
+                expectFloat();
+                emitNoSpace("mathCeiling(");
+                expectationSet = true;
                 break;
             case COS:
-                emitNoSpace("mathCos(");
+                emitNoSpace("mathCosDegree(");
                 expectFloat();
                 expectationSet = true;
                 break;
@@ -1650,7 +1730,7 @@ public class LeilaVisitor extends PrintVisitor {
                 emitNoSpace("mathPowe(");
                 break;
             case SIN:
-                emitNoSpace("mathSin(");
+                emitNoSpace("mathSinDegree(");
                 expectFloat();
                 expectationSet = true;
                 break;
@@ -1743,8 +1823,7 @@ public class LeilaVisitor extends PrintVisitor {
     }
 
     @Override
-    public void visit(NumFunct numFunct) { // TODO use library functions
-        emitNoSpace(numFunct.getFunction());
+    public void visit(NumFunct numFunct) {
     }
 
     @Override
@@ -1783,8 +1862,7 @@ public class LeilaVisitor extends PrintVisitor {
     }
 
     @Override
-    public void visit(AttributeOf node) { // TODO check -- the old version had different ways of handling
-        // TODO backdrop number etc.
+    public void visit(AttributeOf node) {
         emitToken("attribute");
         node.getAttribute().accept(this);
         emitToken("of");
@@ -1825,7 +1903,7 @@ public class LeilaVisitor extends PrintVisitor {
     public void visit(SetGraphicEffectTo setGraphicEffectTo) {
         define();
         setGraphicEffectTo.getEffect().accept(this);
-        emitToken("_effect_value as");
+        emitToken("EffectValue as");
         expectFloat();
         setGraphicEffectTo.getValue().accept(this);
         endExpectation();
@@ -1867,7 +1945,7 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(EventAttribute eventAttribute) {
-        emitToken(eventAttribute.getType());
+        emitNoSpace(eventAttribute.getType());
     }
 
     @Override
@@ -1884,7 +1962,7 @@ public class LeilaVisitor extends PrintVisitor {
     public void visit(SetSoundEffectTo setSoundEffectTo) {
         define();
         setSoundEffectTo.getEffect().accept(this);
-        emitToken("_effect_value as");
+        emitToken("EffectValue as");
         expectFloat();
         setSoundEffectTo.getValue().accept(this);
         endExpectation();
@@ -1981,7 +2059,7 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(ListContains listContains) {
-        emitNoSpace("TODO"); // TODO -- grammar?
+        throw new RuntimeException("The list contains block is not yet supported");
     }
 
     @Override
@@ -1992,7 +2070,8 @@ public class LeilaVisitor extends PrintVisitor {
         declarationBroadcastStmt.getType().accept(this);
     }
 
-    @Override public void visit(Volume volume) {
+    @Override
+    public void visit(Volume volume) {
         emitNoSpace("volume()");
     }
 }

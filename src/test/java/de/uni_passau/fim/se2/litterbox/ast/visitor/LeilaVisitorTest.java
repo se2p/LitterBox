@@ -74,7 +74,7 @@ public class LeilaVisitorTest {
         String path = "src/test/fixtures/leilaVisitor/join.json";
         String output = getLeilaForProject(path);
 
-        assertThat(output).contains("join \"apple \" \"banana\"");
+        assertThat(output).contains("joinStrings(\"apple \", \"banana\")");
     }
 
     @Test
@@ -114,11 +114,103 @@ public class LeilaVisitorTest {
         String path = "src/test/fixtures/leilaVisitor/ambiguousProcedureAndCombinedTextSignature.json";
         String output = getLeilaForProject(path);
 
-        assertThat(output).contains("define myMethod_,y4+jC!5_KL#z]ByYJ^H () begin");
-        assertThat(output).contains("define myMethod_LxW~gi,I]9)6;-1DnDd) () begin");
-        assertThat(output).contains("define myMethod_LxW~gi,I]9)6;-1DnDd) () begin");
-        assertThat(output).contains("myMethod_,y4+jC!5_KL#z]ByYJ^H()");
-        assertThat(output).doesNotContain("myMethod_LxW~gi,I]9)6;-1DnDd)()");
+        assertThat(output).contains("define myMethod_LHk0K2pDITVfS0wjel1CeVlKXkg () begin");
+        assertThat(output).contains("define myMethod_THhXfmdpLEldOSk2Oy0xRG5EZCk () begin");
+        assertThat(output).contains("myMethod_LHk0K2pDITVfS0wjel1CeVlKXkg()");
+        assertThat(output).doesNotContain("myMethod_THhXfmdpLEldOSk2Oy0xRG5EZCk()");
+    }
+
+    @Test
+    public void testGoToSprite() throws Exception {
+        String path = "src/test/fixtures/leilaVisitor/goToSprite.json";
+        String output = getLeilaForProject(path);
+
+        assertThat(output).contains("            declare o as actor \n"
+                + "            define o as locate actor \"Affe\"\n"
+                + "            goToSprite(o)");
+    }
+
+    @Test
+    public void testGlideSecsTo() throws Exception {
+        String path = "src/test/fixtures/leilaVisitor/glideSecsTo.json";
+        String output = getLeilaForProject(path);
+
+        assertThat(output).contains("        declare o as actor \n"
+                + "        define o as locate actor \"Apple\"\n"
+                + "        glideSecsToSprite(1, o)");
+    }
+
+    @Test
+    public void testGlobalVarInStage() throws Exception {
+        String path = "src/test/fixtures/leilaVisitor/globalInStage.json";
+        String output = getLeilaForProject(path);
+
+        assertThat(output).contains("    script on startup do begin \n"
+                + "        define Stage.global as 10\n"
+                + "    end ");
+        assertThat(output).contains("    script on startup do begin \n"
+                + "        define Stage.global as 0\n"
+                + "        define local as 0\n"
+                + "    end ");
+        assertThat(output).contains("    declare local as float\n");
+        assertThat(output).doesNotContain("    declare Stage.local as float\n");
+    }
+
+    @Test
+    public void testAttributeAboveValue() throws Exception {
+        String path = "src/test/fixtures/leilaVisitor/attributeAboveValue.json";
+        String output = getLeilaForProject(path);
+
+        assertThat(output).contains("\n"
+                + "    script on message \"loudness_ABOVE_10\" do begin \n"
+                + "        moveSteps(10)\n"
+                + "    end \n"
+                + "\n"
+                + "    script on startup do begin \n"
+                + "        repeat forever\n"
+                + "            if (loudness > 10) begin \n"
+                + "                broadcast \"loudness_ABOVE_10\"\n"
+                + "            end \n"
+                + "        end \n"
+                + "    end \n"
+                + "\n"
+                + "    script on message \"timer_ABOVE_10\" do begin \n"
+                + "        moveSteps(10)\n"
+                + "    end \n"
+                + "\n"
+                + "    script on startup do begin \n"
+                + "        repeat forever\n"
+                + "            if (timer > 10) begin \n"
+                + "                broadcast \"timer_ABOVE_10\"\n"
+                + "            end \n"
+                + "        end \n"
+                + "    end ");
+    }
+
+    @Test
+    public void testBackdropSwitchEvent() throws Exception {
+        String path = "src/test/fixtures/leilaVisitor/backdropSwitchEvent.json";
+        String output = getLeilaForProject(path);
+
+        assertThat(output).contains("script on message \"BACKDROP_SWITCHED_TO_backdrop1\" () do begin \n"
+                + "        moveSteps(10)\n"
+                + "    end \n"
+                + "\n"
+                + "    script on startup do begin \n"
+                + "        declare oldBackdrop as string\n"
+                + "        define oldBackdrop as backdropName()\n"
+                + "        declare currentBackdrop as string\n"
+                + "        define currentBackdrop as backdropName()\n"
+                + "        repeat forever\n"
+                + "            if ((not (oldBackdrop = \"backdrop1\")) and (currentBackdrop = \"backdrop1\")) then begin \n"
+                + "                broadcast \"BACKDROP_SWITCHED_TO_backdrop1\" ()\n"
+                + "            end \n"
+                + "            define oldBackdrop as currentBackdrop\n"
+                + "            define currentBackdrop as backdropName()\n"
+                + "        end \n"
+                + "    end \n"
+                + "\n"
+                + "end ");
     }
 
     private String getLeilaForProject(String path) throws IOException, ParsingException {
