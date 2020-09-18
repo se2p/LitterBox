@@ -141,6 +141,22 @@ public class LeilaVisitorTest {
     }
 
     @Test
+    public void testGlobalVarInStage() throws Exception {
+        String path = "src/test/fixtures/leilaVisitor/globalInStage.json";
+        String output = getLeilaForProject(path);
+
+        assertThat(output).contains("    script on startup do begin \n"
+                + "        define Stage.global as 10\n"
+                + "    end ");
+        assertThat(output).contains("    script on startup do begin \n"
+                + "        define Stage.global as 0\n"
+                + "        define local as 0\n"
+                + "    end ");
+        assertThat(output).contains("    declare local as float\n");
+        assertThat(output).doesNotContain("    declare Stage.local as float\n");
+    }
+
+    @Test
     public void testAttributeAboveValue() throws Exception {
         String path = "src/test/fixtures/leilaVisitor/attributeAboveValue.json";
         String output = getLeilaForProject(path);
