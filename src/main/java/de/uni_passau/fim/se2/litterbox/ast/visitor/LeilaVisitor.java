@@ -736,7 +736,7 @@ public class LeilaVisitor extends PrintVisitor {
             closeParentheses();
         } else if (position instanceof FromExpression) {
             emitToken("declare o as actor");
-            emitNewLineWithIndentation("define o as");
+            emitNewLineWithIndentation("define o as ");
             position.accept(this);
             newLine();
             appendIndentation();

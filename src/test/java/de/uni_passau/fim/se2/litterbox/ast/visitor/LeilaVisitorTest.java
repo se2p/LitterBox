@@ -131,6 +131,16 @@ public class LeilaVisitorTest {
     }
 
     @Test
+    public void testGlideSecsTo() throws Exception {
+        String path = "src/test/fixtures/leilaVisitor/glideSecsTo.json";
+        String output = getLeilaForProject(path);
+
+        assertThat(output).contains("        declare o as actor \n"
+                + "        define o as locate actor \"Apple\"\n"
+                + "        glideSecsToSprite(1, o)");
+    }
+
+    @Test
     public void testAttributeAboveValue() throws Exception {
         String path = "src/test/fixtures/leilaVisitor/attributeAboveValue.json";
         String output = getLeilaForProject(path);
