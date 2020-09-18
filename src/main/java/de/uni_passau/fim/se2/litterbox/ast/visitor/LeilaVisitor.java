@@ -1615,7 +1615,7 @@ public class LeilaVisitor extends PrintVisitor {
     }
 
     @Override
-    public void visit(PickRandom pickRandom) { // FIXME distinguish between random float and random integer
+    public void visit(PickRandom pickRandom) { // TODO distinguish between random float and random integer
         emitNoSpace("randomBetween(");
         pickRandom.getOperand1().accept(this);
         comma();
@@ -1706,8 +1706,9 @@ public class LeilaVisitor extends PrintVisitor {
                 expectationSet = true;
                 break;
             case CEILING:
-                emitNoSpace("mathCeiling("); // FIXME expecting the default integer here is what makes BASTET parse the
-                // program, but this does not make sense for the ceiling function?
+                expectFloat();
+                emitNoSpace("mathCeiling(");
+                expectationSet = true;
                 break;
             case COS:
                 emitNoSpace("mathCos(");
@@ -1822,8 +1823,7 @@ public class LeilaVisitor extends PrintVisitor {
     }
 
     @Override
-    public void visit(NumFunct numFunct) { // TODO use library functions
-        emitNoSpace(numFunct.getFunction());
+    public void visit(NumFunct numFunct) {
     }
 
     @Override
@@ -1862,8 +1862,7 @@ public class LeilaVisitor extends PrintVisitor {
     }
 
     @Override
-    public void visit(AttributeOf node) { // TODO check -- the old version had different ways of handling
-        // TODO backdrop number etc.
+    public void visit(AttributeOf node) {
         emitToken("attribute");
         node.getAttribute().accept(this);
         emitToken("of");
@@ -2060,7 +2059,7 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(ListContains listContains) {
-        emitNoSpace("TODO"); // TODO -- grammar?
+        throw new RuntimeException("The list contains block is not yet supported");
     }
 
     @Override
