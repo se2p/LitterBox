@@ -29,7 +29,7 @@ produce an executable jar-file, run the following command:
 mvn package
 ```
 
-This will produce `target/Litterbox-1.1.jar`
+This will produce `target/Litterbox-1.2.jar`
 
 
 ## Using LitterBox
@@ -37,7 +37,7 @@ This will produce `target/Litterbox-1.1.jar`
 To see an overview of the command line options available in LitterBox type:
 
 ```
-java -jar Litterbox-1.1.jar --help
+java -jar Litterbox-1.2.jar --help
 ```
 
 ### Basic usage
@@ -46,7 +46,7 @@ LitterBox parses the JSON file of a Scratch project, which contains
 its source code. Given such a JSON file, LitterBox is invoked as follows:
 
 ```
-java -jar Litterbox-1.1.jar --check --path <path/to/project.json>
+java -jar Litterbox-1.2.jar --check --path <path/to/project.json>
 ```
 
 As a result, LitterBox will report any occurrences of bug patterns or
@@ -59,7 +59,7 @@ If you want to check a specific project given its ID (which you can
 find in the URL of the project), you can use the following command:
 
 ```
-java -jar Litterbox-1.1.jar --check --projectid <projectid> --path <path/to/store/downloaded/project>
+java -jar Litterbox-1.2.jar --check --projectid <projectid> --path <path/to/store/downloaded/project>
 ```
 
 When invoked this way, LitterBox will retrieve the JSON file
