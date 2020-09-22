@@ -75,7 +75,7 @@ project IDs to check in a text file (one project ID per line) and
 invoke LitterBox as follows:
 
 ```
-java -jar Litterbox-1.1.jar --check --projectlist <path/to/projectidlist.txt> --path <path/to/projects>
+java -jar Litterbox-1.2.jar --check --projectlist <path/to/projectidlist.txt> --path <path/to/projects>
 ```
 
 LitterBox will check the given path for the projects.
@@ -91,7 +91,7 @@ filename specified in order to decide whether to produce CSV or JSON
 output:
 
 ```
-java -jar Litterbox-1.1.jar --check --path <path/to/project.json> --output <result.csv>
+java -jar Litterbox-1.2.jar --check --path <path/to/project.json> --output <result.csv>
 ```
 
 The CSV file will contain a high-level summary of the number of
@@ -103,7 +103,7 @@ analyzed Scratch-project, where all occurrences of bug patterns are
 highlighted with comments.
 
 ```
-java -jar Litterbox-1.1.jar --check --path <path/to/project.json> --annotate <result.json>
+java -jar Litterbox-1.2.jar --check --path <path/to/project.json> --annotate <result.json>
 ```
 
 
@@ -119,14 +119,14 @@ comma-separated list of bug patterns, e.g.:
 
 
 ```
-java -jar Litterbox-1.1.jar --check --path <path/to/project.json> --detectors endless_recursion,call_without_definition
+java -jar Litterbox-1.2.jar --check --path <path/to/project.json> --detectors endless_recursion,call_without_definition
 ```
 
 A full list of available bug checkers can be retrieved using:
 
 
 ```
-java -jar Litterbox-1.1.jar --help
+java -jar Litterbox-1.2.jar --help
 ```
 
 To select all bug patterns, you can also use the term `bugs` in the
@@ -140,7 +140,7 @@ LitterBox can produce statistics on code metrics of a project (e.g.,
 number of blocks, number of sprites, weighted method count):
 
 ```
-java -jar Litterbox-1.1.jar --stats --project <path/to/project.json> --output <statsfile.csv>
+java -jar Litterbox-1.2.jar --stats --project <path/to/project.json> --output <statsfile.csv>
 ```
 
 
