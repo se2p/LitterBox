@@ -68,4 +68,13 @@ public class OrphanedParameterTest {
         Set<Issue> reports = parameterName.check(outsideParam);
         Assertions.assertEquals(0, reports.size());
     }
+
+    @Test
+    public void testOrphanedParameterRichtung() throws IOException, ParsingException {
+        File f = new File("./src/test/fixtures/bugpattern/orphanedParamRichtung.json");
+        Program richtung = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
+        OrphanedParameter orph = new OrphanedParameter();
+        Set<Issue> reports = orph.check(richtung);
+        Assertions.assertEquals(1, reports.size());
+    }
 }
