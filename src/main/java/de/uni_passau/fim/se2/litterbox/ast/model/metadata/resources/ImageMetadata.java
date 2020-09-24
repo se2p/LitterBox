@@ -18,29 +18,42 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.model.metadata.ressources;
 
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
-public class SoundMetadata extends ResourceMetadata {
+public class ImageMetadata extends ResourceMetadata {
+    private Double bitmapResolution;
+    private double rotationCenterX;
+    private double rotationCenterY;
 
-    private int rate;
-    private int sampleCount;
-
-    public SoundMetadata(String assetId, String name, String md5ext, String dataFormat, int rate, int sampleCount) {
+    public ImageMetadata(String assetId, String name, String md5ext, String dataFormat, Double bitmapResolution,
+                         double rotationCenterX, double rotationCenterY) {
         super(assetId, name, md5ext, dataFormat);
-        this.rate = rate;
-        this.sampleCount = sampleCount;
+        this.bitmapResolution = bitmapResolution;
+        this.rotationCenterX = rotationCenterX;
+        this.rotationCenterY = rotationCenterY;
     }
 
-    public int getRate() {
-        return rate;
+    public Double getBitmapResolution() {
+        return bitmapResolution;
     }
 
-    public int getSampleCount() {
-        return sampleCount;
+    public double getRotationCenterX() {
+        return rotationCenterX;
+    }
+
+    public double getRotationCenterY() {
+        return rotationCenterY;
     }
 
     @Override
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);
+    }
+
+    @Override
+    public ASTNode accept(CloneVisitor visitor) {
+        return visitor.visit(this);
     }
 }
