@@ -109,10 +109,10 @@ public class CloneVisitor {
      * Default implementation of visit method for ActorDefinition.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node ActorDefinition of which the children will be iterated
+     * @param node ActorDefinition which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(ActorDefinition node) {
@@ -123,10 +123,10 @@ public class CloneVisitor {
      * Default implementation of visit method for PenDownStmt.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node PenDownStmt of which the children will be iterated
+     * @param node PenDownStmt which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(PenDownStmt node) {
@@ -137,10 +137,10 @@ public class CloneVisitor {
      * Default implementation of visit method for PenUpStmt.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node PenUpStmt of which the children will be iterated
+     * @param node PenUpStmt which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(PenUpStmt node) {
@@ -151,10 +151,10 @@ public class CloneVisitor {
      * Default implementation of visit method for PenUpStmt.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node PenUpStmt of which the children will be iterated
+     * @param node PenUpStmt which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(PenClearStmt node) {
@@ -165,10 +165,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link Equals}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node Equals Node of which the children will be iterated
+     * @param node Equals Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(Equals node) {
@@ -179,10 +179,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link LessThan}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node LessThan Node of which the children will be iterated
+     * @param node LessThan Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(LessThan node) {
@@ -193,10 +193,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link BiggerThan}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node BiggerThan Node of which the children will be iterated
+     * @param node BiggerThan Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(BiggerThan node) {
@@ -207,10 +207,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link ProcedureDefinition}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node ProcedureDefinition Node of which the children will be iterated
+     * @param node ProcedureDefinition Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(ProcedureDefinition node) {
@@ -221,10 +221,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link StrId}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node StrId of which the children will be iterated
+     * @param node StrId which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(StrId node) {
@@ -235,10 +235,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link Script}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node Script of which the children will be iterated
+     * @param node Script which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(Script node) {
@@ -249,10 +249,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link CreateCloneOf}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node CreateCloneOf Node of which the children will be iterated
+     * @param node CreateCloneOf Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(CreateCloneOf node) {
@@ -263,10 +263,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link StartedAsClone}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node StartedAsClone Node of which the children will be iterated
+     * @param node StartedAsClone Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(StartedAsClone node) {
@@ -277,10 +277,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link IfElseStmt}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node IfElseStmt Node of which the children will be iterated
+     * @param node IfElseStmt Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(IfElseStmt node) {
@@ -291,10 +291,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link IfThenStmt}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node IfThenStmt Node of which the children will be iterated
+     * @param node IfThenStmt Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(IfThenStmt node) {
@@ -305,10 +305,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link WaitUntil}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node WaitUntil Node of which the children will be iterated
+     * @param node WaitUntil Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(WaitUntil node) {
@@ -319,10 +319,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link UntilStmt}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node UntilStmt Node of which the children will be iterated
+     * @param node UntilStmt Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(UntilStmt node) {
@@ -333,10 +333,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link Not}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node Not Node of which the children will be iterated
+     * @param node Not Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(Not node) {
@@ -347,10 +347,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link And}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node And Node of which the children will be iterated
+     * @param node And Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(And node) {
@@ -361,10 +361,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link Or}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node And Node of which the children will be iterated
+     * @param node And Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(Or node) {
@@ -375,10 +375,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link Broadcast}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node Broadcast Node of which the children will be iterated
+     * @param node Broadcast Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(Broadcast node) {
@@ -389,10 +389,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link BroadcastAndWait}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node BroadcastAndWait Node of which the children will be iterated
+     * @param node BroadcastAndWait Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(BroadcastAndWait node) {
@@ -403,10 +403,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link ReceptionOfMessage}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node ReceptionOfMessage Node of which the children will be iterated
+     * @param node ReceptionOfMessage Node which will be copied
      * @return     the copy of the visited node
      */
     public ReceptionOfMessage visit(ReceptionOfMessage node) {
@@ -417,10 +417,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link RepeatForeverStmt}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node RepeatForeverStmt Node of which the children will be iterated
+     * @param node RepeatForeverStmt Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(RepeatForeverStmt node) {
@@ -431,10 +431,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link CallStmt}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node CallStmt Node of which the children will be iterated
+     * @param node CallStmt Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(CallStmt node) {
@@ -445,10 +445,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link DeleteClone}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node DeleteClone Node of which the children will be iterated
+     * @param node DeleteClone Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(DeleteClone node) {
@@ -459,10 +459,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link StopAll}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node StopAll Node of which the children will be iterated
+     * @param node StopAll Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(StopAll node) {
@@ -473,10 +473,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link StmtList}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node StmtList Node of which the children will be iterated
+     * @param node StmtList Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(StmtList node) {
@@ -487,10 +487,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link RepeatTimesStmt}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node RepeatTimesStmt Node of which the children will be iterated
+     * @param node RepeatTimesStmt Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(RepeatTimesStmt node) {
@@ -501,10 +501,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link StringLiteral}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node StringLiteral Node of which the children will be iterated
+     * @param node StringLiteral Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(StringLiteral node) {
@@ -515,10 +515,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link BoolLiteral}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node BoolLiteral Node of which the children will be iterated
+     * @param node BoolLiteral Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(BoolLiteral node) {
@@ -529,10 +529,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link NumberLiteral}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node NumberLiteral Node of which the children will be iterated
+     * @param node NumberLiteral Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(NumberLiteral node) {
@@ -543,10 +543,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link ColorLiteral}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node ColorLiteral Node of which the children will be iterated
+     * @param node ColorLiteral Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(ColorLiteral node) {
@@ -557,10 +557,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link Never}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node Never Node of which the children will be iterated
+     * @param node Never Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(Never node) {
@@ -571,10 +571,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link ParameterDefinitionList}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node ParameterDefinitionList Node of which the children will be iterated
+     * @param node ParameterDefinitionList Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(ParameterDefinitionList node) {
@@ -585,10 +585,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link ParameterDefinition}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node ParameterDefiniton Node of which the children will be iterated
+     * @param node ParameterDefiniton Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(ParameterDefinition node) {
@@ -599,10 +599,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link ExpressionList}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node ExpressionList Node of which the children will be iterated
+     * @param node ExpressionList Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(ExpressionList node) {
@@ -613,10 +613,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link SwitchBackdrop}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node SwitchBackdrop Node of which the children will be iterated
+     * @param node SwitchBackdrop Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(SwitchBackdrop node) {
@@ -627,10 +627,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link NextBackdrop}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node NextBackdrop Node of which the children will be iterated
+     * @param node NextBackdrop Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(NextBackdrop node) {
@@ -641,10 +641,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link SwitchBackdropAndWait}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node SwitchBackdropAndWait Node of which the children will be iterated
+     * @param node SwitchBackdropAndWait Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(SwitchBackdropAndWait node) {
@@ -655,10 +655,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link BackdropSwitchTo}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node BackdropSwitchTo Node of which the children will be iterated
+     * @param node BackdropSwitchTo Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(BackdropSwitchTo node) {
@@ -669,10 +669,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link KeyPressed}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node KeyPressed Node of which the children will be iterated
+     * @param node KeyPressed Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(KeyPressed node) {
@@ -683,10 +683,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link MoveSteps}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node MoveSteps Node of which the children will be iterated
+     * @param node MoveSteps Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(MoveSteps node) {
@@ -697,10 +697,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link ChangeXBy}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node ChangeXBy Node of which the children will be iterated
+     * @param node ChangeXBy Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(ChangeXBy node) {
@@ -711,10 +711,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link ChangeYBy}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node ChangeYBy Node of which the children will be iterated
+     * @param node ChangeYBy Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(ChangeYBy node) {
@@ -725,10 +725,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link SetXTo}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node SetXTo Node of which the children will be iterated
+     * @param node SetXTo Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(SetXTo node) {
@@ -739,10 +739,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link SetYTo}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node SetYTo Node of which the children will be iterated
+     * @param node SetYTo Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(SetYTo node) {
@@ -753,10 +753,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link GoToPos}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node GoToPos Node of which the children will be iterated
+     * @param node GoToPos Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(GoToPos node) {
@@ -767,10 +767,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link GoToPosXY}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node GoToPos Node of which the children will be iterated
+     * @param node GoToPos Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(GoToPosXY node) {
@@ -781,10 +781,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link Qualified}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node Qualified Node of which the children will be iterated
+     * @param node Qualified Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(Qualified node) {
@@ -795,10 +795,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link SetPenColorToColorStmt}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node SetPenColorToColorStmt  Node of which the children will be iterated
+     * @param node SetPenColorToColorStmt  Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(SetPenColorToColorStmt node) {
@@ -809,10 +809,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link ColorTouchingColor}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node ColorTouchingColor  Node of which the children will be iterated
+     * @param node ColorTouchingColor  Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(ColorTouchingColor node) {
@@ -825,10 +825,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link Touching}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node Touching  Node of which the children will be iterated
+     * @param node Touching  Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(Touching node) {
@@ -839,10 +839,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link PenStampStmt}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node PenStampStmt  Node of which the children will be iterated
+     * @param node PenStampStmt  Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(PenStampStmt node) {
@@ -853,10 +853,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link ChangePenColorParamBy}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node ChangePenColorParamBy  Node of which the children will be iterated
+     * @param node ChangePenColorParamBy  Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(ChangePenColorParamBy node) {
@@ -867,10 +867,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link SetPenColorParamTo}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node SetPenColorParamTo Node of which the children will be iterated
+     * @param node SetPenColorParamTo Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(SetPenColorParamTo node) {
@@ -881,10 +881,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link SetAttributeTo}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node SetAttributeTo  Node of which the children will be iterated
+     * @param node SetAttributeTo  Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(SetAttributeTo node) {
@@ -895,10 +895,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link ActorDefinitionList}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node ActorDefinitionList  Node of which the children will be iterated
+     * @param node ActorDefinitionList  Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(ActorDefinitionList node) {
@@ -909,10 +909,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link ActorType}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node ActorType  Node of which the children will be iterated
+     * @param node ActorType  Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(ActorType node) {
@@ -923,10 +923,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link Key}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node Key  Node of which the children will be iterated
+     * @param node Key  Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(Key node) {
@@ -937,10 +937,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link Message}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node Message  Node of which the children will be iterated
+     * @param node Message  Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(Message node) {
@@ -951,10 +951,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link Program}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node Program  Node of which the children will be iterated
+     * @param node Program  Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(Program node) {
@@ -970,10 +970,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link SetStmtList}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node SetStmtList  Node of which the children will be iterated
+     * @param node SetStmtList  Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(SetStmtList node) {
@@ -984,10 +984,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link Next}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node Next  Node of which the children will be iterated
+     * @param node Next  Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(Next node) {
@@ -998,10 +998,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link Prev}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node Prev  Node of which the children will be iterated
+     * @param node Prev  Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(Prev node) {
@@ -1012,10 +1012,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link Random}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node Random  Node of which the children will be iterated
+     * @param node Random  Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(Random node) {
@@ -1026,10 +1026,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link WithExpr}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node WithExpr  Node of which the children will be iterated
+     * @param node WithExpr  Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(WithExpr node) {
@@ -1040,10 +1040,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link GreenFlag}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node GreenFlag  Node of which the children will be iterated
+     * @param node GreenFlag  Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(GreenFlag node) {
@@ -1054,10 +1054,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link AttributeAboveValue}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node VariableAboveValue  Node of which the children will be iterated
+     * @param node VariableAboveValue  Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(AttributeAboveValue node) {
@@ -1069,10 +1069,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link UnspecifiedExpression}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node UnspecifiedExpression  Node of which the children will be iterated
+     * @param node UnspecifiedExpression  Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(UnspecifiedExpression node) {
@@ -1083,10 +1083,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link UnspecifiedId}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node UnspecifiedId  Node of which the children will be iterated
+     * @param node UnspecifiedId  Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(UnspecifiedId node) {
@@ -1097,10 +1097,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link StringContains}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node ExpressionContains  Node of which the children will be iterated
+     * @param node ExpressionContains  Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(StringContains node) {
@@ -1111,10 +1111,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link IsKeyPressed}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node IsKeyPressed  Node of which the children will be iterated
+     * @param node IsKeyPressed  Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(IsKeyPressed node) {
@@ -1125,10 +1125,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link IsMouseDown}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node IsMouseDown  Node of which the children will be iterated
+     * @param node IsMouseDown  Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(IsMouseDown node) {
@@ -1139,10 +1139,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link UnspecifiedBoolExpr}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node UnspecifiedBoolExpr  Node of which the children will be iterated
+     * @param node UnspecifiedBoolExpr  Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(UnspecifiedBoolExpr node) {
@@ -1153,10 +1153,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link FromNumber}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node FromNumber  Node of which the children will be iterated
+     * @param node FromNumber  Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(FromNumber node) {
@@ -1167,10 +1167,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link Add}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node Add  Node of which the children will be iterated
+     * @param node Add  Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(Add node) {
@@ -1181,10 +1181,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link AsNumber}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node AsNumber  Node of which the children will be iterated
+     * @param node AsNumber  Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(AsNumber node) {
@@ -1195,10 +1195,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link AsNumber}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node AsNumber  Node of which the children will be iterated
+     * @param node AsNumber  Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(Current node) {
@@ -1209,10 +1209,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link DaysSince2000}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node DaysSince2000  Node of which the children will be iterated
+     * @param node DaysSince2000  Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(DaysSince2000 node) {
@@ -1223,10 +1223,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link DistanceTo}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node DistanceTo  Node of which the children will be iterated
+     * @param node DistanceTo  Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(DistanceTo node) {
@@ -1237,10 +1237,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link Div}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node Div  Node of which the children will be iterated
+     * @param node Div  Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(Div node) {
@@ -1251,10 +1251,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link IndexOf}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node IndexOf  Node of which the children will be iterated
+     * @param node IndexOf  Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(IndexOf node) {
@@ -1265,10 +1265,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link LengthOfString}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node LengthOfString  Node of which the children will be iterated
+     * @param node LengthOfString  Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(LengthOfString node) {
@@ -1279,10 +1279,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link LengthOfVar}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node LengthOfVar  Node of which the children will be iterated
+     * @param node LengthOfVar  Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(LengthOfVar node) {
@@ -1293,10 +1293,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link Loudness}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node Loudness  Node of which the children will be iterated
+     * @param node Loudness  Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(Loudness node) {
@@ -1307,10 +1307,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link Minus}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node Minus  Node of which the children will be iterated
+     * @param node Minus  Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(Minus node) {
@@ -1321,10 +1321,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link Mod}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node Mod  Node of which the children will be iterated
+     * @param node Mod  Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(Mod node) {
@@ -1335,10 +1335,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link MouseX}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node MouseX  Node of which the children will be iterated
+     * @param node MouseX  Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(MouseX node) {
@@ -1349,10 +1349,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link MouseY}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node MouseY  Node of which the children will be iterated
+     * @param node MouseY  Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(MouseY node) {
@@ -1363,10 +1363,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link Mult}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node Mult  Node of which the children will be iterated
+     * @param node Mult  Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(Mult node) {
@@ -1377,10 +1377,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link NumFunct}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node NumFunct  Node of which the children will be iterated
+     * @param node NumFunct  Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(NumFunct node) {
@@ -1391,10 +1391,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link NumFunctOf}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node NumFunctOf  Node of which the children will be iterated
+     * @param node NumFunctOf  Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(NumFunctOf node) {
@@ -1405,10 +1405,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link PickRandom}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node PickRandom  Node of which the children will be iterated
+     * @param node PickRandom  Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(PickRandom node) {
@@ -1419,10 +1419,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link Round}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node Round  Node of which the children will be iterated
+     * @param node Round  Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(Round node) {
@@ -1433,10 +1433,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link Timer}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node Timer  Node of which the children will be iterated
+     * @param node Timer  Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(Timer node) {
@@ -1447,10 +1447,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link UnspecifiedNumExpr}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node UnspecifiedNumExpr  Node of which the children will be iterated
+     * @param node UnspecifiedNumExpr  Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(UnspecifiedNumExpr node) {
@@ -1461,10 +1461,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link AsString}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node AsString  Node of which the children will be iterated
+     * @param node AsString  Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(AsString node) {
@@ -1475,10 +1475,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link AttributeOf}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node AttributeOf  Node of which the children will be iterated
+     * @param node AttributeOf  Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(AttributeOf node) {
@@ -1489,10 +1489,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link ItemOfVariable}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node ItemOfVariable  Node of which the children will be iterated
+     * @param node ItemOfVariable  Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(ItemOfVariable node) {
@@ -1503,10 +1503,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link Join}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node Join  Node of which the children will be iterated
+     * @param node Join  Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(Join node) {
@@ -1517,10 +1517,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link LetterOf}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node LetterOf  Node of which the children will be iterated
+     * @param node LetterOf  Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(LetterOf node) {
@@ -1531,10 +1531,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link UnspecifiedStringExpr}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node UnspecifiedStringExpr  Node of which the children will be iterated
+     * @param node UnspecifiedStringExpr  Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(UnspecifiedStringExpr node) { //FIXME visit StringExpr or Unspecified?
@@ -1545,10 +1545,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link Username}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node Username  Node of which the children will be iterated
+     * @param node Username  Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(Username node) {
@@ -1559,10 +1559,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link MousePos}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node MousePos  Node of which the children will be iterated
+     * @param node MousePos  Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(MousePos node) {
@@ -1573,10 +1573,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link FromExpression}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node FromExpression  Node of which the children will be iterated
+     * @param node FromExpression  Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(FromExpression node) {
@@ -1587,10 +1587,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link RandomPos}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node RandomPos  Node of which the children will be iterated
+     * @param node RandomPos  Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(RandomPos node) {
@@ -1601,10 +1601,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link ProcedureDefinitionList}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node ProcedureDefinitionList  Node of which the children will be iterated
+     * @param node ProcedureDefinitionList  Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(ProcedureDefinitionList node) {
@@ -1615,10 +1615,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link ExpressionStmt}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node ExpressionStmt  Node of which the children will be iterated
+     * @param node ExpressionStmt  Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(ExpressionStmt node) {
@@ -1629,10 +1629,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link UnspecifiedStmt}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node UnspecifiedStmt  Node of which the children will be iterated
+     * @param node UnspecifiedStmt  Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(UnspecifiedStmt node) {
@@ -1643,10 +1643,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link AskAndWait}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node AskAndWait  Node of which the children will be iterated
+     * @param node AskAndWait  Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(AskAndWait node) {
@@ -1657,10 +1657,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link ClearGraphicEffects}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node ClearGraphicEffects  Node of which the children will be iterated
+     * @param node ClearGraphicEffects  Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(ClearGraphicEffects node) {
@@ -1671,10 +1671,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link ClearSoundEffects}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node ClearSoundEffects  Node of which the children will be iterated
+     * @param node ClearSoundEffects  Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(ClearSoundEffects node) {
@@ -1685,10 +1685,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link PlaySoundUntilDone}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node PlaySoundUntilDone  Node of which the children will be iterated
+     * @param node PlaySoundUntilDone  Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(PlaySoundUntilDone node) {
@@ -1699,10 +1699,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link StartSound}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node StartSound  Node of which the children will be iterated
+     * @param node StartSound  Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(StartSound node) {
@@ -1713,10 +1713,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link StopAllSounds}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node StopAllSounds  Node of which the children will be iterated
+     * @param node StopAllSounds  Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(StopAllSounds node) {
@@ -1727,10 +1727,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link ChangeVariableBy}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node ChangeVariableBy  Node of which the children will be iterated
+     * @param node ChangeVariableBy  Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(ChangeVariableBy node) {
@@ -1741,10 +1741,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link ResetTimer}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node ResetTimer  Node of which the children will be iterated
+     * @param node ResetTimer  Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(ResetTimer node) {
@@ -1755,10 +1755,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link SetVariableTo}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node SetVariableTo  Node of which the children will be iterated
+     * @param node SetVariableTo  Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(SetVariableTo node) {
@@ -1769,10 +1769,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link StopOtherScriptsInSprite}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node StopOtherScriptsInSprite  Node of which the children will be iterated
+     * @param node StopOtherScriptsInSprite  Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(StopOtherScriptsInSprite node) {
@@ -1783,10 +1783,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link WaitSeconds}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node WaitSeconds  Node of which the children will be iterated
+     * @param node WaitSeconds  Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(WaitSeconds node) {
@@ -1797,10 +1797,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link DeclarationAttributeAsTypeStmt}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node DeclarationAttributeAsTypeStmt  Node of which the children will be iterated
+     * @param node DeclarationAttributeAsTypeStmt  Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(DeclarationAttributeAsTypeStmt node) {
@@ -1811,10 +1811,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link DeclarationAttributeOfIdentAsTypeStmt}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node DeclarationAttributeOfIdentAsTypeStmt  Node of which the children will be iterated
+     * @param node DeclarationAttributeOfIdentAsTypeStmt  Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(DeclarationAttributeOfIdentAsTypeStmt node) {
@@ -1825,10 +1825,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link DeclarationIdentAsTypeStmt}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node DeclarationIdentAsTypeStmt  Node of which the children will be iterated
+     * @param node DeclarationIdentAsTypeStmt  Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(DeclarationIdentAsTypeStmt node) {
@@ -1839,10 +1839,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link DeclarationStmtList}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node DeclarationStmtList  Node of which the children will be iterated
+     * @param node DeclarationStmtList  Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(DeclarationStmtList node) {
@@ -1853,10 +1853,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link DeclarationBroadcastStmt}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node DeclarationStmtList  Node of which the children will be iterated
+     * @param node DeclarationStmtList  Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(DeclarationBroadcastStmt node) {
@@ -1867,10 +1867,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link AddTo}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node AddTo  Node of which the children will be iterated
+     * @param node AddTo  Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(AddTo node) {
@@ -1881,10 +1881,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link DeleteAllOf}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node DeleteAllOf  Node of which the children will be iterated
+     * @param node DeleteAllOf  Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(DeleteAllOf node) {
@@ -1895,10 +1895,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link DeleteOf}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node DeleteOf  Node of which the children will be iterated
+     * @param node DeleteOf  Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(DeleteOf node) {
@@ -1909,10 +1909,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link InsertAt}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node InsertAt  Node of which the children will be iterated
+     * @param node InsertAt  Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(InsertAt node) {
@@ -1923,10 +1923,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link ReplaceItem}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node ReplaceItem  Node of which the children will be iterated
+     * @param node ReplaceItem  Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(ReplaceItem node) {
@@ -1937,10 +1937,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link ChangeLayerBy}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node ChangeLayerBy  Node of which the children will be iterated
+     * @param node ChangeLayerBy  Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(ChangeLayerBy node) {
@@ -1951,10 +1951,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link ChangeSizeBy}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node ChangeSizeBy  Node of which the children will be iterated
+     * @param node ChangeSizeBy  Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(ChangeSizeBy node) {
@@ -1965,10 +1965,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link GoToLayer}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node GoToLayer  Node of which the children will be iterated
+     * @param node GoToLayer  Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(GoToLayer node) {
@@ -1979,10 +1979,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link Hide}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node Hide  Node of which the children will be iterated
+     * @param node Hide  Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(Hide node) {
@@ -1993,10 +1993,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link HideVariable}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node HideVariable  Node of which the children will be iterated
+     * @param node HideVariable  Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(HideVariable node) {
@@ -2007,10 +2007,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link HideList}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node HideList  Node of which the children will be iterated
+     * @param node HideList  Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(HideList node) {
@@ -2021,10 +2021,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link ShowList}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node ShowList  Node of which the children will be iterated
+     * @param node ShowList  Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(ShowList node) {
@@ -2035,10 +2035,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link Say}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node Say  Node of which the children will be iterated
+     * @param node Say  Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(Say node) {
@@ -2049,10 +2049,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link SayForSecs}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node SayForSecs  Node of which the children will be iterated
+     * @param node SayForSecs  Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(SayForSecs node) {
@@ -2063,10 +2063,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link SetSizeTo}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node SetSizeTo  Node of which the children will be iterated
+     * @param node SetSizeTo  Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(SetSizeTo node) {
@@ -2077,10 +2077,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link Show}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node Show  Node of which the children will be iterated
+     * @param node Show  Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(Show node) {
@@ -2091,10 +2091,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link ShowVariable}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node ShowVariable  Node of which the children will be iterated
+     * @param node ShowVariable  Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(ShowVariable node) {
@@ -2105,10 +2105,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link SwitchCostumeTo}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node SwitchCostumeTo  Node of which the children will be iterated
+     * @param node SwitchCostumeTo  Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(SwitchCostumeTo node) {
@@ -2119,10 +2119,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link NextCostume}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node NextCostume  Node of which the children will be iterated
+     * @param node NextCostume  Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(NextCostume node) {
@@ -2133,10 +2133,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link Think}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node Think  Node of which the children will be iterated
+     * @param node Think  Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(Think node) {
@@ -2147,10 +2147,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link ThinkForSecs}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node ThinkForSecs  Node of which the children will be iterated
+     * @param node ThinkForSecs  Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(ThinkForSecs node) {
@@ -2161,10 +2161,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link GlideSecsTo}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node GlideSecsTo  Node of which the children will be iterated
+     * @param node GlideSecsTo  Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(GlideSecsTo node) {
@@ -2175,10 +2175,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link GlideSecsToXY}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node GlideSecsToXY  Node of which the children will be iterated
+     * @param node GlideSecsToXY  Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(GlideSecsToXY node) {
@@ -2189,10 +2189,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link IfOnEdgeBounce}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node IfOnEdgeBounce  Node of which the children will be iterated
+     * @param node IfOnEdgeBounce  Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(IfOnEdgeBounce node) {
@@ -2203,10 +2203,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link PointInDirection}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node PointInDirection  Node of which the children will be iterated
+     * @param node PointInDirection  Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(PointInDirection node) {
@@ -2217,10 +2217,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link PointTowards}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node PointTowards  Node of which the children will be iterated
+     * @param node PointTowards  Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(PointTowards node) {
@@ -2231,10 +2231,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link TurnLeft}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node TurnLeft  Node of which the children will be iterated
+     * @param node TurnLeft  Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(TurnLeft node) {
@@ -2245,10 +2245,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link TurnRight}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node TurnRight  Node of which the children will be iterated
+     * @param node TurnRight  Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(TurnRight node) {
@@ -2259,10 +2259,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link StopThisScript}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node StopThisScript  Node of which the children will be iterated
+     * @param node StopThisScript  Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(StopThisScript node) {
@@ -2273,10 +2273,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link TimeComp}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node TimeComp  Node of which the children will be iterated
+     * @param node TimeComp  Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(TimeComp node) {
@@ -2287,10 +2287,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link Edge}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node Edge  Node of which the children will be iterated
+     * @param node Edge  Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(Edge node) {
@@ -2301,10 +2301,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link MousePointer}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node MousePointer  Node of which the children will be iterated
+     * @param node MousePointer  Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(MousePointer node) {
@@ -2315,10 +2315,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link SpriteTouchable}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node SpriteTouchable  Node of which the children will be iterated
+     * @param node SpriteTouchable  Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(SpriteTouchable node) {
@@ -2329,10 +2329,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link BooleanType}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node BooleanType  Node of which the children will be iterated
+     * @param node BooleanType  Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(BooleanType node) {
@@ -2345,10 +2345,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link ListType}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node ListType  Node of which the children will be iterated
+     * @param node ListType  Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(ListType node) {
@@ -2359,10 +2359,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link NumberType}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node NumberType  Node of which the children will be iterated
+     * @param node NumberType  Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(NumberType node) {
@@ -2373,10 +2373,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link StringType}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node StringType  Node of which the children will be iterated
+     * @param node StringType  Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(StringType node) {
@@ -2387,10 +2387,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link AsBool}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node AsBool Node of which the children will be iterated
+     * @param node AsBool Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(AsBool node) {
@@ -2401,10 +2401,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link AsTouchable}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node AsTouchable Node of which the children will be iterated
+     * @param node AsTouchable Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(AsTouchable node) {
@@ -2415,10 +2415,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link ScriptList}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node ScriptList Node of which the children will be iterated
+     * @param node ScriptList Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(ScriptList node) {
@@ -2429,10 +2429,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link SpriteClicked}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node SpriteClicked Node of which the children will be iterated
+     * @param node SpriteClicked Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(SpriteClicked node) {
@@ -2443,10 +2443,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link StageClicked}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node StageClicked Node of which the children will be iterated
+     * @param node StageClicked Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(StageClicked node) {
@@ -2457,10 +2457,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link Costume}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node Costume Node of which the children will be iterated
+     * @param node Costume Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(Costume node) {
@@ -2471,10 +2471,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link Backdrop}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node Backdrop Node of which the children will be iterated
+     * @param node Backdrop Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(Backdrop node) {
@@ -2485,10 +2485,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link Direction}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node Direction Node of which the children will be iterated
+     * @param node Direction Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(Direction node) {
@@ -2499,10 +2499,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link PositionX}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node PositionX Node of which the children will be iterated
+     * @param node PositionX Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(PositionX node) {
@@ -2513,10 +2513,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link PositionY}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node PositionY Node of which the children will be iterated
+     * @param node PositionY Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(PositionY node) {
@@ -2527,10 +2527,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link Size}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node Size Node of which the children will be iterated
+     * @param node Size Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(Size node) {
@@ -2541,10 +2541,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link Volume}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node Volume Node of which the children will be iterated
+     * @param node Volume Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(Volume node) {
@@ -2555,10 +2555,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link Answer}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node Answer Node of which the children will be iterated
+     * @param node Answer Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(Answer node) {
@@ -2569,10 +2569,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link NameNum}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node NameNum Node of which the children will be iterated
+     * @param node NameNum Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(NameNum node) {
@@ -2583,10 +2583,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link FixedAttribute}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node FixedAttribute Node of which the children will be iterated
+     * @param node FixedAttribute Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(FixedAttribute node) {
@@ -2597,10 +2597,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link AttributeFromFixed}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node AttributeFromFixed Node of which the children will be iterated
+     * @param node AttributeFromFixed Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(AttributeFromFixed node) {
@@ -2611,10 +2611,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link AttributeFromVariable}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node AttributeFromVariable Node of which the children will be iterated
+     * @param node AttributeFromVariable Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(AttributeFromVariable node) {
@@ -2625,10 +2625,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link LayerChoice}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node LayerChoice Node of which the children will be iterated
+     * @param node LayerChoice Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(LayerChoice node) {
@@ -2639,10 +2639,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link SetPenSizeTo}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node SetPenSizeTo Node of which the children will be iterated
+     * @param node SetPenSizeTo Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(SetPenSizeTo node) {
@@ -2653,10 +2653,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link ChangePenSizeBy}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node ChangePenSizeBy Node of which the children will be iterated
+     * @param node ChangePenSizeBy Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(ChangePenSizeBy node) {
@@ -2667,10 +2667,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link SetGraphicEffectTo}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node SetGraphicEffectTo Node of which the children will be iterated
+     * @param node SetGraphicEffectTo Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(SetGraphicEffectTo node) {
@@ -2681,10 +2681,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link ChangeGraphicEffectBy}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node ChangeGraphicEffectBy Node of which the children will be iterated
+     * @param node ChangeGraphicEffectBy Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(ChangeGraphicEffectBy node) {
@@ -2695,10 +2695,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link GraphicEffect}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node GraphicEffect Node of which the children will be iterated
+     * @param node GraphicEffect Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(GraphicEffect node) {
@@ -2709,10 +2709,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link SoundEffect}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node SoundEffect Node of which the children will be iterated
+     * @param node SoundEffect Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(SoundEffect node) {
@@ -2723,10 +2723,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link SetSoundEffectTo}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node SetSoundEffectTo Node of which the children will be iterated
+     * @param node SetSoundEffectTo Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(SetSoundEffectTo node) {
@@ -2737,10 +2737,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link ChangeSoundEffectBy}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node ChangeSoundEffectBy Node of which the children will be iterated
+     * @param node ChangeSoundEffectBy Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(ChangeSoundEffectBy node) {
@@ -2751,10 +2751,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link SetVolumeTo}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node SetVolumeTo Node of which the children will be iterated
+     * @param node SetVolumeTo Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(SetVolumeTo node) {
@@ -2765,10 +2765,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link ChangeVolumeBy}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node ChangeVolumeBy Node of which the children will be iterated
+     * @param node ChangeVolumeBy Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(ChangeVolumeBy node) {
@@ -2779,10 +2779,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link DragMode}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node DragMode Node of which the children will be iterated
+     * @param node DragMode Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(DragMode node) {
@@ -2793,10 +2793,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link RotationStyle}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node RotationStyle Node of which the children will be iterated
+     * @param node RotationStyle Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(RotationStyle node) {
@@ -2807,10 +2807,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link SetRotationStyle}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node SetRotationStyle Node of which the children will be iterated
+     * @param node SetRotationStyle Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(SetRotationStyle node) {
@@ -2821,10 +2821,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link SetDragMode}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node SetDragMode Node of which the children will be iterated
+     * @param node SetDragMode Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(SetDragMode node) {
@@ -2835,7 +2835,7 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link SpriteTouchingColor}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
      * @param node SpriteTouchingColor Node of which the children will
@@ -2850,7 +2850,7 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link Variable}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
      * @param node Variable Node of which the children will
@@ -2865,7 +2865,7 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link ScratchList}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
      * @param node ScratchList Node of which the children will
@@ -2880,7 +2880,7 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link Parameter}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
      * @param node Parameter Node of which the children will
@@ -2895,7 +2895,7 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link ListContains}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
      * @param node ListContains Node of which the children will
@@ -2910,10 +2910,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link EventAttribute}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node EventAttribute  Node of which the children will be iterated
+     * @param node EventAttribute  Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(EventAttribute node) {
@@ -2924,7 +2924,7 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link VariableMetadata}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
      * @param node VariableMetadata Node of which the children will
@@ -2939,7 +2939,7 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link MetaMetadata}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
      * @param node MetaMetadata Node of which the children will
@@ -2954,7 +2954,7 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link ListMetadata}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
      * @param node ListMetadata Node of which the children will
@@ -2969,7 +2969,7 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link ExtensionMetadata}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
      * @param node ExtensionMetadata Node of which the children will
@@ -2984,7 +2984,7 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link CommentMetadata}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
      * @param node CommentMetadata Node of which the children will
@@ -3000,7 +3000,7 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link PenWithParamMetadata}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
      * @param node PenWithParamMetadata Node of which the children will
@@ -3015,7 +3015,7 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link ProgramMetadata}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
      * @param node ProgramMetadata Node of which the children will
@@ -3030,7 +3030,7 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link BroadcastMetadata}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
      * @param node BroadcastMetadata Node of which the children will
@@ -3045,7 +3045,7 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link ImageMetadata}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
      * @param node ImageMetadata Node of which the children will
@@ -3061,7 +3061,7 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link SoundMetadata}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
      * @param node SoundMetadata Node of which the children will
@@ -3077,7 +3077,7 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link MonitorSliderMetadata}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
      * @param node MonitorSliderMetadata Node of which the children will
@@ -3094,7 +3094,7 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link MonitorListMetadata}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
      * @param node MonitorListMetadata Node of which the children will
@@ -3111,7 +3111,7 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link MonitorParamMetadata}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
      * @param node MonitorParamMetadata Node of which the children will
@@ -3126,7 +3126,7 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link ReferenceInputMetadata}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
      * @param node ReferenceInputMetadata Node of which the children will
@@ -3141,7 +3141,7 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link TypeInputMetadata}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
      * @param node TypeInputMetadata Node of which the children will
@@ -3156,7 +3156,7 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link DataInputMetadata}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
      * @param node DataInputMetadata Node of which the children will
@@ -3171,7 +3171,7 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link DataBlockMetadata}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
      * @param node DataBlockMetadata Node of which the children will
@@ -3186,7 +3186,7 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link NonDataBlockMetadata}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
      * @param node NonDataBlockMetadata Node of which the children will
@@ -3203,7 +3203,7 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link TopNonDataBlockMetadata}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
      * @param node TopNonDataBlockMetadata Node of which the children will
@@ -3221,7 +3221,7 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link FieldsMetadata}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
      * @param node FieldsMetadata Node of which the children will
@@ -3236,7 +3236,7 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link NoMutationMetadata}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
      * @param node NoMutationMetadata Node of which the children will
@@ -3251,7 +3251,7 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link CallMutationMetadata}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
      * @param node ExistingCallMutationMetadata Node of which the children will
@@ -3266,7 +3266,7 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link PrototypeMutationMetadata}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
      * @param node ExistingPrototypeMutationMetadata Node of which the children will
@@ -3283,7 +3283,7 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link StopMutationMetadata}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
      * @param node StopMutationMetadata Node of which the children will
@@ -3298,7 +3298,7 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link StageMetadata}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
      * @param node StageMetadata Node of which the children will
@@ -3320,7 +3320,7 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link SpriteMetadata}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
      * @param node SpriteMetadata Node of which the children will
@@ -3342,7 +3342,7 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link BroadcastMetadataList}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
      * @param node BroadcastMetadataList Node of which the children will
@@ -3357,7 +3357,7 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link CommentMetadataList}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
      * @param node CommentMetadataList Node of which the children will
@@ -3372,7 +3372,7 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link FieldsMetadataList}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
      * @param node FieldsMetadataList Node of which the children will
@@ -3387,7 +3387,7 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link ImageMetadataList}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
      * @param node ImageMetadataList Node of which the children will
@@ -3402,7 +3402,7 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link InputMetadataList}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
      * @param node InputMetadataList Node of which the children will
@@ -3417,7 +3417,7 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link ListMetadataList}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
      * @param node ListMetadataList Node of which the children will
@@ -3432,7 +3432,7 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link MonitorMetadataList}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
      * @param node MonitorMetadataList Node of which the children will
@@ -3447,7 +3447,7 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link MonitorParamMetadataList}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
      * @param node MonitorParamMetadataList Node of which the children will
@@ -3462,7 +3462,7 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link SoundMetadataList}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
      * @param node SoundMetadataList Node of which the children will
@@ -3477,7 +3477,7 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link VariableMetadataList}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
      * @param node VariableMetadataList Node of which the children will
@@ -3492,7 +3492,7 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link NoMetadata}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
      * @param node NoMetadata Node of which the children will
@@ -3507,7 +3507,7 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link NoBlockMetadata}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
      * @param node NoBlockMetadata Node of which the children will
@@ -3522,7 +3522,7 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link ProcedureMetadata}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
      * @param node ProcedureMetadata Node of which the children will
@@ -3537,10 +3537,10 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link ForwardBackwardChoice}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
-     * @param node ForwardBackwardChoice Node of which the children will be iterated
+     * @param node ForwardBackwardChoice Node which will be copied
      * @return     the copy of the visited node
      */
     public ASTNode visit(ForwardBackwardChoice node) {
@@ -3551,7 +3551,7 @@ public class CloneVisitor {
      * Default implementation of visit method for {@link CloneOfMetadata}.
      *
      * <p>
-     * Iterates all children of this node without performing any action.
+     * Creates a deep copy of this node.
      * </p>
      *
      * @param node CloneOfMetadata Node of which the children will
