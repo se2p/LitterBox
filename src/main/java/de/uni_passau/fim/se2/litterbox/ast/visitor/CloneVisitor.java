@@ -85,8 +85,14 @@ import java.util.List;
 
 public class CloneVisitor {
 
+    /**
+     * Apply the copying or transformation to an ASTNode
+     *
+     * @param node the original node
+     * @return the transformed node
+     */
     @SuppressWarnings("unchecked")
-    public <T extends ASTNode> T cloneNode(T node) {
+    public <T extends ASTNode> T apply(T node) {
         if (node == null) {
             return null;
         }
@@ -97,10 +103,16 @@ public class CloneVisitor {
         return (T) r;
     }
 
-    public <T extends ASTNode> List<T> cloneList(List<T> theList) {
+    /**
+     * Apply the copying or transformation to a list of ASTNodes
+     *
+     * @param theList the original list of nodes
+     * @return a copy of the list, with transformed content
+     */
+    public <T extends ASTNode> List<T> applyList(List<T> theList) {
         List<T> result = new ArrayList<>();
         for (T node : theList) {
-            result.add(cloneNode(node));
+            result.add(apply(node));
         }
         return result;
     }
@@ -116,7 +128,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(ActorDefinition node) {
-        return new ActorDefinition(cloneNode(node.getActorType()), cloneNode(node.getIdent()), cloneNode(node.getDecls()), cloneNode(node.getSetStmtList()), cloneNode(node.getProcedureDefinitionList()), cloneNode(node.getScripts()), cloneNode(node.getActorMetadata()));
+        return new ActorDefinition(apply(node.getActorType()), apply(node.getIdent()), apply(node.getDecls()), apply(node.getSetStmtList()), apply(node.getProcedureDefinitionList()), apply(node.getScripts()), apply(node.getActorMetadata()));
     }
 
     /**
@@ -130,7 +142,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(PenDownStmt node) {
-        return new PenDownStmt(cloneNode(node.getMetadata()));
+        return new PenDownStmt(apply(node.getMetadata()));
     }
 
     /**
@@ -144,7 +156,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(PenUpStmt node) {
-        return new PenUpStmt(cloneNode(node.getMetadata()));
+        return new PenUpStmt(apply(node.getMetadata()));
     }
 
     /**
@@ -158,7 +170,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(PenClearStmt node) {
-        return new PenClearStmt(cloneNode(node.getMetadata()));
+        return new PenClearStmt(apply(node.getMetadata()));
     }
 
     /**
@@ -172,7 +184,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(Equals node) {
-        return new Equals(cloneNode(node.getOperand1()), cloneNode(node.getOperand2()), cloneNode(node.getMetadata()));
+        return new Equals(apply(node.getOperand1()), apply(node.getOperand2()), apply(node.getMetadata()));
     }
 
     /**
@@ -186,7 +198,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(LessThan node) {
-        return new LessThan(cloneNode(node.getOperand1()), cloneNode(node.getOperand2()), cloneNode(node.getMetadata()));
+        return new LessThan(apply(node.getOperand1()), apply(node.getOperand2()), apply(node.getMetadata()));
     }
 
     /**
@@ -200,7 +212,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(BiggerThan node) {
-        return new BiggerThan(cloneNode(node.getOperand1()), cloneNode(node.getOperand2()), cloneNode(node.getMetadata()));
+        return new BiggerThan(apply(node.getOperand1()), apply(node.getOperand2()), apply(node.getMetadata()));
     }
 
     /**
@@ -214,7 +226,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(ProcedureDefinition node) {
-        return new ProcedureDefinition(cloneNode(node.getIdent()), cloneNode(node.getParameterDefinitionList()), cloneNode(node.getStmtList()), cloneNode(node.getMetadata()));
+        return new ProcedureDefinition(apply(node.getIdent()), apply(node.getParameterDefinitionList()), apply(node.getStmtList()), apply(node.getMetadata()));
     }
 
     /**
@@ -242,7 +254,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(Script node) {
-        return new Script(cloneNode(node.getEvent()), cloneNode(node.getStmtList()));
+        return new Script(apply(node.getEvent()), apply(node.getStmtList()));
     }
 
     /**
@@ -256,7 +268,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(CreateCloneOf node) {
-        return new CreateCloneOf(cloneNode(node.getStringExpr()), cloneNode(node.getMetadata()));
+        return new CreateCloneOf(apply(node.getStringExpr()), apply(node.getMetadata()));
     }
 
     /**
@@ -270,7 +282,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(StartedAsClone node) {
-        return new StartedAsClone(cloneNode(node.getMetadata()));
+        return new StartedAsClone(apply(node.getMetadata()));
     }
 
     /**
@@ -284,7 +296,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(IfElseStmt node) {
-        return new IfElseStmt(cloneNode(node.getBoolExpr()), cloneNode(node.getStmtList()), cloneNode(node.getElseStmts()), cloneNode(node.getMetadata()));
+        return new IfElseStmt(apply(node.getBoolExpr()), apply(node.getStmtList()), apply(node.getElseStmts()), apply(node.getMetadata()));
     }
 
     /**
@@ -298,7 +310,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(IfThenStmt node) {
-        return new IfThenStmt(cloneNode(node.getBoolExpr()), cloneNode(node.getThenStmts()), cloneNode(node.getMetadata()));
+        return new IfThenStmt(apply(node.getBoolExpr()), apply(node.getThenStmts()), apply(node.getMetadata()));
     }
 
     /**
@@ -312,7 +324,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(WaitUntil node) {
-        return new WaitUntil(cloneNode(node.getUntil()), cloneNode(node.getMetadata()));
+        return new WaitUntil(apply(node.getUntil()), apply(node.getMetadata()));
     }
 
     /**
@@ -326,7 +338,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(UntilStmt node) {
-        return new UntilStmt(cloneNode(node.getBoolExpr()), cloneNode(node.getStmtList()), cloneNode(node.getMetadata()));
+        return new UntilStmt(apply(node.getBoolExpr()), apply(node.getStmtList()), apply(node.getMetadata()));
     }
 
     /**
@@ -340,7 +352,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(Not node) {
-        return new Not(cloneNode(node.getOperand1()), cloneNode(node.getMetadata()));
+        return new Not(apply(node.getOperand1()), apply(node.getMetadata()));
     }
 
     /**
@@ -354,7 +366,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(And node) {
-        return new And(cloneNode(node.getOperand1()), cloneNode(node.getOperand2()), cloneNode(node.getMetadata()));
+        return new And(apply(node.getOperand1()), apply(node.getOperand2()), apply(node.getMetadata()));
     }
 
     /**
@@ -368,7 +380,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(Or node) {
-        return new Or(cloneNode(node.getOperand1()), cloneNode(node.getOperand2()), cloneNode(node.getMetadata()));
+        return new Or(apply(node.getOperand1()), apply(node.getOperand2()), apply(node.getMetadata()));
     }
 
     /**
@@ -382,7 +394,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(Broadcast node) {
-        return new Broadcast(cloneNode(node.getMessage()), cloneNode(node.getMetadata()));
+        return new Broadcast(apply(node.getMessage()), apply(node.getMetadata()));
     }
 
     /**
@@ -396,7 +408,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(BroadcastAndWait node) {
-        return new BroadcastAndWait(cloneNode(node.getMessage()), cloneNode(node.getMetadata()));
+        return new BroadcastAndWait(apply(node.getMessage()), apply(node.getMetadata()));
     }
 
     /**
@@ -409,8 +421,8 @@ public class CloneVisitor {
      * @param node ReceptionOfMessage Node which will be copied
      * @return     the copy of the visited node
      */
-    public ReceptionOfMessage visit(ReceptionOfMessage node) {
-        return new ReceptionOfMessage(cloneNode(node.getMsg()), cloneNode(node.getMetadata()));
+    public ASTNode visit(ReceptionOfMessage node) {
+        return new ReceptionOfMessage(apply(node.getMsg()), apply(node.getMetadata()));
     }
 
     /**
@@ -424,7 +436,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(RepeatForeverStmt node) {
-        return new RepeatForeverStmt(cloneNode(node.getStmtList()), cloneNode(node.getMetadata()));
+        return new RepeatForeverStmt(apply(node.getStmtList()), apply(node.getMetadata()));
     }
 
     /**
@@ -438,7 +450,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(CallStmt node) {
-        return new CallStmt(cloneNode(node.getIdent()), cloneNode(node.getExpressions()), cloneNode(node.getMetadata()));
+        return new CallStmt(apply(node.getIdent()), apply(node.getExpressions()), apply(node.getMetadata()));
     }
 
     /**
@@ -452,7 +464,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(DeleteClone node) {
-        return new DeleteClone(cloneNode(node.getMetadata()));
+        return new DeleteClone(apply(node.getMetadata()));
     }
 
     /**
@@ -466,7 +478,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(StopAll node) {
-        return new StopAll(cloneNode(node.getMetadata()));
+        return new StopAll(apply(node.getMetadata()));
     }
 
     /**
@@ -480,7 +492,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(StmtList node) {
-        return new StmtList(cloneList(node.getStmts()));
+        return new StmtList(applyList(node.getStmts()));
     }
 
     /**
@@ -494,7 +506,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(RepeatTimesStmt node) {
-        return new RepeatTimesStmt(cloneNode(node.getTimes()), cloneNode(node.getStmtList()), cloneNode(node.getMetadata()));
+        return new RepeatTimesStmt(apply(node.getTimes()), apply(node.getStmtList()), apply(node.getMetadata()));
     }
 
     /**
@@ -578,7 +590,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(ParameterDefinitionList node) {
-        return new ParameterDefinitionList(cloneList(node.getParameterDefinitions()));
+        return new ParameterDefinitionList(applyList(node.getParameterDefinitions()));
     }
 
     /**
@@ -592,7 +604,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(ParameterDefinition node) {
-        return new ParameterDefinition(cloneNode(node.getIdent()), cloneNode(node.getType()), cloneNode(node.getMetadata()));
+        return new ParameterDefinition(apply(node.getIdent()), apply(node.getType()), apply(node.getMetadata()));
     }
 
     /**
@@ -606,7 +618,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(ExpressionList node) {
-        return new ExpressionList(cloneList(node.getExpressions()));
+        return new ExpressionList(applyList(node.getExpressions()));
     }
 
     /**
@@ -620,7 +632,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(SwitchBackdrop node) {
-        return new SwitchBackdrop(cloneNode(node.getElementChoice()), cloneNode(node.getMetadata()));
+        return new SwitchBackdrop(apply(node.getElementChoice()), apply(node.getMetadata()));
     }
 
     /**
@@ -634,7 +646,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(NextBackdrop node) {
-        return new NextBackdrop(cloneNode(node.getMetadata()));
+        return new NextBackdrop(apply(node.getMetadata()));
     }
 
     /**
@@ -648,7 +660,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(SwitchBackdropAndWait node) {
-        return new SwitchBackdropAndWait(cloneNode(node.getElementChoice()), cloneNode(node.getMetadata()));
+        return new SwitchBackdropAndWait(apply(node.getElementChoice()), apply(node.getMetadata()));
     }
 
     /**
@@ -662,7 +674,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(BackdropSwitchTo node) {
-        return new BackdropSwitchTo(cloneNode(node.getBackdrop()), cloneNode(node.getMetadata()));
+        return new BackdropSwitchTo(apply(node.getBackdrop()), apply(node.getMetadata()));
     }
 
     /**
@@ -676,7 +688,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(KeyPressed node) {
-        return new KeyPressed(cloneNode(node.getKey()), cloneNode(node.getMetadata()));
+        return new KeyPressed(apply(node.getKey()), apply(node.getMetadata()));
     }
 
     /**
@@ -690,7 +702,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(MoveSteps node) {
-        return new MoveSteps(cloneNode(node.getSteps()), cloneNode(node.getMetadata()));
+        return new MoveSteps(apply(node.getSteps()), apply(node.getMetadata()));
     }
 
     /**
@@ -704,7 +716,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(ChangeXBy node) {
-        return new ChangeXBy(cloneNode(node.getNum()), cloneNode(node.getMetadata()));
+        return new ChangeXBy(apply(node.getNum()), apply(node.getMetadata()));
     }
 
     /**
@@ -718,7 +730,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(ChangeYBy node) {
-        return new ChangeYBy(cloneNode(node.getNum()), cloneNode(node.getMetadata()));
+        return new ChangeYBy(apply(node.getNum()), apply(node.getMetadata()));
     }
 
     /**
@@ -732,7 +744,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(SetXTo node) {
-        return new SetXTo(cloneNode(node.getNum()), cloneNode(node.getMetadata()));
+        return new SetXTo(apply(node.getNum()), apply(node.getMetadata()));
     }
 
     /**
@@ -746,7 +758,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(SetYTo node) {
-        return new SetYTo(cloneNode(node.getNum()), cloneNode(node.getMetadata()));
+        return new SetYTo(apply(node.getNum()), apply(node.getMetadata()));
     }
 
     /**
@@ -760,7 +772,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(GoToPos node) {
-        return new GoToPos(cloneNode(node.getPosition()), cloneNode(node.getMetadata()));
+        return new GoToPos(apply(node.getPosition()), apply(node.getMetadata()));
     }
 
     /**
@@ -774,7 +786,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(GoToPosXY node) {
-        return new GoToPosXY(cloneNode(node.getX()), cloneNode(node.getY()), cloneNode(node.getMetadata()));
+        return new GoToPosXY(apply(node.getX()), apply(node.getY()), apply(node.getMetadata()));
     }
 
     /**
@@ -788,7 +800,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(Qualified node) {
-        return new Qualified(cloneNode(node.getFirst()), cloneNode(node.getSecond()));
+        return new Qualified(apply(node.getFirst()), apply(node.getSecond()));
     }
 
     /**
@@ -802,7 +814,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(SetPenColorToColorStmt node) {
-        return new SetPenColorToColorStmt(cloneNode(node.getColorExpr()), cloneNode(node.getMetadata()));
+        return new SetPenColorToColorStmt(apply(node.getColorExpr()), apply(node.getMetadata()));
     }
 
     /**
@@ -816,9 +828,9 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(ColorTouchingColor node) {
-        return new ColorTouchingColor(cloneNode(node.getOperand1()),
-                cloneNode(node.getOperand2()),
-                cloneNode(node.getMetadata()));
+        return new ColorTouchingColor(apply(node.getOperand1()),
+                apply(node.getOperand2()),
+                apply(node.getMetadata()));
     }
 
     /**
@@ -832,7 +844,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(Touching node) {
-        return new Touching(cloneNode(node.getTouchable()), cloneNode(node.getMetadata()));
+        return new Touching(apply(node.getTouchable()), apply(node.getMetadata()));
     }
 
     /**
@@ -846,7 +858,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(PenStampStmt node) {
-        return new PenStampStmt(cloneNode(node.getMetadata()));
+        return new PenStampStmt(apply(node.getMetadata()));
     }
 
     /**
@@ -860,7 +872,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(ChangePenColorParamBy node) {
-        return new ChangePenColorParamBy(cloneNode(node.getValue()), cloneNode(node.getParam()), cloneNode(node.getMetadata()));
+        return new ChangePenColorParamBy(apply(node.getValue()), apply(node.getParam()), apply(node.getMetadata()));
     }
 
     /**
@@ -874,7 +886,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(SetPenColorParamTo node) {
-        return new SetPenColorParamTo(cloneNode(node.getValue()), cloneNode(node.getParam()), cloneNode(node.getMetadata()));
+        return new SetPenColorParamTo(apply(node.getValue()), apply(node.getParam()), apply(node.getMetadata()));
     }
 
     /**
@@ -888,7 +900,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(SetAttributeTo node) {
-        return new SetAttributeTo(cloneNode(node.getStringExpr()), cloneNode(node.getExpr()), cloneNode(node.getMetadata()));
+        return new SetAttributeTo(apply(node.getStringExpr()), apply(node.getExpr()), apply(node.getMetadata()));
     }
 
     /**
@@ -902,7 +914,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(ActorDefinitionList node) {
-        return new ActorDefinitionList(cloneList(node.getDefinitions()));
+        return new ActorDefinitionList(applyList(node.getDefinitions()));
     }
 
     /**
@@ -930,7 +942,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(Key node) {
-        return new Key(cloneNode(node.getKey()), cloneNode(node.getMetadata()));
+        return new Key(apply(node.getKey()), apply(node.getMetadata()));
     }
 
     /**
@@ -944,7 +956,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(Message node) {
-        return new Message(cloneNode(node.getMessage()));
+        return new Message(apply(node.getMessage()));
     }
 
     /**
@@ -959,11 +971,11 @@ public class CloneVisitor {
      */
     public ASTNode visit(Program node) {
         SymbolTable copyTable = new SymbolTable();
-        return new Program(cloneNode(node.getIdent()),
-                cloneNode(node.getActorDefinitionList()),
+        return new Program(apply(node.getIdent()),
+                apply(node.getActorDefinitionList()),
                 new SymbolTable(node.getSymbolTable()), // TODO: Not a deep copy
                 new ProcedureDefinitionNameMapping(node.getProcedureMapping()), // TODO: Not a deep copy
-                cloneNode(node.getProgramMetadata()));
+                apply(node.getProgramMetadata()));
     }
 
     /**
@@ -977,7 +989,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(SetStmtList node) {
-        return new SetStmtList(cloneList(node.getStmts()));
+        return new SetStmtList(applyList(node.getStmts()));
     }
 
     /**
@@ -1033,7 +1045,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(WithExpr node) {
-        return new WithExpr(cloneNode(node.getExpression()), (BlockMetadata) node.getMetadata().accept(this));
+        return new WithExpr(apply(node.getExpression()), (BlockMetadata) node.getMetadata().accept(this));
     }
 
     /**
@@ -1047,7 +1059,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(GreenFlag node) {
-        return new GreenFlag((BlockMetadata) cloneNode(node.getMetadata()));
+        return new GreenFlag((BlockMetadata) apply(node.getMetadata()));
     }
 
     /**
@@ -1061,8 +1073,8 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(AttributeAboveValue node) {
-        return new AttributeAboveValue(cloneNode(node.getAttribute()),
-                cloneNode(node.getValue()), cloneNode(node.getMetadata()));
+        return new AttributeAboveValue(apply(node.getAttribute()),
+                apply(node.getValue()), apply(node.getMetadata()));
     }
 
     /**
@@ -1104,7 +1116,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(StringContains node) {
-        return new StringContains(cloneNode(node.getContaining()), cloneNode(node.getContained()), cloneNode(node.getMetadata()));
+        return new StringContains(apply(node.getContaining()), apply(node.getContained()), apply(node.getMetadata()));
     }
 
     /**
@@ -1118,7 +1130,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(IsKeyPressed node) {
-        return new IsKeyPressed(cloneNode(node.getKey()), cloneNode(node.getMetadata()));
+        return new IsKeyPressed(apply(node.getKey()), apply(node.getMetadata()));
     }
 
     /**
@@ -1132,7 +1144,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(IsMouseDown node) {
-        return new IsMouseDown(cloneNode(node.getMetadata()));
+        return new IsMouseDown(apply(node.getMetadata()));
     }
 
     /**
@@ -1160,7 +1172,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(FromNumber node) {
-        return new FromNumber(cloneNode(node.getValue()));
+        return new FromNumber(apply(node.getValue()));
     }
 
     /**
@@ -1174,7 +1186,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(Add node) {
-        return new Add(cloneNode(node.getOperand1()), cloneNode(node.getOperand2()), cloneNode(node.getMetadata()));
+        return new Add(apply(node.getOperand1()), apply(node.getOperand2()), apply(node.getMetadata()));
     }
 
     /**
@@ -1188,7 +1200,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(AsNumber node) {
-        return new AsNumber(cloneNode(node.getOperand1()));
+        return new AsNumber(apply(node.getOperand1()));
     }
 
     /**
@@ -1202,7 +1214,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(Current node) {
-        return new Current(cloneNode(node.getTimeComp()), cloneNode(node.getMetadata()));
+        return new Current(apply(node.getTimeComp()), apply(node.getMetadata()));
     }
 
     /**
@@ -1216,7 +1228,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(DaysSince2000 node) {
-        return new DaysSince2000(cloneNode(node.getMetadata()));
+        return new DaysSince2000(apply(node.getMetadata()));
     }
 
     /**
@@ -1230,7 +1242,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(DistanceTo node) {
-        return new DistanceTo(cloneNode(node.getPosition()), cloneNode(node.getMetadata()));
+        return new DistanceTo(apply(node.getPosition()), apply(node.getMetadata()));
     }
 
     /**
@@ -1244,7 +1256,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(Div node) {
-        return new Div(cloneNode(node.getOperand1()), cloneNode(node.getOperand2()), cloneNode(node.getMetadata()));
+        return new Div(apply(node.getOperand1()), apply(node.getOperand2()), apply(node.getMetadata()));
     }
 
     /**
@@ -1258,7 +1270,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(IndexOf node) {
-        return new IndexOf(cloneNode(node.getExpr()), cloneNode(node.getIdentifier()), cloneNode(node.getMetadata()));
+        return new IndexOf(apply(node.getExpr()), apply(node.getIdentifier()), apply(node.getMetadata()));
     }
 
     /**
@@ -1272,7 +1284,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(LengthOfString node) {
-        return new LengthOfString(cloneNode(node.getStringExpr()), cloneNode(node.getMetadata()));
+        return new LengthOfString(apply(node.getStringExpr()), apply(node.getMetadata()));
     }
 
     /**
@@ -1286,7 +1298,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(LengthOfVar node) {
-        return new LengthOfVar(cloneNode(node.getIdentifier()), cloneNode(node.getMetadata()));
+        return new LengthOfVar(apply(node.getIdentifier()), apply(node.getMetadata()));
     }
 
     /**
@@ -1300,7 +1312,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(Loudness node) {
-        return new Loudness(cloneNode(node.getMetadata()));
+        return new Loudness(apply(node.getMetadata()));
     }
 
     /**
@@ -1314,7 +1326,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(Minus node) {
-        return new Minus(cloneNode(node.getOperand1()), cloneNode(node.getOperand2()), cloneNode(node.getMetadata()));
+        return new Minus(apply(node.getOperand1()), apply(node.getOperand2()), apply(node.getMetadata()));
     }
 
     /**
@@ -1328,7 +1340,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(Mod node) {
-        return new Mod(cloneNode(node.getOperand1()), cloneNode(node.getOperand2()), cloneNode(node.getMetadata()));
+        return new Mod(apply(node.getOperand1()), apply(node.getOperand2()), apply(node.getMetadata()));
     }
 
     /**
@@ -1342,7 +1354,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(MouseX node) {
-        return new MouseX(cloneNode(node.getMetadata()));
+        return new MouseX(apply(node.getMetadata()));
     }
 
     /**
@@ -1356,7 +1368,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(MouseY node) {
-        return new MouseY(cloneNode(node.getMetadata()));
+        return new MouseY(apply(node.getMetadata()));
     }
 
     /**
@@ -1370,7 +1382,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(Mult node) {
-        return new Mult(cloneNode(node.getOperand1()), cloneNode(node.getOperand2()), cloneNode(node.getMetadata()));
+        return new Mult(apply(node.getOperand1()), apply(node.getOperand2()), apply(node.getMetadata()));
     }
 
     /**
@@ -1398,7 +1410,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(NumFunctOf node) {
-        return new NumFunctOf(cloneNode(node.getOperand1()), cloneNode(node.getOperand2()), cloneNode(node.getMetadata()));
+        return new NumFunctOf(apply(node.getOperand1()), apply(node.getOperand2()), apply(node.getMetadata()));
     }
 
     /**
@@ -1412,7 +1424,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(PickRandom node) {
-        return new PickRandom(cloneNode(node.getOperand1()), cloneNode(node.getOperand2()), cloneNode(node.getMetadata()));
+        return new PickRandom(apply(node.getOperand1()), apply(node.getOperand2()), apply(node.getMetadata()));
     }
 
     /**
@@ -1426,7 +1438,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(Round node) {
-        return new Round(cloneNode(node.getOperand1()), cloneNode(node.getMetadata()));
+        return new Round(apply(node.getOperand1()), apply(node.getMetadata()));
     }
 
     /**
@@ -1440,7 +1452,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(Timer node) {
-        return new Timer(cloneNode(node.getMetadata()));
+        return new Timer(apply(node.getMetadata()));
     }
 
     /**
@@ -1468,7 +1480,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(AsString node) {
-        return new AsString(cloneNode(node.getOperand1()));
+        return new AsString(apply(node.getOperand1()));
     }
 
     /**
@@ -1482,7 +1494,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(AttributeOf node) {
-        return new AttributeOf(cloneNode(node.getAttribute()), cloneNode(node.getElementChoice()), cloneNode(node.getMetadata()));
+        return new AttributeOf(apply(node.getAttribute()), apply(node.getElementChoice()), apply(node.getMetadata()));
     }
 
     /**
@@ -1496,7 +1508,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(ItemOfVariable node) {
-        return new ItemOfVariable(cloneNode(node.getNum()), cloneNode(node.getIdentifier()), cloneNode(node.getMetadata()));
+        return new ItemOfVariable(apply(node.getNum()), apply(node.getIdentifier()), apply(node.getMetadata()));
     }
 
     /**
@@ -1510,7 +1522,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(Join node) {
-        return new Join(cloneNode(node.getOperand1()), cloneNode(node.getOperand2()), cloneNode(node.getMetadata()));
+        return new Join(apply(node.getOperand1()), apply(node.getOperand2()), apply(node.getMetadata()));
     }
 
     /**
@@ -1524,7 +1536,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(LetterOf node) {
-        return new LetterOf(cloneNode(node.getNum()), cloneNode(node.getStringExpr()), cloneNode(node.getMetadata()));
+        return new LetterOf(apply(node.getNum()), apply(node.getStringExpr()), apply(node.getMetadata()));
     }
 
     /**
@@ -1552,7 +1564,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(Username node) {
-        return new Username(cloneNode(node.getMetadata()));
+        return new Username(apply(node.getMetadata()));
     }
 
     /**
@@ -1566,7 +1578,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(MousePos node) {
-        return new MousePos(cloneNode(node.getMetadata()));
+        return new MousePos(apply(node.getMetadata()));
     }
 
     /**
@@ -1580,7 +1592,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(FromExpression node) {
-        return new FromExpression(cloneNode(node.getStringExpr()), cloneNode(node.getMetadata()));
+        return new FromExpression(apply(node.getStringExpr()), apply(node.getMetadata()));
     }
 
     /**
@@ -1594,7 +1606,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(RandomPos node) {
-        return new RandomPos(cloneNode(node.getMetadata()));
+        return new RandomPos(apply(node.getMetadata()));
     }
 
     /**
@@ -1608,7 +1620,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(ProcedureDefinitionList node) {
-        return new ProcedureDefinitionList(cloneList(node.getList()));
+        return new ProcedureDefinitionList(applyList(node.getList()));
     }
 
     /**
@@ -1622,7 +1634,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(ExpressionStmt node) {
-        return new ExpressionStmt(cloneNode(node.getExpression()));
+        return new ExpressionStmt(apply(node.getExpression()));
     }
 
     /**
@@ -1650,7 +1662,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(AskAndWait node) {
-        return new AskAndWait(cloneNode(node.getQuestion()), cloneNode(node.getMetadata()));
+        return new AskAndWait(apply(node.getQuestion()), apply(node.getMetadata()));
     }
 
     /**
@@ -1664,7 +1676,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(ClearGraphicEffects node) {
-        return new ClearGraphicEffects(cloneNode(node.getMetadata()));
+        return new ClearGraphicEffects(apply(node.getMetadata()));
     }
 
     /**
@@ -1678,7 +1690,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(ClearSoundEffects node) {
-        return new ClearSoundEffects(cloneNode(node.getMetadata()));
+        return new ClearSoundEffects(apply(node.getMetadata()));
     }
 
     /**
@@ -1692,7 +1704,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(PlaySoundUntilDone node) {
-        return new PlaySoundUntilDone(cloneNode(node.getElementChoice()), cloneNode(node.getMetadata()));
+        return new PlaySoundUntilDone(apply(node.getElementChoice()), apply(node.getMetadata()));
     }
 
     /**
@@ -1706,7 +1718,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(StartSound node) {
-        return new StartSound(cloneNode(node.getElementChoice()), cloneNode(node.getMetadata()));
+        return new StartSound(apply(node.getElementChoice()), apply(node.getMetadata()));
     }
 
     /**
@@ -1720,7 +1732,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(StopAllSounds node) {
-        return new StopAllSounds(cloneNode(node.getMetadata()));
+        return new StopAllSounds(apply(node.getMetadata()));
     }
 
     /**
@@ -1734,7 +1746,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(ChangeVariableBy node) {
-        return new ChangeVariableBy(cloneNode(node.getIdentifier()), cloneNode(node.getExpr()), cloneNode(node.getMetadata()));
+        return new ChangeVariableBy(apply(node.getIdentifier()), apply(node.getExpr()), apply(node.getMetadata()));
     }
 
     /**
@@ -1748,7 +1760,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(ResetTimer node) {
-        return new ResetTimer(cloneNode(node.getMetadata()));
+        return new ResetTimer(apply(node.getMetadata()));
     }
 
     /**
@@ -1762,7 +1774,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(SetVariableTo node) {
-        return new SetVariableTo(cloneNode(node.getIdentifier()), cloneNode(node.getExpr()), cloneNode(node.getMetadata()));
+        return new SetVariableTo(apply(node.getIdentifier()), apply(node.getExpr()), apply(node.getMetadata()));
     }
 
     /**
@@ -1776,7 +1788,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(StopOtherScriptsInSprite node) {
-        return new StopOtherScriptsInSprite(cloneNode(node.getMetadata()));
+        return new StopOtherScriptsInSprite(apply(node.getMetadata()));
     }
 
     /**
@@ -1790,7 +1802,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(WaitSeconds node) {
-        return new WaitSeconds(cloneNode(node.getSeconds()), cloneNode(node.getMetadata()));
+        return new WaitSeconds(apply(node.getSeconds()), apply(node.getMetadata()));
     }
 
     /**
@@ -1804,7 +1816,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(DeclarationAttributeAsTypeStmt node) {
-        return new DeclarationAttributeAsTypeStmt(cloneNode(node.getStringExpr()), cloneNode(node.getType()));
+        return new DeclarationAttributeAsTypeStmt(apply(node.getStringExpr()), apply(node.getType()));
     }
 
     /**
@@ -1818,7 +1830,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(DeclarationAttributeOfIdentAsTypeStmt node) {
-        return new DeclarationAttributeOfIdentAsTypeStmt(cloneNode(node.getStringExpr()), cloneNode(node.getIdent()), cloneNode(node.getType()));
+        return new DeclarationAttributeOfIdentAsTypeStmt(apply(node.getStringExpr()), apply(node.getIdent()), apply(node.getType()));
     }
 
     /**
@@ -1832,7 +1844,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(DeclarationIdentAsTypeStmt node) {
-        return new DeclarationIdentAsTypeStmt(cloneNode(node.getIdent()), cloneNode(node.getType()));
+        return new DeclarationIdentAsTypeStmt(apply(node.getIdent()), apply(node.getType()));
     }
 
     /**
@@ -1846,7 +1858,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(DeclarationStmtList node) {
-        return new DeclarationStmtList(cloneList(node.getDeclarationStmtList()));
+        return new DeclarationStmtList(applyList(node.getDeclarationStmtList()));
     }
 
     /**
@@ -1860,7 +1872,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(DeclarationBroadcastStmt node) {
-        return new DeclarationBroadcastStmt(cloneNode(node.getIdent()), cloneNode(node.getType()));
+        return new DeclarationBroadcastStmt(apply(node.getIdent()), apply(node.getType()));
     }
 
     /**
@@ -1874,7 +1886,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(AddTo node) {
-        return new AddTo(cloneNode(node.getString()), cloneNode(node.getIdentifier()), cloneNode(node.getMetadata()));
+        return new AddTo(apply(node.getString()), apply(node.getIdentifier()), apply(node.getMetadata()));
     }
 
     /**
@@ -1888,7 +1900,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(DeleteAllOf node) {
-        return new DeleteAllOf(cloneNode(node.getIdentifier()), cloneNode(node.getMetadata()));
+        return new DeleteAllOf(apply(node.getIdentifier()), apply(node.getMetadata()));
     }
 
     /**
@@ -1902,7 +1914,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(DeleteOf node) {
-        return new DeleteOf(cloneNode(node.getNum()), cloneNode(node.getIdentifier()), cloneNode(node.getMetadata()));
+        return new DeleteOf(apply(node.getNum()), apply(node.getIdentifier()), apply(node.getMetadata()));
     }
 
     /**
@@ -1916,7 +1928,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(InsertAt node) {
-        return new InsertAt(cloneNode(node.getString()), cloneNode(node.getIndex()), cloneNode(node.getIdentifier()), cloneNode(node.getMetadata()));
+        return new InsertAt(apply(node.getString()), apply(node.getIndex()), apply(node.getIdentifier()), apply(node.getMetadata()));
     }
 
     /**
@@ -1930,7 +1942,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(ReplaceItem node) {
-        return new ReplaceItem(cloneNode(node.getString()), cloneNode(node.getIndex()), cloneNode(node.getIdentifier()), cloneNode(node.getMetadata()));
+        return new ReplaceItem(apply(node.getString()), apply(node.getIndex()), apply(node.getIdentifier()), apply(node.getMetadata()));
     }
 
     /**
@@ -1944,7 +1956,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(ChangeLayerBy node) {
-        return new ChangeLayerBy(cloneNode(node.getNum()), cloneNode(node.getForwardBackwardChoice()), cloneNode(node.getMetadata()));
+        return new ChangeLayerBy(apply(node.getNum()), apply(node.getForwardBackwardChoice()), apply(node.getMetadata()));
     }
 
     /**
@@ -1958,7 +1970,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(ChangeSizeBy node) {
-        return new ChangeSizeBy(cloneNode(node.getNum()), cloneNode(node.getMetadata()));
+        return new ChangeSizeBy(apply(node.getNum()), apply(node.getMetadata()));
     }
 
     /**
@@ -1972,7 +1984,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(GoToLayer node) {
-        return new GoToLayer(cloneNode(node.getLayerChoice()), cloneNode(node.getMetadata()));
+        return new GoToLayer(apply(node.getLayerChoice()), apply(node.getMetadata()));
     }
 
     /**
@@ -1986,7 +1998,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(Hide node) {
-        return new Hide(cloneNode(node.getMetadata()));
+        return new Hide(apply(node.getMetadata()));
     }
 
     /**
@@ -2000,7 +2012,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(HideVariable node) {
-        return new HideVariable(cloneNode(node.getIdentifier()), cloneNode(node.getMetadata()));
+        return new HideVariable(apply(node.getIdentifier()), apply(node.getMetadata()));
     }
 
     /**
@@ -2014,7 +2026,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(HideList node) {
-        return new HideList(cloneNode(node.getIdentifier()), cloneNode(node.getMetadata()));
+        return new HideList(apply(node.getIdentifier()), apply(node.getMetadata()));
     }
 
     /**
@@ -2028,7 +2040,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(ShowList node) {
-        return new ShowList(cloneNode(node.getIdentifier()), cloneNode(node.getMetadata()));
+        return new ShowList(apply(node.getIdentifier()), apply(node.getMetadata()));
     }
 
     /**
@@ -2042,7 +2054,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(Say node) {
-        return new Say(cloneNode(node.getString()), cloneNode(node.getMetadata()));
+        return new Say(apply(node.getString()), apply(node.getMetadata()));
     }
 
     /**
@@ -2056,7 +2068,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(SayForSecs node) {
-        return new SayForSecs(cloneNode(node.getString()), cloneNode(node.getSecs()), cloneNode(node.getMetadata()));
+        return new SayForSecs(apply(node.getString()), apply(node.getSecs()), apply(node.getMetadata()));
     }
 
     /**
@@ -2070,7 +2082,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(SetSizeTo node) {
-        return new SetSizeTo(cloneNode(node.getPercent()), cloneNode(node.getMetadata()));
+        return new SetSizeTo(apply(node.getPercent()), apply(node.getMetadata()));
     }
 
     /**
@@ -2084,7 +2096,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(Show node) {
-        return new Show(cloneNode(node.getMetadata()));
+        return new Show(apply(node.getMetadata()));
     }
 
     /**
@@ -2098,7 +2110,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(ShowVariable node) {
-        return new ShowVariable(cloneNode(node.getIdentifier()), cloneNode(node.getMetadata()));
+        return new ShowVariable(apply(node.getIdentifier()), apply(node.getMetadata()));
     }
 
     /**
@@ -2112,7 +2124,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(SwitchCostumeTo node) {
-        return new SwitchCostumeTo(cloneNode(node.getCostumeChoice()), cloneNode(node.getMetadata()));
+        return new SwitchCostumeTo(apply(node.getCostumeChoice()), apply(node.getMetadata()));
     }
 
     /**
@@ -2126,7 +2138,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(NextCostume node) {
-        return new NextCostume(cloneNode(node.getMetadata()));
+        return new NextCostume(apply(node.getMetadata()));
     }
 
     /**
@@ -2140,7 +2152,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(Think node) {
-        return new Think(cloneNode(node.getThought()), cloneNode(node.getMetadata()));
+        return new Think(apply(node.getThought()), apply(node.getMetadata()));
     }
 
     /**
@@ -2154,7 +2166,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(ThinkForSecs node) {
-        return new ThinkForSecs(cloneNode(node.getThought()), cloneNode(node.getSecs()), cloneNode(node.getMetadata()));
+        return new ThinkForSecs(apply(node.getThought()), apply(node.getSecs()), apply(node.getMetadata()));
     }
 
     /**
@@ -2168,7 +2180,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(GlideSecsTo node) {
-        return new GlideSecsTo(cloneNode(node.getSecs()), cloneNode(node.getPosition()), cloneNode(node.getMetadata()));
+        return new GlideSecsTo(apply(node.getSecs()), apply(node.getPosition()), apply(node.getMetadata()));
     }
 
     /**
@@ -2182,7 +2194,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(GlideSecsToXY node) {
-        return new GlideSecsToXY(cloneNode(node.getSecs()), cloneNode(node.getX()), cloneNode(node.getY()), cloneNode(node.getMetadata()));
+        return new GlideSecsToXY(apply(node.getSecs()), apply(node.getX()), apply(node.getY()), apply(node.getMetadata()));
     }
 
     /**
@@ -2196,7 +2208,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(IfOnEdgeBounce node) {
-        return new IfOnEdgeBounce(cloneNode(node.getMetadata()));
+        return new IfOnEdgeBounce(apply(node.getMetadata()));
     }
 
     /**
@@ -2210,7 +2222,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(PointInDirection node) {
-        return new PointInDirection(cloneNode(node.getDirection()), cloneNode(node.getMetadata()));
+        return new PointInDirection(apply(node.getDirection()), apply(node.getMetadata()));
     }
 
     /**
@@ -2224,7 +2236,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(PointTowards node) {
-        return new PointTowards(cloneNode(node.getPosition()), cloneNode(node.getMetadata()));
+        return new PointTowards(apply(node.getPosition()), apply(node.getMetadata()));
     }
 
     /**
@@ -2238,7 +2250,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(TurnLeft node) {
-        return new TurnLeft(cloneNode(node.getDegrees()), cloneNode(node.getMetadata()));
+        return new TurnLeft(apply(node.getDegrees()), apply(node.getMetadata()));
     }
 
     /**
@@ -2252,7 +2264,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(TurnRight node) {
-        return new TurnRight(cloneNode(node.getDegrees()), cloneNode(node.getMetadata()));
+        return new TurnRight(apply(node.getDegrees()), apply(node.getMetadata()));
     }
 
     /**
@@ -2266,7 +2278,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(StopThisScript node) {
-        return new StopThisScript(cloneNode(node.getMetadata()));
+        return new StopThisScript(apply(node.getMetadata()));
     }
 
     /**
@@ -2294,7 +2306,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(Edge node) {
-        return new Edge(cloneNode(node.getMetadata()));
+        return new Edge(apply(node.getMetadata()));
     }
 
     /**
@@ -2308,7 +2320,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(MousePointer node) {
-        return new MousePointer(cloneNode(node.getMetadata()));
+        return new MousePointer(apply(node.getMetadata()));
     }
 
     /**
@@ -2322,7 +2334,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(SpriteTouchable node) {
-        return new SpriteTouchable(cloneNode(node.getStringExpr()), cloneNode(node.getMetadata()));
+        return new SpriteTouchable(apply(node.getStringExpr()), apply(node.getMetadata()));
     }
 
     /**
@@ -2394,7 +2406,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(AsBool node) {
-        return new AsBool(cloneNode(node.getOperand1()));
+        return new AsBool(apply(node.getOperand1()));
     }
 
     /**
@@ -2408,7 +2420,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(AsTouchable node) {
-        return new AsTouchable(cloneNode(node.getOperand1()));
+        return new AsTouchable(apply(node.getOperand1()));
     }
 
     /**
@@ -2422,7 +2434,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(ScriptList node) {
-        return new ScriptList(cloneList(node.getScriptList()));
+        return new ScriptList(applyList(node.getScriptList()));
     }
 
     /**
@@ -2436,7 +2448,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(SpriteClicked node) {
-        return new SpriteClicked(cloneNode(node.getMetadata()));
+        return new SpriteClicked(apply(node.getMetadata()));
     }
 
     /**
@@ -2450,7 +2462,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(StageClicked node) {
-        return new StageClicked(cloneNode(node.getMetadata()));
+        return new StageClicked(apply(node.getMetadata()));
     }
 
     /**
@@ -2464,7 +2476,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(Costume node) {
-        return new Costume(cloneNode(node.getType()), cloneNode(node.getMetadata()));
+        return new Costume(apply(node.getType()), apply(node.getMetadata()));
     }
 
     /**
@@ -2478,7 +2490,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(Backdrop node) {
-        return new Backdrop(cloneNode(node.getType()), cloneNode(node.getMetadata()));
+        return new Backdrop(apply(node.getType()), apply(node.getMetadata()));
     }
 
     /**
@@ -2492,7 +2504,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(Direction node) {
-        return new Direction(cloneNode(node.getMetadata()));
+        return new Direction(apply(node.getMetadata()));
     }
 
     /**
@@ -2506,7 +2518,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(PositionX node) {
-        return new PositionX(cloneNode(node.getMetadata()));
+        return new PositionX(apply(node.getMetadata()));
     }
 
     /**
@@ -2520,7 +2532,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(PositionY node) {
-        return new PositionY(cloneNode(node.getMetadata()));
+        return new PositionY(apply(node.getMetadata()));
     }
 
     /**
@@ -2534,7 +2546,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(Size node) {
-        return new Size(cloneNode(node.getMetadata()));
+        return new Size(apply(node.getMetadata()));
     }
 
     /**
@@ -2548,7 +2560,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(Volume node) {
-        return new Volume(cloneNode(node.getMetadata()));
+        return new Volume(apply(node.getMetadata()));
     }
 
     /**
@@ -2562,7 +2574,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(Answer node) {
-        return new Answer(cloneNode(node.getMetadata()));
+        return new Answer(apply(node.getMetadata()));
     }
 
     /**
@@ -2604,7 +2616,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(AttributeFromFixed node) {
-        return new AttributeFromFixed(cloneNode(node.getAttribute()));
+        return new AttributeFromFixed(apply(node.getAttribute()));
     }
 
     /**
@@ -2618,7 +2630,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(AttributeFromVariable node) {
-        return new AttributeFromVariable(cloneNode(node.getVariable()));
+        return new AttributeFromVariable(apply(node.getVariable()));
     }
 
     /**
@@ -2646,7 +2658,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(SetPenSizeTo node) {
-        return new SetPenSizeTo(cloneNode(node.getValue()), cloneNode(node.getMetadata()));
+        return new SetPenSizeTo(apply(node.getValue()), apply(node.getMetadata()));
     }
 
     /**
@@ -2660,7 +2672,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(ChangePenSizeBy node) {
-        return new ChangePenSizeBy(cloneNode(node.getValue()), cloneNode(node.getMetadata()));
+        return new ChangePenSizeBy(apply(node.getValue()), apply(node.getMetadata()));
     }
 
     /**
@@ -2674,7 +2686,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(SetGraphicEffectTo node) {
-        return new SetGraphicEffectTo(cloneNode(node.getEffect()), cloneNode(node.getValue()), cloneNode(node.getMetadata()));
+        return new SetGraphicEffectTo(apply(node.getEffect()), apply(node.getValue()), apply(node.getMetadata()));
     }
 
     /**
@@ -2688,7 +2700,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(ChangeGraphicEffectBy node) {
-        return new ChangeGraphicEffectBy(cloneNode(node.getEffect()), cloneNode(node.getValue()), cloneNode(node.getMetadata()));
+        return new ChangeGraphicEffectBy(apply(node.getEffect()), apply(node.getValue()), apply(node.getMetadata()));
     }
 
     /**
@@ -2730,7 +2742,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(SetSoundEffectTo node) {
-        return new SetSoundEffectTo(cloneNode(node.getEffect()), cloneNode(node.getValue()), cloneNode(node.getMetadata()));
+        return new SetSoundEffectTo(apply(node.getEffect()), apply(node.getValue()), apply(node.getMetadata()));
     }
 
     /**
@@ -2744,7 +2756,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(ChangeSoundEffectBy node) {
-        return new ChangeSoundEffectBy(cloneNode(node.getEffect()), cloneNode(node.getValue()), cloneNode(node.getMetadata()));
+        return new ChangeSoundEffectBy(apply(node.getEffect()), apply(node.getValue()), apply(node.getMetadata()));
     }
 
     /**
@@ -2758,7 +2770,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(SetVolumeTo node) {
-        return new SetVolumeTo(cloneNode(node.getVolumeValue()), cloneNode(node.getMetadata()));
+        return new SetVolumeTo(apply(node.getVolumeValue()), apply(node.getMetadata()));
     }
 
     /**
@@ -2772,7 +2784,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(ChangeVolumeBy node) {
-        return new ChangeVolumeBy(cloneNode(node.getVolumeValue()), cloneNode(node.getMetadata()));
+        return new ChangeVolumeBy(apply(node.getVolumeValue()), apply(node.getMetadata()));
     }
 
     /**
@@ -2814,7 +2826,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(SetRotationStyle node) {
-        return new SetRotationStyle(cloneNode(node.getRotation()), cloneNode(node.getMetadata()));
+        return new SetRotationStyle(apply(node.getRotation()), apply(node.getMetadata()));
     }
 
     /**
@@ -2828,7 +2840,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(SetDragMode node) {
-        return new SetDragMode(cloneNode(node.getDrag()), cloneNode(node.getMetadata()));
+        return new SetDragMode(apply(node.getDrag()), apply(node.getMetadata()));
     }
 
     /**
@@ -2843,7 +2855,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(SpriteTouchingColor node) {
-        return new SpriteTouchingColor(cloneNode(node.getColor()), cloneNode(node.getMetadata()));
+        return new SpriteTouchingColor(apply(node.getColor()), apply(node.getMetadata()));
     }
 
     /**
@@ -2858,7 +2870,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(Variable node) {
-        return new Variable(cloneNode(node.getName()), cloneNode(node.getMetadata()));
+        return new Variable(apply(node.getName()), apply(node.getMetadata()));
     }
 
     /**
@@ -2873,7 +2885,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(ScratchList node) {
-        return new ScratchList(cloneNode(node.getName()), cloneNode(node.getMetadata()));
+        return new ScratchList(apply(node.getName()), apply(node.getMetadata()));
     }
 
     /**
@@ -2888,7 +2900,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(Parameter node) {
-        return new Parameter(cloneNode(node.getName()), cloneNode(node.getMetadata()));
+        return new Parameter(apply(node.getName()), apply(node.getMetadata()));
     }
 
     /**
@@ -2903,7 +2915,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(ListContains node) {
-        return new ListContains(cloneNode(node.getIdentifier()), cloneNode(node.getElement()), cloneNode(node.getMetadata()));
+        return new ListContains(apply(node.getIdentifier()), apply(node.getElement()), apply(node.getMetadata()));
     }
 
     /**
@@ -3008,7 +3020,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(PenWithParamMetadata node) {
-        return new PenWithParamMetadata(cloneNode(node.getPenBlockMetadata()), cloneNode(node.getParamMetadata()));
+        return new PenWithParamMetadata(apply(node.getPenBlockMetadata()), apply(node.getParamMetadata()));
     }
 
     /**
@@ -3023,7 +3035,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(ProgramMetadata node) {
-        return new ProgramMetadata(cloneNode(node.getMonitor()), cloneNode(node.getExtension()), cloneNode(node.getMeta()));
+        return new ProgramMetadata(apply(node.getMonitor()), apply(node.getExtension()), apply(node.getMeta()));
     }
 
     /**
@@ -3086,7 +3098,7 @@ public class CloneVisitor {
      */
     public ASTNode visit(MonitorSliderMetadata node) {
         return new MonitorSliderMetadata(node.getId(), node.getMode(), node.getOpcode(),
-                cloneNode(node.getParamsMetadata()), node.getSpriteName(), node.getWidth(), node.getHeight(),
+                apply(node.getParamsMetadata()), node.getSpriteName(), node.getWidth(), node.getHeight(),
                 node.getX(), node.getY(), node.isVisible(), node.getValue(), node.getSliderMin(), node.getSliderMax(), node.isDiscrete());
     }
 
@@ -3103,7 +3115,7 @@ public class CloneVisitor {
      */
     public ASTNode visit(MonitorListMetadata node) {
         return new MonitorListMetadata(node.getId(), node.getMode(), node.getOpcode(),
-                cloneNode(node.getParamsMetadata()), node.getSpriteName(), node.getWidth(),
+                apply(node.getParamsMetadata()), node.getSpriteName(), node.getWidth(),
                 node.getHeight(), node.getX(), node.getY(), node.isVisible(), new ArrayList<>(node.getValues()));
     }
 
@@ -3195,8 +3207,8 @@ public class CloneVisitor {
      */
     public ASTNode visit(NonDataBlockMetadata node) {
         return new NonDataBlockMetadata(node.getCommentId(), node.getBlockId(), node.getOpcode(), node.getNext(), node.getParent(),
-                cloneNode(node.getInputMetadata()), cloneNode(node.getFields()),
-                node.isTopLevel(), node.isShadow(), cloneNode(node.getMutation()));
+                apply(node.getInputMetadata()), apply(node.getFields()),
+                node.isTopLevel(), node.isShadow(), apply(node.getMutation()));
     }
 
     /**
@@ -3212,8 +3224,8 @@ public class CloneVisitor {
      */
     public ASTNode visit(TopNonDataBlockMetadata node) {
         return new TopNonDataBlockMetadata(node.getCommentId(), node.getBlockId(), node.getOpcode(), node.getNext(), node.getParent(),
-                cloneNode(node.getInputMetadata()), cloneNode(node.getFields()),
-                node.isTopLevel(), node.isShadow(), cloneNode(node.getMutation()),
+                apply(node.getInputMetadata()), apply(node.getFields()),
+                node.isTopLevel(), node.isShadow(), apply(node.getMutation()),
                 node.getXPos(), node.getYPos());
     }
 
@@ -3306,12 +3318,12 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(StageMetadata node) {
-        return new StageMetadata(cloneNode(node.getCommentsMetadata()), cloneNode(node.getVariables()),
-                cloneNode(node.getLists()),
-                cloneNode(node.getBroadcasts()),
+        return new StageMetadata(apply(node.getCommentsMetadata()), apply(node.getVariables()),
+                apply(node.getLists()),
+                apply(node.getBroadcasts()),
                 node.getCurrentCostume(),
-                cloneNode(node.getCostumes()),
-                cloneNode(node.getSounds()),
+                apply(node.getCostumes()),
+                apply(node.getSounds()),
                 node.getVolume(), node.getLayerOrder(), node.getTempo(), node.getVideoTransparency(),
                 node.getVideoState(), node.getTextToSpeechLanguage());
     }
@@ -3328,12 +3340,12 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(SpriteMetadata node) {
-        return new SpriteMetadata(cloneNode(node.getCommentsMetadata()), cloneNode(node.getVariables()),
-                cloneNode(node.getLists()),
-                cloneNode(node.getBroadcasts()),
+        return new SpriteMetadata(apply(node.getCommentsMetadata()), apply(node.getVariables()),
+                apply(node.getLists()),
+                apply(node.getBroadcasts()),
                 node.getCurrentCostume(),
-                cloneNode(node.getCostumes()),
-                cloneNode(node.getSounds()),
+                apply(node.getCostumes()),
+                apply(node.getSounds()),
                 node.getVolume(), node.getLayerOrder(), node.isVisible(), node.getX(), node.getY(), node.getSize(),
                 node.getDirection(), node.isDraggable(), node.getRotationStyle());
     }
@@ -3350,7 +3362,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(BroadcastMetadataList node) {
-        return new BroadcastMetadataList(cloneList(node.getList()));
+        return new BroadcastMetadataList(applyList(node.getList()));
     }
 
     /**
@@ -3365,7 +3377,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(CommentMetadataList node) {
-        return new CommentMetadataList(cloneList(node.getList()));
+        return new CommentMetadataList(applyList(node.getList()));
     }
 
     /**
@@ -3380,7 +3392,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(FieldsMetadataList node) {
-        return new FieldsMetadataList(cloneList(node.getList()));
+        return new FieldsMetadataList(applyList(node.getList()));
     }
 
     /**
@@ -3395,7 +3407,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(ImageMetadataList node) {
-        return new ImageMetadataList(cloneList(node.getList()));
+        return new ImageMetadataList(applyList(node.getList()));
     }
 
     /**
@@ -3410,7 +3422,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(InputMetadataList node) {
-        return new InputMetadataList(cloneList(node.getList()));
+        return new InputMetadataList(applyList(node.getList()));
     }
 
     /**
@@ -3425,7 +3437,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(ListMetadataList node) {
-        return new ListMetadataList(cloneList(node.getList()));
+        return new ListMetadataList(applyList(node.getList()));
     }
 
     /**
@@ -3440,7 +3452,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(MonitorMetadataList node) {
-        return new MonitorMetadataList(cloneList(node.getList()));
+        return new MonitorMetadataList(applyList(node.getList()));
     }
 
     /**
@@ -3455,7 +3467,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(MonitorParamMetadataList node) {
-        return new MonitorParamMetadataList(cloneList(node.getList()));
+        return new MonitorParamMetadataList(applyList(node.getList()));
     }
 
     /**
@@ -3470,7 +3482,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(SoundMetadataList node) {
-        return new SoundMetadataList(cloneList(node.getList()));
+        return new SoundMetadataList(applyList(node.getList()));
     }
 
     /**
@@ -3485,7 +3497,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(VariableMetadataList node) {
-        return new VariableMetadataList(cloneList(node.getList()));
+        return new VariableMetadataList(applyList(node.getList()));
     }
 
     /**
@@ -3530,7 +3542,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(ProcedureMetadata node) {
-        return new ProcedureMetadata(cloneNode(node.getDefinition()), cloneNode(node.getPrototype()));
+        return new ProcedureMetadata(apply(node.getDefinition()), apply(node.getPrototype()));
     }
 
     /**
@@ -3559,6 +3571,6 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(CloneOfMetadata node) {
-        return new CloneOfMetadata(cloneNode(node.getCloneBlockMetadata()), cloneNode(node.getCloneMenuMetadata()));
+        return new CloneOfMetadata(apply(node.getCloneBlockMetadata()), apply(node.getCloneMenuMetadata()));
     }
 }

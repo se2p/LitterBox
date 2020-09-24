@@ -71,7 +71,7 @@ public class CloneVisitorTest {
     public void testEquality(String fileName) throws IOException, ParsingException {
         Program program = getAST(fileName);
         CloneVisitor cloneVisitor = new CloneVisitor();
-        Program programCopy = (Program)program.accept(cloneVisitor);
+        Program programCopy = cloneVisitor.apply(program);
         assertEqualsButNotSame(program, programCopy);
     }
 
