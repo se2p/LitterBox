@@ -24,6 +24,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.ProcedureMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 public class ProcedureDefinition extends AbstractNode implements ASTNode {
@@ -41,7 +42,7 @@ public class ProcedureDefinition extends AbstractNode implements ASTNode {
         this.metadata = metadata;
     }
 
-    public BlockMetadata getMetadata() {
+    public ProcedureMetadata getMetadata() {
         return metadata;
     }
 
@@ -60,5 +61,10 @@ public class ProcedureDefinition extends AbstractNode implements ASTNode {
     @Override
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);
+    }
+
+    @Override
+    public ASTNode accept(CloneVisitor visitor) {
+        return visitor.visit(this);
     }
 }
