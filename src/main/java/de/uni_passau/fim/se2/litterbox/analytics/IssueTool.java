@@ -83,6 +83,7 @@ public class IssueTool {
 
         // Smells
         registerSmellFinder(new AmbiguousParameterNameUnused(), smellFinders);
+        registerSmellFinder(new ClonedCode(), smellFinders);
         registerSmellFinder(new DeadCode(), smellFinders);
         registerSmellFinder(new EmptyControlBody(), smellFinders);
         registerSmellFinder(new EmptyCustomBlock(), smellFinders);
