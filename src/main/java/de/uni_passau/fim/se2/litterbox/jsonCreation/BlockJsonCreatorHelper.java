@@ -64,8 +64,8 @@ public abstract class BlockJsonCreatorHelper {
         if (meta instanceof TopNonDataBlockMetadata) {
             TopNonDataBlockMetadata topNonDataBlockMetadata = (TopNonDataBlockMetadata) meta;
             jsonString.append(",");
-            createFieldValue(jsonString, X_KEY, topNonDataBlockMetadata.getxPos()).append(",");
-            createFieldValue(jsonString, Y_KEY, topNonDataBlockMetadata.getyPos());
+            createFieldValue(jsonString, X_KEY, topNonDataBlockMetadata.getXPos()).append(",");
+            createFieldValue(jsonString, Y_KEY, topNonDataBlockMetadata.getYPos());
         }
         return jsonString;
     }

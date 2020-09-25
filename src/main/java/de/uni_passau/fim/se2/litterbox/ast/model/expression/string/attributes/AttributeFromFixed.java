@@ -18,7 +18,9 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes;
 
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 public class AttributeFromFixed extends AbstractNode implements Attribute {
@@ -36,5 +38,10 @@ public class AttributeFromFixed extends AbstractNode implements Attribute {
     @Override
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);
+    }
+
+    @Override
+    public ASTNode accept(CloneVisitor visitor) {
+        return visitor.visit(this);
     }
 }

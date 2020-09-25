@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.uni_passau.fim.se2.litterbox.ast.model.metadata.ressources;
+package de.uni_passau.fim.se2.litterbox.ast.model.metadata.resources;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTLeaf;
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;

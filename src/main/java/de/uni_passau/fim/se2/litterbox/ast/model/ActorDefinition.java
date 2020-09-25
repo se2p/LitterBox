@@ -22,6 +22,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.actor.ActorMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinitionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.declaration.DeclarationStmtList;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
@@ -81,5 +82,10 @@ public class ActorDefinition extends AbstractNode {
     @Override
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);
+    }
+
+    @Override
+    public ASTNode accept(CloneVisitor visitor) {
+        return visitor.visit(this);
     }
 }

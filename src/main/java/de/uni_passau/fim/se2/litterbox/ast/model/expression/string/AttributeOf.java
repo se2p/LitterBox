@@ -18,10 +18,12 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.model.expression.string;
 
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.ElementChoice;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.Attribute;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 public class AttributeOf extends AbstractNode implements StringExpr {
@@ -53,5 +55,10 @@ public class AttributeOf extends AbstractNode implements StringExpr {
     @Override
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);
+    }
+
+    @Override
+    public ASTNode accept(CloneVisitor visitor) {
+        return visitor.visit(this);
     }
 }
