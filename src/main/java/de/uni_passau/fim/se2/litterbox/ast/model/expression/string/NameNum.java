@@ -20,18 +20,16 @@ package de.uni_passau.fim.se2.litterbox.ast.model.expression.string;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTLeaf;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoBlockMetadata;
-import de.uni_passau.fim.se2.litterbox.ast.model.timecomp.TimeComp;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-import java.util.Collections;
-import java.util.List;
 import java.util.Objects;
 
-public class NameNum implements ASTLeaf {
+public class NameNum extends AbstractNode implements ASTLeaf {
 
     public enum NameNumType {
         NAME("name"), NUMBER("number");
@@ -70,17 +68,6 @@ public class NameNum implements ASTLeaf {
         return type.getType();
     }
 
-    private ASTNode parent;
-
-    public ASTNode getParentNode() {
-        return parent;
-    }
-
-    @Override
-    public void setParentNode(ASTNode node) {
-        this.parent = node;
-    }
-
     @Override
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);
@@ -89,11 +76,6 @@ public class NameNum implements ASTLeaf {
     @Override
     public ASTNode accept(CloneVisitor visitor) {
         return visitor.visit(this);
-    }
-
-    @Override
-    public List<? extends ASTNode> getChildren() {
-        return Collections.emptyList();
     }
 
     @Override

@@ -20,17 +20,15 @@ package de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTLeaf;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoBlockMetadata;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.GraphicEffect;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
-import java.util.Collections;
-import java.util.List;
 import java.util.Objects;
 
-public class SoundEffect implements ASTLeaf {
+public class SoundEffect extends AbstractNode implements ASTLeaf {
 
     public enum SoundEffectType {
         PAN("pan left/right"), PITCH("pitch");
@@ -78,17 +76,6 @@ public class SoundEffect implements ASTLeaf {
         return type.getToken();
     }
 
-    private ASTNode parent;
-
-    public ASTNode getParentNode() {
-        return parent;
-    }
-
-    @Override
-    public void setParentNode(ASTNode node) {
-        this.parent = node;
-    }
-
     @Override
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);
@@ -97,11 +84,6 @@ public class SoundEffect implements ASTLeaf {
     @Override
     public ASTNode accept(CloneVisitor visitor) {
         return visitor.visit(this);
-    }
-
-    @Override
-    public List<? extends ASTNode> getChildren() {
-        return Collections.emptyList();
     }
 
     @Override

@@ -23,46 +23,43 @@ import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
-import java.util.Collections;
-import java.util.List;
 import java.util.Objects;
 
-public class ActorType implements ASTLeaf {
+public class ActorType extends AbstractNode implements ASTLeaf {
 
-    // TODO: Rename
-    public enum ActorTypeType {
+    private enum Type {
         STAGE,
         SPRITE;
     }
 
-    private ActorTypeType type;
+    private Type type;
 
-    public ActorType(String name) {
-        this.type = ActorTypeType.valueOf(name);
+    public ActorType(ActorType other) {
+        this.type = other.type;
     }
 
-    ActorType(ActorTypeType type) {
+    private ActorType(Type type) {
         this.type = type;
     }
 
     public static ActorType getStage() {
-        return new ActorType(ActorTypeType.STAGE);
+        return new ActorType(Type.STAGE);
     }
 
     public static ActorType getSprite() {
-        return new ActorType(ActorTypeType.SPRITE);
+        return new ActorType(Type.SPRITE);
     }
 
-    public ActorTypeType getType() {
+    public Type getType() {
         return type;
     }
 
     public boolean isStage() {
-        return type.equals(ActorTypeType.STAGE);
+        return type.equals(Type.STAGE);
     }
 
     public boolean isSprite() {
-        return type.equals(ActorTypeType.SPRITE);
+        return type.equals(Type.SPRITE);
     }
 
     @Override
@@ -73,22 +70,6 @@ public class ActorType implements ASTLeaf {
     @Override
     public ASTNode accept(CloneVisitor visitor) {
         return visitor.visit(this);
-    }
-
-    private ASTNode parent;
-
-    public ASTNode getParentNode() {
-        return parent;
-    }
-
-    @Override
-    public void setParentNode(ASTNode node) {
-        this.parent = node;
-    }
-
-    @Override
-    public List<ASTNode> getChildren() {
-        return Collections.emptyList();
     }
 
     @Override

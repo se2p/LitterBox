@@ -928,7 +928,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(ActorType node) {
-        return new ActorType(node.getType().name());
+        return new ActorType(node);
     }
 
     /**
