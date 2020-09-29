@@ -20,19 +20,26 @@ package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
+import de.uni_passau.fim.se2.litterbox.ast.model.Script;
+import de.uni_passau.fim.se2.litterbox.ast.model.event.ReceptionOfMessage;
+import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.Broadcast;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.BroadcastAndWait;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfElseStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
 
 /**
  * If a custom block calls itself inside its body and has no condition to stop the recursion, it will run for an
- * indefinite amount of time.
+ * indefinite amount of time. The same holds true for broadcast reception scripts that send the same message.
  */
 public class EndlessRecursion extends AbstractIssueFinder {
     public static final String NAME = "endless_recursion";
     private String currentProcedureName;
+    private String currentMessageName;
     private boolean insideProcedure;
+    private boolean insideBroadcastReception;
     private int loopIfCounter;
 
     @Override
@@ -47,6 +54,40 @@ public class EndlessRecursion extends AbstractIssueFinder {
         currentProcedureName = procMap.get(node.getIdent()).getName();
         super.visit(node);
         insideProcedure = false;
+        currentProcedureName = null;
+    }
+
+    @Override
+    public void visit(ReceptionOfMessage node) {
+        currentMessageName = ((StringLiteral) node.getMsg().getMessage()).getText();
+    }
+
+    @Override
+    public void visit(Script node) {
+        if (node.getEvent() instanceof ReceptionOfMessage) {
+            insideBroadcastReception = true;
+        }
+        super.visit(node);
+        insideBroadcastReception = false;
+        currentMessageName = null;
+    }
+
+    @Override
+    public void visit(Broadcast node) {
+        if (insideBroadcastReception && node.getMessage().getMessage() instanceof StringLiteral && loopIfCounter == 0) {
+            if (((StringLiteral) node.getMessage().getMessage()).getText().equals(currentMessageName)) {
+                addIssue(node, node.getMetadata());
+            }
+        }
+    }
+
+    @Override
+    public void visit(BroadcastAndWait node) {
+        if (insideBroadcastReception && node.getMessage().getMessage() instanceof StringLiteral && loopIfCounter == 0) {
+            if (((StringLiteral) node.getMessage().getMessage()).getText().equals(currentMessageName)) {
+                addIssue(node, node.getMetadata());
+            }
+        }
     }
 
     @Override
