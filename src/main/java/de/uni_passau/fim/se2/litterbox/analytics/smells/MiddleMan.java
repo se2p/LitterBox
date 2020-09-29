@@ -22,6 +22,8 @@ import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Event;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.ReceptionOfMessage;
+import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.Broadcast;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.BroadcastAndWait;
@@ -34,12 +36,25 @@ public class MiddleMan extends AbstractIssueFinder {
 
     @Override
     public void visit(Script script) {
+        currentProcedure = null;
         currentScript = script;
         Event event = script.getEvent();
         if (event instanceof ReceptionOfMessage) {
             List<Stmt> stmts = script.getStmtList().getStmts();
             if (stmts.size() == 1 && (stmts.get(0) instanceof Broadcast || stmts.get(0) instanceof BroadcastAndWait)) {
                 addIssue(event, ((ReceptionOfMessage) event).getMetadata());
+            }
+        }
+    }
+
+    @Override
+    public void visit(ProcedureDefinition node) {
+        currentProcedure = node;
+        currentScript = null;
+        List<Stmt> stmts = node.getStmtList().getStmts();
+        if (stmts.size() == 1 && (stmts.get(0) instanceof CallStmt)) {
+            if (!((CallStmt) stmts.get(0)).getIdent().getName().equals(node.getIdent().getName())) {
+                addIssue(node, node.getMetadata().getDefinition());
             }
         }
     }
