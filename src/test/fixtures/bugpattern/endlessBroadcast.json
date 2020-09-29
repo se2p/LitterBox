@@ -1,0 +1,233 @@
+{
+    "targets": [
+        {
+            "isStage": true,
+            "name": "Stage",
+            "variables": {
+                "`jEk@4|i[#Fk?(8x)AV.-my variable": [
+                    "my variable",
+                    0
+                ]
+            },
+            "lists": {},
+            "broadcasts": {
+                "8qlcgh@A_oE/UBgxA;=v": "message1"
+            },
+            "blocks": {},
+            "comments": {},
+            "currentCostume": 0,
+            "costumes": [
+                {
+                    "assetId": "cd21514d0531fdffb22204e0ec5ed84a",
+                    "name": "backdrop1",
+                    "md5ext": "cd21514d0531fdffb22204e0ec5ed84a.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 240,
+                    "rotationCenterY": 180
+                }
+            ],
+            "sounds": [
+                {
+                    "assetId": "83a9787d4cb6f3b7632b4ddfebf74367",
+                    "name": "pop",
+                    "dataFormat": "wav",
+                    "format": "",
+                    "rate": 48000,
+                    "sampleCount": 1124,
+                    "md5ext": "83a9787d4cb6f3b7632b4ddfebf74367.wav"
+                }
+            ],
+            "volume": 100,
+            "layerOrder": 0,
+            "tempo": 60,
+            "videoTransparency": 50,
+            "videoState": "on",
+            "textToSpeechLanguage": null
+        },
+        {
+            "isStage": false,
+            "name": "Sprite1",
+            "variables": {},
+            "lists": {},
+            "broadcasts": {},
+            "blocks": {
+                "MNqCNFT|sm:K.L[1Cn5U": {
+                    "opcode": "event_whenbroadcastreceived",
+                    "next": "NhW3F],-;_9hD=t0/Q#!",
+                    "parent": null,
+                    "inputs": {},
+                    "fields": {
+                        "BROADCAST_OPTION": [
+                            "message1",
+                            "8qlcgh@A_oE/UBgxA;=v"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 451,
+                    "y": 278
+                },
+                "NhW3F],-;_9hD=t0/Q#!": {
+                    "opcode": "looks_nextcostume",
+                    "next": "JC(DH*crxWsJ`@M{/?v3",
+                    "parent": "MNqCNFT|sm:K.L[1Cn5U",
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "JC(DH*crxWsJ`@M{/?v3": {
+                    "opcode": "looks_nextbackdrop",
+                    "next": "oJN}vQ]k.^kuA@7z$xB[",
+                    "parent": "NhW3F],-;_9hD=t0/Q#!",
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "oJN}vQ]k.^kuA@7z$xB[": {
+                    "opcode": "event_broadcast",
+                    "next": null,
+                    "parent": "JC(DH*crxWsJ`@M{/?v3",
+                    "inputs": {
+                        "BROADCAST_INPUT": [
+                            1,
+                            [
+                                11,
+                                "message1",
+                                "8qlcgh@A_oE/UBgxA;=v"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "S7L-eeeN#Jy0I~MEwW3l": {
+                    "opcode": "event_whenbroadcastreceived",
+                    "next": "T30xFP/dL;?!q/)!/Vxm",
+                    "parent": null,
+                    "inputs": {},
+                    "fields": {
+                        "BROADCAST_OPTION": [
+                            "message1",
+                            "8qlcgh@A_oE/UBgxA;=v"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 922,
+                    "y": 404
+                },
+                "T30xFP/dL;?!q/)!/Vxm": {
+                    "opcode": "motion_setrotationstyle",
+                    "next": "ex#j[):r[q[VjEa]hWL8",
+                    "parent": "S7L-eeeN#Jy0I~MEwW3l",
+                    "inputs": {},
+                    "fields": {
+                        "STYLE": [
+                            "left-right",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "ex#j[):r[q[VjEa]hWL8": {
+                    "opcode": "control_if",
+                    "next": null,
+                    "parent": "T30xFP/dL;?!q/)!/Vxm",
+                    "inputs": {
+                        "SUBSTACK": [
+                            2,
+                            "$%wN{J@`[G=Jtyr.,A)`"
+                        ],
+                        "CONDITION": [
+                            2,
+                            "RzG5DLBp@IkFCwimc::i"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "$%wN{J@`[G=Jtyr.,A)`": {
+                    "opcode": "event_broadcast",
+                    "next": null,
+                    "parent": "ex#j[):r[q[VjEa]hWL8",
+                    "inputs": {
+                        "BROADCAST_INPUT": [
+                            1,
+                            [
+                                11,
+                                "message1",
+                                "8qlcgh@A_oE/UBgxA;=v"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "RzG5DLBp@IkFCwimc::i": {
+                    "opcode": "sensing_mousedown",
+                    "next": null,
+                    "parent": "ex#j[):r[q[VjEa]hWL8",
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                }
+            },
+            "comments": {},
+            "currentCostume": 0,
+            "costumes": [
+                {
+                    "assetId": "b7853f557e4426412e64bb3da6531a99",
+                    "name": "costume1",
+                    "bitmapResolution": 1,
+                    "md5ext": "b7853f557e4426412e64bb3da6531a99.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 48,
+                    "rotationCenterY": 50
+                },
+                {
+                    "assetId": "e6ddc55a6ddd9cc9d84fe0b4c21e016f",
+                    "name": "costume2",
+                    "bitmapResolution": 1,
+                    "md5ext": "e6ddc55a6ddd9cc9d84fe0b4c21e016f.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 46,
+                    "rotationCenterY": 53
+                }
+            ],
+            "sounds": [
+                {
+                    "assetId": "83c36d806dc92327b9e7049a565c6bff",
+                    "name": "Meow",
+                    "dataFormat": "wav",
+                    "format": "",
+                    "rate": 48000,
+                    "sampleCount": 40682,
+                    "md5ext": "83c36d806dc92327b9e7049a565c6bff.wav"
+                }
+            ],
+            "volume": 100,
+            "layerOrder": 1,
+            "visible": true,
+            "x": 0,
+            "y": 0,
+            "size": 100,
+            "direction": 90,
+            "draggable": false,
+            "rotationStyle": "all around"
+        }
+    ],
+    "monitors": [],
+    "extensions": [],
+    "meta": {
+        "semver": "3.0.0",
+        "vm": "0.2.0-prerelease.20200916215734",
+        "agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:81.0) Gecko/20100101 Firefox/81.0"
+    }
+}
