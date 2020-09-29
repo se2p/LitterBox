@@ -52,4 +52,14 @@ public class MiddleManTest {
         Set<Issue> reports = finder.check(program);
         Assertions.assertEquals(3, reports.size());
     }
+
+    @Test
+    public void testMiddleManProcedure() throws IOException, ParsingException {
+        File f = new File("./src/test/fixtures/smells/middleManProcedure.json");
+        Program program = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
+
+        MiddleMan finder = new MiddleMan();
+        Set<Issue> reports = finder.check(program);
+        Assertions.assertEquals(1, reports.size());
+    }
 }
