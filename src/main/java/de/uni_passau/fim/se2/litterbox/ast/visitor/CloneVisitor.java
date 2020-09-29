@@ -970,12 +970,13 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(Program node) {
-        SymbolTable copyTable = new SymbolTable();
-        return new Program(apply(node.getIdent()),
+        Program program = new Program(apply(node.getIdent()),
                 apply(node.getActorDefinitionList()),
                 new SymbolTable(node.getSymbolTable()), // TODO: Not a deep copy
                 new ProcedureDefinitionNameMapping(node.getProcedureMapping()), // TODO: Not a deep copy
                 apply(node.getProgramMetadata()));
+        program.accept(new ParentVisitor());
+        return program;
     }
 
     /**
