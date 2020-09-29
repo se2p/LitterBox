@@ -200,7 +200,7 @@ public class StmtListJSONCreator implements ScratchVisitor {
     @Override
     public void visit(GoToLayer node) {
         FieldsMetadata fieldsMeta = ((NonDataBlockMetadata) node.getMetadata()).getFields().getList().get(0);
-        String layer = node.getLayerChoice().getType().getType();
+        String layer = node.getLayerChoice().getTypeName();
         String fieldsString = createFields(fieldsMeta.getFieldsName(), layer, null);
         finishedJSONStrings.add(createBlockWithoutMutationString((NonDataBlockMetadata) node.getMetadata(), getNextId(),
                 previousBlockId, EMPTY_VALUE, fieldsString));
@@ -213,7 +213,7 @@ public class StmtListJSONCreator implements ScratchVisitor {
         FieldsMetadata fieldsMeta = metadata.getFields().getList().get(0);
         List<String> inputs = new ArrayList<>();
         inputs.add(createNumExpr(metadata, NUM_KEY, node.getNum(), INTEGER_NUM_PRIMITIVE));
-        String fields = createFields(fieldsMeta.getFieldsName(), node.getForwardBackwardChoice().getType().getType(), null);
+        String fields = createFields(fieldsMeta.getFieldsName(), node.getForwardBackwardChoice().getTypeName(), null);
         finishedJSONStrings.add(createBlockWithoutMutationString(metadata, getNextId(),
                 previousBlockId, createInputs(inputs), fields));
 

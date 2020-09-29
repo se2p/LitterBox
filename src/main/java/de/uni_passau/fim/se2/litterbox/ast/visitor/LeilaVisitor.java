@@ -1335,12 +1335,12 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(GraphicEffect graphicEffect) {
-        emitNoSpace(graphicEffect.getType().getToken());
+        emitNoSpace(graphicEffect.getTypeName());
     }
 
     @Override
     public void visit(SoundEffect soundEffect) {
-        String effect = soundEffect.getType().getToken();
+        String effect = soundEffect.getTypeName();
         if (effect.equals(SoundEffect.SoundEffectType.PITCH.getToken())) {
             emitNoSpace("pitch");
         } else {
@@ -1355,7 +1355,7 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(FixedAttribute fixedAttribute) {
-        emitToken(fixedAttribute.getType().getType());
+        emitToken(fixedAttribute.getTypeName());
     }
 
     @Override
@@ -1911,7 +1911,7 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(Costume costume) {
-        if (costume.getType().getType().equals(NameNum.NameNumType.NAME.NAME)) {
+        if (costume.getType().getType().equals(NameNum.NameNumType.NAME)) {
             emitNoSpace("costumeName()");
         } else {
             emitNoSpace("costumeNumber()");
@@ -1920,7 +1920,7 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(LayerChoice layerChoice) {
-        emitToken(layerChoice.getType().getType());
+        emitToken(layerChoice.getTypeName());
     }
 
     @Override
@@ -1945,7 +1945,7 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(EventAttribute eventAttribute) {
-        emitNoSpace(eventAttribute.getType().getType());
+        emitNoSpace(eventAttribute.getTypeName());
     }
 
     @Override
@@ -1997,7 +1997,7 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(RotationStyle rotationStyle) {
-        emitString(rotationStyle.getType().getToken());
+        emitString(rotationStyle.getTypeName());
     }
 
     @Override
@@ -2029,7 +2029,7 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(DragMode dragMode) {
-        emitString(dragMode.getType().getToken());
+        emitString(dragMode.getTypeName());
     }
 
     @Override
