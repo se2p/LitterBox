@@ -20,6 +20,7 @@ package de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTLeaf;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.FixedAttribute;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
@@ -28,27 +29,56 @@ import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
-public enum LayerChoice implements ASTLeaf {
-    FRONT("front"), BACK("back");
+public class LayerChoice implements ASTLeaf {
 
-    private final String type;
+    public enum LayerChoiceType {
+        FRONT("front"), BACK("back");
 
-    LayerChoice(String type) {
-        this.type = Preconditions.checkNotNull(type);
-    }
+        private final String type;
 
-    public static LayerChoice fromString(String type) {
-        for (LayerChoice f : values()) {
-            if (f.getType().equals(type)) {
-                return f;
-            }
+        LayerChoiceType(String type) {
+            this.type = Preconditions.checkNotNull(type);
         }
-        throw new IllegalArgumentException("Unknown LayerChoice: " + type);
+
+        public static LayerChoiceType fromString(String type) {
+            for (LayerChoiceType f : values()) {
+                if (f.getType().equals(type)) {
+                    return f;
+                }
+            }
+            throw new IllegalArgumentException("Unknown LayerChoice: " + type);
+        }
+
+        public String getType() {
+            return type;
+        }
     }
 
-    public String getType() {
+    private LayerChoiceType type;
+
+    public LayerChoice(String typeName) {
+        this.type = LayerChoiceType.fromString(typeName);
+    }
+
+    public LayerChoiceType getType() {
         return type;
+    }
+
+    public String getTypeName() {
+        return type.getType();
+    }
+
+    private ASTNode parent;
+
+    public ASTNode getParentNode() {
+        return parent;
+    }
+
+    @Override
+    public void setParentNode(ASTNode node) {
+        this.parent = node;
     }
 
     @Override
@@ -79,7 +109,20 @@ public enum LayerChoice implements ASTLeaf {
     @Override
     public String[] toSimpleStringArray() {
         String[] result = new String[1];
-        result[0] = type;
+        result[0] = type.getType();
         return result;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof LayerChoice)) return false;
+        LayerChoice that = (LayerChoice) o;
+        return type == that.type;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(type);
     }
 }

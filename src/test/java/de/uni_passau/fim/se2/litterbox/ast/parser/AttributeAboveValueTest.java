@@ -50,9 +50,9 @@ public class AttributeAboveValueTest {
     public void testEvent() {
         Assertions.assertTrue(project.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(0).getEvent() instanceof AttributeAboveValue);
         Assertions.assertEquals("loudness",
-                ((AttributeAboveValue) project.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(0).getEvent()).getAttribute().getType());
+                ((AttributeAboveValue) project.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(0).getEvent()).getAttribute().getTypeName());
         Assertions.assertTrue(project.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(1).getEvent() instanceof AttributeAboveValue);
         Assertions.assertEquals("timer",
-                ((AttributeAboveValue) project.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(1).getEvent()).getAttribute().getType());
+                ((AttributeAboveValue) project.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(1).getEvent()).getAttribute().getTypeName());
     }
 }

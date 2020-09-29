@@ -76,12 +76,6 @@ public class CloneVisitorTest {
     }
 
     private void assertEqualsButNotSame(ASTNode node1, ASTNode node2) {
-        assertEquals(node1, node2);
-
-        // Enums are identical so skip checking them
-        if (node1.getClass().isEnum()) {
-            return;
-        }
         assertNotSame(node1, node2);
 
         List<? extends ASTNode> children1 = node1.getChildren();
@@ -91,6 +85,8 @@ public class CloneVisitorTest {
         for (int i = 0; i < node2.getChildren().size(); i++) {
             assertEqualsButNotSame(children1.get(i), children2.get(i));
         }
+
+        assertEquals(node1, node2, "Found difference for nodes of type "+node1.getClass());
     }
 
     private Program getAST(String fileName) throws IOException, ParsingException {

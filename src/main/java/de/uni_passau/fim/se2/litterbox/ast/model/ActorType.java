@@ -25,11 +25,45 @@ import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
-public enum ActorType implements ASTLeaf {
+public class ActorType implements ASTLeaf {
 
-    STAGE,
-    SPRITE;
+    // TODO: Rename
+    public enum ActorTypeType {
+        STAGE,
+        SPRITE;
+    }
+
+    private ActorTypeType type;
+
+    public ActorType(String name) {
+        this.type = ActorTypeType.valueOf(name);
+    }
+
+    ActorType(ActorTypeType type) {
+        this.type = type;
+    }
+
+    public static ActorType getStage() {
+        return new ActorType(ActorTypeType.STAGE);
+    }
+
+    public static ActorType getSprite() {
+        return new ActorType(ActorTypeType.SPRITE);
+    }
+
+    public ActorTypeType getType() {
+        return type;
+    }
+
+    public boolean isStage() {
+        return type.equals(ActorTypeType.STAGE);
+    }
+
+    public boolean isSprite() {
+        return type.equals(ActorTypeType.SPRITE);
+    }
 
     @Override
     public void accept(ScratchVisitor visitor) {
@@ -39,6 +73,17 @@ public enum ActorType implements ASTLeaf {
     @Override
     public ASTNode accept(CloneVisitor visitor) {
         return visitor.visit(this);
+    }
+
+    private ASTNode parent;
+
+    public ASTNode getParentNode() {
+        return parent;
+    }
+
+    @Override
+    public void setParentNode(ASTNode node) {
+        this.parent = node;
     }
 
     @Override
@@ -58,7 +103,20 @@ public enum ActorType implements ASTLeaf {
 
     @Override
     public String[] toSimpleStringArray() {
-        String[] returnArray = {this.name()};
+        String[] returnArray = {type.name()};
         return returnArray;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ActorType)) return false;
+        ActorType actorType = (ActorType) o;
+        return type == actorType.type;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(type);
     }
 }

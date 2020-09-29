@@ -81,7 +81,7 @@ public class ActorSoundStmtParser {
             case sound_changeeffectby:
                 numExpr = NumExprParser.parseNumExpr(current, VALUE_KEY, allBlocks);
                 String effectName = current.get(FIELDS_KEY).get("EFFECT").get(0).asText();
-                return new ChangeSoundEffectBy(SoundEffect.fromString(effectName), numExpr, metadata);
+                return new ChangeSoundEffectBy(new SoundEffect(effectName), numExpr, metadata);
 
             default:
                 throw new RuntimeException("Not implemented yet for opcode " + opCodeString);
@@ -118,8 +118,8 @@ public class ActorSoundStmtParser {
     private static ActorSoundStmt parseSetSoundEffect(JsonNode current, JsonNode allBlocks, BlockMetadata metadata)
             throws ParsingException {
         String effect = current.get(FIELDS_KEY).get(EFFECT_KEY).get(0).asText();
-        Preconditions.checkArgument(SoundEffect.contains(effect));
-        return new SetSoundEffectTo(SoundEffect.fromString(effect), NumExprParser.parseNumExpr(current, VALUE_KEY,
+        Preconditions.checkArgument(SoundEffect.SoundEffectType.contains(effect));
+        return new SetSoundEffectTo(new SoundEffect(effect), NumExprParser.parseNumExpr(current, VALUE_KEY,
                 allBlocks), metadata);
     }
 }

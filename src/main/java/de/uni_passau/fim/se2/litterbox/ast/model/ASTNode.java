@@ -28,6 +28,10 @@ public interface ASTNode extends Visitable<ASTNode> {
 
     List<? extends ASTNode> getChildren();
 
+    ASTNode getParentNode();
+
+    void setParentNode(ASTNode node);
+
     String getUniqueName();
 
     BlockMetadata getMetadata();

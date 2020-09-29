@@ -928,7 +928,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(ActorType node) {
-        return node; // enum
+        return new ActorType(node.getType().name());
     }
 
     /**
@@ -1396,7 +1396,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(NumFunct node) {
-        return node; // enum
+        return new NumFunct(node.getTypeName());
     }
 
     /**
@@ -2292,7 +2292,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(TimeComp node) {
-        return node; // enum
+        return new TimeComp(node.getTypeName());
     }
 
     /**
@@ -2588,7 +2588,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(NameNum node) {
-        return node; // enum
+        return new NameNum(node.getTypeName());
     }
 
     /**
@@ -2602,7 +2602,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(FixedAttribute node) {
-        return node; // enum
+        return new FixedAttribute(node.getTypeName());
     }
 
     /**
@@ -2644,7 +2644,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(LayerChoice node) {
-        return node; // enum
+        return new LayerChoice(node.getTypeName());
     }
 
     /**
@@ -2714,7 +2714,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(GraphicEffect node) {
-        return node; // enum
+        return new GraphicEffect(node.getTypeName());
     }
 
     /**
@@ -2728,7 +2728,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(SoundEffect node) {
-        return node; // enum
+        return new SoundEffect(node.getTypeName());
     }
 
     /**
@@ -2798,7 +2798,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(DragMode node) {
-        return node; // enum
+        return new DragMode(node.getTypeName());
     }
 
     /**
@@ -2812,7 +2812,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(RotationStyle node) {
-        return node; // enum
+        return new RotationStyle(node.getTypeName());
     }
 
     /**
@@ -2929,7 +2929,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(EventAttribute node) {
-        return node; // don't need to copy enum
+        return new EventAttribute(node.getTypeName());
     }
 
     /**
@@ -3556,7 +3556,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(ForwardBackwardChoice node) {
-        return node; // enum
+        return new ForwardBackwardChoice(node.getTypeName());
     }
 
     /**

@@ -55,7 +55,7 @@ class DataExprParserTest {
             Program program = ProgramParser.parseProgram("Params", project);
             List<ActorDefinition> actorDefinitions = program.getActorDefinitionList().getDefinitions();
             for (ActorDefinition actorDefinition : actorDefinitions) {
-                if (actorDefinition.getActorType().equals(ActorType.SPRITE)) {
+                if (actorDefinition.isSprite()) {
                     List<Script> scriptList = actorDefinition.getScripts().getScriptList();
                     Script script = scriptList.get(0);
                     Stmt stmt = script.getStmtList().getStmts().get(0);
