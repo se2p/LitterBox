@@ -168,9 +168,7 @@ public class SymbolTable {
         for (Entry<String, ExpressionListInfo> current : entries) {
             ExpressionListInfo info = current.getValue();
             if (info.getVariableName().equals(name) && info.getActor().equals(actor)) {
-                String key = current.getKey();
-                int index = key.lastIndexOf(actor);
-                return key.substring(0, index);
+                return current.getValue().getIdent();
             }
         }
         return null;
@@ -181,9 +179,7 @@ public class SymbolTable {
         for (Entry<String, VariableInfo> current : entries) {
             VariableInfo info = current.getValue();
             if (info.getVariableName().equals(name) && info.getActor().equals(actor)) {
-                String key = current.getKey();
-                int index = key.lastIndexOf(actor);
-                return key.substring(0, index);
+                return current.getValue().getIdent();
             }
         }
         return null;
