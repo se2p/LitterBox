@@ -31,7 +31,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Set;
 
-public class UnusedIdentifierTest {
+public class UnusedVariableTest {
     private static Program empty;
     private static Program unusedVariables;
     private static Program oneUsedVariables;
