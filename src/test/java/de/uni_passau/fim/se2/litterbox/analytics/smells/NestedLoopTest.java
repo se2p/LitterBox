@@ -18,42 +18,29 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.smells;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Set;
 
-public class NestedLoopTest {
-    private static Program empty;
-    private static Program nestedLoops;
-    private static ObjectMapper mapper = new ObjectMapper();
-
-    @BeforeAll
-    public static void setUp() throws IOException, ParsingException {
-
-        File f = new File("./src/test/fixtures/emptyProject.json");
-        empty = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
-        f = new File("./src/test/fixtures/smells/nestedLoops.json");
-        nestedLoops = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
-    }
+public class NestedLoopTest implements JsonTest {
 
     @Test
-    public void testEmptyProgram() {
+    public void testEmptyProgram() throws IOException, ParsingException {
+        Program empty = getAST("./src/test/fixtures/emptyProject.json");
         NestedLoops parameterName = new NestedLoops();
         Set<Issue> reports = parameterName.check(empty);
         Assertions.assertEquals(0, reports.size());
     }
 
     @Test
-    public void testNestedLoops() {
+    public void testNestedLoops() throws IOException, ParsingException {
+        Program nestedLoops = getAST("./src/test/fixtures/smells/nestedLoops.json");
         NestedLoops parameterName = new NestedLoops();
         Set<Issue> reports = parameterName.check(nestedLoops);
         Assertions.assertEquals(3, reports.size());

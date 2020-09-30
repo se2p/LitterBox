@@ -16,22 +16,26 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.uni_passau.fim.se2.litterbox.ast.parser;
+package de.uni_passau.fim.se2.litterbox;
 
-import de.uni_passau.fim.se2.litterbox.JsonTest;
-import de.uni_passau.fim.se2.litterbox.analytics.metric.SpriteCount;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import org.junit.jupiter.api.Assertions;import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
+import de.uni_passau.fim.se2.litterbox.ast.parser.Scratch3Parser;
+import de.uni_passau.fim.se2.litterbox.cfg.ControlFlowGraph;
+import de.uni_passau.fim.se2.litterbox.cfg.ControlFlowGraphVisitor;
 
 import java.io.IOException;
 
-public class ScratchListAsBooleanTest implements JsonTest {
-    @Test
-    public void testEmptyProgram() throws IOException, ParsingException {
-        Program empty = getAST("./src/test/fixtures/stmtParser/listElementsBoolean.json");
-        SpriteCount sp = new SpriteCount();
-        Assertions.assertEquals(1, sp.calculateMetric(empty));
+public interface JsonTest {
+
+    default Program getAST(String fileName) throws IOException, ParsingException {
+        Scratch3Parser parser = new Scratch3Parser();
+        return parser.parseFile(fileName);
+    }
+
+    default ControlFlowGraph getCFG(String fileName) throws IOException, ParsingException {
+        ControlFlowGraphVisitor visitor = new ControlFlowGraphVisitor();
+        visitor.visit(getAST(fileName));
+        return visitor.getControlFlowGraph();
     }
 }

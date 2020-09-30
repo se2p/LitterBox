@@ -18,38 +18,20 @@
  */
 package de.uni_passau.fim.se2.litterbox.cfg;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.Broadcast;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.BroadcastAndWait;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.CreateCloneOf;
-import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Optional;
 import java.util.Set;
 
 import static com.google.common.truth.Truth.assertThat;
 
-public class CFGTest {
-
-    private Program getAST(String fileName) throws IOException, ParsingException {
-        File file = new File(fileName);
-        ObjectMapper objectMapper = new ObjectMapper();
-        JsonNode project = objectMapper.readTree(file);
-        Program program = ProgramParser.parseProgram("TestProgram", project);
-        return program;
-    }
-
-    private ControlFlowGraph getCFG(String fileName) throws IOException, ParsingException {
-        ControlFlowGraphVisitor visitor = new ControlFlowGraphVisitor();
-        visitor.visit(getAST(fileName));
-        return visitor.getControlFlowGraph();
-    }
+public class CFGTest implements JsonTest {
 
     @Test
     public void testGreenflag() throws IOException, ParsingException {

@@ -18,9 +18,8 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.parser;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.truth.Truth;
+import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
@@ -39,33 +38,22 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfElseStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatTimesStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.Edge;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
 import java.io.IOException;
 
-import static junit.framework.TestCase.fail;
+public class BoolExprParserTest implements JsonTest {
 
-public class BoolExprParserTest {
+    private Program program;
 
-    private static JsonNode project;
-
-    @BeforeAll
-    public static void setup() {
-        String path = "src/test/fixtures/boolExprBlocks.json";
-        File file = new File(path);
-        ObjectMapper objectMapper = new ObjectMapper();
-        try {
-            project = objectMapper.readTree(file);
-        } catch (IOException e) {
-            fail();
-        }
+    @BeforeEach
+    public void setup() throws IOException, ParsingException {
+        program = getAST("src/test/fixtures/boolExprBlocks.json");
     }
 
     @Test
-    public void testContains() throws ParsingException {
-        Program program = ProgramParser.parseProgram("ListExpr", project);
+    public void testContains() {
         final ActorDefinition sprite = program.getActorDefinitionList().getDefinitions().get(1);
         final Script script = sprite.getScripts().getScriptList().get(0);
 
@@ -79,8 +67,7 @@ public class BoolExprParserTest {
     }
 
     @Test
-    public void testOr() throws ParsingException {
-        Program program = ProgramParser.parseProgram("ListExpr", project);
+    public void testOr() {
         final ActorDefinition sprite = program.getActorDefinitionList().getDefinitions().get(1);
         final Script script = sprite.getScripts().getScriptList().get(0);
 
@@ -100,8 +87,7 @@ public class BoolExprParserTest {
     }
 
     @Test
-    public void testWaitUntil() throws ParsingException {
-        Program program = ProgramParser.parseProgram("ListExpr", project);
+    public void testWaitUntil() {
         final ActorDefinition sprite = program.getActorDefinitionList().getDefinitions().get(1);
         final Script script = sprite.getScripts().getScriptList().get(0);
 
@@ -114,8 +100,7 @@ public class BoolExprParserTest {
     }
 
     @Test
-    public void testAnd() throws ParsingException {
-        Program program = ProgramParser.parseProgram("ListExpr", project);
+    public void testAnd() {
         final ActorDefinition sprite = program.getActorDefinitionList().getDefinitions().get(1);
         final Script script = sprite.getScripts().getScriptList().get(0);
 
@@ -129,8 +114,7 @@ public class BoolExprParserTest {
     }
 
     @Test
-    public void testNot() throws ParsingException {
-        Program program = ProgramParser.parseProgram("ListExpr", project);
+    public void testNot() {
         final ActorDefinition sprite = program.getActorDefinitionList().getDefinitions().get(1);
         final Script script = sprite.getScripts().getScriptList().get(0);
 
@@ -145,8 +129,7 @@ public class BoolExprParserTest {
     }
 
     @Test
-    public void testBTLiteral() throws ParsingException {
-        Program program = ProgramParser.parseProgram("ListExpr", project);
+    public void testBTLiteral() {
         final ActorDefinition sprite = program.getActorDefinitionList().getDefinitions().get(1);
         final Script script = sprite.getScripts().getScriptList().get(1);
 
@@ -160,8 +143,7 @@ public class BoolExprParserTest {
     }
 
     @Test
-    public void testLTLiteral() throws ParsingException {
-        Program program = ProgramParser.parseProgram("ListExpr", project);
+    public void testLTLiteral() {
         final ActorDefinition sprite = program.getActorDefinitionList().getDefinitions().get(1);
         final Script script = sprite.getScripts().getScriptList().get(1);
 
@@ -175,8 +157,7 @@ public class BoolExprParserTest {
     }
 
     @Test
-    public void testEqLiteral() throws ParsingException {
-        Program program = ProgramParser.parseProgram("ListExpr", project);
+    public void testEqLiteral() {
         final ActorDefinition sprite = program.getActorDefinitionList().getDefinitions().get(1);
         final Script script = sprite.getScripts().getScriptList().get(1);
 
@@ -190,8 +171,7 @@ public class BoolExprParserTest {
     }
 
     @Test
-    public void testTouching() throws ParsingException {
-        Program program = ProgramParser.parseProgram("ListExpr", project);
+    public void testTouching() {
         final ActorDefinition sprite = program.getActorDefinitionList().getDefinitions().get(1);
         final Script script = sprite.getScripts().getScriptList().get(1);
 
@@ -204,8 +184,7 @@ public class BoolExprParserTest {
     }
 
     @Test
-    public void testTouchingTwoColors() throws ParsingException {
-        Program program = ProgramParser.parseProgram("ListExpr", project);
+    public void testTouchingTwoColors() {
         final ActorDefinition sprite = program.getActorDefinitionList().getDefinitions().get(1);
         final Script script = sprite.getScripts().getScriptList().get(1);
 
@@ -219,8 +198,7 @@ public class BoolExprParserTest {
     }
 
     @Test
-    public void testTouchingOneColor() throws ParsingException {
-        Program program = ProgramParser.parseProgram("ListExpr", project);
+    public void testTouchingOneColor() {
         final ActorDefinition sprite = program.getActorDefinitionList().getDefinitions().get(1);
         final Script script = sprite.getScripts().getScriptList().get(1);
 
