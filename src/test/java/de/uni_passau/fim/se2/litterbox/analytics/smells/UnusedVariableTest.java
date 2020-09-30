@@ -28,7 +28,7 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.util.Set;
 
-public class UnusedIdentifierTest implements JsonTest {
+public class UnusedVariableTest implements JsonTest {
 
     @Test
     public void testEmptyProgram() throws IOException, ParsingException {
