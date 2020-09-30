@@ -29,7 +29,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.metadata.ProgramMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.parser.metadata.ProgramMetadataParser;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ProcedureDefinitionNameMapping;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.SymbolTable;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.ParentVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import java.util.LinkedList;
@@ -84,8 +83,6 @@ public class ProgramParser {
 
         ActorDefinitionList actorDefinitionList = new ActorDefinitionList(actorDefinitions);
         ProgramMetadata metadata = ProgramMetadataParser.parse(programNode);
-        Program program = new Program(ident, actorDefinitionList, symbolTable, procDefMap, metadata);
-        program.accept(new ParentVisitor()); // Set parent relation in all nodes
-        return program;
+        return new Program(ident, actorDefinitionList, symbolTable, procDefMap, metadata);
     }
 }
