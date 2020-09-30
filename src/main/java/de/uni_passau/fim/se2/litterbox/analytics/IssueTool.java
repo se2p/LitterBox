@@ -73,6 +73,7 @@ public class IssueTool {
         bugFinder.put(RecursiveCloning.SHORT_NAME, new RecursiveCloning());
         bugFinder.put(SameVariableDifferentSprite.SHORT_NAME, new SameVariableDifferentSprite());
         bugFinder.put(StutteringMovement.SHORT_NAME, new StutteringMovement());
+        bugFinder.put(TypeError.SHORT_NAME, new TypeError());
 
         //Smells
         smellFinder.put(EmptyControlBody.SHORT_NAME, new EmptyControlBody());
