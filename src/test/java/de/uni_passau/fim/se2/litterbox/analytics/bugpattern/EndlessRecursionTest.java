@@ -18,27 +18,23 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Set;
 
 import static com.google.common.truth.Truth.assertThat;
 
-public class EndlessRecursionTest {
-    private static final ObjectMapper mapper = new ObjectMapper();
+public class EndlessRecursionTest implements JsonTest {
 
     @Test
     public void testEmptyProgram() throws IOException, ParsingException {
-        File f = new File("./src/test/fixtures/emptyProject.json");
-        Program empty = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
+        Program empty = getAST("./src/test/fixtures/emptyProject.json");
         EndlessRecursion parameterName = new EndlessRecursion();
         Set<Issue> reports = parameterName.check(empty);
         Assertions.assertEquals(0, reports.size());
@@ -46,8 +42,7 @@ public class EndlessRecursionTest {
 
     @Test
     public void testEndlessRecursion() throws IOException, ParsingException {
-        File f = new File("./src/test/fixtures/bugpattern/recursiveProcedure.json");
-        Program endlessRecursion = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
+        Program endlessRecursion = getAST("./src/test/fixtures/bugpattern/recursiveProcedure.json");
         EndlessRecursion parameterName = new EndlessRecursion();
         Set<Issue> reports = parameterName.check(endlessRecursion);
         Assertions.assertEquals(1, reports.size());
@@ -59,8 +54,7 @@ public class EndlessRecursionTest {
 
     @Test
     public void testRecursion() throws IOException, ParsingException {
-        File f = new File("./src/test/fixtures/bugpattern/recursion.json");
-        Program recursion = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
+        Program recursion = getAST("./src/test/fixtures/bugpattern/recursion.json");
         EndlessRecursion parameterName = new EndlessRecursion();
         Set<Issue> reports = parameterName.check(recursion);
         Assertions.assertEquals(0, reports.size());
@@ -68,8 +62,7 @@ public class EndlessRecursionTest {
 
     @Test
     public void testEndlessBroadcast() throws IOException, ParsingException {
-        File f = new File("./src/test/fixtures/bugpattern/endlessBroadcast.json");
-        Program endlessRecursion = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
+        Program endlessRecursion = getAST("./src/test/fixtures/bugpattern/endlessBroadcast.json");
         EndlessRecursion parameterName = new EndlessRecursion();
         Set<Issue> reports = parameterName.check(endlessRecursion);
         Assertions.assertEquals(1, reports.size());

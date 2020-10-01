@@ -38,4 +38,11 @@ public interface JsonTest {
         visitor.visit(getAST(fileName));
         return visitor.getControlFlowGraph();
     }
+
+    // TODO: This is a bit redundant wrt getAST (it is added for the tests that have a static test fixture)
+    static Program parseProgram(String fileName) throws IOException, ParsingException {
+        Scratch3Parser parser = new Scratch3Parser();
+        return parser.parseFile(fileName);
+    }
+
 }
