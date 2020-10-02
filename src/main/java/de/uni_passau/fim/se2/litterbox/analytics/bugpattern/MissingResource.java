@@ -2,7 +2,6 @@ package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
-import de.uni_passau.fim.se2.litterbox.ast.model.ActorType;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.WithExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
@@ -20,7 +19,7 @@ import java.util.List;
  * If the costume of a sprite should be set to one not available or play a sound that is not registered in the sprite it will not work.
  */
 public class MissingResource extends AbstractIssueFinder {
-    public static final String NAME = "missing_erase_all";
+    public static final String NAME = "missing_resource";
     private List<ImageMetadata> images;
     private List<ImageMetadata> backdrops;
     private List<SoundMetadata> sounds;
@@ -28,7 +27,7 @@ public class MissingResource extends AbstractIssueFinder {
     @Override
     public void visit(Program node) {
         for (ActorDefinition actor : node.getActorDefinitionList().getDefinitions()) {
-            if (actor.getActorType() == ActorType.STAGE) {
+            if (actor.getActorType().isStage()) {
                 backdrops = actor.getActorMetadata().getCostumes().getList();
                 break;
             }
@@ -83,7 +82,7 @@ public class MissingResource extends AbstractIssueFinder {
     }
 
     @Override
-    public void  visit(PlaySoundUntilDone node){
+    public void visit(PlaySoundUntilDone node) {
         if (node.getElementChoice() instanceof WithExpr && ((WithExpr) node.getElementChoice()).getExpression() instanceof StrId) {
             String sound = ((StrId) ((WithExpr) node.getElementChoice()).getExpression()).getName();
             if (!soundExists(sound)) {
@@ -93,7 +92,7 @@ public class MissingResource extends AbstractIssueFinder {
     }
 
     @Override
-    public void visit(StartSound node){
+    public void visit(StartSound node) {
         if (node.getElementChoice() instanceof WithExpr && ((WithExpr) node.getElementChoice()).getExpression() instanceof StrId) {
             String sound = ((StrId) ((WithExpr) node.getElementChoice()).getExpression()).getName();
             if (!soundExists(sound)) {
