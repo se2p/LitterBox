@@ -59,6 +59,14 @@ public class ActorDefinition extends AbstractNode {
         return actorType;
     }
 
+    public boolean isStage() {
+        return actorType.isStage();
+    }
+
+    public boolean isSprite() {
+        return actorType.isSprite();
+    }
+
     public LocalIdentifier getIdent() {
         return ident;
     }

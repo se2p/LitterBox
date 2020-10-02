@@ -149,7 +149,7 @@ public class ActorLookStmtParser {
             case looks_changeeffectby:
                 NumExpr numExpr = NumExprParser.parseNumExpr(current, CHANGE_KEY, allBlocks);
                 String effectName = current.get(FIELDS_KEY).get(EFFECT_KEY).get(0).asText();
-                return new ChangeGraphicEffectBy(GraphicEffect.fromString(effectName), numExpr, metadata);
+                return new ChangeGraphicEffectBy(new GraphicEffect(effectName), numExpr, metadata);
             default:
                 throw new ParsingException("No parser for opcode " + opcodeString);
         }
@@ -159,8 +159,8 @@ public class ActorLookStmtParser {
             throws ParsingException {
 
         String effect = current.get(FIELDS_KEY).get(EFFECT_KEY).get(0).asText();
-        Preconditions.checkArgument(GraphicEffect.contains(effect));
-        return new SetGraphicEffectTo(GraphicEffect.fromString(effect), NumExprParser.parseNumExpr(current, VALUE_KEY,
+        Preconditions.checkArgument(GraphicEffect.GraphicEffectType.contains(effect));
+        return new SetGraphicEffectTo(new GraphicEffect(effect), NumExprParser.parseNumExpr(current, VALUE_KEY,
                 allBlocks), metadata);
     }
 }

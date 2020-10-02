@@ -18,13 +18,10 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.visitor;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.analytics.LeilaAnalyzer;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -35,11 +32,8 @@ import java.io.PrintStream;
 import java.nio.file.Paths;
 
 import static com.google.common.truth.Truth.assertThat;
-import static junit.framework.TestCase.fail;
 
-public class LeilaVisitorTest {
-
-    private static JsonNode project;
+public class LeilaVisitorTest implements JsonTest {
 
     @Test
     public void testSetRotationStyle() throws Exception {
@@ -215,12 +209,9 @@ public class LeilaVisitorTest {
 
     private String getLeilaForProject(String path) throws IOException, ParsingException {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        File file = new File(path);
-        ObjectMapper objectMapper = new ObjectMapper();
-        JsonNode project = objectMapper.readTree(file);
         PrintStream stream = new PrintStream(out);
         LeilaVisitor visitor = new LeilaVisitor(stream, false, true);
-        Program program = ProgramParser.parseProgram("Small", project);
+        Program program = getAST(path);
         visitor.visit(program);
         return out.toString();
     }
@@ -234,17 +225,5 @@ public class LeilaVisitorTest {
         analyzer.analyzeFile();
         File output = new File(Paths.get(outPath + "foobar", "emptyProject.sc").toString());
         assertThat(output.exists()).isFalse();
-    }
-
-    @BeforeAll
-    public static void setup() {
-        String path = "src/test/fixtures/leilaVisitor/grammarvisitorsmall.json";
-        File file = new File(path);
-        ObjectMapper objectMapper = new ObjectMapper();
-        try {
-            project = objectMapper.readTree(file);
-        } catch (IOException e) {
-            fail();
-        }
     }
 }

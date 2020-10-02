@@ -45,7 +45,7 @@ public class ActorJSONCreator {
         StringBuilder jsonString = new StringBuilder();
         ActorMetadata meta = actor.getActorMetadata();
         boolean isStage = false;
-        if (actor.getActorType().equals(ActorType.STAGE)) {
+        if (actor.isStage()) {
             isStage = true;
         }
         jsonString.append("{");

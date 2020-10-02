@@ -72,7 +72,7 @@ public class EventParser {
             return new StartedAsClone(metadata);
         } else if (opcode.equals(event_whengreaterthan)) {
             String variableValue = current.get(FIELDS_KEY).get(GREATER_THAN_MENU).get(0).asText();
-            EventAttribute attr = EventAttribute.fromString(variableValue.toLowerCase());
+            EventAttribute attr = new EventAttribute(variableValue.toLowerCase());
             NumExpr fieldValue = NumExprParser.parseNumExpr(current, VALUE_KEY, allBlocks);
             return new AttributeAboveValue(attr, fieldValue, metadata);
         } else if (opcode.equals(event_whenbackdropswitchesto)) {

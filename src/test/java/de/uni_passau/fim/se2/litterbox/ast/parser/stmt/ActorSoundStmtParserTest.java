@@ -18,9 +18,8 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.parser.stmt;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.truth.Truth;
+import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinitionList;
@@ -36,115 +35,76 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.PlaySoundU
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.StartSound;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.StopAllSounds;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopAll;
-import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
-import static junit.framework.TestCase.fail;
+public class ActorSoundStmtParserTest implements JsonTest {
 
-public class ActorSoundStmtParserTest {
-
-    private static JsonNode project;
-
-    @BeforeAll
-    public static void setup() {
-        String path = "src/test/fixtures/stmtParser/actorSoundStmts.json";
-        File file = new File(path);
-        ObjectMapper objectMapper = new ObjectMapper();
-        try {
-            project = objectMapper.readTree(file);
-        } catch (IOException e) {
-            fail();
-        }
+    @Test
+    public void testProgramStructure() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/stmtParser/actorSoundStmts.json");
+        ActorDefinitionList list = program.getActorDefinitionList();
+        Truth.assertThat(list.getDefinitions().size()).isEqualTo(2);
     }
 
     @Test
-    public void testProgramStructure() {
-        try {
-            Program program = ProgramParser.parseProgram("ActorSoundStmts", project);
-            ActorDefinitionList list = program.getActorDefinitionList();
-            Truth.assertThat(list.getDefinitions().size()).isEqualTo(2);
-        } catch (ParsingException e) {
-            e.printStackTrace();
-            fail();
-        }
+    public void testStmtsInSprite() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/stmtParser/actorSoundStmts.json");
+        ActorDefinitionList list = program.getActorDefinitionList();
+        ActorDefinition sprite = list.getDefinitions().get(1);
+
+        Script script = sprite.getScripts().getScriptList().get(0);
+        List<Stmt> listOfStmt = script.getStmtList().getStmts();
+
+        Truth.assertThat(listOfStmt.get(0).getClass()).isEqualTo(PlaySoundUntilDone.class);
+        PlaySoundUntilDone playSoundUntilDone = (PlaySoundUntilDone) listOfStmt.get(0);
+        Truth.assertThat(playSoundUntilDone.getMetadata().getClass()).isEqualTo(NonDataBlockMetadata.class);
+        Truth.assertThat(playSoundUntilDone.getElementChoice().getClass()).isEqualTo(WithExpr.class);
+        WithExpr expr = (WithExpr) playSoundUntilDone.getElementChoice();
+        Truth.assertThat(expr.getMetadata().getClass()).isEqualTo(NonDataBlockMetadata.class);
+        Truth.assertThat(listOfStmt.get(0).getClass()).isEqualTo(PlaySoundUntilDone.class);
+        Truth.assertThat(listOfStmt.get(1).getClass()).isEqualTo(StartSound.class);
+        Truth.assertThat(listOfStmt.get(2).getClass()).isEqualTo(ClearSoundEffects.class);
+        Truth.assertThat(listOfStmt.get(3).getClass()).isEqualTo(StopAllSounds.class);
+        Truth.assertThat(listOfStmt.get(4).getClass()).isEqualTo(StopAll.class);
+        StopAll stop = (StopAll) listOfStmt.get(4);
+        Truth.assertThat(stop.getMetadata().getClass()).isEqualTo(NonDataBlockMetadata.class);
+        Truth.assertThat(((NonDataBlockMetadata) stop.getMetadata()).getMutation() instanceof StopMutationMetadata);
     }
 
     @Test
-    public void testStmtsInSprite() {
-        try {
-            Program program = ProgramParser.parseProgram("ActorLookStmts", project);
-            ActorDefinitionList list = program.getActorDefinitionList();
-            ActorDefinition sprite = list.getDefinitions().get(1);
+    public void testPlaySoundTilDone() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/stmtParser/actorSoundStmts.json");
+        ActorDefinitionList list = program.getActorDefinitionList();
+        ActorDefinition sprite = list.getDefinitions().get(1);
 
-            Script script = sprite.getScripts().getScriptList().get(0);
-            List<Stmt> listOfStmt = script.getStmtList().getStmts();
+        Script script = sprite.getScripts().getScriptList().get(0);
+        List<Stmt> listOfStmt = script.getStmtList().getStmts();
 
-            Truth.assertThat(listOfStmt.get(0).getClass()).isEqualTo(PlaySoundUntilDone.class);
-            PlaySoundUntilDone playSoundUntilDone = (PlaySoundUntilDone) listOfStmt.get(0);
-            Truth.assertThat(playSoundUntilDone.getMetadata().getClass()).isEqualTo(NonDataBlockMetadata.class);
-            Truth.assertThat(playSoundUntilDone.getElementChoice().getClass()).isEqualTo(WithExpr.class);
-            WithExpr expr = (WithExpr) playSoundUntilDone.getElementChoice();
-            Truth.assertThat(expr.getMetadata().getClass()).isEqualTo(NonDataBlockMetadata.class);
-            Truth.assertThat(listOfStmt.get(0).getClass()).isEqualTo(PlaySoundUntilDone.class);
-            Truth.assertThat(listOfStmt.get(1).getClass()).isEqualTo(StartSound.class);
-            Truth.assertThat(listOfStmt.get(2).getClass()).isEqualTo(ClearSoundEffects.class);
-            Truth.assertThat(listOfStmt.get(3).getClass()).isEqualTo(StopAllSounds.class);
-            Truth.assertThat(listOfStmt.get(4).getClass()).isEqualTo(StopAll.class);
-            StopAll stop = (StopAll) listOfStmt.get(4);
-            Truth.assertThat(stop.getMetadata().getClass()).isEqualTo(NonDataBlockMetadata.class);
-            Truth.assertThat(((NonDataBlockMetadata) stop.getMetadata()).getMutation() instanceof StopMutationMetadata);
-        } catch (ParsingException e) {
-            e.printStackTrace();
-            fail();
-        }
+        Truth.assertThat(listOfStmt.get(0).getClass()).isEqualTo(PlaySoundUntilDone.class);
+
+        PlaySoundUntilDone playSoundUntilDone = (PlaySoundUntilDone) listOfStmt.get(0);
+        WithExpr elementChoice = (WithExpr) playSoundUntilDone.getElementChoice();
+        StrId strid = (StrId) elementChoice.getExpression();
+        Truth.assertThat(strid.getName()).isEqualTo("Meow");
     }
 
     @Test
-    public void testPlaySoundTilDone() {
-        try {
-            Program program = ProgramParser.parseProgram("ActorLookStmts", project);
-            ActorDefinitionList list = program.getActorDefinitionList();
-            ActorDefinition sprite = list.getDefinitions().get(1);
+    public void testStartSound() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/stmtParser/actorSoundStmts.json");
+        ActorDefinitionList list = program.getActorDefinitionList();
+        ActorDefinition sprite = list.getDefinitions().get(1);
 
-            Script script = sprite.getScripts().getScriptList().get(0);
-            List<Stmt> listOfStmt = script.getStmtList().getStmts();
+        Script script = sprite.getScripts().getScriptList().get(0);
+        List<Stmt> listOfStmt = script.getStmtList().getStmts();
 
-            Truth.assertThat(listOfStmt.get(0).getClass()).isEqualTo(PlaySoundUntilDone.class);
+        Truth.assertThat(listOfStmt.get(0).getClass()).isEqualTo(PlaySoundUntilDone.class);
 
-            PlaySoundUntilDone playSoundUntilDone = (PlaySoundUntilDone) listOfStmt.get(0);
-            WithExpr elementChoice = (WithExpr) playSoundUntilDone.getElementChoice();
-            StrId strid = (StrId) elementChoice.getExpression();
-            Truth.assertThat(strid.getName()).isEqualTo("Meow");
-        } catch (ParsingException e) {
-            e.printStackTrace();
-            fail();
-        }
-    }
-
-    @Test
-    public void testStartSound() {
-        try {
-            Program program = ProgramParser.parseProgram("ActorLookStmts", project);
-            ActorDefinitionList list = program.getActorDefinitionList();
-            ActorDefinition sprite = list.getDefinitions().get(1);
-
-            Script script = sprite.getScripts().getScriptList().get(0);
-            List<Stmt> listOfStmt = script.getStmtList().getStmts();
-
-            Truth.assertThat(listOfStmt.get(0).getClass()).isEqualTo(PlaySoundUntilDone.class);
-
-            StartSound startSound = (StartSound) listOfStmt.get(1);
-            WithExpr elementChoice = (WithExpr) startSound.getElementChoice();
-            StrId strid = (StrId) elementChoice.getExpression();
-            Truth.assertThat(strid.getName()).isEqualTo("Meow");
-        } catch (ParsingException e) {
-            e.printStackTrace();
-            fail();
-        }
+        StartSound startSound = (StartSound) listOfStmt.get(1);
+        WithExpr elementChoice = (WithExpr) startSound.getElementChoice();
+        StrId strid = (StrId) elementChoice.getExpression();
+        Truth.assertThat(strid.getName()).isEqualTo("Meow");
     }
 }

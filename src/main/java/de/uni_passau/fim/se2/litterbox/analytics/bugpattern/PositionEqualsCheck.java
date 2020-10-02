@@ -55,10 +55,10 @@ public class PositionEqualsCheck extends AbstractIssueFinder {
             return false;
         } else if (operand instanceof AttributeOf) {
             if (((AttributeOf) operand).getAttribute() instanceof AttributeFromFixed) {
-                return ((AttributeFromFixed) ((AttributeOf) operand).getAttribute()).getAttribute()
-                        != FixedAttribute.X_POSITION
-                        && ((AttributeFromFixed) ((AttributeOf) operand).getAttribute()).getAttribute()
-                        != FixedAttribute.Y_POSITION;
+                return ((AttributeFromFixed) ((AttributeOf) operand).getAttribute()).getAttribute().getType()
+                        != FixedAttribute.FixedAttributeType.X_POSITION
+                        && ((AttributeFromFixed) ((AttributeOf) operand).getAttribute()).getAttribute().getType()
+                        != FixedAttribute.FixedAttributeType.Y_POSITION;
             }
         }
         return true;

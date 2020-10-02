@@ -18,37 +18,30 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Set;
 
-public class AmbiguousCustomBlockSignatureTest {
+public class AmbiguousCustomBlockSignatureTest implements JsonTest {
     private static Program empty;
     private static Program ambiguousProcedure;
     private static Program ambiguousProcedureDiffArg;
     private static Program emptySign;
-    private static ObjectMapper mapper = new ObjectMapper();
 
     @BeforeAll
     public static void setUp() throws IOException, ParsingException {
 
-        File f = new File("./src/test/fixtures/emptyProject.json");
-        empty = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
-        f = new File("./src/test/fixtures/bugpattern/ambiguousProcedureSignature.json");
-        ambiguousProcedure = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
-        f = new File("./src/test/fixtures/bugpattern/ambiguousSignatureDiffArg.json");
-        ambiguousProcedureDiffArg = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
-        f = new File("./src/test/fixtures/bugpattern/emptyAmbiguousSign.json");
-        emptySign = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
+        empty = JsonTest.parseProgram("./src/test/fixtures/emptyProject.json");
+        ambiguousProcedure = JsonTest.parseProgram("./src/test/fixtures/bugpattern/ambiguousProcedureSignature.json");
+        ambiguousProcedureDiffArg = JsonTest.parseProgram("./src/test/fixtures/bugpattern/ambiguousSignatureDiffArg.json");
+        emptySign = JsonTest.parseProgram("./src/test/fixtures/bugpattern/emptyAmbiguousSign.json");
     }
 
     @Test

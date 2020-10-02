@@ -18,52 +18,36 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Set;
 
-public class PositionEqualsCheckTest {
+public class PositionEqualsCheckTest implements JsonTest {
     private static Program empty;
     private static Program equalX;
     private static Program equalDirection;
     private static Program allChecks;
     private static Program xPositionEquals;
     private static Program nested;
-    private static final ObjectMapper mapper = new ObjectMapper();
     private static Program deadEquals;
 
     @BeforeAll
     public static void setUp() throws IOException, ParsingException {
 
-        File f = new File("./src/test/fixtures/emptyProject.json");
-        empty = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
-
-        f = new File("./src/test/fixtures/bugpattern/xPosEqual.json");
-        equalX = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
-
-        f = new File("./src/test/fixtures/bugpattern/posEqualDirection.json");
-        equalDirection = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
-
-        f = new File("./src/test/fixtures/bugpattern/positionEqualsCheck.json");
-        allChecks = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
-
-        f = new File("./src/test/fixtures/bugpattern/xPositionEquals.json");
-        xPositionEquals = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
-
-        f = new File("./src/test/fixtures/bugpattern/positionEqualsNested.json");
-        nested = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
-
-        f = new File("./src/test/fixtures/bugpattern/deadPositionEquals.json");
-        deadEquals = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
+        empty = JsonTest.parseProgram("./src/test/fixtures/emptyProject.json");
+        equalX = JsonTest.parseProgram("./src/test/fixtures/bugpattern/xPosEqual.json");
+        equalDirection = JsonTest.parseProgram("./src/test/fixtures/bugpattern/posEqualDirection.json");
+        allChecks = JsonTest.parseProgram("./src/test/fixtures/bugpattern/positionEqualsCheck.json");
+        xPositionEquals = JsonTest.parseProgram("./src/test/fixtures/bugpattern/xPositionEquals.json");
+        nested = JsonTest.parseProgram("./src/test/fixtures/bugpattern/positionEqualsNested.json");
+        deadEquals = JsonTest.parseProgram("./src/test/fixtures/bugpattern/deadPositionEquals.json");
     }
 
     @Test
