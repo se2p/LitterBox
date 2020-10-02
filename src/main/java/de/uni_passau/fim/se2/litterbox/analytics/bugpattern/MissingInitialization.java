@@ -18,6 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
+import de.uni_passau.fim.se2.litterbox.analytics.Hint;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
@@ -78,12 +79,14 @@ public class MissingInitialization implements IssueFinder {
                     issues.add(new Issue(this, program, use.getUseTarget().getActor(),
                             (Script) containingScript,
                             use.getUseTarget().getASTNode(),
-                            null)); // TODO: Where is the relevant metadata?
+                            null,  // TODO: Where is the relevant metadata?
+                            new Hint(getName())));
                 } else {
                     issues.add(new Issue(this, program, use.getUseTarget().getActor(),
                             (ProcedureDefinition) containingScript,
                             use.getUseTarget().getASTNode(),
-                            null)); // TODO: Where is the relevant metadata
+                            null, // TODO: Where is the relevant metadata
+                            new Hint(getName())));
                 }
             }
         }
