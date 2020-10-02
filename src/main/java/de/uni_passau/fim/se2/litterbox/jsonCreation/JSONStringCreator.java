@@ -18,9 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.jsonCreation;
 
-import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
-
-
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.MetaMetadata;
@@ -28,7 +25,10 @@ import de.uni_passau.fim.se2.litterbox.ast.model.metadata.monitor.MonitorListMet
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.monitor.MonitorMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.monitor.MonitorParamMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.monitor.MonitorSliderMetadata;
+
 import java.util.List;
+
+import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 
 public class JSONStringCreator {
     private static final String NULL_VALUE = null;
@@ -37,13 +37,14 @@ public class JSONStringCreator {
         StringBuilder jsonString = new StringBuilder();
         jsonString.append("{");
         createField(jsonString, TARGETS_KEY).append("[");
-        List<ActorDefinition> actorDefinitionList = program.getActorDefinitionList().getDefintions();
+        List<ActorDefinition> actorDefinitionList = program.getActorDefinitionList().getDefinitions();
         for (int i = 0; i < actorDefinitionList.size() - 1; i++) {
             jsonString.append(ActorJSONCreator.createActorJSONString(actorDefinitionList.get(i),
                     program.getSymbolTable(), program.getProcedureMapping()));
             jsonString.append(",");
         }
-        jsonString.append(ActorJSONCreator.createActorJSONString(actorDefinitionList.get(actorDefinitionList.size() - 1), program.getSymbolTable(), program.getProcedureMapping()));
+        jsonString.append(ActorJSONCreator.createActorJSONString(actorDefinitionList.get(actorDefinitionList.size() - 1)
+                , program.getSymbolTable(), program.getProcedureMapping()));
         jsonString.append("],");
         createMonitorListJSONString(jsonString, program).append(",");
         createExtensionJSONString(jsonString, program).append(",");
@@ -54,7 +55,7 @@ public class JSONStringCreator {
 
     private static StringBuilder createExtensionJSONString(StringBuilder jsonString, Program program) {
         createField(jsonString, EXTENSIONS_KEY).append("[");
-        List<String> ext = program.getMetadata().getExtension().getExtensionNames();
+        List<String> ext = program.getProgramMetadata().getExtension().getExtensionNames();
         for (int i = 0; i < ext.size() - 1; i++) {
             jsonString.append("\"").append(ext.get(i)).append("\"").append(",");
         }
@@ -66,7 +67,7 @@ public class JSONStringCreator {
     }
 
     private static StringBuilder createMetaJSONString(StringBuilder jsonString, Program program) {
-        MetaMetadata meta = program.getMetadata().getMeta();
+        MetaMetadata meta = program.getProgramMetadata().getMeta();
         createField(jsonString, META_KEY).append("{");
         createFieldValue(jsonString, SEMVER_KEY, meta.getSemver()).append(",");
         createFieldValue(jsonString, VM_KEY, meta.getVm()).append(",");
@@ -100,7 +101,7 @@ public class JSONStringCreator {
     }
 
     private static StringBuilder createMonitorListJSONString(StringBuilder jsonString, Program program) {
-        List<MonitorMetadata> monitorMetadataList = program.getMetadata().getMonitor().getList();
+        List<MonitorMetadata> monitorMetadataList = program.getProgramMetadata().getMonitor().getList();
         createField(jsonString, MONITORS_KEY).append("[");
         for (int i = 0; i < monitorMetadataList.size() - 1; i++) {
             createMonitorJSONString(jsonString, monitorMetadataList.get(i)).append(",");

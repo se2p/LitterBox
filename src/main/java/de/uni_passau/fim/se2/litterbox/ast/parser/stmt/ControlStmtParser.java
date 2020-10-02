@@ -18,9 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.parser.stmt;
 
-import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
-
-
 import com.fasterxml.jackson.databind.JsonNode;
 import de.uni_passau.fim.se2.litterbox.ast.Constants;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
@@ -37,7 +34,10 @@ import de.uni_passau.fim.se2.litterbox.ast.parser.NumExprParser;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ScriptParser;
 import de.uni_passau.fim.se2.litterbox.ast.parser.metadata.BlockMetadataParser;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
+
 import java.util.ArrayList;
+
+import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 
 public class ControlStmtParser {
 
@@ -50,7 +50,8 @@ public class ControlStmtParser {
         final JsonNode inputs = current.get(Constants.INPUTS_KEY);
 
         BoolExpr boolExpr;
-        StmtList stmtList, elseStmtList;
+        StmtList stmtList;
+        StmtList elseStmtList;
         BlockMetadata metadata = BlockMetadataParser.parse(identifier, current);
 
         switch (opcode) {

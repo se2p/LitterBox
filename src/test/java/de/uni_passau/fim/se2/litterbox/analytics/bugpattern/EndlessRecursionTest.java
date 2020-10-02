@@ -18,52 +18,53 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueReport;
+import de.uni_passau.fim.se2.litterbox.JsonTest;
+import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
-import java.io.File;
-import java.io.IOException;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-public class EndlessRecursionTest {
-    private static Program empty;
-    private static Program endlessRecursion;
-    private static Program recursion;
-    private static ObjectMapper mapper = new ObjectMapper();
+import java.io.IOException;
+import java.util.Set;
 
-    @BeforeAll
-    public static void setUp() throws IOException, ParsingException {
+import static com.google.common.truth.Truth.assertThat;
 
-        File f = new File("./src/test/fixtures/emptyProject.json");
-        empty = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
-        f = new File("./src/test/fixtures/bugpattern/recursiveProcedure.json");
-        endlessRecursion = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
-        f = new File("./src/test/fixtures/bugpattern/recursion.json");
-        recursion = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
+public class EndlessRecursionTest implements JsonTest {
+
+    @Test
+    public void testEmptyProgram() throws IOException, ParsingException {
+        Program empty = getAST("./src/test/fixtures/emptyProject.json");
+        EndlessRecursion parameterName = new EndlessRecursion();
+        Set<Issue> reports = parameterName.check(empty);
+        Assertions.assertEquals(0, reports.size());
     }
 
     @Test
-    public void testEmptyProgram() {
+    public void testEndlessRecursion() throws IOException, ParsingException {
+        Program endlessRecursion = getAST("./src/test/fixtures/bugpattern/recursiveProcedure.json");
         EndlessRecursion parameterName = new EndlessRecursion();
-        IssueReport report = parameterName.check(empty);
-        Assertions.assertEquals(0, report.getCount());
+        Set<Issue> reports = parameterName.check(endlessRecursion);
+        Assertions.assertEquals(1, reports.size());
+
+        // Check the procedure is correctly set
+        Issue issue = reports.iterator().next();
+        assertThat(issue.getProcedure().getIdent().getName()).isEqualTo("u(.tD,]^yo1^B?8TSwez");
     }
 
     @Test
-    public void testEndlessRecursion() {
+    public void testRecursion() throws IOException, ParsingException {
+        Program recursion = getAST("./src/test/fixtures/bugpattern/recursion.json");
         EndlessRecursion parameterName = new EndlessRecursion();
-        IssueReport report = parameterName.check(endlessRecursion);
-        Assertions.assertEquals(1, report.getCount());
+        Set<Issue> reports = parameterName.check(recursion);
+        Assertions.assertEquals(0, reports.size());
     }
 
     @Test
-    public void testRecursion() {
+    public void testEndlessBroadcast() throws IOException, ParsingException {
+        Program endlessRecursion = getAST("./src/test/fixtures/bugpattern/endlessBroadcast.json");
         EndlessRecursion parameterName = new EndlessRecursion();
-        IssueReport report = parameterName.check(recursion);
-        Assertions.assertEquals(0, report.getCount());
+        Set<Issue> reports = parameterName.check(endlessRecursion);
+        Assertions.assertEquals(1, reports.size());
     }
 }

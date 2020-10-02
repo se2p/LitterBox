@@ -25,9 +25,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.ComparableExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.UnspecifiedExpression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.*;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.AsListIndex;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.ExpressionList;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.ListExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.Attribute;
@@ -56,9 +54,9 @@ import de.uni_passau.fim.se2.litterbox.ast.model.metadata.monitor.MonitorListMet
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.monitor.MonitorMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.monitor.MonitorParamMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.monitor.MonitorSliderMetadata;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.ressources.ImageMetadata;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.ressources.ResourceMetadata;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.ressources.SoundMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.resources.ImageMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.resources.ResourceMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.resources.SoundMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.FromExpression;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.MousePos;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.Position;
@@ -88,7 +86,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.timecomp.TimeComp;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.Color;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.FromNumber;
-import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.Rgba;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.DataExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Parameter;
@@ -96,6 +93,12 @@ import de.uni_passau.fim.se2.litterbox.ast.model.variable.ScratchList;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 
 public interface ScratchVisitor {
+
+    default void visitChildren(ASTNode node) {
+        for (ASTNode child : node.getChildren()) {
+            child.accept(this);
+        }
+    }
 
     /**
      * Default implementation of visit method for ASTNode.
@@ -107,11 +110,7 @@ public interface ScratchVisitor {
      * @param node ASTNode of which the children will be iterated
      */
     default void visit(ASTNode node) {
-        if (!node.getChildren().isEmpty()) {
-            for (ASTNode child : node.getChildren()) {
-                child.accept(this);
-            }
-        }
+        visitChildren(node);
     }
 
     /**
@@ -605,7 +604,7 @@ public interface ScratchVisitor {
      * @param node ExpressionList Node of which the children will be iterated
      */
     default void visit(ExpressionList node) {
-        visit((ListExpr) node);
+        visit((Expression) node);
     }
 
     /**
@@ -986,19 +985,6 @@ public interface ScratchVisitor {
     }
 
     /**
-     * Default implementation of visit method for {@link URI}.
-     *
-     * <p>
-     * Iterates all children of this node without performing any action.
-     * </p>
-     *
-     * @param node URI  Node of which the children will be iterated
-     */
-    default void visit(URI node) {
-        visit((ASTNode) node);
-    }
-
-    /**
      * Default implementation of visit method for {@link ElementChoice}.
      *
      * <p>
@@ -1230,32 +1216,6 @@ public interface ScratchVisitor {
      */
     default void visit(FromNumber node) {
         visit((Color) node);
-    }
-
-    /**
-     * Default implementation of visit method for {@link Rgba}.
-     *
-     * <p>
-     * Iterates all children of this node without performing any action.
-     * </p>
-     *
-     * @param node Rgba  Node of which the children will be iterated
-     */
-    default void visit(Rgba node) {
-        visit((Color) node);
-    }
-
-    /**
-     * Default implementation of visit method for {@link ListExpr}.
-     *
-     * <p>
-     * Iterates all children of this node without performing any action.
-     * </p>
-     *
-     * @param node ListExpr  Node of which the children will be iterated
-     */
-    default void visit(ListExpr node) {
-        visit((Expression) node);
     }
 
     /**
@@ -2026,6 +1986,19 @@ public interface ScratchVisitor {
     }
 
     /**
+     * Default implementation of visit method for {@link DeclarationBroadcastStmt}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node DeclarationStmtList  Node of which the children will be iterated
+     */
+    default void visit(DeclarationBroadcastStmt node) {
+        visit((ASTNode) node);
+    }
+
+    /**
      * Default implementation of visit method for {@link ListStmt}.
      *
      * <p>
@@ -2533,19 +2506,6 @@ public interface ScratchVisitor {
     }
 
     /**
-     * Default implementation of visit method for {@link ImageType}.
-     *
-     * <p>
-     * Iterates all children of this node without performing any action.
-     * </p>
-     *
-     * @param node ImageType  Node of which the children will be iterated
-     */
-    default void visit(ImageType node) {
-        visit((Type) node);
-    }
-
-    /**
      * Default implementation of visit method for {@link ListType}.
      *
      * <p>
@@ -2568,19 +2528,6 @@ public interface ScratchVisitor {
      * @param node NumberType  Node of which the children will be iterated
      */
     default void visit(NumberType node) {
-        visit((Type) node);
-    }
-
-    /**
-     * Default implementation of visit method for {@link SoundType}.
-     *
-     * <p>
-     * Iterates all children of this node without performing any action.
-     * </p>
-     *
-     * @param node SoundType  Node of which the children will be iterated
-     */
-    default void visit(SoundType node) {
         visit((Type) node);
     }
 
@@ -2621,19 +2568,6 @@ public interface ScratchVisitor {
      */
     default void visit(AsBool node) {
         visit((BoolExpr) node);
-    }
-
-    /**
-     * Default implementation of visit method for {@link AsListIndex}.
-     *
-     * <p>
-     * Iterates all children of this node without performing any action.
-     * </p>
-     *
-     * @param node AsListIndex Node of which the children will be iterated
-     */
-    default void visit(AsListIndex node) {
-        visit((ListExpr) node);
     }
 
     /**
@@ -3528,7 +3462,7 @@ public interface ScratchVisitor {
     }
 
     /**
-     * Default implementation of visit method for {@link }.
+     * Default implementation of visit method for {@link PrototypeMutationMetadata}.
      *
      * <p>
      * Iterates all children of this node without performing any action.

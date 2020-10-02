@@ -18,42 +18,31 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueReport;
+import de.uni_passau.fim.se2.litterbox.JsonTest;
+import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
-import java.io.File;
-import java.io.IOException;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-public class StutteringMovementTest {
-    private static Program stutteringMovement;
-    private static Program deleteParam;
-    private static ObjectMapper mapper = new ObjectMapper();
+import java.io.IOException;
+import java.util.Set;
 
-    @BeforeAll
-    public static void setUp() throws IOException, ParsingException {
+public class StutteringMovementTest implements JsonTest {
 
-        File f = new File("./src/test/fixtures/bugpattern/stutteringMovement.json");
-        stutteringMovement = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
-        f = new File("./src/test/fixtures/stmtParser/deleteParam.json");
-        deleteParam = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
+    @Test
+    public void testStutteringMovement() throws IOException, ParsingException {
+        Program stutteringMovement = getAST("./src/test/fixtures/bugpattern/stutteringMovement.json");
+        StutteringMovement finder = new StutteringMovement();
+        Set<Issue> reports = finder.check(stutteringMovement);
+        Assertions.assertEquals(3, reports.size());
     }
 
     @Test
-    public void testStutteringMovement() {
+    public void testdeleteParam() throws IOException, ParsingException {
+        Program deleteParam = getAST("./src/test/fixtures/stmtParser/deleteParam.json");
         StutteringMovement finder = new StutteringMovement();
-        IssueReport report = finder.check(stutteringMovement);
-        Assertions.assertEquals(3, report.getCount());
-    }
-
-    @Test
-    public void testdeleteParam() {
-        StutteringMovement finder = new StutteringMovement();
-        IssueReport report = finder.check(deleteParam);
-        Assertions.assertEquals(0, report.getCount());
+        Set<Issue> reports = finder.check(deleteParam);
+        Assertions.assertEquals(0, reports.size());
     }
 }

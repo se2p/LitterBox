@@ -20,37 +20,57 @@ package de.uni_passau.fim.se2.litterbox.ast.model.timecomp;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTLeaf;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoBlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
-import java.util.Collections;
-import java.util.List;
 
-public enum TimeComp implements ASTNode, ASTLeaf {
+import java.util.Objects;
 
-    DATE("date"),
-    DAY_OF_WEEK("dayofweek"),
-    HOUR("hour"),
-    MINUTE("minute"),
-    MONTH("month"),
-    SECOND("second"),
-    YEAR("year");
+public class TimeComp extends AbstractNode implements ASTLeaf {
 
-    private final String label;
+    public enum TimeCompType {
+        DATE("date"),
+        DAY_OF_WEEK("dayofweek"),
+        HOUR("hour"),
+        MINUTE("minute"),
+        MONTH("month"),
+        SECOND("second"),
+        YEAR("year");
 
-    TimeComp(String label) {
-        this.label = label;
-    }
+        private final String label;
 
-    public static TimeComp fromString(String text) {
-        for (TimeComp t : values()) {
-            if (t.getLabel().equals(text)) {
-                return t;
-            }
+        TimeCompType(String label) {
+            this.label = label;
         }
-        throw new IllegalArgumentException("Unknown type of time component: " + text);
+
+        public static TimeCompType fromString(String text) {
+            for (TimeCompType t : values()) {
+                if (t.getLabel().equals(text)) {
+                    return t;
+                }
+            }
+            throw new IllegalArgumentException("Unknown type of time component: " + text);
+        }
+
+        public String getLabel() {
+            return label;
+        }
     }
 
-    public String getLabel() {
-        return label;
+    private TimeCompType type;
+
+    public TimeComp(String typeName) {
+        this.type = TimeCompType.fromString(typeName);
+    }
+
+    public TimeCompType getType() {
+        return type;
+    }
+
+    public String getTypeName() {
+        return type.getLabel();
     }
 
     @Override
@@ -59,8 +79,8 @@ public enum TimeComp implements ASTNode, ASTLeaf {
     }
 
     @Override
-    public List<? extends ASTNode> getChildren() {
-        return Collections.emptyList();
+    public ASTNode accept(CloneVisitor visitor) {
+        return visitor.visit(this);
     }
 
     @Override
@@ -69,9 +89,27 @@ public enum TimeComp implements ASTNode, ASTLeaf {
     }
 
     @Override
+    public BlockMetadata getMetadata() {
+        return new NoBlockMetadata();
+    }
+
+    @Override
     public String[] toSimpleStringArray() {
         String[] result = new String[1];
-        result[0] = label;
+        result[0] = type.getLabel();
         return result;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof TimeComp)) return false;
+        TimeComp timeComp = (TimeComp) o;
+        return type == timeComp.type;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(type);
     }
 }

@@ -18,11 +18,14 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.model.metadata.monitor;
 
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTLeaf;
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.Metadata;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
-public class MonitorParamMetadata extends AbstractNode implements Metadata {
+public class MonitorParamMetadata extends AbstractNode implements Metadata, ASTLeaf {
     private String inputName;
     private String inputValue;
 
@@ -43,5 +46,10 @@ public class MonitorParamMetadata extends AbstractNode implements Metadata {
     @Override
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);
+    }
+
+    @Override
+    public ASTNode accept(CloneVisitor visitor) {
+        return visitor.visit(this);
     }
 }

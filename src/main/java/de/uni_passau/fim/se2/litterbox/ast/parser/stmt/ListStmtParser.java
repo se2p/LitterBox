@@ -18,9 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.parser.stmt;
 
-import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
-
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
@@ -33,6 +30,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.list.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.ScratchList;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.ListStmtOpcode;
+import de.uni_passau.fim.se2.litterbox.ast.parser.ActorDefinitionParser;
 import de.uni_passau.fim.se2.litterbox.ast.parser.NumExprParser;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
 import de.uni_passau.fim.se2.litterbox.ast.parser.StringExprParser;
@@ -40,16 +38,29 @@ import de.uni_passau.fim.se2.litterbox.ast.parser.metadata.BlockMetadataParser;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ExpressionListInfo;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
+import java.util.Optional;
+
+import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
+
 public class ListStmtParser {
 
+    /**
+     * Parses a ListStmt for a given block id.
+     *
+     * @param blockId   of the block to be parsed
+     * @param current   JsonNode the contains the ListStmt
+     * @param allBlocks of this program
+     * @return the parsed ListStmt
+     * @throws ParsingException if the block cannot be parsed into an ListStmt
+     */
     public static ListStmt parse(String blockId, JsonNode current, JsonNode allBlocks) throws ParsingException {
         Preconditions.checkNotNull(current);
         Preconditions.checkNotNull(allBlocks);
 
         final String opcodeString = current.get(OPCODE_KEY).asText();
         Preconditions
-                .checkArgument(ListStmtOpcode.contains(opcodeString), "Given blockID does not point to a list " +
-                        "statement block.");
+                .checkArgument(ListStmtOpcode.contains(opcodeString), "Given blockID does not point to a list "
+                        + "statement block.");
 
         final ListStmtOpcode opcode = ListStmtOpcode.valueOf(opcodeString);
         BlockMetadata metadata = BlockMetadataParser.parse(blockId, current);
@@ -74,7 +85,8 @@ public class ListStmtParser {
         }
     }
 
-    private static ListStmt parseAddToList(JsonNode current, JsonNode allBlocks, BlockMetadata metadata) throws ParsingException {
+    private static ListStmt parseAddToList(JsonNode current, JsonNode allBlocks, BlockMetadata metadata)
+            throws ParsingException {
         Preconditions.checkNotNull(current);
         Preconditions.checkNotNull(allBlocks);
         StringExpr expr = StringExprParser.parseStringExpr(current, ITEM_KEY, allBlocks);
@@ -92,15 +104,20 @@ public class ListStmtParser {
         Preconditions.checkArgument(listNode.isArray());
         ArrayNode listArray = (ArrayNode) listNode;
         String identifier = listArray.get(LIST_IDENTIFIER_POS).asText();
-        if (!ProgramParser.symbolTable.getLists().containsKey(identifier)) {
+        String idName = listArray.get(LIST_NAME_POS).asText();
+        String currentActorName = ActorDefinitionParser.getCurrentActor().getName();
+        if (ProgramParser.symbolTable.getList(identifier, idName, currentActorName).isEmpty()) {
             return null;
         }
-        ExpressionListInfo info = ProgramParser.symbolTable.getLists().get(identifier);
-        Preconditions.checkArgument(info.getVariableName().equals(listArray.get(LIST_NAME_POS).asText()));
-        return info;
+        Optional<ExpressionListInfo> info = ProgramParser.symbolTable.getList(identifier, idName, currentActorName);
+
+        Preconditions.checkArgument(info.isPresent());
+        Preconditions.checkArgument(info.get().getVariableName().equals(listArray.get(LIST_NAME_POS).asText()));
+        return info.get();
     }
 
-    private static ListStmt parseDeleteOfList(JsonNode current, JsonNode allBlocks, BlockMetadata metadata) throws ParsingException {
+    private static ListStmt parseDeleteOfList(JsonNode current, JsonNode allBlocks, BlockMetadata metadata)
+            throws ParsingException {
         Preconditions.checkNotNull(current);
         Preconditions.checkNotNull(allBlocks);
         NumExpr expr = NumExprParser.parseNumExpr(current, INDEX_KEY, allBlocks);
@@ -124,7 +141,8 @@ public class ListStmtParser {
                 new ScratchList(new StrId(info.getVariableName()))), metadata);
     }
 
-    private static ListStmt parseInsertAtList(JsonNode current, JsonNode allBlocks, BlockMetadata metadata) throws ParsingException {
+    private static ListStmt parseInsertAtList(JsonNode current, JsonNode allBlocks, BlockMetadata metadata)
+            throws ParsingException {
         Preconditions.checkNotNull(current);
         Preconditions.checkNotNull(allBlocks);
         StringExpr stringExpr = StringExprParser.parseStringExpr(current, ITEM_KEY, allBlocks);
@@ -138,7 +156,8 @@ public class ListStmtParser {
                 new ScratchList(new StrId(info.getVariableName()))), metadata);
     }
 
-    private static ListStmt parseReplaceItemOfList(JsonNode current, JsonNode allBlocks, BlockMetadata metadata) throws ParsingException {
+    private static ListStmt parseReplaceItemOfList(JsonNode current, JsonNode allBlocks, BlockMetadata metadata)
+            throws ParsingException {
         Preconditions.checkNotNull(current);
         Preconditions.checkNotNull(allBlocks);
         StringExpr stringExpr = StringExprParser.parseStringExpr(current, ITEM_KEY, allBlocks);

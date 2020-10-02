@@ -18,18 +18,18 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.parser.metadata;
 
-import static de.uni_passau.fim.se2.litterbox.ast.Constants.COSTUMES_KEY;
-import static de.uni_passau.fim.se2.litterbox.ast.Constants.TARGETS_KEY;
-
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astLists.ImageMetadataList;
-import java.io.File;
-import java.io.IOException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+
+import java.io.File;
+import java.io.IOException;
+
+import static de.uni_passau.fim.se2.litterbox.ast.Constants.COSTUMES_KEY;
+import static de.uni_passau.fim.se2.litterbox.ast.Constants.TARGETS_KEY;
 
 public class ImageMetadataTest {
 
@@ -55,6 +55,4 @@ public class ImageMetadataTest {
         Assertions.assertEquals(240, meta.getList().get(0).getRotationCenterX());
         Assertions.assertEquals(180, meta.getList().get(0).getRotationCenterY());
     }
-
-
 }

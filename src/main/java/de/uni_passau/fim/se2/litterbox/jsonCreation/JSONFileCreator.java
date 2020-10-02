@@ -19,13 +19,19 @@
 package de.uni_passau.fim.se2.litterbox.jsonCreation;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import net.lingala.zip4j.ZipFile;
+import net.lingala.zip4j.exception.ZipException;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.nio.file.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.util.Arrays;
 
 public class JSONFileCreator {
 
@@ -40,10 +46,9 @@ public class JSONFileCreator {
 
     public static void writeJsonFromProgram(Program program, String output) {
         String jsonString = JSONStringCreator.createProgramJSONString(program);
-        if (output.charAt(output.length() - 1) != '/') {
-            output = output + "/";
-        }
-        try (PrintWriter out = new PrintWriter(output + program.getIdent().getName() + "_annotated.json")) {
+
+        Path outPath = Paths.get(output, program.getIdent().getName() + "_annotated.json");
+        try (PrintWriter out = new PrintWriter(outPath.toString())) {
             out.println(jsonString);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -52,14 +57,9 @@ public class JSONFileCreator {
 
     public static void writeSb3FromProgram(Program program, String output, File file) throws IOException {
         String jsonString = JSONStringCreator.createProgramJSONString(program);
-        if (output.charAt(output.length() - 1) != '/') {
-            output = output + "/";
-        }
-        String destinationPath = output + program.getIdent().getName() + "_annotated.sb3";
 
-
-        FileUtils.copyFile(file, new File(destinationPath));
-
+        String destinationPath = Paths.get(output, program.getIdent().getName() + "_annotated.sb3").toString();
+        Path tmp = Files.createTempDirectory("litterbox_");
 
         try (PrintWriter out = new PrintWriter(program.getIdent().getName() + "_annotated.json")) {
             out.println(jsonString);
@@ -67,15 +67,30 @@ public class JSONFileCreator {
             e.printStackTrace();
         }
 
+        try {
+            ZipFile zipFile = new ZipFile(file);
+            zipFile.extractAll(String.valueOf(tmp));
+        } catch (ZipException e) {
+            e.printStackTrace();
+        }
+
+        File tempProj = new File(tmp + "/project.json");
         File annotatedJson = new File(program.getIdent().getName() + "_annotated.json");
 
-        Path zipFilePath = Paths.get(destinationPath);
-        FileSystem fs = FileSystems.newFileSystem(zipFilePath, null);
-        Path source = fs.getPath("/project.json");
-        Files.delete(source);
-        Files.copy(annotatedJson.toPath(), source);
+        Files.copy(annotatedJson.toPath(), tempProj.toPath(), StandardCopyOption.REPLACE_EXISTING);
         Files.delete(annotatedJson.toPath());
+        File tempDir = new File(String.valueOf(tmp));
 
+        File[] files = tempDir.listFiles();
 
+        ZipFile zip = new ZipFile(destinationPath);
+        zip.addFiles(Arrays.asList(files));
+
+        try {
+            FileUtils.deleteDirectory(tempDir);
+        } catch (IOException e) {
+
+            e.printStackTrace();
+        }
     }
 }

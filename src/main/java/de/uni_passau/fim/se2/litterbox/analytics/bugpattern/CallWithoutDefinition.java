@@ -18,25 +18,13 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
-import static de.uni_passau.fim.se2.litterbox.analytics.CommentAdder.addBlockComment;
-
-
-import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueReport;
-import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
+import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
-import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ProcedureInfo;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
-import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
+
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * When a custom block is called without being defined nothing happens. This can occur in two different situations:
@@ -44,34 +32,40 @@ import java.util.Map;
  * can still be used. 2) A script using a call to a custom block can be dragged and copied to another sprite,
  * probably no custom block with the same signature as the call exists here and thus the call has no definition.
  */
-public class CallWithoutDefinition implements IssueFinder, ScratchVisitor {
+public class CallWithoutDefinition extends AbstractIssueFinder {
     public static final String NAME = "call_without_definition";
-    public static final String SHORT_NAME = "cllWithoutDef";
-    public static final String HINT_TEXT = "call without definition";
-    private static final String NOTE1 = "There are no calls without definitions in your project.";
-    private static final String NOTE2 = "Some of the sprites contain calls without definitions.";
-    private boolean found = false;
-    private int count = 0;
-    private List<String> actorNames = new LinkedList<>();
-    private ActorDefinition currentActor;
     private List<String> proceduresDef;
     private List<CallStmt> calledProcedures;
-    private Map<LocalIdentifier, ProcedureInfo> procMap;
-    private Program program;
+
+    private void checkCalls() {
+        for (CallStmt calledProcedure : calledProcedures) {
+            if (!proceduresDef.contains(calledProcedure.getIdent().getName())
+                    && !program.getProcedureMapping().checkIfMalformated(
+                    currentActor.getIdent().getName() + calledProcedure.getIdent().getName())) {
+
+                addIssue(calledProcedure, calledProcedure.getMetadata());
+            }
+        }
+    }
 
     @Override
-    public IssueReport check(Program program) {
-        Preconditions.checkNotNull(program);
-        this.program = program;
-        found = false;
-        count = 0;
-        actorNames = new LinkedList<>();
-        program.accept(this);
-        String notes = NOTE1;
-        if (count > 0) {
-            notes = NOTE2;
-        }
-        return new IssueReport(NAME, count, actorNames, notes);
+    public void visit(ActorDefinition actor) {
+        calledProcedures = new ArrayList<>();
+        proceduresDef = new ArrayList<>();
+        super.visit(actor);
+        checkCalls();
+    }
+
+    @Override
+    public void visit(ProcedureDefinition node) {
+        proceduresDef.add(procMap.get(node.getIdent()).getName());
+        super.visit(node);
+    }
+
+    @Override
+    public void visit(CallStmt node) {
+        calledProcedures.add(node);
+        visitChildren(node);
     }
 
     @Override
@@ -80,53 +74,7 @@ public class CallWithoutDefinition implements IssueFinder, ScratchVisitor {
     }
 
     @Override
-    public void visit(ActorDefinition actor) {
-        currentActor = actor;
-        calledProcedures = new ArrayList<>();
-        proceduresDef = new ArrayList<>();
-        procMap = program.getProcedureMapping().getProcedures().get(currentActor.getIdent().getName());
-        if (!actor.getChildren().isEmpty()) {
-            for (ASTNode child : actor.getChildren()) {
-                child.accept(this);
-            }
-        }
-        checkCalls();
-        if (found) {
-            found = false;
-            actorNames.add(currentActor.getIdent().getName());
-        }
-    }
-
-    private void checkCalls() {
-        for (CallStmt calledProcedure : calledProcedures) {
-            if (!proceduresDef.contains(calledProcedure.getIdent().getName()) && !program.getProcedureMapping().checkIfMalformated(currentActor.getIdent().getName() + calledProcedure.getIdent().getName())) {
-                found = true;
-                count++;
-                addBlockComment((NonDataBlockMetadata) calledProcedure.getMetadata(), currentActor, HINT_TEXT,
-                        SHORT_NAME + count);
-            }
-        }
-    }
-
-    @Override
-    public void visit(ProcedureDefinition node) {
-
-        proceduresDef.add(procMap.get(node.getIdent()).getName());
-
-        if (!node.getChildren().isEmpty()) {
-            for (ASTNode child : node.getChildren()) {
-                child.accept(this);
-            }
-        }
-    }
-
-    @Override
-    public void visit(CallStmt node) {
-        calledProcedures.add(node);
-        if (!node.getChildren().isEmpty()) {
-            for (ASTNode child : node.getChildren()) {
-                child.accept(this);
-            }
-        }
+    public IssueType getIssueType() {
+        return IssueType.BUG;
     }
 }

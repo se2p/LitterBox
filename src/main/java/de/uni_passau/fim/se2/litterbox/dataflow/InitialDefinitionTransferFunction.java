@@ -22,6 +22,7 @@ import de.uni_passau.fim.se2.litterbox.cfg.CFGNode;
 import de.uni_passau.fim.se2.litterbox.cfg.Defineable;
 import de.uni_passau.fim.se2.litterbox.cfg.Definition;
 import de.uni_passau.fim.se2.litterbox.cfg.Use;
+
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -47,7 +48,7 @@ public class InitialDefinitionTransferFunction implements TransferFunction<Defin
 
         // Remove all defs of variables that are used here
         Set<Defineable> uses = node.getUses().parallelStream().map(Use::getDefinable).collect(Collectors.toSet());
-        if(!uses.isEmpty()) {
+        if (!uses.isEmpty()) {
             result.removeIf(d -> uses.contains(d.getDefinable()));
         }
 

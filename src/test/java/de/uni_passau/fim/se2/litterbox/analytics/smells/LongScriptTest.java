@@ -18,42 +18,39 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.smells;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueReport;
+import de.uni_passau.fim.se2.litterbox.JsonTest;
+import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
-import java.io.File;
-import java.io.IOException;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-public class LongScriptTest {
-    private static Program empty;
-    private static Program longScript;
-    private static ObjectMapper mapper = new ObjectMapper();
+import java.io.IOException;
+import java.util.Set;
 
-    @BeforeAll
-    public static void setUp() throws IOException, ParsingException {
+public class LongScriptTest implements JsonTest {
 
-        File f = new File("./src/test/fixtures/emptyProject.json");
-        empty = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
-        f = new File("./src/test/fixtures/smells/longScript.json");
-        longScript = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
+    @Test
+    public void testEmptyProgram() throws IOException, ParsingException {
+        Program empty = getAST("./src/test/fixtures/emptyProject.json");
+        LongScript parameterName = new LongScript();
+        Set<Issue> reports = parameterName.check(empty);
+        Assertions.assertEquals(0, reports.size());
     }
 
     @Test
-    public void testEmptyProgram() {
+    public void testLongScript() throws IOException, ParsingException {
+        Program longScript = getAST("./src/test/fixtures/smells/longScript.json");
         LongScript parameterName = new LongScript();
-        IssueReport report = parameterName.check(empty);
-        Assertions.assertEquals(0, report.getCount());
+        Set<Issue> reports = parameterName.check(longScript);
+        Assertions.assertEquals(2, reports.size());
     }
 
     @Test
-    public void testLongScript() {
+    public void testLongProcedure() throws IOException, ParsingException {
+        Program longProcedure = getAST("./src/test/fixtures/smells/longProcedure.json");
         LongScript parameterName = new LongScript();
-        IssueReport report = parameterName.check(longScript);
-        Assertions.assertEquals(2, report.getCount());
+        Set<Issue> reports = parameterName.check(longProcedure);
+        Assertions.assertEquals(1, reports.size());
     }
 }

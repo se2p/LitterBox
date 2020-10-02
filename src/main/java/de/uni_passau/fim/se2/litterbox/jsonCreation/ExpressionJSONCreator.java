@@ -18,18 +18,12 @@
  */
 package de.uni_passau.fim.se2.litterbox.jsonCreation;
 
-import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
-import static de.uni_passau.fim.se2.litterbox.jsonCreation.BlockJsonCreatorHelper.*;
-import static de.uni_passau.fim.se2.litterbox.jsonCreation.JSONStringCreator.createField;
-
-
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Key;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.ElementChoice;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.WithExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.*;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.AsListIndex;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.Attribute;
@@ -53,9 +47,13 @@ import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.SymbolTable;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
+
 import java.util.ArrayList;
 import java.util.List;
 
+import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
+import static de.uni_passau.fim.se2.litterbox.jsonCreation.BlockJsonCreatorHelper.*;
+import static de.uni_passau.fim.se2.litterbox.jsonCreation.JSONStringCreator.createField;
 
 public class ExpressionJSONCreator implements ScratchVisitor {
     private List<String> finishedJSONStrings;
@@ -139,13 +137,12 @@ public class ExpressionJSONCreator implements ScratchVisitor {
     @Override
     public void visit(ColorLiteral node) {
         StringBuilder colorString = new StringBuilder();
-        colorString.append("#").append(String.format("0x%02x", node.getRed()).substring(2)).append(String.format("0x" +
-                "%02X", node.getGreen()).substring(2)).append(String.format("0x%02X",
+        colorString.append("#").append(String.format("0x%02x", node.getRed()).substring(2)).append(String.format("0x"
+                + "%02X", node.getGreen()).substring(2)).append(String.format("0x%02X",
                 node.getBlue()).substring(2));
         finishedJSONStrings.add(createTypeInput(INPUT_SAME_BLOCK_SHADOW, COLOR_PICKER_PRIMITIVE,
                 colorString.toString()));
     }
-
 
     private void createSimpleExpression(NonDataBlockMetadata metadata) {
         if (topExpressionId == null) {
@@ -159,7 +156,6 @@ public class ExpressionJSONCreator implements ScratchVisitor {
     @Override
     public void visit(Answer node) {
         createSimpleExpression((NonDataBlockMetadata) node.getMetadata());
-
     }
 
     @Override
@@ -224,17 +220,17 @@ public class ExpressionJSONCreator implements ScratchVisitor {
 
     @Override
     public void visit(Costume node) {
-        createFieldsExpression((NonDataBlockMetadata) node.getMetadata(), node.getType().getType());
+        createFieldsExpression((NonDataBlockMetadata) node.getMetadata(), node.getType().getTypeName());
     }
 
     @Override
     public void visit(Backdrop node) {
-        createFieldsExpression((NonDataBlockMetadata) node.getMetadata(), node.getType().getType());
+        createFieldsExpression((NonDataBlockMetadata) node.getMetadata(), node.getType().getTypeName());
     }
 
     @Override
     public void visit(Current node) {
-        createFieldsExpression((NonDataBlockMetadata) node.getMetadata(), node.getTimeComp().getLabel());
+        createFieldsExpression((NonDataBlockMetadata) node.getMetadata(), node.getTimeComp().getTypeName());
     }
 
     private void createFieldsExpression(NonDataBlockMetadata metadata, String fieldValue) {
@@ -406,7 +402,6 @@ public class ExpressionJSONCreator implements ScratchVisitor {
         previousBlockId = metadata.getBlockId();
     }
 
-
     @Override
     public void visit(Touching node) {
         NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
@@ -479,7 +474,7 @@ public class ExpressionJSONCreator implements ScratchVisitor {
         String fieldValue;
         Attribute attr = node.getAttribute();
         if (attr instanceof AttributeFromFixed) {
-            fieldValue = ((AttributeFromFixed) attr).getAttribute().getType();
+            fieldValue = ((AttributeFromFixed) attr).getAttribute().getTypeName();
         } else {
             fieldValue = ((AttributeFromVariable) attr).getVariable().getName().getName();
         }
@@ -500,7 +495,7 @@ public class ExpressionJSONCreator implements ScratchVisitor {
         inputs.add(createExpr(metadata, node.getOperand2(), NUM_KEY, true));
 
         FieldsMetadata fieldsMeta = metadata.getFields().getList().get(0);
-        String fieldsString = createFields(fieldsMeta.getFieldsName(), node.getOperand1().getFunction(), null);
+        String fieldsString = createFields(fieldsMeta.getFieldsName(), node.getOperand1().getTypeName(), null);
 
         finishedJSONStrings.add(createBlockWithoutMutationString(metadata, null,
                 previousBlockId, createInputs(inputs), fieldsString));
@@ -520,7 +515,7 @@ public class ExpressionJSONCreator implements ScratchVisitor {
         } else {
             IdJsonStringTuple tuple = fixedExprCreator.createFixedExpressionJSON(metadata.getBlockId(), key);
             finishedJSONStrings.add(tuple.getJsonString());
-            inputs.add(createReferenceInput(OBJECT_KEY, INPUT_SAME_BLOCK_SHADOW, tuple.getId(), false));
+            inputs.add(createReferenceInput(KEY_OPTION, INPUT_SAME_BLOCK_SHADOW, tuple.getId(), false));
         }
 
         finishedJSONStrings.add(createBlockWithoutMutationString(metadata, null,
@@ -589,12 +584,16 @@ public class ExpressionJSONCreator implements ScratchVisitor {
                 DataBlockMetadata dataBlockMetadata = (DataBlockMetadata) metadata;
                 createField(jsonString, dataBlockMetadata.getBlockId()).append("[").append(LIST_PRIMITIVE);
                 jsonString.append(",\"").append(listName).append("\",\"");
-                jsonString.append(listId).append("\",").append(dataBlockMetadata.getX()).append(",").append(dataBlockMetadata.getY()).append("]");
+                jsonString.append(listId)
+                        .append("\",")
+                        .append(dataBlockMetadata.getX())
+                        .append(",")
+                        .append(dataBlockMetadata.getY())
+                        .append("]");
             } else {
                 jsonString.append(createReferenceType(INPUT_DIFF_BLOCK_SHADOW, LIST_PRIMITIVE, listName, listId,
                         true));
             }
-
         } else if (node.getSecond() instanceof Variable) {
             Variable variable = (Variable) node.getSecond();
             String variableName = variable.getName().getName();
@@ -604,18 +603,18 @@ public class ExpressionJSONCreator implements ScratchVisitor {
                 DataBlockMetadata dataBlockMetadata = (DataBlockMetadata) metadata;
                 createField(jsonString, dataBlockMetadata.getBlockId()).append("[").append(VAR_PRIMITIVE);
                 jsonString.append(",\"").append(variableName).append("\",\"");
-                jsonString.append(variableId).append("\",").append(dataBlockMetadata.getX()).append(",").append(dataBlockMetadata.getY()).append("]");
+                jsonString.append(variableId)
+                        .append("\",")
+                        .append(dataBlockMetadata.getX())
+                        .append(",")
+                        .append(dataBlockMetadata.getY())
+                        .append("]");
             } else {
                 jsonString.append(createReferenceType(INPUT_DIFF_BLOCK_SHADOW, VAR_PRIMITIVE, variableName, variableId,
                         true));
             }
         }
         finishedJSONStrings.add(jsonString.toString());
-    }
-
-    @Override
-    public void visit(AsListIndex node) {
-        node.getOperand1().accept(this);
     }
 
     @Override
@@ -679,8 +678,7 @@ public class ExpressionJSONCreator implements ScratchVisitor {
     }
 
     private String createExpr(NonDataBlockMetadata metadata, ASTNode expr, String inputName, boolean withDefault) {
-        IdJsonStringTuple tuple = expressionJSONCreator.createExpressionJSON(metadata.getBlockId(), expr
-                , symbolTable);
+        IdJsonStringTuple tuple = expressionJSONCreator.createExpressionJSON(metadata.getBlockId(), expr, symbolTable);
         if (tuple.getId() == null) {
             StringBuilder jsonString = new StringBuilder();
             createField(jsonString, inputName).append(tuple.getJsonString());

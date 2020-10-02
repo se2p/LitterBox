@@ -18,12 +18,10 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.parser.stmt;
 
-import static junit.framework.TestCase.fail;
-
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.truth.Truth;
+import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinitionList;
@@ -33,72 +31,51 @@ import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMeta
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.*;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-public class ControlStmtParserTest {
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
 
-    private static JsonNode project;
+import static junit.framework.TestCase.fail;
 
-    @BeforeAll
-    public static void setup() {
-        String path = "src/test/fixtures/stmtParser/controlStmts.json";
-        File file = new File(path);
-        ObjectMapper objectMapper = new ObjectMapper();
-        try {
-            project = objectMapper.readTree(file);
-        } catch (IOException e) {
-            fail();
-        }
+public class ControlStmtParserTest implements JsonTest {
+
+    @Test
+    public void testProgramStructure() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/stmtParser/controlStmts.json");
+        ActorDefinitionList list = program.getActorDefinitionList();
+        Truth.assertThat(list.getDefinitions().size()).isEqualTo(2);
     }
 
     @Test
-    public void testProgramStructure() {
-        try {
-            Program program = ProgramParser.parseProgram("ControlStmts", project);
-            ActorDefinitionList list = program.getActorDefinitionList();
-            Truth.assertThat(list.getDefintions().size()).isEqualTo(2);
-        } catch (ParsingException e) {
-            e.printStackTrace();
-            fail();
-        }
-    }
+    public void testStmtsInSprite() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/stmtParser/controlStmts.json");
+        ActorDefinitionList list = program.getActorDefinitionList();
+        ActorDefinition sprite = list.getDefinitions().get(1);
 
-    @Test
-    public void testStmtsInSprite() {
-        try {
-            Program program = ProgramParser.parseProgram("ControlStmts", project);
-            ActorDefinitionList list = program.getActorDefinitionList();
-            ActorDefinition sprite = list.getDefintions().get(1);
+        Script script = sprite.getScripts().getScriptList().get(0);
+        List<Stmt> listOfStmt = script.getStmtList().getStmts();
 
-            Script script = sprite.getScripts().getScriptList().get(0);
-            List<Stmt> listOfStmt = script.getStmtList().getStmts();
+        Truth.assertThat(listOfStmt.get(0).getClass()).isEqualTo(IfThenStmt.class);
+        IfThenStmt ifthen = (IfThenStmt) listOfStmt.get(0);
+        Truth.assertThat(ifthen.getMetadata().getClass()).isEqualTo(NonDataBlockMetadata.class);
 
-            Truth.assertThat(listOfStmt.get(0).getClass()).isEqualTo(IfThenStmt.class);
-            IfThenStmt ifthen = (IfThenStmt) listOfStmt.get(0);
-            Truth.assertThat(ifthen.getMetadata().getClass()).isEqualTo(NonDataBlockMetadata.class);
+        Truth.assertThat(listOfStmt.get(1).getClass()).isEqualTo(IfElseStmt.class);
+        IfElseStmt ifelse = (IfElseStmt) listOfStmt.get(1);
+        Truth.assertThat(ifelse.getMetadata().getClass()).isEqualTo(NonDataBlockMetadata.class);
 
-            Truth.assertThat(listOfStmt.get(1).getClass()).isEqualTo(IfElseStmt.class);
-            IfElseStmt ifelse = (IfElseStmt) listOfStmt.get(1);
-            Truth.assertThat(ifelse.getMetadata().getClass()).isEqualTo(NonDataBlockMetadata.class);
+        Truth.assertThat(listOfStmt.get(2).getClass()).isEqualTo(RepeatTimesStmt.class);
+        RepeatTimesStmt times = (RepeatTimesStmt) listOfStmt.get(2);
+        Truth.assertThat(times.getMetadata().getClass()).isEqualTo(NonDataBlockMetadata.class);
 
-            Truth.assertThat(listOfStmt.get(2).getClass()).isEqualTo(RepeatTimesStmt.class);
-            RepeatTimesStmt times = (RepeatTimesStmt) listOfStmt.get(2);
-            Truth.assertThat(times.getMetadata().getClass()).isEqualTo(NonDataBlockMetadata.class);
+        Truth.assertThat(listOfStmt.get(3).getClass()).isEqualTo(UntilStmt.class);
+        UntilStmt until = (UntilStmt) listOfStmt.get(3);
+        Truth.assertThat(until.getMetadata().getClass()).isEqualTo(NonDataBlockMetadata.class);
 
-            Truth.assertThat(listOfStmt.get(3).getClass()).isEqualTo(UntilStmt.class);
-            UntilStmt until = (UntilStmt) listOfStmt.get(3);
-            Truth.assertThat(until.getMetadata().getClass()).isEqualTo(NonDataBlockMetadata.class);
-
-            Truth.assertThat(listOfStmt.get(4).getClass()).isEqualTo(RepeatForeverStmt.class);
-            RepeatForeverStmt forever = (RepeatForeverStmt) listOfStmt.get(4);
-            Truth.assertThat(forever.getMetadata().getClass()).isEqualTo(NonDataBlockMetadata.class);
-        } catch (ParsingException e) {
-            e.printStackTrace();
-            fail();
-        }
+        Truth.assertThat(listOfStmt.get(4).getClass()).isEqualTo(RepeatForeverStmt.class);
+        RepeatForeverStmt forever = (RepeatForeverStmt) listOfStmt.get(4);
+        Truth.assertThat(forever.getMetadata().getClass()).isEqualTo(NonDataBlockMetadata.class);
     }
 }

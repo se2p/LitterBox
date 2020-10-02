@@ -18,15 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.parser;
 
-import static de.uni_passau.fim.se2.litterbox.ast.Constants.OPCODE_KEY;
-import static de.uni_passau.fim.se2.litterbox.ast.Constants.POS_DATA_ARRAY;
-import static de.uni_passau.fim.se2.litterbox.ast.parser.BoolExprParser.parsableAsBoolExpr;
-import static de.uni_passau.fim.se2.litterbox.ast.parser.DataExprParser.parsableAsDataExpr;
-import static de.uni_passau.fim.se2.litterbox.ast.parser.ListExprParser.parsableAsListExpr;
-import static de.uni_passau.fim.se2.litterbox.ast.parser.NumExprParser.parsableAsNumExpr;
-import static de.uni_passau.fim.se2.litterbox.ast.parser.StringExprParser.parsableAsStringExpr;
-
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.NullNode;
@@ -45,6 +36,15 @@ import de.uni_passau.fim.se2.litterbox.ast.opcodes.StringExprOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.parser.metadata.BlockMetadataParser;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ExpressionListInfo;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.VariableInfo;
+
+import java.util.Optional;
+
+import static de.uni_passau.fim.se2.litterbox.ast.Constants.OPCODE_KEY;
+import static de.uni_passau.fim.se2.litterbox.ast.Constants.POS_DATA_ARRAY;
+import static de.uni_passau.fim.se2.litterbox.ast.parser.BoolExprParser.parsableAsBoolExpr;
+import static de.uni_passau.fim.se2.litterbox.ast.parser.DataExprParser.parsableAsDataExpr;
+import static de.uni_passau.fim.se2.litterbox.ast.parser.NumExprParser.parsableAsNumExpr;
+import static de.uni_passau.fim.se2.litterbox.ast.parser.StringExprParser.parsableAsStringExpr;
 
 public class ExpressionParser {
 
@@ -72,8 +72,6 @@ public class ExpressionParser {
             expr = BoolExprParser.parseBoolExpr(containingBlock, inputKey, allBlocks);
         } else if (parsableAsDataExpr(containingBlock, inputKey, allBlocks)) {
             expr = DataExprParser.parseDataExpr(containingBlock, inputKey, allBlocks);
-        } else if (parsableAsListExpr(containingBlock, inputKey)) {
-            expr = ListExprParser.parseListExpr(containingBlock, inputKey);
         }
         if (expr != null) {
             return expr;
@@ -90,21 +88,29 @@ public class ExpressionParser {
      * @return The parsed expression.
      * @throws ParsingException If the block is not parsable.
      */
-    public static Expression parseExprBlock(String blockId, JsonNode exprBlock, JsonNode allBlocks) throws ParsingException {
+    public static Expression parseExprBlock(String blockId, JsonNode exprBlock, JsonNode allBlocks)
+            throws ParsingException {
         if (exprBlock instanceof ArrayNode) {
             // it's a list or variable
-            String idString = exprBlock.get(2).asText();
+            String idString = exprBlock.get(2).asText(); // TODO: 2 is identifier pos
+            String idName = exprBlock.get(1).asText(); // TODO: 1 is identifier name
             BlockMetadata metadata = BlockMetadataParser.parse(blockId, exprBlock);
-            if (ProgramParser.symbolTable.getVariables().containsKey(idString)) {
-                VariableInfo variableInfo = ProgramParser.symbolTable.getVariables().get(idString);
+
+            String currentActorName = ActorDefinitionParser.getCurrentActor().getName();
+            if (ProgramParser.symbolTable.getVariable(idString, idName, currentActorName).isPresent()) {
+                VariableInfo variableInfo
+                        = ProgramParser.symbolTable.getVariable(idString, idName, currentActorName).get();
 
                 return new Qualified(new StrId(variableInfo.getActor()),
                         new Variable(new StrId(variableInfo.getVariableName()), metadata));
-            } else if (ProgramParser.symbolTable.getLists().containsKey(idString)) {
-                ExpressionListInfo variableInfo = ProgramParser.symbolTable.getLists().get(idString);
+            } else if (ProgramParser.symbolTable.getList(idString, idName, currentActorName).isPresent()) {
+                Optional<ExpressionListInfo> listOptional
+                        = ProgramParser.symbolTable.getList(idString, idName, currentActorName);
+                ExpressionListInfo variableInfo = listOptional.get();
                 return new Qualified(new StrId(variableInfo.getActor()),
                         new ScratchList(new StrId(variableInfo.getVariableName()), metadata));
             }
+            throw new ParsingException("Id neither of List nor Variable.");
         } else {
             // it's a normal reporter block
             String opcode = exprBlock.get(OPCODE_KEY).asText();
@@ -118,7 +124,6 @@ public class ExpressionParser {
                 throw new ParsingException(opcode + " is an unexpected opcode for an expression");
             }
         }
-        throw new ParsingException("Calling parseExprBlock here went wrong");
     }
 
     static int getShadowIndicator(ArrayNode exprArray) {

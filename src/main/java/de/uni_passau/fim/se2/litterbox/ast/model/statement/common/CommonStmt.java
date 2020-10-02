@@ -18,8 +18,9 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.model.statement.common;
 
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 
 public interface CommonStmt extends Stmt {
-
+    BlockMetadata getMetadata();
 }

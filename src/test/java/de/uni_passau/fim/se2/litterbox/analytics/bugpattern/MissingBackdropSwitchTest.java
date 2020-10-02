@@ -18,72 +18,79 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueReport;
+import de.uni_passau.fim.se2.litterbox.JsonTest;
+import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
-import java.io.File;
-import java.io.IOException;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-public class MissingBackdropSwitchTest {
-    private static Program empty;
-    private static Program missingBackdropSwitchNext;
-    private static Program missingBack;
-    private static Program random;
-    private static Program fischmampfer;
-    private static ObjectMapper mapper = new ObjectMapper();
+import java.io.IOException;
+import java.util.Set;
 
-    @BeforeAll
-    public static void setUp() throws IOException, ParsingException {
+public class MissingBackdropSwitchTest implements JsonTest {
 
-        File f = new File("./src/test/fixtures/emptyProject.json");
-        empty = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
-        f = new File("./src/test/fixtures/bugpattern/missingBackDropSwitchNext.json");
-        missingBackdropSwitchNext = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
-        f = new File("./src/test/fixtures/bugpattern/missBackdrop.json");
-        missingBack = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
-        f = new File("./src/test/fixtures/bugpattern/randomBackdrop.json");
-        random = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
-        f = new File("./src/test/fixtures/bugpattern/missingBackdropSwitchAsString.json");
-        fischmampfer = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
+    @Test
+    public void testEmptyProgram() throws IOException, ParsingException {
+        Program empty = getAST("./src/test/fixtures/emptyProject.json");
+        MissingBackdropSwitch parameterName = new MissingBackdropSwitch();
+        Set<Issue> reports = parameterName.check(empty);
+        Assertions.assertEquals(0, reports.size());
     }
 
     @Test
-    public void testEmptyProgram() {
+    public void testMissingBackdropSwitchNext() throws IOException, ParsingException {
+        Program missingBackdropSwitchNext = getAST("./src/test/fixtures/bugpattern/missingBackDropSwitchNext.json");
         MissingBackdropSwitch parameterName = new MissingBackdropSwitch();
-        IssueReport report = parameterName.check(empty);
-        Assertions.assertEquals(0, report.getCount());
+        Set<Issue> reports = parameterName.check(missingBackdropSwitchNext);
+        Assertions.assertEquals(0, reports.size());
     }
 
     @Test
-    public void testMissingBackdropSwitchNext() {
+    public void testMissingBackdropSwitchNextInSprite() throws IOException, ParsingException {
+        Program missingBackdropSwitchNext2 = getAST("./src/test/fixtures/bugpattern/missingBackDropSwitchNext2.json");
         MissingBackdropSwitch parameterName = new MissingBackdropSwitch();
-        IssueReport report = parameterName.check(missingBackdropSwitchNext);
-        Assertions.assertEquals(0, report.getCount());
+        Set<Issue> reports = parameterName.check(missingBackdropSwitchNext2);
+        Assertions.assertEquals(0, reports.size());
     }
 
     @Test
-    public void testMissBackdrop() {
+    public void testMissBackdrop() throws IOException, ParsingException {
+        Program missingBack = getAST("./src/test/fixtures/bugpattern/missBackdrop.json");
         MissingBackdropSwitch parameterName = new MissingBackdropSwitch();
-        IssueReport report = parameterName.check(missingBack);
-        Assertions.assertEquals(1, report.getCount());
+        Set<Issue> reports = parameterName.check(missingBack);
+        Assertions.assertEquals(1, reports.size());
     }
 
     @Test
-    public void testRandomBack() {
+    public void testRandomBack() throws IOException, ParsingException {
+        Program random = getAST("./src/test/fixtures/bugpattern/randomBackdrop.json");
         MissingBackdropSwitch parameterName = new MissingBackdropSwitch();
-        IssueReport report = parameterName.check(random);
-        Assertions.assertEquals(0, report.getCount());
+        Set<Issue> reports = parameterName.check(random);
+        Assertions.assertEquals(0, reports.size());
     }
 
     @Test
-    public void testFischmampfer() {
+    public void testFischmampfer() throws IOException, ParsingException {
+        Program fischmampfer = getAST("./src/test/fixtures/bugpattern/missingBackdropSwitchAsString.json");
         MissingBackdropSwitch parameterName = new MissingBackdropSwitch();
-        IssueReport report = parameterName.check(fischmampfer);
-        Assertions.assertEquals(0, report.getCount());
+        Set<Issue> reports = parameterName.check(fischmampfer);
+        Assertions.assertEquals(0, reports.size());
+    }
+
+    @Test
+    public void testSwitchAndWait() throws IOException, ParsingException {
+        Program fischmampferWithWait = getAST("./src/test/fixtures/bugpattern/missingBackdropSwitchAndWaitAsString.json");
+        MissingBackdropSwitch parameterName = new MissingBackdropSwitch();
+        Set<Issue> reports = parameterName.check(fischmampferWithWait);
+        Assertions.assertEquals(0, reports.size());
+    }
+
+    @Test
+    public void testSwitchWithNumericExpression() throws IOException, ParsingException {
+        Program programWithSwitch = getAST("./src/test/fixtures/bugpattern/missingBackDropSwitchShouldIgnoreNumericExpr.json");
+        MissingBackdropSwitch parameterName = new MissingBackdropSwitch();
+        Set<Issue> reports = parameterName.check(programWithSwitch);
+        Assertions.assertEquals(0, reports.size());
     }
 }

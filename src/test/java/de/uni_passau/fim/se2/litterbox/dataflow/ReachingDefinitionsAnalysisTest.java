@@ -18,44 +18,23 @@
  */
 package de.uni_passau.fim.se2.litterbox.dataflow;
 
-import static com.google.common.truth.Truth.assertThat;
-
-
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.ChangeVariableBy;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.CreateCloneOf;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetVariableTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SayForSecs;
-import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
 import de.uni_passau.fim.se2.litterbox.cfg.CFGNode;
 import de.uni_passau.fim.se2.litterbox.cfg.ControlFlowGraph;
-import de.uni_passau.fim.se2.litterbox.cfg.ControlFlowGraphVisitor;
 import de.uni_passau.fim.se2.litterbox.cfg.Definition;
-import java.io.File;
-import java.io.IOException;
 import org.junit.jupiter.api.Test;
 
-public class ReachingDefinitionsAnalysisTest {
+import java.io.IOException;
 
+import static com.google.common.truth.Truth.assertThat;
 
-    private Program getAST(String fileName) throws IOException, ParsingException {
-        File file = new File(fileName);
-        ObjectMapper objectMapper = new ObjectMapper();
-        JsonNode project = objectMapper.readTree(file);
-        Program program = ProgramParser.parseProgram("TestProgram", project);
-        return program;
-    }
-
-    private ControlFlowGraph getCFG(String fileName) throws IOException, ParsingException {
-        ControlFlowGraphVisitor visitor = new ControlFlowGraphVisitor();
-        visitor.visit(getAST(fileName));
-        return visitor.getControlFlowGraph();
-    }
-
+public class ReachingDefinitionsAnalysisTest implements JsonTest {
 
     @Test
     public void testReachingDefinition() throws IOException, ParsingException {
@@ -103,7 +82,6 @@ public class ReachingDefinitionsAnalysisTest {
         assertThat(analysis.getDataflowFacts(sayNode)).containsExactly(firstDefinition, secondDefinition);
         assertThat(analysis.getDataflowFacts(exitNode)).containsExactly(firstDefinition, secondDefinition);
     }
-
 
     @Test
     public void testReachingDefinitionsInClone() throws IOException, ParsingException {

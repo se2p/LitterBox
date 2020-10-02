@@ -19,7 +19,9 @@
 package de.uni_passau.fim.se2.litterbox.ast.model.metadata;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTLeaf;
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 public class MetaMetadata extends AbstractNode implements Metadata, ASTLeaf {
@@ -27,6 +29,13 @@ public class MetaMetadata extends AbstractNode implements Metadata, ASTLeaf {
     private String vm;
     private String agent;
 
+    /**
+     * The constructor needs the semver, vm and agent attributes that are stated in the meta node of the json.
+     *
+     * @param semver semver of the project
+     * @param vm     version of the scratch virtual machine
+     * @param agent  information about the browser that was used for creating the project
+     */
     public MetaMetadata(String semver, String vm, String agent) {
         super();
         this.semver = semver;
@@ -49,5 +58,10 @@ public class MetaMetadata extends AbstractNode implements Metadata, ASTLeaf {
     @Override
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);
+    }
+
+    @Override
+    public ASTNode accept(CloneVisitor visitor) {
+        return visitor.visit(this);
     }
 }

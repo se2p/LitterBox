@@ -18,31 +18,20 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.parser.stmt;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.UnspecifiedStmt;
-import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
-import java.io.File;
-import java.io.IOException;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-public class UnspecifiedStmtTest {
+import java.io.IOException;
 
-    private static Program unusedProc;
-    private static ObjectMapper mapper = new ObjectMapper();
-
-    @BeforeAll
-    public static void setUp() throws IOException, ParsingException {
-
-        File f = new File("./src/test/fixtures/stmtParser/textToSpeech.json");
-        unusedProc = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
-    }
+public class UnspecifiedStmtTest implements JsonTest {
 
     @Test
-    public void parseTextToSpeechTest() {
-        Assertions.assertTrue(unusedProc.getActorDefinitionList().getDefintions().get(1).getScripts().getScriptList().get(0).getStmtList().getStmts().get(0) instanceof UnspecifiedStmt);
+    public void parseTextToSpeechTest() throws IOException, ParsingException {
+        Program unusedProc = getAST("./src/test/fixtures/stmtParser/textToSpeech.json");
+        Assertions.assertTrue(unusedProc.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(0).getStmtList().getStmts().get(0) instanceof UnspecifiedStmt);
     }
 }

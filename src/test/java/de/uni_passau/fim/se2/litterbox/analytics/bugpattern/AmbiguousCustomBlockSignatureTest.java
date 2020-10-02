@@ -18,62 +18,57 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueReport;
+import de.uni_passau.fim.se2.litterbox.JsonTest;
+import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
-import java.io.File;
-import java.io.IOException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-public class AmbiguousCustomBlockSignatureTest {
+import java.io.IOException;
+import java.util.Set;
+
+public class AmbiguousCustomBlockSignatureTest implements JsonTest {
     private static Program empty;
     private static Program ambiguousProcedure;
     private static Program ambiguousProcedureDiffArg;
     private static Program emptySign;
-    private static ObjectMapper mapper = new ObjectMapper();
 
     @BeforeAll
     public static void setUp() throws IOException, ParsingException {
 
-        File f = new File("./src/test/fixtures/emptyProject.json");
-        empty = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
-        f = new File("./src/test/fixtures/bugpattern/ambiguousProcedureSignature.json");
-        ambiguousProcedure = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
-        f = new File("./src/test/fixtures/bugpattern/ambiguousSignatureDiffArg.json");
-        ambiguousProcedureDiffArg = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
-        f = new File("./src/test/fixtures/bugpattern/emptyAmbiguousSign.json");
-        emptySign = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
+        empty = JsonTest.parseProgram("./src/test/fixtures/emptyProject.json");
+        ambiguousProcedure = JsonTest.parseProgram("./src/test/fixtures/bugpattern/ambiguousProcedureSignature.json");
+        ambiguousProcedureDiffArg = JsonTest.parseProgram("./src/test/fixtures/bugpattern/ambiguousSignatureDiffArg.json");
+        emptySign = JsonTest.parseProgram("./src/test/fixtures/bugpattern/emptyAmbiguousSign.json");
     }
 
     @Test
     public void testEmptyProgram() {
         AmbiguousCustomBlockSignature parameterName = new AmbiguousCustomBlockSignature();
-        IssueReport report = parameterName.check(empty);
-        Assertions.assertEquals(0, report.getCount());
+        Set<Issue> reports = parameterName.check(empty);
+        Assertions.assertTrue(reports.isEmpty());
     }
 
     @Test
     public void testAmbiguousSignatures() {
         AmbiguousCustomBlockSignature parameterName = new AmbiguousCustomBlockSignature();
-        IssueReport report = parameterName.check(ambiguousProcedure);
-        Assertions.assertEquals(2, report.getCount());
+        Set<Issue> reports = parameterName.check(ambiguousProcedure);
+        Assertions.assertEquals(2, reports.size());
     }
 
     @Test
     public void testAmbiguousSigDifferentParameters() {
         AmbiguousCustomBlockSignature parameterName = new AmbiguousCustomBlockSignature();
-        IssueReport report = parameterName.check(ambiguousProcedureDiffArg);
-        Assertions.assertEquals(2, report.getCount());
+        Set<Issue> reports = parameterName.check(ambiguousProcedureDiffArg);
+        Assertions.assertEquals(2, reports.size());
     }
 
     @Test
     public void testAmbiguousEmpty() {
         AmbiguousCustomBlockSignature parameterName = new AmbiguousCustomBlockSignature();
-        IssueReport report = parameterName.check(emptySign);
-        Assertions.assertEquals(0, report.getCount());
+        Set<Issue> reports = parameterName.check(emptySign);
+        Assertions.assertEquals(0, reports.size());
     }
 }

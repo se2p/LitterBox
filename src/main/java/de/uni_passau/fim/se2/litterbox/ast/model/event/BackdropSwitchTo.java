@@ -18,9 +18,11 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.model.event;
 
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 public class BackdropSwitchTo extends AbstractNode implements Event {
@@ -29,7 +31,7 @@ public class BackdropSwitchTo extends AbstractNode implements Event {
     private final BlockMetadata metadata;
 
     public BackdropSwitchTo(LocalIdentifier backdrop, BlockMetadata metadata) {
-        super(backdrop,metadata);
+        super(backdrop, metadata);
         this.backdrop = backdrop;
         this.metadata = metadata;
     }
@@ -38,6 +40,7 @@ public class BackdropSwitchTo extends AbstractNode implements Event {
         return backdrop;
     }
 
+    @Override
     public BlockMetadata getMetadata() {
         return metadata;
     }
@@ -45,5 +48,10 @@ public class BackdropSwitchTo extends AbstractNode implements Event {
     @Override
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);
+    }
+
+    @Override
+    public ASTNode accept(CloneVisitor visitor) {
+        return visitor.visit(this);
     }
 }

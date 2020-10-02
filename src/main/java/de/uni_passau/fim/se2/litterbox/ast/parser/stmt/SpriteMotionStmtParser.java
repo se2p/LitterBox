@@ -18,9 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.parser.stmt;
 
-import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
-
-
 import com.fasterxml.jackson.databind.JsonNode;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
@@ -33,9 +30,12 @@ import de.uni_passau.fim.se2.litterbox.ast.parser.PositionParser;
 import de.uni_passau.fim.se2.litterbox.ast.parser.metadata.BlockMetadataParser;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
+import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
+
 public class SpriteMotionStmtParser {
 
-    public static SpriteMotionStmt parse(String identifier, JsonNode current, JsonNode allBlocks) throws ParsingException {
+    public static SpriteMotionStmt parse(String identifier, JsonNode current, JsonNode allBlocks)
+            throws ParsingException {
         Preconditions.checkNotNull(current);
         Preconditions.checkNotNull(allBlocks);
 
@@ -105,11 +105,11 @@ public class SpriteMotionStmtParser {
 
     private static SpriteMotionStmt parseSetRotationStyle(JsonNode current, BlockMetadata metadata) {
         String rota = current.get(FIELDS_KEY).get(STYLE_KEY).get(0).asText();
-        return new SetRotationStyle(RotationStyle.fromString(rota), metadata);
+        return new SetRotationStyle(new RotationStyle(rota), metadata);
     }
 
     private static SpriteMotionStmt parseSetDragmode(JsonNode current, BlockMetadata metadata) {
         String drag = current.get(FIELDS_KEY).get(DRAGMODE_KEY).get(0).asText();
-        return new SetDragMode(DragMode.fromString(drag), metadata);
+        return new SetDragMode(new DragMode(drag), metadata);
     }
 }

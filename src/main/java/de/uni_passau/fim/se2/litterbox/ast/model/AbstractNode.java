@@ -18,9 +18,12 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.model;
 
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 import de.uni_passau.fim.se2.litterbox.utils.UnmodifiableListBuilder;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -28,6 +31,8 @@ import java.util.Objects;
 public abstract class AbstractNode implements ASTNode {
 
     protected final List<? extends ASTNode> children;
+
+    protected ASTNode parent;
 
     public AbstractNode(ASTNode... children) {
         this(Arrays.asList(children));
@@ -47,8 +52,23 @@ public abstract class AbstractNode implements ASTNode {
         return children;
     }
 
+    @Override
+    public ASTNode getParentNode() {
+        return parent;
+    }
+
+    @Override
+    public void setParentNode(ASTNode parent) {
+        this.parent = parent;
+    }
+
     public String getUniqueName() {
         return this.getClass().getSimpleName();
+    }
+
+    @Override
+    public BlockMetadata getMetadata() {
+        return new NoBlockMetadata();
     }
 
     @Override

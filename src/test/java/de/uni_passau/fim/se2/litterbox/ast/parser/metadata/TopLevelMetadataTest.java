@@ -18,9 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.parser.metadata;
 
-import static de.uni_passau.fim.se2.litterbox.ast.Constants.VAR_PRIMITIVE;
-
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
@@ -36,16 +33,19 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.DataExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import static de.uni_passau.fim.se2.litterbox.ast.Constants.VAR_PRIMITIVE;
+
 public class TopLevelMetadataTest {
-    private static ObjectMapper mapper = new ObjectMapper();
+    private static final ObjectMapper mapper = new ObjectMapper();
     private static Program program;
 
     @BeforeAll
@@ -55,10 +55,9 @@ public class TopLevelMetadataTest {
         program = ProgramParser.parseProgram("Test", prog);
     }
 
-
     @Test
     public void testVariablesProgram() {
-        List<Script> scripts = program.getActorDefinitionList().getDefintions().get(1).getScripts().getScriptList();
+        List<Script> scripts = program.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList();
         List<Stmt> stmtList = scripts.get(0).getStmtList().getStmts();
         Assertions.assertEquals(ExpressionStmt.class, stmtList.get(0).getClass());
         Expression expr = ((ExpressionStmt) stmtList.get(0)).getExpression();
@@ -73,15 +72,15 @@ public class TopLevelMetadataTest {
     }
 
     @Test
-    public void testProcedureProgram(){
+    public void testProcedureProgram() {
         ProcedureDefinition def =
-                program.getActorDefinitionList().getDefintions().get(1).getProcedureDefinitionList().getList().get(0);
-        ProcedureMetadata meta = def.getMetadata();
+                program.getActorDefinitionList().getDefinitions().get(1).getProcedureDefinitionList().getList().get(0);
+        ProcedureMetadata meta = (ProcedureMetadata) def.getMetadata();
         Assertions.assertEquals(TopNonDataBlockMetadata.class, meta.getDefinition().getClass());
         TopNonDataBlockMetadata defMet = (TopNonDataBlockMetadata) meta.getDefinition();
         Assertions.assertEquals(NoMutationMetadata.class, defMet.getMutation().getClass());
-        Assertions.assertEquals(56, defMet.getxPos());
-        Assertions.assertEquals(184, defMet.getyPos());
+        Assertions.assertEquals(56, defMet.getXPos());
+        Assertions.assertEquals(184, defMet.getYPos());
         Assertions.assertEquals(NonDataBlockMetadata.class, meta.getPrototype().getClass());
         NonDataBlockMetadata protoMet = (NonDataBlockMetadata) meta.getPrototype();
         Assertions.assertEquals(PrototypeMutationMetadata.class, protoMet.getMutation().getClass());

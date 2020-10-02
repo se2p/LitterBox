@@ -18,12 +18,8 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.parser;
 
-import static junit.framework.TestCase.fail;
-
-
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.truth.Truth;
+import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
@@ -32,30 +28,15 @@ import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.WithExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AttributeOf;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.ExpressionStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
-import java.io.File;
-import java.io.IOException;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-public class AttributeOfExpressionTest {
-    private static JsonNode project;
+import java.io.IOException;
 
-    @BeforeAll
-    public static void setup() {
-        String path = "src/test/fixtures/attributeOfExpression.json";
-        File file = new File(path);
-        ObjectMapper objectMapper = new ObjectMapper();
-        try {
-            project = objectMapper.readTree(file);
-        } catch (IOException e) {
-            fail();
-        }
-    }
-
+public class AttributeOfExpressionTest implements JsonTest {
     @Test
-    public void testContains() throws ParsingException {
-        Program program = ProgramParser.parseProgram("AttributeOf", project);
-        final ActorDefinition sprite = program.getActorDefinitionList().getDefintions().get(0);
+    public void testContains() throws ParsingException, IOException {
+        Program program = getAST("src/test/fixtures/attributeOfExpression.json");
+        final ActorDefinition sprite = program.getActorDefinitionList().getDefinitions().get(0);
         final Script script = sprite.getScripts().getScriptList().get(0);
 
         final Stmt stmt = script.getStmtList().getStmts().get(0);

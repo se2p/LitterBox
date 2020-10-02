@@ -19,6 +19,7 @@
 package de.uni_passau.fim.se2.litterbox.cfg;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Identifier;
+
 import java.util.Objects;
 
 public class ListVariable implements Defineable {
@@ -35,8 +36,12 @@ public class ListVariable implements Defineable {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         ListVariable variable = (ListVariable) o;
         return Objects.equals(identifier, variable.identifier);
     }
@@ -45,5 +50,4 @@ public class ListVariable implements Defineable {
     public int hashCode() {
         return Objects.hash(identifier);
     }
-
 }

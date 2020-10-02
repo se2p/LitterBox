@@ -1,0 +1,1131 @@
+{
+    "targets": [
+        {
+            "isStage": true,
+            "name": "Stage",
+            "variables": {
+                "`jEk@4|i[#Fk?(8x)AV.-my variable": [
+                    "meine Variable",
+                    0
+                ]
+            },
+            "lists": {},
+            "broadcasts": {},
+            "blocks": {},
+            "comments": {},
+            "currentCostume": 1,
+            "costumes": [
+                {
+                    "assetId": "cd21514d0531fdffb22204e0ec5ed84a",
+                    "name": "Bühnenbild1",
+                    "md5ext": "cd21514d0531fdffb22204e0ec5ed84a.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 240,
+                    "rotationCenterY": 180
+                },
+                {
+                    "assetId": "47282ff0f7047c6fab9c94b531abf721",
+                    "name": "Stars",
+                    "bitmapResolution": 2,
+                    "md5ext": "47282ff0f7047c6fab9c94b531abf721.png",
+                    "dataFormat": "png",
+                    "rotationCenterX": 480,
+                    "rotationCenterY": 360
+                }
+            ],
+            "sounds": [
+                {
+                    "assetId": "83a9787d4cb6f3b7632b4ddfebf74367",
+                    "name": "Plopp",
+                    "dataFormat": "wav",
+                    "format": "",
+                    "rate": 48000,
+                    "sampleCount": 1124,
+                    "md5ext": "83a9787d4cb6f3b7632b4ddfebf74367.wav"
+                }
+            ],
+            "volume": 100,
+            "layerOrder": 0,
+            "tempo": 60,
+            "videoTransparency": 50,
+            "videoState": "on",
+            "textToSpeechLanguage": null
+        },
+        {
+            "isStage": false,
+            "name": "Erde",
+            "variables": {},
+            "lists": {},
+            "broadcasts": {},
+            "blocks": {},
+            "comments": {},
+            "currentCostume": 0,
+            "costumes": [
+                {
+                    "assetId": "59d96247470a6a8a49dbb84b21f1de60",
+                    "name": "earth",
+                    "bitmapResolution": 1,
+                    "md5ext": "59d96247470a6a8a49dbb84b21f1de60.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 55,
+                    "rotationCenterY": 55
+                }
+            ],
+            "sounds": [
+                {
+                    "assetId": "83a9787d4cb6f3b7632b4ddfebf74367",
+                    "name": "pop",
+                    "dataFormat": "wav",
+                    "format": "",
+                    "rate": 48000,
+                    "sampleCount": 1124,
+                    "md5ext": "83a9787d4cb6f3b7632b4ddfebf74367.wav"
+                }
+            ],
+            "volume": 100,
+            "layerOrder": 1,
+            "visible": true,
+            "x": -143,
+            "y": -195.00000000000003,
+            "size": 200,
+            "direction": 90,
+            "draggable": false,
+            "rotationStyle": "all around"
+        },
+        {
+            "isStage": false,
+            "name": "Mond",
+            "variables": {},
+            "lists": {},
+            "broadcasts": {},
+            "blocks": {},
+            "comments": {},
+            "currentCostume": 0,
+            "costumes": [
+                {
+                    "assetId": "7d11d35734698808c7eb9d22d8975ab6",
+                    "name": "moon",
+                    "bitmapResolution": 2,
+                    "md5ext": "7d11d35734698808c7eb9d22d8975ab6.png",
+                    "dataFormat": "png",
+                    "rotationCenterX": 360,
+                    "rotationCenterY": 360
+                }
+            ],
+            "sounds": [],
+            "volume": 100,
+            "layerOrder": 2,
+            "visible": true,
+            "x": 193.00000000000003,
+            "y": 135,
+            "size": 40,
+            "direction": 90,
+            "draggable": false,
+            "rotationStyle": "all around"
+        },
+        {
+            "isStage": false,
+            "name": "Rakete",
+            "variables": {},
+            "lists": {},
+            "broadcasts": {},
+            "blocks": {
+                "cT1JuXtluvlFIps60iyM": {
+                    "opcode": "event_whenflagclicked",
+                    "next": ")?^q-PP|ckqpryd2)ON7",
+                    "parent": null,
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 837,
+                    "y": 131
+                },
+                ")?^q-PP|ckqpryd2)ON7": {
+                    "opcode": "control_forever",
+                    "next": null,
+                    "parent": "cT1JuXtluvlFIps60iyM",
+                    "inputs": {
+                        "SUBSTACK": [
+                            2,
+                            "@!Pf[eoHfSUG~V,CSV]("
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "@!Pf[eoHfSUG~V,CSV](": {
+                    "opcode": "control_if",
+                    "next": "i~x6eKz.tAZ7ecZiVoFJ",
+                    "parent": ")?^q-PP|ckqpryd2)ON7",
+                    "inputs": {
+                        "CONDITION": [
+                            2,
+                            "RFMH3FcEP;lQ]:=^Z7vW"
+                        ],
+                        "SUBSTACK": [
+                            2,
+                            "Fc%m;3O!paP^q5J`rV%t"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "RFMH3FcEP;lQ]:=^Z7vW": {
+                    "opcode": "sensing_keypressed",
+                    "next": null,
+                    "parent": "@!Pf[eoHfSUG~V,CSV](",
+                    "inputs": {
+                        "KEY_OPTION": [
+                            1,
+                            "m(p:EQwL/z8w!{G(=UFN"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "m(p:EQwL/z8w!{G(=UFN": {
+                    "opcode": "sensing_keyoptions",
+                    "next": null,
+                    "parent": "RFMH3FcEP;lQ]:=^Z7vW",
+                    "inputs": {},
+                    "fields": {
+                        "KEY_OPTION": [
+                            "right arrow"
+                        ]
+                    },
+                    "shadow": true,
+                    "topLevel": false
+                },
+                "Fc%m;3O!paP^q5J`rV%t": {
+                    "opcode": "motion_turnright",
+                    "next": null,
+                    "parent": "@!Pf[eoHfSUG~V,CSV](",
+                    "inputs": {
+                        "DEGREES": [
+                            1,
+                            [
+                                4,
+                                "5"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "i~x6eKz.tAZ7ecZiVoFJ": {
+                    "opcode": "control_if",
+                    "next": null,
+                    "parent": "@!Pf[eoHfSUG~V,CSV](",
+                    "inputs": {
+                        "CONDITION": [
+                            2,
+                            "b@D`vk?1d;uJ%~s9WU[o"
+                        ],
+                        "SUBSTACK": [
+                            2,
+                            ".nW;s}!aRg{)WjqSm[a-"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "b@D`vk?1d;uJ%~s9WU[o": {
+                    "opcode": "sensing_keypressed",
+                    "next": null,
+                    "parent": "i~x6eKz.tAZ7ecZiVoFJ",
+                    "inputs": {
+                        "KEY_OPTION": [
+                            1,
+                            "6(@xZfslS+-s4iHG_d7U"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "6(@xZfslS+-s4iHG_d7U": {
+                    "opcode": "sensing_keyoptions",
+                    "next": null,
+                    "parent": "b@D`vk?1d;uJ%~s9WU[o",
+                    "inputs": {},
+                    "fields": {
+                        "KEY_OPTION": [
+                            "left arrow"
+                        ]
+                    },
+                    "shadow": true,
+                    "topLevel": false
+                },
+                ".nW;s}!aRg{)WjqSm[a-": {
+                    "opcode": "motion_turnleft",
+                    "next": null,
+                    "parent": "i~x6eKz.tAZ7ecZiVoFJ",
+                    "inputs": {
+                        "DEGREES": [
+                            1,
+                            [
+                                4,
+                                "5"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "VRV$`Y`]F{`6)3bWLU8U": {
+                    "opcode": "event_whenflagclicked",
+                    "next": ":HWhKmNLnvE9|%D@@;fz",
+                    "parent": null,
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 109,
+                    "y": -43
+                },
+                ":HWhKmNLnvE9|%D@@;fz": {
+                    "opcode": "looks_switchcostumeto",
+                    "next": "j|D)MrS3c2%E`pEdcG1i",
+                    "parent": "VRV$`Y`]F{`6)3bWLU8U",
+                    "inputs": {
+                        "COSTUME": [
+                            1,
+                            "p(2zwPq=r]V$/gE;gdsv"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "p(2zwPq=r]V$/gE;gdsv": {
+                    "opcode": "looks_costume",
+                    "next": null,
+                    "parent": ":HWhKmNLnvE9|%D@@;fz",
+                    "inputs": {},
+                    "fields": {
+                        "COSTUME": [
+                            "fliegende Rakete",
+                            null
+                        ]
+                    },
+                    "shadow": true,
+                    "topLevel": false
+                },
+                "j|D)MrS3c2%E`pEdcG1i": {
+                    "opcode": "motion_gotoxy",
+                    "next": "YJdhNKdv!T;7HbyxdHHb",
+                    "parent": ":HWhKmNLnvE9|%D@@;fz",
+                    "inputs": {
+                        "X": [
+                            1,
+                            [
+                                4,
+                                "-90"
+                            ]
+                        ],
+                        "Y": [
+                            1,
+                            [
+                                4,
+                                "-130"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "YJdhNKdv!T;7HbyxdHHb": {
+                    "opcode": "motion_pointindirection",
+                    "next": "BqUWk5EVKvUcde*fa*.t",
+                    "parent": "j|D)MrS3c2%E`pEdcG1i",
+                    "inputs": {
+                        "DIRECTION": [
+                            1,
+                            [
+                                8,
+                                "45"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "BqUWk5EVKvUcde*fa*.t": {
+                    "opcode": "looks_thinkforsecs",
+                    "next": "G,!WQ}qH1!.ztg=Ig1vZ",
+                    "parent": "YJdhNKdv!T;7HbyxdHHb",
+                    "inputs": {
+                        "MESSAGE": [
+                            1,
+                            [
+                                10,
+                                "Tschüss Erde!"
+                            ]
+                        ],
+                        "SECS": [
+                            1,
+                            [
+                                4,
+                                "2"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "G,!WQ}qH1!.ztg=Ig1vZ": {
+                    "opcode": "sound_play",
+                    "next": "pm#}Xt@_#3.Y^TYPw+5m",
+                    "parent": "BqUWk5EVKvUcde*fa*.t",
+                    "inputs": {
+                        "SOUND_MENU": [
+                            1,
+                            "nwdv3y5PdXDg8-*CqHA("
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "nwdv3y5PdXDg8-*CqHA(": {
+                    "opcode": "sound_sounds_menu",
+                    "next": null,
+                    "parent": "G,!WQ}qH1!.ztg=Ig1vZ",
+                    "inputs": {},
+                    "fields": {
+                        "SOUND_MENU": [
+                            "Start",
+                            null
+                        ]
+                    },
+                    "shadow": true,
+                    "topLevel": false
+                },
+                "pm#}Xt@_#3.Y^TYPw+5m": {
+                    "opcode": "control_forever",
+                    "next": null,
+                    "parent": "G,!WQ}qH1!.ztg=Ig1vZ",
+                    "inputs": {
+                        "SUBSTACK": [
+                            2,
+                            "t7ZnszUbXcXnf;;:*:D*"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "#8DHT@={t}UK?Nk4GT1q": {
+                    "opcode": "operator_equals",
+                    "next": null,
+                    "parent": "NE.ekk0T(Wd}vFqt.Sa+",
+                    "inputs": {
+                        "OPERAND1": [
+                            3,
+                            "Hfe}Lt#1~Yz[,*__=9A9",
+                            [
+                                10,
+                                ""
+                            ]
+                        ],
+                        "OPERAND2": [
+                            1,
+                            [
+                                10,
+                                "0"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false,
+                    "comment": "~qR%)_%/zsdhVjwc+w[F"
+                },
+                "Hfe}Lt#1~Yz[,*__=9A9": {
+                    "opcode": "sensing_distanceto",
+                    "next": null,
+                    "parent": "#8DHT@={t}UK?Nk4GT1q",
+                    "inputs": {
+                        "DISTANCETOMENU": [
+                            1,
+                            "@MLqWPrt^YTG/ez3C_3."
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "@MLqWPrt^YTG/ez3C_3.": {
+                    "opcode": "sensing_distancetomenu",
+                    "next": null,
+                    "parent": "Hfe}Lt#1~Yz[,*__=9A9",
+                    "inputs": {},
+                    "fields": {
+                        "DISTANCETOMENU": [
+                            "Mond",
+                            null
+                        ]
+                    },
+                    "shadow": true,
+                    "topLevel": false
+                },
+                "YTKRcsgQAHs1`CR_M!yG": {
+                    "opcode": "looks_say",
+                    "next": ";n:Y7vJGf$}QAaIj@PCy",
+                    "parent": "NE.ekk0T(Wd}vFqt.Sa+",
+                    "inputs": {
+                        "MESSAGE": [
+                            1,
+                            [
+                                10,
+                                "Hallo Mond!"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                ";n:Y7vJGf$}QAaIj@PCy": {
+                    "opcode": "motion_pointtowards",
+                    "next": "zo8c9J5w.^|]Kr$-EqCy",
+                    "parent": "YTKRcsgQAHs1`CR_M!yG",
+                    "inputs": {
+                        "TOWARDS": [
+                            1,
+                            "YH](_Sb(S2LHGgOkYcd="
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "YH](_Sb(S2LHGgOkYcd=": {
+                    "opcode": "motion_pointtowards_menu",
+                    "next": null,
+                    "parent": ";n:Y7vJGf$}QAaIj@PCy",
+                    "inputs": {},
+                    "fields": {
+                        "TOWARDS": [
+                            "Mond",
+                            null
+                        ]
+                    },
+                    "shadow": true,
+                    "topLevel": false
+                },
+                "zo8c9J5w.^|]Kr$-EqCy": {
+                    "opcode": "motion_glideto",
+                    "next": "l^ZhQ+0^{wJihs60VZ5}",
+                    "parent": ";n:Y7vJGf$}QAaIj@PCy",
+                    "inputs": {
+                        "SECS": [
+                            1,
+                            [
+                                4,
+                                "1"
+                            ]
+                        ],
+                        "TO": [
+                            1,
+                            "5i:/@H`SK~UW5L7Ni[f)"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "5i:/@H`SK~UW5L7Ni[f)": {
+                    "opcode": "motion_glideto_menu",
+                    "next": null,
+                    "parent": "zo8c9J5w.^|]Kr$-EqCy",
+                    "inputs": {},
+                    "fields": {
+                        "TO": [
+                            "Mond",
+                            null
+                        ]
+                    },
+                    "shadow": true,
+                    "topLevel": false
+                },
+                "l^ZhQ+0^{wJihs60VZ5}": {
+                    "opcode": "looks_switchcostumeto",
+                    "next": "iw$+hSClU?-nB:(5`744",
+                    "parent": "zo8c9J5w.^|]Kr$-EqCy",
+                    "inputs": {
+                        "COSTUME": [
+                            1,
+                            "ZsrHmO..;ssb@5Ya#K@("
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "ZsrHmO..;ssb@5Ya#K@(": {
+                    "opcode": "looks_costume",
+                    "next": null,
+                    "parent": "l^ZhQ+0^{wJihs60VZ5}",
+                    "inputs": {},
+                    "fields": {
+                        "COSTUME": [
+                            "gelandete Rakete",
+                            null
+                        ]
+                    },
+                    "shadow": true,
+                    "topLevel": false
+                },
+                "iw$+hSClU?-nB:(5`744": {
+                    "opcode": "control_stop",
+                    "next": null,
+                    "parent": "l^ZhQ+0^{wJihs60VZ5}",
+                    "inputs": {},
+                    "fields": {
+                        "STOP_OPTION": [
+                            "all",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false,
+                    "mutation": {
+                        "tagName": "mutation",
+                        "children": [],
+                        "hasnext": "false"
+                    }
+                },
+                "t7ZnszUbXcXnf;;:*:D*": {
+                    "opcode": "motion_movesteps",
+                    "next": null,
+                    "parent": "pm#}Xt@_#3.Y^TYPw+5m",
+                    "inputs": {
+                        "STEPS": [
+                            1,
+                            [
+                                4,
+                                "2"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "asU31^v87=3?4bDn9Sfp": {
+                    "opcode": "event_whenflagclicked",
+                    "next": "NE.ekk0T(Wd}vFqt.Sa+",
+                    "parent": null,
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 105,
+                    "y": 459
+                },
+                "NE.ekk0T(Wd}vFqt.Sa+": {
+                    "opcode": "control_wait_until",
+                    "next": "YTKRcsgQAHs1`CR_M!yG",
+                    "parent": "asU31^v87=3?4bDn9Sfp",
+                    "inputs": {
+                        "CONDITION": [
+                            2,
+                            "#8DHT@={t}UK?Nk4GT1q"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                }
+            },
+            "comments": {
+                "~qR%)_%/zsdhVjwc+w[F": {
+                    "blockId": "#8DHT@={t}UK?Nk4GT1q",
+                    "x": 552.09074055707,
+                    "y": 404.18518518518516,
+                    "width": 235.0369873046875,
+                    "height": 313.3333740234375,
+                    "minimized": false,
+                    "text": "Die Entfernung zweier Figuren wird in Scratch von Mittelpunkt zu Mittelpunkt gemessen. Es ist sehr unwahrscheinlich, dass die Mittelpunkte zweier Figuren exakt übereinstimmen. Benutzen Sie stattdessen eine passende Näherung mit < oder verwenden Sie einen eckigen Baustein ``wird ... berührt?'' aus dem Bereich Fühlen."
+                },
+                "|Kr4|j96]7e1K-r2`PT/": {
+                    "blockId": "^LHX9XS%YWh6Ve%vO}HX",
+                    "x": 563.7037037037038,
+                    "y": 837.7407407407408,
+                    "width": 230.592529296875,
+                    "height": 300.59259033203125,
+                    "minimized": false,
+                    "text": "Die Entfernung zweier Figuren wird in Scratch von Mittelpunkt zu Mittelpunkt gemessen. Es ist sehr unwahrscheinlich, dass die Mittelpunkte zweier Figuren exakt übereinstimmen. Benutze stattdessen eine passende Näherung mit < oder verwende einen eckigen Baustein ``wird ... berührt?'' aus dem Bereich Fühlen."
+                }
+            },
+            "currentCostume": 0,
+            "costumes": [
+                {
+                    "assetId": "2302468725c38760e17a390291714ca0",
+                    "name": "fliegende Rakete",
+                    "bitmapResolution": 1,
+                    "md5ext": "2302468725c38760e17a390291714ca0.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 89.91948218603196,
+                    "rotationCenterY": 76.42707757532213
+                },
+                {
+                    "assetId": "bf43228b0c76cdba479ee8453c881a87",
+                    "name": "rocketship-b",
+                    "bitmapResolution": 1,
+                    "md5ext": "bf43228b0c76cdba479ee8453c881a87.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 54,
+                    "rotationCenterY": 92
+                },
+                {
+                    "assetId": "0772801965c4538acb6ed4a9dc5dd3c0",
+                    "name": "rocketship-c",
+                    "bitmapResolution": 1,
+                    "md5ext": "0772801965c4538acb6ed4a9dc5dd3c0.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 59,
+                    "rotationCenterY": 91
+                },
+                {
+                    "assetId": "89b64be6552df04bc8bbc99a1a2176ed",
+                    "name": "rocketship-d",
+                    "bitmapResolution": 1,
+                    "md5ext": "89b64be6552df04bc8bbc99a1a2176ed.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 65,
+                    "rotationCenterY": 91
+                },
+                {
+                    "assetId": "4fe5e8e0a725e4a764b8576204ad7ccb",
+                    "name": "gelandete Rakete",
+                    "bitmapResolution": 1,
+                    "md5ext": "4fe5e8e0a725e4a764b8576204ad7ccb.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 71,
+                    "rotationCenterY": 111
+                }
+            ],
+            "sounds": [
+                {
+                    "assetId": "ff8b8c3bf841a11fd5fe3afaa92be1b5",
+                    "name": "Start",
+                    "dataFormat": "wav",
+                    "format": "",
+                    "rate": 48000,
+                    "sampleCount": 179153,
+                    "md5ext": "ff8b8c3bf841a11fd5fe3afaa92be1b5.wav"
+                },
+                {
+                    "assetId": "46571f8ec0f2cc91666c80e312579082",
+                    "name": "laser1",
+                    "dataFormat": "wav",
+                    "format": "",
+                    "rate": 48000,
+                    "sampleCount": 2247,
+                    "md5ext": "46571f8ec0f2cc91666c80e312579082.wav"
+                },
+                {
+                    "assetId": "27654ed2e3224f0a3f77c244e4fae9aa",
+                    "name": "Laser",
+                    "dataFormat": "wav",
+                    "format": "",
+                    "rate": 48000,
+                    "sampleCount": 3288,
+                    "md5ext": "27654ed2e3224f0a3f77c244e4fae9aa.wav"
+                }
+            ],
+            "volume": 100,
+            "layerOrder": 3,
+            "visible": true,
+            "x": -90,
+            "y": -130,
+            "size": 40,
+            "direction": 45,
+            "draggable": false,
+            "rotationStyle": "all around"
+        },
+        {
+            "isStage": false,
+            "name": "Asteroid",
+            "variables": {},
+            "lists": {},
+            "broadcasts": {},
+            "blocks": {
+                "U+1u2=A/XER3])z^fyDE": {
+                    "opcode": "event_whenflagclicked",
+                    "next": "A]*Hz1m4lW,Tf|KJDKa*",
+                    "parent": null,
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": -48,
+                    "y": 404
+                },
+                "A]*Hz1m4lW,Tf|KJDKa*": {
+                    "opcode": "motion_gotoxy",
+                    "next": "I?RoqL)FC5P5+ODz):Sz",
+                    "parent": "U+1u2=A/XER3])z^fyDE",
+                    "inputs": {
+                        "X": [
+                            1,
+                            [
+                                4,
+                                "170"
+                            ]
+                        ],
+                        "Y": [
+                            1,
+                            [
+                                4,
+                                "-20"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "I?RoqL)FC5P5+ODz):Sz": {
+                    "opcode": "control_forever",
+                    "next": null,
+                    "parent": "A]*Hz1m4lW,Tf|KJDKa*",
+                    "inputs": {
+                        "SUBSTACK": [
+                            2,
+                            "!XiRaQz6#(C:QbHBT.OV"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "!XiRaQz6#(C:QbHBT.OV": {
+                    "opcode": "motion_glidesecstoxy",
+                    "next": "M~EWk#;KQ,0`n.jc*8?`",
+                    "parent": "I?RoqL)FC5P5+ODz):Sz",
+                    "inputs": {
+                        "SECS": [
+                            1,
+                            [
+                                4,
+                                "2"
+                            ]
+                        ],
+                        "X": [
+                            1,
+                            [
+                                4,
+                                "-130"
+                            ]
+                        ],
+                        "Y": [
+                            1,
+                            [
+                                4,
+                                "20"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "M~EWk#;KQ,0`n.jc*8?`": {
+                    "opcode": "motion_glidesecstoxy",
+                    "next": null,
+                    "parent": "!XiRaQz6#(C:QbHBT.OV",
+                    "inputs": {
+                        "SECS": [
+                            1,
+                            [
+                                4,
+                                "2"
+                            ]
+                        ],
+                        "X": [
+                            1,
+                            [
+                                4,
+                                "170"
+                            ]
+                        ],
+                        "Y": [
+                            1,
+                            [
+                                4,
+                                "-20"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "1?13}L-VucCpd)^Vf1F:": {
+                    "opcode": "event_whenflagclicked",
+                    "next": "+h0CmHa-hsU8S^RoI0kd",
+                    "parent": null,
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": -50,
+                    "y": 79
+                },
+                "+h0CmHa-hsU8S^RoI0kd": {
+                    "opcode": "control_wait_until",
+                    "next": "ChC_R7@]kzjZE/TX#oQ*",
+                    "parent": "1?13}L-VucCpd)^Vf1F:",
+                    "inputs": {
+                        "CONDITION": [
+                            2,
+                            "*H]A8LFMN|`:HKCyP/;u"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "*H]A8LFMN|`:HKCyP/;u": {
+                    "opcode": "operator_equals",
+                    "next": null,
+                    "parent": "+h0CmHa-hsU8S^RoI0kd",
+                    "inputs": {
+                        "OPERAND1": [
+                            3,
+                            "X|Wz85Bj{_%{3hKV9enG",
+                            [
+                                10,
+                                ""
+                            ]
+                        ],
+                        "OPERAND2": [
+                            1,
+                            [
+                                10,
+                                "0"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false,
+                    "comment": "x/pO,WmAL#$(+Fk(0fjn"
+                },
+                "X|Wz85Bj{_%{3hKV9enG": {
+                    "opcode": "sensing_distanceto",
+                    "next": null,
+                    "parent": "*H]A8LFMN|`:HKCyP/;u",
+                    "inputs": {
+                        "DISTANCETOMENU": [
+                            1,
+                            "IdtNIwP)xcs:@0LGl:Vi"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "IdtNIwP)xcs:@0LGl:Vi": {
+                    "opcode": "sensing_distancetomenu",
+                    "next": null,
+                    "parent": "X|Wz85Bj{_%{3hKV9enG",
+                    "inputs": {},
+                    "fields": {
+                        "DISTANCETOMENU": [
+                            "Rakete",
+                            null
+                        ]
+                    },
+                    "shadow": true,
+                    "topLevel": false
+                },
+                "ChC_R7@]kzjZE/TX#oQ*": {
+                    "opcode": "looks_say",
+                    "next": "d/p6%@F=q]^yO7FaUE|q",
+                    "parent": "+h0CmHa-hsU8S^RoI0kd",
+                    "inputs": {
+                        "MESSAGE": [
+                            1,
+                            [
+                                10,
+                                "Autsch!"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "d/p6%@F=q]^yO7FaUE|q": {
+                    "opcode": "sound_playuntildone",
+                    "next": "0.@I1ioxfWFeuVh@ZF,6",
+                    "parent": "ChC_R7@]kzjZE/TX#oQ*",
+                    "inputs": {
+                        "SOUND_MENU": [
+                            1,
+                            "09JZm%wh[XA!eNH1xMkI"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "09JZm%wh[XA!eNH1xMkI": {
+                    "opcode": "sound_sounds_menu",
+                    "next": null,
+                    "parent": "d/p6%@F=q]^yO7FaUE|q",
+                    "inputs": {},
+                    "fields": {
+                        "SOUND_MENU": [
+                            "Laser",
+                            null
+                        ]
+                    },
+                    "shadow": true,
+                    "topLevel": false
+                },
+                "0.@I1ioxfWFeuVh@ZF,6": {
+                    "opcode": "control_stop",
+                    "next": null,
+                    "parent": "d/p6%@F=q]^yO7FaUE|q",
+                    "inputs": {},
+                    "fields": {
+                        "STOP_OPTION": [
+                            "all",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false,
+                    "mutation": {
+                        "tagName": "mutation",
+                        "children": [],
+                        "hasnext": "false"
+                    }
+                }
+            },
+            "comments": {
+                "x/pO,WmAL#$(+Fk(0fjn": {
+                    "blockId": "*H]A8LFMN|`:HKCyP/;u",
+                    "x": 399.81481481481484,
+                    "y": 133.14814814814815,
+                    "width": 237.5185546875,
+                    "height": 316.629638671875,
+                    "minimized": false,
+                    "text": "Die Entfernung zweier Figuren wird in Scratch von Mittelpunkt zu Mittelpunkt gemessen. Es ist sehr unwahrscheinlich, dass die Mittelpunkte zweier Figuren exakt übereinstimmen. Benutzen Sie stattdessen eine passende Näherung mit < oder verwenden Sie einen eckigen Baustein ``wird ... berührt?'' aus dem Bereich Fühlen."
+                }
+            },
+            "currentCostume": 0,
+            "costumes": [
+                {
+                    "assetId": "4de05b2fa82db5619e8a5c8dc40a3b90",
+                    "name": "rocks",
+                    "bitmapResolution": 1,
+                    "md5ext": "4de05b2fa82db5619e8a5c8dc40a3b90.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 59,
+                    "rotationCenterY": 15
+                }
+            ],
+            "sounds": [
+                {
+                    "assetId": "83a9787d4cb6f3b7632b4ddfebf74367",
+                    "name": "pop",
+                    "dataFormat": "wav",
+                    "format": "",
+                    "rate": 48000,
+                    "sampleCount": 1124,
+                    "md5ext": "83a9787d4cb6f3b7632b4ddfebf74367.wav"
+                },
+                {
+                    "assetId": "27654ed2e3224f0a3f77c244e4fae9aa",
+                    "name": "Laser",
+                    "dataFormat": "wav",
+                    "format": "",
+                    "rate": 48000,
+                    "sampleCount": 3288,
+                    "md5ext": "27654ed2e3224f0a3f77c244e4fae9aa.wav"
+                }
+            ],
+            "volume": 100,
+            "layerOrder": 4,
+            "visible": true,
+            "x": 78.65,
+            "y": -7.82,
+            "size": 60,
+            "direction": 90,
+            "draggable": false,
+            "rotationStyle": "all around"
+        }
+    ],
+    "monitors": [
+        {
+            "id": "fmh)]15viGSr!(1AO^z;_xposition",
+            "mode": "default",
+            "opcode": "motion_xposition",
+            "params": {},
+            "spriteName": "Rakete",
+            "value": 89,
+            "width": 0,
+            "height": 0,
+            "x": 5,
+            "y": 5,
+            "visible": false,
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "fmh)]15viGSr!(1AO^z;_yposition",
+            "mode": "default",
+            "opcode": "motion_yposition",
+            "params": {},
+            "spriteName": "Rakete",
+            "value": 104,
+            "width": 0,
+            "height": 0,
+            "x": 5,
+            "y": 31,
+            "visible": false,
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "fmh)]15viGSr!(1AO^z;_direction",
+            "mode": "default",
+            "opcode": "motion_direction",
+            "params": {},
+            "spriteName": "Rakete",
+            "value": 92.24350560888377,
+            "width": 0,
+            "height": 0,
+            "x": 5,
+            "y": 57,
+            "visible": false,
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        }
+    ],
+    "extensions": [],
+    "meta": {
+        "semver": "3.0.0",
+        "vm": "0.2.0-prerelease.20200618162938",
+        "agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:77.0) Gecko/20100101 Firefox/77.0"
+    }
+}

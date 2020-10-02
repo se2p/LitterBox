@@ -18,42 +18,66 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.smells;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueReport;
+import de.uni_passau.fim.se2.litterbox.JsonTest;
+import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
-import java.io.File;
-import java.io.IOException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-public class DeadCodeTest {
+import java.io.IOException;
+import java.util.Set;
+
+public class DeadCodeTest implements JsonTest {
     private static Program empty;
     private static Program deadCode;
-    private static ObjectMapper mapper = new ObjectMapper();
+    private static Program deadVariable;
+    private static Program deadParam;
+    private static Program allDead;
 
     @BeforeAll
     public static void setUp() throws IOException, ParsingException {
 
-        File f = new File("./src/test/fixtures/emptyProject.json");
-        empty = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
-        f = new File("./src/test/fixtures/smells/deadCode.json");
-        deadCode = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
+        empty = JsonTest.parseProgram("./src/test/fixtures/emptyProject.json");
+        deadCode = JsonTest.parseProgram("./src/test/fixtures/smells/deadCode.json");
+        deadVariable = JsonTest.parseProgram("./src/test/fixtures/smells/deadVariable.json");
+        allDead = JsonTest.parseProgram("./src/test/fixtures/smells/allBlocksDead.json");
+        deadParam = JsonTest.parseProgram("./src/test/fixtures/smells/deadParam.json");
     }
 
     @Test
     public void testEmptyProgram() {
         DeadCode parameterName = new DeadCode();
-        IssueReport report = parameterName.check(empty);
-        Assertions.assertEquals(0, report.getCount());
+        Set<Issue> reports = parameterName.check(empty);
+        Assertions.assertEquals(0, reports.size());
     }
 
     @Test
     public void testDeadCode() {
         DeadCode parameterName = new DeadCode();
-        IssueReport report = parameterName.check(deadCode);
-        Assertions.assertEquals(3, report.getCount());
+        Set<Issue> reports = parameterName.check(deadCode);
+        Assertions.assertEquals(3, reports.size());
+    }
+
+    @Test
+    public void testDeadVariable() {
+        DeadCode parameterName = new DeadCode();
+        Set<Issue> reports = parameterName.check(deadVariable);
+        Assertions.assertEquals(2, reports.size());
+    }
+
+    @Test
+    public void testDeadParam() {
+        DeadCode parameterName = new DeadCode();
+        Set<Issue> reports = parameterName.check(deadParam);
+        Assertions.assertEquals(2, reports.size());
+    }
+
+    @Test
+    public void testAllDead() {
+        DeadCode parameterName = new DeadCode();
+        Set<Issue> reports = parameterName.check(allDead);
+        Assertions.assertEquals(126, reports.size());
     }
 }

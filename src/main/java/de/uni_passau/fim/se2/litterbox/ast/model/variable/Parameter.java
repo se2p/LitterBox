@@ -18,12 +18,13 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.model.variable;
 
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 public class Parameter extends DataExpr {
-
 
     public Parameter(LocalIdentifier name, BlockMetadata metadata) {
         super(name, metadata);
@@ -32,5 +33,10 @@ public class Parameter extends DataExpr {
     @Override
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);
+    }
+
+    @Override
+    public ASTNode accept(CloneVisitor visitor) {
+        return visitor.visit(this);
     }
 }

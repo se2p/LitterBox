@@ -18,14 +18,13 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.parser;
 
-import static de.uni_passau.fim.se2.litterbox.ast.Constants.FIELDS_KEY;
-import static de.uni_passau.fim.se2.litterbox.ast.Constants.OPCODE_KEY;
-
-
 import com.fasterxml.jackson.databind.JsonNode;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.timecomp.TimeComp;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
+
+import static de.uni_passau.fim.se2.litterbox.ast.Constants.FIELDS_KEY;
+import static de.uni_passau.fim.se2.litterbox.ast.Constants.OPCODE_KEY;
 
 public class TimecompParser {
 
@@ -39,6 +38,6 @@ public class TimecompParser {
                 "Timecomp parsing is only allowed for opcode %s and not %s", CURRENT_OPCODE, opcodeString);
 
         final String currentString = current.get(FIELDS_KEY).get(CURRENT_MENU).get(0).asText();
-        return TimeComp.fromString(currentString.toLowerCase());
+        return new TimeComp(currentString.toLowerCase());
     }
 }

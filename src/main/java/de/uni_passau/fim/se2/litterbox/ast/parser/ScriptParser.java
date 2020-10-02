@@ -18,10 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.parser;
 
-import static de.uni_passau.fim.se2.litterbox.ast.Constants.NEXT_KEY;
-import static de.uni_passau.fim.se2.litterbox.ast.Constants.OPCODE_KEY;
-
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
@@ -36,9 +32,12 @@ import de.uni_passau.fim.se2.litterbox.ast.opcodes.EventOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.ProcedureOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.parser.stmt.StmtParser;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
+
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Logger;
+
+import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 
 public class ScriptParser {
 
@@ -84,35 +83,44 @@ public class ScriptParser {
         return false;
     }
 
-    public static StmtList parseStmtList(String blockID, JsonNode blocks) throws ParsingException {
+    public static StmtList parseStmtList(String blockId, JsonNode blocks) throws ParsingException {
         List<Stmt> list = new LinkedList<>();
-        JsonNode current = blocks.get(blockID);
+        JsonNode current = blocks.get(blockId);
 
         if (current instanceof ArrayNode) {
-            Stmt stmt = StmtParser.parse(blockID, blocks);
+            Stmt stmt = StmtParser.parse(blockId, blocks);
             list.add(stmt);
         } else {
 
             while (current != null && !current.isNull()) {
                 try {
-                    if (ProcedureOpcode.contains(blocks.get(blockID).get(OPCODE_KEY).asText()) || DependentBlockOpcodes.contains(blocks.get(blockID).get(OPCODE_KEY).asText())) {
-                        //Ignore ProcedureOpcodes
-//                    blockID = current.get(NEXT_KEY).asText();
-//                    current = blocks.get(blockID);
+                    String opcode = blocks.get(blockId).get(OPCODE_KEY).asText();
+                    if (DependentBlockOpcodes.contains(opcode)
+                            || ProcedureOpcode.procedures_definition.name().equals(opcode)
+                            || ProcedureOpcode.procedures_prototype.name().equals(opcode)) {
+                        // Don't parse these blocks (here)
                         return null;
+                    } else if (isShadowParameter(opcode, current)) {
+                        // Only parameters that are not shadows are dead code
+                        return null;
+                    } else {
+                        Stmt stmt = StmtParser.parse(blockId, blocks);
+                        list.add(stmt);
                     }
-
-                    Stmt stmt = StmtParser.parse(blockID, blocks);
-                    list.add(stmt);
                 } catch (ParsingException e) {
-                    // and needs to be removed
-                    Logger.getGlobal().warning("Could not parse block with ID " + blockID + " and opcode "
+                    Logger.getGlobal().warning("Could not parse block with ID " + blockId + " and opcode "
                             + current.get(OPCODE_KEY));
                 }
-                blockID = current.get(NEXT_KEY).asText();
-                current = blocks.get(blockID);
+                blockId = current.get(NEXT_KEY).asText();
+                current = blocks.get(blockId);
             }
         }
         return new StmtList(list);
+    }
+
+    private static boolean isShadowParameter(String opcode, JsonNode current) {
+        return (ProcedureOpcode.argument_reporter_string_number.name().equals(opcode)
+                || ProcedureOpcode.argument_reporter_boolean.name().equals(opcode))
+                && (current.get(SHADOW_KEY).asBoolean());
     }
 }

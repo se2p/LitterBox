@@ -18,148 +18,129 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
-import static de.uni_passau.fim.se2.litterbox.analytics.CommentAdder.addBlockComment;
-
-
-import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueReport;
-import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
-import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.GreenFlag;
+import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.StartedAsClone;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.*;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.DistanceTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfElseStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
-import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
-import java.util.LinkedList;
-import java.util.List;
 
 /**
  * A script should execute actions when an event occurs. Instead of continuously checking for the event to occur
  * inside a forever or until loop it is only checked once in a conditional construct, making it
  * unlikely that the timing is correct.
  */
-public class MissingLoopSensing implements IssueFinder, ScratchVisitor {
+public class MissingLoopSensing extends AbstractIssueFinder {
     public static final String NAME = "missing_loop_sensing";
-    public static final String SHORT_NAME = "mssLoopSens";
-    public static final String HINT_TEXT = "missing loop sensing";
-    private static final String NOTE1 = "There is no fishy touching or keyPressed checks without a loop.";
-    private static final String NOTE2 = "The project contains some fishy touching and / or keyPressed checks without " +
-            "a loop.";
-    private boolean found = false;
-    private int count = 0;
-    private List<String> actorNames = new LinkedList<>();
     private boolean insideGreenFlagClone = false;
     private boolean insideLoop = false;
-    private ActorDefinition currentActor;
-
-    @Override
-    public IssueReport check(Program program) {
-        Preconditions.checkNotNull(program);
-        found = false;
-        count = 0;
-        actorNames = new LinkedList<>();
-        program.accept(this);
-        String notes = NOTE1;
-        if (count > 0) {
-            notes = NOTE2;
-        }
-        return new IssueReport(NAME, count, actorNames, notes);
-    }
-
-    @Override
-    public void visit(ActorDefinition actor) {
-        currentActor = actor;
-        if (!actor.getChildren().isEmpty()) {
-            for (ASTNode child : actor.getChildren()) {
-                child.accept(this);
-            }
-        }
-        if (found) {
-            found = false;
-            actorNames.add(actor.getIdent().getName());
-        }
-    }
+    private boolean inCondition = false;
 
     @Override
     public void visit(Script node) {
+        if (ignoreLooseBlocks && node.getEvent() instanceof Never) {
+            // Ignore unconnected blocks
+            return;
+        }
         if (node.getEvent() instanceof GreenFlag || node.getEvent() instanceof StartedAsClone) {
             insideGreenFlagClone = true;
         }
-        if (!node.getChildren().isEmpty()) {
-            for (ASTNode child : node.getChildren()) {
-                child.accept(this);
-            }
-        }
+        inCondition = false;
+        super.visit(node);
         insideGreenFlagClone = false;
     }
 
     @Override
     public void visit(RepeatForeverStmt node) {
         insideLoop = true;
-        if (!node.getChildren().isEmpty()) {
-            for (ASTNode child : node.getChildren()) {
-                child.accept(this);
-            }
-        }
+        visitChildren(node);
         insideLoop = false;
     }
 
     @Override
     public void visit(UntilStmt node) {
         insideLoop = true;
-        if (!node.getChildren().isEmpty()) {
-            for (ASTNode child : node.getChildren()) {
-                child.accept(this);
-            }
-        }
+        visitChildren(node);
         insideLoop = false;
     }
 
     @Override
     public void visit(IfThenStmt node) {
         if (insideGreenFlagClone && !insideLoop) {
+            inCondition = true;
             BoolExpr boolExpr = node.getBoolExpr();
-            if (boolExpr instanceof IsKeyPressed || boolExpr instanceof Touching || boolExpr instanceof IsMouseDown || boolExpr instanceof ColorTouchingColor) {
-                count++;
-                found = true;
-                addBlockComment((NonDataBlockMetadata) node.getMetadata(), currentActor, HINT_TEXT,
-                        SHORT_NAME + count);
-            }
+            boolExpr.accept(this);
+            inCondition = false;
         }
-        if (!node.getChildren().isEmpty()) {
-            for (ASTNode child : node.getChildren()) {
-                child.accept(this);
-            }
+        node.getThenStmts().accept(this);
+    }
+
+    @Override
+    public void visit(IsKeyPressed node) {
+        if (insideGreenFlagClone && !insideLoop && inCondition) {
+            addIssue(node, node.getMetadata());
+        }
+    }
+
+    @Override
+    public void visit(Touching node) {
+        if (insideGreenFlagClone && !insideLoop && inCondition) {
+            addIssue(node, node.getMetadata());
+        }
+    }
+
+    @Override
+    public void visit(IsMouseDown node) {
+        if (insideGreenFlagClone && !insideLoop && inCondition) {
+            addIssue(node, node.getMetadata());
+        }
+    }
+
+    @Override
+    public void visit(ColorTouchingColor node) {
+        if (insideGreenFlagClone && !insideLoop && inCondition) {
+            addIssue(node, node.getMetadata());
+        }
+    }
+
+    @Override
+    public void visit(SpriteTouchingColor node) {
+        if (insideGreenFlagClone && !insideLoop && inCondition) {
+            addIssue(node, node.getMetadata());
+        }
+    }
+
+    @Override
+    public void visit(DistanceTo node) {
+        if (insideGreenFlagClone && !insideLoop && inCondition) {
+            addIssue(node, node.getMetadata());
         }
     }
 
     @Override
     public void visit(IfElseStmt node) {
         if (insideGreenFlagClone && !insideLoop) {
+            inCondition = true;
             BoolExpr boolExpr = node.getBoolExpr();
-            if (boolExpr instanceof IsKeyPressed || boolExpr instanceof Touching || boolExpr instanceof IsMouseDown || boolExpr instanceof ColorTouchingColor) {
-                count++;
-                found = true;
-                addBlockComment((NonDataBlockMetadata) node.getMetadata(), currentActor, HINT_TEXT,
-                        SHORT_NAME + count);
-            }
+            boolExpr.accept(this);
+            inCondition = false;
         }
-        if (!node.getChildren().isEmpty()) {
-            for (ASTNode child : node.getChildren()) {
-                child.accept(this);
-            }
-        }
+        node.getStmtList().accept(this);
+        node.getElseStmts().accept(this);
     }
 
     @Override
     public String getName() {
         return NAME;
+    }
+
+    @Override
+    public IssueType getIssueType() {
+        return IssueType.BUG;
     }
 }

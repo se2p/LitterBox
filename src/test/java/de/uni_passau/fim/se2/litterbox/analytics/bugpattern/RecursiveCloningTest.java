@@ -18,43 +18,31 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueReport;
+import de.uni_passau.fim.se2.litterbox.JsonTest;
+import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
-import java.io.File;
-import java.io.IOException;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-public class RecursiveCloningTest {
-    private static Program empty;
-    private static Program recursiveClones;
+import java.io.IOException;
+import java.util.Set;
 
-    private static ObjectMapper mapper = new ObjectMapper();
+public class RecursiveCloningTest implements JsonTest {
 
-    @BeforeAll
-    public static void setUp() throws IOException, ParsingException {
-
-        File f = new File("./src/test/fixtures/emptyProject.json");
-        empty = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
-        f = new File("./src/test/fixtures/bugpattern/recursiveCloning.json");
-        recursiveClones = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
+    @Test
+    public void testEmptyProgram() throws IOException, ParsingException {
+        Program empty = getAST("./src/test/fixtures/emptyProject.json");
+        RecursiveCloning parameterName = new RecursiveCloning();
+        Set<Issue> reports = parameterName.check(empty);
+        Assertions.assertEquals(0, reports.size());
     }
 
     @Test
-    public void testEmptyProgram() {
+    public void testProcedureWithTermination() throws IOException, ParsingException {
+        Program recursiveClones = getAST("./src/test/fixtures/bugpattern/recursiveCloning.json");
         RecursiveCloning parameterName = new RecursiveCloning();
-        IssueReport report = parameterName.check(empty);
-        Assertions.assertEquals(0, report.getCount());
-    }
-
-    @Test
-    public void testProcedureWithTermination() {
-        RecursiveCloning parameterName = new RecursiveCloning();
-        IssueReport report = parameterName.check(recursiveClones);
-        Assertions.assertEquals(1, report.getCount());
+        Set<Issue> reports = parameterName.check(recursiveClones);
+        Assertions.assertEquals(1, reports.size());
     }
 }

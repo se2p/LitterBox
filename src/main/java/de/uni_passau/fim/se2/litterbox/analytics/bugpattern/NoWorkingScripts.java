@@ -18,20 +18,10 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
-import static de.uni_passau.fim.se2.litterbox.analytics.CommentAdder.addLooseComment;
-
-
-import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueReport;
-import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
+import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
-import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
-import java.util.LinkedList;
-import java.util.List;
 
 /**
  * The empty script smell occurs if an event handler has no other blocks attached to it.
@@ -40,60 +30,27 @@ import java.util.List;
  * If both smells occur simultaneously without any other scripts in a sprite we consider it a bug.
  * We suppose that the complete script should consist of the event handler attached to the dead code.
  */
-public class NoWorkingScripts implements IssueFinder, ScratchVisitor {
+public class NoWorkingScripts extends AbstractIssueFinder {
     public static final String NAME = "no_working_scripts";
-    public static final String SHORT_NAME = "noWorkScript";
-    public static final String HINT_TEXT = "no working scripts";
-    private static final String NOTE1 = "There are no sprites with only empty scripts and simultaneously dead code in" +
-            " your project.";
-    private static final String NOTE2 = "Some of the sprites contain only empty scripts and simultaneously dead code.";
-    private int count = 0;
-    private List<String> actorNames = new LinkedList<>();
-    private ActorDefinition currentActor;
     private boolean stillFullfilledEmptyScript = false;
     private boolean deadCodeFound = false;
     private boolean foundEvent = false;
 
     @Override
-    public IssueReport check(Program program) {
-        Preconditions.checkNotNull(program);
-        count = 0;
-        actorNames = new LinkedList<>();
-
-        program.accept(this);
-        String notes = NOTE1;
-        if (count > 0) {
-            notes = NOTE2;
-        }
-        return new IssueReport(NAME, count, actorNames, notes);
-    }
-
-    @Override
-    public String getName() {
-        return NAME;
-    }
-
-    @Override
     public void visit(ActorDefinition actor) {
-        currentActor = actor;
         stillFullfilledEmptyScript = true;
         deadCodeFound = false;
         foundEvent = false;
-        if (!actor.getChildren().isEmpty()) {
-            for (ASTNode child : actor.getChildren()) {
-                child.accept(this);
-            }
-        }
+        super.visit(actor);
 
         if (deadCodeFound && stillFullfilledEmptyScript && foundEvent) {
-            actorNames.add(currentActor.getIdent().getName());
-            count++;
-            addLooseComment(currentActor, HINT_TEXT, SHORT_NAME + count);
+            addIssueWithLooseComment();
         }
     }
 
     @Override
     public void visit(Script node) {
+        currentScript = node;
         if (stillFullfilledEmptyScript) {
             if (node.getEvent() instanceof Never) {
                 if (node.getStmtList().getStmts().size() > 0) {
@@ -106,5 +63,16 @@ public class NoWorkingScripts implements IssueFinder, ScratchVisitor {
                 }
             }
         }
+        currentScript = null;
+    }
+
+    @Override
+    public String getName() {
+        return NAME;
+    }
+
+    @Override
+    public IssueType getIssueType() {
+        return IssueType.BUG;
     }
 }

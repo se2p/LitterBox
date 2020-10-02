@@ -18,26 +18,36 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.parser;
 
-import static de.uni_passau.fim.se2.litterbox.ast.Constants.STEPS_KEY;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
-
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
+import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
+import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.model.Script;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.ItemOfVariable;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.UnspecifiedId;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.ExpressionStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.utils.JsonParser;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+
+import java.io.File;
+import java.util.List;
+
+import static de.uni_passau.fim.se2.litterbox.ast.Constants.STEPS_KEY;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class ExpressionParserTest {
 
     private static JsonNode moveStepsScript;
     private static JsonNode allExprTypesScript;
     private static JsonNode literalBlock;
-    private static JsonNode variableBlock;
-    private static JsonNode listBlock;
     private static JsonNode containingBlock;
 
     private static JsonNode twoNumExprSlotsNumExprs;
@@ -52,8 +62,6 @@ public class ExpressionParserTest {
         allExprTypesScript = JsonParser.getBlocksNodeFromJSON("./src/test/fixtures/allexprtypes.json");
         twoNumExprSlotsNumExprs = JsonParser.getBlocksNodeFromJSON("./src/test/fixtures/twoNumExprSlotsNumExprs.json");
         literalBlock = allExprTypesScript.get("QJ:02/{CIWEai#dfuC(k");
-        variableBlock = allExprTypesScript.get("Q0r@4R,=K;bq+x;8?O)j");
-        listBlock = allExprTypesScript.get("3k1#g23nWs5dk)w3($|+");
         containingBlock = allExprTypesScript.get("K0-dZ/kW=hWWb/GpMt8:");
 
         addBlock = twoNumExprSlotsNumExprs.get("$`zwlVu=MrX}[7_|OkP0");
@@ -118,11 +126,35 @@ public class ExpressionParserTest {
     }
 
     @Test
-    public void testNumFuncts() throws ParsingException {
+    public void testNumFuncts() {
         JsonNode script = JsonParser.getBlocksNodeFromJSON("./src/test/fixtures/numfuncts.json");
         JsonNode pow10Block = script.get("xbBc!xS=1Yz2Yp/DF;JT");
         assertTrue(NumExprParser.parseNumFunct(pow10Block.get("fields")) instanceof NumFunct);
 
-        assertTrue((NumExprParser.parseNumFunct(pow10Block.get("fields"))).equals(NumFunct.POW10));
+        assertTrue((NumExprParser.parseNumFunct(pow10Block.get("fields"))).getType().equals(NumFunct.NumFunctType.POW10));
+    }
+
+    @Test
+    public void testStatement() {
+        JsonNode script = JsonParser.getBlocksNodeFromJSON("./src/test/fixtures/bugpattern/missingLoopSensingMultiple.json");
+        JsonNode ifBlock = script.get(".-Id3Zrhoe,6;Z+v_;IB");
+
+        Exception exception = assertThrows(ParsingException.class, () -> {
+            ExpressionParser.parseExprBlock(".-Id3Zrhoe,6;Z+v_;IB", ifBlock, script);
+        });
+        String expectedMessage = " is an unexpected opcode for an expression";
+        String actualMessage = exception.getMessage();
+        assertTrue(actualMessage.contains(expectedMessage));
+    }
+
+    @Test
+    public void testItemOfListWithoutListId() throws Exception {
+        Program program = ProgramParser.parseProgram("Test", new ObjectMapper().readTree(new File("src/test/fixtures/missingListIdWithItemOf.json")));
+        List<ActorDefinition> definitions = program.getActorDefinitionList().getDefinitions();
+        Script script = definitions.get(1).getScripts().getScriptList().get(0);
+        List<Stmt> stmts = script.getStmtList().getStmts();
+        Stmt exprStmt = stmts.get(0);
+        Expression expr = ((ExpressionStmt) exprStmt).getExpression();
+        assertTrue(((ItemOfVariable) expr).getIdentifier() instanceof UnspecifiedId);
     }
 }

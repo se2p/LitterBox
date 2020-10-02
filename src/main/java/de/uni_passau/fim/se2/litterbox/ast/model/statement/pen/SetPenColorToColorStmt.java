@@ -18,9 +18,11 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.model.statement.pen;
 
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.Color;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
@@ -31,9 +33,10 @@ public class SetPenColorToColorStmt extends AbstractNode implements PenStmt {
     public SetPenColorToColorStmt(Color color, BlockMetadata metadata) {
         super(color, metadata);
         this.color = Preconditions.checkNotNull(color);
-        this.metadata=metadata;
+        this.metadata = metadata;
     }
 
+    @Override
     public BlockMetadata getMetadata() {
         return metadata;
     }
@@ -45,5 +48,10 @@ public class SetPenColorToColorStmt extends AbstractNode implements PenStmt {
     @Override
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);
+    }
+
+    @Override
+    public ASTNode accept(CloneVisitor visitor) {
+        return visitor.visit(this);
     }
 }

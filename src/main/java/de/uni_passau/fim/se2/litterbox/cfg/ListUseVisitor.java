@@ -23,6 +23,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.list.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.ScratchList;
+
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -95,9 +96,8 @@ public class ListUseVisitor implements DefinableCollector<ListVariable> {
 
     @Override
     public void visit(Qualified node) {
-        if(node.getSecond() instanceof ScratchList) {
+        if (node.getSecond() instanceof ScratchList) {
             defineables.add(new ListVariable(node));
         }
     }
-
 }

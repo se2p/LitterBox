@@ -18,82 +18,75 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueReport;
+import de.uni_passau.fim.se2.litterbox.JsonTest;
+import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
-import java.io.File;
-import java.io.IOException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-public class MissingCloneCallTest {
+import java.io.IOException;
+import java.util.Set;
+
+public class MissingCloneCallTest implements JsonTest {
     private static Program empty;
     private static Program missingCloneCall;
     private static Program cloneInOtherSprite;
     private static Program rainbowSix;
     private static Program jumper;
     private static Program emptyCloneCall;
-    private static ObjectMapper mapper = new ObjectMapper();
 
     @BeforeAll
     public static void setUp() throws IOException, ParsingException {
 
-        File f = new File("./src/test/fixtures/emptyProject.json");
-        empty = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
-        f = new File("./src/test/fixtures/bugpattern/missingCloneCall.json");
-        missingCloneCall = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
-        f = new File("./src/test/fixtures/bugpattern/cloneInOtherSprite.json");
-        cloneInOtherSprite = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
-        f = new File("./src/test/fixtures/bugpattern/rainbowSix.json");
-        rainbowSix = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
-        f = new File("./src/test/fixtures/bugpattern/jumper.json");
-        jumper = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
-        f = new File("./src/test/fixtures/bugpattern/emptyCloneCall.json");
-        emptyCloneCall = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
+        empty = JsonTest.parseProgram("./src/test/fixtures/emptyProject.json");
+        missingCloneCall = JsonTest.parseProgram("./src/test/fixtures/bugpattern/missingCloneCall.json");
+        cloneInOtherSprite = JsonTest.parseProgram("./src/test/fixtures/bugpattern/cloneInOtherSprite.json");
+        rainbowSix = JsonTest.parseProgram("./src/test/fixtures/bugpattern/rainbowSix.json");
+        jumper = JsonTest.parseProgram("./src/test/fixtures/bugpattern/jumper.json");
+        emptyCloneCall = JsonTest.parseProgram("./src/test/fixtures/bugpattern/emptyCloneCall.json");
     }
 
     @Test
     public void testEmptyProgram() {
         MissingCloneCall parameterName = new MissingCloneCall();
-        IssueReport report = parameterName.check(empty);
-        Assertions.assertEquals(0, report.getCount());
+        Set<Issue> reports = parameterName.check(empty);
+        Assertions.assertEquals(0, reports.size());
     }
 
     @Test
     public void testClone() {
         MissingCloneCall parameterName = new MissingCloneCall();
-        IssueReport report = parameterName.check(emptyCloneCall);
-        Assertions.assertEquals(0, report.getCount());
+        Set<Issue> reports = parameterName.check(emptyCloneCall);
+        Assertions.assertEquals(0, reports.size());
     }
 
     @Test
     public void testMissingCloneCall() {
         MissingCloneCall parameterName = new MissingCloneCall();
-        IssueReport report = parameterName.check(missingCloneCall);
-        Assertions.assertEquals(1, report.getCount());
+        Set<Issue> reports = parameterName.check(missingCloneCall);
+        Assertions.assertEquals(1, reports.size());
     }
 
     @Test
     public void testCloneInOtherSprite() {
         MissingCloneCall parameterName = new MissingCloneCall();
-        IssueReport report = parameterName.check(cloneInOtherSprite);
-        Assertions.assertEquals(0, report.getCount());
+        Set<Issue> reports = parameterName.check(cloneInOtherSprite);
+        Assertions.assertEquals(0, reports.size());
     }
 
     @Test
     public void testRainbowSix() {
         MissingCloneCall parameterName = new MissingCloneCall();
-        IssueReport report = parameterName.check(rainbowSix);
-        Assertions.assertEquals(0, report.getCount());
+        Set<Issue> reports = parameterName.check(rainbowSix);
+        Assertions.assertEquals(0, reports.size());
     }
 
     @Test
     public void testJumper() {
         MissingCloneCall parameterName = new MissingCloneCall();
-        IssueReport report = parameterName.check(jumper);
-        Assertions.assertEquals(1, report.getCount());
+        Set<Issue> reports = parameterName.check(jumper);
+        Assertions.assertEquals(1, reports.size());
     }
 }

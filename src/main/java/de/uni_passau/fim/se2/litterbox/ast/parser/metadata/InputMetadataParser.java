@@ -18,9 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.parser.metadata;
 
-import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
-
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.NullNode;
@@ -31,6 +28,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.metadata.input.ReferenceInputMe
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.input.TypeInputMetadata;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
+import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
+
 public class InputMetadataParser {
     public static InputMetadata parse(String inputName, JsonNode inputNode) {
         Preconditions.checkArgument(inputNode instanceof ArrayNode, "The input is not an ArrayNode.");
@@ -40,12 +39,12 @@ public class InputMetadataParser {
         } else if (inputArray.get(POS_BLOCK_ID) instanceof NullNode) {
             return new ReferenceInputMetadata(inputName, null);
         } else {
-            Preconditions.checkArgument(inputNode.get(POS_BLOCK_ID) instanceof ArrayNode, "The entry at POS_BLOCK_ID " +
-                    "is not an " +
-                    "ArrayNode.");
+            Preconditions.checkArgument(inputNode.get(POS_BLOCK_ID) instanceof ArrayNode, "The entry at POS_BLOCK_ID "
+                    + "is not an "
+                    + "ArrayNode.");
             ArrayNode valueArray = (ArrayNode) inputNode.get(POS_BLOCK_ID);
             int type = valueArray.get(POS_INPUT_TYPE).asInt();
-            if (type == VAR_PRIMITIVE || type == LIST_PRIMITIVE|| type == BROADCAST_PRIMITIVE) {
+            if (type == VAR_PRIMITIVE || type == LIST_PRIMITIVE || type == BROADCAST_PRIMITIVE) {
                 String dataName = valueArray.get(DATA_INPUT_NAME_POS).asText();
                 String identifier = valueArray.get(DATA_INPUT_IDENTIFIER_POS).asText();
                 return new DataInputMetadata(inputName, type, dataName, identifier);

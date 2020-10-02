@@ -20,9 +20,10 @@ package de.uni_passau.fim.se2.litterbox.dataflow;
 
 import com.google.common.collect.Sets;
 import de.uni_passau.fim.se2.litterbox.cfg.DataflowFact;
+
 import java.util.Set;
 
-public class MustFunction <T extends DataflowFact> implements JoinFunction<T> {
+public class MustFunction<T extends DataflowFact> implements JoinFunction<T> {
     @Override
     public Set<T> apply(Set<Set<T>> ts) {
         return ts.stream().reduce(Sets::intersection).get();

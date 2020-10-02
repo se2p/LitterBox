@@ -18,62 +18,57 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueReport;
+import de.uni_passau.fim.se2.litterbox.JsonTest;
+import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
-import java.io.File;
-import java.io.IOException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+
+import java.io.IOException;
+import java.util.Set;
 
 public class ExpressionAsTouchingOrColorTest {
     private static Program empty;
     private static Program expressionColor;
     private static Program giant;
     private static Program two;
-    private static ObjectMapper mapper = new ObjectMapper();
 
     @BeforeAll
     public static void setUp() throws IOException, ParsingException {
 
-        File f = new File("./src/test/fixtures/emptyProject.json");
-        empty = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
-        f = new File("./src/test/fixtures/bugpattern/touchingExpressions.json");
-        expressionColor = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
-        f = new File("./src/test/fixtures/bugpattern/exprLit.json");
-        giant = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
-        f = new File("./src/test/fixtures/bugpattern/twoNotColo.json");
-        two = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
+        empty = JsonTest.parseProgram("./src/test/fixtures/emptyProject.json");
+        expressionColor = JsonTest.parseProgram("./src/test/fixtures/bugpattern/touchingExpressions.json");
+        giant = JsonTest.parseProgram("./src/test/fixtures/bugpattern/exprLit.json");
+        two = JsonTest.parseProgram("./src/test/fixtures/bugpattern/twoNotColo.json");
     }
 
     @Test
     public void testEmptyProgram() {
         ExpressionAsTouchingOrColor parameterName = new ExpressionAsTouchingOrColor();
-        IssueReport report = parameterName.check(empty);
-        Assertions.assertEquals(0, report.getCount());
+        Set<Issue> reports = parameterName.check(empty);
+        Assertions.assertEquals(0, reports.size());
     }
 
     @Test
     public void testExpressionAsColor() {
         ExpressionAsTouchingOrColor parameterName = new ExpressionAsTouchingOrColor();
-        IssueReport report = parameterName.check(expressionColor);
-        Assertions.assertEquals(3, report.getCount());
+        Set<Issue> reports = parameterName.check(expressionColor);
+        Assertions.assertEquals(3, reports.size());
     }
 
     @Test
     public void testGiant() {
         ExpressionAsTouchingOrColor parameterName = new ExpressionAsTouchingOrColor();
-        IssueReport report = parameterName.check(giant);
-        Assertions.assertEquals(0, report.getCount());
+        Set<Issue> reports = parameterName.check(giant);
+        Assertions.assertEquals(0, reports.size());
     }
 
     @Test
     public void testTwo() {
         ExpressionAsTouchingOrColor parameterName = new ExpressionAsTouchingOrColor();
-        IssueReport report = parameterName.check(two);
-        Assertions.assertEquals(2, report.getCount());
+        Set<Issue> reports = parameterName.check(two);
+        Assertions.assertEquals(2, reports.size());
     }
 }

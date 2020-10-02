@@ -18,14 +18,14 @@
  */
 package de.uni_passau.fim.se2.litterbox.jsonCreation;
 
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.TopNonDataBlockMetadata;
+
+import java.util.List;
+
 import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 import static de.uni_passau.fim.se2.litterbox.ast.parser.KeyParser.*;
 import static de.uni_passau.fim.se2.litterbox.jsonCreation.JSONStringCreator.*;
-
-
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.TopNonDataBlockMetadata;
-import java.util.List;
 
 public abstract class BlockJsonCreatorHelper {
     public static final String DEFAULT_VALUE = "[10,\"\"]";
@@ -64,8 +64,8 @@ public abstract class BlockJsonCreatorHelper {
         if (meta instanceof TopNonDataBlockMetadata) {
             TopNonDataBlockMetadata topNonDataBlockMetadata = (TopNonDataBlockMetadata) meta;
             jsonString.append(",");
-            createFieldValue(jsonString, X_KEY, topNonDataBlockMetadata.getxPos()).append(",");
-            createFieldValue(jsonString, Y_KEY, topNonDataBlockMetadata.getyPos());
+            createFieldValue(jsonString, X_KEY, topNonDataBlockMetadata.getXPos()).append(",");
+            createFieldValue(jsonString, Y_KEY, topNonDataBlockMetadata.getYPos());
         }
         return jsonString;
     }
@@ -201,7 +201,6 @@ public abstract class BlockJsonCreatorHelper {
         return jsonString;
     }
 
-
     public static String getKeyValue(int numberValue) {
         String key;
         switch (numberValue) {
@@ -268,7 +267,13 @@ public abstract class BlockJsonCreatorHelper {
     public static String createTypeInput(int shadowIndicator, int typeNumber,
                                          String value) {
         StringBuilder jsonString = new StringBuilder();
-        jsonString.append("[").append(shadowIndicator).append(",").append("[").append(typeNumber).append(",\"").append(value).append("\"]]");
+        jsonString.append("[")
+                .append(shadowIndicator)
+                .append(",").append("[")
+                .append(typeNumber)
+                .append(",\"")
+                .append(value)
+                .append("\"]]");
         return jsonString.toString();
     }
 
@@ -283,7 +288,16 @@ public abstract class BlockJsonCreatorHelper {
     public static String createReferenceType(int shadowIndicator, int typeNumber,
                                              String value, String reference, boolean withDefault) {
         StringBuilder jsonString = new StringBuilder();
-        jsonString.append("[").append(shadowIndicator).append(",").append("[").append(typeNumber).append(",\"").append(value).append("\",\"").append(reference).append("\"]");
+        jsonString.append("[").append(shadowIndicator)
+                .append(",")
+                .append("[")
+                .append(typeNumber)
+                .append(",\"")
+                .append(value)
+                .append("\",\"")
+                .append(reference)
+                .append("\"]");
+
         if (withDefault) {
             jsonString.append(",").append(DEFAULT_VALUE);
         }

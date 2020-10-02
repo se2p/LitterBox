@@ -18,42 +18,23 @@
  */
 package de.uni_passau.fim.se2.litterbox.dataflow;
 
-import static com.google.common.truth.Truth.assertThat;
-
-
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.ChangeVariableBy;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.CreateCloneOf;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetVariableTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SayForSecs;
-import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
 import de.uni_passau.fim.se2.litterbox.cfg.CFGNode;
 import de.uni_passau.fim.se2.litterbox.cfg.ControlFlowGraph;
-import de.uni_passau.fim.se2.litterbox.cfg.ControlFlowGraphVisitor;
 import de.uni_passau.fim.se2.litterbox.cfg.Use;
-import java.io.File;
-import java.io.IOException;
 import org.junit.jupiter.api.Test;
 
-public class LivenessAnalysisTest {
+import java.io.IOException;
 
-    private Program getAST(String fileName) throws IOException, ParsingException {
-        File file = new File(fileName);
-        ObjectMapper objectMapper = new ObjectMapper();
-        JsonNode project = objectMapper.readTree(file);
-        Program program = ProgramParser.parseProgram("TestProgram", project);
-        return program;
-    }
+import static com.google.common.truth.Truth.assertThat;
 
-    private ControlFlowGraph getCFG(String fileName) throws IOException, ParsingException {
-        ControlFlowGraphVisitor visitor = new ControlFlowGraphVisitor();
-        visitor.visit(getAST(fileName));
-        return visitor.getControlFlowGraph();
-    }
+public class LivenessAnalysisTest implements JsonTest {
 
     @Test
     public void testLivenessNotOverwritten() throws IOException, ParsingException {
@@ -75,7 +56,6 @@ public class LivenessAnalysisTest {
         assertThat(analysis.getDataflowFacts(exitNode)).containsExactly();
     }
 
-
     @Test
     public void testMultipleUses() throws IOException, ParsingException {
         ControlFlowGraph cfg = getCFG("src/test/fixtures/dataflow/variabletwouses.json");
@@ -89,7 +69,7 @@ public class LivenessAnalysisTest {
         CFGNode sayNode1 = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof SayForSecs).findFirst().get();
         CFGNode sayNode2 = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof SayForSecs).filter(n -> n != sayNode1).findFirst().get();
 
-        Use firstUse  = sayNode1.getUses().iterator().next();
+        Use firstUse = sayNode1.getUses().iterator().next();
         Use secondUse = sayNode2.getUses().iterator().next();
 
         assertThat(analysis.getDataflowFacts(entryNode)).isEmpty();
@@ -113,9 +93,9 @@ public class LivenessAnalysisTest {
         CFGNode ifNode = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof IfThenStmt).findFirst().get();
         CFGNode sayNode = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof SayForSecs).findFirst().get();
 
-        Use firstUse  = ifNode.getUses().iterator().next();
+        Use firstUse = ifNode.getUses().iterator().next();
         Use secondUse = changeNode.getUses().iterator().next();
-        Use thirdUse  = sayNode.getUses().iterator().next();
+        Use thirdUse = sayNode.getUses().iterator().next();
 
         assertThat(analysis.getDataflowFacts(entryNode)).isEmpty();
         assertThat(analysis.getDataflowFacts(setNode)).containsExactly(firstUse, secondUse, thirdUse);
@@ -124,7 +104,6 @@ public class LivenessAnalysisTest {
         assertThat(analysis.getDataflowFacts(sayNode)).containsExactly();
         assertThat(analysis.getDataflowFacts(exitNode)).containsExactly();
     }
-
 
     @Test
     public void testMultipleUsesInClone() throws IOException, ParsingException {
@@ -141,9 +120,9 @@ public class LivenessAnalysisTest {
         CFGNode cloneNode = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof CreateCloneOf).findFirst().get();
         CFGNode sayNode = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof SayForSecs).findFirst().get();
 
-        Use firstUse  = ifNode.getUses().iterator().next(); // var1
+        Use firstUse = ifNode.getUses().iterator().next(); // var1
         Use secondUse = changeNode.getUses().iterator().next(); // var1
-        Use thirdUse  = sayNode.getUses().iterator().next(); // var2
+        Use thirdUse = sayNode.getUses().iterator().next(); // var2
 
         assertThat(analysis.getDataflowFacts(entryNode)).containsExactly(thirdUse);
         assertThat(analysis.getDataflowFacts(setNode)).containsExactly(firstUse, secondUse, thirdUse);
@@ -153,5 +132,4 @@ public class LivenessAnalysisTest {
         assertThat(analysis.getDataflowFacts(sayNode)).containsExactly();
         assertThat(analysis.getDataflowFacts(exitNode)).containsExactly();
     }
-
 }

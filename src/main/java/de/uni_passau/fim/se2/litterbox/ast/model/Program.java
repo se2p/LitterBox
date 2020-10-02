@@ -22,6 +22,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.ProgramMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ProcedureDefinitionNameMapping;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.SymbolTable;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
@@ -35,15 +36,15 @@ public class Program extends AbstractNode {
 
     public Program(LocalIdentifier ident, ActorDefinitionList actorDefinitionList, SymbolTable symbolTable,
                    ProcedureDefinitionNameMapping procedureMapping, ProgramMetadata metadata) {
-        super(ident, actorDefinitionList,metadata);
+        super(ident, actorDefinitionList, metadata);
         this.ident = Preconditions.checkNotNull(ident);
         this.actorDefinitionList = Preconditions.checkNotNull(actorDefinitionList);
         this.procedureMapping = procedureMapping;
         this.symbolTable = symbolTable;
-        this.metadata=metadata;
+        this.metadata = metadata;
     }
 
-    public ProgramMetadata getMetadata() {
+    public ProgramMetadata getProgramMetadata() {
         return metadata;
     }
 
@@ -58,6 +59,11 @@ public class Program extends AbstractNode {
     @Override
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);
+    }
+
+    @Override
+    public ASTNode accept(CloneVisitor visitor) {
+        return visitor.visit(this);
     }
 
     public SymbolTable getSymbolTable() {

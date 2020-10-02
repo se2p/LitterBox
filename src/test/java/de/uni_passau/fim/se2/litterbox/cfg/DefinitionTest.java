@@ -18,13 +18,8 @@
  */
 package de.uni_passau.fim.se2.litterbox.cfg;
 
-import static com.google.common.truth.Truth.assertThat;
-
-
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.ShowVariable;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.ChangeVariableBy;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.CreateCloneOf;
@@ -32,28 +27,14 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetVariableTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SayForSecs;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.MoveSteps;
-import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
-import java.io.File;
-import java.io.IOException;
-import java.util.Set;
 import org.junit.jupiter.api.Test;
 
-public class DefinitionTest {
+import java.io.IOException;
+import java.util.Set;
 
-    private Program getAST(String fileName) throws IOException, ParsingException {
-        File file = new File(fileName);
-        ObjectMapper objectMapper = new ObjectMapper();
-        JsonNode project = objectMapper.readTree(file);
-        Program program = ProgramParser.parseProgram("TestProgram", project);
-        return program;
-    }
+import static com.google.common.truth.Truth.assertThat;
 
-    private ControlFlowGraph getCFG(String fileName) throws IOException, ParsingException {
-        ControlFlowGraphVisitor visitor = new ControlFlowGraphVisitor();
-        visitor.visit(getAST(fileName));
-        return visitor.getControlFlowGraph();
-    }
-
+public class DefinitionTest implements JsonTest {
 
     @Test
     public void testSingleDefinition() throws IOException, ParsingException {
@@ -110,7 +91,6 @@ public class DefinitionTest {
         node.getASTNode().accept(visitor);
         definitions = visitor.getDefineables();
         assertThat(definitions).hasSize(1);
-
     }
 
     @Test
@@ -131,7 +111,6 @@ public class DefinitionTest {
         node = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof SayForSecs).findFirst().get();
         assertThat(getDefinitions(node)).isEmpty();
     }
-
 
     @Test
     public void testNoDefInIf() throws IOException, ParsingException {

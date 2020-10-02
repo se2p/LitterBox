@@ -18,60 +18,100 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
-import static de.uni_passau.fim.se2.litterbox.analytics.CommentAdder.addBlockComment;
-
-
-import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueReport;
-import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
+import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.Script;
+import de.uni_passau.fim.se2.litterbox.ast.model.event.ReceptionOfMessage;
+import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.Broadcast;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.BroadcastAndWait;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfElseStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
-import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ProcedureInfo;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
-import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
 
 /**
  * If a custom block calls itself inside its body and has no condition to stop the recursion, it will run for an
- * indefinite amount of time.
+ * indefinite amount of time. The same holds true for broadcast reception scripts that send the same message.
  */
-public class EndlessRecursion implements IssueFinder, ScratchVisitor {
+public class EndlessRecursion extends AbstractIssueFinder {
     public static final String NAME = "endless_recursion";
-    public static final String SHORT_NAME = "endlRec";
-    public static final String HINT_TEXT = "endless recursion";
-    private static final String NOTE1 = "There are no endless recursions in your project.";
-    private static final String NOTE2 = "Some of the sprites can contain endless recursions.";
-    private boolean found = false;
-    private int count = 0;
-    private List<String> actorNames = new LinkedList<>();
-    private ActorDefinition currentActor;
-    private Map<LocalIdentifier, ProcedureInfo> procMap;
     private String currentProcedureName;
+    private String currentMessageName;
     private boolean insideProcedure;
+    private boolean insideBroadcastReception;
     private int loopIfCounter;
-    private Program program;
 
     @Override
-    public IssueReport check(Program program) {
-        Preconditions.checkNotNull(program);
-        found = false;
-        count = 0;
-        actorNames = new LinkedList<>();
-        this.program = program;
-        program.accept(this);
-        String notes = NOTE1;
-        if (count > 0) {
-            notes = NOTE2;
+    public void visit(ActorDefinition actor) {
+        loopIfCounter = 0;
+        super.visit(actor);
+    }
+
+    @Override
+    public void visit(ProcedureDefinition node) {
+        insideProcedure = true;
+        currentProcedureName = procMap.get(node.getIdent()).getName();
+        super.visit(node);
+        insideProcedure = false;
+        currentProcedureName = null;
+    }
+
+    @Override
+    public void visit(ReceptionOfMessage node) {
+        currentMessageName = ((StringLiteral) node.getMsg().getMessage()).getText();
+    }
+
+    @Override
+    public void visit(Script node) {
+        if (node.getEvent() instanceof ReceptionOfMessage) {
+            insideBroadcastReception = true;
         }
-        return new IssueReport(NAME, count, actorNames, notes);
+        super.visit(node);
+        insideBroadcastReception = false;
+        currentMessageName = null;
+    }
+
+    @Override
+    public void visit(Broadcast node) {
+        if (insideBroadcastReception && node.getMessage().getMessage() instanceof StringLiteral && loopIfCounter == 0) {
+            if (((StringLiteral) node.getMessage().getMessage()).getText().equals(currentMessageName)) {
+                addIssue(node, node.getMetadata());
+            }
+        }
+    }
+
+    @Override
+    public void visit(BroadcastAndWait node) {
+        if (insideBroadcastReception && node.getMessage().getMessage() instanceof StringLiteral && loopIfCounter == 0) {
+            if (((StringLiteral) node.getMessage().getMessage()).getText().equals(currentMessageName)) {
+                addIssue(node, node.getMetadata());
+            }
+        }
+    }
+
+    @Override
+    public void visit(CallStmt node) {
+        if (insideProcedure && loopIfCounter == 0) {
+            String call = node.getIdent().getName();
+            if (call.equals(currentProcedureName)) {
+                addIssue(node, node.getMetadata());
+            }
+        }
+    }
+
+    @Override
+    public void visit(IfElseStmt node) {
+        loopIfCounter++;
+        visitChildren(node);
+        loopIfCounter--;
+    }
+
+    @Override
+    public void visit(IfThenStmt node) {
+        loopIfCounter++;
+        visitChildren(node);
+        loopIfCounter--;
     }
 
     @Override
@@ -80,66 +120,7 @@ public class EndlessRecursion implements IssueFinder, ScratchVisitor {
     }
 
     @Override
-    public void visit(ActorDefinition actor) {
-        currentActor = actor;
-        procMap = program.getProcedureMapping().getProcedures().get(currentActor.getIdent().getName());
-        loopIfCounter = 0;
-        if (!actor.getChildren().isEmpty()) {
-            for (ASTNode child : actor.getChildren()) {
-                child.accept(this);
-            }
-        }
-
-        if (found) {
-            found = false;
-            actorNames.add(currentActor.getIdent().getName());
-        }
-    }
-
-    @Override
-    public void visit(ProcedureDefinition node) {
-        insideProcedure = true;
-        currentProcedureName = procMap.get(node.getIdent()).getName();
-        if (!node.getChildren().isEmpty()) {
-            for (ASTNode child : node.getChildren()) {
-                child.accept(this);
-            }
-        }
-        insideProcedure = false;
-    }
-
-    @Override
-    public void visit(CallStmt node) {
-        if (insideProcedure && loopIfCounter == 0) {
-            String call = node.getIdent().getName();
-            if (call.equals(currentProcedureName)) {
-                found = true;
-                count++;
-                addBlockComment((NonDataBlockMetadata) node.getMetadata(), currentActor, HINT_TEXT,
-                        SHORT_NAME + count);
-            }
-        }
-    }
-
-    @Override
-    public void visit(IfElseStmt node) {
-        loopIfCounter++;
-        if (!node.getChildren().isEmpty()) {
-            for (ASTNode child : node.getChildren()) {
-                child.accept(this);
-            }
-        }
-        loopIfCounter--;
-    }
-
-    @Override
-    public void visit(IfThenStmt node) {
-        loopIfCounter++;
-        if (!node.getChildren().isEmpty()) {
-            for (ASTNode child : node.getChildren()) {
-                child.accept(this);
-            }
-        }
-        loopIfCounter--;
+    public IssueType getIssueType() {
+        return IssueType.BUG;
     }
 }

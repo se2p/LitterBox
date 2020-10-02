@@ -18,23 +18,22 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.parser;
 
-import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
-
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import de.uni_passau.fim.se2.litterbox.ast.Constants;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Key;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.UnspecifiedNumExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.BoolExprOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.parser.metadata.BlockMetadataParser;
+
 import java.util.ArrayList;
 import java.util.List;
+
+import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 
 public class KeyParser {
     public static final int UPARROW = 38;
@@ -55,9 +54,9 @@ public class KeyParser {
             current.get(Constants.INPUTS_KEY).elements().forEachRemaining(inputsList::add);
             if (getShadowIndicator((ArrayNode) inputsList.get(0)) == 1) {
                 // If there is only the menu in the inputs, we evaluate the menu
-                String menuBlockID = current.get(INPUTS_KEY).get(KEY_OPTION).get(POS_INPUT_VALUE).asText();
-                block = allBlocks.get(menuBlockID);
-                metadata = BlockMetadataParser.parse(menuBlockID, block);
+                String menuBlockId = current.get(INPUTS_KEY).get(KEY_OPTION).get(POS_INPUT_VALUE).asText();
+                block = allBlocks.get(menuBlockId);
+                metadata = BlockMetadataParser.parse(menuBlockId, block);
             } else {
                 // If there is a variable or expression we evaluate it and use it as key;
                 final NumExpr numExpr = NumExprParser.parseNumExpr(current, KEY_OPTION, allBlocks);
@@ -65,9 +64,6 @@ public class KeyParser {
             }
         } else {
             block = current;
-        }
-        if (block == null) {
-            return new Key(new UnspecifiedNumExpr(), new NoBlockMetadata());
         }
         String keyValue = block.get(FIELDS_KEY).get(KEY_OPTION).get(FIELD_VALUE).asText();
         switch (keyValue) {

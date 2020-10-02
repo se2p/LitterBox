@@ -18,14 +18,49 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.model;
 
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoBlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
-import java.util.Collections;
-import java.util.List;
 
-public enum ActorType implements ASTLeaf {
+import java.util.Objects;
 
-    STAGE,
-    SPRITE;
+public class ActorType extends AbstractNode implements ASTLeaf {
+
+    private enum Type {
+        STAGE,
+        SPRITE;
+    }
+
+    private Type type;
+
+    public ActorType(ActorType other) {
+        this.type = other.type;
+    }
+
+    private ActorType(Type type) {
+        this.type = type;
+    }
+
+    public static ActorType getStage() {
+        return new ActorType(Type.STAGE);
+    }
+
+    public static ActorType getSprite() {
+        return new ActorType(Type.SPRITE);
+    }
+
+    public Type getType() {
+        return type;
+    }
+
+    public boolean isStage() {
+        return type.equals(Type.STAGE);
+    }
+
+    public boolean isSprite() {
+        return type.equals(Type.SPRITE);
+    }
 
     @Override
     public void accept(ScratchVisitor visitor) {
@@ -33,8 +68,8 @@ public enum ActorType implements ASTLeaf {
     }
 
     @Override
-    public List<ASTNode> getChildren() {
-        return Collections.emptyList();
+    public ASTNode accept(CloneVisitor visitor) {
+        return visitor.visit(this);
     }
 
     @Override
@@ -43,8 +78,26 @@ public enum ActorType implements ASTLeaf {
     }
 
     @Override
+    public BlockMetadata getMetadata() {
+        return new NoBlockMetadata();
+    }
+
+    @Override
     public String[] toSimpleStringArray() {
-        String[] returnArray = {this.name()};
+        String[] returnArray = {type.name()};
         return returnArray;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ActorType)) return false;
+        ActorType actorType = (ActorType) o;
+        return type == actorType.type;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(type);
     }
 }

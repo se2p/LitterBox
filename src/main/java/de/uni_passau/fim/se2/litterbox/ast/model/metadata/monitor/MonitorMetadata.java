@@ -18,7 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.model.metadata.monitor;
 
-import de.uni_passau.fim.se2.litterbox.ast.model.ASTLeaf;
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.Metadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astLists.MonitorParamMetadataList;
@@ -27,7 +26,7 @@ import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 /**
  * This metadata the basis for all other monitors.
  */
-public abstract class MonitorMetadata extends AbstractNode implements Metadata, ASTLeaf {
+public abstract class MonitorMetadata extends AbstractNode implements Metadata {
 
     private String id;
     private String mode;

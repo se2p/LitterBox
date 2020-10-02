@@ -18,8 +18,10 @@
  */
 package de.uni_passau.fim.se2.litterbox.utils;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.nio.charset.StandardCharsets;
@@ -28,15 +30,14 @@ import java.nio.file.Paths;
 import java.util.Iterator;
 
 /**
- * Util class for parsing the JSON files
+ * Util class for parsing the JSON files.
  */
 public class JsonParser {
 
     public static JsonNode getBlocksNodeFromJSON(String path) {
         JsonNode script = null;
         Path currentRelativePath = Paths.get("");
-        String s = currentRelativePath.toAbsolutePath().toString();
-        System.out.println("Current relative path is: " + s);
+        String sPath = currentRelativePath.toAbsolutePath().toString(); // Todo unused variable?
 
         try {
             BufferedReader br = new BufferedReader(new FileReader(path, StandardCharsets.UTF_8));
@@ -48,26 +49,22 @@ public class JsonParser {
             script = buildScriptFromJSONString(sb.toString());
             br.close();
         } catch (Exception e) {
-            e.printStackTrace();
+            // FIXME Empty Catch block?
         }
         return script;
     }
 
-    private static JsonNode buildScriptFromJSONString(String json) {
+    private static JsonNode buildScriptFromJSONString(String json) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         JsonNode script = null;
-        try {
-            JsonNode rootNode = mapper.readTree(json);
-            Iterator<JsonNode> elements = rootNode.get("targets").elements();
-            while (elements.hasNext()) {
-                JsonNode c = elements.next();
-                if (c.has("isStage") && !c.get("isStage").asBoolean() && c.has("blocks")) {
-                    script = c.get("blocks");
-                    break;
-                }
+        JsonNode rootNode = mapper.readTree(json);
+        Iterator<JsonNode> elements = rootNode.get("targets").elements();
+        while (elements.hasNext()) {
+            JsonNode node = elements.next();
+            if (node.has("isStage") && !node.get("isStage").asBoolean() && node.has("blocks")) {
+                script = node.get("blocks");
+                break;
             }
-        } catch (Exception e) {
-            e.printStackTrace();
         }
         return script;
     }

@@ -18,13 +18,9 @@
  */
 package de.uni_passau.fim.se2.litterbox.cfg;
 
-import static com.google.common.truth.Truth.assertThat;
-
-
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.model.event.AttributeAboveValue;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.ShowVariable;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.ChangeVariableBy;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetVariableTo;
@@ -36,29 +32,16 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SayForSecs
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Think;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.ThinkForSecs;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.MoveSteps;
-import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
-import java.io.File;
+import org.junit.jupiter.api.Test;
+
 import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-import org.junit.jupiter.api.Test;
 
-public class UseTest {
+import static com.google.common.truth.Truth.assertThat;
 
-    private Program getAST(String fileName) throws IOException, ParsingException {
-        File file = new File(fileName);
-        ObjectMapper objectMapper = new ObjectMapper();
-        JsonNode project = objectMapper.readTree(file);
-        Program program = ProgramParser.parseProgram("TestProgram", project);
-        return program;
-    }
-
-    private ControlFlowGraph getCFG(String fileName) throws IOException, ParsingException {
-        ControlFlowGraphVisitor visitor = new ControlFlowGraphVisitor();
-        visitor.visit(getAST(fileName));
-        return visitor.getControlFlowGraph();
-    }
+public class UseTest implements JsonTest {
 
     @Test
     public void testSingleUse() throws IOException, ParsingException {
@@ -92,7 +75,6 @@ public class UseTest {
         assertThat(uses).hasSize(1);
     }
 
-
     @Test
     public void testVariableReferenceIsAUse() throws IOException, ParsingException {
         ControlFlowGraph cfg = getCFG("src/test/fixtures/dataflow/variableref.json");
@@ -103,7 +85,6 @@ public class UseTest {
         Set<Variable> uses = visitor.getDefineables();
         assertThat(uses).hasSize(1);
     }
-
 
     @Test
     public void testVariableUsedInAttributeOf() throws IOException, ParsingException {
@@ -158,7 +139,6 @@ public class UseTest {
         assertThat(getUses(node)).isEmpty();
     }
 
-
     @Test
     public void testUseOfOtherSprite() throws IOException, ParsingException {
         ControlFlowGraph cfg = getCFG("src/test/fixtures/cfg/uselocalvarfromothersprite.json");
@@ -168,6 +148,29 @@ public class UseTest {
 
         node = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof SayForSecs).findFirst().get();
         assertThat(getUses(node)).containsExactly(var);
+    }
+
+    @Test
+    public void testAttributeOfVariable() throws IOException, ParsingException {
+        // If the dropdown contains a variable or parameter we don't statically know what sprite
+        // we're referring to, so for now we skip these definitions/uses...
+        ControlFlowGraph cfg = getCFG("src/test/fixtures/cfg/nouseattributewithvariable.json");
+        List<CFGNode> nodes = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof SayForSecs).collect(Collectors.toList());
+        for (CFGNode node : nodes) {
+            assertThat(node.getDefinitions()).isEmpty();
+            assertThat(node.getUses()).isEmpty();
+        }
+    }
+
+    @Test
+    public void testTimerUses() throws IOException, ParsingException {
+        ControlFlowGraph cfg = getCFG("src/test/fixtures/dataflow/timerBlock.json");
+        List<CFGNode> nodes = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof AttributeAboveValue).collect(Collectors.toList());
+        assertThat(nodes).hasSize(1);
+        CFGNode node = nodes.iterator().next();
+
+        assertThat(node.getUses()).hasSize(1);
+        assertThat(node.getDefinitions()).isEmpty();
     }
 
     @Test

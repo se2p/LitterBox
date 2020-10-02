@@ -36,5 +36,4 @@ public class Use implements DataflowFact {
     public Defineable getDefinable() {
         return defineable;
     }
-
 }

@@ -18,86 +18,73 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.smells;
 
-import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueReport;
-import de.uni_passau.fim.se2.litterbox.ast.model.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.Script;
+import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
-import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
-import java.util.LinkedList;
-import java.util.List;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.ProcedureMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 
 /**
  * Checks for scripts with more than 12 blocks.
  */
-public class LongScript implements IssueFinder, ScratchVisitor {
+public class LongScript extends TopBlockFinder {
 
     public static final String NAME = "long_script";
-    public static final String SHORT_NAME = "longScript";
-    private static final String NOTE1 = "There are no long scripts.";
-    private static final String NOTE2 = "Some scripts are very long.";
     private static final int NUMBER_TOO_LONG = 12;
-    private boolean found = false;
-    private int count = 0;
     private int localCount = 0;
-    private List<String> actorNames = new LinkedList<>();
-
-    @Override
-    public IssueReport check(Program program) {
-        Preconditions.checkNotNull(program);
-        found = false;
-        count = 0;
-        actorNames = new LinkedList<>();
-        program.accept(this);
-        String notes = NOTE1;
-        if (count > 0) {
-            notes = NOTE2;
-        }
-        return new IssueReport(NAME, count, actorNames, notes);
-    }
-
-    @Override
-    public void visit(ActorDefinition actor) {
-        if (!actor.getChildren().isEmpty()) {
-            for (ASTNode child : actor.getChildren()) {
-                child.accept(this);
-            }
-        }
-        if (found) {
-            found = false;
-            actorNames.add(actor.getIdent().getName());
-        }
-    }
 
     @Override
     public void visit(Script node) {
+        currentScript = node;
         localCount = 0;
+        setHint = false;
         if (!(node.getEvent() instanceof Never)) {
             localCount++;
         }
-        if (!node.getChildren().isEmpty()) {
-            for (ASTNode child : node.getChildren()) {
-                child.accept(this);
+        visitChildren(node);
+        if (localCount > NUMBER_TOO_LONG) {
+            setHint = true;
+            if (!(node.getEvent() instanceof Never)) {
+                node.getEvent().accept(this);
+            } else {
+                node.getStmtList().accept(this);
             }
         }
+        setHint = false;
+        currentScript = null;
+    }
+
+    @Override
+    public void visit(ProcedureDefinition node) {
+        currentProcedure = node;
+        localCount = 0;
+
+        //this is for counting the definition block itself
+        localCount++;
+        visitChildren(node);
         if (localCount > NUMBER_TOO_LONG) {
-            count++;
-            found = true;
+            addIssue(node, ((ProcedureMetadata) node.getMetadata()).getDefinition());
         }
+        currentProcedure = null;
     }
 
     @Override
     public void visit(StmtList node) {
-        localCount = localCount + node.getStmts().size();
-        if (!node.getChildren().isEmpty()) {
-            for (ASTNode child : node.getChildren()) {
-                child.accept(this);
-            }
+        if (!setHint) {
+            localCount = localCount + node.getStmts().size();
+            visitChildren(node);
+        } else {
+            node.getStmts().get(0).accept(this);
         }
     }
 
     @Override
     public String getName() {
         return NAME;
+    }
+
+    @Override
+    public IssueType getIssueType() {
+        return IssueType.SMELL;
     }
 }

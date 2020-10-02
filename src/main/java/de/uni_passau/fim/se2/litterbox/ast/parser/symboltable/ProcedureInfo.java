@@ -33,6 +33,12 @@ public class ProcedureInfo {
         this.actorName = actorName;
     }
 
+    public ProcedureInfo(ProcedureInfo other) {
+        this.name = other.name;
+        this.arguments = other.arguments.clone();
+        this.actorName = other.actorName;
+    }
+
     public String getName() {
         return name;
     }
@@ -54,9 +60,9 @@ public class ProcedureInfo {
             return false;
         }
         ProcedureInfo that = (ProcedureInfo) o;
-        return Objects.equals(name, that.name) &&
-                Objects.equals(actorName, that.actorName) &&
-                Arrays.equals(arguments, that.arguments);
+        return Objects.equals(name, that.name)
+                && Objects.equals(actorName, that.actorName)
+                && Arrays.equals(arguments, that.arguments);
     }
 
     @Override

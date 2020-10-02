@@ -18,10 +18,13 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.model.identifier;
 
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.DataExpr;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
+
 import java.util.Objects;
 
 public class Qualified extends AbstractNode implements Identifier {
@@ -49,13 +52,24 @@ public class Qualified extends AbstractNode implements Identifier {
     }
 
     @Override
+    public ASTNode accept(CloneVisitor visitor) {
+        return visitor.visit(this);
+    }
+
+    @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        if (!super.equals(o)) {
+            return false;
+        }
         Qualified qualified = (Qualified) o;
-        return Objects.equals(first, qualified.first) &&
-                Objects.equals(second, qualified.second);
+        return Objects.equals(first, qualified.first)
+                && Objects.equals(second, qualified.second);
     }
 
     @Override

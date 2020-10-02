@@ -28,6 +28,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Message;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.AttributeAboveValue;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Event;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
+
 import java.util.Collections;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -102,11 +103,12 @@ public class ControlFlowGraph {
         return cfgNode;
     }
 
-    public AttributeEventNode addNode(AttributeAboveValue node) {
-        AttributeEventNode cfgNode = new AttributeEventNode(node);
+    public AttributeEventNode addNode(AttributeAboveValue node, ActorDefinition actor) {
+        AttributeEventNode cfgNode = new AttributeEventNode(node, actor);
         graph.addNode(cfgNode);
         return cfgNode;
     }
+
     public void addEdge(CFGNode from, CFGNode to) {
         graph.putEdge(from, to);
     }
@@ -120,7 +122,7 @@ public class ControlFlowGraph {
     }
 
     public void fixDetachedEntryExit() {
-        if(graph.degree(entryNode) == 0) {
+        if (graph.degree(entryNode) == 0) {
             graph.putEdge(entryNode, exitNode);
         }
     }
@@ -131,7 +133,7 @@ public class ControlFlowGraph {
         builder.append("digraph {");
         builder.append(System.lineSeparator());
 
-        for(EndpointPair<CFGNode> edge : graph.edges()) {
+        for (EndpointPair<CFGNode> edge : graph.edges()) {
             builder.append("  \"");
             builder.append(edge.nodeU());
             builder.append("\" -> \"");
@@ -159,5 +161,4 @@ public class ControlFlowGraph {
     public Iterable<CFGNode> traverse() {
         return Traverser.forGraph(graph).breadthFirst(entryNode);
     }
-
 }

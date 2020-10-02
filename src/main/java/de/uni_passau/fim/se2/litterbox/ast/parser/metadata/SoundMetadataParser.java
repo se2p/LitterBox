@@ -18,12 +18,11 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.parser.metadata;
 
-import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
-
-
 import com.fasterxml.jackson.databind.JsonNode;
 import de.uni_passau.fim.se2.litterbox.ast.Constants;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.ressources.SoundMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.resources.SoundMetadata;
+
+import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 
 public class SoundMetadataParser {
     public static SoundMetadata parse(JsonNode soundNode) {

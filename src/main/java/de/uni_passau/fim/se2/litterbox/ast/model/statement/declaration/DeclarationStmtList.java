@@ -20,8 +20,10 @@ package de.uni_passau.fim.se2.litterbox.ast.model.statement.declaration;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
+
 import java.util.List;
 
 public class DeclarationStmtList extends AbstractNode implements ASTNode {
@@ -40,5 +42,10 @@ public class DeclarationStmtList extends AbstractNode implements ASTNode {
     @Override
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);
+    }
+
+    @Override
+    public ASTNode accept(CloneVisitor visitor) {
+        return visitor.visit(this);
     }
 }

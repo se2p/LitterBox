@@ -18,9 +18,11 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook;
 
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 public class SetGraphicEffectTo extends AbstractNode implements ActorLookStmt {
@@ -35,6 +37,7 @@ public class SetGraphicEffectTo extends AbstractNode implements ActorLookStmt {
         this.metadata = metadata;
     }
 
+    @Override
     public BlockMetadata getMetadata() {
         return metadata;
     }
@@ -52,4 +55,8 @@ public class SetGraphicEffectTo extends AbstractNode implements ActorLookStmt {
         visitor.visit(this);
     }
 
+    @Override
+    public ASTNode accept(CloneVisitor visitor) {
+        return visitor.visit(this);
+    }
 }

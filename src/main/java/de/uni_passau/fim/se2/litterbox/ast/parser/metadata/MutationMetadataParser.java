@@ -18,9 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.parser.metadata;
 
-import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
-
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -30,9 +27,12 @@ import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.MutationMetadata
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.PrototypeMutationMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.StopMutationMetadata;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 
 public class MutationMetadataParser {
     public static MutationMetadata parse(JsonNode mutationNode) throws ParsingException {

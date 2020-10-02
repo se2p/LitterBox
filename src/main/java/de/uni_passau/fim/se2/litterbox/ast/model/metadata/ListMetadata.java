@@ -19,8 +19,11 @@
 package de.uni_passau.fim.se2.litterbox.ast.model.metadata;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTLeaf;
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
+
 import java.util.List;
 
 public class ListMetadata extends AbstractNode implements Metadata, ASTLeaf {
@@ -28,9 +31,9 @@ public class ListMetadata extends AbstractNode implements Metadata, ASTLeaf {
     private String listName;
     private List<String> values;
 
-    public ListMetadata(String variableID, String listName, List<String> values) {
+    public ListMetadata(String variableId, String listName, List<String> values) {
         super();
-        this.listId = variableID;
+        this.listId = variableId;
         this.listName = listName;
         this.values = values;
     }
@@ -50,5 +53,10 @@ public class ListMetadata extends AbstractNode implements Metadata, ASTLeaf {
     @Override
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);
+    }
+
+    @Override
+    public ASTNode accept(CloneVisitor visitor) {
+        return visitor.visit(this);
     }
 }

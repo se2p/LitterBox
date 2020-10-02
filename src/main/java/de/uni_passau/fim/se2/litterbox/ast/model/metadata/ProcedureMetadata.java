@@ -18,13 +18,15 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.model.metadata;
 
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
-public class ProcedureMetadata extends AbstractNode implements Metadata {
-    private BlockMetadata definition;
-    private BlockMetadata prototype;
+public class ProcedureMetadata extends AbstractNode implements BlockMetadata {
+    private final BlockMetadata definition;
+    private final BlockMetadata prototype;
 
     public ProcedureMetadata(BlockMetadata definition, BlockMetadata prototype) {
         super(definition, prototype);
@@ -43,5 +45,10 @@ public class ProcedureMetadata extends AbstractNode implements Metadata {
     @Override
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);
+    }
+
+    @Override
+    public ASTNode accept(CloneVisitor visitor) {
+        return visitor.visit(this);
     }
 }

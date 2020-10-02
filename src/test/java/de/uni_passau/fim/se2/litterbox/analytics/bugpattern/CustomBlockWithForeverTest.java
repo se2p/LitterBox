@@ -18,62 +18,57 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueReport;
+import de.uni_passau.fim.se2.litterbox.JsonTest;
+import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
-import java.io.File;
-import java.io.IOException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-public class CustomBlockWithForeverTest {
+import java.io.IOException;
+import java.util.Set;
+
+public class CustomBlockWithForeverTest implements JsonTest {
     private static Program empty;
     private static Program procedureWithNoForever;
     private static Program procedureWithForever;
     private static Program lastCall;
-    private static ObjectMapper mapper = new ObjectMapper();
 
     @BeforeAll
     public static void setUp() throws IOException, ParsingException {
 
-        File f = new File("./src/test/fixtures/emptyProject.json");
-        empty = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
-        f = new File("./src/test/fixtures/bugpattern/procedureWithNoForever.json");
-        procedureWithNoForever = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
-        f = new File("./src/test/fixtures/bugpattern/procedureWithForever.json");
-        procedureWithForever = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
-        f = new File("./src/test/fixtures/bugpattern/callLast.json");
-        lastCall = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
+        empty = JsonTest.parseProgram("./src/test/fixtures/emptyProject.json");
+        procedureWithNoForever = JsonTest.parseProgram("./src/test/fixtures/bugpattern/procedureWithNoForever.json");
+        procedureWithForever = JsonTest.parseProgram("./src/test/fixtures/bugpattern/procedureWithForever.json");
+        lastCall = JsonTest.parseProgram("./src/test/fixtures/bugpattern/callLast.json");
     }
 
     @Test
     public void testEmptyProgram() {
         CustomBlockWithForever parameterName = new CustomBlockWithForever();
-        IssueReport report = parameterName.check(empty);
-        Assertions.assertEquals(0, report.getCount());
+        Set<Issue> reports = parameterName.check(empty);
+        Assertions.assertEquals(0, reports.size());
     }
 
     @Test
     public void testProcedureWithNoForever() {
         CustomBlockWithForever parameterName = new CustomBlockWithForever();
-        IssueReport report = parameterName.check(procedureWithNoForever);
-        Assertions.assertEquals(0, report.getCount());
+        Set<Issue> reports = parameterName.check(procedureWithNoForever);
+        Assertions.assertEquals(0, reports.size());
     }
 
     @Test
     public void testProcedureWithForever() {
         CustomBlockWithForever parameterName = new CustomBlockWithForever();
-        IssueReport report = parameterName.check(procedureWithForever);
-        Assertions.assertEquals(1, report.getCount());
+        Set<Issue> reports = parameterName.check(procedureWithForever);
+        Assertions.assertEquals(1, reports.size());
     }
 
     @Test
     public void testlastCall() {
         CustomBlockWithForever parameterName = new CustomBlockWithForever();
-        IssueReport report = parameterName.check(lastCall);
-        Assertions.assertEquals(0, report.getCount());
+        Set<Issue> reports = parameterName.check(lastCall);
+        Assertions.assertEquals(0, reports.size());
     }
 }
