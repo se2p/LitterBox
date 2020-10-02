@@ -75,7 +75,7 @@ public class BlockMetadataTest {
         Assertions.assertTrue(topNonDataBlockMetadata.isTopLevel());
         Assertions.assertFalse(topNonDataBlockMetadata.isShadow());
         Assertions.assertEquals("procedures_definition", topNonDataBlockMetadata.getOpcode());
-        Assertions.assertNull(topNonDataBlockMetadata.getParent());
+        Assertions.assertNull(topNonDataBlockMetadata.getParentNode());
         Assertions.assertEquals("$C@+K-:6ie`W)?I*4jc9", topNonDataBlockMetadata.getNext());
     }
 

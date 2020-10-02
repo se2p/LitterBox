@@ -105,11 +105,11 @@ public class SpriteMotionStmtParser {
 
     private static SpriteMotionStmt parseSetRotationStyle(JsonNode current, BlockMetadata metadata) {
         String rota = current.get(FIELDS_KEY).get(STYLE_KEY).get(0).asText();
-        return new SetRotationStyle(RotationStyle.fromString(rota), metadata);
+        return new SetRotationStyle(new RotationStyle(rota), metadata);
     }
 
     private static SpriteMotionStmt parseSetDragmode(JsonNode current, BlockMetadata metadata) {
         String drag = current.get(FIELDS_KEY).get(DRAGMODE_KEY).get(0).asText();
-        return new SetDragMode(DragMode.fromString(drag), metadata);
+        return new SetDragMode(new DragMode(drag), metadata);
     }
 }

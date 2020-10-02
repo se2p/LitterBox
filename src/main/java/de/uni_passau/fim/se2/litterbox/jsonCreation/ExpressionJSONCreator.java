@@ -220,17 +220,17 @@ public class ExpressionJSONCreator implements ScratchVisitor {
 
     @Override
     public void visit(Costume node) {
-        createFieldsExpression((NonDataBlockMetadata) node.getMetadata(), node.getType().getType());
+        createFieldsExpression((NonDataBlockMetadata) node.getMetadata(), node.getType().getTypeName());
     }
 
     @Override
     public void visit(Backdrop node) {
-        createFieldsExpression((NonDataBlockMetadata) node.getMetadata(), node.getType().getType());
+        createFieldsExpression((NonDataBlockMetadata) node.getMetadata(), node.getType().getTypeName());
     }
 
     @Override
     public void visit(Current node) {
-        createFieldsExpression((NonDataBlockMetadata) node.getMetadata(), node.getTimeComp().getLabel());
+        createFieldsExpression((NonDataBlockMetadata) node.getMetadata(), node.getTimeComp().getTypeName());
     }
 
     private void createFieldsExpression(NonDataBlockMetadata metadata, String fieldValue) {
@@ -474,7 +474,7 @@ public class ExpressionJSONCreator implements ScratchVisitor {
         String fieldValue;
         Attribute attr = node.getAttribute();
         if (attr instanceof AttributeFromFixed) {
-            fieldValue = ((AttributeFromFixed) attr).getAttribute().getType();
+            fieldValue = ((AttributeFromFixed) attr).getAttribute().getTypeName();
         } else {
             fieldValue = ((AttributeFromVariable) attr).getVariable().getName().getName();
         }
@@ -495,7 +495,7 @@ public class ExpressionJSONCreator implements ScratchVisitor {
         inputs.add(createExpr(metadata, node.getOperand2(), NUM_KEY, true));
 
         FieldsMetadata fieldsMeta = metadata.getFields().getList().get(0);
-        String fieldsString = createFields(fieldsMeta.getFieldsName(), node.getOperand1().getFunction(), null);
+        String fieldsString = createFields(fieldsMeta.getFieldsName(), node.getOperand1().getTypeName(), null);
 
         finishedJSONStrings.add(createBlockWithoutMutationString(metadata, null,
                 previousBlockId, createInputs(inputs), fieldsString));

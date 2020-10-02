@@ -20,45 +20,61 @@ package de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTLeaf;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
-import java.util.Collections;
-import java.util.List;
+import java.util.Objects;
 
-public enum GraphicEffect implements ASTLeaf {
+public class GraphicEffect extends AbstractNode implements ASTLeaf {
 
-    COLOR("color"), GHOST("ghost"), BRIGHTNESS("brightness"), WHIRL("whirl"), FISHEYE("fisheye"), PIXELATE("pixelate"),
-    MOSAIC("mosaic");
+    public enum GraphicEffectType {
+        COLOR("color"), GHOST("ghost"), BRIGHTNESS("brightness"), WHIRL("whirl"), FISHEYE("fisheye"), PIXELATE("pixelate"),
+        MOSAIC("mosaic");
 
-    private final String token;
+        private final String token;
 
-    GraphicEffect(String token) {
-        this.token = token;
-    }
-
-    public static boolean contains(String effect) {
-        for (GraphicEffect value : GraphicEffect.values()) {
-            if (value.name().equals(effect.toUpperCase())) {
-                return true;
-            }
+        GraphicEffectType(String token) {
+            this.token = token;
         }
-        return false;
-    }
 
-    public static GraphicEffect fromString(String type) {
-        for (GraphicEffect f : values()) {
-            if (f.getToken().equals(type.toLowerCase())) {
-                return f;
+        public static boolean contains(String effect) {
+            for (GraphicEffectType value : GraphicEffectType.values()) {
+                if (value.name().equals(effect.toUpperCase())) {
+                    return true;
+                }
             }
+            return false;
         }
-        throw new IllegalArgumentException("Unknown GraphicEffect: " + type);
+
+        public static GraphicEffectType fromString(String type) {
+            for (GraphicEffectType f : values()) {
+                if (f.getToken().equals(type.toLowerCase())) {
+                    return f;
+                }
+            }
+            throw new IllegalArgumentException("Unknown GraphicEffect: " + type);
+        }
+
+        public String getToken() {
+            return token;
+        }
     }
 
-    public String getToken() {
-        return token;
+    private GraphicEffectType type;
+
+    public GraphicEffect(String typeName) {
+        this.type = GraphicEffectType.fromString(typeName);
+    }
+
+    public GraphicEffectType getType() {
+        return type;
+    }
+
+    public String getTypeName() {
+        return type.getToken();
     }
 
     @Override
@@ -72,11 +88,6 @@ public enum GraphicEffect implements ASTLeaf {
     }
 
     @Override
-    public List<? extends ASTNode> getChildren() {
-        return Collections.emptyList();
-    }
-
-    @Override
     public String getUniqueName() {
         return this.getClass().getSimpleName();
     }
@@ -84,12 +95,25 @@ public enum GraphicEffect implements ASTLeaf {
     @Override
     public String[] toSimpleStringArray() {
         String[] result = new String[1];
-        result[0] = token;
+        result[0] = type.getToken();
         return result;
     }
 
     @Override
     public BlockMetadata getMetadata() {
         return new NoBlockMetadata();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof GraphicEffect)) return false;
+        GraphicEffect that = (GraphicEffect) o;
+        return type == that.type;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(type);
     }
 }

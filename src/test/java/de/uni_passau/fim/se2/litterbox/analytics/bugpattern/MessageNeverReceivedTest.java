@@ -18,38 +18,21 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.truth.Truth;
+import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Set;
 
-import static junit.framework.TestCase.fail;
-
-class MessageNeverReceivedTest {
-    private static Program program;
-
-    @BeforeAll
-    public static void setup() {
-        String path = "src/test/fixtures/bugpattern/broadcastSync.json";
-        File file = new File(path);
-        ObjectMapper objectMapper = new ObjectMapper();
-        try {
-            program = ProgramParser.parseProgram("broadcastSync", objectMapper.readTree(file));
-        } catch (IOException | ParsingException e) {
-            fail();
-        }
-    }
+class MessageNeverReceivedTest implements JsonTest {
 
     @Test
-    public void testMessageNeverReceived() {
+    public void testMessageNeverReceived() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/bugpattern/broadcastSync.json");
         MessageNeverReceived finder = new MessageNeverReceived();
         Set<Issue> reports = finder.check(program);
         Truth.assertThat(reports).hasSize(4);

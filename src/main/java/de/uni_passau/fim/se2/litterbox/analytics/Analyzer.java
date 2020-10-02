@@ -18,15 +18,10 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
+import de.uni_passau.fim.se2.litterbox.ast.parser.Scratch3Parser;
 import de.uni_passau.fim.se2.litterbox.utils.Downloader;
-import de.uni_passau.fim.se2.litterbox.utils.JsonParser;
-import de.uni_passau.fim.se2.litterbox.utils.ZipReader;
-import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -122,37 +117,16 @@ public abstract class Analyzer {
      * @return the parsed program or null in case the program could not be loaded or parsed
      */
     protected Program extractProgram(File fileEntry) {
-        ObjectMapper mapper = new ObjectMapper();
-        Program program;
-
-        String fileName = fileEntry.getName();
-        String programName = fileName.substring(0, fileName.lastIndexOf("."));
-        JsonNode programNode = null;
-
+        Scratch3Parser parser = new Scratch3Parser();
+        Program program = null;
         try {
-            if ((FilenameUtils.getExtension(fileEntry.getPath())).toLowerCase().equals("json")) {
-                programNode = mapper.readTree(fileEntry);
-            } else {
-                programNode = JsonParser.getTargetsNodeFromJSONString(ZipReader.getJsonString(fileEntry.getPath()));
-            }
+            program = parser.parseFile(fileEntry);
         } catch (IOException e) {
-            log.info("[Error] could not load program from file " + fileName);
-        }
-
-        if (programNode == null) {
-            // TODO: Proper error handling
-            log.info("[Error] project json did not contain root node");
-            return null;
-        }
-
-        try {
-            program = ProgramParser.parseProgram(programName, programNode);
+            log.info("[Error] could not load program from file " + fileEntry.getName());
         } catch (ParsingException | RuntimeException e) {
             // TODO: Proper error handling
-            log.info("[Error] could not parse program for file " + fileName);
-            return null;
+            log.info("[Error] could not parse program for file " + fileEntry.getName());
         }
-
         return program;
     }
 }

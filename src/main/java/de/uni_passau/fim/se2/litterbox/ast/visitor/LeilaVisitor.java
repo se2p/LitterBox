@@ -637,7 +637,7 @@ public class LeilaVisitor extends PrintVisitor {
     @Override
     public void visit(GoToLayer goToLayer) {
         LayerChoice layerChoice = goToLayer.getLayerChoice();
-        if (LayerChoice.BACK.equals(layerChoice)) {
+        if (LayerChoice.LayerChoiceType.BACK.equals(layerChoice.getType())) {
             emitToken("goToBackLayer()");
         } else {
             emitToken("goToFrontLayer()");
@@ -1313,9 +1313,9 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(ActorType actorType) {
-        if (actorType.equals(ActorType.STAGE)) {
+        if (actorType.isStage()) {
             emitNoSpace("ScratchStage");
-        } else if (actorType.equals(ActorType.SPRITE)) {
+        } else if (actorType.isSprite()) {
             emitNoSpace("ScratchSprite");
         } else {
             emitNoSpace("ScratchActor");
@@ -1335,13 +1335,13 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(GraphicEffect graphicEffect) {
-        emitNoSpace(graphicEffect.getToken());
+        emitNoSpace(graphicEffect.getTypeName());
     }
 
     @Override
     public void visit(SoundEffect soundEffect) {
-        String effect = soundEffect.getToken();
-        if (effect.equals(SoundEffect.PITCH.getToken())) {
+        String effect = soundEffect.getTypeName();
+        if (effect.equals(SoundEffect.SoundEffectType.PITCH.getToken())) {
             emitNoSpace("pitch");
         } else {
             emitNoSpace("panLeftRight");
@@ -1355,7 +1355,7 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(FixedAttribute fixedAttribute) {
-        emitToken(fixedAttribute.getType());
+        emitToken(fixedAttribute.getTypeName());
     }
 
     @Override
@@ -1558,8 +1558,8 @@ public class LeilaVisitor extends PrintVisitor {
     @Override
     public void visit(TimeComp timeComp) {
         emitNoSpace("current");
-        String label = timeComp.getLabel();
-        if (label.equalsIgnoreCase(TimeComp.DAY_OF_WEEK.getLabel())) {
+        String label = timeComp.getType().getLabel();
+        if (label.equalsIgnoreCase(TimeComp.TimeCompType.DAY_OF_WEEK.getLabel())) {
             emitNoSpace("DayOfWeek");
         } else {
             emitNoSpace(label.substring(0, 1).toUpperCase() + label.substring(1));
@@ -1685,7 +1685,7 @@ public class LeilaVisitor extends PrintVisitor {
     public void visit(NumFunctOf numFunctOf) {
         NumExpr operand2 = numFunctOf.getOperand2();
         boolean expectationSet = false;
-        switch (numFunctOf.getOperand1()) {
+        switch (numFunctOf.getOperand1().getType()) {
             case ABS:
                 emitNoSpace("mathAbsF(");
                 expectFloat();
@@ -1911,7 +1911,7 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(Costume costume) {
-        if (costume.getType().equals(NameNum.NAME)) {
+        if (costume.getType().getType().equals(NameNum.NameNumType.NAME)) {
             emitNoSpace("costumeName()");
         } else {
             emitNoSpace("costumeNumber()");
@@ -1920,7 +1920,7 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(LayerChoice layerChoice) {
-        emitToken(layerChoice.getType());
+        emitToken(layerChoice.getTypeName());
     }
 
     @Override
@@ -1931,7 +1931,7 @@ public class LeilaVisitor extends PrintVisitor {
     @Override
     public void visit(Backdrop backdrop) {
         NameNum type = backdrop.getType();
-        if (type.equals(NameNum.NAME)) {
+        if (type.getType().equals(NameNum.NameNumType.NAME)) {
             emitNoSpace("backdropName()");
         } else {
             emitNoSpace("backdropNumber()");
@@ -1945,7 +1945,7 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(EventAttribute eventAttribute) {
-        emitNoSpace(eventAttribute.getType());
+        emitNoSpace(eventAttribute.getTypeName());
     }
 
     @Override
@@ -1997,7 +1997,7 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(RotationStyle rotationStyle) {
-        emitString(rotationStyle.getToken());
+        emitString(rotationStyle.getTypeName());
     }
 
     @Override
@@ -2029,7 +2029,7 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(DragMode dragMode) {
-        emitString(dragMode.getToken());
+        emitString(dragMode.getTypeName());
     }
 
     @Override

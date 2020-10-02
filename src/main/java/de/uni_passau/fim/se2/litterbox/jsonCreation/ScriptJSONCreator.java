@@ -83,7 +83,7 @@ public class ScriptJSONCreator {
                 }
 
                 FieldsMetadata fieldsMetadata = meta.getFields().getList().get(0);
-                String attribute = attributeAboveValue.getAttribute().getType();
+                String attribute = attributeAboveValue.getAttribute().getTypeName();
                 String fields = createFields(fieldsMetadata.getFieldsName(), attribute, null);
                 jsonString.append(createBlockWithoutMutationString(meta, nextId, null, createInputs(inputs),
                         fields));

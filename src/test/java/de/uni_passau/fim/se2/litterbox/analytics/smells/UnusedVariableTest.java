@@ -18,72 +18,53 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.smells;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Set;
 
-public class UnusedIdentifierTest {
-    private static Program empty;
-    private static Program unusedVariables;
-    private static Program oneUsedVariables;
-    private static Program usedList;
-    private static Program unusedList;
-    private static ObjectMapper mapper = new ObjectMapper();
-
-    @BeforeAll
-    public static void setUp() throws IOException, ParsingException {
-
-        File f = new File("./src/test/fixtures/bugpattern/recursion.json");
-        empty = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
-        f = new File("./src/test/fixtures/smells/unusedVariables.json");
-        unusedVariables = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
-        f = new File("./src/test/fixtures/smells/oneUsedVariable.json");
-        oneUsedVariables = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
-        f = new File("./src/test/fixtures/smells/listunused.json");
-        unusedList = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
-        f = new File("./src/test/fixtures/smells/listused.json");
-        usedList = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
-    }
+public class UnusedVariableTest implements JsonTest {
 
     @Test
-    public void testEmptyProgram() {
+    public void testEmptyProgram() throws IOException, ParsingException {
+        Program empty = getAST("./src/test/fixtures/bugpattern/recursion.json");
         UnusedVariable parameterName = new UnusedVariable();
         Set<Issue> reports = parameterName.check(empty);
         Assertions.assertEquals(0, reports.size());
     }
 
     @Test
-    public void testUnusedVariable() {
+    public void testUnusedVariable() throws IOException, ParsingException {
+        Program unusedVariables = getAST("./src/test/fixtures/smells/unusedVariables.json");
         UnusedVariable parameterName = new UnusedVariable();
         Set<Issue> reports = parameterName.check(unusedVariables);
         Assertions.assertEquals(2, reports.size());
     }
 
     @Test
-    public void testOneUsedVariable() {
+    public void testOneUsedVariable() throws IOException, ParsingException {
+        Program oneUsedVariables = getAST("./src/test/fixtures/smells/oneUsedVariable.json");
         UnusedVariable parameterName = new UnusedVariable();
         Set<Issue> reports = parameterName.check(oneUsedVariables);
         Assertions.assertEquals(2, reports.size());
     }
 
     @Test
-    public void testUnusedList() {
+    public void testUnusedList() throws IOException, ParsingException {
+        Program unusedList = getAST("./src/test/fixtures/smells/listunused.json");
         UnusedVariable parameterName = new UnusedVariable();
         Set<Issue> reports = parameterName.check(unusedList);
         Assertions.assertEquals(1, reports.size());
     }
 
     @Test
-    public void testUsedList() {
+    public void testUsedList() throws IOException, ParsingException {
+        Program usedList = getAST("./src/test/fixtures/smells/listused.json");
         UnusedVariable parameterName = new UnusedVariable();
         Set<Issue> reports = parameterName.check(usedList);
         Assertions.assertEquals(0, reports.size());

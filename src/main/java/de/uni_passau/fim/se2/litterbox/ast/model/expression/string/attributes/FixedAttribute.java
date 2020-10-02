@@ -20,37 +20,55 @@ package de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTLeaf;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-import java.util.Collections;
-import java.util.List;
+import java.util.Objects;
 
-public enum FixedAttribute implements ASTLeaf {
-    Y_POSITION("y position"), X_POSITION("x position"), DIRECTION("direction"), SIZE("size"), VOLUME("volume"),
-    BACKDROP_NAME("backdrop name"), BACKDROP_NUMBER("backdrop #"), COSTUME_NAME("costume name"), COSTUME_NUMBER(
-            "costume #");
+public class FixedAttribute extends AbstractNode implements ASTLeaf {
 
-    private final String type;
+    public enum FixedAttributeType {
 
-    FixedAttribute(String type) {
-        this.type = Preconditions.checkNotNull(type);
-    }
+        Y_POSITION("y position"), X_POSITION("x position"), DIRECTION("direction"), SIZE("size"), VOLUME("volume"),
+        BACKDROP_NAME("backdrop name"), BACKDROP_NUMBER("backdrop #"), COSTUME_NAME("costume name"), COSTUME_NUMBER(
+                "costume #");
 
-    public static FixedAttribute fromString(String type) {
-        for (FixedAttribute f : values()) {
-            if (f.getType().equals(type.toLowerCase())) {
-                return f;
-            }
+        private final String type;
+
+        FixedAttributeType(String type) {
+            this.type = Preconditions.checkNotNull(type);
         }
-        throw new IllegalArgumentException("Unknown FixedAttribute: " + type);
+
+        public static FixedAttributeType fromString(String type) {
+            for (FixedAttributeType f : values()) {
+                if (f.getType().equals(type.toLowerCase())) {
+                    return f;
+                }
+            }
+            throw new IllegalArgumentException("Unknown FixedAttribute: " + type);
+        }
+
+        public String getType() {
+            return type;
+        }
     }
 
-    public String getType() {
+    private FixedAttributeType type;
+
+    public FixedAttribute(String typeName) {
+        this.type = FixedAttributeType.fromString(typeName);
+    }
+
+    public FixedAttributeType getType() {
         return type;
+    }
+
+    public String getTypeName() {
+        return type.getType();
     }
 
     @Override
@@ -61,11 +79,6 @@ public enum FixedAttribute implements ASTLeaf {
     @Override
     public ASTNode accept(CloneVisitor visitor) {
         return visitor.visit(this);
-    }
-
-    @Override
-    public List<? extends ASTNode> getChildren() {
-        return Collections.emptyList();
     }
 
     @Override
@@ -81,7 +94,20 @@ public enum FixedAttribute implements ASTLeaf {
     @Override
     public String[] toSimpleStringArray() {
         String[] result = new String[1];
-        result[0] = type;
+        result[0] = type.getType();
         return result;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof FixedAttribute)) return false;
+        FixedAttribute that = (FixedAttribute) o;
+        return type == that.type;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(type);
     }
 }

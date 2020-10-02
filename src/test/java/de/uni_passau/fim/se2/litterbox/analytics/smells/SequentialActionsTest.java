@@ -19,28 +19,23 @@
 
 package de.uni_passau.fim.se2.litterbox.analytics.smells;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Set;
 
 // All these tests make the assumption that a sequence has to consist of at least 2 statements, and must occur at least 3 times
 
-public class SequentialActionsTest {
-
-    private static ObjectMapper mapper = new ObjectMapper();
+public class SequentialActionsTest implements JsonTest {
 
     @Test
     public void testEmptyProgram() throws IOException, ParsingException {
-        File f = new File("./src/test/fixtures/emptyProject.json");
-        Program empty = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
+        Program empty = getAST("./src/test/fixtures/emptyProject.json");
 
         SequentialActions parameterName = new SequentialActions();
         Set<Issue> reports = parameterName.check(empty);
@@ -49,9 +44,7 @@ public class SequentialActionsTest {
 
     @Test
     public void testThreeTimesTwoStatements() throws IOException, ParsingException {
-        File f = new File("./src/test/fixtures/smells/sequenceOfThreePairs.json");
-        Program empty = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
-
+        Program empty = getAST("./src/test/fixtures/smells/sequenceOfThreePairs.json");
         SequentialActions parameterName = new SequentialActions();
         Set<Issue> reports = parameterName.check(empty);
         Assertions.assertEquals(1, reports.size());
@@ -59,8 +52,7 @@ public class SequentialActionsTest {
 
     @Test
     public void testThreeTimesThreeStatements() throws IOException, ParsingException {
-        File f = new File("./src/test/fixtures/smells/sequenceOfThreeTriples.json");
-        Program empty = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
+        Program empty = getAST("./src/test/fixtures/smells/sequenceOfThreeTriples.json");
 
         SequentialActions parameterName = new SequentialActions();
         Set<Issue> reports = parameterName.check(empty);
@@ -69,8 +61,7 @@ public class SequentialActionsTest {
 
     @Test
     public void testFourTimesTwoStatements() throws IOException, ParsingException {
-        File f = new File("./src/test/fixtures/smells/sequenceOfFourPairs.json");
-        Program empty = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
+        Program empty = getAST("./src/test/fixtures/smells/sequenceOfFourPairs.json");
 
         SequentialActions parameterName = new SequentialActions();
         Set<Issue> reports = parameterName.check(empty);
@@ -79,8 +70,7 @@ public class SequentialActionsTest {
 
     @Test
     public void testSequenceInLoop() throws IOException, ParsingException {
-        File f = new File("./src/test/fixtures/smells/sequenceInLoop.json");
-        Program empty = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
+        Program empty = getAST("./src/test/fixtures/smells/sequenceInLoop.json");
 
         SequentialActions parameterName = new SequentialActions();
         Set<Issue> reports = parameterName.check(empty);
@@ -89,8 +79,7 @@ public class SequentialActionsTest {
 
     @Test
     public void testSequenceWithNestedIf() throws IOException, ParsingException {
-        File f = new File("./src/test/fixtures/smells/sequenceWithNestedIf.json");
-        Program empty = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
+        Program empty = getAST("./src/test/fixtures/smells/sequenceWithNestedIf.json");
 
         SequentialActions parameterName = new SequentialActions();
         Set<Issue> reports = parameterName.check(empty);
@@ -99,8 +88,7 @@ public class SequentialActionsTest {
 
     @Test
     public void testSequenceWithIfs() throws IOException, ParsingException {
-        File f = new File("./src/test/fixtures/smells/sequenceWithIfs.json");
-        Program empty = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
+        Program empty = getAST("./src/test/fixtures/smells/sequenceWithIfs.json");
 
         SequentialActions parameterName = new SequentialActions();
         Set<Issue> reports = parameterName.check(empty);
@@ -109,8 +97,7 @@ public class SequentialActionsTest {
 
     @Test
     public void testSequenceWithInterruption() throws IOException, ParsingException {
-        File f = new File("./src/test/fixtures/smells/sequenceWithInterruption.json");
-        Program empty = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
+        Program empty = getAST("./src/test/fixtures/smells/sequenceWithInterruption.json");
 
         SequentialActions parameterName = new SequentialActions();
         Set<Issue> reports = parameterName.check(empty);
@@ -119,8 +106,7 @@ public class SequentialActionsTest {
 
     @Test
     public void testSequenceWithPrefix() throws IOException, ParsingException {
-        File f = new File("./src/test/fixtures/smells/sequenceWithPrefix.json");
-        Program empty = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
+        Program empty = getAST("./src/test/fixtures/smells/sequenceWithPrefix.json");
 
         SequentialActions parameterName = new SequentialActions();
         Set<Issue> reports = parameterName.check(empty);
@@ -129,8 +115,7 @@ public class SequentialActionsTest {
 
     @Test
     public void testSequenceWithPostfix() throws IOException, ParsingException {
-        File f = new File("./src/test/fixtures/smells/sequenceWithPostfix.json");
-        Program empty = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
+        Program empty = getAST("./src/test/fixtures/smells/sequenceWithPostfix.json");
 
         SequentialActions parameterName = new SequentialActions();
         Set<Issue> reports = parameterName.check(empty);

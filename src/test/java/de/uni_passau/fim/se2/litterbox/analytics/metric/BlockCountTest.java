@@ -18,18 +18,16 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.metric;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
 import java.io.IOException;
 
-public class BlockCountTest {
+public class BlockCountTest implements JsonTest {
     private static Program empty;
     private static Program nestedLoops;
     private static Program withproc;
@@ -37,25 +35,16 @@ public class BlockCountTest {
     private static Program fixedExpressions;
     private static Program halfFixedExpr;
     private static Program onlyVariable;
-    private static ObjectMapper mapper = new ObjectMapper();
 
     @BeforeAll
     public static void setUp() throws IOException, ParsingException {
-
-        File f = new File("./src/test/fixtures/emptyProject.json");
-        empty = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
-        f = new File("./src/test/fixtures/smells/nestedLoops.json");
-        nestedLoops = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
-        f = new File("./src/test/fixtures/blockCountWithProc.json");
-        withproc = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
-        f = new File("./src/test/fixtures/fixedExpressions.json");
-        fixedExpressions = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
-        f = new File("./src/test/fixtures/stmtParser/allFixedStatements.json");
-        fixedStatements = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
-        f = new File("./src/test/fixtures/halfFixedExpressions.json");
-        halfFixedExpr = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
-        f = new File("./src/test/fixtures/onlyVariable.json");
-        onlyVariable = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
+        empty = JsonTest.parseProgram("./src/test/fixtures/emptyProject.json");
+        nestedLoops = JsonTest.parseProgram("./src/test/fixtures/smells/nestedLoops.json");
+        withproc = JsonTest.parseProgram("./src/test/fixtures/blockCountWithProc.json");
+        fixedExpressions= JsonTest.parseProgram("./src/test/fixtures/fixedExpressions.json");
+        fixedStatements = JsonTest.parseProgram("./src/test/fixtures/stmtParser/allFixedStatements.json");
+        halfFixedExpr = JsonTest.parseProgram("./src/test/fixtures/halfFixedExpressions.json");
+        onlyVariable = JsonTest.parseProgram("./src/test/fixtures/onlyVariable.json");
     }
 
     @Test

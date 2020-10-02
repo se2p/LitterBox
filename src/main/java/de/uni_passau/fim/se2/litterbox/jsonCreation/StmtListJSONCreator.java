@@ -200,7 +200,7 @@ public class StmtListJSONCreator implements ScratchVisitor {
     @Override
     public void visit(GoToLayer node) {
         FieldsMetadata fieldsMeta = ((NonDataBlockMetadata) node.getMetadata()).getFields().getList().get(0);
-        String layer = node.getLayerChoice().getType();
+        String layer = node.getLayerChoice().getTypeName();
         String fieldsString = createFields(fieldsMeta.getFieldsName(), layer, null);
         finishedJSONStrings.add(createBlockWithoutMutationString((NonDataBlockMetadata) node.getMetadata(), getNextId(),
                 previousBlockId, EMPTY_VALUE, fieldsString));
@@ -213,7 +213,7 @@ public class StmtListJSONCreator implements ScratchVisitor {
         FieldsMetadata fieldsMeta = metadata.getFields().getList().get(0);
         List<String> inputs = new ArrayList<>();
         inputs.add(createNumExpr(metadata, NUM_KEY, node.getNum(), INTEGER_NUM_PRIMITIVE));
-        String fields = createFields(fieldsMeta.getFieldsName(), node.getForwardBackwardChoice().getType(), null);
+        String fields = createFields(fieldsMeta.getFieldsName(), node.getForwardBackwardChoice().getTypeName(), null);
         finishedJSONStrings.add(createBlockWithoutMutationString(metadata, getNextId(),
                 previousBlockId, createInputs(inputs), fields));
 
@@ -223,7 +223,7 @@ public class StmtListJSONCreator implements ScratchVisitor {
     @Override
     public void visit(SetDragMode node) {
         FieldsMetadata fieldsMeta = ((NonDataBlockMetadata) node.getMetadata()).getFields().getList().get(0);
-        String drag = node.getDrag().getToken();
+        String drag = node.getDrag().getTypeName();
         String fieldsString = createFields(fieldsMeta.getFieldsName(), drag, null);
         finishedJSONStrings.add(createBlockWithoutMutationString((NonDataBlockMetadata) node.getMetadata(), getNextId(),
                 previousBlockId, EMPTY_VALUE, fieldsString));
@@ -572,25 +572,25 @@ public class StmtListJSONCreator implements ScratchVisitor {
     @Override
     public void visit(SetGraphicEffectTo node) {
         createNumExprFieldsBlockJson((NonDataBlockMetadata) node.getMetadata(), node.getValue(),
-                node.getEffect().getToken(), VALUE_KEY);
+                node.getEffect().getTypeName(), VALUE_KEY);
     }
 
     @Override
     public void visit(ChangeGraphicEffectBy node) {
         createNumExprFieldsBlockJson((NonDataBlockMetadata) node.getMetadata(), node.getValue(),
-                node.getEffect().getToken(), CHANGE_KEY);
+                node.getEffect().getTypeName(), CHANGE_KEY);
     }
 
     @Override
     public void visit(SetSoundEffectTo node) {
         createNumExprFieldsBlockJson((NonDataBlockMetadata) node.getMetadata(), node.getValue(),
-                node.getEffect().getToken(), VALUE_KEY);
+                node.getEffect().getTypeName(), VALUE_KEY);
     }
 
     @Override
     public void visit(ChangeSoundEffectBy node) {
         createNumExprFieldsBlockJson((NonDataBlockMetadata) node.getMetadata(), node.getValue(),
-                node.getEffect().getToken(), VALUE_KEY);
+                node.getEffect().getTypeName(), VALUE_KEY);
     }
 
     @Override
