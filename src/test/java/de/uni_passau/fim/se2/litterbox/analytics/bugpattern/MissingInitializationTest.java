@@ -148,7 +148,7 @@ public class MissingInitializationTest implements JsonTest {
 
     @Test
     public void testMissingInitializationOfList() throws IOException, ParsingException {
-        Program program = getAST("src/test/fixtures/scratchblocks/highlightedlist.json");
+        Program program = getAST("src/test/fixtures/bugpattern/missingInitializationUseList.json");
         MissingInitialization initialization = new MissingInitialization();
         Set<Issue> reports = (initialization).check(program);
         Assertions.assertEquals(1, reports.size());
