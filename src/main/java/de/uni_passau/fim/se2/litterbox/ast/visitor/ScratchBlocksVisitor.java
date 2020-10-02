@@ -1129,7 +1129,7 @@ public class ScratchBlocksVisitor extends PrintVisitor {
 
     @Override
     public void visit(FixedAttribute node) {
-        emitNoSpace(node.getType());
+        emitNoSpace(node.getTypeName());
         storeNotesForIssue(node);
     }
 
@@ -1168,7 +1168,7 @@ public class ScratchBlocksVisitor extends PrintVisitor {
 
     @Override
     public void visit(RotationStyle node) {
-        emitNoSpace(node.getToken());
+        emitNoSpace(node.getTypeName());
         storeNotesForIssue(node);
     }
 
@@ -1222,7 +1222,7 @@ public class ScratchBlocksVisitor extends PrintVisitor {
 
     @Override
     public void visit(NameNum node) {
-        emitNoSpace(node.getType());
+        emitNoSpace(node.getTypeName());
         storeNotesForIssue(node);
     }
 
@@ -1248,31 +1248,31 @@ public class ScratchBlocksVisitor extends PrintVisitor {
 
     @Override
     public void visit(GraphicEffect node) {
-        emitNoSpace(node.getToken());
+        emitNoSpace(node.getTypeName());
         storeNotesForIssue(node);
     }
 
     @Override
     public void visit(SoundEffect node) {
-        emitNoSpace(node.getToken());
+        emitNoSpace(node.getTypeName());
         storeNotesForIssue(node);
     }
 
     @Override
     public void visit(LayerChoice node) {
-        emitNoSpace(node.getType());
+        emitNoSpace(node.getTypeName());
         storeNotesForIssue(node);
     }
 
     @Override
     public void visit(DragMode node) {
-        emitNoSpace(node.getToken());
+        emitNoSpace(node.getTypeName());
         storeNotesForIssue(node);
     }
 
     @Override
     public void visit(ForwardBackwardChoice node) {
-        emitNoSpace(node.getType());
+        emitNoSpace(node.getTypeName());
         storeNotesForIssue(node);
     }
 
@@ -1293,7 +1293,7 @@ public class ScratchBlocksVisitor extends PrintVisitor {
 
     @Override
     public void visit(EventAttribute node) {
-        emitNoSpace(node.getType());
+        emitNoSpace(node.getTypeName());
         storeNotesForIssue(node);
     }
 
@@ -1385,7 +1385,7 @@ public class ScratchBlocksVisitor extends PrintVisitor {
 
     @Override
     public void visit(TimeComp node) {
-        emitNoSpace(node.getLabel());
+        emitNoSpace(node.getTypeName());
         storeNotesForIssue(node);
     }
 
@@ -1542,7 +1542,7 @@ public class ScratchBlocksVisitor extends PrintVisitor {
 
     @Override
     public void visit(NumFunct node) {
-        emitNoSpace(node.getFunction());
+        emitNoSpace(node.getTypeName());
         storeNotesForIssue(node);
     }
 

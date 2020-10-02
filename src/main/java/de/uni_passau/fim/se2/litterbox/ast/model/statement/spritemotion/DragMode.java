@@ -20,45 +20,61 @@ package de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTLeaf;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
-import java.util.Collections;
-import java.util.List;
+import java.util.Objects;
 
-public enum DragMode implements ASTLeaf {
+public class DragMode extends AbstractNode implements ASTLeaf {
 
-    not_draggable("not draggable"),
-    draggable("draggable");
+    public enum DragModeType {
+        not_draggable("not draggable"),
+        draggable("draggable");
 
-    private final String token;
+        private final String token;
 
-    DragMode(String token) {
-        this.token = token;
-    }
-
-    public static boolean contains(String opcode) {
-        for (DragMode value : DragMode.values()) {
-            if (value.toString().equals(opcode)) {
-                return true;
-            }
+        DragModeType(String token) {
+            this.token = token;
         }
-        return false;
-    }
 
-    public static DragMode fromString(String type) {
-        for (DragMode f : values()) {
-            if (f.getToken().equals(type.toLowerCase())) {
-                return f;
+        public static boolean contains(String opcode) {
+            for (DragModeType value : DragModeType.values()) {
+                if (value.toString().equals(opcode)) {
+                    return true;
+                }
             }
+            return false;
         }
-        throw new IllegalArgumentException("Unknown DragMode: " + type);
+
+        public static DragModeType fromString(String type) {
+            for (DragModeType f : values()) {
+                if (f.getToken().equals(type.toLowerCase())) {
+                    return f;
+                }
+            }
+            throw new IllegalArgumentException("Unknown DragMode: " + type);
+        }
+
+        public String getToken() {
+            return token;
+        }
     }
 
-    public String getToken() {
-        return token;
+    private DragModeType type;
+
+    public DragMode(String typeName) {
+        this.type = DragModeType.fromString(typeName);
+    }
+
+    public DragModeType getType() {
+        return type;
+    }
+
+    public String getTypeName() {
+        return type.getToken();
     }
 
     @Override
@@ -72,11 +88,6 @@ public enum DragMode implements ASTLeaf {
     }
 
     @Override
-    public List<? extends ASTNode> getChildren() {
-        return Collections.emptyList();
-    }
-
-    @Override
     public String getUniqueName() {
         return this.getClass().getSimpleName();
     }
@@ -84,17 +95,30 @@ public enum DragMode implements ASTLeaf {
     @Override
     public String[] toSimpleStringArray() {
         String[] result = new String[1];
-        result[0] = token;
+        result[0] = type.getToken();
         return result;
     }
 
     @Override
     public String toString() {
-        return token;
+        return type.getToken();
     }
 
     @Override
     public BlockMetadata getMetadata() {
         return new NoBlockMetadata();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof DragMode)) return false;
+        DragMode dragMode = (DragMode) o;
+        return type == dragMode.type;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(type);
     }
 }

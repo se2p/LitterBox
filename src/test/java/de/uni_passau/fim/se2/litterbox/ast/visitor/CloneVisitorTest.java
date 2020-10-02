@@ -18,23 +18,20 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.visitor;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
 
-public class CloneVisitorTest {
+public class CloneVisitorTest implements JsonTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"src/test/fixtures/scratchblocks/motionblocks.json",
@@ -76,12 +73,6 @@ public class CloneVisitorTest {
     }
 
     private void assertEqualsButNotSame(ASTNode node1, ASTNode node2) {
-        assertEquals(node1, node2);
-
-        // Enums are identical so skip checking them
-        if (node1.getClass().isEnum()) {
-            return;
-        }
         assertNotSame(node1, node2);
 
         List<? extends ASTNode> children1 = node1.getChildren();
@@ -91,13 +82,7 @@ public class CloneVisitorTest {
         for (int i = 0; i < node2.getChildren().size(); i++) {
             assertEqualsButNotSame(children1.get(i), children2.get(i));
         }
-    }
 
-    private Program getAST(String fileName) throws IOException, ParsingException {
-        File file = new File(fileName);
-        ObjectMapper objectMapper = new ObjectMapper();
-        JsonNode project = objectMapper.readTree(file);
-        Program program = ProgramParser.parseProgram("TestProgram", project);
-        return program;
+        assertEquals(node1, node2, "Found difference for nodes of type "+node1.getClass());
     }
 }

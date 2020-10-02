@@ -18,41 +18,32 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Set;
 
-public class NoWorkingScriptTest {
+public class NoWorkingScriptTest implements JsonTest {
     private static Program empty;
     private static Program noWorkingScript;
     private static Program workingScript;
     private static Program myWarrior;
     private static Program noodle;
-    private static Program test;
-    private static ObjectMapper mapper = new ObjectMapper();
 
     @BeforeAll
     public static void setUp() throws IOException, ParsingException {
 
-        File f = new File("./src/test/fixtures/emptyProject.json");
-        empty = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
-        f = new File("./src/test/fixtures/bugpattern/noWorkingScript.json");
-        noWorkingScript = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
-        f = new File("./src/test/fixtures/bugpattern/missingPenUp.json");
-        workingScript = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
-        f = new File("./src/test/fixtures/bugpattern/myWarrior.json");
-        myWarrior = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
-        f = new File("./src/test/fixtures/bugpattern/noodle.json");
-        noodle = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
+        empty = JsonTest.parseProgram("./src/test/fixtures/emptyProject.json");
+        noWorkingScript = JsonTest.parseProgram("./src/test/fixtures/bugpattern/noWorkingScript.json");
+        workingScript = JsonTest.parseProgram("./src/test/fixtures/bugpattern/missingPenUp.json");
+        myWarrior = JsonTest.parseProgram("./src/test/fixtures/bugpattern/myWarrior.json");
+        noodle = JsonTest.parseProgram("./src/test/fixtures/bugpattern/noodle.json");
     }
 
     @Test

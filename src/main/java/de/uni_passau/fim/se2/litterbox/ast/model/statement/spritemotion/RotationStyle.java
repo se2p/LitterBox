@@ -20,46 +20,62 @@ package de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTLeaf;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
-import java.util.Collections;
-import java.util.List;
+import java.util.Objects;
 
-public enum RotationStyle implements ASTLeaf {
+public class RotationStyle extends AbstractNode implements ASTLeaf {
 
-    dont_rotate("don't rotate"),
-    left_right("left-right"),
-    all_around("all around");
+    public enum RotationStyleType {
+        dont_rotate("don't rotate"),
+        left_right("left-right"),
+        all_around("all around");
 
-    private final String token;
+        private final String token;
 
-    RotationStyle(String token) {
-        this.token = token;
-    }
-
-    public static RotationStyle fromString(String type) {
-        for (RotationStyle f : values()) {
-            if (f.getToken().equals(type.toLowerCase())) {
-                return f;
-            }
+        RotationStyleType(String token) {
+            this.token = token;
         }
-        throw new IllegalArgumentException("Unknown RotationStyle: " + type);
-    }
 
-    public static boolean contains(String opcode) {
-        for (RotationStyle value : RotationStyle.values()) {
-            if (value.toString().equals(opcode)) {
-                return true;
+        public static RotationStyleType fromString(String type) {
+            for (RotationStyleType f : values()) {
+                if (f.getToken().equals(type.toLowerCase())) {
+                    return f;
+                }
             }
+            throw new IllegalArgumentException("Unknown RotationStyle: " + type);
         }
-        return false;
+
+        public static boolean contains(String opcode) {
+            for (RotationStyleType value : RotationStyleType.values()) {
+                if (value.toString().equals(opcode)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public String getToken() {
+            return token;
+        }
     }
 
-    public String getToken() {
-        return token;
+    private RotationStyleType type;
+
+    public RotationStyle(String typeName) {
+        this.type = RotationStyleType.fromString(typeName);
+    }
+
+    public RotationStyleType getType() {
+        return type;
+    }
+
+    public String getTypeName() {
+        return type.getToken();
     }
 
     @Override
@@ -73,11 +89,6 @@ public enum RotationStyle implements ASTLeaf {
     }
 
     @Override
-    public List<? extends ASTNode> getChildren() {
-        return Collections.emptyList();
-    }
-
-    @Override
     public String getUniqueName() {
         return this.getClass().getSimpleName();
     }
@@ -85,17 +96,30 @@ public enum RotationStyle implements ASTLeaf {
     @Override
     public String[] toSimpleStringArray() {
         String[] result = new String[1];
-        result[0] = token;
+        result[0] = type.getToken();
         return result;
     }
 
     @Override
     public String toString() {
-        return token;
+        return type.getToken();
     }
 
     @Override
     public BlockMetadata getMetadata() {
         return new NoBlockMetadata();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof RotationStyle)) return false;
+        RotationStyle that = (RotationStyle) o;
+        return type == that.type;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(type);
     }
 }

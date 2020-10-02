@@ -38,6 +38,6 @@ public class TimecompParser {
                 "Timecomp parsing is only allowed for opcode %s and not %s", CURRENT_OPCODE, opcodeString);
 
         final String currentString = current.get(FIELDS_KEY).get(CURRENT_MENU).get(0).asText();
-        return TimeComp.fromString(currentString.toLowerCase());
+        return new TimeComp(currentString.toLowerCase());
     }
 }

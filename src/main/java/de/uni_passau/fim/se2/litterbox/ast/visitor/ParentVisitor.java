@@ -16,8 +16,16 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
+package de.uni_passau.fim.se2.litterbox.ast.visitor;
 
-class TestBugPatternDynamically {
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 
+public class ParentVisitor implements ScratchVisitor {
+    @Override
+    public void visitChildren(ASTNode node) {
+        for (ASTNode child : node.getChildren()) {
+            child.setParentNode(node);
+            child.accept(this);
+        }
+    }
 }

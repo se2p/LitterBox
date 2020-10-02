@@ -20,35 +20,52 @@ package de.uni_passau.fim.se2.litterbox.ast.model.expression.string;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTLeaf;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-import java.util.Collections;
-import java.util.List;
+import java.util.Objects;
 
-public enum NameNum implements ASTLeaf {
-    NAME("name"), NUMBER("number");
+public class NameNum extends AbstractNode implements ASTLeaf {
 
-    private final String type;
+    public enum NameNumType {
+        NAME("name"), NUMBER("number");
 
-    NameNum(String type) {
-        this.type = Preconditions.checkNotNull(type);
-    }
+        private final String type;
 
-    public static NameNum fromString(String type) {
-        for (NameNum f : values()) {
-            if (f.getType().equals(type.toLowerCase())) {
-                return f;
-            }
+        NameNumType(String type) {
+            this.type = Preconditions.checkNotNull(type);
         }
-        throw new IllegalArgumentException("Unknown NameNum: " + type);
+
+        public static NameNumType fromString(String type) {
+            for (NameNumType f : values()) {
+                if (f.getType().equals(type.toLowerCase())) {
+                    return f;
+                }
+            }
+            throw new IllegalArgumentException("Unknown NameNum: " + type);
+        }
+
+        public String getType() {
+            return type;
+        }
     }
 
-    public String getType() {
+    private NameNumType type;
+
+    public NameNum(String typeName) {
+        this.type = NameNumType.fromString(typeName);
+    }
+
+    public NameNumType getType() {
         return type;
+    }
+
+    public String getTypeName() {
+        return type.getType();
     }
 
     @Override
@@ -59,11 +76,6 @@ public enum NameNum implements ASTLeaf {
     @Override
     public ASTNode accept(CloneVisitor visitor) {
         return visitor.visit(this);
-    }
-
-    @Override
-    public List<? extends ASTNode> getChildren() {
-        return Collections.emptyList();
     }
 
     @Override
@@ -79,7 +91,20 @@ public enum NameNum implements ASTLeaf {
     @Override
     public String[] toSimpleStringArray() {
         String[] result = new String[1];
-        result[0] = type;
+        result[0] = type.getType();
         return result;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof NameNum)) return false;
+        NameNum nameNum = (NameNum) o;
+        return type == nameNum.type;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(type);
     }
 }

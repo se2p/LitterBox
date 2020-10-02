@@ -20,44 +20,60 @@ package de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTLeaf;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
-import java.util.Collections;
-import java.util.List;
+import java.util.Objects;
 
-public enum SoundEffect implements ASTLeaf {
+public class SoundEffect extends AbstractNode implements ASTLeaf {
 
-    PAN("pan left/right"), PITCH("pitch");
+    public enum SoundEffectType {
+        PAN("pan left/right"), PITCH("pitch");
 
-    private final String token;
+        private final String token;
 
-    SoundEffect(String token) {
-        this.token = token;
-    }
-
-    public static boolean contains(String opcode) {
-        for (SoundEffect value : SoundEffect.values()) {
-            if (value.name().equals(opcode)) {
-                return true;
-            }
+        SoundEffectType(String token) {
+            this.token = token;
         }
-        return false;
-    }
 
-    public static SoundEffect fromString(String type) {
-        for (SoundEffect f : values()) {
-            if (f.getToken().startsWith(type.toLowerCase())) {
-                return f;
+        public static boolean contains(String opcode) {
+            for (SoundEffectType value : SoundEffectType.values()) {
+                if (value.name().equals(opcode)) {
+                    return true;
+                }
             }
+            return false;
         }
-        throw new IllegalArgumentException("Unknown SoundEffect: " + type);
+
+        public static SoundEffectType fromString(String type) {
+            for (SoundEffectType f : values()) {
+                if (f.getToken().startsWith(type.toLowerCase())) {
+                    return f;
+                }
+            }
+            throw new IllegalArgumentException("Unknown SoundEffect: " + type);
+        }
+
+        public String getToken() {
+            return token;
+        }
     }
 
-    public String getToken() {
-        return token;
+    private SoundEffectType type;
+
+    public SoundEffect(String typeName) {
+        this.type = SoundEffectType.fromString(typeName);
+    }
+
+    public SoundEffectType getType() {
+        return type;
+    }
+
+    public String getTypeName() {
+        return type.getToken();
     }
 
     @Override
@@ -71,11 +87,6 @@ public enum SoundEffect implements ASTLeaf {
     }
 
     @Override
-    public List<? extends ASTNode> getChildren() {
-        return Collections.emptyList();
-    }
-
-    @Override
     public String getUniqueName() {
         return this.getClass().getSimpleName();
     }
@@ -83,12 +94,25 @@ public enum SoundEffect implements ASTLeaf {
     @Override
     public String[] toSimpleStringArray() {
         String[] result = new String[1];
-        result[0] = token;
+        result[0] = type.getToken();
         return result;
     }
 
     @Override
     public BlockMetadata getMetadata() {
         return new NoBlockMetadata();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof SoundEffect)) return false;
+        SoundEffect that = (SoundEffect) o;
+        return type == that.type;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(type);
     }
 }

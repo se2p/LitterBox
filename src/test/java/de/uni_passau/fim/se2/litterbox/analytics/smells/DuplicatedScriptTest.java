@@ -19,20 +19,18 @@
 
 package de.uni_passau.fim.se2.litterbox.analytics.smells;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Set;
 
-class DuplicatedScriptTest {
+class DuplicatedScriptTest implements JsonTest {
 
     private static Program empty;
     private static Program duplicatedScript;
@@ -40,22 +38,15 @@ class DuplicatedScriptTest {
     private static Program duplicatedScriptDifferentEvent;
     private static Program duplicatedScriptMultipleBlocks;
     private static Program duplicatedScriptOtherSprite;
-    private static ObjectMapper mapper = new ObjectMapper();
 
     @BeforeAll
     public static void setUp() throws IOException, ParsingException {
-        File f = new File("./src/test/fixtures/emptyProject.json");
-        empty = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
-        f = new File("./src/test/fixtures/smells/duplicatedScript.json");
-        duplicatedScript = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
-        f = new File("./src/test/fixtures/smells/duplicatedScriptMinimalDifference.json");
-        duplicatedScriptMinimalDifference = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
-        f = new File("./src/test/fixtures/smells/duplicatedScriptDifferentEvent.json");
-        duplicatedScriptDifferentEvent = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
-        f = new File("./src/test/fixtures/smells/duplicatedScriptMultipleBlocks.json");
-        duplicatedScriptMultipleBlocks = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
-        f = new File("./src/test/fixtures/smells/duplicatedScriptOtherSprite.json");
-        duplicatedScriptOtherSprite = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
+        empty = JsonTest.parseProgram("./src/test/fixtures/emptyProject.json");
+        duplicatedScript = JsonTest.parseProgram("./src/test/fixtures/smells/duplicatedScript.json");
+        duplicatedScriptMinimalDifference = JsonTest.parseProgram("./src/test/fixtures/smells/duplicatedScriptMinimalDifference.json");
+        duplicatedScriptDifferentEvent = JsonTest.parseProgram("./src/test/fixtures/smells/duplicatedScriptDifferentEvent.json");
+        duplicatedScriptMultipleBlocks = JsonTest.parseProgram("./src/test/fixtures/smells/duplicatedScriptMultipleBlocks.json");
+        duplicatedScriptOtherSprite = JsonTest.parseProgram("./src/test/fixtures/smells/duplicatedScriptOtherSprite.json");
     }
 
     @Test

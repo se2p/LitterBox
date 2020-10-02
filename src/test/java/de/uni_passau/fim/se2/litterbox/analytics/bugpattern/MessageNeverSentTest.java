@@ -18,48 +18,29 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.truth.Truth;
+import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Set;
 
-import static junit.framework.TestCase.fail;
-
-class MessageNeverSentTest {
-    private static Program program;
-    private static Program messageRec;
-
-    @BeforeAll
-    public static void setup() {
-        String path = "src/test/fixtures/bugpattern/broadcastSync.json";
-        File file = new File(path);
-        ObjectMapper objectMapper = new ObjectMapper();
-        try {
-            program = ProgramParser.parseProgram("broadcastSync", objectMapper.readTree(file));
-            messageRec = ProgramParser.parseProgram("messageRec", objectMapper.readTree(new File("src/test/fixtures" +
-                    "/bugpattern/messageRec.json")));
-        } catch (IOException | ParsingException e) {
-            fail();
-        }
-    }
+class MessageNeverSentTest implements JsonTest {
 
     @Test
-    public void testMessageNeverSent() {
+    public void testMessageNeverSent() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/bugpattern/broadcastSync.json");
         MessageNeverSent finder = new MessageNeverSent();
         Set<Issue> reports = finder.check(program);
         Truth.assertThat(reports).isEmpty();
     }
 
     @Test
-    public void testMessageRec() {
+    public void testMessageRec() throws IOException, ParsingException {
+        Program messageRec = getAST("src/test/fixtures/bugpattern/messageRec.json");
         MessageNeverSent finder = new MessageNeverSent();
         Set<Issue> reports = finder.check(messageRec);
         Truth.assertThat(reports).hasSize(1);

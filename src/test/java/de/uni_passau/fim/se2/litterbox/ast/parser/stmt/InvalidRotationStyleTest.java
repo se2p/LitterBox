@@ -18,31 +18,23 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.parser.stmt;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
 import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.fail;
 
-public class InvalidRotationStyleTest {
-
-    private static ObjectMapper mapper = new ObjectMapper();
+public class InvalidRotationStyleTest implements JsonTest {
 
     @Test
-    public void testInvalidRotationStyle() {
-        File f = new File("./src/test/fixtures/stmtParser/invalidRotationStyle.json");
+    public void testInvalidRotationStyle() throws IOException, ParsingException {
         try {
-            Program invalidRotationSTyle = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
+            getAST("./src/test/fixtures/stmtParser/invalidRotationStyle.json");
             fail();
         } catch (IllegalArgumentException e) {
             // expected
-        } catch (ParsingException | IOException e) {
-            e.printStackTrace();
         }
     }
 }
