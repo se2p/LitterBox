@@ -79,19 +79,19 @@ public abstract class AbstractIssueFinder implements IssueFinder, ScratchVisitor
 
     protected void addIssue(ASTNode node, Metadata metadata) {
         if (currentScript != null) {
-            issues.add(new Issue(this, program, currentActor, currentScript, node, metadata));
+            issues.add(new Issue(this, IssueSeverity.HIGH, program, currentActor, currentScript, node, metadata));
         } else {
             assert (currentProcedure != null);
-            issues.add(new Issue(this, program, currentActor, currentProcedure, node, metadata));
+            issues.add(new Issue(this, IssueSeverity.HIGH, program, currentActor, currentProcedure, node, metadata));
         }
     }
 
     protected void addIssueForSynthesizedScript(Script theScript, ASTNode node, Metadata metadata) {
-        issues.add(new Issue(this, program, currentActor, theScript, node, metadata));
+        issues.add(new Issue(this, IssueSeverity.HIGH, program, currentActor, theScript, node, metadata));
     }
 
     protected void addIssueWithLooseComment() {
-        issues.add(new Issue(this, program, currentActor,
+        issues.add(new Issue(this, IssueSeverity.HIGH, program, currentActor,
                 (Script) null, // TODO: There is no script
                 currentActor, // TODO: There is no node?
                 null)); // TODO: There is no metadata

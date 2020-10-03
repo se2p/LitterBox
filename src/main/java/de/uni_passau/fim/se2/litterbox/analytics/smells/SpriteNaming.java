@@ -20,29 +20,18 @@ package de.uni_passau.fim.se2.litterbox.analytics.smells;
 
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.ProcedureMetadata;
-import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 
-public class EmptyCustomBlock extends AbstractIssueFinder {
-    public static final String NAME = "empty_custom_block";
+public class SpriteNaming extends AbstractIssueFinder {
 
-    @Override
-    public void visit(ProcedureDefinition node) {
-        currentProcedure = node;
-        if (node.getStmtList().getStmts().isEmpty()) {
-            addIssue(node, ((ProcedureMetadata) node.getMetadata()).getDefinition());
-        }
-        visitChildren(node);
-        currentProcedure = null;
-    }
 
-    @Override
-    public String getName() {
-        return NAME;
-    }
 
     @Override
     public IssueType getIssueType() {
         return IssueType.SMELL;
+    }
+
+    @Override
+    public String getName() {
+        return "sprite_naming";
     }
 }

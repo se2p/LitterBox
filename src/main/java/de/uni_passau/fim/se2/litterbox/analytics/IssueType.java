@@ -18,26 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics;
 
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-
-import java.util.Set;
-
-/**
- * Interface for all IssueFinders.
- */
-public interface IssueFinder {
-
-    IssueType getIssueType();
-
-    /**
-     * Checks the given program for a specific issue.
-     *
-     * @param program The project to check
-     * @return a IssueReport object
-     */
-    Set<Issue> check(Program program);
-
-    String getName();
-
-    void setIgnoreLooseBlocks(boolean value);
+public enum IssueType {
+    BUG, SMELL
 }
