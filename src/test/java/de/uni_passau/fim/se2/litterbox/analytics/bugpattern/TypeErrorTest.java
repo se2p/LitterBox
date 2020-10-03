@@ -24,6 +24,7 @@ import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -42,9 +43,13 @@ public class TypeErrorTest implements JsonTest {
     public static void setUp() throws IOException, ParsingException {
 
         empty = JsonTest.parseProgram("./src/test/fixtures/emptyProject.json");
-        stringNumber = JsonTest.parseProgram("./src/test/fixtures/bugpattern/stringComparedToNumber.json");
-        complex = JsonTest.parseProgram("./src/test/fixtures/bugpattern/complexeComparison.json");
-        loudnessNumber = JsonTest.parseProgram("./src/test/fixtures/bugpattern/compareLoudnessToNumber.json");
+        // TODO: Missing
+        // stringNumber = JsonTest.parseProgram("./src/test/fixtures/bugpattern/stringComparedToNumber.json");
+        // TODO: Missing
+        // complex = JsonTest.parseProgram("./src/test/fixtures/bugpattern/complexeComparison.json");
+        // TODO: Missing
+        // loudnessNumber = JsonTest.parseProgram("./src/test/fixtures/bugpattern/compareLoudnessToNumber.json");
+
         motivation = JsonTest.parseProgram("./src/test/fixtures/bugpattern/motivation.json");
         numberString = JsonTest.parseProgram("./src/test/fixtures/bugpattern/numberComparedToString.json");
         booleanEquals = JsonTest.parseProgram("./src/test/fixtures/bugpattern/redundantBooleanEquals.json");
@@ -57,6 +62,7 @@ public class TypeErrorTest implements JsonTest {
         Assertions.assertEquals(0, issues.size());
     }
 
+    @Disabled // Because of missing fixture
     @Test
     public void testStringComparedToNumber() {
         TypeError parameterName = new TypeError();
@@ -71,6 +77,7 @@ public class TypeErrorTest implements JsonTest {
         Assertions.assertEquals(1, issues.size());
     }
 
+    @Disabled // Because of missing fixture
     @Test
     public void testLoudnessComparedToNumber() {
         TypeError parameterName = new TypeError();
@@ -78,6 +85,7 @@ public class TypeErrorTest implements JsonTest {
         Assertions.assertEquals(0, issues.size());
     }
 
+    @Disabled // Because of missing fixture
     @Test
     public void testComplexComparision() {
         TypeError parameterName = new TypeError();
