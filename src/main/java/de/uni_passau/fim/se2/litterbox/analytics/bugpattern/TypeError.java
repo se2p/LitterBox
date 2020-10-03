@@ -1,10 +1,27 @@
+/*
+ * Copyright (C) 2020 LitterBox contributors
+ *
+ * This file is part of LitterBox.
+ *
+ * LitterBox is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or (at
+ * your option) any later version.
+ *
+ * LitterBox is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
+ */
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
-import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueReport;
+import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
+import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.BinaryExpression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.ComparableExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BiggerThan;
@@ -15,11 +32,10 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 /**
  * Detects type errors of the following form:
@@ -29,35 +45,21 @@ import java.util.List;
  *  - Comparisons between Loudness and Position nodes (MouseX, MouseY, PositionX, PositionY)
  *  - Comparisons containing Touching or Not nodes
  */
-public class TypeError implements IssueFinder, ScratchVisitor {
+public class TypeError extends AbstractIssueFinder {
     public static final String NAME = "type_error";
-    public static final String SHORT_NAME = "typeError";
-    private static final String NOTE1 = "There are no type errors in your project.";
-    private static final String NOTE2 = "Some of the comparisons compare attributes of different types.";
-    private int count = 0;
-    private boolean found;
-    private List<String> actorNames = new LinkedList<>();
     private boolean insideComparison = false;
     private boolean isRightSide = false;
-    private String type = null;
+
+    private Type type = null;
+    private enum Type { BOOLEAN, NUMBER, STRING, LOUDNESS, POSITION, DIRECTION };
 
     @Override
-    public IssueReport check(Program program){
+    public Set<Issue> check(Program program){
         Preconditions.checkNotNull(program);
-        found = false;
-        count = 0;
-        actorNames = new LinkedList<>();
+        this.program = program;
+        issues = new LinkedHashSet<>();
         program.accept(this);
-        String notes = NOTE1;
-        if (found) {
-            notes = NOTE2;
-        }
-        return new IssueReport(NAME, count, actorNames, notes);
-    }
-
-    @Override
-    public String getName() {
-        return NAME;
+        return issues;
     }
 
     /**
@@ -87,7 +89,7 @@ public class TypeError implements IssueFinder, ScratchVisitor {
         comparison(node);
     }
 
-    private void comparison(BinaryExpression<ComparableExpr, ComparableExpr> node){
+    private void comparison(BinaryExpression<ComparableExpr, ComparableExpr> node) {
         insideComparison = true;
         if (!node.getChildren().isEmpty()) {
             isRightSide = false;
@@ -97,13 +99,13 @@ public class TypeError implements IssueFinder, ScratchVisitor {
             isRightSide = true;
             rightChild.accept(this);
         }
-        insideComparison = false;
+        insideComparison = false; // TODO: Can comparisons be nested?
         type = null;
     }
 
     @Override
     public void visit(StringExpr node) {
-        if(insideComparison) {
+        if (insideComparison) {
             if (!isRightSide) {
                 type = null;
             }
@@ -112,18 +114,19 @@ public class TypeError implements IssueFinder, ScratchVisitor {
 
     @Override
     public void visit(Loudness node) {
-        checker("Loudness");
+        if (!isValid(Type.LOUDNESS)) {
+            addIssue(node, node.getMetadata());
+        }
     }
 
     @Override
     public void visit(StringLiteral node) {
-        if(insideComparison){
-            if(!isRightSide){
-                this.type = "String";
+        if (insideComparison) {
+            if (!isRightSide) {
+                this.type = Type.STRING;
             } else {
-                if(this.type != null && !type.equals("String")){
-                    count++;
-                    found = true;
+                if (this.type != null && type != Type.STRING) {
+                    addIssue(node, node.getMetadata());
                 }
             }
         }
@@ -131,22 +134,30 @@ public class TypeError implements IssueFinder, ScratchVisitor {
 
     @Override
     public void visit(MouseX node) {
-        checker("Position");
+        if (!isValid(Type.POSITION)) {
+            addIssue(node, node.getMetadata());
+        }
     }
 
     @Override
     public void visit(MouseY node) {
-        checker("Position");
+        if (!isValid(Type.POSITION)) {
+            addIssue(node, node.getMetadata());
+        }
     }
 
     @Override
     public void visit(PositionX node) {
-        checker("Position");
+        if (!isValid(Type.POSITION)) {
+            addIssue(node, node.getMetadata());
+        }
     }
 
     @Override
     public void visit(PositionY node) {
-        checker("Position");
+        if (!isValid(Type.POSITION)) {
+            addIssue(node, node.getMetadata());
+        }
     }
 
     /*@Override
@@ -160,11 +171,10 @@ public class TypeError implements IssueFinder, ScratchVisitor {
     public void visit(NumExpr node) {
        if (insideComparison) {
            if (!isRightSide) {
-               type = "Number";
+               type = Type.NUMBER;
            } else {
-               if (this.type != null && (this.type.equals("String") || this.type.equals("Boolean"))) {
-                   count++;
-                   found = true;
+               if (this.type != null && (this.type == Type.STRING || this.type == Type.BOOLEAN)) {
+                   addIssue(node, node.getMetadata());
                }
            }
        }
@@ -173,25 +183,26 @@ public class TypeError implements IssueFinder, ScratchVisitor {
 
     @Override
     public void visit(Direction node) {
-        checker("Direction");
+        if (!isValid(Type.DIRECTION)) {
+            addIssue(node, node.getMetadata());
+        }
     }
 
 
     @Override
     public void visit(AsString node) {
-        if(insideComparison){
-            if(!isRightSide){
-                if(node.getOperand1().getUniqueName().equals("Touching")){
-                    type = "Boolean";
+        if (insideComparison) {
+            if (!isRightSide) {
+                if (node.getOperand1().getUniqueName().equals("Touching")) {
+                    type = Type.BOOLEAN;
                 } else if (node.getOperand1().getUniqueName().equals("Not")) {
-                    type = "Boolean";
+                    type = Type.BOOLEAN;
                 } else {
                     type = null;
                 }
             } else {
-                if(node.getOperand1().getUniqueName().equals("Touching") || node.getOperand1().getUniqueName().equals("Not")) {
-                    count++;
-                    found = true;
+                if (node.getOperand1().getUniqueName().equals("Touching") || node.getOperand1().getUniqueName().equals("Not")) {
+                    addIssue(node, node.getMetadata());
                 }
             }
         }
@@ -199,13 +210,12 @@ public class TypeError implements IssueFinder, ScratchVisitor {
 
     @Override
     public void visit(AsNumber node) {
-        if(insideComparison) {
+        if (insideComparison) {
             if (!isRightSide) {
                 type = null;
             } else {
-                if(this.type.equals("Boolean")){
-                    count++;
-                    found = true;
+                if (this.type == Type.BOOLEAN){
+                    addIssue(node, node.getMetadata());
                 }
             }
         }
@@ -214,28 +224,37 @@ public class TypeError implements IssueFinder, ScratchVisitor {
 
     @Override
     public void visit(NumberLiteral node) {
-        if(insideComparison){
-            if(!isRightSide){
-                type = "Number";
+        if (insideComparison) {
+            if (!isRightSide) {
+                type = Type.NUMBER;
             } else {
-                if(this.type != null && (this.type.equals("String") || this.type.equals("Boolean"))){
-                    count++;
-                    found = true;
+                if (this.type != null && (this.type == Type.STRING || this.type == Type.BOOLEAN)) {
+                    addIssue(node, node.getMetadata());
                 }
             }
         }
     }
 
-    private void checker(String type){
-        if(insideComparison){
-            if(!isRightSide){
+    private boolean isValid(Type type){
+        if (insideComparison) {
+            if (!isRightSide) {
                 this.type = type;
             } else {
-                if(this.type != null && !this.type.equals(type) && !this.type.equals("Number")){
-                    count++;
-                    found = true;
+                if (this.type != null && this.type != type && this.type != Type.NUMBER) {
+                    return false;
                 }
             }
         }
+        return true;
+    }
+
+    @Override
+    public String getName() {
+        return NAME;
+    }
+
+    @Override
+    public IssueType getIssueType() {
+        return IssueType.BUG;
     }
 }
