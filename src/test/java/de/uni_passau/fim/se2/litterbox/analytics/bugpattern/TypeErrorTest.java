@@ -43,12 +43,9 @@ public class TypeErrorTest implements JsonTest {
     public static void setUp() throws IOException, ParsingException {
 
         empty = JsonTest.parseProgram("./src/test/fixtures/emptyProject.json");
-        // TODO: Missing
-        // stringNumber = JsonTest.parseProgram("./src/test/fixtures/bugpattern/stringComparedToNumber.json");
-        // TODO: Missing
-        // complex = JsonTest.parseProgram("./src/test/fixtures/bugpattern/complexeComparison.json");
-        // TODO: Missing
-        // loudnessNumber = JsonTest.parseProgram("./src/test/fixtures/bugpattern/compareLoudnessToNumber.json");
+        stringNumber = JsonTest.parseProgram("./src/test/fixtures/bugpattern/stringComparedToNumber.json");
+        complex = JsonTest.parseProgram("./src/test/fixtures/bugpattern/complexComparison.json");
+        loudnessNumber = JsonTest.parseProgram("./src/test/fixtures/bugpattern/compareLoudnessToNumber.json");
 
         motivation = JsonTest.parseProgram("./src/test/fixtures/bugpattern/motivation.json");
         numberString = JsonTest.parseProgram("./src/test/fixtures/bugpattern/numberComparedToString.json");
@@ -62,7 +59,6 @@ public class TypeErrorTest implements JsonTest {
         Assertions.assertEquals(0, issues.size());
     }
 
-    @Disabled // Because of missing fixture
     @Test
     public void testStringComparedToNumber() {
         TypeError parameterName = new TypeError();
@@ -77,7 +73,6 @@ public class TypeErrorTest implements JsonTest {
         Assertions.assertEquals(1, issues.size());
     }
 
-    @Disabled // Because of missing fixture
     @Test
     public void testLoudnessComparedToNumber() {
         TypeError parameterName = new TypeError();
@@ -85,9 +80,8 @@ public class TypeErrorTest implements JsonTest {
         Assertions.assertEquals(0, issues.size());
     }
 
-    @Disabled // Because of missing fixture
     @Test
-    public void testComplexComparision() {
+    public void testComplexComparison() {
         TypeError parameterName = new TypeError();
         Set<Issue> issues = parameterName.check(complex);
         Assertions.assertEquals(2, issues.size());
