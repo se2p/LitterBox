@@ -78,11 +78,15 @@ public abstract class AbstractIssueFinder implements IssueFinder, ScratchVisitor
     }
 
     protected void addIssue(ASTNode node, Metadata metadata) {
+        addIssue(node, metadata, IssueSeverity.HIGH);
+    }
+
+    protected void addIssue(ASTNode node, Metadata metadata, IssueSeverity severity) {
         if (currentScript != null) {
-            issues.add(new Issue(this, IssueSeverity.HIGH, program, currentActor, currentScript, node, metadata));
+            issues.add(new Issue(this, severity, program, currentActor, currentScript, node, metadata));
         } else {
             assert (currentProcedure != null);
-            issues.add(new Issue(this, IssueSeverity.HIGH, program, currentActor, currentProcedure, node, metadata));
+            issues.add(new Issue(this, severity, program, currentActor, currentProcedure, node, metadata));
         }
     }
 
