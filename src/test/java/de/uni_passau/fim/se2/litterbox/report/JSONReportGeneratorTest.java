@@ -81,12 +81,11 @@ public class JSONReportGeneratorTest implements JsonTest {
         ObjectMapper mapper = new ObjectMapper();
         JsonNode rootNode = mapper.readTree(jsonText);
         String code = rootNode.get(0).get("code").asText();
-        assertThat(code).isEqualTo("[scratchblocks]" + "\n" +
-                "repeat until <(x position) = (50):: #ff0000> // Position Equals Check" + "\n" +
-                "end" + "\n" +
-                "[/scratchblocks]" + "\n");
+        assertThat(code).isEqualTo("[scratchblocks]" + System.lineSeparator() +
+                "+repeat until <(x position) = (50):: #ff0000> // Position Equals Check" + System.lineSeparator() +
+                "end" + System.lineSeparator() +
+                "[/scratchblocks]" + System.lineSeparator());
     }
-
 
     @Test
     public void testMultipleIssues() throws IOException, ParsingException {

@@ -107,6 +107,8 @@ public class ScratchBlocksVisitor extends PrintVisitor {
 
     private ByteArrayOutputStream byteStream = null;
 
+    private StringBuilder currentLine = new StringBuilder();
+
     private boolean lineWrapped = true;
 
     private final Set<Issue> issues = new LinkedHashSet<>();
@@ -1775,7 +1777,7 @@ public class ScratchBlocksVisitor extends PrintVisitor {
     }
 
     protected void emitNoSpace(String string) {
-        printStream.append(string);
+        currentLine.append(string);
         lineWrapped = false;
     }
 
@@ -1788,16 +1790,27 @@ public class ScratchBlocksVisitor extends PrintVisitor {
     }
 
     protected void newLine() {
+        String currentString = currentLine.toString();
+        currentLine = new StringBuilder();
+        if (!currentString.isEmpty()) {
+            char firstChar = currentString.charAt(0);
+            // Only highlight if this is an actual statement
+            if (issueNote.size() > 0 && firstChar != '<' && firstChar != '(' &&
+                    firstChar != '[' && !currentString.startsWith("define")) {
+                printStream.append('+');
+            }
+        }
+        printStream.append(currentString);
         if (issueNote.size() == 1) {
-            emitNoSpace(" // ");
-            emitNoSpace(issueNote.iterator().next());
+            printStream.append(" // ");
+            printStream.append(issueNote.iterator().next());
             issueNote.clear();
         } else if (issueNote.size() > 1) {
-            emitNoSpace(" // ");
-            emitNoSpace(String.join(", ", issueNote));
+            printStream.append(" // ");
+            printStream.append(String.join(", ", issueNote));
             issueNote.clear();
         }
-        emitNoSpace("\n");
+        printStream.append(System.lineSeparator());
         lineWrapped = true;
     }
 
@@ -1816,6 +1829,8 @@ public class ScratchBlocksVisitor extends PrintVisitor {
 
     private String getParameterName(ParameterDefinition node) {
         // FIXME: Terrible hack
+        String currentString = currentLine.toString();
+        currentLine = new StringBuilder();
         PrintStream origStream = printStream;
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         printStream = new PrintStream(os);
@@ -1836,19 +1851,25 @@ public class ScratchBlocksVisitor extends PrintVisitor {
             storeNotesForIssue(node);
             emitNoSpace(">");
         }
-        String name = os.toString();
+        String name = currentLine.toString();
         printStream = origStream;
+        currentLine = new StringBuilder();
+        currentLine.append(currentString);
         return name;
     }
 
     private String getParameterName(Expression node) {
         // FIXME: Terrible hack
+        String currentString = currentLine.toString();
+        currentLine = new StringBuilder();
         PrintStream origStream = printStream;
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         printStream = new PrintStream(os);
         node.accept(this);
-        String name = os.toString();
+        String name = currentLine.toString();
         printStream = origStream;
+        currentLine = new StringBuilder();
+        currentLine.append(currentString);
         return name;
     }
 }
