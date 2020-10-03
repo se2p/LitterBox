@@ -19,7 +19,7 @@
 package de.uni_passau.fim.se2.litterbox.analytics;
 
 public enum IssueSeverity {
-    HIGH(1), MEDIUM(2), LOW(3);
+    HIGH(3), MEDIUM(2), LOW(1);
 
     private int numVal;
 
