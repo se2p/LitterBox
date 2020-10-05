@@ -20,6 +20,8 @@ package de.uni_passau.fim.se2.litterbox.cfg;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AttributeOf;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.HideList;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.ShowList;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.list.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.ScratchList;
@@ -49,6 +51,16 @@ public class ListUseVisitor implements DefinableCollector<ListVariable> {
 
     @Override
     public void visit(DeleteAllOf stmt) {
+        // No use
+    }
+
+    @Override
+    public void visit(HideList stmt) {
+        // No use
+    }
+
+    @Override
+    public void visit(ShowList stmt) {
         // No use
     }
 

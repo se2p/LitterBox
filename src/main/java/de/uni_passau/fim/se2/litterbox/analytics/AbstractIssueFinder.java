@@ -78,29 +78,28 @@ public abstract class AbstractIssueFinder implements IssueFinder, ScratchVisitor
     }
 
     protected void addIssue(ASTNode node, Metadata metadata) {
-        if (currentScript != null) {
-            issues.add(new Issue(this, program, currentActor, currentScript, node, metadata, new Hint(getName())));
-        } else {
-            assert (currentProcedure != null);
-            issues.add(new Issue(this, program, currentActor, currentProcedure, node, metadata, new Hint(getName())));
-        }
+        addIssue(node, metadata, IssueSeverity.HIGH, new Hint(getName()));
     }
 
     protected void addIssue(ASTNode node, Metadata metadata, Hint hint) {
+        addIssue(node, metadata, IssueSeverity.HIGH, hint);
+    }
+
+    protected void addIssue(ASTNode node, Metadata metadata, IssueSeverity severity, Hint hint) {
         if (currentScript != null) {
-            issues.add(new Issue(this, program, currentActor, currentScript, node, metadata, hint));
+            issues.add(new Issue(this, severity, program, currentActor, currentScript, node, metadata, hint));
         } else {
             assert (currentProcedure != null);
-            issues.add(new Issue(this, program, currentActor, currentProcedure, node, metadata, hint));
+            issues.add(new Issue(this, severity, program, currentActor, currentProcedure, node, metadata, hint));
         }
     }
 
     protected void addIssueForSynthesizedScript(Script theScript, ASTNode node, Metadata metadata, Hint hint) {
-        issues.add(new Issue(this, program, currentActor, theScript, node, metadata, hint));
+        issues.add(new Issue(this, IssueSeverity.HIGH, program, currentActor, theScript, node, metadata, hint));
     }
 
     protected void addIssueWithLooseComment() {
-        issues.add(new Issue(this, program, currentActor,
+        issues.add(new Issue(this, IssueSeverity.HIGH, program, currentActor,
                 (Script) null, // TODO: There is no script
                 currentActor, // TODO: There is no node?
                 null,  // TODO: There is no metadata

@@ -18,26 +18,16 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics;
 
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+public enum IssueSeverity {
+    HIGH(3), MEDIUM(2), LOW(1);
 
-import java.util.Set;
+    private int numVal;
 
-/**
- * Interface for all IssueFinders.
- */
-public interface IssueFinder {
+    IssueSeverity(int numVal) {
+        this.numVal = numVal;
+    }
 
-    IssueType getIssueType();
-
-    /**
-     * Checks the given program for a specific issue.
-     *
-     * @param program The project to check
-     * @return a IssueReport object
-     */
-    Set<Issue> check(Program program);
-
-    String getName();
-
-    void setIgnoreLooseBlocks(boolean value);
+    public int getSeverityLevel() {
+        return numVal;
+    }
 }

@@ -21,6 +21,8 @@ package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 import de.uni_passau.fim.se2.litterbox.analytics.Hint;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
@@ -76,13 +78,13 @@ public class MissingInitialization implements IssueFinder {
                 // TODO: The comment is attached to the statement, not the actual usage...
                 ASTNode containingScript = use.getUseTarget().getScriptOrProcedure();
                 if (containingScript instanceof Script) {
-                    issues.add(new Issue(this, program, use.getUseTarget().getActor(),
+                    issues.add(new Issue(this, IssueSeverity.HIGH, program, use.getUseTarget().getActor(),
                             (Script) containingScript,
                             use.getUseTarget().getASTNode(),
                             null,  // TODO: Where is the relevant metadata?
                             new Hint(getName())));
                 } else {
-                    issues.add(new Issue(this, program, use.getUseTarget().getActor(),
+                    issues.add(new Issue(this, IssueSeverity.HIGH, program, use.getUseTarget().getActor(),
                             (ProcedureDefinition) containingScript,
                             use.getUseTarget().getASTNode(),
                             null, // TODO: Where is the relevant metadata
