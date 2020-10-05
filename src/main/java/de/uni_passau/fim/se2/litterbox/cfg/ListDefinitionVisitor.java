@@ -19,6 +19,8 @@
 package de.uni_passau.fim.se2.litterbox.cfg;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.HideList;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.ShowList;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.list.*;
 
 import java.util.LinkedHashSet;
@@ -55,6 +57,16 @@ public class ListDefinitionVisitor implements DefinableCollector<ListVariable> {
     @Override
     public void visit(ReplaceItem stmt) {
         definitions.add(new ListVariable(stmt.getIdentifier()));
+    }
+
+    @Override
+    public void visit(HideList stmt) {
+        // Nop
+    }
+
+    @Override
+    public void visit(ShowList stmt) {
+        // Nop
     }
 
     @Override

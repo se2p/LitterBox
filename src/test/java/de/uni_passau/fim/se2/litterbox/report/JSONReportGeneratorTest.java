@@ -51,6 +51,7 @@ public class JSONReportGeneratorTest implements JsonTest {
         for (JsonNode node : issueNode) {
             assertThat(node.has("finder")).isTrue();
             assertThat(node.has("name")).isTrue();
+            assertThat(node.has("severity")).isTrue();
             assertThat(node.has("type")).isTrue();
             assertThat(node.has("sprite")).isTrue();
             assertThat(node.has("hint")).isTrue();

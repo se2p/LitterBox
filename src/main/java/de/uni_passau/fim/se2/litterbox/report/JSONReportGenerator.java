@@ -66,7 +66,8 @@ public class JSONReportGenerator implements ReportGenerator {
             JsonNode childNode = mapper.createObjectNode();
             ((ObjectNode) childNode).put("finder", issue.getFinderName());
             ((ObjectNode) childNode).put("name", issue.getTranslatedFinderName());
-            ((ObjectNode) childNode).put("type", issue.getFinderType());
+            ((ObjectNode) childNode).put("type", issue.getIssueType().toString());
+            ((ObjectNode) childNode).put("severity", issue.getSeverity().getSeverityLevel());
             ((ObjectNode) childNode).put("sprite", issue.getActorName());
             ((ObjectNode) childNode).put("hint", issue.getHint());
             ArrayNode arrayNode = ((ObjectNode) childNode).putArray("costumes");

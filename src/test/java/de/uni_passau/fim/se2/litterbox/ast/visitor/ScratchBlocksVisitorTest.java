@@ -20,6 +20,7 @@ package de.uni_passau.fim.se2.litterbox.ast.visitor;
 
 import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.*;
 import de.uni_passau.fim.se2.litterbox.analytics.smells.UnusedVariable;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
@@ -781,7 +782,7 @@ public class ScratchBlocksVisitorTest implements JsonTest {
         StutteringMovement stuttMovement = new StutteringMovement();
 
         Issue firstIssue = issues.iterator().next();
-        Issue mockIssue = new Issue(stuttMovement, program, firstIssue.getActor(), firstIssue.getScript(), firstIssue.getCodeLocation(), firstIssue.getCodeMetadata());
+        Issue mockIssue = new Issue(stuttMovement, IssueSeverity.HIGH, program, firstIssue.getActor(), firstIssue.getScript(), firstIssue.getCodeLocation(), firstIssue.getCodeMetadata());
 
         ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(Arrays.asList(firstIssue, mockIssue));
         visitor.begin();
@@ -1347,6 +1348,25 @@ public class ScratchBlocksVisitorTest implements JsonTest {
         String output = visitor.getScratchBlocks();
         assertEquals("[scratchblocks]\n" +
                 "(the list:: #ff0000 :: list) // Unused Variable\n" +
+                "[/scratchblocks]\n", output);
+    }
+    
+    @Test
+    public void testBuggyListIssueAnnotation() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/scratchblocks/highlightedlist.json");
+        MissingInitialization finder = new MissingInitialization();
+        Set<Issue> issues = finder.check(program);
+        Issue issue = issues.iterator().next();
+
+        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(issue);
+        visitor.begin();
+        visitor.setCurrentActor(issue.getActor());
+        issue.getScriptOrProcedureDefinition().accept(visitor);
+        visitor.end();
+        String output = visitor.getScratchBlocks();
+        assertEquals("[scratchblocks]\n" +
+                "when [space v] key pressed\n" +
+                "delete (1) of [\uD83C\uDF83 Triple click the numbers below. This is your savecode! Press space to close. \uD83C\uDF83 v]:: #ff0000 // Missing Initialization\n" +
                 "[/scratchblocks]\n", output);
     }
 
