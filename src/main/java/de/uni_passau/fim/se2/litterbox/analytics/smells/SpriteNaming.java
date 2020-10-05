@@ -20,10 +20,60 @@ package de.uni_passau.fim.se2.litterbox.analytics.smells;
 
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
+import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
+import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * This finder looks if a sprite name has an uncommunicative name.
+ * This is the case if the standard name from Scratch is used or Sprites are simply iterated.
+ */
 public class SpriteNaming extends AbstractIssueFinder {
+    public static final String NAME = "sprite_naming";
+    private List<String> visitedNames;
 
+    private static final String[] SPRITE_LANGUAGES = {"Actor", "Ator", "Ciplun", "Duszek", "Figur", "Figura", "Gariņš",
+            "Hahmo", "Kihusika", "Kukla", "Lik", "Nhân", "Objeto", "Parehe", "Personaj", "Personatge", "Pertsonaia",
+            "Postava", "Pêlîstik", "Sprait", "Sprajt", "Sprayt", "Sprid", "Sprite", "Sprìd", "Szereplő", "Teikning",
+            "Umlingisi", "Veikėjas", "Αντικείμενο", "Анагӡаҩ", "Дүрс", "Лик", "Спрайт", "Կերպար", "דמות", "الكائن",
+            "تەن", "شکلک", "สไปรต์", "სპრაიტი", "ገፀ-ባህርይ", "តួអង្គ", "スプライト", "角色", "스프라이트"};
 
+    @Override
+    public void visit(Program node) {
+        visitedNames = new ArrayList<>();
+        super.visit(node);
+    }
+
+    @Override
+    public void visit(ActorDefinition node) {
+        currentActor = node;
+        checkName(node.getIdent().getName());
+    }
+
+    private void checkName(String name) {
+        String trimmedName = name;
+        while (Character.isDigit(trimmedName.charAt(trimmedName.length() - 1))
+                || Character.isWhitespace(trimmedName.charAt(trimmedName.length() - 1))) {
+            trimmedName = trimmedName.substring(0, trimmedName.length() - 1);
+        }
+        for (String standard : SPRITE_LANGUAGES) {
+            if (trimmedName.equals(standard)) {
+                addIssueWithLooseComment();
+                visitedNames.add(trimmedName);
+                return;
+            }
+        }
+        for (String visitedName : visitedNames) {
+            if (trimmedName.equals(visitedName)) {
+                addIssueWithLooseComment();
+                visitedNames.add(trimmedName);
+                return;
+            }
+        }
+        visitedNames.add(trimmedName);
+    }
 
     @Override
     public IssueType getIssueType() {
