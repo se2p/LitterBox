@@ -88,6 +88,47 @@ public class ScratchBlocksVisitorTest implements JsonTest {
     }
 
     @Test
+    public void testTouchingSpriteBlock() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/scratchblocks/touchingspriteblock.json");
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        PrintStream ps = new PrintStream(os);
+        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(ps);
+        visitor.begin();
+        program.accept(visitor);
+        visitor.end();
+        String result = os.toString();
+        assertEquals("[scratchblocks]\n" +
+                "when green flag clicked\n" +
+                "forever \n" +
+                "if <touching (Bell v) ?> then\n" +
+                "say [Hello!]\n" +
+                "end\n" +
+                "end\n" +
+                "[/scratchblocks]\n", result);
+    }
+
+    @Test
+    public void testTouchingVarBlock() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/scratchblocks/touchingvarblock.json");
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        PrintStream ps = new PrintStream(os);
+        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(ps);
+        visitor.begin();
+        program.accept(visitor);
+        visitor.end();
+        String result = os.toString();
+        assertEquals("[scratchblocks]\n" +
+                "when green flag clicked\n" +
+                "set [my variable v] to [Bell]\n" +
+                "forever \n" +
+                "if <touching (my variable) ?> then\n" +
+                "say [Hello!]\n" +
+                "end\n" +
+                "end\n" +
+                "[/scratchblocks]\n", result);
+    }
+
+    @Test
     public void testMultipleCustomBlocks() throws IOException, ParsingException {
         Program program = getAST("src/test/fixtures/scratchblocks/multicustomblocks.json");
         ByteArrayOutputStream os = new ByteArrayOutputStream();
@@ -1350,7 +1391,7 @@ public class ScratchBlocksVisitorTest implements JsonTest {
                 "(the list:: #ff0000 :: list) // Unused Variable\n" +
                 "[/scratchblocks]\n", output);
     }
-    
+
     @Test
     public void testBuggyListIssueAnnotation() throws IOException, ParsingException {
         Program program = getAST("src/test/fixtures/scratchblocks/highlightedlist.json");
