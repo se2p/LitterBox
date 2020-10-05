@@ -1349,6 +1349,25 @@ public class ScratchBlocksVisitorTest implements JsonTest {
                 "(the list:: #ff0000 :: list) // Unused Variable\n" +
                 "[/scratchblocks]\n", output);
     }
+    
+    @Test
+    public void testBuggyListIssueAnnotation() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/scratchblocks/highlightedlist.json");
+        MissingInitialization finder = new MissingInitialization();
+        Set<Issue> issues = finder.check(program);
+        Issue issue = issues.iterator().next();
+
+        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(issue);
+        visitor.begin();
+        visitor.setCurrentActor(issue.getActor());
+        issue.getScriptOrProcedureDefinition().accept(visitor);
+        visitor.end();
+        String output = visitor.getScratchBlocks();
+        assertEquals("[scratchblocks]\n" +
+                "when [space v] key pressed\n" +
+                "delete (1) of [\uD83C\uDF83 Triple click the numbers below. This is your savecode! Press space to close. \uD83C\uDF83 v]:: #ff0000 // Missing Initialization\n" +
+                "[/scratchblocks]\n", output);
+    }
 
     // TODO: No working scripts?
     // TODO: SameIdentifierDifferentSprite

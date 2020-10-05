@@ -941,8 +941,8 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         emitNoSpace("show variable [");
         node.getIdentifier().accept(this);
         emitNoSpace(" v");
-        storeNotesForIssue(node);
         emitNoSpace("]");
+        storeNotesForIssue(node);
         newLine();
     }
 
@@ -951,8 +951,8 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         emitNoSpace("hide variable [");
         node.getIdentifier().accept(this);
         emitNoSpace(" v");
-        storeNotesForIssue(node);
         emitNoSpace("]");
+        storeNotesForIssue(node);
         newLine();
     }
 
@@ -963,8 +963,8 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         emitNoSpace(" to [");
         node.getIdentifier().accept(this);
         emitNoSpace(" v");
-        storeNotesForIssue(node);
         emitNoSpace("]");
+        storeNotesForIssue(node);
         newLine();
     }
 
@@ -975,8 +975,8 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         emitNoSpace(" of [");
         node.getIdentifier().accept(this);
         emitNoSpace(" v");
-        storeNotesForIssue(node);
         emitNoSpace("]");
+        storeNotesForIssue(node);
         newLine();
     }
 
@@ -985,8 +985,8 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         emitNoSpace("delete all of [");
         node.getIdentifier().accept(this);
         emitNoSpace(" v");
-        storeNotesForIssue(node);
         emitNoSpace("]");
+        storeNotesForIssue(node);
         newLine();
     }
 
@@ -999,8 +999,8 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         emitNoSpace(" of [");
         node.getIdentifier().accept(this);
         emitNoSpace(" v");
-        storeNotesForIssue(node);
         emitNoSpace("]");
+        storeNotesForIssue(node);
         newLine();
     }
 
@@ -1021,8 +1021,8 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         emitNoSpace("show list [");
         node.getIdentifier().accept(this);
         emitNoSpace(" v");
-        storeNotesForIssue(node);
         emitNoSpace("]");
+        storeNotesForIssue(node);
         newLine();
     }
 
@@ -1031,8 +1031,8 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         emitNoSpace("hide list [");
         node.getIdentifier().accept(this);
         emitNoSpace(" v");
-        storeNotesForIssue(node);
         emitNoSpace("]");
+        storeNotesForIssue(node);
         newLine();
     }
 
