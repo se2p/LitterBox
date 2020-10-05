@@ -53,22 +53,22 @@ public class SpriteNaming extends AbstractIssueFinder {
     }
 
     private void checkName(String name) {
-        String trimmedName = name.trim();
+        String trimmedName = name;
         while (Character.isDigit(trimmedName.charAt(trimmedName.length() - 1))
                 || Character.isWhitespace(trimmedName.charAt(trimmedName.length() - 1))) {
             trimmedName = trimmedName.substring(0, trimmedName.length() - 1);
         }
-        trimmedName = trimmedName.trim();
-        visitedNames.add(trimmedName);
         for (String standard : SPRITE_LANGUAGES) {
             if (trimmedName.equals(standard)) {
                 addIssueWithLooseComment();
+                visitedNames.add(trimmedName);
                 return;
             }
         }
         for (String visitedName : visitedNames) {
-            if (trimmedName.startsWith(visitedName) && Character.isDigit(name.charAt(name.length() - 1))) {
+            if (trimmedName.equals(visitedName)) {
                 addIssueWithLooseComment();
+                visitedNames.add(trimmedName);
                 return;
             }
         }
