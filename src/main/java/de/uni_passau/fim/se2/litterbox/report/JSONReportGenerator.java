@@ -60,7 +60,7 @@ public class JSONReportGenerator implements ReportGenerator {
         ObjectNode metricNode = mapper.createObjectNode();
 
         addMetrics(metricNode, program);
-        rootNode.put("metrics", metricNode);
+        rootNode.set("metrics", metricNode);
 
         for (Issue issue : issues) {
             JsonNode childNode = mapper.createObjectNode();
@@ -91,8 +91,9 @@ public class JSONReportGenerator implements ReportGenerator {
             }
             issueNode.add(childNode);
         }
+        rootNode.set("issues", issueNode);
 
-        String jsonString = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(issueNode);
+        String jsonString = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(rootNode);
         final PrintStream printStream = new PrintStream(outputStream);
         printStream.print(jsonString);
         if (closeStream) {
@@ -100,7 +101,7 @@ public class JSONReportGenerator implements ReportGenerator {
         }
     }
 
-    private JsonNode addMetrics(ObjectNode metricsNode, Program program) {
+    private void addMetrics(ObjectNode metricsNode, Program program) {
         MetricTool tool = new MetricTool();
 
         for (MetricExtractor metric : tool.getAnalyzers()) {
