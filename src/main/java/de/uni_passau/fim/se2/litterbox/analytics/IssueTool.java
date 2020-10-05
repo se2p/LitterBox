@@ -152,7 +152,7 @@ public class IssueTool {
     }
 
     static void registerSmellFinder(IssueFinder finder, Map<String, IssueFinder> smellFinders) {
-        if (finder.getIssueType() != IssueFinder.IssueType.SMELL) {
+        if (finder.getIssueType() != IssueType.SMELL) {
             throw new RuntimeException("Cannot register IssueFinder of Type "
                     + finder.getIssueType()
                     + " as Smell IssueFinder");
@@ -162,7 +162,7 @@ public class IssueTool {
     }
 
     static void registerBugFinder(IssueFinder finder, Map<String, IssueFinder> bugFinders) {
-        if (finder.getIssueType() != IssueFinder.IssueType.BUG) {
+        if (finder.getIssueType() != IssueType.BUG) {
             throw new RuntimeException("Cannot register IssueFinder of Type "
                     + finder.getIssueType()
                     + " as Bug IssueFinder");

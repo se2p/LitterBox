@@ -32,6 +32,7 @@ import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 public class Issue {
 
     private IssueFinder finder;
+    private IssueSeverity severity;
     private ActorDefinition actor;
     private ASTNode node;
     private Script script;
@@ -50,9 +51,10 @@ public class Issue {
      * @param currentNode that is closest to the issue origin
      * @param metaData    that contains references for comments
      */
-    public Issue(IssueFinder finder, Program program, ActorDefinition actor, Script script,
+    public Issue(IssueFinder finder, IssueSeverity severity, Program program, ActorDefinition actor, Script script,
                  ASTNode currentNode, Metadata metaData) {
         this.finder = finder;
+        this.severity = severity;
         this.program = program;
         this.actor = actor;
         this.script = script;
@@ -71,7 +73,7 @@ public class Issue {
      * @param currentNode that is closest to the issue origin
      * @param metaData    that contains references for comments
      */
-    public Issue(IssueFinder finder, Program program, ActorDefinition actor, ProcedureDefinition procedure,
+    public Issue(IssueFinder finder, IssueSeverity severity, Program program, ActorDefinition actor, ProcedureDefinition procedure,
                  ASTNode currentNode, Metadata metaData) {
         this.finder = finder;
         this.program = program;
@@ -83,6 +85,12 @@ public class Issue {
 
     public IssueFinder getFinder() {
         return finder;
+    }
+
+    public IssueSeverity getSeverity() { return severity; }
+
+    public IssueType getIssueType() {
+        return finder.getIssueType();
     }
 
     public ActorDefinition getActor() {
@@ -139,7 +147,4 @@ public class Issue {
         return metaData;
     }
 
-    public String getFinderType() {
-        return finder.getIssueType().toString();
-    }
 }
