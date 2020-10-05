@@ -54,27 +54,6 @@ public class TypeError extends AbstractIssueFinder {
     private enum Type { BOOLEAN, NUMBER, STRING, LOUDNESS, POSITION, DIRECTION };
 
     @Override
-    public Set<Issue> check(Program program){
-        Preconditions.checkNotNull(program);
-        this.program = program;
-        issues = new LinkedHashSet<>();
-        program.accept(this);
-        return issues;
-    }
-
-    /**
-     * Needed when dead code should be excluded.
-     *
-     * @param node LessThan Node of which the children will be iterated
-     */
-    /*@Override
-    public void visit(Script node) {
-        if(!node.getEvent().getUniqueName().equals("Never")) {
-            visit((ASTNode) node);
-        }
-    }*/
-
-    @Override
     public void visit(LessThan node) {
         comparison(node);
     }
@@ -126,7 +105,7 @@ public class TypeError extends AbstractIssueFinder {
                 this.type = Type.STRING;
             } else {
                 if (this.type != null && type != Type.STRING) {
-                    addIssue(node, node.getMetadata());
+                    addIssue(node.getParentNode(), node.getParentNode().getMetadata());
                 }
             }
         }
@@ -229,7 +208,7 @@ public class TypeError extends AbstractIssueFinder {
                 type = Type.NUMBER;
             } else {
                 if (this.type != null && (this.type == Type.STRING || this.type == Type.BOOLEAN)) {
-                    addIssue(node, node.getMetadata());
+                    addIssue(node.getParentNode(), node.getParentNode().getMetadata());
                 }
             }
         }
