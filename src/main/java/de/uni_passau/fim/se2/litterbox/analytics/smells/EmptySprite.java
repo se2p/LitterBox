@@ -29,6 +29,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -69,5 +71,11 @@ public class EmptySprite implements IssueFinder, ScratchVisitor {
     @Override
     public void setIgnoreLooseBlocks(boolean value) {
         // Irrelevant for this finder
+    }
+
+    @Override
+    public Collection<String> getHintKeys() {
+        // Default: Only one key with the name of the finder
+        return Arrays.asList(getName());
     }
 }

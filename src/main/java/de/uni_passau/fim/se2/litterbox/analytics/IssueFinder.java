@@ -20,6 +20,7 @@ package de.uni_passau.fim.se2.litterbox.analytics;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 
+import java.util.Collection;
 import java.util.Set;
 
 /**
@@ -38,6 +39,8 @@ public interface IssueFinder {
     Set<Issue> check(Program program);
 
     String getName();
+
+    Collection<String> getHintKeys();
 
     void setIgnoreLooseBlocks(boolean value);
 }

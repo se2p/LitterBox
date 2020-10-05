@@ -111,4 +111,10 @@ public abstract class AbstractIssueFinder implements IssueFinder, ScratchVisitor
     }
 
     public abstract IssueType getIssueType();
+
+    @Override
+    public Collection<String> getHintKeys() {
+        // Default: Only one key with the name of the finder
+        return Arrays.asList(getName());
+    }
 }

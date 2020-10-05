@@ -59,6 +59,7 @@ public class IssueTool {
         registerBugFinder(new MissingLoopSensing(), bugFinders);
         registerBugFinder(new MissingPenDown(), bugFinders);
         registerBugFinder(new MissingPenUp(), bugFinders);
+        registerBugFinder(new MissingResource(), bugFinders);
         registerBugFinder(new MissingTerminationCondition(), bugFinders);
         registerBugFinder(new MissingWaitUntilCondition(), bugFinders);
         registerBugFinder(new NoWorkingScripts(), bugFinders);
