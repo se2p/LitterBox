@@ -24,9 +24,12 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
+/**
+ * This finder looks if a sprite name has an uncommunicative name.
+ * This is the case if the standard name from Scratch is used or Sprites are simply iterated.
+ */
 public class SpriteNaming extends AbstractIssueFinder {
     public static final String NAME = "sprite_naming";
     private List<String> visitedNames;
@@ -52,11 +55,11 @@ public class SpriteNaming extends AbstractIssueFinder {
 
     private void checkName(String name) {
         String trimmedName = name.trim();
-        while(Character.isDigit(trimmedName.charAt(trimmedName.length()-1))){
-            trimmedName = trimmedName.substring(0,trimmedName.length()-1);
+        while (Character.isDigit(trimmedName.charAt(trimmedName.length() - 1))) {
+            trimmedName = trimmedName.substring(0, trimmedName.length() - 1);
         }
         trimmedName = trimmedName.trim();
-        for (String standard : SPRITE_LANGUAGES){
+        for (String standard : SPRITE_LANGUAGES) {
             if (trimmedName.equals(standard)) {
                 addIssueWithLooseComment();
                 return;
