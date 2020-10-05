@@ -54,7 +54,8 @@ public class SpriteNaming extends AbstractIssueFinder {
 
     private void checkName(String name) {
         String trimmedName = name.trim();
-        while (Character.isDigit(trimmedName.charAt(trimmedName.length() - 1))) {
+        while (Character.isDigit(trimmedName.charAt(trimmedName.length() - 1))
+                || Character.isWhitespace(trimmedName.charAt(trimmedName.length() - 1))) {
             trimmedName = trimmedName.substring(0, trimmedName.length() - 1);
         }
         trimmedName = trimmedName.trim();
