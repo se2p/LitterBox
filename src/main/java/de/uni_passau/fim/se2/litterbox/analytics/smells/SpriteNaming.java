@@ -72,6 +72,7 @@ public class SpriteNaming extends AbstractIssueFinder {
                 return;
             }
         }
+        visitedNames.add(trimmedName);
     }
 
     @Override
