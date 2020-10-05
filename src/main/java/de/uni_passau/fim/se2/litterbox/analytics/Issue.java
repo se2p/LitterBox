@@ -62,6 +62,9 @@ public class Issue {
         this.node = currentNode;
         this.metaData = metaData;
         this.hint = hint;
+        // Check that hints have actually been declared, otherwise
+        // we might be missing translations
+        assert (finder.getHintKeys().contains(hint.getHintKey()));
     }
 
     /**
@@ -84,6 +87,9 @@ public class Issue {
         this.node = currentNode;
         this.metaData = metaData;
         this.hint = hint;
+        // Check that hints have actually been declared, otherwise
+        // we might be missing translations
+        assert (finder.getHintKeys().contains(hint.getHintKey()));
     }
 
     public IssueFinder getFinder() {

@@ -68,6 +68,7 @@ public class IssueTool {
         registerBugFinder(new PositionEqualsCheck(), bugFinders);
         registerBugFinder(new RecursiveCloning(), bugFinders);
         registerBugFinder(new StutteringMovement(), bugFinders);
+        registerBugFinder(new TerminatedLoop(), bugFinders);
         registerBugFinder(new TypeError(), bugFinders);
         registerBugFinder(new VariableAsLiteral(), bugFinders);
 

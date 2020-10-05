@@ -102,11 +102,7 @@ public class IssueTranslator {
      * @return translated hint for a given finder name
      */
     public String getHint(String finderName) {
-        if (hints.containsKey(finderName)) {
-            return hints.getString(finderName);
-        } else {
-            return finderName;
-        }
+        return hints.getString(finderName);
     }
 
     /**
@@ -116,11 +112,7 @@ public class IssueTranslator {
      * @return translated name
      */
     public String getName(String finderName) {
-        if (names.containsKey(finderName)) {
-            return names.getString(finderName);
-        } else {
-            return finderName;
-        }
+        return names.getString(finderName);
     }
 
     /**

@@ -48,6 +48,10 @@ public class Hint {
         return hintText.indexOf(ESCAPE_CHARACTER) >= 0;
     }
 
+    public String getHintKey() {
+        return hintKey;
+    }
+
     public String getHintText() {
         return hintText;
     }
