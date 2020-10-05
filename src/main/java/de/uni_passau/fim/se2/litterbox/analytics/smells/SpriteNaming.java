@@ -50,7 +50,6 @@ public class SpriteNaming extends AbstractIssueFinder {
     public void visit(ActorDefinition node) {
         currentActor = node;
         checkName(node.getIdent().getName());
-        visitedNames.add(node.getIdent().getName());
     }
 
     private void checkName(String name) {
@@ -59,6 +58,7 @@ public class SpriteNaming extends AbstractIssueFinder {
             trimmedName = trimmedName.substring(0, trimmedName.length() - 1);
         }
         trimmedName = trimmedName.trim();
+        visitedNames.add(trimmedName);
         for (String standard : SPRITE_LANGUAGES) {
             if (trimmedName.equals(standard)) {
                 addIssueWithLooseComment();
