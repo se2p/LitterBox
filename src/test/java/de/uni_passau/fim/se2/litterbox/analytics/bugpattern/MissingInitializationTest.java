@@ -145,4 +145,20 @@ public class MissingInitializationTest implements JsonTest {
         Set<Issue> reports = (initialization).check(program);
         Assertions.assertEquals(0, reports.size());
     }
+
+    @Test
+    public void testMissingInitializationOfList() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/bugpattern/missingInitializationUseList.json");
+        MissingInitialization initialization = new MissingInitialization();
+        Set<Issue> reports = (initialization).check(program);
+        Assertions.assertEquals(1, reports.size());
+    }
+
+    @Test
+    public void testMissingInitializationOfListNotReportingHide() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/bugpattern/missingInitializationHideList.json");
+        MissingInitialization initialization = new MissingInitialization();
+        Set<Issue> reports = (initialization).check(program);
+        Assertions.assertEquals(0, reports.size());
+    }
 }
