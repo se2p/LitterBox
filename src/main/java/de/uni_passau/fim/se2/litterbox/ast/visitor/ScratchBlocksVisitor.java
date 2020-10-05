@@ -57,9 +57,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.DeleteClo
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopAll;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopThisScript;
 import de.uni_passau.fim.se2.litterbox.ast.model.timecomp.TimeComp;
-import de.uni_passau.fim.se2.litterbox.ast.model.touchable.AsTouchable;
-import de.uni_passau.fim.se2.litterbox.ast.model.touchable.Edge;
-import de.uni_passau.fim.se2.litterbox.ast.model.touchable.MousePointer;
+import de.uni_passau.fim.se2.litterbox.ast.model.touchable.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.BooleanType;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.NumberType;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.StringType;
@@ -1642,6 +1640,15 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         node.getColor().accept(this);
         storeNotesForIssue(node);
         emitNoSpace(" ?>");
+    }
+
+    @Override
+    public void visit(SpriteTouchable node) {
+        emitNoSpace("(");
+        // TODO: Why is the signature a StringExpr if it is always set to a StringLiteral
+        StringLiteral literal = (StringLiteral)node.getStringExpr();
+        emitNoSpace(literal.getText());
+        emitNoSpace(" v)");
     }
 
     @Override
