@@ -19,9 +19,8 @@
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
-import de.uni_passau.fim.se2.litterbox.analytics.Issue;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.BinaryExpression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.ComparableExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BiggerThan;
@@ -32,18 +31,14 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
-import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
-
-import java.util.LinkedHashSet;
-import java.util.Set;
 
 /**
  * Detects type errors of the following form:
- *  - Comparisons between (empty) String and Number
- *  - Comparisons between Direction and Loudness
- *  - Comparisons between Direction and Position nodes (MouseX, MouseY, PositionX, PositionY)
- *  - Comparisons between Loudness and Position nodes (MouseX, MouseY, PositionX, PositionY)
- *  - Comparisons containing Touching or Not nodes
+ * - Comparisons between (empty) String and Number
+ * - Comparisons between Direction and Loudness
+ * - Comparisons between Direction and Position nodes (MouseX, MouseY, PositionX, PositionY)
+ * - Comparisons between Loudness and Position nodes (MouseX, MouseY, PositionX, PositionY)
+ * - Comparisons containing Touching or Not nodes
  */
 public class TypeError extends AbstractIssueFinder {
     public static final String NAME = "type_error";
@@ -51,7 +46,10 @@ public class TypeError extends AbstractIssueFinder {
     private boolean isRightSide = false;
 
     private Type type = null;
-    private enum Type { BOOLEAN, NUMBER, STRING, LOUDNESS, POSITION, DIRECTION };
+
+    private enum Type {BOOLEAN, NUMBER, STRING, LOUDNESS, POSITION, DIRECTION}
+
+    ;
 
     @Override
     public void visit(LessThan node) {
@@ -146,19 +144,18 @@ public class TypeError extends AbstractIssueFinder {
         }
     }*/
 
-   @Override
+    @Override
     public void visit(NumExpr node) {
-       if (insideComparison) {
-           if (!isRightSide) {
-               type = Type.NUMBER;
-           } else {
-               if (this.type != null && (this.type == Type.STRING || this.type == Type.BOOLEAN)) {
-                   addIssue(node, node.getMetadata());
-               }
-           }
-       }
-   }
-
+        if (insideComparison) {
+            if (!isRightSide) {
+                type = Type.NUMBER;
+            } else {
+                if (this.type != null && (this.type == Type.STRING || this.type == Type.BOOLEAN)) {
+                    addIssue(node, node.getMetadata());
+                }
+            }
+        }
+    }
 
     @Override
     public void visit(Direction node) {
@@ -166,7 +163,6 @@ public class TypeError extends AbstractIssueFinder {
             addIssue(node, node.getMetadata());
         }
     }
-
 
     @Override
     public void visit(AsString node) {
@@ -193,13 +189,12 @@ public class TypeError extends AbstractIssueFinder {
             if (!isRightSide) {
                 type = null;
             } else {
-                if (this.type == Type.BOOLEAN){
+                if (this.type == Type.BOOLEAN) {
                     addIssue(node, node.getMetadata());
                 }
             }
         }
     }
-
 
     @Override
     public void visit(NumberLiteral node) {
@@ -214,7 +209,7 @@ public class TypeError extends AbstractIssueFinder {
         }
     }
 
-    private boolean isValid(Type type){
+    private boolean isValid(Type type) {
         if (insideComparison) {
             if (!isRightSide) {
                 this.type = type;
