@@ -129,6 +129,22 @@ public class ScratchBlocksVisitorTest implements JsonTest {
     }
 
     @Test
+    public void testSetVarToVar() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/scratchblocks/setvariabletovariable.json");
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        PrintStream ps = new PrintStream(os);
+        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(ps);
+        visitor.begin();
+        program.accept(visitor);
+        visitor.end();
+        String result = os.toString();
+        assertEquals("[scratchblocks]\n" +
+                "set [my variable v] to (other variable)\n" +
+                "change [my variable v] by (other variable)\n" +
+                "[/scratchblocks]\n", result);
+    }
+
+    @Test
     public void testMultipleCustomBlocks() throws IOException, ParsingException {
         Program program = getAST("src/test/fixtures/scratchblocks/multicustomblocks.json");
         ByteArrayOutputStream os = new ByteArrayOutputStream();
