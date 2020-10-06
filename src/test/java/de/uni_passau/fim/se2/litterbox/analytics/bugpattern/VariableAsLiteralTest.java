@@ -86,7 +86,7 @@ public class VariableAsLiteralTest implements JsonTest {
         String output = visitor.getScratchBlocks();
         assertEquals("[scratchblocks]" + System.lineSeparator() +
                 "when green flag clicked" + System.lineSeparator() +
-                "+if <[thelist] > (50)> then:: #ff0000 // Variable Used as Literal" + System.lineSeparator() +
+                "+if <[thelist] > (50)> then:: #ff0000 // " + ScratchBlocksVisitor.BUG_NOTE + System.lineSeparator() +
                 "say [thelist]" + System.lineSeparator() +
                 "end" + System.lineSeparator() +
                 "[/scratchblocks]" + System.lineSeparator(), output);
@@ -102,7 +102,7 @@ public class VariableAsLiteralTest implements JsonTest {
         assertEquals("[scratchblocks]" + System.lineSeparator() +
                 "when green flag clicked" + System.lineSeparator() +
                 "if <[thelist] > (50)> then" + System.lineSeparator() +
-                "+say [thelist]:: #ff0000 // Variable Used as Literal" + System.lineSeparator() +
+                "+say [thelist]:: #ff0000 // " + ScratchBlocksVisitor.BUG_NOTE + System.lineSeparator() +
                 "end" + System.lineSeparator() +
                 "[/scratchblocks]" + System.lineSeparator(), output);
 

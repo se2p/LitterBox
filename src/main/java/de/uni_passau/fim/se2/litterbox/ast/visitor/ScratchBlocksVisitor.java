@@ -94,6 +94,7 @@ public class ScratchBlocksVisitor extends PrintVisitor {
 
     public static final String SCRATCHBLOCKS_START = "[scratchblocks]";
     public static final String SCRATCHBLOCKS_END = "[/scratchblocks]";
+    public static final String BUG_NOTE = "⇦  \uD83D\uDC1B";
 
     private boolean inScript = false;
 
@@ -1829,7 +1830,9 @@ public class ScratchBlocksVisitor extends PrintVisitor {
                     emitNoSpace(":: #ff0000");
                 }
                 hasIssue = true;
-                issueNote.add(issue.getTranslatedFinderName());
+                issueNote.add(BUG_NOTE);
+                // TODO: In theory there could be multiple messages here...
+                // issueNote.add(issue.getTranslatedFinderName());
             }
         }
     }
