@@ -39,7 +39,7 @@ import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 public class ComparingLiterals extends AbstractIssueFinder {
 
     public static final String NAME = "comparing_literals";
-    private static final String HINT_TRUE_FALSE = "TRUEFALSE";
+    public static final String HINT_TRUE_FALSE = "TRUEFALSE";
 
     @Override
     public void visit(Equals node) {

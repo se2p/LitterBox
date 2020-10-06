@@ -20,9 +20,11 @@ package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
 import com.google.common.truth.Truth;
 import de.uni_passau.fim.se2.litterbox.JsonTest;
+import de.uni_passau.fim.se2.litterbox.analytics.Hint;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -36,12 +38,16 @@ class ComparingLiteralsTest implements JsonTest {
         ComparingLiterals finder = new ComparingLiterals();
         Set<Issue> reports = finder.check(program);
         Truth.assertThat(reports).hasSize(3);
+        Hint trueHint = new Hint(finder.getName());
+        trueHint.setParameter(ComparingLiterals.HINT_TRUE_FALSE, IssueTranslator.getInstance().getInfo("true"));
+        Hint falseHint = new Hint(finder.getName());
+        falseHint.setParameter(ComparingLiterals.HINT_TRUE_FALSE, IssueTranslator.getInstance().getInfo("false"));
         int i = 0;
         for (Issue issue : reports) {
             if (i == 1) {
-                Truth.assertThat(issue.getHint()).isEqualTo("Reporter blocks are used to evaluate the truth value of certain expressions. If you compare two literals, the result will always be the same, TRUE. The blocks in the control body will be executed always or never. Therefore comparison is not necessary.");
+                Truth.assertThat(issue.getHint()).isEqualTo(trueHint.getHintText());
             } else {
-                Truth.assertThat(issue.getHint()).isEqualTo("Reporter blocks are used to evaluate the truth value of certain expressions. If you compare two literals, the result will always be the same, FALSE. The blocks in the control body will be executed always or never. Therefore comparison is not necessary.");
+                Truth.assertThat(issue.getHint()).isEqualTo(falseHint.getHintText());
             }
             i++;
         }
@@ -53,9 +59,10 @@ class ComparingLiteralsTest implements JsonTest {
         ComparingLiterals finder = new ComparingLiterals();
         Set<Issue> reports = finder.check(program);
         Truth.assertThat(reports).hasSize(1);
-
+        Hint trueHint = new Hint(finder.getName());
+        trueHint.setParameter(ComparingLiterals.HINT_TRUE_FALSE, IssueTranslator.getInstance().getInfo("true"));
         for (Issue issue : reports) {
-            Truth.assertThat(issue.getHint()).isEqualTo("Reporter blocks are used to evaluate the truth value of certain expressions. If you compare two literals, the result will always be the same, TRUE. The blocks in the control body will be executed always or never. Therefore comparison is not necessary.");
+            Truth.assertThat(issue.getHint()).isEqualTo(trueHint.getHintText());
         }
     }
 }
