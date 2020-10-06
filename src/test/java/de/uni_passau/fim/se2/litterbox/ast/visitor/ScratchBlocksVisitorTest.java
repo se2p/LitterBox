@@ -23,6 +23,7 @@ import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.*;
+import de.uni_passau.fim.se2.litterbox.analytics.smells.DeadCode;
 import de.uni_passau.fim.se2.litterbox.analytics.smells.UnusedVariable;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
@@ -98,14 +99,14 @@ public class ScratchBlocksVisitorTest implements JsonTest {
         program.accept(visitor);
         visitor.end();
         String result = os.toString();
-        assertEquals("[scratchblocks]\n" +
-                "when green flag clicked\n" +
-                "forever \n" +
-                "if <touching (Bell v) ?> then\n" +
-                "say [Hello!]\n" +
-                "end\n" +
-                "end\n" +
-                "[/scratchblocks]\n", result);
+        assertEquals("[scratchblocks]" + System.lineSeparator() +
+                "when green flag clicked" + System.lineSeparator() +
+                "forever " + System.lineSeparator() +
+                "if <touching (Bell v) ?> then" + System.lineSeparator() +
+                "say [Hello!]" + System.lineSeparator() +
+                "end" + System.lineSeparator() +
+                "end" + System.lineSeparator() +
+                "[/scratchblocks]" + System.lineSeparator(), result);
     }
 
     @Test
@@ -118,15 +119,15 @@ public class ScratchBlocksVisitorTest implements JsonTest {
         program.accept(visitor);
         visitor.end();
         String result = os.toString();
-        assertEquals("[scratchblocks]\n" +
-                "when green flag clicked\n" +
-                "set [my variable v] to [Bell]\n" +
-                "forever \n" +
-                "if <touching (my variable) ?> then\n" +
-                "say [Hello!]\n" +
-                "end\n" +
-                "end\n" +
-                "[/scratchblocks]\n", result);
+        assertEquals("[scratchblocks]" + System.lineSeparator() +
+                "when green flag clicked" + System.lineSeparator() +
+                "set [my variable v] to [Bell]" + System.lineSeparator() +
+                "forever " + System.lineSeparator() +
+                "if <touching (my variable) ?> then" + System.lineSeparator() +
+                "say [Hello!]" + System.lineSeparator() +
+                "end" + System.lineSeparator() +
+                "end" + System.lineSeparator() +
+                "[/scratchblocks]" + System.lineSeparator(), result);
     }
 
     @Test
@@ -139,10 +140,10 @@ public class ScratchBlocksVisitorTest implements JsonTest {
         program.accept(visitor);
         visitor.end();
         String result = os.toString();
-        assertEquals("[scratchblocks]\n" +
-                "set [my variable v] to (other variable)\n" +
-                "change [my variable v] by (other variable)\n" +
-                "[/scratchblocks]\n", result);
+        assertEquals("[scratchblocks]" + System.lineSeparator() +
+                "set [my variable v] to (other variable)" + System.lineSeparator() +
+                "change [my variable v] by (other variable)" + System.lineSeparator() +
+                "[/scratchblocks]" + System.lineSeparator(), result);
     }
 
     @Test
@@ -155,29 +156,29 @@ public class ScratchBlocksVisitorTest implements JsonTest {
         program.accept(visitor);
         visitor.end();
         String result = os.toString();
-        assertEquals("[scratchblocks]\n" +
-                "set [my variable v] to (0)\n" +
-                "set [my variable v] to (other variable)\n" +
-                "set [my variable v] to (answer)\n" +
-                "set [my variable v] to (distance to (mouse-pointer v))\n" +
-                "set [my variable v] to (join [apple ][banana])\n" +
-                "set [my variable v] to (length of [thelist v])\n" +
-                "set [my variable v] to ([abs v] of (my variable))\n" +
-                "set [my variable v] to ((my variable) mod (other variable))\n" +
-                "set [my variable v] to (round (my variable))\n" +
-                "set [my variable v] to (pick random (1) to (10))\n" +
-                "set [my variable v] to ([my variable v] of (Stage v)?)\n" +
-                "set [my variable v] to ((10)+(my variable))\n" +
-                "set [my variable v] to (item (1) of [thelist v])\n" +
-                "set [my variable v] to (item # of [thing] in [thelist v])\n" +
-                "set [my variable v] to (username)\n" +
-                "set [my variable v] to (thelist)\n" +
-                "set [my variable v] to (mouse x)\n" +
-                "set [my variable v] to (loudness)\n" +
-                "set [my variable v] to (days since 2000)\n" +
-                "set [my variable v] to (current (year v)\n" +
-                "set [my variable v] to (timer)\n" +
-                "[/scratchblocks]\n", result);
+        assertEquals("[scratchblocks]" + System.lineSeparator() +
+                "set [my variable v] to (0)" + System.lineSeparator() +
+                "set [my variable v] to (other variable)" + System.lineSeparator() +
+                "set [my variable v] to (answer)" + System.lineSeparator() +
+                "set [my variable v] to (distance to (mouse-pointer v))" + System.lineSeparator() +
+                "set [my variable v] to (join [apple ][banana])" + System.lineSeparator() +
+                "set [my variable v] to (length of [thelist v])" + System.lineSeparator() +
+                "set [my variable v] to ([abs v] of (my variable))" + System.lineSeparator() +
+                "set [my variable v] to ((my variable) mod (other variable))" + System.lineSeparator() +
+                "set [my variable v] to (round (my variable))" + System.lineSeparator() +
+                "set [my variable v] to (pick random (1) to (10))" + System.lineSeparator() +
+                "set [my variable v] to ([my variable v] of (Stage v)?)" + System.lineSeparator() +
+                "set [my variable v] to ((10)+(my variable))" + System.lineSeparator() +
+                "set [my variable v] to (item (1) of [thelist v])" + System.lineSeparator() +
+                "set [my variable v] to (item # of [thing] in [thelist v])" + System.lineSeparator() +
+                "set [my variable v] to (username)" + System.lineSeparator() +
+                "set [my variable v] to (thelist)" + System.lineSeparator() +
+                "set [my variable v] to (mouse x)" + System.lineSeparator() +
+                "set [my variable v] to (loudness)" + System.lineSeparator() +
+                "set [my variable v] to (days since 2000)" + System.lineSeparator() +
+                "set [my variable v] to (current (year v)" + System.lineSeparator() +
+                "set [my variable v] to (timer)" + System.lineSeparator() +
+                "[/scratchblocks]" + System.lineSeparator(), result);
     }
 
     @Test
@@ -190,36 +191,36 @@ public class ScratchBlocksVisitorTest implements JsonTest {
         program.accept(visitor);
         visitor.end();
         String result = os.toString();
-        assertEquals("[scratchblocks]\n" +
-                "change [my variable v] by (1)\n" +
-                "change [my variable v] by (x position)\n" +
-                "change [my variable v] by (y position)\n" +
-                "change [my variable v] by (backdrop [number v])\n" +
-                "change [my variable v] by (costume [number v])\n" +
-                "change [my variable v] by (direction)\n" +
-                "change [my variable v] by (size)\n" +
-                "change [my variable v] by (volume)\n" +
-                "change [my variable v] by (other variable)\n" +
-                "change [my variable v] by (answer)\n" +
-                "change [my variable v] by (distance to (mouse-pointer v))\n" +
-                "change [my variable v] by (join [apple ][banana])\n" +
-                "change [my variable v] by (length of [thelist v])\n" +
-                "change [my variable v] by ([abs v] of (my variable))\n" +
-                "change [my variable v] by ((my variable) mod (other variable))\n" +
-                "change [my variable v] by (round (my variable))\n" +
-                "change [my variable v] by (pick random (1) to (10))\n" +
-                "change [my variable v] by ([my variable v] of (Stage v)?)\n" +
-                "change [my variable v] by ((10)+(my variable))\n" +
-                "change [my variable v] by (item (1) of [thelist v])\n" +
-                "change [my variable v] by (item # of [thing] in [thelist v])\n" +
-                "change [my variable v] by (username)\n" +
-                "change [my variable v] by (thelist)\n" +
-                "change [my variable v] by (mouse x)\n" +
-                "change [my variable v] by (loudness)\n" +
-                "change [my variable v] by (days since 2000)\n" +
-                "change [my variable v] by (current (year v)\n" +
-                "change [my variable v] by (timer)\n" +
-                "[/scratchblocks]\n", result);
+        assertEquals("[scratchblocks]" + System.lineSeparator() +
+                "change [my variable v] by (1)" + System.lineSeparator() +
+                "change [my variable v] by (x position)" + System.lineSeparator() +
+                "change [my variable v] by (y position)" + System.lineSeparator() +
+                "change [my variable v] by (backdrop [number v])" + System.lineSeparator() +
+                "change [my variable v] by (costume [number v])" + System.lineSeparator() +
+                "change [my variable v] by (direction)" + System.lineSeparator() +
+                "change [my variable v] by (size)" + System.lineSeparator() +
+                "change [my variable v] by (volume)" + System.lineSeparator() +
+                "change [my variable v] by (other variable)" + System.lineSeparator() +
+                "change [my variable v] by (answer)" + System.lineSeparator() +
+                "change [my variable v] by (distance to (mouse-pointer v))" + System.lineSeparator() +
+                "change [my variable v] by (join [apple ][banana])" + System.lineSeparator() +
+                "change [my variable v] by (length of [thelist v])" + System.lineSeparator() +
+                "change [my variable v] by ([abs v] of (my variable))" + System.lineSeparator() +
+                "change [my variable v] by ((my variable) mod (other variable))" + System.lineSeparator() +
+                "change [my variable v] by (round (my variable))" + System.lineSeparator() +
+                "change [my variable v] by (pick random (1) to (10))" + System.lineSeparator() +
+                "change [my variable v] by ([my variable v] of (Stage v)?)" + System.lineSeparator() +
+                "change [my variable v] by ((10)+(my variable))" + System.lineSeparator() +
+                "change [my variable v] by (item (1) of [thelist v])" + System.lineSeparator() +
+                "change [my variable v] by (item # of [thing] in [thelist v])" + System.lineSeparator() +
+                "change [my variable v] by (username)" + System.lineSeparator() +
+                "change [my variable v] by (thelist)" + System.lineSeparator() +
+                "change [my variable v] by (mouse x)" + System.lineSeparator() +
+                "change [my variable v] by (loudness)" + System.lineSeparator() +
+                "change [my variable v] by (days since 2000)" + System.lineSeparator() +
+                "change [my variable v] by (current (year v)" + System.lineSeparator() +
+                "change [my variable v] by (timer)" + System.lineSeparator() +
+                "[/scratchblocks]" + System.lineSeparator(), result);
     }
 
     @Test
@@ -1505,6 +1506,38 @@ public class ScratchBlocksVisitorTest implements JsonTest {
                 "[/scratchblocks]" + System.lineSeparator(), output);
     }
 
+    @Test
+    public void testShowVariableIssueAnnotation() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/scratchblocks/showvariableannotation.json");
+        DeadCode finder = new DeadCode();
+        Set<Issue> issues = finder.check(program);
+
+        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(issues);
+        visitor.begin();
+        program.accept(visitor);
+        visitor.end();
+        String output = visitor.getScratchBlocks();
+        assertEquals("[scratchblocks]" + System.lineSeparator() +
+                "+show variable [my variable v]:: #ff0000 // ⇦  \uD83D\uDC1B" + System.lineSeparator() +
+                "[/scratchblocks]" + System.lineSeparator(), output);
+    }
+
+
+    @Test
+    public void testHideVariableIssueAnnotation() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/scratchblocks/hidevariableannotation.json");
+        DeadCode finder = new DeadCode();
+        Set<Issue> issues = finder.check(program);
+
+        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(issues);
+        visitor.begin();
+        program.accept(visitor);
+        visitor.end();
+        String output = visitor.getScratchBlocks();
+        assertEquals("[scratchblocks]" + System.lineSeparator() +
+                "+hide variable [my variable v]:: #ff0000 // ⇦  \uD83D\uDC1B" + System.lineSeparator() +
+                "[/scratchblocks]" + System.lineSeparator(), output);
+    }
     // TODO: No working scripts?
     // TODO: SameIdentifierDifferentSprite
 }
