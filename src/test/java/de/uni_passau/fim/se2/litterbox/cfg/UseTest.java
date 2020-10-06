@@ -44,13 +44,14 @@ import static com.google.common.truth.Truth.assertThat;
 public class UseTest implements JsonTest {
 
     @Test
-    public void testSingleUse() throws IOException, ParsingException {
+    public void testShowIsNotAUse() throws IOException, ParsingException {
+        // Show/hide represents neither a read nor a write of the variable, so let's not count it
         ControlFlowGraph cfg = getCFG("src/test/fixtures/dataflow/oneuse.json");
         CFGNode node = cfg.getNodes().stream().filter(n -> n.getASTNode() instanceof ShowVariable).findFirst().get();
         VariableUseVisitor visitor = new VariableUseVisitor();
         node.getASTNode().accept(visitor);
         Set<Variable> uses = visitor.getDefineables();
-        assertThat(uses).hasSize(1);
+        assertThat(uses).hasSize(0);
     }
 
     @Test

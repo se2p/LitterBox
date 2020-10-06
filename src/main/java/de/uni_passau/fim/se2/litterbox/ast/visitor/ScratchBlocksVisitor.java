@@ -57,9 +57,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.DeleteClo
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopAll;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopThisScript;
 import de.uni_passau.fim.se2.litterbox.ast.model.timecomp.TimeComp;
-import de.uni_passau.fim.se2.litterbox.ast.model.touchable.AsTouchable;
-import de.uni_passau.fim.se2.litterbox.ast.model.touchable.Edge;
-import de.uni_passau.fim.se2.litterbox.ast.model.touchable.MousePointer;
+import de.uni_passau.fim.se2.litterbox.ast.model.touchable.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.BooleanType;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.NumberType;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.StringType;
@@ -943,8 +941,8 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         emitNoSpace("show variable [");
         node.getIdentifier().accept(this);
         emitNoSpace(" v");
-        storeNotesForIssue(node);
         emitNoSpace("]");
+        storeNotesForIssue(node);
         newLine();
     }
 
@@ -953,8 +951,8 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         emitNoSpace("hide variable [");
         node.getIdentifier().accept(this);
         emitNoSpace(" v");
-        storeNotesForIssue(node);
         emitNoSpace("]");
+        storeNotesForIssue(node);
         newLine();
     }
 
@@ -965,8 +963,8 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         emitNoSpace(" to [");
         node.getIdentifier().accept(this);
         emitNoSpace(" v");
-        storeNotesForIssue(node);
         emitNoSpace("]");
+        storeNotesForIssue(node);
         newLine();
     }
 
@@ -977,8 +975,8 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         emitNoSpace(" of [");
         node.getIdentifier().accept(this);
         emitNoSpace(" v");
-        storeNotesForIssue(node);
         emitNoSpace("]");
+        storeNotesForIssue(node);
         newLine();
     }
 
@@ -987,8 +985,8 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         emitNoSpace("delete all of [");
         node.getIdentifier().accept(this);
         emitNoSpace(" v");
-        storeNotesForIssue(node);
         emitNoSpace("]");
+        storeNotesForIssue(node);
         newLine();
     }
 
@@ -1001,8 +999,8 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         emitNoSpace(" of [");
         node.getIdentifier().accept(this);
         emitNoSpace(" v");
-        storeNotesForIssue(node);
         emitNoSpace("]");
+        storeNotesForIssue(node);
         newLine();
     }
 
@@ -1023,8 +1021,8 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         emitNoSpace("show list [");
         node.getIdentifier().accept(this);
         emitNoSpace(" v");
-        storeNotesForIssue(node);
         emitNoSpace("]");
+        storeNotesForIssue(node);
         newLine();
     }
 
@@ -1033,8 +1031,8 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         emitNoSpace("hide list [");
         node.getIdentifier().accept(this);
         emitNoSpace(" v");
-        storeNotesForIssue(node);
         emitNoSpace("]");
+        storeNotesForIssue(node);
         newLine();
     }
 
@@ -1644,6 +1642,15 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         node.getColor().accept(this);
         storeNotesForIssue(node);
         emitNoSpace(" ?>");
+    }
+
+    @Override
+    public void visit(SpriteTouchable node) {
+        emitNoSpace("(");
+        // TODO: Why is the signature a StringExpr if it is always set to a StringLiteral
+        StringLiteral literal = (StringLiteral)node.getStringExpr();
+        emitNoSpace(literal.getText());
+        emitNoSpace(" v)");
     }
 
     @Override

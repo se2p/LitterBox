@@ -32,12 +32,14 @@ import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 public class Issue {
 
     private IssueFinder finder;
+    private IssueSeverity severity;
     private ActorDefinition actor;
     private ASTNode node;
     private Script script;
     private ProcedureDefinition procedure;
     private Program program;
     private Metadata metaData;
+    private Hint hint;
 
     /**
      * Creates a new issue the contains the finder that created this issue, the actor in which the issue was found and
@@ -50,14 +52,19 @@ public class Issue {
      * @param currentNode that is closest to the issue origin
      * @param metaData    that contains references for comments
      */
-    public Issue(IssueFinder finder, Program program, ActorDefinition actor, Script script,
-                 ASTNode currentNode, Metadata metaData) {
+    public Issue(IssueFinder finder, IssueSeverity severity, Program program, ActorDefinition actor, Script script,
+                 ASTNode currentNode, Metadata metaData, Hint hint) {
         this.finder = finder;
+        this.severity = severity;
         this.program = program;
         this.actor = actor;
         this.script = script;
         this.node = currentNode;
         this.metaData = metaData;
+        this.hint = hint;
+        // Check that hints have actually been declared, otherwise
+        // we might be missing translations
+        assert (finder.getHintKeys().contains(hint.getHintKey()));
     }
 
     /**
@@ -71,18 +78,28 @@ public class Issue {
      * @param currentNode that is closest to the issue origin
      * @param metaData    that contains references for comments
      */
-    public Issue(IssueFinder finder, Program program, ActorDefinition actor, ProcedureDefinition procedure,
-                 ASTNode currentNode, Metadata metaData) {
+    public Issue(IssueFinder finder, IssueSeverity severity, Program program, ActorDefinition actor, ProcedureDefinition procedure,
+                 ASTNode currentNode, Metadata metaData, Hint hint) {
         this.finder = finder;
         this.program = program;
         this.actor = actor;
         this.procedure = procedure;
         this.node = currentNode;
         this.metaData = metaData;
+        this.hint = hint;
+        // Check that hints have actually been declared, otherwise
+        // we might be missing translations
+        assert (finder.getHintKeys().contains(hint.getHintKey()));
     }
 
     public IssueFinder getFinder() {
         return finder;
+    }
+
+    public IssueSeverity getSeverity() { return severity; }
+
+    public IssueType getIssueType() {
+        return finder.getIssueType();
     }
 
     public ActorDefinition getActor() {
@@ -128,7 +145,7 @@ public class Issue {
     }
 
     public String getHint() {
-        return IssueTranslator.getInstance().getHint(this.finder.getName());
+        return hint.getHintText();
     }
 
     public ASTNode getCodeLocation() {
@@ -139,7 +156,4 @@ public class Issue {
         return metaData;
     }
 
-    public String getFinderType() {
-        return finder.getIssueType().toString();
-    }
 }

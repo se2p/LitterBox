@@ -18,14 +18,19 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.smells;
 
+import de.uni_passau.fim.se2.litterbox.analytics.Hint;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -47,7 +52,9 @@ public class EmptySprite implements IssueFinder, ScratchVisitor {
     public void visit(ActorDefinition actor) {
         if (actor.getProcedureDefinitionList().getList().size() == 0 && actor.getScripts().getScriptList().size() == 0
                 && !actor.isStage()) {
-            issues.add(new Issue(this, program, actor, (Script) null, null, null));
+            Hint hint = new Hint(getName());
+            hint.setParameter(Hint.HINT_SPRITE, actor.getIdent().getName());
+            issues.add(new Issue(this, IssueSeverity.HIGH, program, actor, (Script) null, null, null, hint));
         }
     }
 
@@ -64,5 +71,11 @@ public class EmptySprite implements IssueFinder, ScratchVisitor {
     @Override
     public void setIgnoreLooseBlocks(boolean value) {
         // Irrelevant for this finder
+    }
+
+    @Override
+    public Collection<String> getHintKeys() {
+        // Default: Only one key with the name of the finder
+        return Arrays.asList(getName());
     }
 }

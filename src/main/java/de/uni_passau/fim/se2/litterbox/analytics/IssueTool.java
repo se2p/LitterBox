@@ -59,6 +59,7 @@ public class IssueTool {
         registerBugFinder(new MissingLoopSensing(), bugFinders);
         registerBugFinder(new MissingPenDown(), bugFinders);
         registerBugFinder(new MissingPenUp(), bugFinders);
+        registerBugFinder(new MissingResource(), bugFinders);
         registerBugFinder(new MissingTerminationCondition(), bugFinders);
         registerBugFinder(new MissingWaitUntilCondition(), bugFinders);
         registerBugFinder(new NoWorkingScripts(), bugFinders);
@@ -67,6 +68,8 @@ public class IssueTool {
         registerBugFinder(new PositionEqualsCheck(), bugFinders);
         registerBugFinder(new RecursiveCloning(), bugFinders);
         registerBugFinder(new StutteringMovement(), bugFinders);
+        registerBugFinder(new TerminatedLoop(), bugFinders);
+        registerBugFinder(new TypeError(), bugFinders);
         registerBugFinder(new VariableAsLiteral(), bugFinders);
 
         return bugFinders;
@@ -99,6 +102,7 @@ public class IssueTool {
         registerSmellFinder(new NestedLoops(), smellFinders);
         registerSmellFinder(new SameVariableDifferentSprite(), smellFinders);
         registerSmellFinder(new SequentialActions(), smellFinders);
+        registerSmellFinder(new SpriteNaming(), smellFinders);
         registerSmellFinder(new UnusedCustomBlock(), smellFinders);
         registerSmellFinder(new UnusedParameter(), smellFinders);
         registerSmellFinder(new UnusedVariable(), smellFinders);
@@ -151,7 +155,7 @@ public class IssueTool {
     }
 
     static void registerSmellFinder(IssueFinder finder, Map<String, IssueFinder> smellFinders) {
-        if (finder.getIssueType() != IssueFinder.IssueType.SMELL) {
+        if (finder.getIssueType() != IssueType.SMELL) {
             throw new RuntimeException("Cannot register IssueFinder of Type "
                     + finder.getIssueType()
                     + " as Smell IssueFinder");
@@ -161,7 +165,7 @@ public class IssueTool {
     }
 
     static void registerBugFinder(IssueFinder finder, Map<String, IssueFinder> bugFinders) {
-        if (finder.getIssueType() != IssueFinder.IssueType.BUG) {
+        if (finder.getIssueType() != IssueType.BUG) {
             throw new RuntimeException("Cannot register IssueFinder of Type "
                     + finder.getIssueType()
                     + " as Bug IssueFinder");

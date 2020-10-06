@@ -18,8 +18,10 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.visitor;
 
+import de.uni_passau.fim.se2.litterbox.analytics.Hint;
 import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.*;
 import de.uni_passau.fim.se2.litterbox.analytics.smells.UnusedVariable;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
@@ -84,6 +86,47 @@ public class ScratchBlocksVisitorTest implements JsonTest {
                 "end" + System.lineSeparator() +
                 "end" + System.lineSeparator() +
                 "[/scratchblocks]" + System.lineSeparator(),result);
+    }
+
+    @Test
+    public void testTouchingSpriteBlock() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/scratchblocks/touchingspriteblock.json");
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        PrintStream ps = new PrintStream(os);
+        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(ps);
+        visitor.begin();
+        program.accept(visitor);
+        visitor.end();
+        String result = os.toString();
+        assertEquals("[scratchblocks]\n" +
+                "when green flag clicked\n" +
+                "forever \n" +
+                "if <touching (Bell v) ?> then\n" +
+                "say [Hello!]\n" +
+                "end\n" +
+                "end\n" +
+                "[/scratchblocks]\n", result);
+    }
+
+    @Test
+    public void testTouchingVarBlock() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/scratchblocks/touchingvarblock.json");
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        PrintStream ps = new PrintStream(os);
+        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(ps);
+        visitor.begin();
+        program.accept(visitor);
+        visitor.end();
+        String result = os.toString();
+        assertEquals("[scratchblocks]\n" +
+                "when green flag clicked\n" +
+                "set [my variable v] to [Bell]\n" +
+                "forever \n" +
+                "if <touching (my variable) ?> then\n" +
+                "say [Hello!]\n" +
+                "end\n" +
+                "end\n" +
+                "[/scratchblocks]\n", result);
     }
 
     @Test
@@ -781,7 +824,7 @@ public class ScratchBlocksVisitorTest implements JsonTest {
         StutteringMovement stuttMovement = new StutteringMovement();
 
         Issue firstIssue = issues.iterator().next();
-        Issue mockIssue = new Issue(stuttMovement, program, firstIssue.getActor(), firstIssue.getScript(), firstIssue.getCodeLocation(), firstIssue.getCodeMetadata());
+        Issue mockIssue = new Issue(stuttMovement, IssueSeverity.HIGH, program, firstIssue.getActor(), firstIssue.getScript(), firstIssue.getCodeLocation(), firstIssue.getCodeMetadata(), new Hint(stuttMovement.getName()));
 
         ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(Arrays.asList(firstIssue, mockIssue));
         visitor.begin();
@@ -1348,6 +1391,25 @@ public class ScratchBlocksVisitorTest implements JsonTest {
         assertEquals("[scratchblocks]" + System.lineSeparator() +
                 "(the list:: #ff0000 :: list) // Unused Variable" + System.lineSeparator() +
                 "[/scratchblocks]" + System.lineSeparator(),output);
+    }
+
+    @Test
+    public void testBuggyListIssueAnnotation() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/scratchblocks/highlightedlist.json");
+        MissingInitialization finder = new MissingInitialization();
+        Set<Issue> issues = finder.check(program);
+        Issue issue = issues.iterator().next();
+
+        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(issue);
+        visitor.begin();
+        visitor.setCurrentActor(issue.getActor());
+        issue.getScriptOrProcedureDefinition().accept(visitor);
+        visitor.end();
+        String output = visitor.getScratchBlocks();
+        assertEquals("[scratchblocks]\n" +
+                "when [space v] key pressed\n" +
+                "delete (1) of [\uD83C\uDF83 Triple click the numbers below. This is your savecode! Press space to close. \uD83C\uDF83 v]:: #ff0000 // Missing Initialization\n" +
+                "[/scratchblocks]\n", output);
     }
 
     // TODO: No working scripts?
