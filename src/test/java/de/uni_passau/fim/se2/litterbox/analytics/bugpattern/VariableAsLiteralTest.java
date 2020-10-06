@@ -84,12 +84,12 @@ public class VariableAsLiteralTest implements JsonTest {
         issue.getScriptOrProcedureDefinition().accept(visitor);
         visitor.end();
         String output = visitor.getScratchBlocks();
-        assertEquals("[scratchblocks]\n" +
-                "when green flag clicked\n" +
-                "if <[thelist] > (50)> then:: #ff0000 // Variable Used as Literal\n" +
-                "say [thelist]\n" +
-                "end\n" +
-                "[/scratchblocks]\n", output);
+        assertEquals("[scratchblocks]" + System.lineSeparator() +
+                "when green flag clicked" + System.lineSeparator() +
+                "+if <[thelist] > (50)> then:: #ff0000 // " + ScratchBlocksVisitor.BUG_NOTE + System.lineSeparator() +
+                "say [thelist]" + System.lineSeparator() +
+                "end" + System.lineSeparator() +
+                "[/scratchblocks]" + System.lineSeparator(), output);
 
         issue = issues.get(1);
 
@@ -99,12 +99,12 @@ public class VariableAsLiteralTest implements JsonTest {
         issue.getScriptOrProcedureDefinition().accept(visitor);
         visitor.end();
         output = visitor.getScratchBlocks();
-        assertEquals("[scratchblocks]\n" +
-                "when green flag clicked\n" +
-                "if <[thelist] > (50)> then\n" +
-                "say [thelist]:: #ff0000 // Variable Used as Literal\n" +
-                "end\n" +
-                "[/scratchblocks]\n", output);
+        assertEquals("[scratchblocks]" + System.lineSeparator() +
+                "when green flag clicked" + System.lineSeparator() +
+                "if <[thelist] > (50)> then" + System.lineSeparator() +
+                "+say [thelist]:: #ff0000 // " + ScratchBlocksVisitor.BUG_NOTE + System.lineSeparator() +
+                "end" + System.lineSeparator() +
+                "[/scratchblocks]" + System.lineSeparator(), output);
 
     }
 

@@ -94,6 +94,7 @@ public class ScratchBlocksVisitor extends PrintVisitor {
 
     public static final String SCRATCHBLOCKS_START = "[scratchblocks]";
     public static final String SCRATCHBLOCKS_END = "[/scratchblocks]";
+    public static final String BUG_NOTE = "⇦  \uD83D\uDC1B";
 
     private boolean inScript = false;
 
@@ -104,6 +105,8 @@ public class ScratchBlocksVisitor extends PrintVisitor {
     private ActorDefinition currentActor = null;
 
     private ByteArrayOutputStream byteStream = null;
+
+    private StringBuilder currentLine = new StringBuilder();
 
     private boolean lineWrapped = true;
 
@@ -1782,7 +1785,7 @@ public class ScratchBlocksVisitor extends PrintVisitor {
     }
 
     protected void emitNoSpace(String string) {
-        printStream.append(string);
+        currentLine.append(string);
         lineWrapped = false;
     }
 
@@ -1795,16 +1798,27 @@ public class ScratchBlocksVisitor extends PrintVisitor {
     }
 
     protected void newLine() {
+        String currentString = currentLine.toString();
+        currentLine = new StringBuilder();
+        if (!currentString.isEmpty()) {
+            char firstChar = currentString.charAt(0);
+            // Only highlight if this is an actual statement
+            if (issueNote.size() > 0 && firstChar != '<' && firstChar != '(' &&
+                    firstChar != '[' && !currentString.startsWith("define")) {
+                printStream.append('+');
+            }
+        }
+        printStream.append(currentString);
         if (issueNote.size() == 1) {
-            emitNoSpace(" // ");
-            emitNoSpace(issueNote.iterator().next());
+            printStream.append(" // ");
+            printStream.append(issueNote.iterator().next());
             issueNote.clear();
         } else if (issueNote.size() > 1) {
-            emitNoSpace(" // ");
-            emitNoSpace(String.join(", ", issueNote));
+            printStream.append(" // ");
+            printStream.append(String.join(", ", issueNote));
             issueNote.clear();
         }
-        emitNoSpace("\n");
+        printStream.append(System.lineSeparator());
         lineWrapped = true;
     }
 
@@ -1816,13 +1830,17 @@ public class ScratchBlocksVisitor extends PrintVisitor {
                     emitNoSpace(":: #ff0000");
                 }
                 hasIssue = true;
-                issueNote.add(issue.getTranslatedFinderName());
+                issueNote.add(BUG_NOTE);
+                // TODO: In theory there could be multiple messages here...
+                // issueNote.add(issue.getTranslatedFinderName());
             }
         }
     }
 
     private String getParameterName(ParameterDefinition node) {
         // FIXME: Terrible hack
+        String currentString = currentLine.toString();
+        currentLine = new StringBuilder();
         PrintStream origStream = printStream;
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         printStream = new PrintStream(os);
@@ -1843,19 +1861,25 @@ public class ScratchBlocksVisitor extends PrintVisitor {
             storeNotesForIssue(node);
             emitNoSpace(">");
         }
-        String name = os.toString();
+        String name = currentLine.toString();
         printStream = origStream;
+        currentLine = new StringBuilder();
+        currentLine.append(currentString);
         return name;
     }
 
     private String getParameterName(Expression node) {
         // FIXME: Terrible hack
+        String currentString = currentLine.toString();
+        currentLine = new StringBuilder();
         PrintStream origStream = printStream;
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         printStream = new PrintStream(os);
         node.accept(this);
-        String name = os.toString();
+        String name = currentLine.toString();
         printStream = origStream;
+        currentLine = new StringBuilder();
+        currentLine.append(currentString);
         return name;
     }
 }
