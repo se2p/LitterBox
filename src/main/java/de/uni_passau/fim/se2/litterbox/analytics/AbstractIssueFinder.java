@@ -78,27 +78,32 @@ public abstract class AbstractIssueFinder implements IssueFinder, ScratchVisitor
     }
 
     protected void addIssue(ASTNode node, Metadata metadata) {
-        addIssue(node, metadata, IssueSeverity.HIGH);
+        addIssue(node, metadata, IssueSeverity.HIGH, new Hint(getName()));
     }
 
-    protected void addIssue(ASTNode node, Metadata metadata, IssueSeverity severity) {
+    protected void addIssue(ASTNode node, Metadata metadata, Hint hint) {
+        addIssue(node, metadata, IssueSeverity.HIGH, hint);
+    }
+
+    protected void addIssue(ASTNode node, Metadata metadata, IssueSeverity severity, Hint hint) {
         if (currentScript != null) {
-            issues.add(new Issue(this, severity, program, currentActor, currentScript, node, metadata));
+            issues.add(new Issue(this, severity, program, currentActor, currentScript, node, metadata, hint));
         } else {
             assert (currentProcedure != null);
-            issues.add(new Issue(this, severity, program, currentActor, currentProcedure, node, metadata));
+            issues.add(new Issue(this, severity, program, currentActor, currentProcedure, node, metadata, hint));
         }
     }
 
-    protected void addIssueForSynthesizedScript(Script theScript, ASTNode node, Metadata metadata) {
-        issues.add(new Issue(this, IssueSeverity.HIGH, program, currentActor, theScript, node, metadata));
+    protected void addIssueForSynthesizedScript(Script theScript, ASTNode node, Metadata metadata, Hint hint) {
+        issues.add(new Issue(this, IssueSeverity.HIGH, program, currentActor, theScript, node, metadata, hint));
     }
 
     protected void addIssueWithLooseComment() {
         issues.add(new Issue(this, IssueSeverity.HIGH, program, currentActor,
                 (Script) null, // TODO: There is no script
                 currentActor, // TODO: There is no node?
-                null)); // TODO: There is no metadata
+                null,  // TODO: There is no metadata
+                new Hint(getName())));
     }
 
     public void setIgnoreLooseBlocks(boolean value) {
@@ -106,4 +111,10 @@ public abstract class AbstractIssueFinder implements IssueFinder, ScratchVisitor
     }
 
     public abstract IssueType getIssueType();
+
+    @Override
+    public Collection<String> getHintKeys() {
+        // Default: Only one key with the name of the finder
+        return Arrays.asList(getName());
+    }
 }

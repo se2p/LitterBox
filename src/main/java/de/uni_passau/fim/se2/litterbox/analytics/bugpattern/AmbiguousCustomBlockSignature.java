@@ -55,7 +55,7 @@ public class AmbiguousCustomBlockSignature extends AbstractIssueFinder {
         for (ProcedureInfo procedureInfo : procedureInfos) {
             if (procedureInfo != current && current.getName().equals(procedureInfo.getName())
                     && current.getActorName().equals(procedureInfo.getActorName())) {
-                addIssue(node, ((ProcedureMetadata) node.getMetadata()).getDefinition());
+                addIssue(node, node.getMetadata().getDefinition());
             }
         }
     }

@@ -59,6 +59,7 @@ public class IssueTool {
         registerBugFinder(new MissingLoopSensing(), bugFinders);
         registerBugFinder(new MissingPenDown(), bugFinders);
         registerBugFinder(new MissingPenUp(), bugFinders);
+        registerBugFinder(new MissingResource(), bugFinders);
         registerBugFinder(new MissingTerminationCondition(), bugFinders);
         registerBugFinder(new MissingWaitUntilCondition(), bugFinders);
         registerBugFinder(new NoWorkingScripts(), bugFinders);
@@ -67,6 +68,7 @@ public class IssueTool {
         registerBugFinder(new PositionEqualsCheck(), bugFinders);
         registerBugFinder(new RecursiveCloning(), bugFinders);
         registerBugFinder(new StutteringMovement(), bugFinders);
+        registerBugFinder(new TerminatedLoop(), bugFinders);
         registerBugFinder(new TypeError(), bugFinders);
         registerBugFinder(new VariableAsLiteral(), bugFinders);
 

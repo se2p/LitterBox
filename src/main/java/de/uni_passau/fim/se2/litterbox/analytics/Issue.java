@@ -39,6 +39,7 @@ public class Issue {
     private ProcedureDefinition procedure;
     private Program program;
     private Metadata metaData;
+    private Hint hint;
 
     /**
      * Creates a new issue the contains the finder that created this issue, the actor in which the issue was found and
@@ -52,7 +53,7 @@ public class Issue {
      * @param metaData    that contains references for comments
      */
     public Issue(IssueFinder finder, IssueSeverity severity, Program program, ActorDefinition actor, Script script,
-                 ASTNode currentNode, Metadata metaData) {
+                 ASTNode currentNode, Metadata metaData, Hint hint) {
         this.finder = finder;
         this.severity = severity;
         this.program = program;
@@ -60,6 +61,10 @@ public class Issue {
         this.script = script;
         this.node = currentNode;
         this.metaData = metaData;
+        this.hint = hint;
+        // Check that hints have actually been declared, otherwise
+        // we might be missing translations
+        assert (finder.getHintKeys().contains(hint.getHintKey()));
     }
 
     /**
@@ -74,13 +79,17 @@ public class Issue {
      * @param metaData    that contains references for comments
      */
     public Issue(IssueFinder finder, IssueSeverity severity, Program program, ActorDefinition actor, ProcedureDefinition procedure,
-                 ASTNode currentNode, Metadata metaData) {
+                 ASTNode currentNode, Metadata metaData, Hint hint) {
         this.finder = finder;
         this.program = program;
         this.actor = actor;
         this.procedure = procedure;
         this.node = currentNode;
         this.metaData = metaData;
+        this.hint = hint;
+        // Check that hints have actually been declared, otherwise
+        // we might be missing translations
+        assert (finder.getHintKeys().contains(hint.getHintKey()));
     }
 
     public IssueFinder getFinder() {
@@ -136,7 +145,7 @@ public class Issue {
     }
 
     public String getHint() {
-        return IssueTranslator.getInstance().getHint(this.finder.getName());
+        return hint.getHintText();
     }
 
     public ASTNode getCodeLocation() {

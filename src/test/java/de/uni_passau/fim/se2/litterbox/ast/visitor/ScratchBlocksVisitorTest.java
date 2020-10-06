@@ -18,6 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.visitor;
 
+import de.uni_passau.fim.se2.litterbox.analytics.Hint;
 import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
@@ -823,7 +824,7 @@ public class ScratchBlocksVisitorTest implements JsonTest {
         StutteringMovement stuttMovement = new StutteringMovement();
 
         Issue firstIssue = issues.iterator().next();
-        Issue mockIssue = new Issue(stuttMovement, IssueSeverity.HIGH, program, firstIssue.getActor(), firstIssue.getScript(), firstIssue.getCodeLocation(), firstIssue.getCodeMetadata());
+        Issue mockIssue = new Issue(stuttMovement, IssueSeverity.HIGH, program, firstIssue.getActor(), firstIssue.getScript(), firstIssue.getCodeLocation(), firstIssue.getCodeMetadata(), new Hint(stuttMovement.getName()));
 
         ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(Arrays.asList(firstIssue, mockIssue));
         visitor.begin();

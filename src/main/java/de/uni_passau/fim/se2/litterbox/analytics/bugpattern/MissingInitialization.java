@@ -18,6 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
+import de.uni_passau.fim.se2.litterbox.analytics.Hint;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
@@ -36,9 +37,7 @@ import de.uni_passau.fim.se2.litterbox.dataflow.InitialDefinitionTransferFunctio
 import de.uni_passau.fim.se2.litterbox.dataflow.LivenessTransferFunction;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.*;
 
 public class MissingInitialization implements IssueFinder {
 
@@ -80,12 +79,14 @@ public class MissingInitialization implements IssueFinder {
                     issues.add(new Issue(this, IssueSeverity.HIGH, program, use.getUseTarget().getActor(),
                             (Script) containingScript,
                             use.getUseTarget().getASTNode(),
-                            null)); // TODO: Where is the relevant metadata?
+                            null,  // TODO: Where is the relevant metadata?
+                            new Hint(getName())));
                 } else {
                     issues.add(new Issue(this, IssueSeverity.HIGH, program, use.getUseTarget().getActor(),
                             (ProcedureDefinition) containingScript,
                             use.getUseTarget().getASTNode(),
-                            null)); // TODO: Where is the relevant metadata
+                            null, // TODO: Where is the relevant metadata
+                            new Hint(getName())));
                 }
             }
         }
@@ -105,5 +106,11 @@ public class MissingInitialization implements IssueFinder {
     @Override
     public void setIgnoreLooseBlocks(boolean value) {
         // Irrelevant for this finder
+    }
+
+    @Override
+    public Collection<String> getHintKeys() {
+        // Default: Only one key with the name of the finder
+        return Arrays.asList(getName());
     }
 }
