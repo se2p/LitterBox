@@ -36,5 +36,26 @@ class ComparingLiteralsTest implements JsonTest {
         ComparingLiterals finder = new ComparingLiterals();
         Set<Issue> reports = finder.check(program);
         Truth.assertThat(reports).hasSize(3);
+        int i = 0;
+        for (Issue issue : reports) {
+            if (i == 1) {
+                Truth.assertThat(issue.getHint()).isEqualTo("Reporter blocks are used to evaluate the truth value of certain expressions. If you compare two literals, the result will always be the same, TRUE. The blocks in the control body will be executed always or never. Therefore comparison is not necessary.");
+            } else {
+                Truth.assertThat(issue.getHint()).isEqualTo("Reporter blocks are used to evaluate the truth value of certain expressions. If you compare two literals, the result will always be the same, FALSE. The blocks in the control body will be executed always or never. Therefore comparison is not necessary.");
+            }
+            i++;
+        }
+    }
+
+    @Test
+    public void testComparingLiteralsNumbersGreater() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/bugpattern/compareNumbersGreater.json");
+        ComparingLiterals finder = new ComparingLiterals();
+        Set<Issue> reports = finder.check(program);
+        Truth.assertThat(reports).hasSize(1);
+
+        for (Issue issue : reports) {
+            Truth.assertThat(issue.getHint()).isEqualTo("Reporter blocks are used to evaluate the truth value of certain expressions. If you compare two literals, the result will always be the same, TRUE. The blocks in the control body will be executed always or never. Therefore comparison is not necessary.");
+        }
     }
 }
