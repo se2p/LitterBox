@@ -145,6 +145,83 @@ public class ScratchBlocksVisitorTest implements JsonTest {
     }
 
     @Test
+    public void testSetVarToAllOtherblocks() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/scratchblocks/setvartoblocks.json");
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        PrintStream ps = new PrintStream(os);
+        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(ps);
+        visitor.begin();
+        program.accept(visitor);
+        visitor.end();
+        String result = os.toString();
+        assertEquals("[scratchblocks]\n" +
+                "set [my variable v] to (0)\n" +
+                "set [my variable v] to (other variable)\n" +
+                "set [my variable v] to (answer)\n" +
+                "set [my variable v] to (distance to (mouse-pointer v))\n" +
+                "set [my variable v] to (join [apple ][banana])\n" +
+                "set [my variable v] to (length of [thelist v])\n" +
+                "set [my variable v] to ([abs v] of (my variable))\n" +
+                "set [my variable v] to ((my variable) mod (other variable))\n" +
+                "set [my variable v] to (round (my variable))\n" +
+                "set [my variable v] to (pick random (1) to (10))\n" +
+                "set [my variable v] to ([my variable v] of (Stage v)?)\n" +
+                "set [my variable v] to ((10)+(my variable))\n" +
+                "set [my variable v] to (item (1) of [thelist v])\n" +
+                "set [my variable v] to (item # of [thing] in [thelist v])\n" +
+                "set [my variable v] to (username)\n" +
+                "set [my variable v] to (thelist)\n" +
+                "set [my variable v] to (mouse x)\n" +
+                "set [my variable v] to (loudness)\n" +
+                "set [my variable v] to (days since 2000)\n" +
+                "set [my variable v] to (current (year v)\n" +
+                "set [my variable v] to (timer)\n" +
+                "[/scratchblocks]\n", result);
+    }
+
+    @Test
+    public void testChangeVarToAllOtherblocks() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/scratchblocks/changevartoblocks.json");
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        PrintStream ps = new PrintStream(os);
+        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(ps);
+        visitor.begin();
+        program.accept(visitor);
+        visitor.end();
+        String result = os.toString();
+        assertEquals("[scratchblocks]\n" +
+                "change [my variable v] by (1)\n" +
+                "change [my variable v] by (x position)\n" +
+                "change [my variable v] by (y position)\n" +
+                "change [my variable v] by (backdrop [number v])\n" +
+                "change [my variable v] by (costume [number v])\n" +
+                "change [my variable v] by (direction)\n" +
+                "change [my variable v] by (size)\n" +
+                "change [my variable v] by (volume)\n" +
+                "change [my variable v] by (other variable)\n" +
+                "change [my variable v] by (answer)\n" +
+                "change [my variable v] by (distance to (mouse-pointer v))\n" +
+                "change [my variable v] by (join [apple ][banana])\n" +
+                "change [my variable v] by (length of [thelist v])\n" +
+                "change [my variable v] by ([abs v] of (my variable))\n" +
+                "change [my variable v] by ((my variable) mod (other variable))\n" +
+                "change [my variable v] by (round (my variable))\n" +
+                "change [my variable v] by (pick random (1) to (10))\n" +
+                "change [my variable v] by ([my variable v] of (Stage v)?)\n" +
+                "change [my variable v] by ((10)+(my variable))\n" +
+                "change [my variable v] by (item (1) of [thelist v])\n" +
+                "change [my variable v] by (item # of [thing] in [thelist v])\n" +
+                "change [my variable v] by (username)\n" +
+                "change [my variable v] by (thelist)\n" +
+                "change [my variable v] by (mouse x)\n" +
+                "change [my variable v] by (loudness)\n" +
+                "change [my variable v] by (days since 2000)\n" +
+                "change [my variable v] by (current (year v)\n" +
+                "change [my variable v] by (timer)\n" +
+                "[/scratchblocks]\n", result);
+    }
+
+    @Test
     public void testMultipleCustomBlocks() throws IOException, ParsingException {
         Program program = getAST("src/test/fixtures/scratchblocks/multicustomblocks.json");
         ByteArrayOutputStream os = new ByteArrayOutputStream();
