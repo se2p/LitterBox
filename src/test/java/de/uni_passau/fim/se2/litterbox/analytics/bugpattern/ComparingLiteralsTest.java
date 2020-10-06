@@ -20,9 +20,11 @@ package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
 import com.google.common.truth.Truth;
 import de.uni_passau.fim.se2.litterbox.JsonTest;
+import de.uni_passau.fim.se2.litterbox.analytics.Hint;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -36,5 +38,31 @@ class ComparingLiteralsTest implements JsonTest {
         ComparingLiterals finder = new ComparingLiterals();
         Set<Issue> reports = finder.check(program);
         Truth.assertThat(reports).hasSize(3);
+        Hint trueHint = new Hint(finder.getName());
+        trueHint.setParameter(ComparingLiterals.HINT_TRUE_FALSE, IssueTranslator.getInstance().getInfo("true"));
+        Hint falseHint = new Hint(finder.getName());
+        falseHint.setParameter(ComparingLiterals.HINT_TRUE_FALSE, IssueTranslator.getInstance().getInfo("false"));
+        int i = 0;
+        for (Issue issue : reports) {
+            if (i == 1) {
+                Truth.assertThat(issue.getHint()).isEqualTo(trueHint.getHintText());
+            } else {
+                Truth.assertThat(issue.getHint()).isEqualTo(falseHint.getHintText());
+            }
+            i++;
+        }
+    }
+
+    @Test
+    public void testComparingLiteralsNumbersGreater() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/bugpattern/compareNumbersGreater.json");
+        ComparingLiterals finder = new ComparingLiterals();
+        Set<Issue> reports = finder.check(program);
+        Truth.assertThat(reports).hasSize(1);
+        Hint trueHint = new Hint(finder.getName());
+        trueHint.setParameter(ComparingLiterals.HINT_TRUE_FALSE, IssueTranslator.getInstance().getInfo("true"));
+        for (Issue issue : reports) {
+            Truth.assertThat(issue.getHint()).isEqualTo(trueHint.getHintText());
+        }
     }
 }
