@@ -919,7 +919,13 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         emitNoSpace("set [");
         node.getIdentifier().accept(this);
         emitNoSpace(" v] to ");
+        if (node.getExpr() instanceof Qualified) {
+            emitNoSpace("(");
+        }
         node.getExpr().accept(this);
+        if (node.getExpr() instanceof Qualified) {
+            emitNoSpace(")");
+        }
         storeNotesForIssue(node);
         newLine();
     }
@@ -929,7 +935,11 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         emitNoSpace("change [");
         node.getIdentifier().accept(this);
         emitNoSpace(" v] by ");
-        node.getExpr().accept(this);
+        if (node.getExpr() instanceof AsNumber && !(((AsNumber)node.getExpr()).getOperand1() instanceof Qualified)) {
+            ((AsNumber)node.getExpr()).getOperand1().accept(this);
+        } else {
+            node.getExpr().accept(this);
+        }
         storeNotesForIssue(node);
         newLine();
     }
