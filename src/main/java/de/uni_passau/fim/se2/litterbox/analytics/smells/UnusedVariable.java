@@ -19,6 +19,7 @@
 package de.uni_passau.fim.se2.litterbox.analytics.smells;
 
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
+import de.uni_passau.fim.se2.litterbox.analytics.Hint;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
@@ -129,7 +130,7 @@ public class UnusedVariable extends AbstractIssueFinder {
 
     private void addScriptWithIssueFor(Expression expr) {
         Script theScript = new Script(new Never(), new StmtList(Arrays.asList(new ExpressionStmt(expr))));
-        addIssueForSynthesizedScript(theScript, expr, new NoBlockMetadata());
+        addIssueForSynthesizedScript(theScript, expr, new NoBlockMetadata(), new Hint(getName()));
     }
 
     @Override

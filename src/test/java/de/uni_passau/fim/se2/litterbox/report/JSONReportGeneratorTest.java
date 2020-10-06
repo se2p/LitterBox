@@ -27,6 +27,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.PositionEqualsCheck;
 import de.uni_passau.fim.se2.litterbox.analytics.smells.EmptySprite;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -43,10 +44,14 @@ public class JSONReportGeneratorTest implements JsonTest {
     private void assertValidJsonIssue(String issueText, int numIssues) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         JsonNode rootNode = mapper.readTree(issueText);
-        assertThat(rootNode.size()).isEqualTo(numIssues);
+        assertThat(rootNode.has("metrics")).isTrue();
+        assertThat(rootNode.has("issues")).isTrue();
+        JsonNode issueNode = rootNode.get("issues");
+        assertThat(issueNode.size()).isEqualTo(numIssues);
 
-        for (JsonNode node : rootNode) {
+        for (JsonNode node : issueNode) {
             assertThat(node.has("finder")).isTrue();
+            assertThat(node.has("name")).isTrue();
             assertThat(node.has("severity")).isTrue();
             assertThat(node.has("type")).isTrue();
             assertThat(node.has("sprite")).isTrue();
@@ -81,13 +86,12 @@ public class JSONReportGeneratorTest implements JsonTest {
         String jsonText = os.toString();
         ObjectMapper mapper = new ObjectMapper();
         JsonNode rootNode = mapper.readTree(jsonText);
-        String code = rootNode.get(0).get("code").asText();
-        assertThat(code).isEqualTo("[scratchblocks]" + "\n" +
-                "repeat until <(x position) = (50):: #ff0000> // Position Equals Check" + "\n" +
-                "end" + "\n" +
-                "[/scratchblocks]" + "\n");
+        String code = rootNode.get("issues").get(0).get("code").asText();
+        assertThat(code).isEqualTo("[scratchblocks]" + System.lineSeparator() +
+                "+repeat until <(x position) = (50):: #ff0000> // " + ScratchBlocksVisitor.BUG_NOTE + System.lineSeparator() +
+                "end" + System.lineSeparator() +
+                "[/scratchblocks]" + System.lineSeparator());
     }
-
 
     @Test
     public void testMultipleIssues() throws IOException, ParsingException {

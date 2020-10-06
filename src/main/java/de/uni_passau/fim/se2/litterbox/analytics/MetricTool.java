@@ -30,6 +30,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -45,6 +46,10 @@ public class MetricTool {
 
     public List<String> getMetricNames() {
         return metrics.stream().map(MetricExtractor::getName).collect(Collectors.toList());
+    }
+
+    public List<MetricExtractor> getAnalyzers() {
+        return Collections.unmodifiableList(metrics);
     }
 
     public void createCSVFile(Program program, String fileName) throws IOException {
