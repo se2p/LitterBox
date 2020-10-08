@@ -38,10 +38,12 @@ class ComparingLiteralsTest implements JsonTest {
         ComparingLiterals finder = new ComparingLiterals();
         Set<Issue> reports = finder.check(program);
         Truth.assertThat(reports).hasSize(3);
-        Hint trueHint = new Hint(finder.getName());
-        trueHint.setParameter(ComparingLiterals.HINT_TRUE_FALSE, IssueTranslator.getInstance().getInfo("true"));
-        Hint falseHint = new Hint(finder.getName());
-        falseHint.setParameter(ComparingLiterals.HINT_TRUE_FALSE, IssueTranslator.getInstance().getInfo("false"));
+        Hint trueHint = new Hint(ComparingLiterals.DEFAULT_VARIABLE);
+        trueHint.setParameter(ComparingLiterals.HINT_TRUE_FALSE,IssueTranslator.getInstance().getInfo("true"));
+        trueHint.setParameter(Hint.HINT_VARIABLE,"\"\"");
+        Hint falseHint = new Hint(ComparingLiterals.DEFAULT_VARIABLE);
+        falseHint.setParameter(ComparingLiterals.HINT_TRUE_FALSE,IssueTranslator.getInstance().getInfo("false"));
+        falseHint.setParameter(Hint.HINT_VARIABLE,"\"\"");
         int i = 0;
         for (Issue issue : reports) {
             if (i == 1) {
@@ -59,8 +61,7 @@ class ComparingLiteralsTest implements JsonTest {
         ComparingLiterals finder = new ComparingLiterals();
         Set<Issue> reports = finder.check(program);
         Truth.assertThat(reports).hasSize(1);
-        Hint trueHint = new Hint(finder.getName());
-        trueHint.setParameter(ComparingLiterals.HINT_TRUE_FALSE, IssueTranslator.getInstance().getInfo("true"));
+        Hint trueHint = new Hint(ComparingLiterals.DEFAULT_TRUE);
         for (Issue issue : reports) {
             Truth.assertThat(issue.getHint()).isEqualTo(trueHint.getHintText());
         }
