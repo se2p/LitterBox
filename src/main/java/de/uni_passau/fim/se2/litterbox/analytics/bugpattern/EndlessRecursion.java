@@ -19,6 +19,7 @@
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
+import de.uni_passau.fim.se2.litterbox.analytics.Hint;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
@@ -31,12 +32,18 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.BroadcastAndWa
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfElseStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 /**
  * If a custom block calls itself inside its body and has no condition to stop the recursion, it will run for an
  * indefinite amount of time. The same holds true for broadcast reception scripts that send the same message.
  */
 public class EndlessRecursion extends AbstractIssueFinder {
     public static final String NAME = "endless_recursion";
+    private static final String BROADCAST_HINT = "endless_recursion_broadcast";
+    private static final String PROCEDURE_HINT = "endless_recursion_procedure";
     private String currentProcedureName;
     private String currentMessageName;
     private boolean insideProcedure;
@@ -77,7 +84,7 @@ public class EndlessRecursion extends AbstractIssueFinder {
     public void visit(Broadcast node) {
         if (insideBroadcastReception && node.getMessage().getMessage() instanceof StringLiteral && loopIfCounter == 0) {
             if (((StringLiteral) node.getMessage().getMessage()).getText().equals(currentMessageName)) {
-                addIssue(node, node.getMetadata());
+                addIssue(node, node.getMetadata(), new Hint(BROADCAST_HINT));
             }
         }
     }
@@ -86,7 +93,7 @@ public class EndlessRecursion extends AbstractIssueFinder {
     public void visit(BroadcastAndWait node) {
         if (insideBroadcastReception && node.getMessage().getMessage() instanceof StringLiteral && loopIfCounter == 0) {
             if (((StringLiteral) node.getMessage().getMessage()).getText().equals(currentMessageName)) {
-                addIssue(node, node.getMetadata());
+                addIssue(node, node.getMetadata(), new Hint(BROADCAST_HINT));
             }
         }
     }
@@ -96,7 +103,7 @@ public class EndlessRecursion extends AbstractIssueFinder {
         if (insideProcedure && loopIfCounter == 0) {
             String call = node.getIdent().getName();
             if (call.equals(currentProcedureName)) {
-                addIssue(node, node.getMetadata());
+                addIssue(node, node.getMetadata(), new Hint(PROCEDURE_HINT));
             }
         }
     }
@@ -123,5 +130,13 @@ public class EndlessRecursion extends AbstractIssueFinder {
     @Override
     public IssueType getIssueType() {
         return IssueType.BUG;
+    }
+
+    @Override
+    public Collection<String> getHintKeys() {
+        List<String> keys = new ArrayList<>();
+        keys.add(BROADCAST_HINT);
+        keys.add(PROCEDURE_HINT);
+        return keys;
     }
 }

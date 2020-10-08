@@ -19,6 +19,7 @@
 package de.uni_passau.fim.se2.litterbox.analytics.smells;
 
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
+import de.uni_passau.fim.se2.litterbox.analytics.Hint;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Event;
@@ -29,11 +30,15 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.Broadcast;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.BroadcastAndWait;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 public class MiddleMan extends AbstractIssueFinder {
 
     private static final String NAME = "middle_man";
+    private static final String BROADCAST_HINT = "middle_man_broadcast";
+    private static final String PROCEDURE_HINT = "middle_man_procedure";
 
     @Override
     public void visit(Script script) {
@@ -43,7 +48,7 @@ public class MiddleMan extends AbstractIssueFinder {
         if (event instanceof ReceptionOfMessage) {
             List<Stmt> stmts = script.getStmtList().getStmts();
             if (stmts.size() == 1 && (stmts.get(0) instanceof Broadcast || stmts.get(0) instanceof BroadcastAndWait)) {
-                addIssue(event, ((ReceptionOfMessage) event).getMetadata());
+                addIssue(event, ((ReceptionOfMessage) event).getMetadata(), new Hint(BROADCAST_HINT));
             }
         }
     }
@@ -55,7 +60,7 @@ public class MiddleMan extends AbstractIssueFinder {
         List<Stmt> stmts = node.getStmtList().getStmts();
         if (stmts.size() == 1 && (stmts.get(0) instanceof CallStmt)) {
             if (!((CallStmt) stmts.get(0)).getIdent().getName().equals(node.getIdent().getName())) {
-                addIssue(node, node.getMetadata().getDefinition());
+                addIssue(node, node.getMetadata().getDefinition(), new Hint(PROCEDURE_HINT));
             }
         }
     }
@@ -68,5 +73,13 @@ public class MiddleMan extends AbstractIssueFinder {
     @Override
     public String getName() {
         return NAME;
+    }
+
+    @Override
+    public Collection<String> getHintKeys() {
+        List<String> keys = new ArrayList<>();
+        keys.add(BROADCAST_HINT);
+        keys.add(PROCEDURE_HINT);
+        return keys;
     }
 }
