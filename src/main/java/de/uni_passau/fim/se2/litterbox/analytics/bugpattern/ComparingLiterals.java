@@ -19,12 +19,19 @@
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
+import de.uni_passau.fim.se2.litterbox.analytics.Hint;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.ComparableExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BiggerThan;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Equals;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.LessThan;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
+import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * Reporter blocks are used to evaluate the truth value of certain expressions.
@@ -36,21 +43,104 @@ import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 public class ComparingLiterals extends AbstractIssueFinder {
 
     public static final String NAME = "comparing_literals";
+    public static final String DEFAULT_TRUE = "comparing_literals_default_true";
+    public static final String DEFAULT_FALSE = "comparing_literals_default_false";
+    public static final String DEFAULT_VARIABLE = "comparing_literals_default_variable";
+    public static final String HINT_TRUE_FALSE = "TRUEFALSE";
 
     @Override
     public void visit(Equals node) {
         if ((node.getOperand1() instanceof StringLiteral || node.getOperand1() instanceof NumberLiteral)
                 && (node.getOperand2() instanceof StringLiteral || node.getOperand2() instanceof NumberLiteral)) {
-            addIssue(node, node.getMetadata());
+            Hint hint;
+            if (node.getOperand1() instanceof NumberLiteral && node.getOperand2() instanceof NumberLiteral) {
+                double text1 = ((NumberLiteral) node.getOperand1()).getValue();
+                double text2 = ((NumberLiteral) node.getOperand2()).getValue();
+                if (text1 == text2) {
+                    hint = new Hint(DEFAULT_TRUE);
+                } else {
+                    hint = new Hint(DEFAULT_FALSE);
+                }
+            } else if (node.getOperand1() instanceof StringLiteral && node.getOperand2() instanceof StringLiteral) {
+                String text1 = getLiteralValue(node.getOperand1());
+                String text2 = getLiteralValue(node.getOperand2());
+
+                int result = text1.compareTo(text2);
+                if (result == 0) {
+                    hint = new Hint(DEFAULT_TRUE);
+                } else {
+                    hint = new Hint(DEFAULT_FALSE);
+                }
+            } else {
+                String text1 = getLiteralValue(node.getOperand1());
+                String text2 = getLiteralValue(node.getOperand2());
+                hint = new Hint(DEFAULT_VARIABLE);
+                int result = text1.compareTo(text2);
+                if (result == 0) {
+                    hint.setParameter(HINT_TRUE_FALSE, IssueTranslator.getInstance().getInfo("true"));
+                } else {
+                    hint.setParameter(HINT_TRUE_FALSE, IssueTranslator.getInstance().getInfo("false"));
+                }
+                hint.setParameter(Hint.HINT_VARIABLE, "\"" + possibleVariableName(node.getOperand1(), node.getOperand2()) + "\"");
+            }
+            addIssue(node, node.getMetadata(), hint);
         }
         visitChildren(node);
+    }
+
+    private String possibleVariableName(ComparableExpr node1, ComparableExpr node2) {
+        if (node1 instanceof StringLiteral) {
+            return ((StringLiteral) node1).getText();
+        } else {
+            return ((StringLiteral) node2).getText();
+        }
+    }
+
+    private String getLiteralValue(ComparableExpr node) {
+        String text1;
+        if (node instanceof StringLiteral) {
+            text1 = ((StringLiteral) node).getText();
+        } else {
+            text1 = String.valueOf(((NumberLiteral) node).getValue());
+        }
+        return text1;
     }
 
     @Override
     public void visit(LessThan node) {
         if ((node.getOperand1() instanceof StringLiteral || node.getOperand1() instanceof NumberLiteral)
                 && (node.getOperand2() instanceof StringLiteral || node.getOperand2() instanceof NumberLiteral)) {
-            addIssue(node, node.getMetadata());
+            Hint hint;
+            if (node.getOperand1() instanceof NumberLiteral && node.getOperand2() instanceof NumberLiteral) {
+                double text1 = ((NumberLiteral) node.getOperand1()).getValue();
+                double text2 = ((NumberLiteral) node.getOperand2()).getValue();
+                if (text1 < text2) {
+                    hint = new Hint(DEFAULT_TRUE);
+                } else {
+                    hint = new Hint(DEFAULT_FALSE);
+                }
+            } else if (node.getOperand1() instanceof StringLiteral && node.getOperand2() instanceof StringLiteral) {
+                String text1 = getLiteralValue(node.getOperand1());
+                String text2 = getLiteralValue(node.getOperand2());
+                int result = text1.compareTo(text2);
+                if (result < 0) {
+                    hint = new Hint(DEFAULT_TRUE);
+                } else {
+                    hint = new Hint(DEFAULT_FALSE);
+                }
+            } else {
+                String text1 = getLiteralValue(node.getOperand1());
+                String text2 = getLiteralValue(node.getOperand2());
+                hint = new Hint(DEFAULT_VARIABLE);
+                int result = text1.compareTo(text2);
+                if (result < 0) {
+                    hint.setParameter(HINT_TRUE_FALSE, IssueTranslator.getInstance().getInfo("true"));
+                } else {
+                    hint.setParameter(HINT_TRUE_FALSE, IssueTranslator.getInstance().getInfo("false"));
+                }
+                hint.setParameter(Hint.HINT_VARIABLE, "\"" + possibleVariableName(node.getOperand1(), node.getOperand2()) + "\"");
+            }
+            addIssue(node, node.getMetadata(), hint);
         }
         visitChildren(node);
     }
@@ -59,7 +149,37 @@ public class ComparingLiterals extends AbstractIssueFinder {
     public void visit(BiggerThan node) {
         if ((node.getOperand1() instanceof StringLiteral || node.getOperand1() instanceof NumberLiteral)
                 && (node.getOperand2() instanceof StringLiteral || node.getOperand2() instanceof NumberLiteral)) {
-            addIssue(node, node.getMetadata());
+            Hint hint;
+            if (node.getOperand1() instanceof NumberLiteral && node.getOperand2() instanceof NumberLiteral) {
+                double text1 = ((NumberLiteral) node.getOperand1()).getValue();
+                double text2 = ((NumberLiteral) node.getOperand2()).getValue();
+                if (text1 > text2) {
+                    hint = new Hint(DEFAULT_TRUE);
+                } else {
+                    hint = new Hint(DEFAULT_FALSE);
+                }
+            } else if (node.getOperand1() instanceof StringLiteral && node.getOperand2() instanceof StringLiteral) {
+                String text1 = getLiteralValue(node.getOperand1());
+                String text2 = getLiteralValue(node.getOperand2());
+                int result = text1.compareTo(text2);
+                if (result > 0) {
+                    hint = new Hint(DEFAULT_TRUE);
+                } else {
+                    hint = new Hint(DEFAULT_FALSE);
+                }
+            } else {
+                String text1 = getLiteralValue(node.getOperand1());
+                String text2 = getLiteralValue(node.getOperand2());
+                hint = new Hint(DEFAULT_VARIABLE);
+                int result = text1.compareTo(text2);
+                if (result > 0) {
+                    hint.setParameter(HINT_TRUE_FALSE, IssueTranslator.getInstance().getInfo("true"));
+                } else {
+                    hint.setParameter(HINT_TRUE_FALSE, IssueTranslator.getInstance().getInfo("false"));
+                }
+                hint.setParameter(Hint.HINT_VARIABLE, "\"" + possibleVariableName(node.getOperand1(), node.getOperand2()) + "\"");
+            }
+            addIssue(node, node.getMetadata(), hint);
         }
         visitChildren(node);
     }
@@ -72,5 +192,14 @@ public class ComparingLiterals extends AbstractIssueFinder {
     @Override
     public IssueType getIssueType() {
         return IssueType.BUG;
+    }
+
+    @Override
+    public Collection<String> getHintKeys() {
+        List<String> keys = new ArrayList<>();
+        keys.add(DEFAULT_FALSE);
+        keys.add(DEFAULT_TRUE);
+        keys.add(DEFAULT_VARIABLE);
+        return keys;
     }
 }
