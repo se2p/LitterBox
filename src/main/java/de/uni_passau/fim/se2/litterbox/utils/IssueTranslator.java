@@ -30,6 +30,14 @@ public class IssueTranslator {
     private ResourceBundle general;
     private Locale locale;
 
+    public static final String SIZE = "size";
+    public static final String POSITION = "position";
+    public static final String COSTUME = "costume";
+    public static final String ROTATION = "rotation";
+    public static final String VARIABLE = "variable";
+    public static final String LIST = "list";
+    public static final String ATTRIBUTE = "attribute";
+
     /**
      * Private constructor to avoid instatiation of singleton.
      */
