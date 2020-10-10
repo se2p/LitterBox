@@ -620,6 +620,59 @@ public class ScratchBlocksVisitorTest implements JsonTest {
     }
 
     @Test
+    public void testTouchingAllBlocks() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/scratchblocks/touchingallblocks.json");
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        PrintStream ps = new PrintStream(os);
+        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(ps);
+        visitor.begin();
+        program.accept(visitor);
+        visitor.end();
+        String result = os.toString();
+        assertEquals("[scratchblocks]" + System.lineSeparator() +
+                "define block name [number or text] <boolean>" + System.lineSeparator() +
+                "wait until <touching (my variable) ?>" + System.lineSeparator() +
+                "wait until <touching (x position) ?>" + System.lineSeparator() +
+                "wait until <touching (direction) ?>" + System.lineSeparator() +
+                "wait until <touching (costume [number v]) ?>" + System.lineSeparator() +
+                "wait until <touching (size) ?>" + System.lineSeparator() +
+                "wait until <touching (backdrop [number v]) ?>" + System.lineSeparator() +
+                "wait until <touching (volume) ?>" + System.lineSeparator() +
+                "wait until <touching <touching (mouse-pointer v) ?> ?>" + System.lineSeparator() +
+                "wait until <touching <touching color [#c9dae2] ?> ?>" + System.lineSeparator() +
+                "wait until <touching <color [#8d6b27] is touching [#805a3c] ?> ?>" + System.lineSeparator() +
+                "wait until <touching (distance to (mouse-pointer v)) ?>" + System.lineSeparator() +
+                "wait until <touching (answer) ?>" + System.lineSeparator() +
+                "wait until <touching <key (space v) pressed?> ?>" + System.lineSeparator() +
+                "wait until <touching <mouse down?> ?>" + System.lineSeparator() +
+                "wait until <touching (mouse x) ?>" + System.lineSeparator() +
+                "wait until <touching (mouse y) ?>" + System.lineSeparator() +
+                "wait until <touching (loudness) ?>" + System.lineSeparator() +
+                "wait until <touching (timer) ?>" + System.lineSeparator() +
+                "wait until <touching ([backdrop # v] of (Stage v)?) ?>" + System.lineSeparator() +
+                "wait until <touching (current (year v)) ?>" + System.lineSeparator() +
+                "wait until <touching (days since 2000) ?>" + System.lineSeparator() +
+                "wait until <touching (username) ?>" + System.lineSeparator() +
+                "wait until <touching ([]+[]) ?>" + System.lineSeparator() +
+                "wait until <touching (pick random (1) to (10)) ?>" + System.lineSeparator() +
+                "wait until <touching <[] > (50)> ?>" + System.lineSeparator() +
+                "wait until <touching <<> and <>> ?>" + System.lineSeparator() +
+                "wait until <touching (join [apple ][banana]) ?>" + System.lineSeparator() +
+                "wait until <touching <[apple] contains [a]?> ?>" + System.lineSeparator() +
+                "wait until <touching ([] mod []) ?>" + System.lineSeparator() +
+                "wait until <touching ([abs v] of []) ?>" + System.lineSeparator() +
+                "wait until <touching (my variable) ?>" + System.lineSeparator() +
+                "wait until <touching (listy) ?>" + System.lineSeparator() +
+                "wait until <touching (item (1) of [listy v]) ?>" + System.lineSeparator() +
+                "wait until <touching (item # of [thing] in [listy v]) ?>" + System.lineSeparator() +
+                "wait until <touching (length of [listy v]) ?>" + System.lineSeparator() +
+                "wait until <touching <[listy v] contains [thing] ?> ?>" + System.lineSeparator() +
+                "wait until <touching (number or text) ?>" + System.lineSeparator() +
+                "wait until <touching <boolean> ?>" + System.lineSeparator() +
+                "[/scratchblocks]" + System.lineSeparator(),result);
+    }
+
+    @Test
     public void testBooleanBlocks() throws IOException, ParsingException {
         Program program = getAST("src/test/fixtures/scratchblocks/booleanblocks.json");
         ByteArrayOutputStream os = new ByteArrayOutputStream();

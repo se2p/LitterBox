@@ -1424,18 +1424,26 @@ public class ScratchBlocksVisitor extends PrintVisitor {
 
     @Override
     public void visit(AsTouchable node) {
-        emitNoSpace("(");
+        if (node.getOperand1() instanceof Qualified) {
+            emitNoSpace("(");
+        }
         node.getOperand1().accept(this);
         storeNotesForIssue(node);
-        emitNoSpace(")");
+        if (node.getOperand1() instanceof Qualified) {
+            emitNoSpace(")");
+        }
     }
 
     @Override
     public void visit(AsBool node) {
-        // emitNoSpace("<");
+        if (node.getOperand1() instanceof Qualified) {
+            emitNoSpace("(");
+        }
         node.getOperand1().accept(this);
         storeNotesForIssue(node);
-        // emitNoSpace(">");
+        if (node.getOperand1() instanceof Qualified) {
+            emitNoSpace(")");
+        }
     }
 
     @Override
