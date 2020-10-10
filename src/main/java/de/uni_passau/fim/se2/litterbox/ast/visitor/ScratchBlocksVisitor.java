@@ -1412,12 +1412,12 @@ public class ScratchBlocksVisitor extends PrintVisitor {
 
     @Override
     public void visit(AsNumber node) {
-        if (node.getOperand1() instanceof Qualified || node.getOperand1() instanceof Parameter) {
+        if (node.getOperand1() instanceof Qualified) {
             emitNoSpace("(");
         }
         node.getOperand1().accept(this);
         storeNotesForIssue(node);
-        if (node.getOperand1() instanceof Qualified || node.getOperand1() instanceof Parameter) {
+        if (node.getOperand1() instanceof Qualified) {
             emitNoSpace(")");
         }
     }
@@ -1432,10 +1432,10 @@ public class ScratchBlocksVisitor extends PrintVisitor {
 
     @Override
     public void visit(AsBool node) {
-        emitNoSpace("<");
+        // emitNoSpace("<");
         node.getOperand1().accept(this);
         storeNotesForIssue(node);
-        emitNoSpace(">");
+        // emitNoSpace(">");
     }
 
     @Override
@@ -1447,20 +1447,7 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         } else if (node.getOperand1() instanceof NumExpr) {
             node.getOperand1().accept(this);
         } else if (node.getOperand1() instanceof Parameter) {
-            NonDataBlockMetadata metadata = (NonDataBlockMetadata) ((Parameter) node.getOperand1()).getMetadata();
-            if (ProcedureOpcode.argument_reporter_boolean.name().equals(metadata.getOpcode())) {
-                emitNoSpace("<");
-                node.getOperand1().accept(this);
-                storeNotesForIssue(node);
-                emitNoSpace(">");
-            } else if (ProcedureOpcode.argument_reporter_string_number.name().equals(metadata.getOpcode())) {
-                emitNoSpace("(");
-                node.getOperand1().accept(this);
-                storeNotesForIssue(node);
-                emitNoSpace(")");
-            } else {
-                assert (false);
-            }
+            node.getOperand1().accept(this);
         } else if (node.getOperand1() instanceof StrId) {
             emitNoSpace("(");
             final String spriteName = ((StrId) node.getOperand1()).getName();
@@ -1755,8 +1742,19 @@ public class ScratchBlocksVisitor extends PrintVisitor {
 
     @Override
     public void visit(Parameter node) {
+        NonDataBlockMetadata metaData = (NonDataBlockMetadata)node.getMetadata();
+        if (metaData.getOpcode().equals(ProcedureOpcode.argument_reporter_boolean.name())) {
+            emitNoSpace("<");
+        } else {
+            emitNoSpace("(");
+        }
         visitChildren(node);
         storeNotesForIssue(node);
+        if (metaData.getOpcode().equals(ProcedureOpcode.argument_reporter_boolean.name())) {
+            emitNoSpace(">");
+        } else {
+            emitNoSpace(")");
+        }
     }
 
     @Override

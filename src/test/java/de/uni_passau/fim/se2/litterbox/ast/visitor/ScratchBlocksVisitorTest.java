@@ -147,6 +147,32 @@ public class ScratchBlocksVisitorTest implements JsonTest {
     }
 
     @Test
+    public void testSetVarToBool() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/scratchblocks/booleaninsetvar.json");
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        PrintStream ps = new PrintStream(os);
+        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(ps);
+        visitor.begin();
+        program.accept(visitor);
+        visitor.end();
+        String result = os.toString();
+        assertEquals("[scratchblocks]" + System.lineSeparator()+
+                "define block name [number or text] <boolean>" + System.lineSeparator()+
+                "set [my variable v] to <touching color [#c9dae2] ?>" + System.lineSeparator()+
+                "set [my variable v] to <touching (mouse-pointer v) ?>" + System.lineSeparator()+
+                "set [my variable v] to <color [#8d6b27] is touching [#805a3c] ?>" + System.lineSeparator()+
+                "set [my variable v] to <key (space v) pressed?>" + System.lineSeparator()+
+                "set [my variable v] to <mouse down?>" + System.lineSeparator()+
+                "set [my variable v] to <<> and <>>" + System.lineSeparator()+
+                "set [my variable v] to <[apple] contains [a]?>" + System.lineSeparator()+
+                "set [my variable v] to <not <>>" + System.lineSeparator()+
+                "set [my variable v] to <<> or <>>" + System.lineSeparator()+
+                "set [my variable v] to <[] > (50)>" + System.lineSeparator()+
+                "set [my variable v] to <boolean>" + System.lineSeparator()+
+                "[/scratchblocks]" + System.lineSeparator(), result);
+    }
+
+    @Test
     public void testSetVarToAllOtherblocks() throws IOException, ParsingException {
         Program program = getAST("src/test/fixtures/scratchblocks/setvartoblocks.json");
         ByteArrayOutputStream os = new ByteArrayOutputStream();
@@ -1433,7 +1459,7 @@ public class ScratchBlocksVisitorTest implements JsonTest {
         String output = visitor.getScratchBlocks();
         assertEquals("[scratchblocks]" + System.lineSeparator() +
                 "define block name <boolean>" + System.lineSeparator() +
-                "move (boolean) steps" + System.lineSeparator() +
+                "move <boolean> steps" + System.lineSeparator() +
                 "+if <String:: #ff0000> then // " + ScratchBlocksVisitor.BUG_NOTE + System.lineSeparator() +
                 "say [Hello!] for (2) seconds" + System.lineSeparator() +
                 "end" + System.lineSeparator() +
@@ -1454,7 +1480,7 @@ public class ScratchBlocksVisitorTest implements JsonTest {
         visitor.end();
         String output = visitor.getScratchBlocks();
         assertEquals("[scratchblocks]" + System.lineSeparator() +
-                "+turn right (boolean:: #ff0000) degrees // " + ScratchBlocksVisitor.BUG_NOTE + System.lineSeparator() +
+                "+turn right <boolean:: #ff0000> degrees // " + ScratchBlocksVisitor.BUG_NOTE + System.lineSeparator() +
                 "[/scratchblocks]" + System.lineSeparator(),output);
     }
 
