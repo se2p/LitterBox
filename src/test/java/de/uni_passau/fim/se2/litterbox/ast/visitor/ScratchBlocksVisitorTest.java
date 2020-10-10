@@ -673,6 +673,58 @@ public class ScratchBlocksVisitorTest implements JsonTest {
     }
 
     @Test
+    public void testAskAllBlocks() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/scratchblocks/askallblocks.json");
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        PrintStream ps = new PrintStream(os);
+        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(ps);
+        visitor.begin();
+        program.accept(visitor);
+        visitor.end();
+        String result = os.toString();
+        assertEquals("[scratchblocks]" + System.lineSeparator() +
+                "define block name [number or text] <boolean>" + System.lineSeparator() +
+                "ask [What's your name?] and wait" + System.lineSeparator() +
+                "ask (x position) and wait" + System.lineSeparator() +
+                "ask (direction) and wait" + System.lineSeparator() +
+                "ask (costume [number v]) and wait" + System.lineSeparator() +
+                "ask (backdrop [number v]) and wait" + System.lineSeparator() +
+                "ask (size) and wait" + System.lineSeparator() +
+                "ask (volume) and wait" + System.lineSeparator() +
+                "ask <touching (mouse-pointer v) ?> and wait" + System.lineSeparator() +
+                "ask <touching color [#c9dae2] ?> and wait" + System.lineSeparator() +
+                "ask <color [#8d6b27] is touching [#805a3c] ?> and wait" + System.lineSeparator() +
+                "ask (distance to (mouse-pointer v)) and wait" + System.lineSeparator() +
+                "ask (answer) and wait" + System.lineSeparator() +
+                "ask <key (space v) pressed?> and wait" + System.lineSeparator() +
+                "ask <mouse down?> and wait" + System.lineSeparator() +
+                "ask (mouse x) and wait" + System.lineSeparator() +
+                "ask (loudness) and wait" + System.lineSeparator() +
+                "ask (timer) and wait" + System.lineSeparator() +
+                "ask ([backdrop # v] of (Stage v)?) and wait" + System.lineSeparator() +
+                "ask (current (year v)) and wait" + System.lineSeparator() +
+                "ask (days since 2000) and wait" + System.lineSeparator() +
+                "ask (username) and wait" + System.lineSeparator() +
+                "ask ([]+[]) and wait" + System.lineSeparator() +
+                "ask (pick random (1) to (10)) and wait" + System.lineSeparator() +
+                "ask <[] > (50)> and wait" + System.lineSeparator() +
+                "ask <<> and <>> and wait" + System.lineSeparator() +
+                "ask (join [apple ][banana]) and wait" + System.lineSeparator() +
+                "ask ([] mod []) and wait" + System.lineSeparator() +
+                "ask ([abs v] of []) and wait" + System.lineSeparator() +
+                "ask (my variable) and wait" + System.lineSeparator() +
+                "ask (listy) and wait" + System.lineSeparator() +
+                "ask (item (1) of [listy v]) and wait" + System.lineSeparator() +
+                "ask (item # of [thing] in [listy v]) and wait" + System.lineSeparator() +
+                "ask (length of [listy v]) and wait" + System.lineSeparator() +
+                "ask <[listy v] contains [thing] ?> and wait" + System.lineSeparator() +
+                "ask <boolean> and wait" + System.lineSeparator() +
+                "ask (number or text) and wait" + System.lineSeparator() +
+                "[/scratchblocks]" + System.lineSeparator(),result);
+    }
+
+
+    @Test
     public void testBooleanBlocks() throws IOException, ParsingException {
         Program program = getAST("src/test/fixtures/scratchblocks/booleanblocks.json");
         ByteArrayOutputStream os = new ByteArrayOutputStream();
