@@ -941,6 +941,7 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         if (node.getExpr() instanceof AsNumber && !(((AsNumber)node.getExpr()).getOperand1() instanceof Qualified)) {
             ((AsNumber)node.getExpr()).getOperand1().accept(this);
         } else {
+            //
             node.getExpr().accept(this);
         }
         storeNotesForIssue(node);
@@ -1389,7 +1390,7 @@ public class ScratchBlocksVisitor extends PrintVisitor {
     public void visit(Current node) {
         emitNoSpace("(current (");
         node.getTimeComp().accept(this);
-        emitNoSpace(" v");
+        emitNoSpace(" v)");
         storeNotesForIssue(node);
         emitNoSpace(")");
     }
@@ -1411,10 +1412,14 @@ public class ScratchBlocksVisitor extends PrintVisitor {
 
     @Override
     public void visit(AsNumber node) {
-        emitNoSpace("(");
+        if (node.getOperand1() instanceof Qualified || node.getOperand1() instanceof Parameter) {
+            emitNoSpace("(");
+        }
         node.getOperand1().accept(this);
         storeNotesForIssue(node);
-        emitNoSpace(")");
+        if (node.getOperand1() instanceof Qualified || node.getOperand1() instanceof Parameter) {
+            emitNoSpace(")");
+        }
     }
 
     @Override

@@ -176,7 +176,7 @@ public class ScratchBlocksVisitorTest implements JsonTest {
                 "set [my variable v] to (mouse x)" + System.lineSeparator() +
                 "set [my variable v] to (loudness)" + System.lineSeparator() +
                 "set [my variable v] to (days since 2000)" + System.lineSeparator() +
-                "set [my variable v] to (current (year v)" + System.lineSeparator() +
+                "set [my variable v] to (current (year v))" + System.lineSeparator() +
                 "set [my variable v] to (timer)" + System.lineSeparator() +
                 "[/scratchblocks]" + System.lineSeparator(), result);
     }
@@ -218,8 +218,55 @@ public class ScratchBlocksVisitorTest implements JsonTest {
                 "change [my variable v] by (mouse x)" + System.lineSeparator() +
                 "change [my variable v] by (loudness)" + System.lineSeparator() +
                 "change [my variable v] by (days since 2000)" + System.lineSeparator() +
-                "change [my variable v] by (current (year v)" + System.lineSeparator() +
+                "change [my variable v] by (current (year v))" + System.lineSeparator() +
                 "change [my variable v] by (timer)" + System.lineSeparator() +
+                "[/scratchblocks]" + System.lineSeparator(), result);
+    }
+
+    @Test
+    public void testMoveWithAllOtherblocks() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/scratchblocks/movewithallblocks.json");
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        PrintStream ps = new PrintStream(os);
+        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(ps);
+        visitor.begin();
+        program.accept(visitor);
+        visitor.end();
+        String result = os.toString();
+        assertEquals("[scratchblocks]" + System.lineSeparator() +
+                "move (10) steps" + System.lineSeparator() +
+                "move (x position) steps" + System.lineSeparator() +
+                "move (y position) steps" + System.lineSeparator() +
+                "move (direction) steps" + System.lineSeparator() +
+                "move (costume [number v]) steps" + System.lineSeparator() +
+                "move (backdrop [number v]) steps" + System.lineSeparator() +
+                "move (size) steps" + System.lineSeparator() +
+                "move ([]+[]) steps" + System.lineSeparator() +
+                "move (join [apple ][banana]) steps" + System.lineSeparator() +
+                "move ([backdrop # v] of (letter (1) of [apple])?) steps" + System.lineSeparator() +
+                "move (loudness) steps" + System.lineSeparator() +
+                "move <touching (mouse-pointer v) ?> steps" + System.lineSeparator() +
+                "move <[] > (50)> steps" + System.lineSeparator() +
+                "move (my variable) steps" + System.lineSeparator() +
+                "move ([] mod []) steps" + System.lineSeparator() +
+                "move (timer) steps" + System.lineSeparator() +
+                "move (days since 2000) steps" + System.lineSeparator() +
+                "move (mouse x) steps" + System.lineSeparator() +
+                "move <touching color [#e24b5b] ?> steps" + System.lineSeparator() +
+                "move (length of (round [])) steps" + System.lineSeparator() +
+                "move ([abs v] of []) steps" + System.lineSeparator() +
+                "move <[apple] contains [a]?> steps" + System.lineSeparator() +
+                "move (distance to (mouse-pointer v)) steps" + System.lineSeparator() +
+                "move <color [#d9de7a] is touching [#7efc63] ?> steps" + System.lineSeparator() +
+                "move <<> and <>> steps" + System.lineSeparator() +
+                "move (answer) steps" + System.lineSeparator() +
+                "move (current (year v)) steps" + System.lineSeparator() +
+                "move (pick random (1) to (10)) steps" + System.lineSeparator() +
+                "move (volume) steps" + System.lineSeparator() +
+                "move <key (space v) pressed?> steps" + System.lineSeparator() +
+                "move (username) steps" + System.lineSeparator() +
+                "move (mouse y) steps" + System.lineSeparator() +
+                "move <mouse down?> steps" + System.lineSeparator() +
                 "[/scratchblocks]" + System.lineSeparator(), result);
     }
 
@@ -622,8 +669,8 @@ public class ScratchBlocksVisitorTest implements JsonTest {
                 "say (username)" + System.lineSeparator() +
                 "say (loudness)" + System.lineSeparator() +
                 "say (distance to (mouse-pointer v))" + System.lineSeparator() +
-                "say (current (second v)" + System.lineSeparator() +
-                "say (current (year v)" + System.lineSeparator() +
+                "say (current (second v))" + System.lineSeparator() +
+                "say (current (year v))" + System.lineSeparator() +
                 "say (mouse x)" + System.lineSeparator() +
                 "say (mouse y)" + System.lineSeparator() +
                 "say (days since 2000)" + System.lineSeparator() +
