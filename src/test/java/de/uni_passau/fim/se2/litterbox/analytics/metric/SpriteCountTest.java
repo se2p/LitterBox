@@ -45,7 +45,7 @@ public class SpriteCountTest {
     }
 
     @Test
-    public void tesSpriteCount() {
+    public void testSpriteCount() {
         SpriteCount parameterName = new SpriteCount();
         Assertions.assertEquals(1, parameterName.calculateMetric(unusedProc));
     }
