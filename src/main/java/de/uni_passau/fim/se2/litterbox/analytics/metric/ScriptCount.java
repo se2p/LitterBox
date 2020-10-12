@@ -20,12 +20,18 @@ package de.uni_passau.fim.se2.litterbox.analytics.metric;
 
 import de.uni_passau.fim.se2.litterbox.analytics.MetricExtractor;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
+import de.uni_passau.fim.se2.litterbox.ast.model.Script;
+import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.ExpressionStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-public class ProcedureCount implements MetricExtractor, ScratchVisitor {
-    public static final String NAME = "procedure_count";
+import java.util.List;
+
+public class ScriptCount implements MetricExtractor, ScratchVisitor {
+
+    public static final String NAME = "script_count";
 
     private int count = 0;
 
@@ -38,12 +44,19 @@ public class ProcedureCount implements MetricExtractor, ScratchVisitor {
     }
 
     @Override
-    public String getName() {
-        return NAME;
+    public void visit(Script node) {
+        if (node.getEvent() instanceof Never) {
+            List<Stmt> statements = node.getStmtList().getStmts();
+            if (statements.size() == 1 && statements.get(0) instanceof ExpressionStmt) {
+                // loose reporter block
+                return;
+            }
+        }
+        count++;
     }
 
     @Override
-    public void visit(ProcedureDefinition node) {
-        count++;
+    public String getName() {
+        return NAME;
     }
 }

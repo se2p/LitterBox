@@ -20,12 +20,14 @@ package de.uni_passau.fim.se2.litterbox.analytics.metric;
 
 import de.uni_passau.fim.se2.litterbox.analytics.MetricExtractor;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
+import de.uni_passau.fim.se2.litterbox.ast.model.event.Event;
+import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-public class ProcedureCount implements MetricExtractor, ScratchVisitor {
-    public static final String NAME = "procedure_count";
+public class HatCount implements MetricExtractor, ScratchVisitor {
+
+    public static final String NAME = "hat_count";
 
     private int count = 0;
 
@@ -38,12 +40,15 @@ public class ProcedureCount implements MetricExtractor, ScratchVisitor {
     }
 
     @Override
-    public String getName() {
-        return NAME;
+    public void visit(Event node) {
+        if (node instanceof Never) {
+            return;
+        }
+        count++;
     }
 
     @Override
-    public void visit(ProcedureDefinition node) {
-        count++;
+    public String getName() {
+        return NAME;
     }
 }

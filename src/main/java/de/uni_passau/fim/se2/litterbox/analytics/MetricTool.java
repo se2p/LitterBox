@@ -38,9 +38,12 @@ public class MetricTool {
 
     private List<MetricExtractor> metrics = Arrays.asList(
             new BlockCount(),
-            new SpriteCount(),
+            new HatCount(),
             new ProcedureCount(),
             new ProgramUsingPen(),
+            new ScriptCount(),
+            new SpriteCount(),
+            new StatementCount(),
             new WeightedMethodCount(),
             new WeightedMethodCountStrict());
 
