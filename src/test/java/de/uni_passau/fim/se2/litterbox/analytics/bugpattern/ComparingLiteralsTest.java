@@ -40,9 +40,11 @@ class ComparingLiteralsTest implements JsonTest {
         Truth.assertThat(reports).hasSize(3);
         Hint trueHint = new Hint(ComparingLiterals.DEFAULT_VARIABLE);
         trueHint.setParameter(ComparingLiterals.HINT_TRUE_FALSE,IssueTranslator.getInstance().getInfo("true"));
+        trueHint.setParameter(ComparingLiterals.ALWAYS_NEVER,IssueTranslator.getInstance().getInfo(ComparingLiterals.ALWAYS_OR_NEVER));
         trueHint.setParameter(Hint.HINT_VARIABLE,"\"\"");
         Hint falseHint = new Hint(ComparingLiterals.DEFAULT_VARIABLE);
         falseHint.setParameter(ComparingLiterals.HINT_TRUE_FALSE,IssueTranslator.getInstance().getInfo("false"));
+        falseHint.setParameter(ComparingLiterals.ALWAYS_NEVER,IssueTranslator.getInstance().getInfo(ComparingLiterals.ALWAYS_OR_NEVER));
         falseHint.setParameter(Hint.HINT_VARIABLE,"\"\"");
         int i = 0;
         for (Issue issue : reports) {
@@ -62,6 +64,7 @@ class ComparingLiteralsTest implements JsonTest {
         Set<Issue> reports = finder.check(program);
         Truth.assertThat(reports).hasSize(1);
         Hint trueHint = new Hint(ComparingLiterals.DEFAULT_TRUE);
+        trueHint.setParameter(ComparingLiterals.ALWAYS_NEVER,IssueTranslator.getInstance().getInfo("always"));
         for (Issue issue : reports) {
             Truth.assertThat(issue.getHint()).isEqualTo(trueHint.getHintText());
         }

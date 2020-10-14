@@ -21,12 +21,18 @@ package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.Hint;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.ComparableExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BiggerThan;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Equals;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.LessThan;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Not;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitUntil;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfElseStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 
 import java.util.ArrayList;
@@ -46,46 +52,53 @@ public class ComparingLiterals extends AbstractIssueFinder {
     public static final String DEFAULT_TRUE = "comparing_literals_default_true";
     public static final String DEFAULT_FALSE = "comparing_literals_default_false";
     public static final String DEFAULT_VARIABLE = "comparing_literals_default_variable";
+    public static final String WAIT_TRUE = "comparing_literals_wait_true";
+    public static final String WAIT_FALSE = "comparing_literals_wait_false";
+    public static final String WAIT_VARIABLE = "comparing_literals_wait_variable";
     public static final String HINT_TRUE_FALSE = "TRUEFALSE";
+    public static final String ALWAYS_NEVER = "ALWAYSNEVER";
+    public static final String ALWAYS = "always";
+    public static final String NEVER = "never";
+    public static final String ALWAYS_OR_NEVER = "always_or_never";
 
     @Override
     public void visit(Equals node) {
         if ((node.getOperand1() instanceof StringLiteral || node.getOperand1() instanceof NumberLiteral)
                 && (node.getOperand2() instanceof StringLiteral || node.getOperand2() instanceof NumberLiteral)) {
             Hint hint;
+            ASTNode parent = node.getParentNode();
+            boolean isTopLevelCond = checkIfTopCond(parent);
+            boolean isNot = checkIfNotIsTop(parent);
             if (node.getOperand1() instanceof NumberLiteral && node.getOperand2() instanceof NumberLiteral) {
                 double text1 = ((NumberLiteral) node.getOperand1()).getValue();
                 double text2 = ((NumberLiteral) node.getOperand2()).getValue();
-                if (text1 == text2) {
-                    hint = new Hint(DEFAULT_TRUE);
-                } else {
-                    hint = new Hint(DEFAULT_FALSE);
-                }
+                hint = generateHint(text1 == text2, parent instanceof WaitUntil, isTopLevelCond, isNot, false);
             } else if (node.getOperand1() instanceof StringLiteral && node.getOperand2() instanceof StringLiteral) {
                 String text1 = getLiteralValue(node.getOperand1());
                 String text2 = getLiteralValue(node.getOperand2());
 
                 int result = text1.compareTo(text2);
-                if (result == 0) {
-                    hint = new Hint(DEFAULT_TRUE);
-                } else {
-                    hint = new Hint(DEFAULT_FALSE);
-                }
+                hint = generateHint(result == 0, parent instanceof WaitUntil, isTopLevelCond, isNot, false);
             } else {
                 String text1 = getLiteralValue(node.getOperand1());
                 String text2 = getLiteralValue(node.getOperand2());
-                hint = new Hint(DEFAULT_VARIABLE);
+
                 int result = text1.compareTo(text2);
-                if (result == 0) {
-                    hint.setParameter(HINT_TRUE_FALSE, IssueTranslator.getInstance().getInfo("true"));
-                } else {
-                    hint.setParameter(HINT_TRUE_FALSE, IssueTranslator.getInstance().getInfo("false"));
-                }
+                hint = generateHint(result == 0, parent instanceof WaitUntil, isTopLevelCond, isNot, true);
                 hint.setParameter(Hint.HINT_VARIABLE, "\"" + possibleVariableName(node.getOperand1(), node.getOperand2()) + "\"");
             }
+
             addIssue(node, node.getMetadata(), hint);
         }
         visitChildren(node);
+    }
+
+    private boolean checkIfNotIsTop(ASTNode parent) {
+        return parent instanceof Not && checkIfTopCond(parent.getParentNode());
+    }
+
+    private boolean checkIfTopCond(ASTNode parent) {
+        return parent instanceof IfThenStmt || parent instanceof IfElseStmt || parent instanceof UntilStmt || parent instanceof WaitUntil;
     }
 
     private String possibleVariableName(ComparableExpr node1, ComparableExpr node2) {
@@ -106,38 +119,68 @@ public class ComparingLiterals extends AbstractIssueFinder {
         return text1;
     }
 
+    private Hint generateHint(boolean value, boolean wait, boolean top, boolean topNot, boolean variable) {
+        Hint hint;
+        if (wait) {
+            hint = getVariableHint(value, variable, WAIT_VARIABLE, WAIT_TRUE, WAIT_FALSE);
+        } else {
+            hint = getVariableHint(value, variable, DEFAULT_VARIABLE, DEFAULT_TRUE, DEFAULT_FALSE);
+        }
+        if (top) {
+            if (value) {
+                hint.setParameter(ALWAYS_NEVER, IssueTranslator.getInstance().getInfo(ALWAYS));
+            } else {
+                hint.setParameter(ALWAYS_NEVER, IssueTranslator.getInstance().getInfo(NEVER));
+            }
+        } else if (topNot) {
+            if (!value) {
+                hint.setParameter(ALWAYS_NEVER, IssueTranslator.getInstance().getInfo(ALWAYS));
+            } else {
+                hint.setParameter(ALWAYS_NEVER, IssueTranslator.getInstance().getInfo(NEVER));
+            }
+        } else {
+            hint.setParameter(ALWAYS_NEVER, IssueTranslator.getInstance().getInfo(ALWAYS_OR_NEVER));
+        }
+        return hint;
+    }
+
+    private Hint getVariableHint(boolean value, boolean variable, String waitVariable, String waitTrue, String waitFalse) {
+        Hint hint;
+        if (variable) {
+            hint = new Hint(waitVariable);
+            hint.setParameter(HINT_TRUE_FALSE, IssueTranslator.getInstance().getInfo(String.valueOf(value)));
+        } else {
+            if (value) {
+                hint = new Hint(waitTrue);
+            } else {
+                hint = new Hint(waitFalse);
+            }
+        }
+        return hint;
+    }
+
     @Override
     public void visit(LessThan node) {
         if ((node.getOperand1() instanceof StringLiteral || node.getOperand1() instanceof NumberLiteral)
                 && (node.getOperand2() instanceof StringLiteral || node.getOperand2() instanceof NumberLiteral)) {
             Hint hint;
+            ASTNode parent = node.getParentNode();
+            boolean isTopLevelCond = checkIfTopCond(parent);
+            boolean isNot = checkIfNotIsTop(parent);
             if (node.getOperand1() instanceof NumberLiteral && node.getOperand2() instanceof NumberLiteral) {
                 double text1 = ((NumberLiteral) node.getOperand1()).getValue();
                 double text2 = ((NumberLiteral) node.getOperand2()).getValue();
-                if (text1 < text2) {
-                    hint = new Hint(DEFAULT_TRUE);
-                } else {
-                    hint = new Hint(DEFAULT_FALSE);
-                }
+                hint = generateHint(text1 < text2, parent instanceof WaitUntil, isTopLevelCond, isNot, false);
             } else if (node.getOperand1() instanceof StringLiteral && node.getOperand2() instanceof StringLiteral) {
                 String text1 = getLiteralValue(node.getOperand1());
                 String text2 = getLiteralValue(node.getOperand2());
                 int result = text1.compareTo(text2);
-                if (result < 0) {
-                    hint = new Hint(DEFAULT_TRUE);
-                } else {
-                    hint = new Hint(DEFAULT_FALSE);
-                }
+                hint = generateHint(result < 0, parent instanceof WaitUntil, isTopLevelCond, isNot, false);
             } else {
                 String text1 = getLiteralValue(node.getOperand1());
                 String text2 = getLiteralValue(node.getOperand2());
-                hint = new Hint(DEFAULT_VARIABLE);
                 int result = text1.compareTo(text2);
-                if (result < 0) {
-                    hint.setParameter(HINT_TRUE_FALSE, IssueTranslator.getInstance().getInfo("true"));
-                } else {
-                    hint.setParameter(HINT_TRUE_FALSE, IssueTranslator.getInstance().getInfo("false"));
-                }
+                hint = generateHint(result < 0, parent instanceof WaitUntil, isTopLevelCond, isNot, true);
                 hint.setParameter(Hint.HINT_VARIABLE, "\"" + possibleVariableName(node.getOperand1(), node.getOperand2()) + "\"");
             }
             addIssue(node, node.getMetadata(), hint);
@@ -150,33 +193,24 @@ public class ComparingLiterals extends AbstractIssueFinder {
         if ((node.getOperand1() instanceof StringLiteral || node.getOperand1() instanceof NumberLiteral)
                 && (node.getOperand2() instanceof StringLiteral || node.getOperand2() instanceof NumberLiteral)) {
             Hint hint;
+            ASTNode parent = node.getParentNode();
+            boolean isTopLevelCond = checkIfTopCond(parent);
+            boolean isNot = checkIfNotIsTop(parent);
             if (node.getOperand1() instanceof NumberLiteral && node.getOperand2() instanceof NumberLiteral) {
                 double text1 = ((NumberLiteral) node.getOperand1()).getValue();
                 double text2 = ((NumberLiteral) node.getOperand2()).getValue();
-                if (text1 > text2) {
-                    hint = new Hint(DEFAULT_TRUE);
-                } else {
-                    hint = new Hint(DEFAULT_FALSE);
-                }
+                hint = generateHint(text1 > text2, parent instanceof WaitUntil, isTopLevelCond, isNot, false);
             } else if (node.getOperand1() instanceof StringLiteral && node.getOperand2() instanceof StringLiteral) {
                 String text1 = getLiteralValue(node.getOperand1());
                 String text2 = getLiteralValue(node.getOperand2());
                 int result = text1.compareTo(text2);
-                if (result > 0) {
-                    hint = new Hint(DEFAULT_TRUE);
-                } else {
-                    hint = new Hint(DEFAULT_FALSE);
-                }
+                hint = generateHint(result > 0, parent instanceof WaitUntil, isTopLevelCond, isNot, false);
             } else {
                 String text1 = getLiteralValue(node.getOperand1());
                 String text2 = getLiteralValue(node.getOperand2());
-                hint = new Hint(DEFAULT_VARIABLE);
+
                 int result = text1.compareTo(text2);
-                if (result > 0) {
-                    hint.setParameter(HINT_TRUE_FALSE, IssueTranslator.getInstance().getInfo("true"));
-                } else {
-                    hint.setParameter(HINT_TRUE_FALSE, IssueTranslator.getInstance().getInfo("false"));
-                }
+                hint = generateHint(result > 0, parent instanceof WaitUntil, isTopLevelCond, isNot, true);
                 hint.setParameter(Hint.HINT_VARIABLE, "\"" + possibleVariableName(node.getOperand1(), node.getOperand2()) + "\"");
             }
             addIssue(node, node.getMetadata(), hint);
@@ -200,6 +234,9 @@ public class ComparingLiterals extends AbstractIssueFinder {
         keys.add(DEFAULT_FALSE);
         keys.add(DEFAULT_TRUE);
         keys.add(DEFAULT_VARIABLE);
+        keys.add(WAIT_FALSE);
+        keys.add(WAIT_TRUE);
+        keys.add(WAIT_VARIABLE);
         return keys;
     }
 }
