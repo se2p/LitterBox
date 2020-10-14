@@ -99,6 +99,7 @@ public class CloneAnalysis {
                         clone.addClonedStatement(stmt1, stmt2);
                     }
                     if (clones.stream().noneMatch(c -> c.contains(clone))) {
+                        clone.setType(setCloneType(clone));
                         clones.add(clone);
                     }
                 }
@@ -106,6 +107,18 @@ public class CloneAnalysis {
         }
 
         return clones;
+    }
+
+    private CodeClone.CloneType setCloneType(CodeClone clone){
+        List<Stmt> statements1 = clone.getFirstStatements();
+        List<Stmt> statements2 = clone.getSecondStatements();
+        // Type 1 or Type 2
+        if (statements1.equals(statements2)) {
+            return CodeClone.CloneType.TYPE1;
+        } else {
+            // TODO: Handle Type 3
+            return CodeClone.CloneType.TYPE2;
+        }
     }
 
     private LinkedHashMap<Integer, Integer> findDiagonale(boolean[][] similarityMatrix, int x, int y) {
