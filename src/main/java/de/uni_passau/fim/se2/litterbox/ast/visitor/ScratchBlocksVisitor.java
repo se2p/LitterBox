@@ -94,7 +94,7 @@ public class ScratchBlocksVisitor extends PrintVisitor {
 
     public static final String SCRATCHBLOCKS_START = "[scratchblocks]";
     public static final String SCRATCHBLOCKS_END = "[/scratchblocks]";
-    public static final String BUG_NOTE = "⇦  \uD83D\uDC1B";
+    public static final String BUG_NOTE = "⇦  \uD83D\uDC1B   ";
 
     private boolean inScript = false;
 
@@ -105,8 +105,6 @@ public class ScratchBlocksVisitor extends PrintVisitor {
     private ActorDefinition currentActor = null;
 
     private ByteArrayOutputStream byteStream = null;
-
-    private StringBuilder currentLine = new StringBuilder();
 
     private boolean lineWrapped = true;
 
@@ -922,7 +920,13 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         emitNoSpace("set [");
         node.getIdentifier().accept(this);
         emitNoSpace(" v] to ");
+        if (node.getExpr() instanceof Qualified) {
+            emitNoSpace("(");
+        }
         node.getExpr().accept(this);
+        if (node.getExpr() instanceof Qualified) {
+            emitNoSpace(")");
+        }
         storeNotesForIssue(node);
         newLine();
     }
@@ -932,7 +936,12 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         emitNoSpace("change [");
         node.getIdentifier().accept(this);
         emitNoSpace(" v] by ");
-        node.getExpr().accept(this);
+        if (node.getExpr() instanceof AsNumber && !(((AsNumber)node.getExpr()).getOperand1() instanceof Qualified)) {
+            ((AsNumber)node.getExpr()).getOperand1().accept(this);
+        } else {
+            //
+            node.getExpr().accept(this);
+        }
         storeNotesForIssue(node);
         newLine();
     }
@@ -1379,7 +1388,7 @@ public class ScratchBlocksVisitor extends PrintVisitor {
     public void visit(Current node) {
         emitNoSpace("(current (");
         node.getTimeComp().accept(this);
-        emitNoSpace(" v");
+        emitNoSpace(" v)");
         storeNotesForIssue(node);
         emitNoSpace(")");
     }
@@ -1401,26 +1410,38 @@ public class ScratchBlocksVisitor extends PrintVisitor {
 
     @Override
     public void visit(AsNumber node) {
-        emitNoSpace("(");
+        if (node.getOperand1() instanceof Qualified) {
+            emitNoSpace("(");
+        }
         node.getOperand1().accept(this);
         storeNotesForIssue(node);
-        emitNoSpace(")");
+        if (node.getOperand1() instanceof Qualified) {
+            emitNoSpace(")");
+        }
     }
 
     @Override
     public void visit(AsTouchable node) {
-        emitNoSpace("(");
+        if (node.getOperand1() instanceof Qualified) {
+            emitNoSpace("(");
+        }
         node.getOperand1().accept(this);
         storeNotesForIssue(node);
-        emitNoSpace(")");
+        if (node.getOperand1() instanceof Qualified) {
+            emitNoSpace(")");
+        }
     }
 
     @Override
     public void visit(AsBool node) {
-        emitNoSpace("<");
+        if (node.getOperand1() instanceof Qualified) {
+            emitNoSpace("(");
+        }
         node.getOperand1().accept(this);
         storeNotesForIssue(node);
-        emitNoSpace(">");
+        if (node.getOperand1() instanceof Qualified) {
+            emitNoSpace(")");
+        }
     }
 
     @Override
@@ -1432,20 +1453,7 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         } else if (node.getOperand1() instanceof NumExpr) {
             node.getOperand1().accept(this);
         } else if (node.getOperand1() instanceof Parameter) {
-            NonDataBlockMetadata metadata = (NonDataBlockMetadata) ((Parameter) node.getOperand1()).getMetadata();
-            if (ProcedureOpcode.argument_reporter_boolean.name().equals(metadata.getOpcode())) {
-                emitNoSpace("<");
-                node.getOperand1().accept(this);
-                storeNotesForIssue(node);
-                emitNoSpace(">");
-            } else if (ProcedureOpcode.argument_reporter_string_number.name().equals(metadata.getOpcode())) {
-                emitNoSpace("(");
-                node.getOperand1().accept(this);
-                storeNotesForIssue(node);
-                emitNoSpace(")");
-            } else {
-                assert (false);
-            }
+            node.getOperand1().accept(this);
         } else if (node.getOperand1() instanceof StrId) {
             emitNoSpace("(");
             final String spriteName = ((StrId) node.getOperand1()).getName();
@@ -1740,8 +1748,19 @@ public class ScratchBlocksVisitor extends PrintVisitor {
 
     @Override
     public void visit(Parameter node) {
+        NonDataBlockMetadata metaData = (NonDataBlockMetadata)node.getMetadata();
+        if (metaData.getOpcode().equals(ProcedureOpcode.argument_reporter_boolean.name())) {
+            emitNoSpace("<");
+        } else {
+            emitNoSpace("(");
+        }
         visitChildren(node);
         storeNotesForIssue(node);
+        if (metaData.getOpcode().equals(ProcedureOpcode.argument_reporter_boolean.name())) {
+            emitNoSpace(">");
+        } else {
+            emitNoSpace(")");
+        }
     }
 
     @Override
@@ -1785,7 +1804,7 @@ public class ScratchBlocksVisitor extends PrintVisitor {
     }
 
     protected void emitNoSpace(String string) {
-        currentLine.append(string);
+        printStream.append(string);
         lineWrapped = false;
     }
 
@@ -1798,27 +1817,16 @@ public class ScratchBlocksVisitor extends PrintVisitor {
     }
 
     protected void newLine() {
-        String currentString = currentLine.toString();
-        currentLine = new StringBuilder();
-        if (!currentString.isEmpty()) {
-            char firstChar = currentString.charAt(0);
-            // Only highlight if this is an actual statement
-            if (issueNote.size() > 0 && firstChar != '<' && firstChar != '(' &&
-                    firstChar != '[' && !currentString.startsWith("define")) {
-                printStream.append('+');
-            }
-        }
-        printStream.append(currentString);
         if (issueNote.size() == 1) {
-            printStream.append(" // ");
-            printStream.append(issueNote.iterator().next());
+            emitNoSpace(" // ");
+            emitNoSpace(issueNote.iterator().next());
             issueNote.clear();
         } else if (issueNote.size() > 1) {
-            printStream.append(" // ");
-            printStream.append(String.join(", ", issueNote));
+            emitNoSpace(" // ");
+            emitNoSpace(String.join(", ", issueNote));
             issueNote.clear();
         }
-        printStream.append(System.lineSeparator());
+        emitNoSpace(System.lineSeparator());
         lineWrapped = true;
     }
 
@@ -1839,8 +1847,6 @@ public class ScratchBlocksVisitor extends PrintVisitor {
 
     private String getParameterName(ParameterDefinition node) {
         // FIXME: Terrible hack
-        String currentString = currentLine.toString();
-        currentLine = new StringBuilder();
         PrintStream origStream = printStream;
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         printStream = new PrintStream(os);
@@ -1861,25 +1867,19 @@ public class ScratchBlocksVisitor extends PrintVisitor {
             storeNotesForIssue(node);
             emitNoSpace(">");
         }
-        String name = currentLine.toString();
+        String name = os.toString();
         printStream = origStream;
-        currentLine = new StringBuilder();
-        currentLine.append(currentString);
         return name;
     }
 
     private String getParameterName(Expression node) {
         // FIXME: Terrible hack
-        String currentString = currentLine.toString();
-        currentLine = new StringBuilder();
         PrintStream origStream = printStream;
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         printStream = new PrintStream(os);
         node.accept(this);
-        String name = currentLine.toString();
+        String name = os.toString();
         printStream = origStream;
-        currentLine = new StringBuilder();
-        currentLine.append(currentString);
         return name;
     }
 }

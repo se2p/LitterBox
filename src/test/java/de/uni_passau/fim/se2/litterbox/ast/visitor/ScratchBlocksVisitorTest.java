@@ -23,6 +23,7 @@ import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.*;
+import de.uni_passau.fim.se2.litterbox.analytics.smells.DeadCode;
 import de.uni_passau.fim.se2.litterbox.analytics.smells.UnusedVariable;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
@@ -98,14 +99,14 @@ public class ScratchBlocksVisitorTest implements JsonTest {
         program.accept(visitor);
         visitor.end();
         String result = os.toString();
-        assertEquals("[scratchblocks]\n" +
-                "when green flag clicked\n" +
-                "forever \n" +
-                "if <touching (Bell v) ?> then\n" +
-                "say [Hello!]\n" +
-                "end\n" +
-                "end\n" +
-                "[/scratchblocks]\n", result);
+        assertEquals("[scratchblocks]" + System.lineSeparator() +
+                "when green flag clicked" + System.lineSeparator() +
+                "forever " + System.lineSeparator() +
+                "if <touching (Bell v) ?> then" + System.lineSeparator() +
+                "say [Hello!]" + System.lineSeparator() +
+                "end" + System.lineSeparator() +
+                "end" + System.lineSeparator() +
+                "[/scratchblocks]" + System.lineSeparator(), result);
     }
 
     @Test
@@ -118,15 +119,181 @@ public class ScratchBlocksVisitorTest implements JsonTest {
         program.accept(visitor);
         visitor.end();
         String result = os.toString();
-        assertEquals("[scratchblocks]\n" +
-                "when green flag clicked\n" +
-                "set [my variable v] to [Bell]\n" +
-                "forever \n" +
-                "if <touching (my variable) ?> then\n" +
-                "say [Hello!]\n" +
-                "end\n" +
-                "end\n" +
-                "[/scratchblocks]\n", result);
+        assertEquals("[scratchblocks]" + System.lineSeparator() +
+                "when green flag clicked" + System.lineSeparator() +
+                "set [my variable v] to [Bell]" + System.lineSeparator() +
+                "forever " + System.lineSeparator() +
+                "if <touching (my variable) ?> then" + System.lineSeparator() +
+                "say [Hello!]" + System.lineSeparator() +
+                "end" + System.lineSeparator() +
+                "end" + System.lineSeparator() +
+                "[/scratchblocks]" + System.lineSeparator(), result);
+    }
+
+    @Test
+    public void testSetVarToVar() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/scratchblocks/setvariabletovariable.json");
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        PrintStream ps = new PrintStream(os);
+        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(ps);
+        visitor.begin();
+        program.accept(visitor);
+        visitor.end();
+        String result = os.toString();
+        assertEquals("[scratchblocks]" + System.lineSeparator() +
+                "set [my variable v] to (other variable)" + System.lineSeparator() +
+                "change [my variable v] by (other variable)" + System.lineSeparator() +
+                "[/scratchblocks]" + System.lineSeparator(), result);
+    }
+
+    @Test
+    public void testSetVarToBool() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/scratchblocks/booleaninsetvar.json");
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        PrintStream ps = new PrintStream(os);
+        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(ps);
+        visitor.begin();
+        program.accept(visitor);
+        visitor.end();
+        String result = os.toString();
+        assertEquals("[scratchblocks]" + System.lineSeparator()+
+                "define block name [number or text] <boolean>" + System.lineSeparator()+
+                "set [my variable v] to <touching color [#c9dae2] ?>" + System.lineSeparator()+
+                "set [my variable v] to <touching (mouse-pointer v) ?>" + System.lineSeparator()+
+                "set [my variable v] to <color [#8d6b27] is touching [#805a3c] ?>" + System.lineSeparator()+
+                "set [my variable v] to <key (space v) pressed?>" + System.lineSeparator()+
+                "set [my variable v] to <mouse down?>" + System.lineSeparator()+
+                "set [my variable v] to <<> and <>>" + System.lineSeparator()+
+                "set [my variable v] to <[apple] contains [a]?>" + System.lineSeparator()+
+                "set [my variable v] to <not <>>" + System.lineSeparator()+
+                "set [my variable v] to <<> or <>>" + System.lineSeparator()+
+                "set [my variable v] to <[] > (50)>" + System.lineSeparator()+
+                "set [my variable v] to <boolean>" + System.lineSeparator()+
+                "[/scratchblocks]" + System.lineSeparator(), result);
+    }
+
+    @Test
+    public void testSetVarToAllOtherblocks() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/scratchblocks/setvartoblocks.json");
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        PrintStream ps = new PrintStream(os);
+        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(ps);
+        visitor.begin();
+        program.accept(visitor);
+        visitor.end();
+        String result = os.toString();
+        assertEquals("[scratchblocks]" + System.lineSeparator() +
+                "set [my variable v] to (0)" + System.lineSeparator() +
+                "set [my variable v] to (other variable)" + System.lineSeparator() +
+                "set [my variable v] to (answer)" + System.lineSeparator() +
+                "set [my variable v] to (distance to (mouse-pointer v))" + System.lineSeparator() +
+                "set [my variable v] to (join [apple ][banana])" + System.lineSeparator() +
+                "set [my variable v] to (length of [thelist v])" + System.lineSeparator() +
+                "set [my variable v] to ([abs v] of (my variable))" + System.lineSeparator() +
+                "set [my variable v] to ((my variable) mod (other variable))" + System.lineSeparator() +
+                "set [my variable v] to (round (my variable))" + System.lineSeparator() +
+                "set [my variable v] to (pick random (1) to (10))" + System.lineSeparator() +
+                "set [my variable v] to ([my variable v] of (Stage v)?)" + System.lineSeparator() +
+                "set [my variable v] to ((10)+(my variable))" + System.lineSeparator() +
+                "set [my variable v] to (item (1) of [thelist v])" + System.lineSeparator() +
+                "set [my variable v] to (item # of [thing] in [thelist v])" + System.lineSeparator() +
+                "set [my variable v] to (username)" + System.lineSeparator() +
+                "set [my variable v] to (thelist)" + System.lineSeparator() +
+                "set [my variable v] to (mouse x)" + System.lineSeparator() +
+                "set [my variable v] to (loudness)" + System.lineSeparator() +
+                "set [my variable v] to (days since 2000)" + System.lineSeparator() +
+                "set [my variable v] to (current (year v))" + System.lineSeparator() +
+                "set [my variable v] to (timer)" + System.lineSeparator() +
+                "[/scratchblocks]" + System.lineSeparator(), result);
+    }
+
+    @Test
+    public void testChangeVarToAllOtherblocks() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/scratchblocks/changevartoblocks.json");
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        PrintStream ps = new PrintStream(os);
+        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(ps);
+        visitor.begin();
+        program.accept(visitor);
+        visitor.end();
+        String result = os.toString();
+        assertEquals("[scratchblocks]" + System.lineSeparator() +
+                "change [my variable v] by (1)" + System.lineSeparator() +
+                "change [my variable v] by (x position)" + System.lineSeparator() +
+                "change [my variable v] by (y position)" + System.lineSeparator() +
+                "change [my variable v] by (backdrop [number v])" + System.lineSeparator() +
+                "change [my variable v] by (costume [number v])" + System.lineSeparator() +
+                "change [my variable v] by (direction)" + System.lineSeparator() +
+                "change [my variable v] by (size)" + System.lineSeparator() +
+                "change [my variable v] by (volume)" + System.lineSeparator() +
+                "change [my variable v] by (other variable)" + System.lineSeparator() +
+                "change [my variable v] by (answer)" + System.lineSeparator() +
+                "change [my variable v] by (distance to (mouse-pointer v))" + System.lineSeparator() +
+                "change [my variable v] by (join [apple ][banana])" + System.lineSeparator() +
+                "change [my variable v] by (length of [thelist v])" + System.lineSeparator() +
+                "change [my variable v] by ([abs v] of (my variable))" + System.lineSeparator() +
+                "change [my variable v] by ((my variable) mod (other variable))" + System.lineSeparator() +
+                "change [my variable v] by (round (my variable))" + System.lineSeparator() +
+                "change [my variable v] by (pick random (1) to (10))" + System.lineSeparator() +
+                "change [my variable v] by ([my variable v] of (Stage v)?)" + System.lineSeparator() +
+                "change [my variable v] by ((10)+(my variable))" + System.lineSeparator() +
+                "change [my variable v] by (item (1) of [thelist v])" + System.lineSeparator() +
+                "change [my variable v] by (item # of [thing] in [thelist v])" + System.lineSeparator() +
+                "change [my variable v] by (username)" + System.lineSeparator() +
+                "change [my variable v] by (thelist)" + System.lineSeparator() +
+                "change [my variable v] by (mouse x)" + System.lineSeparator() +
+                "change [my variable v] by (loudness)" + System.lineSeparator() +
+                "change [my variable v] by (days since 2000)" + System.lineSeparator() +
+                "change [my variable v] by (current (year v))" + System.lineSeparator() +
+                "change [my variable v] by (timer)" + System.lineSeparator() +
+                "[/scratchblocks]" + System.lineSeparator(), result);
+    }
+
+    @Test
+    public void testMoveWithAllOtherblocks() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/scratchblocks/movewithallblocks.json");
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        PrintStream ps = new PrintStream(os);
+        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(ps);
+        visitor.begin();
+        program.accept(visitor);
+        visitor.end();
+        String result = os.toString();
+        assertEquals("[scratchblocks]" + System.lineSeparator() +
+                "move (10) steps" + System.lineSeparator() +
+                "move (x position) steps" + System.lineSeparator() +
+                "move (y position) steps" + System.lineSeparator() +
+                "move (direction) steps" + System.lineSeparator() +
+                "move (costume [number v]) steps" + System.lineSeparator() +
+                "move (backdrop [number v]) steps" + System.lineSeparator() +
+                "move (size) steps" + System.lineSeparator() +
+                "move ([]+[]) steps" + System.lineSeparator() +
+                "move (join [apple ][banana]) steps" + System.lineSeparator() +
+                "move ([backdrop # v] of (letter (1) of [apple])?) steps" + System.lineSeparator() +
+                "move (loudness) steps" + System.lineSeparator() +
+                "move <touching (mouse-pointer v) ?> steps" + System.lineSeparator() +
+                "move <[] > (50)> steps" + System.lineSeparator() +
+                "move (my variable) steps" + System.lineSeparator() +
+                "move ([] mod []) steps" + System.lineSeparator() +
+                "move (timer) steps" + System.lineSeparator() +
+                "move (days since 2000) steps" + System.lineSeparator() +
+                "move (mouse x) steps" + System.lineSeparator() +
+                "move <touching color [#e24b5b] ?> steps" + System.lineSeparator() +
+                "move (length of (round [])) steps" + System.lineSeparator() +
+                "move ([abs v] of []) steps" + System.lineSeparator() +
+                "move <[apple] contains [a]?> steps" + System.lineSeparator() +
+                "move (distance to (mouse-pointer v)) steps" + System.lineSeparator() +
+                "move <color [#d9de7a] is touching [#7efc63] ?> steps" + System.lineSeparator() +
+                "move <<> and <>> steps" + System.lineSeparator() +
+                "move (answer) steps" + System.lineSeparator() +
+                "move (current (year v)) steps" + System.lineSeparator() +
+                "move (pick random (1) to (10)) steps" + System.lineSeparator() +
+                "move (volume) steps" + System.lineSeparator() +
+                "move <key (space v) pressed?> steps" + System.lineSeparator() +
+                "move (username) steps" + System.lineSeparator() +
+                "move (mouse y) steps" + System.lineSeparator() +
+                "move <mouse down?> steps" + System.lineSeparator() +
+                "[/scratchblocks]" + System.lineSeparator(), result);
     }
 
     @Test
@@ -453,6 +620,111 @@ public class ScratchBlocksVisitorTest implements JsonTest {
     }
 
     @Test
+    public void testTouchingAllBlocks() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/scratchblocks/touchingallblocks.json");
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        PrintStream ps = new PrintStream(os);
+        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(ps);
+        visitor.begin();
+        program.accept(visitor);
+        visitor.end();
+        String result = os.toString();
+        assertEquals("[scratchblocks]" + System.lineSeparator() +
+                "define block name [number or text] <boolean>" + System.lineSeparator() +
+                "wait until <touching (my variable) ?>" + System.lineSeparator() +
+                "wait until <touching (x position) ?>" + System.lineSeparator() +
+                "wait until <touching (direction) ?>" + System.lineSeparator() +
+                "wait until <touching (costume [number v]) ?>" + System.lineSeparator() +
+                "wait until <touching (size) ?>" + System.lineSeparator() +
+                "wait until <touching (backdrop [number v]) ?>" + System.lineSeparator() +
+                "wait until <touching (volume) ?>" + System.lineSeparator() +
+                "wait until <touching <touching (mouse-pointer v) ?> ?>" + System.lineSeparator() +
+                "wait until <touching <touching color [#c9dae2] ?> ?>" + System.lineSeparator() +
+                "wait until <touching <color [#8d6b27] is touching [#805a3c] ?> ?>" + System.lineSeparator() +
+                "wait until <touching (distance to (mouse-pointer v)) ?>" + System.lineSeparator() +
+                "wait until <touching (answer) ?>" + System.lineSeparator() +
+                "wait until <touching <key (space v) pressed?> ?>" + System.lineSeparator() +
+                "wait until <touching <mouse down?> ?>" + System.lineSeparator() +
+                "wait until <touching (mouse x) ?>" + System.lineSeparator() +
+                "wait until <touching (mouse y) ?>" + System.lineSeparator() +
+                "wait until <touching (loudness) ?>" + System.lineSeparator() +
+                "wait until <touching (timer) ?>" + System.lineSeparator() +
+                "wait until <touching ([backdrop # v] of (Stage v)?) ?>" + System.lineSeparator() +
+                "wait until <touching (current (year v)) ?>" + System.lineSeparator() +
+                "wait until <touching (days since 2000) ?>" + System.lineSeparator() +
+                "wait until <touching (username) ?>" + System.lineSeparator() +
+                "wait until <touching ([]+[]) ?>" + System.lineSeparator() +
+                "wait until <touching (pick random (1) to (10)) ?>" + System.lineSeparator() +
+                "wait until <touching <[] > (50)> ?>" + System.lineSeparator() +
+                "wait until <touching <<> and <>> ?>" + System.lineSeparator() +
+                "wait until <touching (join [apple ][banana]) ?>" + System.lineSeparator() +
+                "wait until <touching <[apple] contains [a]?> ?>" + System.lineSeparator() +
+                "wait until <touching ([] mod []) ?>" + System.lineSeparator() +
+                "wait until <touching ([abs v] of []) ?>" + System.lineSeparator() +
+                "wait until <touching (my variable) ?>" + System.lineSeparator() +
+                "wait until <touching (listy) ?>" + System.lineSeparator() +
+                "wait until <touching (item (1) of [listy v]) ?>" + System.lineSeparator() +
+                "wait until <touching (item # of [thing] in [listy v]) ?>" + System.lineSeparator() +
+                "wait until <touching (length of [listy v]) ?>" + System.lineSeparator() +
+                "wait until <touching <[listy v] contains [thing] ?> ?>" + System.lineSeparator() +
+                "wait until <touching (number or text) ?>" + System.lineSeparator() +
+                "wait until <touching <boolean> ?>" + System.lineSeparator() +
+                "[/scratchblocks]" + System.lineSeparator(),result);
+    }
+
+    @Test
+    public void testAskAllBlocks() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/scratchblocks/askallblocks.json");
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        PrintStream ps = new PrintStream(os);
+        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(ps);
+        visitor.begin();
+        program.accept(visitor);
+        visitor.end();
+        String result = os.toString();
+        assertEquals("[scratchblocks]" + System.lineSeparator() +
+                "define block name [number or text] <boolean>" + System.lineSeparator() +
+                "ask [What's your name?] and wait" + System.lineSeparator() +
+                "ask (x position) and wait" + System.lineSeparator() +
+                "ask (direction) and wait" + System.lineSeparator() +
+                "ask (costume [number v]) and wait" + System.lineSeparator() +
+                "ask (backdrop [number v]) and wait" + System.lineSeparator() +
+                "ask (size) and wait" + System.lineSeparator() +
+                "ask (volume) and wait" + System.lineSeparator() +
+                "ask <touching (mouse-pointer v) ?> and wait" + System.lineSeparator() +
+                "ask <touching color [#c9dae2] ?> and wait" + System.lineSeparator() +
+                "ask <color [#8d6b27] is touching [#805a3c] ?> and wait" + System.lineSeparator() +
+                "ask (distance to (mouse-pointer v)) and wait" + System.lineSeparator() +
+                "ask (answer) and wait" + System.lineSeparator() +
+                "ask <key (space v) pressed?> and wait" + System.lineSeparator() +
+                "ask <mouse down?> and wait" + System.lineSeparator() +
+                "ask (mouse x) and wait" + System.lineSeparator() +
+                "ask (loudness) and wait" + System.lineSeparator() +
+                "ask (timer) and wait" + System.lineSeparator() +
+                "ask ([backdrop # v] of (Stage v)?) and wait" + System.lineSeparator() +
+                "ask (current (year v)) and wait" + System.lineSeparator() +
+                "ask (days since 2000) and wait" + System.lineSeparator() +
+                "ask (username) and wait" + System.lineSeparator() +
+                "ask ([]+[]) and wait" + System.lineSeparator() +
+                "ask (pick random (1) to (10)) and wait" + System.lineSeparator() +
+                "ask <[] > (50)> and wait" + System.lineSeparator() +
+                "ask <<> and <>> and wait" + System.lineSeparator() +
+                "ask (join [apple ][banana]) and wait" + System.lineSeparator() +
+                "ask ([] mod []) and wait" + System.lineSeparator() +
+                "ask ([abs v] of []) and wait" + System.lineSeparator() +
+                "ask (my variable) and wait" + System.lineSeparator() +
+                "ask (listy) and wait" + System.lineSeparator() +
+                "ask (item (1) of [listy v]) and wait" + System.lineSeparator() +
+                "ask (item # of [thing] in [listy v]) and wait" + System.lineSeparator() +
+                "ask (length of [listy v]) and wait" + System.lineSeparator() +
+                "ask <[listy v] contains [thing] ?> and wait" + System.lineSeparator() +
+                "ask <boolean> and wait" + System.lineSeparator() +
+                "ask (number or text) and wait" + System.lineSeparator() +
+                "[/scratchblocks]" + System.lineSeparator(),result);
+    }
+
+
+    @Test
     public void testBooleanBlocks() throws IOException, ParsingException {
         Program program = getAST("src/test/fixtures/scratchblocks/booleanblocks.json");
         ByteArrayOutputStream os = new ByteArrayOutputStream();
@@ -528,8 +800,8 @@ public class ScratchBlocksVisitorTest implements JsonTest {
                 "say (username)" + System.lineSeparator() +
                 "say (loudness)" + System.lineSeparator() +
                 "say (distance to (mouse-pointer v))" + System.lineSeparator() +
-                "say (current (second v)" + System.lineSeparator() +
-                "say (current (year v)" + System.lineSeparator() +
+                "say (current (second v))" + System.lineSeparator() +
+                "say (current (year v))" + System.lineSeparator() +
                 "say (mouse x)" + System.lineSeparator() +
                 "say (mouse y)" + System.lineSeparator() +
                 "say (days since 2000)" + System.lineSeparator() +
@@ -811,7 +1083,7 @@ public class ScratchBlocksVisitorTest implements JsonTest {
         String output = visitor.getScratchBlocks();
         assertEquals("[scratchblocks]" + System.lineSeparator() +
                 "when green flag clicked" + System.lineSeparator() +
-                "+if <<<[] = (50):: #ff0000> and <[] < (50):: #ff0000>> and <[] > (50):: #ff0000>> then // " + ScratchBlocksVisitor.BUG_NOTE + System.lineSeparator() +
+                "if <<<[] = (50):: #ff0000> and <[] < (50):: #ff0000>> and <[] > (50):: #ff0000>> then // " + ScratchBlocksVisitor.BUG_NOTE + System.lineSeparator() +
                 "end" + System.lineSeparator() +
                 "[/scratchblocks]" + System.lineSeparator(),output);
     }
@@ -833,7 +1105,7 @@ public class ScratchBlocksVisitorTest implements JsonTest {
         String output = visitor.getScratchBlocks();
         assertEquals("[scratchblocks]" + System.lineSeparator() +
                 "when green flag clicked" + System.lineSeparator() +
-                "+if <<<[] = (50):: #ff0000> and <[] < (50)>> and <[] > (50)>> then // " + ScratchBlocksVisitor.BUG_NOTE + System.lineSeparator() +
+                "if <<<[] = (50):: #ff0000> and <[] < (50)>> and <[] > (50)>> then // " + ScratchBlocksVisitor.BUG_NOTE + System.lineSeparator() +
                 "end" + System.lineSeparator() +
                 "[/scratchblocks]" + System.lineSeparator(),output);
     }
@@ -852,7 +1124,7 @@ public class ScratchBlocksVisitorTest implements JsonTest {
         String output = visitor.getScratchBlocks();
         assertEquals("[scratchblocks]" + System.lineSeparator() +
                 "when [space v] key pressed" + System.lineSeparator() +
-                "+move (10) steps:: #ff0000 // " + ScratchBlocksVisitor.BUG_NOTE + System.lineSeparator() +
+                "move (10) steps:: #ff0000 // " + ScratchBlocksVisitor.BUG_NOTE + System.lineSeparator() +
                 "[/scratchblocks]" + System.lineSeparator(),output);
     }
 
@@ -872,7 +1144,7 @@ public class ScratchBlocksVisitorTest implements JsonTest {
         assertEquals("[scratchblocks]" + System.lineSeparator() +
                 "define block name [number or text]" + System.lineSeparator() +
                 "show variable [my variable v]" + System.lineSeparator() +
-                "+block name [text]:: #ff0000 // " + ScratchBlocksVisitor.BUG_NOTE + System.lineSeparator() +
+                "block name [text]:: #ff0000 // " + ScratchBlocksVisitor.BUG_NOTE + System.lineSeparator() +
                 "[/scratchblocks]" + System.lineSeparator(),output);
     }
 
@@ -891,7 +1163,7 @@ public class ScratchBlocksVisitorTest implements JsonTest {
         String output = visitor.getScratchBlocks();
         assertEquals("[scratchblocks]" + System.lineSeparator() +
                 "when green flag clicked" + System.lineSeparator() +
-                "+block name [reed] <>:: #ff0000 // " + ScratchBlocksVisitor.BUG_NOTE + System.lineSeparator() +
+                "block name [reed] <>:: #ff0000 // " + ScratchBlocksVisitor.BUG_NOTE + System.lineSeparator() +
                 "say [Hello!] for (2) seconds" + System.lineSeparator() +
                 "[/scratchblocks]" + System.lineSeparator(),output);
     }
@@ -911,7 +1183,7 @@ public class ScratchBlocksVisitorTest implements JsonTest {
         String output = visitor.getScratchBlocks();
         assertEquals("[scratchblocks]" + System.lineSeparator() +
                 "when green flag clicked" + System.lineSeparator() +
-                "+block name:: #ff0000 // " + ScratchBlocksVisitor.BUG_NOTE + System.lineSeparator() +
+                "block name:: #ff0000 // " + ScratchBlocksVisitor.BUG_NOTE + System.lineSeparator() +
                 "change size by (10)" + System.lineSeparator() +
                 "[/scratchblocks]" + System.lineSeparator(),output);
     }
@@ -930,7 +1202,7 @@ public class ScratchBlocksVisitorTest implements JsonTest {
         visitor.end();
         String output = visitor.getScratchBlocks();
         assertEquals("[scratchblocks]" + System.lineSeparator() +
-                "+block name [] <>:: #ff0000 // " + ScratchBlocksVisitor.BUG_NOTE + System.lineSeparator() +
+                "block name [] <>:: #ff0000 // " + ScratchBlocksVisitor.BUG_NOTE + System.lineSeparator() +
                 "[/scratchblocks]" + System.lineSeparator(),output);
     }
 
@@ -1009,7 +1281,7 @@ public class ScratchBlocksVisitorTest implements JsonTest {
                 "repeat (10)" + System.lineSeparator() +
                 "next costume" + System.lineSeparator() +
                 "end" + System.lineSeparator() +
-                "+forever :: #ff0000 // " + ScratchBlocksVisitor.BUG_NOTE + System.lineSeparator() +
+                "forever :: #ff0000 // " + ScratchBlocksVisitor.BUG_NOTE + System.lineSeparator() +
                 "point in direction (90)" + System.lineSeparator() +
                 "end" + System.lineSeparator() +
                 "end" + System.lineSeparator() +
@@ -1031,7 +1303,7 @@ public class ScratchBlocksVisitorTest implements JsonTest {
         String output = visitor.getScratchBlocks();
         assertEquals("[scratchblocks]" + System.lineSeparator() +
                 "define block name [car] <boolean>" + System.lineSeparator() +
-                "+if <car:: #ff0000> then // " + ScratchBlocksVisitor.BUG_NOTE + System.lineSeparator() +
+                "if <car:: #ff0000> then // " + ScratchBlocksVisitor.BUG_NOTE + System.lineSeparator() +
                 "move (10) steps" + System.lineSeparator() +
                 "end" + System.lineSeparator() +
                 "[/scratchblocks]" + System.lineSeparator(),output);
@@ -1053,7 +1325,7 @@ public class ScratchBlocksVisitorTest implements JsonTest {
         assertEquals("[scratchblocks]" + System.lineSeparator() +
                 "when green flag clicked" + System.lineSeparator() +
                 "broadcast (received v)" + System.lineSeparator() +
-                "+broadcast (ignored v):: #ff0000 // " + ScratchBlocksVisitor.BUG_NOTE + System.lineSeparator() +
+                "broadcast (ignored v):: #ff0000 // " + ScratchBlocksVisitor.BUG_NOTE + System.lineSeparator() +
                 "[/scratchblocks]" + System.lineSeparator(),output);
     }
 
@@ -1071,7 +1343,7 @@ public class ScratchBlocksVisitorTest implements JsonTest {
         visitor.end();
         String output = visitor.getScratchBlocks();
         assertEquals("[scratchblocks]" + System.lineSeparator() +
-                "+when I receive [message1 v]:: #ff0000 // " + ScratchBlocksVisitor.BUG_NOTE + System.lineSeparator() +
+                "when I receive [message1 v]:: #ff0000 // " + ScratchBlocksVisitor.BUG_NOTE + System.lineSeparator() +
                 "wait (1) seconds" + System.lineSeparator() +
                 "[/scratchblocks]" + System.lineSeparator(),output);
     }
@@ -1090,7 +1362,7 @@ public class ScratchBlocksVisitorTest implements JsonTest {
         visitor.end();
         String output = visitor.getScratchBlocks();
         assertEquals("[scratchblocks]" + System.lineSeparator() +
-                "+when backdrop switches to [backdrop1 v]:: #ff0000 // " + ScratchBlocksVisitor.BUG_NOTE + System.lineSeparator() +
+                "when backdrop switches to [backdrop1 v]:: #ff0000 // " + ScratchBlocksVisitor.BUG_NOTE + System.lineSeparator() +
                 "ask [What's your name?] and wait" + System.lineSeparator() +
                 "[/scratchblocks]" + System.lineSeparator(),output);
     }
@@ -1109,7 +1381,7 @@ public class ScratchBlocksVisitorTest implements JsonTest {
         visitor.end();
         String output = visitor.getScratchBlocks();
         assertEquals("[scratchblocks]" + System.lineSeparator() +
-                "+when I start as a clone :: #ff0000 // " + ScratchBlocksVisitor.BUG_NOTE + System.lineSeparator() +
+                "when I start as a clone :: #ff0000 // " + ScratchBlocksVisitor.BUG_NOTE + System.lineSeparator() +
                 "wait (1) seconds" + System.lineSeparator() +
                 "[/scratchblocks]" + System.lineSeparator(),output);
     }
@@ -1130,7 +1402,7 @@ public class ScratchBlocksVisitorTest implements JsonTest {
         assertEquals("[scratchblocks]" + System.lineSeparator() +
                 "when green flag clicked" + System.lineSeparator() +
                 "create clone of (myself v)" + System.lineSeparator() +
-                "+create clone of (Anina Dance v):: #ff0000 // " + ScratchBlocksVisitor.BUG_NOTE + System.lineSeparator() +
+                "create clone of (Anina Dance v):: #ff0000 // " + ScratchBlocksVisitor.BUG_NOTE + System.lineSeparator() +
                 "[/scratchblocks]" + System.lineSeparator(),output);
     }
 
@@ -1149,7 +1421,7 @@ public class ScratchBlocksVisitorTest implements JsonTest {
         String output = visitor.getScratchBlocks();
         assertEquals("[scratchblocks]" + System.lineSeparator() +
                 "when green flag clicked" + System.lineSeparator() +
-                "+pen down:: #ff0000 // " + ScratchBlocksVisitor.BUG_NOTE + System.lineSeparator() +
+                "pen down:: #ff0000 // " + ScratchBlocksVisitor.BUG_NOTE + System.lineSeparator() +
                 "pen up" + System.lineSeparator() +
                 "[/scratchblocks]" + System.lineSeparator(),output);
     }
@@ -1169,7 +1441,7 @@ public class ScratchBlocksVisitorTest implements JsonTest {
         String output = visitor.getScratchBlocks();
         assertEquals("[scratchblocks]" + System.lineSeparator() +
                 "when green flag clicked" + System.lineSeparator() +
-                "+say (meine Variable) for (2) seconds:: #ff0000 // " + ScratchBlocksVisitor.BUG_NOTE + System.lineSeparator() +
+                "say (meine Variable) for (2) seconds:: #ff0000 // " + ScratchBlocksVisitor.BUG_NOTE + System.lineSeparator() +
                 "[/scratchblocks]" + System.lineSeparator(),output);
     }
 
@@ -1188,7 +1460,7 @@ public class ScratchBlocksVisitorTest implements JsonTest {
         String output = visitor.getScratchBlocks();
         assertEquals("[scratchblocks]" + System.lineSeparator() +
                 "when green flag clicked" + System.lineSeparator() +
-                "+if <<not <touching (mouse-pointer v) ?:: #ff0000>> and <(distance to (mouse-pointer v)) > (50)>> then // " + ScratchBlocksVisitor.BUG_NOTE + System.lineSeparator() +
+                "if <<not <touching (mouse-pointer v) ?:: #ff0000>> and <(distance to (mouse-pointer v)) > (50)>> then // " + ScratchBlocksVisitor.BUG_NOTE + System.lineSeparator() +
                 "say [Hallo!] for (2) seconds" + System.lineSeparator() +
                 "end" + System.lineSeparator() +
                 "[/scratchblocks]" + System.lineSeparator(),output);
@@ -1209,7 +1481,7 @@ public class ScratchBlocksVisitorTest implements JsonTest {
         String output = visitor.getScratchBlocks();
         assertEquals("[scratchblocks]" + System.lineSeparator() +
                 "when green flag clicked" + System.lineSeparator() +
-                "+pen up:: #ff0000 // " + ScratchBlocksVisitor.BUG_NOTE + System.lineSeparator() +
+                "pen up:: #ff0000 // " + ScratchBlocksVisitor.BUG_NOTE + System.lineSeparator() +
                 "set pen color to [#c63f3f]" + System.lineSeparator() +
                 "say [Hello!]" + System.lineSeparator() +
                 "go to (random position v)" + System.lineSeparator() +
@@ -1231,7 +1503,7 @@ public class ScratchBlocksVisitorTest implements JsonTest {
         String output = visitor.getScratchBlocks();
         assertEquals("[scratchblocks]" + System.lineSeparator() +
                 "when green flag clicked" + System.lineSeparator() +
-                "+pen down:: #ff0000 // " + ScratchBlocksVisitor.BUG_NOTE + System.lineSeparator() +
+                "pen down:: #ff0000 // " + ScratchBlocksVisitor.BUG_NOTE + System.lineSeparator() +
                 "say [Hello!]" + System.lineSeparator() +
                 "go to (random position v)" + System.lineSeparator() +
                 "[/scratchblocks]" + System.lineSeparator(),output);
@@ -1252,7 +1524,7 @@ public class ScratchBlocksVisitorTest implements JsonTest {
         String output = visitor.getScratchBlocks();
         assertEquals("[scratchblocks]" + System.lineSeparator() +
                 "when green flag clicked" + System.lineSeparator() +
-                "+repeat until <>:: #ff0000 // " + ScratchBlocksVisitor.BUG_NOTE + System.lineSeparator() +
+                "repeat until <>:: #ff0000 // " + ScratchBlocksVisitor.BUG_NOTE + System.lineSeparator() +
                 "say [Hello!] for (2) seconds" + System.lineSeparator() +
                 "end" + System.lineSeparator() +
                 "[/scratchblocks]" + System.lineSeparator(),output);
@@ -1273,7 +1545,7 @@ public class ScratchBlocksVisitorTest implements JsonTest {
         String output = visitor.getScratchBlocks();
         assertEquals("[scratchblocks]" + System.lineSeparator() +
                 "when green flag clicked" + System.lineSeparator() +
-                "+wait until <>:: #ff0000 // " + ScratchBlocksVisitor.BUG_NOTE + System.lineSeparator() +
+                "wait until <>:: #ff0000 // " + ScratchBlocksVisitor.BUG_NOTE + System.lineSeparator() +
                 "[/scratchblocks]" + System.lineSeparator(),output);
     }
 
@@ -1292,8 +1564,8 @@ public class ScratchBlocksVisitorTest implements JsonTest {
         String output = visitor.getScratchBlocks();
         assertEquals("[scratchblocks]" + System.lineSeparator() +
                 "define block name <boolean>" + System.lineSeparator() +
-                "move (boolean) steps" + System.lineSeparator() +
-                "+if <String:: #ff0000> then // " + ScratchBlocksVisitor.BUG_NOTE + System.lineSeparator() +
+                "move <boolean> steps" + System.lineSeparator() +
+                "if <String:: #ff0000> then // " + ScratchBlocksVisitor.BUG_NOTE + System.lineSeparator() +
                 "say [Hello!] for (2) seconds" + System.lineSeparator() +
                 "end" + System.lineSeparator() +
                 "[/scratchblocks]" + System.lineSeparator(),output);
@@ -1313,7 +1585,7 @@ public class ScratchBlocksVisitorTest implements JsonTest {
         visitor.end();
         String output = visitor.getScratchBlocks();
         assertEquals("[scratchblocks]" + System.lineSeparator() +
-                "+turn right (boolean:: #ff0000) degrees // " + ScratchBlocksVisitor.BUG_NOTE + System.lineSeparator() +
+                "turn right <boolean:: #ff0000> degrees // " + ScratchBlocksVisitor.BUG_NOTE + System.lineSeparator() +
                 "[/scratchblocks]" + System.lineSeparator(),output);
     }
 
@@ -1331,7 +1603,7 @@ public class ScratchBlocksVisitorTest implements JsonTest {
         visitor.end();
         String output = visitor.getScratchBlocks();
         assertEquals("[scratchblocks]" + System.lineSeparator() +
-                "+repeat until <(x position) = (50):: #ff0000> // " + ScratchBlocksVisitor.BUG_NOTE + System.lineSeparator() +
+                "repeat until <(x position) = (50):: #ff0000> // " + ScratchBlocksVisitor.BUG_NOTE + System.lineSeparator() +
                 "end" + System.lineSeparator() +
                 "[/scratchblocks]" + System.lineSeparator(),output);
     }
@@ -1352,7 +1624,7 @@ public class ScratchBlocksVisitorTest implements JsonTest {
         assertEquals("[scratchblocks]" + System.lineSeparator() +
                 "when I start as a clone " + System.lineSeparator() +
                 "play sound (Meow v) until done" + System.lineSeparator() +
-                "+create clone of (myself v):: #ff0000 // " + ScratchBlocksVisitor.BUG_NOTE + System.lineSeparator() +
+                "create clone of (myself v):: #ff0000 // " + ScratchBlocksVisitor.BUG_NOTE + System.lineSeparator() +
                 "[/scratchblocks]" + System.lineSeparator(),output);
     }
 
@@ -1408,10 +1680,42 @@ public class ScratchBlocksVisitorTest implements JsonTest {
         String output = visitor.getScratchBlocks();
         assertEquals("[scratchblocks]" + System.lineSeparator() +
                 "when [space v] key pressed" + System.lineSeparator() +
-                "+delete (1) of [\uD83C\uDF83 Triple click the numbers below. This is your savecode! Press space to close. \uD83C\uDF83 v]:: #ff0000 // " + ScratchBlocksVisitor.BUG_NOTE + System.lineSeparator() +
+                "delete (1) of [\uD83C\uDF83 Triple click the numbers below. This is your savecode! Press space to close. \uD83C\uDF83 v]:: #ff0000 // " + ScratchBlocksVisitor.BUG_NOTE + System.lineSeparator() +
                 "[/scratchblocks]" + System.lineSeparator(), output);
     }
 
+    @Test
+    public void testShowVariableIssueAnnotation() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/scratchblocks/showvariableannotation.json");
+        DeadCode finder = new DeadCode();
+        Set<Issue> issues = finder.check(program);
+
+        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(issues);
+        visitor.begin();
+        program.accept(visitor);
+        visitor.end();
+        String output = visitor.getScratchBlocks();
+        assertEquals("[scratchblocks]" + System.lineSeparator() +
+                "show variable [my variable v]:: #ff0000 // " + ScratchBlocksVisitor.BUG_NOTE + System.lineSeparator() +
+                "[/scratchblocks]" + System.lineSeparator(), output);
+    }
+
+
+    @Test
+    public void testHideVariableIssueAnnotation() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/scratchblocks/hidevariableannotation.json");
+        DeadCode finder = new DeadCode();
+        Set<Issue> issues = finder.check(program);
+
+        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(issues);
+        visitor.begin();
+        program.accept(visitor);
+        visitor.end();
+        String output = visitor.getScratchBlocks();
+        assertEquals("[scratchblocks]" + System.lineSeparator() +
+                "hide variable [my variable v]:: #ff0000 // " + ScratchBlocksVisitor.BUG_NOTE + System.lineSeparator() +
+                "[/scratchblocks]" + System.lineSeparator(), output);
+    }
     // TODO: No working scripts?
     // TODO: SameIdentifierDifferentSprite
 }
