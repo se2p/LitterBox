@@ -46,8 +46,8 @@ public class LeilaAnalyzer extends Analyzer {
      * @param nonDet flag whether attributes in intermediate language should be
      *               non deterministic (i.e. not initialized)
      */
-    public LeilaAnalyzer(String input, String output, boolean nonDet, boolean onNever) {
-        super(input, output);
+    public LeilaAnalyzer(String input, String output, boolean nonDet, boolean onNever, boolean delete) {
+        super(input, output, delete);
         this.nonDet = nonDet;
         this.onNever = onNever;
 

@@ -24,9 +24,7 @@ import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 import org.apache.commons.cli.*;
 
-import java.io.File;
 import java.io.IOException;
-import java.util.Objects;
 
 import static de.uni_passau.fim.se2.litterbox.utils.GroupConstants.*;
 
@@ -150,7 +148,7 @@ public class Main {
             path = Files.createTempDir().getPath();
         }
         boolean ignoreLooseBlocks = cmd.hasOption(IGNORE_LOOSE_BLOCKS);
-        BugAnalyzer analyzer = new BugAnalyzer(path, outputPath, detectors, ignoreLooseBlocks);
+        BugAnalyzer analyzer = new BugAnalyzer(path, outputPath, detectors, ignoreLooseBlocks, cmd.hasOption(DELETE_PROJECT_AFTERWARDS));
 
         if (cmd.hasOption(ANNOTATE)) {
             String annotationPath = cmd.getOptionValue(ANNOTATE);
@@ -158,22 +156,6 @@ public class Main {
         }
 
         runAnalysis(cmd, analyzer);
-        if (cmd.hasOption(DELETE_PROJECT_AFTERWARDS)) {
-            deleteAfterUse(path);
-        }
-    }
-
-    private static void deleteAfterUse(String path) {
-        File folder = new File(path);
-        File fList[] = folder.listFiles();
-        // Searchs .lck
-        for (int i = 0; i < Objects.requireNonNull(fList).length; i++) {
-            String pes = fList[i].getName();
-            if (pes.endsWith(".json") || pes.endsWith(".sb3")) {
-                // and deletes
-                boolean success = (fList[i].delete());
-            }
-        }
     }
 
     static void translatePrograms(CommandLine cmd) throws ParseException, IOException {
@@ -189,11 +171,8 @@ public class Main {
         String input = cmd.getOptionValue(PROJECTPATH);
         boolean nonDet = cmd.hasOption(NONDET);
 
-        LeilaAnalyzer analyzer = new LeilaAnalyzer(input, outputPath, nonDet, false);
+        LeilaAnalyzer analyzer = new LeilaAnalyzer(input, outputPath, nonDet, false, cmd.hasOption(DELETE_PROJECT_AFTERWARDS));
         runAnalysis(cmd, analyzer);
-        if (cmd.hasOption(DELETE_PROJECT_AFTERWARDS)) {
-            deleteAfterUse(input);
-        }
     }
 
     static void statsPrograms(CommandLine cmd) throws ParseException, IOException, ParsingException {
@@ -207,11 +186,8 @@ public class Main {
 
         String outputPath = cmd.getOptionValue(OUTPUT);
         String input = cmd.getOptionValue(PROJECTPATH);
-        MetricAnalyzer analyzer = new MetricAnalyzer(input, outputPath);
+        MetricAnalyzer analyzer = new MetricAnalyzer(input, outputPath, cmd.hasOption(DELETE_PROJECT_AFTERWARDS));
         runAnalysis(cmd, analyzer);
-        if (cmd.hasOption(DELETE_PROJECT_AFTERWARDS)) {
-            deleteAfterUse(input);
-        }
     }
 
     static void runAnalysis(CommandLine cmd, Analyzer analyzer) {
