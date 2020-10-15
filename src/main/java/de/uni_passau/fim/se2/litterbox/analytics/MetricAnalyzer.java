@@ -29,8 +29,8 @@ public class MetricAnalyzer extends Analyzer {
     private static final Logger log = Logger.getLogger(MetricAnalyzer.class.getName());
     private MetricTool issueTool;
 
-    public MetricAnalyzer(String input, String output) {
-        super(input, output);
+    public MetricAnalyzer(String input, String output, boolean delete) {
+        super(input, output, delete);
         this.issueTool = new MetricTool();
     }
 

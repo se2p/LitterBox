@@ -221,7 +221,7 @@ public class LeilaVisitorTest implements JsonTest {
         File file = new File("./src/test/fixtures/emptyProject.json");
         String path = file.getAbsolutePath();
         String outPath = tempFile.getAbsolutePath();
-        LeilaAnalyzer analyzer = new LeilaAnalyzer(path, outPath + "foobar", false, true);
+        LeilaAnalyzer analyzer = new LeilaAnalyzer(path, outPath + "foobar", false, true,false);
         analyzer.analyzeFile();
         File output = new File(Paths.get(outPath + "foobar", "emptyProject.sc").toString());
         assertThat(output.exists()).isFalse();

@@ -39,10 +39,12 @@ public abstract class Analyzer {
 
     Path input;
     String output;
+    boolean delete;
 
-    public Analyzer(String input, String output) {
+    public Analyzer(String input, String output, boolean delete) {
         this.input = Paths.get(input);
         this.output = output;
+        this.delete = delete;
     }
 
     /**
@@ -58,12 +60,23 @@ public abstract class Analyzer {
             for (final File fileEntry : Objects.requireNonNull(file.listFiles())) {
                 if (!fileEntry.isDirectory()) {
                     check(fileEntry, output);
+                    deleteFile(fileEntry);
                 }
             }
         } else if (file.exists() && !file.isDirectory()) {
             check(file, output);
+            deleteFile(file);
         } else {
             log.info("Folder or file '" + file.getName() + "' does not exist");
+        }
+    }
+
+    private void deleteFile(File file) {
+        if (delete && (file.getName().endsWith(".json") || file.getName().endsWith(".sb3"))) {
+            boolean success = file.delete();
+            if (!success) {
+                log.warning("[Error] Could not delete project: " + file.getName());
+            }
         }
     }
 
@@ -106,6 +119,7 @@ public abstract class Analyzer {
         }
 
         check(projectFile, output);
+        deleteFile(projectFile);
     }
 
     abstract void check(File fileEntry, String csv);
