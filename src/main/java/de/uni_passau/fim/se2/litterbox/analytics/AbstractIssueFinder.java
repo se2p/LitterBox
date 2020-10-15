@@ -106,6 +106,14 @@ public abstract class AbstractIssueFinder implements IssueFinder, ScratchVisitor
                 new Hint(getName())));
     }
 
+    protected void addIssueWithLooseComment(Hint hint) {
+        issues.add(new Issue(this, IssueSeverity.HIGH, program, currentActor,
+                (Script) null, // TODO: There is no script
+                currentActor, // TODO: There is no node?
+                null,  // TODO: There is no metadata
+                hint));
+    }
+
     public void setIgnoreLooseBlocks(boolean value) {
         ignoreLooseBlocks = value;
     }
