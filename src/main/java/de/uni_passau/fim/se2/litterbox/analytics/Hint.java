@@ -30,6 +30,8 @@ public class Hint {
 
     public final static String HINT_VARIABLE = "VARIABLE";
 
+    public final static String HINT_MESSAGE = "MESSAGE";
+
     private String hintKey;
     private String hintText;
 
