@@ -55,10 +55,11 @@ public class SpriteNaming extends AbstractIssueFinder {
 
     private void checkName(String name) {
         String trimmedName = name;
-        while (Character.isDigit(trimmedName.charAt(trimmedName.length() - 1))
-                || Character.isWhitespace(trimmedName.charAt(trimmedName.length() - 1))) {
+        while (trimmedName.length() > 0 && (Character.isDigit(trimmedName.charAt(trimmedName.length() - 1))
+                || Character.isWhitespace(trimmedName.charAt(trimmedName.length() - 1)))) {
             trimmedName = trimmedName.substring(0, trimmedName.length() - 1);
         }
+
         for (String standard : SPRITE_LANGUAGES) {
             if (trimmedName.equals(standard)) {
                 Hint hint = new Hint(getName());
