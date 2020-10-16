@@ -18,84 +18,86 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
+import com.google.common.truth.Truth;
 import de.uni_passau.fim.se2.litterbox.JsonTest;
+import de.uni_passau.fim.se2.litterbox.analytics.Hint;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
+import de.uni_passau.fim.se2.litterbox.analytics.hint.PositionEqualsCheckHintFactory;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.Set;
 
 public class PositionEqualsCheckTest implements JsonTest {
-    private static Program empty;
-    private static Program equalX;
-    private static Program equalDirection;
-    private static Program allChecks;
-    private static Program xPositionEquals;
-    private static Program nested;
-    private static Program deadEquals;
-
-    @BeforeAll
-    public static void setUp() throws IOException, ParsingException {
-
-        empty = JsonTest.parseProgram("./src/test/fixtures/emptyProject.json");
-        equalX = JsonTest.parseProgram("./src/test/fixtures/bugpattern/xPosEqual.json");
-        equalDirection = JsonTest.parseProgram("./src/test/fixtures/bugpattern/posEqualDirection.json");
-        allChecks = JsonTest.parseProgram("./src/test/fixtures/bugpattern/positionEqualsCheck.json");
-        xPositionEquals = JsonTest.parseProgram("./src/test/fixtures/bugpattern/xPositionEquals.json");
-        nested = JsonTest.parseProgram("./src/test/fixtures/bugpattern/positionEqualsNested.json");
-        deadEquals = JsonTest.parseProgram("./src/test/fixtures/bugpattern/deadPositionEquals.json");
-    }
 
     @Test
-    public void testEmptyProgram() {
+    public void testEmptyProgram() throws IOException, ParsingException {
+        Program empty = JsonTest.parseProgram("./src/test/fixtures/emptyProject.json");
         PositionEqualsCheck parameterName = new PositionEqualsCheck();
         Set<Issue> reports = parameterName.check(empty);
         Assertions.assertEquals(0, reports.size());
     }
 
     @Test
-    public void testEqualCond() {
+    public void testEqualCond() throws IOException, ParsingException {
+        Program equalX = JsonTest.parseProgram("./src/test/fixtures/bugpattern/xPosEqual.json");
         PositionEqualsCheck parameterName = new PositionEqualsCheck();
         Set<Issue> reports = parameterName.check(equalX);
         Assertions.assertEquals(1, reports.size());
     }
 
     @Test
-    public void testEqualDir() {
+    public void testEqualDir() throws IOException, ParsingException {
+        Program equalDirection = JsonTest.parseProgram("./src/test/fixtures/bugpattern/posEqualDirection.json");
         PositionEqualsCheck parameterName = new PositionEqualsCheck();
         Set<Issue> reports = parameterName.check(equalDirection);
         Assertions.assertEquals(0, reports.size());
     }
 
     @Test
-    public void testXPositionEquals() {
+    public void testXPositionEquals() throws IOException, ParsingException {
+        Program xPositionEquals = JsonTest.parseProgram("./src/test/fixtures/bugpattern/xPositionEquals.json");
         PositionEqualsCheck parameterName = new PositionEqualsCheck();
         Set<Issue> reports = parameterName.check(xPositionEquals);
         Assertions.assertEquals(1, reports.size());
     }
 
     @Test
-    public void testAll() {
+    public void testAll() throws IOException, ParsingException {
+        Program allChecks = JsonTest.parseProgram("./src/test/fixtures/bugpattern/positionEqualsCheck.json");
         PositionEqualsCheck parameterName = new PositionEqualsCheck();
         Set<Issue> reports = parameterName.check(allChecks);
         Assertions.assertEquals(4, reports.size());
     }
 
     @Test
-    public void testNested() {
+    public void testNested() throws IOException, ParsingException {
+        Program nested = JsonTest.parseProgram("./src/test/fixtures/bugpattern/positionEqualsNested.json");
         PositionEqualsCheck parameterName = new PositionEqualsCheck();
         Set<Issue> reports = parameterName.check(nested);
         Assertions.assertEquals(2, reports.size());
     }
 
     @Test
-    public void testDeadEquals() {
+    public void testDeadEquals() throws IOException, ParsingException {
+        Program deadEquals = JsonTest.parseProgram("./src/test/fixtures/bugpattern/deadPositionEquals.json");
         PositionEqualsCheck parameterName = new PositionEqualsCheck();
         Set<Issue> reports = parameterName.check(deadEquals);
         Assertions.assertEquals(2, reports.size());
+    }
+
+    @Test
+    public void testDistanceZero() throws IOException, ParsingException {
+        Program deadEquals = JsonTest.parseProgram("./src/test/fixtures/bugpattern/pecDistanceZero.json");
+        PositionEqualsCheck parameterName = new PositionEqualsCheck();
+        Set<Issue> reports = parameterName.check(deadEquals);
+        Assertions.assertEquals(1, reports.size());
+        Hint hint = new Hint(PositionEqualsCheckHintFactory.DISTANCE_ZERO_SPRITES);
+        for (Issue issue : reports) {
+            Truth.assertThat(issue.getHint()).isEqualTo(hint.getHintText());
+        }
     }
 }
