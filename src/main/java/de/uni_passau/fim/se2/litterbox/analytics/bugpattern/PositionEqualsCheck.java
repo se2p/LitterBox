@@ -19,7 +19,9 @@
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
+import de.uni_passau.fim.se2.litterbox.analytics.Hint;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
+import de.uni_passau.fim.se2.litterbox.analytics.hint.PositionEqualsCheckHintFactory;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.ComparableExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Equals;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
@@ -30,6 +32,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitUntil;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfElseStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
+
+import java.util.Collection;
 
 /**
  * When an equals comparison is used as check for an until loop or a wait until, it can occur that
@@ -76,7 +80,8 @@ public class PositionEqualsCheck extends AbstractIssueFinder {
     public void visit(Equals node) {
         if (inCondition) {
             if (!checkEquals(node)) {
-                addIssue(node, node.getMetadata());
+                Hint hint = PositionEqualsCheckHintFactory.generateHint(node);
+                addIssue(node, node.getMetadata(), hint);
             }
         }
     }
@@ -114,5 +119,10 @@ public class PositionEqualsCheck extends AbstractIssueFinder {
     @Override
     public IssueType getIssueType() {
         return IssueType.BUG;
+    }
+
+    @Override
+    public Collection<String> getHintKeys() {
+        return PositionEqualsCheckHintFactory.getHintKeys();
     }
 }
