@@ -81,6 +81,7 @@ public class Issue {
     public Issue(IssueFinder finder, IssueSeverity severity, Program program, ActorDefinition actor, ProcedureDefinition procedure,
                  ASTNode currentNode, Metadata metaData, Hint hint) {
         this.finder = finder;
+        this.severity = severity;
         this.program = program;
         this.actor = actor;
         this.procedure = procedure;
