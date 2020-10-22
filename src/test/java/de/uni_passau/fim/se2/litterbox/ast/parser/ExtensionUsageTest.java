@@ -18,39 +18,20 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.parser;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.UnspecifiedStmt;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
 import java.io.IOException;
 
-import static junit.framework.TestCase.fail;
-
-public class ExtensionUsageTest {
-
-    private static JsonNode project;
-
-    @BeforeAll
-    public static void setup() {
-        String path = "src/test/fixtures/testExtension.json";
-        File file = new File(path);
-        ObjectMapper objectMapper = new ObjectMapper();
-        try {
-            project = objectMapper.readTree(file);
-        } catch (IOException e) {
-            fail();
-        }
-    }
+public class ExtensionUsageTest implements JsonTest {
 
     @Test
-    public void testContains() throws ParsingException {
-        Program program = ProgramParser.parseProgram("Extension", project);
+    public void testContains() throws ParsingException, IOException {
+        Program program = getAST("src/test/fixtures/testExtension.json");
         //check if the used extension that LitterBox can not parse is an UnspecifiedStmt
         Assertions.assertTrue(program.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(0).getStmtList().getStmts().get(0) instanceof UnspecifiedStmt);
     }

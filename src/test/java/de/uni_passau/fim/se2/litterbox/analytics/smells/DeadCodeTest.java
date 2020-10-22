@@ -18,40 +18,32 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.smells;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Set;
 
-public class DeadCodeTest {
+public class DeadCodeTest implements JsonTest {
     private static Program empty;
     private static Program deadCode;
     private static Program deadVariable;
-    private static final ObjectMapper mapper = new ObjectMapper();
     private static Program deadParam;
     private static Program allDead;
 
     @BeforeAll
     public static void setUp() throws IOException, ParsingException {
 
-        File f = new File("./src/test/fixtures/emptyProject.json");
-        empty = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
-        f = new File("./src/test/fixtures/smells/deadCode.json");
-        deadCode = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
-        f = new File("./src/test/fixtures/smells/deadVariable.json");
-        deadVariable = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
-        f = new File("./src/test/fixtures/smells/allBlocksDead.json");
-        allDead = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
-        f = new File("./src/test/fixtures/smells/deadParam.json");
-        deadParam = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
+        empty = JsonTest.parseProgram("./src/test/fixtures/emptyProject.json");
+        deadCode = JsonTest.parseProgram("./src/test/fixtures/smells/deadCode.json");
+        deadVariable = JsonTest.parseProgram("./src/test/fixtures/smells/deadVariable.json");
+        allDead = JsonTest.parseProgram("./src/test/fixtures/smells/allBlocksDead.json");
+        deadParam = JsonTest.parseProgram("./src/test/fixtures/smells/deadParam.json");
     }
 
     @Test

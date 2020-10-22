@@ -18,42 +18,29 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.smells;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Set;
 
-public class EmptyScriptTest {
-    private static Program empty;
-    private static Program emptyScript;
-    private static ObjectMapper mapper = new ObjectMapper();
-
-    @BeforeAll
-    public static void setUp() throws IOException, ParsingException {
-
-        File f = new File("./src/test/fixtures/emptyProject.json");
-        empty = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
-        f = new File("./src/test/fixtures/smells/emptyScript.json");
-        emptyScript = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
-    }
+public class EmptyScriptTest implements JsonTest {
 
     @Test
-    public void testEmptyProgram() {
+    public void testEmptyProgram() throws IOException, ParsingException {
+        Program empty = getAST("./src/test/fixtures/emptyProject.json");
         EmptyScript parameterName = new EmptyScript();
         Set<Issue> reports = parameterName.check(empty);
         Assertions.assertEquals(0, reports.size());
     }
 
     @Test
-    public void testEmptyScript() {
+    public void testEmptyScript() throws IOException, ParsingException {
+        Program emptyScript = getAST("./src/test/fixtures/smells/emptyScript.json");
         EmptyScript parameterName = new EmptyScript();
         Set<Issue> reports = parameterName.check(emptyScript);
         Assertions.assertEquals(2, reports.size());

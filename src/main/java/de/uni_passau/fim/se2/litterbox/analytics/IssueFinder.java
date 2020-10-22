@@ -20,6 +20,7 @@ package de.uni_passau.fim.se2.litterbox.analytics;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 
+import java.util.Collection;
 import java.util.Set;
 
 /**
@@ -39,9 +40,7 @@ public interface IssueFinder {
 
     String getName();
 
-    void setIgnoreLooseBlocks(boolean value);
+    Collection<String> getHintKeys();
 
-    enum IssueType {
-        BUG, SMELL
-    }
+    void setIgnoreLooseBlocks(boolean value);
 }

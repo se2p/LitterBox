@@ -41,8 +41,8 @@ public class BugAnalyzer extends Analyzer {
     private String annotationOutput;
     private boolean ignoreLooseBlocks;
 
-    public BugAnalyzer(String input, String output, String detectors, boolean ignoreLooseBlocks) {
-        super(input, output);
+    public BugAnalyzer(String input, String output, String detectors, boolean ignoreLooseBlocks, boolean delete) {
+        super(input, output, delete);
         issueFinders = IssueTool.getFinders(detectors);
         detectorNames = issueFinders.stream().map(IssueFinder::getName).collect(Collectors.toList());
         this.ignoreLooseBlocks = ignoreLooseBlocks;

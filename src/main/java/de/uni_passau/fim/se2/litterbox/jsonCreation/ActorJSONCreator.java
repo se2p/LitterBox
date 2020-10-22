@@ -28,8 +28,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.metadata.VariableMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.actor.ActorMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.actor.SpriteMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.actor.StageMetadata;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.ressources.ImageMetadata;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.ressources.SoundMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.resources.ImageMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.resources.SoundMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ProcedureDefinitionNameMapping;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.SymbolTable;
@@ -45,7 +45,7 @@ public class ActorJSONCreator {
         StringBuilder jsonString = new StringBuilder();
         ActorMetadata meta = actor.getActorMetadata();
         boolean isStage = false;
-        if (actor.getActorType().equals(ActorType.STAGE)) {
+        if (actor.isStage()) {
             isStage = true;
         }
         jsonString.append("{");

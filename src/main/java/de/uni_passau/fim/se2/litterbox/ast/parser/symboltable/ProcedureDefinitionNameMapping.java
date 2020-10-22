@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class ProcedureDefinitionNameMapping {
 
@@ -35,6 +36,16 @@ public class ProcedureDefinitionNameMapping {
     public ProcedureDefinitionNameMapping() {
         procedures = new LinkedHashMap<>();
         malformatedProcedures = new ArrayList<>();
+    }
+
+    public ProcedureDefinitionNameMapping(ProcedureDefinitionNameMapping other) {
+        procedures = new LinkedHashMap<>();
+        // TODO: This creates a deep copy of the datastructure itself, but the LocalIdentifier and ProcedureInfo
+        //       are not copied
+        for (Map.Entry<String, Map<LocalIdentifier, ProcedureInfo>> entry : other.procedures.entrySet()) {
+            procedures.put(entry.getKey(), new LinkedHashMap<>(entry.getValue()));
+        }
+        malformatedProcedures = new ArrayList<>(other.malformatedProcedures);
     }
 
     public void addProcedure(LocalIdentifier localIdentifier,

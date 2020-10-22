@@ -24,7 +24,6 @@ import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 import org.apache.commons.cli.*;
 
-import java.io.File;
 import java.io.IOException;
 
 import static de.uni_passau.fim.se2.litterbox.utils.GroupConstants.*;
@@ -48,6 +47,8 @@ public class Main {
     private static final String PROJECTID_SHORT = "i";
     private static final String PROJECTLIST = "projectlist";
     private static final String PROJECTLIST_SHORT = "t";
+    private static final String DELETE_PROJECT_AFTERWARDS = "delete";
+    private static final String DELETE_PROJECT_AFTERWARDS_SHORT = "del";
 
     private static final String OUTPUT_LANG = "lang";
     private static final String OUTPUT_LANG_SHORT = "k";
@@ -87,6 +88,7 @@ public class Main {
         // Storage options
         options.addOption(new Option(PROJECTPATH_SHORT, PROJECTPATH, true,
                 "path to folder or file that should be analyzed, or path in which to store downloaded projects"));
+        options.addOption(new Option(DELETE_PROJECT_AFTERWARDS_SHORT, DELETE_PROJECT_AFTERWARDS, false, "indicates if project files should be deleted after analysing them"));
 
         // Output options
         options.addOption(OUTPUT_SHORT, OUTPUT, true,
@@ -146,7 +148,7 @@ public class Main {
             path = Files.createTempDir().getPath();
         }
         boolean ignoreLooseBlocks = cmd.hasOption(IGNORE_LOOSE_BLOCKS);
-        BugAnalyzer analyzer = new BugAnalyzer(path, outputPath, detectors, ignoreLooseBlocks);
+        BugAnalyzer analyzer = new BugAnalyzer(path, outputPath, detectors, ignoreLooseBlocks, cmd.hasOption(DELETE_PROJECT_AFTERWARDS));
 
         if (cmd.hasOption(ANNOTATE)) {
             String annotationPath = cmd.getOptionValue(ANNOTATE);
@@ -169,7 +171,7 @@ public class Main {
         String input = cmd.getOptionValue(PROJECTPATH);
         boolean nonDet = cmd.hasOption(NONDET);
 
-        LeilaAnalyzer analyzer = new LeilaAnalyzer(input, outputPath, nonDet, false);
+        LeilaAnalyzer analyzer = new LeilaAnalyzer(input, outputPath, nonDet, false, cmd.hasOption(DELETE_PROJECT_AFTERWARDS));
         runAnalysis(cmd, analyzer);
     }
 
@@ -184,7 +186,7 @@ public class Main {
 
         String outputPath = cmd.getOptionValue(OUTPUT);
         String input = cmd.getOptionValue(PROJECTPATH);
-        MetricAnalyzer analyzer = new MetricAnalyzer(input, outputPath);
+        MetricAnalyzer analyzer = new MetricAnalyzer(input, outputPath, cmd.hasOption(DELETE_PROJECT_AFTERWARDS));
         runAnalysis(cmd, analyzer);
     }
 

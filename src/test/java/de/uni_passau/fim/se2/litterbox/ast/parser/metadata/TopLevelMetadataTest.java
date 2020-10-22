@@ -79,8 +79,8 @@ public class TopLevelMetadataTest {
         Assertions.assertEquals(TopNonDataBlockMetadata.class, meta.getDefinition().getClass());
         TopNonDataBlockMetadata defMet = (TopNonDataBlockMetadata) meta.getDefinition();
         Assertions.assertEquals(NoMutationMetadata.class, defMet.getMutation().getClass());
-        Assertions.assertEquals(56, defMet.getxPos());
-        Assertions.assertEquals(184, defMet.getyPos());
+        Assertions.assertEquals(56, defMet.getXPos());
+        Assertions.assertEquals(184, defMet.getYPos());
         Assertions.assertEquals(NonDataBlockMetadata.class, meta.getPrototype().getClass());
         NonDataBlockMetadata protoMet = (NonDataBlockMetadata) meta.getPrototype();
         Assertions.assertEquals(PrototypeMutationMetadata.class, protoMet.getMutation().getClass());

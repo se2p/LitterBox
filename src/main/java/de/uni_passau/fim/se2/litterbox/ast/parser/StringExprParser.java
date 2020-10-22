@@ -174,10 +174,10 @@ public class StringExprParser {
                 return new ItemOfVariable(index, var, metadata);
             case looks_costumenumbername:
                 String numberName = exprBlock.get(FIELDS_KEY).get(NUMBER_NAME_KEY).get(0).asText();
-                return new Costume(NameNum.fromString(numberName), metadata);
+                return new Costume(new NameNum(numberName), metadata);
             case looks_backdropnumbername:
                 numberName = exprBlock.get(FIELDS_KEY).get(NUMBER_NAME_KEY).get(0).asText();
-                return new Backdrop(NameNum.fromString(numberName), metadata);
+                return new Backdrop(new NameNum(numberName), metadata);
             case sensing_answer:
                 return new Answer(metadata);
             case sensing_of:
@@ -214,7 +214,7 @@ public class StringExprParser {
                     case "volume":
                     case "backdrop name":
                     case "backdrop #":
-                        property = new AttributeFromFixed(FixedAttribute.fromString(prop));
+                        property = new AttributeFromFixed(new FixedAttribute(prop));
                         break;
                     default:
                         property = new AttributeFromVariable(new Variable(new StrId(prop)));

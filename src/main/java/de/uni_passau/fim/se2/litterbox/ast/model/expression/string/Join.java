@@ -18,8 +18,10 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.model.expression.string;
 
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.BinaryExpression;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 public class Join extends BinaryExpression<StringExpr, StringExpr> implements StringExpr {
@@ -31,5 +33,10 @@ public class Join extends BinaryExpression<StringExpr, StringExpr> implements St
     @Override
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);
+    }
+
+    @Override
+    public ASTNode accept(CloneVisitor visitor) {
+        return visitor.visit(this);
     }
 }

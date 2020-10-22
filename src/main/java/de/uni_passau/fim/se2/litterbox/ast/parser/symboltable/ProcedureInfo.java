@@ -33,6 +33,12 @@ public class ProcedureInfo {
         this.actorName = actorName;
     }
 
+    public ProcedureInfo(ProcedureInfo other) {
+        this.name = other.name;
+        this.arguments = other.arguments.clone();
+        this.actorName = other.actorName;
+    }
+
     public String getName() {
         return name;
     }

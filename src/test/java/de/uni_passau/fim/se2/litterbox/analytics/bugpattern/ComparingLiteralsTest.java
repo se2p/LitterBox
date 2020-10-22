@@ -18,41 +18,83 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.truth.Truth;
+import de.uni_passau.fim.se2.litterbox.JsonTest;
+import de.uni_passau.fim.se2.litterbox.analytics.Hint;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
-import org.junit.jupiter.api.BeforeAll;
+import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Set;
 
-import static junit.framework.TestCase.fail;
+class ComparingLiteralsTest implements JsonTest {
 
-class ComparingLiteralsTest {
-
-    private static Program program;
-
-    @BeforeAll
-    public static void setup() {
-        String path = "src/test/fixtures/bugpattern/comparingLiterals.json";
-        File file = new File(path);
-        ObjectMapper objectMapper = new ObjectMapper();
-        try {
-            program = ProgramParser.parseProgram("comparing literals", objectMapper.readTree(file));
-        } catch (IOException | ParsingException e) {
-            fail();
+    @Test
+    public void testComparingLiterals() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/bugpattern/comparingLiterals.json");
+        ComparingLiterals finder = new ComparingLiterals();
+        Set<Issue> reports = finder.check(program);
+        Truth.assertThat(reports).hasSize(3);
+        Hint trueHint = new Hint(ComparingLiterals.DEFAULT_VARIABLE);
+        trueHint.setParameter(ComparingLiterals.HINT_TRUE_FALSE, IssueTranslator.getInstance().getInfo("true"));
+        trueHint.setParameter(ComparingLiterals.ALWAYS_NEVER, IssueTranslator.getInstance().getInfo(ComparingLiterals.ALWAYS_OR_NEVER));
+        trueHint.setParameter(Hint.HINT_VARIABLE, "\"\"");
+        Hint falseHint = new Hint(ComparingLiterals.DEFAULT_VARIABLE);
+        falseHint.setParameter(ComparingLiterals.HINT_TRUE_FALSE, IssueTranslator.getInstance().getInfo("false"));
+        falseHint.setParameter(ComparingLiterals.ALWAYS_NEVER, IssueTranslator.getInstance().getInfo(ComparingLiterals.ALWAYS_OR_NEVER));
+        falseHint.setParameter(Hint.HINT_VARIABLE, "\"\"");
+        int i = 0;
+        for (Issue issue : reports) {
+            if (i == 1) {
+                Truth.assertThat(issue.getHint()).isEqualTo(trueHint.getHintText());
+            } else {
+                Truth.assertThat(issue.getHint()).isEqualTo(falseHint.getHintText());
+            }
+            i++;
         }
     }
 
     @Test
-    public void testComparingLiterals() {
+    public void testComparingLiteralsNumbersGreater() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/bugpattern/compareNumbersGreater.json");
         ComparingLiterals finder = new ComparingLiterals();
         Set<Issue> reports = finder.check(program);
-        Truth.assertThat(reports).hasSize(3);
+        Truth.assertThat(reports).hasSize(1);
+        Hint trueHint = new Hint(ComparingLiterals.DEFAULT_TRUE);
+        trueHint.setParameter(ComparingLiterals.ALWAYS_NEVER, IssueTranslator.getInstance().getInfo("always"));
+        for (Issue issue : reports) {
+            Truth.assertThat(issue.getHint()).isEqualTo(trueHint.getHintText());
+        }
+    }
+
+    @Test
+    public void testComparingLiteralsWait() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/bugpattern/comparingLiteralsWait.json");
+        ComparingLiterals finder = new ComparingLiterals();
+        Set<Issue> reports = finder.check(program);
+        Truth.assertThat(reports).hasSize(1);
+        Hint trueHint = new Hint(ComparingLiterals.WAIT_TRUE);
+        trueHint.setParameter(ComparingLiterals.ALWAYS_NEVER, IssueTranslator.getInstance().getInfo(ComparingLiterals.ALWAYS_OR_NEVER));
+        for (Issue issue : reports) {
+            Truth.assertThat(issue.getHint()).isEqualTo(trueHint.getHintText());
+        }
+    }
+
+    @Test
+    public void testComparingLiteralsVariableExists() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/bugpattern/comparingLiteralsVariableExists.json");
+        ComparingLiterals finder = new ComparingLiterals();
+        Set<Issue> reports = finder.check(program);
+        Truth.assertThat(reports).hasSize(1);
+        Hint falseHint = new Hint(ComparingLiterals.DEFAULT_VARIABLE_EXISTS);
+        falseHint.setParameter(ComparingLiterals.ALWAYS_NEVER, IssueTranslator.getInstance().getInfo(ComparingLiterals.NEVER));
+        falseHint.setParameter(Hint.HINT_VARIABLE, "\"test\"");
+        falseHint.setParameter(ComparingLiterals.HINT_TRUE_FALSE, IssueTranslator.getInstance().getInfo("false"));
+        for (Issue issue : reports) {
+            Truth.assertThat(issue.getHint()).isEqualTo(falseHint.getHintText());
+        }
     }
 }

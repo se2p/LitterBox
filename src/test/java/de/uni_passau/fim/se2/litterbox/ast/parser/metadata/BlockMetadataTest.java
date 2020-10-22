@@ -69,13 +69,13 @@ public class BlockMetadataTest {
         Assertions.assertEquals(1, topNonDataBlockMetadata.getInputMetadata().getList().size());
         Assertions.assertEquals("X)N~xB@[E,i0S}Vwwtjm", topNonDataBlockMetadata.getBlockId());
         Assertions.assertNull(topNonDataBlockMetadata.getCommentId());
-        Assertions.assertEquals(56, topNonDataBlockMetadata.getxPos());
-        Assertions.assertEquals(184, topNonDataBlockMetadata.getyPos());
+        Assertions.assertEquals(56, topNonDataBlockMetadata.getXPos());
+        Assertions.assertEquals(184, topNonDataBlockMetadata.getYPos());
         Assertions.assertTrue(topNonDataBlockMetadata.getMutation() instanceof NoMutationMetadata);
         Assertions.assertTrue(topNonDataBlockMetadata.isTopLevel());
         Assertions.assertFalse(topNonDataBlockMetadata.isShadow());
         Assertions.assertEquals("procedures_definition", topNonDataBlockMetadata.getOpcode());
-        Assertions.assertNull(topNonDataBlockMetadata.getParent());
+        Assertions.assertNull(topNonDataBlockMetadata.getParentNode());
         Assertions.assertEquals("$C@+K-:6ie`W)?I*4jc9", topNonDataBlockMetadata.getNext());
     }
 

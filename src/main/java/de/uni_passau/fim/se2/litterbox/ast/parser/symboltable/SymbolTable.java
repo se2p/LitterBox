@@ -46,6 +46,12 @@ public class SymbolTable {
         this.lists = new LinkedHashMap<>();
     }
 
+    public SymbolTable(SymbolTable other) {
+        this.variables = new LinkedHashMap<>(other.variables);
+        this.messages = new LinkedHashMap<>(other.messages);
+        this.lists = new LinkedHashMap<>(other.lists);
+    }
+
     public Map<String, VariableInfo> getVariables() {
         return variables;
     }
