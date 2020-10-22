@@ -89,6 +89,7 @@ import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ProcedureInfo;
 import java.io.PrintStream;
 import java.util.*;
 import java.util.regex.Pattern;
+import java.util.logging.Logger;
 
 import static de.uni_passau.fim.se2.litterbox.ast.visitor.LeilaVisitor.TYPE.*;
 
@@ -104,6 +105,8 @@ public class LeilaVisitor extends PrintVisitor {
     private String currentActor = null;
     private Program program = null;
     private Stack<TYPE> expectedTypes = new Stack<>();
+
+    private static final Logger log = Logger.getLogger(PrintVisitor.class.getName());
 
     enum TYPE {
         INTEGER, FLOAT, ORIGINAL
@@ -1638,19 +1641,13 @@ public class LeilaVisitor extends PrintVisitor {
         double value = number.getValue();
         switch (expectedType) {
             case ORIGINAL:
-                if (isInteger(value)) {
-                    emitAsLong(value);
-                } else {
-                    emitAsDouble(value);
-                }
-                break;
             case INTEGER:
-                if (isInteger(value)) {
-                    emitAsLong(value);
-                } else {
-                    throw new RuntimeException("Expected type integer but got " + value);
+                if (!isInteger(value)) {
+                    log.warning("Value " + value + " cast as integer");
                 }
+                emitAsLong(value);
                 break;
+            //throw new RuntimeException("Expected type integer but got " + value);
             case FLOAT:
                 emitAsDouble(value);
                 break;
