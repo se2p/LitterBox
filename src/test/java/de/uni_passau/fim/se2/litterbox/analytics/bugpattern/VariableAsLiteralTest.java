@@ -114,4 +114,11 @@ public class VariableAsLiteralTest implements JsonTest {
         Set<Issue> reports = (new VariableAsLiteral()).check(program);
         Assertions.assertEquals(0, reports.size());
     }
+
+    @Test
+    public void testHideListWithNoBug() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/bugpattern/hideList.json");
+        Set<Issue> reports = (new VariableAsLiteral()).check(program);
+        Assertions.assertEquals(0, reports.size());
+    }
 }

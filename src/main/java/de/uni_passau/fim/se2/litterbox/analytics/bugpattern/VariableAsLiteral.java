@@ -31,6 +31,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.metadata.Metadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Parameter;
+import de.uni_passau.fim.se2.litterbox.ast.model.variable.ScratchList;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ArgumentInfo;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ExpressionListInfo;
@@ -86,6 +87,11 @@ public class VariableAsLiteral extends AbstractIssueFinder {
 
     @Override
     public void visit(Variable node) {
+        // No-op
+    }
+
+    @Override
+    public void visit(ScratchList node) {
         // No-op
     }
 
