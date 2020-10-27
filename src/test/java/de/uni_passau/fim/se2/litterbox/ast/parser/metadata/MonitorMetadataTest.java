@@ -34,34 +34,19 @@ import static de.uni_passau.fim.se2.litterbox.ast.Constants.MONITORS_KEY;
 
 public class MonitorMetadataTest {
     private static final ObjectMapper mapper = new ObjectMapper();
-    private static JsonNode prog;
-    private static JsonNode empty;
-    private static JsonNode monitorMetaAlternative;
-    private static JsonNode monitorMetaManipulated;
-    private static JsonNode sliderMetadata;
-
-    @BeforeAll
-    public static void setUp() throws IOException {
-        File f = new File("./src/test/fixtures/emptyProject.json");
-        empty = mapper.readTree(f);
-        f = new File("./src/test/fixtures/metadata/monitorMeta.json");
-        prog = mapper.readTree(f);
-        f = new File("./src/test/fixtures/metadata/monitorMetaAlternative.json");
-        monitorMetaAlternative = mapper.readTree(f);
-        f = new File("./src/test/fixtures/metadata/monitorMetaManipulated.json");
-        monitorMetaManipulated = mapper.readTree(f);
-        f = new File("./src/test/fixtures/metadata/sliderMetadata.json");
-        sliderMetadata = mapper.readTree(f);
-    }
 
     @Test
-    public void testEmptyProgram() {
+    public void testEmptyProgram() throws IOException {
+        File f = new File("./src/test/fixtures/emptyProject.json");
+        JsonNode empty = mapper.readTree(f);
         MonitorMetadataList monitors = MonitorMetadataListParser.parse(empty.get(MONITORS_KEY));
         Assertions.assertEquals(2, monitors.getList().size());
     }
 
     @Test
-    public void testMonitorsProgram() {
+    public void testMonitorsProgram() throws IOException {
+        File f = new File("./src/test/fixtures/metadata/monitorMeta.json");
+        JsonNode prog = mapper.readTree(f);
         MonitorMetadataList monitors = MonitorMetadataListParser.parse(prog.get(MONITORS_KEY));
         Assertions.assertEquals(4, monitors.getList().size());
         Assertions.assertTrue(monitors.getList().get(0) instanceof MonitorListMetadata);
@@ -71,13 +56,17 @@ public class MonitorMetadataTest {
     }
 
     @Test
-    public void testMonitorsAlternativeProgram() {
+    public void testMonitorsAlternativeProgram() throws IOException {
+        File f = new File("./src/test/fixtures/metadata/monitorMetaAlternative.json");
+        JsonNode monitorMetaAlternative = mapper.readTree(f);
         MonitorMetadataList monitors = MonitorMetadataListParser.parse(monitorMetaAlternative.get(MONITORS_KEY));
         Assertions.assertEquals(1, monitors.getList().size());
     }
 
     @Test
-    public void testMonitorsManipulatedProgram() {
+    public void testMonitorsManipulatedProgram() throws IOException {
+        File f = new File("./src/test/fixtures/metadata/monitorMetaManipulated.json");
+        JsonNode monitorMetaManipulated = mapper.readTree(f);
         MonitorMetadataList monitors = MonitorMetadataListParser.parse(monitorMetaManipulated.get(MONITORS_KEY));
         Assertions.assertEquals(1, monitors.getList().size());
         Assertions.assertTrue(monitors.getList().get(0) instanceof MonitorSliderMetadata);
@@ -86,12 +75,14 @@ public class MonitorMetadataTest {
     }
 
     @Test
-    public void testSlider() {
+    public void testSlider() throws IOException {
+        File f = new File("./src/test/fixtures/metadata/sliderMetadata.json");
+        JsonNode sliderMetadata = mapper.readTree(f);
         MonitorMetadataList monitors = MonitorMetadataListParser.parse(sliderMetadata.get(MONITORS_KEY));
         MonitorSliderMetadata monitorSliderMetadata = (MonitorSliderMetadata) monitors.getList().get(0);
         Assertions.assertEquals(monitorSliderMetadata.getSliderMin(), 0);
         Assertions.assertEquals(monitorSliderMetadata.getSliderMax(), 100);
         Assertions.assertEquals(monitorSliderMetadata.getValue(), "1000");
-        Assertions.assertEquals(monitorSliderMetadata.isDiscrete(), true);
+        Assertions.assertTrue(monitorSliderMetadata.isDiscrete());
     }
 }

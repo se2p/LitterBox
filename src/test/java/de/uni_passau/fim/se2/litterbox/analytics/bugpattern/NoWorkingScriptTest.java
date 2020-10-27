@@ -23,59 +23,48 @@ import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.Set;
 
 public class NoWorkingScriptTest implements JsonTest {
-    private static Program empty;
-    private static Program noWorkingScript;
-    private static Program workingScript;
-    private static Program myWarrior;
-    private static Program noodle;
-
-    @BeforeAll
-    public static void setUp() throws IOException, ParsingException {
-
-        empty = JsonTest.parseProgram("./src/test/fixtures/emptyProject.json");
-        noWorkingScript = JsonTest.parseProgram("./src/test/fixtures/bugpattern/noWorkingScript.json");
-        workingScript = JsonTest.parseProgram("./src/test/fixtures/bugpattern/missingPenUp.json");
-        myWarrior = JsonTest.parseProgram("./src/test/fixtures/bugpattern/myWarrior.json");
-        noodle = JsonTest.parseProgram("./src/test/fixtures/bugpattern/noodle.json");
-    }
 
     @Test
-    public void testEmptyProgram() {
+    public void testEmptyProgram() throws IOException, ParsingException {
+        Program empty = JsonTest.parseProgram("./src/test/fixtures/emptyProject.json");
         NoWorkingScripts parameterName = new NoWorkingScripts();
         Set<Issue> reports = parameterName.check(empty);
         Assertions.assertEquals(0, reports.size());
     }
 
     @Test
-    public void testNoWorkingScript() {
+    public void testNoWorkingScript() throws IOException, ParsingException {
+        Program noWorkingScript = JsonTest.parseProgram("./src/test/fixtures/bugpattern/noWorkingScript.json");
         NoWorkingScripts parameterName = new NoWorkingScripts();
         Set<Issue> reports = parameterName.check(noWorkingScript);
         Assertions.assertEquals(1, reports.size());
     }
 
     @Test
-    public void testWorkingScript() {
+    public void testWorkingScript() throws IOException, ParsingException {
+        Program workingScript = JsonTest.parseProgram("./src/test/fixtures/bugpattern/missingPenUp.json");
         NoWorkingScripts parameterName = new NoWorkingScripts();
         Set<Issue> reports = parameterName.check(workingScript);
         Assertions.assertEquals(0, reports.size());
     }
 
     @Test
-    public void testMyWarrior() {
+    public void testMyWarrior() throws IOException, ParsingException {
+        Program myWarrior = JsonTest.parseProgram("./src/test/fixtures/bugpattern/myWarrior.json");
         NoWorkingScripts parameterName = new NoWorkingScripts();
         Set<Issue> reports = parameterName.check(myWarrior);
         Assertions.assertEquals(0, reports.size());
     }
 
     @Test
-    public void testNoodle() {
+    public void testNoodle() throws IOException, ParsingException {
+        Program noodle = JsonTest.parseProgram("./src/test/fixtures/bugpattern/noodle.json");
         NoWorkingScripts parameterName = new NoWorkingScripts();
         Set<Issue> reports = parameterName.check(noodle);
         Assertions.assertEquals(0, reports.size());

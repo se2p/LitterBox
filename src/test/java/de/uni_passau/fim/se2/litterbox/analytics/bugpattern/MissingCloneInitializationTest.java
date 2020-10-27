@@ -23,6 +23,9 @@ import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.CreateCloneOf;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -36,8 +39,9 @@ public class MissingCloneInitializationTest implements JsonTest {
         MissingCloneInitialization finder = new MissingCloneInitialization();
         Set<Issue> reports = finder.check(program);
         Truth.assertThat(reports).hasSize(1);
-        // TODO: Restore check
-        // Truth.assertThat(check.getPosition().get(0)).isEqualTo("Anina Dance");
+        for (Issue issue : reports) {
+            Truth.assertThat(((StrId) ((AsString) ((CreateCloneOf) issue.getCodeLocation()).getStringExpr()).getOperand1()).getName()).isEqualTo("Anina Dance");
+        }
     }
 
     @Test

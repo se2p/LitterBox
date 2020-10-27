@@ -23,7 +23,6 @@ import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -31,52 +30,41 @@ import java.util.Set;
 
 public class MissingLoopSensingTest implements JsonTest {
 
-    private static Program empty;
-    private static Program codeHero;
-    private static Program anina;
-    private static Program nestedMissingLoopSensing;
-    private static Program missingLoopSensingMultiple;
-
-    @BeforeAll
-    public static void setUp() throws IOException, ParsingException {
-
-        empty = JsonTest.parseProgram("./src/test/fixtures/emptyProject.json");
-        codeHero = JsonTest.parseProgram("./src/test/fixtures/bugpattern/codeHero.json");
-        anina = JsonTest.parseProgram("./src/test/fixtures/bugpattern/anina.json");
-        nestedMissingLoopSensing = JsonTest.parseProgram("./src/test/fixtures/bugpattern/nestedMissingLoopSensing.json");
-        missingLoopSensingMultiple = JsonTest.parseProgram("./src/test/fixtures/bugpattern/missingLoopSensingMultiple.json");
-    }
-
     @Test
-    public void testEmptyProgram() {
+    public void testEmptyProgram() throws IOException, ParsingException {
+        Program empty = JsonTest.parseProgram("./src/test/fixtures/emptyProject.json");
         MissingLoopSensing parameterName = new MissingLoopSensing();
         Set<Issue> reports = parameterName.check(empty);
         Assertions.assertEquals(0, reports.size());
     }
 
     @Test
-    public void testMissingLoopSensing() {
+    public void testMissingLoopSensing() throws IOException, ParsingException {
+        Program codeHero = JsonTest.parseProgram("./src/test/fixtures/bugpattern/codeHero.json");
         MissingLoopSensing parameterName = new MissingLoopSensing();
         Set<Issue> reports = parameterName.check(codeHero);
         Assertions.assertEquals(2, reports.size());
     }
 
     @Test
-    public void testAnina() {
+    public void testAnina() throws IOException, ParsingException {
+        Program anina = JsonTest.parseProgram("./src/test/fixtures/bugpattern/anina.json");
         MissingLoopSensing parameterName = new MissingLoopSensing();
         Set<Issue> reports = parameterName.check(anina);
         Assertions.assertEquals(1, reports.size());
     }
 
     @Test
-    public void testMissingLoopSensingNested() {
+    public void testMissingLoopSensingNested() throws IOException, ParsingException {
+        Program nestedMissingLoopSensing = JsonTest.parseProgram("./src/test/fixtures/bugpattern/nestedMissingLoopSensing.json");
         MissingLoopSensing parameterName = new MissingLoopSensing();
         Set<Issue> reports = parameterName.check(nestedMissingLoopSensing);
         Assertions.assertEquals(2, reports.size());
     }
 
     @Test
-    public void testMissingLoopSensingMultiple() {
+    public void testMissingLoopSensingMultiple() throws IOException, ParsingException {
+        Program missingLoopSensingMultiple = JsonTest.parseProgram("./src/test/fixtures/bugpattern/missingLoopSensingMultiple.json");
         MissingLoopSensing parameterName = new MissingLoopSensing();
         Set<Issue> reports = parameterName.check(missingLoopSensingMultiple);
         Assertions.assertEquals(5, reports.size());

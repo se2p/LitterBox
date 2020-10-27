@@ -23,49 +23,40 @@ import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.Set;
 
 public class AmbiguousParameterNameUsedTest implements JsonTest {
-    private static Program empty;
-    private static Program ambiguousParams;
-    private static Program clans;
-    private static Program realAmbiguousParam;
-
-    @BeforeAll
-    public static void setUp() throws IOException, ParsingException {
-        empty = JsonTest.parseProgram("./src/test/fixtures/emptyProject.json");
-        ambiguousParams = JsonTest.parseProgram("./src/test/fixtures/bugpattern/ambiguousParameters.json");
-        clans = JsonTest.parseProgram("./src/test/fixtures/bugpattern/clans.json");
-        realAmbiguousParam = JsonTest.parseProgram("./src/test/fixtures/bugpattern/realAmbiguousParameter.json");
-    }
 
     @Test
-    public void testEmptyProgram() {
+    public void testEmptyProgram() throws IOException, ParsingException {
+        Program empty = JsonTest.parseProgram("./src/test/fixtures/emptyProject.json");
         AmbiguousParameterNameUsed parameterName = new AmbiguousParameterNameUsed();
         Set<Issue> reports = parameterName.check(empty);
         Assertions.assertEquals(0, reports.size());
     }
 
     @Test
-    public void testAmbiguousParameters() {
+    public void testAmbiguousParameters() throws IOException, ParsingException {
+        Program ambiguousParams = JsonTest.parseProgram("./src/test/fixtures/bugpattern/ambiguousParameters.json");
         AmbiguousParameterNameUsed parameterName = new AmbiguousParameterNameUsed();
         Set<Issue> reports = parameterName.check(ambiguousParams);
         Assertions.assertEquals(0, reports.size());
     }
 
     @Test
-    public void testClans() {
+    public void testClans() throws IOException, ParsingException {
+        Program clans = JsonTest.parseProgram("./src/test/fixtures/bugpattern/clans.json");
         AmbiguousParameterNameUsed parameterName = new AmbiguousParameterNameUsed();
         Set<Issue> reports = parameterName.check(clans);
         Assertions.assertEquals(0, reports.size());
     }
 
     @Test
-    public void testReal() {
+    public void testReal() throws IOException, ParsingException {
+        Program realAmbiguousParam = JsonTest.parseProgram("./src/test/fixtures/bugpattern/realAmbiguousParameter.json");
         AmbiguousParameterNameUsed parameterName = new AmbiguousParameterNameUsed();
         Set<Issue> reports = parameterName.check(realAmbiguousParam);
         Assertions.assertEquals(1, reports.size());

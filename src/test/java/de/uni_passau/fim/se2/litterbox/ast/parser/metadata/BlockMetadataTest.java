@@ -32,16 +32,13 @@ import java.io.IOException;
 import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 
 public class BlockMetadataTest {
-    private static ObjectMapper mapper = new ObjectMapper();
+    private static final ObjectMapper mapper = new ObjectMapper();
     private static JsonNode prog;
-    private static JsonNode field;
 
     @BeforeAll
     public static void setUp() throws IOException {
         File f = new File("./src/test/fixtures/metadata/blockMeta.json");
         prog = mapper.readTree(f);
-        f = new File("./src/test/fixtures/metadata/fieldsMeta.json");
-        field = mapper.readTree(f);
     }
 
     @Test

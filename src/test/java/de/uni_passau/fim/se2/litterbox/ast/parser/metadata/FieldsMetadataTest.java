@@ -31,7 +31,7 @@ import java.io.IOException;
 import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 
 public class FieldsMetadataTest {
-    private static ObjectMapper mapper = new ObjectMapper();
+    private static final ObjectMapper mapper = new ObjectMapper();
     private static JsonNode field;
 
     @BeforeAll

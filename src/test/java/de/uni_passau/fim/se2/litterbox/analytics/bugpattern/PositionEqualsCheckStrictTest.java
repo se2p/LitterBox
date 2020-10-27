@@ -23,29 +23,16 @@ import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.Set;
 
 public class PositionEqualsCheckStrictTest implements JsonTest {
-    private static Program empty;
-    private static Program equalXStrict;
-    private static Program equalstrict;
-    private static Program deadEquals;
-
-    @BeforeAll
-    public static void setUp() throws IOException, ParsingException {
-
-        empty = JsonTest.parseProgram("./src/test/fixtures/emptyProject.json");
-        equalXStrict = JsonTest.parseProgram("./src/test/fixtures/bugpattern/positionEqualsCheckStrict.json");
-        equalstrict = JsonTest.parseProgram("./src/test/fixtures/bugpattern/positionEqualsCheckStrict2.json");
-        deadEquals = JsonTest.parseProgram("./src/test/fixtures/bugpattern/deadPositionEquals.json");
-    }
 
     @Test
-    public void testEmptyProgram() {
+    public void testEmptyProgram() throws IOException, ParsingException {
+        Program empty = JsonTest.parseProgram("./src/test/fixtures/emptyProject.json");
         PositionEqualsCheck parameterName = new PositionEqualsCheck();
         parameterName.setIgnoreLooseBlocks(true);
         Set<Issue> reports = parameterName.check(empty);
@@ -53,7 +40,8 @@ public class PositionEqualsCheckStrictTest implements JsonTest {
     }
 
     @Test
-    public void testEqualCond() {
+    public void testEqualCond() throws IOException, ParsingException {
+        Program equalXStrict = JsonTest.parseProgram("./src/test/fixtures/bugpattern/positionEqualsCheckStrict.json");
         PositionEqualsCheck parameterName = new PositionEqualsCheck();
         parameterName.setIgnoreLooseBlocks(true);
         Set<Issue> reports = parameterName.check(equalXStrict);
@@ -61,7 +49,8 @@ public class PositionEqualsCheckStrictTest implements JsonTest {
     }
 
     @Test
-    public void testEqualDistCond() {
+    public void testEqualDistCond() throws IOException, ParsingException {
+        Program equalstrict = JsonTest.parseProgram("./src/test/fixtures/bugpattern/positionEqualsCheckStrict2.json");
         PositionEqualsCheck parameterName = new PositionEqualsCheck();
         parameterName.setIgnoreLooseBlocks(true);
         Set<Issue> reports = parameterName.check(equalstrict);
@@ -69,7 +58,8 @@ public class PositionEqualsCheckStrictTest implements JsonTest {
     }
 
     @Test
-    public void testDeadEquals() {
+    public void testDeadEquals() throws IOException, ParsingException {
+        Program deadEquals = JsonTest.parseProgram("./src/test/fixtures/bugpattern/deadPositionEquals.json");
         PositionEqualsCheck parameterName = new PositionEqualsCheck();
         parameterName.setIgnoreLooseBlocks(true);
         Set<Issue> reports = parameterName.check(deadEquals);

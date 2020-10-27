@@ -23,31 +23,24 @@ import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.Set;
 
 public class IllegalParameterRefactorTest implements JsonTest {
-    private static Program empty;
-    private static Program illegalParameter;
-
-    @BeforeAll
-    public static void setUp() throws IOException, ParsingException {
-        empty = JsonTest.parseProgram("./src/test/fixtures/emptyProject.json");
-        illegalParameter = JsonTest.parseProgram("./src/test/fixtures/bugpattern/illegalParameterRefactor.json");
-    }
 
     @Test
-    public void testEmptyProgram() {
+    public void testEmptyProgram() throws IOException, ParsingException {
+        Program empty = JsonTest.parseProgram("./src/test/fixtures/emptyProject.json");
         IllegalParameterRefactor parameterName = new IllegalParameterRefactor();
         Set<Issue> reports = parameterName.check(empty);
         Assertions.assertEquals(0, reports.size());
     }
 
     @Test
-    public void testIllegalParameterRefactorTest() {
+    public void testIllegalParameterRefactorTest() throws IOException, ParsingException {
+        Program illegalParameter = JsonTest.parseProgram("./src/test/fixtures/bugpattern/illegalParameterRefactor.json");
         IllegalParameterRefactor parameterName = new IllegalParameterRefactor();
         Set<Issue> reports = parameterName.check(illegalParameter);
         Assertions.assertEquals(1, reports.size());

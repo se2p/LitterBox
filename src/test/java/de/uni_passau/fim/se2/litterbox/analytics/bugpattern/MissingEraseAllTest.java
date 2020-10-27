@@ -23,40 +23,32 @@ import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.Set;
 
 public class MissingEraseAllTest implements JsonTest {
-    private static Program empty;
-    private static Program eraseOtherSprite;
-    private static Program missingEraseAll;
-
-    @BeforeAll
-    public static void setUp() throws IOException, ParsingException {
-        eraseOtherSprite = JsonTest.parseProgram("./src/test/fixtures/bugpattern/eraseOtherSprite.json");
-        empty = JsonTest.parseProgram("./src/test/fixtures/emptyProject.json");
-        missingEraseAll = JsonTest.parseProgram("./src/test/fixtures/bugpattern/missingEraseAll.json");
-    }
 
     @Test
-    public void testEmptyProgram() {
+    public void testEmptyProgram() throws IOException, ParsingException {
+        Program empty = JsonTest.parseProgram("./src/test/fixtures/emptyProject.json");
         MissingEraseAll parameterName = new MissingEraseAll();
         Set<Issue> reports = parameterName.check(empty);
         Assertions.assertTrue(reports.isEmpty());
     }
 
     @Test
-    public void testEraseInOtherSprite() {
+    public void testEraseInOtherSprite() throws IOException, ParsingException {
+        Program eraseOtherSprite = JsonTest.parseProgram("./src/test/fixtures/bugpattern/eraseOtherSprite.json");
         MissingEraseAll parameterName = new MissingEraseAll();
         Set<Issue> reports = parameterName.check(eraseOtherSprite);
         Assertions.assertTrue(reports.isEmpty());
     }
 
     @Test
-    public void testMissingEraseAll() {
+    public void testMissingEraseAll() throws IOException, ParsingException {
+        Program missingEraseAll = JsonTest.parseProgram("./src/test/fixtures/bugpattern/missingEraseAll.json");
         MissingEraseAll parameterName = new MissingEraseAll();
         Set<Issue> reports = parameterName.check(missingEraseAll);
         Assertions.assertEquals(1, reports.size());

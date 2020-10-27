@@ -29,24 +29,16 @@ import java.io.IOException;
 
 public class WeightedMethodCountStrictTest {
 
-    private static Program empty;
-    private static Program unusedProc;
-
-    @BeforeAll
-    public static void setUp() throws IOException, ParsingException {
-
-        empty = JsonTest.parseProgram("./src/test/fixtures/emptyProject.json");
-        unusedProc = JsonTest.parseProgram("./src/test/fixtures/bugpattern/weightedMethodCountStrict.json");
-    }
-
     @Test
-    public void testEmptyProgram() {
+    public void testEmptyProgram() throws IOException, ParsingException {
+        Program empty = JsonTest.parseProgram("./src/test/fixtures/emptyProject.json");
         WeightedMethodCount parameterName = new WeightedMethodCountStrict();
         Assertions.assertEquals(0, parameterName.calculateMetric(empty));
     }
 
     @Test
-    public void testMethodCount() {
+    public void testMethodCount() throws IOException, ParsingException {
+        Program unusedProc = JsonTest.parseProgram("./src/test/fixtures/bugpattern/weightedMethodCountStrict.json");
         WeightedMethodCount parameterName = new WeightedMethodCountStrict();
         Assertions.assertEquals(2, parameterName.calculateMetric(unusedProc));
     }

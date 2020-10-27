@@ -23,41 +23,32 @@ import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.Set;
 
 public class ParameterOutOfScopeTest implements JsonTest {
-    private static Program empty;
-    private static Program orphanedParam;
-    private static Program outsideParam;
-
-    @BeforeAll
-    public static void setUp() throws IOException, ParsingException {
-
-        empty = JsonTest.parseProgram("./src/test/fixtures/emptyProject.json");
-        orphanedParam = JsonTest.parseProgram("./src/test/fixtures/bugpattern/orphanedParameter.json");
-        outsideParam = JsonTest.parseProgram("./src/test/fixtures/bugpattern/parameterOutsideScope.json");
-    }
 
     @Test
-    public void testEmptyProgram() {
+    public void testEmptyProgram() throws IOException, ParsingException {
+        Program empty = JsonTest.parseProgram("./src/test/fixtures/emptyProject.json");
         ParameterOutOfScope parameterName = new ParameterOutOfScope();
         Set<Issue> reports = parameterName.check(empty);
         Assertions.assertEquals(0, reports.size());
     }
 
     @Test
-    public void testOrphanedParameter() {
+    public void testOrphanedParameter() throws IOException, ParsingException {
+        Program orphanedParam = JsonTest.parseProgram("./src/test/fixtures/bugpattern/orphanedParameter.json");
         ParameterOutOfScope parameterName = new ParameterOutOfScope();
         Set<Issue> reports = parameterName.check(orphanedParam);
         Assertions.assertEquals(0, reports.size());
     }
 
     @Test
-    public void testOutsideParameter() {
+    public void testOutsideParameter() throws IOException, ParsingException {
+        Program outsideParam = JsonTest.parseProgram("./src/test/fixtures/bugpattern/parameterOutsideScope.json");
         ParameterOutOfScope parameterName = new ParameterOutOfScope();
         Set<Issue> reports = parameterName.check(outsideParam);
         Assertions.assertEquals(1, reports.size());
