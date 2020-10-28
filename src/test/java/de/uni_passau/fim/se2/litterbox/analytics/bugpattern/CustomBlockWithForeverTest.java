@@ -30,43 +30,34 @@ import java.io.IOException;
 import java.util.Set;
 
 public class CustomBlockWithForeverTest implements JsonTest {
-    private static Program empty;
-    private static Program procedureWithNoForever;
-    private static Program procedureWithForever;
-    private static Program lastCall;
-
-    @BeforeAll
-    public static void setUp() throws IOException, ParsingException {
-
-        empty = JsonTest.parseProgram("./src/test/fixtures/emptyProject.json");
-        procedureWithNoForever = JsonTest.parseProgram("./src/test/fixtures/bugpattern/procedureWithNoForever.json");
-        procedureWithForever = JsonTest.parseProgram("./src/test/fixtures/bugpattern/procedureWithForever.json");
-        lastCall = JsonTest.parseProgram("./src/test/fixtures/bugpattern/callLast.json");
-    }
 
     @Test
-    public void testEmptyProgram() {
+    public void testEmptyProgram() throws IOException, ParsingException {
+        Program empty = JsonTest.parseProgram("./src/test/fixtures/emptyProject.json");
         CustomBlockWithForever parameterName = new CustomBlockWithForever();
         Set<Issue> reports = parameterName.check(empty);
         Assertions.assertEquals(0, reports.size());
     }
 
     @Test
-    public void testProcedureWithNoForever() {
+    public void testProcedureWithNoForever() throws IOException, ParsingException {
+        Program procedureWithNoForever = JsonTest.parseProgram("./src/test/fixtures/bugpattern/procedureWithNoForever.json");
         CustomBlockWithForever parameterName = new CustomBlockWithForever();
         Set<Issue> reports = parameterName.check(procedureWithNoForever);
         Assertions.assertEquals(0, reports.size());
     }
 
     @Test
-    public void testProcedureWithForever() {
+    public void testProcedureWithForever() throws IOException, ParsingException {
+        Program procedureWithForever = JsonTest.parseProgram("./src/test/fixtures/bugpattern/procedureWithForever.json");
         CustomBlockWithForever parameterName = new CustomBlockWithForever();
         Set<Issue> reports = parameterName.check(procedureWithForever);
         Assertions.assertEquals(1, reports.size());
     }
 
     @Test
-    public void testlastCall() {
+    public void testLastCall() throws IOException, ParsingException {
+        Program lastCall = JsonTest.parseProgram("./src/test/fixtures/bugpattern/callLast.json");
         CustomBlockWithForever parameterName = new CustomBlockWithForever();
         Set<Issue> reports = parameterName.check(lastCall);
         Assertions.assertEquals(0, reports.size());

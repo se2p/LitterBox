@@ -23,26 +23,16 @@ import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.Set;
 
 public class ComparingLiteralsStrictTest implements JsonTest {
-    private static Program empty;
-    private static Program deadCompare;
-    private static Program normal;
-
-    @BeforeAll
-    public static void setUp() throws IOException, ParsingException {
-        empty = JsonTest.parseProgram("./src/test/fixtures/emptyProject.json");
-        deadCompare = JsonTest.parseProgram("./src/test/fixtures/bugpattern/comparingLiteralsStrict.json");
-        normal = JsonTest.parseProgram("./src/test/fixtures/bugpattern/comparingLiterals.json");
-    }
 
     @Test
-    public void testEmptyProgram() {
+    public void testEmptyProgram() throws IOException, ParsingException {
+        Program empty = JsonTest.parseProgram("./src/test/fixtures/emptyProject.json");
         ComparingLiterals parameterName = new ComparingLiterals();
         parameterName.setIgnoreLooseBlocks(true);
         Set<Issue> reports = parameterName.check(empty);
@@ -50,7 +40,8 @@ public class ComparingLiteralsStrictTest implements JsonTest {
     }
 
     @Test
-    public void testDeadProgram() {
+    public void testDeadProgram() throws IOException, ParsingException {
+        Program deadCompare = JsonTest.parseProgram("./src/test/fixtures/bugpattern/comparingLiteralsStrict.json");
         ComparingLiterals parameterName = new ComparingLiterals();
         parameterName.setIgnoreLooseBlocks(true);
         Set<Issue> reports = parameterName.check(deadCompare);
@@ -58,7 +49,8 @@ public class ComparingLiteralsStrictTest implements JsonTest {
     }
 
     @Test
-    public void testNormalProgram() {
+    public void testNormalProgram() throws IOException, ParsingException {
+        Program normal = JsonTest.parseProgram("./src/test/fixtures/bugpattern/comparingLiterals.json");
         ComparingLiterals parameterName = new ComparingLiterals();
         parameterName.setIgnoreLooseBlocks(true);
         Set<Issue> reports = parameterName.check(normal);

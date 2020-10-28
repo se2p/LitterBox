@@ -31,32 +31,26 @@ import java.util.Set;
 
 public class MultipleProjectTest implements JsonTest {
 
-    private static Program boatrace;
-    private static Program ballgame;
-
-    @BeforeAll
-    public static void setUp() throws IOException, ParsingException {
-
-        boatrace = JsonTest.parseProgram("./src/test/fixtures/bugpattern/boatrace.json");
-        ballgame = JsonTest.parseProgram("./src/test/fixtures/bugpattern/ballgame.json");
-    }
-
     @Test
-    public void testBoatRace() {
+    public void testBoatRace() throws IOException, ParsingException {
+        Program boatrace = JsonTest.parseProgram("./src/test/fixtures/bugpattern/boatrace.json");
         MissingLoopSensing parameterName = new MissingLoopSensing();
         Set<Issue> reports = parameterName.check(boatrace);
         Assertions.assertEquals(0, reports.size());
     }
 
     @Test
-    public void testBallgame() {
+    public void testBallgame() throws IOException, ParsingException {
+        Program ballgame = JsonTest.parseProgram("./src/test/fixtures/bugpattern/ballgame.json");
         MissingLoopSensing parameterName = new MissingLoopSensing();
         Set<Issue> reports = parameterName.check(ballgame);
         Assertions.assertEquals(2, reports.size());
     }
 
     @Test
-    public void testCombined() {
+    public void testCombined() throws IOException, ParsingException {
+        Program ballgame = JsonTest.parseProgram("./src/test/fixtures/bugpattern/ballgame.json");
+        Program boatrace = JsonTest.parseProgram("./src/test/fixtures/bugpattern/boatrace.json");
         MissingLoopSensing parameterName = new MissingLoopSensing();
         Set<Issue> reports = parameterName.check(ballgame);
         Assertions.assertEquals(2, reports.size());

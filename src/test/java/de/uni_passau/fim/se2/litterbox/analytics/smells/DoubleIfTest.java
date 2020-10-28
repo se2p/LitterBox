@@ -32,70 +32,57 @@ import java.util.Set;
 
 public class DoubleIfTest implements JsonTest {
 
-    private static Program empty;
-    private static Program doubleIf;
-    private static Program doubleIfConditionOnVariable;
-    private static Program doubleIfConditionOnDifferentVariable;
-    private static Program doubleIfIfElse;
-    private static Program doubleIfWithStatementBetween;
-    private static Program doubleIfWithDifferentBody;
-
-    @BeforeAll
-    public static void setUp() throws IOException, ParsingException {
-
-        empty = JsonTest.parseProgram("./src/test/fixtures/emptyProject.json");
-        doubleIf = JsonTest.parseProgram("./src/test/fixtures/smells/doubleIf.json");
-        doubleIfConditionOnVariable = JsonTest.parseProgram("./src/test/fixtures/smells/doubleIfCondition.json");
-        doubleIfConditionOnDifferentVariable = JsonTest.parseProgram("./src/test/fixtures/smells/doubleIfConditionDifferentVariable.json");
-        doubleIfIfElse = JsonTest.parseProgram("./src/test/fixtures/smells/doubleIfIfElse.json");
-        doubleIfWithStatementBetween = JsonTest.parseProgram("./src/test/fixtures/smells/doubleIfWithStatementBetween.json");
-        doubleIfWithDifferentBody = JsonTest.parseProgram("./src/test/fixtures/smells/doubleIfWithDifferentBody.json");
-    }
-
     @Test
-    public void testEmptyProgram() {
+    public void testEmptyProgram() throws IOException, ParsingException {
+        Program empty = JsonTest.parseProgram("./src/test/fixtures/emptyProject.json");
         DoubleIf finder = new DoubleIf();
         Set<Issue> reports = finder.check(empty);
         Assertions.assertEquals(0, reports.size());
     }
 
     @Test
-    public void testProgram() {
+    public void testProgram() throws IOException, ParsingException {
+        Program doubleIf = JsonTest.parseProgram("./src/test/fixtures/smells/doubleIf.json");
         DoubleIf finder = new DoubleIf();
         Set<Issue> reports = finder.check(doubleIf);
         Assertions.assertEquals(2, reports.size());
     }
 
     @Test
-    public void testDuplicateConditionOnVariable() {
+    public void testDuplicateConditionOnVariable() throws IOException, ParsingException {
+        Program doubleIfConditionOnVariable = JsonTest.parseProgram("./src/test/fixtures/smells/doubleIfCondition.json");
         DoubleIf finder = new DoubleIf();
         Set<Issue> reports = finder.check(doubleIfConditionOnVariable);
         Assertions.assertEquals(1, reports.size());
     }
 
     @Test
-    public void testDuplicateConditionOnDifferentVariable() {
+    public void testDuplicateConditionOnDifferentVariable() throws IOException, ParsingException {
+        Program doubleIfConditionOnDifferentVariable = JsonTest.parseProgram("./src/test/fixtures/smells/doubleIfConditionDifferentVariable.json");
         DoubleIf finder = new DoubleIf();
         Set<Issue> reports = finder.check(doubleIfConditionOnDifferentVariable);
         Assertions.assertEquals(0, reports.size());
     }
 
     @Test
-    public void testIfThenFollowedByIfElse() {
+    public void testIfThenFollowedByIfElse() throws IOException, ParsingException {
+        Program doubleIfIfElse = JsonTest.parseProgram("./src/test/fixtures/smells/doubleIfIfElse.json");
         DoubleIf finder = new DoubleIf();
         Set<Issue> reports = finder.check(doubleIfIfElse);
         Assertions.assertEquals(1, reports.size());
     }
 
     @Test
-    public void testStatementBetweenIfs() {
+    public void testStatementBetweenIfs() throws IOException, ParsingException {
+        Program doubleIfWithStatementBetween = JsonTest.parseProgram("./src/test/fixtures/smells/doubleIfWithStatementBetween.json");
         DoubleIf finder = new DoubleIf();
         Set<Issue> reports = finder.check(doubleIfWithStatementBetween);
         Assertions.assertEquals(0, reports.size());
     }
 
     @Test
-    public void testDoubleIfWithDifferentBody() {
+    public void testDoubleIfWithDifferentBody() throws IOException, ParsingException {
+        Program doubleIfWithDifferentBody = JsonTest.parseProgram("./src/test/fixtures/smells/doubleIfWithDifferentBody.json");
         DoubleIf finder = new DoubleIf();
         // The body of the condition doesn't matter
         Set<Issue> reports = finder.check(doubleIfWithDifferentBody);

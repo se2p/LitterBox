@@ -30,52 +30,42 @@ import java.io.IOException;
 import java.util.Set;
 
 public class DeadCodeTest implements JsonTest {
-    private static Program empty;
-    private static Program deadCode;
-    private static Program deadVariable;
-    private static Program deadParam;
-    private static Program allDead;
-
-    @BeforeAll
-    public static void setUp() throws IOException, ParsingException {
-
-        empty = JsonTest.parseProgram("./src/test/fixtures/emptyProject.json");
-        deadCode = JsonTest.parseProgram("./src/test/fixtures/smells/deadCode.json");
-        deadVariable = JsonTest.parseProgram("./src/test/fixtures/smells/deadVariable.json");
-        allDead = JsonTest.parseProgram("./src/test/fixtures/smells/allBlocksDead.json");
-        deadParam = JsonTest.parseProgram("./src/test/fixtures/smells/deadParam.json");
-    }
 
     @Test
-    public void testEmptyProgram() {
+    public void testEmptyProgram() throws IOException, ParsingException {
+        Program empty = JsonTest.parseProgram("./src/test/fixtures/emptyProject.json");
         DeadCode parameterName = new DeadCode();
         Set<Issue> reports = parameterName.check(empty);
         Assertions.assertEquals(0, reports.size());
     }
 
     @Test
-    public void testDeadCode() {
+    public void testDeadCode() throws IOException, ParsingException {
+        Program deadCode = JsonTest.parseProgram("./src/test/fixtures/smells/deadCode.json");
         DeadCode parameterName = new DeadCode();
         Set<Issue> reports = parameterName.check(deadCode);
         Assertions.assertEquals(3, reports.size());
     }
 
     @Test
-    public void testDeadVariable() {
+    public void testDeadVariable() throws IOException, ParsingException {
+        Program deadVariable = JsonTest.parseProgram("./src/test/fixtures/smells/deadVariable.json");
         DeadCode parameterName = new DeadCode();
         Set<Issue> reports = parameterName.check(deadVariable);
         Assertions.assertEquals(2, reports.size());
     }
 
     @Test
-    public void testDeadParam() {
+    public void testDeadParam() throws IOException, ParsingException {
+        Program deadParam = JsonTest.parseProgram("./src/test/fixtures/smells/deadParam.json");
         DeadCode parameterName = new DeadCode();
         Set<Issue> reports = parameterName.check(deadParam);
         Assertions.assertEquals(2, reports.size());
     }
 
     @Test
-    public void testAllDead() {
+    public void testAllDead() throws IOException, ParsingException {
+        Program allDead = JsonTest.parseProgram("./src/test/fixtures/smells/allBlocksDead.json");
         DeadCode parameterName = new DeadCode();
         Set<Issue> reports = parameterName.check(allDead);
         Assertions.assertEquals(126, reports.size());

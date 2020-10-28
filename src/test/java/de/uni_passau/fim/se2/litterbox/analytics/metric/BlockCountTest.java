@@ -22,69 +22,57 @@ import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
 public class BlockCountTest implements JsonTest {
-    private static Program empty;
-    private static Program nestedLoops;
-    private static Program withproc;
-    private static Program fixedStatements;
-    private static Program fixedExpressions;
-    private static Program halfFixedExpr;
-    private static Program onlyVariable;
-
-    @BeforeAll
-    public static void setUp() throws IOException, ParsingException {
-        empty = JsonTest.parseProgram("./src/test/fixtures/emptyProject.json");
-        nestedLoops = JsonTest.parseProgram("./src/test/fixtures/smells/nestedLoops.json");
-        withproc = JsonTest.parseProgram("./src/test/fixtures/blockCountWithProc.json");
-        fixedExpressions= JsonTest.parseProgram("./src/test/fixtures/fixedExpressions.json");
-        fixedStatements = JsonTest.parseProgram("./src/test/fixtures/stmtParser/allFixedStatements.json");
-        halfFixedExpr = JsonTest.parseProgram("./src/test/fixtures/halfFixedExpressions.json");
-        onlyVariable = JsonTest.parseProgram("./src/test/fixtures/onlyVariable.json");
-    }
 
     @Test
-    public void testEmptyProgram() {
+    public void testEmptyProgram() throws IOException, ParsingException {
+        Program empty = JsonTest.parseProgram("./src/test/fixtures/emptyProject.json");
         BlockCount parameterName = new BlockCount();
         Assertions.assertEquals(0, parameterName.calculateMetric(empty));
     }
 
     @Test
-    public void testBlockCountNested() {
+    public void testBlockCountNested() throws IOException, ParsingException {
+        Program nestedLoops = JsonTest.parseProgram("./src/test/fixtures/smells/nestedLoops.json");
         BlockCount parameterName = new BlockCount();
         Assertions.assertEquals(14, parameterName.calculateMetric(nestedLoops));
     }
 
     @Test
-    public void testBlockproc() {
+    public void testBlockproc() throws IOException, ParsingException {
+        Program withProc = JsonTest.parseProgram("./src/test/fixtures/blockCountWithProc.json");
         BlockCount parameterName = new BlockCount();
-        Assertions.assertEquals(18, parameterName.calculateMetric(withproc));
+        Assertions.assertEquals(18, parameterName.calculateMetric(withProc));
     }
 
     @Test
-    public void testFixedStatements() {
+    public void testFixedStatements() throws IOException, ParsingException {
+        Program fixedStatements = JsonTest.parseProgram("./src/test/fixtures/stmtParser/allFixedStatements.json");
         BlockCount parameterName = new BlockCount();
         Assertions.assertEquals(26, parameterName.calculateMetric(fixedStatements));
     }
 
     @Test
-    public void testFixedExpr() {
+    public void testFixedExpr() throws IOException, ParsingException {
+        Program fixedExpressions = JsonTest.parseProgram("./src/test/fixtures/fixedExpressions.json");
         BlockCount parameterName = new BlockCount();
         Assertions.assertEquals(4, parameterName.calculateMetric(fixedExpressions));
     }
 
     @Test
-    public void testOnlyVariable() {
+    public void testOnlyVariable() throws IOException, ParsingException {
+        Program onlyVariable = JsonTest.parseProgram("./src/test/fixtures/onlyVariable.json");
         BlockCount parameterName = new BlockCount();
         Assertions.assertEquals(1, parameterName.calculateMetric(onlyVariable));
     }
 
     @Test
-    public void testHalfFixedExpr() {
+    public void testHalfFixedExpr() throws IOException, ParsingException {
+        Program halfFixedExpr = JsonTest.parseProgram("./src/test/fixtures/halfFixedExpressions.json");
         BlockCount parameterName = new BlockCount();
         Assertions.assertEquals(5, parameterName.calculateMetric(halfFixedExpr)); //TODO does an empty string have to be an UnspecifiedExpr?
     }

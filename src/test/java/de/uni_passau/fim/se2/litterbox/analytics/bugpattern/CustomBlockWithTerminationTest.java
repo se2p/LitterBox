@@ -30,34 +30,26 @@ import java.io.IOException;
 import java.util.Set;
 
 public class CustomBlockWithTerminationTest implements JsonTest {
-    private static Program empty;
-    private static Program procedureWithTermination;
-    private static Program procedureWithForever;
-
-    @BeforeAll
-    public static void setUp() throws IOException, ParsingException {
-
-        empty = JsonTest.parseProgram("./src/test/fixtures/emptyProject.json");
-        procedureWithTermination = JsonTest.parseProgram("./src/test/fixtures/bugpattern/procedureWithTermination.json");
-        procedureWithForever = JsonTest.parseProgram("./src/test/fixtures/bugpattern/procedureWithForever.json");
-    }
 
     @Test
-    public void testEmptyProgram() {
+    public void testEmptyProgram() throws IOException, ParsingException {
+        Program empty = JsonTest.parseProgram("./src/test/fixtures/emptyProject.json");
         CustomBlockWithTermination parameterName = new CustomBlockWithTermination();
         Set<Issue> reports = parameterName.check(empty);
         Assertions.assertEquals(0, reports.size());
     }
 
     @Test
-    public void testProcedureWithTermination() {
+    public void testProcedureWithTermination() throws IOException, ParsingException {
+        Program procedureWithTermination = JsonTest.parseProgram("./src/test/fixtures/bugpattern/procedureWithTermination.json");
         CustomBlockWithTermination parameterName = new CustomBlockWithTermination();
         Set<Issue> reports = parameterName.check(procedureWithTermination);
         Assertions.assertEquals(1, reports.size());
     }
 
     @Test
-    public void testProcedureWithForever() {
+    public void testProcedureWithForever() throws IOException, ParsingException {
+        Program procedureWithForever = JsonTest.parseProgram("./src/test/fixtures/bugpattern/procedureWithForever.json");
         CustomBlockWithTermination parameterName = new CustomBlockWithTermination();
         Set<Issue> reports = parameterName.check(procedureWithForever);
         Assertions.assertEquals(0, reports.size());

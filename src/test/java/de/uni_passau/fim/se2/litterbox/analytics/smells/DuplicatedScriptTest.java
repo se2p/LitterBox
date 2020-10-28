@@ -32,39 +32,25 @@ import java.util.Set;
 
 class DuplicatedScriptTest implements JsonTest {
 
-    private static Program empty;
-    private static Program duplicatedScript;
-    private static Program duplicatedScriptMinimalDifference;
-    private static Program duplicatedScriptDifferentEvent;
-    private static Program duplicatedScriptMultipleBlocks;
-    private static Program duplicatedScriptOtherSprite;
-
-    @BeforeAll
-    public static void setUp() throws IOException, ParsingException {
-        empty = JsonTest.parseProgram("./src/test/fixtures/emptyProject.json");
-        duplicatedScript = JsonTest.parseProgram("./src/test/fixtures/smells/duplicatedScript.json");
-        duplicatedScriptMinimalDifference = JsonTest.parseProgram("./src/test/fixtures/smells/duplicatedScriptMinimalDifference.json");
-        duplicatedScriptDifferentEvent = JsonTest.parseProgram("./src/test/fixtures/smells/duplicatedScriptDifferentEvent.json");
-        duplicatedScriptMultipleBlocks = JsonTest.parseProgram("./src/test/fixtures/smells/duplicatedScriptMultipleBlocks.json");
-        duplicatedScriptOtherSprite = JsonTest.parseProgram("./src/test/fixtures/smells/duplicatedScriptOtherSprite.json");
-    }
-
     @Test
-    public void testEmptyProgram() {
+    public void testEmptyProgram() throws IOException, ParsingException {
+        Program empty = JsonTest.parseProgram("./src/test/fixtures/emptyProject.json");
         DuplicatedScript parameterName = new DuplicatedScript();
         Set<Issue> reports = parameterName.check(empty);
         Assertions.assertEquals(0, reports.size());
     }
 
     @Test
-    public void testProgram() {
+    public void testProgram() throws IOException, ParsingException {
+        Program duplicatedScript = JsonTest.parseProgram("./src/test/fixtures/smells/duplicatedScript.json");
         DuplicatedScript finder = new DuplicatedScript();
         Set<Issue> reports = finder.check(duplicatedScript);
         Assertions.assertEquals(1, reports.size());
     }
 
     @Test
-    public void testDuplicatedScriptMinimalDifference() {
+    public void testDuplicatedScriptMinimalDifference() throws IOException, ParsingException {
+        Program duplicatedScriptMinimalDifference = JsonTest.parseProgram("./src/test/fixtures/smells/duplicatedScriptMinimalDifference.json");
         DuplicatedScript finder = new DuplicatedScript();
         Set<Issue> reports = finder.check(duplicatedScriptMinimalDifference);
         // x-position and y-position sensing blocks are replaced
@@ -72,21 +58,24 @@ class DuplicatedScriptTest implements JsonTest {
     }
 
     @Test
-    public void testDuplicatedScriptDifferentEvent() {
+    public void testDuplicatedScriptDifferentEvent() throws IOException, ParsingException {
+        Program duplicatedScriptDifferentEvent = JsonTest.parseProgram("./src/test/fixtures/smells/duplicatedScriptDifferentEvent.json");
         DuplicatedScript finder = new DuplicatedScript();
         Set<Issue> reports = finder.check(duplicatedScriptDifferentEvent);
         Assertions.assertEquals(0, reports.size());
     }
 
     @Test
-    public void testDuplicatedScriptMultipleBlocks() {
+    public void testDuplicatedScriptMultipleBlocks() throws IOException, ParsingException {
+        Program duplicatedScriptMultipleBlocks = JsonTest.parseProgram("./src/test/fixtures/smells/duplicatedScriptMultipleBlocks.json");
         DuplicatedScript finder = new DuplicatedScript();
         Set<Issue> reports = finder.check(duplicatedScriptMultipleBlocks);
         Assertions.assertEquals(1, reports.size());
     }
 
     @Test
-    public void testDuplicatedScriptOtherSprite() {
+    public void testDuplicatedScriptOtherSprite() throws IOException, ParsingException {
+        Program duplicatedScriptOtherSprite = JsonTest.parseProgram("./src/test/fixtures/smells/duplicatedScriptOtherSprite.json");
         DuplicatedScript finder = new DuplicatedScript();
         Set<Issue> reports = finder.check(duplicatedScriptOtherSprite);
         Assertions.assertEquals(0, reports.size());

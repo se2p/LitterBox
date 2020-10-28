@@ -36,7 +36,9 @@ class MissingPenDownTest implements JsonTest {
         MissingPenDown finder = new MissingPenDown();
         Set<Issue> reports = finder.check(program);
         Truth.assertThat(reports).hasSize(1);
-        // TODO: Restore check
-        // Truth.assertThat(result.getPosition().get(0)).isEqualTo("Apple");
+        for (Issue issue : reports) {
+            Truth.assertThat(issue.getActor().getIdent().getName()).isEqualTo("Apple");
+        }
+
     }
 }

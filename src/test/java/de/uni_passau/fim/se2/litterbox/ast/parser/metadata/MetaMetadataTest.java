@@ -31,17 +31,12 @@ import java.io.IOException;
 import static de.uni_passau.fim.se2.litterbox.ast.Constants.META_KEY;
 
 public class MetaMetadataTest {
-    private static ObjectMapper mapper = new ObjectMapper();
-    private static JsonNode prog;
-
-    @BeforeAll
-    public static void setUp() throws IOException {
-        File f = new File("./src/test/fixtures/metadata/metaExtensionMonitorData.json");
-        prog = mapper.readTree(f);
-    }
+    private static final ObjectMapper mapper = new ObjectMapper();
 
     @Test
-    public void testMeta() {
+    public void testMeta() throws IOException {
+        File f = new File("./src/test/fixtures/metadata/metaExtensionMonitorData.json");
+        JsonNode prog = mapper.readTree(f);
         MetaMetadata meta = MetaMetadataParser.parse(prog.get(META_KEY));
         Assertions.assertEquals("0.2.0-prerelease.20200402182733", meta.getVm());
         Assertions.assertEquals("Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:75.0) Gecko/20100101 Firefox/75.0",

@@ -23,31 +23,24 @@ import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.Set;
 
 public class ForeverInsideLoopTest implements JsonTest {
-    private static Program empty;
-    private static Program foreverInLoop;
-
-    @BeforeAll
-    public static void setUp() throws IOException, ParsingException {
-        empty = JsonTest.parseProgram("./src/test/fixtures/emptyProject.json");
-        foreverInLoop = JsonTest.parseProgram("./src/test/fixtures/bugpattern/foreverInLoop.json");
-    }
 
     @Test
-    public void testEmptyProgram() {
+    public void testEmptyProgram() throws IOException, ParsingException {
+        Program empty = JsonTest.parseProgram("./src/test/fixtures/emptyProject.json");
         ForeverInsideLoop parameterName = new ForeverInsideLoop();
         Set<Issue> reports = parameterName.check(empty);
         Assertions.assertEquals(0, reports.size());
     }
 
     @Test
-    public void testAmbiguousSignatures() {
+    public void testAmbiguousSignatures() throws IOException, ParsingException {
+        Program foreverInLoop = JsonTest.parseProgram("./src/test/fixtures/bugpattern/foreverInLoop.json");
         ForeverInsideLoop parameterName = new ForeverInsideLoop();
         Set<Issue> reports = parameterName.check(foreverInLoop);
         Assertions.assertEquals(1, reports.size());

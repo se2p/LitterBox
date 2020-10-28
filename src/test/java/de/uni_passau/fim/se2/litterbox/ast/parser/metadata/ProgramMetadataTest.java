@@ -31,17 +31,12 @@ import java.io.IOException;
 import static de.uni_passau.fim.se2.litterbox.ast.Constants.MONITORS_KEY;
 
 public class ProgramMetadataTest {
-    private static ObjectMapper mapper = new ObjectMapper();
-    private static JsonNode prog;
-
-    @BeforeAll
-    public static void setUp() throws IOException {
-        File f = new File("./src/test/fixtures/metadata/missingMonitorsNode.json");
-        prog = mapper.readTree(f);
-    }
+    private static final ObjectMapper mapper = new ObjectMapper();
 
     @Test
-    public void testMissingMonitors() {
+    public void testMissingMonitors() throws IOException {
+        File f = new File("./src/test/fixtures/metadata/missingMonitorsNode.json");
+        JsonNode prog = mapper.readTree(f);
         Assertions.assertFalse(prog.has(MONITORS_KEY));
         ProgramMetadata metadata = ProgramMetadataParser.parse(prog);
         Assertions.assertEquals(0, metadata.getMonitor().getList().size());

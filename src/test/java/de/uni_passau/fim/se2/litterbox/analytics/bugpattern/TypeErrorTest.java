@@ -23,82 +23,66 @@ import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.Set;
 
 public class TypeErrorTest implements JsonTest {
-    private static Program empty;
-    private static Program stringNumber;
-    private static Program numberString;
-    private static Program loudnessNumber;
-    private static Program complex;
-    private static Program motivation;
-    private static Program booleanEquals;
-
-    @BeforeAll
-    public static void setUp() throws IOException, ParsingException {
-
-        empty = JsonTest.parseProgram("./src/test/fixtures/emptyProject.json");
-        stringNumber = JsonTest.parseProgram("./src/test/fixtures/bugpattern/stringComparedToNumber.json");
-        complex = JsonTest.parseProgram("./src/test/fixtures/bugpattern/complexComparison.json");
-        loudnessNumber = JsonTest.parseProgram("./src/test/fixtures/bugpattern/compareLoudnessToNumber.json");
-
-        motivation = JsonTest.parseProgram("./src/test/fixtures/bugpattern/motivation.json");
-        numberString = JsonTest.parseProgram("./src/test/fixtures/bugpattern/numberComparedToString.json");
-        booleanEquals = JsonTest.parseProgram("./src/test/fixtures/bugpattern/redundantBooleanEquals.json");
-    }
 
     @Test
-    public void testEmptyProgram() {
+    public void testEmptyProgram() throws IOException, ParsingException {
+        Program empty = JsonTest.parseProgram("./src/test/fixtures/emptyProject.json");
         TypeError parameterName = new TypeError();
         Set<Issue> issues = parameterName.check(empty);
         Assertions.assertEquals(0, issues.size());
     }
 
     @Test
-    public void testStringComparedToNumber() {
+    public void testStringComparedToNumber() throws IOException, ParsingException {
+        Program stringNumber = JsonTest.parseProgram("./src/test/fixtures/bugpattern/stringComparedToNumber.json");
         TypeError parameterName = new TypeError();
         Set<Issue> issues = parameterName.check(stringNumber);
         Assertions.assertEquals(1, issues.size());
     }
 
     @Test
-    public void testNumberComparedToString() {
+    public void testNumberComparedToString() throws IOException, ParsingException {
+        Program numberString = JsonTest.parseProgram("./src/test/fixtures/bugpattern/numberComparedToString.json");
         TypeError parameterName = new TypeError();
         Set<Issue> issues = parameterName.check(numberString);
         Assertions.assertEquals(1, issues.size());
     }
 
     @Test
-    public void testLoudnessComparedToNumber() {
+    public void testLoudnessComparedToNumber() throws IOException, ParsingException {
+        Program loudnessNumber = JsonTest.parseProgram("./src/test/fixtures/bugpattern/compareLoudnessToNumber.json");
         TypeError parameterName = new TypeError();
         Set<Issue> issues = parameterName.check(loudnessNumber);
         Assertions.assertEquals(0, issues.size());
     }
 
     @Test
-    public void testComplexComparison() {
+    public void testComplexComparison() throws IOException, ParsingException {
+        Program complex = JsonTest.parseProgram("./src/test/fixtures/bugpattern/complexComparison.json");
         TypeError parameterName = new TypeError();
         Set<Issue> issues = parameterName.check(complex);
         Assertions.assertEquals(2, issues.size());
     }
 
     @Test
-    public void testMotivation() {
+    public void testMotivation() throws IOException, ParsingException {
+        Program motivation = JsonTest.parseProgram("./src/test/fixtures/bugpattern/motivation.json");
         TypeError parameterName = new TypeError();
         Set<Issue> issues = parameterName.check(motivation);
         Assertions.assertEquals(1, issues.size());
     }
 
     @Test
-    public void testRedundantBooleanEquals() {
+    public void testRedundantBooleanEquals() throws IOException, ParsingException {
+        Program booleanEquals = JsonTest.parseProgram("./src/test/fixtures/bugpattern/redundantBooleanEquals.json");
         TypeError parameterName = new TypeError();
         Set<Issue> issues = parameterName.check(booleanEquals);
         Assertions.assertEquals(1, issues.size());
     }
-
 }

@@ -28,23 +28,17 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 
 public class ProcedureCountTest {
-    private static Program empty;
-    private static Program unusedProc;
-
-    @BeforeAll
-    public static void setUp() throws IOException, ParsingException {
-        empty = JsonTest.parseProgram("./src/test/fixtures/emptyProject.json");
-        unusedProc = JsonTest.parseProgram("./src/test/fixtures/smells/unusedEmptyProcedure.json");
-    }
 
     @Test
-    public void testEmptyProgram() {
+    public void testEmptyProgram() throws IOException, ParsingException {
+        Program empty = JsonTest.parseProgram("./src/test/fixtures/emptyProject.json");
         ProcedureCount parameterName = new ProcedureCount();
         Assertions.assertEquals(0, parameterName.calculateMetric(empty));
     }
 
     @Test
-    public void testProcCount() {
+    public void testProcCount() throws IOException, ParsingException {
+        Program unusedProc = JsonTest.parseProgram("./src/test/fixtures/smells/unusedEmptyProcedure.json");
         ProcedureCount parameterName = new ProcedureCount();
         Assertions.assertEquals(2, parameterName.calculateMetric(unusedProc));
     }
