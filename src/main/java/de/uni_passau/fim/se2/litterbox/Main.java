@@ -61,6 +61,13 @@ public class Main {
     private static final String IGNORE_LOOSE_BLOCKS = "ignoreloose";
     private static final String IGNORE_LOOSE_BLOCKS_SHORT = "g";
 
+    private static final String CODE2VEC = "code2vec";
+    private static final String CODE2VEC_SHORT = "c2v";
+    private static final String MAXPATHLENGTH = "maxpathlength";
+    private static final String MAXPATHLENGTH_SHORT = "plength";
+    private static final String MAXPATHWIDTH = "maxpathwidth";
+    private static final String MAXPATHWIDTH_SHORT = "pwidth";
+
     private Main() {
     }
 
@@ -71,6 +78,7 @@ public class Main {
         mainMode.addOption(new Option(CHECK_SHORT, CHECK, false, "Check specified Scratch projects for issues"));
         mainMode.addOption(new Option(LEILA_SHORT, LEILA, false, "Translate specified Scratch projects to Leila"));
         mainMode.addOption(new Option(STATS_SHORT, STATS, false, "Extract metrics for Scratch projects"));
+        mainMode.addOption(new Option(CODE2VEC_SHORT, CODE2VEC, false, "Generates text output for specified Scratch projects as input for Code2Vec"));
         mainMode.addOption(new Option(HELP_SHORT, HELP, false, "print this message"));
 
         Options options = new Options();
@@ -110,6 +118,11 @@ public class Main {
 
         options.addOption(IGNORE_LOOSE_BLOCKS_SHORT, IGNORE_LOOSE_BLOCKS, false, "ignore loose blocks when checking bug patterns");
 
+        //parameters for Code2Vec
+
+        options.addOption(MAXPATHLENGTH_SHORT, MAXPATHLENGTH, true, "maximum of path length for connecting two AST leafs. 0 means there is no max path length. Default is 8");
+        options.addOption(MAXPATHWIDTH_SHORT, MAXPATHWIDTH, true, "maximum of path width for connecting two AST leafs. 0 means there is no max path width. Default is 2");
+
         return options;
     }
 
@@ -124,6 +137,9 @@ public class Main {
         System.out.println("Example for Leila intermediate language output: "
                 + "java -jar Litterbox-1.0.jar --leila -o ~/path/to/folder/or/file/for/the/output --path "
                 + "~/path/to/json/project/or/folder/with/projects \n");
+        System.out.println("Example to produce output as input for code2vec: "
+                + "java -jar target/Litterbox-1.4-SNAPSHOT.jar -c2v -p ~/path/to/folder/or/file/for/the/output "
+                + "-maxpathlength 8 -maxpathwidth 2");
 
         System.out.println("Detectors:");
         IssueTranslator messages = IssueTranslator.getInstance();
@@ -190,6 +206,35 @@ public class Main {
         runAnalysis(cmd, analyzer);
     }
 
+    static void convertToCode2Vec(CommandLine cmd) throws ParseException {
+        int maxPathLength = 8; //default Value
+        int maxPathWidth = 2;  //default Value
+
+        if (cmd.hasOption(MAXPATHLENGTH)) {
+            maxPathLength = Integer.parseInt(cmd.getOptionValue(MAXPATHLENGTH));
+            if (maxPathLength < 0) {
+                throw new ParseException("Max Path Length can't be negative");
+            }
+        }
+
+        if (cmd.hasOption(MAXPATHWIDTH)) {
+            maxPathWidth = Integer.parseInt(cmd.getOptionValue(MAXPATHWIDTH));
+            if (maxPathLength < 0) {
+                throw new ParseException("Max Path Width can't be negative");
+            }
+        }
+
+        if (!cmd.hasOption(PROJECTPATH)) {
+            throw new ParseException("Input path option '" + PROJECTPATH + "' required");
+        }
+
+
+        String outputPath = cmd.getOptionValue(OUTPUT);
+        String input = cmd.getOptionValue(PROJECTPATH);
+        Code2VecAnalyzer analyzer = new Code2VecAnalyzer(input, outputPath, maxPathLength, maxPathWidth, cmd.hasOption(DELETE_PROJECT_AFTERWARDS));
+        runAnalysis(cmd, analyzer);
+    }
+
     static void runAnalysis(CommandLine cmd, Analyzer analyzer) {
         if (cmd.hasOption(PROJECTID)) {
             String projectId = cmd.getOptionValue(PROJECTID);
@@ -217,6 +262,8 @@ public class Main {
                 statsPrograms(cmd);
             } else if (cmd.hasOption(LEILA)) {
                 translatePrograms(cmd);
+            } else if (cmd.hasOption(CODE2VEC)) {
+                convertToCode2Vec(cmd);
             } else {
                 printHelp();
             }
