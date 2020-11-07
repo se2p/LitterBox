@@ -21,13 +21,8 @@ package de.uni_passau.fim.se2.litterbox.analytics.smells;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
-import de.uni_passau.fim.se2.litterbox.analytics.clonedetection.CloneAnalysis;
-import de.uni_passau.fim.se2.litterbox.analytics.clonedetection.CodeClone;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
-import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.model.Script;
-import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
 import org.junit.Test;
 
@@ -38,12 +33,12 @@ import java.util.Set;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
-public class ClonedCodeTest {
+public class ClonedCodeType3Test {
 
     @Test
     public void testDuplicatedScript() throws IOException, ParsingException {
         Program program = getAST("./src/test/fixtures/smells/duplicatedScript.json");
-        ClonedCode finder = new ClonedCode();
+        ClonedCodeType3 finder = new ClonedCodeType3();
         Set<Issue> issues = finder.check(program);
         assertEquals(1, issues.size());
     }
@@ -51,7 +46,7 @@ public class ClonedCodeTest {
     @Test
     public void testDuplicatedScriptDifferentLiteralsAndVariables() throws IOException, ParsingException {
         Program program = getAST("./src/test/fixtures/smells/codecloneliteralsvariables.json");
-        ClonedCode finder = new ClonedCode();
+        ClonedCodeType3 finder = new ClonedCodeType3();
         Set<Issue> issues = finder.check(program);
         assertEquals(1, issues.size());
     }
@@ -59,7 +54,7 @@ public class ClonedCodeTest {
     @Test
     public void testSubsequenceClone() throws IOException, ParsingException {
         Program program = getAST("./src/test/fixtures/smells/codeclonesubsequence.json");
-        ClonedCode finder = new ClonedCode();
+        ClonedCodeType3 finder = new ClonedCodeType3();
         Set<Issue> issues = finder.check(program);
         assertEquals(1, issues.size());
     }
@@ -67,7 +62,7 @@ public class ClonedCodeTest {
     @Test
     public void testVariableClone() throws IOException, ParsingException {
         Program program = getAST("./src/test/fixtures/smells/codeclonevariableblocks.json");
-        ClonedCode finder = new ClonedCode();
+        ClonedCodeType3 finder = new ClonedCodeType3();
         Set<Issue> issues = finder.check(program);
         assertEquals(1, issues.size());
     }
@@ -75,7 +70,7 @@ public class ClonedCodeTest {
     @Test
     public void testListClone() throws IOException, ParsingException {
         Program program = getAST("./src/test/fixtures/smells/codeclonelistblocks.json");
-        ClonedCode finder = new ClonedCode();
+        ClonedCodeType3 finder = new ClonedCodeType3();
         Set<Issue> issues = finder.check(program);
         assertEquals(1, issues.size());
     }
@@ -83,7 +78,7 @@ public class ClonedCodeTest {
     @Test
     public void testCustomBlockClone() throws IOException, ParsingException {
         Program program = getAST("./src/test/fixtures/smells/codeclonecustomblock.json");
-        ClonedCode finder = new ClonedCode();
+        ClonedCodeType3 finder = new ClonedCodeType3();
         Set<Issue> issues = finder.check(program);
         assertEquals(1, issues.size());
     }

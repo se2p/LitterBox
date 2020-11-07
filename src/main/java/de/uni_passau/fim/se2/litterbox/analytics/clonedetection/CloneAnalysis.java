@@ -20,7 +20,6 @@ package de.uni_passau.fim.se2.litterbox.analytics.clonedetection;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
-import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 
 import java.util.*;
@@ -50,8 +49,8 @@ public class CloneAnalysis {
      * @param root starting point in the AST for the clone analysis
      * @return all clones found
      */
-    public Set<CodeClone> check(ASTNode root) {
-        return check(root, root);
+    public Set<CodeClone> check(ASTNode root, CodeClone.CloneType cloneType) {
+        return check(root, root, cloneType);
     }
 
     /**
@@ -60,7 +59,7 @@ public class CloneAnalysis {
      * @param root2 second tree
      * @return all clones found
      */
-    public Set<CodeClone> check(ASTNode root1, ASTNode root2) {
+    public Set<CodeClone> check(ASTNode root1, ASTNode root2, CodeClone.CloneType cloneType) {
 
         this.root1 = root1;
         this.root2 = root2;
@@ -79,18 +78,16 @@ public class CloneAnalysis {
         boolean[][] similarityMatrix = getMatrix(normalizedStatements1, normalizedStatements2);
 
         // Return all clones identifiable in the matrix
-        return check(statements1, statements2, similarityMatrix);
+        return check(statements1, statements2, normalizedStatements1, normalizedStatements2, similarityMatrix, cloneType);
     }
 
-
-    private Set<CodeClone> check(List<Stmt> statements1, List<Stmt> statements2, boolean[][] similarityMatrix) {
-
+    private Set<CodeClone> check(List<Stmt> statements1, List<Stmt> statements2, List<Stmt> normalizedStatements1, List<Stmt> normalizedStatements2, boolean[][] similarityMatrix, CodeClone.CloneType cloneType) {
         Set<CodeClone> clones = new LinkedHashSet<>();
 
         for (int i = 0; i < statements1.size(); i++) {
             for (int j = 0; j < statements2.size(); j++) {
                 // LinkedHashMap remembers order of insertion
-                LinkedHashMap<Integer, Integer> positions = findDiagonale(similarityMatrix, i, j);
+                LinkedHashMap<Integer, Integer> positions = findDiagonal(similarityMatrix, i, j);
                 if (positions.size() >= minSize) {
                     CodeClone clone = new CodeClone(actor, root1, root2);
                     for (Map.Entry<Integer, Integer> location : positions.entrySet()) {
@@ -98,8 +95,10 @@ public class CloneAnalysis {
                         Stmt stmt2 = statements2.get(location.getValue());
                         clone.addClonedStatement(stmt1, stmt2);
                     }
-                    if (clones.stream().noneMatch(c -> c.contains(clone))) {
-                        clone.setType(setCloneType(clone));
+
+                    clone.setType(decideCloneType(clone, normalizedStatements1, normalizedStatements2));
+
+                    if (clones.stream().noneMatch(c -> c.contains(clone)) && clone.getType().equals(cloneType)) {
                         clones.add(clone);
                     }
                 }
@@ -109,27 +108,36 @@ public class CloneAnalysis {
         return clones;
     }
 
-    private CodeClone.CloneType setCloneType(CodeClone clone){
-        List<Stmt> statements1 = clone.getFirstStatements();
-        List<Stmt> statements2 = clone.getSecondStatements();
-        // Type 1 or Type 2
-        if (statements1.equals(statements2)) {
-            return CodeClone.CloneType.TYPE1;
-        } else {
-            // TODO: Handle Type 3
-            return CodeClone.CloneType.TYPE2;
-        }
-    }
+    private LinkedHashMap<Integer, Integer> findDiagonal(boolean[][] similarityMatrix, int x, int y) {
+        LinkedHashMap<Integer, Integer> clonePositions = new LinkedHashMap<>();
 
-    private LinkedHashMap<Integer, Integer> findDiagonale(boolean[][] similarityMatrix, int x, int y) {
-        LinkedHashMap<Integer, Integer> positions = new LinkedHashMap<>();
-        // TODO allow gaps
-        while (x < similarityMatrix.length && y < similarityMatrix[x].length && similarityMatrix[x][y]) {
-            positions.put(x, y);
+        while (x < similarityMatrix.length && y < similarityMatrix[x].length) {
+            if (similarityMatrix[x][y]) {
+                clonePositions.put(x, y);
+            }
             x++;
             y++;
         }
-        return positions;
+
+        return clonePositions;
+    }
+
+    private CodeClone.CloneType decideCloneType(CodeClone clone, List<Stmt> normalizedStatements1, List<Stmt> normalizedStatements2){
+
+        List<Stmt> statements1 = clone.getFirstStatements();
+        List<Stmt> statements2 = clone.getSecondStatements();
+        CodeClone.CloneType type = clone.getType();
+
+        if (normalizedStatements1.equals(normalizedStatements2)) {
+            // Type 1 is default, so only test for Type 2 is necessary
+            if (!statements1.equals(statements2)) {
+                type = CodeClone.CloneType.TYPE2;
+            }
+        } else {
+            // Type 4 not implemented, so no specific check for Type 3 necessary
+            type = CodeClone.CloneType.TYPE3;
+        }
+        return type;
     }
 
     private boolean[][] getMatrix(List<Stmt> normalizedStatements1, List<Stmt> normalizedStatements2) {

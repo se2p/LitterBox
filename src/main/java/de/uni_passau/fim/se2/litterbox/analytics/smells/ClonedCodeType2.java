@@ -22,18 +22,18 @@ import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.clonedetection.CloneAnalysis;
 import de.uni_passau.fim.se2.litterbox.analytics.clonedetection.CodeClone;
-import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
+import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
+import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-public class ClonedCode extends AbstractIssueFinder {
-
+public class ClonedCodeType2 extends AbstractIssueFinder {
 
     @Override
     public void visit(ActorDefinition actor) {
@@ -55,13 +55,13 @@ public class ClonedCode extends AbstractIssueFinder {
     private void checkScript(Script script, List<Script> otherScripts, List<ProcedureDefinition> otherProcedures) {
         CloneAnalysis cloneAnalysis = new CloneAnalysis(currentActor);
         for (Script otherScript : otherScripts) {
-            Set<CodeClone> clones = cloneAnalysis.check(script, otherScript);
+            Set<CodeClone> clones = cloneAnalysis.check(script, otherScript, CodeClone.CloneType.TYPE2);
             for (CodeClone clone : clones) {
                 issues.add(new Issue(this, program, currentActor, script, clone.getFirstNode(), script.getMetadata()));
             }
         }
         for (ProcedureDefinition procedure : otherProcedures) {
-            Set<CodeClone> clones = cloneAnalysis.check(script, procedure);
+            Set<CodeClone> clones = cloneAnalysis.check(script, procedure, CodeClone.CloneType.TYPE2);
             for (CodeClone clone : clones) {
                 issues.add(new Issue(this, program, currentActor, procedure, clone.getFirstNode(), script.getMetadata()));
             }
@@ -71,7 +71,7 @@ public class ClonedCode extends AbstractIssueFinder {
     private void checkProcedure(ProcedureDefinition procedure, List<ProcedureDefinition> otherProcedures) {
         CloneAnalysis cloneAnalysis = new CloneAnalysis(currentActor);
         for (ProcedureDefinition otherProcedure : otherProcedures) {
-            Set<CodeClone> clones = cloneAnalysis.check(procedure, otherProcedure);
+            Set<CodeClone> clones = cloneAnalysis.check(procedure, otherProcedure, CodeClone.CloneType.TYPE2);
             for (CodeClone clone : clones) {
                 issues.add(new Issue(this, program, currentActor, procedure, clone.getFirstNode(), procedure.getMetadata()));
             }
@@ -85,6 +85,6 @@ public class ClonedCode extends AbstractIssueFinder {
 
     @Override
     public String getName() {
-        return "code_clone";
+        return "code_clone_type_2";
     }
 }
