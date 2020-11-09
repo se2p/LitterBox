@@ -37,6 +37,7 @@ public class CommentGenerator implements ReportGenerator {
         for (Issue issue : issues) {
             ActorDefinition currentActor = issue.getActor();
             String hintText = issue.getHint();
+            hintText = hintText.replace("\"", "\\\"");
             String commentId = issue.getFinderName() + numIssue++;
             Metadata metaData = issue.getCodeMetadata();
             if (metaData == null) {
