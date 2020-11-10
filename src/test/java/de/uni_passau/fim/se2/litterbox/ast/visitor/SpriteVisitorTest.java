@@ -20,9 +20,9 @@ public class SpriteVisitorTest {
 
     private static JsonNode project;
 
-    @BeforeAll
+    //@BeforeAll
     public static void setup() {
-        String path = "/home/flo/Bachelorarbeit/scratchprojects/Empty.json";
+        String path = "/path/to/scratchproject.json";
         File file = new File(path);
         ObjectMapper objectMapper = new ObjectMapper();
         try {
@@ -33,7 +33,7 @@ public class SpriteVisitorTest {
     }
 
 
-    @Test
+    //@Test
     public void testSpriteVisitor() {
         ExtractSpriteVisitor visitor = new ExtractSpriteVisitor();
         try {
