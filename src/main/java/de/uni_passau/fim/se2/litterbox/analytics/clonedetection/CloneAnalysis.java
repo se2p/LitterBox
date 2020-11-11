@@ -97,7 +97,7 @@ public class CloneAnalysis {
                 tempClones = checkForGaps(positions, statements1, statements2, normalizedStatements1, normalizedStatements2);
 
                 for (CodeClone clone : tempClones) {
-                    if (clone.getType().equals(cloneType)) {
+                    if (clone.getType().equals(cloneType) & clone.size() >= MIN_SIZE) {
                         clones.add(clone);
                     }
                 }
@@ -110,7 +110,7 @@ public class CloneAnalysis {
                 tempClones = checkForGaps(positions, statements1, statements2, normalizedStatements1, normalizedStatements2);
 
                 for (CodeClone clone : tempClones) {
-                    if (clone.getType().equals(cloneType)) {
+                    if (clone.getType().equals(cloneType) & clone.size() >= MIN_SIZE) {
                         clones.add(clone);
                     }
                 }
