@@ -18,16 +18,14 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,42 +33,32 @@ import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class VariableAsLiteralTest {
-
-    private static final ObjectMapper mapper = new ObjectMapper();
+public class VariableAsLiteralTest implements JsonTest {
 
     @Test
     public void testEmpty() throws IOException, ParsingException {
-        File f = new File("src/test/fixtures/emptyProject.json");
-        Program program = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
-
+        Program program = getAST("src/test/fixtures/emptyProject.json");
         Set<Issue> reports = (new VariableAsLiteral()).check(program);
         Assertions.assertEquals(0, reports.size());
     }
 
     @Test
     public void testLiteralsInSayAndIf() throws IOException, ParsingException {
-        File f = new File("src/test/fixtures/bugpattern/variableAsLiteral.json");
-        Program program = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
-
+        Program program = getAST("src/test/fixtures/bugpattern/variableAsLiteral.json");
         Set<Issue> reports = (new VariableAsLiteral()).check(program);
         Assertions.assertEquals(2, reports.size());
     }
 
     @Test
     public void testListAsLiteral() throws IOException, ParsingException {
-        File f = new File("src/test/fixtures/bugpattern/listAsLiteral.json");
-        Program program = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
-
+        Program program = getAST("src/test/fixtures/bugpattern/listAsLiteral.json");
         Set<Issue> reports = (new VariableAsLiteral()).check(program);
         Assertions.assertEquals(2, reports.size());
     }
 
     @Test
     public void testParameterAsLiteral() throws IOException, ParsingException {
-        File f = new File("src/test/fixtures/bugpattern/parameterAsLiteral.json");
-        Program program = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
-
+        Program program = getAST("src/test/fixtures/bugpattern/parameterAsLiteral.json");
         // 2 usages inside custom block, and 2 outside custom block
         Set<Issue> reports = (new VariableAsLiteral()).check(program);
         Assertions.assertEquals(4, reports.size());
@@ -78,18 +66,14 @@ public class VariableAsLiteralTest {
 
     @Test
     public void testActorsAsLiterals() throws IOException, ParsingException {
-        File f = new File("src/test/fixtures/bugpattern/actorsAsLiterals.json");
-        Program program = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
-
+        Program program = getAST("src/test/fixtures/bugpattern/actorsAsLiterals.json");
         Set<Issue> reports = (new VariableAsLiteral()).check(program);
         Assertions.assertEquals(0, reports.size());
     }
 
     @Test
     public void testScratchBlocksOutput() throws IOException, ParsingException {
-        File f = new File("src/test/fixtures/bugpattern/listAsLiteral.json");
-        Program program = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
-
+        Program program = getAST("src/test/fixtures/bugpattern/listAsLiteral.json");
         VariableAsLiteral finder = new VariableAsLiteral();
         List<Issue> issues = new ArrayList<>(finder.check(program));
         Issue issue = issues.get(0);
@@ -100,12 +84,12 @@ public class VariableAsLiteralTest {
         issue.getScriptOrProcedureDefinition().accept(visitor);
         visitor.end();
         String output = visitor.getScratchBlocks();
-        assertEquals("[scratchblocks]\n" +
-                "when green flag clicked\n" +
-                "if <[thelist] > (50)> then:: #ff0000 // Variable Used as Literal\n" +
-                "say [thelist]\n" +
-                "end\n" +
-                "[/scratchblocks]\n", output);
+        assertEquals("[scratchblocks]" + System.lineSeparator() +
+                "when green flag clicked" + System.lineSeparator() +
+                "if <[thelist] > (50):: #ff0000> then // " + ScratchBlocksVisitor.BUG_NOTE + System.lineSeparator() +
+                "say [thelist]" + System.lineSeparator() +
+                "end" + System.lineSeparator() +
+                "[/scratchblocks]" + System.lineSeparator(), output);
 
         issue = issues.get(1);
 
@@ -115,20 +99,25 @@ public class VariableAsLiteralTest {
         issue.getScriptOrProcedureDefinition().accept(visitor);
         visitor.end();
         output = visitor.getScratchBlocks();
-        assertEquals("[scratchblocks]\n" +
-                "when green flag clicked\n" +
-                "if <[thelist] > (50)> then\n" +
-                "say [thelist]:: #ff0000 // Variable Used as Literal\n" +
-                "end\n" +
-                "[/scratchblocks]\n", output);
+        assertEquals("[scratchblocks]" + System.lineSeparator() +
+                "when green flag clicked" + System.lineSeparator() +
+                "if <[thelist] > (50)> then" + System.lineSeparator() +
+                "say [thelist]:: #ff0000 // " + ScratchBlocksVisitor.BUG_NOTE + System.lineSeparator() +
+                "end" + System.lineSeparator() +
+                "[/scratchblocks]" + System.lineSeparator(), output);
 
     }
 
     @Test
     public void testBlocksThatShouldNotBeRecognisedAsStrings() throws IOException, ParsingException {
-        File f = new File("src/test/fixtures/smells/attributesThatAreNotStrings.json");
-        Program program = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
+        Program program = getAST("src/test/fixtures/smells/attributesThatAreNotStrings.json");
+        Set<Issue> reports = (new VariableAsLiteral()).check(program);
+        Assertions.assertEquals(0, reports.size());
+    }
 
+    @Test
+    public void testHideListWithNoBug() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/bugpattern/hideList.json");
         Set<Issue> reports = (new VariableAsLiteral()).check(program);
         Assertions.assertEquals(0, reports.size());
     }

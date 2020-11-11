@@ -16,31 +16,8 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.uni_passau.fim.se2.litterbox.ast.model.metadata.ressources;
+package de.uni_passau.fim.se2.litterbox.analytics;
 
-import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
-
-public class SoundMetadata extends ResourceMetadata {
-
-    private int rate;
-    private int sampleCount;
-
-    public SoundMetadata(String assetId, String name, String md5ext, String dataFormat, int rate, int sampleCount) {
-        super(assetId, name, md5ext, dataFormat);
-        this.rate = rate;
-        this.sampleCount = sampleCount;
-    }
-
-    public int getRate() {
-        return rate;
-    }
-
-    public int getSampleCount() {
-        return sampleCount;
-    }
-
-    @Override
-    public void accept(ScratchVisitor visitor) {
-        visitor.visit(this);
-    }
+public enum IssueType {
+    BUG, SMELL
 }

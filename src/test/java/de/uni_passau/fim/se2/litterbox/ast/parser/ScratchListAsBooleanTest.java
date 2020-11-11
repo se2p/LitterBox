@@ -18,30 +18,19 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.parser;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.analytics.metric.SpriteCount;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Assertions;import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
 import java.io.IOException;
 
-public class ScratchListAsBooleanTest {
-    private static Program empty;
-    private static ObjectMapper mapper = new ObjectMapper();
-
-    @BeforeAll
-    public static void setUp() throws IOException, ParsingException {
-
-        File f = new File("./src/test/fixtures/stmtParser/listElementsBoolean.json");
-        empty = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
-    }
-
+public class ScratchListAsBooleanTest implements JsonTest {
     @Test
-    public void testEmptyProgram() {
+    public void testEmptyProgram() throws IOException, ParsingException {
+        Program empty = getAST("./src/test/fixtures/stmtParser/listElementsBoolean.json");
         SpriteCount sp = new SpriteCount();
         Assertions.assertEquals(1, sp.calculateMetric(empty));
     }

@@ -18,26 +18,22 @@
  */
 package de.uni_passau.fim.se2.litterbox.jsonCreation;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
 import java.io.IOException;
 
-public class ProcedureJSONCreatorTest {
-    private static Program procedure;
+public class ProcedureJSONCreatorTest implements JsonTest {
+    private Program procedure;
 
-    @BeforeAll
-    public static void setUp() throws IOException, ParsingException {
-        ObjectMapper mapper = new ObjectMapper();
-        File f = new File("./src/test/fixtures/metadata/procedureDefinition.json");
-        procedure = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
+    @BeforeEach
+    public void setUp() throws IOException, ParsingException {
+        procedure = getAST("src/test/fixtures/metadata/procedureDefinition.json");
     }
 
     @Test

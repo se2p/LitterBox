@@ -293,6 +293,6 @@ public class NumExprParser {
         Preconditions.checkArgument(fields.has(OPERATOR_KEY));
         ArrayNode operator = (ArrayNode) fields.get(OPERATOR_KEY);
         String operatorOpcode = operator.get(FIELD_VALUE).asText();
-        return NumFunct.fromString(operatorOpcode);
+        return new NumFunct(operatorOpcode);
     }
 }

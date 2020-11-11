@@ -23,10 +23,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
+import de.uni_passau.fim.se2.litterbox.analytics.MetricExtractor;
+import de.uni_passau.fim.se2.litterbox.analytics.MetricTool;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.actor.ActorMetadata;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.ressources.ImageMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.resources.ImageMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 
 import java.io.FileOutputStream;
@@ -53,12 +55,19 @@ public class JSONReportGenerator implements ReportGenerator {
     @Override
     public void generateReport(Program program, Collection<Issue> issues) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
-        JsonNode rootNode = mapper.createArrayNode();
+        ObjectNode rootNode = mapper.createObjectNode();
+        ArrayNode issueNode = mapper.createArrayNode();
+        ObjectNode metricNode = mapper.createObjectNode();
+
+        addMetrics(metricNode, program);
+        rootNode.set("metrics", metricNode);
 
         for (Issue issue : issues) {
             JsonNode childNode = mapper.createObjectNode();
-            ((ObjectNode) childNode).put("finder", issue.getTranslatedFinderName());
-            ((ObjectNode) childNode).put("type", issue.getFinderType());
+            ((ObjectNode) childNode).put("finder", issue.getFinderName());
+            ((ObjectNode) childNode).put("name", issue.getTranslatedFinderName());
+            ((ObjectNode) childNode).put("type", issue.getIssueType().toString());
+            ((ObjectNode) childNode).put("severity", issue.getSeverity().getSeverityLevel());
             ((ObjectNode) childNode).put("sprite", issue.getActorName());
             ((ObjectNode) childNode).put("hint", issue.getHint());
             ArrayNode arrayNode = ((ObjectNode) childNode).putArray("costumes");
@@ -81,14 +90,24 @@ public class JSONReportGenerator implements ReportGenerator {
                 String scratchBlockCode = blockVisitor.getScratchBlocks();
                 ((ObjectNode) childNode).put("code", scratchBlockCode);
             }
-            ((ArrayNode) rootNode).add(childNode);
+            issueNode.add(childNode);
         }
+        rootNode.set("issues", issueNode);
 
         String jsonString = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(rootNode);
         final PrintStream printStream = new PrintStream(outputStream);
         printStream.print(jsonString);
         if (closeStream) {
             outputStream.close();
+        }
+    }
+
+    private void addMetrics(ObjectNode metricsNode, Program program) {
+        MetricTool tool = new MetricTool();
+
+        for (MetricExtractor metric : tool.getAnalyzers()) {
+            double value = metric.calculateMetric(program);
+            metricsNode.put(metric.getName(), value);
         }
     }
 }

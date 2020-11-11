@@ -18,8 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.parser.metadata;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
@@ -32,27 +31,22 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.ExpressionStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.DataExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
-import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import static de.uni_passau.fim.se2.litterbox.ast.Constants.VAR_PRIMITIVE;
 
-public class TopLevelMetadataTest {
-    private static final ObjectMapper mapper = new ObjectMapper();
+public class TopLevelMetadataTest implements JsonTest {
     private static Program program;
 
     @BeforeAll
     public static void setUp() throws IOException, ParsingException {
-        File f = new File("./src/test/fixtures/metadata/blockMeta.json");
-        JsonNode prog = mapper.readTree(f);
-        program = ProgramParser.parseProgram("Test", prog);
+        program = JsonTest.parseProgram("./src/test/fixtures/metadata/blockMeta.json");
     }
 
     @Test
@@ -79,8 +73,8 @@ public class TopLevelMetadataTest {
         Assertions.assertEquals(TopNonDataBlockMetadata.class, meta.getDefinition().getClass());
         TopNonDataBlockMetadata defMet = (TopNonDataBlockMetadata) meta.getDefinition();
         Assertions.assertEquals(NoMutationMetadata.class, defMet.getMutation().getClass());
-        Assertions.assertEquals(56, defMet.getxPos());
-        Assertions.assertEquals(184, defMet.getyPos());
+        Assertions.assertEquals(56, defMet.getXPos());
+        Assertions.assertEquals(184, defMet.getYPos());
         Assertions.assertEquals(NonDataBlockMetadata.class, meta.getPrototype().getClass());
         NonDataBlockMetadata protoMet = (NonDataBlockMetadata) meta.getPrototype();
         Assertions.assertEquals(PrototypeMutationMetadata.class, protoMet.getMutation().getClass());

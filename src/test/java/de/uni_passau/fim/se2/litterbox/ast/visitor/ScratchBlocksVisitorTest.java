@@ -18,18 +18,18 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.visitor;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import de.uni_passau.fim.se2.litterbox.analytics.Hint;
+import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.*;
+import de.uni_passau.fim.se2.litterbox.analytics.smells.DeadCode;
 import de.uni_passau.fim.se2.litterbox.analytics.smells.UnusedVariable;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.Arrays;
@@ -37,15 +37,7 @@ import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class ScratchBlocksVisitorTest {
-
-    private Program getAST(String fileName) throws IOException, ParsingException {
-        File file = new File(fileName);
-        ObjectMapper objectMapper = new ObjectMapper();
-        JsonNode project = objectMapper.readTree(file);
-        Program program = ProgramParser.parseProgram("TestProgram", project);
-        return program;
-    }
+public class ScratchBlocksVisitorTest implements JsonTest {
 
     @Test
     public void testMotionBlocks() throws IOException, ParsingException {
@@ -57,24 +49,24 @@ public class ScratchBlocksVisitorTest {
         program.accept(visitor);
         visitor.end();
         String result = os.toString();
-        assertEquals("[scratchblocks]\n" +
-                "when green flag clicked\n" +
-                "move (10) steps\n" +
-                "turn right (15) degrees\n" +
-                "turn left (15) degrees\n" +
-                "go to (random position v)\n" +
-                "go to x: (0) y: (0)\n" +
-                "glide (1) secs to (random position v)\n" +
-                "glide (1) secs to x: (0) y: (0)\n" +
-                "point in direction (90)\n" +
-                "point towards (mouse-pointer v)\n" +
-                "change x by (10)\n" +
-                "set x to (0)\n" +
-                "change y by (10)\n" +
-                "set y to (0)\n" +
-                "if on edge, bounce\n" +
-                "set rotation style [left-right v]\n" +
-                "[/scratchblocks]\n", result);
+        assertEquals("[scratchblocks]" + System.lineSeparator() +
+                "when green flag clicked" + System.lineSeparator() +
+                "move (10) steps" + System.lineSeparator() +
+                "turn right (15) degrees" + System.lineSeparator() +
+                "turn left (15) degrees" + System.lineSeparator() +
+                "go to (random position v)" + System.lineSeparator() +
+                "go to x: (0) y: (0)" + System.lineSeparator() +
+                "glide (1) secs to (random position v)" + System.lineSeparator() +
+                "glide (1) secs to x: (0) y: (0)" + System.lineSeparator() +
+                "point in direction (90)" + System.lineSeparator() +
+                "point towards (mouse-pointer v)" + System.lineSeparator() +
+                "change x by (10)" + System.lineSeparator() +
+                "set x to (0)" + System.lineSeparator() +
+                "change y by (10)" + System.lineSeparator() +
+                "set y to (0)" + System.lineSeparator() +
+                "if on edge, bounce" + System.lineSeparator() +
+                "set rotation style [left-right v]" + System.lineSeparator() +
+                "[/scratchblocks]" + System.lineSeparator(),result);
     }
 
     @Test
@@ -87,14 +79,221 @@ public class ScratchBlocksVisitorTest {
         program.accept(visitor);
         visitor.end();
         String result = os.toString();
-        assertEquals("[scratchblocks]\n" +
-                "when green flag clicked\n" +
-                "forever \n" +
-                "if <touching (edge v) ?> then\n" +
-                "say [Hello!] for (2) seconds\n" +
-                "end\n" +
-                "end\n" +
-                "[/scratchblocks]\n", result);
+        assertEquals("[scratchblocks]" + System.lineSeparator() +
+                "when green flag clicked" + System.lineSeparator() +
+                "forever " + System.lineSeparator() +
+                "if <touching (edge v) ?> then" + System.lineSeparator() +
+                "say [Hello!] for (2) seconds" + System.lineSeparator() +
+                "end" + System.lineSeparator() +
+                "end" + System.lineSeparator() +
+                "[/scratchblocks]" + System.lineSeparator(),result);
+    }
+
+    @Test
+    public void testTouchingSpriteBlock() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/scratchblocks/touchingspriteblock.json");
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        PrintStream ps = new PrintStream(os);
+        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(ps);
+        visitor.begin();
+        program.accept(visitor);
+        visitor.end();
+        String result = os.toString();
+        assertEquals("[scratchblocks]" + System.lineSeparator() +
+                "when green flag clicked" + System.lineSeparator() +
+                "forever " + System.lineSeparator() +
+                "if <touching (Bell v) ?> then" + System.lineSeparator() +
+                "say [Hello!]" + System.lineSeparator() +
+                "end" + System.lineSeparator() +
+                "end" + System.lineSeparator() +
+                "[/scratchblocks]" + System.lineSeparator(), result);
+    }
+
+    @Test
+    public void testTouchingVarBlock() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/scratchblocks/touchingvarblock.json");
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        PrintStream ps = new PrintStream(os);
+        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(ps);
+        visitor.begin();
+        program.accept(visitor);
+        visitor.end();
+        String result = os.toString();
+        assertEquals("[scratchblocks]" + System.lineSeparator() +
+                "when green flag clicked" + System.lineSeparator() +
+                "set [my variable v] to [Bell]" + System.lineSeparator() +
+                "forever " + System.lineSeparator() +
+                "if <touching (my variable) ?> then" + System.lineSeparator() +
+                "say [Hello!]" + System.lineSeparator() +
+                "end" + System.lineSeparator() +
+                "end" + System.lineSeparator() +
+                "[/scratchblocks]" + System.lineSeparator(), result);
+    }
+
+    @Test
+    public void testSetVarToVar() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/scratchblocks/setvariabletovariable.json");
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        PrintStream ps = new PrintStream(os);
+        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(ps);
+        visitor.begin();
+        program.accept(visitor);
+        visitor.end();
+        String result = os.toString();
+        assertEquals("[scratchblocks]" + System.lineSeparator() +
+                "set [my variable v] to (other variable)" + System.lineSeparator() +
+                "change [my variable v] by (other variable)" + System.lineSeparator() +
+                "[/scratchblocks]" + System.lineSeparator(), result);
+    }
+
+    @Test
+    public void testSetVarToBool() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/scratchblocks/booleaninsetvar.json");
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        PrintStream ps = new PrintStream(os);
+        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(ps);
+        visitor.begin();
+        program.accept(visitor);
+        visitor.end();
+        String result = os.toString();
+        assertEquals("[scratchblocks]" + System.lineSeparator()+
+                "define block name [number or text] <boolean>" + System.lineSeparator()+
+                "set [my variable v] to <touching color [#c9dae2] ?>" + System.lineSeparator()+
+                "set [my variable v] to <touching (mouse-pointer v) ?>" + System.lineSeparator()+
+                "set [my variable v] to <color [#8d6b27] is touching [#805a3c] ?>" + System.lineSeparator()+
+                "set [my variable v] to <key (space v) pressed?>" + System.lineSeparator()+
+                "set [my variable v] to <mouse down?>" + System.lineSeparator()+
+                "set [my variable v] to <<> and <>>" + System.lineSeparator()+
+                "set [my variable v] to <[apple] contains [a]?>" + System.lineSeparator()+
+                "set [my variable v] to <not <>>" + System.lineSeparator()+
+                "set [my variable v] to <<> or <>>" + System.lineSeparator()+
+                "set [my variable v] to <[] > (50)>" + System.lineSeparator()+
+                "set [my variable v] to <boolean>" + System.lineSeparator()+
+                "[/scratchblocks]" + System.lineSeparator(), result);
+    }
+
+    @Test
+    public void testSetVarToAllOtherblocks() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/scratchblocks/setvartoblocks.json");
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        PrintStream ps = new PrintStream(os);
+        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(ps);
+        visitor.begin();
+        program.accept(visitor);
+        visitor.end();
+        String result = os.toString();
+        assertEquals("[scratchblocks]" + System.lineSeparator() +
+                "set [my variable v] to (0)" + System.lineSeparator() +
+                "set [my variable v] to (other variable)" + System.lineSeparator() +
+                "set [my variable v] to (answer)" + System.lineSeparator() +
+                "set [my variable v] to (distance to (mouse-pointer v))" + System.lineSeparator() +
+                "set [my variable v] to (join [apple ][banana])" + System.lineSeparator() +
+                "set [my variable v] to (length of [thelist v])" + System.lineSeparator() +
+                "set [my variable v] to ([abs v] of (my variable))" + System.lineSeparator() +
+                "set [my variable v] to ((my variable) mod (other variable))" + System.lineSeparator() +
+                "set [my variable v] to (round (my variable))" + System.lineSeparator() +
+                "set [my variable v] to (pick random (1) to (10))" + System.lineSeparator() +
+                "set [my variable v] to ([my variable v] of (Stage v)?)" + System.lineSeparator() +
+                "set [my variable v] to ((10)+(my variable))" + System.lineSeparator() +
+                "set [my variable v] to (item (1) of [thelist v])" + System.lineSeparator() +
+                "set [my variable v] to (item # of [thing] in [thelist v])" + System.lineSeparator() +
+                "set [my variable v] to (username)" + System.lineSeparator() +
+                "set [my variable v] to (thelist)" + System.lineSeparator() +
+                "set [my variable v] to (mouse x)" + System.lineSeparator() +
+                "set [my variable v] to (loudness)" + System.lineSeparator() +
+                "set [my variable v] to (days since 2000)" + System.lineSeparator() +
+                "set [my variable v] to (current (year v))" + System.lineSeparator() +
+                "set [my variable v] to (timer)" + System.lineSeparator() +
+                "[/scratchblocks]" + System.lineSeparator(), result);
+    }
+
+    @Test
+    public void testChangeVarToAllOtherblocks() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/scratchblocks/changevartoblocks.json");
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        PrintStream ps = new PrintStream(os);
+        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(ps);
+        visitor.begin();
+        program.accept(visitor);
+        visitor.end();
+        String result = os.toString();
+        assertEquals("[scratchblocks]" + System.lineSeparator() +
+                "change [my variable v] by (1)" + System.lineSeparator() +
+                "change [my variable v] by (x position)" + System.lineSeparator() +
+                "change [my variable v] by (y position)" + System.lineSeparator() +
+                "change [my variable v] by (backdrop [number v])" + System.lineSeparator() +
+                "change [my variable v] by (costume [number v])" + System.lineSeparator() +
+                "change [my variable v] by (direction)" + System.lineSeparator() +
+                "change [my variable v] by (size)" + System.lineSeparator() +
+                "change [my variable v] by (volume)" + System.lineSeparator() +
+                "change [my variable v] by (other variable)" + System.lineSeparator() +
+                "change [my variable v] by (answer)" + System.lineSeparator() +
+                "change [my variable v] by (distance to (mouse-pointer v))" + System.lineSeparator() +
+                "change [my variable v] by (join [apple ][banana])" + System.lineSeparator() +
+                "change [my variable v] by (length of [thelist v])" + System.lineSeparator() +
+                "change [my variable v] by ([abs v] of (my variable))" + System.lineSeparator() +
+                "change [my variable v] by ((my variable) mod (other variable))" + System.lineSeparator() +
+                "change [my variable v] by (round (my variable))" + System.lineSeparator() +
+                "change [my variable v] by (pick random (1) to (10))" + System.lineSeparator() +
+                "change [my variable v] by ([my variable v] of (Stage v)?)" + System.lineSeparator() +
+                "change [my variable v] by ((10)+(my variable))" + System.lineSeparator() +
+                "change [my variable v] by (item (1) of [thelist v])" + System.lineSeparator() +
+                "change [my variable v] by (item # of [thing] in [thelist v])" + System.lineSeparator() +
+                "change [my variable v] by (username)" + System.lineSeparator() +
+                "change [my variable v] by (thelist)" + System.lineSeparator() +
+                "change [my variable v] by (mouse x)" + System.lineSeparator() +
+                "change [my variable v] by (loudness)" + System.lineSeparator() +
+                "change [my variable v] by (days since 2000)" + System.lineSeparator() +
+                "change [my variable v] by (current (year v))" + System.lineSeparator() +
+                "change [my variable v] by (timer)" + System.lineSeparator() +
+                "[/scratchblocks]" + System.lineSeparator(), result);
+    }
+
+    @Test
+    public void testMoveWithAllOtherblocks() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/scratchblocks/movewithallblocks.json");
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        PrintStream ps = new PrintStream(os);
+        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(ps);
+        visitor.begin();
+        program.accept(visitor);
+        visitor.end();
+        String result = os.toString();
+        assertEquals("[scratchblocks]" + System.lineSeparator() +
+                "move (10) steps" + System.lineSeparator() +
+                "move (x position) steps" + System.lineSeparator() +
+                "move (y position) steps" + System.lineSeparator() +
+                "move (direction) steps" + System.lineSeparator() +
+                "move (costume [number v]) steps" + System.lineSeparator() +
+                "move (backdrop [number v]) steps" + System.lineSeparator() +
+                "move (size) steps" + System.lineSeparator() +
+                "move ([]+[]) steps" + System.lineSeparator() +
+                "move (join [apple ][banana]) steps" + System.lineSeparator() +
+                "move ([backdrop # v] of (letter (1) of [apple])?) steps" + System.lineSeparator() +
+                "move (loudness) steps" + System.lineSeparator() +
+                "move <touching (mouse-pointer v) ?> steps" + System.lineSeparator() +
+                "move <[] > (50)> steps" + System.lineSeparator() +
+                "move (my variable) steps" + System.lineSeparator() +
+                "move ([] mod []) steps" + System.lineSeparator() +
+                "move (timer) steps" + System.lineSeparator() +
+                "move (days since 2000) steps" + System.lineSeparator() +
+                "move (mouse x) steps" + System.lineSeparator() +
+                "move <touching color [#e24b5b] ?> steps" + System.lineSeparator() +
+                "move (length of (round [])) steps" + System.lineSeparator() +
+                "move ([abs v] of []) steps" + System.lineSeparator() +
+                "move <[apple] contains [a]?> steps" + System.lineSeparator() +
+                "move (distance to (mouse-pointer v)) steps" + System.lineSeparator() +
+                "move <color [#d9de7a] is touching [#7efc63] ?> steps" + System.lineSeparator() +
+                "move <<> and <>> steps" + System.lineSeparator() +
+                "move (answer) steps" + System.lineSeparator() +
+                "move (current (year v)) steps" + System.lineSeparator() +
+                "move (pick random (1) to (10)) steps" + System.lineSeparator() +
+                "move (volume) steps" + System.lineSeparator() +
+                "move <key (space v) pressed?> steps" + System.lineSeparator() +
+                "move (username) steps" + System.lineSeparator() +
+                "move (mouse y) steps" + System.lineSeparator() +
+                "move <mouse down?> steps" + System.lineSeparator() +
+                "[/scratchblocks]" + System.lineSeparator(), result);
     }
 
     @Test
@@ -107,17 +306,17 @@ public class ScratchBlocksVisitorTest {
         program.accept(visitor);
         visitor.end();
         String result = os.toString();
-        assertEquals("[scratchblocks]\n" +
-                "define block1\n" +
-                "say [Hello!]\n" +
-                "\n" +
-                "define block2\n" +
-                "say [Bye!]\n" +
-                "\n" +
-                "when green flag clicked\n" +
-                "block1\n" +
-                "block2\n" +
-                "[/scratchblocks]\n", result);
+        assertEquals("[scratchblocks]" + System.lineSeparator() +
+                "define block1" + System.lineSeparator() +
+                "say [Hello!]" + System.lineSeparator() +
+                "" + System.lineSeparator() +
+                "define block2" + System.lineSeparator() +
+                "say [Bye!]" + System.lineSeparator() +
+                "" + System.lineSeparator() +
+                "when green flag clicked" + System.lineSeparator() +
+                "block1" + System.lineSeparator() +
+                "block2" + System.lineSeparator() +
+                "[/scratchblocks]" + System.lineSeparator(),result);
     }
 
     @Test
@@ -130,26 +329,26 @@ public class ScratchBlocksVisitorTest {
         program.accept(visitor);
         visitor.end();
         String result = os.toString();
-        assertEquals("[scratchblocks]\n" +
-                "when green flag clicked\n" +
-                "say [Hello!] for (2) seconds\n" +
-                "say [Hello!]\n" +
-                "think [Hmm...] for (2) seconds\n" +
-                "think [Hmm...]\n" +
-                "switch costume to (costume2 v)\n" +
-                "next costume\n" +
-                "switch backdrop to (backdrop1 v)\n" +
-                "next backdrop\n" +
-                "change size by (10)\n" +
-                "set size to (100) %\n" +
-                "change [color v] effect by (25)\n" +
-                "set [color v] effect to (0)\n" +
-                "clear graphic effects\n" +
-                "show\n" +
-                "hide\n" +
-                "go to [front v] layer\n" +
-                "go [forward v] (1) layers\n" +
-                "[/scratchblocks]\n", result);
+        assertEquals("[scratchblocks]" + System.lineSeparator() +
+                "when green flag clicked" + System.lineSeparator() +
+                "say [Hello!] for (2) seconds" + System.lineSeparator() +
+                "say [Hello!]" + System.lineSeparator() +
+                "think [Hmm...] for (2) seconds" + System.lineSeparator() +
+                "think [Hmm...]" + System.lineSeparator() +
+                "switch costume to (costume2 v)" + System.lineSeparator() +
+                "next costume" + System.lineSeparator() +
+                "switch backdrop to (backdrop1 v)" + System.lineSeparator() +
+                "next backdrop" + System.lineSeparator() +
+                "change size by (10)" + System.lineSeparator() +
+                "set size to (100) %" + System.lineSeparator() +
+                "change [color v] effect by (25)" + System.lineSeparator() +
+                "set [color v] effect to (0)" + System.lineSeparator() +
+                "clear graphic effects" + System.lineSeparator() +
+                "show" + System.lineSeparator() +
+                "hide" + System.lineSeparator() +
+                "go to [front v] layer" + System.lineSeparator() +
+                "go [forward v] (1) layers" + System.lineSeparator() +
+                "[/scratchblocks]" + System.lineSeparator(),result);
     }
 
     @Test
@@ -162,17 +361,17 @@ public class ScratchBlocksVisitorTest {
         program.accept(visitor);
         visitor.end();
         String result = os.toString();
-        assertEquals("[scratchblocks]\n" +
-                "when green flag clicked\n" +
-                "play sound (Meow v) until done\n" +
-                "start sound (Meow v)\n" +
-                "stop all sounds\n" +
-                "change [pitch v] effect by (10)\n" +
-                "set [pitch v] effect to (100)\n" +
-                "clear sound effects\n" +
-                "change volume by (-10)\n" +
-                "set volume to (100) %\n" +
-                "[/scratchblocks]\n", result);
+        assertEquals("[scratchblocks]" + System.lineSeparator() +
+                "when green flag clicked" + System.lineSeparator() +
+                "play sound (Meow v) until done" + System.lineSeparator() +
+                "start sound (Meow v)" + System.lineSeparator() +
+                "stop all sounds" + System.lineSeparator() +
+                "change [pitch v] effect by (10)" + System.lineSeparator() +
+                "set [pitch v] effect to (100)" + System.lineSeparator() +
+                "clear sound effects" + System.lineSeparator() +
+                "change volume by (-10)" + System.lineSeparator() +
+                "set volume to (100) %" + System.lineSeparator() +
+                "[/scratchblocks]" + System.lineSeparator(),result);
     }
 
     @Test
@@ -185,13 +384,13 @@ public class ScratchBlocksVisitorTest {
         program.accept(visitor);
         visitor.end();
         String result = os.toString();
-        assertEquals("[scratchblocks]\n" +
-                "when [loudness v] > (10)\n" +
-                "say (volume)\n" +
-                "change [pan left/right v] effect by (10)\n" +
-                "start sound (Meow v)\n" +
-                "start sound (B Trombone v)\n" +
-                "[/scratchblocks]\n", result);
+        assertEquals("[scratchblocks]" + System.lineSeparator() +
+                "when [loudness v] > (10)" + System.lineSeparator() +
+                "say (volume)" + System.lineSeparator() +
+                "change [pan left/right v] effect by (10)" + System.lineSeparator() +
+                "start sound (Meow v)" + System.lineSeparator() +
+                "start sound (B Trombone v)" + System.lineSeparator() +
+                "[/scratchblocks]" + System.lineSeparator(),result);
     }
 
     @Test
@@ -204,12 +403,12 @@ public class ScratchBlocksVisitorTest {
         program.accept(visitor);
         visitor.end();
         String result = os.toString();
-        assertEquals("[scratchblocks]\n" +
-                "when green flag clicked\n" +
-                "ask [What's your name?] and wait\n" +
-                "set drag mode [draggable v]\n" +
-                "reset timer\n" +
-                "[/scratchblocks]\n", result);
+        assertEquals("[scratchblocks]" + System.lineSeparator() +
+                "when green flag clicked" + System.lineSeparator() +
+                "ask [What's your name?] and wait" + System.lineSeparator() +
+                "set drag mode [draggable v]" + System.lineSeparator() +
+                "reset timer" + System.lineSeparator() +
+                "[/scratchblocks]" + System.lineSeparator(),result);
     }
 
     @Test
@@ -222,20 +421,20 @@ public class ScratchBlocksVisitorTest {
         program.accept(visitor);
         visitor.end();
         String result = os.toString();
-        assertEquals("[scratchblocks]\n" +
-                "when green flag clicked\n" +
-                "set [my variable v] to (0)\n" +
-                "change [my variable v] by (1)\n" +
-                "show variable [my variable v]\n" +
-                "hide variable [my variable v]\n" +
-                "add [thing] to [foo v]\n" +
-                "delete (1) of [foo v]\n" +
-                "delete all of [foo v]\n" +
-                "insert [thing] at (1) of [foo v]\n" +
-                "replace item (1) of [foo v] with [thing]\n" +
-                "show list [foo v]\n" +
-                "hide list [foo v]\n" +
-                "[/scratchblocks]\n", result);
+        assertEquals("[scratchblocks]" + System.lineSeparator() +
+                "when green flag clicked" + System.lineSeparator() +
+                "set [my variable v] to (0)" + System.lineSeparator() +
+                "change [my variable v] by (1)" + System.lineSeparator() +
+                "show variable [my variable v]" + System.lineSeparator() +
+                "hide variable [my variable v]" + System.lineSeparator() +
+                "add [thing] to [foo v]" + System.lineSeparator() +
+                "delete (1) of [foo v]" + System.lineSeparator() +
+                "delete all of [foo v]" + System.lineSeparator() +
+                "insert [thing] at (1) of [foo v]" + System.lineSeparator() +
+                "replace item (1) of [foo v] with [thing]" + System.lineSeparator() +
+                "show list [foo v]" + System.lineSeparator() +
+                "hide list [foo v]" + System.lineSeparator() +
+                "[/scratchblocks]" + System.lineSeparator(),result);
     }
 
     @Test
@@ -248,23 +447,23 @@ public class ScratchBlocksVisitorTest {
         program.accept(visitor);
         visitor.end();
         String result = os.toString();
-        assertEquals("[scratchblocks]\n" +
-                "when green flag clicked\n" +
-                "wait (1) seconds\n" +
-                "repeat (10)\n" +
-                "end\n" +
-                "if <> then\n" +
-                "end\n" +
-                "if <> then\n" +
-                "else\n" +
-                "end\n" +
-                "wait until <>\n" +
-                "repeat until <>\n" +
-                "forever \n" +
-                "end\n" +
-                "end\n" +
-                "stop [all v]\n" +
-                "[/scratchblocks]\n", result);
+        assertEquals("[scratchblocks]" + System.lineSeparator() +
+                "when green flag clicked" + System.lineSeparator() +
+                "wait (1) seconds" + System.lineSeparator() +
+                "repeat (10)" + System.lineSeparator() +
+                "end" + System.lineSeparator() +
+                "if <> then" + System.lineSeparator() +
+                "end" + System.lineSeparator() +
+                "if <> then" + System.lineSeparator() +
+                "else" + System.lineSeparator() +
+                "end" + System.lineSeparator() +
+                "wait until <>" + System.lineSeparator() +
+                "repeat until <>" + System.lineSeparator() +
+                "forever " + System.lineSeparator() +
+                "end" + System.lineSeparator() +
+                "end" + System.lineSeparator() +
+                "stop [all v]" + System.lineSeparator() +
+                "[/scratchblocks]" + System.lineSeparator(),result);
         // TODO: Indentation needs fixing
     }
 
@@ -278,11 +477,11 @@ public class ScratchBlocksVisitorTest {
         program.accept(visitor);
         visitor.end();
         String result = os.toString();
-        assertEquals("[scratchblocks]\n" +
-                "when I receive [message1 v]\n" +
-                "broadcast (message1 v)\n" +
-                "broadcast (message1 v) and wait\n" +
-                "[/scratchblocks]\n", result);
+        assertEquals("[scratchblocks]" + System.lineSeparator() +
+                "when I receive [message1 v]" + System.lineSeparator() +
+                "broadcast (message1 v)" + System.lineSeparator() +
+                "broadcast (message1 v) and wait" + System.lineSeparator() +
+                "[/scratchblocks]" + System.lineSeparator(),result);
     }
 
     @Test
@@ -295,12 +494,12 @@ public class ScratchBlocksVisitorTest {
         program.accept(visitor);
         visitor.end();
         String result = os.toString();
-        assertEquals("[scratchblocks]\n" +
-                "when I start as a clone \n" +
-                "create clone of (myself v)\n" +
-                "create clone of (Fairy v)\n" +
-                "delete this clone \n" +
-                "[/scratchblocks]\n", result);
+        assertEquals("[scratchblocks]" + System.lineSeparator() +
+                "when I start as a clone " + System.lineSeparator() +
+                "create clone of (myself v)" + System.lineSeparator() +
+                "create clone of (Fairy v)" + System.lineSeparator() +
+                "delete this clone " + System.lineSeparator() +
+                "[/scratchblocks]" + System.lineSeparator(),result);
     }
 
     @Test
@@ -313,16 +512,16 @@ public class ScratchBlocksVisitorTest {
         program.accept(visitor);
         visitor.end();
         String result = os.toString();
-        assertEquals("[scratchblocks]\n" +
-                "when backdrop switches to [backdrop1 v]\n" +
-                "switch backdrop to (backdrop1 v)\n" +
-                "switch backdrop to (Witch House v)\n" +
-                "switch backdrop to (next backdrop v)\n" +
-                "switch backdrop to (previous backdrop v)\n" +
-                "switch backdrop to (random backdrop v)\n" +
-                "say ([backdrop # v] of (Stage v)?)\n" +
-                "say ([backdrop name v] of (Stage v)?)\n" +
-                "[/scratchblocks]\n", result);
+        assertEquals("[scratchblocks]" + System.lineSeparator() +
+                "when backdrop switches to [backdrop1 v]" + System.lineSeparator() +
+                "switch backdrop to (backdrop1 v)" + System.lineSeparator() +
+                "switch backdrop to (Witch House v)" + System.lineSeparator() +
+                "switch backdrop to (next backdrop v)" + System.lineSeparator() +
+                "switch backdrop to (previous backdrop v)" + System.lineSeparator() +
+                "switch backdrop to (random backdrop v)" + System.lineSeparator() +
+                "say ([backdrop # v] of (Stage v)?)" + System.lineSeparator() +
+                "say ([backdrop name v] of (Stage v)?)" + System.lineSeparator() +
+                "[/scratchblocks]" + System.lineSeparator(),result);
     }
 
     @Test
@@ -335,11 +534,11 @@ public class ScratchBlocksVisitorTest {
         program.accept(visitor);
         visitor.end();
         String result = os.toString();
-        assertEquals("[scratchblocks]\n" +
-                "when [timer v] > (10)\n" +
-                "say (timer) for (timer) seconds\n" +
-                "reset timer\n" +
-                "[/scratchblocks]\n", result);
+        assertEquals("[scratchblocks]" + System.lineSeparator() +
+                "when [timer v] > (10)" + System.lineSeparator() +
+                "say (timer) for (timer) seconds" + System.lineSeparator() +
+                "reset timer" + System.lineSeparator() +
+                "[/scratchblocks]" + System.lineSeparator(),result);
     }
 
     @Test
@@ -352,18 +551,18 @@ public class ScratchBlocksVisitorTest {
         program.accept(visitor);
         visitor.end();
         String result = os.toString();
-        assertEquals("[scratchblocks]\n" +
-                "when [timer v] > (my variable)\n" +
-                "set [my variable v] to (0)\n" +
-                "\n" +
-                "when green flag clicked\n" +
-                "set [my variable v] to (60)\n" +
-                "forever \n" +
-                "say (timer) for (2) seconds\n" +
-                "say (my variable) for (2) seconds\n" +
-                "change [my variable v] by (1)\n" +
-                "end\n" +
-                "[/scratchblocks]\n", result);
+        assertEquals("[scratchblocks]" + System.lineSeparator() +
+                "when [timer v] > (my variable)" + System.lineSeparator() +
+                "set [my variable v] to (0)" + System.lineSeparator() +
+                "" + System.lineSeparator() +
+                "when green flag clicked" + System.lineSeparator() +
+                "set [my variable v] to (60)" + System.lineSeparator() +
+                "forever " + System.lineSeparator() +
+                "say (timer) for (2) seconds" + System.lineSeparator() +
+                "say (my variable) for (2) seconds" + System.lineSeparator() +
+                "change [my variable v] by (1)" + System.lineSeparator() +
+                "end" + System.lineSeparator() +
+                "[/scratchblocks]" + System.lineSeparator(),result);
     }
 
     @Test
@@ -376,13 +575,13 @@ public class ScratchBlocksVisitorTest {
         program.accept(visitor);
         visitor.end();
         String result = os.toString();
-        assertEquals("[scratchblocks]\n" +
-                "when green flag clicked\n" +
-                "set [my variable v] to (0)\n" +
-                "\n" +
-                "when [timer v] > ([abs v] of (my variable))\n" +
-                "say [Hello!]\n" +
-                "[/scratchblocks]\n", result);
+        assertEquals("[scratchblocks]" + System.lineSeparator() +
+                "when green flag clicked" + System.lineSeparator() +
+                "set [my variable v] to (0)" + System.lineSeparator() +
+                "" + System.lineSeparator() +
+                "when [timer v] > ([abs v] of (my variable))" + System.lineSeparator() +
+                "say [Hello!]" + System.lineSeparator() +
+                "[/scratchblocks]" + System.lineSeparator(),result);
     }
 
     @Test
@@ -395,30 +594,135 @@ public class ScratchBlocksVisitorTest {
         program.accept(visitor);
         visitor.end();
         String result = os.toString();
-        assertEquals("[scratchblocks]\n" +
-                "when green flag clicked\n" +
-                "set [x v] to (0)\n" +
-                "set [y v] to (0)\n" +
-                "set [z v] to ((x)+(y))\n" +
-                "say (z)\n" +
-                "set [z v] to ((x)-(y))\n" +
-                "say (z)\n" +
-                "set [z v] to ((x)*(y))\n" +
-                "say (z)\n" +
-                "set [z v] to ((x)/(y))\n" +
-                "say (z)\n" +
-                "set [z v] to (round (x))\n" +
-                "say (z)\n" +
-                "set [z v] to (pick random (1) to (10))\n" +
-                "say (z)\n" +
-                "set [z v] to ((x) mod (y))\n" +
-                "say (z)\n" +
-                "set [z v] to ([abs v] of (x))\n" +
-                "say (z)\n" +
-                "set [z v] to (((x)-(z))+([abs v] of (x)))\n" +
-                "say (z)\n" +
-                "[/scratchblocks]\n", result);
+        assertEquals("[scratchblocks]" + System.lineSeparator() +
+                "when green flag clicked" + System.lineSeparator() +
+                "set [x v] to (0)" + System.lineSeparator() +
+                "set [y v] to (0)" + System.lineSeparator() +
+                "set [z v] to ((x)+(y))" + System.lineSeparator() +
+                "say (z)" + System.lineSeparator() +
+                "set [z v] to ((x)-(y))" + System.lineSeparator() +
+                "say (z)" + System.lineSeparator() +
+                "set [z v] to ((x)*(y))" + System.lineSeparator() +
+                "say (z)" + System.lineSeparator() +
+                "set [z v] to ((x)/(y))" + System.lineSeparator() +
+                "say (z)" + System.lineSeparator() +
+                "set [z v] to (round (x))" + System.lineSeparator() +
+                "say (z)" + System.lineSeparator() +
+                "set [z v] to (pick random (1) to (10))" + System.lineSeparator() +
+                "say (z)" + System.lineSeparator() +
+                "set [z v] to ((x) mod (y))" + System.lineSeparator() +
+                "say (z)" + System.lineSeparator() +
+                "set [z v] to ([abs v] of (x))" + System.lineSeparator() +
+                "say (z)" + System.lineSeparator() +
+                "set [z v] to (((x)-(z))+([abs v] of (x)))" + System.lineSeparator() +
+                "say (z)" + System.lineSeparator() +
+                "[/scratchblocks]" + System.lineSeparator(),result);
     }
+
+    @Test
+    public void testTouchingAllBlocks() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/scratchblocks/touchingallblocks.json");
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        PrintStream ps = new PrintStream(os);
+        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(ps);
+        visitor.begin();
+        program.accept(visitor);
+        visitor.end();
+        String result = os.toString();
+        assertEquals("[scratchblocks]" + System.lineSeparator() +
+                "define block name [number or text] <boolean>" + System.lineSeparator() +
+                "wait until <touching (my variable) ?>" + System.lineSeparator() +
+                "wait until <touching (x position) ?>" + System.lineSeparator() +
+                "wait until <touching (direction) ?>" + System.lineSeparator() +
+                "wait until <touching (costume [number v]) ?>" + System.lineSeparator() +
+                "wait until <touching (size) ?>" + System.lineSeparator() +
+                "wait until <touching (backdrop [number v]) ?>" + System.lineSeparator() +
+                "wait until <touching (volume) ?>" + System.lineSeparator() +
+                "wait until <touching <touching (mouse-pointer v) ?> ?>" + System.lineSeparator() +
+                "wait until <touching <touching color [#c9dae2] ?> ?>" + System.lineSeparator() +
+                "wait until <touching <color [#8d6b27] is touching [#805a3c] ?> ?>" + System.lineSeparator() +
+                "wait until <touching (distance to (mouse-pointer v)) ?>" + System.lineSeparator() +
+                "wait until <touching (answer) ?>" + System.lineSeparator() +
+                "wait until <touching <key (space v) pressed?> ?>" + System.lineSeparator() +
+                "wait until <touching <mouse down?> ?>" + System.lineSeparator() +
+                "wait until <touching (mouse x) ?>" + System.lineSeparator() +
+                "wait until <touching (mouse y) ?>" + System.lineSeparator() +
+                "wait until <touching (loudness) ?>" + System.lineSeparator() +
+                "wait until <touching (timer) ?>" + System.lineSeparator() +
+                "wait until <touching ([backdrop # v] of (Stage v)?) ?>" + System.lineSeparator() +
+                "wait until <touching (current (year v)) ?>" + System.lineSeparator() +
+                "wait until <touching (days since 2000) ?>" + System.lineSeparator() +
+                "wait until <touching (username) ?>" + System.lineSeparator() +
+                "wait until <touching ([]+[]) ?>" + System.lineSeparator() +
+                "wait until <touching (pick random (1) to (10)) ?>" + System.lineSeparator() +
+                "wait until <touching <[] > (50)> ?>" + System.lineSeparator() +
+                "wait until <touching <<> and <>> ?>" + System.lineSeparator() +
+                "wait until <touching (join [apple ][banana]) ?>" + System.lineSeparator() +
+                "wait until <touching <[apple] contains [a]?> ?>" + System.lineSeparator() +
+                "wait until <touching ([] mod []) ?>" + System.lineSeparator() +
+                "wait until <touching ([abs v] of []) ?>" + System.lineSeparator() +
+                "wait until <touching (my variable) ?>" + System.lineSeparator() +
+                "wait until <touching (listy) ?>" + System.lineSeparator() +
+                "wait until <touching (item (1) of [listy v]) ?>" + System.lineSeparator() +
+                "wait until <touching (item # of [thing] in [listy v]) ?>" + System.lineSeparator() +
+                "wait until <touching (length of [listy v]) ?>" + System.lineSeparator() +
+                "wait until <touching <[listy v] contains [thing] ?> ?>" + System.lineSeparator() +
+                "wait until <touching (number or text) ?>" + System.lineSeparator() +
+                "wait until <touching <boolean> ?>" + System.lineSeparator() +
+                "[/scratchblocks]" + System.lineSeparator(),result);
+    }
+
+    @Test
+    public void testAskAllBlocks() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/scratchblocks/askallblocks.json");
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        PrintStream ps = new PrintStream(os);
+        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(ps);
+        visitor.begin();
+        program.accept(visitor);
+        visitor.end();
+        String result = os.toString();
+        assertEquals("[scratchblocks]" + System.lineSeparator() +
+                "define block name [number or text] <boolean>" + System.lineSeparator() +
+                "ask [What's your name?] and wait" + System.lineSeparator() +
+                "ask (x position) and wait" + System.lineSeparator() +
+                "ask (direction) and wait" + System.lineSeparator() +
+                "ask (costume [number v]) and wait" + System.lineSeparator() +
+                "ask (backdrop [number v]) and wait" + System.lineSeparator() +
+                "ask (size) and wait" + System.lineSeparator() +
+                "ask (volume) and wait" + System.lineSeparator() +
+                "ask <touching (mouse-pointer v) ?> and wait" + System.lineSeparator() +
+                "ask <touching color [#c9dae2] ?> and wait" + System.lineSeparator() +
+                "ask <color [#8d6b27] is touching [#805a3c] ?> and wait" + System.lineSeparator() +
+                "ask (distance to (mouse-pointer v)) and wait" + System.lineSeparator() +
+                "ask (answer) and wait" + System.lineSeparator() +
+                "ask <key (space v) pressed?> and wait" + System.lineSeparator() +
+                "ask <mouse down?> and wait" + System.lineSeparator() +
+                "ask (mouse x) and wait" + System.lineSeparator() +
+                "ask (loudness) and wait" + System.lineSeparator() +
+                "ask (timer) and wait" + System.lineSeparator() +
+                "ask ([backdrop # v] of (Stage v)?) and wait" + System.lineSeparator() +
+                "ask (current (year v)) and wait" + System.lineSeparator() +
+                "ask (days since 2000) and wait" + System.lineSeparator() +
+                "ask (username) and wait" + System.lineSeparator() +
+                "ask ([]+[]) and wait" + System.lineSeparator() +
+                "ask (pick random (1) to (10)) and wait" + System.lineSeparator() +
+                "ask <[] > (50)> and wait" + System.lineSeparator() +
+                "ask <<> and <>> and wait" + System.lineSeparator() +
+                "ask (join [apple ][banana]) and wait" + System.lineSeparator() +
+                "ask ([] mod []) and wait" + System.lineSeparator() +
+                "ask ([abs v] of []) and wait" + System.lineSeparator() +
+                "ask (my variable) and wait" + System.lineSeparator() +
+                "ask (listy) and wait" + System.lineSeparator() +
+                "ask (item (1) of [listy v]) and wait" + System.lineSeparator() +
+                "ask (item # of [thing] in [listy v]) and wait" + System.lineSeparator() +
+                "ask (length of [listy v]) and wait" + System.lineSeparator() +
+                "ask <[listy v] contains [thing] ?> and wait" + System.lineSeparator() +
+                "ask <boolean> and wait" + System.lineSeparator() +
+                "ask (number or text) and wait" + System.lineSeparator() +
+                "[/scratchblocks]" + System.lineSeparator(),result);
+    }
+
 
     @Test
     public void testBooleanBlocks() throws IOException, ParsingException {
@@ -430,24 +734,24 @@ public class ScratchBlocksVisitorTest {
         program.accept(visitor);
         visitor.end();
         String result = os.toString();
-        assertEquals("[scratchblocks]\n" +
-                "when green flag clicked\n" +
-                "set [x v] to (0)\n" +
-                "set [y v] to (0)\n" +
-                "if <(x) > (50)> then\n" +
-                "end\n" +
-                "if <(x) < (y)> then\n" +
-                "end\n" +
-                "if <[Hello] = (x)> then\n" +
-                "end\n" +
-                "if <not <(x) > (y)>> then\n" +
-                "end\n" +
-                "if <<(x) > (50)> and <(x) > (y)>> then\n" +
-                "end\n" +
-                "if <<(x) > (50)> or <(x) > (y)>> then\n" +
-                "end\n" +
-                "say <not <(x) > (y)>>\n" +
-                "[/scratchblocks]\n", result);
+        assertEquals("[scratchblocks]" + System.lineSeparator() +
+                "when green flag clicked" + System.lineSeparator() +
+                "set [x v] to (0)" + System.lineSeparator() +
+                "set [y v] to (0)" + System.lineSeparator() +
+                "if <(x) > (50)> then" + System.lineSeparator() +
+                "end" + System.lineSeparator() +
+                "if <(x) < (y)> then" + System.lineSeparator() +
+                "end" + System.lineSeparator() +
+                "if <[Hello] = (x)> then" + System.lineSeparator() +
+                "end" + System.lineSeparator() +
+                "if <not <(x) > (y)>> then" + System.lineSeparator() +
+                "end" + System.lineSeparator() +
+                "if <<(x) > (50)> and <(x) > (y)>> then" + System.lineSeparator() +
+                "end" + System.lineSeparator() +
+                "if <<(x) > (50)> or <(x) > (y)>> then" + System.lineSeparator() +
+                "end" + System.lineSeparator() +
+                "say <not <(x) > (y)>>" + System.lineSeparator() +
+                "[/scratchblocks]" + System.lineSeparator(),result);
     }
 
     @Test
@@ -460,16 +764,16 @@ public class ScratchBlocksVisitorTest {
         program.accept(visitor);
         visitor.end();
         String result = os.toString();
-        assertEquals("[scratchblocks]\n" +
-                "when green flag clicked\n" +
-                "say (join [apple ][banana])\n" +
-                "set [x v] to (letter (1) of (x))\n" +
-                "say (length of (x))\n" +
-                "ask [What's your name?] and wait\n" +
-                "if <(answer) contains [a]?> then\n" +
-                "say [Hello!]\n" +
-                "end\n" +
-                "[/scratchblocks]\n", result);
+        assertEquals("[scratchblocks]" + System.lineSeparator() +
+                "when green flag clicked" + System.lineSeparator() +
+                "say (join [apple ][banana])" + System.lineSeparator() +
+                "set [x v] to (letter (1) of (x))" + System.lineSeparator() +
+                "say (length of (x))" + System.lineSeparator() +
+                "ask [What's your name?] and wait" + System.lineSeparator() +
+                "if <(answer) contains [a]?> then" + System.lineSeparator() +
+                "say [Hello!]" + System.lineSeparator() +
+                "end" + System.lineSeparator() +
+                "[/scratchblocks]" + System.lineSeparator(),result);
     }
 
     @Test
@@ -482,28 +786,28 @@ public class ScratchBlocksVisitorTest {
         program.accept(visitor);
         visitor.end();
         String result = os.toString();
-        assertEquals("[scratchblocks]\n" +
-                "when green flag clicked\n" +
-                "say (x position)\n" +
-                "say (y position)\n" +
-                "say (direction)\n" +
-                "say (costume [number v])\n" +
-                "say (answer)\n" +
-                "say (timer)\n" +
-                "say (backdrop [number v])\n" +
-                "say (size)\n" +
-                "say (volume)\n" +
-                "say (username)\n" +
-                "say (loudness)\n" +
-                "say (distance to (mouse-pointer v))\n" +
-                "say (current (second v)\n" +
-                "say (current (year v)\n" +
-                "say (mouse x)\n" +
-                "say (mouse y)\n" +
-                "say (days since 2000)\n" +
-                "say ([volume v] of (Stage v)?)\n" +
-                "say ([x position v] of (Prince v)?)\n" +
-                "[/scratchblocks]\n", result);
+        assertEquals("[scratchblocks]" + System.lineSeparator() +
+                "when green flag clicked" + System.lineSeparator() +
+                "say (x position)" + System.lineSeparator() +
+                "say (y position)" + System.lineSeparator() +
+                "say (direction)" + System.lineSeparator() +
+                "say (costume [number v])" + System.lineSeparator() +
+                "say (answer)" + System.lineSeparator() +
+                "say (timer)" + System.lineSeparator() +
+                "say (backdrop [number v])" + System.lineSeparator() +
+                "say (size)" + System.lineSeparator() +
+                "say (volume)" + System.lineSeparator() +
+                "say (username)" + System.lineSeparator() +
+                "say (loudness)" + System.lineSeparator() +
+                "say (distance to (mouse-pointer v))" + System.lineSeparator() +
+                "say (current (second v))" + System.lineSeparator() +
+                "say (current (year v))" + System.lineSeparator() +
+                "say (mouse x)" + System.lineSeparator() +
+                "say (mouse y)" + System.lineSeparator() +
+                "say (days since 2000)" + System.lineSeparator() +
+                "say ([volume v] of (Stage v)?)" + System.lineSeparator() +
+                "say ([x position v] of (Prince v)?)" + System.lineSeparator() +
+                "[/scratchblocks]" + System.lineSeparator(),result);
     }
 
     @Test
@@ -516,14 +820,14 @@ public class ScratchBlocksVisitorTest {
         program.accept(visitor);
         visitor.end();
         String result = os.toString();
-        assertEquals("[scratchblocks]\n" +
-                "when green flag clicked\n" +
-                "wait until <touching (mouse-pointer v) ?>\n" +
-                "wait until <touching color [#fb9ff6] ?>\n" +
-                "wait until <color [#19a6d1] is touching [#7daf7d] ?>\n" +
-                "wait until <key (space v) pressed?>\n" +
-                "wait until <mouse down?>\n" +
-                "[/scratchblocks]\n", result);
+        assertEquals("[scratchblocks]" + System.lineSeparator() +
+                "when green flag clicked" + System.lineSeparator() +
+                "wait until <touching (mouse-pointer v) ?>" + System.lineSeparator() +
+                "wait until <touching color [#fb9ff6] ?>" + System.lineSeparator() +
+                "wait until <color [#19a6d1] is touching [#7daf7d] ?>" + System.lineSeparator() +
+                "wait until <key (space v) pressed?>" + System.lineSeparator() +
+                "wait until <mouse down?>" + System.lineSeparator() +
+                "[/scratchblocks]" + System.lineSeparator(),result);
     }
 
     @Test
@@ -536,15 +840,15 @@ public class ScratchBlocksVisitorTest {
         program.accept(visitor);
         visitor.end();
         String result = os.toString();
-        assertEquals("[scratchblocks]\n" +
-                "when green flag clicked\n" +
-                "say (foo)\n" +
-                "add [thing] to [foo v]\n" +
-                "say (item (1) of [foo v])\n" +
-                "say (item # of [thing] in [foo v])\n" +
-                "say (length of [foo v])\n" +
-                "wait until <[foo v] contains [thing] ?>\n" +
-                "[/scratchblocks]\n", result);
+        assertEquals("[scratchblocks]" + System.lineSeparator() +
+                "when green flag clicked" + System.lineSeparator() +
+                "say (foo)" + System.lineSeparator() +
+                "add [thing] to [foo v]" + System.lineSeparator() +
+                "say (item (1) of [foo v])" + System.lineSeparator() +
+                "say (item # of [thing] in [foo v])" + System.lineSeparator() +
+                "say (length of [foo v])" + System.lineSeparator() +
+                "wait until <[foo v] contains [thing] ?>" + System.lineSeparator() +
+                "[/scratchblocks]" + System.lineSeparator(),result);
     }
 
     @Test
@@ -557,10 +861,10 @@ public class ScratchBlocksVisitorTest {
         program.accept(visitor);
         visitor.end();
         String result = os.toString();
-        assertEquals("[scratchblocks]\n" +
-                "define fun_noargs\n" +
-                "say [Hello!]\n" +
-                "[/scratchblocks]\n", result);
+        assertEquals("[scratchblocks]" + System.lineSeparator() +
+                "define fun_noargs" + System.lineSeparator() +
+                "say [Hello!]" + System.lineSeparator() +
+                "[/scratchblocks]" + System.lineSeparator(),result);
     }
 
     @Test
@@ -573,10 +877,10 @@ public class ScratchBlocksVisitorTest {
         program.accept(visitor);
         visitor.end();
         String result = os.toString();
-        assertEquals("[scratchblocks]\n" +
-                "define fun_numarg [num_param]\n" +
-                "say (num_param)\n" +
-                "[/scratchblocks]\n", result);
+        assertEquals("[scratchblocks]" + System.lineSeparator() +
+                "define fun_numarg [num_param]" + System.lineSeparator() +
+                "say (num_param)" + System.lineSeparator() +
+                "[/scratchblocks]" + System.lineSeparator(),result);
     }
 
     @Test
@@ -589,10 +893,10 @@ public class ScratchBlocksVisitorTest {
         program.accept(visitor);
         visitor.end();
         String result = os.toString();
-        assertEquals("[scratchblocks]\n" +
-                "define fun_numarg <boolean_param>\n" +
-                "say <boolean_param>\n" +
-                "[/scratchblocks]\n", result);
+        assertEquals("[scratchblocks]" + System.lineSeparator() +
+                "define fun_numarg <boolean_param>" + System.lineSeparator() +
+                "say <boolean_param>" + System.lineSeparator() +
+                "[/scratchblocks]" + System.lineSeparator(),result);
     }
 
     @Test
@@ -605,11 +909,11 @@ public class ScratchBlocksVisitorTest {
         program.accept(visitor);
         visitor.end();
         String result = os.toString();
-        assertEquals("[scratchblocks]\n" +
-                "define fun_numarg <boolean_param> [num_param] label\n" +
-                "say <boolean_param>\n" +
-                "say (num_param)\n" +
-                "[/scratchblocks]\n", result);
+        assertEquals("[scratchblocks]" + System.lineSeparator() +
+                "define fun_numarg <boolean_param> [num_param] label" + System.lineSeparator() +
+                "say <boolean_param>" + System.lineSeparator() +
+                "say (num_param)" + System.lineSeparator() +
+                "[/scratchblocks]" + System.lineSeparator(),result);
     }
 
     @Test
@@ -622,14 +926,14 @@ public class ScratchBlocksVisitorTest {
         program.accept(visitor);
         visitor.end();
         String result = os.toString();
-        assertEquals("[scratchblocks]\n" +
-                "define fun_numarg <boolean_param> [num_param] label\n" +
-                "say <boolean_param>\n" +
-                "say (num_param)\n" +
-                "\n" +
-                "when green flag clicked\n" +
-                "fun_numarg <mouse down?> (username) label\n" +
-                "[/scratchblocks]\n", result);
+        assertEquals("[scratchblocks]" + System.lineSeparator() +
+                "define fun_numarg <boolean_param> [num_param] label" + System.lineSeparator() +
+                "say <boolean_param>" + System.lineSeparator() +
+                "say (num_param)" + System.lineSeparator() +
+                "" + System.lineSeparator() +
+                "when green flag clicked" + System.lineSeparator() +
+                "fun_numarg <mouse down?> (username) label" + System.lineSeparator() +
+                "[/scratchblocks]" + System.lineSeparator(),result);
     }
 
     @Test
@@ -642,19 +946,19 @@ public class ScratchBlocksVisitorTest {
         program.accept(visitor);
         visitor.end();
         String result = os.toString();
-        assertEquals("[scratchblocks]\n" +
-                "erase all\n" +
-                "stamp\n" +
-                "pen down\n" +
-                "pen up\n" +
-                "set pen color to [#23bb7]\n" +
-                "change pen (color v) by (10)\n" +
-                "change pen (brightness v) by (10)\n" +
-                "set pen (color v) to (50)\n" +
-                "set pen (saturation v) to (50)\n" +
-                "change pen size by (1)\n" +
-                "set pen size to (1)\n" +
-                "[/scratchblocks]\n", result);
+        assertEquals("[scratchblocks]" + System.lineSeparator() +
+                "erase all" + System.lineSeparator() +
+                "stamp" + System.lineSeparator() +
+                "pen down" + System.lineSeparator() +
+                "pen up" + System.lineSeparator() +
+                "set pen color to [#23bb7]" + System.lineSeparator() +
+                "change pen (color v) by (10)" + System.lineSeparator() +
+                "change pen (brightness v) by (10)" + System.lineSeparator() +
+                "set pen (color v) to (50)" + System.lineSeparator() +
+                "set pen (saturation v) to (50)" + System.lineSeparator() +
+                "change pen size by (1)" + System.lineSeparator() +
+                "set pen size to (1)" + System.lineSeparator() +
+                "[/scratchblocks]" + System.lineSeparator(),result);
     }
 
     @Test
@@ -667,11 +971,11 @@ public class ScratchBlocksVisitorTest {
         program.accept(visitor);
         visitor.end();
         String result = os.toString();
-        assertEquals("[scratchblocks]\n" +
-                "repeat (10)\n" +
-                "say [Hello!] for (2) seconds\n" +
-                "end\n" +
-                "[/scratchblocks]\n", result);
+        assertEquals("[scratchblocks]" + System.lineSeparator() +
+                "repeat (10)" + System.lineSeparator() +
+                "say [Hello!] for (2) seconds" + System.lineSeparator() +
+                "end" + System.lineSeparator() +
+                "[/scratchblocks]" + System.lineSeparator(),result);
     }
 
     @Test
@@ -684,13 +988,13 @@ public class ScratchBlocksVisitorTest {
         program.accept(visitor);
         visitor.end();
         String result = os.toString();
-        assertEquals("[scratchblocks]\n" +
-                "show\n" +
-                "\n" +
-                "say [Hallo!] for (2) seconds\n" +
-                "\n" +
-                "hide\n" +
-                "[/scratchblocks]\n", result);
+        assertEquals("[scratchblocks]" + System.lineSeparator() +
+                "show" + System.lineSeparator() +
+                "" + System.lineSeparator() +
+                "say [Hallo!] for (2) seconds" + System.lineSeparator() +
+                "" + System.lineSeparator() +
+                "hide" + System.lineSeparator() +
+                "[/scratchblocks]" + System.lineSeparator(),result);
     }
 
     @Test
@@ -703,14 +1007,14 @@ public class ScratchBlocksVisitorTest {
         program.accept(visitor);
         visitor.end();
         String result = os.toString();
-        assertEquals("[scratchblocks]\n" +
-                "when green flag clicked\n" +
-                "if <key (space v) pressed?> then\n" +
-                "stop [this script v] \n" +
-                "else\n" +
-                "stop [other scripts in sprite v] \n" +
-                "end\n" +
-                "[/scratchblocks]\n", result);
+        assertEquals("[scratchblocks]" + System.lineSeparator() +
+                "when green flag clicked" + System.lineSeparator() +
+                "if <key (space v) pressed?> then" + System.lineSeparator() +
+                "stop [this script v] " + System.lineSeparator() +
+                "else" + System.lineSeparator() +
+                "stop [other scripts in sprite v] " + System.lineSeparator() +
+                "end" + System.lineSeparator() +
+                "[/scratchblocks]" + System.lineSeparator(),result);
     }
 
     @Test
@@ -723,12 +1027,12 @@ public class ScratchBlocksVisitorTest {
         program.accept(visitor);
         visitor.end();
         String result = os.toString();
-        assertEquals("[scratchblocks]\n" +
-                "when this sprite clicked\n" +
-                "set [my variable v] to [message 1]\n" +
-                "broadcast (my variable)\n" +
-                "broadcast (message1 v)\n" +
-                "[/scratchblocks]\n", result);
+        assertEquals("[scratchblocks]" + System.lineSeparator() +
+                "when this sprite clicked" + System.lineSeparator() +
+                "set [my variable v] to [message 1]" + System.lineSeparator() +
+                "broadcast (my variable)" + System.lineSeparator() +
+                "broadcast (message1 v)" + System.lineSeparator() +
+                "[/scratchblocks]" + System.lineSeparator(),result);
     }
 
     @Test
@@ -741,29 +1045,29 @@ public class ScratchBlocksVisitorTest {
         program.accept(visitor);
         visitor.end();
         String result = os.toString();
-        assertEquals("[scratchblocks]\n" +
-                "when green flag clicked\n" +
-                "go to (my variable)\n" +
-                "glide (1) secs to (my variable)\n" +
-                "point towards (my variable)\n" +
-                "switch costume to (my variable)\n" +
-                "switch backdrop to (my variable)\n" +
-                "play sound (my variable) until done\n" +
-                "start sound (my variable)\n" +
-                "broadcast (my variable)\n" +
-                "broadcast (my variable) and wait\n" +
-                "create clone of (my variable)\n" +
-                "wait until <key (my variable) pressed?>\n" +
-                "wait until <touching (my variable) ?>\n" +
-                "say ([backdrop # v] of (my variable)?)\n" +
-                "say (distance to (my variable))\n" +
-                "wait until <touching color (my variable) ?>\n" +
-                "wait until <color [#ffd824] is touching (my variable) ?>\n" +
-                "ask (my variable) and wait\n" +
-                "set pen color to (my variable)\n" +
-                "change pen (my variable) by (10)\n" +
-                "set pen (my variable) to (50)\n" +
-                "[/scratchblocks]\n", result);
+        assertEquals("[scratchblocks]" + System.lineSeparator() +
+                "when green flag clicked" + System.lineSeparator() +
+                "go to (my variable)" + System.lineSeparator() +
+                "glide (1) secs to (my variable)" + System.lineSeparator() +
+                "point towards (my variable)" + System.lineSeparator() +
+                "switch costume to (my variable)" + System.lineSeparator() +
+                "switch backdrop to (my variable)" + System.lineSeparator() +
+                "play sound (my variable) until done" + System.lineSeparator() +
+                "start sound (my variable)" + System.lineSeparator() +
+                "broadcast (my variable)" + System.lineSeparator() +
+                "broadcast (my variable) and wait" + System.lineSeparator() +
+                "create clone of (my variable)" + System.lineSeparator() +
+                "wait until <key (my variable) pressed?>" + System.lineSeparator() +
+                "wait until <touching (my variable) ?>" + System.lineSeparator() +
+                "say ([backdrop # v] of (my variable)?)" + System.lineSeparator() +
+                "say (distance to (my variable))" + System.lineSeparator() +
+                "wait until <touching color (my variable) ?>" + System.lineSeparator() +
+                "wait until <color [#ffd824] is touching (my variable) ?>" + System.lineSeparator() +
+                "ask (my variable) and wait" + System.lineSeparator() +
+                "set pen color to (my variable)" + System.lineSeparator() +
+                "change pen (my variable) by (10)" + System.lineSeparator() +
+                "set pen (my variable) to (50)" + System.lineSeparator() +
+                "[/scratchblocks]" + System.lineSeparator(),result);
     }
 
     @Test
@@ -777,11 +1081,11 @@ public class ScratchBlocksVisitorTest {
         program.accept(visitor);
         visitor.end();
         String output = visitor.getScratchBlocks();
-        assertEquals("[scratchblocks]\n" +
-                "when green flag clicked\n" +
-                "if <<<[] = (50):: #ff0000> and <[] < (50):: #ff0000>> and <[] > (50):: #ff0000>> then // Comparing Literals\n" +
-                "end\n" +
-                "[/scratchblocks]\n", output);
+        assertEquals("[scratchblocks]" + System.lineSeparator() +
+                "when green flag clicked" + System.lineSeparator() +
+                "if <<<[] = (50):: #ff0000> and <[] < (50):: #ff0000>> and <[] > (50):: #ff0000>> then // " + ScratchBlocksVisitor.BUG_NOTE + System.lineSeparator() +
+                "end" + System.lineSeparator() +
+                "[/scratchblocks]" + System.lineSeparator(),output);
     }
 
     @Test
@@ -792,18 +1096,18 @@ public class ScratchBlocksVisitorTest {
         StutteringMovement stuttMovement = new StutteringMovement();
 
         Issue firstIssue = issues.iterator().next();
-        Issue mockIssue = new Issue(stuttMovement, program, firstIssue.getActor(), firstIssue.getScript(), firstIssue.getCodeLocation(), firstIssue.getCodeMetadata());
+        Issue mockIssue = new Issue(stuttMovement, IssueSeverity.HIGH, program, firstIssue.getActor(), firstIssue.getScript(), firstIssue.getCodeLocation(), firstIssue.getCodeMetadata(), new Hint(stuttMovement.getName()));
 
         ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(Arrays.asList(firstIssue, mockIssue));
         visitor.begin();
         program.accept(visitor);
         visitor.end();
         String output = visitor.getScratchBlocks();
-        assertEquals("[scratchblocks]\n" +
-                "when green flag clicked\n" +
-                "if <<<[] = (50):: #ff0000> and <[] < (50)>> and <[] > (50)>> then // Comparing Literals, Stuttering Movement\n" +
-                "end\n" +
-                "[/scratchblocks]\n", output);
+        assertEquals("[scratchblocks]" + System.lineSeparator() +
+                "when green flag clicked" + System.lineSeparator() +
+                "if <<<[] = (50):: #ff0000> and <[] < (50)>> and <[] > (50)>> then // " + ScratchBlocksVisitor.BUG_NOTE + System.lineSeparator() +
+                "end" + System.lineSeparator() +
+                "[/scratchblocks]" + System.lineSeparator(),output);
     }
 
     @Test
@@ -818,10 +1122,10 @@ public class ScratchBlocksVisitorTest {
         issue.getScript().accept(visitor);
         visitor.end();
         String output = visitor.getScratchBlocks();
-        assertEquals("[scratchblocks]\n" +
-                "when [space v] key pressed\n" +
-                "move (10) steps:: #ff0000 // Stuttering Movement\n" +
-                "[/scratchblocks]\n", output);
+        assertEquals("[scratchblocks]" + System.lineSeparator() +
+                "when [space v] key pressed" + System.lineSeparator() +
+                "move (10) steps:: #ff0000 // " + ScratchBlocksVisitor.BUG_NOTE + System.lineSeparator() +
+                "[/scratchblocks]" + System.lineSeparator(),output);
     }
 
     @Test
@@ -837,11 +1141,11 @@ public class ScratchBlocksVisitorTest {
         issue.getScriptOrProcedureDefinition().accept(visitor);
         visitor.end();
         String output = visitor.getScratchBlocks();
-        assertEquals("[scratchblocks]\n" +
-                "define block name [number or text]\n" +
-                "show variable [my variable v]\n" +
-                "block name [text]:: #ff0000 // Endless Recursion\n" +
-                "[/scratchblocks]\n", output);
+        assertEquals("[scratchblocks]" + System.lineSeparator() +
+                "define block name [number or text]" + System.lineSeparator() +
+                "show variable [my variable v]" + System.lineSeparator() +
+                "block name [text]:: #ff0000 // " + ScratchBlocksVisitor.BUG_NOTE + System.lineSeparator() +
+                "[/scratchblocks]" + System.lineSeparator(),output);
     }
 
     @Test
@@ -857,11 +1161,11 @@ public class ScratchBlocksVisitorTest {
         issue.getScriptOrProcedureDefinition().accept(visitor);
         visitor.end();
         String output = visitor.getScratchBlocks();
-        assertEquals("[scratchblocks]\n" +
-                "when green flag clicked\n" +
-                "block name [reed] <>:: #ff0000 // Custom Block With Forever\n" +
-                "say [Hello!] for (2) seconds\n" +
-                "[/scratchblocks]\n", output);
+        assertEquals("[scratchblocks]" + System.lineSeparator() +
+                "when green flag clicked" + System.lineSeparator() +
+                "block name [reed] <>:: #ff0000 // " + ScratchBlocksVisitor.BUG_NOTE + System.lineSeparator() +
+                "say [Hello!] for (2) seconds" + System.lineSeparator() +
+                "[/scratchblocks]" + System.lineSeparator(),output);
     }
 
     @Test
@@ -877,11 +1181,11 @@ public class ScratchBlocksVisitorTest {
         issue.getScriptOrProcedureDefinition().accept(visitor);
         visitor.end();
         String output = visitor.getScratchBlocks();
-        assertEquals("[scratchblocks]\n" +
-                "when green flag clicked\n" +
-                "block name:: #ff0000 // Custom Block with Termination\n" +
-                "change size by (10)\n" +
-                "[/scratchblocks]\n", output);
+        assertEquals("[scratchblocks]" + System.lineSeparator() +
+                "when green flag clicked" + System.lineSeparator() +
+                "block name:: #ff0000 // " + ScratchBlocksVisitor.BUG_NOTE + System.lineSeparator() +
+                "change size by (10)" + System.lineSeparator() +
+                "[/scratchblocks]" + System.lineSeparator(),output);
     }
 
     @Test
@@ -897,9 +1201,9 @@ public class ScratchBlocksVisitorTest {
         issue.getScriptOrProcedureDefinition().accept(visitor);
         visitor.end();
         String output = visitor.getScratchBlocks();
-        assertEquals("[scratchblocks]\n" +
-                "block name [] <>:: #ff0000 // Call Without Definition\n" +
-                "[/scratchblocks]\n", output);
+        assertEquals("[scratchblocks]" + System.lineSeparator() +
+                "block name [] <>:: #ff0000 // " + ScratchBlocksVisitor.BUG_NOTE + System.lineSeparator() +
+                "[/scratchblocks]" + System.lineSeparator(),output);
     }
 
     @Test
@@ -915,10 +1219,10 @@ public class ScratchBlocksVisitorTest {
         issue.getScriptOrProcedureDefinition().accept(visitor);
         visitor.end();
         String output = visitor.getScratchBlocks();
-        assertEquals("[scratchblocks]\n" +
-                "define block name [number or text] [number or text]:: #ff0000 // Ambiguous Parameter Name Used\n" +
-                "wait (number or text) seconds\n" +
-                "[/scratchblocks]\n", output);
+        assertEquals("[scratchblocks]" + System.lineSeparator() +
+                "define block name [number or text] [number or text]:: #ff0000 // " + ScratchBlocksVisitor.BUG_NOTE + System.lineSeparator() +
+                "wait (number or text) seconds" + System.lineSeparator() +
+                "[/scratchblocks]" + System.lineSeparator(),output);
     }
 
     @Test
@@ -934,10 +1238,10 @@ public class ScratchBlocksVisitorTest {
         issue.getScriptOrProcedureDefinition().accept(visitor);
         visitor.end();
         String output = visitor.getScratchBlocks();
-        assertEquals("[scratchblocks]\n" +
-                "define AmbiguousParameters [paramTest] [paramTest]:: #ff0000 // Ambiguous Custom Block Signature\n" +
-                "move (10) steps\n" +
-                "[/scratchblocks]\n", output);
+        assertEquals("[scratchblocks]" + System.lineSeparator() +
+                "define AmbiguousParameters [paramTest] [paramTest]:: #ff0000 // " + ScratchBlocksVisitor.BUG_NOTE + System.lineSeparator() +
+                "move (10) steps" + System.lineSeparator() +
+                "[/scratchblocks]" + System.lineSeparator(),output);
     }
 
     @Test
@@ -953,9 +1257,9 @@ public class ScratchBlocksVisitorTest {
         issue.getScriptOrProcedureDefinition().accept(visitor);
         visitor.end();
         String output = visitor.getScratchBlocks();
-        assertEquals("[scratchblocks]\n" +
-                "<touching color (my variable):: #ff0000 ?> // Expression as touching or color\n" +
-                "[/scratchblocks]\n", output);
+        assertEquals("[scratchblocks]" + System.lineSeparator() +
+                "<touching color (my variable):: #ff0000 ?> // " + ScratchBlocksVisitor.BUG_NOTE + System.lineSeparator() +
+                "[/scratchblocks]" + System.lineSeparator(),output);
     }
 
     @Test
@@ -971,17 +1275,17 @@ public class ScratchBlocksVisitorTest {
         issue.getScriptOrProcedureDefinition().accept(visitor);
         visitor.end();
         String output = visitor.getScratchBlocks();
-        assertEquals("[scratchblocks]\n" +
-                "repeat (10)\n" +
-                "say [Hello!] for (2) seconds\n" +
-                "repeat (10)\n" +
-                "next costume\n" +
-                "end\n" +
-                "forever :: #ff0000 // Forever inside a Loop\n" +
-                "point in direction (90)\n" +
-                "end\n" +
-                "end\n" +
-                "[/scratchblocks]\n", output);
+        assertEquals("[scratchblocks]" + System.lineSeparator() +
+                "repeat (10)" + System.lineSeparator() +
+                "say [Hello!] for (2) seconds" + System.lineSeparator() +
+                "repeat (10)" + System.lineSeparator() +
+                "next costume" + System.lineSeparator() +
+                "end" + System.lineSeparator() +
+                "forever :: #ff0000 // " + ScratchBlocksVisitor.BUG_NOTE + System.lineSeparator() +
+                "point in direction (90)" + System.lineSeparator() +
+                "end" + System.lineSeparator() +
+                "end" + System.lineSeparator() +
+                "[/scratchblocks]" + System.lineSeparator(),output);
     }
 
     @Test
@@ -997,12 +1301,12 @@ public class ScratchBlocksVisitorTest {
         issue.getScriptOrProcedureDefinition().accept(visitor);
         visitor.end();
         String output = visitor.getScratchBlocks();
-        assertEquals("[scratchblocks]\n" +
-                "define block name [car] <boolean>\n" +
-                "if <car:: #ff0000> then // Illegal Parameter Refactor\n" +
-                "move (10) steps\n" +
-                "end\n" +
-                "[/scratchblocks]\n", output);
+        assertEquals("[scratchblocks]" + System.lineSeparator() +
+                "define block name [car] <boolean>" + System.lineSeparator() +
+                "if <car:: #ff0000> then // " + ScratchBlocksVisitor.BUG_NOTE + System.lineSeparator() +
+                "move (10) steps" + System.lineSeparator() +
+                "end" + System.lineSeparator() +
+                "[/scratchblocks]" + System.lineSeparator(),output);
     }
 
     @Test
@@ -1018,11 +1322,11 @@ public class ScratchBlocksVisitorTest {
         issue.getScriptOrProcedureDefinition().accept(visitor);
         visitor.end();
         String output = visitor.getScratchBlocks();
-        assertEquals("[scratchblocks]\n" +
-                "when green flag clicked\n" +
-                "broadcast (received v)\n" +
-                "broadcast (ignored v):: #ff0000 // Message Never Received\n" +
-                "[/scratchblocks]\n", output);
+        assertEquals("[scratchblocks]" + System.lineSeparator() +
+                "when green flag clicked" + System.lineSeparator() +
+                "broadcast (received v)" + System.lineSeparator() +
+                "broadcast (ignored v):: #ff0000 // " + ScratchBlocksVisitor.BUG_NOTE + System.lineSeparator() +
+                "[/scratchblocks]" + System.lineSeparator(),output);
     }
 
     @Test
@@ -1038,10 +1342,10 @@ public class ScratchBlocksVisitorTest {
         issue.getScriptOrProcedureDefinition().accept(visitor);
         visitor.end();
         String output = visitor.getScratchBlocks();
-        assertEquals("[scratchblocks]\n" +
-                "when I receive [message1 v]:: #ff0000 // Message Never Sent\n" +
-                "wait (1) seconds\n" +
-                "[/scratchblocks]\n", output);
+        assertEquals("[scratchblocks]" + System.lineSeparator() +
+                "when I receive [message1 v]:: #ff0000 // " + ScratchBlocksVisitor.BUG_NOTE + System.lineSeparator() +
+                "wait (1) seconds" + System.lineSeparator() +
+                "[/scratchblocks]" + System.lineSeparator(),output);
     }
 
     @Test
@@ -1057,10 +1361,10 @@ public class ScratchBlocksVisitorTest {
         issue.getScriptOrProcedureDefinition().accept(visitor);
         visitor.end();
         String output = visitor.getScratchBlocks();
-        assertEquals("[scratchblocks]\n" +
-                "when backdrop switches to [backdrop1 v]:: #ff0000 // Missing Backdrop Switch\n" +
-                "ask [What's your name?] and wait\n" +
-                "[/scratchblocks]\n", output);
+        assertEquals("[scratchblocks]" + System.lineSeparator() +
+                "when backdrop switches to [backdrop1 v]:: #ff0000 // " + ScratchBlocksVisitor.BUG_NOTE + System.lineSeparator() +
+                "ask [What's your name?] and wait" + System.lineSeparator() +
+                "[/scratchblocks]" + System.lineSeparator(),output);
     }
 
     @Test
@@ -1076,10 +1380,10 @@ public class ScratchBlocksVisitorTest {
         issue.getScriptOrProcedureDefinition().accept(visitor);
         visitor.end();
         String output = visitor.getScratchBlocks();
-        assertEquals("[scratchblocks]\n" +
-                "when I start as a clone :: #ff0000 // Missing Clone Call\n" +
-                "wait (1) seconds\n" +
-                "[/scratchblocks]\n", output);
+        assertEquals("[scratchblocks]" + System.lineSeparator() +
+                "when I start as a clone :: #ff0000 // " + ScratchBlocksVisitor.BUG_NOTE + System.lineSeparator() +
+                "wait (1) seconds" + System.lineSeparator() +
+                "[/scratchblocks]" + System.lineSeparator(),output);
     }
 
     @Test
@@ -1095,11 +1399,11 @@ public class ScratchBlocksVisitorTest {
         issue.getScriptOrProcedureDefinition().accept(visitor);
         visitor.end();
         String output = visitor.getScratchBlocks();
-        assertEquals("[scratchblocks]\n" +
-                "when green flag clicked\n" +
-                "create clone of (myself v)\n" +
-                "create clone of (Anina Dance v):: #ff0000 // Missing Clone Initialization\n" +
-                "[/scratchblocks]\n", output);
+        assertEquals("[scratchblocks]" + System.lineSeparator() +
+                "when green flag clicked" + System.lineSeparator() +
+                "create clone of (myself v)" + System.lineSeparator() +
+                "create clone of (Anina Dance v):: #ff0000 // " + ScratchBlocksVisitor.BUG_NOTE + System.lineSeparator() +
+                "[/scratchblocks]" + System.lineSeparator(),output);
     }
 
     @Test
@@ -1115,11 +1419,11 @@ public class ScratchBlocksVisitorTest {
         issue.getScriptOrProcedureDefinition().accept(visitor);
         visitor.end();
         String output = visitor.getScratchBlocks();
-        assertEquals("[scratchblocks]\n" +
-                "when green flag clicked\n" +
-                "pen down:: #ff0000 // Missing Erase All\n" +
-                "pen up\n" +
-                "[/scratchblocks]\n", output);
+        assertEquals("[scratchblocks]" + System.lineSeparator() +
+                "when green flag clicked" + System.lineSeparator() +
+                "pen down:: #ff0000 // " + ScratchBlocksVisitor.BUG_NOTE + System.lineSeparator() +
+                "pen up" + System.lineSeparator() +
+                "[/scratchblocks]" + System.lineSeparator(),output);
     }
 
     @Test
@@ -1135,10 +1439,10 @@ public class ScratchBlocksVisitorTest {
         issue.getScriptOrProcedureDefinition().accept(visitor);
         visitor.end();
         String output = visitor.getScratchBlocks();
-        assertEquals("[scratchblocks]\n" +
-                "when green flag clicked\n" +
-                "say (meine Variable) for (2) seconds:: #ff0000 // Missing Initialization\n" +
-                "[/scratchblocks]\n", output);
+        assertEquals("[scratchblocks]" + System.lineSeparator() +
+                "when green flag clicked" + System.lineSeparator() +
+                "say (meine Variable) for (2) seconds:: #ff0000 // " + ScratchBlocksVisitor.BUG_NOTE + System.lineSeparator() +
+                "[/scratchblocks]" + System.lineSeparator(),output);
     }
 
     @Test
@@ -1154,12 +1458,12 @@ public class ScratchBlocksVisitorTest {
         issue.getScriptOrProcedureDefinition().accept(visitor);
         visitor.end();
         String output = visitor.getScratchBlocks();
-        assertEquals("[scratchblocks]\n" +
-                "when green flag clicked\n" +
-                "if <<not <touching (mouse-pointer v) ?:: #ff0000>> and <(distance to (mouse-pointer v)) > (50)>> then // Missing Loop\n" +
-                "say [Hallo!] for (2) seconds\n" +
-                "end\n" +
-                "[/scratchblocks]\n", output);
+        assertEquals("[scratchblocks]" + System.lineSeparator() +
+                "when green flag clicked" + System.lineSeparator() +
+                "if <<not <touching (mouse-pointer v) ?:: #ff0000>> and <(distance to (mouse-pointer v)) > (50)>> then // " + ScratchBlocksVisitor.BUG_NOTE + System.lineSeparator() +
+                "say [Hallo!] for (2) seconds" + System.lineSeparator() +
+                "end" + System.lineSeparator() +
+                "[/scratchblocks]" + System.lineSeparator(),output);
     }
 
     @Test
@@ -1175,13 +1479,13 @@ public class ScratchBlocksVisitorTest {
         issue.getScriptOrProcedureDefinition().accept(visitor);
         visitor.end();
         String output = visitor.getScratchBlocks();
-        assertEquals("[scratchblocks]\n" +
-                "when green flag clicked\n" +
-                "pen up:: #ff0000 // Missing Pen Down\n" +
-                "set pen color to [#c63f3f]\n" +
-                "say [Hello!]\n" +
-                "go to (random position v)\n" +
-                "[/scratchblocks]\n", output);
+        assertEquals("[scratchblocks]" + System.lineSeparator() +
+                "when green flag clicked" + System.lineSeparator() +
+                "pen up:: #ff0000 // " + ScratchBlocksVisitor.BUG_NOTE + System.lineSeparator() +
+                "set pen color to [#c63f3f]" + System.lineSeparator() +
+                "say [Hello!]" + System.lineSeparator() +
+                "go to (random position v)" + System.lineSeparator() +
+                "[/scratchblocks]" + System.lineSeparator(),output);
     }
 
     @Test
@@ -1197,12 +1501,12 @@ public class ScratchBlocksVisitorTest {
         issue.getScriptOrProcedureDefinition().accept(visitor);
         visitor.end();
         String output = visitor.getScratchBlocks();
-        assertEquals("[scratchblocks]\n" +
-                "when green flag clicked\n" +
-                "pen down:: #ff0000 // Missing Pen Up\n" +
-                "say [Hello!]\n" +
-                "go to (random position v)\n" +
-                "[/scratchblocks]\n", output);
+        assertEquals("[scratchblocks]" + System.lineSeparator() +
+                "when green flag clicked" + System.lineSeparator() +
+                "pen down:: #ff0000 // " + ScratchBlocksVisitor.BUG_NOTE + System.lineSeparator() +
+                "say [Hello!]" + System.lineSeparator() +
+                "go to (random position v)" + System.lineSeparator() +
+                "[/scratchblocks]" + System.lineSeparator(),output);
     }
 
     @Test
@@ -1218,12 +1522,12 @@ public class ScratchBlocksVisitorTest {
         issue.getScriptOrProcedureDefinition().accept(visitor);
         visitor.end();
         String output = visitor.getScratchBlocks();
-        assertEquals("[scratchblocks]\n" +
-                "when green flag clicked\n" +
-                "repeat until <>:: #ff0000 // Missing Termination\n" +
-                "say [Hello!] for (2) seconds\n" +
-                "end\n" +
-                "[/scratchblocks]\n", output);
+        assertEquals("[scratchblocks]" + System.lineSeparator() +
+                "when green flag clicked" + System.lineSeparator() +
+                "repeat until <>:: #ff0000 // " + ScratchBlocksVisitor.BUG_NOTE + System.lineSeparator() +
+                "say [Hello!] for (2) seconds" + System.lineSeparator() +
+                "end" + System.lineSeparator() +
+                "[/scratchblocks]" + System.lineSeparator(),output);
     }
 
     @Test
@@ -1239,10 +1543,10 @@ public class ScratchBlocksVisitorTest {
         issue.getScriptOrProcedureDefinition().accept(visitor);
         visitor.end();
         String output = visitor.getScratchBlocks();
-        assertEquals("[scratchblocks]\n" +
-                "when green flag clicked\n" +
-                "wait until <>:: #ff0000 // Missing Wait Until Condition\n" +
-                "[/scratchblocks]\n", output);
+        assertEquals("[scratchblocks]" + System.lineSeparator() +
+                "when green flag clicked" + System.lineSeparator() +
+                "wait until <>:: #ff0000 // " + ScratchBlocksVisitor.BUG_NOTE + System.lineSeparator() +
+                "[/scratchblocks]" + System.lineSeparator(),output);
     }
 
     @Test
@@ -1258,13 +1562,13 @@ public class ScratchBlocksVisitorTest {
         issue.getScriptOrProcedureDefinition().accept(visitor);
         visitor.end();
         String output = visitor.getScratchBlocks();
-        assertEquals("[scratchblocks]\n" +
-                "define block name <boolean>\n" +
-                "move (boolean) steps\n" +
-                "if <String:: #ff0000> then // Orphaned Parameter\n" +
-                "say [Hello!] for (2) seconds\n" +
-                "end\n" +
-                "[/scratchblocks]\n", output);
+        assertEquals("[scratchblocks]" + System.lineSeparator() +
+                "define block name <boolean>" + System.lineSeparator() +
+                "move <boolean> steps" + System.lineSeparator() +
+                "if <String:: #ff0000> then // " + ScratchBlocksVisitor.BUG_NOTE + System.lineSeparator() +
+                "say [Hello!] for (2) seconds" + System.lineSeparator() +
+                "end" + System.lineSeparator() +
+                "[/scratchblocks]" + System.lineSeparator(),output);
     }
 
     @Test
@@ -1280,9 +1584,9 @@ public class ScratchBlocksVisitorTest {
         issue.getScriptOrProcedureDefinition().accept(visitor);
         visitor.end();
         String output = visitor.getScratchBlocks();
-        assertEquals("[scratchblocks]\n" +
-                "turn right (boolean:: #ff0000) degrees // Parameter out of Scope\n" +
-                "[/scratchblocks]\n", output);
+        assertEquals("[scratchblocks]" + System.lineSeparator() +
+                "turn right <boolean:: #ff0000> degrees // " + ScratchBlocksVisitor.BUG_NOTE + System.lineSeparator() +
+                "[/scratchblocks]" + System.lineSeparator(),output);
     }
 
     @Test
@@ -1298,10 +1602,10 @@ public class ScratchBlocksVisitorTest {
         issue.getScriptOrProcedureDefinition().accept(visitor);
         visitor.end();
         String output = visitor.getScratchBlocks();
-        assertEquals("[scratchblocks]\n" +
-                "repeat until <(x position) = (50):: #ff0000> // Position Equals Check\n" +
-                "end\n" +
-                "[/scratchblocks]\n", output);
+        assertEquals("[scratchblocks]" + System.lineSeparator() +
+                "repeat until <(x position) = (50):: #ff0000> // " + ScratchBlocksVisitor.BUG_NOTE + System.lineSeparator() +
+                "end" + System.lineSeparator() +
+                "[/scratchblocks]" + System.lineSeparator(),output);
     }
 
     @Test
@@ -1317,11 +1621,11 @@ public class ScratchBlocksVisitorTest {
         issue.getScriptOrProcedureDefinition().accept(visitor);
         visitor.end();
         String output = visitor.getScratchBlocks();
-        assertEquals("[scratchblocks]\n" +
-                "when I start as a clone \n" +
-                "play sound (Meow v) until done\n" +
-                "create clone of (myself v):: #ff0000 // Recursive Cloning\n" +
-                "[/scratchblocks]\n", output);
+        assertEquals("[scratchblocks]" + System.lineSeparator() +
+                "when I start as a clone " + System.lineSeparator() +
+                "play sound (Meow v) until done" + System.lineSeparator() +
+                "create clone of (myself v):: #ff0000 // " + ScratchBlocksVisitor.BUG_NOTE + System.lineSeparator() +
+                "[/scratchblocks]" + System.lineSeparator(),output);
     }
 
 
@@ -1338,9 +1642,9 @@ public class ScratchBlocksVisitorTest {
         issue.getScriptOrProcedureDefinition().accept(visitor);
         visitor.end();
         String output = visitor.getScratchBlocks();
-        assertEquals("[scratchblocks]\n" +
-                "(tryvar:: #ff0000) // Unused Variable\n" +
-                "[/scratchblocks]\n", output);
+        assertEquals("[scratchblocks]" + System.lineSeparator() +
+                "(tryvar:: #ff0000) // " + ScratchBlocksVisitor.BUG_NOTE + System.lineSeparator() +
+                "[/scratchblocks]" + System.lineSeparator(),output);
     }
 
     @Test
@@ -1356,11 +1660,62 @@ public class ScratchBlocksVisitorTest {
         issue.getScriptOrProcedureDefinition().accept(visitor);
         visitor.end();
         String output = visitor.getScratchBlocks();
-        assertEquals("[scratchblocks]\n" +
-                "(the list:: #ff0000 :: list) // Unused Variable\n" +
-                "[/scratchblocks]\n", output);
+        assertEquals("[scratchblocks]" + System.lineSeparator() +
+                "(the list:: #ff0000 :: list) // " + ScratchBlocksVisitor.BUG_NOTE + System.lineSeparator() +
+                "[/scratchblocks]" + System.lineSeparator(), output);
     }
 
+    @Test
+    public void testBuggyListIssueAnnotation() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/scratchblocks/highlightedlist.json");
+        MissingInitialization finder = new MissingInitialization();
+        Set<Issue> issues = finder.check(program);
+        Issue issue = issues.iterator().next();
+
+        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(issue);
+        visitor.begin();
+        visitor.setCurrentActor(issue.getActor());
+        issue.getScriptOrProcedureDefinition().accept(visitor);
+        visitor.end();
+        String output = visitor.getScratchBlocks();
+        assertEquals("[scratchblocks]" + System.lineSeparator() +
+                "when [space v] key pressed" + System.lineSeparator() +
+                "delete (1) of [\uD83C\uDF83 Triple click the numbers below. This is your savecode! Press space to close. \uD83C\uDF83 v]:: #ff0000 // " + ScratchBlocksVisitor.BUG_NOTE + System.lineSeparator() +
+                "[/scratchblocks]" + System.lineSeparator(), output);
+    }
+
+    @Test
+    public void testShowVariableIssueAnnotation() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/scratchblocks/showvariableannotation.json");
+        DeadCode finder = new DeadCode();
+        Set<Issue> issues = finder.check(program);
+
+        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(issues);
+        visitor.begin();
+        program.accept(visitor);
+        visitor.end();
+        String output = visitor.getScratchBlocks();
+        assertEquals("[scratchblocks]" + System.lineSeparator() +
+                "show variable [my variable v]:: #ff0000 // " + ScratchBlocksVisitor.BUG_NOTE + System.lineSeparator() +
+                "[/scratchblocks]" + System.lineSeparator(), output);
+    }
+
+
+    @Test
+    public void testHideVariableIssueAnnotation() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/scratchblocks/hidevariableannotation.json");
+        DeadCode finder = new DeadCode();
+        Set<Issue> issues = finder.check(program);
+
+        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(issues);
+        visitor.begin();
+        program.accept(visitor);
+        visitor.end();
+        String output = visitor.getScratchBlocks();
+        assertEquals("[scratchblocks]" + System.lineSeparator() +
+                "hide variable [my variable v]:: #ff0000 // " + ScratchBlocksVisitor.BUG_NOTE + System.lineSeparator() +
+                "[/scratchblocks]" + System.lineSeparator(), output);
+    }
     // TODO: No working scripts?
     // TODO: SameIdentifierDifferentSprite
 }

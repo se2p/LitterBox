@@ -172,7 +172,7 @@ public class AttributeUseVisitor implements DefinableCollector<Attribute> {
             if (attribute instanceof AttributeFromFixed) {
                 AttributeFromFixed fixedAttribute = (AttributeFromFixed) attribute;
                 FixedAttribute at = fixedAttribute.getAttribute();
-                switch (at) {
+                switch (at.getType()) {
                     case X_POSITION:
                     case Y_POSITION:
                         uses.add(Attribute.positionOf(localIdentifier));

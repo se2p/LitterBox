@@ -34,27 +34,21 @@ import static de.uni_passau.fim.se2.litterbox.ast.Constants.LISTS_KEY;
 import static de.uni_passau.fim.se2.litterbox.ast.Constants.TARGETS_KEY;
 
 public class ListMetadataTest {
-    private static ObjectMapper mapper = new ObjectMapper();
-    private static JsonNode prog;
-    private static JsonNode empty;
-
-    @BeforeAll
-    public static void setUp() throws IOException {
-        File f = new File("./src/test/fixtures/emptyProject.json");
-        empty = mapper.readTree(f);
-        f = new File("./src/test/fixtures/metadata/monitorMeta.json");
-        prog = mapper.readTree(f);
-    }
+    private static final ObjectMapper mapper = new ObjectMapper();
 
     @Test
-    public void testEmptyProgram() {
+    public void testEmptyProgram() throws IOException {
+        File f = new File("./src/test/fixtures/emptyProject.json");
+        JsonNode empty = mapper.readTree(f);
         ListMetadataList monitors = ListMetadataListParser.parse(empty.get(TARGETS_KEY).get(0)
                 .get(LISTS_KEY));
         Assertions.assertEquals(0, monitors.getList().size());
     }
 
     @Test
-    public void testListsProgram() {
+    public void testListsProgram() throws IOException {
+        File f = new File("./src/test/fixtures/metadata/monitorMeta.json");
+        JsonNode prog = mapper.readTree(f);
         ListMetadataList monitors = ListMetadataListParser.parse(prog.get(TARGETS_KEY).get(0)
                 .get(LISTS_KEY));
         Assertions.assertEquals(1, monitors.getList().size());

@@ -32,18 +32,12 @@ import static de.uni_passau.fim.se2.litterbox.ast.Constants.COSTUMES_KEY;
 import static de.uni_passau.fim.se2.litterbox.ast.Constants.TARGETS_KEY;
 
 public class ImageMetadataTest {
-
-    private static ObjectMapper mapper = new ObjectMapper();
-    private static JsonNode empty;
-
-    @BeforeAll
-    public static void setUp() throws IOException {
-        File f = new File("./src/test/fixtures/emptyProject.json");
-        empty = mapper.readTree(f);
-    }
+    private static final ObjectMapper mapper = new ObjectMapper();
 
     @Test
-    public void testEmptyProgram() {
+    public void testEmptyProgram() throws IOException {
+        File f = new File("./src/test/fixtures/emptyProject.json");
+        JsonNode empty = mapper.readTree(f);
         ImageMetadataList meta = ImageMetadataListParser.parse(empty.get(TARGETS_KEY).get(0)
                 .get(COSTUMES_KEY));
         Assertions.assertEquals(1, meta.getList().size());

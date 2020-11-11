@@ -45,8 +45,5 @@ public class ProcedureCount implements MetricExtractor, ScratchVisitor {
     @Override
     public void visit(ProcedureDefinition node) {
         count++;
-        // TODO: Can ProcedureDefinitions be defined within ProcedureDefinitions?
-        //       Otherwise this is a waste of time
-        visitChildren(node);
     }
 }

@@ -33,17 +33,12 @@ import java.io.IOException;
 import static de.uni_passau.fim.se2.litterbox.ast.Constants.TARGETS_KEY;
 
 public class ActorMetadataTest {
-    private static ObjectMapper mapper = new ObjectMapper();
-    private static JsonNode empty;
-
-    @BeforeAll
-    public static void setUp() throws IOException {
-        File f = new File("./src/test/fixtures/emptyProject.json");
-        empty = mapper.readTree(f);
-    }
 
     @Test
-    public void testActorMetadata() {
+    public void testActorMetadata() throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        File f = new File("./src/test/fixtures/emptyProject.json");
+        JsonNode empty = mapper.readTree(f);
         ActorMetadata actor0 = ActorMetadataParser.parse(empty.get(TARGETS_KEY).get(0));
         Assertions.assertTrue(actor0 instanceof StageMetadata);
         StageMetadata stage = (StageMetadata) actor0;

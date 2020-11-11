@@ -36,7 +36,7 @@ import java.util.List;
 import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 
 public class MutationMetadataTest {
-    private static ObjectMapper mapper = new ObjectMapper();
+    private static final ObjectMapper mapper = new ObjectMapper();
     private static JsonNode prog;
 
     @BeforeAll

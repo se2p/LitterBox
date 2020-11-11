@@ -54,9 +54,9 @@ import de.uni_passau.fim.se2.litterbox.ast.model.metadata.monitor.MonitorListMet
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.monitor.MonitorMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.monitor.MonitorParamMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.monitor.MonitorSliderMetadata;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.ressources.ImageMetadata;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.ressources.ResourceMetadata;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.ressources.SoundMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.resources.ImageMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.resources.ResourceMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.resources.SoundMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.FromExpression;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.MousePos;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.Position;

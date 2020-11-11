@@ -32,27 +32,21 @@ import static de.uni_passau.fim.se2.litterbox.ast.Constants.TARGETS_KEY;
 import static de.uni_passau.fim.se2.litterbox.ast.Constants.VARIABLES_KEY;
 
 public class VariableMetadataTest {
-    private static ObjectMapper mapper = new ObjectMapper();
-    private static JsonNode prog;
-    private static JsonNode empty;
-
-    @BeforeAll
-    public static void setUp() throws IOException {
-        File f = new File("./src/test/fixtures/emptyProject.json");
-        empty = mapper.readTree(f);
-        f = new File("./src/test/fixtures/listBlocks.json");
-        prog = mapper.readTree(f);
-    }
+    private static final ObjectMapper mapper = new ObjectMapper();
 
     @Test
-    public void testEmptyProgram() {
+    public void testEmptyProgram() throws IOException {
+        File f = new File("./src/test/fixtures/emptyProject.json");
+        JsonNode empty = mapper.readTree(f);
         VariableMetadataList monitors = VariableMetadataListParser.parse(empty.get(TARGETS_KEY).get(0)
                 .get(VARIABLES_KEY));
         Assertions.assertEquals(1, monitors.getList().size());
     }
 
     @Test
-    public void testVariablesProgram() {
+    public void testVariablesProgram() throws IOException {
+       File f = new File("./src/test/fixtures/listBlocks.json");
+        JsonNode prog = mapper.readTree(f);
         VariableMetadataList monitors = VariableMetadataListParser.parse(prog.get(TARGETS_KEY).get(0)
                 .get(VARIABLES_KEY));
         Assertions.assertEquals(2, monitors.getList().size());

@@ -30,6 +30,14 @@ public class IssueTranslator {
     private ResourceBundle general;
     private Locale locale;
 
+    public static final String SIZE = "size";
+    public static final String POSITION = "position";
+    public static final String COSTUME = "costume";
+    public static final String ROTATION = "rotation";
+    public static final String VARIABLE = "variable";
+    public static final String LIST = "list";
+    public static final String ATTRIBUTE = "attribute";
+
     /**
      * Private constructor to avoid instatiation of singleton.
      */
@@ -86,9 +94,9 @@ public class IssueTranslator {
         }
 
         try {
-            general = ResourceBundle.getBundle("IssueHints", locale);
+            general = ResourceBundle.getBundle("GeneralTerms", locale);
         } catch (MissingResourceException e) {
-            general = ResourceBundle.getBundle("IssueHints", Locale.ENGLISH);
+            general = ResourceBundle.getBundle("GeneralTerms", Locale.ENGLISH);
             System.err.println("Could not load resource bundle for language "
                     + locale.toLanguageTag()
                     + "; Defaulting to english");
@@ -102,11 +110,7 @@ public class IssueTranslator {
      * @return translated hint for a given finder name
      */
     public String getHint(String finderName) {
-        if (hints.containsKey(finderName)) {
-            return hints.getString(finderName);
-        } else {
-            return finderName;
-        }
+        return hints.getString(finderName);
     }
 
     /**
@@ -116,24 +120,20 @@ public class IssueTranslator {
      * @return translated name
      */
     public String getName(String finderName) {
-        if (names.containsKey(finderName)) {
-            return names.getString(finderName);
-        } else {
-            return finderName;
-        }
+        return names.getString(finderName);
     }
 
     /**
      * Returns a translated version of an info keyword.
      *
-     * <p>These translations are used for general information, such as help-texts.
+     * <p>These translations are used for general information, such as true or false.
      *
      * @param keyword for general information
      * @return translated name
      */
     public String getInfo(String keyword) {
-        if (names.containsKey(keyword)) {
-            return names.getString(keyword);
+        if (general.containsKey(keyword)) {
+            return general.getString(keyword);
         } else {
             return keyword;
         }

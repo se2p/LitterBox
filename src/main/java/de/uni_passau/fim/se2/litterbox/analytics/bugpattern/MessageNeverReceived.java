@@ -19,7 +19,9 @@
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
+import de.uni_passau.fim.se2.litterbox.analytics.Hint;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.ReceptionOfMessage;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
@@ -87,7 +89,9 @@ public class MessageNeverReceived extends AbstractIssueFinder {
                 final String actorName = currentActor.getIdent().getName();
                 messageSent.add(new Pair<>(actorName, msgName));
             } else if (notReceivedMessages.contains(msgName)) {
-                addIssue(node, node.getMetadata());
+                Hint hint = new Hint(getName());
+                hint.setParameter(Hint.HINT_MESSAGE, ((StringLiteral) node.getMessage().getMessage()).getText());
+                addIssue(node, node.getMetadata(), hint);
             }
         }
     }
@@ -100,7 +104,9 @@ public class MessageNeverReceived extends AbstractIssueFinder {
                 final String actorName = currentActor.getIdent().getName();
                 messageSent.add(new Pair<>(actorName, msgName));
             } else if (notReceivedMessages.contains(msgName)) {
-                addIssue(node, node.getMetadata());
+                Hint hint = new Hint(getName());
+                hint.setParameter(Hint.HINT_MESSAGE, ((StringLiteral) node.getMessage().getMessage()).getText());
+                addIssue(node, node.getMetadata(), hint);
             }
         }
     }

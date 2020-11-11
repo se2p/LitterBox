@@ -18,25 +18,20 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.smells;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Set;
 
-public class VariableInitializationRaceTest {
-    private static final ObjectMapper mapper = new ObjectMapper();
-
+public class VariableInitializationRaceTest implements JsonTest {
     @Test
     public void testEmptyProgram() throws IOException, ParsingException {
-        File f = new File("./src/test/fixtures/emptyProject.json");
-        Program empty = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
+        Program empty = getAST("./src/test/fixtures/emptyProject.json");
 
         VariableInitializationRace finder = new VariableInitializationRace();
         Set<Issue> reports = finder.check(empty);
@@ -45,8 +40,7 @@ public class VariableInitializationRaceTest {
 
     @Test
     public void testVariableInitializationOnGreenFlag() throws IOException, ParsingException {
-        File f = new File("./src/test/fixtures/smells/raceConditionVarGreenFlag.json");
-        Program program = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
+        Program program = getAST("./src/test/fixtures/smells/raceConditionVarGreenFlag.json");
 
         VariableInitializationRace finder = new VariableInitializationRace();
         Set<Issue> reports = finder.check(program);
@@ -55,19 +49,16 @@ public class VariableInitializationRaceTest {
 
     @Test
     public void testVariableInitializationOn3GreenFlags() throws IOException, ParsingException {
-        File f = new File("./src/test/fixtures/smells/raceConditionVarGreenFlag3.json");
-        Program program = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
+        Program program = getAST("./src/test/fixtures/smells/raceConditionVarGreenFlag3.json");
 
         VariableInitializationRace finder = new VariableInitializationRace();
         Set<Issue> reports = finder.check(program);
         Assertions.assertEquals(1, reports.size());
     }
 
-
     @Test
     public void testVariableInitializationOnClick() throws IOException, ParsingException {
-        File f = new File("./src/test/fixtures/smells/raceConditionOnClick.json");
-        Program program = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
+        Program program = getAST("./src/test/fixtures/smells/raceConditionOnClick.json");
 
         VariableInitializationRace finder = new VariableInitializationRace();
         Set<Issue> reports = finder.check(program);
@@ -76,8 +67,7 @@ public class VariableInitializationRaceTest {
 
     @Test
     public void testVariableInitializationOnDifferentEvents() throws IOException, ParsingException {
-        File f = new File("./src/test/fixtures/smells/raceConditionDifferentEvents.json");
-        Program program = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
+        Program program = getAST("./src/test/fixtures/smells/raceConditionDifferentEvents.json");
 
         VariableInitializationRace finder = new VariableInitializationRace();
         Set<Issue> reports = finder.check(program);
@@ -86,8 +76,7 @@ public class VariableInitializationRaceTest {
 
     @Test
     public void testVariableInitializationOnDifferentVariables() throws IOException, ParsingException {
-        File f = new File("./src/test/fixtures/smells/raceConditionDifferentVariables.json");
-        Program program = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
+        Program program = getAST("./src/test/fixtures/smells/raceConditionDifferentVariables.json");
 
         VariableInitializationRace finder = new VariableInitializationRace();
         Set<Issue> reports = finder.check(program);
@@ -96,8 +85,7 @@ public class VariableInitializationRaceTest {
 
     @Test
     public void testVariableInitializationSetAndChangeVariable() throws IOException, ParsingException {
-        File f = new File("./src/test/fixtures/smells/raceConditionDifferentVariableStatements.json");
-        Program program = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
+        Program program = getAST("./src/test/fixtures/smells/raceConditionDifferentVariableStatements.json");
 
         VariableInitializationRace finder = new VariableInitializationRace();
         Set<Issue> reports = finder.check(program);
@@ -106,8 +94,7 @@ public class VariableInitializationRaceTest {
 
     @Test
     public void testVariableInitializationDifferentActors() throws IOException, ParsingException {
-        File f = new File("./src/test/fixtures/smells/raceConditionDifferentActors.json");
-        Program program = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
+        Program program = getAST("./src/test/fixtures/smells/raceConditionDifferentActors.json");
 
         VariableInitializationRace finder = new VariableInitializationRace();
         Set<Issue> reports = finder.check(program);
@@ -116,8 +103,7 @@ public class VariableInitializationRaceTest {
 
     @Test
     public void testVariableInitializationLocalVariables() throws IOException, ParsingException {
-        File f = new File("./src/test/fixtures/smells/raceConditionLocalVariables.json");
-        Program program = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
+        Program program = getAST("./src/test/fixtures/smells/raceConditionLocalVariables.json");
 
         VariableInitializationRace finder = new VariableInitializationRace();
         Set<Issue> reports = finder.check(program);
@@ -126,18 +112,16 @@ public class VariableInitializationRaceTest {
 
     @Test
     public void testVariableAfterInitializationInLoop() throws IOException, ParsingException {
-        File f = new File("./src/test/fixtures/smells/raceConditionAfterInitialization.json");
-        Program program = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
+        Program program = getAST("./src/test/fixtures/smells/raceConditionAfterInitialization.json");
 
         VariableInitializationRace finder = new VariableInitializationRace();
         Set<Issue> reports = finder.check(program);
         Assertions.assertEquals(0, reports.size());
     }
-    
+
     @Test
     public void testVariableAfterInitialization() throws IOException, ParsingException {
-        File f = new File("./src/test/fixtures/smells/raceConditionAfterInitialization2.json");
-        Program program = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
+        Program program = getAST("./src/test/fixtures/smells/raceConditionAfterInitialization2.json");
 
         VariableInitializationRace finder = new VariableInitializationRace();
         Set<Issue> reports = finder.check(program);

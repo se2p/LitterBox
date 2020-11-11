@@ -18,16 +18,13 @@
  */
 package de.uni_passau.fim.se2.litterbox.report;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.EndlessRecursion;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -37,16 +34,7 @@ import java.util.Set;
 
 import static com.google.common.truth.Truth.assertThat;
 
-public class CSVReportGeneratorTest {
-
-    // TODO: Code clone
-    private Program getAST(String fileName) throws IOException, ParsingException {
-        File file = new File(fileName);
-        ObjectMapper objectMapper = new ObjectMapper();
-        JsonNode project = objectMapper.readTree(file);
-        Program program = ProgramParser.parseProgram("TestProgram", project);
-        return program;
-    }
+public class CSVReportGeneratorTest implements JsonTest {
 
     @Test
     public void testSingleIssueSingleProjectNewCSV() throws IOException, ParsingException {
@@ -66,7 +54,7 @@ public class CSVReportGeneratorTest {
 
         assertThat(lines).hasSize(2);
         assertThat(lines.get(0)).isEqualTo("project,endless_recursion");
-        assertThat(lines.get(1)).isEqualTo("TestProgram,1");
+        assertThat(lines.get(1)).isEqualTo("recursiveProcedure,1");
     }
 
     @Test
@@ -94,7 +82,7 @@ public class CSVReportGeneratorTest {
 
         assertThat(lines).hasSize(3);
         assertThat(lines.get(0)).isEqualTo("project,endless_recursion");
-        assertThat(lines.get(1)).isEqualTo("TestProgram,1");
-        assertThat(lines.get(2)).isEqualTo("TestProgram,1");
+        assertThat(lines.get(1)).isEqualTo("recursiveProcedure,1");
+        assertThat(lines.get(2)).isEqualTo("recursiveProcedure,1");
     }
 }

@@ -19,15 +19,19 @@
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
+import de.uni_passau.fim.se2.litterbox.analytics.Hint;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Message;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.Metadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Parameter;
+import de.uni_passau.fim.se2.litterbox.ast.model.variable.ScratchList;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ArgumentInfo;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ExpressionListInfo;
@@ -35,7 +39,9 @@ import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ProcedureInfo;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.VariableInfo;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-import java.util.*;
+import java.util.LinkedHashSet;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class VariableAsLiteral extends AbstractIssueFinder {
@@ -44,6 +50,7 @@ public class VariableAsLiteral extends AbstractIssueFinder {
     private Map<String, ExpressionListInfo> listMap;
     private Set<String> variablesInScope = new LinkedHashSet<>();
     private Stmt currentStatement;
+    private Expression currentExpression;
     private Metadata currentMetadata;
 
     @Override
@@ -68,12 +75,23 @@ public class VariableAsLiteral extends AbstractIssueFinder {
 
         String literal = node.getText();
         if (variablesInScope.contains(literal)) {
-            addIssue(currentStatement, currentMetadata);
+            Hint hint = new Hint(getName());
+            hint.setParameter(Hint.HINT_VARIABLE, "\"" + node.getText() + "\"");
+            if (currentExpression != null) {
+                addIssue(currentExpression, currentMetadata);
+            } else {
+                addIssue(currentStatement, currentMetadata);
+            }
         }
     }
 
     @Override
     public void visit(Variable node) {
+        // No-op
+    }
+
+    @Override
+    public void visit(ScratchList node) {
         // No-op
     }
 
@@ -91,6 +109,13 @@ public class VariableAsLiteral extends AbstractIssueFinder {
     public void visit(Stmt node) {
         currentStatement = node;
         super.visit(node);
+    }
+
+    @Override
+    public void visit(Expression node) {
+        currentExpression = node;
+        super.visit(node);
+        currentExpression = null;
     }
 
     @Override

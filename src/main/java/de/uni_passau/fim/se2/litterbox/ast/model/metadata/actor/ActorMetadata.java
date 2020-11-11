@@ -18,10 +18,12 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.model.metadata.actor;
 
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.CommentMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.Metadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astLists.*;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 public abstract class ActorMetadata extends AbstractNode implements Metadata {
@@ -96,3 +98,4 @@ public abstract class ActorMetadata extends AbstractNode implements Metadata {
         visitor.visit(this);
     }
 }
+

@@ -18,40 +18,28 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Set;
 
-public class MissingTerminationConditionTest {
-    private static ObjectMapper mapper = new ObjectMapper();
-    private static Program program;
-    private static Program programNested;
-
-    @BeforeAll
-    public static void setUp() throws IOException, ParsingException {
-        File f = new File("./src/test/fixtures/missingTermination/missingTermination.json");
-        program = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
-        f = new File("./src/test/fixtures/missingTermination/missingTerminationNested.json");
-        programNested = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
-    }
+public class MissingTerminationConditionTest implements JsonTest {
 
     @Test
-    public void testMissingTermination() {
+    public void testMissingTermination() throws IOException, ParsingException {
+        Program program = getAST("./src/test/fixtures/missingTermination/missingTermination.json");
         Set<Issue> reports = (new MissingTerminationCondition()).check(program);
         Assertions.assertEquals(1, reports.size());
     }
 
     @Test
-    public void testMissingTerminationNested() {
+    public void testMissingTerminationNested() throws IOException, ParsingException {
+        Program programNested = getAST("./src/test/fixtures/missingTermination/missingTerminationNested.json");
         Set<Issue> reports = (new MissingTerminationCondition()).check(programNested);
         Assertions.assertEquals(1, reports.size());
     }
