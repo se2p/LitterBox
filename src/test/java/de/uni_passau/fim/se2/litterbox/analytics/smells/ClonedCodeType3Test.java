@@ -40,7 +40,8 @@ public class ClonedCodeType3Test {
         Program program = getAST("./src/test/fixtures/smells/duplicatedScript.json");
         ClonedCodeType3 finder = new ClonedCodeType3();
         Set<Issue> issues = finder.check(program);
-        assertEquals(1, issues.size());
+        // 0, as clone is of type 1
+        assertEquals(0, issues.size());
     }
 
     @Test
@@ -48,7 +49,8 @@ public class ClonedCodeType3Test {
         Program program = getAST("./src/test/fixtures/smells/codecloneliteralsvariables.json");
         ClonedCodeType3 finder = new ClonedCodeType3();
         Set<Issue> issues = finder.check(program);
-        assertEquals(1, issues.size());
+        // 0, as clone is of type 2
+        assertEquals(0, issues.size());
     }
 
     @Test
@@ -56,7 +58,8 @@ public class ClonedCodeType3Test {
         Program program = getAST("./src/test/fixtures/smells/codeclonesubsequence.json");
         ClonedCodeType3 finder = new ClonedCodeType3();
         Set<Issue> issues = finder.check(program);
-        assertEquals(1, issues.size());
+        // 0, as clone is of type 2
+        assertEquals(0, issues.size());
     }
 
     @Test
@@ -64,7 +67,8 @@ public class ClonedCodeType3Test {
         Program program = getAST("./src/test/fixtures/smells/codeclonevariableblocks.json");
         ClonedCodeType3 finder = new ClonedCodeType3();
         Set<Issue> issues = finder.check(program);
-        assertEquals(1, issues.size());
+        // 0, as clone is of type 2
+        assertEquals(0, issues.size());
     }
 
     @Test
@@ -72,7 +76,8 @@ public class ClonedCodeType3Test {
         Program program = getAST("./src/test/fixtures/smells/codeclonelistblocks.json");
         ClonedCodeType3 finder = new ClonedCodeType3();
         Set<Issue> issues = finder.check(program);
-        assertEquals(1, issues.size());
+        // 0, as clone is of type 2
+        assertEquals(0, issues.size());
     }
 
     @Test
@@ -80,7 +85,8 @@ public class ClonedCodeType3Test {
         Program program = getAST("./src/test/fixtures/smells/codeclonecustomblock.json");
         ClonedCodeType3 finder = new ClonedCodeType3();
         Set<Issue> issues = finder.check(program);
-        assertEquals(1, issues.size());
+        // 0, as clone is of type 1
+        assertEquals(0, issues.size());
     }
 
     private Program getAST(String fileName) throws IOException, ParsingException {

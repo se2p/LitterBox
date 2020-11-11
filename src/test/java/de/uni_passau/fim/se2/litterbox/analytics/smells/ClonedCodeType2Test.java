@@ -37,39 +37,43 @@ public class ClonedCodeType2Test {
     @Test
     public void testDuplicatedScript() throws IOException, ParsingException {
         Program program = getAST("./src/test/fixtures/smells/duplicatedScript.json");
-        ClonedCodeType3 finder = new ClonedCodeType3();
+        ClonedCodeType2 finder = new ClonedCodeType2();
         Set<Issue> issues = finder.check(program);
-        assertEquals(1, issues.size());
+        // 0, as clone is of type 1
+        assertEquals(0, issues.size());
     }
 
     @Test
     public void testDuplicatedScriptDifferentLiteralsAndVariables() throws IOException, ParsingException {
         Program program = getAST("./src/test/fixtures/smells/codecloneliteralsvariables.json");
-        ClonedCodeType3 finder = new ClonedCodeType3();
+        ClonedCodeType2 finder = new ClonedCodeType2();
         Set<Issue> issues = finder.check(program);
-        assertEquals(1, issues.size());
+        // 0, as clone is shorter than the minSize of 6
+        assertEquals(0, issues.size());
     }
 
     @Test
     public void testSubsequenceClone() throws IOException, ParsingException {
         Program program = getAST("./src/test/fixtures/smells/codeclonesubsequence.json");
-        ClonedCodeType3 finder = new ClonedCodeType3();
+        ClonedCodeType2 finder = new ClonedCodeType2();
         Set<Issue> issues = finder.check(program);
-        assertEquals(1, issues.size());
+        // 0, as clone is shorter than the minSize of 6
+        assertEquals(0, issues.size());
     }
 
     @Test
     public void testVariableClone() throws IOException, ParsingException {
         Program program = getAST("./src/test/fixtures/smells/codeclonevariableblocks.json");
-        ClonedCodeType3 finder = new ClonedCodeType3();
+        ClonedCodeType2 finder = new ClonedCodeType2();
         Set<Issue> issues = finder.check(program);
-        assertEquals(1, issues.size());
+        // 0, as clone is shorter than the minSize of 6
+        assertEquals(0, issues.size());
     }
 
     @Test
     public void testListClone() throws IOException, ParsingException {
         Program program = getAST("./src/test/fixtures/smells/codeclonelistblocks.json");
-        ClonedCodeType3 finder = new ClonedCodeType3();
+        ClonedCodeType2 finder = new ClonedCodeType2();
         Set<Issue> issues = finder.check(program);
         assertEquals(1, issues.size());
     }
@@ -77,9 +81,10 @@ public class ClonedCodeType2Test {
     @Test
     public void testCustomBlockClone() throws IOException, ParsingException {
         Program program = getAST("./src/test/fixtures/smells/codeclonecustomblock.json");
-        ClonedCodeType3 finder = new ClonedCodeType3();
+        ClonedCodeType2 finder = new ClonedCodeType2();
         Set<Issue> issues = finder.check(program);
-        assertEquals(1, issues.size());
+        // 0, as clone is of type 1
+        assertEquals(0, issues.size());
     }
 
     private Program getAST(String fileName) throws IOException, ParsingException {

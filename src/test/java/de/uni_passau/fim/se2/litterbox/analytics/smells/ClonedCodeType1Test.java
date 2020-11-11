@@ -47,7 +47,8 @@ public class ClonedCodeType1Test {
         Program program = getAST("./src/test/fixtures/smells/codecloneliteralsvariables.json");
         ClonedCodeType1 finder = new ClonedCodeType1();
         Set<Issue> issues = finder.check(program);
-        assertEquals(1, issues.size());
+        // 0, as clone is of type 2
+        assertEquals(0, issues.size());
     }
 
     @Test
@@ -55,7 +56,8 @@ public class ClonedCodeType1Test {
         Program program = getAST("./src/test/fixtures/smells/codeclonesubsequence.json");
         ClonedCodeType1 finder = new ClonedCodeType1();
         Set<Issue> issues = finder.check(program);
-        assertEquals(1, issues.size());
+        // 0, as clone is of type 2
+        assertEquals(0, issues.size());
     }
 
     @Test
@@ -63,7 +65,8 @@ public class ClonedCodeType1Test {
         Program program = getAST("./src/test/fixtures/smells/codeclonevariableblocks.json");
         ClonedCodeType1 finder = new ClonedCodeType1();
         Set<Issue> issues = finder.check(program);
-        assertEquals(1, issues.size());
+        // 0, as clone is of type 2
+        assertEquals(0, issues.size());
     }
 
     @Test
@@ -71,7 +74,8 @@ public class ClonedCodeType1Test {
         Program program = getAST("./src/test/fixtures/smells/codeclonelistblocks.json");
         ClonedCodeType1 finder = new ClonedCodeType1();
         Set<Issue> issues = finder.check(program);
-        assertEquals(1, issues.size());
+        // 0, as clone is of type 2
+        assertEquals(0, issues.size());
     }
 
     @Test
@@ -79,7 +83,8 @@ public class ClonedCodeType1Test {
         Program program = getAST("./src/test/fixtures/smells/codeclonecustomblock.json");
         ClonedCodeType1 finder = new ClonedCodeType1();
         Set<Issue> issues = finder.check(program);
-        assertEquals(1, issues.size());
+        // 0, as clone is shorter than the minSize of 6
+        assertEquals(0, issues.size());
     }
 
     private Program getAST(String fileName) throws IOException, ParsingException {
