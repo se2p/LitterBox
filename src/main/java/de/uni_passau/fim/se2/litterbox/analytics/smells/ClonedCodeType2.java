@@ -20,16 +20,13 @@ package de.uni_passau.fim.se2.litterbox.analytics.smells;
 
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.analytics.clonedetection.CloneAnalysis;
 import de.uni_passau.fim.se2.litterbox.analytics.clonedetection.CodeClone;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
-import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-import java.util.Collections;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
