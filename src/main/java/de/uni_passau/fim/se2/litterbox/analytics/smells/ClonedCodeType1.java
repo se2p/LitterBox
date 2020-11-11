@@ -44,6 +44,7 @@ public class ClonedCodeType1 extends AbstractIssueFinder {
         List<Script> scripts = actor.getScripts().getScriptList();
         List<ProcedureDefinition> procedures = actor.getProcedureDefinitionList().getList();
 
+        // TODO: Enable comparision of scripts with themself
         for (int i = 0; i < scripts.size(); i++) {
             checkScript(scripts.get(i), scripts.subList(i + 1, scripts.size()), procedures);
         }

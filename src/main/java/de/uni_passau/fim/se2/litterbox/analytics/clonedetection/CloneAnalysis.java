@@ -66,6 +66,14 @@ public class CloneAnalysis {
 
         this.root1 = root1;
         this.root2 = root2;
+        Boolean compareWithItself = false;
+
+        /* TODO: How to check if comparison with itself? This comparison is not working.
+            If two scripts are identical, this will also return true.
+        if (root1.equals(root2)){
+            compareWithItself = true;
+        }
+        */
 
         // We compare at the level of statements, not tokens
         StatementListVisitor statementListVisitor = new StatementListVisitor();
@@ -81,25 +89,29 @@ public class CloneAnalysis {
         boolean[][] similarityMatrix = getSimilarityMatrix(normalizedStatements1, normalizedStatements2);
 
         // Return all clones identifiable in the matrix
-        return check(statements1, statements2, normalizedStatements1, normalizedStatements2, similarityMatrix, cloneType);
+        return check(statements1, statements2, normalizedStatements1, normalizedStatements2, similarityMatrix, cloneType, compareWithItself);
     }
 
-    private Set<CodeClone> check(List<Stmt> statements1, List<Stmt> statements2, List<Stmt> normalizedStatements1, List<Stmt> normalizedStatements2, boolean[][] similarityMatrix, CodeClone.CloneType cloneType) {
+    private Set<CodeClone> check(List<Stmt> statements1, List<Stmt> statements2, List<Stmt> normalizedStatements1, List<Stmt> normalizedStatements2, boolean[][] similarityMatrix, CodeClone.CloneType cloneType, Boolean compareWithItself) {
         Set<CodeClone> clones = new LinkedHashSet<>();
         List<CodeClone> tempClones;
         // LinkedHashMap remembers order of insertion
         LinkedHashMap<Integer, Integer> positions;
 
-        // The following two for-loops could be refactored to not have duplicated code (how ironic)
-        // Find clones on the lower left of the matrix, with middle diagonal
-        for (int j = 0; j < statements2.size(); j++) {
-            positions = findDiagonal(similarityMatrix, 0, j);
-            if (!positions.isEmpty()) {
-                tempClones = checkDiagonalForGaps(positions, statements1, statements2, normalizedStatements1, normalizedStatements2);
+        // If the script gets compared with itself, the diagonal in the middle is not a clone.
+        // It's also only necessary to analyze one side of the matrix. The other side would result in the same clones.
+        if (!compareWithItself) {
+            // The following two for-loops could be refactored to not have duplicated code (how ironic)
+            // Find clones on the lower left of the matrix, with middle diagonal
+            for (int j = 0; j < statements2.size(); j++) {
+                positions = findDiagonal(similarityMatrix, 0, j);
+                if (!positions.isEmpty()) {
+                    tempClones = checkDiagonalForGaps(positions, statements1, statements2, normalizedStatements1, normalizedStatements2);
 
-                for (CodeClone clone : tempClones) {
-                    if (clone.getType().equals(cloneType) & clone.size() >= minSize) {
-                        clones.add(clone);
+                    for (CodeClone clone : tempClones) {
+                        if (clone.getType().equals(cloneType) & clone.size() >= minSize) {
+                            clones.add(clone);
+                        }
                     }
                 }
             }

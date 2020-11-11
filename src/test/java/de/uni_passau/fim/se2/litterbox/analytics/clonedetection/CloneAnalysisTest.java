@@ -120,6 +120,20 @@ public class CloneAnalysisTest {
         assertEquals(11, clones.iterator().next().size());
     }
 
+    /* TODO: Comparison of one script with itself needs to work
+    @Test
+    public void testScriptWithItself() throws IOException, ParsingException {
+        Program program = getAST("./src/test/fixtures/smells/cloneScriptWithItself.json");
+        ActorDefinition actor = program.getActorDefinitionList().getDefinitions().get(1);
+        Script script1 = actor.getScripts().getScriptList().get(0);
+
+        CloneAnalysis cloneAnalysis = new CloneAnalysis(actor);
+        Set<CodeClone> clonesType = cloneAnalysis.check(script1, CodeClone.CloneType.TYPE1);
+        assertEquals(1, clonesType.size());
+        assertEquals(7, clonesType.iterator().next().size());
+    }
+    */
+
     @Test
     public void testMinimumCloneSizeIs6() throws IOException, ParsingException {
         Program program = getAST("./src/test/fixtures/smells/cloneTypeMinSize.json");
