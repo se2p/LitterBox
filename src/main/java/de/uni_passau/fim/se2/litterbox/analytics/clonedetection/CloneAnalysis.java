@@ -22,7 +22,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 
-import java.security.KeyStore;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -79,7 +78,7 @@ public class CloneAnalysis {
         List<Stmt> normalizedStatements2 = statements2.stream().map(normalizationVisitor::apply).collect(Collectors.toList());
 
         // Comparison matrix on the normalized statements
-        boolean[][] similarityMatrix = getMatrix(normalizedStatements1, normalizedStatements2);
+        boolean[][] similarityMatrix = getSimilarityMatrix(normalizedStatements1, normalizedStatements2);
 
         // Return all clones identifiable in the matrix
         return check(statements1, statements2, normalizedStatements1, normalizedStatements2, similarityMatrix, cloneType);
@@ -91,10 +90,12 @@ public class CloneAnalysis {
         // LinkedHashMap remembers order of insertion
         LinkedHashMap<Integer, Integer> positions;
 
+        // The following two for-loops could be refactored to not have duplicated code (how ironic)
+        // Find clones on the lower left of the matrix, with middle diagonal
         for (int j = 0; j < statements2.size(); j++) {
             positions = findDiagonal(similarityMatrix, 0, j);
             if (!positions.isEmpty()) {
-                tempClones = checkForGaps(positions, statements1, statements2, normalizedStatements1, normalizedStatements2);
+                tempClones = checkDiagonalForGaps(positions, statements1, statements2, normalizedStatements1, normalizedStatements2);
 
                 for (CodeClone clone : tempClones) {
                     if (clone.getType().equals(cloneType) & clone.size() >= minSize) {
@@ -104,10 +105,11 @@ public class CloneAnalysis {
             }
         }
 
+        // Find clones on the upper right of the matrix, without middle diagonal
         for (int i = 1; i < statements2.size(); i++) {
             positions = findDiagonal(similarityMatrix, i, 0);
             if (!positions.isEmpty()) {
-                tempClones = checkForGaps(positions, statements1, statements2, normalizedStatements1, normalizedStatements2);
+                tempClones = checkDiagonalForGaps(positions, statements1, statements2, normalizedStatements1, normalizedStatements2);
 
                 for (CodeClone clone : tempClones) {
                     if (clone.getType().equals(cloneType) & clone.size() >= minSize) {
@@ -120,15 +122,32 @@ public class CloneAnalysis {
         return clones;
     }
 
-    private List<CodeClone> checkForGaps(LinkedHashMap<Integer, Integer> positions, List<Stmt> statements1, List<Stmt> statements2, List<Stmt> normalizedStatements1, List<Stmt> normalizedStatements2) {
-        List<CodeClone> clones = new ArrayList<>();
+    // Returns positions of duplicated blocks in a diagonal of the similarity matrix
+    private LinkedHashMap<Integer, Integer> findDiagonal(boolean[][] similarityMatrix, int x, int y) {
+        LinkedHashMap<Integer, Integer> clonePositions = new LinkedHashMap<>();
+
+        while (x < similarityMatrix.length && y < similarityMatrix[x].length) {
+            if (similarityMatrix[x][y]) {
+                clonePositions.put(x, y);
+            }
+            x++;
+            y++;
+        }
+
+        return clonePositions;
+    }
+
+    // Every diagonal gets checked, whether it contains gaps or not.
+    // A gap larger than maxGap mean the diagonal has multiple clones. A smaller gap indicates a type 3 clone.
+    private List<CodeClone> checkDiagonalForGaps(LinkedHashMap<Integer, Integer> positions, List<Stmt> statements1, List<Stmt> statements2, List<Stmt> normalizedStatements1, List<Stmt> normalizedStatements2) {
         Set<Map.Entry<Integer, Integer>> entries = positions.entrySet();
         Map.Entry<Integer, Integer> lastEntry = entries.iterator().next();
+        CodeClone clone = new CodeClone(actor, root1, root2);
+        List<CodeClone> clones = new ArrayList<>();
         List<Stmt> tempNormalized1 = new ArrayList<>();
         List<Stmt> tempNormalized2 = new ArrayList<>();
 
-        CodeClone clone = new CodeClone(actor, root1, root2);
-
+        // Could be refactored to not have the same steps duplicated for every clause (again, how ironic)
         for (Map.Entry<Integer, Integer> location : entries) {
             if (location.getKey() - lastEntry.getKey() <= 1) {
                 Stmt stmt1 = statements1.get(location.getKey());
@@ -137,11 +156,14 @@ public class CloneAnalysis {
                 tempNormalized2.add(normalizedStatements2.get(location.getValue()));
                 clone.addClonedStatement(stmt1, stmt2);
             } else {
-                // MAG_GAP + 1, as MAX_GAP means the number of blocks not being the same
-                // 0 1 2 x x 5 6 has two gap blocks, but 5-2=3 > MAX_GAP
+                // maxGap + 1, as maxGap means the number of blocks not being the same
+                // 0 1 2 x x 5 6 has two gap blocks, but 5-2=3 > maxGap
                 if (location.getKey() - lastEntry.getKey() > maxGap + 1) {
+                    // As the gap is larger than maxGap, the clone is finished
                     clone.setType(decideCloneType(clone, tempNormalized1, tempNormalized2));
                     clones.add(clone);
+
+                    // Current location belongs to a new clone
                     clone = new CodeClone(actor, root1, root2);
                     tempNormalized1.clear();
                     tempNormalized2.clear();
@@ -151,6 +173,7 @@ public class CloneAnalysis {
                     tempNormalized2.add(normalizedStatements2.get(location.getValue()));
                     clone.addClonedStatement(stmt1, stmt2);
                 } else {
+                    // If gap is smaller than maxGap allows, gap is part of a type III clone
                     for (int i = 1; lastEntry.getKey() + i < location.getKey(); i++) {
                         Stmt stmt1 = statements1.get(lastEntry.getKey() + i);
                         Stmt stmt2 = statements2.get(lastEntry.getValue() + i);
@@ -168,22 +191,7 @@ public class CloneAnalysis {
         return clones;
     }
 
-    private LinkedHashMap<Integer, Integer> findDiagonal(boolean[][] similarityMatrix, int x, int y) {
-        LinkedHashMap<Integer, Integer> clonePositions = new LinkedHashMap<>();
-
-        while (x < similarityMatrix.length && y < similarityMatrix[x].length) {
-            if (similarityMatrix[x][y]) {
-                clonePositions.put(x, y);
-            }
-            x++;
-            y++;
-        }
-
-        return clonePositions;
-    }
-
     private CodeClone.CloneType decideCloneType(CodeClone clone, List<Stmt> normalizedStatements1, List<Stmt> normalizedStatements2){
-
         List<Stmt> statements1 = clone.getFirstStatements();
         List<Stmt> statements2 = clone.getSecondStatements();
         CodeClone.CloneType type = clone.getType();
@@ -200,7 +208,7 @@ public class CloneAnalysis {
         return type;
     }
 
-    private boolean[][] getMatrix(List<Stmt> normalizedStatements1, List<Stmt> normalizedStatements2) {
+    private boolean[][] getSimilarityMatrix(List<Stmt> normalizedStatements1, List<Stmt> normalizedStatements2) {
         int width  = normalizedStatements1.size();
         int height = normalizedStatements2.size();
         boolean[][] matrix = new boolean[width][height];
