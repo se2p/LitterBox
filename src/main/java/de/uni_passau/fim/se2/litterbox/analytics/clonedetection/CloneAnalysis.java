@@ -137,7 +137,9 @@ public class CloneAnalysis {
                 tempNormalized2.add(normalizedStatements2.get(location.getValue()));
                 clone.addClonedStatement(stmt1, stmt2);
             } else {
-                if (location.getKey() - lastEntry.getKey() > MAX_GAP) {
+                // MAG_GAP + 1, as MAX_GAP means the number of blocks not being the same
+                // 0 1 2 x x 5 6 has two gap blocks, but 5-2=3 > MAX_GAP
+                if (location.getKey() - lastEntry.getKey() > MAX_GAP + 1) {
                     clone.setType(decideCloneType(clone, tempNormalized1, tempNormalized2));
                     clones.add(clone);
                     clone = new CodeClone(actor, root1, root2);
