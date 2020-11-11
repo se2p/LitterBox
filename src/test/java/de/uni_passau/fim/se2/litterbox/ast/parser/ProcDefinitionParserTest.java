@@ -92,4 +92,18 @@ public class ProcDefinitionParserTest implements JsonTest {
         Assertions.assertEquals("NumInput",
                 ((Parameter) ((AsNumber) ((MoveSteps) list.get(1).getStmtList().getStmts().get(0)).getSteps()).getOperand1()).getName().getName());
     }
+
+    @Test
+    public void testManipulatedProto() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/stmtParser/manipulatedProc.json");
+        final List<ActorDefinition> defintions = program.getActorDefinitionList().getDefinitions();
+        final List<ProcedureDefinition> list = defintions.get(1).getProcedureDefinitionList().getList();
+        final String actorName = defintions.get(1).getIdent().getName();
+
+        Truth.assertThat(list.get(0)).isInstanceOf(ProcedureDefinition.class);
+        ProcedureInfo procedureInfo =
+                program.getProcedureMapping().getProcedures().get(actorName).get(list.get(0).getIdent());
+        Assertions.assertEquals("manipulate",
+                procedureInfo.getName());
+    }
 }
