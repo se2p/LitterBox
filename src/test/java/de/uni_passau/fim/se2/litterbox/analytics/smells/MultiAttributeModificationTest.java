@@ -54,4 +54,12 @@ public class MultiAttributeModificationTest implements JsonTest {
         Set<Issue> reports = finder.check(program);
         Assertions.assertEquals(22, reports.size());
     }
+
+    @Test
+    public void testMultiHideShowModification() throws IOException, ParsingException {
+        Program program = getAST("./src/test/fixtures/smells/multipleShowHide.json");
+        MultiAttributeModification finder = new MultiAttributeModification();
+        Set<Issue> reports = finder.check(program);
+        Assertions.assertEquals(3, reports.size());
+    }
 }
