@@ -59,32 +59,6 @@ public class CodeClone {
         type = cloneType;
     }
 
-    public boolean contains(CodeClone other) {
-        List<Stmt> otherFirst = other.getFirstStatements();
-        List<Stmt> otherSecond = other.getSecondStatements();
-
-        if (otherFirst.size() >= copy1.size()) {
-            return false;
-        }
-        if (otherSecond.size() >= copy2.size()) {
-            return false;
-        }
-
-        // TODO: Do we need to check both statement sequences, or is one enough?
-        for (Stmt stmt : otherFirst) {
-            if (!copy1.contains(stmt)) {
-                return false;
-            }
-        }
-        for (Stmt stmt : otherSecond) {
-            if (!copy2.contains(stmt)) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
     public ASTNode getFirstScript() {
         return firstRoot;
     }

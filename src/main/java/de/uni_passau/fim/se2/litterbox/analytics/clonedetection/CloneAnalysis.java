@@ -22,14 +22,17 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 
+import java.security.KeyStore;
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class CloneAnalysis {
 
-    public static final int MIN_SIZE = 3;
+    public static final int MIN_SIZE = 6;
+    public static final int MAX_GAP = 2;
 
     private int minSize = MIN_SIZE;
+    private int maxGap = MAX_GAP;
 
     private ActorDefinition actor;
     private ASTNode root1;
@@ -39,9 +42,10 @@ public class CloneAnalysis {
         this.actor = actor;
     }
 
-    public CloneAnalysis(ActorDefinition actor, int minSize) {
+    public CloneAnalysis(ActorDefinition actor, int minSize, int maxGap) {
         this.actor = actor;
         this.minSize = minSize;
+        this.maxGap = maxGap;
     }
 
     /**
@@ -83,27 +87,81 @@ public class CloneAnalysis {
 
     private Set<CodeClone> check(List<Stmt> statements1, List<Stmt> statements2, List<Stmt> normalizedStatements1, List<Stmt> normalizedStatements2, boolean[][] similarityMatrix, CodeClone.CloneType cloneType) {
         Set<CodeClone> clones = new LinkedHashSet<>();
+        List<CodeClone> tempClones;
+        // LinkedHashMap remembers order of insertion
+        LinkedHashMap<Integer, Integer> positions;
 
-        for (int i = 0; i < statements1.size(); i++) {
-            for (int j = 0; j < statements2.size(); j++) {
-                // LinkedHashMap remembers order of insertion
-                LinkedHashMap<Integer, Integer> positions = findDiagonal(similarityMatrix, i, j);
-                if (positions.size() >= minSize) {
-                    CodeClone clone = new CodeClone(actor, root1, root2);
-                    for (Map.Entry<Integer, Integer> location : positions.entrySet()) {
-                        Stmt stmt1 = statements1.get(location.getKey());
-                        Stmt stmt2 = statements2.get(location.getValue());
-                        clone.addClonedStatement(stmt1, stmt2);
-                    }
+        for (int j = 0; j < statements2.size(); j++) {
+            positions = findDiagonal(similarityMatrix, 0, j);
+            if (!positions.isEmpty()) {
+                tempClones = checkForGaps(positions, statements1, statements2, normalizedStatements1, normalizedStatements2);
 
-                    clone.setType(decideCloneType(clone, normalizedStatements1, normalizedStatements2));
-
-                    if (clones.stream().noneMatch(c -> c.contains(clone)) && clone.getType().equals(cloneType)) {
+                for (CodeClone clone : tempClones) {
+                    if (clone.getType().equals(cloneType)) {
                         clones.add(clone);
                     }
                 }
             }
         }
+
+        for (int i = 1; i < statements2.size(); i++) {
+            positions = findDiagonal(similarityMatrix, i, 0);
+            if (!positions.isEmpty()) {
+                tempClones = checkForGaps(positions, statements1, statements2, normalizedStatements1, normalizedStatements2);
+
+                for (CodeClone clone : tempClones) {
+                    if (clone.getType().equals(cloneType)) {
+                        clones.add(clone);
+                    }
+                }
+            }
+        }
+
+        return clones;
+    }
+
+    private List<CodeClone> checkForGaps(LinkedHashMap<Integer, Integer> positions, List<Stmt> statements1, List<Stmt> statements2, List<Stmt> normalizedStatements1, List<Stmt> normalizedStatements2) {
+        List<CodeClone> clones = new ArrayList<>();
+        Set<Map.Entry<Integer, Integer>> entries = positions.entrySet();
+        Map.Entry<Integer, Integer> lastEntry = entries.iterator().next();
+        List<Stmt> tempNormalized1 = new ArrayList<>();
+        List<Stmt> tempNormalized2 = new ArrayList<>();
+
+        CodeClone clone = new CodeClone(actor, root1, root2);
+
+        for (Map.Entry<Integer, Integer> location : entries) {
+            if (location.getKey() - lastEntry.getKey() <= 1) {
+                Stmt stmt1 = statements1.get(location.getKey());
+                Stmt stmt2 = statements2.get(location.getValue());
+                tempNormalized1.add(normalizedStatements1.get(location.getKey()));
+                tempNormalized2.add(normalizedStatements2.get(location.getValue()));
+                clone.addClonedStatement(stmt1, stmt2);
+            } else {
+                if (location.getKey() - lastEntry.getKey() > MAX_GAP) {
+                    clone.setType(decideCloneType(clone, tempNormalized1, tempNormalized2));
+                    clones.add(clone);
+                    clone = new CodeClone(actor, root1, root2);
+                    tempNormalized1.clear();
+                    tempNormalized2.clear();
+                    Stmt stmt1 = statements1.get(location.getKey());
+                    Stmt stmt2 = statements2.get(location.getValue());
+                    tempNormalized1.add(normalizedStatements1.get(location.getKey()));
+                    tempNormalized2.add(normalizedStatements2.get(location.getValue()));
+                    clone.addClonedStatement(stmt1, stmt2);
+                } else {
+                    for (int i = 1; lastEntry.getKey() + i < location.getKey(); i++) {
+                        Stmt stmt1 = statements1.get(lastEntry.getKey() + i);
+                        Stmt stmt2 = statements2.get(lastEntry.getValue() + i);
+                        tempNormalized1.add(normalizedStatements1.get(lastEntry.getKey() + i));
+                        tempNormalized2.add(normalizedStatements2.get(lastEntry.getValue() + i));
+                        clone.addClonedStatement(stmt1, stmt2);
+                    }
+                }
+            }
+            lastEntry = location;
+        }
+        clone.setType(decideCloneType(clone, tempNormalized1, tempNormalized2));
+        clones.add(clone);
 
         return clones;
     }
@@ -145,7 +203,6 @@ public class CloneAnalysis {
         int height = normalizedStatements2.size();
         boolean[][] matrix = new boolean[width][height];
 
-        // TODO: This makes redundant comparisons -- we compare each pair of nodes twice
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
                 matrix[i][j] = normalizedStatements1.get(i).equals(normalizedStatements2.get(j));
