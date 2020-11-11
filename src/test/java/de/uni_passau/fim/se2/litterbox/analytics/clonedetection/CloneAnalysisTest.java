@@ -121,6 +121,65 @@ public class CloneAnalysisTest {
     }
 
     @Test
+    public void testMinimumCloneSizeIs6() throws IOException, ParsingException {
+        Program program = getAST("./src/test/fixtures/smells/cloneTypeMinSize.json");
+        ActorDefinition actor = program.getActorDefinitionList().getDefinitions().get(1);
+        Script script1 = actor.getScripts().getScriptList().get(0);
+        Script script2 = actor.getScripts().getScriptList().get(1);
+        assertNotEquals(script1, script2);
+
+        CloneAnalysis cloneAnalysis = new CloneAnalysis(actor);
+        Set<CodeClone> clonesType = cloneAnalysis.check(script1, script2, CodeClone.CloneType.TYPE1);
+        assertEquals(1, clonesType.size());
+        assertEquals(6, clonesType.iterator().next().size());
+    }
+
+    @Test
+    public void testCloneType2() throws IOException, ParsingException {
+        Program program = getAST("./src/test/fixtures/smells/cloneType2.json");
+        ActorDefinition actor = program.getActorDefinitionList().getDefinitions().get(1);
+        Script script1 = actor.getScripts().getScriptList().get(0);
+        Script script2 = actor.getScripts().getScriptList().get(1);
+        assertNotEquals(script1, script2);
+
+        CloneAnalysis cloneAnalysis = new CloneAnalysis(actor, 3, 2);
+        Set<CodeClone> clonesType = cloneAnalysis.check(script1, script2, CodeClone.CloneType.TYPE2);
+        assertEquals(1, clonesType.size());
+        assertEquals(4, clonesType.iterator().next().size());
+    }
+
+    @Test
+    public void testCloneType1And2InOneScript() throws IOException, ParsingException {
+        Program program = getAST("./src/test/fixtures/smells/cloneType1And2.json");
+        ActorDefinition actor = program.getActorDefinitionList().getDefinitions().get(1);
+        Script script1 = actor.getScripts().getScriptList().get(0);
+        Script script2 = actor.getScripts().getScriptList().get(1);
+        assertNotEquals(script1, script2);
+
+        CloneAnalysis cloneAnalysis = new CloneAnalysis(actor, 3, 2);
+        Set<CodeClone> clonesType1 = cloneAnalysis.check(script1, script2, CodeClone.CloneType.TYPE1);
+        Set<CodeClone> clonesType2 = cloneAnalysis.check(script1, script2, CodeClone.CloneType.TYPE2);
+        assertEquals(2, clonesType1.size());
+        assertEquals(4, clonesType1.iterator().next().size());
+        assertEquals(2, clonesType2.size());
+        assertEquals(4, clonesType2.iterator().next().size());
+    }
+
+    @Test
+    public void testCloneType3WithGap() throws IOException, ParsingException {
+        Program program = getAST("./src/test/fixtures/smells/cloneType3WithGap.json");
+        ActorDefinition actor = program.getActorDefinitionList().getDefinitions().get(1);
+        Script script1 = actor.getScripts().getScriptList().get(0);
+        Script script2 = actor.getScripts().getScriptList().get(1);
+        assertNotEquals(script1, script2);
+
+        CloneAnalysis cloneAnalysis = new CloneAnalysis(actor);
+        Set<CodeClone> clonesType = cloneAnalysis.check(script1, script2, CodeClone.CloneType.TYPE3);
+        assertEquals(1, clonesType.size());
+        assertEquals(11, clonesType.iterator().next().size());
+    }
+
+    @Test
     public void testCustomBlockClone() throws IOException, ParsingException {
         Program program = getAST("./src/test/fixtures/smells/codeclonecustomblock.json");
         ActorDefinition actor = program.getActorDefinitionList().getDefinitions().get(1);
