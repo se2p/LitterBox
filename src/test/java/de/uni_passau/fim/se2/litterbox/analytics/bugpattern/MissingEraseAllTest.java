@@ -18,51 +18,37 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Set;
 
-public class MissingEraseAllTest {
-    private static Program empty;
-    private static Program eraseOtherSprite;
-    private static Program missingEraseAll;
-    private static ObjectMapper mapper = new ObjectMapper();
-
-    @BeforeAll
-    public static void setUp() throws IOException, ParsingException {
-        File f = new File("./src/test/fixtures/bugpattern/eraseOtherSprite.json");
-        eraseOtherSprite = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
-        f = new File("./src/test/fixtures/emptyProject.json");
-        empty = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
-        f = new File("./src/test/fixtures/bugpattern/missingEraseAll.json");
-        missingEraseAll = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
-    }
+public class MissingEraseAllTest implements JsonTest {
 
     @Test
-    public void testEmptyProgram() {
+    public void testEmptyProgram() throws IOException, ParsingException {
+        Program empty = JsonTest.parseProgram("./src/test/fixtures/emptyProject.json");
         MissingEraseAll parameterName = new MissingEraseAll();
         Set<Issue> reports = parameterName.check(empty);
         Assertions.assertTrue(reports.isEmpty());
     }
 
     @Test
-    public void testEraseInOtherSprite() {
+    public void testEraseInOtherSprite() throws IOException, ParsingException {
+        Program eraseOtherSprite = JsonTest.parseProgram("./src/test/fixtures/bugpattern/eraseOtherSprite.json");
         MissingEraseAll parameterName = new MissingEraseAll();
         Set<Issue> reports = parameterName.check(eraseOtherSprite);
         Assertions.assertTrue(reports.isEmpty());
     }
 
     @Test
-    public void testMissingEraseAll() {
+    public void testMissingEraseAll() throws IOException, ParsingException {
+        Program missingEraseAll = JsonTest.parseProgram("./src/test/fixtures/bugpattern/missingEraseAll.json");
         MissingEraseAll parameterName = new MissingEraseAll();
         Set<Issue> reports = parameterName.check(missingEraseAll);
         Assertions.assertEquals(1, reports.size());

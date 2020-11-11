@@ -19,7 +19,9 @@
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
+import de.uni_passau.fim.se2.litterbox.analytics.Hint;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
@@ -119,6 +121,8 @@ public class MessageNeverSent extends AbstractIssueFinder {
                     final String actorName = currentActor.getIdent().getName();
                     messageReceived.add(new Pair<>(actorName, msgName));
                 } else if (notSentMessages.contains(msgName)) {
+                    Hint hint = new Hint(getName());
+                    hint.setParameter(Hint.HINT_MESSAGE, ((StringLiteral) event.getMsg().getMessage()).getText());
                     addIssue(event, event.getMetadata());
                 }
             }

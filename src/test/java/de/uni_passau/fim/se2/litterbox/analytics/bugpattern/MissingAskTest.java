@@ -19,29 +19,21 @@
 
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Set;
 
-public class MissingAskTest {
-
-    private Program loadProgram(String name) throws IOException, ParsingException {
-        ObjectMapper mapper = new ObjectMapper();
-        File f = new File(name);
-        return ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
-    }
+public class MissingAskTest implements JsonTest {
 
     @Test
     public void testEmptyProgram() throws IOException, ParsingException {
-        Program empty = loadProgram("./src/test/fixtures/emptyProject.json");
+        Program empty = getAST("./src/test/fixtures/emptyProject.json");
         MissingAsk parameterName = new MissingAsk();
         Set<Issue> reports = parameterName.check(empty);
         Assertions.assertEquals(0, reports.size());
@@ -49,7 +41,7 @@ public class MissingAskTest {
 
     @Test
     public void testAskBeforeAnswer() throws IOException, ParsingException {
-        Program correctAsk = loadProgram("./src/test/fixtures/bugpattern/askBeforeAnswer.json");
+        Program correctAsk = getAST("./src/test/fixtures/bugpattern/askBeforeAnswer.json");
         MissingAsk parameterName = new MissingAsk();
         Set<Issue> reports = parameterName.check(correctAsk);
         Assertions.assertEquals(0, reports.size());
@@ -57,7 +49,7 @@ public class MissingAskTest {
 
     @Test
     public void testMissingAsk() throws IOException, ParsingException {
-        Program correctAsk = loadProgram("./src/test/fixtures/bugpattern/missingAsk.json");
+        Program correctAsk = getAST("./src/test/fixtures/bugpattern/missingAsk.json");
         MissingAsk parameterName = new MissingAsk();
         Set<Issue> reports = parameterName.check(correctAsk);
         Assertions.assertEquals(1, reports.size());
@@ -65,10 +57,9 @@ public class MissingAskTest {
 
     @Test
     public void testMissingAsks() throws IOException, ParsingException {
-        Program correctAsk = loadProgram("./src/test/fixtures/bugpattern/missingAsks.json");
+        Program correctAsk = getAST("./src/test/fixtures/bugpattern/missingAsks.json");
         MissingAsk parameterName = new MissingAsk();
         Set<Issue> reports = parameterName.check(correctAsk);
         Assertions.assertEquals(2, reports.size());
     }
-
 }

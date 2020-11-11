@@ -18,52 +18,37 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Set;
 
-public class OrphanedParameterTest {
-    private static Program empty;
-    private static Program orphanedParam;
-    private static Program outsideParam;
-    private static ObjectMapper mapper = new ObjectMapper();
-
-    @BeforeAll
-    public static void setUp() throws IOException, ParsingException {
-
-        File f = new File("./src/test/fixtures/emptyProject.json");
-        empty = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
-        f = new File("./src/test/fixtures/bugpattern/orphanedParameter.json");
-        orphanedParam = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
-        f = new File("./src/test/fixtures/bugpattern/parameterOutsideScope.json");
-        outsideParam = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
-    }
+public class OrphanedParameterTest implements JsonTest {
 
     @Test
-    public void testEmptyProgram() {
+    public void testEmptyProgram() throws IOException, ParsingException {
+        Program empty = JsonTest.parseProgram("./src/test/fixtures/emptyProject.json");
         OrphanedParameter parameterName = new OrphanedParameter();
         Set<Issue> reports = parameterName.check(empty);
         Assertions.assertEquals(0, reports.size());
     }
 
     @Test
-    public void testOrphanedParameter() {
+    public void testOrphanedParameter() throws IOException, ParsingException {
+        Program orphanedParam = JsonTest.parseProgram("./src/test/fixtures/bugpattern/orphanedParameter.json");
         OrphanedParameter parameterName = new OrphanedParameter();
         Set<Issue> reports = parameterName.check(orphanedParam);
         Assertions.assertEquals(1, reports.size());
     }
 
     @Test
-    public void testOutsideParameter() {
+    public void testOutsideParameter() throws IOException, ParsingException {
+        Program outsideParam = JsonTest.parseProgram("./src/test/fixtures/bugpattern/parameterOutsideScope.json");
         OrphanedParameter parameterName = new OrphanedParameter();
         Set<Issue> reports = parameterName.check(outsideParam);
         Assertions.assertEquals(0, reports.size());

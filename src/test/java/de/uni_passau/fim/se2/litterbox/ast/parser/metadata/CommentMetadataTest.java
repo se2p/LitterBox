@@ -32,27 +32,21 @@ import static de.uni_passau.fim.se2.litterbox.ast.Constants.COMMENTS_KEY;
 import static de.uni_passau.fim.se2.litterbox.ast.Constants.TARGETS_KEY;
 
 public class CommentMetadataTest {
-    private static ObjectMapper mapper = new ObjectMapper();
-    private static JsonNode prog;
-    private static JsonNode empty;
-
-    @BeforeAll
-    public static void setUp() throws IOException {
-        File f = new File("./src/test/fixtures/emptyProject.json");
-        empty = mapper.readTree(f);
-        f = new File("./src/test/fixtures/metadata/commentMetadata.json");
-        prog = mapper.readTree(f);
-    }
+    private static final ObjectMapper mapper = new ObjectMapper();
 
     @Test
-    public void testEmptyProgram() {
+    public void testEmptyProgram() throws IOException {
+        File f = new File("./src/test/fixtures/emptyProject.json");
+        JsonNode empty = mapper.readTree(f);
         CommentMetadataList monitors = CommentMetadataListParser.parse(empty.get(TARGETS_KEY).get(0)
                 .get(COMMENTS_KEY));
         Assertions.assertEquals(0, monitors.getList().size());
     }
 
     @Test
-    public void testCommentsProgram() {
+    public void testCommentsProgram() throws IOException {
+        File f = new File("./src/test/fixtures/metadata/commentMetadata.json");
+        JsonNode prog = mapper.readTree(f);
         CommentMetadataList monitors = CommentMetadataListParser.parse(prog.get(TARGETS_KEY).get(1)
                 .get(COMMENTS_KEY));
         Assertions.assertEquals(2, monitors.getList().size());

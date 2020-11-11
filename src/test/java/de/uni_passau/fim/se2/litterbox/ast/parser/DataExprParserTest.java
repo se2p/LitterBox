@@ -18,11 +18,9 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.parser;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
-import de.uni_passau.fim.se2.litterbox.ast.model.ActorType;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
@@ -32,44 +30,29 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetVariableTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Parameter;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
 import static junit.framework.TestCase.*;
 
-class DataExprParserTest {
+class DataExprParserTest implements JsonTest {
 
     @Test
-    public void testParseParam() {
-        String path = "src/test/fixtures/parseParamInExprParser.json";
-        File file = new File(path);
-        ObjectMapper objectMapper = new ObjectMapper();
-        JsonNode project = null;
-        try {
-            project = objectMapper.readTree(file);
-        } catch (IOException e) {
-            fail();
-        }
-        try {
-            Program program = ProgramParser.parseProgram("Params", project);
-            List<ActorDefinition> actorDefinitions = program.getActorDefinitionList().getDefinitions();
-            for (ActorDefinition actorDefinition : actorDefinitions) {
-                if (actorDefinition.getActorType().equals(ActorType.SPRITE)) {
-                    List<Script> scriptList = actorDefinition.getScripts().getScriptList();
-                    Script script = scriptList.get(0);
-                    Stmt stmt = script.getStmtList().getStmts().get(0);
-                    assertTrue(stmt instanceof SetVariableTo);
-                    SetVariableTo setVariableTo = (SetVariableTo) stmt;
-                    Expression param = setVariableTo.getExpr();
-                    assertTrue(param instanceof Parameter);
-                    assertEquals(((Parameter) param).getName().getName(), "input");
-                    assertEquals(((Parameter) param).getMetadata().getClass(), NonDataBlockMetadata.class);
-                }
+    public void testParseParam() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/parseParamInExprParser.json");
+        List<ActorDefinition> actorDefinitions = program.getActorDefinitionList().getDefinitions();
+        for (ActorDefinition actorDefinition : actorDefinitions) {
+            if (actorDefinition.isSprite()) {
+                List<Script> scriptList = actorDefinition.getScripts().getScriptList();
+                Script script = scriptList.get(0);
+                Stmt stmt = script.getStmtList().getStmts().get(0);
+                assertTrue(stmt instanceof SetVariableTo);
+                SetVariableTo setVariableTo = (SetVariableTo) stmt;
+                Expression param = setVariableTo.getExpr();
+                assertTrue(param instanceof Parameter);
+                assertEquals(((Parameter) param).getName().getName(), "input");
+                assertEquals(((Parameter) param).getMetadata().getClass(), NonDataBlockMetadata.class);
             }
-        } catch (ParsingException e) {
-            e.printStackTrace();
-            fail();
         }
     }
 }

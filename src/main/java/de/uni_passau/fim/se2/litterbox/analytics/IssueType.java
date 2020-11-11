@@ -16,8 +16,8 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
+package de.uni_passau.fim.se2.litterbox.analytics;
 
-class TestBugPatternDynamically {
-
+public enum IssueType {
+    BUG, SMELL
 }

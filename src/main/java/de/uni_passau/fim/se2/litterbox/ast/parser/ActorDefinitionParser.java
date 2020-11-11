@@ -53,9 +53,9 @@ public class ActorDefinitionParser {
 
         ActorType actorType;
         if (actorDefinitionNode.get(IS_STAGE_KEY).asBoolean()) {
-            actorType = ActorType.STAGE;
+            actorType = ActorType.getStage();
         } else {
-            actorType = ActorType.SPRITE;
+            actorType = ActorType.getSprite();
         }
 
         LocalIdentifier localIdentifier = new StrId(actorDefinitionNode.get(NAME_KEY).asText());

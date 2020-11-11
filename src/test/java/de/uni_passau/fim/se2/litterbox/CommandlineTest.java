@@ -36,8 +36,8 @@ public class CommandlineTest {
 
     private PrintStream out = System.out;
     private PrintStream err = System.err;
-    private ByteArrayOutputStream mockOut = new ByteArrayOutputStream();
-    private ByteArrayOutputStream mockErr = new ByteArrayOutputStream();
+    private final ByteArrayOutputStream mockOut = new ByteArrayOutputStream();
+    private final ByteArrayOutputStream mockErr = new ByteArrayOutputStream();
 
     @Test
     public void testInvalidOptionPrintsAnError() {

@@ -25,6 +25,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.At
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.AttributeFromVariable;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.HideVariable;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.ShowVariable;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetVariableTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.DataExpr;
@@ -60,6 +62,16 @@ public class VariableUseVisitor implements DefinableCollector<de.uni_passau.fim.
 
     @Override
     public void visit(RepeatForeverStmt node) {
+        // Nop
+    }
+
+    @Override
+    public void visit(ShowVariable node) {
+        // Nop
+    }
+
+    @Override
+    public void visit(HideVariable node) {
         // Nop
     }
 

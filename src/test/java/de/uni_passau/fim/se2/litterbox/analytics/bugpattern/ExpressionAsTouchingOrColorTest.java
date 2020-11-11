@@ -18,62 +18,45 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Set;
 
 public class ExpressionAsTouchingOrColorTest {
-    private static Program empty;
-    private static Program expressionColor;
-    private static Program giant;
-    private static Program two;
-    private static ObjectMapper mapper = new ObjectMapper();
-
-    @BeforeAll
-    public static void setUp() throws IOException, ParsingException {
-
-        File f = new File("./src/test/fixtures/emptyProject.json");
-        empty = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
-        f = new File("./src/test/fixtures/bugpattern/touchingExpressions.json");
-        expressionColor = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
-        f = new File("./src/test/fixtures/bugpattern/exprLit.json");
-        giant = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
-        f = new File("./src/test/fixtures/bugpattern/twoNotColo.json");
-        two = ProgramParser.parseProgram(f.getName(), mapper.readTree(f));
-    }
 
     @Test
-    public void testEmptyProgram() {
+    public void testEmptyProgram() throws IOException, ParsingException {
+        Program empty = JsonTest.parseProgram("./src/test/fixtures/emptyProject.json");
         ExpressionAsTouchingOrColor parameterName = new ExpressionAsTouchingOrColor();
         Set<Issue> reports = parameterName.check(empty);
         Assertions.assertEquals(0, reports.size());
     }
 
     @Test
-    public void testExpressionAsColor() {
+    public void testExpressionAsColor() throws IOException, ParsingException {
+        Program expressionColor = JsonTest.parseProgram("./src/test/fixtures/bugpattern/touchingExpressions.json");
         ExpressionAsTouchingOrColor parameterName = new ExpressionAsTouchingOrColor();
         Set<Issue> reports = parameterName.check(expressionColor);
         Assertions.assertEquals(3, reports.size());
     }
 
     @Test
-    public void testGiant() {
+    public void testGiant() throws IOException, ParsingException {
+        Program giant = JsonTest.parseProgram("./src/test/fixtures/bugpattern/exprLit.json");
         ExpressionAsTouchingOrColor parameterName = new ExpressionAsTouchingOrColor();
         Set<Issue> reports = parameterName.check(giant);
         Assertions.assertEquals(0, reports.size());
     }
 
     @Test
-    public void testTwo() {
+    public void testTwo() throws IOException, ParsingException {
+        Program two = JsonTest.parseProgram("./src/test/fixtures/bugpattern/twoNotColo.json");
         ExpressionAsTouchingOrColor parameterName = new ExpressionAsTouchingOrColor();
         Set<Issue> reports = parameterName.check(two);
         Assertions.assertEquals(2, reports.size());

@@ -48,6 +48,7 @@ public class IssueTool {
         registerBugFinder(new ExpressionAsTouchingOrColor(), bugFinders);
         registerBugFinder(new ForeverInsideLoop(), bugFinders);
         registerBugFinder(new IllegalParameterRefactor(), bugFinders);
+        registerBugFinder(new ImmediateStopAfterSay(), bugFinders);
         registerBugFinder(new MessageNeverReceived(), bugFinders);
         registerBugFinder(new MessageNeverSent(), bugFinders);
         registerBugFinder(new MissingAsk(), bugFinders);
@@ -59,6 +60,7 @@ public class IssueTool {
         registerBugFinder(new MissingLoopSensing(), bugFinders);
         registerBugFinder(new MissingPenDown(), bugFinders);
         registerBugFinder(new MissingPenUp(), bugFinders);
+        registerBugFinder(new MissingResource(), bugFinders);
         registerBugFinder(new MissingTerminationCondition(), bugFinders);
         registerBugFinder(new MissingWaitUntilCondition(), bugFinders);
         registerBugFinder(new NoWorkingScripts(), bugFinders);
@@ -67,6 +69,8 @@ public class IssueTool {
         registerBugFinder(new PositionEqualsCheck(), bugFinders);
         registerBugFinder(new RecursiveCloning(), bugFinders);
         registerBugFinder(new StutteringMovement(), bugFinders);
+        registerBugFinder(new TerminatedLoop(), bugFinders);
+        registerBugFinder(new TypeError(), bugFinders);
         registerBugFinder(new VariableAsLiteral(), bugFinders);
 
         return bugFinders;
@@ -97,12 +101,15 @@ public class IssueTool {
         registerSmellFinder(new DuplicatedScript(), smellFinders);
         registerSmellFinder(new DuplicateSprite(), smellFinders);
         registerSmellFinder(new LongScript(), smellFinders);
+        registerSmellFinder(new UnnecessaryLoop(), smellFinders);
         registerSmellFinder(new MiddleMan(), smellFinders);
         registerSmellFinder(new MultiAttributeModification(), smellFinders);
         registerSmellFinder(new NestedLoops(), smellFinders);
         registerSmellFinder(new SameVariableDifferentSprite(), smellFinders);
         registerSmellFinder(new SequentialActions(), smellFinders);
+        registerSmellFinder(new SpriteNaming(), smellFinders);
         registerSmellFinder(new UnusedCustomBlock(), smellFinders);
+        registerSmellFinder(new UnusedParameter(), smellFinders);
         registerSmellFinder(new UnusedVariable(), smellFinders);
         registerSmellFinder(new VariableInitializationRace(), smellFinders);
 
@@ -153,7 +160,7 @@ public class IssueTool {
     }
 
     static void registerSmellFinder(IssueFinder finder, Map<String, IssueFinder> smellFinders) {
-        if (finder.getIssueType() != IssueFinder.IssueType.SMELL) {
+        if (finder.getIssueType() != IssueType.SMELL) {
             throw new RuntimeException("Cannot register IssueFinder of Type "
                     + finder.getIssueType()
                     + " as Smell IssueFinder");
@@ -163,7 +170,7 @@ public class IssueTool {
     }
 
     static void registerBugFinder(IssueFinder finder, Map<String, IssueFinder> bugFinders) {
-        if (finder.getIssueType() != IssueFinder.IssueType.BUG) {
+        if (finder.getIssueType() != IssueType.BUG) {
             throw new RuntimeException("Cannot register IssueFinder of Type "
                     + finder.getIssueType()
                     + " as Bug IssueFinder");

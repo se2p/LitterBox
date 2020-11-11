@@ -18,39 +18,21 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.truth.Truth;
+import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Set;
 
-import static junit.framework.TestCase.fail;
-
-public class ComparingLiteralsWithHintTest {
-
-    private static Program program;
-
-    @BeforeAll
-    public static void setup() {
-        String path = "src/test/fixtures/bugpattern/comparingLiterals.json";
-        File file = new File(path);
-        ObjectMapper objectMapper = new ObjectMapper();
-        try {
-            program = ProgramParser.parseProgram("comparing literals", objectMapper.readTree(file));
-        } catch (IOException | ParsingException e) {
-            fail();
-        }
-    }
+public class ComparingLiteralsWithHintTest implements JsonTest {
 
     @Test
-    public void testComparingLiterals() {
+    public void testComparingLiterals() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/bugpattern/comparingLiterals.json");
         ComparingLiterals finder = new ComparingLiterals();
         Set<Issue> reports = finder.check(program);
         Truth.assertThat(reports).hasSize(3);

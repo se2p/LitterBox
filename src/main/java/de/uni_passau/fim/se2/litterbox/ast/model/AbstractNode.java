@@ -32,6 +32,8 @@ public abstract class AbstractNode implements ASTNode {
 
     protected final List<? extends ASTNode> children;
 
+    protected ASTNode parent;
+
     public AbstractNode(ASTNode... children) {
         this(Arrays.asList(children));
     }
@@ -48,6 +50,16 @@ public abstract class AbstractNode implements ASTNode {
 
     public List<? extends ASTNode> getChildren() {
         return children;
+    }
+
+    @Override
+    public ASTNode getParentNode() {
+        return parent;
+    }
+
+    @Override
+    public void setParentNode(ASTNode parent) {
+        this.parent = parent;
     }
 
     public String getUniqueName() {

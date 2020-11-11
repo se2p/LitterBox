@@ -31,17 +31,12 @@ import java.io.File;
 import java.io.IOException;
 
 public class JSONCreate {
-    private static ObjectMapper mapper = new ObjectMapper();
-    private static JsonNode prog;
-
-    @BeforeAll
-    public static void setUp() throws IOException {
-        File f = new File("./src/test/fixtures/stmtParser/manipulatedBroadcast.json");
-        prog = mapper.readTree(f);
-    }
+    private static final ObjectMapper mapper = new ObjectMapper();
 
     @Test
-    public void createJSON() throws ParsingException {
+    public void createJSON() throws ParsingException, IOException {
+        File f = new File("./src/test/fixtures/stmtParser/manipulatedBroadcast.json");
+        JsonNode prog = mapper.readTree(f);
         Program test = ProgramParser.parseProgram("createBroadcast", prog);
         JSONFileCreator.writeJsonFromProgram(test);
     }

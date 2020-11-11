@@ -18,51 +18,35 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.truth.Truth;
+import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
-import org.junit.jupiter.api.BeforeAll;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.CreateCloneOf;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Set;
 
-import static junit.framework.TestCase.fail;
+public class MissingCloneInitializationTest implements JsonTest {
 
-public class MissingCloneInitializationTest {
-
-    private static Program program;
-    private static Program clicked;
-
-    @BeforeAll
-    public static void setup() {
-        String path = "src/test/fixtures/bugpattern/missingCloneInitialization.json";
-        File file = new File(path);
-        ObjectMapper objectMapper = new ObjectMapper();
-        try {
-            program = ProgramParser.parseProgram("missingCloneInit", objectMapper.readTree(file));
-            file = new File("src/test/fixtures/bugpattern/cloningWithClicked.json");
-            clicked = ProgramParser.parseProgram("cloningWithClicked", objectMapper.readTree(file));
-        } catch (IOException | ParsingException e) {
-            fail();
+    @Test
+    public void testCloneInit() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/bugpattern/missingCloneInitialization.json");
+        MissingCloneInitialization finder = new MissingCloneInitialization();
+        Set<Issue> reports = finder.check(program);
+        Truth.assertThat(reports).hasSize(1);
+        for (Issue issue : reports) {
+            Truth.assertThat(((StrId) ((AsString) ((CreateCloneOf) issue.getCodeLocation()).getStringExpr()).getOperand1()).getName()).isEqualTo("Anina Dance");
         }
     }
 
     @Test
-    public void testCloneInit() {
-        MissingCloneInitialization finder = new MissingCloneInitialization();
-        Set<Issue> reports = finder.check(program);
-        Truth.assertThat(reports).hasSize(1);
-        // TODO: Restore check
-        // Truth.assertThat(check.getPosition().get(0)).isEqualTo("Anina Dance");
-    }
-
-    @Test
-    public void testCloningWithClicked() {
+    public void testCloningWithClicked() throws IOException, ParsingException {
+        Program clicked = getAST("src/test/fixtures/bugpattern/cloningWithClicked.json");
         MissingCloneInitialization finder = new MissingCloneInitialization();
         Set<Issue> reports = finder.check(clicked);
         Truth.assertThat(reports).isEmpty();

@@ -238,7 +238,7 @@ public class ControlFlowGraphBuilder {
             // If the name is an expression, add edges to *all* actors
 
             for (ActorDefinition actor : allActors) {
-                if (actor.getActorType().equals(ActorType.STAGE)) {
+                if (actor.isStage()) {
                     continue;
                 }
                 CloneEventNode handlerNode = new CloneEventNode(actor.getIdent().getName());

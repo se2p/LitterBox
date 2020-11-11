@@ -18,25 +18,26 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
+import de.uni_passau.fim.se2.litterbox.analytics.Hint;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
-import de.uni_passau.fim.se2.litterbox.cfg.ControlFlowGraph;
-import de.uni_passau.fim.se2.litterbox.cfg.ControlFlowGraphVisitor;
-import de.uni_passau.fim.se2.litterbox.cfg.Definition;
-import de.uni_passau.fim.se2.litterbox.cfg.Use;
+import de.uni_passau.fim.se2.litterbox.cfg.*;
 import de.uni_passau.fim.se2.litterbox.dataflow.DataflowAnalysis;
 import de.uni_passau.fim.se2.litterbox.dataflow.DataflowAnalysisBuilder;
 import de.uni_passau.fim.se2.litterbox.dataflow.InitialDefinitionTransferFunction;
 import de.uni_passau.fim.se2.litterbox.dataflow.LivenessTransferFunction;
+import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.*;
 
 public class MissingInitialization implements IssueFinder {
 
@@ -72,22 +73,75 @@ public class MissingInitialization implements IssueFinder {
                     .noneMatch(d -> d.getDefinitionSource().getScriptOrProcedure()
                             != use.getUseTarget().getScriptOrProcedure())) {
 
+                Hint hint = new Hint(getName());
+                hint.setParameter(Hint.HINT_VARIABLE, getDefineableName(use.getDefinable()));
                 // TODO: The comment is attached to the statement, not the actual usage...
                 ASTNode containingScript = use.getUseTarget().getScriptOrProcedure();
                 if (containingScript instanceof Script) {
-                    issues.add(new Issue(this, program, use.getUseTarget().getActor(),
+                    issues.add(new Issue(this, IssueSeverity.HIGH, program, use.getUseTarget().getActor(),
                             (Script) containingScript,
                             use.getUseTarget().getASTNode(),
-                            null)); // TODO: Where is the relevant metadata?
+                            null,  // TODO: Where is the relevant metadata?
+                            hint));
                 } else {
-                    issues.add(new Issue(this, program, use.getUseTarget().getActor(),
+                    issues.add(new Issue(this, IssueSeverity.HIGH, program, use.getUseTarget().getActor(),
                             (ProcedureDefinition) containingScript,
                             use.getUseTarget().getASTNode(),
-                            null)); // TODO: Where is the relevant metadata
+                            null, // TODO: Where is the relevant metadata
+                            hint));
                 }
             }
         }
         return Collections.unmodifiableSet(issues);
+    }
+
+    // TODO: Clean this up
+    public String getDefineableName(Defineable def) {
+        String result = "";
+        if (def instanceof Variable) {
+            result = IssueTranslator.getInstance().getInfo(IssueTranslator.VARIABLE);
+            result += " \"";
+            Variable var = (Variable)def;
+            if (var.getIdentifier() instanceof LocalIdentifier) {
+                result += ((LocalIdentifier)var.getIdentifier()).getName();
+            } else {
+                result += ((Qualified)var.getIdentifier()).getSecond().getName().getName();
+            }
+            result += "\"";
+
+        } else if (def instanceof ListVariable) {
+            result = IssueTranslator.getInstance().getInfo(IssueTranslator.LIST);
+            result += " \"";
+            ListVariable var = (ListVariable)def;
+            if (var.getIdentifier() instanceof LocalIdentifier) {
+                result += ((LocalIdentifier)var.getIdentifier()).getName();
+            } else {
+                result += ((Qualified)var.getIdentifier()).getSecond().getName().getName();
+            }
+            result += "\"";
+
+        } else if (def instanceof Attribute) {
+            result = IssueTranslator.getInstance().getInfo(IssueTranslator.ATTRIBUTE);
+            result += " \"";
+            Attribute attr = (Attribute)def;
+            switch (attr.getAttributeType()) {
+                case SIZE:
+                    result += IssueTranslator.getInstance().getInfo(IssueTranslator.SIZE);
+                    break;
+                case COSTUME:
+                    result += IssueTranslator.getInstance().getInfo(IssueTranslator.COSTUME);
+                    break;
+                case POSITION:
+                    result += IssueTranslator.getInstance().getInfo(IssueTranslator.POSITION);
+                    break;
+                case ROTATION:
+                    result += IssueTranslator.getInstance().getInfo(IssueTranslator.ROTATION);
+                    break;
+            }
+            result += "\"";
+
+        }
+        return result;
     }
 
     @Override
@@ -103,5 +157,11 @@ public class MissingInitialization implements IssueFinder {
     @Override
     public void setIgnoreLooseBlocks(boolean value) {
         // Irrelevant for this finder
+    }
+
+    @Override
+    public Collection<String> getHintKeys() {
+        // Default: Only one key with the name of the finder
+        return Arrays.asList(getName());
     }
 }
