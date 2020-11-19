@@ -951,7 +951,7 @@ public class ScratchBlocksVisitorTest implements JsonTest {
                 "stamp" + System.lineSeparator() +
                 "pen down" + System.lineSeparator() +
                 "pen up" + System.lineSeparator() +
-                "set pen color to [#23bb7]" + System.lineSeparator() +
+                "set pen color to [#023bb7]" + System.lineSeparator() +
                 "change pen (color v) by (10)" + System.lineSeparator() +
                 "change pen (brightness v) by (10)" + System.lineSeparator() +
                 "set pen (color v) to (50)" + System.lineSeparator() +
