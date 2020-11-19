@@ -123,7 +123,7 @@ public class MessageNeverSent extends AbstractIssueFinder {
                 } else if (notSentMessages.contains(msgName)) {
                     Hint hint = new Hint(getName());
                     hint.setParameter(Hint.HINT_MESSAGE, ((StringLiteral) event.getMsg().getMessage()).getText());
-                    addIssue(event, event.getMetadata());
+                    addIssue(event, event.getMetadata(), hint);
                 }
             }
         }
