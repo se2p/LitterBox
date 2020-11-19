@@ -278,7 +278,7 @@ public class NumExprParser {
     static NumberLiteral parseNumber(JsonNode inputs, String inputKey) throws ParsingException {
         Preconditions.checkArgument(inputs.has(inputKey));
         String valueString = ExpressionParser.getDataArrayByName(inputs, inputKey).get(POS_INPUT_VALUE).asText();
-        float value = Float.parseFloat(valueString);
+        double value = Double.parseDouble(valueString);
         return new NumberLiteral(value);
     }
 
