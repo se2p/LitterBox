@@ -1716,6 +1716,23 @@ public class ScratchBlocksVisitorTest implements JsonTest {
                 "hide variable [my variable v]:: #ff0000 // " + ScratchBlocksVisitor.BUG_NOTE + System.lineSeparator() +
                 "[/scratchblocks]" + System.lineSeparator(), output);
     }
+
+    @Test
+    public void testFloatingPoint() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/scratchblocks/float.json");
+        MessageNeverSent finder = new MessageNeverSent();
+        Set<Issue> issues = finder.check(program);
+
+        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(issues);
+        visitor.begin();
+        program.accept(visitor);
+        visitor.end();
+        String output = visitor.getScratchBlocks();
+        assertEquals("[scratchblocks]" + System.lineSeparator() +
+                "when I receive [message1 v]:: #ff0000 // " + ScratchBlocksVisitor.BUG_NOTE + System.lineSeparator() +
+                "wait (0.2) seconds" + System.lineSeparator() +
+                "[/scratchblocks]" + System.lineSeparator(), output);
+    }
     // TODO: No working scripts?
     // TODO: SameIdentifierDifferentSprite
 }
