@@ -951,7 +951,7 @@ public class ScratchBlocksVisitorTest implements JsonTest {
                 "stamp" + System.lineSeparator() +
                 "pen down" + System.lineSeparator() +
                 "pen up" + System.lineSeparator() +
-                "set pen color to [#23bb7]" + System.lineSeparator() +
+                "set pen color to [#023bb7]" + System.lineSeparator() +
                 "change pen (color v) by (10)" + System.lineSeparator() +
                 "change pen (brightness v) by (10)" + System.lineSeparator() +
                 "set pen (color v) to (50)" + System.lineSeparator() +
@@ -1731,6 +1731,26 @@ public class ScratchBlocksVisitorTest implements JsonTest {
         assertEquals("[scratchblocks]" + System.lineSeparator() +
                 "when I receive [message1 v]:: #ff0000 // " + ScratchBlocksVisitor.BUG_NOTE + System.lineSeparator() +
                 "wait (0.2) seconds" + System.lineSeparator() +
+                "[/scratchblocks]" + System.lineSeparator(), output);
+    }
+
+
+    @Test
+    public void testColour() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/scratchblocks/colour.json");
+        MessageNeverSent finder = new MessageNeverSent();
+        Set<Issue> issues = finder.check(program);
+
+        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(issues);
+        visitor.begin();
+        program.accept(visitor);
+        visitor.end();
+        String output = visitor.getScratchBlocks();
+        assertEquals("[scratchblocks]" + System.lineSeparator() +
+                "when I receive [message1 v]:: #ff0000 // " + ScratchBlocksVisitor.BUG_NOTE + System.lineSeparator() +
+                "if <touching color [#663b00] ?> then" + System.lineSeparator() +
+                "say [Hello!]" + System.lineSeparator() +
+                "end" + System.lineSeparator() +
                 "[/scratchblocks]" + System.lineSeparator(), output);
     }
     // TODO: No working scripts?
