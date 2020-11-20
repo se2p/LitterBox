@@ -137,9 +137,7 @@ public class ExpressionJSONCreator implements ScratchVisitor {
     @Override
     public void visit(ColorLiteral node) {
         StringBuilder colorString = new StringBuilder();
-        colorString.append("#").append(String.format("0x%02x", node.getRed()).substring(2)).append(String.format("0x"
-                + "%02X", node.getGreen()).substring(2)).append(String.format("0x%02X",
-                node.getBlue()).substring(2));
+        colorString.append("#").append(String.format("%02x", node.getRed())).append(String.format("%02x", node.getGreen())).append(String.format("%02x", node.getBlue()));
         finishedJSONStrings.add(createTypeInput(INPUT_SAME_BLOCK_SHADOW, COLOR_PICKER_PRIMITIVE,
                 colorString.toString()));
     }
