@@ -73,9 +73,13 @@ public class CloneAnalysisTest {
         assertNotEquals(script1, script2);
 
         CloneAnalysis cloneAnalysis = new CloneAnalysis(actor, 3, 2);
-        Set<CodeClone> clones = cloneAnalysis.check(script1, script2, CodeClone.CloneType.TYPE2);
-        assertEquals(1, clones.size());
-        assertEquals(4, clones.iterator().next().size());
+        Set<CodeClone> type1Clones = cloneAnalysis.check(script1, script2, CodeClone.CloneType.TYPE1);
+        Set<CodeClone> type2Clones = cloneAnalysis.check(script1, script2, CodeClone.CloneType.TYPE2);
+        Set<CodeClone> type3Clones = cloneAnalysis.check(script1, script2, CodeClone.CloneType.TYPE3);
+        assertEquals(0, type1Clones.size());
+        assertEquals(1, type2Clones.size());
+        assertEquals(0, type3Clones.size());
+        assertEquals(4, type2Clones.iterator().next().size());
     }
 
     @Test
@@ -188,9 +192,13 @@ public class CloneAnalysisTest {
         assertNotEquals(script1, script2);
 
         CloneAnalysis cloneAnalysis = new CloneAnalysis(actor);
-        Set<CodeClone> clonesType = cloneAnalysis.check(script1, script2, CodeClone.CloneType.TYPE3);
-        assertEquals(1, clonesType.size());
-        assertEquals(11, clonesType.iterator().next().size());
+        Set<CodeClone> clonesType1 = cloneAnalysis.check(script1, script2, CodeClone.CloneType.TYPE1);
+        Set<CodeClone> clonesType2 = cloneAnalysis.check(script1, script2, CodeClone.CloneType.TYPE2);
+        Set<CodeClone> clonesType3 = cloneAnalysis.check(script1, script2, CodeClone.CloneType.TYPE3);
+        assertEquals(0, clonesType1.size());
+        assertEquals(0, clonesType2.size());
+        assertEquals(1, clonesType3.size());
+        assertEquals(11, clonesType3.iterator().next().size());
     }
 
     @Test
