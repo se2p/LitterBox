@@ -31,11 +31,11 @@ abstract class ClonedCode extends AbstractIssueFinder {
 
     private CodeClone.CloneType targetType;
 
-    private String hintKey;
+    private String hintName;
 
-    protected ClonedCode(CodeClone.CloneType targetType, String hintKey) {
+    protected ClonedCode(CodeClone.CloneType targetType, String hintName) {
         this.targetType = targetType;
-        this.hintKey = hintKey;
+        this.hintName = hintName;
     }
 
     @Override
@@ -61,13 +61,13 @@ abstract class ClonedCode extends AbstractIssueFinder {
         for (Script otherScript : otherScripts) {
             Set<CodeClone> clones = cloneAnalysis.check(script, otherScript, targetType);
             for (CodeClone clone : clones) {
-                addIssue(clone.getFirstNode(), clone.getFirstNode().getMetadata(), IssueSeverity.MEDIUM, new Hint(hintKey));
+                addIssue(clone.getFirstNode(), clone.getFirstNode().getMetadata(), IssueSeverity.MEDIUM, new Hint(hintName));
             }
         }
         for (ProcedureDefinition procedure : otherProcedures) {
             Set<CodeClone> clones = cloneAnalysis.check(script, procedure, targetType);
             for (CodeClone clone : clones) {
-                addIssue(clone.getFirstNode(), clone.getFirstNode().getMetadata(), IssueSeverity.MEDIUM, new Hint(hintKey));
+                addIssue(clone.getFirstNode(), clone.getFirstNode().getMetadata(), IssueSeverity.MEDIUM, new Hint(hintName));
             }
         }
     }
@@ -77,7 +77,7 @@ abstract class ClonedCode extends AbstractIssueFinder {
         for (ProcedureDefinition otherProcedure : otherProcedures) {
             Set<CodeClone> clones = cloneAnalysis.check(procedure, otherProcedure, targetType);
             for (CodeClone clone : clones) {
-                addIssue(clone.getFirstNode(), clone.getFirstNode().getMetadata(), IssueSeverity.MEDIUM, new Hint(""));
+                addIssue(clone.getFirstNode(), clone.getFirstNode().getMetadata(), IssueSeverity.MEDIUM, new Hint(hintName));
             }
         }
     }
@@ -89,6 +89,6 @@ abstract class ClonedCode extends AbstractIssueFinder {
 
     @Override
     public String getName() {
-        return hintKey;
+        return hintName;
     }
 }
