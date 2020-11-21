@@ -18,71 +18,11 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.smells;
 
-import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
-import de.uni_passau.fim.se2.litterbox.analytics.Issue;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
-import de.uni_passau.fim.se2.litterbox.analytics.clonedetection.CloneAnalysis;
 import de.uni_passau.fim.se2.litterbox.analytics.clonedetection.CodeClone;
-import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
-import de.uni_passau.fim.se2.litterbox.ast.model.Script;
-import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 
-import java.util.List;
-import java.util.Set;
+public class ClonedCodeType1 extends ClonedCode {
 
-public class ClonedCodeType1 extends AbstractIssueFinder {
-
-    @Override
-    public void visit(ActorDefinition actor) {
-        // TODO: Don't need these?
-        currentActor = actor;
-        procMap = program.getProcedureMapping().getProcedures().get(currentActor.getIdent().getName());
-
-        List<Script> scripts = actor.getScripts().getScriptList();
-        List<ProcedureDefinition> procedures = actor.getProcedureDefinitionList().getList();
-
-        // TODO: Enable comparision of scripts with themself
-        for (int i = 0; i < scripts.size(); i++) {
-            checkScript(scripts.get(i), scripts.subList(i + 1, scripts.size()), procedures);
-        }
-        for (int i = 0; i < procedures.size(); i++) {
-            checkProcedure(procedures.get(i), procedures.subList(i + 1, procedures.size()));
-        }
-    }
-
-    private void checkScript(Script script, List<Script> otherScripts, List<ProcedureDefinition> otherProcedures) {
-        CloneAnalysis cloneAnalysis = new CloneAnalysis(currentActor);
-        for (Script otherScript : otherScripts) {
-            Set<CodeClone> clones = cloneAnalysis.check(script, otherScript, CodeClone.CloneType.TYPE1);
-            for (CodeClone clone : clones) {
-                issues.add(new Issue(this, program, currentActor, script, clone.getFirstNode(), script.getMetadata()));
-            }
-        }
-        for (ProcedureDefinition procedure : otherProcedures) {
-            Set<CodeClone> clones = cloneAnalysis.check(script, procedure, CodeClone.CloneType.TYPE1);
-            for (CodeClone clone : clones) {
-                issues.add(new Issue(this, program, currentActor, procedure, clone.getFirstNode(), script.getMetadata()));
-            }
-        }
-    }
-
-    private void checkProcedure(ProcedureDefinition procedure, List<ProcedureDefinition> otherProcedures) {
-        CloneAnalysis cloneAnalysis = new CloneAnalysis(currentActor);
-        for (ProcedureDefinition otherProcedure : otherProcedures) {
-            Set<CodeClone> clones = cloneAnalysis.check(procedure, otherProcedure, CodeClone.CloneType.TYPE1);
-            for (CodeClone clone : clones) {
-                issues.add(new Issue(this, program, currentActor, procedure, clone.getFirstNode(), procedure.getMetadata()));
-            }
-        }
-    }
-
-    @Override
-    public IssueType getIssueType() {
-        return IssueType.SMELL;
-    }
-
-    @Override
-    public String getName() {
-        return "code_clone_type_1";
+    public ClonedCodeType1() {
+        super(CodeClone.CloneType.TYPE1, "clone_type_1");
     }
 }
