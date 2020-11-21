@@ -1249,9 +1249,9 @@ public class ScratchBlocksVisitor extends PrintVisitor {
     @Override
     public void visit(ColorLiteral colorLiteral) {
         emitNoSpace("[#");
-        emitNoSpace(Long.toHexString(colorLiteral.getRed()));
-        emitNoSpace(Long.toHexString(colorLiteral.getGreen()));
-        emitNoSpace(Long.toHexString(colorLiteral.getBlue()));
+        emitNoSpace(String.format("%02x", colorLiteral.getRed()));
+        emitNoSpace(String.format("%02x", colorLiteral.getGreen()));
+        emitNoSpace(String.format("%02x", colorLiteral.getBlue()));
         emitNoSpace("]");
         storeNotesForIssue(colorLiteral);
     }
