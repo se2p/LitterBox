@@ -18,11 +18,14 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
+import com.google.common.truth.Truth;
 import de.uni_passau.fim.se2.litterbox.JsonTest;
+import de.uni_passau.fim.se2.litterbox.analytics.Hint;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
+import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -120,5 +123,18 @@ public class VariableAsLiteralTest implements JsonTest {
         Program program = getAST("src/test/fixtures/bugpattern/hideList.json");
         Set<Issue> reports = (new VariableAsLiteral()).check(program);
         Assertions.assertEquals(0, reports.size());
+    }
+
+    @Test
+    public void testHint() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/bugpattern/happyNewYear.json");
+        VariableAsLiteral lit = new VariableAsLiteral();
+        Set<Issue> reports = lit.check(program);
+        Assertions.assertEquals(1, reports.size());
+        Hint hint = new Hint(lit.getName());
+        hint.setParameter(Hint.HINT_VARIABLE, "\"aktuelles Jahr\"");
+        for (Issue issue : reports) {
+            Truth.assertThat(issue.getHint()).isEqualTo(hint.getHintText());
+        }
     }
 }
