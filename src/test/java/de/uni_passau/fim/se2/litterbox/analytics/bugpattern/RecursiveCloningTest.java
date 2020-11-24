@@ -39,10 +39,18 @@ public class RecursiveCloningTest implements JsonTest {
     }
 
     @Test
-    public void testProcedureWithTermination() throws IOException, ParsingException {
+    public void testRecursiveCloning() throws IOException, ParsingException {
         Program recursiveClones = getAST("./src/test/fixtures/bugpattern/recursiveCloning.json");
         RecursiveCloning parameterName = new RecursiveCloning();
         Set<Issue> reports = parameterName.check(recursiveClones);
         Assertions.assertEquals(1, reports.size());
+    }
+
+    @Test
+    public void testRecursionWithDelete() throws IOException, ParsingException {
+        Program recursiveClones = getAST("./src/test/fixtures/bugpattern/happyNewYear.json");
+        RecursiveCloning parameterName = new RecursiveCloning();
+        Set<Issue> reports = parameterName.check(recursiveClones);
+        Assertions.assertEquals(0, reports.size());
     }
 }
