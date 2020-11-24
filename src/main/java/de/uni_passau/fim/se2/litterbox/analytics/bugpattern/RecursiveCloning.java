@@ -58,11 +58,17 @@ public class RecursiveCloning extends AbstractIssueFinder {
         if (node.getEvent() instanceof StartedAsClone) {
             startAsClone = true;
             super.visit(node);
-            secondVisit = true;
-            super.visit(node);
-            startAsClone = false;
-            secondVisit = false;
+            /* the first visit is to make sure that the complete script is scanned for a delete clone
+               in the second visit the create clone of blocks are collected in issues,
+               but only if no delete was detected prior
+             */
+            if (!foundDelete) {
+                secondVisit = true;
+                super.visit(node);
+                secondVisit = false;
+            }
             foundDelete = false;
+            startAsClone = false;
         }
     }
 
