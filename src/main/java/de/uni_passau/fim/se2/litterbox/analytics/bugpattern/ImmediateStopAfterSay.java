@@ -22,7 +22,7 @@ public class ImmediateStopAfterSay extends AbstractIssueFinder {
     @Override
     public void visit(StmtList node) {
         List<Stmt> stmts = node.getStmts();
-        if (stmts.get(stmts.size() - 1) instanceof StopAll) {
+        if (stmts.size() > 1 && stmts.get(stmts.size() - 1) instanceof StopAll) {
             ASTNode questionableNode = stmts.get(stmts.size() - 2);
             if (questionableNode instanceof Say) {
                 addIssue(questionableNode, questionableNode.getMetadata(), new Hint(SAY_HINT));
