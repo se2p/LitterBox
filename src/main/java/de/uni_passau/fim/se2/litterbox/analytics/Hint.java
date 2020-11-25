@@ -32,6 +32,8 @@ public class Hint {
 
     public final static String HINT_MESSAGE = "MESSAGE";
 
+    public final static String HINT_KEY = "KEY";
+
     private String hintKey;
     private String hintText;
 
