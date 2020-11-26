@@ -27,6 +27,7 @@ public class Hint {
     public final static char ESCAPE_CHARACTER = '%';
 
     public final static String HINT_SPRITE = "SPRITE";
+    public final static String HINT_SPRITES = "SPRITES";
     public final static String HINT_VARIABLE = "VARIABLE";
     public final static String HINT_MESSAGE = "MESSAGE";
     public final static String HINT_KEY = "KEY";

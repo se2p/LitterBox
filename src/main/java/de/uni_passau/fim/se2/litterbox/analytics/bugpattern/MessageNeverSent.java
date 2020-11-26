@@ -27,6 +27,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.ReceptionOfMessage;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Touching;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.Broadcast;
@@ -35,6 +36,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Say;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SayForSecs;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Think;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.ThinkForSecs;
+import de.uni_passau.fim.se2.litterbox.ast.model.touchable.SpriteTouchable;
 import de.uni_passau.fim.se2.litterbox.utils.Pair;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
@@ -54,6 +56,7 @@ public class MessageNeverSent extends AbstractIssueFinder {
     private Set<String> notSentMessages = new LinkedHashSet<>();
     private Map<String, Set<String>> thinkText;
     private Map<String, Set<String>> sayText;
+    private Map<String, Set<String>> touchedSprites;
 
     @Override
     public Set<Issue> check(Program program) {
@@ -63,6 +66,7 @@ public class MessageNeverSent extends AbstractIssueFinder {
         messageReceived = new ArrayList<>();
         thinkText = new TreeMap<>();
         sayText = new TreeMap<>();
+        touchedSprites = new TreeMap<>();
         program.accept(this);
         addComment = false;
         notSentMessages = new LinkedHashSet<>();
@@ -128,7 +132,7 @@ public class MessageNeverSent extends AbstractIssueFinder {
                     final String actorName = currentActor.getIdent().getName();
                     messageReceived.add(new Pair<>(actorName, msgName));
                 } else if (notSentMessages.contains(msgName)) {
-                    Hint hint = MessageNeverSentHintFactory.generateHint(((StringLiteral) event.getMsg().getMessage()).getText(), sayText, thinkText);
+                    Hint hint = MessageNeverSentHintFactory.generateHint(((StringLiteral) event.getMsg().getMessage()).getText(), sayText, thinkText, touchedSprites);
                     addIssue(event, event.getMetadata(), hint);
                 }
             }
@@ -140,21 +144,32 @@ public class MessageNeverSent extends AbstractIssueFinder {
     @Override
     public void visit(Think node) {
         processStringExpr(node.getThought(), thinkText);
+        super.visitChildren(node);
     }
 
     @Override
     public void visit(ThinkForSecs node) {
         processStringExpr(node.getThought(), thinkText);
+        super.visitChildren(node);
     }
 
     @Override
     public void visit(Say node) {
         processStringExpr(node.getString(), sayText);
+        super.visitChildren(node);
     }
 
     @Override
     public void visit(SayForSecs node) {
         processStringExpr(node.getString(), sayText);
+        super.visitChildren(node);
+    }
+
+    @Override
+    public void visit(Touching node) {
+        if (node.getTouchable() instanceof SpriteTouchable) {
+            processStringExpr((((SpriteTouchable) node.getTouchable()).getStringExpr()), touchedSprites);
+        }
     }
 
     private void processStringExpr(StringExpr node, Map<String, Set<String>> map) {
