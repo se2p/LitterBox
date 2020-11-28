@@ -52,6 +52,20 @@ public class JSONReportGenerator implements ReportGenerator {
         this.outputStream = stream;
     }
 
+    private void addDuplicateIDs(ArrayNode jsonNode, Issue theIssue, Collection<Issue> issues) {
+        issues.stream().filter(issue -> issue != theIssue)
+                .filter(issue -> theIssue.isDuplicateOf(issue))
+                .map(issue -> issue.getId())
+                .forEach(id -> jsonNode.add(id));
+    }
+
+    private void addSubsumingIssueIDs(ArrayNode jsonNode, Issue theIssue, Collection<Issue> issues) {
+        issues.stream().filter(issue -> issue != theIssue)
+                .filter(issue -> theIssue.isSubsumedBy(issue))
+                .map(issue -> issue.getId())
+                .forEach(id -> jsonNode.add(id));
+    }
+
     @Override
     public void generateReport(Program program, Collection<Issue> issues) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
@@ -64,11 +78,19 @@ public class JSONReportGenerator implements ReportGenerator {
 
         for (Issue issue : issues) {
             JsonNode childNode = mapper.createObjectNode();
+            ((ObjectNode) childNode).put("id", issue.getId());
             ((ObjectNode) childNode).put("finder", issue.getFinderName());
             ((ObjectNode) childNode).put("name", issue.getTranslatedFinderName());
             ((ObjectNode) childNode).put("type", issue.getIssueType().toString());
             ((ObjectNode) childNode).put("severity", issue.getSeverity().getSeverityLevel());
             ((ObjectNode) childNode).put("sprite", issue.getActorName());
+
+            ArrayNode duplicateNode = ((ObjectNode) childNode).putArray("duplicate-of");
+            addDuplicateIDs(duplicateNode, issue, issues);
+
+            ArrayNode subsumedNode  = ((ObjectNode) childNode).putArray("subsumed-by");
+            addSubsumingIssueIDs(subsumedNode, issue, issues);
+
             ((ObjectNode) childNode).put("hint", issue.getHint());
             ArrayNode arrayNode = ((ObjectNode) childNode).putArray("costumes");
             ActorMetadata actorMetadata = issue.getActor().getActorMetadata();
