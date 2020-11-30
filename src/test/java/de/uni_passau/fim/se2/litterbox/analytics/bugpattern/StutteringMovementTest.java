@@ -39,10 +39,18 @@ public class StutteringMovementTest implements JsonTest {
     }
 
     @Test
-    public void testdeleteParam() throws IOException, ParsingException {
+    public void testDeleteParam() throws IOException, ParsingException {
         Program deleteParam = getAST("./src/test/fixtures/stmtParser/deleteParam.json");
         StutteringMovement finder = new StutteringMovement();
         Set<Issue> reports = finder.check(deleteParam);
         Assertions.assertEquals(0, reports.size());
+    }
+
+    @Test
+    public void testStutteringRotation() throws IOException, ParsingException {
+        Program stutteringMovement = getAST("./src/test/fixtures/bugpattern/stutteringRotation.json");
+        StutteringMovement finder = new StutteringMovement();
+        Set<Issue> reports = finder.check(stutteringMovement);
+        Assertions.assertEquals(2, reports.size());
     }
 }

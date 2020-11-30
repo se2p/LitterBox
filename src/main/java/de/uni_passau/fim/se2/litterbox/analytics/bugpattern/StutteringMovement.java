@@ -24,9 +24,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.KeyPressed;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.ChangeXBy;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.ChangeYBy;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.MoveSteps;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.*;
 
 import java.util.List;
 
@@ -39,6 +37,9 @@ import java.util.List;
 public class StutteringMovement extends AbstractIssueFinder {
 
     public static final String NAME = "stuttering_movement";
+    private boolean hasPositionMove;
+    private boolean hasRotation;
+    private boolean hasKeyPressed;
 
     @Override
     public void visit(Script script) {
@@ -48,18 +49,54 @@ public class StutteringMovement extends AbstractIssueFinder {
         }
         currentScript = script;
         currentProcedure = null;
-        if (script.getEvent() instanceof KeyPressed) {
+        visitChildren(script);
+        if (hasKeyPressed) {
             List<Stmt> listOfStmt = script.getStmtList().getStmts();
             if (listOfStmt.size() == 1) {
                 Stmt stmt = listOfStmt.get(0);
-                if (stmt instanceof MoveSteps || stmt instanceof ChangeXBy || stmt instanceof ChangeYBy) {
+                if (hasRotation || hasPositionMove) {
+                    KeyPressed keyPressed = (KeyPressed) script.getEvent();
+                    addIssue(stmt, keyPressed.getMetadata());
+                }
+            } else if (listOfStmt.size() == 2) {
+                Stmt stmt = listOfStmt.get(0);
+                if (hasRotation && hasPositionMove) {
                     KeyPressed keyPressed = (KeyPressed) script.getEvent();
                     addIssue(stmt, keyPressed.getMetadata());
                 }
             }
         }
-        visitChildren(script);
         currentScript = null;
+    }
+
+    @Override
+    public void visit(MoveSteps node) {
+        hasPositionMove = true;
+    }
+
+    @Override
+    public void visit(ChangeXBy node) {
+        hasPositionMove = true;
+    }
+
+    @Override
+    public void visit(ChangeYBy node) {
+        hasPositionMove = true;
+    }
+
+    @Override
+    public void visit(TurnRight node) {
+        hasRotation = true;
+    }
+
+    @Override
+    public void visit(TurnLeft node) {
+        hasRotation = true;
+    }
+
+    @Override
+    public void visit(KeyPressed node) {
+        hasKeyPressed = true;
     }
 
     @Override
