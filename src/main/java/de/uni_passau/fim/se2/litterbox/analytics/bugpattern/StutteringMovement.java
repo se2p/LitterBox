@@ -19,14 +19,18 @@
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
+import de.uni_passau.fim.se2.litterbox.analytics.Hint;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.KeyPressed;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
+import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.*;
 
 import java.util.List;
+
+import static de.uni_passau.fim.se2.litterbox.jsonCreation.BlockJsonCreatorHelper.getKeyValue;
 
 /**
  * A common way to move sprites in response to keyboard input is to use the specific event handler When key
@@ -62,7 +66,10 @@ public class StutteringMovement extends AbstractIssueFinder {
                 Stmt stmt = listOfStmt.get(0);
                 if (hasRotation && hasPositionMove) {
                     KeyPressed keyPressed = (KeyPressed) script.getEvent();
-                    addIssue(stmt, keyPressed.getMetadata());
+                    String key = getKeyValue((int) ((NumberLiteral) keyPressed.getKey().getKey()).getValue());
+                    Hint hint = new Hint(getName());
+                    hint.setParameter(Hint.HINT_KEY, key);
+                    addIssue(stmt, keyPressed.getMetadata(), hint);
                 }
             }
         }
