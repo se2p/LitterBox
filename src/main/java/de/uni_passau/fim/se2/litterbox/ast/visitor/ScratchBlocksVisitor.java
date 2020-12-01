@@ -147,6 +147,10 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         currentActor = node;
     }
 
+    public void setProgram(Program program) {
+        this.program = program;
+    }
+
     @Override
     public void visit(ActorDefinition node) {
         currentActor = node;
