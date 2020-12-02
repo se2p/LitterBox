@@ -19,21 +19,23 @@
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
+import de.uni_passau.fim.se2.litterbox.analytics.Hint;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.model.Script;
+import de.uni_passau.fim.se2.litterbox.ast.model.event.ReceptionOfMessage;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.SpriteClicked;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.StartedAsClone;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
+import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.CloneOfMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.CreateCloneOf;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.DeleteClone;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -47,11 +49,15 @@ import java.util.stream.Collectors;
 public class MissingCloneInitialization extends AbstractIssueFinder {
 
     public static final String NAME = "missing_clone_initialization";
+    public static final String HAS_DELETE_CLONE = "missing_clone_initialization_delete_clone";
+    public static final String HAS_DELETE_CLONE_MESSAGE = "missing_clone_initialization_delete_clone_message";
 
     private List<String> whenStartsAsCloneActors = new ArrayList<>();
     private List<String> clonedActors = new ArrayList<>();
     private boolean addComment;
     private Set<String> notClonedActor;
+    private boolean hasDeleteClone;
+    private Map<String, Set<String>> deleteCloneSpritesAndMessages;
 
     @Override
     public Set<Issue> check(Program program) {
@@ -61,6 +67,8 @@ public class MissingCloneInitialization extends AbstractIssueFinder {
         whenStartsAsCloneActors = new ArrayList<>();
         clonedActors = new ArrayList<>();
         addComment = false;
+        hasDeleteClone = false;
+        deleteCloneSpritesAndMessages = new LinkedHashMap<>();
         notClonedActor = new LinkedHashSet<>();
         program.accept(this);
         final List<String> uninitializingActors
@@ -71,6 +79,23 @@ public class MissingCloneInitialization extends AbstractIssueFinder {
         addComment = true;
         program.accept(this);
         return issues;
+    }
+
+    @Override
+    public void visit(Script node) {
+        super.visit(node);
+        if (!addComment && hasDeleteClone) {
+            Set<String> messages;
+            if (!deleteCloneSpritesAndMessages.containsKey(currentActor.getIdent().getName())) {
+                messages = new LinkedHashSet<>();
+                deleteCloneSpritesAndMessages.put(currentActor.getIdent().getName(), messages);
+            }
+            if (node.getEvent() instanceof ReceptionOfMessage) {
+                messages = deleteCloneSpritesAndMessages.get(currentActor.getIdent().getName());
+                messages.add(((StringLiteral) ((ReceptionOfMessage) node.getEvent()).getMsg().getMessage()).getText());
+            }
+        }
+        hasDeleteClone = false;
     }
 
     @Override
@@ -85,10 +110,44 @@ public class MissingCloneInitialization extends AbstractIssueFinder {
                 } else {
                     clonedActors.add(spriteName);
                 }
-            } else if (notClonedActor.contains(spriteName) || (spriteName.equals("_myself_") && notClonedActor.contains(currentActor.getIdent().getName()))) {
-                addIssue(node, ((CloneOfMetadata) node.getMetadata()).getCloneBlockMetadata());
+            } else if (notClonedActor.contains(spriteName)) {
+                Hint hint = generateHint(spriteName);
+                addIssue(node, ((CloneOfMetadata) node.getMetadata()).getCloneBlockMetadata(), hint);
+            } else if (spriteName.equals("_myself_") && notClonedActor.contains(currentActor.getIdent().getName())) {
+                Hint hint = generateHint(currentActor.getIdent().getName());
+                addIssue(node, ((CloneOfMetadata) node.getMetadata()).getCloneBlockMetadata(), hint);
             }
         }
+    }
+
+    private Hint generateHint(String actorName) {
+        Hint hint;
+        if (deleteCloneSpritesAndMessages.containsKey(actorName)) {
+            Set<String> messages = deleteCloneSpritesAndMessages.get(actorName);
+            if (messages.size() > 0) {
+                hint = new Hint(HAS_DELETE_CLONE_MESSAGE);
+                hint.setParameter(Hint.HINT_MESSAGE, generateMessageString(messages));
+            } else {
+                hint = new Hint(HAS_DELETE_CLONE);
+            }
+            hint.setParameter(Hint.HINT_SPRITE, actorName);
+        } else {
+            hint = new Hint(NAME);
+        }
+        return hint;
+    }
+
+    private String generateMessageString(Set<String> messages) {
+        StringBuilder builder = new StringBuilder();
+        int i = 1;
+        for (String string : messages) {
+            builder.append(string);
+            if (i < messages.size()) {
+                builder.append(", ");
+            }
+            i++;
+        }
+        return builder.toString();
     }
 
     @Override
@@ -106,6 +165,11 @@ public class MissingCloneInitialization extends AbstractIssueFinder {
     }
 
     @Override
+    public void visit(DeleteClone node) {
+        hasDeleteClone = true;
+    }
+
+    @Override
     public String getName() {
         return NAME;
     }
@@ -113,5 +177,14 @@ public class MissingCloneInitialization extends AbstractIssueFinder {
     @Override
     public IssueType getIssueType() {
         return IssueType.BUG;
+    }
+
+    @Override
+    public Collection<String> getHintKeys() {
+        List<String> keys = new ArrayList<>();
+        keys.add(NAME);
+        keys.add(HAS_DELETE_CLONE);
+        keys.add(HAS_DELETE_CLONE_MESSAGE);
+        return keys;
     }
 }
