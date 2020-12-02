@@ -51,4 +51,12 @@ public class MissingCloneInitializationTest implements JsonTest {
         Set<Issue> reports = finder.check(clicked);
         Truth.assertThat(reports).isEmpty();
     }
+
+    @Test
+    public void testSnake() throws IOException, ParsingException {
+        Program clicked = getAST("src/test/fixtures/bugpattern/snake.json");
+        MissingCloneInitialization finder = new MissingCloneInitialization();
+        Set<Issue> reports = finder.check(clicked);
+        Truth.assertThat(reports).hasSize(1);
+    }
 }
