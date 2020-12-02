@@ -19,6 +19,7 @@
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
+import de.uni_passau.fim.se2.litterbox.analytics.Hint;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.GreenFlag;
@@ -26,10 +27,16 @@ import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.StartedAsClone;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.DistanceTo;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.ItemOfVariable;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfElseStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * A script should execute actions when an event occurs. Instead of continuously checking for the event to occur
@@ -38,9 +45,11 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
  */
 public class MissingLoopSensing extends AbstractIssueFinder {
     public static final String NAME = "missing_loop_sensing";
+    public static final String VARIABLE_VERSION = "missing_loop_sensing_variable";
     private boolean insideGreenFlagClone = false;
     private boolean insideLoop = false;
     private boolean inCondition = false;
+    private boolean insideEquals = false;
 
     @Override
     public void visit(Script node) {
@@ -124,6 +133,31 @@ public class MissingLoopSensing extends AbstractIssueFinder {
     }
 
     @Override
+    public void visit(Equals node) {
+        if (insideGreenFlagClone && !insideLoop && inCondition) {
+            insideEquals = true;
+        }
+        visitChildren(node);
+        insideEquals = false;
+    }
+
+    @Override
+    public void visit(Variable node) {
+        if (insideEquals) {
+            Hint hint = new Hint(VARIABLE_VERSION);
+            addIssue(node.getParentNode(), node.getParentNode().getMetadata(), hint);
+        }
+    }
+
+    @Override
+    public void visit(ItemOfVariable node) {
+        if (insideEquals) {
+            Hint hint = new Hint(VARIABLE_VERSION);
+            addIssue(node, node.getMetadata(), hint);
+        }
+    }
+
+    @Override
     public void visit(IfElseStmt node) {
         if (insideGreenFlagClone && !insideLoop) {
             inCondition = true;
@@ -143,5 +177,13 @@ public class MissingLoopSensing extends AbstractIssueFinder {
     @Override
     public IssueType getIssueType() {
         return IssueType.BUG;
+    }
+
+    @Override
+    public Collection<String> getHintKeys() {
+        List<String> keys = new ArrayList<>();
+        keys.add(NAME);
+        keys.add(VARIABLE_VERSION);
+        return keys;
     }
 }
