@@ -20,6 +20,7 @@ package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
 import com.google.common.truth.Truth;
 import de.uni_passau.fim.se2.litterbox.JsonTest;
+import de.uni_passau.fim.se2.litterbox.analytics.Hint;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
@@ -58,5 +59,10 @@ public class MissingCloneInitializationTest implements JsonTest {
         MissingCloneInitialization finder = new MissingCloneInitialization();
         Set<Issue> reports = finder.check(clicked);
         Truth.assertThat(reports).hasSize(1);
+        Hint hint = new Hint(MissingCloneInitialization.HAS_DELETE_CLONE);
+        hint.setParameter(Hint.HINT_SPRITE,"Körper");
+        for (Issue issue : reports) {
+            Truth.assertThat(issue.getHint()).isEqualTo(hint.getHintText());
+        }
     }
 }
