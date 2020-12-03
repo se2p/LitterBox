@@ -73,6 +73,9 @@ public class StutteringMovement extends AbstractIssueFinder {
                 }
             }
         }
+        hasKeyPressed = false;
+        hasPositionMove = false;
+        hasRotation = false;
         currentScript = null;
     }
 
