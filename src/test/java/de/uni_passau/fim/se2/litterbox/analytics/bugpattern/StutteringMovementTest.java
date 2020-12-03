@@ -53,4 +53,12 @@ public class StutteringMovementTest implements JsonTest {
         Set<Issue> reports = finder.check(stutteringMovement);
         Assertions.assertEquals(2, reports.size());
     }
+
+    @Test
+    public void testStutteringMovementReset() throws IOException, ParsingException {
+        Program stutteringMovement = getAST("./src/test/fixtures/bugpattern/stutteringMovementBug.json");
+        StutteringMovement finder = new StutteringMovement();
+        Set<Issue> reports = finder.check(stutteringMovement);
+        Assertions.assertEquals(1, reports.size());
+    }
 }
