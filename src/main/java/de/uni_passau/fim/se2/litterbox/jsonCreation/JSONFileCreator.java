@@ -20,7 +20,6 @@ package de.uni_passau.fim.se2.litterbox.jsonCreation;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import net.lingala.zip4j.ZipFile;
-import net.lingala.zip4j.exception.ZipException;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
@@ -35,23 +34,19 @@ import java.util.Arrays;
 
 public class JSONFileCreator {
 
-    public static void writeJsonFromProgram(Program program) {
+    public static void writeJsonFromProgram(Program program) throws FileNotFoundException {
         String jsonString = JSONStringCreator.createProgramJSONString(program);
         try (PrintWriter out = new PrintWriter(program.getIdent().getName() + "_annotated.json")) {
             out.println(jsonString);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
         }
     }
 
-    public static void writeJsonFromProgram(Program program, String output) {
+    public static void writeJsonFromProgram(Program program, String output) throws FileNotFoundException {
         String jsonString = JSONStringCreator.createProgramJSONString(program);
 
         Path outPath = Paths.get(output, program.getIdent().getName() + "_annotated.json");
         try (PrintWriter out = new PrintWriter(outPath.toString())) {
             out.println(jsonString);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
         }
     }
 
@@ -63,16 +58,10 @@ public class JSONFileCreator {
 
         try (PrintWriter out = new PrintWriter(program.getIdent().getName() + "_annotated.json")) {
             out.println(jsonString);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
         }
 
-        try {
-            ZipFile zipFile = new ZipFile(file);
-            zipFile.extractAll(String.valueOf(tmp));
-        } catch (ZipException e) {
-            e.printStackTrace();
-        }
+        ZipFile zipFile = new ZipFile(file);
+        zipFile.extractAll(String.valueOf(tmp));
 
         File tempProj = new File(tmp + "/project.json");
         File annotatedJson = new File(program.getIdent().getName() + "_annotated.json");
@@ -82,15 +71,11 @@ public class JSONFileCreator {
         File tempDir = new File(String.valueOf(tmp));
 
         File[] files = tempDir.listFiles();
-
-        ZipFile zip = new ZipFile(destinationPath);
-        zip.addFiles(Arrays.asList(files));
-
-        try {
-            FileUtils.deleteDirectory(tempDir);
-        } catch (IOException e) {
-
-            e.printStackTrace();
+        if (files != null) {
+            ZipFile zip = new ZipFile(destinationPath);
+            zip.addFiles(Arrays.asList(files));
         }
+
+        FileUtils.deleteDirectory(tempDir);
     }
 }

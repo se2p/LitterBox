@@ -68,9 +68,9 @@ public class IssueTranslator {
     public void setLanguage(String lang) {
         if (lang == null) {
             locale = Locale.ENGLISH;
+        } else {
+            locale = Locale.forLanguageTag(lang);
         }
-
-        locale = Locale.forLanguageTag(lang);
         loadResourceBundles();
     }
 
