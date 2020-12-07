@@ -190,10 +190,10 @@ public class JSONReportGeneratorTest implements JsonTest {
     }
 
     @Test
-    public void testReportWithoutRedundantDuplicateInformation() throws IOException, ParsingException {
-        Program program = getAST("src/test/fixtures/bugpattern/multiple_missingbroadcast_nodups.json");
+    public void testReportWithoutDuplicateInformation() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/bugpattern/comparingLiterals.json");
 
-        MessageNeverSent finder = new MessageNeverSent();
+        ComparingLiterals finder = new ComparingLiterals();
         Set<Issue> issues = finder.check(program);
 
         ByteArrayOutputStream os = new ByteArrayOutputStream();
