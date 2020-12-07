@@ -115,7 +115,8 @@ public abstract class BlockJsonCreatorHelper {
         createField(jsonString, fieldName).append("[");
         jsonString.append("\"").append(fieldValue).append("\",");
         if (fieldReference == null) {
-            jsonString.append(fieldReference);
+            //No " needed because it should represent the value null
+            jsonString.append((String) null);
         } else {
             jsonString.append("\"").append(fieldReference).append("\"");
         }
@@ -234,7 +235,8 @@ public abstract class BlockJsonCreatorHelper {
         StringBuilder jsonString = new StringBuilder();
         createField(jsonString, inputName).append("[").append(shadowIndicator).append(",");
         if (reference == null) {
-            jsonString.append(reference);
+            //In this case no " are needed around the null because it represents the value null
+            jsonString.append((String) null);
         } else {
             jsonString.append("\"").append(reference).append("\"");
         }
