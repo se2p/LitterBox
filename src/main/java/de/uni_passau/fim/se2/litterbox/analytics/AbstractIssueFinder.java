@@ -132,10 +132,25 @@ public abstract class AbstractIssueFinder implements IssueFinder, ScratchVisitor
             // Don't check against self
             return false;
         }
-        if (first.getFinder() == other.getFinder()) {
-            if (first.getCodeLocation().equals(other.getCodeLocation())) {
-                return true;
+        if (first.getFinder() != other.getFinder()) {
+            // Can only be a duplicate if it's the same finder
+            return false;
+        }
+
+        if (first.getScriptOrProcedureDefinition() == null) {
+            if (other.getScriptOrProcedureDefinition() != null) {
+                // Need to refer to same script
+                return false;
             }
+        }
+        if (!first.getScriptOrProcedureDefinition().equals(other.getScriptOrProcedureDefinition())) {
+            // Need to refer to same script
+            return false;
+        }
+
+        if (first.getCodeLocation().equals(other.getCodeLocation())) {
+            // Same block, so assume it's a duplicate
+            return true;
         }
         return false;
     }
