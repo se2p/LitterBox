@@ -23,8 +23,10 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
+import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.ComparingLiterals;
 import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.MessageNeverSent;
 import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.PositionEqualsCheck;
+import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.VariableAsLiteral;
 import de.uni_passau.fim.se2.litterbox.analytics.smells.EmptySprite;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
@@ -217,5 +219,41 @@ public class JSONReportGeneratorTest implements JsonTest {
 
         duplicateList = issue2.get("duplicate-of");
         assertThat(duplicateList.size()).isEqualTo(0);
+    }
+
+    @Test
+    public void testReportWithSubsumptionInformation() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/bugpattern/varcomparison_subsumption.json");
+        Set<Issue> issues = new LinkedHashSet<>();
+
+        ComparingLiterals finder = new ComparingLiterals();
+        issues.addAll(finder.check(program));
+
+        VariableAsLiteral literalFinder = new VariableAsLiteral();
+        issues.addAll(literalFinder.check(program));
+
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        JSONReportGenerator generator = new JSONReportGenerator(os);
+        generator.generateReport(program, issues);
+        os.close();
+        String issueText = os.toString();
+        assertValidJsonIssue(issueText, 2);
+
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode rootNode = mapper.readTree(issueText);
+        JsonNode issueNode = rootNode.get("issues");
+        JsonNode issue0 = issueNode.get(0);
+        JsonNode issue1 = issueNode.get(1);
+
+        JsonNode subsumption0 = issue0.get("subsumed-by");
+        JsonNode subsumption1 = issue1.get("subsumed-by");
+
+        if (issue0.get("finder").asText().equals(finder.getName())) {
+            assertThat(subsumption0.size()).isEqualTo(0);
+            assertThat(subsumption1.get(0).asInt()).isEqualTo(issue0.get("id").asInt());
+        } else {
+            assertThat(subsumption1.size()).isEqualTo(0);
+            assertThat(subsumption0.get(0).asInt()).isEqualTo(issue1.get("id").asInt());
+        }
     }
 }
