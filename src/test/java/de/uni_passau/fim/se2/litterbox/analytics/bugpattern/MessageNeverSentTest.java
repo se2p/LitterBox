@@ -23,9 +23,12 @@ import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 class MessageNeverSentTest implements JsonTest {
@@ -44,5 +47,15 @@ class MessageNeverSentTest implements JsonTest {
         MessageNeverSent finder = new MessageNeverSent();
         Set<Issue> reports = finder.check(messageRec);
         Truth.assertThat(reports).hasSize(1);
+    }
+
+    @Test
+    public void testMessageNeverSentDoubles() throws IOException, ParsingException {
+        Program messageRec = getAST("src/test/fixtures/bugpattern/messageNeverSentDoubles.json");
+        MessageNeverSent finder = new MessageNeverSent();
+        Set<Issue> reports = finder.check(messageRec);
+        Truth.assertThat(reports).hasSize(2);
+        List<Issue> list = new ArrayList<>(reports);
+        Assertions.assertTrue(list.get(0).isDuplicateOf(list.get(1)));
     }
 }
