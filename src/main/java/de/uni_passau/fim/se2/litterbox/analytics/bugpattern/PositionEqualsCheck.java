@@ -44,7 +44,7 @@ import java.util.Collection;
  */
 public class PositionEqualsCheck extends AbstractIssueFinder {
     public static final String NAME = "position_equals_check";
-    static boolean inCondition;
+    private boolean inCondition;
 
     boolean checkEquals(Equals equals) {
         if (!checkOptions(equals.getOperand1())) {

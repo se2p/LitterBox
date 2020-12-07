@@ -66,7 +66,7 @@ public class DataExprParser {
                         || opcode.equals(argument_reporter_boolean.name());
             }
         } else if (exprArray.get(POS_DATA_ARRAY) instanceof ArrayNode) {
-            String idString = exprArray.get(POS_DATA_ARRAY).get(POS_INPUT_ID).asText();
+            // String idString = exprArray.get(POS_DATA_ARRAY).get(POS_INPUT_ID).asText();
             //return symbolTable.getVariables().containsKey(idString)
             //        || symbolTable.getLists().containsKey(idString);
             return true; // the above is the "strict" truth, but some JSON files
