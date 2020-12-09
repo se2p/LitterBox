@@ -49,6 +49,7 @@ public class IssueTool {
         registerBugFinder(new ForeverInsideLoop(), bugFinders);
         registerBugFinder(new IllegalParameterRefactor(), bugFinders);
         registerBugFinder(new ImmediateStopAfterSay(), bugFinders);
+        registerBugFinder(new InappropriateHandlerDeleteClone(), bugFinders);
         registerBugFinder(new MessageNeverReceived(), bugFinders);
         registerBugFinder(new MessageNeverSent(), bugFinders);
         registerBugFinder(new MissingAsk(), bugFinders);
