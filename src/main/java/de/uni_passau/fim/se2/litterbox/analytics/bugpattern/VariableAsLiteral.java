@@ -76,7 +76,7 @@ public class VariableAsLiteral extends AbstractIssueFinder {
         String literal = node.getText();
         if (variablesInScope.contains(literal)) {
             Hint hint = new Hint(getName());
-            hint.setParameter(Hint.HINT_VARIABLE, "\"" + node.getText() + "\"");
+            hint.setParameter(Hint.HINT_VARIABLE, node.getText());
             if (currentExpression != null) {
                 addIssue(currentExpression, currentMetadata, hint);
             } else {
