@@ -32,6 +32,7 @@ public class Hint {
     public final static String HINT_MESSAGE = "MESSAGE";
     public final static String HINT_KEY = "KEY";
     public final static String HINT_SAY_THINK = "SAYTHINK";
+    public final static String THEN_ELSE = "THENELSE";
 
     private String hintKey;
     private String hintText;
