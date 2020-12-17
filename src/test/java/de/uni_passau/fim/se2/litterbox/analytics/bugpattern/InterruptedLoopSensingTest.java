@@ -26,7 +26,7 @@ public class InterruptedLoopSensingTest implements JsonTest {
     }
 
     @Test
-    public void testInappropriateHandlerDeleteClone() throws IOException, ParsingException {
+    public void testInterruptedLoopSensing() throws IOException, ParsingException {
         Program illegalParameter = JsonTest.parseProgram("./src/test/fixtures/bugpattern/interruptedLoopSensing.json");
         InterruptedLoopSensing parameterName = new InterruptedLoopSensing();
         Set<Issue> reports = parameterName.check(illegalParameter);
@@ -42,4 +42,11 @@ public class InterruptedLoopSensingTest implements JsonTest {
         Assertions.assertEquals(hint2.getHintText(),issues.get(1).getHint());
     }
 
+    @Test
+    public void testInterruptedLoopSensingWithVariableChanging() throws IOException, ParsingException {
+        Program empty = JsonTest.parseProgram("./src/test/fixtures/bugpattern/interruptedLoopSensingChangingVariable.json");
+        InterruptedLoopSensing parameterName = new InterruptedLoopSensing();
+        Set<Issue> reports = parameterName.check(empty);
+        Assertions.assertEquals(0, reports.size());
+    }
 }
