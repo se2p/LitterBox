@@ -6,20 +6,27 @@ import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.DistanceTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.ItemOfVariable;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitSeconds;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfElseStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SayForSecs;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.ThinkForSecs;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.GlideSecsTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.GlideSecsToXY;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 
+/**
+ * A sensing in a control structure can be interrupted if the control body has a stmt that takes a longer time like gliding.
+ */
 public class InterruptedLoopSensing extends AbstractIssueFinder {
     private final String NAME = "interrupted_loop_sensing";
     private boolean inCondition = false;
     private boolean insideEquals = false;
-    private boolean sensing = false;
+    private boolean sensingCollision = false;
+    private boolean sensingOther = false;
     private boolean insideForever = false;
     private boolean insideControl = false;
     private String blockName;
@@ -39,7 +46,9 @@ public class InterruptedLoopSensing extends AbstractIssueFinder {
         insideControl = true;
         blockName = IssueTranslator.getInstance().getInfo("until");
         node.getStmtList().accept(this);
-        insideForever = false;
+        insideControl = false;
+        sensingCollision=false;
+        sensingOther=false;
     }
 
     @Override
@@ -53,6 +62,8 @@ public class InterruptedLoopSensing extends AbstractIssueFinder {
             node.getStmtList().accept(this);
             node.getElseStmts().accept(this);
             insideControl = false;
+            sensingCollision=false;
+            sensingOther=false;
         }
     }
 
@@ -66,23 +77,57 @@ public class InterruptedLoopSensing extends AbstractIssueFinder {
             blockName = IssueTranslator.getInstance().getInfo("if") + " " + IssueTranslator.getInstance().getInfo("then");
             node.getThenStmts().accept(this);
             insideControl = false;
+            sensingCollision=false;
+            sensingOther=false;
         }
     }
 
     @Override
     public void visit(GlideSecsTo node) {
-        if (insideControl && sensing) {
+        if (insideControl && (sensingCollision || sensingOther)) {
             Hint hint = new Hint(getName());
             hint.setParameter(Hint.THEN_ELSE, blockName);
+            hint.setParameter(Hint.BLOCK_NAME, IssueTranslator.getInstance().getInfo("glide_secs_to"));
             addIssue(node, node.getMetadata(), hint);
         }
     }
 
     @Override
     public void visit(GlideSecsToXY node) {
-        if (insideControl && sensing) {
+        if (insideControl && (sensingCollision || sensingOther)) {
             Hint hint = new Hint(getName());
             hint.setParameter(Hint.THEN_ELSE, blockName);
+            hint.setParameter(Hint.BLOCK_NAME, IssueTranslator.getInstance().getInfo("glide_secs_to_xy"));
+            addIssue(node, node.getMetadata(), hint);
+        }
+    }
+
+    @Override
+    public void visit(WaitSeconds node) {
+        if (insideControl &&  sensingOther) {
+            Hint hint = new Hint(getName());
+            hint.setParameter(Hint.THEN_ELSE, blockName);
+            hint.setParameter(Hint.BLOCK_NAME, IssueTranslator.getInstance().getInfo("wait_seconds"));
+            addIssue(node, node.getMetadata(), hint);
+        }
+    }
+
+    @Override
+    public void visit(ThinkForSecs node) {
+        if (insideControl &&  sensingOther) {
+            Hint hint = new Hint(getName());
+            hint.setParameter(Hint.THEN_ELSE, blockName);
+            hint.setParameter(Hint.BLOCK_NAME, IssueTranslator.getInstance().getInfo("think_seconds"));
+            addIssue(node, node.getMetadata(), hint);
+        }
+    }
+
+    @Override
+    public void visit(SayForSecs node) {
+        if (insideControl &&  sensingOther) {
+            Hint hint = new Hint(getName());
+            hint.setParameter(Hint.THEN_ELSE, blockName);
+            hint.setParameter(Hint.BLOCK_NAME, IssueTranslator.getInstance().getInfo("say_seconds"));
             addIssue(node, node.getMetadata(), hint);
         }
     }
@@ -90,42 +135,42 @@ public class InterruptedLoopSensing extends AbstractIssueFinder {
     @Override
     public void visit(IsKeyPressed node) {
         if (inCondition) {
-            sensing = true;
+            sensingOther = true;
         }
     }
 
     @Override
     public void visit(Touching node) {
         if (inCondition) {
-            sensing = true;
+            sensingCollision = true;
         }
     }
 
     @Override
     public void visit(IsMouseDown node) {
         if (inCondition) {
-            sensing = true;
+            sensingOther = true;
         }
     }
 
     @Override
     public void visit(ColorTouchingColor node) {
         if (inCondition) {
-            sensing = true;
+            sensingCollision = true;
         }
     }
 
     @Override
     public void visit(SpriteTouchingColor node) {
         if (inCondition) {
-            sensing = true;
+            sensingCollision = true;
         }
     }
 
     @Override
     public void visit(DistanceTo node) {
         if (inCondition) {
-            sensing = true;
+            sensingCollision = true;
         }
     }
 
@@ -141,14 +186,14 @@ public class InterruptedLoopSensing extends AbstractIssueFinder {
     @Override
     public void visit(Variable node) {
         if (insideEquals) {
-            sensing = true;
+            sensingOther = true;
         }
     }
 
     @Override
     public void visit(ItemOfVariable node) {
         if (insideEquals) {
-            sensing = true;
+            sensingOther = true;
         }
     }
 

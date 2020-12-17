@@ -33,6 +33,7 @@ public class Hint {
     public final static String HINT_KEY = "KEY";
     public final static String HINT_SAY_THINK = "SAYTHINK";
     public final static String THEN_ELSE = "THENELSE";
+    public final static String BLOCK_NAME = "BLOCKNAME";
 
     private String hintKey;
     private String hintText;
