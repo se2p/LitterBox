@@ -51,6 +51,7 @@ public class MissingLoopSensing extends AbstractIssueFinder {
     private boolean insideLoop = false;
     private boolean inCondition = false;
     private boolean insideEquals = false;
+    private boolean hasVariable = false;
     private boolean afterWaitUntil = false;
 
     @Override
@@ -141,22 +142,25 @@ public class MissingLoopSensing extends AbstractIssueFinder {
             insideEquals = true;
         }
         visitChildren(node);
+        if (hasVariable) {
+            Hint hint = new Hint(VARIABLE_VERSION);
+            addIssue(node, node.getMetadata(), hint);
+            hasVariable = false;
+        }
         insideEquals = false;
     }
 
     @Override
     public void visit(Variable node) {
         if (insideEquals) {
-            Hint hint = new Hint(VARIABLE_VERSION);
-            addIssue(node.getParentNode(), node.getParentNode().getMetadata(), hint);
+            hasVariable = true;
         }
     }
 
     @Override
     public void visit(ItemOfVariable node) {
         if (insideEquals) {
-            Hint hint = new Hint(VARIABLE_VERSION);
-            addIssue(node, node.getMetadata(), hint);
+            hasVariable = true;
         }
     }
 
