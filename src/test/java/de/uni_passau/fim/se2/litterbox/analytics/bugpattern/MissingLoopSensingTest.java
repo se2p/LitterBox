@@ -83,4 +83,12 @@ public class MissingLoopSensingTest implements JsonTest {
         MissingLoopSensing parameterName = new MissingLoopSensing();
         Assertions.assertEquals("missing_loop_sensing", parameterName.getName());
     }
+
+    @Test
+    public void testMissingLoopSensingAfterWaitUntil() throws IOException, ParsingException {
+        Program empty = JsonTest.parseProgram("./src/test/fixtures/bugpattern/missingLoopSensingAfterWaitUntil.json");
+        MissingLoopSensing parameterName = new MissingLoopSensing();
+        Set<Issue> reports = parameterName.check(empty);
+        Assertions.assertEquals(0, reports.size());
+    }
 }

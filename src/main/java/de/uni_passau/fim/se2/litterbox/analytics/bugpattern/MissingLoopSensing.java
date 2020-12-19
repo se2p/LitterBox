@@ -28,6 +28,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.event.StartedAsClone;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.DistanceTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.ItemOfVariable;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitUntil;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfElseStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
@@ -50,6 +51,8 @@ public class MissingLoopSensing extends AbstractIssueFinder {
     private boolean insideLoop = false;
     private boolean inCondition = false;
     private boolean insideEquals = false;
+    private boolean hasVariable = false;
+    private boolean afterWaitUntil = false;
 
     @Override
     public void visit(Script node) {
@@ -63,6 +66,7 @@ public class MissingLoopSensing extends AbstractIssueFinder {
         inCondition = false;
         super.visit(node);
         insideGreenFlagClone = false;
+        afterWaitUntil = false;
     }
 
     @Override
@@ -92,68 +96,71 @@ public class MissingLoopSensing extends AbstractIssueFinder {
 
     @Override
     public void visit(IsKeyPressed node) {
-        if (insideGreenFlagClone && !insideLoop && inCondition) {
+        if (insideGreenFlagClone && !insideLoop && inCondition && !afterWaitUntil) {
             addIssue(node, node.getMetadata());
         }
     }
 
     @Override
     public void visit(Touching node) {
-        if (insideGreenFlagClone && !insideLoop && inCondition) {
+        if (insideGreenFlagClone && !insideLoop && inCondition && !afterWaitUntil) {
             addIssue(node, node.getMetadata());
         }
     }
 
     @Override
     public void visit(IsMouseDown node) {
-        if (insideGreenFlagClone && !insideLoop && inCondition) {
+        if (insideGreenFlagClone && !insideLoop && inCondition && !afterWaitUntil) {
             addIssue(node, node.getMetadata());
         }
     }
 
     @Override
     public void visit(ColorTouchingColor node) {
-        if (insideGreenFlagClone && !insideLoop && inCondition) {
+        if (insideGreenFlagClone && !insideLoop && inCondition && !afterWaitUntil) {
             addIssue(node, node.getMetadata());
         }
     }
 
     @Override
     public void visit(SpriteTouchingColor node) {
-        if (insideGreenFlagClone && !insideLoop && inCondition) {
+        if (insideGreenFlagClone && !insideLoop && inCondition && !afterWaitUntil) {
             addIssue(node, node.getMetadata());
         }
     }
 
     @Override
     public void visit(DistanceTo node) {
-        if (insideGreenFlagClone && !insideLoop && inCondition) {
+        if (insideGreenFlagClone && !insideLoop && inCondition && !afterWaitUntil) {
             addIssue(node, node.getMetadata());
         }
     }
 
     @Override
     public void visit(Equals node) {
-        if (insideGreenFlagClone && !insideLoop && inCondition) {
+        if (insideGreenFlagClone && !insideLoop && inCondition && !afterWaitUntil) {
             insideEquals = true;
         }
         visitChildren(node);
+        if (hasVariable) {
+            Hint hint = new Hint(VARIABLE_VERSION);
+            addIssue(node, node.getMetadata(), hint);
+            hasVariable = false;
+        }
         insideEquals = false;
     }
 
     @Override
     public void visit(Variable node) {
         if (insideEquals) {
-            Hint hint = new Hint(VARIABLE_VERSION);
-            addIssue(node.getParentNode(), node.getParentNode().getMetadata(), hint);
+            hasVariable = true;
         }
     }
 
     @Override
     public void visit(ItemOfVariable node) {
         if (insideEquals) {
-            Hint hint = new Hint(VARIABLE_VERSION);
-            addIssue(node, node.getMetadata(), hint);
+            hasVariable = true;
         }
     }
 
@@ -167,6 +174,12 @@ public class MissingLoopSensing extends AbstractIssueFinder {
         }
         node.getStmtList().accept(this);
         node.getElseStmts().accept(this);
+    }
+
+    @Override
+    public void visit(WaitUntil node) {
+        afterWaitUntil = true;
+        super.visit(node);
     }
 
     @Override

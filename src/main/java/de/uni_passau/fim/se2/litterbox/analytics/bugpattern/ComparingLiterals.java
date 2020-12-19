@@ -68,7 +68,7 @@ public class ComparingLiterals extends AbstractIssueFinder {
 
                 int result = text1.compareTo(text2);
                 hint = ComparingLiteralsHintFactory.generateHint(result == 0, inWait, parent, true, node, currentActor, program, currentProcedure, currentScript);
-                hint.setParameter(Hint.HINT_VARIABLE, "\"" + possibleVariableName(node.getOperand1(), node.getOperand2()) + "\"");
+                hint.setParameter(Hint.HINT_VARIABLE, possibleVariableName(node.getOperand1(), node.getOperand2()));
             }
 
             addIssue(node, node.getMetadata(), hint);
@@ -122,7 +122,7 @@ public class ComparingLiterals extends AbstractIssueFinder {
                 String text2 = getLiteralValue(node.getOperand2());
                 int result = text1.compareTo(text2);
                 hint = ComparingLiteralsHintFactory.generateHint(result < 0, inWait, parent, true, node, currentActor, program, currentProcedure, currentScript);
-                hint.setParameter(Hint.HINT_VARIABLE, "\"" + possibleVariableName(node.getOperand1(), node.getOperand2()) + "\"");
+                hint.setParameter(Hint.HINT_VARIABLE, possibleVariableName(node.getOperand1(), node.getOperand2()));
             }
             addIssue(node, node.getMetadata(), hint);
         }
@@ -151,7 +151,7 @@ public class ComparingLiterals extends AbstractIssueFinder {
 
                 int result = text1.compareTo(text2);
                 hint = ComparingLiteralsHintFactory.generateHint(result > 0, inWait, parent, true, node, currentActor, program, currentProcedure, currentScript);
-                hint.setParameter(Hint.HINT_VARIABLE, "\"" + possibleVariableName(node.getOperand1(), node.getOperand2()) + "\"");
+                hint.setParameter(Hint.HINT_VARIABLE, possibleVariableName(node.getOperand1(), node.getOperand2()));
             }
             addIssue(node, node.getMetadata(), hint);
         }

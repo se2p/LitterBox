@@ -41,10 +41,10 @@ class ComparingLiteralsTest implements JsonTest {
         Truth.assertThat(reports).hasSize(3);
         Hint trueHint = new Hint(ComparingLiteralsHintFactory.DEFAULT_VARIABLE_WITHOUT_INFORMATION);
         trueHint.setParameter(ComparingLiteralsHintFactory.HINT_TRUE_FALSE, IssueTranslator.getInstance().getInfo("true"));
-        trueHint.setParameter(Hint.HINT_VARIABLE, "\"\"");
+        trueHint.setParameter(Hint.HINT_VARIABLE, "");
         Hint falseHint = new Hint(ComparingLiteralsHintFactory.DEFAULT_VARIABLE_WITHOUT_INFORMATION);
         falseHint.setParameter(ComparingLiteralsHintFactory.HINT_TRUE_FALSE, IssueTranslator.getInstance().getInfo("false"));
-        falseHint.setParameter(Hint.HINT_VARIABLE, "\"\"");
+        falseHint.setParameter(Hint.HINT_VARIABLE, "");
         int i = 0;
         for (Issue issue : reports) {
             if (i == 1) {
@@ -64,7 +64,7 @@ class ComparingLiteralsTest implements JsonTest {
         Truth.assertThat(reports).hasSize(1);
         Hint trueHint = new Hint(ComparingLiteralsHintFactory.DEFAULT_TRUE);
         trueHint.setParameter(ComparingLiteralsHintFactory.ALWAYS_NEVER, IssueTranslator.getInstance().getInfo("always"));
-        trueHint.setParameter(ComparingLiteralsHintFactory.THEN_ELSE, IssueTranslator.getInstance().getInfo("then"));
+        trueHint.setParameter(Hint.THEN_ELSE, IssueTranslator.getInstance().getInfo("then"));
         for (Issue issue : reports) {
             Truth.assertThat(issue.getHint()).isEqualTo(trueHint.getHintText());
         }
@@ -91,8 +91,8 @@ class ComparingLiteralsTest implements JsonTest {
         Truth.assertThat(reports).hasSize(1);
         Hint falseHint = new Hint(ComparingLiteralsHintFactory.DEFAULT_VARIABLE_EXISTS);
         falseHint.setParameter(ComparingLiteralsHintFactory.ALWAYS_NEVER, IssueTranslator.getInstance().getInfo(ComparingLiteralsHintFactory.NEVER));
-        falseHint.setParameter(Hint.HINT_VARIABLE, "\"test\"");
-        falseHint.setParameter(ComparingLiteralsHintFactory.THEN_ELSE,IssueTranslator.getInstance().getInfo("then"));
+        falseHint.setParameter(Hint.HINT_VARIABLE, "test");
+        falseHint.setParameter(Hint.THEN_ELSE,IssueTranslator.getInstance().getInfo("then"));
         falseHint.setParameter(ComparingLiteralsHintFactory.HINT_TRUE_FALSE, IssueTranslator.getInstance().getInfo("false"));
         for (Issue issue : reports) {
             Truth.assertThat(issue.getHint()).isEqualTo(falseHint.getHintText());

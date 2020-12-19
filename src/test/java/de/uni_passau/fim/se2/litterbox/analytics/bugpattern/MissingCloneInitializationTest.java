@@ -27,6 +27,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.CreateCloneOf;
+import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -61,6 +62,22 @@ public class MissingCloneInitializationTest implements JsonTest {
         Truth.assertThat(reports).hasSize(1);
         Hint hint = new Hint(MissingCloneInitialization.HAS_DELETE_CLONE);
         hint.setParameter(Hint.HINT_SPRITE,"Körper");
+        for (Issue issue : reports) {
+            Truth.assertThat(issue.getHint()).isEqualTo(hint.getHintText());
+        }
+    }
+
+    @Test
+    public void testMissingCloneInitDeleteMessage() throws IOException, ParsingException {
+        Program clicked = getAST("src/test/fixtures/bugpattern/missingCloneInitDeleteMessage.json");
+        MissingCloneInitialization finder = new MissingCloneInitialization();
+        Set<Issue> reports = finder.check(clicked);
+        Truth.assertThat(reports).hasSize(1);
+        Hint hint = new Hint(MissingCloneInitialization.HAS_DELETE_CLONE_MESSAGE);
+        hint.setParameter(Hint.HINT_MESSAGE,"Nachricht1");
+        hint.setParameter(Hint.EVENT_HANDLER, IssueTranslator.getInstance().getInfo("greenflag"));
+        hint.setParameter(Hint.HINT_SPRITE,"Sprite1");
+        System.out.println(hint.getHintText());
         for (Issue issue : reports) {
             Truth.assertThat(issue.getHint()).isEqualTo(hint.getHintText());
         }

@@ -35,7 +35,6 @@ public abstract class ComparingLiteralsHintFactory {
     public static final String WAIT_VARIABLE_EXISTS = "comparing_literals_wait_variable_exists";
     public static final String HINT_TRUE_FALSE = "TRUEFALSE";
     public static final String ALWAYS_NEVER = "ALWAYSNEVER";
-    public static final String THEN_ELSE = "THENELSE";
     public static final String ALWAYS = "always";
     public static final String NEVER = "never";
 
@@ -99,9 +98,9 @@ public abstract class ComparingLiteralsHintFactory {
             currentParent = parent;
         }
         if (currentParent instanceof IfThenStmt || currentParent instanceof IfElseStmt) {
-            hint.setParameter(THEN_ELSE, IssueTranslator.getInstance().getInfo("then"));
+            hint.setParameter(Hint.THEN_ELSE, IssueTranslator.getInstance().getInfo("then"));
         } else if (currentParent instanceof UntilStmt) {
-            hint.setParameter(THEN_ELSE, IssueTranslator.getInstance().getInfo("until"));
+            hint.setParameter(Hint.THEN_ELSE, IssueTranslator.getInstance().getInfo("until"));
         }
     }
 
