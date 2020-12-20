@@ -43,7 +43,8 @@ public class TypeErrorTest implements JsonTest {
         Program stringNumber = JsonTest.parseProgram("./src/test/fixtures/bugpattern/stringComparedToNumber.json");
         TypeError parameterName = new TypeError();
         Set<Issue> issues = parameterName.check(stringNumber);
-        Assertions.assertEquals(1, issues.size());
+        //must not find this, because this is part of ComparingLiterals
+        Assertions.assertEquals(0, issues.size());
     }
 
     @Test
@@ -67,7 +68,7 @@ public class TypeErrorTest implements JsonTest {
         Program complex = JsonTest.parseProgram("./src/test/fixtures/bugpattern/complexComparison.json");
         TypeError parameterName = new TypeError();
         Set<Issue> issues = parameterName.check(complex);
-        Assertions.assertEquals(2, issues.size());
+        Assertions.assertEquals(1, issues.size());
     }
 
     @Test

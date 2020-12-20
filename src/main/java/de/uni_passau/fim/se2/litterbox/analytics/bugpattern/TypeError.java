@@ -34,7 +34,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 
 /**
  * Detects type errors of the following form:
- * - Comparisons between (empty) String and Number
+ * - Comparisons between Number and Boolean
  * - Comparisons between Direction and Loudness
  * - Comparisons between Direction and Position nodes (MouseX, MouseY, PositionX, PositionY)
  * - Comparisons between Loudness and Position nodes (MouseX, MouseY, PositionX, PositionY)
@@ -150,7 +150,7 @@ public class TypeError extends AbstractIssueFinder {
             if (!isRightSide) {
                 type = Type.NUMBER;
             } else {
-                if (this.type != null && (this.type == Type.STRING || this.type == Type.BOOLEAN)) {
+                if (this.type != null && this.type == Type.BOOLEAN) {
                     addIssue(node, node.getMetadata());
                 }
             }
@@ -202,7 +202,7 @@ public class TypeError extends AbstractIssueFinder {
             if (!isRightSide) {
                 type = Type.NUMBER;
             } else {
-                if (this.type != null && (this.type == Type.STRING || this.type == Type.BOOLEAN)) {
+                if (this.type != null && this.type == Type.BOOLEAN) {
                     addIssue(node.getParentNode(), node.getParentNode().getMetadata());
                 }
             }
