@@ -19,6 +19,7 @@
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
+import de.uni_passau.fim.se2.litterbox.analytics.Hint;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.BinaryExpression;
@@ -29,8 +30,16 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.LessThan;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
+import de.uni_passau.fim.se2.litterbox.ast.model.position.FromExpression;
+import de.uni_passau.fim.se2.litterbox.ast.model.position.Position;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * Detects type errors of the following form:
@@ -39,17 +48,17 @@ import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
  * - Comparisons between Direction and Position nodes (MouseX, MouseY, PositionX, PositionY)
  * - Comparisons between Loudness and Position nodes (MouseX, MouseY, PositionX, PositionY)
  * - Comparisons containing Touching or Not nodes
+ * - Distance to containing weird blocks
  */
 public class TypeError extends AbstractIssueFinder {
     public static final String NAME = "type_error";
+    public static final String WEIRD_DISTANCE = "type_error_weird_distance";
     private boolean insideComparison = false;
     private boolean isRightSide = false;
 
     private Type type = null;
 
     private enum Type {BOOLEAN, NUMBER, STRING, LOUDNESS, POSITION, DIRECTION}
-
-    ;
 
     @Override
     public void visit(LessThan node) {
@@ -64,6 +73,20 @@ public class TypeError extends AbstractIssueFinder {
     @Override
     public void visit(Equals node) {
         comparison(node);
+    }
+
+    @Override
+    public void visit(DistanceTo node) {
+        Position position = node.getPosition();
+        if (position instanceof FromExpression) {
+            Hint hint = new Hint(WEIRD_DISTANCE);
+            if (!(((FromExpression) position).getStringExpr() instanceof AsString)) {
+                addIssue(node, node.getMetadata(), hint);
+            } else if (!((((AsString) ((FromExpression) position).getStringExpr()).getOperand1() instanceof StrId) || ((AsString) ((FromExpression) position).getStringExpr()).getOperand1() instanceof Qualified)) {
+                addIssue(node, node.getMetadata(), hint);
+            }
+        }
+        visitChildren(node);
     }
 
     private void comparison(BinaryExpression<ComparableExpr, ComparableExpr> node) {
@@ -230,5 +253,13 @@ public class TypeError extends AbstractIssueFinder {
     @Override
     public IssueType getIssueType() {
         return IssueType.BUG;
+    }
+
+    @Override
+    public Collection<String> getHintKeys() {
+        List<String> keys = new ArrayList<>();
+        keys.add(NAME);
+        keys.add(WEIRD_DISTANCE);
+        return keys;
     }
 }

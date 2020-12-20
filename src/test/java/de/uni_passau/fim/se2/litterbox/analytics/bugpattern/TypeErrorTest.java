@@ -19,6 +19,7 @@
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
 import de.uni_passau.fim.se2.litterbox.JsonTest;
+import de.uni_passau.fim.se2.litterbox.analytics.Hint;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
@@ -85,5 +86,16 @@ public class TypeErrorTest implements JsonTest {
         TypeError parameterName = new TypeError();
         Set<Issue> issues = parameterName.check(booleanEquals);
         Assertions.assertEquals(1, issues.size());
+    }
+
+    @Test
+    public void testDistanceToWeirdCombination() throws IOException, ParsingException {
+        Program booleanEquals = JsonTest.parseProgram("./src/test/fixtures/bugpattern/distanceToWeirdCombination.json");
+        TypeError parameterName = new TypeError();
+        Set<Issue> issues = parameterName.check(booleanEquals);
+        Assertions.assertEquals(1, issues.size());
+        for (Issue issue : issues) {
+            Assertions.assertEquals((new Hint(TypeError.WEIRD_DISTANCE)).getHintText(), issue.getHint());
+        }
     }
 }
