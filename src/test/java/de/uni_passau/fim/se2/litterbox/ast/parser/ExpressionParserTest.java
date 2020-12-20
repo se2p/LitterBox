@@ -36,6 +36,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 import static de.uni_passau.fim.se2.litterbox.ast.Constants.STEPS_KEY;
@@ -57,7 +58,7 @@ public class ExpressionParserTest {
     private static JsonNode multBlock;
 
     @BeforeAll
-    public static void setup() {
+    public static void setup() throws IOException {
         moveStepsScript = JsonParser.getBlocksNodeFromJSON("./src/test/fixtures/movesteps.json");
         allExprTypesScript = JsonParser.getBlocksNodeFromJSON("./src/test/fixtures/allexprtypes.json");
         twoNumExprSlotsNumExprs = JsonParser.getBlocksNodeFromJSON("./src/test/fixtures/twoNumExprSlotsNumExprs.json");
@@ -126,7 +127,7 @@ public class ExpressionParserTest {
     }
 
     @Test
-    public void testNumFuncts() {
+    public void testNumFuncts() throws IOException {
         JsonNode script = JsonParser.getBlocksNodeFromJSON("./src/test/fixtures/numfuncts.json");
         JsonNode pow10Block = script.get("xbBc!xS=1Yz2Yp/DF;JT");
         assertTrue(NumExprParser.parseNumFunct(pow10Block.get("fields")) instanceof NumFunct);
@@ -135,7 +136,7 @@ public class ExpressionParserTest {
     }
 
     @Test
-    public void testStatement() {
+    public void testStatement() throws IOException {
         JsonNode script = JsonParser.getBlocksNodeFromJSON("./src/test/fixtures/bugpattern/missingLoopSensingMultiple.json");
         JsonNode ifBlock = script.get(".-Id3Zrhoe,6;Z+v_;IB");
 

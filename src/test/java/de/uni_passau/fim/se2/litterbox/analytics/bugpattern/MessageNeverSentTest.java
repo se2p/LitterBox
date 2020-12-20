@@ -20,9 +20,13 @@ package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
 import com.google.common.truth.Truth;
 import de.uni_passau.fim.se2.litterbox.JsonTest;
+import de.uni_passau.fim.se2.litterbox.analytics.Hint;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
+import de.uni_passau.fim.se2.litterbox.analytics.hint.MessageNeverSentHintFactory;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -44,5 +48,35 @@ class MessageNeverSentTest implements JsonTest {
         MessageNeverSent finder = new MessageNeverSent();
         Set<Issue> reports = finder.check(messageRec);
         Truth.assertThat(reports).hasSize(1);
+    }
+
+    @Test
+    public void testMessageNeverSentSay() throws IOException, ParsingException {
+        Program messageRec = getAST("src/test/fixtures/bugpattern/messageNeverSentSay.json");
+        MessageNeverSent finder = new MessageNeverSent();
+        Set<Issue> reports = finder.check(messageRec);
+        Truth.assertThat(reports).hasSize(1);
+        for (Issue issue : reports) {
+            Hint hint = new Hint(MessageNeverSentHintFactory.MESSAGE_IN_SAY_OR_THINK);
+            hint.setParameter(Hint.HINT_SPRITES, "Sprite1");
+            hint.setParameter(Hint.HINT_MESSAGE,"test");
+            hint.setParameter(Hint.HINT_SAY_THINK, IssueTranslator.getInstance().getInfo("say"));
+            Assertions.assertEquals(hint.getHintText(), issue.getHint());
+        }
+    }
+
+    @Test
+    public void testMessageNeverSentTouching() throws IOException, ParsingException {
+        Program messageRec = getAST("src/test/fixtures/bugpattern/messageNeverSentTouching.json");
+        MessageNeverSent finder = new MessageNeverSent();
+        Set<Issue> reports = finder.check(messageRec);
+        Truth.assertThat(reports).hasSize(1);
+        for (Issue issue : reports) {
+            Hint hint = new Hint(MessageNeverSentHintFactory.TOUCHING_USED);
+            hint.setParameter(Hint.HINT_SPRITES, "Sprite1");
+            hint.setParameter(Hint.HINT_SPRITE, "Bat");
+            hint.setParameter(Hint.HINT_MESSAGE,"Bat berührt");
+            Assertions.assertEquals(hint.getHintText(), issue.getHint());
+        }
     }
 }

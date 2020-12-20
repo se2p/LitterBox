@@ -19,16 +19,18 @@
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
+import de.uni_passau.fim.se2.litterbox.analytics.Hint;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.KeyPressed;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
+import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.ChangeXBy;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.ChangeYBy;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.MoveSteps;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.*;
 
 import java.util.List;
+
+import static de.uni_passau.fim.se2.litterbox.jsonCreation.BlockJsonCreatorHelper.getKeyValue;
 
 /**
  * A common way to move sprites in response to keyboard input is to use the specific event handler When key
@@ -39,6 +41,9 @@ import java.util.List;
 public class StutteringMovement extends AbstractIssueFinder {
 
     public static final String NAME = "stuttering_movement";
+    private boolean hasPositionMove;
+    private boolean hasRotation;
+    private boolean hasKeyPressed;
 
     @Override
     public void visit(Script script) {
@@ -48,18 +53,60 @@ public class StutteringMovement extends AbstractIssueFinder {
         }
         currentScript = script;
         currentProcedure = null;
-        if (script.getEvent() instanceof KeyPressed) {
+        visitChildren(script);
+        if (hasKeyPressed) {
             List<Stmt> listOfStmt = script.getStmtList().getStmts();
             if (listOfStmt.size() == 1) {
                 Stmt stmt = listOfStmt.get(0);
-                if (stmt instanceof MoveSteps || stmt instanceof ChangeXBy || stmt instanceof ChangeYBy) {
+                if (hasRotation || hasPositionMove) {
                     KeyPressed keyPressed = (KeyPressed) script.getEvent();
                     addIssue(stmt, keyPressed.getMetadata());
                 }
+            } else if (listOfStmt.size() == 2) {
+                Stmt stmt = listOfStmt.get(0);
+                if (hasRotation && hasPositionMove) {
+                    KeyPressed keyPressed = (KeyPressed) script.getEvent();
+                    String key = getKeyValue((int) ((NumberLiteral) keyPressed.getKey().getKey()).getValue());
+                    Hint hint = new Hint(getName());
+                    hint.setParameter(Hint.HINT_KEY, key);
+                    addIssue(stmt, keyPressed.getMetadata(), hint);
+                }
             }
         }
-        visitChildren(script);
+        hasKeyPressed = false;
+        hasPositionMove = false;
+        hasRotation = false;
         currentScript = null;
+    }
+
+    @Override
+    public void visit(MoveSteps node) {
+        hasPositionMove = true;
+    }
+
+    @Override
+    public void visit(ChangeXBy node) {
+        hasPositionMove = true;
+    }
+
+    @Override
+    public void visit(ChangeYBy node) {
+        hasPositionMove = true;
+    }
+
+    @Override
+    public void visit(TurnRight node) {
+        hasRotation = true;
+    }
+
+    @Override
+    public void visit(TurnLeft node) {
+        hasRotation = true;
+    }
+
+    @Override
+    public void visit(KeyPressed node) {
+        hasKeyPressed = true;
     }
 
     @Override

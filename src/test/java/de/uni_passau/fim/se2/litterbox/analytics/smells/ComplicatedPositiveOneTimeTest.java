@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
+package de.uni_passau.fim.se2.litterbox.analytics.smells;
 
 import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
@@ -28,29 +28,20 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.util.Set;
 
-public class RecursiveCloningTest implements JsonTest {
-
+public class ComplicatedPositiveOneTimeTest implements JsonTest {
     @Test
     public void testEmptyProgram() throws IOException, ParsingException {
         Program empty = getAST("./src/test/fixtures/emptyProject.json");
-        RecursiveCloning parameterName = new RecursiveCloning();
+        ComplicatedPositiveOneTime parameterName = new ComplicatedPositiveOneTime();
         Set<Issue> reports = parameterName.check(empty);
         Assertions.assertEquals(0, reports.size());
     }
 
     @Test
-    public void testRecursiveCloning() throws IOException, ParsingException {
-        Program recursiveClones = getAST("./src/test/fixtures/bugpattern/recursiveCloning.json");
-        RecursiveCloning parameterName = new RecursiveCloning();
-        Set<Issue> reports = parameterName.check(recursiveClones);
-        Assertions.assertEquals(1, reports.size());
-    }
-
-    @Test
-    public void testRecursionWithDelete() throws IOException, ParsingException {
-        Program recursiveClones = getAST("./src/test/fixtures/bugpattern/happyNewYear.json");
-        RecursiveCloning parameterName = new RecursiveCloning();
-        Set<Issue> reports = parameterName.check(recursiveClones);
-        Assertions.assertEquals(0, reports.size());
+    public void testThreeInstances() throws IOException, ParsingException {
+        Program longScript = getAST("./src/test/fixtures/smells/complicatedPositiveOneTime.json");
+        ComplicatedPositiveOneTime parameterName = new ComplicatedPositiveOneTime();
+        Set<Issue> reports = parameterName.check(longScript);
+        Assertions.assertEquals(3, reports.size());
     }
 }

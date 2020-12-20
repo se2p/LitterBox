@@ -48,7 +48,10 @@ public class IssueTool {
         registerBugFinder(new ExpressionAsTouchingOrColor(), bugFinders);
         registerBugFinder(new ForeverInsideLoop(), bugFinders);
         registerBugFinder(new IllegalParameterRefactor(), bugFinders);
+        registerBugFinder(new ImmediateDeleteCloneAfterBroadcast(), bugFinders);
         registerBugFinder(new ImmediateStopAfterSay(), bugFinders);
+        registerBugFinder(new InappropriateHandlerDeleteClone(), bugFinders);
+        registerBugFinder(new InterruptedLoopSensing(), bugFinders);
         registerBugFinder(new MessageNeverReceived(), bugFinders);
         registerBugFinder(new MessageNeverSent(), bugFinders);
         registerBugFinder(new MissingAsk(), bugFinders);
@@ -90,6 +93,7 @@ public class IssueTool {
         registerSmellFinder(new ClonedCodeType1(), smellFinders);
         registerSmellFinder(new ClonedCodeType2(), smellFinders);
         registerSmellFinder(new ClonedCodeType3(), smellFinders);
+        registerSmellFinder(new ComplicatedPositiveOneTime(), smellFinders);
         registerSmellFinder(new DeadCode(), smellFinders);
         registerSmellFinder(new EmptyControlBody(), smellFinders);
         registerSmellFinder(new EmptyCustomBlock(), smellFinders);
