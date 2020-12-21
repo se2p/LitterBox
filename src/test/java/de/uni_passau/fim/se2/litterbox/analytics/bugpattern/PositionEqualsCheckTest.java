@@ -29,6 +29,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 public class PositionEqualsCheckTest implements JsonTest {
@@ -99,5 +101,17 @@ public class PositionEqualsCheckTest implements JsonTest {
         for (Issue issue : reports) {
             Truth.assertThat(issue.getHint()).isEqualTo(hint.getHintText());
         }
+    }
+
+    @Test
+    public void testSubsumptionDistanceTo() throws IOException, ParsingException {
+        Program prog = JsonTest.parseProgram("./src/test/fixtures/bugpattern/distanceFromColorPEC.json");
+        PositionEqualsCheck parameterName = new PositionEqualsCheck();
+        List<Issue> reportsPEC = new ArrayList<>(parameterName.check(prog));
+        Assertions.assertEquals(1, reportsPEC.size());
+        TypeError typeError = new TypeError();
+        List<Issue> reportsType = new ArrayList<>(typeError.check(prog));
+        Assertions.assertEquals(1, reportsType.size());
+        Assertions.assertTrue(reportsPEC.get(0).isSubsumedBy(reportsType.get(0)));
     }
 }

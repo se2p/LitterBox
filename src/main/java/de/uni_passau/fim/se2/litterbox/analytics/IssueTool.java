@@ -40,6 +40,7 @@ public class IssueTool {
         Map<String, IssueFinder> bugFinders = new LinkedHashMap<>();
         registerBugFinder(new AmbiguousCustomBlockSignature(), bugFinders);
         registerBugFinder(new AmbiguousParameterNameUsed(), bugFinders);
+        registerBugFinder(new BlockingIfElse(), bugFinders);
         registerBugFinder(new CallWithoutDefinition(), bugFinders);
         registerBugFinder(new ComparingLiterals(), bugFinders);
         registerBugFinder(new CustomBlockWithForever(), bugFinders);

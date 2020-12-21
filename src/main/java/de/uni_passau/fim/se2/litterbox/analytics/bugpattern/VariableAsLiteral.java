@@ -153,6 +153,21 @@ public class VariableAsLiteral extends AbstractIssueFinder {
     }
 
     @Override
+    public boolean isSubsumedBy(Issue theIssue, Issue other) {
+        if (theIssue.getFinder() != this) {
+            return super.isSubsumedBy(theIssue, other);
+        }
+
+        if (other.getFinder() instanceof ComparingLiterals) {
+            if (theIssue.getCodeLocation().equals(other.getCodeLocation())) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    @Override
     public IssueType getIssueType() {
         return IssueType.BUG;
     }

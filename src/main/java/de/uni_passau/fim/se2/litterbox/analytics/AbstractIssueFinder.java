@@ -129,4 +129,38 @@ public abstract class AbstractIssueFinder implements IssueFinder, ScratchVisitor
         // Default: Only one key with the name of the finder
         return Arrays.asList(getName());
     }
+
+    @Override
+    public boolean isDuplicateOf(Issue first, Issue other) {
+        if (first == other) {
+            // Don't check against self
+            return false;
+        }
+        if (first.getFinder() != other.getFinder()) {
+            // Can only be a duplicate if it's the same finder
+            return false;
+        }
+
+        if (first.getScriptOrProcedureDefinition() == null) {
+            if (other.getScriptOrProcedureDefinition() != null) {
+                // Need to refer to same script
+                return false;
+            }
+        }
+        if (!first.getScriptOrProcedureDefinition().equals(other.getScriptOrProcedureDefinition())) {
+            // Need to refer to same script
+            return false;
+        }
+
+        if (first.getCodeLocation().equals(other.getCodeLocation())) {
+            // Same block, so assume it's a duplicate
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean isSubsumedBy(Issue first, Issue other) {
+        return false;
+    }
 }

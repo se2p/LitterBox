@@ -104,6 +104,22 @@ public class MissingCloneCall extends AbstractIssueFinder {
     }
 
     @Override
+    public boolean isDuplicateOf(Issue first, Issue other) {
+        if (first == other) {
+            return false;
+        }
+        if (first.getFinder() != other.getFinder()) {
+            return false;
+        }
+
+        if (!first.getActor().equals(other.getActor())){
+            return false;
+        }
+
+        return first.getCodeLocation().equals(other.getCodeLocation());
+    }
+
+    @Override
     public String getName() {
         return NAME;
     }

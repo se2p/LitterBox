@@ -19,7 +19,10 @@
 package de.uni_passau.fim.se2.litterbox.analytics.smells;
 
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
+import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
+import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.ComparingLiterals;
+import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.ForeverInsideLoop;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatTimesStmt;
@@ -60,6 +63,29 @@ public class NestedLoops extends AbstractIssueFinder {
             addIssue(node, node.getMetadata());
         }
         visitChildren(node);
+    }
+
+    @Override
+    public boolean isSubsumedBy(Issue theIssue, Issue other) {
+        if (theIssue.getFinder() != this) {
+            return super.isSubsumedBy(theIssue, other);
+        }
+
+        if (other.getFinder() instanceof ForeverInsideLoop) {
+            //need parent of the parent (the parent of forever is the StmtList) of forever because NestedLoop flags the parent loop and not the nested forever loop
+            if (theIssue.getCodeLocation().equals(other.getCodeLocation().getParentNode().getParentNode())) {
+                return true;
+            }
+        }
+
+        if (other.getFinder() instanceof UnnecessaryLoop) {
+            //if the outer loop is unnecessary solving that problem solves the nested loop problem
+            if (theIssue.getCodeLocation().equals(other.getCodeLocation())) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     @Override

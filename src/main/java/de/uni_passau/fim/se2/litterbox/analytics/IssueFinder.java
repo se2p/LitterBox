@@ -43,4 +43,8 @@ public interface IssueFinder {
     Collection<String> getHintKeys();
 
     void setIgnoreLooseBlocks(boolean value);
+
+    boolean isDuplicateOf(Issue first, Issue other);
+
+    boolean isSubsumedBy(Issue first, Issue other);
 }
