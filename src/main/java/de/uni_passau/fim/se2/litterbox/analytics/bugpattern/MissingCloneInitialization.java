@@ -208,6 +208,18 @@ public class MissingCloneInitialization extends AbstractIssueFinder {
     }
 
     @Override
+    public boolean isDuplicateOf(Issue first, Issue other) {
+        if (first == other) {
+            return false;
+        }
+        if (first.getFinder() != other.getFinder()) {
+            return false;
+        }
+
+        return first.getCodeLocation().equals(other.getCodeLocation());
+    }
+
+    @Override
     public void visit(DeleteClone node) {
         hasDeleteClone = true;
     }

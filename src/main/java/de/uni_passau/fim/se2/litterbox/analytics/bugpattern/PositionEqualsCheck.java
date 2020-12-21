@@ -20,6 +20,7 @@ package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.Hint;
+import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.analytics.hint.PositionEqualsCheckHintFactory;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.ComparableExpr;
@@ -109,6 +110,22 @@ public class PositionEqualsCheck extends AbstractIssueFinder {
         inCondition = false;
         node.getStmtList().accept(this);
         node.getElseStmts().accept(this);
+    }
+
+    @Override
+    public boolean isSubsumedBy(Issue theIssue, Issue other) {
+        if (theIssue.getFinder() != this) {
+            return super.isSubsumedBy(theIssue, other);
+        }
+
+        if (other.getFinder() instanceof TypeError) {
+            //need parent if 'distance to' is the subsumed node, because PEC has the boolean node as affected node and TypeError the distance node
+            if (theIssue.getCodeLocation().equals(other.getCodeLocation()) || theIssue.getCodeLocation().equals(other.getCodeLocation().getParentNode())) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     @Override

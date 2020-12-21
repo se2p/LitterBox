@@ -26,6 +26,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 public class StutteringMovementTest implements JsonTest {
@@ -60,5 +62,14 @@ public class StutteringMovementTest implements JsonTest {
         StutteringMovement finder = new StutteringMovement();
         Set<Issue> reports = finder.check(stutteringMovement);
         Assertions.assertEquals(1, reports.size());
+    }
+
+    @Test
+    public void testStutteringMovementDuplicates() throws IOException, ParsingException {
+        Program stutteringMovement = getAST("./src/test/fixtures/bugpattern/doubleStuttering.json");
+        StutteringMovement finder = new StutteringMovement();
+        List<Issue> reports = new ArrayList<>(finder.check(stutteringMovement));
+        Assertions.assertEquals(2, reports.size());
+        Assertions.assertTrue(reports.get(0).isDuplicateOf(reports.get(1)));
     }
 }

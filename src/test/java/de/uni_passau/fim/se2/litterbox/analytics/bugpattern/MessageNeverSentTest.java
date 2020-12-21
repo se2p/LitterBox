@@ -30,6 +30,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 class MessageNeverSentTest implements JsonTest {
@@ -78,5 +80,15 @@ class MessageNeverSentTest implements JsonTest {
             hint.setParameter(Hint.HINT_MESSAGE,"Bat berührt");
             Assertions.assertEquals(hint.getHintText(), issue.getHint());
         }
+    }
+
+    @Test
+    public void testMessageNeverSentDoubles() throws IOException, ParsingException {
+        Program messageRec = getAST("src/test/fixtures/bugpattern/messageNeverSentDoubles.json");
+        MessageNeverSent finder = new MessageNeverSent();
+        Set<Issue> reports = finder.check(messageRec);
+        Truth.assertThat(reports).hasSize(2);
+        List<Issue> list = new ArrayList<>(reports);
+        Assertions.assertTrue(list.get(0).isDuplicateOf(list.get(1)));
     }
 }

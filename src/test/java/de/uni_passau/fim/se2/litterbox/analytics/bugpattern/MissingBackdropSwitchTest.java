@@ -26,6 +26,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 public class MissingBackdropSwitchTest implements JsonTest {
@@ -92,5 +94,14 @@ public class MissingBackdropSwitchTest implements JsonTest {
         MissingBackdropSwitch parameterName = new MissingBackdropSwitch();
         Set<Issue> reports = parameterName.check(programWithSwitch);
         Assertions.assertEquals(0, reports.size());
+    }
+
+    @Test
+    public void testSwitchDuplicate() throws IOException, ParsingException {
+        Program programWithSwitch = getAST("./src/test/fixtures/bugpattern/missingBackdropSwitchDouble.json");
+        MissingBackdropSwitch parameterName = new MissingBackdropSwitch();
+        List<Issue> reports = new ArrayList<>(parameterName.check(programWithSwitch));
+        Assertions.assertEquals(2, reports.size());
+        Assertions.assertTrue(reports.get(0).isDuplicateOf(reports.get(1)));
     }
 }
