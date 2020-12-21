@@ -39,7 +39,7 @@ public class ClonedCodeType1Test {
         Program program = getAST("./src/test/fixtures/smells/duplicatedScript.json");
         ClonedCodeType1 finder = new ClonedCodeType1();
         Set<Issue> issues = finder.check(program);
-        assertEquals(1, issues.size());
+        assertEquals(2, issues.size());
     }
 
     @Test
@@ -74,9 +74,7 @@ public class ClonedCodeType1Test {
         Program program = getAST("./src/test/fixtures/smells/cloneScriptWithItself.json");
         ClonedCodeType1 finder = new ClonedCodeType1();
         Set<Issue> issues = finder.check(program);
-        // 0, as comparing a script with itself is not working
-        // TODO: Adjust CloneCodeType1-3 and CloneAnalysis to enable comparing a script with itself
-        assertEquals(0, issues.size());
+        assertEquals(2, issues.size());
     }
 
     @Test

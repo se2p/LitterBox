@@ -31,7 +31,6 @@ import java.io.IOException;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 public class ClonedCodeType3Test {
 
@@ -87,6 +86,15 @@ public class ClonedCodeType3Test {
         Set<Issue> issues = finder.check(program);
         // 0, as clone is of type 1
         assertEquals(0, issues.size());
+    }
+
+    @Test
+    public void testCloneWithGap() throws IOException, ParsingException {
+        Program program = getAST("./src/test/fixtures/smells/cloneType3WithGap.json");
+        ClonedCodeType3 finder = new ClonedCodeType3();
+        Set<Issue> issues = finder.check(program);
+        // 0, as clone is of type 1
+        assertEquals(2, issues.size());
     }
 
     private Program getAST(String fileName) throws IOException, ParsingException {

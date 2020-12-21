@@ -24,6 +24,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 import org.junit.Test;
 
 import java.io.File;
@@ -75,7 +76,7 @@ public class ClonedCodeType2Test {
         Program program = getAST("./src/test/fixtures/smells/codeclonelistblocks.json");
         ClonedCodeType2 finder = new ClonedCodeType2();
         Set<Issue> issues = finder.check(program);
-        assertEquals(1, issues.size());
+        assertEquals(2, issues.size());
     }
 
     @Test

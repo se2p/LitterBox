@@ -79,6 +79,10 @@ public class CodeClone {
         return copy1.get(0);
     }
 
+    public ASTNode getSecondNode() {
+        return copy2.get(0);
+    }
+
     public int size() {
         return copy1.size();
     }
