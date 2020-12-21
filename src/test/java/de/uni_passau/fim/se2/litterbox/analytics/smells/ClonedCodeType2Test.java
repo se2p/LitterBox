@@ -21,17 +21,25 @@ package de.uni_passau.fim.se2.litterbox.analytics.smells;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
+import de.uni_passau.fim.se2.litterbox.analytics.clonedetection.CloneAnalysis;
+import de.uni_passau.fim.se2.litterbox.analytics.clonedetection.CodeClone;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
+import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
+import static com.google.common.truth.Truth.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 public class ClonedCodeType2Test {
 
@@ -75,8 +83,11 @@ public class ClonedCodeType2Test {
     public void testListClone() throws IOException, ParsingException {
         Program program = getAST("./src/test/fixtures/smells/codeclonelistblocks.json");
         ClonedCodeType2 finder = new ClonedCodeType2();
-        Set<Issue> issues = finder.check(program);
+        List<Issue> issues = new ArrayList<>(finder.check(program));
         assertEquals(2, issues.size());
+        Issue issue1 = issues.get(0);
+        Issue issue2 = issues.get(1);
+        assertThat(issue1.isDuplicateOf(issue2)).isTrue();
     }
 
     @Test
@@ -86,6 +97,31 @@ public class ClonedCodeType2Test {
         Set<Issue> issues = finder.check(program);
         // 0, as clone is of type 1
         assertEquals(0, issues.size());
+    }
+
+    @Test
+    public void testCloneType1And2InOneScript() throws IOException, ParsingException {
+        int origSize = CloneAnalysis.MIN_SIZE;
+        Program program = getAST("./src/test/fixtures/smells/cloneType1And2.json");
+        ClonedCodeType1 finder1 = new ClonedCodeType1();
+        CloneAnalysis.MIN_SIZE = 3;
+        List<Issue> type1Issues = new ArrayList<>(finder1.check(program));
+
+        ClonedCodeType2 finder2 = new ClonedCodeType2();
+        List<Issue> type2Issues = new ArrayList<>(finder2.check(program));
+        CloneAnalysis.MIN_SIZE = origSize;
+
+        assertThat(type1Issues).hasSize(4);
+        assertThat(type2Issues).hasSize(6);
+
+        assertThat(type1Issues.get(0).isDuplicateOf(type1Issues.get(1))).isTrue();
+        assertThat(type1Issues.get(2).isDuplicateOf(type1Issues.get(3))).isTrue();
+        assertThat(type1Issues.get(0).isDuplicateOf(type1Issues.get(3))).isTrue();
+
+        assertThat(type1Issues.get(0).isDuplicateOf(type2Issues.get(0))).isFalse();
+
+        assertThat(type2Issues.get(0).isDuplicateOf(type2Issues.get(1))).isTrue();
+        assertThat(type2Issues.get(0).isDuplicateOf(type2Issues.get(2))).isTrue();
     }
 
     private Program getAST(String fileName) throws IOException, ParsingException {

@@ -28,8 +28,11 @@ import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
+import static com.google.common.truth.Truth.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ClonedCodeType3Test {
@@ -92,9 +95,12 @@ public class ClonedCodeType3Test {
     public void testCloneWithGap() throws IOException, ParsingException {
         Program program = getAST("./src/test/fixtures/smells/cloneType3WithGap.json");
         ClonedCodeType3 finder = new ClonedCodeType3();
-        Set<Issue> issues = finder.check(program);
+        List<Issue> issues = new ArrayList<>(finder.check(program));
         // 0, as clone is of type 1
         assertEquals(2, issues.size());
+        Issue issue1 = issues.get(0);
+        Issue issue2 = issues.get(1);
+        assertThat(issue1.isDuplicateOf(issue2)).isTrue();
     }
 
     private Program getAST(String fileName) throws IOException, ParsingException {

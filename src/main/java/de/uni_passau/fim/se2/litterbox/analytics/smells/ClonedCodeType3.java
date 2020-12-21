@@ -19,11 +19,25 @@
 package de.uni_passau.fim.se2.litterbox.analytics.smells;
 
 import de.uni_passau.fim.se2.litterbox.analytics.clonedetection.CodeClone;
+import de.uni_passau.fim.se2.litterbox.analytics.clonedetection.NormalizationVisitor;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class ClonedCodeType3 extends ClonedCode {
 
     public ClonedCodeType3() {
         super(CodeClone.CloneType.TYPE3, "clone_type_3");
+    }
+
+    @Override
+    protected boolean compareStatements(List<Stmt> statements1, List<Stmt> statements2) {
+        NormalizationVisitor normalizationVisitor = new NormalizationVisitor();
+        List<Stmt> normalizedStatements1 = statements1.stream().map(normalizationVisitor::apply).collect(Collectors.toList());
+        List<Stmt> normalizedStatements2 = statements2.stream().map(normalizationVisitor::apply).collect(Collectors.toList());
+
+        return normalizedStatements1.equals(normalizedStatements2);
     }
 
 }

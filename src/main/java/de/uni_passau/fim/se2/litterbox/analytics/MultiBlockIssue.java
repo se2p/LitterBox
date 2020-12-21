@@ -8,6 +8,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.metadata.Metadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class MultiBlockIssue extends Issue {
@@ -32,5 +33,9 @@ public class MultiBlockIssue extends Issue {
     @Override
     public boolean hasMultipleBlocks() {
         return nodes.size() > 1;
+    }
+
+    public List<ASTNode> getNodes() {
+        return Collections.unmodifiableList(nodes);
     }
 }

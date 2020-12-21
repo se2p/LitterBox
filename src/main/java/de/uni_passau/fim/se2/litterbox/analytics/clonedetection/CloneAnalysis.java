@@ -27,8 +27,8 @@ import java.util.stream.Collectors;
 
 public class CloneAnalysis {
 
-    public static final int MIN_SIZE = 6;
-    public static final int MAX_GAP = 2;
+    public static int MIN_SIZE = 6;
+    public static int MAX_GAP = 2;
 
     private int minSize = MIN_SIZE;
     private int maxGap = MAX_GAP;
