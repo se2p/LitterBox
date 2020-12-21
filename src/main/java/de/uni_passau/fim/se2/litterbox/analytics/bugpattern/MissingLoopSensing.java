@@ -19,6 +19,7 @@
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
+import de.uni_passau.fim.se2.litterbox.analytics.Hint;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.GreenFlag;
@@ -26,10 +27,17 @@ import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.StartedAsClone;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.DistanceTo;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.ItemOfVariable;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitUntil;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfElseStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * A script should execute actions when an event occurs. Instead of continuously checking for the event to occur
@@ -38,9 +46,13 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
  */
 public class MissingLoopSensing extends AbstractIssueFinder {
     public static final String NAME = "missing_loop_sensing";
+    public static final String VARIABLE_VERSION = "missing_loop_sensing_variable";
     private boolean insideGreenFlagClone = false;
     private boolean insideLoop = false;
     private boolean inCondition = false;
+    private boolean insideEquals = false;
+    private boolean hasVariable = false;
+    private boolean afterWaitUntil = false;
 
     @Override
     public void visit(Script node) {
@@ -54,6 +66,7 @@ public class MissingLoopSensing extends AbstractIssueFinder {
         inCondition = false;
         super.visit(node);
         insideGreenFlagClone = false;
+        afterWaitUntil = false;
     }
 
     @Override
@@ -83,43 +96,71 @@ public class MissingLoopSensing extends AbstractIssueFinder {
 
     @Override
     public void visit(IsKeyPressed node) {
-        if (insideGreenFlagClone && !insideLoop && inCondition) {
+        if (insideGreenFlagClone && !insideLoop && inCondition && !afterWaitUntil) {
             addIssue(node, node.getMetadata());
         }
     }
 
     @Override
     public void visit(Touching node) {
-        if (insideGreenFlagClone && !insideLoop && inCondition) {
+        if (insideGreenFlagClone && !insideLoop && inCondition && !afterWaitUntil) {
             addIssue(node, node.getMetadata());
         }
     }
 
     @Override
     public void visit(IsMouseDown node) {
-        if (insideGreenFlagClone && !insideLoop && inCondition) {
+        if (insideGreenFlagClone && !insideLoop && inCondition && !afterWaitUntil) {
             addIssue(node, node.getMetadata());
         }
     }
 
     @Override
     public void visit(ColorTouchingColor node) {
-        if (insideGreenFlagClone && !insideLoop && inCondition) {
+        if (insideGreenFlagClone && !insideLoop && inCondition && !afterWaitUntil) {
             addIssue(node, node.getMetadata());
         }
     }
 
     @Override
     public void visit(SpriteTouchingColor node) {
-        if (insideGreenFlagClone && !insideLoop && inCondition) {
+        if (insideGreenFlagClone && !insideLoop && inCondition && !afterWaitUntil) {
             addIssue(node, node.getMetadata());
         }
     }
 
     @Override
     public void visit(DistanceTo node) {
-        if (insideGreenFlagClone && !insideLoop && inCondition) {
+        if (insideGreenFlagClone && !insideLoop && inCondition && !afterWaitUntil) {
             addIssue(node, node.getMetadata());
+        }
+    }
+
+    @Override
+    public void visit(Equals node) {
+        if (insideGreenFlagClone && !insideLoop && inCondition && !afterWaitUntil) {
+            insideEquals = true;
+        }
+        visitChildren(node);
+        if (hasVariable) {
+            Hint hint = new Hint(VARIABLE_VERSION);
+            addIssue(node, node.getMetadata(), hint);
+            hasVariable = false;
+        }
+        insideEquals = false;
+    }
+
+    @Override
+    public void visit(Variable node) {
+        if (insideEquals) {
+            hasVariable = true;
+        }
+    }
+
+    @Override
+    public void visit(ItemOfVariable node) {
+        if (insideEquals) {
+            hasVariable = true;
         }
     }
 
@@ -136,6 +177,12 @@ public class MissingLoopSensing extends AbstractIssueFinder {
     }
 
     @Override
+    public void visit(WaitUntil node) {
+        afterWaitUntil = true;
+        super.visit(node);
+    }
+
+    @Override
     public String getName() {
         return NAME;
     }
@@ -143,5 +190,13 @@ public class MissingLoopSensing extends AbstractIssueFinder {
     @Override
     public IssueType getIssueType() {
         return IssueType.BUG;
+    }
+
+    @Override
+    public Collection<String> getHintKeys() {
+        List<String> keys = new ArrayList<>();
+        keys.add(NAME);
+        keys.add(VARIABLE_VERSION);
+        return keys;
     }
 }

@@ -30,7 +30,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.*;
  */
 public class WeightedMethodCountStrict extends WeightedMethodCount {
     public static final String NAME = "weighted_method_count_strict";
-    private static boolean inScriptOrProcedure;
+    private boolean inScriptOrProcedure;
 
     @Override
     public String getName() {

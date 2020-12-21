@@ -24,6 +24,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -34,22 +35,16 @@ import java.util.Iterator;
  */
 public class JsonParser {
 
-    public static JsonNode getBlocksNodeFromJSON(String path) {
+    public static JsonNode getBlocksNodeFromJSON(String path) throws IOException {
         JsonNode script = null;
-        Path currentRelativePath = Paths.get("");
-        String sPath = currentRelativePath.toAbsolutePath().toString(); // Todo unused variable?
 
-        try {
-            BufferedReader br = new BufferedReader(new FileReader(path, StandardCharsets.UTF_8));
+        try (BufferedReader br = new BufferedReader(new FileReader(path, StandardCharsets.UTF_8))) {
             StringBuilder sb = new StringBuilder();
             String line;
             while ((line = br.readLine()) != null) {
                 sb.append(line);
             }
             script = buildScriptFromJSONString(sb.toString());
-            br.close();
-        } catch (Exception e) {
-            // FIXME Empty Catch block?
         }
         return script;
     }

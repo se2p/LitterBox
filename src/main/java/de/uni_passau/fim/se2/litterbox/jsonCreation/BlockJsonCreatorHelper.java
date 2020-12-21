@@ -20,6 +20,7 @@ package de.uni_passau.fim.se2.litterbox.jsonCreation;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.TopNonDataBlockMetadata;
+import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 
 import java.util.List;
 
@@ -114,7 +115,8 @@ public abstract class BlockJsonCreatorHelper {
         createField(jsonString, fieldName).append("[");
         jsonString.append("\"").append(fieldValue).append("\",");
         if (fieldReference == null) {
-            jsonString.append(fieldReference);
+            //No " needed because it should represent the value null
+            jsonString.append((String) null);
         } else {
             jsonString.append("\"").append(fieldReference).append("\"");
         }
@@ -205,22 +207,22 @@ public abstract class BlockJsonCreatorHelper {
         String key;
         switch (numberValue) {
             case UPARROW:
-                key = "up arrow";
+                key = IssueTranslator.getInstance().getInfo("up_arrow");
                 break;
             case DOWNARROW:
-                key = "down arrow";
+                key = IssueTranslator.getInstance().getInfo("down_arrow");
                 break;
             case LEFTARROW:
-                key = "left arrow";
+                key = IssueTranslator.getInstance().getInfo("left_arrow");
                 break;
             case RIGHTARROW:
-                key = "right arrow";
+                key = IssueTranslator.getInstance().getInfo("right_arrow");
                 break;
             case SPACE:
-                key = "space";
+                key = IssueTranslator.getInstance().getInfo("space");
                 break;
             case ANYKEY:
-                key = "any";
+                key = IssueTranslator.getInstance().getInfo("any");
                 break;
             default:
                 key = String.valueOf((char) numberValue);
@@ -233,7 +235,8 @@ public abstract class BlockJsonCreatorHelper {
         StringBuilder jsonString = new StringBuilder();
         createField(jsonString, inputName).append("[").append(shadowIndicator).append(",");
         if (reference == null) {
-            jsonString.append(reference);
+            //In this case no " are needed around the null because it represents the value null
+            jsonString.append((String) null);
         } else {
             jsonString.append("\"").append(reference).append("\"");
         }

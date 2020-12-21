@@ -44,7 +44,7 @@ import static de.uni_passau.fim.se2.litterbox.ast.Constants.TARGETS_KEY;
 public class ProgramParser {
 
     public static SymbolTable symbolTable;
-    public static ProcedureDefinitionNameMapping procDefMap;
+    static ProcedureDefinitionNameMapping procDefMap;
 
     public static Program parseProgram(String programName, JsonNode programNode) throws ParsingException {
         Preconditions.checkNotNull(programName);
