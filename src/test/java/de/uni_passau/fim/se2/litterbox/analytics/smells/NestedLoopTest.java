@@ -20,12 +20,15 @@ package de.uni_passau.fim.se2.litterbox.analytics.smells;
 
 import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
+import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.ForeverInsideLoop;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 public class NestedLoopTest implements JsonTest {
@@ -44,5 +47,17 @@ public class NestedLoopTest implements JsonTest {
         NestedLoops parameterName = new NestedLoops();
         Set<Issue> reports = parameterName.check(nestedLoops);
         Assertions.assertEquals(3, reports.size());
+    }
+
+    @Test
+    public void testNestedForeverSubsumption() throws IOException, ParsingException {
+        Program nestedLoops = getAST("./src/test/fixtures/bugpattern/nestedForever.json");
+        NestedLoops parameterName = new NestedLoops();
+        List<Issue> reportsNested = new ArrayList<>(parameterName.check(nestedLoops));
+        Assertions.assertEquals(1, reportsNested.size());
+        ForeverInsideLoop foreverInsideLoop = new ForeverInsideLoop();
+        List<Issue> reportsForever = new ArrayList<>(foreverInsideLoop.check(nestedLoops));
+        Assertions.assertEquals(1, reportsForever.size());
+        Assertions.assertTrue(reportsNested.get(0).isSubsumedBy(reportsForever.get(0)));
     }
 }
