@@ -49,6 +49,7 @@ public class CloneAnalysis {
 
     /**
      * Check a fraction of the AST for internal clones, i.e., compare it against itself
+     *
      * @param root starting point in the AST for the clone analysis
      * @return all clones found
      */
@@ -58,6 +59,7 @@ public class CloneAnalysis {
 
     /**
      * Check a pair of ASTs for clones
+     *
      * @param root1 first tree
      * @param root2 second tree
      * @return all clones found
@@ -66,14 +68,6 @@ public class CloneAnalysis {
 
         this.root1 = root1;
         this.root2 = root2;
-        Boolean compareWithItself = false;
-
-        /* TODO: How to check if comparison with itself? This comparison is not working.
-            If two scripts are identical, this will also return true.
-        if (root1.equals(root2)){
-            compareWithItself = true;
-        }
-        */
 
         // We compare at the level of statements, not tokens
         StatementListVisitor statementListVisitor = new StatementListVisitor();
@@ -89,139 +83,19 @@ public class CloneAnalysis {
         boolean[][] similarityMatrix = getSimilarityMatrix(normalizedStatements1, normalizedStatements2);
 
         // Return all clones identifiable in the matrix
-        return check(statements1, statements2, normalizedStatements1, normalizedStatements2, similarityMatrix, cloneType, compareWithItself);
-    }
+        Set<CodeClone> allClones = getAllClones(statements1, statements2, similarityMatrix);
+        allClones = allClones.stream().filter(c -> c.getType() == cloneType).collect(Collectors.toSet());
 
-    private Set<CodeClone> check(List<Stmt> statements1, List<Stmt> statements2, List<Stmt> normalizedStatements1, List<Stmt> normalizedStatements2, boolean[][] similarityMatrix, CodeClone.CloneType cloneType, Boolean compareWithItself) {
-        Set<CodeClone> clones = new LinkedHashSet<>();
-        List<CodeClone> tempClones;
-        // LinkedHashMap remembers order of insertion
-        LinkedHashMap<Integer, Integer> positions;
-
-        // If the script gets compared with itself, the diagonal in the middle is not a clone.
-        // It's also only necessary to analyze one side of the matrix. The other side would result in the same clones.
-        if (!compareWithItself) {
-            // The following two for-loops could be refactored to not have duplicated code (how ironic)
-            // Find clones on the lower left of the matrix, with middle diagonal
-            for (int j = 0; j < statements2.size(); j++) {
-                positions = findDiagonal(similarityMatrix, 0, j);
-                if (!positions.isEmpty()) {
-                    tempClones = checkDiagonalForGaps(positions, statements1, statements2, normalizedStatements1, normalizedStatements2);
-
-                    for (CodeClone clone : tempClones) {
-                        if (clone.getType().equals(cloneType) & clone.size() >= minSize) {
-                            clones.add(clone);
-                        }
-                    }
-                }
-            }
+        if (root1 == root2) {
+            // If a script is compared against itself, then there will always be a trivial type 1 clone
+            allClones = allClones.stream().filter(c -> c.size() != statements1.size()).collect(Collectors.toSet());
         }
 
-        // Find clones on the upper right of the matrix, without middle diagonal
-        for (int i = 1; i < statements2.size(); i++) {
-            positions = findDiagonal(similarityMatrix, i, 0);
-            if (!positions.isEmpty()) {
-                tempClones = checkDiagonalForGaps(positions, statements1, statements2, normalizedStatements1, normalizedStatements2);
-
-                for (CodeClone clone : tempClones) {
-                    if (clone.getType().equals(cloneType) & clone.size() >= minSize) {
-                        clones.add(clone);
-                    }
-                }
-            }
-        }
-
-        return clones;
-    }
-
-    // Returns positions of duplicated blocks in a diagonal of the similarity matrix
-    private LinkedHashMap<Integer, Integer> findDiagonal(boolean[][] similarityMatrix, int x, int y) {
-        LinkedHashMap<Integer, Integer> clonePositions = new LinkedHashMap<>();
-
-        while (x < similarityMatrix.length && y < similarityMatrix[x].length) {
-            if (similarityMatrix[x][y]) {
-                clonePositions.put(x, y);
-            }
-            x++;
-            y++;
-        }
-
-        return clonePositions;
-    }
-
-    // Every diagonal gets checked, whether it contains gaps or not.
-    // A gap larger than maxGap mean the diagonal has multiple clones. A smaller gap indicates a type 3 clone.
-    private List<CodeClone> checkDiagonalForGaps(LinkedHashMap<Integer, Integer> positions, List<Stmt> statements1, List<Stmt> statements2, List<Stmt> normalizedStatements1, List<Stmt> normalizedStatements2) {
-        Set<Map.Entry<Integer, Integer>> entries = positions.entrySet();
-        Map.Entry<Integer, Integer> lastEntry = entries.iterator().next();
-        CodeClone clone = new CodeClone(actor, root1, root2);
-        List<CodeClone> clones = new ArrayList<>();
-        List<Stmt> tempNormalized1 = new ArrayList<>();
-        List<Stmt> tempNormalized2 = new ArrayList<>();
-
-        // Could be refactored to not have the same steps duplicated for every clause (again, how ironic)
-        for (Map.Entry<Integer, Integer> location : entries) {
-            if (location.getKey() - lastEntry.getKey() <= 1) {
-                Stmt stmt1 = statements1.get(location.getKey());
-                Stmt stmt2 = statements2.get(location.getValue());
-                tempNormalized1.add(normalizedStatements1.get(location.getKey()));
-                tempNormalized2.add(normalizedStatements2.get(location.getValue()));
-                clone.addClonedStatement(stmt1, stmt2);
-            } else {
-                // maxGap + 1, as maxGap means the number of blocks not being the same
-                // 0 1 2 x x 5 6 has two gap blocks, but 5-2=3 > maxGap
-                if (location.getKey() - lastEntry.getKey() > maxGap + 1) {
-                    // As the gap is larger than maxGap, the clone is finished
-                    clone.setType(decideCloneType(clone, tempNormalized1, tempNormalized2));
-                    clones.add(clone);
-
-                    // Current location belongs to a new clone
-                    clone = new CodeClone(actor, root1, root2);
-                    tempNormalized1.clear();
-                    tempNormalized2.clear();
-                    Stmt stmt1 = statements1.get(location.getKey());
-                    Stmt stmt2 = statements2.get(location.getValue());
-                    tempNormalized1.add(normalizedStatements1.get(location.getKey()));
-                    tempNormalized2.add(normalizedStatements2.get(location.getValue()));
-                    clone.addClonedStatement(stmt1, stmt2);
-                } else {
-                    // If gap is smaller than maxGap allows, gap is part of a type III clone
-                    for (int i = 1; lastEntry.getKey() + i < location.getKey(); i++) {
-                        Stmt stmt1 = statements1.get(lastEntry.getKey() + i);
-                        Stmt stmt2 = statements2.get(lastEntry.getValue() + i);
-                        tempNormalized1.add(normalizedStatements1.get(lastEntry.getKey() + i));
-                        tempNormalized2.add(normalizedStatements2.get(lastEntry.getValue() + i));
-                        clone.addClonedStatement(stmt1, stmt2);
-                    }
-                }
-            }
-            lastEntry = location;
-        }
-        clone.setType(decideCloneType(clone, tempNormalized1, tempNormalized2));
-        clones.add(clone);
-
-        return clones;
-    }
-
-    private CodeClone.CloneType decideCloneType(CodeClone clone, List<Stmt> normalizedStatements1, List<Stmt> normalizedStatements2){
-        List<Stmt> statements1 = clone.getFirstStatements();
-        List<Stmt> statements2 = clone.getSecondStatements();
-        CodeClone.CloneType type = clone.getType();
-
-        if (normalizedStatements1.equals(normalizedStatements2)) {
-            // Type 1 is default, so only test for Type 2 is necessary
-            if (!statements1.equals(statements2)) {
-                type = CodeClone.CloneType.TYPE2;
-            }
-        } else {
-            // Type 4 not implemented, so no specific check for Type 3 necessary
-            type = CodeClone.CloneType.TYPE3;
-        }
-        return type;
+        return allClones;
     }
 
     private boolean[][] getSimilarityMatrix(List<Stmt> normalizedStatements1, List<Stmt> normalizedStatements2) {
-        int width  = normalizedStatements1.size();
+        int width = normalizedStatements1.size();
         int height = normalizedStatements2.size();
         boolean[][] matrix = new boolean[width][height];
 
@@ -232,6 +106,85 @@ public class CloneAnalysis {
         }
 
         return matrix;
+    }
+
+    private Set<CodeClone> getAllClones(List<Stmt> statements1, List<Stmt> statements2, boolean[][] similarityMatrix) {
+        Set<CodeClone> clones = new LinkedHashSet<>();
+
+        Set<CloneBlock> blocks = getAllBlocks(similarityMatrix);
+        for (CloneBlock block : blocks) {
+            // Type 1/2
+            if (block.size() >= minSize) {
+                CodeClone clone = new CodeClone(actor, root1, root2);
+                block.fillClone(clone, statements1, statements2);
+                if (!clone.getFirstStatements().equals(clone.getSecondStatements())) {
+                    clone.setType(CodeClone.CloneType.TYPE2);
+                }
+                clones.add(clone);
+            }
+
+            // Type 3
+            for (CloneBlock otherBlock : getNeighbouringBlocks(block, blocks)) {
+                CodeClone clone = new CodeClone(actor, root1, root2);
+                clone.setType(CodeClone.CloneType.TYPE3);
+                block.fillClone(clone, statements1, statements2);
+                otherBlock.fillClone(clone, statements1, statements2);
+                clones.add(clone);
+            }
+        }
+
+        return clones;
+    }
+
+    private Set<CloneBlock> getNeighbouringBlocks(CloneBlock block, Set<CloneBlock> otherBlocks) {
+        Set<CloneBlock> cloneBlocks = new LinkedHashSet<>();
+
+        for (CloneBlock otherBlock : otherBlocks) {
+            if (otherBlock == block)
+                continue;
+
+            if (otherBlock.extendsWithGap(block, maxGap)) {
+                cloneBlocks.add(otherBlock);
+            }
+        }
+
+        return cloneBlocks;
+    }
+
+    private Set<CloneBlock> getAllBlocks(boolean[][] similarityMatrix) {
+        Set<CloneBlock> cloneBlocks = new LinkedHashSet<>();
+        int width = similarityMatrix.length;
+        if (width == 0) {
+            // Empty matrix
+            return cloneBlocks;
+        }
+        int height = similarityMatrix[0].length;
+
+        boolean[][] coveredFields = new boolean[width][height];
+
+        for (int i = 0; i < width; i++) {
+            for (int j = i; j < height; j++) {
+                if (coveredFields[i][j]) {
+                    continue;
+                }
+                CloneBlock block = getBlockAt(similarityMatrix, i, j);
+                if (block.size() > 0) {
+                    cloneBlocks.add(block);
+                    block.fillPositionMap(coveredFields);
+                }
+            }
+        }
+        return cloneBlocks;
+    }
+
+    private CloneBlock getBlockAt(boolean[][] similarityMatrix, int x, int y) {
+        CloneBlock block = new CloneBlock();
+        while (x < similarityMatrix.length && y < similarityMatrix[x].length && similarityMatrix[x][y]) {
+            block.add(x, y);
+            x++;
+            y++;
+        }
+        return block;
     }
 
 }

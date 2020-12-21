@@ -40,19 +40,17 @@ abstract class ClonedCode extends AbstractIssueFinder {
 
     @Override
     public void visit(ActorDefinition actor) {
-        // TODO: Don't need these?
         currentActor = actor;
         procMap = program.getProcedureMapping().getProcedures().get(currentActor.getIdent().getName());
 
         List<Script> scripts = actor.getScripts().getScriptList();
         List<ProcedureDefinition> procedures = actor.getProcedureDefinitionList().getList();
 
-        // TODO: Enable comparision of scripts with themself
         for (int i = 0; i < scripts.size(); i++) {
-            checkScript(scripts.get(i), scripts.subList(i + 1, scripts.size()), procedures);
+            checkScript(scripts.get(i), scripts.subList(i, scripts.size()), procedures);
         }
         for (int i = 0; i < procedures.size(); i++) {
-            checkProcedure(procedures.get(i), procedures.subList(i + 1, procedures.size()));
+            checkProcedure(procedures.get(i), procedures.subList(i, procedures.size()));
         }
     }
 

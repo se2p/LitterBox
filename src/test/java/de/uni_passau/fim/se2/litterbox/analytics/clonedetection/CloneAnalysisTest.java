@@ -26,6 +26,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 import org.junit.Test;
 
 import java.io.File;
@@ -46,8 +47,7 @@ public class CloneAnalysisTest {
 
         CloneAnalysis cloneAnalysis = new CloneAnalysis(actor, 3, 2);
         Set<CodeClone> clones = cloneAnalysis.check(script, script, CodeClone.CloneType.TYPE1);
-        assertEquals(1, clones.size());
-        assertEquals(6, clones.iterator().next().size());
+        assertEquals(0, clones.size());
     }
 
     @Test
@@ -59,7 +59,7 @@ public class CloneAnalysisTest {
         assertEquals(script1, script2);
 
         CloneAnalysis cloneAnalysis = new CloneAnalysis(actor);
-        Set<CodeClone> clones = cloneAnalysis.check(script1, script1, CodeClone.CloneType.TYPE1);
+        Set<CodeClone> clones = cloneAnalysis.check(script1, script2, CodeClone.CloneType.TYPE1);
         assertEquals(1, clones.size());
         assertEquals(6, clones.iterator().next().size());
     }
@@ -124,7 +124,6 @@ public class CloneAnalysisTest {
         assertEquals(11, clones.iterator().next().size());
     }
 
-    /* TODO: Comparison of one script with itself needs to work
     @Test
     public void testScriptWithItself() throws IOException, ParsingException {
         Program program = getAST("./src/test/fixtures/smells/cloneScriptWithItself.json");
@@ -136,7 +135,6 @@ public class CloneAnalysisTest {
         assertEquals(1, clonesType.size());
         assertEquals(7, clonesType.iterator().next().size());
     }
-    */
 
     @Test
     public void testMinimumCloneSizeIs6() throws IOException, ParsingException {
@@ -177,7 +175,7 @@ public class CloneAnalysisTest {
         CloneAnalysis cloneAnalysis = new CloneAnalysis(actor, 3, 2);
         Set<CodeClone> clonesType1 = cloneAnalysis.check(script1, script2, CodeClone.CloneType.TYPE1);
         Set<CodeClone> clonesType2 = cloneAnalysis.check(script1, script2, CodeClone.CloneType.TYPE2);
-        assertEquals(2, clonesType1.size());
+        assertEquals(1, clonesType1.size());
         assertEquals(4, clonesType1.iterator().next().size());
         assertEquals(2, clonesType2.size());
         assertEquals(4, clonesType2.iterator().next().size());
@@ -195,10 +193,10 @@ public class CloneAnalysisTest {
         Set<CodeClone> clonesType1 = cloneAnalysis.check(script1, script2, CodeClone.CloneType.TYPE1);
         Set<CodeClone> clonesType2 = cloneAnalysis.check(script1, script2, CodeClone.CloneType.TYPE2);
         Set<CodeClone> clonesType3 = cloneAnalysis.check(script1, script2, CodeClone.CloneType.TYPE3);
-        assertEquals(0, clonesType1.size());
+        assertEquals(1, clonesType1.size());
         assertEquals(0, clonesType2.size());
         assertEquals(1, clonesType3.size());
-        assertEquals(11, clonesType3.iterator().next().size());
+        assertEquals(10, clonesType3.iterator().next().size());
     }
 
     @Test
