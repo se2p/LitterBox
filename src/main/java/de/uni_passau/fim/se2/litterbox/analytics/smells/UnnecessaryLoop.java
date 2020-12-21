@@ -20,7 +20,9 @@ package de.uni_passau.fim.se2.litterbox.analytics.smells;
 
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.Hint;
+import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
+import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.ForeverInsideLoop;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatTimesStmt;
 
@@ -47,6 +49,22 @@ public class UnnecessaryLoop extends AbstractIssueFinder {
                 addIssue(node, node.getMetadata(),hint);
             }
         }
+    }
+
+    @Override
+    public boolean isSubsumedBy(Issue theIssue, Issue other) {
+        if (theIssue.getFinder() != this) {
+            return super.isSubsumedBy(theIssue, other);
+        }
+
+        if (other.getFinder() instanceof ForeverInsideLoop) {
+            //need parent of the parent (the parent of forever is the StmtList) of forever because UnnecessaryLoop flags the parent loop and not the nested forever loop
+            if (theIssue.getCodeLocation().equals(other.getCodeLocation().getParentNode().getParentNode())) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     @Override

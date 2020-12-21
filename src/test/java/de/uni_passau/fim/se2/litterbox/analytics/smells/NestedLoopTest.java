@@ -51,7 +51,7 @@ public class NestedLoopTest implements JsonTest {
 
     @Test
     public void testNestedForeverSubsumption() throws IOException, ParsingException {
-        Program nestedLoops = getAST("./src/test/fixtures/bugpattern/nestedForever.json");
+        Program nestedLoops = getAST("./src/test/fixtures/bugpattern/unnecessaryForever.json");
         NestedLoops parameterName = new NestedLoops();
         List<Issue> reportsNested = new ArrayList<>(parameterName.check(nestedLoops));
         Assertions.assertEquals(1, reportsNested.size());
@@ -59,5 +59,17 @@ public class NestedLoopTest implements JsonTest {
         List<Issue> reportsForever = new ArrayList<>(foreverInsideLoop.check(nestedLoops));
         Assertions.assertEquals(1, reportsForever.size());
         Assertions.assertTrue(reportsNested.get(0).isSubsumedBy(reportsForever.get(0)));
+    }
+
+    @Test
+    public void testNestedUnnecessarySubsumption() throws IOException, ParsingException {
+        Program nestedLoops = getAST("./src/test/fixtures/smells/unnecessaryNestedForever.json");
+        NestedLoops parameterName = new NestedLoops();
+        List<Issue> reportsNested = new ArrayList<>(parameterName.check(nestedLoops));
+        Assertions.assertEquals(1, reportsNested.size());
+        UnnecessaryLoop foreverInsideLoop = new UnnecessaryLoop();
+        List<Issue> reportsUnnecessary = new ArrayList<>(foreverInsideLoop.check(nestedLoops));
+        Assertions.assertEquals(1, reportsUnnecessary.size());
+        Assertions.assertTrue(reportsNested.get(0).isSubsumedBy(reportsUnnecessary.get(0)));
     }
 }

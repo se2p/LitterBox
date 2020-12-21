@@ -39,8 +39,24 @@ public class ForeverInsideLoopTest implements JsonTest {
     }
 
     @Test
-    public void testAmbiguousSignatures() throws IOException, ParsingException {
+    public void testForeverInLoop() throws IOException, ParsingException {
         Program foreverInLoop = JsonTest.parseProgram("./src/test/fixtures/bugpattern/foreverInLoop.json");
+        ForeverInsideLoop parameterName = new ForeverInsideLoop();
+        Set<Issue> reports = parameterName.check(foreverInLoop);
+        Assertions.assertEquals(1, reports.size());
+    }
+
+    @Test
+    public void testForeverInLoopNoOtherBlock() throws IOException, ParsingException {
+        Program foreverInLoop = JsonTest.parseProgram("./src/test/fixtures/bugpattern/foreverInLoopWithoutOtherBlock.json");
+        ForeverInsideLoop parameterName = new ForeverInsideLoop();
+        Set<Issue> reports = parameterName.check(foreverInLoop);
+        Assertions.assertEquals(0, reports.size());
+    }
+
+    @Test
+    public void testForeverInsideUnnecessary() throws IOException, ParsingException {
+        Program foreverInLoop = JsonTest.parseProgram("./src/test/fixtures/bugpattern/unnecessaryForever.json");
         ForeverInsideLoop parameterName = new ForeverInsideLoop();
         Set<Issue> reports = parameterName.check(foreverInLoop);
         Assertions.assertEquals(1, reports.size());

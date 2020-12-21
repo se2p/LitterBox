@@ -78,6 +78,13 @@ public class NestedLoops extends AbstractIssueFinder {
             }
         }
 
+        if (other.getFinder() instanceof UnnecessaryLoop) {
+            //if the outer loop is unnecessary solving that problem solves the nested loop problem
+            if (theIssue.getCodeLocation().equals(other.getCodeLocation())) {
+                return true;
+            }
+        }
+
         return false;
     }
 
