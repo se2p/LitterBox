@@ -153,6 +153,14 @@ public class Issue {
         return node;
     }
 
+    public boolean isCodeLocation(ASTNode node) {
+        return this.node == node;
+    }
+
+    public boolean hasMultipleBlocks() {
+        return false;
+    }
+
     public Metadata getCodeMetadata() {
         return metaData;
     }
