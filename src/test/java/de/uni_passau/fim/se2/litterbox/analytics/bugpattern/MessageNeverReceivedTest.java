@@ -23,9 +23,12 @@ import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 class MessageNeverReceivedTest implements JsonTest {
@@ -40,5 +43,15 @@ class MessageNeverReceivedTest implements JsonTest {
 //        Truth.assertThat(check.getPosition().get(2)).isEqualTo("Apple");
 //        Truth.assertThat(check.getPosition().get(0)).isEqualTo("Sprite1");
 //        Truth.assertThat(check.getPosition().get(1)).isEqualTo("Abby");
+    }
+
+    @Test
+    public void testMessageNeverReceivedDouble() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/bugpattern/messageNeverReceivedDouble.json");
+        MessageNeverReceived finder = new MessageNeverReceived();
+        List<Issue> reports = new ArrayList<>(finder.check(program));
+        Truth.assertThat(reports).hasSize(3);
+        Assertions.assertTrue(reports.get(0).isDuplicateOf(reports.get(1)));
+        Assertions.assertFalse(reports.get(0).isDuplicateOf(reports.get(2)));
     }
 }

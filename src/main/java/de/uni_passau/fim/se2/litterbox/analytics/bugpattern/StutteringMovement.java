@@ -20,7 +20,9 @@ package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.Hint;
+import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.KeyPressed;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
@@ -60,7 +62,10 @@ public class StutteringMovement extends AbstractIssueFinder {
                 Stmt stmt = listOfStmt.get(0);
                 if (hasRotation || hasPositionMove) {
                     KeyPressed keyPressed = (KeyPressed) script.getEvent();
-                    addIssue(stmt, keyPressed.getMetadata());
+                    String key = getKeyValue((int) ((NumberLiteral) keyPressed.getKey().getKey()).getValue());
+                    Hint hint = new Hint(getName());
+                    hint.setParameter(Hint.HINT_KEY, key);
+                    addIssue(stmt, stmt.getMetadata(), hint);
                 }
             } else if (listOfStmt.size() == 2) {
                 Stmt stmt = listOfStmt.get(0);
@@ -69,7 +74,7 @@ public class StutteringMovement extends AbstractIssueFinder {
                     String key = getKeyValue((int) ((NumberLiteral) keyPressed.getKey().getKey()).getValue());
                     Hint hint = new Hint(getName());
                     hint.setParameter(Hint.HINT_KEY, key);
-                    addIssue(stmt, keyPressed.getMetadata(), hint);
+                    addIssue(stmt, stmt.getMetadata(), hint);
                 }
             }
         }
@@ -107,6 +112,27 @@ public class StutteringMovement extends AbstractIssueFinder {
     @Override
     public void visit(KeyPressed node) {
         hasKeyPressed = true;
+    }
+
+    @Override
+    public boolean isDuplicateOf(Issue first, Issue other) {
+        if (first == other) {
+            return false;
+        }
+        if (first.getFinder() != other.getFinder()) {
+            return false;
+        }
+
+        ASTNode firstNode = first.getCodeLocation();
+        ASTNode secondNode = other.getCodeLocation();
+
+        if ((firstNode instanceof TurnLeft || firstNode instanceof TurnRight) && (secondNode instanceof TurnLeft || secondNode instanceof TurnRight)) {
+            return true;
+        }
+        if (firstNode instanceof MoveSteps && secondNode instanceof MoveSteps) {
+            return true;
+        }
+        return first.getCodeLocation().equals(other.getCodeLocation());
     }
 
     @Override

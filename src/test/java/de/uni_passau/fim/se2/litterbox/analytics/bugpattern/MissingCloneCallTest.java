@@ -27,6 +27,8 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 public class MissingCloneCallTest implements JsonTest {
@@ -77,5 +79,15 @@ public class MissingCloneCallTest implements JsonTest {
         MissingCloneCall parameterName = new MissingCloneCall();
         Set<Issue> reports = parameterName.check(jumper);
         Assertions.assertEquals(1, reports.size());
+    }
+
+    @Test
+    public void testCloneCallDuplication() throws IOException, ParsingException {
+        Program prog = getAST("src/test/fixtures/bugpattern/missingCloneCallDouble.json");
+        MissingCloneCall finder = new MissingCloneCall();
+        List<Issue> reports = new ArrayList<>(finder.check(prog));
+        Assertions.assertEquals(3, reports.size());
+        Assertions.assertTrue(reports.get(0).isDuplicateOf(reports.get(1)));
+        Assertions.assertFalse(reports.get(0).isDuplicateOf(reports.get(2)));
     }
 }
