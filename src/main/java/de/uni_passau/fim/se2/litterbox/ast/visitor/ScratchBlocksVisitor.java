@@ -1837,12 +1837,14 @@ public class ScratchBlocksVisitor extends PrintVisitor {
     private void storeNotesForIssue(ASTNode node) {
         boolean hasIssue = false;
         for (Issue issue : issues) {
-            if (issue.getCodeLocation() == node) {
+            if (issue.isCodeLocation(node)) {
                 if (!hasIssue) {
                     emitNoSpace(":: #ff0000");
                 }
                 hasIssue = true;
-                issueNote.add(BUG_NOTE);
+                if (!issue.hasMultipleBlocks()) {
+                    issueNote.add(BUG_NOTE);
+                }
                 // TODO: In theory there could be multiple messages here...
                 // issueNote.add(issue.getTranslatedFinderName());
             }
