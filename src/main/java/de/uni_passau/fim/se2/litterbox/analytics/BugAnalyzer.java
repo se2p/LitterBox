@@ -72,7 +72,6 @@ public class BugAnalyzer extends Analyzer {
 
     private Set<Issue> runFinders(Program program) {
         Preconditions.checkNotNull(program);
-        System.out.println(program.getIdent().getName());
         Set<Issue> issues = new LinkedHashSet<>();
         for (IssueFinder iF : issueFinders) {
             iF.setIgnoreLooseBlocks(ignoreLooseBlocks);
