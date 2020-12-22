@@ -91,7 +91,7 @@ public class IssueTool {
 
         // Smells
         registerSmellFinder(new AmbiguousParameterNameUnused(), smellFinders);
-        registerSmellFinder(new ComplicatedPositiveOneTime(), smellFinders);
+        registerSmellFinder(new BusyWaiting(), smellFinders);
         registerSmellFinder(new DeadCode(), smellFinders);
         registerSmellFinder(new EmptyControlBody(), smellFinders);
         registerSmellFinder(new EmptyCustomBlock(), smellFinders);
