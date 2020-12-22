@@ -94,7 +94,7 @@ public class IssueTool {
         registerSmellFinder(new ClonedCodeType1(), smellFinders);
         registerSmellFinder(new ClonedCodeType2(), smellFinders);
         registerSmellFinder(new ClonedCodeType3(), smellFinders);
-        registerSmellFinder(new ComplicatedPositiveOneTime(), smellFinders);
+        registerSmellFinder(new BusyWaiting(), smellFinders);
         registerSmellFinder(new DeadCode(), smellFinders);
         registerSmellFinder(new EmptyControlBody(), smellFinders);
         registerSmellFinder(new EmptyCustomBlock(), smellFinders);
