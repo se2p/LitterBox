@@ -28,9 +28,12 @@ import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ClonedCodeType1Test {
 
@@ -101,5 +104,23 @@ public class ClonedCodeType1Test {
         JsonNode project = objectMapper.readTree(file);
         Program program = ProgramParser.parseProgram("TestProgram", project);
         return program;
+    }
+
+    @Test
+    public void testDuplicatedScriptSixInclEvent() throws IOException, ParsingException {
+        Program program = getAST("./src/test/fixtures/smells/exactCopySixInclEvent.json");
+        ClonedCodeType1 finder = new ClonedCodeType1();
+        List<Issue> issues = new ArrayList<>(finder.check(program));
+        //0, event is not counted
+        assertEquals(0, issues.size());
+    }
+
+    @Test
+    public void testDuplicatedScriptSevenInclEvent() throws IOException, ParsingException {
+        Program program = getAST("./src/test/fixtures/smells/exactCopySevenInclEvent.json");
+        ClonedCodeType1 finder = new ClonedCodeType1();
+        List<Issue> issues = new ArrayList<>(finder.check(program));
+        assertEquals(2, issues.size());
+        assertTrue(issues.get(0).isDuplicateOf(issues.get(1)));
     }
 }

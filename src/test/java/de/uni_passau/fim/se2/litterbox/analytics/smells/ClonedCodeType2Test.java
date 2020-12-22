@@ -124,6 +124,17 @@ public class ClonedCodeType2Test {
         assertThat(type2Issues.get(0).isDuplicateOf(type2Issues.get(2))).isTrue();
     }
 
+    @Test
+    public void testSevenInclEventOneVariableNameDifference() throws IOException, ParsingException {
+        Program program = getAST("./src/test/fixtures/smells/type2CopySevenInclEvent.json");
+        ClonedCodeType2 finder = new ClonedCodeType2();
+        List<Issue> issues = new ArrayList<>(finder.check(program));
+        assertEquals(2, issues.size());
+        Issue issue1 = issues.get(0);
+        Issue issue2 = issues.get(1);
+        assertThat(issue1.isDuplicateOf(issue2)).isTrue();
+    }
+
     private Program getAST(String fileName) throws IOException, ParsingException {
         File file = new File(fileName);
         ObjectMapper objectMapper = new ObjectMapper();
