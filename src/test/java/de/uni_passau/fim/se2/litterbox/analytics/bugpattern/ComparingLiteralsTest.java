@@ -98,4 +98,22 @@ class ComparingLiteralsTest implements JsonTest {
             Truth.assertThat(issue.getHint()).isEqualTo(falseHint.getHintText());
         }
     }
+
+    @Test
+    public void testComparingLiteralsTwoStrings() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/bugpattern/comparingLiteralsStrings.json");
+        ComparingLiterals finder = new ComparingLiterals();
+        Set<Issue> reports = finder.check(program);
+        Truth.assertThat(reports).hasSize(1);
+        /*
+        Hint falseHint = new Hint(ComparingLiteralsHintFactory.DEFAULT_VARIABLE_EXISTS);
+        falseHint.setParameter(ComparingLiteralsHintFactory.ALWAYS_NEVER, IssueTranslator.getInstance().getInfo(ComparingLiteralsHintFactory.NEVER));
+        falseHint.setParameter(Hint.HINT_VARIABLE, "test");
+        falseHint.setParameter(Hint.THEN_ELSE,IssueTranslator.getInstance().getInfo("then"));
+        falseHint.setParameter(ComparingLiteralsHintFactory.HINT_TRUE_FALSE, IssueTranslator.getInstance().getInfo("false"));
+        for (Issue issue : reports) {
+            Truth.assertThat(issue.getHint()).isEqualTo(falseHint.getHintText());
+        }
+        */
+    }
 }
