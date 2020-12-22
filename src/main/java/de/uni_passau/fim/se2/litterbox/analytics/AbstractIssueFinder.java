@@ -147,6 +147,18 @@ public abstract class AbstractIssueFinder implements IssueFinder, ScratchVisitor
                 return false;
             }
         }
+
+        if (other.getScriptOrProcedureDefinition() == null) {
+            if (first.getScriptOrProcedureDefinition() != null) {
+                // Need to refer to same script
+                return false;
+            }
+        }
+
+        if (first.getScriptOrProcedureDefinition() == null && other.getScriptOrProcedureDefinition() == null) {
+            return false;
+        }
+
         if (!first.getScriptOrProcedureDefinition().equals(other.getScriptOrProcedureDefinition())) {
             // Need to refer to same script
             return false;

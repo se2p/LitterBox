@@ -29,6 +29,8 @@ public class Hint {
     public final static String HINT_SPRITE = "SPRITE";
     public final static String HINT_SPRITES = "SPRITES";
     public final static String HINT_VARIABLE = "VARIABLE";
+    public final static String HINT_VARIABLE1 = "VARIABLE1";
+    public final static String HINT_VARIABLE2 = "VARIABLE2";
     public final static String HINT_MESSAGE = "MESSAGE";
     public final static String HINT_KEY = "KEY";
     public final static String HINT_SAY_THINK = "SAYTHINK";

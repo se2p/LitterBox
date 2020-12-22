@@ -55,20 +55,19 @@ public class ComparingLiterals extends AbstractIssueFinder {
             if (node.getOperand1() instanceof NumberLiteral && node.getOperand2() instanceof NumberLiteral) {
                 double text1 = ((NumberLiteral) node.getOperand1()).getValue();
                 double text2 = ((NumberLiteral) node.getOperand2()).getValue();
-                hint = ComparingLiteralsHintFactory.generateHint(text1 == text2, inWait, parent, false, node, currentActor, program, currentProcedure, currentScript);
+                hint = ComparingLiteralsHintFactory.generateHint(text1 == text2, inWait, parent, null, null, node, currentActor, program, currentProcedure, currentScript);
             } else if (node.getOperand1() instanceof StringLiteral && node.getOperand2() instanceof StringLiteral) {
                 String text1 = getLiteralValue(node.getOperand1());
                 String text2 = getLiteralValue(node.getOperand2());
 
                 int result = text1.compareTo(text2);
-                hint = ComparingLiteralsHintFactory.generateHint(result == 0, inWait, parent, false, node, currentActor, program, currentProcedure, currentScript);
+                hint = ComparingLiteralsHintFactory.generateHint(result == 0, inWait, parent, ((StringLiteral) node.getOperand1()).getText(), ((StringLiteral) node.getOperand2()).getText(), node, currentActor, program, currentProcedure, currentScript);
             } else {
                 String text1 = getLiteralValue(node.getOperand1());
                 String text2 = getLiteralValue(node.getOperand2());
 
                 int result = text1.compareTo(text2);
-                hint = ComparingLiteralsHintFactory.generateHint(result == 0, inWait, parent, true, node, currentActor, program, currentProcedure, currentScript);
-                hint.setParameter(Hint.HINT_VARIABLE, possibleVariableName(node.getOperand1(), node.getOperand2()));
+                hint = ComparingLiteralsHintFactory.generateHint(result == 0, inWait, parent, possibleVariableName(node.getOperand1(), node.getOperand2()), null, node, currentActor, program, currentProcedure, currentScript);
             }
 
             addIssue(node, node.getMetadata(), hint);
@@ -111,18 +110,17 @@ public class ComparingLiterals extends AbstractIssueFinder {
             if (node.getOperand1() instanceof NumberLiteral && node.getOperand2() instanceof NumberLiteral) {
                 double text1 = ((NumberLiteral) node.getOperand1()).getValue();
                 double text2 = ((NumberLiteral) node.getOperand2()).getValue();
-                hint = ComparingLiteralsHintFactory.generateHint(text1 < text2, inWait, parent, false, node, currentActor, program, currentProcedure, currentScript);
+                hint = ComparingLiteralsHintFactory.generateHint(text1 < text2, inWait, parent, null, null, node, currentActor, program, currentProcedure, currentScript);
             } else if (node.getOperand1() instanceof StringLiteral && node.getOperand2() instanceof StringLiteral) {
                 String text1 = getLiteralValue(node.getOperand1());
                 String text2 = getLiteralValue(node.getOperand2());
                 int result = text1.compareTo(text2);
-                hint = ComparingLiteralsHintFactory.generateHint(result < 0, inWait, parent, false, node, currentActor, program, currentProcedure, currentScript);
+                hint = ComparingLiteralsHintFactory.generateHint(result < 0, inWait, parent, ((StringLiteral) node.getOperand1()).getText(), ((StringLiteral) node.getOperand2()).getText(), node, currentActor, program, currentProcedure, currentScript);
             } else {
                 String text1 = getLiteralValue(node.getOperand1());
                 String text2 = getLiteralValue(node.getOperand2());
                 int result = text1.compareTo(text2);
-                hint = ComparingLiteralsHintFactory.generateHint(result < 0, inWait, parent, true, node, currentActor, program, currentProcedure, currentScript);
-                hint.setParameter(Hint.HINT_VARIABLE, possibleVariableName(node.getOperand1(), node.getOperand2()));
+                hint = ComparingLiteralsHintFactory.generateHint(result < 0, inWait, parent, possibleVariableName(node.getOperand1(), node.getOperand2()), null, node, currentActor, program, currentProcedure, currentScript);
             }
             addIssue(node, node.getMetadata(), hint);
         }
@@ -139,19 +137,19 @@ public class ComparingLiterals extends AbstractIssueFinder {
             if (node.getOperand1() instanceof NumberLiteral && node.getOperand2() instanceof NumberLiteral) {
                 double text1 = ((NumberLiteral) node.getOperand1()).getValue();
                 double text2 = ((NumberLiteral) node.getOperand2()).getValue();
-                hint = ComparingLiteralsHintFactory.generateHint(text1 > text2, inWait, parent, false, node, currentActor, program, currentProcedure, currentScript);
+                hint = ComparingLiteralsHintFactory.generateHint(text1 > text2, inWait, parent, null, null, node, currentActor, program, currentProcedure, currentScript);
             } else if (node.getOperand1() instanceof StringLiteral && node.getOperand2() instanceof StringLiteral) {
                 String text1 = getLiteralValue(node.getOperand1());
                 String text2 = getLiteralValue(node.getOperand2());
                 int result = text1.compareTo(text2);
-                hint = ComparingLiteralsHintFactory.generateHint(result > 0, inWait, parent, false, node, currentActor, program, currentProcedure, currentScript);
+
+                hint = ComparingLiteralsHintFactory.generateHint(result > 0, inWait, parent, ((StringLiteral) node.getOperand1()).getText(), ((StringLiteral) node.getOperand2()).getText(), node, currentActor, program, currentProcedure, currentScript);
             } else {
                 String text1 = getLiteralValue(node.getOperand1());
                 String text2 = getLiteralValue(node.getOperand2());
 
                 int result = text1.compareTo(text2);
-                hint = ComparingLiteralsHintFactory.generateHint(result > 0, inWait, parent, true, node, currentActor, program, currentProcedure, currentScript);
-                hint.setParameter(Hint.HINT_VARIABLE, possibleVariableName(node.getOperand1(), node.getOperand2()));
+                hint = ComparingLiteralsHintFactory.generateHint(result > 0, inWait, parent, possibleVariableName(node.getOperand1(), node.getOperand2()), null, node, currentActor, program, currentProcedure, currentScript);
             }
             addIssue(node, node.getMetadata(), hint);
         }
