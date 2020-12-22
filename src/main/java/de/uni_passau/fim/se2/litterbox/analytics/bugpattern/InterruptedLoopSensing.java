@@ -40,253 +40,290 @@ public class InterruptedLoopSensing extends AbstractIssueFinder {
 
     @Override
     public void visit(RepeatForeverStmt node) {
-        insideForever = true;
-        visitChildren(node);
-        insideForever = false;
+        if (!checkingVariable) {
+            insideForever = true;
+            visitChildren(node);
+            insideForever = false;
+        }
     }
 
     @Override
     public void visit(UntilStmt node) {
-        inCondition = true;
-        node.getBoolExpr().accept(this);
-        if (variableName!=null){
-            checkForVariableChange(node.getStmtList());
+        if (!checkingVariable) {
+            inCondition = true;
+            node.getBoolExpr().accept(this);
+            if (variableName != null) {
+                checkForVariableChange(node.getStmtList());
+            }
+            inCondition = false;
+            insideControl = true;
+            blockName = IssueTranslator.getInstance().getInfo("until");
+            node.getStmtList().accept(this);
+            insideControl = false;
+            sensingCollision = false;
+            sensingOther = false;
         }
-        inCondition = false;
-        insideControl = true;
-        blockName = IssueTranslator.getInstance().getInfo("until");
-        node.getStmtList().accept(this);
-        insideControl = false;
-        sensingCollision=false;
-        sensingOther=false;
     }
 
     @Override
     public void visit(IfElseStmt node) {
-        if (insideForever) {
-            inCondition = true;
-            node.getBoolExpr().accept(this);
-            if (variableName!=null){
-                checkForVariableChange(node.getStmtList());
-                checkForVariableChange(node.getElseStmts());
+        if (!checkingVariable) {
+            if (insideForever) {
+                inCondition = true;
+                node.getBoolExpr().accept(this);
+                if (variableName != null) {
+                    checkForVariableChange(node.getStmtList());
+                    checkForVariableChange(node.getElseStmts());
+                }
+                inCondition = false;
+                insideControl = true;
+                blockName = IssueTranslator.getInstance().getInfo("if") + " " + IssueTranslator.getInstance().getInfo("then") + " " + IssueTranslator.getInstance().getInfo("else");
+                node.getStmtList().accept(this);
+                node.getElseStmts().accept(this);
+                insideControl = false;
+                sensingCollision = false;
+                sensingOther = false;
             }
-            inCondition = false;
-            insideControl = true;
-            blockName = IssueTranslator.getInstance().getInfo("if") + " " + IssueTranslator.getInstance().getInfo("then") + " " + IssueTranslator.getInstance().getInfo("else");
-            node.getStmtList().accept(this);
-            node.getElseStmts().accept(this);
-            insideControl = false;
-            sensingCollision=false;
-            sensingOther=false;
         }
     }
 
     @Override
     public void visit(IfThenStmt node) {
-        if (insideForever) {
-            inCondition = true;
-            node.getBoolExpr().accept(this);
-            if (variableName!=null){
-                checkForVariableChange(node.getThenStmts());
+        if (!checkingVariable) {
+            if (insideForever) {
+                inCondition = true;
+                node.getBoolExpr().accept(this);
+                if (variableName != null) {
+                    checkForVariableChange(node.getThenStmts());
+                }
+                inCondition = false;
+                insideControl = true;
+                blockName = IssueTranslator.getInstance().getInfo("if") + " " + IssueTranslator.getInstance().getInfo("then");
+                node.getThenStmts().accept(this);
+                insideControl = false;
+                sensingCollision = false;
+                sensingOther = false;
             }
-            inCondition = false;
-            insideControl = true;
-            blockName = IssueTranslator.getInstance().getInfo("if") + " " + IssueTranslator.getInstance().getInfo("then");
-            node.getThenStmts().accept(this);
-            insideControl = false;
-            sensingCollision=false;
-            sensingOther=false;
         }
     }
 
     /**
      * If the variable is changed inside these stmts, it should not trigger the finder, as the insides of the loop are responsible for the exit condition.
+     *
      * @param stmts stmts that should be searched
      */
     private void checkForVariableChange(StmtList stmts) {
-        checkingVariable=true;
+        checkingVariable = true;
         stmts.accept(this);
-        checkingVariable=false;
-        variableName=null;
+        checkingVariable = false;
+        variableName = null;
     }
 
     @Override
-    public void visit(SetVariableTo node){
-        if (checkingVariable){
-            if (node.getIdentifier().equals(variableName)){
-                sensingOther=false;
+    public void visit(SetVariableTo node) {
+        if (checkingVariable) {
+            if (node.getIdentifier().equals(variableName)) {
+                sensingOther = false;
             }
         }
     }
 
     @Override
-    public void visit(ChangeVariableBy node){
-        if (checkingVariable){
-            if (node.getIdentifier().equals(variableName)){
-                sensingOther=false;
+    public void visit(ChangeVariableBy node) {
+        if (checkingVariable) {
+            if (node.getIdentifier().equals(variableName)) {
+                sensingOther = false;
             }
         }
     }
 
     @Override
-    public void visit(AddTo node){
-        if (checkingVariable){
-            if (node.getIdentifier().equals(variableName)){
-                sensingOther=false;
+    public void visit(AddTo node) {
+        if (checkingVariable) {
+            if (node.getIdentifier().equals(variableName)) {
+                sensingOther = false;
             }
         }
     }
 
     @Override
-    public void visit(DeleteOf node){
-        if (checkingVariable){
-            if (node.getIdentifier().equals(variableName)){
-                sensingOther=false;
+    public void visit(DeleteOf node) {
+        if (checkingVariable) {
+            if (node.getIdentifier().equals(variableName)) {
+                sensingOther = false;
             }
         }
     }
 
     @Override
-    public void visit(DeleteAllOf node){
-        if (checkingVariable){
-            if (node.getIdentifier().equals(variableName)){
-                sensingOther=false;
+    public void visit(DeleteAllOf node) {
+        if (checkingVariable) {
+            if (node.getIdentifier().equals(variableName)) {
+                sensingOther = false;
             }
         }
     }
 
     @Override
-    public void visit(InsertAt node){
-        if (checkingVariable){
-            if (node.getIdentifier().equals(variableName)){
-                sensingOther=false;
+    public void visit(InsertAt node) {
+        if (checkingVariable) {
+            if (node.getIdentifier().equals(variableName)) {
+                sensingOther = false;
             }
         }
     }
 
     @Override
-    public void visit(ReplaceItem node){
-        if (checkingVariable){
-            if (node.getIdentifier().equals(variableName)){
-                sensingOther=false;
+    public void visit(ReplaceItem node) {
+        if (checkingVariable) {
+            if (node.getIdentifier().equals(variableName)) {
+                sensingOther = false;
             }
         }
     }
 
     @Override
     public void visit(GlideSecsTo node) {
-        if (insideControl && (sensingCollision || sensingOther)) {
-            Hint hint = new Hint(getName());
-            hint.setParameter(Hint.THEN_ELSE, blockName);
-            hint.setParameter(Hint.BLOCK_NAME, IssueTranslator.getInstance().getInfo("glide_secs_to"));
-            addIssue(node, node.getMetadata(), hint);
+        if (!checkingVariable) {
+            if (insideControl && (sensingCollision || sensingOther)) {
+                Hint hint = new Hint(getName());
+                hint.setParameter(Hint.THEN_ELSE, blockName);
+                hint.setParameter(Hint.BLOCK_NAME, IssueTranslator.getInstance().getInfo("glide_secs_to"));
+                addIssue(node, node.getMetadata(), hint);
+            }
         }
     }
 
     @Override
     public void visit(GlideSecsToXY node) {
-        if (insideControl && (sensingCollision || sensingOther)) {
-            Hint hint = new Hint(getName());
-            hint.setParameter(Hint.THEN_ELSE, blockName);
-            hint.setParameter(Hint.BLOCK_NAME, IssueTranslator.getInstance().getInfo("glide_secs_to_xy"));
-            addIssue(node, node.getMetadata(), hint);
+        if (!checkingVariable) {
+            if (insideControl && (sensingCollision || sensingOther)) {
+                Hint hint = new Hint(getName());
+                hint.setParameter(Hint.THEN_ELSE, blockName);
+                hint.setParameter(Hint.BLOCK_NAME, IssueTranslator.getInstance().getInfo("glide_secs_to_xy"));
+                addIssue(node, node.getMetadata(), hint);
+            }
         }
     }
 
     @Override
     public void visit(WaitSeconds node) {
-        if (insideControl &&  sensingOther) {
-            Hint hint = new Hint(getName());
-            hint.setParameter(Hint.THEN_ELSE, blockName);
-            hint.setParameter(Hint.BLOCK_NAME, IssueTranslator.getInstance().getInfo("wait_seconds"));
-            addIssue(node, node.getMetadata(), hint);
+        if (!checkingVariable) {
+            if (insideControl && sensingOther) {
+                Hint hint = new Hint(getName());
+                hint.setParameter(Hint.THEN_ELSE, blockName);
+                hint.setParameter(Hint.BLOCK_NAME, IssueTranslator.getInstance().getInfo("wait_seconds"));
+                addIssue(node, node.getMetadata(), hint);
+            }
         }
     }
 
     @Override
     public void visit(ThinkForSecs node) {
-        if (insideControl &&  sensingOther) {
-            Hint hint = new Hint(getName());
-            hint.setParameter(Hint.THEN_ELSE, blockName);
-            hint.setParameter(Hint.BLOCK_NAME, IssueTranslator.getInstance().getInfo("think_seconds"));
-            addIssue(node, node.getMetadata(), hint);
+        if (!checkingVariable) {
+            if (insideControl && sensingOther) {
+                Hint hint = new Hint(getName());
+                hint.setParameter(Hint.THEN_ELSE, blockName);
+                hint.setParameter(Hint.BLOCK_NAME, IssueTranslator.getInstance().getInfo("think_seconds"));
+                addIssue(node, node.getMetadata(), hint);
+            }
         }
     }
 
     @Override
     public void visit(SayForSecs node) {
-        if (insideControl &&  sensingOther) {
-            Hint hint = new Hint(getName());
-            hint.setParameter(Hint.THEN_ELSE, blockName);
-            hint.setParameter(Hint.BLOCK_NAME, IssueTranslator.getInstance().getInfo("say_seconds"));
-            addIssue(node, node.getMetadata(), hint);
+        if (!checkingVariable) {
+            if (insideControl && sensingOther) {
+                Hint hint = new Hint(getName());
+                hint.setParameter(Hint.THEN_ELSE, blockName);
+                hint.setParameter(Hint.BLOCK_NAME, IssueTranslator.getInstance().getInfo("say_seconds"));
+                addIssue(node, node.getMetadata(), hint);
+            }
         }
     }
 
     @Override
     public void visit(IsKeyPressed node) {
-        if (inCondition) {
-            sensingOther = true;
+        if (!checkingVariable) {
+            if (inCondition) {
+                sensingOther = true;
+            }
         }
     }
 
     @Override
     public void visit(Touching node) {
-        if (inCondition) {
-            sensingCollision = true;
+        if (!checkingVariable) {
+            if (inCondition) {
+                sensingCollision = true;
+            }
         }
     }
 
     @Override
     public void visit(IsMouseDown node) {
-        if (inCondition) {
-            sensingOther = true;
+        if (!checkingVariable) {
+            if (inCondition) {
+                sensingOther = true;
+            }
         }
     }
 
     @Override
     public void visit(ColorTouchingColor node) {
-        if (inCondition) {
-            sensingCollision = true;
+        if (!checkingVariable) {
+            if (inCondition) {
+                sensingCollision = true;
+            }
         }
     }
 
     @Override
     public void visit(SpriteTouchingColor node) {
-        if (inCondition) {
-            sensingCollision = true;
+        if (!checkingVariable) {
+            if (inCondition) {
+                sensingCollision = true;
+            }
         }
     }
 
     @Override
     public void visit(DistanceTo node) {
-        if (inCondition) {
-            sensingCollision = true;
+        if (!checkingVariable) {
+            if (inCondition) {
+                sensingCollision = true;
+            }
         }
     }
 
     @Override
     public void visit(Equals node) {
-        if (inCondition) {
-            insideEquals = true;
+        if (!checkingVariable) {
+            if (inCondition) {
+                insideEquals = true;
+            }
+            visitChildren(node);
+            insideEquals = false;
         }
-        visitChildren(node);
-        insideEquals = false;
     }
 
     @Override
     public void visit(Variable node) {
-        if (insideEquals) {
-            sensingOther = true;
-            variableName=node.getParentNode();
+        if (!checkingVariable) {
+            if (insideEquals) {
+                sensingOther = true;
+                variableName = node.getParentNode();
+            }
         }
     }
 
     @Override
     public void visit(ItemOfVariable node) {
-        if (insideEquals) {
-            sensingOther = true;
-            variableName=node.getIdentifier();
+        if (!checkingVariable) {
+            if (insideEquals) {
+                sensingOther = true;
+                variableName = node.getIdentifier();
+            }
         }
     }
 
