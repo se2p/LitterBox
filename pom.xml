@@ -6,7 +6,7 @@
 
     <groupId>de.uni_passau.fim.se2</groupId>
     <artifactId>Litterbox</artifactId>
-    <version>1.4</version>
+    <version>1.5-SNAPSHOT</version>
 
     <build>
         <plugins>
@@ -159,7 +159,7 @@
         <dependency>
             <artifactId>guava</artifactId>
             <groupId>com.google.guava</groupId>
-            <version>30.0-jre</version>
+            <version>30.1-jre</version>
         </dependency>
         <dependency>
             <groupId>commons-io</groupId>
