@@ -20,6 +20,7 @@ package de.uni_passau.fim.se2.litterbox.analytics.smells;
 
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.Hint;
+import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
@@ -54,11 +55,7 @@ public class SpriteNaming extends AbstractIssueFinder {
     }
 
     private void checkName(String name) {
-        String trimmedName = name;
-        while (trimmedName.length() > 0 && (Character.isDigit(trimmedName.charAt(trimmedName.length() - 1))
-                || Character.isWhitespace(trimmedName.charAt(trimmedName.length() - 1)))) {
-            trimmedName = trimmedName.substring(0, trimmedName.length() - 1);
-        }
+        String trimmedName = trimName(name);
 
         for (String standard : SPRITE_LANGUAGES) {
             if (trimmedName.equals(standard)) {
@@ -79,6 +76,33 @@ public class SpriteNaming extends AbstractIssueFinder {
             }
         }
         visitedNames.add(trimmedName);
+    }
+
+    private String trimName(String name) {
+        String trimmedName = name;
+        while (trimmedName.length() > 0 && (Character.isDigit(trimmedName.charAt(trimmedName.length() - 1))
+                || Character.isWhitespace(trimmedName.charAt(trimmedName.length() - 1)))) {
+            trimmedName = trimmedName.substring(0, trimmedName.length() - 1);
+        }
+        return trimmedName;
+    }
+
+    @Override
+    public boolean isDuplicateOf(Issue first, Issue other) {
+        if (first == other) {
+            // Don't check against self
+            return false;
+        }
+
+        if (first.getFinder() != other.getFinder()) {
+            // Can only be a duplicate if it's the same finder
+            return false;
+        }
+
+        String firstName = first.getActorName();
+        String secondName = other.getActorName();
+
+        return trimName(firstName).equals(trimName(secondName));
     }
 
     @Override

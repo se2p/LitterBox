@@ -26,6 +26,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 public class SpriteNamingTest implements JsonTest {
@@ -34,7 +36,17 @@ public class SpriteNamingTest implements JsonTest {
     public void testSpriteNaming() throws IOException, ParsingException {
         Program empty = getAST("./src/test/fixtures/smells/spriteNaming.json");
        SpriteNaming parameterName = new SpriteNaming();
-        Set<Issue> reports = parameterName.check(empty);
+        List<Issue> reports = new ArrayList<>(parameterName.check(empty));
         Assertions.assertEquals(2, reports.size());
+        Assertions.assertFalse(reports.get(0).isDuplicateOf(reports.get(1)));
+    }
+
+    @Test
+    public void testSpriteNamingDuplicate() throws IOException, ParsingException {
+        Program empty = getAST("./src/test/fixtures/smells/spriteNamingDuplicate.json");
+        SpriteNaming parameterName = new SpriteNaming();
+        List<Issue> reports = new ArrayList<>(parameterName.check(empty));
+        Assertions.assertEquals(2, reports.size());
+        Assertions.assertTrue(reports.get(0).isDuplicateOf(reports.get(1)));
     }
 }
