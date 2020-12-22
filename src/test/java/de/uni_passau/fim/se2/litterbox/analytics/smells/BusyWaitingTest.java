@@ -28,11 +28,11 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.util.Set;
 
-public class ComplicatedPositiveOneTimeTest implements JsonTest {
+public class BusyWaitingTest implements JsonTest {
     @Test
     public void testEmptyProgram() throws IOException, ParsingException {
         Program empty = getAST("./src/test/fixtures/emptyProject.json");
-        ComplicatedPositiveOneTime parameterName = new ComplicatedPositiveOneTime();
+        BusyWaiting parameterName = new BusyWaiting();
         Set<Issue> reports = parameterName.check(empty);
         Assertions.assertEquals(0, reports.size());
     }
@@ -40,7 +40,7 @@ public class ComplicatedPositiveOneTimeTest implements JsonTest {
     @Test
     public void testThreeInstances() throws IOException, ParsingException {
         Program longScript = getAST("./src/test/fixtures/smells/complicatedPositiveOneTime.json");
-        ComplicatedPositiveOneTime parameterName = new ComplicatedPositiveOneTime();
+        BusyWaiting parameterName = new BusyWaiting();
         Set<Issue> reports = parameterName.check(longScript);
         Assertions.assertEquals(3, reports.size());
     }

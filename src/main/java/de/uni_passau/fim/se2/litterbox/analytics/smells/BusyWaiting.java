@@ -17,11 +17,11 @@ import java.util.List;
 /**
  * This finder looks for a forever loop that contains an if loop that stops at least the script.
  */
-public class ComplicatedPositiveOneTime extends AbstractIssueFinder {
-    public static final String NAME = "complicated_positive_one_time";
-    public static final String ALL_HINT = "complicated_positive_one_time_all";
-    public static final String SCRIPT_HINT = "complicated_positive_one_time_script";
-    public static final String CLONE_HINT = "complicated_positive_one_time_clone";
+public class BusyWaiting extends AbstractIssueFinder {
+    public static final String NAME = "busy_waiting";
+    public static final String ALL_HINT = "busy_waiting_all";
+    public static final String SCRIPT_HINT = "busy_waiting_script";
+    public static final String CLONE_HINT = "busy_waiting_clone";
     private boolean insideForeverWithOneStmt;
     private boolean insideForeverAndIf;
     private boolean hasStop;
