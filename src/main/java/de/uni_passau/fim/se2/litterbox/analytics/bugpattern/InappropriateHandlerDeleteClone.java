@@ -33,7 +33,7 @@ public class InappropriateHandlerDeleteClone extends AbstractIssueFinder {
         if (node.getEvent() instanceof GreenFlag){
             super.visit(node);
             if (hasDeleteClone){
-                addIssue(node.getEvent(),node.getEvent().getMetadata());
+                addIssue(node.getEvent(),node.getEvent().getMetadata(), IssueSeverity.LOW);
             }
             hasDeleteClone=false;
         }

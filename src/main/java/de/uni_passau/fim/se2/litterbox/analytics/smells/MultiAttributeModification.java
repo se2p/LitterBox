@@ -78,7 +78,7 @@ public class MultiAttributeModification extends AbstractIssueFinder {
     public void visit(SetVariableTo node) {
         if (prevIdent != null) {
             if (node.getIdentifier().equals(prevIdent)) {
-                addIssue(node, node.getMetadata());
+                addIssue(node, node.getMetadata(), IssueSeverity.LOW);
             }
         }
         prevIdent = node.getIdentifier();
@@ -88,7 +88,7 @@ public class MultiAttributeModification extends AbstractIssueFinder {
     public void visit(ChangeVariableBy node) {
         if (prevIdent != null) {
             if (node.getIdentifier().equals(prevIdent)) {
-                addIssue(node, node.getMetadata());
+                addIssue(node, node.getMetadata(), IssueSeverity.LOW);
             }
         }
         prevIdent = node.getIdentifier();
@@ -97,7 +97,7 @@ public class MultiAttributeModification extends AbstractIssueFinder {
     @Override
     public void visit(ChangeYBy node) {
         if (prevNode != null && (prevNode instanceof SetYTo || prevNode instanceof ChangeYBy)) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         }
 
         prevNode = node;
@@ -106,7 +106,7 @@ public class MultiAttributeModification extends AbstractIssueFinder {
     @Override
     public void visit(SetYTo node) {
         if (prevNode != null && (prevNode instanceof SetYTo || prevNode instanceof ChangeYBy)) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         }
 
         prevNode = node;
@@ -115,7 +115,7 @@ public class MultiAttributeModification extends AbstractIssueFinder {
     @Override
     public void visit(ChangeXBy node) {
         if (prevNode != null && (prevNode instanceof SetXTo || prevNode instanceof ChangeXBy)) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         }
 
         prevNode = node;
@@ -124,7 +124,7 @@ public class MultiAttributeModification extends AbstractIssueFinder {
     @Override
     public void visit(SetXTo node) {
         if (prevNode != null && (prevNode instanceof SetXTo || prevNode instanceof ChangeXBy)) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         }
 
         prevNode = node;
@@ -133,7 +133,7 @@ public class MultiAttributeModification extends AbstractIssueFinder {
     @Override
     public void visit(SetSizeTo node) {
         if (prevNode != null && (prevNode instanceof SetSizeTo || prevNode instanceof ChangeSizeBy)) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         }
 
         prevNode = node;
@@ -142,7 +142,7 @@ public class MultiAttributeModification extends AbstractIssueFinder {
     @Override
     public void visit(ChangeSizeBy node) {
         if (prevNode != null && (prevNode instanceof SetSizeTo || prevNode instanceof ChangeSizeBy)) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         }
 
         prevNode = node;
@@ -151,7 +151,7 @@ public class MultiAttributeModification extends AbstractIssueFinder {
     @Override
     public void visit(SetPenSizeTo node) {
         if (prevNode != null && (prevNode instanceof SetPenSizeTo || prevNode instanceof ChangePenSizeBy)) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         }
 
         prevNode = node;
@@ -160,7 +160,7 @@ public class MultiAttributeModification extends AbstractIssueFinder {
     @Override
     public void visit(ChangePenSizeBy node) {
         if (prevNode != null && (prevNode instanceof SetPenSizeTo || prevNode instanceof ChangePenSizeBy)) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         }
 
         prevNode = node;
@@ -169,7 +169,7 @@ public class MultiAttributeModification extends AbstractIssueFinder {
     @Override
     public void visit(SetVolumeTo node) {
         if (prevNode != null && (prevNode instanceof SetVolumeTo || prevNode instanceof ChangeVolumeBy)) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         }
 
         prevNode = node;
@@ -178,7 +178,7 @@ public class MultiAttributeModification extends AbstractIssueFinder {
     @Override
     public void visit(ChangeVolumeBy node) {
         if (prevNode != null && (prevNode instanceof SetVolumeTo || prevNode instanceof ChangeVolumeBy)) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         }
 
         prevNode = node;
@@ -187,7 +187,7 @@ public class MultiAttributeModification extends AbstractIssueFinder {
     @Override
     public void visit(SetPenColorToColorStmt node) {
         if (prevNode != null && prevNode instanceof SetPenColorToColorStmt) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         }
 
         prevNode = node;
@@ -200,7 +200,7 @@ public class MultiAttributeModification extends AbstractIssueFinder {
                     && ((SetPenColorParamTo) prevNode).getParam().equals(node.getParam()))
                     || (prevNode instanceof ChangePenColorParamBy
                     && ((ChangePenColorParamBy) prevNode).getParam().equals(node.getParam()))) {
-                addIssue(node, node.getMetadata());
+                addIssue(node, node.getMetadata(), IssueSeverity.LOW);
             }
         }
         prevNode = node;
@@ -213,7 +213,7 @@ public class MultiAttributeModification extends AbstractIssueFinder {
                     && ((SetPenColorParamTo) prevNode).getParam().equals(node.getParam()))
                     || (prevNode instanceof ChangePenColorParamBy
                     && ((ChangePenColorParamBy) prevNode).getParam().equals(node.getParam()))) {
-                addIssue(node, node.getMetadata());
+                addIssue(node, node.getMetadata(), IssueSeverity.LOW);
             }
         }
         prevNode = node;
@@ -226,7 +226,7 @@ public class MultiAttributeModification extends AbstractIssueFinder {
                     && ((SetGraphicEffectTo) prevNode).getEffect().equals(node.getEffect()))
                     || (prevNode instanceof ChangeGraphicEffectBy
                     && ((ChangeGraphicEffectBy) prevNode).getEffect().equals(node.getEffect()))) {
-                addIssue(node, node.getMetadata());
+                addIssue(node, node.getMetadata(), IssueSeverity.LOW);
             }
         }
         prevNode = node;
@@ -239,7 +239,7 @@ public class MultiAttributeModification extends AbstractIssueFinder {
                     && ((SetGraphicEffectTo) prevNode).getEffect().equals(node.getEffect()))
                     || (prevNode instanceof ChangeGraphicEffectBy
                     && ((ChangeGraphicEffectBy) prevNode).getEffect().equals(node.getEffect()))) {
-                addIssue(node, node.getMetadata());
+                addIssue(node, node.getMetadata(), IssueSeverity.LOW);
             }
         }
         prevNode = node;
@@ -252,7 +252,7 @@ public class MultiAttributeModification extends AbstractIssueFinder {
                     && ((SetSoundEffectTo) prevNode).getEffect().equals(node.getEffect()))
                     || (prevNode instanceof ChangeSoundEffectBy
                     && ((ChangeSoundEffectBy) prevNode).getEffect().equals(node.getEffect()))) {
-                addIssue(node, node.getMetadata());
+                addIssue(node, node.getMetadata(), IssueSeverity.LOW);
             }
         }
         prevNode = node;
@@ -265,7 +265,7 @@ public class MultiAttributeModification extends AbstractIssueFinder {
                     && ((SetSoundEffectTo) prevNode).getEffect().equals(node.getEffect()))
                     || (prevNode instanceof ChangeSoundEffectBy
                     && ((ChangeSoundEffectBy) prevNode).getEffect().equals(node.getEffect()))) {
-                addIssue(node, node.getMetadata());
+                addIssue(node, node.getMetadata(), IssueSeverity.LOW);
             }
         }
         prevNode = node;
@@ -274,7 +274,7 @@ public class MultiAttributeModification extends AbstractIssueFinder {
     @Override
     public void visit(SetDragMode node) {
         if (prevNode != null && (prevNode instanceof SetDragMode)) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         }
 
         prevNode = node;
@@ -283,7 +283,7 @@ public class MultiAttributeModification extends AbstractIssueFinder {
     @Override
     public void visit(SetRotationStyle node) {
         if (prevNode != null && (prevNode instanceof SetRotationStyle)) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         }
 
         prevNode = node;
@@ -292,7 +292,7 @@ public class MultiAttributeModification extends AbstractIssueFinder {
     @Override
     public void visit(Hide node) {
         if (prevNode != null && (prevNode instanceof Hide || prevNode instanceof Show)) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         }
 
         prevNode = node;
@@ -301,7 +301,7 @@ public class MultiAttributeModification extends AbstractIssueFinder {
     @Override
     public void visit(Show node) {
         if (prevNode != null && (prevNode instanceof Hide || prevNode instanceof Show)) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         }
 
         prevNode = node;
@@ -310,7 +310,7 @@ public class MultiAttributeModification extends AbstractIssueFinder {
     @Override
     public void visit(SwitchCostumeTo node) {
         if (prevNode != null && (prevNode instanceof SwitchCostumeTo || prevNode instanceof NextCostume)) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         }
 
         prevNode = node;
@@ -319,7 +319,7 @@ public class MultiAttributeModification extends AbstractIssueFinder {
     @Override
     public void visit(NextCostume node) {
         if (prevNode != null && (prevNode instanceof SwitchCostumeTo || prevNode instanceof NextCostume)) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         }
 
         prevNode = node;
@@ -328,7 +328,7 @@ public class MultiAttributeModification extends AbstractIssueFinder {
     @Override
     public void visit(GoToLayer node) {
         if (prevNode != null && (prevNode instanceof GoToLayer || prevNode instanceof ChangeLayerBy)) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         }
 
         prevNode = node;
@@ -337,7 +337,7 @@ public class MultiAttributeModification extends AbstractIssueFinder {
     @Override
     public void visit(ChangeLayerBy node) {
         if (prevNode != null && (prevNode instanceof GoToLayer || prevNode instanceof ChangeLayerBy)) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         }
 
         prevNode = node;
@@ -346,7 +346,7 @@ public class MultiAttributeModification extends AbstractIssueFinder {
     @Override
     public void visit(Say node) {
         if (prevNode != null && (prevNode instanceof Say || prevNode instanceof Think)) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         }
 
         prevNode = node;
@@ -355,7 +355,7 @@ public class MultiAttributeModification extends AbstractIssueFinder {
     @Override
     public void visit(Think node) {
         if (prevNode != null && (prevNode instanceof Say || prevNode instanceof Think)) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         }
 
         prevNode = node;
@@ -364,7 +364,7 @@ public class MultiAttributeModification extends AbstractIssueFinder {
     @Override
     public void visit(PointInDirection node) {
         if (prevNode != null && (prevNode instanceof TurnLeft || prevNode instanceof TurnRight || prevNode instanceof PointInDirection)) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         }
 
         prevNode = node;
@@ -373,7 +373,7 @@ public class MultiAttributeModification extends AbstractIssueFinder {
     @Override
     public void visit(TurnLeft node) {
         if (prevNode != null && (prevNode instanceof TurnLeft || prevNode instanceof TurnRight || prevNode instanceof PointInDirection)) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         }
 
         prevNode = node;
@@ -382,7 +382,7 @@ public class MultiAttributeModification extends AbstractIssueFinder {
     @Override
     public void visit(TurnRight node) {
         if (prevNode != null && (prevNode instanceof TurnLeft || prevNode instanceof TurnRight || prevNode instanceof PointInDirection)) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         }
 
         prevNode = node;

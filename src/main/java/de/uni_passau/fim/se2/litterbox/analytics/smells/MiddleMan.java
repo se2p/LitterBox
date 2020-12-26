@@ -48,7 +48,7 @@ public class MiddleMan extends AbstractIssueFinder {
         if (event instanceof ReceptionOfMessage) {
             List<Stmt> stmts = script.getStmtList().getStmts();
             if (stmts.size() == 1 && (stmts.get(0) instanceof Broadcast || stmts.get(0) instanceof BroadcastAndWait)) {
-                addIssue(event, ((ReceptionOfMessage) event).getMetadata(), new Hint(BROADCAST_HINT));
+                addIssue(event, ((ReceptionOfMessage) event).getMetadata(), IssueSeverity.MEDIUM, new Hint(BROADCAST_HINT));
             }
         }
     }
@@ -60,7 +60,7 @@ public class MiddleMan extends AbstractIssueFinder {
         List<Stmt> stmts = node.getStmtList().getStmts();
         if (stmts.size() == 1 && (stmts.get(0) instanceof CallStmt)) {
             if (!((CallStmt) stmts.get(0)).getIdent().getName().equals(node.getIdent().getName())) {
-                addIssue(node, node.getMetadata().getDefinition(), new Hint(PROCEDURE_HINT));
+                addIssue(node, node.getMetadata().getDefinition(), IssueSeverity.MEDIUM, new Hint(PROCEDURE_HINT));
             }
         }
     }

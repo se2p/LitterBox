@@ -39,7 +39,7 @@ public class ExpressionAsTouchingOrColor extends AbstractIssueFinder {
     @Override
     public void visit(SetPenColorToColorStmt node) {
         if (!(node.getColorExpr() instanceof ColorLiteral)) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.HIGH);
         }
         visitChildren(node);
     }
@@ -47,11 +47,11 @@ public class ExpressionAsTouchingOrColor extends AbstractIssueFinder {
     @Override
     public void visit(ColorTouchingColor node) {
         if (!(node.getOperand1() instanceof ColorLiteral)) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.HIGH);
         }
         // TODO: Should this be an else-if rather than if, to avoid duplicate reports?
         if (!(node.getOperand2() instanceof ColorLiteral)) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.HIGH);
         }
         visitChildren(node);
     }
@@ -59,7 +59,7 @@ public class ExpressionAsTouchingOrColor extends AbstractIssueFinder {
     @Override
     public void visit(SpriteTouchingColor node) {
         if (!(node.getColor() instanceof ColorLiteral)) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.HIGH);
         }
         visitChildren(node);
     }
@@ -69,7 +69,7 @@ public class ExpressionAsTouchingOrColor extends AbstractIssueFinder {
         if (!(node.getTouchable() instanceof MousePointer)
                 && !(node.getTouchable() instanceof Edge)
                 && !(node.getTouchable() instanceof SpriteTouchable)) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.HIGH);
         }
     }
 

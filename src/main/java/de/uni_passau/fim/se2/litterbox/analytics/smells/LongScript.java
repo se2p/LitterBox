@@ -64,7 +64,7 @@ public class LongScript extends TopBlockFinder {
         localCount++;
         visitChildren(node);
         if (localCount > NUMBER_TOO_LONG) {
-            addIssue(node, ((ProcedureMetadata) node.getMetadata()).getDefinition());
+            addIssue(node, ((ProcedureMetadata) node.getMetadata()).getDefinition(), IssueSeverity.LOW);
         }
         currentProcedure = null;
     }

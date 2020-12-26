@@ -41,7 +41,7 @@ public class ParameterOutOfScope extends AbstractIssueFinder {
     @Override
     public void visit(Parameter node) {
         if (!insideProcedure) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         }
         visitChildren(node);
     }

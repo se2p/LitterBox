@@ -34,7 +34,7 @@ public class MissingTerminationCondition extends AbstractIssueFinder {
     @Override
     public void visit(UntilStmt node) {
         if (node.getBoolExpr() instanceof UnspecifiedBoolExpr) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.MEDIUM);
         }
         visitChildren(node);
     }

@@ -44,56 +44,56 @@ public class EmptyScript extends AbstractIssueFinder {
     @Override
     public void visit(AttributeAboveValue node) {
         if (isEmpty) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         }
     }
 
     @Override
     public void visit(BackdropSwitchTo node) {
         if (isEmpty) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         }
     }
 
     @Override
     public void visit(GreenFlag node) {
         if (isEmpty) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         }
     }
 
     @Override
     public void visit(KeyPressed node) {
         if (isEmpty) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         }
     }
 
     @Override
     public void visit(ReceptionOfMessage node) {
         if (isEmpty) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         }
     }
 
     @Override
     public void visit(SpriteClicked node) {
         if (isEmpty) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         }
     }
 
     @Override
     public void visit(StageClicked node) {
         if (isEmpty) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         }
     }
 
     @Override
     public void visit(StartedAsClone node) {
         if (isEmpty) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         }
     }
 

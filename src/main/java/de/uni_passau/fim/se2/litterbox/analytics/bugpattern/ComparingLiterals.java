@@ -70,7 +70,7 @@ public class ComparingLiterals extends AbstractIssueFinder {
                 hint = ComparingLiteralsHintFactory.generateHint(result == 0, inWait, parent, possibleVariableName(node.getOperand1(), node.getOperand2()), null, node, currentActor, program, currentProcedure, currentScript);
             }
 
-            addIssue(node, node.getMetadata(), hint);
+            addIssue(node, node.getMetadata(), IssueSeverity.HIGH, hint);
         }
         visitChildren(node);
     }
@@ -122,7 +122,7 @@ public class ComparingLiterals extends AbstractIssueFinder {
                 int result = text1.compareTo(text2);
                 hint = ComparingLiteralsHintFactory.generateHint(result < 0, inWait, parent, possibleVariableName(node.getOperand1(), node.getOperand2()), null, node, currentActor, program, currentProcedure, currentScript);
             }
-            addIssue(node, node.getMetadata(), hint);
+            addIssue(node, node.getMetadata(), IssueSeverity.HIGH, hint);
         }
         visitChildren(node);
     }
@@ -151,7 +151,7 @@ public class ComparingLiterals extends AbstractIssueFinder {
                 int result = text1.compareTo(text2);
                 hint = ComparingLiteralsHintFactory.generateHint(result > 0, inWait, parent, possibleVariableName(node.getOperand1(), node.getOperand2()), null, node, currentActor, program, currentProcedure, currentScript);
             }
-            addIssue(node, node.getMetadata(), hint);
+            addIssue(node, node.getMetadata(), IssueSeverity.HIGH, hint);
         }
         visitChildren(node);
     }

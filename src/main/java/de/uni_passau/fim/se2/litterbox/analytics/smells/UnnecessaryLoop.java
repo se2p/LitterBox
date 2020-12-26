@@ -43,10 +43,10 @@ public class UnnecessaryLoop extends AbstractIssueFinder {
         if (node.getTimes() instanceof NumberLiteral) {
             if(((NumberLiteral) node.getTimes()).getValue() == 1){
                 Hint hint = new Hint(ONE_HINT);
-                addIssue(node, node.getMetadata(),hint);
+                addIssue(node, node.getMetadata(), IssueSeverity.LOW, hint);
             }else if(((NumberLiteral) node.getTimes()).getValue() == 0){
                 Hint hint = new Hint(ZERO_HINT);
-                addIssue(node, node.getMetadata(),hint);
+                addIssue(node, node.getMetadata(), IssueSeverity.LOW, hint);
             }
         }
     }

@@ -78,7 +78,7 @@ public class ForeverInsideLoop extends AbstractIssueFinder {
     @Override
     public void visit(RepeatForeverStmt node) {
         if (loopcounter > 0 && (blocksAfter || blocksBefore)) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.HIGH);
         }
         loopcounter++;
         checkPosition(node);

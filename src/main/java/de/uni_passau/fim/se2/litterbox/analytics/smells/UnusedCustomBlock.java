@@ -42,7 +42,7 @@ public class UnusedCustomBlock extends AbstractIssueFinder {
         for (ProcedureDefinition procedureDef : proceduresDef) {
             ProcedureInfo info = procMap.get(procedureDef.getIdent());
             if (!calledProcedures.contains(info.getName())) {
-                addIssue(procedureDef, ((ProcedureMetadata) procedureDef.getMetadata()).getDefinition());
+                addIssue(procedureDef, ((ProcedureMetadata) procedureDef.getMetadata()).getDefinition(), IssueSeverity.LOW);
             }
         }
     }

@@ -40,7 +40,7 @@ public class NestedLoops extends AbstractIssueFinder {
     @Override
     public void visit(UntilStmt node) {
         if (checkNested(node.getStmtList().getStmts())) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.MEDIUM);
         }
         visitChildren(node);
     }
@@ -48,7 +48,7 @@ public class NestedLoops extends AbstractIssueFinder {
     @Override
     public void visit(RepeatForeverStmt node) {
         if (checkNested(node.getStmtList().getStmts())) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.MEDIUM);
         }
         visitChildren(node);
     }
@@ -60,7 +60,7 @@ public class NestedLoops extends AbstractIssueFinder {
     @Override
     public void visit(RepeatTimesStmt node) {
         if (checkNested(node.getStmtList().getStmts())) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.MEDIUM);
         }
         visitChildren(node);
     }

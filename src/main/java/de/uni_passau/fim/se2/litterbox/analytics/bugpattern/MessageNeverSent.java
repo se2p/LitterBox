@@ -133,7 +133,7 @@ public class MessageNeverSent extends AbstractIssueFinder {
                     messageReceived.add(new Pair<>(actorName, msgName));
                 } else if (notSentMessages.contains(msgName)) {
                     Hint hint = MessageNeverSentHintFactory.generateHint(((StringLiteral) event.getMsg().getMessage()).getText(), sayText, thinkText, touchedSprites);
-                    addIssue(event, event.getMetadata(), hint);
+                    addIssue(event, event.getMetadata(), IssueSeverity.MEDIUM, hint);
                 }
             }
         }

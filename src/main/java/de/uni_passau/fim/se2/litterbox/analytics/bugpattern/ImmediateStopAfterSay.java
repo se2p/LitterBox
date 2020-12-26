@@ -43,10 +43,10 @@ public class ImmediateStopAfterSay extends AbstractIssueFinder {
             Hint hint = new Hint(getName());
             if (questionableNode instanceof Say) {
                 hint.setParameter(Hint.HINT_SAY_THINK, IssueTranslator.getInstance().getInfo("say"));
-                addIssue(questionableNode, questionableNode.getMetadata(), hint);
+                addIssue(questionableNode, questionableNode.getMetadata(), IssueSeverity.LOW, hint);
             } else if (questionableNode instanceof Think) {
                 hint.setParameter(Hint.HINT_SAY_THINK, IssueTranslator.getInstance().getInfo("think"));
-                addIssue(questionableNode, questionableNode.getMetadata(), hint);
+                addIssue(questionableNode, questionableNode.getMetadata(), IssueSeverity.LOW, hint);
             }
         }
         super.visitChildren(node);

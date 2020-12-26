@@ -84,7 +84,7 @@ public class EndlessRecursion extends AbstractIssueFinder {
     public void visit(Broadcast node) {
         if (insideBroadcastReception && node.getMessage().getMessage() instanceof StringLiteral && loopIfCounter == 0) {
             if (((StringLiteral) node.getMessage().getMessage()).getText().equals(currentMessageName)) {
-                addIssue(node, node.getMetadata(), new Hint(BROADCAST_HINT));
+                addIssue(node, node.getMetadata(), IssueSeverity.HIGH, new Hint(BROADCAST_HINT));
             }
         }
     }
@@ -93,7 +93,7 @@ public class EndlessRecursion extends AbstractIssueFinder {
     public void visit(BroadcastAndWait node) {
         if (insideBroadcastReception && node.getMessage().getMessage() instanceof StringLiteral && loopIfCounter == 0) {
             if (((StringLiteral) node.getMessage().getMessage()).getText().equals(currentMessageName)) {
-                addIssue(node, node.getMetadata(), new Hint(BROADCAST_HINT));
+                addIssue(node, node.getMetadata(), IssueSeverity.HIGH, new Hint(BROADCAST_HINT));
             }
         }
     }
@@ -103,7 +103,7 @@ public class EndlessRecursion extends AbstractIssueFinder {
         if (insideProcedure && loopIfCounter == 0) {
             String call = node.getIdent().getName();
             if (call.equals(currentProcedureName)) {
-                addIssue(node, node.getMetadata(), new Hint(PROCEDURE_HINT));
+                addIssue(node, node.getMetadata(), IssueSeverity.HIGH, new Hint(PROCEDURE_HINT));
             }
         }
     }

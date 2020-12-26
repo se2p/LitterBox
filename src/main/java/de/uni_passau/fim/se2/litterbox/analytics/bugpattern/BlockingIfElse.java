@@ -82,7 +82,7 @@ public class BlockingIfElse extends AbstractIssueFinder {
                         } else {
                             hint = new Hint(INSIDE_LOOP);
                         }
-                        addIssue(ifElse, ifElse.getMetadata(), hint);
+                        addIssue(ifElse, ifElse.getMetadata(), IssueSeverity.MEDIUM, hint);
                     }
                 }
             }

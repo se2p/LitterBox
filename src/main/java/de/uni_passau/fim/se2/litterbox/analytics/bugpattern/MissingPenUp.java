@@ -58,7 +58,7 @@ public class MissingPenUp extends AbstractIssueFinder {
             visitChildren(node);
         } else if (getResult()) {
             // TODO: Is this potentially added multiple times?
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.MEDIUM);
         }
     }
 

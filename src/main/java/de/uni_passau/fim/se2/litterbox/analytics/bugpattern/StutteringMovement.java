@@ -65,7 +65,7 @@ public class StutteringMovement extends AbstractIssueFinder {
                     String key = getKeyValue((int) ((NumberLiteral) keyPressed.getKey().getKey()).getValue());
                     Hint hint = new Hint(getName());
                     hint.setParameter(Hint.HINT_KEY, key);
-                    addIssue(stmt, stmt.getMetadata(), hint);
+                    addIssue(stmt, stmt.getMetadata(), IssueSeverity.HIGH, hint);
                 }
             } else if (listOfStmt.size() == 2) {
                 Stmt stmt = listOfStmt.get(0);
@@ -74,7 +74,7 @@ public class StutteringMovement extends AbstractIssueFinder {
                     String key = getKeyValue((int) ((NumberLiteral) keyPressed.getKey().getKey()).getValue());
                     Hint hint = new Hint(getName());
                     hint.setParameter(Hint.HINT_KEY, key);
-                    addIssue(stmt, stmt.getMetadata(), hint);
+                    addIssue(stmt, stmt.getMetadata(), IssueSeverity.HIGH, hint);
                 }
             }
         }

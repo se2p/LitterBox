@@ -35,7 +35,7 @@ public class MissingWaitUntilCondition extends AbstractIssueFinder {
     @Override
     public void visit(WaitUntil node) {
         if (node.getUntil() instanceof UnspecifiedBoolExpr) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.MEDIUM);
         }
     }
 

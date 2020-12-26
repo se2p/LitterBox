@@ -73,7 +73,7 @@ public class MissingEraseAll extends AbstractIssueFinder {
             penDownSet = true;
             visitChildren(node);
         } else if (getResult()) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         }
     }
 

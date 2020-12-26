@@ -62,7 +62,7 @@ public class BusyWaiting extends AbstractIssueFinder {
         }
         visitChildren(node);
         if (insideForeverWithOneStmt && hasStop) {
-            addIssue(node, node.getMetadata(), hint);
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW, hint);
             hasStop = false;
         }
         insideForeverAndIf = false;

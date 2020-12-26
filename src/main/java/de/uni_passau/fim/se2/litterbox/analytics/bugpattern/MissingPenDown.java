@@ -67,7 +67,7 @@ public class MissingPenDown extends AbstractIssueFinder {
             penUpSet = true;
             visitChildren(node);
         } else if (getResult()) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.MEDIUM);
         }
     }
 

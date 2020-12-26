@@ -44,7 +44,7 @@ public class DoubleIf extends AbstractIssueFinder {
                 BoolExpr condition = getCondition((IfStmt) s);
                 if (lastCondition != null) {
                     if (lastCondition.equals(condition)) {
-                        addIssue(s, getMetadata((IfStmt) s));
+                        addIssue(s, getMetadata((IfStmt) s), IssueSeverity.LOW);
                     }
                 }
                 lastCondition = condition;

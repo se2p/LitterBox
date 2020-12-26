@@ -76,7 +76,7 @@ public class VariableInitializationRace extends AbstractIssueFinder {
                 if (numScripts > 1) {
                     InitializationInstance instance = modifyingScripts.iterator().next();
                     currentScript = instance.getScript();
-                    addIssue(instance.getStatement(), instance.getStatement().getMetadata());
+                    addIssue(instance.getStatement(), instance.getStatement().getMetadata(), IssueSeverity.HIGH);
                 }
             }
         }

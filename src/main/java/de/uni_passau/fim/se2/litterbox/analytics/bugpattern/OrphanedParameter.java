@@ -63,7 +63,7 @@ public class OrphanedParameter extends AbstractIssueFinder {
             }
         }
         if (!validParametername) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.MEDIUM);
         }
     }
 

@@ -121,10 +121,10 @@ public class MissingCloneInitialization extends AbstractIssueFinder {
                 }
             } else if (notClonedActor.contains(spriteName)) {
                 Hint hint = generateHint(spriteName);
-                addIssue(node, ((CloneOfMetadata) node.getMetadata()).getCloneBlockMetadata(), hint);
+                addIssue(node, ((CloneOfMetadata) node.getMetadata()).getCloneBlockMetadata(), IssueSeverity.LOW, hint);
             } else if (spriteName.equals("_myself_") && notClonedActor.contains(currentActor.getIdent().getName())) {
                 Hint hint = generateHint(currentActor.getIdent().getName());
-                addIssue(node, ((CloneOfMetadata) node.getMetadata()).getCloneBlockMetadata(), hint);
+                addIssue(node, ((CloneOfMetadata) node.getMetadata()).getCloneBlockMetadata(), IssueSeverity.LOW, hint);
             }
         }
     }

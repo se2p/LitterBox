@@ -46,7 +46,7 @@ public class CustomBlockWithForever extends AbstractIssueFinder {
     private void checkCalls() {
         for (CallStmt calledProcedure : calledProcedures) {
             if (proceduresWithForever.contains(calledProcedure.getIdent().getName())) {
-                addIssue(calledProcedure, calledProcedure.getMetadata());
+                addIssue(calledProcedure, calledProcedure.getMetadata(), IssueSeverity.LOW);
             }
         }
     }

@@ -43,7 +43,7 @@ public class UnusedParameter extends AbstractIssueFinder {
         List<ParameterDefinition> parameterDefinitions = node.getParameterDefinitionList().getParameterDefinitions();
         for (ParameterDefinition def : parameterDefinitions) {
             if (!usedParameterNames.contains(def.getIdent().getName())) {
-                addIssue(def, def.getMetadata());
+                addIssue(def, def.getMetadata(), IssueSeverity.LOW);
             }
         }
         insideProcedure = false;

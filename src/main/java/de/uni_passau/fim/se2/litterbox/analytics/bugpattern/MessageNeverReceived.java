@@ -91,7 +91,7 @@ public class MessageNeverReceived extends AbstractIssueFinder {
             } else if (notReceivedMessages.contains(msgName)) {
                 Hint hint = new Hint(getName());
                 hint.setParameter(Hint.HINT_MESSAGE, ((StringLiteral) node.getMessage().getMessage()).getText());
-                addIssue(node, node.getMetadata(), hint);
+                addIssue(node, node.getMetadata(), IssueSeverity.MEDIUM, hint);
             }
         }
     }
@@ -106,7 +106,7 @@ public class MessageNeverReceived extends AbstractIssueFinder {
             } else if (notReceivedMessages.contains(msgName)) {
                 Hint hint = new Hint(getName());
                 hint.setParameter(Hint.HINT_MESSAGE, ((StringLiteral) node.getMessage().getMessage()).getText());
-                addIssue(node, node.getMetadata(), hint);
+                addIssue(node, node.getMetadata(), IssueSeverity.MEDIUM, hint);
             }
         }
     }

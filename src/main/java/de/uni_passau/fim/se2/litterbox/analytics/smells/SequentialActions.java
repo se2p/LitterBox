@@ -47,7 +47,7 @@ public class SequentialActions extends AbstractIssueFinder {
                 }
                 int numSubsequences = findSubsequences(statements.subList(i, statements.size()), currentSequence);
                 if (numSubsequences >= MIN_OCCURRENCE) {
-                    addIssue(statements.get(i), statements.get(i).getMetadata());
+                    addIssue(statements.get(i), statements.get(i).getMetadata(), IssueSeverity.LOW);
                     i += numSubsequences * currentSequence.size();
                 }
             }

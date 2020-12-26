@@ -31,10 +31,10 @@ public class EmptyControlBody extends AbstractIssueFinder {
     @Override
     public void visit(IfElseStmt node) {
         if (node.getStmtList().getStmts().isEmpty()) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         }
         if (node.getElseStmts().getStmts().isEmpty()) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         }
         visitChildren(node);
     }
@@ -42,7 +42,7 @@ public class EmptyControlBody extends AbstractIssueFinder {
     @Override
     public void visit(IfThenStmt node) {
         if (node.getThenStmts().getStmts().isEmpty()) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         }
         visitChildren(node);
     }
@@ -50,7 +50,7 @@ public class EmptyControlBody extends AbstractIssueFinder {
     @Override
     public void visit(UntilStmt node) {
         if (node.getStmtList().getStmts().isEmpty()) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         }
         visitChildren(node);
     }
@@ -58,7 +58,7 @@ public class EmptyControlBody extends AbstractIssueFinder {
     @Override
     public void visit(RepeatForeverStmt node) {
         if (node.getStmtList().getStmts().isEmpty()) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         }
         visitChildren(node);
     }
@@ -66,7 +66,7 @@ public class EmptyControlBody extends AbstractIssueFinder {
     @Override
     public void visit(RepeatTimesStmt node) {
         if (node.getStmtList().getStmts().isEmpty()) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         }
         visitChildren(node);
     }

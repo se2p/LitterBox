@@ -97,42 +97,42 @@ public class MissingLoopSensing extends AbstractIssueFinder {
     @Override
     public void visit(IsKeyPressed node) {
         if (insideGreenFlagClone && !insideLoop && inCondition && !afterWaitUntil) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.HIGH);
         }
     }
 
     @Override
     public void visit(Touching node) {
         if (insideGreenFlagClone && !insideLoop && inCondition && !afterWaitUntil) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.HIGH);
         }
     }
 
     @Override
     public void visit(IsMouseDown node) {
         if (insideGreenFlagClone && !insideLoop && inCondition && !afterWaitUntil) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.HIGH);
         }
     }
 
     @Override
     public void visit(ColorTouchingColor node) {
         if (insideGreenFlagClone && !insideLoop && inCondition && !afterWaitUntil) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.HIGH);
         }
     }
 
     @Override
     public void visit(SpriteTouchingColor node) {
         if (insideGreenFlagClone && !insideLoop && inCondition && !afterWaitUntil) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.HIGH);
         }
     }
 
     @Override
     public void visit(DistanceTo node) {
         if (insideGreenFlagClone && !insideLoop && inCondition && !afterWaitUntil) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.HIGH);
         }
     }
 
@@ -144,7 +144,7 @@ public class MissingLoopSensing extends AbstractIssueFinder {
         visitChildren(node);
         if (hasVariable) {
             Hint hint = new Hint(VARIABLE_VERSION);
-            addIssue(node, node.getMetadata(), hint);
+            addIssue(node, node.getMetadata(), IssueSeverity.HIGH, hint);
             hasVariable = false;
         }
         insideEquals = false;

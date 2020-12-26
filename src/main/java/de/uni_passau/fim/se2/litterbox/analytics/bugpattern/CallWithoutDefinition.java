@@ -44,7 +44,7 @@ public class CallWithoutDefinition extends AbstractIssueFinder {
                     && !program.getProcedureMapping().checkIfMalformated(
                     currentActor.getIdent().getName() + calledProcedure.getIdent().getName())) {
 
-                addIssue(calledProcedure, calledProcedure.getMetadata());
+                addIssue(calledProcedure, calledProcedure.getMetadata(), IssueSeverity.LOW);
             }
         }
     }

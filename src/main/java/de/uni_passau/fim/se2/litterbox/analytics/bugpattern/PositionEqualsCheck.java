@@ -82,7 +82,7 @@ public class PositionEqualsCheck extends AbstractIssueFinder {
         if (inCondition) {
             if (!checkEquals(node)) {
                 Hint hint = PositionEqualsCheckHintFactory.generateHint(node);
-                addIssue(node, node.getMetadata(), hint);
+                addIssue(node, node.getMetadata(), IssueSeverity.HIGH, hint);
             }
         }
     }

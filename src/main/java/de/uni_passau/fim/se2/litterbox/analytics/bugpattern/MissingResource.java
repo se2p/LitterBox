@@ -66,7 +66,7 @@ public class MissingResource extends AbstractIssueFinder {
         if (node.getElementChoice() instanceof WithExpr && ((WithExpr) node.getElementChoice()).getExpression() instanceof StrId) {
             String backdropName = ((StrId) ((WithExpr) node.getElementChoice()).getExpression()).getName();
             if (!imageExists(backdropName, backdrops)) {
-                addIssue(node, node.getMetadata());
+                addIssue(node, node.getMetadata(), IssueSeverity.LOW);
             }
         }
     }
@@ -85,7 +85,7 @@ public class MissingResource extends AbstractIssueFinder {
         if (node.getElementChoice() instanceof WithExpr && ((WithExpr) node.getElementChoice()).getExpression() instanceof StrId) {
             String backdropName = ((StrId) ((WithExpr) node.getElementChoice()).getExpression()).getName();
             if (!imageExists(backdropName, backdrops)) {
-                addIssue(node, node.getMetadata());
+                addIssue(node, node.getMetadata(), IssueSeverity.LOW);
             }
         }
     }
@@ -95,7 +95,7 @@ public class MissingResource extends AbstractIssueFinder {
         if (node.getCostumeChoice() instanceof WithExpr && ((WithExpr) node.getCostumeChoice()).getExpression() instanceof StrId) {
             String costume = ((StrId) ((WithExpr) node.getCostumeChoice()).getExpression()).getName();
             if (!imageExists(costume, images)) {
-                addIssue(node, node.getMetadata());
+                addIssue(node, node.getMetadata(), IssueSeverity.LOW);
             }
         }
     }
@@ -105,7 +105,7 @@ public class MissingResource extends AbstractIssueFinder {
         if (node.getElementChoice() instanceof WithExpr && ((WithExpr) node.getElementChoice()).getExpression() instanceof StrId) {
             String sound = ((StrId) ((WithExpr) node.getElementChoice()).getExpression()).getName();
             if (!soundExists(sound)) {
-                addIssue(node, node.getMetadata());
+                addIssue(node, node.getMetadata(), IssueSeverity.LOW);
             }
         }
     }
@@ -115,7 +115,7 @@ public class MissingResource extends AbstractIssueFinder {
         if (node.getElementChoice() instanceof WithExpr && ((WithExpr) node.getElementChoice()).getExpression() instanceof StrId) {
             String sound = ((StrId) ((WithExpr) node.getElementChoice()).getExpression()).getName();
             if (!soundExists(sound)) {
-                addIssue(node, node.getMetadata());
+                addIssue(node, node.getMetadata(), IssueSeverity.LOW);
             }
         }
     }

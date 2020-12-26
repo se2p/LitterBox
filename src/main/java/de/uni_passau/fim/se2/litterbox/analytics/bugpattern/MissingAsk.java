@@ -48,7 +48,7 @@ public class MissingAsk extends AbstractIssueFinder  {
 
         if (!answerBlocks.isEmpty() && !askUsed) {
             for (Answer answer : answerBlocks) {
-                addIssue(answer, answer.getMetadata());
+                addIssue(answer, answer.getMetadata(), IssueSeverity.MEDIUM);
             }
         }
 

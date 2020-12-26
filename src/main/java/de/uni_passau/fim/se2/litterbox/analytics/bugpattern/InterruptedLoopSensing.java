@@ -207,7 +207,7 @@ public class InterruptedLoopSensing extends AbstractIssueFinder {
                 Hint hint = new Hint(getName());
                 hint.setParameter(Hint.THEN_ELSE, blockName);
                 hint.setParameter(Hint.BLOCK_NAME, IssueTranslator.getInstance().getInfo("glide_secs_to"));
-                addIssue(node, node.getMetadata(), hint);
+                addIssue(node, node.getMetadata(), IssueSeverity.LOW, hint);
             }
         }
     }
@@ -219,7 +219,7 @@ public class InterruptedLoopSensing extends AbstractIssueFinder {
                 Hint hint = new Hint(getName());
                 hint.setParameter(Hint.THEN_ELSE, blockName);
                 hint.setParameter(Hint.BLOCK_NAME, IssueTranslator.getInstance().getInfo("glide_secs_to_xy"));
-                addIssue(node, node.getMetadata(), hint);
+                addIssue(node, node.getMetadata(), IssueSeverity.LOW, hint);
             }
         }
     }
@@ -231,7 +231,7 @@ public class InterruptedLoopSensing extends AbstractIssueFinder {
                 Hint hint = new Hint(getName());
                 hint.setParameter(Hint.THEN_ELSE, blockName);
                 hint.setParameter(Hint.BLOCK_NAME, IssueTranslator.getInstance().getInfo("wait_seconds"));
-                addIssue(node, node.getMetadata(), hint);
+                addIssue(node, node.getMetadata(), IssueSeverity.LOW, hint);
             }
         }
     }
@@ -243,7 +243,7 @@ public class InterruptedLoopSensing extends AbstractIssueFinder {
                 Hint hint = new Hint(getName());
                 hint.setParameter(Hint.THEN_ELSE, blockName);
                 hint.setParameter(Hint.BLOCK_NAME, IssueTranslator.getInstance().getInfo("think_seconds"));
-                addIssue(node, node.getMetadata(), hint);
+                addIssue(node, node.getMetadata(), IssueSeverity.LOW, hint);
             }
         }
     }
@@ -255,7 +255,7 @@ public class InterruptedLoopSensing extends AbstractIssueFinder {
                 Hint hint = new Hint(getName());
                 hint.setParameter(Hint.THEN_ELSE, blockName);
                 hint.setParameter(Hint.BLOCK_NAME, IssueTranslator.getInstance().getInfo("say_seconds"));
-                addIssue(node, node.getMetadata(), hint);
+                addIssue(node, node.getMetadata(), IssueSeverity.LOW, hint);
             }
         }
     }

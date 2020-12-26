@@ -82,7 +82,7 @@ public class RecursiveCloning extends AbstractIssueFinder {
 
                 if (spriteName.equals("_myself_") && !foundDelete) {
                     CloneOfMetadata metadata = (CloneOfMetadata) node.getMetadata();
-                    addIssue(node, metadata.getCloneBlockMetadata());
+                    addIssue(node, metadata.getCloneBlockMetadata(), IssueSeverity.LOW);
                 }
             }
         }

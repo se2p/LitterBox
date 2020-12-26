@@ -39,7 +39,7 @@ public class ImmediateDeleteCloneAfterBroadcast extends AbstractIssueFinder {
         if (stmts.size() > 1 && stmts.get(stmts.size() - 1) instanceof DeleteClone) {
             ASTNode questionableNode = stmts.get(stmts.size() - 2);
             if (questionableNode instanceof Broadcast) {
-                addIssue(questionableNode, questionableNode.getMetadata());
+                addIssue(questionableNode, questionableNode.getMetadata(), IssueSeverity.LOW);
             }
         }
         super.visitChildren(node);
