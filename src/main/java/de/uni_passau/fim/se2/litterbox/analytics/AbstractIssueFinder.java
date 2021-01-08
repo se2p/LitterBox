@@ -77,6 +77,10 @@ public abstract class AbstractIssueFinder implements IssueFinder, ScratchVisitor
         visitChildren(procedure);
     }
 
+    protected void addIssue(ASTNode node, Metadata metadata, IssueSeverity severity) {
+        addIssue(node, metadata, severity, new Hint(getName()));
+    }
+
     protected void addIssue(ASTNode node, Metadata metadata) {
         addIssue(node, metadata, IssueSeverity.HIGH, new Hint(getName()));
     }
