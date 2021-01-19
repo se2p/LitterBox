@@ -18,10 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
-import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
-import de.uni_passau.fim.se2.litterbox.analytics.Hint;
-import de.uni_passau.fim.se2.litterbox.analytics.Issue;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
+import de.uni_passau.fim.se2.litterbox.analytics.*;
 import de.uni_passau.fim.se2.litterbox.analytics.hint.MessageNeverSentHintFactory;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
@@ -133,7 +130,7 @@ public class MessageNeverSent extends AbstractIssueFinder {
                     messageReceived.add(new Pair<>(actorName, msgName));
                 } else if (notSentMessages.contains(msgName)) {
                     Hint hint = MessageNeverSentHintFactory.generateHint(((StringLiteral) event.getMsg().getMessage()).getText(), sayText, thinkText, touchedSprites);
-                    addIssue(event, event.getMetadata(), hint);
+                    addIssue(event, event.getMetadata(), IssueSeverity.MEDIUM, hint);
                 }
             }
         }

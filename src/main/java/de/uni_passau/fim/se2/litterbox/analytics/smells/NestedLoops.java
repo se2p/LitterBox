@@ -20,6 +20,7 @@ package de.uni_passau.fim.se2.litterbox.analytics.smells;
 
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.ComparingLiterals;
 import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.ForeverInsideLoop;
@@ -40,7 +41,7 @@ public class NestedLoops extends AbstractIssueFinder {
     @Override
     public void visit(UntilStmt node) {
         if (checkNested(node.getStmtList().getStmts())) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.MEDIUM);
         }
         visitChildren(node);
     }
@@ -48,7 +49,7 @@ public class NestedLoops extends AbstractIssueFinder {
     @Override
     public void visit(RepeatForeverStmt node) {
         if (checkNested(node.getStmtList().getStmts())) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.MEDIUM);
         }
         visitChildren(node);
     }
@@ -60,7 +61,7 @@ public class NestedLoops extends AbstractIssueFinder {
     @Override
     public void visit(RepeatTimesStmt node) {
         if (checkNested(node.getStmtList().getStmts())) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.MEDIUM);
         }
         visitChildren(node);
     }

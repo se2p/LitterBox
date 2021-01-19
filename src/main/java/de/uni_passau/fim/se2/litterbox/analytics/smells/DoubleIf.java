@@ -20,6 +20,7 @@
 package de.uni_passau.fim.se2.litterbox.analytics.smells;
 
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BoolExpr;
@@ -44,7 +45,7 @@ public class DoubleIf extends AbstractIssueFinder {
                 BoolExpr condition = getCondition((IfStmt) s);
                 if (lastCondition != null) {
                     if (lastCondition.equals(condition)) {
-                        addIssue(s, getMetadata((IfStmt) s));
+                        addIssue(s, getMetadata((IfStmt) s), IssueSeverity.LOW);
                     }
                 }
                 lastCondition = condition;

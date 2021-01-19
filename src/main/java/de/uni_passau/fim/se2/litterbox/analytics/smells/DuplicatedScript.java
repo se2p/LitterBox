@@ -18,6 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.smells;
 
+import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.ScriptList;
@@ -64,7 +65,7 @@ public class DuplicatedScript extends TopBlockFinder {
                     setHint = true;
                     if (!(s.getEvent() instanceof Never)) {
                         Event event = s.getEvent();
-                        addIssue(event, event.getMetadata());
+                        addIssue(event, event.getMetadata(), IssueSeverity.LOW);
                     } else {
                         s.getStmtList().accept(this);
                     }

@@ -19,6 +19,7 @@
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
@@ -62,9 +63,9 @@ public class TerminatedLoop extends AbstractIssueFinder {
             List<Stmt> stmts = children.getStmts();
             Stmt last = stmts.get(stmts.size() - 1);
             if (last instanceof StopAll) {
-                addIssue(last, ((StopAll) last).getMetadata());
+                addIssue(last, ((StopAll) last).getMetadata(), IssueSeverity.LOW);
             } else if (last instanceof StopThisScript) {
-                addIssue(last, ((StopThisScript) last).getMetadata());
+                addIssue(last, ((StopThisScript) last).getMetadata(), IssueSeverity.LOW);
             }
         }
     }

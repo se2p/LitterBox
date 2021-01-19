@@ -19,6 +19,7 @@
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
@@ -42,7 +43,7 @@ public class IllegalParameterRefactor extends AbstractIssueFinder {
             for (ArgumentInfo currentArgument : currentArguments) {
                 if (currentArgument.getName().equals(ident.getName().getName())
                         && !(currentArgument.getType() instanceof BooleanType)) {
-                    addIssue(ident, ident.getMetadata());
+                    addIssue(ident, ident.getMetadata(), IssueSeverity.MEDIUM);
                 }
             }
         }

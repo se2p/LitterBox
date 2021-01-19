@@ -20,6 +20,7 @@ package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.Hint;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
@@ -207,7 +208,7 @@ public class InterruptedLoopSensing extends AbstractIssueFinder {
                 Hint hint = new Hint(getName());
                 hint.setParameter(Hint.THEN_ELSE, blockName);
                 hint.setParameter(Hint.BLOCK_NAME, IssueTranslator.getInstance().getInfo("glide_secs_to"));
-                addIssue(node, node.getMetadata(), hint);
+                addIssue(node, node.getMetadata(), IssueSeverity.LOW, hint);
             }
         }
     }
@@ -219,7 +220,7 @@ public class InterruptedLoopSensing extends AbstractIssueFinder {
                 Hint hint = new Hint(getName());
                 hint.setParameter(Hint.THEN_ELSE, blockName);
                 hint.setParameter(Hint.BLOCK_NAME, IssueTranslator.getInstance().getInfo("glide_secs_to_xy"));
-                addIssue(node, node.getMetadata(), hint);
+                addIssue(node, node.getMetadata(), IssueSeverity.LOW, hint);
             }
         }
     }
@@ -231,7 +232,7 @@ public class InterruptedLoopSensing extends AbstractIssueFinder {
                 Hint hint = new Hint(getName());
                 hint.setParameter(Hint.THEN_ELSE, blockName);
                 hint.setParameter(Hint.BLOCK_NAME, IssueTranslator.getInstance().getInfo("wait_seconds"));
-                addIssue(node, node.getMetadata(), hint);
+                addIssue(node, node.getMetadata(), IssueSeverity.LOW, hint);
             }
         }
     }
@@ -243,7 +244,7 @@ public class InterruptedLoopSensing extends AbstractIssueFinder {
                 Hint hint = new Hint(getName());
                 hint.setParameter(Hint.THEN_ELSE, blockName);
                 hint.setParameter(Hint.BLOCK_NAME, IssueTranslator.getInstance().getInfo("think_seconds"));
-                addIssue(node, node.getMetadata(), hint);
+                addIssue(node, node.getMetadata(), IssueSeverity.LOW, hint);
             }
         }
     }
@@ -255,7 +256,7 @@ public class InterruptedLoopSensing extends AbstractIssueFinder {
                 Hint hint = new Hint(getName());
                 hint.setParameter(Hint.THEN_ELSE, blockName);
                 hint.setParameter(Hint.BLOCK_NAME, IssueTranslator.getInstance().getInfo("say_seconds"));
-                addIssue(node, node.getMetadata(), hint);
+                addIssue(node, node.getMetadata(), IssueSeverity.LOW, hint);
             }
         }
     }

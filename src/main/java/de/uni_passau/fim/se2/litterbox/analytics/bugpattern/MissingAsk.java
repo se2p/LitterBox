@@ -21,6 +21,7 @@ package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.Answer;
@@ -48,7 +49,7 @@ public class MissingAsk extends AbstractIssueFinder  {
 
         if (!answerBlocks.isEmpty() && !askUsed) {
             for (Answer answer : answerBlocks) {
-                addIssue(answer, answer.getMetadata());
+                addIssue(answer, answer.getMetadata(), IssueSeverity.MEDIUM);
             }
         }
 

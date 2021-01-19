@@ -20,6 +20,7 @@ package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.Hint;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.analytics.hint.ComparingLiteralsHintFactory;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
@@ -70,7 +71,7 @@ public class ComparingLiterals extends AbstractIssueFinder {
                 hint = ComparingLiteralsHintFactory.generateHint(result == 0, inWait, parent, possibleVariableName(node.getOperand1(), node.getOperand2()), null, node, currentActor, program, currentProcedure, currentScript);
             }
 
-            addIssue(node, node.getMetadata(), hint);
+            addIssue(node, node.getMetadata(), IssueSeverity.HIGH, hint);
         }
         visitChildren(node);
     }
@@ -122,7 +123,7 @@ public class ComparingLiterals extends AbstractIssueFinder {
                 int result = text1.compareTo(text2);
                 hint = ComparingLiteralsHintFactory.generateHint(result < 0, inWait, parent, possibleVariableName(node.getOperand1(), node.getOperand2()), null, node, currentActor, program, currentProcedure, currentScript);
             }
-            addIssue(node, node.getMetadata(), hint);
+            addIssue(node, node.getMetadata(), IssueSeverity.HIGH, hint);
         }
         visitChildren(node);
     }
@@ -151,7 +152,7 @@ public class ComparingLiterals extends AbstractIssueFinder {
                 int result = text1.compareTo(text2);
                 hint = ComparingLiteralsHintFactory.generateHint(result > 0, inWait, parent, possibleVariableName(node.getOperand1(), node.getOperand2()), null, node, currentActor, program, currentProcedure, currentScript);
             }
-            addIssue(node, node.getMetadata(), hint);
+            addIssue(node, node.getMetadata(), IssueSeverity.HIGH, hint);
         }
         visitChildren(node);
     }

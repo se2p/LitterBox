@@ -18,10 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
-import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
-import de.uni_passau.fim.se2.litterbox.analytics.Hint;
-import de.uni_passau.fim.se2.litterbox.analytics.Issue;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
+import de.uni_passau.fim.se2.litterbox.analytics.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.KeyPressed;
@@ -65,7 +62,7 @@ public class StutteringMovement extends AbstractIssueFinder {
                     String key = getKeyValue((int) ((NumberLiteral) keyPressed.getKey().getKey()).getValue());
                     Hint hint = new Hint(getName());
                     hint.setParameter(Hint.HINT_KEY, key);
-                    addIssue(stmt, stmt.getMetadata(), hint);
+                    addIssue(stmt, stmt.getMetadata(), IssueSeverity.HIGH, hint);
                 }
             } else if (listOfStmt.size() == 2) {
                 Stmt stmt = listOfStmt.get(0);
@@ -74,7 +71,7 @@ public class StutteringMovement extends AbstractIssueFinder {
                     String key = getKeyValue((int) ((NumberLiteral) keyPressed.getKey().getKey()).getValue());
                     Hint hint = new Hint(getName());
                     hint.setParameter(Hint.HINT_KEY, key);
-                    addIssue(stmt, stmt.getMetadata(), hint);
+                    addIssue(stmt, stmt.getMetadata(), IssueSeverity.HIGH, hint);
                 }
             }
         }

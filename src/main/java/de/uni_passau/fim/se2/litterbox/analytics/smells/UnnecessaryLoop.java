@@ -18,10 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.smells;
 
-import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
-import de.uni_passau.fim.se2.litterbox.analytics.Hint;
-import de.uni_passau.fim.se2.litterbox.analytics.Issue;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
+import de.uni_passau.fim.se2.litterbox.analytics.*;
 import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.ForeverInsideLoop;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatTimesStmt;
@@ -43,10 +40,10 @@ public class UnnecessaryLoop extends AbstractIssueFinder {
         if (node.getTimes() instanceof NumberLiteral) {
             if(((NumberLiteral) node.getTimes()).getValue() == 1){
                 Hint hint = new Hint(ONE_HINT);
-                addIssue(node, node.getMetadata(),hint);
+                addIssue(node, node.getMetadata(), IssueSeverity.LOW, hint);
             }else if(((NumberLiteral) node.getTimes()).getValue() == 0){
                 Hint hint = new Hint(ZERO_HINT);
-                addIssue(node, node.getMetadata(),hint);
+                addIssue(node, node.getMetadata(), IssueSeverity.LOW, hint);
             }
         }
     }

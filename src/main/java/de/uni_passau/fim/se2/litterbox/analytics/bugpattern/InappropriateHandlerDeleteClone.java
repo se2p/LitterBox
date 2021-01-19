@@ -19,6 +19,7 @@
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.GreenFlag;
@@ -33,7 +34,7 @@ public class InappropriateHandlerDeleteClone extends AbstractIssueFinder {
         if (node.getEvent() instanceof GreenFlag){
             super.visit(node);
             if (hasDeleteClone){
-                addIssue(node.getEvent(),node.getEvent().getMetadata());
+                addIssue(node.getEvent(),node.getEvent().getMetadata(), IssueSeverity.LOW);
             }
             hasDeleteClone=false;
         }

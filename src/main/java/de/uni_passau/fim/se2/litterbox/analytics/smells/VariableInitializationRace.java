@@ -20,6 +20,7 @@ package de.uni_passau.fim.se2.litterbox.analytics.smells;
 
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.ast.model.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Event;
@@ -76,7 +77,7 @@ public class VariableInitializationRace extends AbstractIssueFinder {
                 if (numScripts > 1) {
                     InitializationInstance instance = modifyingScripts.iterator().next();
                     currentScript = instance.getScript();
-                    addIssue(instance.getStatement(), instance.getStatement().getMetadata());
+                    addIssue(instance.getStatement(), instance.getStatement().getMetadata(), IssueSeverity.HIGH);
                 }
             }
         }

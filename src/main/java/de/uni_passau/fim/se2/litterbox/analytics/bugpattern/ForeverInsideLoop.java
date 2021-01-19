@@ -19,6 +19,7 @@
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
@@ -78,7 +79,7 @@ public class ForeverInsideLoop extends AbstractIssueFinder {
     @Override
     public void visit(RepeatForeverStmt node) {
         if (loopcounter > 0 && (blocksAfter || blocksBefore)) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.HIGH);
         }
         loopcounter++;
         checkPosition(node);

@@ -20,6 +20,7 @@
 package de.uni_passau.fim.se2.litterbox.analytics.smells;
 
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
@@ -47,7 +48,7 @@ public class SequentialActions extends AbstractIssueFinder {
                 }
                 int numSubsequences = findSubsequences(statements.subList(i, statements.size()), currentSequence);
                 if (numSubsequences >= MIN_OCCURRENCE) {
-                    addIssue(statements.get(i), statements.get(i).getMetadata());
+                    addIssue(statements.get(i), statements.get(i).getMetadata(), IssueSeverity.LOW);
                     i += numSubsequences * currentSequence.size();
                 }
             }

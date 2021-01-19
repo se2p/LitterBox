@@ -20,6 +20,7 @@ package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
@@ -82,7 +83,7 @@ public class RecursiveCloning extends AbstractIssueFinder {
 
                 if (spriteName.equals("_myself_") && !foundDelete) {
                     CloneOfMetadata metadata = (CloneOfMetadata) node.getMetadata();
-                    addIssue(node, metadata.getCloneBlockMetadata());
+                    addIssue(node, metadata.getCloneBlockMetadata(), IssueSeverity.LOW);
                 }
             }
         }

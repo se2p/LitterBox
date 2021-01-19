@@ -20,6 +20,7 @@ package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.Hint;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.BinaryExpression;
@@ -81,9 +82,9 @@ public class TypeError extends AbstractIssueFinder {
         if (position instanceof FromExpression) {
             Hint hint = new Hint(WEIRD_DISTANCE);
             if (!(((FromExpression) position).getStringExpr() instanceof AsString)) {
-                addIssue(node, node.getMetadata(), hint);
+                addIssue(node, node.getMetadata(), IssueSeverity.LOW, hint);
             } else if (!((((AsString) ((FromExpression) position).getStringExpr()).getOperand1() instanceof StrId) || ((AsString) ((FromExpression) position).getStringExpr()).getOperand1() instanceof Qualified)) {
-                addIssue(node, node.getMetadata(), hint);
+                addIssue(node, node.getMetadata(), IssueSeverity.LOW, hint);
             }
         }
         visitChildren(node);
@@ -115,7 +116,7 @@ public class TypeError extends AbstractIssueFinder {
     @Override
     public void visit(Loudness node) {
         if (!isValid(Type.LOUDNESS)) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         }
     }
 
@@ -126,7 +127,7 @@ public class TypeError extends AbstractIssueFinder {
                 this.type = Type.STRING;
             } else {
                 if (this.type != null && type != Type.STRING) {
-                    addIssue(node.getParentNode(), node.getParentNode().getMetadata());
+                    addIssue(node.getParentNode(), node.getParentNode().getMetadata(), IssueSeverity.LOW);
                 }
             }
         }
@@ -135,28 +136,28 @@ public class TypeError extends AbstractIssueFinder {
     @Override
     public void visit(MouseX node) {
         if (!isValid(Type.POSITION)) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         }
     }
 
     @Override
     public void visit(MouseY node) {
         if (!isValid(Type.POSITION)) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         }
     }
 
     @Override
     public void visit(PositionX node) {
         if (!isValid(Type.POSITION)) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         }
     }
 
     @Override
     public void visit(PositionY node) {
         if (!isValid(Type.POSITION)) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         }
     }
 
@@ -174,7 +175,7 @@ public class TypeError extends AbstractIssueFinder {
                 type = Type.NUMBER;
             } else {
                 if (this.type != null && this.type == Type.BOOLEAN) {
-                    addIssue(node, node.getMetadata());
+                    addIssue(node, node.getMetadata(), IssueSeverity.LOW);
                 }
             }
         }
@@ -183,7 +184,7 @@ public class TypeError extends AbstractIssueFinder {
     @Override
     public void visit(Direction node) {
         if (!isValid(Type.DIRECTION)) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         }
     }
 
@@ -200,7 +201,7 @@ public class TypeError extends AbstractIssueFinder {
                 }
             } else {
                 if (node.getOperand1().getUniqueName().equals("Touching") || node.getOperand1().getUniqueName().equals("Not")) {
-                    addIssue(node, node.getMetadata());
+                    addIssue(node, node.getMetadata(), IssueSeverity.LOW);
                 }
             }
         }
@@ -213,7 +214,7 @@ public class TypeError extends AbstractIssueFinder {
                 type = null;
             } else {
                 if (this.type == Type.BOOLEAN) {
-                    addIssue(node, node.getMetadata());
+                    addIssue(node, node.getMetadata(), IssueSeverity.LOW);
                 }
             }
         }
@@ -226,7 +227,7 @@ public class TypeError extends AbstractIssueFinder {
                 type = Type.NUMBER;
             } else {
                 if (this.type != null && this.type == Type.BOOLEAN) {
-                    addIssue(node.getParentNode(), node.getParentNode().getMetadata());
+                    addIssue(node.getParentNode(), node.getParentNode().getMetadata(), IssueSeverity.LOW);
                 }
             }
         }

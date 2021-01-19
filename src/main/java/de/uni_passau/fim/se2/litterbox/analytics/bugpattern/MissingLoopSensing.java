@@ -20,6 +20,7 @@ package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.Hint;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.GreenFlag;
@@ -97,42 +98,42 @@ public class MissingLoopSensing extends AbstractIssueFinder {
     @Override
     public void visit(IsKeyPressed node) {
         if (insideGreenFlagClone && !insideLoop && inCondition && !afterWaitUntil) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.HIGH);
         }
     }
 
     @Override
     public void visit(Touching node) {
         if (insideGreenFlagClone && !insideLoop && inCondition && !afterWaitUntil) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.HIGH);
         }
     }
 
     @Override
     public void visit(IsMouseDown node) {
         if (insideGreenFlagClone && !insideLoop && inCondition && !afterWaitUntil) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.HIGH);
         }
     }
 
     @Override
     public void visit(ColorTouchingColor node) {
         if (insideGreenFlagClone && !insideLoop && inCondition && !afterWaitUntil) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.HIGH);
         }
     }
 
     @Override
     public void visit(SpriteTouchingColor node) {
         if (insideGreenFlagClone && !insideLoop && inCondition && !afterWaitUntil) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.HIGH);
         }
     }
 
     @Override
     public void visit(DistanceTo node) {
         if (insideGreenFlagClone && !insideLoop && inCondition && !afterWaitUntil) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.HIGH);
         }
     }
 
@@ -144,7 +145,7 @@ public class MissingLoopSensing extends AbstractIssueFinder {
         visitChildren(node);
         if (hasVariable) {
             Hint hint = new Hint(VARIABLE_VERSION);
-            addIssue(node, node.getMetadata(), hint);
+            addIssue(node, node.getMetadata(), IssueSeverity.HIGH, hint);
             hasVariable = false;
         }
         insideEquals = false;

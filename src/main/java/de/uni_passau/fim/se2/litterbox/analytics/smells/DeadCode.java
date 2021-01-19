@@ -19,6 +19,7 @@
 package de.uni_passau.fim.se2.litterbox.analytics.smells;
 
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
@@ -78,7 +79,7 @@ public class DeadCode extends AbstractIssueFinder {
     @Override
     public void visit(PenDownStmt node) {
         if (addHint) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         } else {
             visitChildren(node);
         }
@@ -87,7 +88,7 @@ public class DeadCode extends AbstractIssueFinder {
     @Override
     public void visit(PenUpStmt node) {
         if (addHint) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         } else {
             visitChildren(node);
         }
@@ -96,7 +97,7 @@ public class DeadCode extends AbstractIssueFinder {
     @Override
     public void visit(PenClearStmt node) {
         if (addHint) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         } else {
             visitChildren(node);
         }
@@ -105,7 +106,7 @@ public class DeadCode extends AbstractIssueFinder {
     @Override
     public void visit(Equals node) {
         if (addHint) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         } else {
             visitChildren(node);
         }
@@ -114,7 +115,7 @@ public class DeadCode extends AbstractIssueFinder {
     @Override
     public void visit(LessThan node) {
         if (addHint) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         } else {
             visitChildren(node);
         }
@@ -123,7 +124,7 @@ public class DeadCode extends AbstractIssueFinder {
     @Override
     public void visit(BiggerThan node) {
         if (addHint) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         } else {
             visitChildren(node);
         }
@@ -132,7 +133,7 @@ public class DeadCode extends AbstractIssueFinder {
     @Override
     public void visit(CreateCloneOf node) {
         if (addHint) {
-            addIssue(node, ((CloneOfMetadata) node.getMetadata()).getCloneBlockMetadata());
+            addIssue(node, ((CloneOfMetadata) node.getMetadata()).getCloneBlockMetadata(), IssueSeverity.LOW);
         } else {
             visitChildren(node);
         }
@@ -141,7 +142,7 @@ public class DeadCode extends AbstractIssueFinder {
     @Override
     public void visit(IfElseStmt node) {
         if (addHint) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         } else {
             visitChildren(node);
         }
@@ -150,7 +151,7 @@ public class DeadCode extends AbstractIssueFinder {
     @Override
     public void visit(IfThenStmt node) {
         if (addHint) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         } else {
             visitChildren(node);
         }
@@ -159,7 +160,7 @@ public class DeadCode extends AbstractIssueFinder {
     @Override
     public void visit(WaitUntil node) {
         if (addHint) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         } else {
             visitChildren(node);
         }
@@ -168,7 +169,7 @@ public class DeadCode extends AbstractIssueFinder {
     @Override
     public void visit(UntilStmt node) {
         if (addHint) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         } else {
             visitChildren(node);
         }
@@ -177,7 +178,7 @@ public class DeadCode extends AbstractIssueFinder {
     @Override
     public void visit(Not node) {
         if (addHint) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         } else {
             visitChildren(node);
         }
@@ -186,7 +187,7 @@ public class DeadCode extends AbstractIssueFinder {
     @Override
     public void visit(And node) {
         if (addHint) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         } else {
             visitChildren(node);
         }
@@ -195,7 +196,7 @@ public class DeadCode extends AbstractIssueFinder {
     @Override
     public void visit(Or node) {
         if (addHint) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         } else {
             visitChildren(node);
         }
@@ -204,7 +205,7 @@ public class DeadCode extends AbstractIssueFinder {
     @Override
     public void visit(Broadcast node) {
         if (addHint) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         } else {
             visitChildren(node);
         }
@@ -213,7 +214,7 @@ public class DeadCode extends AbstractIssueFinder {
     @Override
     public void visit(BroadcastAndWait node) {
         if (addHint) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         } else {
             visitChildren(node);
         }
@@ -222,7 +223,7 @@ public class DeadCode extends AbstractIssueFinder {
     @Override
     public void visit(RepeatForeverStmt node) {
         if (addHint) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         } else {
             visitChildren(node);
         }
@@ -231,7 +232,7 @@ public class DeadCode extends AbstractIssueFinder {
     @Override
     public void visit(CallStmt node) {
         if (addHint) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         } else {
             visitChildren(node);
         }
@@ -240,7 +241,7 @@ public class DeadCode extends AbstractIssueFinder {
     @Override
     public void visit(DeleteClone node) {
         if (addHint) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         } else {
             visitChildren(node);
         }
@@ -249,7 +250,7 @@ public class DeadCode extends AbstractIssueFinder {
     @Override
     public void visit(StopAll node) {
         if (addHint) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         } else {
             visitChildren(node);
         }
@@ -258,7 +259,7 @@ public class DeadCode extends AbstractIssueFinder {
     @Override
     public void visit(RepeatTimesStmt node) {
         if (addHint) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         } else {
             visitChildren(node);
         }
@@ -267,7 +268,7 @@ public class DeadCode extends AbstractIssueFinder {
     @Override
     public void visit(SwitchBackdrop node) {
         if (addHint) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         } else {
             visitChildren(node);
         }
@@ -276,7 +277,7 @@ public class DeadCode extends AbstractIssueFinder {
     @Override
     public void visit(NextBackdrop node) {
         if (addHint) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         } else {
             visitChildren(node);
         }
@@ -285,7 +286,7 @@ public class DeadCode extends AbstractIssueFinder {
     @Override
     public void visit(SwitchBackdropAndWait node) {
         if (addHint) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         } else {
             visitChildren(node);
         }
@@ -294,7 +295,7 @@ public class DeadCode extends AbstractIssueFinder {
     @Override
     public void visit(MoveSteps node) {
         if (addHint) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         } else {
             visitChildren(node);
         }
@@ -303,7 +304,7 @@ public class DeadCode extends AbstractIssueFinder {
     @Override
     public void visit(ChangeXBy node) {
         if (addHint) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         } else {
             visitChildren(node);
         }
@@ -312,7 +313,7 @@ public class DeadCode extends AbstractIssueFinder {
     @Override
     public void visit(ChangeYBy node) {
         if (addHint) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         } else {
             visitChildren(node);
         }
@@ -321,7 +322,7 @@ public class DeadCode extends AbstractIssueFinder {
     @Override
     public void visit(SetXTo node) {
         if (addHint) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         } else {
             visitChildren(node);
         }
@@ -330,7 +331,7 @@ public class DeadCode extends AbstractIssueFinder {
     @Override
     public void visit(SetYTo node) {
         if (addHint) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         } else {
             visitChildren(node);
         }
@@ -339,7 +340,7 @@ public class DeadCode extends AbstractIssueFinder {
     @Override
     public void visit(GoToPos node) {
         if (addHint) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         } else {
             visitChildren(node);
         }
@@ -348,7 +349,7 @@ public class DeadCode extends AbstractIssueFinder {
     @Override
     public void visit(GoToPosXY node) {
         if (addHint) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         } else {
             visitChildren(node);
         }
@@ -357,7 +358,7 @@ public class DeadCode extends AbstractIssueFinder {
     @Override
     public void visit(SetPenColorToColorStmt node) {
         if (addHint) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         } else {
             visitChildren(node);
         }
@@ -366,7 +367,7 @@ public class DeadCode extends AbstractIssueFinder {
     @Override
     public void visit(ColorTouchingColor node) {
         if (addHint) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         } else {
             visitChildren(node);
         }
@@ -375,7 +376,7 @@ public class DeadCode extends AbstractIssueFinder {
     @Override
     public void visit(Touching node) {
         if (addHint) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         } else {
             visitChildren(node);
         }
@@ -384,7 +385,7 @@ public class DeadCode extends AbstractIssueFinder {
     @Override
     public void visit(PenStampStmt node) {
         if (addHint) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         } else {
             visitChildren(node);
         }
@@ -393,7 +394,7 @@ public class DeadCode extends AbstractIssueFinder {
     @Override
     public void visit(ChangePenColorParamBy node) {
         if (addHint) {
-            addIssue(node, ((PenWithParamMetadata) node.getMetadata()).getPenBlockMetadata());
+            addIssue(node, ((PenWithParamMetadata) node.getMetadata()).getPenBlockMetadata(), IssueSeverity.LOW);
         } else {
             visitChildren(node);
         }
@@ -402,7 +403,7 @@ public class DeadCode extends AbstractIssueFinder {
     @Override
     public void visit(SetPenColorParamTo node) {
         if (addHint) {
-            addIssue(node, ((PenWithParamMetadata) node.getMetadata()).getPenBlockMetadata());
+            addIssue(node, ((PenWithParamMetadata) node.getMetadata()).getPenBlockMetadata(), IssueSeverity.LOW);
         } else {
             visitChildren(node);
         }
@@ -411,7 +412,7 @@ public class DeadCode extends AbstractIssueFinder {
     @Override
     public void visit(IsKeyPressed node) {
         if (addHint) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         } else {
             visitChildren(node);
         }
@@ -420,7 +421,7 @@ public class DeadCode extends AbstractIssueFinder {
     @Override
     public void visit(IsMouseDown node) {
         if (addHint) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         } else {
             visitChildren(node);
         }
@@ -429,7 +430,7 @@ public class DeadCode extends AbstractIssueFinder {
     @Override
     public void visit(Add node) {
         if (addHint) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         } else {
             visitChildren(node);
         }
@@ -438,7 +439,7 @@ public class DeadCode extends AbstractIssueFinder {
     @Override
     public void visit(Current node) {
         if (addHint) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         } else {
             visitChildren(node);
         }
@@ -447,7 +448,7 @@ public class DeadCode extends AbstractIssueFinder {
     @Override
     public void visit(DaysSince2000 node) {
         if (addHint) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         } else {
             visitChildren(node);
         }
@@ -456,7 +457,7 @@ public class DeadCode extends AbstractIssueFinder {
     @Override
     public void visit(DistanceTo node) {
         if (addHint) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         } else {
             visitChildren(node);
         }
@@ -465,7 +466,7 @@ public class DeadCode extends AbstractIssueFinder {
     @Override
     public void visit(Div node) {
         if (addHint) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         } else {
             visitChildren(node);
         }
@@ -474,7 +475,7 @@ public class DeadCode extends AbstractIssueFinder {
     @Override
     public void visit(IndexOf node) {
         if (addHint) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         } else {
             visitChildren(node);
         }
@@ -483,7 +484,7 @@ public class DeadCode extends AbstractIssueFinder {
     @Override
     public void visit(LengthOfString node) {
         if (addHint) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         } else {
             visitChildren(node);
         }
@@ -492,7 +493,7 @@ public class DeadCode extends AbstractIssueFinder {
     @Override
     public void visit(LengthOfVar node) {
         if (addHint) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         } else {
             visitChildren(node);
         }
@@ -501,7 +502,7 @@ public class DeadCode extends AbstractIssueFinder {
     @Override
     public void visit(Loudness node) {
         if (addHint) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         } else {
             visitChildren(node);
         }
@@ -510,7 +511,7 @@ public class DeadCode extends AbstractIssueFinder {
     @Override
     public void visit(Minus node) {
         if (addHint) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         } else {
             visitChildren(node);
         }
@@ -519,7 +520,7 @@ public class DeadCode extends AbstractIssueFinder {
     @Override
     public void visit(Mod node) {
         if (addHint) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         } else {
             visitChildren(node);
         }
@@ -528,7 +529,7 @@ public class DeadCode extends AbstractIssueFinder {
     @Override
     public void visit(MouseX node) {
         if (addHint) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         } else {
             visitChildren(node);
         }
@@ -537,7 +538,7 @@ public class DeadCode extends AbstractIssueFinder {
     @Override
     public void visit(MouseY node) {
         if (addHint) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         } else {
             visitChildren(node);
         }
@@ -546,7 +547,7 @@ public class DeadCode extends AbstractIssueFinder {
     @Override
     public void visit(Mult node) {
         if (addHint) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         } else {
             visitChildren(node);
         }
@@ -555,7 +556,7 @@ public class DeadCode extends AbstractIssueFinder {
     @Override
     public void visit(NumFunctOf node) {
         if (addHint) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         } else {
             visitChildren(node);
         }
@@ -564,7 +565,7 @@ public class DeadCode extends AbstractIssueFinder {
     @Override
     public void visit(PickRandom node) {
         if (addHint) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         } else {
             visitChildren(node);
         }
@@ -573,7 +574,7 @@ public class DeadCode extends AbstractIssueFinder {
     @Override
     public void visit(Round node) {
         if (addHint) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         } else {
             visitChildren(node);
         }
@@ -582,7 +583,7 @@ public class DeadCode extends AbstractIssueFinder {
     @Override
     public void visit(Timer node) {
         if (addHint) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         } else {
             visitChildren(node);
         }
@@ -591,7 +592,7 @@ public class DeadCode extends AbstractIssueFinder {
     @Override
     public void visit(AttributeOf node) {
         if (addHint) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         } else {
             visitChildren(node);
         }
@@ -600,7 +601,7 @@ public class DeadCode extends AbstractIssueFinder {
     @Override
     public void visit(ItemOfVariable node) {
         if (addHint) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         } else {
             visitChildren(node);
         }
@@ -609,7 +610,7 @@ public class DeadCode extends AbstractIssueFinder {
     @Override
     public void visit(Join node) {
         if (addHint) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         } else {
             visitChildren(node);
         }
@@ -618,7 +619,7 @@ public class DeadCode extends AbstractIssueFinder {
     @Override
     public void visit(LetterOf node) {
         if (addHint) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         } else {
             visitChildren(node);
         }
@@ -627,7 +628,7 @@ public class DeadCode extends AbstractIssueFinder {
     @Override
     public void visit(Username node) {
         if (addHint) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         } else {
             visitChildren(node);
         }
@@ -636,7 +637,7 @@ public class DeadCode extends AbstractIssueFinder {
     @Override
     public void visit(AskAndWait node) {
         if (addHint) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         } else {
             visitChildren(node);
         }
@@ -645,7 +646,7 @@ public class DeadCode extends AbstractIssueFinder {
     @Override
     public void visit(ClearGraphicEffects node) {
         if (addHint) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         } else {
             visitChildren(node);
         }
@@ -654,7 +655,7 @@ public class DeadCode extends AbstractIssueFinder {
     @Override
     public void visit(ClearSoundEffects node) {
         if (addHint) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         } else {
             visitChildren(node);
         }
@@ -663,7 +664,7 @@ public class DeadCode extends AbstractIssueFinder {
     @Override
     public void visit(PlaySoundUntilDone node) {
         if (addHint) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         } else {
             visitChildren(node);
         }
@@ -672,7 +673,7 @@ public class DeadCode extends AbstractIssueFinder {
     @Override
     public void visit(StartSound node) {
         if (addHint) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         } else {
             visitChildren(node);
         }
@@ -681,7 +682,7 @@ public class DeadCode extends AbstractIssueFinder {
     @Override
     public void visit(StopAllSounds node) {
         if (addHint) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         } else {
             visitChildren(node);
         }
@@ -690,7 +691,7 @@ public class DeadCode extends AbstractIssueFinder {
     @Override
     public void visit(ChangeVariableBy node) {
         if (addHint) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         } else {
             visitChildren(node);
         }
@@ -699,7 +700,7 @@ public class DeadCode extends AbstractIssueFinder {
     @Override
     public void visit(ResetTimer node) {
         if (addHint) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         } else {
             visitChildren(node);
         }
@@ -708,7 +709,7 @@ public class DeadCode extends AbstractIssueFinder {
     @Override
     public void visit(SetVariableTo node) {
         if (addHint) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         } else {
             visitChildren(node);
         }
@@ -717,7 +718,7 @@ public class DeadCode extends AbstractIssueFinder {
     @Override
     public void visit(StopOtherScriptsInSprite node) {
         if (addHint) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         } else {
             visitChildren(node);
         }
@@ -726,7 +727,7 @@ public class DeadCode extends AbstractIssueFinder {
     @Override
     public void visit(WaitSeconds node) {
         if (addHint) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         } else {
             visitChildren(node);
         }
@@ -735,7 +736,7 @@ public class DeadCode extends AbstractIssueFinder {
     @Override
     public void visit(AddTo node) {
         if (addHint) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         } else {
             visitChildren(node);
         }
@@ -744,7 +745,7 @@ public class DeadCode extends AbstractIssueFinder {
     @Override
     public void visit(DeleteAllOf node) {
         if (addHint) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         } else {
             visitChildren(node);
         }
@@ -753,7 +754,7 @@ public class DeadCode extends AbstractIssueFinder {
     @Override
     public void visit(DeleteOf node) {
         if (addHint) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         } else {
             visitChildren(node);
         }
@@ -762,7 +763,7 @@ public class DeadCode extends AbstractIssueFinder {
     @Override
     public void visit(InsertAt node) {
         if (addHint) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         } else {
             visitChildren(node);
         }
@@ -771,7 +772,7 @@ public class DeadCode extends AbstractIssueFinder {
     @Override
     public void visit(ReplaceItem node) {
         if (addHint) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         } else {
             visitChildren(node);
         }
@@ -780,7 +781,7 @@ public class DeadCode extends AbstractIssueFinder {
     @Override
     public void visit(ChangeLayerBy node) {
         if (addHint) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         } else {
             visitChildren(node);
         }
@@ -789,7 +790,7 @@ public class DeadCode extends AbstractIssueFinder {
     @Override
     public void visit(ChangeSizeBy node) {
         if (addHint) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         } else {
             visitChildren(node);
         }
@@ -798,7 +799,7 @@ public class DeadCode extends AbstractIssueFinder {
     @Override
     public void visit(GoToLayer node) {
         if (addHint) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         } else {
             visitChildren(node);
         }
@@ -807,7 +808,7 @@ public class DeadCode extends AbstractIssueFinder {
     @Override
     public void visit(Hide node) {
         if (addHint) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         } else {
             visitChildren(node);
         }
@@ -816,7 +817,7 @@ public class DeadCode extends AbstractIssueFinder {
     @Override
     public void visit(HideVariable node) {
         if (addHint) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         } else {
             visitChildren(node);
         }
@@ -825,7 +826,7 @@ public class DeadCode extends AbstractIssueFinder {
     @Override
     public void visit(HideList node) {
         if (addHint) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         } else {
             visitChildren(node);
         }
@@ -834,7 +835,7 @@ public class DeadCode extends AbstractIssueFinder {
     @Override
     public void visit(ShowList node) {
         if (addHint) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         } else {
             visitChildren(node);
         }
@@ -843,7 +844,7 @@ public class DeadCode extends AbstractIssueFinder {
     @Override
     public void visit(Say node) {
         if (addHint) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         } else {
             visitChildren(node);
         }
@@ -852,7 +853,7 @@ public class DeadCode extends AbstractIssueFinder {
     @Override
     public void visit(SayForSecs node) {
         if (addHint) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         } else {
             visitChildren(node);
         }
@@ -861,7 +862,7 @@ public class DeadCode extends AbstractIssueFinder {
     @Override
     public void visit(SetSizeTo node) {
         if (addHint) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         } else {
             visitChildren(node);
         }
@@ -870,7 +871,7 @@ public class DeadCode extends AbstractIssueFinder {
     @Override
     public void visit(Show node) {
         if (addHint) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         } else {
             visitChildren(node);
         }
@@ -879,7 +880,7 @@ public class DeadCode extends AbstractIssueFinder {
     @Override
     public void visit(ShowVariable node) {
         if (addHint) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         } else {
             visitChildren(node);
         }
@@ -888,7 +889,7 @@ public class DeadCode extends AbstractIssueFinder {
     @Override
     public void visit(SwitchCostumeTo node) {
         if (addHint) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         } else {
             visitChildren(node);
         }
@@ -897,7 +898,7 @@ public class DeadCode extends AbstractIssueFinder {
     @Override
     public void visit(NextCostume node) {
         if (addHint) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         } else {
             visitChildren(node);
         }
@@ -906,7 +907,7 @@ public class DeadCode extends AbstractIssueFinder {
     @Override
     public void visit(Think node) {
         if (addHint) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         } else {
             visitChildren(node);
         }
@@ -915,7 +916,7 @@ public class DeadCode extends AbstractIssueFinder {
     @Override
     public void visit(ThinkForSecs node) {
         if (addHint) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         } else {
             visitChildren(node);
         }
@@ -924,7 +925,7 @@ public class DeadCode extends AbstractIssueFinder {
     @Override
     public void visit(GlideSecsTo node) {
         if (addHint) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         } else {
             visitChildren(node);
         }
@@ -933,7 +934,7 @@ public class DeadCode extends AbstractIssueFinder {
     @Override
     public void visit(GlideSecsToXY node) {
         if (addHint) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         } else {
             visitChildren(node);
         }
@@ -942,7 +943,7 @@ public class DeadCode extends AbstractIssueFinder {
     @Override
     public void visit(IfOnEdgeBounce node) {
         if (addHint) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         } else {
             visitChildren(node);
         }
@@ -951,7 +952,7 @@ public class DeadCode extends AbstractIssueFinder {
     @Override
     public void visit(PointInDirection node) {
         if (addHint) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         } else {
             visitChildren(node);
         }
@@ -960,7 +961,7 @@ public class DeadCode extends AbstractIssueFinder {
     @Override
     public void visit(PointTowards node) {
         if (addHint) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         } else {
             visitChildren(node);
         }
@@ -969,7 +970,7 @@ public class DeadCode extends AbstractIssueFinder {
     @Override
     public void visit(TurnLeft node) {
         if (addHint) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         } else {
             visitChildren(node);
         }
@@ -978,7 +979,7 @@ public class DeadCode extends AbstractIssueFinder {
     @Override
     public void visit(TurnRight node) {
         if (addHint) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         } else {
             visitChildren(node);
         }
@@ -987,7 +988,7 @@ public class DeadCode extends AbstractIssueFinder {
     @Override
     public void visit(StopThisScript node) {
         if (addHint) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         } else {
             visitChildren(node);
         }
@@ -1001,7 +1002,7 @@ public class DeadCode extends AbstractIssueFinder {
     @Override
     public void visit(Costume node) {
         if (addHint) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         } else {
             visitChildren(node);
         }
@@ -1010,7 +1011,7 @@ public class DeadCode extends AbstractIssueFinder {
     @Override
     public void visit(Backdrop node) {
         if (addHint) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         } else {
             visitChildren(node);
         }
@@ -1019,7 +1020,7 @@ public class DeadCode extends AbstractIssueFinder {
     @Override
     public void visit(Direction node) {
         if (addHint) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         } else {
             visitChildren(node);
         }
@@ -1028,7 +1029,7 @@ public class DeadCode extends AbstractIssueFinder {
     @Override
     public void visit(PositionX node) {
         if (addHint) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         } else {
             visitChildren(node);
         }
@@ -1037,7 +1038,7 @@ public class DeadCode extends AbstractIssueFinder {
     @Override
     public void visit(PositionY node) {
         if (addHint) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         } else {
             visitChildren(node);
         }
@@ -1046,7 +1047,7 @@ public class DeadCode extends AbstractIssueFinder {
     @Override
     public void visit(Size node) {
         if (addHint) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         } else {
             visitChildren(node);
         }
@@ -1055,7 +1056,7 @@ public class DeadCode extends AbstractIssueFinder {
     @Override
     public void visit(Volume node) {
         if (addHint) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         } else {
             visitChildren(node);
         }
@@ -1064,7 +1065,7 @@ public class DeadCode extends AbstractIssueFinder {
     @Override
     public void visit(Answer node) {
         if (addHint) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         } else {
             visitChildren(node);
         }
@@ -1073,7 +1074,7 @@ public class DeadCode extends AbstractIssueFinder {
     @Override
     public void visit(SetPenSizeTo node) {
         if (addHint) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         } else {
             visitChildren(node);
         }
@@ -1082,7 +1083,7 @@ public class DeadCode extends AbstractIssueFinder {
     @Override
     public void visit(ChangePenSizeBy node) {
         if (addHint) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         } else {
             visitChildren(node);
         }
@@ -1091,7 +1092,7 @@ public class DeadCode extends AbstractIssueFinder {
     @Override
     public void visit(SetGraphicEffectTo node) {
         if (addHint) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         } else {
             visitChildren(node);
         }
@@ -1100,7 +1101,7 @@ public class DeadCode extends AbstractIssueFinder {
     @Override
     public void visit(ChangeGraphicEffectBy node) {
         if (addHint) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         } else {
             visitChildren(node);
         }
@@ -1109,7 +1110,7 @@ public class DeadCode extends AbstractIssueFinder {
     @Override
     public void visit(SetSoundEffectTo node) {
         if (addHint) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         } else {
             visitChildren(node);
         }
@@ -1118,7 +1119,7 @@ public class DeadCode extends AbstractIssueFinder {
     @Override
     public void visit(ChangeSoundEffectBy node) {
         if (addHint) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         } else {
             visitChildren(node);
         }
@@ -1127,7 +1128,7 @@ public class DeadCode extends AbstractIssueFinder {
     @Override
     public void visit(SetVolumeTo node) {
         if (addHint) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         } else {
             visitChildren(node);
         }
@@ -1136,7 +1137,7 @@ public class DeadCode extends AbstractIssueFinder {
     @Override
     public void visit(ChangeVolumeBy node) {
         if (addHint) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         } else {
             visitChildren(node);
         }
@@ -1145,7 +1146,7 @@ public class DeadCode extends AbstractIssueFinder {
     @Override
     public void visit(SetRotationStyle node) {
         if (addHint) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         } else {
             visitChildren(node);
         }
@@ -1154,7 +1155,7 @@ public class DeadCode extends AbstractIssueFinder {
     @Override
     public void visit(SetDragMode node) {
         if (addHint) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         } else {
             visitChildren(node);
         }
@@ -1163,7 +1164,7 @@ public class DeadCode extends AbstractIssueFinder {
     @Override
     public void visit(SpriteTouchingColor node) {
         if (addHint) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         } else {
             visitChildren(node);
         }
@@ -1172,7 +1173,7 @@ public class DeadCode extends AbstractIssueFinder {
     @Override
     public void visit(Variable node) {
         if (addHint) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         } else {
             visitChildren(node);
         }
@@ -1181,7 +1182,7 @@ public class DeadCode extends AbstractIssueFinder {
     @Override
     public void visit(ScratchList node) {
         if (addHint) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         } else {
             visitChildren(node);
         }
@@ -1190,7 +1191,7 @@ public class DeadCode extends AbstractIssueFinder {
     @Override
     public void visit(Parameter node) {
         if (addHint) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         } else {
             visitChildren(node);
         }
@@ -1199,7 +1200,7 @@ public class DeadCode extends AbstractIssueFinder {
     @Override
     public void visit(ListContains node) {
         if (addHint) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         } else {
             visitChildren(node);
         }

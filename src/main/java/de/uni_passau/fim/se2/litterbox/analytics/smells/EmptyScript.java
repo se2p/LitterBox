@@ -19,6 +19,7 @@
 package de.uni_passau.fim.se2.litterbox.analytics.smells;
 
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.*;
@@ -44,56 +45,56 @@ public class EmptyScript extends AbstractIssueFinder {
     @Override
     public void visit(AttributeAboveValue node) {
         if (isEmpty) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         }
     }
 
     @Override
     public void visit(BackdropSwitchTo node) {
         if (isEmpty) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         }
     }
 
     @Override
     public void visit(GreenFlag node) {
         if (isEmpty) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         }
     }
 
     @Override
     public void visit(KeyPressed node) {
         if (isEmpty) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         }
     }
 
     @Override
     public void visit(ReceptionOfMessage node) {
         if (isEmpty) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         }
     }
 
     @Override
     public void visit(SpriteClicked node) {
         if (isEmpty) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         }
     }
 
     @Override
     public void visit(StageClicked node) {
         if (isEmpty) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         }
     }
 
     @Override
     public void visit(StartedAsClone node) {
         if (isEmpty) {
-            addIssue(node, node.getMetadata());
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         }
     }
 
