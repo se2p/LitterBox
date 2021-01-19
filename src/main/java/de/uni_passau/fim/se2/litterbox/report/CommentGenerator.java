@@ -23,6 +23,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.CommentMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.Metadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
 
 import java.io.IOException;
@@ -40,7 +41,7 @@ public class CommentGenerator implements ReportGenerator {
             hintText = hintText.replace("\"", "\\\"");
             String commentId = issue.getFinderName() + numIssue++;
             Metadata metaData = issue.getCodeMetadata();
-            if (metaData == null) {
+            if (metaData == null || metaData instanceof NoBlockMetadata) {
                 addLooseComment(currentActor, hintText, commentId);
             } else {
                 addBlockComment((NonDataBlockMetadata) metaData,
