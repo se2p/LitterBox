@@ -246,12 +246,16 @@ public class StmtListJSONCreator implements ScratchVisitor {
 
     private String getListDataFields(NonDataBlockMetadata metadata, Identifier identifier) {
         FieldsMetadata fieldsMeta = metadata.getFields().getList().get(0);
-        Preconditions.checkArgument(identifier instanceof Qualified, "Identifier of list has to be in Qualified");
-        Qualified qual = (Qualified) identifier;
-        Preconditions.checkArgument(qual.getSecond() instanceof ScratchList, "Qualified has to hold Scratch List");
-        ScratchList list = (ScratchList) qual.getSecond();
-        String id = symbolTable.getListIdentifierFromActorAndName(qual.getFirst().getName(), list.getName().getName());
-        return createFields(fieldsMeta.getFieldsName(), list.getName().getName(), id);
+        if (identifier instanceof Qualified) {
+           // Preconditions.checkArgument(identifier instanceof Qualified, "Identifier of list has to be in Qualified");
+            Qualified qual = (Qualified) identifier;
+            Preconditions.checkArgument(qual.getSecond() instanceof ScratchList, "Qualified has to hold Scratch List");
+            ScratchList list = (ScratchList) qual.getSecond();
+            String id = symbolTable.getListIdentifierFromActorAndName(qual.getFirst().getName(), list.getName().getName());
+            return createFields(fieldsMeta.getFieldsName(), list.getName().getName(), id);
+        } else {
+            return createFields(fieldsMeta.getFieldsName(), fieldsMeta.getFieldsValue(), fieldsMeta.getFieldsReference());
+        }
     }
 
     @Override
@@ -275,13 +279,18 @@ public class StmtListJSONCreator implements ScratchVisitor {
 
     private void getVariableFields(NonDataBlockMetadata metadata, Identifier identifier, String inputsString) {
         FieldsMetadata fieldsMeta = metadata.getFields().getList().get(0);
-        Preconditions.checkArgument(identifier instanceof Qualified, "Identifier of variable has to be in Qualified");
-        Qualified qual = (Qualified) identifier;
-        Preconditions.checkArgument(qual.getSecond() instanceof Variable, "Qualified has to hold Variable");
-        Variable variable = (Variable) qual.getSecond();
-        String id = symbolTable.getVariableIdentifierFromActorAndName(qual.getFirst().getName(),
-                variable.getName().getName());
-        String fieldsString = createFields(fieldsMeta.getFieldsName(), variable.getName().getName(), id);
+        String fieldsString;
+        if (identifier instanceof Qualified) {
+            //Preconditions.checkArgument(identifier instanceof Qualified, "Identifier of variable has to be in Qualified");
+            Qualified qual = (Qualified) identifier;
+            Preconditions.checkArgument(qual.getSecond() instanceof Variable, "Qualified has to hold Variable");
+            Variable variable = (Variable) qual.getSecond();
+            String id = symbolTable.getVariableIdentifierFromActorAndName(qual.getFirst().getName(),
+                    variable.getName().getName());
+            fieldsString = createFields(fieldsMeta.getFieldsName(), variable.getName().getName(), id);
+        } else {
+            fieldsString = createFields(fieldsMeta.getFieldsName(), fieldsMeta.getFieldsValue(), fieldsMeta.getFieldsReference());
+        }
         finishedJSONStrings.add(createBlockWithoutMutationString(metadata, getNextId(),
                 previousBlockId, inputsString, fieldsString));
         previousBlockId = metadata.getBlockId();
