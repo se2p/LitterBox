@@ -27,6 +27,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.DistanceTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.ItemOfVariable;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.PlaySoundUntilDone;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.ChangeVariableBy;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetVariableTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitSeconds;
@@ -244,6 +245,18 @@ public class InterruptedLoopSensing extends AbstractIssueFinder {
                 Hint hint = new Hint(getName());
                 hint.setParameter(Hint.THEN_ELSE, blockName);
                 hint.setParameter(Hint.BLOCK_NAME, IssueTranslator.getInstance().getInfo("think_seconds"));
+                addIssue(node, node.getMetadata(), IssueSeverity.LOW, hint);
+            }
+        }
+    }
+
+    @Override
+    public void visit(PlaySoundUntilDone node) {
+        if (!checkingVariable) {
+            if (insideControl && sensingOther) {
+                Hint hint = new Hint(getName());
+                hint.setParameter(Hint.THEN_ELSE, blockName);
+                hint.setParameter(Hint.BLOCK_NAME, IssueTranslator.getInstance().getInfo("play_sound_until_done"));
                 addIssue(node, node.getMetadata(), IssueSeverity.LOW, hint);
             }
         }
