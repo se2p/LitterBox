@@ -223,6 +223,36 @@ public class CloneAnalysisTest {
         assertEquals(0, clones.size());
     }
 
+    @Test
+    public void testCloneGap() throws IOException, ParsingException {
+        Program program = getAST("./src/test/fixtures/smells/cloneGapTest.json");
+        ActorDefinition actor = program.getActorDefinitionList().getDefinitions().get(1);
+        Script script1 = actor.getScripts().getScriptList().get(0);
+        Script script2 = actor.getScripts().getScriptList().get(1);
+
+        CloneAnalysis cloneAnalysis = new CloneAnalysis(actor, CloneAnalysis.MIN_SIZE, CloneAnalysis.MAX_GAP);
+        // Potential clone has size 2, should not report anything
+        Set<CodeClone> clones = cloneAnalysis.check(script1, script2, CodeClone.CloneType.TYPE3);
+        assertEquals(0, clones.size());
+    }
+
+    @Test
+    public void testCloneGapMinSize() throws IOException, ParsingException {
+        Program program = getAST("./src/test/fixtures/smells/cloneGapTest.json");
+        ActorDefinition actor = program.getActorDefinitionList().getDefinitions().get(1);
+        Script script1 = actor.getScripts().getScriptList().get(0);
+        Script script2 = actor.getScripts().getScriptList().get(1);
+
+        // Gap size is > 2
+        CloneAnalysis cloneAnalysis = new CloneAnalysis(actor, 2, 1);
+        Set<CodeClone> clones = cloneAnalysis.check(script1, script2, CodeClone.CloneType.TYPE3);
+        assertEquals(0, clones.size());
+
+        cloneAnalysis = new CloneAnalysis(actor, 2, 2);
+        clones = cloneAnalysis.check(script1, script2, CodeClone.CloneType.TYPE3);
+        assertEquals(1, clones.size());
+    }
+
     private Program getAST(String fileName) throws IOException, ParsingException {
         File file = new File(fileName);
         ObjectMapper objectMapper = new ObjectMapper();
