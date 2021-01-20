@@ -19,17 +19,16 @@
 package de.uni_passau.fim.se2.litterbox.analytics.clonedetection;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
-import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
+import de.uni_passau.fim.se2.litterbox.ast.model.Key;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterDefinition;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.GoToPos;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Parameter;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.ScratchList;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 public class NormalizationVisitor extends CloneVisitor {
 
@@ -41,6 +40,18 @@ public class NormalizationVisitor extends CloneVisitor {
     @Override
     public ASTNode visit(NumberLiteral node) {
         return new NormalizedNumberLiteral();
+    }
+
+    public ASTNode visit(Key node) {
+        NumExpr keyNode = node.getKey();
+        if (keyNode instanceof NumberLiteral) {
+            // The number of the key is stored as a NumberLiteral
+            // which we do not want to normalize
+            NumberLiteral theKeyNumber = (NumberLiteral) keyNode;
+            return new Key(new NumberLiteral(theKeyNumber.getValue()), apply(node.getMetadata()));
+        } else {
+            return super.visit(node);
+        }
     }
 
     @Override

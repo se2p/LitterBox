@@ -212,6 +212,17 @@ public class CloneAnalysisTest {
         assertEquals(4, clones.iterator().next().size());
     }
 
+    @Test
+    public void testNoCloneWithNormalizedKey() throws IOException, ParsingException {
+        Program program = getAST("./src/test/fixtures/smells/codeclone_keynormalization.json");
+        ActorDefinition actor = program.getActorDefinitionList().getDefinitions().get(1);
+        Script script = actor.getScripts().getScriptList().get(0);
+
+        CloneAnalysis cloneAnalysis = new CloneAnalysis(actor);
+        Set<CodeClone> clones = cloneAnalysis.check(script, script, CodeClone.CloneType.TYPE3);
+        assertEquals(0, clones.size());
+    }
+
     private Program getAST(String fileName) throws IOException, ParsingException {
         File file = new File(fileName);
         ObjectMapper objectMapper = new ObjectMapper();
