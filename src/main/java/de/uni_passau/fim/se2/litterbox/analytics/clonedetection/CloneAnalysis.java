@@ -129,7 +129,9 @@ public class CloneAnalysis {
                 clone.setType(CodeClone.CloneType.TYPE3);
                 block.fillClone(clone, statements1, statements2);
                 otherBlock.fillClone(clone, statements1, statements2);
-                clones.add(clone);
+                if (clone.size() >= minSize) {
+                    clones.add(clone);
+                }
             }
         }
 
