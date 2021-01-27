@@ -59,11 +59,12 @@ public class CommentGenerator implements ReportGenerator {
         hintText= hintText.replace("[/sbi]","'");
         hintText= hintText.replace("[sbi]","'");
         hintText= hintText.replace("[bc]","");
-        hintText= hintText.replace("[/bs]","");
+        hintText= hintText.replace("[/bc]","");
         hintText= hintText.replace("[IF]", IssueTranslator.getInstance().getInfo("if"));
         hintText= hintText.replace("[ELSE]", IssueTranslator.getInstance().getInfo("else"));
         hintText= hintText.replace("[","");
         hintText= hintText.replace(" v]","");
+        hintText= hintText.replace(" ]","");
         hintText= hintText.replace(" v)"," )");
         hintText = hintText.replace("\"", "\\\"");
         return hintText;
