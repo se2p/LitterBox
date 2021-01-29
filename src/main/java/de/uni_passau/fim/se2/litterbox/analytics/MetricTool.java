@@ -38,12 +38,22 @@ public class MetricTool {
 
     private List<MetricExtractor> metrics = Arrays.asList(
             new BlockCount(),
+            new ControlBlockCount(),
+            new EventsBlockCount(),
             new HatCount(),
+            new LooksBlockCount(),
+            new MotionBlockCount(),
+            new MyBlocksBlockCount(),
+            new OperatorsBlockCount(),
+            new PenBlockCount(),
             new ProcedureCount(),
             new ProgramUsingPen(),
             new ScriptCount(),
+            new SensingBlockCount(),
+            new SoundBlockCount(),
             new SpriteCount(),
             new StatementCount(),
+            new VariablesBlockCount(),
             new WeightedMethodCount(),
             new WeightedMethodCountStrict());
 
