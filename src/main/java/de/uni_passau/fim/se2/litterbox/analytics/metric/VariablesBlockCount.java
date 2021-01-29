@@ -2,6 +2,7 @@ package de.uni_passau.fim.se2.litterbox.analytics.metric;
 
 import de.uni_passau.fim.se2.litterbox.analytics.MetricExtractor;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.ListContains;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.IndexOf;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.LengthOfVar;
@@ -22,6 +23,7 @@ public class VariablesBlockCount implements MetricExtractor, ScratchVisitor {
     public static final String NAME = "variables_block_count";
 
     private int count = 0;
+    private boolean insideScript = false;
 
     @Override
     public double calculateMetric(Program program) {
@@ -32,9 +34,18 @@ public class VariablesBlockCount implements MetricExtractor, ScratchVisitor {
     }
 
     @Override
+    public void visit(Script node) {
+        insideScript = true;
+        visitChildren(node);
+        insideScript = false;
+    }
+
+    @Override
     public void visit(SetVariableTo node) {
-        count++;
-        node.getExpr().accept(this);
+        if (insideScript) {
+            count++;
+            node.getExpr().accept(this);
+        }
     }
 
     @Override
@@ -55,12 +66,16 @@ public class VariablesBlockCount implements MetricExtractor, ScratchVisitor {
 
     @Override
     public void visit(Variable node) {
-        count++;
+        if (insideScript) {
+            count++;
+        }
     }
 
     @Override
     public void visit(ScratchList node) {
-        count++;
+        if (insideScript) {
+            count++;
+        }
     }
 
     @Override

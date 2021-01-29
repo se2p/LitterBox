@@ -3,6 +3,7 @@ package de.uni_passau.fim.se2.litterbox.analytics.metric;
 import de.uni_passau.fim.se2.litterbox.analytics.MetricExtractor;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Event;
+import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.StartedAsClone;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.Broadcast;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.BroadcastAndWait;
@@ -25,7 +26,7 @@ public class EventsBlockCount implements MetricExtractor, ScratchVisitor {
     @Override
     public void visit(Event node) {
         //StartedAsClone is not in the Events category in Scratch
-        if (node instanceof StartedAsClone) {
+        if (node instanceof StartedAsClone || node instanceof Never) {
             return;
         }
         count++;

@@ -1,0 +1,530 @@
+{
+    "targets": [
+        {
+            "isStage": true,
+            "name": "Stage",
+            "variables": {
+                "`jEk@4|i[#Fk?(8x)AV.-my variable": [
+                    "meine Variable",
+                    0
+                ]
+            },
+            "lists": {
+                "e7,B?BZTyxCpa|IXfq{w": [
+                    "test",
+                    []
+                ]
+            },
+            "broadcasts": {},
+            "blocks": {
+                "mb#:d~B=WaRthY{fx4`g": {
+                    "opcode": "looks_switchbackdroptoandwait",
+                    "next": null,
+                    "parent": null,
+                    "inputs": {
+                        "BACKDROP": [
+                            1,
+                            "MLZL*HnwfE-m[fm.K)0K"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 95,
+                    "y": 322
+                },
+                "MLZL*HnwfE-m[fm.K)0K": {
+                    "opcode": "looks_backdrops",
+                    "next": null,
+                    "parent": "mb#:d~B=WaRthY{fx4`g",
+                    "inputs": {},
+                    "fields": {
+                        "BACKDROP": [
+                            "Bühnenbild1",
+                            null
+                        ]
+                    },
+                    "shadow": true,
+                    "topLevel": false
+                }
+            },
+            "comments": {},
+            "currentCostume": 0,
+            "costumes": [
+                {
+                    "assetId": "cd21514d0531fdffb22204e0ec5ed84a",
+                    "name": "Bühnenbild1",
+                    "md5ext": "cd21514d0531fdffb22204e0ec5ed84a.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 240,
+                    "rotationCenterY": 180
+                }
+            ],
+            "sounds": [
+                {
+                    "assetId": "83a9787d4cb6f3b7632b4ddfebf74367",
+                    "name": "Plopp",
+                    "dataFormat": "wav",
+                    "format": "",
+                    "rate": 48000,
+                    "sampleCount": 1124,
+                    "md5ext": "83a9787d4cb6f3b7632b4ddfebf74367.wav"
+                }
+            ],
+            "volume": 100,
+            "layerOrder": 0,
+            "tempo": 60,
+            "videoTransparency": 50,
+            "videoState": "on",
+            "textToSpeechLanguage": null
+        },
+        {
+            "isStage": false,
+            "name": "Figur1",
+            "variables": {},
+            "lists": {},
+            "broadcasts": {},
+            "blocks": {
+                "uLzSx$w@]2iRvT8Bhy+.": {
+                    "opcode": "looks_sayforsecs",
+                    "next": null,
+                    "parent": null,
+                    "inputs": {
+                        "MESSAGE": [
+                            1,
+                            [
+                                10,
+                                "Hello!"
+                            ]
+                        ],
+                        "SECS": [
+                            1,
+                            [
+                                4,
+                                "2"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 35,
+                    "y": 174
+                },
+                "k._;ebXJk[j1@)[/yKl9": {
+                    "opcode": "looks_say",
+                    "next": null,
+                    "parent": null,
+                    "inputs": {
+                        "MESSAGE": [
+                            1,
+                            [
+                                10,
+                                "Hello!"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 51,
+                    "y": 284
+                },
+                "L1T*zWTeDhg(6TU}@FWW": {
+                    "opcode": "looks_thinkforsecs",
+                    "next": null,
+                    "parent": null,
+                    "inputs": {
+                        "MESSAGE": [
+                            1,
+                            [
+                                10,
+                                "Hmm..."
+                            ]
+                        ],
+                        "SECS": [
+                            1,
+                            [
+                                4,
+                                "2"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 395,
+                    "y": 168
+                },
+                "Dt]]?7G$^5_$uT25;.lm": {
+                    "opcode": "looks_think",
+                    "next": null,
+                    "parent": null,
+                    "inputs": {
+                        "MESSAGE": [
+                            1,
+                            [
+                                10,
+                                "Hmm..."
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 471,
+                    "y": 285
+                },
+                "GrH?{$GwbcxhLX7D={O;": {
+                    "opcode": "looks_switchcostumeto",
+                    "next": null,
+                    "parent": null,
+                    "inputs": {
+                        "COSTUME": [
+                            1,
+                            "K7!PY7~6#FJ5A*=B)m~I"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 22,
+                    "y": 414
+                },
+                "K7!PY7~6#FJ5A*=B)m~I": {
+                    "opcode": "looks_costume",
+                    "next": null,
+                    "parent": "GrH?{$GwbcxhLX7D={O;",
+                    "inputs": {},
+                    "fields": {
+                        "COSTUME": [
+                            "Kostüm2",
+                            null
+                        ]
+                    },
+                    "shadow": true,
+                    "topLevel": false
+                },
+                "P[Bab~6+RYIkaX6egy9o": {
+                    "opcode": "looks_nextcostume",
+                    "next": null,
+                    "parent": null,
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 75,
+                    "y": 538
+                },
+                "w1p7i6a::`K#T!jPDg,z": {
+                    "opcode": "looks_switchbackdropto",
+                    "next": null,
+                    "parent": null,
+                    "inputs": {
+                        "BACKDROP": [
+                            1,
+                            "v%fO8@Nae^k(m@!okD65"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 411,
+                    "y": 420
+                },
+                "v%fO8@Nae^k(m@!okD65": {
+                    "opcode": "looks_backdrops",
+                    "next": null,
+                    "parent": "w1p7i6a::`K#T!jPDg,z",
+                    "inputs": {},
+                    "fields": {
+                        "BACKDROP": [
+                            "Bühnenbild1",
+                            null
+                        ]
+                    },
+                    "shadow": true,
+                    "topLevel": false
+                },
+                "DxJ;g`_/7`)#[pj)t)/r": {
+                    "opcode": "looks_nextbackdrop",
+                    "next": null,
+                    "parent": null,
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 428,
+                    "y": 531
+                },
+                "SKTP/QbjTRbB!3`AbNBX": {
+                    "opcode": "looks_changesizeby",
+                    "next": null,
+                    "parent": null,
+                    "inputs": {
+                        "CHANGE": [
+                            1,
+                            [
+                                4,
+                                "10"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 96,
+                    "y": 635
+                },
+                "O*C[cBE2(Bz*KCz#Bja#": {
+                    "opcode": "looks_setsizeto",
+                    "next": null,
+                    "parent": null,
+                    "inputs": {
+                        "SIZE": [
+                            1,
+                            [
+                                4,
+                                "100"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 431,
+                    "y": 646
+                },
+                "XrfjrM}1I:VLXt$J3Is?": {
+                    "opcode": "looks_changeeffectby",
+                    "next": null,
+                    "parent": null,
+                    "inputs": {
+                        "CHANGE": [
+                            1,
+                            [
+                                4,
+                                "25"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "EFFECT": [
+                            "COLOR",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 54,
+                    "y": 764
+                },
+                "=%X6sb}f5:Jh`CP;JbC5": {
+                    "opcode": "looks_seteffectto",
+                    "next": null,
+                    "parent": null,
+                    "inputs": {
+                        "VALUE": [
+                            1,
+                            [
+                                4,
+                                "0"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "EFFECT": [
+                            "COLOR",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 493,
+                    "y": 772
+                },
+                "Gw.b8`)s^52o2]QMWgdc": {
+                    "opcode": "looks_cleargraphiceffects",
+                    "next": null,
+                    "parent": null,
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 40,
+                    "y": 891
+                },
+                "V~ofXPajcx{?CV(:oJL-": {
+                    "opcode": "looks_show",
+                    "next": null,
+                    "parent": null,
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 487,
+                    "y": 910
+                },
+                "Z+}{Qu-0RJHER/(~o25#": {
+                    "opcode": "looks_hide",
+                    "next": null,
+                    "parent": null,
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 103,
+                    "y": 1008
+                },
+                "}I.|jXVx!a}.ka{B5If2": {
+                    "opcode": "looks_gotofrontback",
+                    "next": null,
+                    "parent": null,
+                    "inputs": {},
+                    "fields": {
+                        "FRONT_BACK": [
+                            "front",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 466,
+                    "y": 1029
+                },
+                "K`0LkTB/pFFTXMA[RM.8": {
+                    "opcode": "looks_goforwardbackwardlayers",
+                    "next": null,
+                    "parent": null,
+                    "inputs": {
+                        "NUM": [
+                            1,
+                            [
+                                7,
+                                "1"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "FORWARD_BACKWARD": [
+                            "forward",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 7,
+                    "y": 1113
+                },
+                "O8)msJ4q}UJmFD74ktCS": {
+                    "opcode": "looks_costumenumbername",
+                    "next": null,
+                    "parent": null,
+                    "inputs": {},
+                    "fields": {
+                        "NUMBER_NAME": [
+                            "number",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 426,
+                    "y": 1139
+                },
+                "L)9@C^NZTl=}t9tKDtfj": {
+                    "opcode": "looks_backdropnumbername",
+                    "next": null,
+                    "parent": null,
+                    "inputs": {},
+                    "fields": {
+                        "NUMBER_NAME": [
+                            "number",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 11,
+                    "y": 1280
+                },
+                "F=8?GQ/k9-7)jteAO4_S": {
+                    "opcode": "looks_size",
+                    "next": null,
+                    "parent": null,
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 428,
+                    "y": 1254
+                }
+            },
+            "comments": {},
+            "currentCostume": 0,
+            "costumes": [
+                {
+                    "assetId": "bcf454acf82e4504149f7ffe07081dbc",
+                    "name": "Kostüm1",
+                    "bitmapResolution": 1,
+                    "md5ext": "bcf454acf82e4504149f7ffe07081dbc.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 48,
+                    "rotationCenterY": 50
+                },
+                {
+                    "assetId": "0fb9be3e8397c983338cb71dc84d0b25",
+                    "name": "Kostüm2",
+                    "bitmapResolution": 1,
+                    "md5ext": "0fb9be3e8397c983338cb71dc84d0b25.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 46,
+                    "rotationCenterY": 53
+                }
+            ],
+            "sounds": [
+                {
+                    "assetId": "83c36d806dc92327b9e7049a565c6bff",
+                    "name": "Miau",
+                    "dataFormat": "wav",
+                    "format": "",
+                    "rate": 48000,
+                    "sampleCount": 40682,
+                    "md5ext": "83c36d806dc92327b9e7049a565c6bff.wav"
+                }
+            ],
+            "volume": 100,
+            "layerOrder": 1,
+            "visible": true,
+            "x": 0,
+            "y": 0,
+            "size": 100,
+            "direction": 90,
+            "draggable": false,
+            "rotationStyle": "all around"
+        }
+    ],
+    "monitors": [
+        {
+            "id": "e7,B?BZTyxCpa|IXfq{w",
+            "mode": "list",
+            "opcode": "data_listcontents",
+            "params": {
+                "LIST": "test"
+            },
+            "spriteName": null,
+            "value": [],
+            "width": 0,
+            "height": 0,
+            "x": 5,
+            "y": 5,
+            "visible": true
+        }
+    ],
+    "extensions": [],
+    "meta": {
+        "semver": "3.0.0",
+        "vm": "0.2.0-prerelease.20210126041803",
+        "agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:85.0) Gecko/20100101 Firefox/85.0"
+    }
+}
