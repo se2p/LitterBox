@@ -1,0 +1,312 @@
+{
+    "targets": [
+        {
+            "isStage": true,
+            "name": "Stage",
+            "variables": {
+                "`jEk@4|i[#Fk?(8x)AV.-my variable": [
+                    "meine Variable",
+                    0
+                ]
+            },
+            "lists": {
+                "e7,B?BZTyxCpa|IXfq{w": [
+                    "test",
+                    []
+                ]
+            },
+            "broadcasts": {
+                "R$zd|8tzB*o|g-Jw}3{N": "Nachricht1"
+            },
+            "blocks": {},
+            "comments": {},
+            "currentCostume": 0,
+            "costumes": [
+                {
+                    "assetId": "cd21514d0531fdffb22204e0ec5ed84a",
+                    "name": "Bühnenbild1",
+                    "md5ext": "cd21514d0531fdffb22204e0ec5ed84a.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 240,
+                    "rotationCenterY": 180
+                }
+            ],
+            "sounds": [
+                {
+                    "assetId": "83a9787d4cb6f3b7632b4ddfebf74367",
+                    "name": "Plopp",
+                    "dataFormat": "wav",
+                    "format": "",
+                    "rate": 48000,
+                    "sampleCount": 1124,
+                    "md5ext": "83a9787d4cb6f3b7632b4ddfebf74367.wav"
+                }
+            ],
+            "volume": 100,
+            "layerOrder": 0,
+            "tempo": 60,
+            "videoTransparency": 50,
+            "videoState": "on",
+            "textToSpeechLanguage": null
+        },
+        {
+            "isStage": false,
+            "name": "Figur1",
+            "variables": {},
+            "lists": {},
+            "broadcasts": {},
+            "blocks": {
+                "cCHB^96vI#BL8J|uABKE": {
+                    "opcode": "control_forever",
+                    "next": null,
+                    "parent": null,
+                    "inputs": {
+                        "SUBSTACK": [
+                            2,
+                            "7OKO!Qv,8S:$7^ZCj,T;"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 437,
+                    "y": 576
+                },
+                "7OKO!Qv,8S:$7^ZCj,T;": {
+                    "opcode": "pen_clear",
+                    "next": "Z;uLKLgRjg7RPp]T}YOH",
+                    "parent": "cCHB^96vI#BL8J|uABKE",
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "Z;uLKLgRjg7RPp]T}YOH": {
+                    "opcode": "pen_stamp",
+                    "next": "`.9_-R(8T@_FZ[1]n@SH",
+                    "parent": "7OKO!Qv,8S:$7^ZCj,T;",
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "`.9_-R(8T@_FZ[1]n@SH": {
+                    "opcode": "pen_penDown",
+                    "next": "9tm]Ft]PB`Na38[|HhUg",
+                    "parent": "Z;uLKLgRjg7RPp]T}YOH",
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "9tm]Ft]PB`Na38[|HhUg": {
+                    "opcode": "pen_penUp",
+                    "next": "[~h9aCAz-xG%zmz(K5m.",
+                    "parent": "`.9_-R(8T@_FZ[1]n@SH",
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "[~h9aCAz-xG%zmz(K5m.": {
+                    "opcode": "pen_setPenColorToColor",
+                    "next": "P9N@)OE}BHQ0XY/K:ry(",
+                    "parent": "9tm]Ft]PB`Na38[|HhUg",
+                    "inputs": {
+                        "COLOR": [
+                            1,
+                            [
+                                9,
+                                "#c40ae8"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "P9N@)OE}BHQ0XY/K:ry(": {
+                    "opcode": "pen_changePenColorParamBy",
+                    "next": "6A!eDWe{nW7$dNC(wc*}",
+                    "parent": "[~h9aCAz-xG%zmz(K5m.",
+                    "inputs": {
+                        "COLOR_PARAM": [
+                            1,
+                            "ogC(L4s@)WsvvYpA5bdx"
+                        ],
+                        "VALUE": [
+                            1,
+                            [
+                                4,
+                                "10"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "ogC(L4s@)WsvvYpA5bdx": {
+                    "opcode": "pen_menu_colorParam",
+                    "next": null,
+                    "parent": "P9N@)OE}BHQ0XY/K:ry(",
+                    "inputs": {},
+                    "fields": {
+                        "colorParam": [
+                            "color",
+                            null
+                        ]
+                    },
+                    "shadow": true,
+                    "topLevel": false
+                },
+                "6A!eDWe{nW7$dNC(wc*}": {
+                    "opcode": "pen_setPenColorParamTo",
+                    "next": "NN}8}tu?)CKC%)42EudA",
+                    "parent": "P9N@)OE}BHQ0XY/K:ry(",
+                    "inputs": {
+                        "COLOR_PARAM": [
+                            1,
+                            "q^,v9hPSp%DHfLKm*Gx["
+                        ],
+                        "VALUE": [
+                            1,
+                            [
+                                4,
+                                "50"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "q^,v9hPSp%DHfLKm*Gx[": {
+                    "opcode": "pen_menu_colorParam",
+                    "next": null,
+                    "parent": "6A!eDWe{nW7$dNC(wc*}",
+                    "inputs": {},
+                    "fields": {
+                        "colorParam": [
+                            "color",
+                            null
+                        ]
+                    },
+                    "shadow": true,
+                    "topLevel": false
+                },
+                "NN}8}tu?)CKC%)42EudA": {
+                    "opcode": "pen_changePenSizeBy",
+                    "next": "TXi6Qsy6SL%N9-DG7l4#",
+                    "parent": "6A!eDWe{nW7$dNC(wc*}",
+                    "inputs": {
+                        "SIZE": [
+                            1,
+                            [
+                                4,
+                                "1"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "TXi6Qsy6SL%N9-DG7l4#": {
+                    "opcode": "pen_setPenSizeTo",
+                    "next": null,
+                    "parent": "NN}8}tu?)CKC%)42EudA",
+                    "inputs": {
+                        "SIZE": [
+                            1,
+                            [
+                                4,
+                                "1"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                }
+            },
+            "comments": {
+                ")Wb$gzU*MtLkEV*+W.4q": {
+                    "blockId": "GF[;@eZ:rUfa/9gS$hf@",
+                    "x": 1040.3814779210975,
+                    "y": 396.0740740740741,
+                    "width": 200,
+                    "height": 200,
+                    "minimized": false,
+                    "text": ""
+                }
+            },
+            "currentCostume": 0,
+            "costumes": [
+                {
+                    "assetId": "bcf454acf82e4504149f7ffe07081dbc",
+                    "name": "Kostüm1",
+                    "bitmapResolution": 1,
+                    "md5ext": "bcf454acf82e4504149f7ffe07081dbc.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 48,
+                    "rotationCenterY": 50
+                },
+                {
+                    "assetId": "0fb9be3e8397c983338cb71dc84d0b25",
+                    "name": "Kostüm2",
+                    "bitmapResolution": 1,
+                    "md5ext": "0fb9be3e8397c983338cb71dc84d0b25.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 46,
+                    "rotationCenterY": 53
+                }
+            ],
+            "sounds": [
+                {
+                    "assetId": "83c36d806dc92327b9e7049a565c6bff",
+                    "name": "Miau",
+                    "dataFormat": "wav",
+                    "format": "",
+                    "rate": 48000,
+                    "sampleCount": 40682,
+                    "md5ext": "83c36d806dc92327b9e7049a565c6bff.wav"
+                }
+            ],
+            "volume": 100,
+            "layerOrder": 1,
+            "visible": true,
+            "x": 0,
+            "y": 0,
+            "size": 100,
+            "direction": 90,
+            "draggable": false,
+            "rotationStyle": "all around"
+        }
+    ],
+    "monitors": [
+        {
+            "id": "e7,B?BZTyxCpa|IXfq{w",
+            "mode": "list",
+            "opcode": "data_listcontents",
+            "params": {
+                "LIST": "test"
+            },
+            "spriteName": null,
+            "value": [],
+            "width": 0,
+            "height": 0,
+            "x": 5,
+            "y": 5,
+            "visible": true
+        }
+    ],
+    "extensions": [
+        "pen"
+    ],
+    "meta": {
+        "semver": "3.0.0",
+        "vm": "0.2.0-prerelease.20210126041803",
+        "agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:85.0) Gecko/20100101 Firefox/85.0"
+    }
+}
