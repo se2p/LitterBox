@@ -1,0 +1,304 @@
+{
+    "targets": [
+        {
+            "isStage": true,
+            "name": "Stage",
+            "variables": {
+                "`jEk@4|i[#Fk?(8x)AV.-my variable": [
+                    "meine Variable",
+                    0
+                ]
+            },
+            "lists": {
+                "e7,B?BZTyxCpa|IXfq{w": [
+                    "test",
+                    []
+                ]
+            },
+            "broadcasts": {},
+            "blocks": {},
+            "comments": {},
+            "currentCostume": 0,
+            "costumes": [
+                {
+                    "assetId": "cd21514d0531fdffb22204e0ec5ed84a",
+                    "name": "Bühnenbild1",
+                    "md5ext": "cd21514d0531fdffb22204e0ec5ed84a.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 240,
+                    "rotationCenterY": 180
+                }
+            ],
+            "sounds": [
+                {
+                    "assetId": "83a9787d4cb6f3b7632b4ddfebf74367",
+                    "name": "Plopp",
+                    "dataFormat": "wav",
+                    "format": "",
+                    "rate": 48000,
+                    "sampleCount": 1124,
+                    "md5ext": "83a9787d4cb6f3b7632b4ddfebf74367.wav"
+                }
+            ],
+            "volume": 100,
+            "layerOrder": 0,
+            "tempo": 60,
+            "videoTransparency": 50,
+            "videoState": "on",
+            "textToSpeechLanguage": null
+        },
+        {
+            "isStage": false,
+            "name": "Figur1",
+            "variables": {},
+            "lists": {},
+            "broadcasts": {},
+            "blocks": {
+                "}dw!cO%2@Z1nm=BPUGC(": {
+                    "opcode": "sound_playuntildone",
+                    "next": null,
+                    "parent": null,
+                    "inputs": {
+                        "SOUND_MENU": [
+                            1,
+                            "B#wWi{QvOfMi)ilH.85Q"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 40,
+                    "y": 234
+                },
+                "B#wWi{QvOfMi)ilH.85Q": {
+                    "opcode": "sound_sounds_menu",
+                    "next": null,
+                    "parent": "}dw!cO%2@Z1nm=BPUGC(",
+                    "inputs": {},
+                    "fields": {
+                        "SOUND_MENU": [
+                            "Miau",
+                            null
+                        ]
+                    },
+                    "shadow": true,
+                    "topLevel": false
+                },
+                "w_OGi[MW,10O7r8h5kl(": {
+                    "opcode": "sound_play",
+                    "next": null,
+                    "parent": null,
+                    "inputs": {
+                        "SOUND_MENU": [
+                            1,
+                            "tds;|8+,qMtH9SW[BqO:"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 420,
+                    "y": 226
+                },
+                "tds;|8+,qMtH9SW[BqO:": {
+                    "opcode": "sound_sounds_menu",
+                    "next": null,
+                    "parent": "w_OGi[MW,10O7r8h5kl(",
+                    "inputs": {},
+                    "fields": {
+                        "SOUND_MENU": [
+                            "Miau",
+                            null
+                        ]
+                    },
+                    "shadow": true,
+                    "topLevel": false
+                },
+                "19Cm$6*cL6L]BK,LJ9N0": {
+                    "opcode": "sound_stopallsounds",
+                    "next": null,
+                    "parent": null,
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 72,
+                    "y": 361
+                },
+                "|2UR7pF$(qE2nsi;Ml0,": {
+                    "opcode": "sound_changeeffectby",
+                    "next": null,
+                    "parent": null,
+                    "inputs": {
+                        "VALUE": [
+                            1,
+                            [
+                                4,
+                                "10"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "EFFECT": [
+                            "PITCH",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 394,
+                    "y": 371
+                },
+                "?70@evqnFUG)w2:}Uv#)": {
+                    "opcode": "sound_seteffectto",
+                    "next": null,
+                    "parent": null,
+                    "inputs": {
+                        "VALUE": [
+                            1,
+                            [
+                                4,
+                                "100"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "EFFECT": [
+                            "PITCH",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 49,
+                    "y": 472
+                },
+                "M~LyOg9P5q?HMxE_y0vG": {
+                    "opcode": "sound_cleareffects",
+                    "next": null,
+                    "parent": null,
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 478,
+                    "y": 488
+                },
+                "W^6c1J1%/yhZebG;)]zP": {
+                    "opcode": "sound_changevolumeby",
+                    "next": null,
+                    "parent": null,
+                    "inputs": {
+                        "VOLUME": [
+                            1,
+                            [
+                                4,
+                                "-10"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 54,
+                    "y": 576
+                },
+                "Fw1hyUOy=3,IlTjsE,7O": {
+                    "opcode": "sound_setvolumeto",
+                    "next": null,
+                    "parent": null,
+                    "inputs": {
+                        "VOLUME": [
+                            1,
+                            [
+                                4,
+                                "100"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 475,
+                    "y": 595
+                },
+                "KufvzvbAx2bI:uL4t|nn": {
+                    "opcode": "sound_volume",
+                    "next": null,
+                    "parent": null,
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 210,
+                    "y": 701
+                }
+            },
+            "comments": {},
+            "currentCostume": 0,
+            "costumes": [
+                {
+                    "assetId": "bcf454acf82e4504149f7ffe07081dbc",
+                    "name": "Kostüm1",
+                    "bitmapResolution": 1,
+                    "md5ext": "bcf454acf82e4504149f7ffe07081dbc.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 48,
+                    "rotationCenterY": 50
+                },
+                {
+                    "assetId": "0fb9be3e8397c983338cb71dc84d0b25",
+                    "name": "Kostüm2",
+                    "bitmapResolution": 1,
+                    "md5ext": "0fb9be3e8397c983338cb71dc84d0b25.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 46,
+                    "rotationCenterY": 53
+                }
+            ],
+            "sounds": [
+                {
+                    "assetId": "83c36d806dc92327b9e7049a565c6bff",
+                    "name": "Miau",
+                    "dataFormat": "wav",
+                    "format": "",
+                    "rate": 48000,
+                    "sampleCount": 40682,
+                    "md5ext": "83c36d806dc92327b9e7049a565c6bff.wav"
+                }
+            ],
+            "volume": 100,
+            "layerOrder": 1,
+            "visible": true,
+            "x": 0,
+            "y": 0,
+            "size": 100,
+            "direction": 90,
+            "draggable": false,
+            "rotationStyle": "all around"
+        }
+    ],
+    "monitors": [
+        {
+            "id": "e7,B?BZTyxCpa|IXfq{w",
+            "mode": "list",
+            "opcode": "data_listcontents",
+            "params": {
+                "LIST": "test"
+            },
+            "spriteName": null,
+            "value": [],
+            "width": 0,
+            "height": 0,
+            "x": 5,
+            "y": 5,
+            "visible": true
+        }
+    ],
+    "extensions": [],
+    "meta": {
+        "semver": "3.0.0",
+        "vm": "0.2.0-prerelease.20210126041803",
+        "agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:85.0) Gecko/20100101 Firefox/85.0"
+    }
+}

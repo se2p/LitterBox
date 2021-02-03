@@ -1,0 +1,369 @@
+{
+    "targets": [
+        {
+            "isStage": true,
+            "name": "Stage",
+            "variables": {
+                "`jEk@4|i[#Fk?(8x)AV.-my variable": [
+                    "meine Variable",
+                    0
+                ]
+            },
+            "lists": {
+                "e7,B?BZTyxCpa|IXfq{w": [
+                    "test",
+                    []
+                ]
+            },
+            "broadcasts": {
+                "R$zd|8tzB*o|g-Jw}3{N": "Nachricht1"
+            },
+            "blocks": {},
+            "comments": {},
+            "currentCostume": 0,
+            "costumes": [
+                {
+                    "assetId": "cd21514d0531fdffb22204e0ec5ed84a",
+                    "name": "Bühnenbild1",
+                    "md5ext": "cd21514d0531fdffb22204e0ec5ed84a.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 240,
+                    "rotationCenterY": 180
+                }
+            ],
+            "sounds": [
+                {
+                    "assetId": "83a9787d4cb6f3b7632b4ddfebf74367",
+                    "name": "Plopp",
+                    "dataFormat": "wav",
+                    "format": "",
+                    "rate": 48000,
+                    "sampleCount": 1124,
+                    "md5ext": "83a9787d4cb6f3b7632b4ddfebf74367.wav"
+                }
+            ],
+            "volume": 100,
+            "layerOrder": 0,
+            "tempo": 60,
+            "videoTransparency": 50,
+            "videoState": "on",
+            "textToSpeechLanguage": null
+        },
+        {
+            "isStage": false,
+            "name": "Figur1",
+            "variables": {},
+            "lists": {},
+            "broadcasts": {},
+            "blocks": {
+                "XbQNyg`ay:i?|-3]59`X": {
+                    "opcode": "control_forever",
+                    "next": null,
+                    "parent": null,
+                    "inputs": {
+                        "SUBSTACK": [
+                            2,
+                            "pfGXGQv1OpTvR?UF,ORX"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 325,
+                    "y": 263
+                },
+                "pfGXGQv1OpTvR?UF,ORX": {
+                    "opcode": "data_setvariableto",
+                    "next": "EQwu-6dKJ!|gbkq1JrK8",
+                    "parent": "XbQNyg`ay:i?|-3]59`X",
+                    "inputs": {
+                        "VALUE": [
+                            1,
+                            [
+                                10,
+                                "0"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "VARIABLE": [
+                            "meine Variable",
+                            "`jEk@4|i[#Fk?(8x)AV.-my variable"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "EQwu-6dKJ!|gbkq1JrK8": {
+                    "opcode": "data_changevariableby",
+                    "next": "Y?YyYI$7u_;E!X;p8![i",
+                    "parent": "pfGXGQv1OpTvR?UF,ORX",
+                    "inputs": {
+                        "VALUE": [
+                            1,
+                            [
+                                4,
+                                "1"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "VARIABLE": [
+                            "meine Variable",
+                            "`jEk@4|i[#Fk?(8x)AV.-my variable"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "Y?YyYI$7u_;E!X;p8![i": {
+                    "opcode": "data_showvariable",
+                    "next": "K;zz2:ZfzWZU]kTDKrVk",
+                    "parent": "EQwu-6dKJ!|gbkq1JrK8",
+                    "inputs": {},
+                    "fields": {
+                        "VARIABLE": [
+                            "meine Variable",
+                            "`jEk@4|i[#Fk?(8x)AV.-my variable"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "K;zz2:ZfzWZU]kTDKrVk": {
+                    "opcode": "data_hidevariable",
+                    "next": "E4(`-xR`T[KzVe0Q,(7+",
+                    "parent": "Y?YyYI$7u_;E!X;p8![i",
+                    "inputs": {},
+                    "fields": {
+                        "VARIABLE": [
+                            "meine Variable",
+                            "`jEk@4|i[#Fk?(8x)AV.-my variable"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "E4(`-xR`T[KzVe0Q,(7+": {
+                    "opcode": "data_addtolist",
+                    "next": "+t;s3QqoW1sr7M-@oHhn",
+                    "parent": "K;zz2:ZfzWZU]kTDKrVk",
+                    "inputs": {
+                        "ITEM": [
+                            1,
+                            [
+                                10,
+                                "Ding"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "LIST": [
+                            "test",
+                            "e7,B?BZTyxCpa|IXfq{w"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "+t;s3QqoW1sr7M-@oHhn": {
+                    "opcode": "data_deleteoflist",
+                    "next": "V~bNV$^hC;|?)15yMu|]",
+                    "parent": "E4(`-xR`T[KzVe0Q,(7+",
+                    "inputs": {
+                        "INDEX": [
+                            1,
+                            [
+                                7,
+                                "1"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "LIST": [
+                            "test",
+                            "e7,B?BZTyxCpa|IXfq{w"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "V~bNV$^hC;|?)15yMu|]": {
+                    "opcode": "data_deletealloflist",
+                    "next": "}1l3X8Ad:]pPy)L0!998",
+                    "parent": "+t;s3QqoW1sr7M-@oHhn",
+                    "inputs": {},
+                    "fields": {
+                        "LIST": [
+                            "test",
+                            "e7,B?BZTyxCpa|IXfq{w"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "}1l3X8Ad:]pPy)L0!998": {
+                    "opcode": "data_insertatlist",
+                    "next": "%Ps[GzSHw3e@rMtf(oXh",
+                    "parent": "V~bNV$^hC;|?)15yMu|]",
+                    "inputs": {
+                        "ITEM": [
+                            1,
+                            [
+                                10,
+                                "Ding"
+                            ]
+                        ],
+                        "INDEX": [
+                            1,
+                            [
+                                7,
+                                "1"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "LIST": [
+                            "test",
+                            "e7,B?BZTyxCpa|IXfq{w"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "%Ps[GzSHw3e@rMtf(oXh": {
+                    "opcode": "data_replaceitemoflist",
+                    "next": "Re[6hmL,t}IoiWn6/iLh",
+                    "parent": "}1l3X8Ad:]pPy)L0!998",
+                    "inputs": {
+                        "INDEX": [
+                            1,
+                            [
+                                7,
+                                "1"
+                            ]
+                        ],
+                        "ITEM": [
+                            1,
+                            [
+                                10,
+                                "Ding"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "LIST": [
+                            "test",
+                            "e7,B?BZTyxCpa|IXfq{w"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "Re[6hmL,t}IoiWn6/iLh": {
+                    "opcode": "data_showlist",
+                    "next": "|CIaSpSgfgTyu[WJGlwS",
+                    "parent": "%Ps[GzSHw3e@rMtf(oXh",
+                    "inputs": {},
+                    "fields": {
+                        "LIST": [
+                            "test",
+                            "e7,B?BZTyxCpa|IXfq{w"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "|CIaSpSgfgTyu[WJGlwS": {
+                    "opcode": "data_hidelist",
+                    "next": null,
+                    "parent": "Re[6hmL,t}IoiWn6/iLh",
+                    "inputs": {},
+                    "fields": {
+                        "LIST": [
+                            "test",
+                            "e7,B?BZTyxCpa|IXfq{w"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                }
+            },
+            "comments": {
+                ")Wb$gzU*MtLkEV*+W.4q": {
+                    "blockId": "GF[;@eZ:rUfa/9gS$hf@",
+                    "x": 1040.3814779210975,
+                    "y": 396.0740740740741,
+                    "width": 200,
+                    "height": 200,
+                    "minimized": false,
+                    "text": ""
+                }
+            },
+            "currentCostume": 0,
+            "costumes": [
+                {
+                    "assetId": "bcf454acf82e4504149f7ffe07081dbc",
+                    "name": "Kostüm1",
+                    "bitmapResolution": 1,
+                    "md5ext": "bcf454acf82e4504149f7ffe07081dbc.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 48,
+                    "rotationCenterY": 50
+                },
+                {
+                    "assetId": "0fb9be3e8397c983338cb71dc84d0b25",
+                    "name": "Kostüm2",
+                    "bitmapResolution": 1,
+                    "md5ext": "0fb9be3e8397c983338cb71dc84d0b25.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 46,
+                    "rotationCenterY": 53
+                }
+            ],
+            "sounds": [
+                {
+                    "assetId": "83c36d806dc92327b9e7049a565c6bff",
+                    "name": "Miau",
+                    "dataFormat": "wav",
+                    "format": "",
+                    "rate": 48000,
+                    "sampleCount": 40682,
+                    "md5ext": "83c36d806dc92327b9e7049a565c6bff.wav"
+                }
+            ],
+            "volume": 100,
+            "layerOrder": 1,
+            "visible": true,
+            "x": 0,
+            "y": 0,
+            "size": 100,
+            "direction": 90,
+            "draggable": false,
+            "rotationStyle": "all around"
+        }
+    ],
+    "monitors": [
+        {
+            "id": "e7,B?BZTyxCpa|IXfq{w",
+            "mode": "list",
+            "opcode": "data_listcontents",
+            "params": {
+                "LIST": "test"
+            },
+            "spriteName": null,
+            "value": [],
+            "width": 0,
+            "height": 0,
+            "x": 5,
+            "y": 5,
+            "visible": true
+        }
+    ],
+    "extensions": [],
+    "meta": {
+        "semver": "3.0.0",
+        "vm": "0.2.0-prerelease.20210126041803",
+        "agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:85.0) Gecko/20100101 Firefox/85.0"
+    }
+}

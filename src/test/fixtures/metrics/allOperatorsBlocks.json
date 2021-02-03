@@ -1,0 +1,534 @@
+{
+    "targets": [
+        {
+            "isStage": true,
+            "name": "Stage",
+            "variables": {
+                "`jEk@4|i[#Fk?(8x)AV.-my variable": [
+                    "meine Variable",
+                    0
+                ]
+            },
+            "lists": {
+                "e7,B?BZTyxCpa|IXfq{w": [
+                    "test",
+                    []
+                ]
+            },
+            "broadcasts": {
+                "*R?Jv(IPb.fh$z)MIDQk": "message1"
+            },
+            "blocks": {},
+            "comments": {},
+            "currentCostume": 0,
+            "costumes": [
+                {
+                    "assetId": "cd21514d0531fdffb22204e0ec5ed84a",
+                    "name": "Bühnenbild1",
+                    "md5ext": "cd21514d0531fdffb22204e0ec5ed84a.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 240,
+                    "rotationCenterY": 180
+                }
+            ],
+            "sounds": [
+                {
+                    "assetId": "83a9787d4cb6f3b7632b4ddfebf74367",
+                    "name": "Plopp",
+                    "dataFormat": "wav",
+                    "format": "",
+                    "rate": 48000,
+                    "sampleCount": 1124,
+                    "md5ext": "83a9787d4cb6f3b7632b4ddfebf74367.wav"
+                }
+            ],
+            "volume": 100,
+            "layerOrder": 0,
+            "tempo": 60,
+            "videoTransparency": 50,
+            "videoState": "on",
+            "textToSpeechLanguage": null
+        },
+        {
+            "isStage": false,
+            "name": "Figur1",
+            "variables": {},
+            "lists": {},
+            "broadcasts": {},
+            "blocks": {
+                "AVI[pYl`YsUXZ?1x*r%w": {
+                    "opcode": "operator_add",
+                    "next": null,
+                    "parent": null,
+                    "inputs": {
+                        "NUM1": [
+                            1,
+                            [
+                                4,
+                                ""
+                            ]
+                        ],
+                        "NUM2": [
+                            1,
+                            [
+                                4,
+                                ""
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": -32,
+                    "y": 172
+                },
+                "$LSx~nvK9)(:z]UaO8.B": {
+                    "opcode": "operator_subtract",
+                    "next": null,
+                    "parent": null,
+                    "inputs": {
+                        "NUM1": [
+                            1,
+                            [
+                                4,
+                                ""
+                            ]
+                        ],
+                        "NUM2": [
+                            1,
+                            [
+                                4,
+                                ""
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 142,
+                    "y": 166
+                },
+                "3Vp%U_Rk92oobR6vy97v": {
+                    "opcode": "operator_multiply",
+                    "next": null,
+                    "parent": null,
+                    "inputs": {
+                        "NUM1": [
+                            1,
+                            [
+                                4,
+                                ""
+                            ]
+                        ],
+                        "NUM2": [
+                            1,
+                            [
+                                4,
+                                ""
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": -52,
+                    "y": 258
+                },
+                "YnU1efnA3^]FM+*Fn./m": {
+                    "opcode": "operator_divide",
+                    "next": null,
+                    "parent": null,
+                    "inputs": {
+                        "NUM1": [
+                            1,
+                            [
+                                4,
+                                ""
+                            ]
+                        ],
+                        "NUM2": [
+                            1,
+                            [
+                                4,
+                                ""
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 157,
+                    "y": 273
+                },
+                "hqHGW9O{7ZPG1;z]2(uX": {
+                    "opcode": "operator_random",
+                    "next": null,
+                    "parent": null,
+                    "inputs": {
+                        "FROM": [
+                            1,
+                            [
+                                4,
+                                "1"
+                            ]
+                        ],
+                        "TO": [
+                            1,
+                            [
+                                4,
+                                "10"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": -227,
+                    "y": 380
+                },
+                "=EGY=A^;A{r%s0m~W$C;": {
+                    "opcode": "operator_gt",
+                    "next": null,
+                    "parent": null,
+                    "inputs": {
+                        "OPERAND1": [
+                            1,
+                            [
+                                10,
+                                ""
+                            ]
+                        ],
+                        "OPERAND2": [
+                            1,
+                            [
+                                10,
+                                "50"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 99,
+                    "y": 385
+                },
+                "V-uqA?oH?dtc~,1PF(Vf": {
+                    "opcode": "operator_lt",
+                    "next": null,
+                    "parent": null,
+                    "inputs": {
+                        "OPERAND1": [
+                            1,
+                            [
+                                10,
+                                ""
+                            ]
+                        ],
+                        "OPERAND2": [
+                            1,
+                            [
+                                10,
+                                "50"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": -246,
+                    "y": 473
+                },
+                "5,oX8hAQW!t1i=dW+EWm": {
+                    "opcode": "operator_equals",
+                    "next": null,
+                    "parent": null,
+                    "inputs": {
+                        "OPERAND1": [
+                            1,
+                            [
+                                10,
+                                ""
+                            ]
+                        ],
+                        "OPERAND2": [
+                            1,
+                            [
+                                10,
+                                "50"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 67,
+                    "y": 476
+                },
+                "8kW}}[bFY974?H`4k/-L": {
+                    "opcode": "operator_and",
+                    "next": null,
+                    "parent": null,
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": -281,
+                    "y": 571
+                },
+                "2gR)xSf{k7.*fKIi*RDw": {
+                    "opcode": "operator_or",
+                    "next": null,
+                    "parent": null,
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 12,
+                    "y": 586
+                },
+                "N:T169zFFxf1z6J5Wt;U": {
+                    "opcode": "operator_not",
+                    "next": null,
+                    "parent": null,
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": -257,
+                    "y": 681
+                },
+                "iW4Z-=lK.|Q`pKT^Tz[y": {
+                    "opcode": "operator_join",
+                    "next": null,
+                    "parent": null,
+                    "inputs": {
+                        "STRING1": [
+                            1,
+                            [
+                                10,
+                                "apple "
+                            ]
+                        ],
+                        "STRING2": [
+                            1,
+                            [
+                                10,
+                                "banana"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": -20,
+                    "y": 679
+                },
+                "A~!y@R@%{KwcM(yj:EB6": {
+                    "opcode": "operator_letter_of",
+                    "next": null,
+                    "parent": null,
+                    "inputs": {
+                        "LETTER": [
+                            1,
+                            [
+                                6,
+                                "1"
+                            ]
+                        ],
+                        "STRING": [
+                            1,
+                            [
+                                10,
+                                "apple"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": -265,
+                    "y": 797
+                },
+                "e+wYy9_?Cb+~B?S0k0LT": {
+                    "opcode": "operator_length",
+                    "next": null,
+                    "parent": null,
+                    "inputs": {
+                        "STRING": [
+                            1,
+                            [
+                                10,
+                                "apple"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 36,
+                    "y": 797
+                },
+                "kMdlj@77g#RUsn|)Ac9E": {
+                    "opcode": "operator_contains",
+                    "next": null,
+                    "parent": null,
+                    "inputs": {
+                        "STRING1": [
+                            1,
+                            [
+                                10,
+                                "apple"
+                            ]
+                        ],
+                        "STRING2": [
+                            1,
+                            [
+                                10,
+                                "a"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": -272,
+                    "y": 895
+                },
+                "VI0uTjp52De$@oJU#4%|": {
+                    "opcode": "operator_mod",
+                    "next": null,
+                    "parent": null,
+                    "inputs": {
+                        "NUM1": [
+                            1,
+                            [
+                                4,
+                                ""
+                            ]
+                        ],
+                        "NUM2": [
+                            1,
+                            [
+                                4,
+                                ""
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 57,
+                    "y": 902
+                },
+                "JDSv%^*kbgNcO0Ds73{P": {
+                    "opcode": "operator_round",
+                    "next": null,
+                    "parent": null,
+                    "inputs": {
+                        "NUM": [
+                            1,
+                            [
+                                4,
+                                ""
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": -228,
+                    "y": 980
+                },
+                "[=0WCv^MK==8p6Gnyq;z": {
+                    "opcode": "operator_mathop",
+                    "next": null,
+                    "parent": null,
+                    "inputs": {
+                        "NUM": [
+                            1,
+                            [
+                                4,
+                                ""
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "OPERATOR": [
+                            "abs",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": -69,
+                    "y": 1009
+                }
+            },
+            "comments": {},
+            "currentCostume": 0,
+            "costumes": [
+                {
+                    "assetId": "bcf454acf82e4504149f7ffe07081dbc",
+                    "name": "Kostüm1",
+                    "bitmapResolution": 1,
+                    "md5ext": "bcf454acf82e4504149f7ffe07081dbc.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 48,
+                    "rotationCenterY": 50
+                },
+                {
+                    "assetId": "0fb9be3e8397c983338cb71dc84d0b25",
+                    "name": "Kostüm2",
+                    "bitmapResolution": 1,
+                    "md5ext": "0fb9be3e8397c983338cb71dc84d0b25.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 46,
+                    "rotationCenterY": 53
+                }
+            ],
+            "sounds": [
+                {
+                    "assetId": "83c36d806dc92327b9e7049a565c6bff",
+                    "name": "Miau",
+                    "dataFormat": "wav",
+                    "format": "",
+                    "rate": 48000,
+                    "sampleCount": 40682,
+                    "md5ext": "83c36d806dc92327b9e7049a565c6bff.wav"
+                }
+            ],
+            "volume": 100,
+            "layerOrder": 1,
+            "visible": true,
+            "x": 0,
+            "y": 0,
+            "size": 100,
+            "direction": 90,
+            "draggable": false,
+            "rotationStyle": "all around"
+        }
+    ],
+    "monitors": [
+        {
+            "id": "e7,B?BZTyxCpa|IXfq{w",
+            "mode": "list",
+            "opcode": "data_listcontents",
+            "params": {
+                "LIST": "test"
+            },
+            "spriteName": null,
+            "value": [],
+            "width": 0,
+            "height": 0,
+            "x": 5,
+            "y": 5,
+            "visible": true
+        }
+    ],
+    "extensions": [],
+    "meta": {
+        "semver": "3.0.0",
+        "vm": "0.2.0-prerelease.20210126041803",
+        "agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:85.0) Gecko/20100101 Firefox/85.0"
+    }
+}
