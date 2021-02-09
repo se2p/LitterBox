@@ -47,6 +47,7 @@ import java.util.*;
 public class UnusedVariable extends AbstractIssueFinder {
 
     public static final String NAME = "unused_variables";
+    public static final String NAME_LIST= "unused_variables_list";
     private static final String[] MY_VARIABLE_LANGUAGES = {"meine Variable", "исхатәу аҽеиҭак", "my variable",
             "متغيري", "мая зменная", "моята променлива", "la meva variable", "گۆڕاوەکەم", "moje proměnná", "fy "
             + "newidyn", "min variabel", "η μεταβλητή μου", "mi variable", "minu muutuja", "nire aldagaia", "متغیر من",
@@ -99,7 +100,9 @@ public class UnusedVariable extends AbstractIssueFinder {
                     }
                 }
                 Qualified qualified = new Qualified(new StrId(actorName), new Variable(new StrId(name)));
-                addScriptWithIssueFor(qualified);
+                Hint hint = new Hint(getName());
+                hint.setParameter(Hint.HINT_VARIABLE, name);
+                addScriptWithIssueFor(qualified, hint);
             }
         }
 
@@ -123,14 +126,16 @@ public class UnusedVariable extends AbstractIssueFinder {
                     }
                 }
                 Qualified qualified = new Qualified(new StrId(actorName), new ScratchList(new StrId(name)));
-                addScriptWithIssueFor(qualified);
+                Hint hint = new Hint(NAME_LIST);
+                hint.setParameter(Hint.HINT_VARIABLE, name);
+                addScriptWithIssueFor(qualified, hint);
             }
         }
     }
 
-    private void addScriptWithIssueFor(Expression expr) {
+    private void addScriptWithIssueFor(Expression expr, Hint hint) {
         Script theScript = new Script(new Never(), new StmtList(Arrays.asList(new ExpressionStmt(expr))));
-        addIssueForSynthesizedScript(theScript, expr, new NoBlockMetadata(), new Hint(getName()));
+        addIssueForSynthesizedScript(theScript, expr, new NoBlockMetadata(), hint);
     }
 
     @Override
@@ -163,5 +168,13 @@ public class UnusedVariable extends AbstractIssueFinder {
     @Override
     public IssueType getIssueType() {
         return IssueType.SMELL;
+    }
+
+    @Override
+    public Collection<String> getHintKeys() {
+        List<String> keys = new ArrayList<>();
+        keys.add(NAME);
+        keys.add(NAME_LIST);
+        return keys;
     }
 }
