@@ -41,9 +41,9 @@ public class UnnecessaryIfAfterUntil extends AbstractIssueFinder {
     }
 
     @Override
-    public boolean areCouple(Issue first, Issue other) {
+    public boolean areCoupled(Issue first, Issue other) {
         if (first.getFinder() != this) {
-            return super.areCouple(first, other);
+            return super.areCoupled(first, other);
         }
 
         if (other.getFinder() instanceof MissingLoopSensing) {

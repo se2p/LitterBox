@@ -23,11 +23,9 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
-import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.ComparingLiterals;
-import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.MessageNeverSent;
-import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.PositionEqualsCheck;
-import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.VariableAsLiteral;
+import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.*;
 import de.uni_passau.fim.se2.litterbox.analytics.smells.EmptySprite;
+import de.uni_passau.fim.se2.litterbox.analytics.smells.UnnecessaryIfAfterUntil;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
@@ -38,7 +36,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 import static com.google.common.truth.Truth.assertThat;
@@ -254,6 +254,41 @@ public class JSONReportGeneratorTest implements JsonTest {
         } else {
             assertThat(subsumption1.size()).isEqualTo(0);
             assertThat(subsumption0.get(0).asInt()).isEqualTo(issue1.get("id").asInt());
+        }
+    }
+
+    @Test
+    public void testReportWithCouplingInformation() throws IOException, ParsingException {
+        Set<Issue> issues = new LinkedHashSet<>();
+        Program program = getAST("./src/test/fixtures/smells/unnecessaryIf.json");
+        UnnecessaryIfAfterUntil unnecessaryIfAfterUntil = new UnnecessaryIfAfterUntil();
+        issues.addAll(unnecessaryIfAfterUntil.check(program));
+        MissingLoopSensing mls = new MissingLoopSensing();
+        issues.addAll(mls.check(program));
+
+
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        JSONReportGenerator generator = new JSONReportGenerator(os);
+        generator.generateReport(program, issues);
+        os.close();
+        String issueText = os.toString();
+        assertValidJsonIssue(issueText, 2);
+
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode rootNode = mapper.readTree(issueText);
+        JsonNode issueNode = rootNode.get("issues");
+        JsonNode issue0 = issueNode.get(0);
+        JsonNode issue1 = issueNode.get(1);
+
+        JsonNode coupling0 = issue0.get("coupled-to");
+        JsonNode coupling1 = issue1.get("coupled-to");
+
+        if (issue0.get("finder").asText().equals(unnecessaryIfAfterUntil.getName())) {
+            assertThat(coupling0.size()).isEqualTo(1);
+            assertThat(coupling1.get(0).asInt()).isEqualTo(issue0.get("id").asInt());
+        } else {
+            assertThat(coupling1.size()).isEqualTo(1);
+            assertThat(coupling0.get(0).asInt()).isEqualTo(issue1.get("id").asInt());
         }
     }
 }

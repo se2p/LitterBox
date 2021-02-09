@@ -18,10 +18,9 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
-import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
-import de.uni_passau.fim.se2.litterbox.analytics.Hint;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
+import de.uni_passau.fim.se2.litterbox.analytics.*;
+import de.uni_passau.fim.se2.litterbox.analytics.smells.UnnecessaryIfAfterUntil;
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.GreenFlag;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
@@ -191,6 +190,18 @@ public class MissingLoopSensing extends AbstractIssueFinder {
     @Override
     public IssueType getIssueType() {
         return IssueType.BUG;
+    }
+
+    @Override
+    public boolean areCoupled(Issue first, Issue other) {
+        if (first.getFinder() != this) {
+            return super.areCoupled(first, other);
+        }
+
+        if (other.getFinder() instanceof UnnecessaryIfAfterUntil) {
+            return other.getFinder().areCoupled(other, first);
+        }
+        return false;
     }
 
     @Override
