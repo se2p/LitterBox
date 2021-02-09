@@ -172,6 +172,12 @@ public class MissingInitialization implements IssueFinder {
     }
 
     @Override
+    public boolean areCouple(Issue first, Issue other) {
+        // TODO: Implement
+        return false;
+    }
+
+    @Override
     public Collection<String> getHintKeys() {
         // Default: Only one key with the name of the finder
         return Arrays.asList(getName());

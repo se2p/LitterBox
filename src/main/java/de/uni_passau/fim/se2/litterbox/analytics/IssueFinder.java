@@ -47,4 +47,6 @@ public interface IssueFinder {
     boolean isDuplicateOf(Issue first, Issue other);
 
     boolean isSubsumedBy(Issue first, Issue other);
+
+    boolean areCouple(Issue first, Issue other);
 }

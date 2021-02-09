@@ -179,4 +179,9 @@ public abstract class AbstractIssueFinder implements IssueFinder, ScratchVisitor
     public boolean isSubsumedBy(Issue first, Issue other) {
         return false;
     }
+
+    @Override
+    public boolean areCouple(Issue first, Issue other) {
+        return false;
+    }
 }
