@@ -61,5 +61,11 @@ class BlockingIfElseTest implements JsonTest {
         Assertions.assertEquals(0, reports.size());
     }
 
-
+    @Test
+    public void testNestedBlockingIfElse() throws IOException, ParsingException {
+        Program empty = JsonTest.parseProgram("./src/test/fixtures/bugpattern/nestedBlockingIfElse.json");
+        BlockingIfElse parameterName = new BlockingIfElse();
+        Set<Issue> reports = parameterName.check(empty);
+        Assertions.assertEquals(1, reports.size());
+    }
 }
