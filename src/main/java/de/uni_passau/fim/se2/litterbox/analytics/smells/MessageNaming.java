@@ -1,9 +1,13 @@
 package de.uni_passau.fim.se2.litterbox.analytics.smells;
 
 import de.uni_passau.fim.se2.litterbox.analytics.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.model.event.ReceptionOfMessage;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.Broadcast;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.BroadcastAndWait;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,9 +16,13 @@ public class MessageNaming extends AbstractIssueFinder {
     public static final String NAME = "message_naming";
     private List<String> visitedNames;
 
-    private static final String[] MESSAGE_LANGUAGES = {"ацҳамҭа","boodskap","መልእክት","الرسالة", "ismarıc", "паведамленне",
+    private static final String[] MESSAGE_LANGUAGES = {"ацҳамҭа", "boodskap", "መልእክት", "الرسالة", "ismarıc", "паведамленне",
             "съобщение", "missatge", "نامەی", "zpráva", "neges", "besked", "Nachricht", "μήνυμα", "message", "mensaje", "teade",
-            "mezua", "پیام", "viesti", "teachtaireacht", "teachdaireachd", "mensaxe"};
+            "mezua", "پیام", "viesti", "teachtaireacht", "teachdaireachd", "mensaxe", "מסר", "poruka", "mesaj", "üzenet", "հաղորդագրություն",
+            "pesan", "dæmiUmNafnÁSkilaboðum", "messaggio", "メッセージ", "შეტყობინება", "សារ", "메시지", "peyam", "žinutė", "ziņa", "karere",
+            "мэссэж", "melding", "bericht", "molaetša", "ସନ୍ଦେଶ", "wiadomość", "mensagem", "Mensagem", "qillqa", "ki hāŋa", "mesaj",
+            "сообщение", "správa", "sporočilo", "порука", "meddelande", "ujumbe", "ข้อความ", "molaetsa", "haber", "повідомлення", "xabar",
+            "tin nhắn", "umyalezo", "消息", "umyalezo wokuqala"};
 
     @Override
     public void visit(Program node) {
@@ -26,7 +34,31 @@ public class MessageNaming extends AbstractIssueFinder {
     public void visit(Broadcast node) {
         if (node.getMessage().getMessage() instanceof StringLiteral) {
             if (checkName(((StringLiteral) node.getMessage().getMessage()).getText())) {
-                addIssue(node, node.getMetadata(), IssueSeverity.LOW);
+                Hint hint = new Hint(getName());
+                hint.setParameter(Hint.HINT_MESSAGE, ((StringLiteral) node.getMessage().getMessage()).getText());
+                addIssue(node, node.getMetadata(), IssueSeverity.LOW, hint);
+            }
+        }
+    }
+
+    @Override
+    public void visit(BroadcastAndWait node) {
+        if (node.getMessage().getMessage() instanceof StringLiteral) {
+            if (checkName(((StringLiteral) node.getMessage().getMessage()).getText())) {
+                Hint hint = new Hint(getName());
+                hint.setParameter(Hint.HINT_MESSAGE, ((StringLiteral) node.getMessage().getMessage()).getText());
+                addIssue(node, node.getMetadata(), IssueSeverity.LOW, hint);
+            }
+        }
+    }
+
+    @Override
+    public void visit(ReceptionOfMessage node) {
+        if (node.getMsg().getMessage() instanceof StringLiteral) {
+            if (checkName(((StringLiteral) node.getMsg().getMessage()).getText())) {
+                Hint hint = new Hint(getName());
+                hint.setParameter(Hint.HINT_MESSAGE, ((StringLiteral) node.getMsg().getMessage()).getText());
+                addIssue(node, node.getMetadata(), IssueSeverity.LOW, hint);
             }
         }
     }
@@ -68,10 +100,23 @@ public class MessageNaming extends AbstractIssueFinder {
             return false;
         }
 
-        String firstName = first.getActorName();
-        String secondName = other.getActorName();
+        String firstName = getText(first.getCodeLocation());
+        String secondName = getText(other.getCodeLocation());
 
         return trimName(firstName).equals(trimName(secondName));
+    }
+
+    private String getText(ASTNode codeLocation) {
+        if (codeLocation instanceof Broadcast) {
+            StringExpr expr = ((Broadcast) codeLocation).getMessage().getMessage();
+            return ((StringLiteral) expr).getText();
+        } else if (codeLocation instanceof BroadcastAndWait) {
+            StringExpr expr = ((BroadcastAndWait) codeLocation).getMessage().getMessage();
+            return ((StringLiteral) expr).getText();
+        } else {
+            StringExpr expr = ((ReceptionOfMessage) codeLocation).getMsg().getMessage();
+            return ((StringLiteral) expr).getText();
+        }
     }
 
     @Override
