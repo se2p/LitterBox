@@ -108,7 +108,6 @@ public class VariableAsLiteralTest implements JsonTest {
                 "say [thelist]:: #ff0000 // " + ScratchBlocksVisitor.BUG_NOTE + System.lineSeparator() +
                 "end" + System.lineSeparator() +
                 "[/scratchblocks]" + System.lineSeparator(), output);
-
     }
 
     @Test
@@ -136,5 +135,16 @@ public class VariableAsLiteralTest implements JsonTest {
         for (Issue issue : reports) {
             Truth.assertThat(issue.getHint()).isEqualTo(hint.getHintText());
         }
+    }
+
+    @Test
+    public void testSubsumptionByComparingLiterals() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/bugpattern/comparingLiteralsSubsumption.json");
+        List<Issue> reportsVariableAsLiteral = new ArrayList<>((new VariableAsLiteral()).check(program));
+        Assertions.assertEquals(2, reportsVariableAsLiteral.size());
+        List<Issue> reportsComparingLiterals = new ArrayList<>((new ComparingLiterals()).check(program));
+        Assertions.assertEquals(1, reportsComparingLiterals.size());
+        Assertions.assertFalse(reportsVariableAsLiteral.get(0).isSubsumedBy(reportsComparingLiterals.get(0)));
+        Assertions.assertTrue(reportsVariableAsLiteral.get(1).isSubsumedBy(reportsComparingLiterals.get(0)));
     }
 }

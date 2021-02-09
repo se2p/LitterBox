@@ -176,6 +176,10 @@ public class Issue {
         return finder.isSubsumedBy(this, other);
     }
 
+    public boolean areCoupled(Issue other) {
+        return finder.areCoupled(this, other);
+    }
+
     public boolean isDuplicateOf(Issue other) {
         return finder.isDuplicateOf(this, other);
     }
