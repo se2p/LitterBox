@@ -85,6 +85,7 @@
                         <exclude>**/Jenkinsfile</exclude>
                         <exclude>src/test/resources/**</exclude>
                         <exclude>src/main/resources/**</exclude>
+                        <exclude>**/*.properties</exclude>
                     </excludes>
                     <mapping>
                         <java>SLASHSTAR_STYLE</java>
