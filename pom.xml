@@ -75,7 +75,7 @@
                 <configuration>
                     <header>src/etc/header.txt</header>
                     <properties>
-                        <year>2020</year>
+                        <year>2019-2021</year>
                     </properties>
                     <excludes>
                         <exclude>**/README</exclude>
