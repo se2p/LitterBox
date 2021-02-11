@@ -61,6 +61,8 @@ public abstract class ComparingLiteralsHintFactory {
     public static final String ALWAYS_NEVER = "ALWAYSNEVER";
     public static final String ALWAYS = "always";
     public static final String NEVER = "never";
+    public static final String ADD_INFO_DICT_RESOURCE = "add_info_dict";
+    public static final String ADD_INFO_DICT = "ADDINFODICT";
 
     public static Hint generateHint(boolean value, boolean wait, ASTNode parent, String variable, String variable2, ASTNode currentNode, ActorDefinition currentActor, Program program, ProcedureDefinition currentProcedure, Script currentScript) {
         Hint hint;
@@ -100,11 +102,11 @@ public abstract class ComparingLiteralsHintFactory {
             }
             setBlock(parent, hint, top);
         } else {
-            if(variable != null && variable2 != null && variableExits){
+            if (variable != null && variable2 != null && variableExits) {
                 hint = new Hint(DEFAULT_VARIABLE_EXISTS_TWO_WITHOUT_INFORMATION);
                 hint.setParameter(Hint.HINT_VARIABLE1, variable);
                 hint.setParameter(Hint.HINT_VARIABLE2, variable2);
-            }else if (variable != null && variable2 != null){
+            } else if (variable != null && variable2 != null) {
                 hint = new Hint(DEFAULT_VARIABLE_TWO_WITHOUT_INFORMATION);
                 hint.setParameter(Hint.HINT_VARIABLE1, variable);
                 hint.setParameter(Hint.HINT_VARIABLE2, variable2);
@@ -118,6 +120,11 @@ public abstract class ComparingLiteralsHintFactory {
                 hint = new Hint(DEFAULT_WITHOUT_INFORMATION);
             }
             hint.setParameter(HINT_TRUE_FALSE, IssueTranslator.getInstance().getInfo(String.valueOf(value)));
+            if (value) {
+                hint.setParameter(ADD_INFO_DICT, IssueTranslator.getInstance().getInfo(ADD_INFO_DICT_RESOURCE));
+            } else {
+                hint.setParameter(ADD_INFO_DICT, "");
+            }
         }
         return hint;
     }
@@ -137,9 +144,9 @@ public abstract class ComparingLiteralsHintFactory {
         }
     }
 
-    private static Hint getWaitHint(boolean value, String variable,String variable2, String waitVariable, String waitVariable2, String waitTrue, String waitFalse) {
+    private static Hint getWaitHint(boolean value, String variable, String variable2, String waitVariable, String waitVariable2, String waitTrue, String waitFalse) {
         Hint hint;
-        if (variable!= null && variable2 != null){
+        if (variable != null && variable2 != null) {
             hint = new Hint(waitVariable2);
             hint.setParameter(HINT_TRUE_FALSE, IssueTranslator.getInstance().getInfo(String.valueOf(value)));
             hint.setParameter(Hint.HINT_VARIABLE1, variable);
@@ -154,6 +161,11 @@ public abstract class ComparingLiteralsHintFactory {
             } else {
                 hint = new Hint(waitFalse);
             }
+        }
+        if (value) {
+            hint.setParameter(ADD_INFO_DICT, IssueTranslator.getInstance().getInfo(ADD_INFO_DICT_RESOURCE));
+        } else {
+            hint.setParameter(ADD_INFO_DICT, "");
         }
         return hint;
     }
