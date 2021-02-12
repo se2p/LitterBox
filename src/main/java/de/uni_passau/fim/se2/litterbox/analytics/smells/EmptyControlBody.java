@@ -28,14 +28,15 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.*;
  */
 public class EmptyControlBody extends AbstractIssueFinder {
     public static final String NAME = "empty_control_body";
+    private static final IssueSeverity severity = IssueSeverity.LOW;
 
     @Override
     public void visit(IfElseStmt node) {
         if (node.getStmtList().getStmts().isEmpty()) {
-            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
+            addIssue(node, node.getMetadata(), severity);
         }
         if (node.getElseStmts().getStmts().isEmpty()) {
-            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
+            addIssue(node, node.getMetadata(), severity);
         }
         visitChildren(node);
     }
@@ -43,7 +44,7 @@ public class EmptyControlBody extends AbstractIssueFinder {
     @Override
     public void visit(IfThenStmt node) {
         if (node.getThenStmts().getStmts().isEmpty()) {
-            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
+            addIssue(node, node.getMetadata(), severity);
         }
         visitChildren(node);
     }
@@ -51,7 +52,7 @@ public class EmptyControlBody extends AbstractIssueFinder {
     @Override
     public void visit(UntilStmt node) {
         if (node.getStmtList().getStmts().isEmpty()) {
-            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
+            addIssue(node, node.getMetadata(), severity);
         }
         visitChildren(node);
     }
@@ -59,7 +60,7 @@ public class EmptyControlBody extends AbstractIssueFinder {
     @Override
     public void visit(RepeatForeverStmt node) {
         if (node.getStmtList().getStmts().isEmpty()) {
-            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
+            addIssue(node, node.getMetadata(), severity);
         }
         visitChildren(node);
     }
@@ -67,7 +68,7 @@ public class EmptyControlBody extends AbstractIssueFinder {
     @Override
     public void visit(RepeatTimesStmt node) {
         if (node.getStmtList().getStmts().isEmpty()) {
-            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
+            addIssue(node, node.getMetadata(), severity);
         }
         visitChildren(node);
     }

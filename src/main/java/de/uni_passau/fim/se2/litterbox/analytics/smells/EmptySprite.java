@@ -50,7 +50,7 @@ public class EmptySprite extends AbstractIssueFinder {
                 && !actor.isStage()) {
             Hint hint = new Hint(getName());
             hint.setParameter(Hint.HINT_SPRITE, actor.getIdent().getName());
-            issues.add(new Issue(this, IssueSeverity.HIGH, program, actor, (Script) null, null, null, hint));
+            issues.add(new Issue(this, IssueSeverity.LOW, program, actor, (Script) null, null, null, hint));
         }
     }
 
