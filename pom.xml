@@ -6,7 +6,7 @@
 
     <groupId>de.uni_passau.fim.se2</groupId>
     <artifactId>Litterbox</artifactId>
-    <version>1.5</version>
+    <version>1.6-SNAPSHOT</version>
 
     <build>
         <plugins>
