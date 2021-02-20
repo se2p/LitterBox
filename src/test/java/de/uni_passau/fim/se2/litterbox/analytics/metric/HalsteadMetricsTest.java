@@ -45,9 +45,6 @@ public class HalsteadMetricsTest implements JsonTest {
         assertThat(size).isEqualTo(7);
     }
 
-    // 5,2,7,5
-
-
     @Test
     public void testVolume() throws IOException, ParsingException {
         Program program = getAST("src/test/fixtures/cfg/ifelse_repeattimes.json");
