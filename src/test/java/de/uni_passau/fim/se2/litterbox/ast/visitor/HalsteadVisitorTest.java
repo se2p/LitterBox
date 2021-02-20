@@ -72,8 +72,8 @@ public class HalsteadVisitorTest implements JsonTest {
                 "src/test/fixtures/cfg/broadcastvariableandwait.json,7,5,6,4",
                 "src/test/fixtures/scratchblocks/mathExprInTimerBlock.json,6,5,5,5",
                 "src/test/fixtures/scratchblocks/arithmeticblocks.json,41,7,32,11",
-                "src/test/fixtures/scratchblocks/touchingallblocks.json,50,35,101,25",
-                "src/test/fixtures/scratchblocks/askallblocks.json,47,33,60,24",
+                "src/test/fixtures/scratchblocks/touchingallblocks.json,53,37,98,23",
+                "src/test/fixtures/scratchblocks/askallblocks.json,50,35,57,22",
                 "src/test/fixtures/scratchblocks/booleanblocks.json,22,5,23,10",
                 "src/test/fixtures/scratchblocks/stringblocks.json,10,8,11,9",
                 "src/test/fixtures/scratchblocks/multipleunconnectedblocks.json,2,2,3,3"

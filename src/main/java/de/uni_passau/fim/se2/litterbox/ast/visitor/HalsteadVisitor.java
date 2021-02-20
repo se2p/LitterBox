@@ -29,6 +29,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BoolExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.IsMouseDown;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Not;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.UnspecifiedBoolExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumFunct;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.Round;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.NameNum;
@@ -180,12 +181,7 @@ public class HalsteadVisitor implements ScratchVisitor {
     public void visit(Expression node) {
         // TODO: Refactor once this works
         if (node instanceof SingularExpression) {
-            if (node instanceof IsMouseDown) {
-                operators.add(node.getClass());
-            } else {
-                // Answer, Username, Direction, Loudness, ...
-                operands.add(node);
-            }
+            operands.add(node);
         } else if (node instanceof Parameter) {
             visitChildren(node);
         } else if (node instanceof UnaryExpression) {
@@ -194,6 +190,8 @@ public class HalsteadVisitor implements ScratchVisitor {
                 operators.add(node.getClass());
             }
             visitChildren(node);
+        } else if (node instanceof UnspecifiedBoolExpr) {
+            operands.add(node);
         } else if (node instanceof BinaryExpression || node instanceof BoolExpr || node instanceof ComparableExpr) {
             operators.add(node.getClass());
             visitChildren(node);
