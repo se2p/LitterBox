@@ -21,16 +21,15 @@ package de.uni_passau.fim.se2.litterbox.analytics.metric;
 import de.uni_passau.fim.se2.litterbox.analytics.MetricExtractor;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.HalsteadVisitor;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
-public class HalsteadVocabulary implements MetricExtractor, ScratchVisitor {
+public class HalsteadVocabulary implements MetricExtractor {
 
     @Override
     public double calculateMetric(Program program) {
         HalsteadVisitor halstead = new HalsteadVisitor();
         program.accept(halstead);
-        // The vocabulary size (n) is the sum of the number of unique operators and operands
 
+        // The vocabulary size (n) is the sum of the number of unique operators and operands
         return halstead.getUniqueOperands() + halstead.getUniqueOperators();
     }
 

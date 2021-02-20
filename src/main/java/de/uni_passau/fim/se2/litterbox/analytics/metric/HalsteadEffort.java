@@ -21,16 +21,17 @@ package de.uni_passau.fim.se2.litterbox.analytics.metric;
 import de.uni_passau.fim.se2.litterbox.analytics.MetricExtractor;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.HalsteadVisitor;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
-public class HalsteadEffort implements MetricExtractor, ScratchVisitor {
+public class HalsteadEffort implements MetricExtractor {
 
     @Override
     public double calculateMetric(Program program) {
         HalsteadVisitor halstead = new HalsteadVisitor();
         program.accept(halstead);
-        // E = V * D
 
+        // TODO: extract common code
+
+        // E = V * D
         int length = halstead.getTotalOperands() + halstead.getTotalOperators();
         int size = halstead.getUniqueOperands() + halstead.getUniqueOperators();
         double volume = length * Math.log(size) / Math.log(2);
