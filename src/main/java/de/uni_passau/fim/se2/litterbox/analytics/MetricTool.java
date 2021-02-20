@@ -46,6 +46,7 @@ public class MetricTool {
             new HalsteadVocabulary(),
             new HalsteadVolume(),
             new HatCount(),
+            new InterproceduralCyclomaticComplexity(),
             new InsideControlControlStmtCount(),
             new InsideControlEventsStmtCount(),
             new InsideControlLooksStmtCount(),
