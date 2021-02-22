@@ -50,6 +50,9 @@ class MessageNeverSentTest implements JsonTest {
         MessageNeverSent finder = new MessageNeverSent();
         Set<Issue> reports = finder.check(messageRec);
         Truth.assertThat(reports).hasSize(1);
+        Program program = getAST("src/test/fixtures/bugpattern/broadcastSync.json");
+        reports = finder.check(program);
+        Truth.assertThat(reports).isEmpty();
     }
 
     @Test
@@ -65,6 +68,9 @@ class MessageNeverSentTest implements JsonTest {
             hint.setParameter(Hint.HINT_SAY_THINK, IssueTranslator.getInstance().getInfo("say"));
             Assertions.assertEquals(hint.getHintText(), issue.getHint());
         }
+        messageRec = getAST("src/test/fixtures/bugpattern/messageRec.json");
+        reports = finder.check(messageRec);
+        Truth.assertThat(reports).hasSize(1);
     }
 
     @Test

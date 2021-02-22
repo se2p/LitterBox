@@ -53,5 +53,8 @@ class MessageNeverReceivedTest implements JsonTest {
         Truth.assertThat(reports).hasSize(3);
         Assertions.assertTrue(reports.get(0).isDuplicateOf(reports.get(1)));
         Assertions.assertFalse(reports.get(0).isDuplicateOf(reports.get(2)));
+        program = getAST("src/test/fixtures/bugpattern/broadcastSync.json");
+        Set<Issue> report = finder.check(program);
+        Truth.assertThat(report).hasSize(4);
     }
 }
