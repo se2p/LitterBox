@@ -25,6 +25,9 @@ import de.uni_passau.fim.se2.litterbox.ast.model.event.KeyPressed;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatTimesStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.*;
 
 import java.util.List;
@@ -43,6 +46,7 @@ public class StutteringMovement extends AbstractIssueFinder {
     private boolean hasPositionMove;
     private boolean hasRotation;
     private boolean hasKeyPressed;
+    private int loopCount = 0;
 
     @Override
     public void visit(Script script) {
@@ -50,6 +54,7 @@ public class StutteringMovement extends AbstractIssueFinder {
             // Ignore unconnected blocks
             return;
         }
+        loopCount = 0;
         currentScript = script;
         currentProcedure = null;
         visitChildren(script);
@@ -83,32 +88,63 @@ public class StutteringMovement extends AbstractIssueFinder {
 
     @Override
     public void visit(MoveSteps node) {
-        hasPositionMove = true;
+        if (loopCount == 0) {
+            hasPositionMove = true;
+        }
     }
 
     @Override
     public void visit(ChangeXBy node) {
-        hasPositionMove = true;
+        if (loopCount == 0) {
+            hasPositionMove = true;
+        }
     }
 
     @Override
     public void visit(ChangeYBy node) {
-        hasPositionMove = true;
+        if (loopCount == 0) {
+            hasPositionMove = true;
+        }
     }
 
     @Override
     public void visit(TurnRight node) {
-        hasRotation = true;
+        if (loopCount == 0) {
+            hasRotation = true;
+        }
     }
 
     @Override
     public void visit(TurnLeft node) {
-        hasRotation = true;
+        if (loopCount == 0) {
+            hasRotation = true;
+        }
     }
 
     @Override
     public void visit(KeyPressed node) {
         hasKeyPressed = true;
+    }
+
+    @Override
+    public void visit(UntilStmt node) {
+        loopCount++;
+        visitChildren(node);
+        loopCount--;
+    }
+
+    @Override
+    public void visit(RepeatForeverStmt node) {
+        loopCount++;
+        visitChildren(node);
+        loopCount--;
+    }
+
+    @Override
+    public void visit(RepeatTimesStmt node) {
+        loopCount++;
+        visitChildren(node);
+        loopCount--;
     }
 
     @Override

@@ -72,4 +72,12 @@ public class StutteringMovementTest implements JsonTest {
         Assertions.assertEquals(2, reports.size());
         Assertions.assertTrue(reports.get(0).isDuplicateOf(reports.get(1)));
     }
+
+    @Test
+    public void testNonStuttering() throws IOException, ParsingException {
+        Program stutteringMovement = getAST("./src/test/fixtures/bugpattern/nonStuttering.json");
+        StutteringMovement finder = new StutteringMovement();
+        List<Issue> reports = new ArrayList<>(finder.check(stutteringMovement));
+        Assertions.assertEquals(0, reports.size());
+    }
 }
