@@ -60,18 +60,9 @@ public class StutteringMovement extends AbstractIssueFinder {
         visitChildren(script);
         if (hasKeyPressed) {
             List<Stmt> listOfStmt = script.getStmtList().getStmts();
-            if (listOfStmt.size() == 1) {
+            if (listOfStmt.size() <= 2 && listOfStmt.size() > 0) {
                 Stmt stmt = listOfStmt.get(0);
                 if (hasRotation || hasPositionMove) {
-                    KeyPressed keyPressed = (KeyPressed) script.getEvent();
-                    String key = getKeyValue((int) ((NumberLiteral) keyPressed.getKey().getKey()).getValue());
-                    Hint hint = new Hint(getName());
-                    hint.setParameter(Hint.HINT_KEY, key);
-                    addIssue(stmt, stmt.getMetadata(), IssueSeverity.HIGH, hint);
-                }
-            } else if (listOfStmt.size() == 2) {
-                Stmt stmt = listOfStmt.get(0);
-                if (hasRotation && hasPositionMove) {
                     KeyPressed keyPressed = (KeyPressed) script.getEvent();
                     String key = getKeyValue((int) ((NumberLiteral) keyPressed.getKey().getKey()).getValue());
                     Hint hint = new Hint(getName());
@@ -135,13 +126,6 @@ public class StutteringMovement extends AbstractIssueFinder {
 
     @Override
     public void visit(RepeatForeverStmt node) {
-        loopCount++;
-        visitChildren(node);
-        loopCount--;
-    }
-
-    @Override
-    public void visit(RepeatTimesStmt node) {
         loopCount++;
         visitChildren(node);
         loopCount--;
