@@ -45,7 +45,6 @@ public class StutteringMovement extends AbstractIssueFinder {
     public static final String NAME = "stuttering_movement";
     private boolean hasPositionMove;
     private boolean hasRotation;
-    private boolean hasKeyPressed;
     private int loopCount = 0;
 
     @Override
@@ -58,7 +57,7 @@ public class StutteringMovement extends AbstractIssueFinder {
         currentScript = script;
         currentProcedure = null;
         visitChildren(script);
-        if (hasKeyPressed) {
+        if (script.getEvent() instanceof KeyPressed) {
             List<Stmt> listOfStmt = script.getStmtList().getStmts();
             if (listOfStmt.size() <= 2 && listOfStmt.size() > 0) {
                 Stmt stmt = listOfStmt.get(0);
@@ -71,7 +70,6 @@ public class StutteringMovement extends AbstractIssueFinder {
                 }
             }
         }
-        hasKeyPressed = false;
         hasPositionMove = false;
         hasRotation = false;
         currentScript = null;
@@ -110,11 +108,6 @@ public class StutteringMovement extends AbstractIssueFinder {
         if (loopCount == 0) {
             hasRotation = true;
         }
-    }
-
-    @Override
-    public void visit(KeyPressed node) {
-        hasKeyPressed = true;
     }
 
     @Override
