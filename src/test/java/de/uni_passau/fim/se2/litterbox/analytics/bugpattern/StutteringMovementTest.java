@@ -37,7 +37,7 @@ public class StutteringMovementTest implements JsonTest {
         Program stutteringMovement = getAST("./src/test/fixtures/bugpattern/stutteringMovement.json");
         StutteringMovement finder = new StutteringMovement();
         Set<Issue> reports = finder.check(stutteringMovement);
-        Assertions.assertEquals(3, reports.size());
+        Assertions.assertEquals(5, reports.size());
     }
 
     @Test
