@@ -59,6 +59,8 @@ public class ComputationalThinkingScoreAbstraction implements MetricExtractor, S
                 score = Math.max(1, score);
             }
         }
+        visit(node.getScripts());
+        visit(node.getProcedureDefinitionList());
     }
 
     @Override

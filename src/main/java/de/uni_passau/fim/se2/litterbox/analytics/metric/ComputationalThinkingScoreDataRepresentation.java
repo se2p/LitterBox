@@ -19,6 +19,7 @@
 package de.uni_passau.fim.se2.litterbox.analytics.metric;
 
 import de.uni_passau.fim.se2.litterbox.analytics.MetricExtractor;
+import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.ListContains;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.LengthOfVar;
@@ -40,6 +41,14 @@ public class ComputationalThinkingScoreDataRepresentation implements MetricExtra
         score = 0;
         program.accept(this);
         return score;
+    }
+
+    @Override
+    public void visit(ActorDefinition node) {
+        // Make sure variable statements are only counted inside code
+        // and not initialization of the program
+        visit(node.getScripts());
+        visit(node.getProcedureDefinitionList());
     }
 
     @Override
