@@ -38,6 +38,15 @@ public class MetricTool {
 
     private List<MetricExtractor> metrics = Arrays.asList(
             new BlockCount(),
+            new ComputationalThinkingAverageScore(),
+            new ComputationalThinkingScore(),
+            new ComputationalThinkingScoreAbstraction(),
+            new ComputationalThinkingScoreDataRepresentation(),
+            new ComputationalThinkingScoreFlowControl(),
+            new ComputationalThinkingScoreLogic(),
+            new ComputationalThinkingScoreParallelization(),
+            new ComputationalThinkingScoreSynchronization(),
+            new ComputationalThinkingScoreUserInteractivity(),
             new ControlBlockCount(),
             new EventsBlockCount(),
             new HatCount(),
