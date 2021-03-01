@@ -124,6 +124,21 @@ public class MessageNaming extends AbstractIssueFinder {
         return trimName(firstName).equals(trimName(secondName));
     }
 
+    @Override
+    public boolean isSimilarTo(Issue first, Issue other) {
+        if (first == other) {
+            // Don't check against self
+            return false;
+        }
+
+        if (first.getFinder() != other.getFinder()) {
+            // Can only be a duplicate if it's the same finder
+            return false;
+        }
+
+        return true;
+    }
+
     private String getText(ASTNode codeLocation) {
         if (codeLocation instanceof Broadcast) {
             StringExpr expr = ((Broadcast) codeLocation).getMessage().getMessage();

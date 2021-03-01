@@ -18,6 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics;
 
+import de.uni_passau.fim.se2.litterbox.analytics.clonedetection.NormalizationVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
@@ -140,26 +141,14 @@ public abstract class AbstractIssueFinder implements IssueFinder, ScratchVisitor
             // Don't check against self
             return false;
         }
+
         if (first.getFinder() != other.getFinder()) {
             // Can only be a duplicate if it's the same finder
             return false;
         }
 
-        if (first.getScriptOrProcedureDefinition() == null) {
-            if (other.getScriptOrProcedureDefinition() != null) {
-                // Need to refer to same script
-                return false;
-            }
-        }
-
-        if (other.getScriptOrProcedureDefinition() == null) {
-            if (first.getScriptOrProcedureDefinition() != null) {
-                // Need to refer to same script
-                return false;
-            }
-        }
-
-        if (first.getScriptOrProcedureDefinition() == null && other.getScriptOrProcedureDefinition() == null) {
+        if ((first.getScriptOrProcedureDefinition() == null) || (other.getScriptOrProcedureDefinition() == null)) {
+            // Need to refer to same script
             return false;
         }
 
@@ -172,6 +161,44 @@ public abstract class AbstractIssueFinder implements IssueFinder, ScratchVisitor
             // Same block, so assume it's a duplicate
             return true;
         }
+
+        return false;
+    }
+
+    @Override
+    public boolean isSimilarTo(Issue first, Issue other) {
+        if (first == other) {
+            // Don't check against self
+            return false;
+        }
+
+        if (first.getFinder() != other.getFinder()) {
+            // Can only be a duplicate if it's the same finder
+            return false;
+        }
+
+        if ((first.getScriptOrProcedureDefinition() == null) || (other.getScriptOrProcedureDefinition() == null)) {
+            // Need to refer to same script
+            return false;
+        }
+
+        NormalizationVisitor visitor = new NormalizationVisitor();
+        ASTNode firstNormalized = first.getScriptOrProcedureDefinition().accept(visitor);
+        ASTNode otherNormalized = other.getScriptOrProcedureDefinition().accept(visitor);
+
+        if (!firstNormalized.equals(otherNormalized)) {
+            // Need to refer to same script
+            return false;
+        }
+
+        ASTNode firstNormalizedLocation = first.getCodeLocation().accept(visitor);
+        ASTNode otherNormalizedLocation = other.getCodeLocation().accept(visitor);
+
+        if (firstNormalizedLocation.equals(otherNormalizedLocation)) {
+            // Same block, so assume it's a duplicate
+            return true;
+        }
+
         return false;
     }
 

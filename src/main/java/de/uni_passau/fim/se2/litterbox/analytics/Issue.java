@@ -184,4 +184,8 @@ public class Issue {
         return finder.isDuplicateOf(this, other);
     }
 
+    public boolean isSimilarTo(Issue other) {
+        return finder.isSimilarTo(this, other);
+    }
+
 }

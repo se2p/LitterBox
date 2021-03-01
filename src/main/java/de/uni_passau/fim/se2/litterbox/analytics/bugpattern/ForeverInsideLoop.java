@@ -31,7 +31,7 @@ import java.util.List;
 
 /**
  * If two loops are nested and the inner loop is a forever loop, the inner loop will never terminate. Thus
- * the statements preceeding the inner loop are only executed once. Furthermore, the statements following the outer
+ * the statements preceding the inner loop are only executed once. Furthermore, the statements following the outer
  * loop can never be reached.
  */
 public class ForeverInsideLoop extends AbstractIssueFinder {

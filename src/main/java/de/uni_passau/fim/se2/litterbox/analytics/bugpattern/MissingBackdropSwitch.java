@@ -22,6 +22,8 @@ import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
+import de.uni_passau.fim.se2.litterbox.analytics.clonedetection.NormalizationVisitor;
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.*;
@@ -187,6 +189,22 @@ public class MissingBackdropSwitch extends AbstractIssueFinder {
         }
 
         return first.getCodeLocation().equals(other.getCodeLocation());
+    }
+
+    @Override
+    public boolean isSimilarTo(Issue first, Issue other) {
+        if (first == other) {
+            return false;
+        }
+        if (first.getFinder() != other.getFinder()) {
+            return false;
+        }
+
+        NormalizationVisitor visitor = new NormalizationVisitor();
+        ASTNode firstNormalizedLocation = first.getCodeLocation().accept(visitor);
+        ASTNode otherNormalizedLocation = other.getCodeLocation().accept(visitor);
+
+        return firstNormalizedLocation.equals(otherNormalizedLocation);
     }
 
     @Override

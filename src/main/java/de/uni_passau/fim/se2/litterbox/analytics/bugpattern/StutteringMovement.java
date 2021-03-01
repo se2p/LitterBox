@@ -19,6 +19,7 @@
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
 import de.uni_passau.fim.se2.litterbox.analytics.*;
+import de.uni_passau.fim.se2.litterbox.analytics.clonedetection.NormalizationVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.KeyPressed;
@@ -143,6 +144,31 @@ public class StutteringMovement extends AbstractIssueFinder {
             return true;
         }
         return first.getCodeLocation().equals(other.getCodeLocation());
+    }
+
+    @Override
+    public boolean isSimilarTo(Issue first, Issue other) {
+        if (first == other) {
+            return false;
+        }
+        if (first.getFinder() != other.getFinder()) {
+            return false;
+        }
+
+        ASTNode firstNode = first.getCodeLocation();
+        ASTNode secondNode = other.getCodeLocation();
+
+        if ((firstNode instanceof TurnLeft || firstNode instanceof TurnRight) && (secondNode instanceof TurnLeft || secondNode instanceof TurnRight)) {
+            return true;
+        }
+        if (firstNode instanceof MoveSteps && secondNode instanceof MoveSteps) {
+            return true;
+        }
+        NormalizationVisitor visitor = new NormalizationVisitor();
+        ASTNode firstNormalizedLocation = first.getCodeLocation().accept(visitor);
+        ASTNode otherNormalizedLocation = other.getCodeLocation().accept(visitor);
+
+        return firstNormalizedLocation.equals(otherNormalizedLocation);
     }
 
     @Override

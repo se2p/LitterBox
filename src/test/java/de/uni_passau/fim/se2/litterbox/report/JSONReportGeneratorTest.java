@@ -65,6 +65,7 @@ public class JSONReportGeneratorTest implements JsonTest {
             assertThat(node.has("id")).isTrue();
             assertThat(node.has("duplicate-of")).isTrue();
             assertThat(node.has("subsumed-by")).isTrue();
+            assertThat(node.has("similar-to")).isTrue();
         }
     }
 
@@ -290,5 +291,89 @@ public class JSONReportGeneratorTest implements JsonTest {
             assertThat(coupling1.size()).isEqualTo(1);
             assertThat(coupling0.get(0).asInt()).isEqualTo(issue1.get("id").asInt());
         }
+    }
+
+
+    @Test
+    public void testDuplicatesAreSimilar() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/bugpattern/multiple_missingbroadcast.json");
+
+        MessageNeverSent finder = new MessageNeverSent();
+        Set<Issue> issues = finder.check(program);
+
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        JSONReportGenerator generator = new JSONReportGenerator(os);
+        generator.generateReport(program, issues);
+        os.close();
+        String issueText = os.toString();
+        assertValidJsonIssue(issueText, 3);
+
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode rootNode = mapper.readTree(issueText);
+        JsonNode issueNode = rootNode.get("issues");
+
+        JsonNode issue0 = issueNode.get(0);
+        JsonNode issue1 = issueNode.get(1);
+        JsonNode issue2 = issueNode.get(2);
+        Set<Integer> ids = new LinkedHashSet<>();
+        ids.add(issue0.get("id").asInt());
+        ids.add(issue1.get("id").asInt());
+        ids.add(issue2.get("id").asInt());
+
+        JsonNode duplicateList = issue0.get("similar-to");
+        Set<Integer> duplicates = new LinkedHashSet<>(ids);
+        duplicates.remove(issue0.get("id").intValue());
+        assertThat(duplicateList.get(0).asInt()).isIn(duplicates);
+        assertThat(duplicateList.get(1).asInt()).isIn(duplicates);
+
+        duplicateList = issue1.get("similar-to");
+        duplicates = new LinkedHashSet<>(ids);
+        duplicates.remove(issue1.get("id").intValue());
+        assertThat(duplicateList.get(0).asInt()).isIn(duplicates);
+        assertThat(duplicateList.get(1).asInt()).isIn(duplicates);
+
+        duplicateList = issue2.get("similar-to");
+        duplicates = new LinkedHashSet<>(ids);
+        duplicates.remove(issue2.get("id").intValue());
+        assertThat(duplicateList.get(0).asInt()).isIn(duplicates);
+        assertThat(duplicateList.get(1).asInt()).isIn(duplicates);
+    }
+
+    @Test
+    public void testSimilarButNotSame() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/similarButNotSame.json");
+
+        ForeverInsideLoop finder = new ForeverInsideLoop();
+        Set<Issue> issues = finder.check(program);
+
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        JSONReportGenerator generator = new JSONReportGenerator(os);
+        generator.generateReport(program, issues);
+        os.close();
+        String issueText = os.toString();
+        assertValidJsonIssue(issueText, 2);
+
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode rootNode = mapper.readTree(issueText);
+        JsonNode issueNode = rootNode.get("issues");
+
+        JsonNode issue0 = issueNode.get(0);
+        JsonNode issue1 = issueNode.get(1);
+        Set<Integer> ids = new LinkedHashSet<>();
+        ids.add(issue0.get("id").asInt());
+        ids.add(issue1.get("id").asInt());
+
+        JsonNode duplicateList = issue0.get("similar-to");
+        Set<Integer> duplicates = new LinkedHashSet<>(ids);
+        duplicates.remove(issue0.get("id").intValue());
+        assertThat(duplicateList.get(0).asInt()).isIn(duplicates);
+
+        duplicateList = issue1.get("similar-to");
+        duplicates = new LinkedHashSet<>(ids);
+        duplicates.remove(issue1.get("id").intValue());
+        assertThat(duplicateList.get(0).asInt()).isIn(duplicates);
+
+        assertThat(issue0.get("duplicate-of")).isEmpty();
+        assertThat(issue1.get("duplicate-of")).isEmpty();
     }
 }

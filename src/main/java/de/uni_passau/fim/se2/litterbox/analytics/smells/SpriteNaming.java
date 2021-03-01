@@ -106,6 +106,22 @@ public class SpriteNaming extends AbstractIssueFinder {
     }
 
     @Override
+    public boolean isSimilarTo(Issue first, Issue other) {
+        if (first == other) {
+            // Don't check against self
+            return false;
+        }
+
+        if (first.getFinder() != other.getFinder()) {
+            // Can only be a duplicate if it's the same finder
+            return false;
+        }
+
+        // All Sprite Naming bugs are similar
+        return true;
+    }
+
+    @Override
     public IssueType getIssueType() {
         return IssueType.SMELL;
     }

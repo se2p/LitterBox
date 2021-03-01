@@ -130,6 +130,12 @@ abstract class ClonedCode extends AbstractIssueFinder {
         return compareNodes(mbIssue1.getNodes(), mbIssue2.getNodes());
     }
 
+    @Override
+    public boolean isSimilarTo(Issue first, Issue other) {
+        // TODO: Can this be relaxed?
+        return isDuplicateOf(first, other);
+    }
+
     protected boolean compareNodes(List<ASTNode> nodes1, List<ASTNode> nodes2) {
         List<Stmt> statements1 = new ArrayList<>();
         List<Stmt> statements2 = new ArrayList<>();

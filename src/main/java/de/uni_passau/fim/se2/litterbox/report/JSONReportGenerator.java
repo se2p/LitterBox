@@ -73,6 +73,13 @@ public class JSONReportGenerator implements ReportGenerator {
                 .forEach(id -> jsonNode.add(id));
     }
 
+    private void addSimilarIssueIDs(ArrayNode jsonNode, Issue theIssue, Collection<Issue> issues) {
+        issues.stream().filter(issue -> issue != theIssue)
+                .filter(issue -> theIssue.isSimilarTo(issue))
+                .map(issue -> issue.getId())
+                .forEach(id -> jsonNode.add(id));
+    }
+
     @Override
     public void generateReport(Program program, Collection<Issue> issues) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
@@ -100,6 +107,9 @@ public class JSONReportGenerator implements ReportGenerator {
 
             ArrayNode coupledNode  = ((ObjectNode) childNode).putArray("coupled-to");
             addCoupledIssueIDs(coupledNode, issue, issues);
+
+            ArrayNode similarNode  = ((ObjectNode) childNode).putArray("similar-to");
+            addSimilarIssueIDs(similarNode, issue, issues);
 
             ((ObjectNode) childNode).put("hint", issue.getHint());
             ArrayNode arrayNode = ((ObjectNode) childNode).putArray("costumes");

@@ -166,6 +166,17 @@ public class MissingInitialization implements IssueFinder {
     }
 
     @Override
+    public boolean isSimilarTo(Issue first, Issue other) {
+        if (first == other) {
+            return false;
+        }
+        if (first.getFinder() != other.getFinder()) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
     public boolean isSubsumedBy(Issue first, Issue other) {
         // TODO: Implement
         return false;
