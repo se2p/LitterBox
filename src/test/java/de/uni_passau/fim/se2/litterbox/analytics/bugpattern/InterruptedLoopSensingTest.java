@@ -67,4 +67,12 @@ public class InterruptedLoopSensingTest implements JsonTest {
         Set<Issue> reports = parameterName.check(empty);
         Assertions.assertEquals(0, reports.size());
     }
+
+    @Test
+    public void testInterruptedLoopSensingWithStop() throws IOException, ParsingException {
+        Program empty = JsonTest.parseProgram("./src/test/fixtures/bugpattern/interruptedLoopSensingWithStop.json");
+        InterruptedLoopSensing parameterName = new InterruptedLoopSensing();
+        Set<Issue> reports = parameterName.check(empty);
+        Assertions.assertEquals(1, reports.size());
+    }
 }

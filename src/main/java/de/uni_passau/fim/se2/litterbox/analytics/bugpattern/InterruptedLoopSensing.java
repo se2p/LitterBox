@@ -102,6 +102,8 @@ public class InterruptedLoopSensing extends AbstractIssueFinder {
                     checkForVariableChange(node.getElseStmts());
                 }
                 inCondition = false;
+                checkForStop(node.getStmtList());
+                checkForStop(node.getElseStmts());
                 insideControl = true;
                 blockName = IssueTranslator.getInstance().getInfo("if") + " " + IssueTranslator.getInstance().getInfo("then") + " " + IssueTranslator.getInstance().getInfo("else");
                 node.getStmtList().accept(this);
@@ -133,6 +135,7 @@ public class InterruptedLoopSensing extends AbstractIssueFinder {
                     checkForVariableChange(node.getThenStmts());
                 }
                 inCondition = false;
+                checkForStop(node.getThenStmts());
                 insideControl = true;
                 blockName = IssueTranslator.getInstance().getInfo("if") + " " + IssueTranslator.getInstance().getInfo("then");
                 node.getThenStmts().accept(this);
@@ -168,6 +171,7 @@ public class InterruptedLoopSensing extends AbstractIssueFinder {
             sensingCollision = false;
             sensingOther = false;
         }
+        hasStop=false;
     }
 
     @Override
