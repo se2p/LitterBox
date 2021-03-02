@@ -1,17 +1,19 @@
 package de.uni_passau.fim.se2.litterbox.analytics.pqGram;
 
+import com.google.common.collect.HashMultiset;
+import com.google.common.collect.Multiset;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
-import org.apache.commons.collections4.Bag;
-import org.apache.commons.collections4.bag.HashBag;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class PQGramProfileUtil {
+public final class PQGramProfileUtil {
     private static int p = 2;
     private static int q = 3;
     public static final String NULL_NODE = "*";
-    // private static Map<String, Integer> countPerLabel;
+
+    private PQGramProfileUtil() {
+    }
 
     public static PQGramProfile createPQProfile(ASTNode node) {
         PQGramProfile profile = new PQGramProfile();
@@ -19,14 +21,16 @@ public abstract class PQGramProfileUtil {
         for (int i = 0; i < p; i++) {
             anc.add(new Label(NULL_NODE));
         }
-        // countPerLabel = new LinkedHashMap<>();
 
         profile = profileStep(profile, node, getBlockName(node), anc);
         return profile;
     }
 
     public static double calculateDistance(PQGramProfile profile1, PQGramProfile profile2) {
-        Bag<LabelTuple> intersection = new HashBag<>(profile1.getTuples());
+        if (profile1.getTuples().isEmpty() && profile2.getTuples().isEmpty()) {
+            return 0;
+        }
+        Multiset<LabelTuple> intersection = HashMultiset.create(profile1.getTuples());
         intersection.retainAll(profile2.getTuples());
         double division = (double) intersection.size() / (profile1.getTuples().size() + profile2.getTuples().size());
         return 1 - (2 * division);

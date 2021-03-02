@@ -1,20 +1,20 @@
 package de.uni_passau.fim.se2.litterbox.analytics.pqGram;
 
-import org.apache.commons.collections4.Bag;
-import org.apache.commons.collections4.bag.HashBag;
+import com.google.common.collect.HashMultiset;
+import com.google.common.collect.Multiset;
 
 public class PQGramProfile {
-    private Bag<LabelTuple> tuples;
+    private Multiset<LabelTuple> tuples;
 
     public PQGramProfile() {
-        tuples = new HashBag<>();
+        tuples = HashMultiset.create();
     }
 
     public void addLabelTuple(LabelTuple tuple) {
         tuples.add(tuple);
     }
 
-    public Bag<LabelTuple> getTuples() {
+    public Multiset<LabelTuple> getTuples() {
         return tuples;
     }
 

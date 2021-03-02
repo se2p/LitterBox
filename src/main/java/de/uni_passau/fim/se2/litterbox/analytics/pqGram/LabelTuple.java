@@ -44,13 +44,4 @@ public class LabelTuple {
     public String toString() {
         return labels.toString();
     }
-
-    public boolean containsLabel(Label label) {
-        for (Label value : labels) {
-            if (value.getLabel().equals(label.getLabel())) {
-                return true;
-            }
-        }
-        return false;
-    }
 }
