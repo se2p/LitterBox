@@ -18,6 +18,9 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics;
 
+import de.uni_passau.fim.se2.litterbox.analytics.clonedetection.NormalizationVisitor;
+import de.uni_passau.fim.se2.litterbox.analytics.pqGram.PQGramProfileUtil;
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.jsonCreation.JSONFileCreator;
 import de.uni_passau.fim.se2.litterbox.report.CSVReportGenerator;
@@ -55,7 +58,7 @@ public class BugAnalyzer extends Analyzer {
     /**
      * The method for analyzing one Scratch project file (ZIP). It will produce only console output.
      *
-     * @param fileEntry the file to analyze
+     * @param fileEntry      the file to analyze
      * @param reportFileName the file in which to write the results
      */
     void check(File fileEntry, String reportFileName) {
@@ -75,9 +78,40 @@ public class BugAnalyzer extends Analyzer {
         Set<Issue> issues = new LinkedHashSet<>();
         for (IssueFinder iF : issueFinders) {
             iF.setIgnoreLooseBlocks(ignoreLooseBlocks);
-            issues.addAll(iF.check(program));
+            Set<Issue> newIssues = iF.check(program);
+            calculateDistancesBetweenIssues(newIssues);
+            issues.addAll(newIssues);
         }
         return issues;
+    }
+
+    private void calculateDistancesBetweenIssues(Set<Issue> issues) {
+        List<Issue> allIssues = new ArrayList<>(issues);
+        NormalizationVisitor visitor = new NormalizationVisitor();
+        for (int i = 0; i < allIssues.size(); i++) {
+            Issue first = allIssues.get(i);
+
+            if (first.getCodeLocation() != null) {
+                ASTNode firstNormalizedLocation = first.getCodeLocation().accept(visitor);
+
+                for (int j = i + 1; j < allIssues.size(); j++) {
+                    Issue second = allIssues.get(j);
+                    if (second.getCodeLocation() != null) {
+                        ASTNode secondNormalizedLocation = second.getCodeLocation().accept(visitor);
+                        double distance = PQGramProfileUtil.calculateDistance(first.getScriptOrProcedureDefinition(), second.getScriptOrProcedureDefinition());
+
+                        //if the code location is different the distance is increased by 1 to reflect this
+                        if (firstNormalizedLocation.equals(secondNormalizedLocation)) {
+                            first.addDistance(second, distance);
+                            second.addDistance(first, distance);
+                        } else {
+                            first.addDistance(second, 1 + distance);
+                            second.addDistance(first, 1 + distance);
+                        }
+                    }
+                }
+            }
+        }
     }
 
     private void generateOutput(Program program, Set<Issue> issues, String reportFileName) {
@@ -98,10 +132,9 @@ public class BugAnalyzer extends Analyzer {
         } catch (IOException e) {
             log.warning(e.getMessage());
         }
-
     }
 
-    private void createAnnotatedFile(File fileEntry, Program program, Set<Issue> issues, String annotatePath)  {
+    private void createAnnotatedFile(File fileEntry, Program program, Set<Issue> issues, String annotatePath) {
         if (annotationOutput != null && !annotationOutput.isEmpty()) {
             try {
                 CommentGenerator commentGenerator = new CommentGenerator();

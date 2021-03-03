@@ -36,6 +36,10 @@ public final class PQGramProfileUtil {
         return 1 - (2 * division);
     }
 
+    public static double calculateDistance(ASTNode node1, ASTNode node2) {
+        return calculateDistance(createPQProfile(node1), createPQProfile(node2));
+    }
+
     private static String getBlockName(ASTNode node) {
         String blockName;
         blockName = node.getClass().getSimpleName();

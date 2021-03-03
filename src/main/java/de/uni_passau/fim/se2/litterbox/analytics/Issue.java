@@ -26,6 +26,9 @@ import de.uni_passau.fim.se2.litterbox.ast.model.metadata.Metadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * The Issue represents issues that are identified in Scratch Projects.
  */
@@ -41,8 +44,10 @@ public class Issue {
     private Metadata metaData;
     private Hint hint;
     private int id;
+    private Map<Issue, Double> distancesToOtherIssues;
 
     private static int globalIssueCount = 0;
+
     /**
      * Creates a new issue the contains the finder that created this issue, the actor in which the issue was found and
      * the ASTNode that is most specific to this issue.
@@ -65,6 +70,7 @@ public class Issue {
         this.metaData = metaData;
         this.hint = hint;
         this.id = globalIssueCount++;
+        distancesToOtherIssues = new HashMap<>();
         // Check that hints have actually been declared, otherwise
         // we might be missing translations
         assert (finder.getHintKeys().contains(hint.getHintKey()));
@@ -91,6 +97,7 @@ public class Issue {
         this.node = currentNode;
         this.metaData = metaData;
         this.hint = hint;
+        distancesToOtherIssues = new HashMap<>();
         // Check that hints have actually been declared, otherwise
         // we might be missing translations
         assert (finder.getHintKeys().contains(hint.getHintKey()));
@@ -100,7 +107,9 @@ public class Issue {
         return finder;
     }
 
-    public IssueSeverity getSeverity() { return severity; }
+    public IssueSeverity getSeverity() {
+        return severity;
+    }
 
     public IssueType getIssueType() {
         return finder.getIssueType();
@@ -118,7 +127,9 @@ public class Issue {
         return procedure;
     }
 
-    public Program getProgram() { return program; }
+    public Program getProgram() {
+        return program;
+    }
 
     public String getActorName() {
         return actor.getIdent().getName();
@@ -188,4 +199,11 @@ public class Issue {
         return finder.isSimilarTo(this, other);
     }
 
+    public Map<Issue, Double> getDistancesToOtherIssues() {
+        return distancesToOtherIssues;
+    }
+
+    public void addDistance(Issue issue, double distance) {
+        distancesToOtherIssues.put(issue, distance);
+    }
 }
