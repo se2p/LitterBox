@@ -40,6 +40,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SayForSecs
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.ThinkForSecs;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.GlideSecsTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.GlideSecsToXY;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopAll;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopThisScript;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 
@@ -54,6 +56,9 @@ public class InterruptedLoopSensing extends AbstractIssueFinder {
     private boolean sensingOther = false;
     private boolean insideForever = false;
     private boolean insideControl = false;
+    private boolean hasStop = false;
+    private boolean hasStopInIf = false;
+    private boolean checkingStop = false;
     private String blockName;
     private ASTNode variableName;
     private boolean checkingVariable;
@@ -76,6 +81,7 @@ public class InterruptedLoopSensing extends AbstractIssueFinder {
                 checkForVariableChange(node.getStmtList());
             }
             inCondition = false;
+            checkForStop(node.getStmtList());
             insideControl = true;
             blockName = IssueTranslator.getInstance().getInfo("until");
             node.getStmtList().accept(this);
@@ -87,7 +93,7 @@ public class InterruptedLoopSensing extends AbstractIssueFinder {
 
     @Override
     public void visit(IfElseStmt node) {
-        if (!checkingVariable) {
+        if (!checkingVariable && !checkingStop) {
             if (insideForever) {
                 inCondition = true;
                 node.getBoolExpr().accept(this);
@@ -96,6 +102,8 @@ public class InterruptedLoopSensing extends AbstractIssueFinder {
                     checkForVariableChange(node.getElseStmts());
                 }
                 inCondition = false;
+                checkForStop(node.getStmtList());
+                checkForStop(node.getElseStmts());
                 insideControl = true;
                 blockName = IssueTranslator.getInstance().getInfo("if") + " " + IssueTranslator.getInstance().getInfo("then") + " " + IssueTranslator.getInstance().getInfo("else");
                 node.getStmtList().accept(this);
@@ -104,12 +112,22 @@ public class InterruptedLoopSensing extends AbstractIssueFinder {
                 sensingCollision = false;
                 sensingOther = false;
             }
+        } else if (!hasStop && checkingStop) {
+            node.getStmtList().accept(this);
+            if (hasStop) {
+                hasStop = false;
+                hasStopInIf = true;
+            }
+            if (hasStopInIf) {
+                node.getElseStmts().accept(this);
+                hasStopInIf = false;
+            }
         }
     }
 
     @Override
     public void visit(IfThenStmt node) {
-        if (!checkingVariable) {
+        if (!checkingVariable && !checkingStop) {
             if (insideForever) {
                 inCondition = true;
                 node.getBoolExpr().accept(this);
@@ -117,6 +135,7 @@ public class InterruptedLoopSensing extends AbstractIssueFinder {
                     checkForVariableChange(node.getThenStmts());
                 }
                 inCondition = false;
+                checkForStop(node.getThenStmts());
                 insideControl = true;
                 blockName = IssueTranslator.getInstance().getInfo("if") + " " + IssueTranslator.getInstance().getInfo("then");
                 node.getThenStmts().accept(this);
@@ -137,6 +156,22 @@ public class InterruptedLoopSensing extends AbstractIssueFinder {
         stmts.accept(this);
         checkingVariable = false;
         variableName = null;
+    }
+
+    /**
+     * If the stmts only lead to a stop without alternate control flow the interruption should not be detected.
+     *
+     * @param stmts stmts that should be searched
+     */
+    private void checkForStop(StmtList stmts) {
+        checkingStop = true;
+        stmts.accept(this);
+        checkingStop = false;
+        if (hasStop) {
+            sensingCollision = false;
+            sensingOther = false;
+        }
+        hasStop=false;
     }
 
     @Override
@@ -204,7 +239,7 @@ public class InterruptedLoopSensing extends AbstractIssueFinder {
 
     @Override
     public void visit(GlideSecsTo node) {
-        if (!checkingVariable) {
+        if (!checkingVariable && !checkingStop) {
             if (insideControl && (sensingCollision || sensingOther)) {
                 Hint hint = new Hint(getName());
                 hint.setParameter(Hint.THEN_ELSE, blockName);
@@ -216,7 +251,7 @@ public class InterruptedLoopSensing extends AbstractIssueFinder {
 
     @Override
     public void visit(GlideSecsToXY node) {
-        if (!checkingVariable) {
+        if (!checkingVariable && !checkingStop) {
             if (insideControl && (sensingCollision || sensingOther)) {
                 Hint hint = new Hint(getName());
                 hint.setParameter(Hint.THEN_ELSE, blockName);
@@ -228,7 +263,7 @@ public class InterruptedLoopSensing extends AbstractIssueFinder {
 
     @Override
     public void visit(WaitSeconds node) {
-        if (!checkingVariable) {
+        if (!checkingVariable && !checkingStop) {
             if (insideControl && sensingOther) {
                 Hint hint = new Hint(getName());
                 hint.setParameter(Hint.THEN_ELSE, blockName);
@@ -240,7 +275,7 @@ public class InterruptedLoopSensing extends AbstractIssueFinder {
 
     @Override
     public void visit(ThinkForSecs node) {
-        if (!checkingVariable) {
+        if (!checkingVariable && !checkingStop) {
             if (insideControl && sensingOther) {
                 Hint hint = new Hint(getName());
                 hint.setParameter(Hint.THEN_ELSE, blockName);
@@ -252,7 +287,7 @@ public class InterruptedLoopSensing extends AbstractIssueFinder {
 
     @Override
     public void visit(PlaySoundUntilDone node) {
-        if (!checkingVariable) {
+        if (!checkingVariable && !checkingStop) {
             if (insideControl && sensingOther) {
                 Hint hint = new Hint(getName());
                 hint.setParameter(Hint.THEN_ELSE, blockName);
@@ -264,7 +299,7 @@ public class InterruptedLoopSensing extends AbstractIssueFinder {
 
     @Override
     public void visit(SayForSecs node) {
-        if (!checkingVariable) {
+        if (!checkingVariable && !checkingStop) {
             if (insideControl && sensingOther) {
                 Hint hint = new Hint(getName());
                 hint.setParameter(Hint.THEN_ELSE, blockName);
@@ -276,7 +311,7 @@ public class InterruptedLoopSensing extends AbstractIssueFinder {
 
     @Override
     public void visit(IsKeyPressed node) {
-        if (!checkingVariable) {
+        if (!checkingVariable && !checkingStop) {
             if (inCondition) {
                 sensingOther = true;
             }
@@ -285,7 +320,7 @@ public class InterruptedLoopSensing extends AbstractIssueFinder {
 
     @Override
     public void visit(Touching node) {
-        if (!checkingVariable) {
+        if (!checkingVariable && !checkingStop) {
             if (inCondition) {
                 sensingCollision = true;
             }
@@ -294,7 +329,7 @@ public class InterruptedLoopSensing extends AbstractIssueFinder {
 
     @Override
     public void visit(IsMouseDown node) {
-        if (!checkingVariable) {
+        if (!checkingVariable && !checkingStop) {
             if (inCondition) {
                 sensingOther = true;
             }
@@ -303,7 +338,7 @@ public class InterruptedLoopSensing extends AbstractIssueFinder {
 
     @Override
     public void visit(ColorTouchingColor node) {
-        if (!checkingVariable) {
+        if (!checkingVariable && !checkingStop) {
             if (inCondition) {
                 sensingCollision = true;
             }
@@ -312,7 +347,7 @@ public class InterruptedLoopSensing extends AbstractIssueFinder {
 
     @Override
     public void visit(SpriteTouchingColor node) {
-        if (!checkingVariable) {
+        if (!checkingVariable && !checkingStop) {
             if (inCondition) {
                 sensingCollision = true;
             }
@@ -321,7 +356,7 @@ public class InterruptedLoopSensing extends AbstractIssueFinder {
 
     @Override
     public void visit(DistanceTo node) {
-        if (!checkingVariable) {
+        if (!checkingVariable && !checkingStop) {
             if (inCondition) {
                 sensingCollision = true;
             }
@@ -330,7 +365,7 @@ public class InterruptedLoopSensing extends AbstractIssueFinder {
 
     @Override
     public void visit(Equals node) {
-        if (!checkingVariable) {
+        if (!checkingVariable && !checkingStop) {
             if (inCondition) {
                 insideEquals = true;
             }
@@ -341,7 +376,7 @@ public class InterruptedLoopSensing extends AbstractIssueFinder {
 
     @Override
     public void visit(Variable node) {
-        if (!checkingVariable) {
+        if (!checkingVariable && !checkingStop) {
             if (insideEquals) {
                 sensingOther = true;
                 variableName = node.getParentNode();
@@ -351,11 +386,25 @@ public class InterruptedLoopSensing extends AbstractIssueFinder {
 
     @Override
     public void visit(ItemOfVariable node) {
-        if (!checkingVariable) {
+        if (!checkingVariable && !checkingStop) {
             if (insideEquals) {
                 sensingOther = true;
                 variableName = node.getIdentifier();
             }
+        }
+    }
+
+    @Override
+    public void visit(StopAll node) {
+        if (checkingStop) {
+            hasStop = true;
+        }
+    }
+
+    @Override
+    public void visit(StopThisScript node) {
+        if (checkingStop) {
+            hasStop = true;
         }
     }
 
