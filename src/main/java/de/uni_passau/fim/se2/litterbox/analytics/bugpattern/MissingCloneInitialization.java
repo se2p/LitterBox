@@ -222,22 +222,6 @@ public class MissingCloneInitialization extends AbstractIssueFinder {
     }
 
     @Override
-    public boolean isSimilarTo(Issue first, Issue other) {
-        if (first == other) {
-            return false;
-        }
-        if (first.getFinder() != other.getFinder()) {
-            return false;
-        }
-
-        NormalizationVisitor visitor = new NormalizationVisitor();
-        ASTNode firstNormalizedLocation = first.getCodeLocation().accept(visitor);
-        ASTNode otherNormalizedLocation = other.getCodeLocation().accept(visitor);
-
-        return firstNormalizedLocation.equals(otherNormalizedLocation);
-    }
-
-    @Override
     public void visit(DeleteClone node) {
         hasDeleteClone = true;
     }

@@ -323,20 +323,20 @@ public class JSONReportGeneratorTest implements JsonTest {
         JsonNode duplicateList = issue0.get("similar-to");
         Set<Integer> duplicates = new LinkedHashSet<>(ids);
         duplicates.remove(issue0.get("id").intValue());
-        assertThat(duplicateList.get(0).asInt()).isIn(duplicates);
-        assertThat(duplicateList.get(1).asInt()).isIn(duplicates);
+        assertThat(duplicateList.get(0).get("id").asInt()).isIn(duplicates);
+        assertThat(duplicateList.get(1).get("id").asInt()).isIn(duplicates);
 
         duplicateList = issue1.get("similar-to");
         duplicates = new LinkedHashSet<>(ids);
         duplicates.remove(issue1.get("id").intValue());
-        assertThat(duplicateList.get(0).asInt()).isIn(duplicates);
-        assertThat(duplicateList.get(1).asInt()).isIn(duplicates);
+        assertThat(duplicateList.get(0).get("id").asInt()).isIn(duplicates);
+        assertThat(duplicateList.get(1).get("id").asInt()).isIn(duplicates);
 
         duplicateList = issue2.get("similar-to");
         duplicates = new LinkedHashSet<>(ids);
         duplicates.remove(issue2.get("id").intValue());
-        assertThat(duplicateList.get(0).asInt()).isIn(duplicates);
-        assertThat(duplicateList.get(1).asInt()).isIn(duplicates);
+        assertThat(duplicateList.get(0).get("id").asInt()).isIn(duplicates);
+        assertThat(duplicateList.get(1).get("id").asInt()).isIn(duplicates);
     }
 
     @Test
@@ -366,12 +366,12 @@ public class JSONReportGeneratorTest implements JsonTest {
         JsonNode duplicateList = issue0.get("similar-to");
         Set<Integer> duplicates = new LinkedHashSet<>(ids);
         duplicates.remove(issue0.get("id").intValue());
-        assertThat(duplicateList.get(0).asInt()).isIn(duplicates);
+        assertThat(duplicateList.get(0).get("id").asInt()).isIn(duplicates);
 
         duplicateList = issue1.get("similar-to");
         duplicates = new LinkedHashSet<>(ids);
         duplicates.remove(issue1.get("id").intValue());
-        assertThat(duplicateList.get(0).asInt()).isIn(duplicates);
+        assertThat(duplicateList.get(0).get("id").asInt()).isIn(duplicates);
 
         assertThat(issue0.get("duplicate-of")).isEmpty();
         assertThat(issue1.get("duplicate-of")).isEmpty();

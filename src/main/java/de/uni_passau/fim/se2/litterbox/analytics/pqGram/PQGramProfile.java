@@ -2,20 +2,106 @@ package de.uni_passau.fim.se2.litterbox.analytics.pqGram;
 
 import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Multiset;
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class PQGramProfile {
-    private Multiset<LabelTuple> tuples;
 
-    public PQGramProfile() {
-        tuples = HashMultiset.create();
+    public static final String NULL_NODE = "*";
+
+    private int p = 2;
+
+    private int q = 3;
+
+
+    private Multiset<LabelTuple> tuples = HashMultiset.create();
+
+    public PQGramProfile(ASTNode node) {
+        if (node != null) {
+            populatePQGram(node);
+        }
     }
 
-    public void addLabelTuple(LabelTuple tuple) {
+    private void populatePQGram(ASTNode node) {
+        List<Label> anc = new ArrayList<>();
+        for (int i = 0; i < p; i++) {
+            anc.add(new Label(NULL_NODE));
+        }
+        profileStep(node, getBlockName(node), anc);
+    }
+
+    private void addLabelTuple(LabelTuple tuple) {
         tuples.add(tuple);
     }
 
+    // TODO: Remove
     public Multiset<LabelTuple> getTuples() {
         return tuples;
+    }
+
+    public int size() {
+        return tuples.size();
+    }
+
+    public double calculateDistanceTo(PQGramProfile other) {
+        if (tuples.isEmpty() && other.size() == 0) {
+            return 0;
+        }
+        Multiset<LabelTuple> intersection = HashMultiset.create(tuples);
+        intersection.retainAll(other.getTuples());
+        double division = (double) intersection.size() / (size() + other.size());
+        return 1 - (2 * division);
+    }
+
+    private void profileStep(ASTNode root, String rootLabel, List<Label> anc) {
+        List<Label> ancHere = new ArrayList<>(anc);
+        shift(ancHere, new Label(rootLabel));
+        List<Label> sib = new ArrayList<>();
+        for (int i = 0; i < q; i++) {
+            sib.add(new Label(NULL_NODE));
+        }
+
+        if (!root.hasChildren()) {
+            addLabelTuple(new LabelTuple(ancHere, sib));
+        } else {
+            for (ASTNode child : root.getChildren()) {
+                String blockName = getBlockName(child);
+                shift(sib, new Label(blockName));
+                addLabelTuple(new LabelTuple(ancHere, sib));
+                profileStep(child, blockName, ancHere);
+            }
+            for (int k = 0; k < q - 1; k++) {
+                shift(sib, new Label(NULL_NODE));
+                addLabelTuple(new LabelTuple(ancHere, sib));
+            }
+        }
+    }
+
+    private void shift(List<Label> register, Label label) {
+        register.remove(0);
+        register.add(label);
+    }
+
+    private String getBlockName(ASTNode node) {
+        return node.getClass().getSimpleName();
+    }
+
+    public void setP(int p) {
+        this.p = p;
+    }
+
+    public void setQ(int q) {
+        this.q = q;
+    }
+
+    public int getP() {
+        return p;
+    }
+
+    public int getQ() {
+        return q;
     }
 
     @Override

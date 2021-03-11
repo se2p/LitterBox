@@ -147,31 +147,6 @@ public class StutteringMovement extends AbstractIssueFinder {
     }
 
     @Override
-    public boolean isSimilarTo(Issue first, Issue other) {
-        if (first == other) {
-            return false;
-        }
-        if (first.getFinder() != other.getFinder()) {
-            return false;
-        }
-
-        ASTNode firstNode = first.getCodeLocation();
-        ASTNode secondNode = other.getCodeLocation();
-
-        if ((firstNode instanceof TurnLeft || firstNode instanceof TurnRight) && (secondNode instanceof TurnLeft || secondNode instanceof TurnRight)) {
-            return true;
-        }
-        if (firstNode instanceof MoveSteps && secondNode instanceof MoveSteps) {
-            return true;
-        }
-        NormalizationVisitor visitor = new NormalizationVisitor();
-        ASTNode firstNormalizedLocation = first.getCodeLocation().accept(visitor);
-        ASTNode otherNormalizedLocation = other.getCodeLocation().accept(visitor);
-
-        return firstNormalizedLocation.equals(otherNormalizedLocation);
-    }
-
-    @Override
     public String getName() {
         return NAME;
     }

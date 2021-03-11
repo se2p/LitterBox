@@ -73,11 +73,16 @@ public class JSONReportGenerator implements ReportGenerator {
                 .forEach(id -> jsonNode.add(id));
     }
 
-    private void addSimilarIssueIDs(ArrayNode jsonNode, Issue theIssue, Collection<Issue> issues) {
+    private void addSimilarIssueIDs(ObjectMapper mapper, ArrayNode jsonNode, Issue theIssue, Collection<Issue> issues) {
         issues.stream().filter(issue -> issue != theIssue)
-                .filter(issue -> theIssue.isSimilarTo(issue))
-                .map(issue -> issue.getId())
-                .forEach(id -> jsonNode.add(id));
+                .filter(issue -> theIssue.getFinder() == issue.getFinder())
+                .forEach(issue -> {
+                            JsonNode childNode = mapper.createObjectNode();
+                            ((ObjectNode) childNode).put("id", issue.getId());
+                            ((ObjectNode) childNode).put("distance", theIssue.getDistanceTo(issue));
+                            jsonNode.add(childNode);
+                        }
+                );
     }
 
     @Override
@@ -109,7 +114,7 @@ public class JSONReportGenerator implements ReportGenerator {
             addCoupledIssueIDs(coupledNode, issue, issues);
 
             ArrayNode similarNode  = ((ObjectNode) childNode).putArray("similar-to");
-            addSimilarIssueIDs(similarNode, issue, issues);
+            addSimilarIssueIDs(mapper, similarNode, issue, issues);
 
             ((ObjectNode) childNode).put("hint", issue.getHint());
             ArrayNode arrayNode = ((ObjectNode) childNode).putArray("costumes");

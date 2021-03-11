@@ -166,14 +166,9 @@ public class MissingInitialization implements IssueFinder {
     }
 
     @Override
-    public boolean isSimilarTo(Issue first, Issue other) {
-        if (first == other) {
-            return false;
-        }
-        if (first.getFinder() != other.getFinder()) {
-            return false;
-        }
-        return true;
+    public double getDistanceTo(Issue first, Issue other) {
+        // TODO
+        return 0;
     }
 
     @Override

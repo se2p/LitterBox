@@ -28,6 +28,8 @@ public interface ASTNode extends Visitable<ASTNode> {
 
     List<? extends ASTNode> getChildren();
 
+    boolean hasChildren();
+
     ASTNode getParentNode();
 
     void setParentNode(ASTNode node);
