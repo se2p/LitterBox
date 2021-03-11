@@ -19,7 +19,7 @@
 package de.uni_passau.fim.se2.litterbox.analytics;
 
 import de.uni_passau.fim.se2.litterbox.analytics.clonedetection.NormalizationVisitor;
-import de.uni_passau.fim.se2.litterbox.analytics.pqGram.PQGramProfile;
+import de.uni_passau.fim.se2.litterbox.analytics.pqgram.PQGramProfile;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;

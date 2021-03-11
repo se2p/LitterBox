@@ -16,21 +16,23 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.uni_passau.fim.se2.litterbox.analytics.pqGram;
+package de.uni_passau.fim.se2.litterbox.analytics.pqgram;
 
-import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
-
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
-public class Label {
-    private final String label;
+public class LabelTuple {
+    private final List<Label> labels;
 
-    public Label(String label) {
-        this.label = label;
-    }
-
-    public String getLabel() {
-        return label;
+    public LabelTuple(List<Label> anc, List<Label> sib) {
+//        Preconditions.checkArgument(anc.size() == PQGramProfileUtil.getP(),
+//                "Too many ancestors for the specified p.");
+//        Preconditions.checkArgument(sib.size() == PQGramProfileUtil.getQ(),
+//                "Too many siblings for the specified q.");
+        labels = new ArrayList<>();
+        labels.addAll(anc);
+        labels.addAll(sib);
     }
 
     @Override
@@ -41,17 +43,21 @@ public class Label {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        Label label1 = (Label) o;
-        return getLabel().equals(label1.getLabel());
+        LabelTuple that = (LabelTuple) o;
+        return Objects.equals(getLabels(), that.getLabels());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getLabel());
+        return Objects.hash(getLabels());
+    }
+
+    public List<Label> getLabels() {
+        return labels;
     }
 
     @Override
     public String toString() {
-        return label;
+        return labels.toString();
     }
 }

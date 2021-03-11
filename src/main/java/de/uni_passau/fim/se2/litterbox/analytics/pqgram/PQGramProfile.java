@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.uni_passau.fim.se2.litterbox.analytics.pqGram;
+package de.uni_passau.fim.se2.litterbox.analytics.pqgram;
 
 import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Multiset;
