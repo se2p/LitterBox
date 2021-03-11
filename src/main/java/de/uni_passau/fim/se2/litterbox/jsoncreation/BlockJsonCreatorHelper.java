@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.uni_passau.fim.se2.litterbox.jsonCreation;
+package de.uni_passau.fim.se2.litterbox.jsoncreation;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.TopNonDataBlockMetadata;
@@ -26,7 +26,7 @@ import java.util.List;
 
 import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 import static de.uni_passau.fim.se2.litterbox.ast.parser.KeyParser.*;
-import static de.uni_passau.fim.se2.litterbox.jsonCreation.JSONStringCreator.*;
+import static de.uni_passau.fim.se2.litterbox.jsoncreation.JSONStringCreator.*;
 
 public abstract class BlockJsonCreatorHelper {
     public static final String DEFAULT_VALUE = "[10,\"\"]";
