@@ -168,18 +168,28 @@ public abstract class AbstractIssueFinder implements IssueFinder, ScratchVisitor
 
     @Override
     public double getDistanceTo(Issue first, Issue other) {
-
-        PQGramProfile profile1 = new PQGramProfile(first.getScriptOrProcedureDefinition());
-        PQGramProfile profile2 = new PQGramProfile(other.getScriptOrProcedureDefinition());
-        double distance = profile1.calculateDistanceTo(profile2);
+        double distance = 0;
 
         NormalizationVisitor visitor = new NormalizationVisitor();
         ASTNode firstNormalizedLocation = first.getCodeLocation().accept(visitor);
         ASTNode secondNormalizedLocation = other.getCodeLocation().accept(visitor);
 
+        //if a different script or procedure has the issue, distance is increased by 1
+        if (first.getScriptOrProcedureDefinition() != other.getScriptOrProcedureDefinition()) {
+            distance += 1;
+            ASTNode firstNormalizedScriptProcedure = first.getScriptOrProcedureDefinition().accept(visitor);
+            ASTNode secondNormalizedScriptProcedure = other.getScriptOrProcedureDefinition().accept(visitor);
+
+            //if the scripts are different after normalisation their pq-distance is added to the distance
+            if (!firstNormalizedScriptProcedure.equals(secondNormalizedScriptProcedure)) {
+                PQGramProfile profile1 = new PQGramProfile(first.getScriptOrProcedureDefinition());
+                PQGramProfile profile2 = new PQGramProfile(other.getScriptOrProcedureDefinition());
+                distance += profile1.calculateDistanceTo(profile2);
+            }
+        }
         //if the code location is different the distance is increased by 1 to reflect this
         if (!firstNormalizedLocation.equals(secondNormalizedLocation)) {
-            distance +=1;
+            distance += 1;
         }
 
         return distance;

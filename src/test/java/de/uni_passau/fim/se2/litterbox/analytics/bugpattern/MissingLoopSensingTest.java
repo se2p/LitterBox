@@ -20,12 +20,16 @@ package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
 import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
+import de.uni_passau.fim.se2.litterbox.analytics.pqgram.PQGramProfile;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 public class MissingLoopSensingTest implements JsonTest {
@@ -90,5 +94,43 @@ public class MissingLoopSensingTest implements JsonTest {
         MissingLoopSensing parameterName = new MissingLoopSensing();
         Set<Issue> reports = parameterName.check(empty);
         Assertions.assertEquals(0, reports.size());
+    }
+
+    @Test
+    public void testDistances() throws IOException, ParsingException {
+        Program prog = JsonTest.parseProgram("./src/test/fixtures/bugpattern/differentDistancesMLS.json");
+        MissingLoopSensing mls = new MissingLoopSensing();
+        List<Issue> reports = new ArrayList<>(mls.check(prog));
+        Assertions.assertEquals(8, reports.size());
+
+        //scripts are equal, location is equal
+        Assertions.assertTrue(reports.get(0).isDuplicateOf(reports.get(1)));
+        Assertions.assertEquals(1, reports.get(0).getDistanceTo(reports.get(1)));
+
+        // scripts are different, location is equals
+        PQGramProfile profile0 = new PQGramProfile(reports.get(0).getScriptOrProcedureDefinition());
+        PQGramProfile profile2 = new PQGramProfile(reports.get(2).getScriptOrProcedureDefinition());
+        double distanceSameLocationOtherScript = 1 + profile0.calculateDistanceTo(profile2);
+        Assertions.assertEquals(distanceSameLocationOtherScript, reports.get(0).getDistanceTo(reports.get(2)));
+
+        //Location equals other location in same script
+        Assertions.assertSame(reports.get(4).getScriptOrProcedureDefinition(), reports.get(5).getScriptOrProcedureDefinition());
+        Assertions.assertEquals(reports.get(4).getCodeLocation(), reports.get(5).getCodeLocation());
+        Assertions.assertEquals(0, reports.get(4).getDistanceTo(reports.get(5)));
+
+        // scripts are different, location is equals
+        PQGramProfile profile4 = new PQGramProfile(reports.get(4).getScriptOrProcedureDefinition());
+        distanceSameLocationOtherScript = 1 + profile0.calculateDistanceTo(profile4);
+        Assertions.assertEquals(distanceSameLocationOtherScript, reports.get(0).getDistanceTo(reports.get(4)));
+
+        // scripts are different, location is different
+        PQGramProfile profile3 = new PQGramProfile(reports.get(3).getScriptOrProcedureDefinition());
+        distanceSameLocationOtherScript = 1 + 1 + profile0.calculateDistanceTo(profile3);
+        Assertions.assertEquals(distanceSameLocationOtherScript, reports.get(0).getDistanceTo(reports.get(3)));
+
+        //Location not equals other location in same script
+        Assertions.assertSame(reports.get(6).getScriptOrProcedureDefinition(), reports.get(7).getScriptOrProcedureDefinition());
+        Assertions.assertNotEquals(reports.get(6).getCodeLocation(), reports.get(7).getCodeLocation());
+        Assertions.assertEquals(1, reports.get(6).getDistanceTo(reports.get(7)));
     }
 }
