@@ -18,13 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
-import de.uni_passau.fim.se2.litterbox.analytics.Hint;
-import de.uni_passau.fim.se2.litterbox.analytics.Issue;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
-import de.uni_passau.fim.se2.litterbox.analytics.clonedetection.NormalizationVisitor;
-import de.uni_passau.fim.se2.litterbox.analytics.pqgram.PQGramProfile;
+import de.uni_passau.fim.se2.litterbox.analytics.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
@@ -41,7 +35,7 @@ import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import java.util.*;
 
-public class MissingInitialization implements IssueFinder {
+public class MissingInitialization extends AbstractIssueFinder {
 
     public static final String NAME = "missing_initialization";
 
@@ -159,42 +153,6 @@ public class MissingInitialization implements IssueFinder {
     @Override
     public void setIgnoreLooseBlocks(boolean value) {
         // Irrelevant for this finder
-    }
-
-    @Override
-    public boolean isDuplicateOf(Issue first, Issue other) {
-        // TODO: Implement
-        return false;
-    }
-
-    @Override
-    public double getDistanceTo(Issue first, Issue other) {
-        PQGramProfile profile1 = new PQGramProfile(first.getScriptOrProcedureDefinition());
-        PQGramProfile profile2 = new PQGramProfile(other.getScriptOrProcedureDefinition());
-        double distance = profile1.calculateDistanceTo(profile2);
-
-        NormalizationVisitor visitor = new NormalizationVisitor();
-        ASTNode firstNormalizedLocation = first.getCodeLocation().accept(visitor);
-        ASTNode secondNormalizedLocation = other.getCodeLocation().accept(visitor);
-
-        //if the code location is different the distance is increased by 1 to reflect this
-        if (!firstNormalizedLocation.equals(secondNormalizedLocation)) {
-            distance +=1;
-        }
-
-        return distance;
-    }
-
-    @Override
-    public boolean isSubsumedBy(Issue first, Issue other) {
-        // TODO: Implement
-        return false;
-    }
-
-    @Override
-    public boolean areCoupled(Issue first, Issue other) {
-        // TODO: Implement
-        return false;
     }
 
     @Override
