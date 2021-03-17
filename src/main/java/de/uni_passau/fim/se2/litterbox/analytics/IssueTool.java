@@ -19,6 +19,7 @@
 package de.uni_passau.fim.se2.litterbox.analytics;
 
 import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.*;
+import de.uni_passau.fim.se2.litterbox.analytics.designpattern.ExistingTerminationCondition;
 import de.uni_passau.fim.se2.litterbox.analytics.smells.*;
 
 import java.util.*;
@@ -83,6 +84,7 @@ public class IssueTool {
     private static Map<String, IssueFinder> generateAllFinders() {
         Map<String, IssueFinder> allFinders = new LinkedHashMap<>(generateBugFinders());
         allFinders.putAll(generateSmellFinders());
+        allFinders.putAll(generateSolutionFinders());
         return allFinders;
     }
 
@@ -121,6 +123,15 @@ public class IssueTool {
         registerSmellFinder(new VariableInitializationRace(), smellFinders);
 
         return smellFinders;
+    }
+
+    public static Map<String, IssueFinder> generateSolutionFinders() {
+        Map<String, IssueFinder> solutionFinders = new LinkedHashMap<>();
+
+        // Solution patterns/practices
+        registerSolutionFinder(new ExistingTerminationCondition(), solutionFinders);
+
+        return solutionFinders;
     }
 
     public static List<IssueFinder> getFinders(String commandString) {
@@ -183,5 +194,14 @@ public class IssueTool {
                     + " as Bug IssueFinder");
         }
         bugFinders.put(finder.getName(), finder);
+    }
+
+    static void registerSolutionFinder(IssueFinder finder, Map<String, IssueFinder> solutionFinders) {
+        if (finder.getIssueType() != IssueType.SOLUTION) {
+            throw new RuntimeException("Cannot register IssueFinder of Type "
+                    + finder.getIssueType()
+                    + " as Solution IssueFinder");
+        }
+        solutionFinders.put(finder.getName(), finder);
     }
 }
