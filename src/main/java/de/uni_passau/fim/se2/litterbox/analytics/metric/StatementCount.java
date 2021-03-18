@@ -18,6 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.metric;
 
+import de.uni_passau.fim.se2.litterbox.analytics.FeatureExtractor;
 import de.uni_passau.fim.se2.litterbox.analytics.MetricExtractor;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
@@ -27,7 +28,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-public class StatementCount implements MetricExtractor, ScratchVisitor {
+public class StatementCount implements MetricExtractor, ScratchVisitor, FeatureExtractor {
 
     public static final String NAME = "statement_count";
     private boolean insideScript = false;
@@ -42,6 +43,16 @@ public class StatementCount implements MetricExtractor, ScratchVisitor {
         insideProcedure = false;
         insideScript = false;
         program.accept(this);
+        return count;
+    }
+
+    @Override
+    public double calculateMetric(Script script) {
+        Preconditions.checkNotNull(script);
+        count = 0;
+        insideProcedure = false;
+        insideScript = false;
+        script.accept(this);
         return count;
     }
 

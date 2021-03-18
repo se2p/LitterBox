@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 LitterBox contributors
+ * Copyright (C) 2020 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -19,51 +19,36 @@
 package de.uni_passau.fim.se2.litterbox.analytics.metric;
 
 import de.uni_passau.fim.se2.litterbox.analytics.FeatureExtractor;
-import de.uni_passau.fim.se2.litterbox.analytics.MetricExtractor;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
+import de.uni_passau.fim.se2.litterbox.ast.model.event.Event;
+import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.Parameter;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.*;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-public class MyBlocksBlockCount implements MetricExtractor, ScratchVisitor, FeatureExtractor {
-    public static final String NAME = "my_blocks_block_count";
+public class AvgBlockStatementCount implements FeatureExtractor, ScratchVisitor {
 
-    private int count = 0;
-
-    @Override
-    public double calculateMetric(Program program) {
-        Preconditions.checkNotNull(program);
-        count = 0;
-        program.accept(this);
-        return count;
-    }
+    public static final String NAME = "avg_block_statement_count";
 
     @Override
     public double calculateMetric(Script script) {
         Preconditions.checkNotNull(script);
-        count = 0;
+        double blockCount = new BlockCount().calculateMetric(script);
+        double statementCount = new StatementCount().calculateMetric(script);
         script.accept(this);
-        return count;
+        return blockCount/statementCount;
     }
 
     @Override
     public void visit(ProcedureDefinition node) {
-        count++;
         visitChildren(node);
     }
 
     @Override
-    public void visit(CallStmt node) {
-        count++;
-        visitChildren(node);
-    }
-
-    @Override
-    public void visit(Parameter node) {
-        count++;
+    public void visit(Script node) {
         visitChildren(node);
     }
 
@@ -72,3 +57,4 @@ public class MyBlocksBlockCount implements MetricExtractor, ScratchVisitor, Feat
         return NAME;
     }
 }
+

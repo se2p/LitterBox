@@ -19,7 +19,9 @@
 package de.uni_passau.fim.se2.litterbox.analytics.metric;
 
 import de.uni_passau.fim.se2.litterbox.analytics.MetricExtractor;
+import de.uni_passau.fim.se2.litterbox.analytics.FeatureExtractor;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.Size;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.Backdrop;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.Costume;
@@ -28,7 +30,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SpriteLook
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-public class LooksBlockCount implements MetricExtractor, ScratchVisitor {
+public class LooksBlockCount implements MetricExtractor, ScratchVisitor, FeatureExtractor {
     public static final String NAME = "looks_block_count";
 
     private int count = 0;
@@ -38,6 +40,14 @@ public class LooksBlockCount implements MetricExtractor, ScratchVisitor {
         Preconditions.checkNotNull(program);
         count = 0;
         program.accept(this);
+        return count;
+    }
+
+    @Override
+    public double calculateMetric(Script script) {
+        Preconditions.checkNotNull(script);
+        count = 0;
+        script.accept(this);
         return count;
     }
 

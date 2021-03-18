@@ -18,14 +18,16 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.metric;
 
+import de.uni_passau.fim.se2.litterbox.analytics.FeatureExtractor;
 import de.uni_passau.fim.se2.litterbox.analytics.MetricExtractor;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.Volume;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.ActorSoundStmt;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-public class SoundBlockCount implements MetricExtractor, ScratchVisitor {
+public class SoundBlockCount implements MetricExtractor, ScratchVisitor, FeatureExtractor {
     public static final String NAME = "sound_block_count";
 
     private int count = 0;
@@ -35,6 +37,14 @@ public class SoundBlockCount implements MetricExtractor, ScratchVisitor {
         Preconditions.checkNotNull(program);
         count = 0;
         program.accept(this);
+        return count;
+    }
+
+    @Override
+    public double calculateMetric(Script script) {
+        Preconditions.checkNotNull(script);
+        count = 0;
+        script.accept(this);
         return count;
     }
 

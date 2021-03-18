@@ -18,6 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.metric;
 
+import de.uni_passau.fim.se2.litterbox.analytics.FeatureExtractor;
 import de.uni_passau.fim.se2.litterbox.analytics.MetricExtractor;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
@@ -25,6 +26,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.WithExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.UnspecifiedExpression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.AsBool;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.ListContains;
@@ -43,6 +45,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterDefinitionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.ExpressionStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.ChangeSoundEffectBy;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.SetSoundEffectTo;
@@ -59,7 +62,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.type.Type;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-public class BlockCount implements MetricExtractor, ScratchVisitor {
+public class BlockCount implements MetricExtractor, ScratchVisitor, FeatureExtractor {
     public static final String NAME = "block_count";
     private int count = 0;
     private boolean insideScript = false;
@@ -76,6 +79,26 @@ public class BlockCount implements MetricExtractor, ScratchVisitor {
         insideParameterList = false;
         fixedBlock = false;
         program.accept(this);
+        return count;
+    }
+
+    @Override
+    public double calculateMetric(Script script) {
+        Preconditions.checkNotNull(script);
+        count = 0;
+        insideProcedure = false;
+        insideScript = false;
+        script.accept(this);
+        return count;
+    }
+
+    public double calculateMetric(ASTNode node){
+        Preconditions.checkNotNull(node);
+        count = 0;
+        insideProcedure = false;
+        insideScript = true;
+        node.accept(this);
+        insideScript = false;
         return count;
     }
 
