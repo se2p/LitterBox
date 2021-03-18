@@ -103,9 +103,9 @@ public class MissingLoopSensingTest implements JsonTest {
         List<Issue> reports = new ArrayList<>(mls.check(prog));
         Assertions.assertEquals(8, reports.size());
 
-        //scripts are equal, location is equal
+        //scripts are equal, location is equal (the issues are duplicates)
         Assertions.assertTrue(reports.get(0).isDuplicateOf(reports.get(1)));
-        Assertions.assertEquals(1, reports.get(0).getDistanceTo(reports.get(1)));
+        Assertions.assertEquals(0, reports.get(0).getDistanceTo(reports.get(1)));
 
         // scripts are different, location is equals
         PQGramProfile profile0 = new PQGramProfile(reports.get(0).getScriptOrProcedureDefinition());
