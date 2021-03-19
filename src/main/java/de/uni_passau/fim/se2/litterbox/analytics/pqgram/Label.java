@@ -16,25 +16,40 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.uni_passau.fim.se2.litterbox.ast.model;
+package de.uni_passau.fim.se2.litterbox.analytics.pqgram;
 
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.Visitable;
+import java.util.Objects;
 
-import java.util.List;
+public class Label {
+    private final String label;
 
-public interface ASTNode extends Visitable<ASTNode> {
+    public Label(String label) {
+        this.label = label;
+    }
 
-    List<? extends ASTNode> getChildren();
+    public String getLabel() {
+        return label;
+    }
 
-    boolean hasChildren();
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Label label1 = (Label) o;
+        return getLabel().equals(label1.getLabel());
+    }
 
-    ASTNode getParentNode();
+    @Override
+    public int hashCode() {
+        return Objects.hash(getLabel());
+    }
 
-    void setParentNode(ASTNode node);
-
-    String getUniqueName();
-
-    BlockMetadata getMetadata();
+    @Override
+    public String toString() {
+        return label;
+    }
 }
