@@ -10,12 +10,12 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.util.Set;
 
-public class UnnecessaryWaitTest implements JsonTest {
+public class UnnecessaryTimeTest implements JsonTest {
 
     @Test
     public void testEmptyProgram() throws IOException, ParsingException {
         Program empty = getAST("./src/test/fixtures/emptyProject.json");
-        UnnecessaryWait parameterName = new UnnecessaryWait();
+        UnnecessaryTime parameterName = new UnnecessaryTime();
         Set<Issue> reports = parameterName.check(empty);
         Assertions.assertEquals(0, reports.size());
     }
@@ -23,8 +23,8 @@ public class UnnecessaryWaitTest implements JsonTest {
     @Test
     public void testUnnecessaryWaitProgram() throws IOException, ParsingException {
         Program empty = getAST("./src/test/fixtures/smells/unnecessaryWait.json");
-        UnnecessaryWait parameterName = new UnnecessaryWait();
+        UnnecessaryTime parameterName = new UnnecessaryTime();
         Set<Issue> reports = parameterName.check(empty);
-        Assertions.assertEquals(1, reports.size());
+        Assertions.assertEquals(10, reports.size());
     }
 }
