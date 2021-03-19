@@ -5,6 +5,9 @@ import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitSeconds;
 
+/**
+ * This finder looks if a wait block waits for 0 seconds and thus is unnecessary.
+ */
 public class UnnecessaryWait extends AbstractIssueFinder {
     public static final String NAME = "unnecessary_wait";
 
