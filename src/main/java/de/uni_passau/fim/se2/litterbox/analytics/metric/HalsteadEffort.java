@@ -22,7 +22,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.MetricExtractor;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.HalsteadVisitor;
 
-public class HalsteadEffort implements MetricExtractor {
+public class HalsteadEffort implements MetricExtractor<Program> {
 
     @Override
     public double calculateMetric(Program program) {

@@ -28,7 +28,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SetDragM
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-public class InsideControlSensingStmtCount implements MetricExtractor, ScratchVisitor {
+public class InsideControlSensingStmtCount implements MetricExtractor<Program>, ScratchVisitor {
     public static final String NAME = "inside_control_sensing_stmt_count";
     private int count = 0;
 

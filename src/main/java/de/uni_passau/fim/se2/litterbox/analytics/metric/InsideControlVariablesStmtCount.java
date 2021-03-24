@@ -32,7 +32,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.list.*;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-public class InsideControlVariablesStmtCount implements MetricExtractor, ScratchVisitor {
+public class InsideControlVariablesStmtCount implements MetricExtractor<Program>, ScratchVisitor {
     public static final String NAME = "inside_control_variables_stmt_count";
 
     private int count = 0;

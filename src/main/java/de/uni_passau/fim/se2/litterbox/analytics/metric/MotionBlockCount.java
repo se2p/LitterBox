@@ -30,7 +30,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SpriteMo
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-public class MotionBlockCount implements MetricExtractor, ScratchVisitor, FeatureExtractor {
+public class MotionBlockCount implements MetricExtractor<Program>, ScratchVisitor, FeatureExtractor {
     public static final String NAME = "motion_block_count";
 
     private int count = 0;

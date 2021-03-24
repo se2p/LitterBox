@@ -27,7 +27,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.variable.Parameter;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-public class TopLevelMyBlocksStmtCount implements MetricExtractor, ScratchVisitor {
+public class TopLevelMyBlocksStmtCount implements MetricExtractor<Program>, ScratchVisitor {
     public static final String NAME = "top_level_my_blocks_stmt_count";
     private int count = 0;
 

@@ -32,7 +32,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.Terminati
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-public class ControlBlockCount implements MetricExtractor, ScratchVisitor, FeatureExtractor {
+public class ControlBlockCount implements MetricExtractor<Program>, ScratchVisitor, FeatureExtractor {
     public static final String NAME = "control_block_count";
 
     private int count = 0;

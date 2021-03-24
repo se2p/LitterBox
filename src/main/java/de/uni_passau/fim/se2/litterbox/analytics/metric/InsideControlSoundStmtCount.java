@@ -26,7 +26,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.ActorSound
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-public class InsideControlSoundStmtCount implements MetricExtractor, ScratchVisitor {
+public class InsideControlSoundStmtCount implements MetricExtractor<Program>, ScratchVisitor {
     public static final String NAME = "inside_control_sound_stmt_count";
     private int count = 0;
 

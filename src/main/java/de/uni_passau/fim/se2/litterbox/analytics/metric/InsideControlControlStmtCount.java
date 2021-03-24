@@ -31,7 +31,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.Terminati
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-public class InsideControlControlStmtCount implements MetricExtractor, ScratchVisitor {
+public class InsideControlControlStmtCount implements MetricExtractor<Program>, ScratchVisitor {
     public static final String NAME = "inside_control_control_stmt_count";
 
     private int count = 0;

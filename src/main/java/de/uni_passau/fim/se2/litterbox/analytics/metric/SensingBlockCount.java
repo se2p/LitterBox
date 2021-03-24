@@ -34,7 +34,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SetDragM
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-public class SensingBlockCount implements MetricExtractor, ScratchVisitor, FeatureExtractor {
+public class SensingBlockCount implements MetricExtractor<Program>, ScratchVisitor, FeatureExtractor {
     public static final String NAME = "sensing_block_count";
 
     private int count = 0;

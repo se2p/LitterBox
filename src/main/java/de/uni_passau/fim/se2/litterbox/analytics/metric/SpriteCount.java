@@ -22,7 +22,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.MetricExtractor;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
-public class SpriteCount implements MetricExtractor, ScratchVisitor {
+public class SpriteCount implements MetricExtractor<Program>, ScratchVisitor {
     public static final String NAME = "sprite_count";
 
     @Override

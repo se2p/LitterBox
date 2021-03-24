@@ -28,7 +28,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-public class StatementCount implements MetricExtractor, ScratchVisitor, FeatureExtractor {
+public class StatementCount implements MetricExtractor<Program>, ScratchVisitor, FeatureExtractor {
 
     public static final String NAME = "statement_count";
     private boolean insideScript = false;

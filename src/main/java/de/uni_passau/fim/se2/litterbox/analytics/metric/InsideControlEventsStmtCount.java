@@ -27,7 +27,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.BroadcastAndWa
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-public class InsideControlEventsStmtCount implements MetricExtractor, ScratchVisitor {
+public class InsideControlEventsStmtCount implements MetricExtractor<Program>, ScratchVisitor {
     public static final String NAME = "inside_control_events_stmt_count";
     private int count = 0;
 

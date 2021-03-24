@@ -27,7 +27,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.ActorSound
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-public class TopLevelSoundStmtCount implements MetricExtractor, ScratchVisitor {
+public class TopLevelSoundStmtCount implements MetricExtractor<Program>, ScratchVisitor {
     public static final String NAME = "top_level_sound_stmt_count";
     private int count = 0;
 

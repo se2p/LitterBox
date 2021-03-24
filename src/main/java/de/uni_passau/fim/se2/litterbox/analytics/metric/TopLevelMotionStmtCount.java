@@ -27,7 +27,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SpriteMo
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-public class TopLevelMotionStmtCount implements MetricExtractor, ScratchVisitor {
+public class TopLevelMotionStmtCount implements MetricExtractor<Program>, ScratchVisitor {
     public static final String NAME = "top_level_motion_stmt_count";
 
     private int count = 0;

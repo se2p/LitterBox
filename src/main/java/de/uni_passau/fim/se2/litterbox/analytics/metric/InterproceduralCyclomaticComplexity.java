@@ -23,7 +23,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.cfg.ControlFlowGraph;
 import de.uni_passau.fim.se2.litterbox.cfg.ControlFlowGraphVisitor;
 
-public class InterproceduralCyclomaticComplexity implements MetricExtractor {
+public class InterproceduralCyclomaticComplexity implements MetricExtractor<Program> {
 
     @Override
     public double calculateMetric(Program program) {

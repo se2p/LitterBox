@@ -29,7 +29,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.LetterOf;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-public class OperatorsBlockCount implements MetricExtractor, ScratchVisitor, FeatureExtractor {
+public class OperatorsBlockCount implements MetricExtractor<Program>, ScratchVisitor, FeatureExtractor {
     public static final String NAME = "operators_block_count";
 
     private int count = 0;

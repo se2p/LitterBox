@@ -62,7 +62,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.type.Type;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-public class BlockCount implements MetricExtractor, ScratchVisitor, FeatureExtractor {
+public class BlockCount implements MetricExtractor<Program>, ScratchVisitor, FeatureExtractor {
     public static final String NAME = "block_count";
     private int count = 0;
     private boolean insideScript = false;

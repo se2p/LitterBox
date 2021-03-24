@@ -30,7 +30,7 @@ import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 /**
  * This visitor calculates the weighted method count as a metric for Scratch projects.
  */
-public class WeightedMethodCount implements MetricExtractor, ScratchVisitor {
+public class WeightedMethodCount implements MetricExtractor<Program>, ScratchVisitor {
     public static final String NAME = "weighted_method_count";
     int count = 0;
 

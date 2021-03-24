@@ -30,7 +30,7 @@ import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 /**
  * Calculate the length of the longest script or procedure of the project.
  */
-public class LengthLongestScript implements MetricExtractor, ScratchVisitor {
+public class LengthLongestScript implements MetricExtractor<Program>, ScratchVisitor {
     public static final String NAME = "length_longest_script";
     int count = 0;
     private int localCount = 0;

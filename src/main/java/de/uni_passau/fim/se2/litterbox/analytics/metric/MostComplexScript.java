@@ -30,7 +30,7 @@ import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 /**
  * Calculates the complexity of the most complex script based on the weighted method count.
  */
-public class MostComplexScript implements MetricExtractor, ScratchVisitor {
+public class MostComplexScript implements MetricExtractor<Program>, ScratchVisitor {
     public static final String NAME = "most_complex_script";
     int count = 0;
     int localCount = 0;

@@ -25,7 +25,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-public class HatCount implements MetricExtractor, ScratchVisitor {
+public class HatCount implements MetricExtractor<Program>, ScratchVisitor {
 
     public static final String NAME = "hat_count";
 

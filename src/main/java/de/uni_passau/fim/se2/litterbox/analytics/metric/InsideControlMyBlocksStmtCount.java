@@ -26,7 +26,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-public class InsideControlMyBlocksStmtCount implements MetricExtractor, ScratchVisitor {
+public class InsideControlMyBlocksStmtCount implements MetricExtractor<Program>, ScratchVisitor {
     public static final String NAME = "inside_control_my_blocks_stmt_count";
     private int count = 0;
 

@@ -30,7 +30,7 @@ import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 import java.util.ArrayList;
 import java.util.List;
 
-public class NestedBlockCount implements MetricExtractor, ScratchVisitor, FeatureExtractor {
+public class NestedBlockCount implements MetricExtractor<Program>, ScratchVisitor, FeatureExtractor {
 
     public static final String NAME = "nested_block_count";
 

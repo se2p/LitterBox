@@ -38,7 +38,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-public class VariablesBlockCount implements MetricExtractor, ScratchVisitor, FeatureExtractor {
+public class VariablesBlockCount implements MetricExtractor<Program>, ScratchVisitor, FeatureExtractor {
     public static final String NAME = "variables_block_count";
 
     private int count = 0;

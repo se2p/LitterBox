@@ -27,7 +27,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.ActorSound
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-public class SoundBlockCount implements MetricExtractor, ScratchVisitor, FeatureExtractor {
+public class SoundBlockCount implements MetricExtractor<Program>, ScratchVisitor, FeatureExtractor {
     public static final String NAME = "sound_block_count";
 
     private int count = 0;

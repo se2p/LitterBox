@@ -29,7 +29,7 @@ import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import java.util.List;
 
-public class ScriptCount implements MetricExtractor, ScratchVisitor {
+public class ScriptCount implements MetricExtractor<Program>, ScratchVisitor {
 
     public static final String NAME = "script_count";
 
