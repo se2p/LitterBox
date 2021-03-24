@@ -19,15 +19,15 @@
 package de.uni_passau.fim.se2.litterbox.analytics.metric;
 
 import de.uni_passau.fim.se2.litterbox.analytics.MetricExtractor;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.HalsteadVisitor;
 
-public class HalsteadVocabulary implements MetricExtractor<Program> {
+public class HalsteadVocabulary<T extends ASTNode> implements MetricExtractor<T> {
 
     @Override
-    public double calculateMetric(Program program) {
+    public double calculateMetric(T node) {
         HalsteadVisitor halstead = new HalsteadVisitor();
-        program.accept(halstead);
+        node.accept(halstead);
 
         // The vocabulary size (n) is the sum of the number of unique operators and operands
         return halstead.getUniqueOperands() + halstead.getUniqueOperators();

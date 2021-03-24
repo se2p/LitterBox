@@ -19,7 +19,7 @@
 package de.uni_passau.fim.se2.litterbox.analytics.metric;
 
 import de.uni_passau.fim.se2.litterbox.analytics.MetricExtractor;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitUntil;
@@ -30,17 +30,16 @@ import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 /**
  * Calculates the complexity of the most complex script based on the weighted method count.
  */
-public class MostComplexScript implements MetricExtractor<Program>, ScratchVisitor {
+public class MostComplexScript<T extends ASTNode> implements MetricExtractor<T>, ScratchVisitor {
     public static final String NAME = "most_complex_script";
     int count = 0;
     int localCount = 0;
 
     @Override
-    public double calculateMetric(Program program) {
-        Preconditions.checkNotNull(program);
+    public double calculateMetric(T node) {
+        Preconditions.checkNotNull(node);
         this.count = 0;
-
-        program.accept(this);
+        node.accept(this);
         return count;
     }
 

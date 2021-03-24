@@ -19,16 +19,25 @@
 package de.uni_passau.fim.se2.litterbox.analytics.metric;
 
 import de.uni_passau.fim.se2.litterbox.analytics.MetricExtractor;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
-public class SpriteCount implements MetricExtractor<Program>, ScratchVisitor {
+public class SpriteCount<T extends ASTNode> implements MetricExtractor<T>, ScratchVisitor {
     public static final String NAME = "sprite_count";
 
+    private int count = 0;
+
     @Override
-    public double calculateMetric(Program program) {
-        int count = program.getActorDefinitionList().getDefinitions().size() - 1;
+    public double calculateMetric(T node) {
+        count = 0;
+        node.accept(this);
         return count;
+    }
+
+    @Override
+    public void visit(ActorDefinition node) {
+        count += 1;
     }
 
     @Override

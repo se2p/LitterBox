@@ -19,15 +19,15 @@
 package de.uni_passau.fim.se2.litterbox.analytics.metric;
 
 import de.uni_passau.fim.se2.litterbox.analytics.MetricExtractor;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.HalsteadVisitor;
 
-public class HalsteadVolume implements MetricExtractor<Program> {
+public class HalsteadVolume<T extends ASTNode> implements MetricExtractor<T> {
 
     @Override
-    public double calculateMetric(Program program) {
+    public double calculateMetric(T node) {
         HalsteadVisitor halstead = new HalsteadVisitor();
-        program.accept(halstead);
+        node.accept(halstead);
         // The program volume (V) is the information contents of the program, measured in mathematical bits
         // It is calculated as the program length times the 2-base logarithm of the vocabulary size (n):
         //        V = N * log2(n)

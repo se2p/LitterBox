@@ -18,9 +18,8 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.metric;
 
-import de.uni_passau.fim.se2.litterbox.analytics.FeatureExtractor;
 import de.uni_passau.fim.se2.litterbox.analytics.MetricExtractor;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
@@ -28,7 +27,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-public class StatementCount implements MetricExtractor<Program>, ScratchVisitor, FeatureExtractor {
+public class StatementCount<T extends ASTNode> implements MetricExtractor<T>, ScratchVisitor {
 
     public static final String NAME = "statement_count";
     private boolean insideScript = false;
@@ -37,22 +36,12 @@ public class StatementCount implements MetricExtractor<Program>, ScratchVisitor,
     private int count = 0;
 
     @Override
-    public double calculateMetric(Program program) {
-        Preconditions.checkNotNull(program);
+    public double calculateMetric(T node) {
+        Preconditions.checkNotNull(node);
         count = 0;
         insideProcedure = false;
         insideScript = false;
-        program.accept(this);
-        return count;
-    }
-
-    @Override
-    public double calculateMetric(Script script) {
-        Preconditions.checkNotNull(script);
-        count = 0;
-        insideProcedure = false;
-        insideScript = false;
-        script.accept(this);
+        node.accept(this);
         return count;
     }
 
