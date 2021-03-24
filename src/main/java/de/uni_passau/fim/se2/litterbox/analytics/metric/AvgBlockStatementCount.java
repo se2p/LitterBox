@@ -18,22 +18,23 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.metric;
 
-import de.uni_passau.fim.se2.litterbox.analytics.FeatureExtractor;
+import de.uni_passau.fim.se2.litterbox.analytics.MetricExtractor;
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-public class AvgBlockStatementCount implements FeatureExtractor, ScratchVisitor {
+public class AvgBlockStatementCount<T extends ASTNode> implements MetricExtractor<T>, ScratchVisitor {
 
     public static final String NAME = "avg_block_statement_count";
 
     @Override
-    public double calculateMetric(Script script) {
-        Preconditions.checkNotNull(script);
-        double blockCount = new BlockCount().calculateMetric(script);
-        double statementCount = new StatementCount().calculateMetric(script);
-        script.accept(this);
+    public double calculateMetric(T node) {
+        Preconditions.checkNotNull(node);
+        double blockCount = new BlockCount<T>().calculateMetric(node);
+        double statementCount = new StatementCount<T>().calculateMetric(node);
+        node.accept(this);
         return blockCount/statementCount;
     }
 

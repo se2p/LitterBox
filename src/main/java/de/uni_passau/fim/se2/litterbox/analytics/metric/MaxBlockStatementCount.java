@@ -18,7 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.metric;
 
-import de.uni_passau.fim.se2.litterbox.analytics.FeatureExtractor;
+import de.uni_passau.fim.se2.litterbox.analytics.MetricExtractor;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Event;
@@ -29,7 +29,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.*;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-public class MaxBlockStatementCount implements FeatureExtractor, ScratchVisitor {
+public class MaxBlockStatementCount<T extends ASTNode> implements MetricExtractor<T>, ScratchVisitor {
 
     public static final String NAME = "max_block_statement_count";
 
@@ -37,10 +37,10 @@ public class MaxBlockStatementCount implements FeatureExtractor, ScratchVisitor 
     private double maxBlocks;
 
     @Override
-    public double calculateMetric(Script script) {
-        Preconditions.checkNotNull(script);
+    public double calculateMetric(T node) {
+        Preconditions.checkNotNull(node);
         maxBlocks = 0;
-        script.accept(this);
+        node.accept(this);
         return maxBlocks;
     }
 

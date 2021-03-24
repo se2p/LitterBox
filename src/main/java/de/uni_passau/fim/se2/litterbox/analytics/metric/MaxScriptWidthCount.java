@@ -1,7 +1,7 @@
 package de.uni_passau.fim.se2.litterbox.analytics.metric;
 
-import de.uni_passau.fim.se2.litterbox.analytics.FeatureExtractor;
-import de.uni_passau.fim.se2.litterbox.ast.model.Script;
+import de.uni_passau.fim.se2.litterbox.analytics.MetricExtractor;
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
@@ -9,20 +9,20 @@ import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 import java.util.ArrayList;
 import java.util.Collections;
 
-public class MaxScriptWidthCount implements ScratchVisitor, FeatureExtractor {
+public class MaxScriptWidthCount<T extends ASTNode> implements ScratchVisitor, MetricExtractor<T> {
     private double count = 0;
     public static final String NAME = "Max_script_width_count";
 
     @Override
-    public double calculateMetric(Script script) {
-        Preconditions.checkNotNull(script);
+    public double calculateMetric(T node) {
+        Preconditions.checkNotNull(node);
         count = 0;
-        count = countMaxScriptWidthCount(script);
+        count = countMaxScriptWidthCount(node);
         return count;
     }
 
-    private double countMaxScriptWidthCount(Script script) {
-        String scriptString = getScriptString(script);
+    private double countMaxScriptWidthCount(T node) {
+        String scriptString = getScriptString(node);
         scriptString = scriptString.replace("[scratchblocks]\r\n", "");
         scriptString = scriptString.replace("[/scratchblocks]\r\n", "");
         scriptString = scriptString.replace("end\r\n", "");
@@ -36,10 +36,10 @@ public class MaxScriptWidthCount implements ScratchVisitor, FeatureExtractor {
         return Collections.max(scriptWidths);
     }
 
-    private String getScriptString(Script script) {
+    private String getScriptString(T node) {
         ScratchBlocksVisitor visitor = new ScratchBlocksVisitor();
         visitor.begin();
-        script.accept(visitor);
+        node.accept(visitor);
         visitor.end();
         return visitor.getScratchBlocks();
     }

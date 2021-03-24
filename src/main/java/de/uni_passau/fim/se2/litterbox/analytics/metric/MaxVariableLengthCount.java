@@ -1,6 +1,7 @@
 package de.uni_passau.fim.se2.litterbox.analytics.metric;
 
-import de.uni_passau.fim.se2.litterbox.analytics.FeatureExtractor;
+import de.uni_passau.fim.se2.litterbox.analytics.MetricExtractor;
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
@@ -13,7 +14,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class MaxVariableLengthCount implements ScratchVisitor, FeatureExtractor {
+public class MaxVariableLengthCount<T extends ASTNode> implements ScratchVisitor, MetricExtractor<T> {
     public static final String NAME = "max_variable_length_count";
     private boolean insideScript = false;
     private boolean insideProcedure = false;
@@ -27,13 +28,13 @@ public class MaxVariableLengthCount implements ScratchVisitor, FeatureExtractor 
         }
     }
     @Override
-    public double calculateMetric(Script script) {
-        Preconditions.checkNotNull(script);
+    public double calculateMetric(T node) {
+        Preconditions.checkNotNull(node);
         double count = 0;
         this.variables = new ArrayList<>();
         insideProcedure = false;
         insideScript = false;
-        script.accept(this);
+        node.accept(this);
         count = getMaxVariableLengthCount();
         return count;
     }

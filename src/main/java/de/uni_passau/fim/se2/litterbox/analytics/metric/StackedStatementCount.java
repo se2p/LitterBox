@@ -18,15 +18,12 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.metric;
 
-import de.uni_passau.fim.se2.litterbox.analytics.FeatureExtractor;
 import de.uni_passau.fim.se2.litterbox.analytics.MetricExtractor;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.AttributeAboveValue;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Event;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.EventAttribute;
-import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.*;
@@ -49,7 +46,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-public class StackedStatementCount implements ScratchVisitor, FeatureExtractor {
+public class StackedStatementCount<T extends ASTNode> implements ScratchVisitor, MetricExtractor<T> {
 
     public static final String NAME = "stacked_statement_count";
     private int maxStackedDepth = 0;
@@ -348,10 +345,10 @@ public class StackedStatementCount implements ScratchVisitor, FeatureExtractor {
     }
 
     @Override
-    public double calculateMetric(Script script) {
-        Preconditions.checkNotNull(script);
+    public double calculateMetric(T node) {
+        Preconditions.checkNotNull(node);
         maxStackedDepth = 0;
-        script.accept(this);
+        node.accept(this);
         return maxStackedDepth;
     }
 

@@ -37,7 +37,9 @@ public class SpriteCount<T extends ASTNode> implements MetricExtractor<T>, Scrat
 
     @Override
     public void visit(ActorDefinition node) {
-        count += 1;
+        if (node.isSprite()) {
+            count += 1;
+        }
     }
 
     @Override

@@ -18,7 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics;
 
-import de.uni_passau.fim.se2.litterbox.analytics.FeatureExtractor;
 import de.uni_passau.fim.se2.litterbox.analytics.metric.AvgScriptWidthCount;
 import de.uni_passau.fim.se2.litterbox.analytics.metric.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.*;
@@ -39,34 +38,34 @@ import java.util.stream.Collectors;
 
 public class FeatureTool {
 
-    private List<FeatureExtractor> metrics = Arrays.asList(
-            new AvgScriptWidthCount(),
-            new AvgBlockStatementCount(),
-            new MaxBlockStatementCount(),
-            new BlockCount(),
-            new MaxScriptWidthCount(),
-            new NestedBlockCount(),
-            new StackedStatementCount(),
-            new StatementCount(),
-            new VariableCount(),
-            new AvgVariableLengthCount(),
-            new MaxVariableLengthCount(),
-            new MotionBlockCount(),
-            new LooksBlockCount(),
-            new SoundBlockCount(),
-            new EventsBlockCount(),
-            new ControlBlockCount(),
-            new SensingBlockCount(),
-            new OperatorsBlockCount(),
-            new VariablesBlockCount(),
-            new MyBlocksBlockCount()
+    private List<MetricExtractor<ASTNode>> metrics = Arrays.asList(
+            new AvgScriptWidthCount<>(),
+            new AvgBlockStatementCount<>(),
+            new MaxBlockStatementCount<>(),
+            new BlockCount<>(),
+            new MaxScriptWidthCount<>(),
+            new NestedBlockCount<>(),
+            new StackedStatementCount<>(),
+            new StatementCount<>(),
+            new VariableCount<>(),
+            new AvgVariableLengthCount<>(),
+            new MaxVariableLengthCount<>(),
+            new MotionBlockCount<>(),
+            new LooksBlockCount<>(),
+            new SoundBlockCount<>(),
+            new EventsBlockCount<>(),
+            new ControlBlockCount<>(),
+            new SensingBlockCount<>(),
+            new OperatorsBlockCount<>(),
+            new VariablesBlockCount<>(),
+            new MyBlocksBlockCount<>()
     );
 
     public List<String> getMetricNames() {
-        return metrics.stream().map(FeatureExtractor::getName).collect(Collectors.toList());
+        return metrics.stream().map(MetricExtractor::getName).collect(Collectors.toList());
     }
 
-    public List<FeatureExtractor> getAnalyzers() {
+    public List<MetricExtractor<ASTNode>> getAnalyzers() {
         return Collections.unmodifiableList(metrics);
     }
 
@@ -74,38 +73,38 @@ public class FeatureTool {
         List<String> headers = new ArrayList<>();
         headers.add("project");
         headers.add("id");
-        metrics.stream().map(FeatureExtractor::getName).forEach(headers::add);
+        metrics.stream().map(MetricExtractor::getName).forEach(headers::add);
         headers.add("scratch_block_code");
         CSVPrinter printer = getNewPrinter(fileName, headers);
         int count = 0;
         List<ActorDefinition> actorDefinitions = getActors(program);
         for (ActorDefinition actorDefinition : actorDefinitions) {
-            ScriptList scripts = actorDefinition.getScripts();
-            if (scripts != null) {
+            List<ASTNode> targets = new ArrayList<>();
+            targets.addAll(actorDefinition.getScripts().getScriptList());
+            targets.addAll(actorDefinition.getProcedureDefinitionList().getList());
 
-                for (Script script : scripts.getScriptList()) {
-                    List<String> row = new ArrayList<>();
-                    count = count + 1;
-                    row.add(program.getIdent().getName());
-                    String uniqueID = program.toString().replace("de.uni_passau.fim.se2.litterbox.ast.model.", "")
-                            + script.toString().replace("de.uni_passau.fim.se2.litterbox.ast.model.", "");
-                    row.add(uniqueID + count);
-                    for (FeatureExtractor extractor : metrics) {
-                        row.add(Double.toString(extractor.calculateMetric(script)));
-                    }
-                    String stringScratchCode = getScratchBlockCode(script);
-                    row.add(stringScratchCode);
-                    printer.printRecord(row);
+            for (ASTNode target : targets) {
+                List<String> row = new ArrayList<>();
+                count = count + 1;
+                row.add(program.getIdent().getName());
+                String uniqueID = program.toString().replace("de.uni_passau.fim.se2.litterbox.ast.model.", "")
+                        + target.toString().replace("de.uni_passau.fim.se2.litterbox.ast.model.", "");
+                row.add(uniqueID + count);
+                for (MetricExtractor<ASTNode> extractor : metrics) {
+                    row.add(Double.toString(extractor.calculateMetric(target)));
                 }
+                String stringScratchCode = getScratchBlockCode(target);
+                row.add(stringScratchCode);
+                printer.printRecord(row);
             }
         }
         printer.flush();
     }
 
-    private String getScratchBlockCode(Script script) {
+    private String getScratchBlockCode(ASTNode target) {
         ScratchBlocksVisitor visitor = new ScratchBlocksVisitor();
         visitor.begin();
-        script.accept(visitor);
+        target.accept(visitor);
         visitor.end();
         return visitor.getScratchBlocks();
     }
