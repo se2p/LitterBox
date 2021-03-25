@@ -18,6 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.clonedetection;
 
+import com.google.common.collect.Sets;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
@@ -89,9 +90,28 @@ public class CloneAnalysis {
         if (root1 == root2) {
             // If a script is compared against itself, then there will always be a trivial type 1 clone
             allClones = allClones.stream().filter(c -> c.size() != statements1.size()).collect(Collectors.toSet());
+
+            // Also exclude clones within a script that overlap
+            allClones = allClones.stream().filter(c -> !hasOverlap(c.getFirstStatements(), c.getSecondStatements())).collect(Collectors.toSet());
         }
 
         return allClones;
+    }
+
+    private boolean hasOverlap(List<Stmt> statements1, List<Stmt> statements2) {
+        for (Stmt stmt1 : statements1) {
+            for (Stmt stmt2 : statements2) {
+                if (stmt1 == stmt2) {
+                    return true;
+                }
+            }
+        }
+        return false;
+        // TODO: Why does this not work with identity hashsets?
+//        Set<Stmt> statements = Sets.newIdentityHashSet();
+//        statements.addAll(statements1);
+//        statements..removeAll(statements2);
+//        return statements.size() != statements1.size();
     }
 
     private boolean[][] getSimilarityMatrix(List<Stmt> normalizedStatements1, List<Stmt> normalizedStatements2) {

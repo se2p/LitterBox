@@ -18,24 +18,21 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.clonedetection;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
-import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
-public class CloneAnalysisTest {
+public class CloneAnalysisTest implements JsonTest {
 
     @Test
     public void testIdentity() throws IOException, ParsingException {
@@ -252,11 +249,16 @@ public class CloneAnalysisTest {
         assertEquals(1, clones.size());
     }
 
-    private Program getAST(String fileName) throws IOException, ParsingException {
-        File file = new File(fileName);
-        ObjectMapper objectMapper = new ObjectMapper();
-        JsonNode project = objectMapper.readTree(file);
-        Program program = ProgramParser.parseProgram("TestProgram", project);
-        return program;
+    @Test
+    public void testCloneRegression() throws IOException, ParsingException {
+        Program program = getAST("./src/test/fixtures/smells/notype2clone.json");
+        ActorDefinition actor = program.getActorDefinitionList().getDefinitions().get(3); // Pufferfish
+        Script script = actor.getScripts().getScriptList().get(0);
+
+        // Gap size is > 2
+        CloneAnalysis cloneAnalysis = new CloneAnalysis(actor);
+        Set<CodeClone> clones = cloneAnalysis.check(script, script, CodeClone.CloneType.TYPE2);
+        assertEquals(0, clones.size());
     }
+
 }
