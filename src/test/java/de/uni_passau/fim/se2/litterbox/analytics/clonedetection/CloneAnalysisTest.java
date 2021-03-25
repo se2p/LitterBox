@@ -250,7 +250,7 @@ public class CloneAnalysisTest implements JsonTest {
     }
 
     @Test
-    public void testCloneRegression() throws IOException, ParsingException {
+    public void testNoCloneWithOverlappingCode() throws IOException, ParsingException {
         Program program = getAST("./src/test/fixtures/smells/notype2clone.json");
         ActorDefinition actor = program.getActorDefinitionList().getDefinitions().get(3); // Pufferfish
         Script script = actor.getScripts().getScriptList().get(0);
