@@ -127,4 +127,13 @@ public class VariableInitializationRaceTest implements JsonTest {
         Set<Issue> reports = finder.check(program);
         Assertions.assertEquals(0, reports.size());
     }
+
+    @Test
+    public void testNoVariableRace() throws IOException, ParsingException {
+        Program program = getAST("./src/test/fixtures/smells/variableInitialisationWithoutRace.json");
+
+        VariableInitializationRace finder = new VariableInitializationRace();
+        Set<Issue> reports = finder.check(program);
+        Assertions.assertEquals(0, reports.size());
+    }
 }
