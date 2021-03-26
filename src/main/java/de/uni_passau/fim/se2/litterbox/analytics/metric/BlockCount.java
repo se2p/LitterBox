@@ -20,6 +20,7 @@ package de.uni_passau.fim.se2.litterbox.analytics.metric;
 
 import de.uni_passau.fim.se2.litterbox.analytics.MetricExtractor;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.WithExpr;
@@ -70,11 +71,13 @@ public class BlockCount<T extends ASTNode> implements MetricExtractor<T>, Scratc
     public double calculateMetric(T node) {
         Preconditions.checkNotNull(node);
         count = 0;
-        insideScript = false;
+
         insideProcedure = false;
         insideParameterList = false;
         fixedBlock = false;
+        insideScript = !(node instanceof Script || node instanceof ProcedureDefinition || node instanceof Program);
         node.accept(this);
+        insideScript = false;
         return count;
     }
 

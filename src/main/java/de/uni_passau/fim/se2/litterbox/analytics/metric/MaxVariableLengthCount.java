@@ -5,6 +5,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.variable.ScratchList;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
@@ -23,10 +24,18 @@ public class MaxVariableLengthCount<T extends ASTNode> implements ScratchVisitor
 
     @Override
     public void visit(Variable node) {
-        if (insideScript) {
+        if (insideScript || insideProcedure) {
             this.variables.add(node.getName().getName());
         }
     }
+
+    @Override
+    public void visit(ScratchList node) {
+        if (insideScript || insideProcedure) {
+            this.variables.add(node.getName().getName());
+        }
+    }
+
     @Override
     public double calculateMetric(T node) {
         Preconditions.checkNotNull(node);

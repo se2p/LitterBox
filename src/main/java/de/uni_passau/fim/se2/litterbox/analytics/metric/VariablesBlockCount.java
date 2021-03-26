@@ -25,6 +25,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.ListContains;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.IndexOf;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.LengthOfVar;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.ItemOfVariable;
+import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.HideList;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.HideVariable;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.ShowList;
@@ -42,6 +43,7 @@ public class VariablesBlockCount<T extends ASTNode> implements MetricExtractor<T
 
     private int count = 0;
     private boolean insideScript = false;
+    private boolean insideProcedure = false;
 
     @Override
     public double calculateMetric(T node) {
@@ -59,8 +61,15 @@ public class VariablesBlockCount<T extends ASTNode> implements MetricExtractor<T
     }
 
     @Override
+    public void visit(ProcedureDefinition node) {
+        insideProcedure = true;
+        visitChildren(node);
+        insideProcedure = false;
+    }
+
+    @Override
     public void visit(SetVariableTo node) {
-        if (insideScript) {
+        if (insideScript || insideProcedure) {
             count++;
             node.getExpr().accept(this);
         }
@@ -84,14 +93,14 @@ public class VariablesBlockCount<T extends ASTNode> implements MetricExtractor<T
 
     @Override
     public void visit(Variable node) {
-        if (insideScript) {
+        if (insideScript|| insideProcedure) {
             count++;
         }
     }
 
     @Override
     public void visit(ScratchList node) {
-        if (insideScript) {
+        if (insideScript|| insideProcedure) {
             count++;
         }
     }

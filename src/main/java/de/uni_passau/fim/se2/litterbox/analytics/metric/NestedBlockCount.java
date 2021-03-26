@@ -33,16 +33,12 @@ public class NestedBlockCount<T extends ASTNode> implements MetricExtractor<T>, 
     public static final String NAME = "nested_block_count";
 
     private int count = 0;
-    private int nestedLoopCount = 0;
-    private List<Integer> nestedLoopCountList = new ArrayList<>();
     private int maxNestedDepth = 0;
     private int currentNestedDepth = 0;
 
-//    private String callingMethod = "";
 
     @Override
     public void visit(IfThenStmt node) {
-//        String currentMethod = "ifThen";
         currentNestedDepth++;
         if (currentNestedDepth > maxNestedDepth) {
             maxNestedDepth = currentNestedDepth;
@@ -53,7 +49,6 @@ public class NestedBlockCount<T extends ASTNode> implements MetricExtractor<T>, 
 
     @Override
     public void visit(RepeatTimesStmt node) {
-        String currentMethod = "repeatTimes";
         currentNestedDepth++;
         if (currentNestedDepth > maxNestedDepth) {
             maxNestedDepth = currentNestedDepth;
@@ -64,7 +59,6 @@ public class NestedBlockCount<T extends ASTNode> implements MetricExtractor<T>, 
 
     @Override
     public void visit(RepeatForeverStmt node) {
-        String currentMethod = "repeatForever";
         currentNestedDepth++;
         if (currentNestedDepth > maxNestedDepth) {
             maxNestedDepth = currentNestedDepth;
@@ -85,7 +79,6 @@ public class NestedBlockCount<T extends ASTNode> implements MetricExtractor<T>, 
 
     @Override
     public void visit(UntilStmt node) {
-        String currentMethod = "until";
         currentNestedDepth++;
         if (currentNestedDepth > maxNestedDepth) {
             maxNestedDepth = currentNestedDepth;
@@ -97,9 +90,9 @@ public class NestedBlockCount<T extends ASTNode> implements MetricExtractor<T>, 
     @Override
     public double calculateMetric(T node) {
         Preconditions.checkNotNull(node);
-        count = 0;
+        maxNestedDepth = 0;
         node.accept(this);
-        return count;
+        return maxNestedDepth;
     }
 
     @Override

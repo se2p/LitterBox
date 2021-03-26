@@ -61,38 +61,27 @@ public class MaxBlockStatementCount<T extends ASTNode> implements MetricExtracto
     @Override
     public void visit(Event node){
         if(!(node instanceof Never)){
-            this.currentNumberOfBlocks = 0;
-            this.currentNumberOfBlocks = new BlockCount().calculateMetric(node);
-            this.maxBlocks = Math.max(this.maxBlocks, this.currentNumberOfBlocks);
+            this.getBlockCount(node, false);
         }
     }
     public void visitControlStmts(ControlStmt controlStmt) {
         if (controlStmt instanceof IfThenStmt) {
-            this.currentNumberOfBlocks = 0;
-            this.currentNumberOfBlocks = new BlockCount().calculateMetric(((IfThenStmt) controlStmt).getBoolExpr()) + 1;
-            this.maxBlocks = Math.max(this.maxBlocks, this.currentNumberOfBlocks);
+            this.getBlockCount(((IfThenStmt) controlStmt).getBoolExpr(), true);
             for (Stmt stmt : ((IfThenStmt) controlStmt).getThenStmts().getStmts()) {
                 visit(stmt);
             }
         } else if (controlStmt instanceof RepeatTimesStmt) {
-            this.currentNumberOfBlocks = 0;
-            this.currentNumberOfBlocks = new BlockCount().calculateMetric(((RepeatTimesStmt) controlStmt).getTimes()) + 1;
-            this.maxBlocks = Math.max(this.maxBlocks, this.currentNumberOfBlocks);
+            this.getBlockCount(((RepeatTimesStmt) controlStmt).getTimes(), true);
             for (Stmt stmt : ((RepeatTimesStmt) controlStmt).getStmtList().getStmts()) {
                 visit(stmt);
             }
         } else if (controlStmt instanceof UntilStmt) {
-            this.currentNumberOfBlocks = 0;
-            this.currentNumberOfBlocks = new BlockCount().calculateMetric(((UntilStmt) controlStmt).getBoolExpr()) + 1;
-            this.maxBlocks = Math.max(this.maxBlocks, this.currentNumberOfBlocks);
+            this.getBlockCount(((UntilStmt) controlStmt).getBoolExpr(), true);
             for (Stmt stmt : ((UntilStmt) controlStmt).getStmtList().getStmts()) {
                 visit(stmt);
             }
         } else if (controlStmt instanceof IfElseStmt) {
-            this.currentNumberOfBlocks = 0;
-            this.currentNumberOfBlocks = new BlockCount().calculateMetric(((IfElseStmt) controlStmt).getBoolExpr()) + 1;
-            this.maxBlocks = Math.max(this.maxBlocks, this.currentNumberOfBlocks);
-
+            this.getBlockCount(((IfElseStmt) controlStmt).getBoolExpr(), true);
             for (Stmt stmt : ((IfElseStmt) controlStmt).getStmtList().getStmts()) {
                 visit(stmt);
             }
@@ -101,11 +90,21 @@ public class MaxBlockStatementCount<T extends ASTNode> implements MetricExtracto
                 visit(stmt);
             }
         } else if (controlStmt instanceof RepeatForeverStmt) {
-
             for (Stmt stmt : ((RepeatForeverStmt) controlStmt).getStmtList().getStmts()) {
                 visit(stmt);
             }
         }
+    }
+
+    public void getBlockCount(ASTNode node, boolean increment){
+        this.currentNumberOfBlocks = 0;
+        if (increment) {
+            this.currentNumberOfBlocks = new BlockCount<>().calculateMetric(node);
+        }else{
+            this.currentNumberOfBlocks = new BlockCount<>().calculateMetric(node) + 1;
+        }
+
+        this.maxBlocks = Math.max(this.maxBlocks, this.currentNumberOfBlocks);
     }
 
     @Override
@@ -113,9 +112,7 @@ public class MaxBlockStatementCount<T extends ASTNode> implements MetricExtracto
         if (isLoopOrBranch(node)) {
             visitControlStmts((ControlStmt) node);
         } else {
-            this.currentNumberOfBlocks = 0;
-            this.currentNumberOfBlocks = new BlockCount().calculateMetric(node);
-            this.maxBlocks = Math.max(this.maxBlocks, this.currentNumberOfBlocks);
+            this.getBlockCount(node, false);
         }
     }
 
