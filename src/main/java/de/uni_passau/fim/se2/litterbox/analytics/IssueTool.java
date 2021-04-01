@@ -19,7 +19,9 @@
 package de.uni_passau.fim.se2.litterbox.analytics;
 
 import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.*;
-import de.uni_passau.fim.se2.litterbox.analytics.designpattern.ExistingTerminationCondition;
+import de.uni_passau.fim.se2.litterbox.analytics.goodpractices.CheckForEventInLoop;
+import de.uni_passau.fim.se2.litterbox.analytics.goodpractices.ListUsage;
+import de.uni_passau.fim.se2.litterbox.analytics.solutionpattern.ValidTerminationCondition;
 import de.uni_passau.fim.se2.litterbox.analytics.smells.*;
 
 import java.util.*;
@@ -85,6 +87,8 @@ public class IssueTool {
         Map<String, IssueFinder> allFinders = new LinkedHashMap<>(generateBugFinders());
         allFinders.putAll(generateSmellFinders());
         allFinders.putAll(generateSolutionFinders());
+        allFinders.putAll(generateGoodPracticeFinders());
+
         return allFinders;
     }
 
@@ -129,9 +133,20 @@ public class IssueTool {
         Map<String, IssueFinder> solutionFinders = new LinkedHashMap<>();
 
         // Solution patterns/practices
-        registerSolutionFinder(new ExistingTerminationCondition(), solutionFinders);
+        registerSolutionFinder(new ValidTerminationCondition(), solutionFinders);
 
         return solutionFinders;
+    }
+
+    public static Map<String, IssueFinder> generateGoodPracticeFinders() {
+        Map<String, IssueFinder> goodPracticeFinders = new LinkedHashMap<>();
+
+        // good practices
+        registerGoodPracticeFinder(new ListUsage(), goodPracticeFinders);
+        registerGoodPracticeFinder(new CheckForEventInLoop(), goodPracticeFinders);
+
+
+        return goodPracticeFinders;
     }
 
     public static List<IssueFinder> getFinders(String commandString) {
@@ -147,6 +162,11 @@ public class IssueTool {
             case SMELLS:
                 finders = new ArrayList<>(generateSmellFinders().values());
                 break;
+            case SOLUTIONS:
+                finders = new ArrayList<>(generateSolutionFinders().values());
+                break;
+            case GOOD_PRACTICE:
+                finders = new ArrayList<>(generateGoodPracticeFinders().values());
             case DEFAULT:
                 finders.addAll(generateAllFinders().values().stream().filter(f -> !f.getName().toLowerCase().endsWith("strict")).collect(Collectors.toList()));
                 break;
@@ -203,5 +223,14 @@ public class IssueTool {
                     + " as Solution IssueFinder");
         }
         solutionFinders.put(finder.getName(), finder);
+    }
+
+    static void registerGoodPracticeFinder(IssueFinder finder, Map<String, IssueFinder> goodPracticeFinders) {
+        if (finder.getIssueType() != IssueType.GOOD_PRACTICE) {
+            throw new RuntimeException("Cannot register IssueFinder of Type "
+                    + finder.getIssueType()
+                    + " as Good Practice IssueFinder");
+        }
+        goodPracticeFinders.put(finder.getName(), finder);
     }
 }

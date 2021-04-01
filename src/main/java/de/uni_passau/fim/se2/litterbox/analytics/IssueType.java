@@ -19,5 +19,5 @@
 package de.uni_passau.fim.se2.litterbox.analytics;
 
 public enum IssueType {
-    BUG, SMELL, SOLUTION
+    BUG, SMELL, SOLUTION, GOOD_PRACTICE
 }

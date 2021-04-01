@@ -1,4 +1,4 @@
-package de.uni_passau.fim.se2.litterbox.analytics.designpattern;
+package de.uni_passau.fim.se2.litterbox.analytics.solutionpattern;
 
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
@@ -6,8 +6,11 @@ import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.UnspecifiedBoolExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
 
-public class ExistingTerminationCondition extends AbstractIssueFinder {
-    public static final String NAME = "existing_termination";
+/**
+ * The repeat until blocks require a valid stopping condition to work as intended.
+ */
+public class ValidTerminationCondition extends AbstractIssueFinder {
+    public static final String NAME = "valid_termination";
 
     @Override
     public void visit(UntilStmt node) {
