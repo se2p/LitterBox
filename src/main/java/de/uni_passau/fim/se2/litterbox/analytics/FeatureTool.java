@@ -77,20 +77,31 @@ public class FeatureTool {
         metrics.stream().map(MetricExtractor::getName).forEach(headers::add);
         headers.add("scratch_block_code");
         CSVPrinter printer = getNewPrinter(fileName, headers);
-        int count = 0;
+        int actorCount = 0;
         List<ActorDefinition> actorDefinitions = getActors(program);
         for (ActorDefinition actorDefinition : actorDefinitions) {
+            int scriptCount = 0;
+            int procedureDefCount = 0;
+            actorCount = actorCount + 1;
             List<ASTNode> targets = new ArrayList<>();
             targets.addAll(actorDefinition.getScripts().getScriptList());
             targets.addAll(actorDefinition.getProcedureDefinitionList().getList());
 
             for (ASTNode target : targets) {
                 List<String> row = new ArrayList<>();
-                count = count + 1;
                 row.add(program.getIdent().getName());
-                String uniqueID = program.toString().replace("de.uni_passau.fim.se2.litterbox.ast.model.", "")
-                        + target.toString().replace("de.uni_passau.fim.se2.litterbox.ast.model.", "");
-                row.add(uniqueID + count);
+                String uniqueID = "";
+                if(target instanceof Script){
+                    scriptCount =scriptCount + 1;
+                    uniqueID = "ACTOR"+actorCount+"_"+"SCRIPT"+scriptCount;
+                }
+                else if(target instanceof ProcedureDefinition){
+                    procedureDefCount = procedureDefCount + 1;
+                    uniqueID = "ACTOR"+actorCount+"_"+"PROCEDUREDEFINITION"+procedureDefCount;
+                }
+
+                row.add(uniqueID);
+
                 for (MetricExtractor<ASTNode> extractor : metrics) {
                     row.add(Double.toString(extractor.calculateMetric(target)));
                 }
