@@ -19,8 +19,9 @@
 package de.uni_passau.fim.se2.litterbox.analytics;
 
 import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.*;
-import de.uni_passau.fim.se2.litterbox.analytics.goodpractices.CheckForEventInLoop;
+import de.uni_passau.fim.se2.litterbox.analytics.solutionpattern.CheckForEventInLoop;
 import de.uni_passau.fim.se2.litterbox.analytics.goodpractices.ListUsage;
+import de.uni_passau.fim.se2.litterbox.analytics.solutionpattern.InitializedParameter;
 import de.uni_passau.fim.se2.litterbox.analytics.solutionpattern.ValidTerminationCondition;
 import de.uni_passau.fim.se2.litterbox.analytics.smells.*;
 
@@ -134,6 +135,8 @@ public class IssueTool {
 
         // Solution patterns/practices
         registerSolutionFinder(new ValidTerminationCondition(), solutionFinders);
+        registerSolutionFinder(new InitializedParameter(), solutionFinders);
+        registerSolutionFinder(new CheckForEventInLoop(), solutionFinders);
 
         return solutionFinders;
     }
@@ -143,7 +146,6 @@ public class IssueTool {
 
         // good practices
         registerGoodPracticeFinder(new ListUsage(), goodPracticeFinders);
-        registerGoodPracticeFinder(new CheckForEventInLoop(), goodPracticeFinders);
 
 
         return goodPracticeFinders;

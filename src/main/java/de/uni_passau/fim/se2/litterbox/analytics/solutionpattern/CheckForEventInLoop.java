@@ -1,4 +1,4 @@
-package de.uni_passau.fim.se2.litterbox.analytics.goodpractices;
+package de.uni_passau.fim.se2.litterbox.analytics.solutionpattern;
 
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
@@ -18,7 +18,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
 /**
  * A script should execute actions when an event occurs. To ensure correct timing for the action, a continuous check for
  * the event to occur is necessary. So the check must be inside a forever or until loop (and not only in a conditional
- * construct)
+ * construct). This is the solution pattern for the bug pattern "Missing Loop Sensing".
  */
 public class CheckForEventInLoop extends AbstractIssueFinder {
 
@@ -126,6 +126,6 @@ public class CheckForEventInLoop extends AbstractIssueFinder {
 
     @Override
     public IssueType getIssueType() {
-        return IssueType.GOOD_PRACTICE;
+        return IssueType.SOLUTION;
     }
 }

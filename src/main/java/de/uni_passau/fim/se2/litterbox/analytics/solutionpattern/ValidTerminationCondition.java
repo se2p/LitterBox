@@ -7,7 +7,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.UnspecifiedBool
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
 
 /**
- * The repeat until blocks require a valid stopping condition to work as intended.
+ * The repeat until blocks require a valid stopping condition to work as intended. This is the solution pattern for
+ * the bug pattern "Missing Termination Condition"
  */
 public class ValidTerminationCondition extends AbstractIssueFinder {
     public static final String NAME = "valid_termination";
