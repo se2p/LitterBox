@@ -65,6 +65,7 @@ public class CheckForEventInLoop extends AbstractIssueFinder {
         }
         node.getThenStmts().accept(this);
     }
+
     @Override
     public void visit(IsKeyPressed node) {
         if (insideGreenFlagClone && insideLoop && inCondition) {

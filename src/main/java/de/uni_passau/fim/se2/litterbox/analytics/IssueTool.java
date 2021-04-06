@@ -19,11 +19,8 @@
 package de.uni_passau.fim.se2.litterbox.analytics;
 
 import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.*;
-import de.uni_passau.fim.se2.litterbox.analytics.solutionpattern.CheckForEventInLoop;
+import de.uni_passau.fim.se2.litterbox.analytics.solutionpattern.*;
 import de.uni_passau.fim.se2.litterbox.analytics.goodpractices.ListUsage;
-import de.uni_passau.fim.se2.litterbox.analytics.solutionpattern.CorrectBroadcast;
-import de.uni_passau.fim.se2.litterbox.analytics.solutionpattern.InitializedParameter;
-import de.uni_passau.fim.se2.litterbox.analytics.solutionpattern.ValidTerminationCondition;
 import de.uni_passau.fim.se2.litterbox.analytics.smells.*;
 
 import java.util.*;
@@ -139,6 +136,8 @@ public class IssueTool {
         registerSolutionFinder(new InitializedParameter(), solutionFinders);
         registerSolutionFinder(new CheckForEventInLoop(), solutionFinders);
         registerSolutionFinder(new CorrectBroadcast(), solutionFinders);
+        registerSolutionFinder(new UsefulPositionCheck(), solutionFinders);
+        registerSolutionFinder(new MovementInLoop(), solutionFinders);
 
         return solutionFinders;
     }
