@@ -27,7 +27,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopAll;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopThisScript;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
-public class ComputationalThinkingScoreSynchronization implements MetricExtractor, ScratchVisitor {
+public class ComputationalThinkingScoreSynchronization implements MetricExtractor<Program>, ScratchVisitor {
 
     private int score = 0;
 

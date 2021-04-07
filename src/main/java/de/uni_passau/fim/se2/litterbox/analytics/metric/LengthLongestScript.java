@@ -19,7 +19,7 @@
 package de.uni_passau.fim.se2.litterbox.analytics.metric;
 
 import de.uni_passau.fim.se2.litterbox.analytics.MetricExtractor;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
@@ -30,17 +30,16 @@ import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 /**
  * Calculate the length of the longest script or procedure of the project.
  */
-public class LengthLongestScript implements MetricExtractor, ScratchVisitor {
+public class LengthLongestScript<T extends ASTNode> implements MetricExtractor<T>, ScratchVisitor {
     public static final String NAME = "length_longest_script";
     int count = 0;
     private int localCount = 0;
 
     @Override
-    public double calculateMetric(Program program) {
-        Preconditions.checkNotNull(program);
+    public double calculateMetric(T node) {
+        Preconditions.checkNotNull(node);
         this.count = 0;
-
-        program.accept(this);
+        node.accept(this);
         return count;
     }
 

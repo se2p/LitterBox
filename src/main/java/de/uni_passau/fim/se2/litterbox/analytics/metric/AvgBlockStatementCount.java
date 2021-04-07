@@ -19,37 +19,32 @@
 package de.uni_passau.fim.se2.litterbox.analytics.metric;
 
 import de.uni_passau.fim.se2.litterbox.analytics.MetricExtractor;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SetDragMode;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SpriteMotionStmt;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-public class TopLevelMotionStmtCount implements MetricExtractor, ScratchVisitor {
-    public static final String NAME = "top_level_motion_stmt_count";
+public class AvgBlockStatementCount<T extends ASTNode> implements MetricExtractor<T>, ScratchVisitor {
 
-    private int count = 0;
+    public static final String NAME = "avg_block_statement_count";
 
     @Override
-    public double calculateMetric(Program program) {
-        Preconditions.checkNotNull(program);
-        count = 0;
-        program.accept(this);
-        return count;
+    public double calculateMetric(T node) {
+        Preconditions.checkNotNull(node);
+        double blockCount = new BlockCount<T>().calculateMetric(node);
+        double statementCount = new StatementCount<T>().calculateMetric(node);
+        node.accept(this);
+        return blockCount/statementCount;
     }
 
     @Override
-    public void visit(SpriteMotionStmt node) {
-        //SetDragMode is a SpriteMotionStmt but not from Motion category in Scratch
-        if (node instanceof SetDragMode) {
-            return;
-        }
-        //The parent is a StmtList, so the parent of the StmtList has to be checked
-        if (node.getParentNode().getParentNode() instanceof Script || node.getParentNode().getParentNode() instanceof ProcedureDefinition) {
-            count++;
-        }
+    public void visit(ProcedureDefinition node) {
+        visitChildren(node);
+    }
+
+    @Override
+    public void visit(Script node) {
         visitChildren(node);
     }
 
@@ -58,3 +53,4 @@ public class TopLevelMotionStmtCount implements MetricExtractor, ScratchVisitor 
         return NAME;
     }
 }
+

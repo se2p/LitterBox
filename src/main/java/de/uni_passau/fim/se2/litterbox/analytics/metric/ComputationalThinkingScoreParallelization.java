@@ -26,7 +26,7 @@ import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class ComputationalThinkingScoreParallelization implements MetricExtractor, ScratchVisitor {
+public class ComputationalThinkingScoreParallelization implements MetricExtractor<Program>, ScratchVisitor {
 
     private int score = 0;
     private Map<Event, Integer> eventMap = new LinkedHashMap<>();
