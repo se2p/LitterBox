@@ -15,7 +15,7 @@ import java.util.ArrayList;
 
 public class AvgScriptWidthCount<T extends ASTNode> implements ScratchVisitor, MetricExtractor<T> {
     private double count = 0;
-    public static final String NAME = "Avg_script_width_count";
+    public static final String NAME = "avg_script_width_count";
 
     @Override
     public double calculateMetric(T node) {

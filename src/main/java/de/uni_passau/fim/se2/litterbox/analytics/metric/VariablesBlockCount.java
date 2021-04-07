@@ -93,14 +93,14 @@ public class VariablesBlockCount<T extends ASTNode> implements MetricExtractor<T
 
     @Override
     public void visit(Variable node) {
-        if (insideScript|| insideProcedure) {
+        if (insideScript || insideProcedure) {
             count++;
         }
     }
 
     @Override
     public void visit(ScratchList node) {
-        if (insideScript|| insideProcedure) {
+        if (insideScript || insideProcedure) {
             count++;
         }
     }

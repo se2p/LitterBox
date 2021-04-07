@@ -14,7 +14,7 @@ import java.util.Collections;
 
 public class MaxScriptWidthCount<T extends ASTNode> implements ScratchVisitor, MetricExtractor<T> {
     private double count = 0;
-    public static final String NAME = "Max_script_width_count";
+    public static final String NAME = "max_script_width_count";
 
     @Override
     public double calculateMetric(T node) {

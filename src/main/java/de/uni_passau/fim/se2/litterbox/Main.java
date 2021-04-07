@@ -236,7 +236,7 @@ public class Main {
                 statsPrograms(cmd);
             } else if (cmd.hasOption(LEILA)) {
                 translatePrograms(cmd);
-            }else if (cmd.hasOption(FEATURE)) {
+            } else if (cmd.hasOption(FEATURE)) {
                 featurePrograms(cmd);
             }
             else {
