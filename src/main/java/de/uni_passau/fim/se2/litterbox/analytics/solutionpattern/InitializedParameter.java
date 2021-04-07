@@ -7,31 +7,35 @@ import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Parameter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
 /**
  * When custom blocks are created the user can define parameters, which can then be used in the body of the custom
  * block. The program only works as intended as long as the parameter is initialized. This is the solution pattern for
- *  * the bug pattern "Orphaned Parameter".
+ * the bug pattern "Orphaned Parameter".
  */
 public class InitializedParameter extends AbstractIssueFinder {
     public static final String NAME = "initialized_parameter";
     private List<ParameterDefinition> currentParameterDefinitions;
     private boolean insideProcedure;
+    private List<String> checkedList;
 
     @Override
     public void visit(ProcedureDefinition node) {
         insideProcedure = true;
         currentParameterDefinitions = node.getParameterDefinitionList().getParameterDefinitions();
+        checkedList = new ArrayList<>();
         super.visit(node);
         insideProcedure = false;
     }
 
     @Override
     public void visit(Parameter node) {
-        if (insideProcedure) {
+        if (insideProcedure && !checked(node.getName().getName())) {
             checkParameterNames(node.getName().getName(), node);
+            checkedList.add(node.getName().getName());
         }
         visitChildren(node);
     }
@@ -43,6 +47,15 @@ public class InitializedParameter extends AbstractIssueFinder {
                 break;
             }
         }
+    }
+
+    private boolean checked(String name) {
+        for (String parameter : checkedList) {
+            if (parameter.equals(name)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
