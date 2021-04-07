@@ -69,6 +69,10 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.DeleteClone;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopAll;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopThisScript;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.texttospeech.SayTextToSpeech;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.texttospeech.SetLanguage;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.texttospeech.language.ExprLanguage;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.texttospeech.language.FixedLanguageBlock;
 import de.uni_passau.fim.se2.litterbox.ast.model.timecomp.TimeComp;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.FromNumber;
@@ -3573,5 +3577,65 @@ public class CloneVisitor {
      */
     public ASTNode visit(CloneOfMetadata node) {
         return new CloneOfMetadata(apply(node.getCloneBlockMetadata()), apply(node.getCloneMenuMetadata()));
+    }
+
+    /**
+     * Default implementation of visit method for {@link SayTextToSpeech}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node SayTextToSpeech Node of which the children will
+     *             be iterated
+     * @return     the copy of the visited node
+     */
+    public ASTNode visit(SayTextToSpeech node) {
+        return new SayTextToSpeech(apply(node.getText()), apply(node.getMetadata()));
+    }
+
+    /**
+     * Default implementation of visit method for {@link ExprLanguage}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node ExprLanguage Node of which the children will
+     *             be iterated
+     * @return     the copy of the visited node
+     */
+    public ASTNode visit(ExprLanguage node) {
+        return new ExprLanguage(apply(node.getExpr()), apply(node.getMetadata()));
+    }
+
+    /**
+     * Default implementation of visit method for {@link FixedLanguageBlock}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node FixedLanguageBlock Node of which the children will
+     *             be iterated
+     * @return     the copy of the visited node
+     */
+    public ASTNode visit(FixedLanguageBlock node) {
+        return new FixedLanguageBlock(node.getType().getType(), apply(node.getMetadata()));
+    }
+
+    /**
+     * Default implementation of visit method for {@link SetLanguage}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node SetLanguage Node of which the children will
+     *             be iterated
+     * @return     the copy of the visited node
+     */
+    public ASTNode visit(SetLanguage node) {
+        return new SetLanguage(apply(node.getLanguage()), apply(node.getMetadata()));
     }
 }

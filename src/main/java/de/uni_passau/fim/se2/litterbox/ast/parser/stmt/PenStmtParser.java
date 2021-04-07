@@ -119,7 +119,7 @@ public class PenStmtParser {
 
     private static PenStmt parseSetPenSizeTo(JsonNode current, JsonNode allBlocks, BlockMetadata metadata)
             throws ParsingException {
-        return new SetPenSizeTo(NumExprParser.parseNumExpr(current, "SIZE",
+        return new SetPenSizeTo(NumExprParser.parseNumExpr(current, SIZE_KEY_CAP,
                 allBlocks), metadata);
     }
 }
