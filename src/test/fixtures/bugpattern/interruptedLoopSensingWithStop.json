@@ -1,0 +1,460 @@
+{
+    "targets": [
+        {
+            "isStage": true,
+            "name": "Stage",
+            "variables": {
+                "`jEk@4|i[#Fk?(8x)AV.-my variable": [
+                    "my variable",
+                    0
+                ]
+            },
+            "lists": {},
+            "broadcasts": {},
+            "blocks": {},
+            "comments": {},
+            "currentCostume": 0,
+            "costumes": [
+                {
+                    "assetId": "cd21514d0531fdffb22204e0ec5ed84a",
+                    "name": "backdrop1",
+                    "md5ext": "cd21514d0531fdffb22204e0ec5ed84a.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 240,
+                    "rotationCenterY": 180
+                }
+            ],
+            "sounds": [
+                {
+                    "assetId": "83a9787d4cb6f3b7632b4ddfebf74367",
+                    "name": "pop",
+                    "dataFormat": "wav",
+                    "format": "",
+                    "rate": 48000,
+                    "sampleCount": 1124,
+                    "md5ext": "83a9787d4cb6f3b7632b4ddfebf74367.wav"
+                }
+            ],
+            "volume": 100,
+            "layerOrder": 0,
+            "tempo": 60,
+            "videoTransparency": 50,
+            "videoState": "on",
+            "textToSpeechLanguage": null
+        },
+        {
+            "isStage": false,
+            "name": "Sprite1",
+            "variables": {},
+            "lists": {},
+            "broadcasts": {},
+            "blocks": {
+                "jSp~J4+[7C)-N6c1d`hI": {
+                    "opcode": "event_whenflagclicked",
+                    "next": "lg[~_N:5kX6opNa%=n~B",
+                    "parent": null,
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 477,
+                    "y": 324
+                },
+                "lg[~_N:5kX6opNa%=n~B": {
+                    "opcode": "control_forever",
+                    "next": null,
+                    "parent": "jSp~J4+[7C)-N6c1d`hI",
+                    "inputs": {
+                        "SUBSTACK": [
+                            2,
+                            "K=4:MrC`S(Jkq=.igsA1"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "K=4:MrC`S(Jkq=.igsA1": {
+                    "opcode": "control_if_else",
+                    "next": "N-(d.$vU!CNp@Ufo4_-8",
+                    "parent": "lg[~_N:5kX6opNa%=n~B",
+                    "inputs": {
+                        "CONDITION": [
+                            2,
+                            "[Bd5?D7H:j@oyI|;uP`i"
+                        ],
+                        "SUBSTACK": [
+                            2,
+                            "H+)^m@^l,Z7Sw4R]w)`d"
+                        ],
+                        "SUBSTACK2": [
+                            2,
+                            "yu]%B[tC)3l{El;Ee9Fp"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "[Bd5?D7H:j@oyI|;uP`i": {
+                    "opcode": "sensing_touchingobject",
+                    "next": null,
+                    "parent": "K=4:MrC`S(Jkq=.igsA1",
+                    "inputs": {
+                        "TOUCHINGOBJECTMENU": [
+                            1,
+                            "E:n,7t[nq=h;$ApH#t-L"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "E:n,7t[nq=h;$ApH#t-L": {
+                    "opcode": "sensing_touchingobjectmenu",
+                    "next": null,
+                    "parent": "[Bd5?D7H:j@oyI|;uP`i",
+                    "inputs": {},
+                    "fields": {
+                        "TOUCHINGOBJECTMENU": [
+                            "_mouse_",
+                            null
+                        ]
+                    },
+                    "shadow": true,
+                    "topLevel": false
+                },
+                "H+)^m@^l,Z7Sw4R]w)`d": {
+                    "opcode": "looks_sayforsecs",
+                    "next": "%,_qDGUdNb}Q_#V3_%(g",
+                    "parent": "K=4:MrC`S(Jkq=.igsA1",
+                    "inputs": {
+                        "MESSAGE": [
+                            1,
+                            [
+                                10,
+                                "Hello!"
+                            ]
+                        ],
+                        "SECS": [
+                            1,
+                            [
+                                4,
+                                "2"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "%,_qDGUdNb}Q_#V3_%(g": {
+                    "opcode": "control_stop",
+                    "next": null,
+                    "parent": "H+)^m@^l,Z7Sw4R]w)`d",
+                    "inputs": {},
+                    "fields": {
+                        "STOP_OPTION": [
+                            "all",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false,
+                    "mutation": {
+                        "tagName": "mutation",
+                        "children": [],
+                        "hasnext": "false"
+                    }
+                },
+                "yu]%B[tC)3l{El;Ee9Fp": {
+                    "opcode": "looks_sayforsecs",
+                    "next": "ct1`IN[=Fx?xi5u8r;@J",
+                    "parent": "K=4:MrC`S(Jkq=.igsA1",
+                    "inputs": {
+                        "MESSAGE": [
+                            1,
+                            [
+                                10,
+                                "Hello!"
+                            ]
+                        ],
+                        "SECS": [
+                            1,
+                            [
+                                4,
+                                "2"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "ct1`IN[=Fx?xi5u8r;@J": {
+                    "opcode": "control_stop",
+                    "next": null,
+                    "parent": "yu]%B[tC)3l{El;Ee9Fp",
+                    "inputs": {},
+                    "fields": {
+                        "STOP_OPTION": [
+                            "all",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false,
+                    "mutation": {
+                        "tagName": "mutation",
+                        "children": [],
+                        "hasnext": "false"
+                    }
+                },
+                "N-(d.$vU!CNp@Ufo4_-8": {
+                    "opcode": "control_if",
+                    "next": "4!l$)Si^@voC8#]MwXhv",
+                    "parent": "K=4:MrC`S(Jkq=.igsA1",
+                    "inputs": {
+                        "CONDITION": [
+                            2,
+                            "SxEdQ8:cJ,dh+-dgcIIb"
+                        ],
+                        "SUBSTACK": [
+                            2,
+                            "Li@h@H*r9`E$hmWNmK@s"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "SxEdQ8:cJ,dh+-dgcIIb": {
+                    "opcode": "sensing_touchingobject",
+                    "next": null,
+                    "parent": "N-(d.$vU!CNp@Ufo4_-8",
+                    "inputs": {
+                        "TOUCHINGOBJECTMENU": [
+                            1,
+                            "iE0S5V^{LW8$?2-h,*R("
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "iE0S5V^{LW8$?2-h,*R(": {
+                    "opcode": "sensing_touchingobjectmenu",
+                    "next": null,
+                    "parent": "SxEdQ8:cJ,dh+-dgcIIb",
+                    "inputs": {},
+                    "fields": {
+                        "TOUCHINGOBJECTMENU": [
+                            "_mouse_",
+                            null
+                        ]
+                    },
+                    "shadow": true,
+                    "topLevel": false
+                },
+                "Li@h@H*r9`E$hmWNmK@s": {
+                    "opcode": "motion_glideto",
+                    "next": null,
+                    "parent": "N-(d.$vU!CNp@Ufo4_-8",
+                    "inputs": {
+                        "SECS": [
+                            1,
+                            [
+                                4,
+                                "1"
+                            ]
+                        ],
+                        "TO": [
+                            1,
+                            "iW`ns6vrD0i7gXSpq+0D"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "iW`ns6vrD0i7gXSpq+0D": {
+                    "opcode": "motion_glideto_menu",
+                    "next": null,
+                    "parent": "Li@h@H*r9`E$hmWNmK@s",
+                    "inputs": {},
+                    "fields": {
+                        "TO": [
+                            "_random_",
+                            null
+                        ]
+                    },
+                    "shadow": true,
+                    "topLevel": false
+                },
+                "4!l$)Si^@voC8#]MwXhv": {
+                    "opcode": "control_if",
+                    "next": null,
+                    "parent": "N-(d.$vU!CNp@Ufo4_-8",
+                    "inputs": {
+                        "CONDITION": [
+                            2,
+                            "HdLtwW(_5*d{%SQq]ew*"
+                        ],
+                        "SUBSTACK": [
+                            2,
+                            "k$6%|=x?KTR(~+jg5CiM"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "HdLtwW(_5*d{%SQq]ew*": {
+                    "opcode": "sensing_touchingobject",
+                    "next": null,
+                    "parent": "4!l$)Si^@voC8#]MwXhv",
+                    "inputs": {
+                        "TOUCHINGOBJECTMENU": [
+                            1,
+                            "G5C4_8RWR1_sDC-*.,0="
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "G5C4_8RWR1_sDC-*.,0=": {
+                    "opcode": "sensing_touchingobjectmenu",
+                    "next": null,
+                    "parent": "HdLtwW(_5*d{%SQq]ew*",
+                    "inputs": {},
+                    "fields": {
+                        "TOUCHINGOBJECTMENU": [
+                            "_mouse_",
+                            null
+                        ]
+                    },
+                    "shadow": true,
+                    "topLevel": false
+                },
+                "k$6%|=x?KTR(~+jg5CiM": {
+                    "opcode": "motion_glideto",
+                    "next": "uaAD}f*jmnYz/juhtS3(",
+                    "parent": "4!l$)Si^@voC8#]MwXhv",
+                    "inputs": {
+                        "SECS": [
+                            1,
+                            [
+                                4,
+                                "1"
+                            ]
+                        ],
+                        "TO": [
+                            1,
+                            "3=K6]wMx]fJQu/6aeEcZ"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "3=K6]wMx]fJQu/6aeEcZ": {
+                    "opcode": "motion_glideto_menu",
+                    "next": null,
+                    "parent": "k$6%|=x?KTR(~+jg5CiM",
+                    "inputs": {},
+                    "fields": {
+                        "TO": [
+                            "_random_",
+                            null
+                        ]
+                    },
+                    "shadow": true,
+                    "topLevel": false
+                },
+                "uaAD}f*jmnYz/juhtS3(": {
+                    "opcode": "control_forever",
+                    "next": null,
+                    "parent": "k$6%|=x?KTR(~+jg5CiM",
+                    "inputs": {
+                        "SUBSTACK": [
+                            2,
+                            "oFpWksQr@NXT__d0^0v|"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "oFpWksQr@NXT__d0^0v|": {
+                    "opcode": "control_stop",
+                    "next": null,
+                    "parent": "uaAD}f*jmnYz/juhtS3(",
+                    "inputs": {},
+                    "fields": {
+                        "STOP_OPTION": [
+                            "all",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false,
+                    "mutation": {
+                        "tagName": "mutation",
+                        "children": [],
+                        "hasnext": "false"
+                    }
+                }
+            },
+            "comments": {},
+            "currentCostume": 0,
+            "costumes": [
+                {
+                    "assetId": "bcf454acf82e4504149f7ffe07081dbc",
+                    "name": "costume1",
+                    "bitmapResolution": 1,
+                    "md5ext": "bcf454acf82e4504149f7ffe07081dbc.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 48,
+                    "rotationCenterY": 50
+                },
+                {
+                    "assetId": "0fb9be3e8397c983338cb71dc84d0b25",
+                    "name": "costume2",
+                    "bitmapResolution": 1,
+                    "md5ext": "0fb9be3e8397c983338cb71dc84d0b25.svg",
+                    "dataFormat": "svg",
+                    "rotationCenterX": 46,
+                    "rotationCenterY": 53
+                }
+            ],
+            "sounds": [
+                {
+                    "assetId": "83c36d806dc92327b9e7049a565c6bff",
+                    "name": "Meow",
+                    "dataFormat": "wav",
+                    "format": "",
+                    "rate": 48000,
+                    "sampleCount": 40682,
+                    "md5ext": "83c36d806dc92327b9e7049a565c6bff.wav"
+                }
+            ],
+            "volume": 100,
+            "layerOrder": 1,
+            "visible": true,
+            "x": 0,
+            "y": 0,
+            "size": 100,
+            "direction": 90,
+            "draggable": false,
+            "rotationStyle": "all around"
+        }
+    ],
+    "monitors": [],
+    "extensions": [],
+    "meta": {
+        "semver": "3.0.0",
+        "vm": "0.2.0-prerelease.20210202100335",
+        "agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:86.0) Gecko/20100101 Firefox/86.0"
+    }
+}

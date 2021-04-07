@@ -43,6 +43,7 @@ public class Issue {
     private int id;
 
     private static int globalIssueCount = 0;
+
     /**
      * Creates a new issue the contains the finder that created this issue, the actor in which the issue was found and
      * the ASTNode that is most specific to this issue.
@@ -91,6 +92,7 @@ public class Issue {
         this.node = currentNode;
         this.metaData = metaData;
         this.hint = hint;
+        this.id = globalIssueCount++;
         // Check that hints have actually been declared, otherwise
         // we might be missing translations
         assert (finder.getHintKeys().contains(hint.getHintKey()));
@@ -100,7 +102,9 @@ public class Issue {
         return finder;
     }
 
-    public IssueSeverity getSeverity() { return severity; }
+    public IssueSeverity getSeverity() {
+        return severity;
+    }
 
     public IssueType getIssueType() {
         return finder.getIssueType();
@@ -118,7 +122,9 @@ public class Issue {
         return procedure;
     }
 
-    public Program getProgram() { return program; }
+    public Program getProgram() {
+        return program;
+    }
 
     public String getActorName() {
         return actor.getIdent().getName();
@@ -183,5 +189,7 @@ public class Issue {
     public boolean isDuplicateOf(Issue other) {
         return finder.isDuplicateOf(this, other);
     }
+
+    public double getDistanceTo(Issue other) { return finder.getDistanceTo(this, other); }
 
 }

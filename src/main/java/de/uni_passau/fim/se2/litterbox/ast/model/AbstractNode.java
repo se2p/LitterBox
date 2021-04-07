@@ -52,6 +52,10 @@ public abstract class AbstractNode implements ASTNode {
         return children;
     }
 
+    public boolean hasChildren() {
+        return !children.isEmpty();
+    }
+
     @Override
     public ASTNode getParentNode() {
         return parent;

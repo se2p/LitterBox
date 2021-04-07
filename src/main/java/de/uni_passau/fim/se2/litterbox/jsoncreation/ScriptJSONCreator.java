@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.uni_passau.fim.se2.litterbox.jsonCreation;
+package de.uni_passau.fim.se2.litterbox.jsoncreation;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
@@ -35,8 +35,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
-import static de.uni_passau.fim.se2.litterbox.jsonCreation.BlockJsonCreatorHelper.*;
-import static de.uni_passau.fim.se2.litterbox.jsonCreation.JSONStringCreator.createField;
+import static de.uni_passau.fim.se2.litterbox.jsoncreation.BlockJsonCreatorHelper.*;
+import static de.uni_passau.fim.se2.litterbox.jsoncreation.JSONStringCreator.createField;
 
 public class ScriptJSONCreator {
     public static String createScriptJSONString(Script script, SymbolTable symbol) {

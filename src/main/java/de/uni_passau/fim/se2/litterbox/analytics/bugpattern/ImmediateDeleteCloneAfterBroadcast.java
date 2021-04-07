@@ -19,14 +19,16 @@
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
+import de.uni_passau.fim.se2.litterbox.analytics.Hint;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
-import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
+import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.Broadcast;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.DeleteClone;
+import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 
 import java.util.List;
 
@@ -40,7 +42,14 @@ public class ImmediateDeleteCloneAfterBroadcast extends AbstractIssueFinder {
         if (stmts.size() > 1 && stmts.get(stmts.size() - 1) instanceof DeleteClone) {
             ASTNode questionableNode = stmts.get(stmts.size() - 2);
             if (questionableNode instanceof Broadcast) {
-                addIssue(questionableNode, questionableNode.getMetadata(), IssueSeverity.LOW);
+                Hint hint = new Hint(getName());
+                hint.setParameter(Hint.HINT_SPRITE, currentActor.getIdent().getName());
+                if (((Broadcast) questionableNode).getMessage().getMessage() instanceof StringLiteral) {
+                    hint.setParameter(Hint.HINT_MESSAGE, ((StringLiteral) ((Broadcast) questionableNode).getMessage().getMessage()).getText());
+                } else {
+                    hint.setParameter(Hint.HINT_MESSAGE, IssueTranslator.getInstance().getInfo("message"));
+                }
+                addIssue(questionableNode, questionableNode.getMetadata(), IssueSeverity.LOW, hint);
             }
         }
         super.visitChildren(node);

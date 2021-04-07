@@ -25,11 +25,13 @@ import de.uni_passau.fim.se2.litterbox.ast.model.event.KeyPressed;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.*;
 
 import java.util.List;
 
-import static de.uni_passau.fim.se2.litterbox.jsonCreation.BlockJsonCreatorHelper.getKeyValue;
+import static de.uni_passau.fim.se2.litterbox.jsoncreation.BlockJsonCreatorHelper.getKeyValue;
 
 /**
  * A common way to move sprites in response to keyboard input is to use the specific event handler When key
@@ -42,7 +44,7 @@ public class StutteringMovement extends AbstractIssueFinder {
     public static final String NAME = "stuttering_movement";
     private boolean hasPositionMove;
     private boolean hasRotation;
-    private boolean hasKeyPressed;
+    private int loopCount = 0;
 
     @Override
     public void visit(Script script) {
@@ -50,12 +52,13 @@ public class StutteringMovement extends AbstractIssueFinder {
             // Ignore unconnected blocks
             return;
         }
+        loopCount = 0;
         currentScript = script;
         currentProcedure = null;
         visitChildren(script);
-        if (hasKeyPressed) {
+        if (script.getEvent() instanceof KeyPressed) {
             List<Stmt> listOfStmt = script.getStmtList().getStmts();
-            if (listOfStmt.size() == 1) {
+            if (listOfStmt.size() <= 2 && listOfStmt.size() > 0) {
                 Stmt stmt = listOfStmt.get(0);
                 if (hasRotation || hasPositionMove) {
                     KeyPressed keyPressed = (KeyPressed) script.getEvent();
@@ -64,18 +67,8 @@ public class StutteringMovement extends AbstractIssueFinder {
                     hint.setParameter(Hint.HINT_KEY, key);
                     addIssue(stmt, stmt.getMetadata(), IssueSeverity.HIGH, hint);
                 }
-            } else if (listOfStmt.size() == 2) {
-                Stmt stmt = listOfStmt.get(0);
-                if (hasRotation && hasPositionMove) {
-                    KeyPressed keyPressed = (KeyPressed) script.getEvent();
-                    String key = getKeyValue((int) ((NumberLiteral) keyPressed.getKey().getKey()).getValue());
-                    Hint hint = new Hint(getName());
-                    hint.setParameter(Hint.HINT_KEY, key);
-                    addIssue(stmt, stmt.getMetadata(), IssueSeverity.HIGH, hint);
-                }
             }
         }
-        hasKeyPressed = false;
         hasPositionMove = false;
         hasRotation = false;
         currentScript = null;
@@ -83,32 +76,51 @@ public class StutteringMovement extends AbstractIssueFinder {
 
     @Override
     public void visit(MoveSteps node) {
-        hasPositionMove = true;
+        if (loopCount == 0) {
+            hasPositionMove = true;
+        }
     }
 
     @Override
     public void visit(ChangeXBy node) {
-        hasPositionMove = true;
+        if (loopCount == 0) {
+            hasPositionMove = true;
+        }
     }
 
     @Override
     public void visit(ChangeYBy node) {
-        hasPositionMove = true;
+        if (loopCount == 0) {
+            hasPositionMove = true;
+        }
     }
 
     @Override
     public void visit(TurnRight node) {
-        hasRotation = true;
+        if (loopCount == 0) {
+            hasRotation = true;
+        }
     }
 
     @Override
     public void visit(TurnLeft node) {
-        hasRotation = true;
+        if (loopCount == 0) {
+            hasRotation = true;
+        }
     }
 
     @Override
-    public void visit(KeyPressed node) {
-        hasKeyPressed = true;
+    public void visit(UntilStmt node) {
+        loopCount++;
+        visitChildren(node);
+        loopCount--;
+    }
+
+    @Override
+    public void visit(RepeatForeverStmt node) {
+        loopCount++;
+        visitChildren(node);
+        loopCount--;
     }
 
     @Override
