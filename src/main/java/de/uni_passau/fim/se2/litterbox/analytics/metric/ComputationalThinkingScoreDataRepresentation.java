@@ -32,7 +32,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SpriteLook
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SpriteMotionStmt;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
-public class ComputationalThinkingScoreDataRepresentation implements MetricExtractor, ScratchVisitor {
+public class ComputationalThinkingScoreDataRepresentation implements MetricExtractor<Program>, ScratchVisitor {
 
     private int score = 0;
 
