@@ -27,7 +27,7 @@ public abstract class ExtensionVisitor {
 
     public void visitChildren(ASTNode node) {
         for (ASTNode child : node.getChildren()) {
-            child.accept(this);
+            child.accept(parent);
         }
     }
 
