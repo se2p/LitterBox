@@ -21,6 +21,7 @@ package de.uni_passau.fim.se2.litterbox.analytics;
 import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.*;
 import de.uni_passau.fim.se2.litterbox.analytics.goodpractices.BoolExpression;
 import de.uni_passau.fim.se2.litterbox.analytics.goodpractices.CustomBlockUsage;
+import de.uni_passau.fim.se2.litterbox.analytics.goodpractices.InitializeLocation;
 import de.uni_passau.fim.se2.litterbox.analytics.solutionpattern.*;
 import de.uni_passau.fim.se2.litterbox.analytics.goodpractices.ListUsage;
 import de.uni_passau.fim.se2.litterbox.analytics.smells.*;
@@ -153,6 +154,7 @@ public class IssueTool {
         registerGoodPracticeFinder(new ListUsage(), goodPracticeFinders);
         registerGoodPracticeFinder(new CustomBlockUsage(), goodPracticeFinders);
         registerGoodPracticeFinder(new BoolExpression(), goodPracticeFinders);
+        registerGoodPracticeFinder(new InitializeLocation(), goodPracticeFinders);
 
 
         return goodPracticeFinders;
