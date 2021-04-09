@@ -27,12 +27,15 @@ public class Cohesion <T extends ASTNode> implements MetricExtractor<T>, Scratch
     @Override
     public void visit(Script node) {
         ArrayList<MetricExtractor<Script>> list = new ArrayList<>();
+        list.add(new EventsBlockCount<>()); //TODO if you doesnt want to count events as kind of blocks
+                                            // add corner case for count_different_blocks == 0
         list.add(new SoundBlockCount<>());
         list.add(new MotionBlockCount<>());
         list.add(new LooksBlockCount<>());
         list.add(new ControlBlockCount<>());
         list.add(new SensingBlockCount<>());
         list.add(new VariablesBlockCount<>());
+        list.add(new OperatorsBlockCount<>());
 
         int count_different_blocks = 0;
 
@@ -43,7 +46,7 @@ public class Cohesion <T extends ASTNode> implements MetricExtractor<T>, Scratch
         }
 
         // Calculate local script cohesion
-        local_cohesion = new BlockCount<Script>().calculateMetric(node) / count_different_blocks;
+        local_cohesion = new BlockCount<Script>().calculateMetric(node) / count_different_blocks; //TODO corner case here
 
         count += local_cohesion;
     }
@@ -51,12 +54,14 @@ public class Cohesion <T extends ASTNode> implements MetricExtractor<T>, Scratch
     @Override
     public void visit(ProcedureDefinition node) {
         ArrayList<MetricExtractor<ProcedureDefinition>> list = new ArrayList<>();
+        list.add(new EventsBlockCount<>());
         list.add(new SoundBlockCount<>());
         list.add(new MotionBlockCount<>());
         list.add(new LooksBlockCount<>());
         list.add(new ControlBlockCount<>());
         list.add(new SensingBlockCount<>());
         list.add(new VariablesBlockCount<>());
+        list.add(new OperatorsBlockCount<>());
 
         int count_different_blocks = 0;
 
