@@ -21,6 +21,7 @@ package de.uni_passau.fim.se2.litterbox.analytics.smells;
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.CloneOfMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.PenWithParamMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;

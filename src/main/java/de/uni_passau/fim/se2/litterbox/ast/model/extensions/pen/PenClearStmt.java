@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.uni_passau.fim.se2.litterbox.ast.model.statement.pen;
+package de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTLeaf;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
@@ -25,10 +25,10 @@ import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
-public class PenDownStmt extends AbstractNode implements PenStmt, ASTLeaf {
+public class PenClearStmt extends AbstractNode implements PenStmt, ASTLeaf {
     private final BlockMetadata metadata;
 
-    public PenDownStmt(BlockMetadata metadata) {
+    public PenClearStmt(BlockMetadata metadata) {
         super(metadata);
         this.metadata = metadata;
     }

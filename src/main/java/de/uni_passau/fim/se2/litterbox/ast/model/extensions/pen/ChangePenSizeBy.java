@@ -16,26 +16,33 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.uni_passau.fim.se2.litterbox.ast.model.statement.pen;
+package de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen;
 
-import de.uni_passau.fim.se2.litterbox.ast.model.ASTLeaf;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
+import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-public class PenStampStmt extends AbstractNode implements PenStmt, ASTLeaf {
+public class ChangePenSizeBy extends AbstractNode implements PenStmt {
+    private final NumExpr value;
     private final BlockMetadata metadata;
 
-    public PenStampStmt(BlockMetadata metadata) {
-        super(metadata);
+    public ChangePenSizeBy(NumExpr value, BlockMetadata metadata) {
+        super(value, metadata);
+        this.value = Preconditions.checkNotNull(value);
         this.metadata = metadata;
     }
 
     @Override
     public BlockMetadata getMetadata() {
         return metadata;
+    }
+
+    public NumExpr getValue() {
+        return value;
     }
 
     @Override

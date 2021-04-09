@@ -20,8 +20,8 @@ package de.uni_passau.fim.se2.litterbox.ast.visitor;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTLeaf;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.pen.PenDownStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.pen.PenUpStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.PenDownStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.PenUpStmt;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;

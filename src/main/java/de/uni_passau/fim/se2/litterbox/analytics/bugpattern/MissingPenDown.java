@@ -22,8 +22,8 @@ import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.pen.PenDownStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.pen.PenUpStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.PenDownStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.PenUpStmt;
 
 /**
  * Scripts of a sprite using a pen up block but never a pen down block fall in this category.

@@ -32,6 +32,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.At
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.AttributeFromFixed;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.AttributeFromVariable;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.FixedAttribute;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.ExtensionBlock;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Identifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
@@ -75,7 +77,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.declaration.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.list.*;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.pen.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.DeleteClone;
@@ -92,12 +93,21 @@ import de.uni_passau.fim.se2.litterbox.ast.model.variable.Parameter;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.ScratchList;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public interface ScratchVisitor {
+    List<ExtensionVisitor> extensionVisitors = new ArrayList<>();
 
     default void visitChildren(ASTNode node) {
         for (ASTNode child : node.getChildren()) {
             child.accept(this);
         }
+    }
+
+    default void addExtensionVisitor(ExtensionVisitor visitor) {
+        extensionVisitors.add(visitor);
+        visitor.addParent(this);
     }
 
     /**
@@ -3724,5 +3734,21 @@ public interface ScratchVisitor {
      */
     default void visit(CloneOfMetadata node) {
         visit((BlockMetadata) node);
+    }
+
+    /**
+     * Default implementation of visit method for {@link ExtensionBlock}.
+     *
+     * <p>
+     * Iterates all children of this node without performing any action.
+     * </p>
+     *
+     * @param node ExtensionBlock Node of which the children will
+     *             be iterated
+     */
+    default void visit(ExtensionBlock node) {
+        for (ExtensionVisitor visitor: extensionVisitors) {
+            visitor.visit(node);
+        }
     }
 }

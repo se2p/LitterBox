@@ -16,23 +16,25 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.uni_passau.fim.se2.litterbox.ast.model.statement.pen;
+package de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
-import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-public class SetPenSizeTo extends AbstractNode implements PenStmt {
+public class ChangePenColorParamBy extends AbstractNode implements PenStmt {
     private final NumExpr value;
+    private final StringExpr param;
     private final BlockMetadata metadata;
 
-    public SetPenSizeTo(NumExpr value, BlockMetadata metadata) {
-        super(value, metadata);
-        this.value = Preconditions.checkNotNull(value);
+    public ChangePenColorParamBy(NumExpr value, StringExpr param, BlockMetadata metadata) {
+        super(value, param, metadata);
+        this.value = value;
+        this.param = param;
         this.metadata = metadata;
     }
 
@@ -43,6 +45,10 @@ public class SetPenSizeTo extends AbstractNode implements PenStmt {
 
     public NumExpr getValue() {
         return value;
+    }
+
+    public StringExpr getParam() {
+        return param;
     }
 
     @Override

@@ -18,6 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.jsoncreation;
 
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.CloneOfMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.PenWithParamMetadata;

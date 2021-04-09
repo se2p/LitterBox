@@ -25,7 +25,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.ColorTouchingCo
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.SpriteTouchingColor;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Touching;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.ColorLiteral;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.pen.SetPenColorToColorStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.SetPenColorToColorStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.Edge;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.MousePointer;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.SpriteTouchable;
