@@ -34,7 +34,7 @@ public class NumberOfSmells implements MinimizingFitnessFunction<RefactorSequenc
     public double getFitness(RefactorSequence refactorSequence) throws NullPointerException {
         Program copy = new Program(program.getIdent(), program.getActorDefinitionList(), program.getSymbolTable(),
                 program.getProcedureMapping(), program.getProgramMetadata());
-        for (Refactoring refactoring : refactorSequence.getRefactorings()) {
+        for (Refactoring refactoring : refactorSequence.getProductions()) {
             copy = refactoring.apply(copy);
         }
 

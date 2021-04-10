@@ -2,7 +2,6 @@ package de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.chromosomes;
 
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.search_operators.Crossover;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.search_operators.Mutation;
-import de.uni_passau.fim.se2.litterbox.refactor.refactorings.Refactoring;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,10 +9,10 @@ import java.util.Objects;
 
 public class RefactorSequence extends Solution<RefactorSequence> {
 
-    private final List<Refactoring> refactorings;
+    private final List<Integer> productions;
 
-    public List<Refactoring> getRefactorings() {
-        return refactorings;
+    public List<Integer> getProductions() {
+        return productions;
     }
 
     /**
@@ -25,9 +24,9 @@ public class RefactorSequence extends Solution<RefactorSequence> {
      * @param productions a list of executed refactorings within the sequence, not {@code null}
      * @throws NullPointerException if an argument is {@code null}
      */
-    public RefactorSequence(Mutation<RefactorSequence> mutation, Crossover<RefactorSequence> crossover, List<Refactoring> productions) throws NullPointerException {
+    public RefactorSequence(Mutation<RefactorSequence> mutation, Crossover<RefactorSequence> crossover, List<Integer> productions) throws NullPointerException {
         super(mutation, crossover);
-        this.refactorings = Objects.requireNonNull(productions);
+        this.productions = Objects.requireNonNull(productions);
     }
 
     /**
@@ -37,8 +36,7 @@ public class RefactorSequence extends Solution<RefactorSequence> {
      */
     @Override
     public RefactorSequence copy() {
-        // TODO currently the refactorings are just a shallow copy
-        return new RefactorSequence(getMutation(), getCrossover(), new ArrayList<>(refactorings));
+        return new RefactorSequence(getMutation(), getCrossover(), new ArrayList<>(productions));
     }
 
     /**
@@ -54,7 +52,7 @@ public class RefactorSequence extends Solution<RefactorSequence> {
         if (!(other instanceof RefactorSequence)) {
             return false;
         }
-        return ((RefactorSequence) other).getRefactorings().equals(getRefactorings());
+        return ((RefactorSequence) other).getProductions().equals(getProductions());
     }
 
     /**
@@ -62,7 +60,7 @@ public class RefactorSequence extends Solution<RefactorSequence> {
      */
     @Override
     public int hashCode() {
-        return getRefactorings().hashCode();
+        return getProductions().hashCode();
     }
 
     @Override

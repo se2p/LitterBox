@@ -50,7 +50,8 @@ public class RefactoringAnalyzer extends Analyzer {
             return;
         }
 
-        List<Refactoring> executedRefactorings = findRefactoring(program, issueFinders, refactoringFinders, ignoreLooseBlocks);
+        List<Integer> executedProductions = findRefactoring(program, issueFinders, refactoringFinders, ignoreLooseBlocks);
+        // TODO switch to integer representation of grammatical evolution
         Program refactored = runRefactoring(program, executedRefactorings);
         generateOutput(refactored, executedRefactorings, reportName);
         createNewProjectFile(fileEntry, refactored);
@@ -66,7 +67,7 @@ public class RefactoringAnalyzer extends Analyzer {
      * @param ignoreLooseBlocks  Flag if loose blocks should be ignored or also be removed with the refactoring.
      * @return A copy of the original program with the best sequence of refactorings found applied on it.
      */
-    private List<Refactoring> findRefactoring(Program program, List<IssueFinder> issueFinders, List<RefactoringFinder> refactoringFinders, boolean ignoreLooseBlocks) {
+    private List<Integer> findRefactoring(Program program, List<IssueFinder> issueFinders, List<RefactoringFinder> refactoringFinders, boolean ignoreLooseBlocks) {
         NSGAII<RefactorSequence> nsgaii = initializeNSGAII(program, issueFinders, refactoringFinders, ignoreLooseBlocks);
         List<RefactorSequence> solution = nsgaii.findSolution();
         if (solution.isEmpty()) {
@@ -75,7 +76,7 @@ public class RefactoringAnalyzer extends Analyzer {
         }
 
         // TODO choose solution from front with lowest euclidian distance to perfect solution instead of first one
-        return solution.get(0).getRefactorings();
+        return solution.get(0).getProductions();
     }
 
     private NSGAII<RefactorSequence> initializeNSGAII(Program program, List<IssueFinder> issueFinders, List<RefactoringFinder> refactoringFinders, boolean ignoreLooseBlocks) {
@@ -84,7 +85,7 @@ public class RefactoringAnalyzer extends Analyzer {
         OffspringGenerator<RefactorSequence> offspringGenerator = new OffspringGenerator<>(random, binaryRankTournament);
         Mutation<RefactorSequence> mutation = new RefactorSequenceMutation(program, refactoringFinders);
         Crossover<RefactorSequence> crossover = new RefactorSequenceCrossover();
-        ChromosomeGenerator<RefactorSequence> chromosomeGenerator = new RefactorSequenceGenerator(mutation, crossover, program, refactoringFinders);
+        ChromosomeGenerator<RefactorSequence> chromosomeGenerator = new RefactorSequenceGenerator(mutation, crossover, random);
         FixedSizePopulationGenerator<RefactorSequence> populationGenerator = new FixedSizePopulationGenerator<>(chromosomeGenerator, POPULATION_SIZE);
         MinimizingFitnessFunction<RefactorSequence> fitnessFunction = new NumberOfSmells(program, issueFinders, ignoreLooseBlocks);
         FastNonDominatedSort<RefactorSequence> fastNonDominatedSort = new FastNonDominatedSort<>(fitnessFunction);
