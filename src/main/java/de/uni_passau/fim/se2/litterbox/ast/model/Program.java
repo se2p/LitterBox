@@ -73,4 +73,9 @@ public class Program extends AbstractNode {
     public ProcedureDefinitionNameMapping getProcedureMapping() {
         return procedureMapping;
     }
+
+    public Program copy() {
+        // TODO make deep copy of nodes
+        return new Program(ident, actorDefinitionList, symbolTable, procedureMapping, metadata);
+    }
 }

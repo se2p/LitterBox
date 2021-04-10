@@ -30,6 +30,8 @@ import static de.uni_passau.fim.se2.litterbox.utils.GroupConstants.*;
 
 public class Main {
 
+    private static final String REFACTOR = "refactor";
+    private static final String REFACTOR_SHORT = "r";
     private static final String CHECK = "check";
     private static final String CHECK_SHORT = "c";
     private static final String LEILA = "leila";
@@ -68,6 +70,7 @@ public class Main {
 
         // Operation mode
         OptionGroup mainMode = new OptionGroup();
+        mainMode.addOption(new Option(REFACTOR_SHORT, REFACTOR, false, "Refactor specified Scratch projects"));
         mainMode.addOption(new Option(CHECK_SHORT, CHECK, false, "Check specified Scratch projects for issues"));
         mainMode.addOption(new Option(LEILA_SHORT, LEILA, false, "Translate specified Scratch projects to Leila"));
         mainMode.addOption(new Option(STATS_SHORT, STATS, false, "Extract metrics for Scratch projects"));
@@ -136,6 +139,22 @@ public class Main {
                 finder,
                 messages.getName(finder)
         ));
+    }
+
+    static void refactorPrograms(CommandLine cmd) throws ParseException {
+        if (!cmd.hasOption(PROJECTPATH)) {
+            throw new ParseException("Input path option '" + PROJECTPATH + "' required");
+        }
+
+        String outputPath = cmd.getOptionValue(OUTPUT);
+        String input = cmd.getOptionValue(PROJECTPATH);
+        String detectors = cmd.getOptionValue(DETECTORS, DEFAULT);
+        boolean ignoreLooseBlocks = cmd.hasOption(IGNORE_LOOSE_BLOCKS);
+        boolean delete = cmd.hasOption(DELETE_PROJECT_AFTERWARDS);
+
+        RefactoringAnalyzer refactorer = new RefactoringAnalyzer(input, outputPath, detectors, ignoreLooseBlocks, delete);
+
+        runAnalysis(cmd, refactorer);
     }
 
     static void checkPrograms(CommandLine cmd) throws ParseException {
@@ -211,7 +230,9 @@ public class Main {
             String lang = cmd.getOptionValue(OUTPUT_LANG, "en");
             IssueTranslator.getInstance().setLanguage(lang);
 
-            if (cmd.hasOption(CHECK)) {
+            if (cmd.hasOption(REFACTOR)) {
+                refactorPrograms(cmd);
+            } else if (cmd.hasOption(CHECK)) {
                 checkPrograms(cmd);
             } else if (cmd.hasOption(STATS)) {
                 statsPrograms(cmd);
