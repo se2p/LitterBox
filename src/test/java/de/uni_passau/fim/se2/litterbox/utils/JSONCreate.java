@@ -24,6 +24,7 @@ import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ProgramParser;
 import de.uni_passau.fim.se2.litterbox.jsoncreation.JSONFileCreator;
+import de.uni_passau.fim.se2.litterbox.jsoncreation.enums.FilePostfix;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -37,6 +38,6 @@ public class JSONCreate {
         File f = new File("./src/test/fixtures/stmtParser/manipulatedBroadcast.json");
         JsonNode prog = mapper.readTree(f);
         Program test = ProgramParser.parseProgram("createBroadcast", prog);
-        JSONFileCreator.writeJsonFromProgram(test);
+        JSONFileCreator.writeJsonFromProgram(test, FilePostfix.ANNOTATED);
     }
 }
