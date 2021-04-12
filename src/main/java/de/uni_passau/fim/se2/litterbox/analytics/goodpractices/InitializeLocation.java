@@ -3,6 +3,7 @@ package de.uni_passau.fim.se2.litterbox.analytics.goodpractices;
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
+import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.GreenFlag;
@@ -19,18 +20,29 @@ public class InitializeLocation extends AbstractIssueFinder {
     public static final String NAME = "initialize_location";
     private boolean initializedX = false;
     private boolean initializedY = false;
+    private boolean initInProcedure = false;
+    private boolean inCustomBlock = false;
+    private boolean inGreenFlag = false;
     private final int INIT_STATE = 0;
 
     @Override
     public void visit(Script node) {
         if (node.getEvent() instanceof GreenFlag) {
+            inGreenFlag = true;
+            if (initInProcedure) {
+                addIssue(node, node.getMetadata(), IssueSeverity.MEDIUM);
+                initInProcedure = false;
+            }
             visitChildren(node);
+            inGreenFlag = false;
         }
     }
 
     @Override
     public void visit(ProcedureDefinition node) {
+        inCustomBlock = true;
         visitChildren(node);
+        inCustomBlock = false;
     }
 
     @Override
@@ -54,7 +66,7 @@ public class InitializeLocation extends AbstractIssueFinder {
             if ((((NumberLiteral) stmt.getNum()).getValue() == INIT_STATE)) {
                 initializedX = true;
                 if (initializedX && initializedY) {
-                    addIssue(stmt, stmt.getMetadata(), IssueSeverity.MEDIUM);
+                    this.check(stmt);
                     initializedX = false;
                     initializedY = false;
                 }
@@ -68,7 +80,7 @@ public class InitializeLocation extends AbstractIssueFinder {
             if ((((NumberLiteral) stmt.getNum()).getValue() == INIT_STATE)) {
                 initializedY = true;
                 if (initializedX && initializedY) {
-                    addIssue(stmt, stmt.getMetadata(), IssueSeverity.MEDIUM);
+                    this.check(stmt);
                     initializedX = false;
                     initializedY = false;
                 }
@@ -82,10 +94,23 @@ public class InitializeLocation extends AbstractIssueFinder {
                 && stmt.getY() instanceof NumberLiteral) {
             if ((((NumberLiteral) stmt.getX()).getValue() == INIT_STATE &&
                     ((NumberLiteral) stmt.getX()).getValue() == INIT_STATE)) {
-                addIssue(stmt, stmt.getMetadata(), IssueSeverity.MEDIUM);
+                this.check(stmt);
             }
         }
     }
+
+    private void check(AbstractNode node) {
+        if (inCustomBlock) {
+            if (inGreenFlag) {
+                addIssue(node, node.getMetadata(), IssueSeverity.MEDIUM);
+            } else {
+                initInProcedure = true;
+            }
+        } else if (inGreenFlag) {
+            addIssue(node, node.getMetadata(), IssueSeverity.MEDIUM);
+        }
+    }
+
     @Override
     public String getName() {
         return NAME;
