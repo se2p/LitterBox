@@ -50,11 +50,15 @@ public class RefactoringAnalyzer extends Analyzer {
             return;
         }
 
-        List<Integer> executedProductions = findRefactoring(program, issueFinders, refactoringFinders, ignoreLooseBlocks);
-        // TODO switch to integer representation of grammatical evolution
-        Program refactored = runRefactoring(program, executedRefactorings);
-        generateOutput(refactored, executedRefactorings, reportName);
-        createNewProjectFile(fileEntry, refactored);
+        RefactorSequence solution = findRefactoring(program, issueFinders, refactoringFinders, ignoreLooseBlocks);
+
+        if(solution != null) {
+            Program refactored = solution.applyToProgram(program); // fill list of refactorings
+            generateOutput(refactored, solution.getExecutedRefactorings(), reportName);
+            createNewProjectFile(fileEntry, refactored);
+        } else {
+            System.out.println("NSGA-II found no solutions!");
+        }
     }
 
     /**
@@ -67,25 +71,24 @@ public class RefactoringAnalyzer extends Analyzer {
      * @param ignoreLooseBlocks  Flag if loose blocks should be ignored or also be removed with the refactoring.
      * @return A copy of the original program with the best sequence of refactorings found applied on it.
      */
-    private List<Integer> findRefactoring(Program program, List<IssueFinder> issueFinders, List<RefactoringFinder> refactoringFinders, boolean ignoreLooseBlocks) {
+    private RefactorSequence findRefactoring(Program program, List<IssueFinder> issueFinders, List<RefactoringFinder> refactoringFinders, boolean ignoreLooseBlocks) {
         NSGAII<RefactorSequence> nsgaii = initializeNSGAII(program, issueFinders, refactoringFinders, ignoreLooseBlocks);
         List<RefactorSequence> solution = nsgaii.findSolution();
         if (solution.isEmpty()) {
-            log.info("NSGA-II found no solutions!");
-            return new LinkedList<>();
+            return null;
         }
 
         // TODO choose solution from front with lowest euclidian distance to perfect solution instead of first one
-        return solution.get(0).getProductions();
+        return solution.get(0);
     }
 
     private NSGAII<RefactorSequence> initializeNSGAII(Program program, List<IssueFinder> issueFinders, List<RefactoringFinder> refactoringFinders, boolean ignoreLooseBlocks) {
         Random random = new Random();
         BinaryRankTournament<RefactorSequence> binaryRankTournament = new BinaryRankTournament<>(random);
         OffspringGenerator<RefactorSequence> offspringGenerator = new OffspringGenerator<>(random, binaryRankTournament);
-        Mutation<RefactorSequence> mutation = new RefactorSequenceMutation(program, refactoringFinders);
-        Crossover<RefactorSequence> crossover = new RefactorSequenceCrossover();
-        ChromosomeGenerator<RefactorSequence> chromosomeGenerator = new RefactorSequenceGenerator(mutation, crossover, random);
+        Mutation<RefactorSequence> mutation = new RefactorSequenceMutation(random, refactoringFinders);
+        Crossover<RefactorSequence> crossover = new RefactorSequenceCrossover(random);
+        ChromosomeGenerator<RefactorSequence> chromosomeGenerator = new RefactorSequenceGenerator(mutation, crossover, random, refactoringFinders);
         FixedSizePopulationGenerator<RefactorSequence> populationGenerator = new FixedSizePopulationGenerator<>(chromosomeGenerator, POPULATION_SIZE);
         MinimizingFitnessFunction<RefactorSequence> fitnessFunction = new NumberOfSmells(program, issueFinders, ignoreLooseBlocks);
         FastNonDominatedSort<RefactorSequence> fastNonDominatedSort = new FastNonDominatedSort<>(fitnessFunction);
@@ -94,20 +97,6 @@ public class RefactoringAnalyzer extends Analyzer {
         return new NSGAII<>(populationGenerator, offspringGenerator, fastNonDominatedSort, crowdingDistanceSort, MAX_GEN);
     }
 
-    /**
-     * Execute the list of refactorings
-     *
-     * @param program              The original flawed program to be refactored.
-     * @param executedRefactorings A list of refactorings to execute on the original program.
-     * @return A copy of the original program with the best sequence of refactorings found applied on it.
-     */
-    private Program runRefactoring(Program program, List<Refactoring> executedRefactorings) {
-        Program refactoredProgram = program.copy();
-        for (Refactoring refactoring : executedRefactorings) {
-            refactoredProgram = refactoring.apply(refactoredProgram);
-        }
-        return refactoredProgram;
-    }
 
     private void generateOutput(Program program, List<Refactoring> executedRefactorings, String reportFileName) {
         try {

@@ -32,16 +32,12 @@ public class NumberOfSmells implements MinimizingFitnessFunction<RefactorSequenc
      */
     @Override
     public double getFitness(RefactorSequence refactorSequence) throws NullPointerException {
-        Program copy = new Program(program.getIdent(), program.getActorDefinitionList(), program.getSymbolTable(),
-                program.getProcedureMapping(), program.getProgramMetadata());
-        for (Refactoring refactoring : refactorSequence.getProductions()) {
-            copy = refactoring.apply(copy);
-        }
+        Program refactoredProgram = refactorSequence.applyToProgram(program);
 
         Set<Issue> issues = new LinkedHashSet<>();
         for (IssueFinder iF : issueFinders) {
             iF.setIgnoreLooseBlocks(ignoreLooseBlocks);
-            issues.addAll(iF.check(program));
+            issues.addAll(iF.check(refactoredProgram));
         }
 
         return issues.size();

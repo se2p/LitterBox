@@ -4,7 +4,18 @@ import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.chromosomes.Chrom
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.chromosomes.RefactorSequence;
 import de.uni_passau.fim.se2.litterbox.utils.Pair;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
 public class RefactorSequenceCrossover implements Crossover<RefactorSequence> {
+
+    private final Random random;
+
+    public RefactorSequenceCrossover(Random random) {
+        this.random = random;
+    }
+
     /**
      * Applies this crossover operator to the two given non-null parent chromosomes {@code parent1}
      * and {@code parent2}, and returns the resulting pair of offspring chromosomes.
@@ -24,8 +35,20 @@ public class RefactorSequenceCrossover implements Crossover<RefactorSequence> {
         RefactorSequence child1 = parent1.copy();
         RefactorSequence child2 = parent2.copy();
 
-        // TODO implement one-point crossover on the list if sequence here instead
-        // TODO validate crossover solutions afterwards
+        // TODO exclude cases 0 and size - 1? if so, how to handle chromosomes with length == 1
+        int crossoverPoint = child1.getProductions().isEmpty() ? random.nextInt(child1.getProductions().size()) : 0;
+
+        List<Integer> child1List = new ArrayList<>(child1.getProductions().subList(0, crossoverPoint));
+        List<Integer> child2List = new ArrayList<>(child2.getProductions().subList(0, crossoverPoint));
+
+        child1List.addAll(new ArrayList<>(child2.getProductions().subList(crossoverPoint, child2.getProductions().size())));
+        child2List.addAll(new ArrayList<>(child1.getProductions().subList(crossoverPoint, child1.getProductions().size())));
+
+        child1.getProductions().clear();
+        child2.getProductions().clear();
+
+        child1.getProductions().addAll(child1List);
+        child2.getProductions().addAll(child2List);
 
         return Pair.of(child1, child2);
     }

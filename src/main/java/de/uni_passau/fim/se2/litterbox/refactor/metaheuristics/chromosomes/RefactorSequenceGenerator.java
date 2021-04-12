@@ -1,5 +1,6 @@
 package de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.chromosomes;
 
+import de.uni_passau.fim.se2.litterbox.analytics.RefactoringFinder;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.search_operators.Crossover;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.search_operators.Mutation;
 
@@ -14,11 +15,14 @@ public class RefactorSequenceGenerator implements ChromosomeGenerator<RefactorSe
     private final Mutation<RefactorSequence> mutation;
     private final Crossover<RefactorSequence> crossover;
     private final Random random;
+    private final List<RefactoringFinder> refactoringFinders;
 
-    public RefactorSequenceGenerator(Mutation<RefactorSequence> mutation, Crossover<RefactorSequence> crossover, Random random) {
+    public RefactorSequenceGenerator(Mutation<RefactorSequence> mutation, Crossover<RefactorSequence> crossover,
+                                     Random random, List<RefactoringFinder> refactoringFinders) {
         this.mutation = mutation;
         this.crossover = crossover;
         this.random = random;
+        this.refactoringFinders = refactoringFinders;
     }
 
     /**
@@ -29,10 +33,10 @@ public class RefactorSequenceGenerator implements ChromosomeGenerator<RefactorSe
     @Override
     public RefactorSequence get() {
         List<Integer> productions = new LinkedList<>();
-        int numberOfProductions = random.nextInt(MAX_REFACTORINGS_PER_SOLUTION);
+        int numberOfProductions = 1 + random.nextInt(MAX_REFACTORINGS_PER_SOLUTION);
         for (int i = 0; i < numberOfProductions; i++) {
             productions.add(random.nextInt(255));
         }
-        return new RefactorSequence(mutation, crossover, productions);
+        return new RefactorSequence(mutation, crossover, productions, refactoringFinders);
     }
 }
