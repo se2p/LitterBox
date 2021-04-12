@@ -25,27 +25,6 @@ public class MergeDoubleIf implements Refactoring {
         return refactored;
     }
 
-    /**
-     * The if statements can be merged, if the second if, follows the first directly and and both have the same condition.
-     */
-    @Override
-    public boolean preCondition() {
-        if (!(if2.getParentNode() instanceof StmtList)) {
-            throw new IllegalArgumentException("PreCondition failed due to wrong parent access");
-        }
-        StmtList stmtList = (StmtList) if2.getParentNode();
-        return stmtList.getStmts().indexOf(if1) + 1 == stmtList.getStmts().indexOf(if2)
-                && if1.getBoolExpr().equals(if2.getBoolExpr());
-    }
-
-    @Override
-    public boolean postCondition() {
-        if (!(if2.getParentNode() instanceof StmtList)) {
-            throw new IllegalArgumentException("PostCondition failed due to wrong parent access");
-        }
-        return !if2.getThenStmts().hasStatements() && !((StmtList) if2.getParentNode()).getStmts().contains(if2);
-    }
-
     @Override
     public String getName() {
         return NAME;

@@ -15,19 +15,5 @@ public interface Refactoring {
      */
     Program apply(Program program);
 
-    /**
-     * Checks if the refactoring can be applied.
-     *
-     * @return {@code true} if the refactoring can be applied, {@code false} otherwise
-     */
-    boolean preCondition();
-
-    /**
-     * Checks if the refactoring was correctly applied and leaves the program in a valid state.
-     *
-     * @return {@code true} if the program is still valid after the refactoring, {@code false} otherwise
-     */
-    boolean postCondition();
-
     String getName();
 }
