@@ -18,6 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.jsoncreation;
 
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.ExtensionBlock;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.CloneOfMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
@@ -29,16 +30,36 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.list.*;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.pen.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.DeleteClone;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopAll;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopThisScript;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ExtensionVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
-public class IdVisitor implements ScratchVisitor {
+public class IdVisitor implements ScratchVisitor, ExtensionVisitor {
     private String id;
+    private ScratchVisitor parent;
+
+    public IdVisitor() {
+        addExtensionVisitor(this);
+    }
+
+    @Override
+    public void addParent(ScratchVisitor scratchVisitor) {
+        parent = scratchVisitor;
+    }
+
+    @Override
+    public ScratchVisitor getParent() {
+        return parent;
+    }
+
+    @Override
+    public void visit(ExtensionBlock node) {
+        visitChildren(node);
+    }
 
     public String getBlockId(Stmt stmt) {
         stmt.accept(this);

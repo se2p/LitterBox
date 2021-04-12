@@ -20,14 +20,20 @@ package de.uni_passau.fim.se2.litterbox.analytics.metric;
 
 import de.uni_passau.fim.se2.litterbox.analytics.MetricExtractor;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.ExtensionBlock;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.*;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.pen.*;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ExtensionVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-public class ProgramUsingPen<T extends ASTNode> implements MetricExtractor<T>, ScratchVisitor {
+public class ProgramUsingPen<T extends ASTNode> implements MetricExtractor<T>, ScratchVisitor, ExtensionVisitor {
     public static final String NAME = "using_pen";
     private boolean found = false;
+    private ScratchVisitor parent;
+
+    public ProgramUsingPen(){
+        addExtensionVisitor(this);
+    }
 
     @Override
     public String getName() {
@@ -40,6 +46,21 @@ public class ProgramUsingPen<T extends ASTNode> implements MetricExtractor<T>, S
         found = false;
         node.accept(this);
         return found ? 1 : 0;
+    }
+
+    @Override
+    public void addParent(ScratchVisitor scratchVisitor) {
+        parent=scratchVisitor;
+    }
+
+    @Override
+    public ScratchVisitor getParent() {
+        return parent;
+    }
+
+    @Override
+    public void visit(ExtensionBlock node) {
+        visitChildren(node);
     }
 
     @Override

@@ -27,6 +27,9 @@ import de.uni_passau.fim.se2.litterbox.ast.model.event.EventAttribute;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.ExtensionBlock;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.ChangePenColorParamBy;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.SetPenColorParamTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.AskAndWait;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.SwitchBackdrop;
@@ -37,20 +40,39 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.list.AddTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.list.DeleteOf;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.list.InsertAt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.list.ReplaceItem;
-import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.ChangePenColorParamBy;
-import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.SetPenColorParamTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.ScratchList;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ExtensionVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-public class StackedStatementCount<T extends ASTNode> implements ScratchVisitor, MetricExtractor<T> {
+public class StackedStatementCount<T extends ASTNode> implements ScratchVisitor, ExtensionVisitor, MetricExtractor<T> {
 
     public static final String NAME = "stacked_statement_count";
     private int maxStackedDepth = 0;
     private int currentStackedDepth = 0;
+    private ScratchVisitor parent;
+
+    public StackedStatementCount(){
+        addExtensionVisitor(this);
+    }
+
+    @Override
+    public void addParent(ScratchVisitor scratchVisitor) {
+        parent=scratchVisitor;
+    }
+
+    @Override
+    public ScratchVisitor getParent() {
+        return parent;
+    }
+
+    @Override
+    public void visit(ExtensionBlock node) {
+        visitChildren(node);
+    }
 
 //Motion
     @Override

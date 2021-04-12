@@ -18,10 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
-import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
-import de.uni_passau.fim.se2.litterbox.analytics.Issue;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
+import de.uni_passau.fim.se2.litterbox.analytics.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.PenClearStmt;
@@ -37,13 +34,17 @@ import java.util.Set;
  * previous execution might remain, making it impossible to get a blank background without reloading the scratch
  * project.
  */
-public class MissingEraseAll extends AbstractIssueFinder {
+public class MissingEraseAll extends AbstractExtensionIssueFinder {
 
     public static final String NAME = "missing_erase_all";
 
     private boolean penClearSet = false;
     private boolean penDownSet = false;
     private boolean addComment = false;
+
+    public MissingEraseAll(){
+        addExtensionVisitor(this);
+    }
 
     @Override
     public Set<Issue> check(Program program) {

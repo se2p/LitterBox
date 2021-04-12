@@ -18,7 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.smells;
 
-import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
+import de.uni_passau.fim.se2.litterbox.analytics.AbstractExtensionIssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
@@ -37,18 +37,21 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.SetSoundEf
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.SetVolumeTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.ChangeVariableBy;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetVariableTo;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.pen.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.*;
 
 /**
  * Checks if a variable is changed multiple times in a row.
  */
-public class MultiAttributeModification extends AbstractIssueFinder {
+public class MultiAttributeModification extends AbstractExtensionIssueFinder {
 
     public static final String NAME = "multiple_attribute_modifications";
     private Identifier prevIdent = null;
     private ASTNode prevNode = null;
+
+    public MultiAttributeModification(){
+        addExtensionVisitor(this);
+    }
 
     @Override
     public void visit(Script script) {

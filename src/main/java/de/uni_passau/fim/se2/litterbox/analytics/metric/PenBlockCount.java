@@ -20,14 +20,21 @@ package de.uni_passau.fim.se2.litterbox.analytics.metric;
 
 import de.uni_passau.fim.se2.litterbox.analytics.MetricExtractor;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.ExtensionBlock;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.PenStmt;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ExtensionVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-public class PenBlockCount<T extends ASTNode> implements MetricExtractor<T>, ScratchVisitor {
+public class PenBlockCount<T extends ASTNode> implements MetricExtractor<T>, ScratchVisitor, ExtensionVisitor {
     public static final String NAME = "pen_block_count";
+    ScratchVisitor parent = null;
 
     private int count = 0;
+
+    public PenBlockCount(){
+        addExtensionVisitor(this);
+    }
 
     @Override
     public double calculateMetric(T node) {
@@ -38,6 +45,16 @@ public class PenBlockCount<T extends ASTNode> implements MetricExtractor<T>, Scr
     }
 
     @Override
+    public void addParent(ScratchVisitor scratchVisitor) {
+        parent=scratchVisitor;
+    }
+
+    @Override
+    public ScratchVisitor getParent() {
+        return parent;
+    }
+
+    @Override
     public void visit(PenStmt node) {
         count++;
     }
@@ -45,5 +62,10 @@ public class PenBlockCount<T extends ASTNode> implements MetricExtractor<T>, Scr
     @Override
     public String getName() {
         return NAME;
+    }
+
+    @Override
+    public void visit(ExtensionBlock node) {
+        visitChildren(node);
     }
 }

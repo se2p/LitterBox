@@ -35,6 +35,10 @@ public class LongScript extends TopBlockFinder {
     private static final int NUMBER_TOO_LONG = 12;
     private int localCount = 0;
 
+    public LongScript(){
+        addExtensionVisitor(this);
+    }
+
     @Override
     public void visit(Script node) {
         currentScript = node;

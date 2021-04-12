@@ -20,6 +20,7 @@ package de.uni_passau.fim.se2.litterbox.ast.visitor;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTLeaf;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.ExtensionBlock;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.PenDownStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.PenUpStmt;
 
@@ -31,10 +32,30 @@ import java.util.List;
 /**
  * Visitor that creates a .dot output for a Program-AST
  */
-public class DotVisitor implements ScratchVisitor {
+public class DotVisitor implements ScratchVisitor, ExtensionVisitor {
 
     List<String> edges = new LinkedList<>();
     long counter = 0;
+    ScratchVisitor parent;
+
+    public DotVisitor() {
+        addExtensionVisitor(this);
+    }
+
+    @Override
+    public void addParent(ScratchVisitor scratchVisitor) {
+        parent = scratchVisitor;
+    }
+
+    @Override
+    public ScratchVisitor getParent() {
+        return parent;
+    }
+
+    @Override
+    public void visit(ExtensionBlock node) {
+        visitChildren(node);
+    }
 
     @Override
     public void visit(ASTNode node) {

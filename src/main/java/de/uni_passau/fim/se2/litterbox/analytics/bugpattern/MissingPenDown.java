@@ -18,12 +18,14 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
+import de.uni_passau.fim.se2.litterbox.analytics.AbstractExtensionIssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.PenDownStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.PenUpStmt;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 /**
  * Scripts of a sprite using a pen up block but never a pen down block fall in this category.
@@ -31,13 +33,17 @@ import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.PenUpStmt;
  * something and does not, or later additions of pen down blocks may not lead to the desired results since remaining
  * pen up blocks could disrupt the project.
  */
-public class MissingPenDown extends AbstractIssueFinder {
+public class MissingPenDown extends AbstractExtensionIssueFinder {
 
     public static final String NAME = "missing_pen_down";
 
     private boolean penUpSet = false;
     private boolean penDownSet = false;
     private boolean addComment;
+
+    public MissingPenDown(){
+        addExtensionVisitor(this);
+    }
 
     @Override
     public void visit(ActorDefinition actor) {

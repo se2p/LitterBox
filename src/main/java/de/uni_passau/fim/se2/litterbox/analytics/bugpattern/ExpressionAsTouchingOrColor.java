@@ -18,6 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
+import de.uni_passau.fim.se2.litterbox.analytics.AbstractExtensionIssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
@@ -34,8 +35,12 @@ import de.uni_passau.fim.se2.litterbox.ast.model.touchable.SpriteTouchable;
  * This happens when inside a block that expects a colour or sprite as parameter (e.g., set pen color to or
  * touching mouse-pointer?) a reporter block, or an expression with a string or number value is used.
  */
-public class ExpressionAsTouchingOrColor extends AbstractIssueFinder {
+public class ExpressionAsTouchingOrColor extends AbstractExtensionIssueFinder {
     public static final String NAME = "expression_as_touching_or_color";
+
+    public ExpressionAsTouchingOrColor(){
+        addExtensionVisitor(this);
+    }
 
     @Override
     public void visit(SetPenColorToColorStmt node) {

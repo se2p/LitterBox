@@ -18,6 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
+import de.uni_passau.fim.se2.litterbox.analytics.AbstractExtensionIssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
@@ -29,13 +30,17 @@ import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.PenUpStmt;
  * A sprite that uses pen down blocks but never a pen up may draw right away, when the project is
  * restarted. This might not be intended.
  */
-public class MissingPenUp extends AbstractIssueFinder {
+public class MissingPenUp extends AbstractExtensionIssueFinder {
 
     public static final String NAME = "missing_pen_up";
 
     private boolean penUpSet = false;
     private boolean penDownSet = false;
     private boolean addComment = false;
+
+    public MissingPenUp(){
+        addExtensionVisitor(this);
+    }
 
     @Override
     public void visit(ActorDefinition actor) {
