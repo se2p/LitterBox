@@ -7,6 +7,8 @@ public abstract class Solution<C extends Solution<C>> extends Chromosome<C> {
 
     private int rank = Integer.MAX_VALUE;
     private double distance = Double.MAX_VALUE;
+
+    // TODO make generic for dynamic amount of fitness functions (also in crowding distance sort)
     private double fitness1 = Double.MAX_VALUE;
 
     /**

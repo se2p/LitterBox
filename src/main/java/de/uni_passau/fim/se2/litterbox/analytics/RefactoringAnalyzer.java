@@ -53,8 +53,8 @@ public class RefactoringAnalyzer extends Analyzer {
         RefactorSequence solution = findRefactoring(program, issueFinders, refactoringFinders, ignoreLooseBlocks);
 
         if(solution != null) {
-            Program refactored = solution.applyToProgram(program); // fill list of refactorings
-            generateOutput(refactored, solution.getExecutedRefactorings(), reportName);
+            Program refactored = solution.applyToProgram(program);
+            generateOutput(refactored, solution.getProductions(), reportName);
             createNewProjectFile(fileEntry, refactored);
         } else {
             System.out.println("NSGA-II found no solutions!");
@@ -98,7 +98,7 @@ public class RefactoringAnalyzer extends Analyzer {
     }
 
 
-    private void generateOutput(Program program, List<Refactoring> executedRefactorings, String reportFileName) {
+    private void generateOutput(Program program, List<Integer> executedRefactorings, String reportFileName) {
         try {
             if (reportFileName == null || reportFileName.isEmpty()) {
                 ConsoleRefactorReportGenerator reportGenerator = new ConsoleRefactorReportGenerator();

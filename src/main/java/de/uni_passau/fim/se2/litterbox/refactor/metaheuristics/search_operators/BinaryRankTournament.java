@@ -29,7 +29,7 @@ public class BinaryRankTournament<C extends Solution<C>> implements Selection<C>
         C candidate1 = population.get(index1).copy();
 
         int index2;
-        // runs endless for generations size == 1
+        // TODO runs endless for generations size == 1
         do {
             index2 = random.nextInt(population.size());
         } while (index2 == index1);

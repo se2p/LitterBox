@@ -17,8 +17,6 @@ public class RefactorSequence extends Solution<RefactorSequence> {
 
     private final List<RefactoringFinder> refactoringFinders;
 
-    private final List<Refactoring> executedRefactorings;
-
     public List<Integer> getProductions() {
         return productions;
     }
@@ -37,11 +35,6 @@ public class RefactorSequence extends Solution<RefactorSequence> {
         super(mutation, crossover);
         this.productions = Objects.requireNonNull(productions);
         this.refactoringFinders = refactoringFinders;
-        this.executedRefactorings = new LinkedList<>();
-    }
-
-    public List<Refactoring> getExecutedRefactorings() {
-        return executedRefactorings;
     }
 
     /**
@@ -51,7 +44,7 @@ public class RefactorSequence extends Solution<RefactorSequence> {
      * @return A deep copy of the original program after the refactorings were applied.
      */
     public Program applyToProgram(Program program) {
-        Program current = program.copy();
+        Program current = program.deepCopy();
 
         for (Integer nthProduction : productions) {
 
@@ -65,7 +58,6 @@ public class RefactorSequence extends Solution<RefactorSequence> {
 
             int executedProduction = nthProduction % possibleProductions.size();
             Refactoring executedRefactoring = possibleProductions.get(executedProduction);
-            executedRefactorings.add(executedRefactoring);
             current = executedRefactoring.apply(current);
         }
         return current;

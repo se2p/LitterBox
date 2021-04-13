@@ -26,18 +26,19 @@ import java.util.List;
 
 public class ConsoleRefactorReportGenerator {
 
-    public void generateReport(Program program, List<Refactoring> refactorings) throws IOException {
+    // TODO get List of concrete refactorings here
+    public void generateReport(Program program, List<Integer> productions) throws IOException {
 
-        if (refactorings.isEmpty()) {
+        if (productions.isEmpty()) {
             System.out.println("No executable refactorings found.");
             return;
         }
 
         System.out.println("The following refactorings were executed on " + program.getIdent().getName());
 
-        for (int i = 0; i < refactorings.size(); i++) {
-            Refactoring refactoring = refactorings.get(i);
-            System.out.println(i + ": " + refactoring.toString());
+        for (int i = 0; i < productions.size(); i++) {
+            Integer production = productions.get(i);
+            System.out.println(i + ": " + production);
         }
     }
 }
