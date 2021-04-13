@@ -20,6 +20,7 @@ package de.uni_passau.fim.se2.litterbox.analytics;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.jsoncreation.JSONFileCreator;
+import de.uni_passau.fim.se2.litterbox.jsoncreation.enums.FilePostfix;
 import de.uni_passau.fim.se2.litterbox.report.CSVReportGenerator;
 import de.uni_passau.fim.se2.litterbox.report.CommentGenerator;
 import de.uni_passau.fim.se2.litterbox.report.ConsoleReportGenerator;
@@ -29,9 +30,12 @@ import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+
 
 public class BugAnalyzer extends Analyzer {
 
@@ -105,10 +109,10 @@ public class BugAnalyzer extends Analyzer {
             try {
                 CommentGenerator commentGenerator = new CommentGenerator();
                 commentGenerator.generateReport(program, issues);
-                if ((FilenameUtils.getExtension(fileEntry.getPath())).toLowerCase().equals("json")) {
-                    JSONFileCreator.writeJsonFromProgram(program, annotatePath);
+                if ((FilenameUtils.getExtension(fileEntry.getPath())).equalsIgnoreCase("json")) {
+                    JSONFileCreator.writeJsonFromProgram(program, annotatePath, FilePostfix.ANNOTATED);
                 } else {
-                    JSONFileCreator.writeSb3FromProgram(program, annotatePath, fileEntry);
+                    JSONFileCreator.writeSb3FromProgram(program, annotatePath, fileEntry, FilePostfix.ANNOTATED);
                 }
             } catch (IOException e) {
                 log.warning(e.getMessage());
