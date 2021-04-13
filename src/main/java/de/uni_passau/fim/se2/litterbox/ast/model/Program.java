@@ -76,6 +76,7 @@ public class Program extends AbstractNode {
         return procedureMapping;
     }
 
+    // TODO test
     public Program deepCopy() {
         return (Program) cloneVisitor.visit(this);
     }

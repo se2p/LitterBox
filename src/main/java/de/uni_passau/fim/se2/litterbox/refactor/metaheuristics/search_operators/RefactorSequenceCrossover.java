@@ -36,7 +36,7 @@ public class RefactorSequenceCrossover implements Crossover<RefactorSequence> {
         RefactorSequence child2 = parent2.copy();
 
         // TODO exclude cases 0 and size - 1? if so, how to handle chromosomes with length == 1
-        int crossoverPoint = child1.getProductions().isEmpty() ? random.nextInt(child1.getProductions().size()) : 0;
+        int crossoverPoint = child1.getProductions().isEmpty() ? 0 : random.nextInt(child1.getProductions().size());
 
         List<Integer> child1List = new ArrayList<>(child1.getProductions().subList(0, crossoverPoint));
         List<Integer> child2List = new ArrayList<>(child2.getProductions().subList(0, crossoverPoint));

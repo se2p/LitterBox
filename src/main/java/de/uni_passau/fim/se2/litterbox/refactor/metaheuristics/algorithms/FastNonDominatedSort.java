@@ -20,7 +20,6 @@ public class FastNonDominatedSort<C extends Solution<C>> {
      * Condition 1: solution1 is no worse than solution2 for all objectives
      * Condition 2: solution1 is strictly better than solution2 in at least one objective
      * <p>
-     * We are maximising fitness 1 in function1, but minimising fitness 2 in function2.
      *
      * @param solution1 Chromosome 1, which is checked, whether it dominates the other chromosome
      * @param solution2 Chromosome 2, which is checked, whether it is dominates by the other chromosome
@@ -104,8 +103,6 @@ public class FastNonDominatedSort<C extends Solution<C>> {
      */
     @VisibleForTesting
     void calculateFitnessValuesForSolutions(List<C> solutions) {
-        solutions.forEach(c -> {
-            c.setFitness1(function1.getFitness(c));
-        });
+        solutions.forEach(c -> c.setFitness1(function1.getFitness(c)));
     }
 }
