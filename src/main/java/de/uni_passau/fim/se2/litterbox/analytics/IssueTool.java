@@ -154,6 +154,7 @@ public class IssueTool {
         registerGoodPracticeFinder(new InitializeLocation(), goodPracticeFinders);
         registerGoodPracticeFinder(new Parallelization(), goodPracticeFinders);
         registerGoodPracticeFinder(new Coordination(), goodPracticeFinders);
+        registerGoodPracticeFinder(new DirectedMotion(), goodPracticeFinders);
 
 
         return goodPracticeFinders;
