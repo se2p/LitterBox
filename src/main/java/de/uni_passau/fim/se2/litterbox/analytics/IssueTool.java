@@ -153,6 +153,7 @@ public class IssueTool {
         registerGoodPracticeFinder(new BoolExpression(), goodPracticeFinders);
         registerGoodPracticeFinder(new InitializeLocation(), goodPracticeFinders);
         registerGoodPracticeFinder(new Parallelization(), goodPracticeFinders);
+        registerGoodPracticeFinder(new Coordination(), goodPracticeFinders);
 
 
         return goodPracticeFinders;
