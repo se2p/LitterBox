@@ -108,7 +108,7 @@ public abstract class Chromosome<C extends Chromosome<C>> implements SelfTyped<C
      * @apiNote This method is primarily intended as syntactic sugar to allow for a more idiomatic,
      * OOP-like use.
      */
-    public final double getFitness(final FitnessFunction<C> fitnessFunction) {
+    public double getFitness(final FitnessFunction<C> fitnessFunction) {
         Objects.requireNonNull(fitnessFunction);
         return fitnessFunction.getFitness(self());
     }

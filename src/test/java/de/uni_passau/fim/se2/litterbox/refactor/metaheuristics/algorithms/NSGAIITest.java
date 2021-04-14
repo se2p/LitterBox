@@ -18,25 +18,25 @@ class NSGAIITest {
     void testNSGAIICalls() {
         int generations = 2;
 
-        RefactorSequence t1gen1 = mock(RefactorSequence.class);
-        RefactorSequence t2gen1 = mock(RefactorSequence.class);
-        RefactorSequence t3gen1 = mock(RefactorSequence.class);
-        RefactorSequence t4gen1 = mock(RefactorSequence.class);
-        List<RefactorSequence> gen1 = Lists.newArrayList(t1gen1, t2gen1, t3gen1, t4gen1);
+        RefactorSequence c1gen1 = mock(RefactorSequence.class);
+        RefactorSequence c2gen1 = mock(RefactorSequence.class);
+        RefactorSequence c3gen1 = mock(RefactorSequence.class);
+        RefactorSequence c4gen1 = mock(RefactorSequence.class);
+        List<RefactorSequence> gen1 = Lists.newArrayList(c1gen1, c2gen1, c3gen1, c4gen1);
 
-        RefactorSequence t1gen2 = mock(RefactorSequence.class);
-        RefactorSequence t2gen2 = mock(RefactorSequence.class);
-        RefactorSequence t3gen2 = mock(RefactorSequence.class);
-        RefactorSequence t4gen2 = mock(RefactorSequence.class);
-        List<RefactorSequence> gen2 = Lists.newArrayList(t1gen2, t2gen2, t3gen2, t4gen2);
+        RefactorSequence c1gen2 = mock(RefactorSequence.class);
+        RefactorSequence c2gen2 = mock(RefactorSequence.class);
+        RefactorSequence c3gen2 = mock(RefactorSequence.class);
+        RefactorSequence c4gen2 = mock(RefactorSequence.class);
+        List<RefactorSequence> gen2 = Lists.newArrayList(c1gen2, c2gen2, c3gen2, c4gen2);
 
         List<RefactorSequence> combined = Lists.newLinkedList(gen1);
         combined.addAll(gen2);
 
-        List<RefactorSequence> front1 = List.of(t1gen1, t1gen2);
-        List<RefactorSequence> front2 = List.of(t2gen1, t2gen2);
-        List<RefactorSequence> front3 = List.of(t3gen1, t3gen2);
-        List<RefactorSequence> front4 = List.of(t4gen1, t4gen2);
+        List<RefactorSequence> front1 = List.of(c1gen1, c1gen2);
+        List<RefactorSequence> front2 = List.of(c2gen1, c2gen2);
+        List<RefactorSequence> front3 = List.of(c3gen1, c3gen2);
+        List<RefactorSequence> front4 = List.of(c4gen1, c4gen2);
 
         List<List<RefactorSequence>> paretoFronts = Lists.newArrayList(front1, front2, front3, front4);
 
@@ -53,7 +53,7 @@ class NSGAIITest {
         CrowdingDistanceSort<RefactorSequence> crowdingDistanceSort = mock(CrowdingDistanceSort.class);
         doNothing().when(crowdingDistanceSort).calculateCrowdingDistanceAndSort(anyList());
 
-        List<RefactorSequence> populationAfterNSGAII = Lists.newArrayList(t1gen1, t1gen2, t2gen1, t2gen2);
+        List<RefactorSequence> populationAfterNSGAII = Lists.newArrayList(c1gen1, c1gen2, c2gen1, c2gen2);
         ignoreStubs(offspringGenerator);
 
         List<List<RefactorSequence>> finalFronts = List.of(front1, front2);

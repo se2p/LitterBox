@@ -8,18 +8,17 @@ import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.algorithms.Crowdi
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.algorithms.FastNonDominatedSort;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.algorithms.NSGAII;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.chromosomes.*;
-import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.fitness_functions.MinimizingFitnessFunction;
+import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.fitness_functions.FitnessFunction;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.fitness_functions.NumberOfSmells;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.search_operators.*;
-import de.uni_passau.fim.se2.litterbox.refactor.refactorings.Refactoring;
 import de.uni_passau.fim.se2.litterbox.report.ConsoleRefactorReportGenerator;
 import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
@@ -84,15 +83,18 @@ public class RefactoringAnalyzer extends Analyzer {
 
     private NSGAII<RefactorSequence> initializeNSGAII(Program program, List<IssueFinder> issueFinders, List<RefactoringFinder> refactoringFinders, boolean ignoreLooseBlocks) {
         Random random = new Random();
-        BinaryRankTournament<RefactorSequence> binaryRankTournament = new BinaryRankTournament<>(random);
-        OffspringGenerator<RefactorSequence> offspringGenerator = new OffspringGenerator<>(random, binaryRankTournament);
-        Mutation<RefactorSequence> mutation = new RefactorSequenceMutation(random, refactoringFinders);
+
         Crossover<RefactorSequence> crossover = new RefactorSequenceCrossover(random);
+        Mutation<RefactorSequence> mutation = new RefactorSequenceMutation(random, refactoringFinders);
+
         ChromosomeGenerator<RefactorSequence> chromosomeGenerator = new RefactorSequenceGenerator(mutation, crossover, random, refactoringFinders);
         FixedSizePopulationGenerator<RefactorSequence> populationGenerator = new FixedSizePopulationGenerator<>(chromosomeGenerator, POPULATION_SIZE);
-        MinimizingFitnessFunction<RefactorSequence> fitnessFunction = new NumberOfSmells(program, issueFinders, ignoreLooseBlocks);
-        FastNonDominatedSort<RefactorSequence> fastNonDominatedSort = new FastNonDominatedSort<>(fitnessFunction);
-        CrowdingDistanceSort<RefactorSequence> crowdingDistanceSort = new CrowdingDistanceSort<>();
+        BinaryRankTournament<RefactorSequence> binaryRankTournament = new BinaryRankTournament<>(random);
+        OffspringGenerator<RefactorSequence> offspringGenerator = new OffspringGenerator<>(random, binaryRankTournament);
+
+        Set<FitnessFunction<RefactorSequence>> fitnessFunctions = Set.of(new NumberOfSmells(program, issueFinders, ignoreLooseBlocks));
+        FastNonDominatedSort<RefactorSequence> fastNonDominatedSort = new FastNonDominatedSort<>(fitnessFunctions);
+        CrowdingDistanceSort<RefactorSequence> crowdingDistanceSort = new CrowdingDistanceSort<>(fitnessFunctions);
 
         return new NSGAII<>(populationGenerator, offspringGenerator, fastNonDominatedSort, crowdingDistanceSort, MAX_GEN);
     }
