@@ -18,6 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.jsoncreation;
 
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
@@ -55,6 +56,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.variable.ScratchList;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.SymbolTable;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ExtensionVisitor;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.PenExtensionVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
@@ -65,7 +67,7 @@ import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 import static de.uni_passau.fim.se2.litterbox.jsoncreation.BlockJsonCreatorHelper.*;
 import static de.uni_passau.fim.se2.litterbox.jsoncreation.JSONStringCreator.createField;
 
-public class StmtListJSONCreator implements ScratchVisitor, ExtensionVisitor {
+public class StmtListJSONCreator implements ScratchVisitor, PenExtensionVisitor {
     private String previousBlockId = null;
     private List<String> finishedJSONStrings;
     private List<Stmt> stmtList;
@@ -85,7 +87,6 @@ public class StmtListJSONCreator implements ScratchVisitor, ExtensionVisitor {
         this.symbolTable = symbolTable;
         exprCreator = new ExpressionJSONCreator();
         fixedExprCreator = new FixedExpressionJSONCreator();
-        addExtensionVisitor(this);
     }
 
     public StmtListJSONCreator(StmtList stmtList, SymbolTable symbolTable) {
@@ -96,21 +97,6 @@ public class StmtListJSONCreator implements ScratchVisitor, ExtensionVisitor {
         this.symbolTable = symbolTable;
         exprCreator = new ExpressionJSONCreator();
         fixedExprCreator = new FixedExpressionJSONCreator();
-        addExtensionVisitor(this);
-    }
-    @Override
-    public void addParent(ScratchVisitor scratchVisitor) {
-        parent = scratchVisitor;
-    }
-
-    @Override
-    public ScratchVisitor getParent() {
-        return parent;
-    }
-
-    @Override
-    public void visit(ExtensionBlock node) {
-        visitChildren(node);
     }
 
     public String createStmtListJSONString() {
@@ -266,7 +252,7 @@ public class StmtListJSONCreator implements ScratchVisitor, ExtensionVisitor {
     private String getListDataFields(NonDataBlockMetadata metadata, Identifier identifier) {
         FieldsMetadata fieldsMeta = metadata.getFields().getList().get(0);
         if (identifier instanceof Qualified) {
-           // Preconditions.checkArgument(identifier instanceof Qualified, "Identifier of list has to be in Qualified");
+            // Preconditions.checkArgument(identifier instanceof Qualified, "Identifier of list has to be in Qualified");
             Qualified qual = (Qualified) identifier;
             Preconditions.checkArgument(qual.getSecond() instanceof ScratchList, "Qualified has to hold Scratch List");
             ScratchList list = (ScratchList) qual.getSecond();
@@ -344,6 +330,11 @@ public class StmtListJSONCreator implements ScratchVisitor, ExtensionVisitor {
         finishedJSONStrings.add(createBlockWithMutationString(metadata, getNextId(),
                 previousBlockId, EMPTY_VALUE, fieldsString, mutationString));
         previousBlockId = metadata.getBlockId();
+    }
+
+    @Override
+    public void visit(PenStmt node) {
+        visit((ASTNode) node);
     }
 
     @Override

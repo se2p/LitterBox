@@ -18,7 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.smells;
 
-import de.uni_passau.fim.se2.litterbox.analytics.AbstractExtensionIssueFinder;
+import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.*;
@@ -35,10 +35,15 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.DeleteClone;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopAll;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopThisScript;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.PenExtensionVisitor;
 
-public abstract class TopBlockFinder extends AbstractExtensionIssueFinder{
-
+public abstract class TopBlockFinder extends AbstractIssueFinder implements PenExtensionVisitor {
     boolean setHint = false;
+
+    @Override
+    public void visit(PenStmt node) {
+        visitChildren(node);
+    }
 
     @Override
     public void visit(PenDownStmt node) {

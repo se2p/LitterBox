@@ -92,21 +92,12 @@ import de.uni_passau.fim.se2.litterbox.ast.model.variable.Parameter;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.ScratchList;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public interface ScratchVisitor {
-    List<ExtensionVisitor> extensionVisitors = new ArrayList<>();
 
     default void visitChildren(ASTNode node) {
         for (ASTNode child : node.getChildren()) {
             child.accept(this);
         }
-    }
-
-    default void addExtensionVisitor(ExtensionVisitor visitor) {
-        extensionVisitors.add(visitor);
-        visitor.addParent(this);
     }
 
     /**
@@ -3616,12 +3607,6 @@ public interface ScratchVisitor {
      *             be iterated
      */
     default void visit(ExtensionBlock node) {
-        if (!extensionVisitors.isEmpty()) {
-            for (ExtensionVisitor visitor : extensionVisitors) {
-                visitor.visit(node);
-            }
-        } else {
-            visit((ASTNode) node);
-        }
+        visit((ASTNode) node);
     }
 }

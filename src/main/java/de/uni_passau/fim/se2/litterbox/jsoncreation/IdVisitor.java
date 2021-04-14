@@ -36,34 +36,21 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.DeleteClo
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopAll;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopThisScript;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ExtensionVisitor;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.PenExtensionVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
-public class IdVisitor implements ScratchVisitor, ExtensionVisitor {
+public class IdVisitor implements ScratchVisitor, PenExtensionVisitor {
     private String id;
-    private ScratchVisitor parent;
 
-    public IdVisitor() {
-        addExtensionVisitor(this);
-    }
-
-    @Override
-    public void addParent(ScratchVisitor scratchVisitor) {
-        parent = scratchVisitor;
-    }
-
-    @Override
-    public ScratchVisitor getParent() {
-        return parent;
-    }
-
-    @Override
-    public void visit(ExtensionBlock node) {
-        visitChildren(node);
-    }
 
     public String getBlockId(Stmt stmt) {
         stmt.accept(this);
         return id;
+    }
+
+    @Override
+    public void visit(PenStmt node) {
+        id = ((NonDataBlockMetadata) node.getMetadata()).getBlockId();
     }
 
     @Override

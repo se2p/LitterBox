@@ -19,16 +19,15 @@
 package de.uni_passau.fim.se2.litterbox.ast.visitor;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
-import de.uni_passau.fim.se2.litterbox.ast.model.extensions.ExtensionBlock;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.PenStmt;
 
 import java.io.PrintStream;
 
-public abstract class PrintVisitor implements ScratchVisitor, ExtensionVisitor {
+public abstract class PrintVisitor implements ScratchVisitor, PenExtensionVisitor {
 
     protected static final String INDENT = "    ";
     protected PrintStream printStream;
     protected int level;
-    protected ScratchVisitor parent;
 
     public PrintVisitor(PrintStream printStream) {
         this.printStream = printStream;
@@ -38,6 +37,11 @@ public abstract class PrintVisitor implements ScratchVisitor, ExtensionVisitor {
     protected void emitToken(String string) {
         emitNoSpace(string);
         emitNoSpace(" ");
+    }
+
+    @Override
+    public void visit(PenStmt node) {
+        visit((ASTNode) node);
     }
 
     protected void emitNoSpace(String string) {
@@ -69,20 +73,5 @@ public abstract class PrintVisitor implements ScratchVisitor, ExtensionVisitor {
 
     protected void newLine() {
         emitNoSpace("\n");
-    }
-
-    @Override
-    public void addParent(ScratchVisitor scratchVisitor) {
-        parent = scratchVisitor;
-    }
-
-    @Override
-    public ScratchVisitor getParent() {
-        return parent;
-    }
-
-    @Override
-    public void visit(ExtensionBlock node) {
-        parent.visit((ASTNode) node);
     }
 }

@@ -18,28 +18,30 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
-import de.uni_passau.fim.se2.litterbox.analytics.AbstractExtensionIssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.ColorTouchingColor;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.SpriteTouchingColor;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Touching;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.PenStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.ColorLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.SetPenColorToColorStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.Edge;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.MousePointer;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.SpriteTouchable;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.PenExtensionVisitor;
 
 /**
  * This happens when inside a block that expects a colour or sprite as parameter (e.g., set pen color to or
  * touching mouse-pointer?) a reporter block, or an expression with a string or number value is used.
  */
-public class ExpressionAsTouchingOrColor extends AbstractExtensionIssueFinder {
+public class ExpressionAsTouchingOrColor extends AbstractIssueFinder implements PenExtensionVisitor {
     public static final String NAME = "expression_as_touching_or_color";
 
-    public ExpressionAsTouchingOrColor(){
-        addExtensionVisitor(this);
+    @Override
+    public void visit(PenStmt node) {
+        visitChildren(node);
     }
 
     @Override

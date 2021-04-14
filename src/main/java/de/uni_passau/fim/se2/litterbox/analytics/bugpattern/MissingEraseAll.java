@@ -23,6 +23,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.PenClearStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.PenDownStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.PenStmt;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.PenExtensionVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import java.util.Collections;
@@ -34,7 +36,7 @@ import java.util.Set;
  * previous execution might remain, making it impossible to get a blank background without reloading the scratch
  * project.
  */
-public class MissingEraseAll extends AbstractExtensionIssueFinder {
+public class MissingEraseAll extends AbstractIssueFinder implements PenExtensionVisitor {
 
     public static final String NAME = "missing_erase_all";
 
@@ -42,8 +44,9 @@ public class MissingEraseAll extends AbstractExtensionIssueFinder {
     private boolean penDownSet = false;
     private boolean addComment = false;
 
-    public MissingEraseAll(){
-        addExtensionVisitor(this);
+    @Override
+    public void visit(PenStmt node) {
+        visitChildren(node);
     }
 
     @Override

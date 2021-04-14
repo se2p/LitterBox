@@ -23,17 +23,13 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.ExtensionBlock;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.*;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ExtensionVisitor;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.PenExtensionVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-public class ProgramUsingPen<T extends ASTNode> implements MetricExtractor<T>, ScratchVisitor, ExtensionVisitor {
+public class ProgramUsingPen<T extends ASTNode> implements MetricExtractor<T>, ScratchVisitor, PenExtensionVisitor {
     public static final String NAME = "using_pen";
     private boolean found = false;
-    private ScratchVisitor parent;
-
-    public ProgramUsingPen(){
-        addExtensionVisitor(this);
-    }
 
     @Override
     public String getName() {
@@ -49,18 +45,8 @@ public class ProgramUsingPen<T extends ASTNode> implements MetricExtractor<T>, S
     }
 
     @Override
-    public void addParent(ScratchVisitor scratchVisitor) {
-        parent=scratchVisitor;
-    }
-
-    @Override
-    public ScratchVisitor getParent() {
-        return parent;
-    }
-
-    @Override
-    public void visit(ExtensionBlock node) {
-        visitChildren(node);
+    public void visit(PenStmt node) {
+        found = true;
     }
 
     @Override

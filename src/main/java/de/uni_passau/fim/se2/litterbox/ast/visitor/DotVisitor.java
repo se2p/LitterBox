@@ -20,8 +20,10 @@ package de.uni_passau.fim.se2.litterbox.ast.visitor;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTLeaf;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.ExtensionBlock;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.PenDownStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.PenStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.PenUpStmt;
 
 import java.io.*;
@@ -32,30 +34,10 @@ import java.util.List;
 /**
  * Visitor that creates a .dot output for a Program-AST
  */
-public class DotVisitor implements ScratchVisitor, ExtensionVisitor {
+public class DotVisitor implements ScratchVisitor, PenExtensionVisitor {
 
     List<String> edges = new LinkedList<>();
     long counter = 0;
-    ScratchVisitor parent;
-
-    public DotVisitor() {
-        addExtensionVisitor(this);
-    }
-
-    @Override
-    public void addParent(ScratchVisitor scratchVisitor) {
-        parent = scratchVisitor;
-    }
-
-    @Override
-    public ScratchVisitor getParent() {
-        return parent;
-    }
-
-    @Override
-    public void visit(ExtensionBlock node) {
-        visitChildren(node);
-    }
 
     @Override
     public void visit(ASTNode node) {
@@ -74,6 +56,11 @@ public class DotVisitor implements ScratchVisitor, ExtensionVisitor {
                 child.accept(this);
             }
         }
+    }
+
+    @Override
+    public void visit(PenStmt node) {
+        visit((ASTNode) node);
     }
 
     @Override

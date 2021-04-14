@@ -18,7 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.smells;
 
-import de.uni_passau.fim.se2.litterbox.analytics.AbstractExtensionIssueFinder;
+import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
@@ -39,19 +39,16 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.ChangeVariable
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetVariableTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.*;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.PenExtensionVisitor;
 
 /**
  * Checks if a variable is changed multiple times in a row.
  */
-public class MultiAttributeModification extends AbstractExtensionIssueFinder {
+public class MultiAttributeModification extends AbstractIssueFinder implements PenExtensionVisitor {
 
     public static final String NAME = "multiple_attribute_modifications";
     private Identifier prevIdent = null;
     private ASTNode prevNode = null;
-
-    public MultiAttributeModification(){
-        addExtensionVisitor(this);
-    }
 
     @Override
     public void visit(Script script) {
@@ -187,6 +184,11 @@ public class MultiAttributeModification extends AbstractExtensionIssueFinder {
         }
 
         prevNode = node;
+    }
+
+    @Override
+    public void visit(PenStmt node) {
+        visitChildren(node);
     }
 
     @Override

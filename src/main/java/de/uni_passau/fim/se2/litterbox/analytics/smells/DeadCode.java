@@ -30,10 +30,6 @@ public class DeadCode extends TopBlockFinder {
     public static final String NAME = "dead_code";
     private boolean addHint = false;
 
-    public DeadCode(){
-        addExtensionVisitor(this);
-    }
-
     @Override
     public void visit(Script node) {
         currentScript = node;
