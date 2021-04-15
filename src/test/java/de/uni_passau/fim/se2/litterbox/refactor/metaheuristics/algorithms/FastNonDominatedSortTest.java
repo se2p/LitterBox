@@ -27,7 +27,7 @@ class FastNonDominatedSortTest {
 
     FitnessFunction<RefactorSequence> function1 = mock(NumberOfSmells.class);
     FitnessFunction<RefactorSequence> function2 = mock(NumberOfSmells.class);
-    Set<FitnessFunction<RefactorSequence>> fitnessFunctions = Set.of(function1, function2);
+    List<FitnessFunction<RefactorSequence>> fitnessFunctions = List.of(function1, function2);
 
     @Test
     void fastNonDominatedSortCalculatesAndStoresFitnessValues() {

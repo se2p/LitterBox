@@ -50,7 +50,7 @@ class CrowdingDistanceSortTest {
 
         List<RefactorSequence> solutions = Lists.newArrayList(c1, c2, c3);
 
-        CrowdingDistanceSort<RefactorSequence> crowdingDistanceSort = new CrowdingDistanceSort<>(Set.of(function1, function2));
+        CrowdingDistanceSort<RefactorSequence> crowdingDistanceSort = new CrowdingDistanceSort<>(List.of(function1, function2));
         crowdingDistanceSort.calculateCrowdingDistanceAndSort(solutions);
 
         assertSame(c1, solutions.get(0));

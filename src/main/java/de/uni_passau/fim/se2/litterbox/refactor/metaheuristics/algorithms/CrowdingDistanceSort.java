@@ -8,9 +8,9 @@ import java.util.*;
 
 public class CrowdingDistanceSort<C extends Solution<C>> {
 
-    private final Set<FitnessFunction<C>> fitnessFunctions;
+    private final List<FitnessFunction<C>> fitnessFunctions;
 
-    public CrowdingDistanceSort(Set<FitnessFunction<C>> fitnessFunctions) {
+    public CrowdingDistanceSort(List<FitnessFunction<C>> fitnessFunctions) {
         this.fitnessFunctions = fitnessFunctions;
     }
 

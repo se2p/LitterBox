@@ -6,13 +6,12 @@ import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.chromosomes.Solut
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.fitness_functions.FitnessFunction;
 
 import java.util.List;
-import java.util.Set;
 
 public class FastNonDominatedSort<C extends Solution<C>> {
 
-    private final Set<FitnessFunction<C>> fitnessFunctions;
+    private final List<FitnessFunction<C>> fitnessFunctions;
 
-    public FastNonDominatedSort(Set<FitnessFunction<C>> fitnessFunctions) {
+    public FastNonDominatedSort(List<FitnessFunction<C>> fitnessFunctions) {
         this.fitnessFunctions = fitnessFunctions;
     }
 

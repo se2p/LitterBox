@@ -16,9 +16,9 @@ import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
-import java.util.Set;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
@@ -92,7 +92,8 @@ public class RefactoringAnalyzer extends Analyzer {
         BinaryRankTournament<RefactorSequence> binaryRankTournament = new BinaryRankTournament<>(random);
         OffspringGenerator<RefactorSequence> offspringGenerator = new OffspringGenerator<>(random, binaryRankTournament);
 
-        Set<FitnessFunction<RefactorSequence>> fitnessFunctions = Set.of(new NumberOfSmells(program, issueFinders, ignoreLooseBlocks));
+        List<FitnessFunction<RefactorSequence>> fitnessFunctions = new LinkedList<>();
+        fitnessFunctions.add(new NumberOfSmells(program, issueFinders, ignoreLooseBlocks));
         FastNonDominatedSort<RefactorSequence> fastNonDominatedSort = new FastNonDominatedSort<>(fitnessFunctions);
         CrowdingDistanceSort<RefactorSequence> crowdingDistanceSort = new CrowdingDistanceSort<>(fitnessFunctions);
 
