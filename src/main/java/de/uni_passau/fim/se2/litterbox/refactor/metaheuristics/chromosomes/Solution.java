@@ -4,7 +4,7 @@ import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.fitness_functions
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.search_operators.Crossover;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.search_operators.Mutation;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -27,7 +27,7 @@ public abstract class Solution<C extends Solution<C>> extends Chromosome<C> {
      */
     protected Solution(Mutation<C> mutation, Crossover<C> crossover) throws NullPointerException {
         super(mutation, crossover);
-        this.fitnessMap = new HashMap<>();
+        this.fitnessMap = new LinkedHashMap<>();
     }
 
     /**
@@ -53,7 +53,7 @@ public abstract class Solution<C extends Solution<C>> extends Chromosome<C> {
      */
     protected Solution(C other) throws NullPointerException {
         super(other);
-        this.fitnessMap = new HashMap<>(other.getFitnessMap());
+        this.fitnessMap = new LinkedHashMap<>(other.getFitnessMap());
     }
 
     /**

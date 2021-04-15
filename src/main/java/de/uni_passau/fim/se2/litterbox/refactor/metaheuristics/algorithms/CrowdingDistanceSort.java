@@ -24,7 +24,7 @@ public class CrowdingDistanceSort<C extends Solution<C>> {
         Map<C, Double> newDistancesPerSolution = new IdentityHashMap<>();
         int l = front.size();
 
-        Map<FitnessFunction<C>, Pair<Double>> minMaxPairPerFF = new HashMap<>();
+        Map<FitnessFunction<C>, Pair<Double>> minMaxPairPerFF = new LinkedHashMap<>();
 
         for (FitnessFunction<C> ff : fitnessFunctions) {
             double ffMax = Double.MIN_VALUE;
