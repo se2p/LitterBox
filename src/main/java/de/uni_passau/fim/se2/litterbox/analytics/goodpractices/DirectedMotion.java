@@ -1,11 +1,22 @@
 package de.uni_passau.fim.se2.litterbox.analytics.goodpractices;
 
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
+import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.Key;
+import de.uni_passau.fim.se2.litterbox.ast.model.Script;
+import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.KeyPressed;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.MoveSteps;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.PointInDirection;
+import org.w3c.dom.Node;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Directed Motion means after a key press the sprite points to a certain direction and moves a number of steps. That
@@ -13,30 +24,37 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.PointInD
  */
 public class DirectedMotion extends AbstractIssueFinder {
     public static final String NAME = "directed_motion";
-    private boolean keyPressed = false;
     private boolean pointInDirection = false;
+    private boolean keyPressed;
+
+    @Override
+    public void visit(Script node) {
+        keyPressed = false;
+        pointInDirection = false;
+        visitChildren(node);
+        keyPressed = false;
+        pointInDirection = false;
+    }
+
 
     @Override
     public void visit(KeyPressed node) {
         keyPressed = true;
-        visitChildren(node);
     }
 
-
     @Override
-    public void visit(PointInDirection node) {
+    public void visit(StmtList node) {
         if (keyPressed) {
-            pointInDirection = true;
-            visitChildren(node);
-        }
-    }
-
-    @Override
-    public void visit(MoveSteps node) {
-        if (keyPressed && pointInDirection) {
-            addIssue(node, node.getMetadata(), IssueSeverity.MEDIUM);
-            keyPressed = false;
-            pointInDirection = false;
+            for (Stmt stmt : node.getStmts()) {
+                if (stmt instanceof PointInDirection) {
+                    pointInDirection = true;
+                } else if (stmt instanceof MoveSteps) {
+                    if (pointInDirection) {
+                        addIssue(stmt, stmt.getMetadata(), IssueSeverity.MEDIUM);
+                        break;
+                    }
+                }
+            }
         }
     }
 
@@ -49,5 +67,4 @@ public class DirectedMotion extends AbstractIssueFinder {
     public IssueType getIssueType() {
         return IssueType.GOOD_PRACTICE;
     }
-
 }

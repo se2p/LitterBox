@@ -184,4 +184,9 @@ public abstract class AbstractIssueFinder implements IssueFinder, ScratchVisitor
     public boolean areCoupled(Issue first, Issue other) {
         return false;
     }
+
+    @Override
+    public boolean areOpposite(Issue first, Issue other) {
+        return false;
+    }
 }

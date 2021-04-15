@@ -131,7 +131,7 @@ public class IssueTool {
     public static Map<String, IssueFinder> generateSolutionFinders() {
         Map<String, IssueFinder> solutionFinders = new LinkedHashMap<>();
 
-        // Solution patterns/practices
+        // Solution patterns
         registerSolutionFinder(new ValidTerminationCondition(), solutionFinders);
         registerSolutionFinder(new InitializedParameter(), solutionFinders);
         registerSolutionFinder(new CheckForEventInLoop(), solutionFinders);
@@ -155,6 +155,7 @@ public class IssueTool {
         registerGoodPracticeFinder(new Parallelization(), goodPracticeFinders);
         registerGoodPracticeFinder(new Coordination(), goodPracticeFinders);
         registerGoodPracticeFinder(new DirectedMotion(), goodPracticeFinders);
+        registerGoodPracticeFinder(new Collision(), goodPracticeFinders);
 
 
         return goodPracticeFinders;

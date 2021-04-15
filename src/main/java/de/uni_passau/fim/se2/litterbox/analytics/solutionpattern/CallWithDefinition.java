@@ -1,11 +1,18 @@
 package de.uni_passau.fim.se2.litterbox.analytics.solutionpattern;
 
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
+import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
+import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.CallWithoutDefinition;
+import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.MissingLoopSensing;
+import de.uni_passau.fim.se2.litterbox.analytics.smells.UnnecessaryIfAfterUntil;
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfElseStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,6 +57,44 @@ public class CallWithDefinition extends AbstractIssueFinder {
         calledProcedures.add(node);
         visitChildren(node);
     }
+
+    @Override
+    public boolean areOpposite(Issue first, Issue other) {
+        if (first.getFinder() != this) {
+            return super.areOpposite(first, other);
+        }
+        return (other.getFinder() instanceof CallWithoutDefinition);
+    }
+
+//    @Override
+//    public boolean areCoupled(Issue first, Issue other) {
+//        if (first.getFinder() != this) {
+//            return super.areCoupled(first, other);
+//        }
+//
+//        if (other.getFinder() instanceof UnnecessaryIfAfterUntil) {
+//            return other.getFinder().areCoupled(other, first);
+//        }
+//        return false;
+//    }
+//
+//    @Override
+//    public boolean areCoupled(Issue first, Issue other) {
+//        if (first.getFinder() != this) {
+//            return super.areCoupled(first, other);
+//        }
+//
+//        if (other.getFinder() instanceof MissingLoopSensing) {
+//            if (other.getActor().equals(first.getActor()) && other.getScriptOrProcedureDefinition().equals(first.getScriptOrProcedureDefinition())) {
+//                ASTNode otherLoc = other.getCodeLocation();
+//                while (!(otherLoc instanceof IfElseStmt) && !(otherLoc instanceof IfThenStmt)) {
+//                    otherLoc = otherLoc.getParentNode();
+//                }
+//                return otherLoc.equals(first.getCodeLocation());
+//            }
+//        }
+//        return false;
+//    }
 
     @Override
     public String getName() {
