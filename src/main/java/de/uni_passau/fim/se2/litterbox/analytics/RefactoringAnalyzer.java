@@ -8,10 +8,9 @@ import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.algorithms.Crowdi
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.algorithms.FastNonDominatedSort;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.algorithms.NSGAII;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.chromosomes.*;
-import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.fitness_functions.MinimizingFitnessFunction;
+import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.fitness_functions.FitnessFunction;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.fitness_functions.NumberOfSmells;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.search_operators.*;
-import de.uni_passau.fim.se2.litterbox.refactor.refactorings.Refactoring;
 import de.uni_passau.fim.se2.litterbox.report.ConsoleRefactorReportGenerator;
 import org.apache.commons.io.FilenameUtils;
 
@@ -84,15 +83,19 @@ public class RefactoringAnalyzer extends Analyzer {
 
     private NSGAII<RefactorSequence> initializeNSGAII(Program program, List<IssueFinder> issueFinders, List<RefactoringFinder> refactoringFinders, boolean ignoreLooseBlocks) {
         Random random = new Random();
-        BinaryRankTournament<RefactorSequence> binaryRankTournament = new BinaryRankTournament<>(random);
-        OffspringGenerator<RefactorSequence> offspringGenerator = new OffspringGenerator<>(random, binaryRankTournament);
-        Mutation<RefactorSequence> mutation = new RefactorSequenceMutation(random, refactoringFinders);
+
         Crossover<RefactorSequence> crossover = new RefactorSequenceCrossover(random);
+        Mutation<RefactorSequence> mutation = new RefactorSequenceMutation(random, refactoringFinders);
+
         ChromosomeGenerator<RefactorSequence> chromosomeGenerator = new RefactorSequenceGenerator(mutation, crossover, random, refactoringFinders);
         FixedSizePopulationGenerator<RefactorSequence> populationGenerator = new FixedSizePopulationGenerator<>(chromosomeGenerator, POPULATION_SIZE);
-        MinimizingFitnessFunction<RefactorSequence> fitnessFunction = new NumberOfSmells(program, issueFinders, ignoreLooseBlocks);
-        FastNonDominatedSort<RefactorSequence> fastNonDominatedSort = new FastNonDominatedSort<>(fitnessFunction);
-        CrowdingDistanceSort<RefactorSequence> crowdingDistanceSort = new CrowdingDistanceSort<>();
+        BinaryRankTournament<RefactorSequence> binaryRankTournament = new BinaryRankTournament<>(random);
+        OffspringGenerator<RefactorSequence> offspringGenerator = new OffspringGenerator<>(random, binaryRankTournament);
+
+        List<FitnessFunction<RefactorSequence>> fitnessFunctions = new LinkedList<>();
+        fitnessFunctions.add(new NumberOfSmells(program, issueFinders, ignoreLooseBlocks));
+        FastNonDominatedSort<RefactorSequence> fastNonDominatedSort = new FastNonDominatedSort<>(fitnessFunctions);
+        CrowdingDistanceSort<RefactorSequence> crowdingDistanceSort = new CrowdingDistanceSort<>(fitnessFunctions);
 
         return new NSGAII<>(populationGenerator, offspringGenerator, fastNonDominatedSort, crowdingDistanceSort, MAX_GEN);
     }
