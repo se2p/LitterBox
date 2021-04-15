@@ -24,7 +24,6 @@ public class Collision extends AbstractIssueFinder {
     @Override
     public void visit(RepeatForeverStmt node) {
         inRepeatForever = true;
-        System.out.println(node.getChildren() + "ALL FOREVER CHILDREN");
         visitChildren(node);
         inRepeatForever = false;
     }
@@ -32,7 +31,6 @@ public class Collision extends AbstractIssueFinder {
     @Override
     public void visit(IfThenStmt node) {
         changeAfterTouching = false;
-        System.out.println(node.getParentNode() + "IFTHEN PARENT");
         if (inRepeatForever) {
 
             // Checks if the condition is of type touching (e.g. touched the edge?)

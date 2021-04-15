@@ -31,15 +31,13 @@ public class DirectedMotion extends AbstractIssueFinder {
     public void visit(Script node) {
         keyPressed = false;
         pointInDirection = false;
+        if (node.getEvent() instanceof KeyPressed) {
+            keyPressed = true;
+            visitChildren(node);
+            keyPressed = false;
+            pointInDirection = false;
+        }
         visitChildren(node);
-        keyPressed = false;
-        pointInDirection = false;
-    }
-
-
-    @Override
-    public void visit(KeyPressed node) {
-        keyPressed = true;
     }
 
     @Override
