@@ -28,7 +28,7 @@ class RefactorSequenceCrossoverTest {
         RefactorSequence parent1 = new RefactorSequence(mutation, crossover, production1, refactoringFinders);
         RefactorSequence parent2 = new RefactorSequence(mutation, crossover, production2, refactoringFinders);
 
-        when(mockedRandom.nextInt(3)).thenReturn(2);
+        when(mockedRandom.nextInt(2)).thenReturn(1);
         Pair<RefactorSequence> children = parent1.crossover(parent2);
 
         assertEquals(0, children.getFst().getProductions().get(0));
@@ -38,5 +38,23 @@ class RefactorSequenceCrossoverTest {
         assertEquals(1, children.getSnd().getProductions().get(0));
         assertEquals(1, children.getSnd().getProductions().get(1));
         assertEquals(0, children.getSnd().getProductions().get(2));
+    }
+
+    @Test
+    void testCrossoverSmallProductions() {
+
+        List<Integer> production1 = List.of(0, 0);
+        List<Integer> production2 = List.of(1);
+
+        RefactorSequence parent1 = new RefactorSequence(mutation, crossover, production1, refactoringFinders);
+        RefactorSequence parent2 = new RefactorSequence(mutation, crossover, production2, refactoringFinders);
+
+        when(mockedRandom.nextInt(1)).thenReturn(0);
+        Pair<RefactorSequence> children = parent1.crossover(parent2);
+
+        assertEquals(0, children.getFst().getProductions().get(0));
+
+        assertEquals(1, children.getSnd().getProductions().get(0));
+        assertEquals(0, children.getSnd().getProductions().get(1));
     }
 }
