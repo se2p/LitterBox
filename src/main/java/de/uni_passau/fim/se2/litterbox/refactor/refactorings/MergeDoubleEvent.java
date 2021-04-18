@@ -4,7 +4,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Event;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
 
 public class MergeDoubleEvent implements Refactoring {
 
@@ -19,8 +18,7 @@ public class MergeDoubleEvent implements Refactoring {
 
     @Override
     public Program apply(Program program) {
-        CloneVisitor cloneVisitor = new CloneVisitor();
-        Program refactored = cloneVisitor.apply(program);
+        Program refactored = program.deepCopy();
         StmtList stmts;
         if (event2.hasChildren()) {
             stmts = (StmtList) event2.getChildren();

@@ -3,7 +3,6 @@ package de.uni_passau.fim.se2.litterbox.refactor.refactorings;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
 
 public class MergeDoubleIf implements Refactoring {
 
@@ -18,8 +17,7 @@ public class MergeDoubleIf implements Refactoring {
 
     @Override
     public Program apply(Program program) {
-        CloneVisitor cloneVisitor = new CloneVisitor();
-        Program refactored = cloneVisitor.apply(program);
+        Program refactored = program.deepCopy();
         if1.getThenStmts().getStmts().addAll(if2.getThenStmts().getStmts());
 
         StmtList stmtList = (StmtList) if2.getParentNode();
