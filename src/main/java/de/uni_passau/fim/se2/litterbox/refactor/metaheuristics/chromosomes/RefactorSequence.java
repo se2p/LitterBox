@@ -17,27 +17,36 @@ public class RefactorSequence extends Solution<RefactorSequence> {
 
     private final List<RefactoringFinder> refactoringFinders;
 
+    private List<Refactoring> executedRefactorings;
+
     public List<Integer> getProductions() {
         return productions;
+    }
+
+    public List<Refactoring> getExecutedRefactorings() {
+        return executedRefactorings;
     }
 
     /**
      * Constructs a new chromosome, using the given mutation and crossover operators for offspring
      * creation.
      *
-     * @param mutation           a strategy that tells how to perform mutation, not {@code null}
-     * @param crossover          a strategy that tells how to perform crossover, not {@code null}
-     * @param productions        a list of executed refactorings within the sequence, not {@code null}
-     * @param refactoringFinders used refactoringFinders in the run, not {@code null}
-     * @param fitnessMap         A map of fitness functions and their value stored inside the solution
+     * @param mutation             a strategy that tells how to perform mutation, not {@code null}
+     * @param crossover            a strategy that tells how to perform crossover, not {@code null}
+     * @param productions          a list of executed refactorings within the sequence, not {@code null}
+     * @param refactoringFinders   used refactoringFinders in the run, not {@code null}
+     * @param fitnessMap           A map of fitness functions and their value stored inside the solution, not {@code null}
+     * @param executedRefactorings A list of the concrete refactorings produced by the given list of productions, not {@code null}
      * @throws NullPointerException if an argument is {@code null}
      */
     public RefactorSequence(Mutation<RefactorSequence> mutation, Crossover<RefactorSequence> crossover,
                             List<Integer> productions, List<RefactoringFinder> refactoringFinders,
-                            Map<FitnessFunction<RefactorSequence>, Double> fitnessMap) throws NullPointerException {
+                            Map<FitnessFunction<RefactorSequence>, Double> fitnessMap,
+                            List<Refactoring> executedRefactorings) throws NullPointerException {
         super(mutation, crossover, fitnessMap);
         this.productions = Objects.requireNonNull(productions);
         this.refactoringFinders = Objects.requireNonNull(refactoringFinders);
+        this.executedRefactorings = Objects.requireNonNull(executedRefactorings);
     }
 
     /**
@@ -55,8 +64,8 @@ public class RefactorSequence extends Solution<RefactorSequence> {
         super(mutation, crossover);
         this.productions = Objects.requireNonNull(productions);
         this.refactoringFinders = Objects.requireNonNull(refactoringFinders);
+        this.executedRefactorings = new LinkedList<>();
     }
-
 
     /**
      * Constructs a new chromosome, using the given mutation and crossover operators for offspring
@@ -67,10 +76,12 @@ public class RefactorSequence extends Solution<RefactorSequence> {
      * @param refactoringFinders used refactoringFinders in the run, not {@code null}
      * @throws NullPointerException if an argument is {@code null}
      */
-    public RefactorSequence(Mutation<RefactorSequence> mutation, Crossover<RefactorSequence> crossover, List<RefactoringFinder> refactoringFinders) throws NullPointerException {
+    public RefactorSequence(Mutation<RefactorSequence> mutation, Crossover<RefactorSequence> crossover,
+                            List<RefactoringFinder> refactoringFinders) throws NullPointerException {
         super(mutation, crossover);
         this.productions = new LinkedList<>();
         this.refactoringFinders = refactoringFinders;
+        this.executedRefactorings = new LinkedList<>();
     }
 
     /**
@@ -80,6 +91,7 @@ public class RefactorSequence extends Solution<RefactorSequence> {
      * @return A deep copy of the original program after the refactorings were applied.
      */
     public Program applyToProgram(Program program) {
+        executedRefactorings = new LinkedList<>();
         Program current = program.deepCopy();
 
         for (Integer nthProduction : productions) {
@@ -94,6 +106,7 @@ public class RefactorSequence extends Solution<RefactorSequence> {
 
             int executedProduction = nthProduction % possibleProductions.size();
             Refactoring executedRefactoring = possibleProductions.get(executedProduction);
+            executedRefactorings.add(executedRefactoring);
             current = executedRefactoring.apply(current);
         }
         return current;
@@ -106,7 +119,8 @@ public class RefactorSequence extends Solution<RefactorSequence> {
      */
     @Override
     public RefactorSequence copy() {
-        return new RefactorSequence(getMutation(), getCrossover(), new ArrayList<>(productions), refactoringFinders);
+        return new RefactorSequence(getMutation(), getCrossover(), new ArrayList<>(productions),
+                refactoringFinders);
     }
 
     /**

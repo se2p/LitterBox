@@ -11,6 +11,7 @@ import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.chromosomes.*;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.fitness_functions.FitnessFunction;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.fitness_functions.NumberOfSmells;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.search_operators.*;
+import de.uni_passau.fim.se2.litterbox.refactor.refactorings.Refactoring;
 import de.uni_passau.fim.se2.litterbox.report.ConsoleRefactorReportGenerator;
 import org.apache.commons.io.FilenameUtils;
 
@@ -49,11 +50,11 @@ public class RefactoringAnalyzer extends Analyzer {
             return;
         }
 
-        RefactorSequence solution = findRefactoring(program, issueFinders, refactoringFinders, ignoreLooseBlocks);
+        RefactorSequence solution = findRefactoring(program.deepCopy(), issueFinders, refactoringFinders, ignoreLooseBlocks);
 
         if(solution != null) {
             Program refactored = solution.applyToProgram(program);
-            generateOutput(refactored, solution.getProductions(), reportName);
+            generateOutput(refactored, solution.getExecutedRefactorings(), reportName);
             createNewProjectFile(fileEntry, refactored);
         } else {
             System.out.println("NSGA-II found no solutions!");
@@ -101,7 +102,7 @@ public class RefactoringAnalyzer extends Analyzer {
     }
 
 
-    private void generateOutput(Program program, List<Integer> executedRefactorings, String reportFileName) {
+    private void generateOutput(Program program, List<Refactoring> executedRefactorings, String reportFileName) {
         try {
             if (reportFileName == null || reportFileName.isEmpty()) {
                 ConsoleRefactorReportGenerator reportGenerator = new ConsoleRefactorReportGenerator();
