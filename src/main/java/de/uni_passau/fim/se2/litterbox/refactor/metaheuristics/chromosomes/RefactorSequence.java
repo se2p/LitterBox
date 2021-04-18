@@ -2,14 +2,12 @@ package de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.chromosomes;
 
 import de.uni_passau.fim.se2.litterbox.analytics.RefactoringFinder;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.fitness_functions.FitnessFunction;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.search_operators.Crossover;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.search_operators.Mutation;
 import de.uni_passau.fim.se2.litterbox.refactor.refactorings.Refactoring;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 public class RefactorSequence extends Solution<RefactorSequence> {
 
@@ -31,11 +29,47 @@ public class RefactorSequence extends Solution<RefactorSequence> {
      * @param crossover          a strategy that tells how to perform crossover, not {@code null}
      * @param productions        a list of executed refactorings within the sequence, not {@code null}
      * @param refactoringFinders used refactoringFinders in the run, not {@code null}
+     * @param fitnessMap         A map of fitness functions and their value stored inside the solution
      * @throws NullPointerException if an argument is {@code null}
      */
-    public RefactorSequence(Mutation<RefactorSequence> mutation, Crossover<RefactorSequence> crossover, List<Integer> productions, List<RefactoringFinder> refactoringFinders) throws NullPointerException {
+    public RefactorSequence(Mutation<RefactorSequence> mutation, Crossover<RefactorSequence> crossover,
+                            List<Integer> productions, List<RefactoringFinder> refactoringFinders,
+                            Map<FitnessFunction<RefactorSequence>, Double> fitnessMap) throws NullPointerException {
+        super(mutation, crossover, fitnessMap);
+        this.productions = Objects.requireNonNull(productions);
+        this.refactoringFinders = Objects.requireNonNull(refactoringFinders);
+    }
+
+    /**
+     * Constructs a new chromosome, using the given mutation and crossover operators for offspring
+     * creation.
+     *
+     * @param mutation           a strategy that tells how to perform mutation, not {@code null}
+     * @param crossover          a strategy that tells how to perform crossover, not {@code null}
+     * @param productions        a list of executed refactorings within the sequence, not {@code null}
+     * @param refactoringFinders used refactoringFinders in the run, not {@code null}
+     * @throws NullPointerException if an argument is {@code null}
+     */
+    public RefactorSequence(Mutation<RefactorSequence> mutation, Crossover<RefactorSequence> crossover,
+                            List<Integer> productions, List<RefactoringFinder> refactoringFinders) throws NullPointerException {
         super(mutation, crossover);
         this.productions = Objects.requireNonNull(productions);
+        this.refactoringFinders = Objects.requireNonNull(refactoringFinders);
+    }
+
+
+    /**
+     * Constructs a new chromosome, using the given mutation and crossover operators for offspring
+     * creation.
+     *
+     * @param mutation           a strategy that tells how to perform mutation, not {@code null}
+     * @param crossover          a strategy that tells how to perform crossover, not {@code null}
+     * @param refactoringFinders used refactoringFinders in the run, not {@code null}
+     * @throws NullPointerException if an argument is {@code null}
+     */
+    public RefactorSequence(Mutation<RefactorSequence> mutation, Crossover<RefactorSequence> crossover, List<RefactoringFinder> refactoringFinders) throws NullPointerException {
+        super(mutation, crossover);
+        this.productions = new LinkedList<>();
         this.refactoringFinders = refactoringFinders;
     }
 

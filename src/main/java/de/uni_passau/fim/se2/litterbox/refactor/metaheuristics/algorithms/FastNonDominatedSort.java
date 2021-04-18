@@ -3,16 +3,16 @@ package de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.algorithms;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Lists;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.chromosomes.Solution;
-import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.fitness_functions.MinimizingFitnessFunction;
+import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.fitness_functions.FitnessFunction;
 
 import java.util.List;
 
 public class FastNonDominatedSort<C extends Solution<C>> {
 
-    private final MinimizingFitnessFunction<C> function1;
+    private final List<FitnessFunction<C>> fitnessFunctions;
 
-    public FastNonDominatedSort(MinimizingFitnessFunction<C> function1) {
-        this.function1 = function1;
+    public FastNonDominatedSort(List<FitnessFunction<C>> fitnessFunctions) {
+        this.fitnessFunctions = fitnessFunctions;
     }
 
     /**
@@ -27,11 +27,22 @@ public class FastNonDominatedSort<C extends Solution<C>> {
      */
     @VisibleForTesting
     boolean dominates(C solution1, C solution2) {
-        if (solution1.getFitness1() > solution2.getFitness1()) {
-            return false;
+        int dominated = 0;
+
+        for (FitnessFunction<C> fitnessFunction : fitnessFunctions) {
+            int compareResult = fitnessFunction.comparator().compare(solution1, solution2);
+
+            if (compareResult < 0) {
+                return false;
+            } else if (compareResult > 0) {
+                // not return yet in case it is worse than a later fitness function
+                dominated++;
+            }
         }
-        return solution1.getFitness1() < solution2.getFitness1();
+
+        return dominated > 0;
     }
+
 
     /**
      * Implements the fast dominated sort provided in the lecture slides.
@@ -103,6 +114,6 @@ public class FastNonDominatedSort<C extends Solution<C>> {
      */
     @VisibleForTesting
     void calculateFitnessValuesForSolutions(List<C> solutions) {
-        solutions.forEach(c -> c.setFitness1(function1.getFitness(c)));
+        solutions.forEach(c -> fitnessFunctions.forEach(c::getFitness));
     }
 }

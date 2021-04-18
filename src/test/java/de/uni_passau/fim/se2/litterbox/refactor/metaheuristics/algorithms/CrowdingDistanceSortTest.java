@@ -4,13 +4,18 @@ import com.google.common.collect.Lists;
 import de.uni_passau.fim.se2.litterbox.analytics.RefactoringFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.refactorings.DoubleIfFinder;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.chromosomes.RefactorSequence;
+import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.fitness_functions.FitnessFunction;
+import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.fitness_functions.NumberOfSmells;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.search_operators.Crossover;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.search_operators.Mutation;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.search_operators.RefactorSequenceCrossover;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.search_operators.RefactorSequenceMutation;
 import org.junit.jupiter.api.Test;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.mockito.Mockito.mock;
@@ -25,22 +30,31 @@ class CrowdingDistanceSortTest {
     @Test
     void crowdingDistanceIsCalculatedAndSortedCorrectly() {
 
-        RefactorSequence x6 = new RefactorSequence(mutation, crossover, productions, refactoringFinders);
-        x6.setFitness1(0.99);
+        FitnessFunction<RefactorSequence> function1 = mock(NumberOfSmells.class);
+        FitnessFunction<RefactorSequence> function2 = mock(NumberOfSmells.class);
 
-        RefactorSequence x7 = new RefactorSequence(mutation, crossover, productions, refactoringFinders);
-        x7.setFitness1(0.99);
+        Map<FitnessFunction<RefactorSequence>, Double> fitnessMap1 = new HashMap<>();
+        fitnessMap1.put(function1, 0.99);
+        fitnessMap1.put(function2, 0.90);
+        RefactorSequence c1 = new RefactorSequence(mutation, crossover, productions, refactoringFinders, fitnessMap1);
 
-        RefactorSequence x8 = new RefactorSequence(mutation, crossover, productions, refactoringFinders);
-        x8.setFitness1(0.95);
+        Map<FitnessFunction<RefactorSequence>, Double> fitnessMap2 = new HashMap<>();
+        fitnessMap2.put(function1, 0.99);
+        fitnessMap2.put(function2, 0.90);
+        RefactorSequence c2 = new RefactorSequence(mutation, crossover, productions, refactoringFinders, fitnessMap2);
 
-        List<RefactorSequence> solutions = Lists.newArrayList(x6, x7, x8);
+        Map<FitnessFunction<RefactorSequence>, Double> fitnessMap3 = new HashMap<>();
+        fitnessMap3.put(function1, 0.95);
+        fitnessMap3.put(function2, 0.92);
+        RefactorSequence c3 = new RefactorSequence(mutation, crossover, productions, refactoringFinders, fitnessMap3);
 
-        CrowdingDistanceSort<RefactorSequence> crowdingDistanceSort = new CrowdingDistanceSort<>();
+        List<RefactorSequence> solutions = Lists.newArrayList(c1, c2, c3);
+
+        CrowdingDistanceSort<RefactorSequence> crowdingDistanceSort = new CrowdingDistanceSort<>(List.of(function1, function2));
         crowdingDistanceSort.calculateCrowdingDistanceAndSort(solutions);
 
-        assertSame(x7, solutions.get(0));
-        assertSame(x8, solutions.get(1));
-        assertSame(x6, solutions.get(2));
+        assertSame(c1, solutions.get(0));
+        assertSame(c2, solutions.get(1));
+        assertSame(c3, solutions.get(2));
     }
 }
