@@ -4,13 +4,11 @@ import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
-import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.KeyPressed;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.GlideSecsToXY;
 
 public class GlidingMotion extends AbstractIssueFinder {
+
     public static final String NAME = "gliding_motion";
     private boolean keyPressed;
 

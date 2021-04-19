@@ -157,6 +157,8 @@ public class IssueTool {
         registerGoodPracticeFinder(new DirectedMotion(), goodPracticeFinders);
         registerGoodPracticeFinder(new Collision(), goodPracticeFinders);
         registerGoodPracticeFinder(new GlidingMotion(), goodPracticeFinders);
+        registerGoodPracticeFinder(new MouseFollower(), goodPracticeFinders);
+        registerGoodPracticeFinder(new ObjectFollower(), goodPracticeFinders);
 
 
         return goodPracticeFinders;
