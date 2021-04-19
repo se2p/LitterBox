@@ -25,11 +25,18 @@ public class BinaryRankTournament<C extends Solution<C>> implements Selection<C>
      */
     @Override
     public C apply(List<C> population) {
+        if (population.isEmpty()) {
+            throw new IllegalArgumentException("Empty population given to binary rank tournament.");
+        }
+        if (population.size() == 1) {
+            return population.get(0);
+        }
+
+
         int index1 = random.nextInt(population.size());
         C candidate1 = population.get(index1).copy();
 
         int index2;
-        // TODO runs endless for generations size == 1
         do {
             index2 = random.nextInt(population.size());
         } while (index2 == index1);
