@@ -75,6 +75,7 @@ public class MetricTool {
             new SpriteCount<Program>(),
             new StackedStatementCount<Program>(),
             new StatementCount<Program>(),
+            new TokenEntropy<Program>(),
             new VariableCount<Program>(),
             new VariablesBlockCount<Program>(),
             new WeightedMethodCount<Program>(),
