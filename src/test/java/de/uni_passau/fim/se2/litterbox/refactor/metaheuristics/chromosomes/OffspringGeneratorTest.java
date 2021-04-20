@@ -3,6 +3,8 @@ package de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.chromosomes;
 import de.uni_passau.fim.se2.litterbox.analytics.RefactoringFinder;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.search_operators.*;
 import de.uni_passau.fim.se2.litterbox.utils.Pair;
+import de.uni_passau.fim.se2.litterbox.utils.PropertyLoader;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -14,20 +16,40 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 class OffspringGeneratorTest {
-    Mutation<RefactorSequence> mutation = mock(RefactorSequenceMutation.class);
-    Crossover<RefactorSequence> crossover = mock(RefactorSequenceCrossover.class);
+    Mutation<RefactorSequence> mutation;
+    Crossover<RefactorSequence> crossover;
 
-    List<Integer> production1 = List.of(1, 1, 1);
-    List<Integer> production2 = List.of(2, 2, 2);
-    List<Integer> production3 = List.of(3, 3, 3);
-    List<Integer> production4 = List.of(4, 4, 4);
+    List<Integer> production1;
+    List<Integer> production2;
+    List<Integer> production3;
+    List<Integer> production4;
 
-    List<RefactoringFinder> refactoringFinders = List.of();
+    List<RefactoringFinder> refactoringFinders;
 
-    RefactorSequence parent1 = new RefactorSequence(mutation, crossover, production1, refactoringFinders);
-    RefactorSequence parent2 = new RefactorSequence(mutation, crossover, production2, refactoringFinders);
-    RefactorSequence mutant1 = new RefactorSequence(mutation, crossover, production3, refactoringFinders);
-    RefactorSequence mutant2 = new RefactorSequence(mutation, crossover, production4, refactoringFinders);
+    RefactorSequence parent1;
+    RefactorSequence parent2;
+    RefactorSequence mutant1;
+    RefactorSequence mutant2;
+
+    @BeforeEach
+    void setupEnv() {
+        PropertyLoader.setDefaultSystemProperties("nsga-ii.properties");
+
+        mutation = mock(RefactorSequenceMutation.class);
+        crossover = mock(RefactorSequenceCrossover.class);
+
+        production1 = List.of(1, 1, 1);
+        production2 = List.of(2, 2, 2);
+        production3 = List.of(3, 3, 3);
+        production4 = List.of(4, 4, 4);
+
+        refactoringFinders = List.of();
+
+        parent1 = new RefactorSequence(mutation, crossover, production1, refactoringFinders);
+        parent2 = new RefactorSequence(mutation, crossover, production2, refactoringFinders);
+        mutant1 = new RefactorSequence(mutation, crossover, production3, refactoringFinders);
+        mutant2 = new RefactorSequence(mutation, crossover, production4, refactoringFinders);
+    }
 
     @Test
     void offspringGeneratorCreatesOffspringCorrectlyWithCrossover() {

@@ -10,22 +10,30 @@ import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.search_operators.
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.search_operators.Mutation;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.search_operators.RefactorSequenceCrossover;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.search_operators.RefactorSequenceMutation;
+import de.uni_passau.fim.se2.litterbox.utils.PropertyLoader;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.mockito.Mockito.mock;
 
 class CrowdingDistanceSortTest {
 
-    Mutation<RefactorSequence> mutation = mock(RefactorSequenceMutation.class);
-    Crossover<RefactorSequence> crossover = mock(RefactorSequenceCrossover.class);
-    List<Integer> productions = List.of(0, 0, 0);
-    List<RefactoringFinder> refactoringFinders = List.of(new DoubleIfFinder());
+    @BeforeEach
+    void setupEnv() {
+        PropertyLoader.setDefaultSystemProperties("nsga-ii.properties");
+    }
 
     @Test
     void crowdingDistanceIsCalculatedAndSortedCorrectly() {
+        Mutation<RefactorSequence> mutation = mock(RefactorSequenceMutation.class);
+        Crossover<RefactorSequence> crossover = mock(RefactorSequenceCrossover.class);
+        List<Integer> productions = List.of(0, 0, 0);
+        List<RefactoringFinder> refactoringFinders = List.of(new DoubleIfFinder());
 
         FitnessFunction<RefactorSequence> function1 = mock(NumberOfSmells.class);
         FitnessFunction<RefactorSequence> function2 = mock(NumberOfSmells.class);

@@ -4,6 +4,8 @@ import de.uni_passau.fim.se2.litterbox.analytics.RefactoringFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.refactorings.DoubleIfFinder;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.chromosomes.RefactorSequence;
 import de.uni_passau.fim.se2.litterbox.utils.Pair;
+import de.uni_passau.fim.se2.litterbox.utils.PropertyLoader;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -14,10 +16,20 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 class RefactorSequenceCrossoverTest {
-    Random mockedRandom = mock(Random.class);
-    Mutation<RefactorSequence> mutation = mock(RefactorSequenceMutation.class);
-    RefactorSequenceCrossover crossover = new RefactorSequenceCrossover(mockedRandom);
-    List<RefactoringFinder> refactoringFinders = List.of(new DoubleIfFinder());
+    Random mockedRandom;
+    Mutation<RefactorSequence> mutation;
+    RefactorSequenceCrossover crossover;
+    List<RefactoringFinder> refactoringFinders;
+
+    @BeforeEach
+    void setupEnv() {
+        PropertyLoader.setDefaultSystemProperties("nsga-ii.properties");
+
+        mockedRandom = mock(Random.class);
+        mutation = mock(RefactorSequenceMutation.class);
+        crossover = new RefactorSequenceCrossover(mockedRandom);
+        refactoringFinders = List.of(new DoubleIfFinder());
+    }
 
     @Test
     void testCrossover() {

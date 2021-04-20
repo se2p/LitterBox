@@ -4,6 +4,8 @@ import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.search_operators.
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.search_operators.Mutation;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.search_operators.RefactorSequenceCrossover;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.search_operators.RefactorSequenceMutation;
+import de.uni_passau.fim.se2.litterbox.utils.PropertyLoader;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -15,6 +17,12 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 class RefactorSequenceGeneratorTest {
+
+    @BeforeEach
+    void setupEnv() {
+        PropertyLoader.setDefaultSystemProperties("nsga-ii.properties");
+    }
+
     @Test
     void generateNewRefactorSequence() {
         Random mockedRandom = mock(Random.class);
