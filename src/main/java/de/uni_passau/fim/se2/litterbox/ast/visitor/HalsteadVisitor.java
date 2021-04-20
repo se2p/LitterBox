@@ -19,6 +19,7 @@
 package de.uni_passau.fim.se2.litterbox.ast.visitor;
 
 import com.google.common.collect.LinkedHashMultiset;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Multiset;
 import de.uni_passau.fim.se2.litterbox.ast.model.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.ElementChoice;
@@ -29,6 +30,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BoolExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Not;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.UnspecifiedBoolExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.ExpressionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumFunct;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.Round;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.NameNum;
@@ -48,7 +50,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.touchable.MousePointer;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.SpriteTouchable;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Parameter;
 
-public class HalsteadVisitor implements ScratchVisitor {
+public class TokenVisitor implements ScratchVisitor {
 
     private Multiset<Class<?>> operators = LinkedHashMultiset.create();
 
@@ -68,6 +70,10 @@ public class HalsteadVisitor implements ScratchVisitor {
 
     public int getUniqueOperators() {
         return operators.elementSet().size();
+    }
+
+    public void foo() {
+        Maps.asMap(operands.elementSet(), elem -> operands.count(elem));
     }
 
     @Override
@@ -208,6 +214,8 @@ public class HalsteadVisitor implements ScratchVisitor {
             visitChildren(node);
         } else if (node instanceof BinaryExpression || node instanceof BoolExpr || node instanceof ComparableExpr) {
             operators.add(node.getClass());
+            visitChildren(node);
+        } else if (node instanceof ExpressionList) {
             visitChildren(node);
         }
     }
