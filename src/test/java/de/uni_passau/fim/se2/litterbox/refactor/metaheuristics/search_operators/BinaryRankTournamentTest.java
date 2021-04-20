@@ -3,6 +3,8 @@ package de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.search_operators
 import com.google.common.collect.Lists;
 import de.uni_passau.fim.se2.litterbox.analytics.RefactoringFinder;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.chromosomes.RefactorSequence;
+import de.uni_passau.fim.se2.litterbox.utils.PropertyLoader;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -14,18 +16,36 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 class BinaryRankTournamentTest {
-    Random mockedRandom = mock(Random.class);
-    Mutation<RefactorSequence> mutation = mock(RefactorSequenceMutation.class);
-    Crossover<RefactorSequence> crossover = mock(RefactorSequenceCrossover.class);
-    List<Integer> productions = List.of(1, 1, 1);
-    List<RefactoringFinder> refactoringFinders = List.of();
+    Random mockedRandom;
+    Mutation<RefactorSequence> mutation;
+    Crossover<RefactorSequence> crossover;
+    List<Integer> productions;
+    List<RefactoringFinder> refactoringFinders;
 
-    RefactorSequence testSuite1 = new RefactorSequence(mutation, crossover, productions, refactoringFinders);
-    RefactorSequence testSuite2 = new RefactorSequence(mutation, crossover, productions, refactoringFinders);
+    RefactorSequence testSuite1;
+    RefactorSequence testSuite2;
 
-    List<RefactorSequence> population = Lists.newArrayList(testSuite1, testSuite2);
+    List<RefactorSequence> population;
 
-    Selection<RefactorSequence> selection = new BinaryRankTournament(mockedRandom);
+    Selection<RefactorSequence> selection;
+
+    @BeforeEach
+    void setupEnv() {
+        PropertyLoader.setDefaultSystemProperties();
+
+        mockedRandom = mock(Random.class);
+        mutation = mock(RefactorSequenceMutation.class);
+        crossover = mock(RefactorSequenceCrossover.class);
+        productions = List.of(1, 1, 1);
+        refactoringFinders = List.of();
+
+        testSuite1 = new RefactorSequence(mutation, crossover, productions, refactoringFinders);
+        testSuite2 = new RefactorSequence(mutation, crossover, productions, refactoringFinders);
+
+        population = Lists.newArrayList(testSuite1, testSuite2);
+
+        selection = new BinaryRankTournament(mockedRandom);
+    }
 
     @Test
     void testSelectionByRank() {

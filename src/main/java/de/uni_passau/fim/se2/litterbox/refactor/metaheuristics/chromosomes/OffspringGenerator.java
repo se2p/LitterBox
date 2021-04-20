@@ -12,7 +12,7 @@ public class OffspringGenerator<C extends Solution<C>> {
     private final Random random;
     private final BinaryRankTournament<C> binaryRankTournament;
 
-    private static final double CROSSOVER_PROBABILITY = 0.7;
+    private static final double CROSSOVER_PROBABILITY = Double.parseDouble(System.getProperty("nsga-ii.crossoverProbability"));
 
     public OffspringGenerator(Random random, BinaryRankTournament<C> binaryRankTournament) {
         this.random = random;

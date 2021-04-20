@@ -10,7 +10,8 @@ import java.util.Random;
 
 public class RefactorSequenceGenerator implements ChromosomeGenerator<RefactorSequence> {
 
-    private static final int MAX_REFACTORINGS_PER_SOLUTION = 10;
+    private static final int MAX_PRODUCTIONS_PER_SOLUTION = Integer.parseInt(System.getProperty("nsga-ii.maxProductionsPerSolution"));
+    private static final int MAX_PRODUCTION_NUMBER = Integer.parseInt(System.getProperty("nsga-ii.maxProductionNumber"));
 
     private final Mutation<RefactorSequence> mutation;
     private final Crossover<RefactorSequence> crossover;
@@ -33,9 +34,9 @@ public class RefactorSequenceGenerator implements ChromosomeGenerator<RefactorSe
     @Override
     public RefactorSequence get() {
         List<Integer> productions = new LinkedList<>();
-        int numberOfProductions = 1 + random.nextInt(MAX_REFACTORINGS_PER_SOLUTION);
+        int numberOfProductions = 1 + random.nextInt(MAX_PRODUCTIONS_PER_SOLUTION);
         for (int i = 0; i < numberOfProductions; i++) {
-            productions.add(random.nextInt(255));
+            productions.add(random.nextInt(MAX_PRODUCTION_NUMBER));
         }
         return new RefactorSequence(mutation, crossover, productions, refactoringFinders);
     }

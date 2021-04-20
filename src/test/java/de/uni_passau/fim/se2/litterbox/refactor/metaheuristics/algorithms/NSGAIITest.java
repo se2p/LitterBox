@@ -4,6 +4,8 @@ import com.google.common.collect.Lists;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.chromosomes.FixedSizePopulationGenerator;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.chromosomes.OffspringGenerator;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.chromosomes.RefactorSequence;
+import de.uni_passau.fim.se2.litterbox.utils.PropertyLoader;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -13,6 +15,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
 class NSGAIITest {
+
+    @BeforeEach
+    void setupEnv() {
+        PropertyLoader.setDefaultSystemProperties();
+    }
 
     @Test
     void testNSGAIICalls() {

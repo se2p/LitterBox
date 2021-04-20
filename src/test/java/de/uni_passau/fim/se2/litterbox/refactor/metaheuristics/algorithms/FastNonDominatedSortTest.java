@@ -12,12 +12,13 @@ import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.search_operators.
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.search_operators.Mutation;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.search_operators.RefactorSequenceCrossover;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.search_operators.RefactorSequenceMutation;
+import de.uni_passau.fim.se2.litterbox.utils.PropertyLoader;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -25,12 +26,16 @@ import static org.mockito.Mockito.*;
 
 class FastNonDominatedSortTest {
 
-    FitnessFunction<RefactorSequence> function1 = mock(NumberOfSmells.class);
-    FitnessFunction<RefactorSequence> function2 = mock(NumberOfSmells.class);
-    List<FitnessFunction<RefactorSequence>> fitnessFunctions = List.of(function1, function2);
+    @BeforeEach
+    void setupEnv() {
+        PropertyLoader.setDefaultSystemProperties();
+    }
 
     @Test
     void fastNonDominatedSortCalculatesAndStoresFitnessValues() {
+        MinimizingFitnessFunction<RefactorSequence> function1 = mock(NumberOfSmells.class);
+        List<FitnessFunction<RefactorSequence>> fitnessFunctions = List.of(function1);
+
         Mutation<RefactorSequence> mutation = mock(RefactorSequenceMutation.class);
         Crossover<RefactorSequence> crossover = mock(RefactorSequenceCrossover.class);
 
@@ -40,7 +45,6 @@ class FastNonDominatedSortTest {
         when(program.deepCopy()).thenReturn(program);
 
         RefactorSequence solution = new RefactorSequence(mutation, crossover, new LinkedList<>(), refactoringFinders);
-        MinimizingFitnessFunction<RefactorSequence> function1 = mock(NumberOfSmells.class);
         when(function1.getFitness(solution)).thenReturn(1.0);
 
         FastNonDominatedSort<RefactorSequence> fastNonDominatedSort = new FastNonDominatedSort<>(fitnessFunctions);
@@ -50,6 +54,10 @@ class FastNonDominatedSortTest {
 
     @Test
     void testDominationCheck() {
+        FitnessFunction<RefactorSequence> function1 = mock(NumberOfSmells.class);
+        FitnessFunction<RefactorSequence> function2 = mock(NumberOfSmells.class);
+        List<FitnessFunction<RefactorSequence>> fitnessFunctions = List.of(function1, function2);
+
         // mock f1 maximizing
         when(function1.comparator()).thenReturn(Comparator.comparingDouble(c -> c.getFitness(function1)));
         // mock f2 minimizing

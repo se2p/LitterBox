@@ -31,8 +31,8 @@ public class RefactoringAnalyzer extends Analyzer {
     private final boolean ignoreLooseBlocks;
     private final List<RefactoringFinder> refactoringFinders;
 
-    private static final int POPULATION_SIZE = 2;
-    private static final int MAX_GEN = 1;
+    private static final int POPULATION_SIZE = Integer.parseInt(System.getProperty("nsga-ii.populationSize"));
+    private static final int MAX_GEN = Integer.parseInt(System.getProperty("nsga-ii.generations"));
 
     public RefactoringAnalyzer(String input, String output, String detectors, boolean ignoreLooseBlocks, boolean delete) {
         super(input, output, delete);
