@@ -35,20 +35,24 @@ public class RefactorSequenceCrossover implements Crossover<RefactorSequence> {
         RefactorSequence child1 = parent1.copy();
         RefactorSequence child2 = parent2.copy();
 
-        // TODO exclude cases 0 and size - 1? if so, how to handle chromosomes with length == 1
-        int crossoverPoint = child1.getProductions().isEmpty() ? 0 : random.nextInt(child1.getProductions().size());
+        if (child1.getProductions().size() > 1 && !child2.getProductions().isEmpty()) {
+            int crossoverPoint;
+            do {
+                crossoverPoint = 1 + random.nextInt(child1.getProductions().size() - 1); // exclude 0 as valid crossoverPoint
+            } while (crossoverPoint > child2.getProductions().size()); // only accept solutions where a swap is valid
 
-        List<Integer> child1List = new ArrayList<>(child1.getProductions().subList(0, crossoverPoint));
-        List<Integer> child2List = new ArrayList<>(child2.getProductions().subList(0, crossoverPoint));
+            List<Integer> child1List = new ArrayList<>(child1.getProductions().subList(0, crossoverPoint));
+            List<Integer> child2List = new ArrayList<>(child2.getProductions().subList(0, crossoverPoint));
 
-        child1List.addAll(new ArrayList<>(child2.getProductions().subList(crossoverPoint, child2.getProductions().size())));
-        child2List.addAll(new ArrayList<>(child1.getProductions().subList(crossoverPoint, child1.getProductions().size())));
+            child1List.addAll(new ArrayList<>(child2.getProductions().subList(crossoverPoint, child2.getProductions().size())));
+            child2List.addAll(new ArrayList<>(child1.getProductions().subList(crossoverPoint, child1.getProductions().size())));
 
-        child1.getProductions().clear();
-        child2.getProductions().clear();
+            child1.getProductions().clear();
+            child2.getProductions().clear();
 
-        child1.getProductions().addAll(child1List);
-        child2.getProductions().addAll(child2List);
+            child1.getProductions().addAll(child1List);
+            child2.getProductions().addAll(child2List);
+        }
 
         return Pair.of(child1, child2);
     }

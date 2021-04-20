@@ -19,26 +19,24 @@
 package de.uni_passau.fim.se2.litterbox.report;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.refactor.refactorings.Refactoring;
 
 import java.io.IOException;
 import java.util.List;
 
 public class ConsoleRefactorReportGenerator {
 
-    // TODO test
-    // TODO get List of concrete refactorings here
-    public void generateReport(Program program, List<Integer> productions) throws IOException {
+    public void generateReport(Program program, List<Refactoring> refactorings) throws IOException {
 
-        if (productions.isEmpty()) {
+        if (refactorings.isEmpty()) {
             System.out.println("No executable refactorings found.");
             return;
         }
 
         System.out.println("The following refactorings were executed on " + program.getIdent().getName());
 
-        for (int i = 0; i < productions.size(); i++) {
-            Integer production = productions.get(i);
-            System.out.println(i + ": " + production);
+        for (int i = 0; i < refactorings.size(); i++) {
+            System.out.println(i + ": " + refactorings.get(i).toString());
         }
     }
 }
