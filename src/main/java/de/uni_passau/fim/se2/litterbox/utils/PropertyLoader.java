@@ -25,17 +25,15 @@ public class PropertyLoader {
      */
     public static int getSystemIntProperty(String name) {
         String stringValue = System.getProperty(name);
-        int number = 0;
         if (stringValue == null) {
-            log.log(Level.WARNING, "The key {0} is not a set system variable.", name);
+            throw new IllegalArgumentException("The value for key " + name + " is not set in the system properties!");
         } else {
             try {
-                number = Integer.parseInt(stringValue);
+                return Integer.parseInt(stringValue);
             } catch (NumberFormatException e) {
-                log.log(Level.WARNING, "The value for key {0} is not an integer.", name);
+                throw new IllegalArgumentException("The value for key " + name + " is not an integer value!");
             }
         }
-        return number;
     }
 
     /**
@@ -48,17 +46,15 @@ public class PropertyLoader {
      */
     public static double getSystemDoubleProperty(String name) {
         String stringValue = System.getProperty(name);
-        double number = 0;
         if (stringValue == null) {
-            log.log(Level.WARNING, "The key {0} is not a set system variable.", name);
+            throw new IllegalArgumentException("The value for key " + name + " is not set in the system properties!");
         } else {
             try {
-                number = Double.parseDouble(stringValue);
+                return Double.parseDouble(stringValue);
             } catch (NumberFormatException e) {
-                log.log(Level.WARNING, "The value for key {0} is not a floating number.", name);
+                throw new IllegalArgumentException("The value for key " + name + " is not a floating number!");
             }
         }
-        return number;
     }
 
     /**
