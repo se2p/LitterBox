@@ -70,6 +70,7 @@ public class MetricTool {
             new SoundBlockCount<Program>(),
             new SpriteCount<Program>(),
             new StatementCount<Program>(),
+            new TokenEntropy<Program>(),
             new VariablesBlockCount<Program>(),
             new WeightedMethodCount<Program>(),
             new WeightedMethodCountStrict<Program>());
