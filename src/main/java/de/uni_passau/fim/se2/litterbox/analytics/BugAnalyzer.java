@@ -20,7 +20,6 @@ package de.uni_passau.fim.se2.litterbox.analytics;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.jsoncreation.JSONFileCreator;
-import de.uni_passau.fim.se2.litterbox.jsoncreation.enums.FilePostfix;
 import de.uni_passau.fim.se2.litterbox.report.CSVReportGenerator;
 import de.uni_passau.fim.se2.litterbox.report.CommentGenerator;
 import de.uni_passau.fim.se2.litterbox.report.ConsoleReportGenerator;
@@ -110,9 +109,9 @@ public class BugAnalyzer extends Analyzer {
                 CommentGenerator commentGenerator = new CommentGenerator();
                 commentGenerator.generateReport(program, issues);
                 if ((FilenameUtils.getExtension(fileEntry.getPath())).equalsIgnoreCase("json")) {
-                    JSONFileCreator.writeJsonFromProgram(program, annotatePath, FilePostfix.ANNOTATED);
+                    JSONFileCreator.writeJsonFromProgram(program, annotatePath, "_annotated");
                 } else {
-                    JSONFileCreator.writeSb3FromProgram(program, annotatePath, fileEntry, FilePostfix.ANNOTATED);
+                    JSONFileCreator.writeSb3FromProgram(program, annotatePath, fileEntry, "_annotated");
                 }
             } catch (IOException e) {
                 log.warning(e.getMessage());

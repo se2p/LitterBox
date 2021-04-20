@@ -2,7 +2,6 @@ package de.uni_passau.fim.se2.litterbox.analytics;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.jsoncreation.JSONFileCreator;
-import de.uni_passau.fim.se2.litterbox.jsoncreation.enums.FilePostfix;
 import de.uni_passau.fim.se2.litterbox.refactor.RefactoringTool;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.algorithms.CrowdingDistanceSort;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.algorithms.FastNonDominatedSort;
@@ -119,9 +118,9 @@ public class RefactoringAnalyzer extends Analyzer {
     private void createNewProjectFile(File fileEntry, Program program) {
         try {
             if ((FilenameUtils.getExtension(fileEntry.getPath())).equalsIgnoreCase("json")) {
-                JSONFileCreator.writeJsonFromProgram(program, fileEntry.getParent(), FilePostfix.REFACTORED);
+                JSONFileCreator.writeJsonFromProgram(program, fileEntry.getParent(), "_refactored_" + counterPostfix);
             } else {
-                JSONFileCreator.writeSb3FromProgram(program, fileEntry.getParent(), fileEntry, FilePostfix.REFACTORED);
+                JSONFileCreator.writeSb3FromProgram(program, fileEntry.getParent(), fileEntry, "_refactored_" + counterPostfix);
             }
         } catch (IOException e) {
             log.warning(e.getMessage());
