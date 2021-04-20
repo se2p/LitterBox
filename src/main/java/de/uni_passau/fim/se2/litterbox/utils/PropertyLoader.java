@@ -10,7 +10,56 @@ import java.util.logging.Logger;
 
 public class PropertyLoader {
 
-    private PropertyLoader() {}
+    private PropertyLoader() {
+    }
+
+    private static final Logger log = Logger.getLogger(PropertyLoader.class.getName());
+
+    /**
+     * Load the string value of the given key from the system properties.
+     * If the key has a value assigned, that is a parsable integer, return that integer.
+     * Otherwise, write a warning to the logs and return 0.
+     *
+     * @param name The key to the system variable.
+     * @return The value to the given key as integer or 0 otherwise.
+     */
+    public static int getSystemIntProperty(String name) {
+        String stringValue = System.getProperty(name);
+        int number = 0;
+        if (stringValue == null) {
+            log.log(Level.WARNING, "The key {0} is not a set system variable.", name);
+        } else {
+            try {
+                number = Integer.parseInt(stringValue);
+            } catch (NumberFormatException e) {
+                log.log(Level.WARNING, "The value for key {0} is not an integer.", name);
+            }
+        }
+        return number;
+    }
+
+    /**
+     * Load the string value of the given key from the system properties.
+     * If the key has a value assigned, that is a parsable floating number, return that value as a double.
+     * Otherwise, write a warning to the logs and return 0.
+     *
+     * @param name The key to the system variable.
+     * @return The value to the given key as double or 0 otherwise.
+     */
+    public static double getSystemDoubleProperty(String name) {
+        String stringValue = System.getProperty(name);
+        double number = 0;
+        if (stringValue == null) {
+            log.log(Level.WARNING, "The key {0} is not a set system variable.", name);
+        } else {
+            try {
+                number = Double.parseDouble(stringValue);
+            } catch (NumberFormatException e) {
+                log.log(Level.WARNING, "The value for key {0} is not a floating number.", name);
+            }
+        }
+        return number;
+    }
 
     /**
      * If a property is already set as a system property via command line, use that value.

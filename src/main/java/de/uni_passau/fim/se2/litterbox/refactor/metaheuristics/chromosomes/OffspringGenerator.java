@@ -3,6 +3,7 @@ package de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.chromosomes;
 import com.google.common.collect.Lists;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.search_operators.BinaryRankTournament;
 import de.uni_passau.fim.se2.litterbox.utils.Pair;
+import de.uni_passau.fim.se2.litterbox.utils.PropertyLoader;
 
 import java.util.List;
 import java.util.Random;
@@ -12,7 +13,7 @@ public class OffspringGenerator<C extends Solution<C>> {
     private final Random random;
     private final BinaryRankTournament<C> binaryRankTournament;
 
-    private static final double CROSSOVER_PROBABILITY = Double.parseDouble(System.getProperty("nsga-ii.crossoverProbability"));
+    private static final double CROSSOVER_PROBABILITY = PropertyLoader.getSystemDoubleProperty("nsga-ii.crossoverProbability");
 
     public OffspringGenerator(Random random, BinaryRankTournament<C> binaryRankTournament) {
         this.random = random;
