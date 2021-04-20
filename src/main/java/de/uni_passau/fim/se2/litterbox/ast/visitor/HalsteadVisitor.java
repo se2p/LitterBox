@@ -19,7 +19,6 @@
 package de.uni_passau.fim.se2.litterbox.ast.visitor;
 
 import com.google.common.collect.LinkedHashMultiset;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Multiset;
 import de.uni_passau.fim.se2.litterbox.ast.model.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.ElementChoice;
@@ -50,7 +49,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.touchable.MousePointer;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.SpriteTouchable;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Parameter;
 
-public class TokenVisitor implements ScratchVisitor {
+public class HalsteadVisitor implements ScratchVisitor {
 
     private Multiset<Class<?>> operators = LinkedHashMultiset.create();
 
@@ -70,10 +69,6 @@ public class TokenVisitor implements ScratchVisitor {
 
     public int getUniqueOperators() {
         return operators.elementSet().size();
-    }
-
-    public void foo() {
-        Maps.asMap(operands.elementSet(), elem -> operands.count(elem));
     }
 
     @Override
