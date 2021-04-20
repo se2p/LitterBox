@@ -17,7 +17,7 @@ public class MergeDoubleIf implements Refactoring {
 
     @Override
     public Program apply(Program program) {
-        Program refactored = program.deepCopy(); // even needed?
+        Program refactored = program.deepCopy();
         if1.getThenStmts().getStmts().addAll(if2.getThenStmts().getStmts());
 
         StmtList stmtList = (StmtList) if2.getParentNode();
