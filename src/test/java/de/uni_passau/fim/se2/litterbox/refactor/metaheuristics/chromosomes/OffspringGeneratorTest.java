@@ -33,7 +33,7 @@ class OffspringGeneratorTest {
 
     @BeforeEach
     void setupEnv() {
-        PropertyLoader.setDefaultSystemProperties();
+        PropertyLoader.setDefaultSystemProperties("nsga-ii.properties");
 
         mutation = mock(RefactorSequenceMutation.class);
         crossover = mock(RefactorSequenceCrossover.class);

@@ -31,7 +31,7 @@ class BinaryRankTournamentTest {
 
     @BeforeEach
     void setupEnv() {
-        PropertyLoader.setDefaultSystemProperties();
+        PropertyLoader.setDefaultSystemProperties("nsga-ii.properties");
 
         mockedRandom = mock(Random.class);
         mutation = mock(RefactorSequenceMutation.class);

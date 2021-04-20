@@ -18,7 +18,7 @@ class NSGAIITest {
 
     @BeforeEach
     void setupEnv() {
-        PropertyLoader.setDefaultSystemProperties();
+        PropertyLoader.setDefaultSystemProperties("nsga-ii.properties");
     }
 
     @Test

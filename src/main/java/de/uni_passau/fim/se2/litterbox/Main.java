@@ -262,7 +262,7 @@ public class Main {
      * @param args Arguments that are parsed as options.
      */
     public static void main(String[] args) {
-        PropertyLoader.setDefaultSystemProperties();
+        PropertyLoader.setDefaultSystemProperties("nsga-ii.properties");
         parseCommandLine(args);
     }
 }
