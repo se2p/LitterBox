@@ -112,22 +112,14 @@ public class RefactorSequence extends Solution<RefactorSequence> {
         return current;
     }
 
-    /**
-     * Creates a copy of this chromosome.
-     *
-     * @return a copy of this chromosome
-     */
+
     @Override
     public RefactorSequence copy() {
         return new RefactorSequence(getMutation(), getCrossover(), new ArrayList<>(productions),
                 refactoringFinders);
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * @param other
-     */
+
     @Override
     public boolean equals(Object other) {
         if (this == other) {
@@ -139,9 +131,7 @@ public class RefactorSequence extends Solution<RefactorSequence> {
         return ((RefactorSequence) other).getProductions().equals(getProductions());
     }
 
-    /**
-     * {@inheritDoc}
-     */
+
     @Override
     public int hashCode() {
         return getProductions().hashCode();

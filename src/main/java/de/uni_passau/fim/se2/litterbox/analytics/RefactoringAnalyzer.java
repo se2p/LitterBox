@@ -49,7 +49,7 @@ public class RefactoringAnalyzer extends Analyzer {
         }
 
         List<RefactorSequence> solutions = findRefactoring(program.deepCopy(), issueFinders, refactoringFinders, ignoreLooseBlocks);
-        if (solutions.isEmpty()) {
+        if (!solutions.isEmpty()) {
             generateProjectsFromParetoFront(fileEntry, reportName, program, solutions);
         } else {
             System.out.println("NSGA-II found no solutions!");
