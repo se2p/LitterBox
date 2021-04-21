@@ -22,8 +22,8 @@ class BinaryRankTournamentTest {
     List<Integer> productions;
     List<RefactoringFinder> refactoringFinders;
 
-    RefactorSequence testSuite1;
-    RefactorSequence testSuite2;
+    RefactorSequence refactorSequence1;
+    RefactorSequence refactorSequence2;
 
     List<RefactorSequence> population;
 
@@ -39,57 +39,57 @@ class BinaryRankTournamentTest {
         productions = List.of(1, 1, 1);
         refactoringFinders = List.of();
 
-        testSuite1 = new RefactorSequence(mutation, crossover, productions, refactoringFinders);
-        testSuite2 = new RefactorSequence(mutation, crossover, productions, refactoringFinders);
+        refactorSequence1 = new RefactorSequence(mutation, crossover, productions, refactoringFinders);
+        refactorSequence2 = new RefactorSequence(mutation, crossover, productions, refactoringFinders);
 
-        population = Lists.newArrayList(testSuite1, testSuite2);
+        population = Lists.newArrayList(refactorSequence1, refactorSequence2);
 
         selection = new BinaryRankTournament(mockedRandom);
     }
 
     @Test
     void testSelectionByRank() {
-        testSuite1.setRank(0);
-        testSuite2.setRank(1);
+        refactorSequence1.setRank(0);
+        refactorSequence2.setRank(1);
 
         when(mockedRandom.nextInt(2)).thenReturn(0).thenReturn(1);
         RefactorSequence candidate1 = selection.apply(population);
-        assertNotSame(testSuite1, candidate1);
-        assertEquals(testSuite1, candidate1);
+        assertNotSame(refactorSequence1, candidate1);
+        assertEquals(refactorSequence1, candidate1);
 
-        testSuite1.setRank(2);
+        refactorSequence1.setRank(2);
         when(mockedRandom.nextInt(2)).thenReturn(0).thenReturn(1);
         RefactorSequence candidate2 = selection.apply(population);
-        assertNotSame(testSuite2, candidate2);
-        assertEquals(testSuite2, candidate2);
+        assertNotSame(refactorSequence2, candidate2);
+        assertEquals(refactorSequence2, candidate2);
     }
 
     @Test
     void testSelectionByDistance() {
-        testSuite1.setRank(0);
-        testSuite2.setRank(0);
-        testSuite1.setDistance(0.0);
-        testSuite2.setDistance(1.0);
+        refactorSequence1.setRank(0);
+        refactorSequence2.setRank(0);
+        refactorSequence1.setDistance(0.0);
+        refactorSequence2.setDistance(1.0);
         when(mockedRandom.nextInt(2)).thenReturn(0).thenReturn(1);
 
         RefactorSequence candidate1 = selection.apply(population);
-        assertNotSame(testSuite2, candidate1);
-        assertEquals(testSuite2, candidate1);
+        assertNotSame(refactorSequence2, candidate1);
+        assertEquals(refactorSequence2, candidate1);
 
-        testSuite1.setDistance(2.0);
+        refactorSequence1.setDistance(2.0);
         when(mockedRandom.nextInt(2)).thenReturn(0).thenReturn(1);
         RefactorSequence candidate2 = selection.apply(population);
-        assertNotSame(testSuite1, candidate1);
-        assertEquals(testSuite1, candidate1);
+        assertNotSame(refactorSequence1, candidate1);
+        assertEquals(refactorSequence1, candidate1);
     }
 
     @Test
     void testNeverTheSameBothArePicked() {
-        testSuite1.setRank(0);
-        testSuite2.setRank(1);
+        refactorSequence1.setRank(0);
+        refactorSequence2.setRank(1);
         when(mockedRandom.nextInt(2)).thenReturn(0).thenReturn(0).thenReturn(1);
         RefactorSequence candidate = selection.apply(population);
-        assertNotSame(testSuite2, candidate);
-        assertEquals(testSuite2, candidate);
+        assertNotSame(refactorSequence2, candidate);
+        assertEquals(refactorSequence2, candidate);
     }
 }

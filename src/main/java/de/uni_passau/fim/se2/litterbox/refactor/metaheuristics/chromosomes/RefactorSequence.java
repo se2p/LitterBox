@@ -11,8 +11,6 @@ import java.util.*;
 
 public class RefactorSequence extends Solution<RefactorSequence> {
 
-    // TODO test
-
     private final List<Integer> productions;
 
     private final List<RefactoringFinder> refactoringFinders;
