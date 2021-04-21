@@ -22,9 +22,12 @@ import com.google.common.io.Files;
 import de.uni_passau.fim.se2.litterbox.analytics.*;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
+import de.uni_passau.fim.se2.litterbox.utils.PropertyLoader;
 import org.apache.commons.cli.*;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
 
 import static de.uni_passau.fim.se2.litterbox.utils.GroupConstants.*;
 
@@ -251,12 +254,15 @@ public class Main {
         }
     }
 
+
+
     /**
      * Entry point to LitterBox where the arguments are parsed and the selected functionality is called.
      *
      * @param args Arguments that are parsed as options.
      */
     public static void main(String[] args) {
+        PropertyLoader.setDefaultSystemProperties("nsga-ii.properties");
         parseCommandLine(args);
     }
 }

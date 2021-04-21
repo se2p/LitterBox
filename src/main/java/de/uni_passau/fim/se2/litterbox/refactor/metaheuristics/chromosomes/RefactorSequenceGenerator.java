@@ -3,6 +3,7 @@ package de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.chromosomes;
 import de.uni_passau.fim.se2.litterbox.analytics.RefactoringFinder;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.search_operators.Crossover;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.search_operators.Mutation;
+import de.uni_passau.fim.se2.litterbox.utils.PropertyLoader;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -10,7 +11,8 @@ import java.util.Random;
 
 public class RefactorSequenceGenerator implements ChromosomeGenerator<RefactorSequence> {
 
-    private static final int MAX_REFACTORINGS_PER_SOLUTION = 10;
+    private static final int MAX_PRODUCTIONS_PER_SOLUTION = PropertyLoader.getSystemIntProperty("nsga-ii.maxProductionsPerSolution");
+    private static final int MAX_PRODUCTION_NUMBER = PropertyLoader.getSystemIntProperty("nsga-ii.maxProductionNumber");
 
     private final Mutation<RefactorSequence> mutation;
     private final Crossover<RefactorSequence> crossover;
@@ -33,9 +35,9 @@ public class RefactorSequenceGenerator implements ChromosomeGenerator<RefactorSe
     @Override
     public RefactorSequence get() {
         List<Integer> productions = new LinkedList<>();
-        int numberOfProductions = 1 + random.nextInt(MAX_REFACTORINGS_PER_SOLUTION);
+        int numberOfProductions = 1 + random.nextInt(MAX_PRODUCTIONS_PER_SOLUTION);
         for (int i = 0; i < numberOfProductions; i++) {
-            productions.add(random.nextInt(255));
+            productions.add(random.nextInt(MAX_PRODUCTION_NUMBER));
         }
         return new RefactorSequence(mutation, crossover, productions, refactoringFinders);
     }

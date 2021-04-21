@@ -12,6 +12,7 @@ import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.fitness_functions
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.search_operators.*;
 import de.uni_passau.fim.se2.litterbox.refactor.refactorings.Refactoring;
 import de.uni_passau.fim.se2.litterbox.report.ConsoleRefactorReportGenerator;
+import de.uni_passau.fim.se2.litterbox.utils.PropertyLoader;
 import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
@@ -28,8 +29,8 @@ public class RefactoringAnalyzer extends Analyzer {
     private final boolean ignoreLooseBlocks;
     private final List<RefactoringFinder> refactoringFinders;
 
-    private static final int POPULATION_SIZE = 2;
-    private static final int MAX_GEN = 1;
+    private static final int POPULATION_SIZE = PropertyLoader.getSystemIntProperty("nsga-ii.populationSize");
+    private static final int MAX_GEN = PropertyLoader.getSystemIntProperty("nsga-ii.generations");
 
     public RefactoringAnalyzer(String input, String output, String detectors, boolean ignoreLooseBlocks, boolean delete) {
         super(input, output, delete);
