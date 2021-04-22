@@ -19,6 +19,7 @@
 package de.uni_passau.fim.se2.litterbox.ast.visitor;
 
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
+import de.uni_passau.fim.se2.litterbox.analytics.metric.ProgramUsingPen;
 import de.uni_passau.fim.se2.litterbox.ast.model.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.Next;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.Prev;
@@ -32,6 +33,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.Timer;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.FixedAttribute;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.ExtensionBlock;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
@@ -46,6 +48,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinitionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.ExpressionStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.*;
@@ -112,6 +115,8 @@ public class ScratchBlocksVisitor extends PrintVisitor {
 
     private final Set<String> issueNote = new LinkedHashSet<>();
 
+    private ExtensionVisitor vis;
+
     public ScratchBlocksVisitor() {
         super(null);
         byteStream = new ByteArrayOutputStream();
@@ -120,6 +125,7 @@ public class ScratchBlocksVisitor extends PrintVisitor {
 
     public ScratchBlocksVisitor(PrintStream stream) {
         super(stream);
+        vis = new ScratchBlocksExtensionVisitor(this);
     }
 
     public ScratchBlocksVisitor(Issue issue) {
@@ -127,11 +133,13 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         this.issues.add(issue);
         this.program = issue.getProgram();
         this.currentActor = issue.getActor();
+        vis = new ScratchBlocksExtensionVisitor(this);
     }
 
     public ScratchBlocksVisitor(Collection<Issue> issues) {
         this();
         this.issues.addAll(issues);
+        vis = new ScratchBlocksExtensionVisitor(this);
         if (!issues.isEmpty()) {
             // TODO: This assumes all issues are reported on the same program
             this.program = issues.iterator().next().getProgram();
@@ -149,6 +157,11 @@ public class ScratchBlocksVisitor extends PrintVisitor {
 
     public void setProgram(Program program) {
         this.program = program;
+    }
+
+    @Override
+    public void visit(ExtensionBlock node) {
+        node.accept(vis);
     }
 
     @Override
@@ -185,7 +198,6 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         this.program = program;
         super.visit(program);
     }
-
 
     @Override
     public void visit(Script script) {
@@ -824,95 +836,113 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         newLine();
     }
 
-    //---------------------------------------------------------------
-    // Pen blocks
-    @Override
-    public void visit(PenClearStmt node) {
-        emitNoSpace("erase all");
-        storeNotesForIssue(node);
-        newLine();
-    }
+    private class ScratchBlocksExtensionVisitor implements PenExtensionVisitor {
+        ScratchVisitor parent;
 
-    @Override
-    public void visit(PenStampStmt node) {
-        emitNoSpace("stamp");
-        storeNotesForIssue(node);
-        newLine();
-    }
-
-    @Override
-    public void visit(PenDownStmt node) {
-        emitNoSpace("pen down");
-        storeNotesForIssue(node);
-        newLine();
-    }
-
-    @Override
-    public void visit(PenUpStmt node) {
-        emitNoSpace("pen up");
-        storeNotesForIssue(node);
-        newLine();
-    }
-
-    @Override
-    public void visit(SetPenColorToColorStmt node) {
-        emitNoSpace("set pen color to ");
-        node.getColorExpr().accept(this);
-        storeNotesForIssue(node);
-        newLine();
-    }
-
-    @Override
-    public void visit(ChangePenColorParamBy node) {
-        emitNoSpace("change pen ");
-
-        if (node.getParam() instanceof StringLiteral) {
-            emitNoSpace("(");
-            StringLiteral literal = (StringLiteral) node.getParam();
-            emitNoSpace(literal.getText());
-            emitNoSpace(" v)");
-        } else {
-            node.getParam().accept(this);
+        public ScratchBlocksExtensionVisitor(ScratchVisitor parent) {
+            this.parent = parent;
         }
-        emitNoSpace(" by ");
-        node.getValue().accept(this);
-        storeNotesForIssue(node);
-        newLine();
-    }
 
-    @Override
-    public void visit(SetPenColorParamTo node) {
-        emitNoSpace("set pen ");
-        if (node.getParam() instanceof StringLiteral) {
-            emitNoSpace("(");
-            StringLiteral literal = (StringLiteral) node.getParam();
-            emitNoSpace(literal.getText());
-            emitNoSpace(" v)");
-        } else {
-            node.getParam().accept(this);
+        //---------------------------------------------------------------
+        // Pen blocks
+
+        @Override
+        public void visit(ExtensionBlock node) {
+            node.accept(parent);
         }
-        emitNoSpace(" to ");
-        node.getValue().accept(this);
-        storeNotesForIssue(node);
-        newLine();
-    }
 
-    @Override
-    public void visit(ChangePenSizeBy node) {
-        emitNoSpace("change pen size by ");
-        node.getValue().accept(this);
-        storeNotesForIssue(node);
-        newLine();
-    }
+        @Override
+        public void visit(PenClearStmt node) {
+            emitNoSpace("erase all");
+            storeNotesForIssue(node);
+            newLine();
+        }
 
-    @Override
-    public void visit(SetPenSizeTo node) {
-        emitNoSpace("set pen size to ");
-        node.getValue().accept(this);
-        storeNotesForIssue(node);
-        newLine();
-    }
+        @Override
+        public void visit(PenStampStmt node) {
+            emitNoSpace("stamp");
+            storeNotesForIssue(node);
+            newLine();
+        }
 
+        @Override
+        public void visit(PenStmt node) {
+            ((Stmt) node).accept(parent);
+        }
+
+        @Override
+        public void visit(PenDownStmt node) {
+            emitNoSpace("pen down");
+            storeNotesForIssue(node);
+            newLine();
+        }
+
+        @Override
+        public void visit(PenUpStmt node) {
+            emitNoSpace("pen up");
+            storeNotesForIssue(node);
+            newLine();
+        }
+
+        @Override
+        public void visit(SetPenColorToColorStmt node) {
+            emitNoSpace("set pen color to ");
+            node.getColorExpr().accept(parent);
+            storeNotesForIssue(node);
+            newLine();
+        }
+
+        @Override
+        public void visit(ChangePenColorParamBy node) {
+            emitNoSpace("change pen ");
+
+            if (node.getParam() instanceof StringLiteral) {
+                emitNoSpace("(");
+                StringLiteral literal = (StringLiteral) node.getParam();
+                emitNoSpace(literal.getText());
+                emitNoSpace(" v)");
+            } else {
+                node.getParam().accept(parent);
+            }
+            emitNoSpace(" by ");
+            node.getValue().accept(parent);
+            storeNotesForIssue(node);
+            newLine();
+        }
+
+        @Override
+        public void visit(SetPenColorParamTo node) {
+            emitNoSpace("set pen ");
+            if (node.getParam() instanceof StringLiteral) {
+                emitNoSpace("(");
+                StringLiteral literal = (StringLiteral) node.getParam();
+                emitNoSpace(literal.getText());
+                emitNoSpace(" v)");
+            } else {
+                node.getParam().accept(parent);
+            }
+            emitNoSpace(" to ");
+            node.getValue().accept(parent);
+            storeNotesForIssue(node);
+            newLine();
+        }
+
+        @Override
+        public void visit(ChangePenSizeBy node) {
+            emitNoSpace("change pen size by ");
+            node.getValue().accept(parent);
+            storeNotesForIssue(node);
+            newLine();
+        }
+
+        @Override
+        public void visit(SetPenSizeTo node) {
+            emitNoSpace("set pen size to ");
+            node.getValue().accept(parent);
+            storeNotesForIssue(node);
+            newLine();
+        }
+    }
     //---------------------------------------------------------------
     // Variables blocks
 
@@ -940,8 +970,8 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         emitNoSpace("change [");
         node.getIdentifier().accept(this);
         emitNoSpace(" v] by ");
-        if (node.getExpr() instanceof AsNumber && !(((AsNumber)node.getExpr()).getOperand1() instanceof Qualified)) {
-            ((AsNumber)node.getExpr()).getOperand1().accept(this);
+        if (node.getExpr() instanceof AsNumber && !(((AsNumber) node.getExpr()).getOperand1() instanceof Qualified)) {
+            ((AsNumber) node.getExpr()).getOperand1().accept(this);
         } else {
             //
             node.getExpr().accept(this);
@@ -1189,14 +1219,14 @@ public class ScratchBlocksVisitor extends PrintVisitor {
     @Override
     public void visit(ExpressionStmt node) {
         if (node.getExpression() instanceof Qualified) {
-            DataExpr dataExpr = ((Qualified)node.getExpression()).getSecond();
+            DataExpr dataExpr = ((Qualified) node.getExpression()).getSecond();
             if (dataExpr instanceof Variable || dataExpr instanceof ScratchList) {
                 emitNoSpace("(");
             }
         }
         node.getExpression().accept(this);
         if (node.getExpression() instanceof Qualified) {
-            DataExpr dataExpr = ((Qualified)node.getExpression()).getSecond();
+            DataExpr dataExpr = ((Qualified) node.getExpression()).getSecond();
             if (dataExpr instanceof Variable) {
                 emitNoSpace(")");
             } else if (dataExpr instanceof ScratchList) {
@@ -1661,7 +1691,7 @@ public class ScratchBlocksVisitor extends PrintVisitor {
     public void visit(SpriteTouchable node) {
         emitNoSpace("(");
         // TODO: Why is the signature a StringExpr if it is always set to a StringLiteral
-        StringLiteral literal = (StringLiteral)node.getStringExpr();
+        StringLiteral literal = (StringLiteral) node.getStringExpr();
         emitNoSpace(literal.getText());
         emitNoSpace(" v)");
     }
@@ -1752,7 +1782,7 @@ public class ScratchBlocksVisitor extends PrintVisitor {
 
     @Override
     public void visit(Parameter node) {
-        NonDataBlockMetadata metaData = (NonDataBlockMetadata)node.getMetadata();
+        NonDataBlockMetadata metaData = (NonDataBlockMetadata) node.getMetadata();
         if (metaData.getOpcode().equals(ProcedureOpcode.argument_reporter_boolean.name())) {
             emitNoSpace("<");
         } else {

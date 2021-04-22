@@ -18,13 +18,14 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.visitor;
 
+import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
+import de.uni_passau.fim.se2.litterbox.analytics.smells.MultiAttributeModification;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTLeaf;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.ExtensionBlock;
-import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.PenDownStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.PenStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.PenUpStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -34,10 +35,20 @@ import java.util.List;
 /**
  * Visitor that creates a .dot output for a Program-AST
  */
-public class DotVisitor implements ScratchVisitor, PenExtensionVisitor {
+public class DotVisitor implements ScratchVisitor{
 
     List<String> edges = new LinkedList<>();
     long counter = 0;
+    private ExtensionVisitor vis;
+
+    public DotVisitor() {
+        vis = new DotVisitorExtensionVisitor(this);
+    }
+
+    @Override
+    public void visit(ExtensionBlock node) {
+        node.accept(vis);
+    }
 
     @Override
     public void visit(ASTNode node) {
@@ -55,25 +66,6 @@ public class DotVisitor implements ScratchVisitor, PenExtensionVisitor {
             for (ASTNode child : node.getChildren()) {
                 child.accept(this);
             }
-        }
-    }
-
-    @Override
-    public void visit(PenStmt node) {
-        visit((ASTNode) node);
-    }
-
-    @Override
-    public void visit(PenDownStmt node) {
-        if (node != null) {
-            recordLeaf(node);
-        }
-    }
-
-    @Override
-    public void visit(PenUpStmt node) {
-        if (node != null) {
-            recordLeaf(node);
         }
     }
 
@@ -120,5 +112,38 @@ public class DotVisitor implements ScratchVisitor, PenExtensionVisitor {
         }
         bw.write("}");
         bw.close();
+    }
+
+    private class DotVisitorExtensionVisitor implements PenExtensionVisitor {
+        ScratchVisitor parent;
+
+        public DotVisitorExtensionVisitor(ScratchVisitor parent) {
+            this.parent = parent;
+        }
+
+        @Override
+        public void visit(PenStmt node) {
+            ((Stmt) node).accept(parent);
+        }
+
+        @Override
+        public void visit(PenDownStmt node) {
+            if (node != null) {
+                recordLeaf(node);
+            }
+        }
+
+
+        @Override
+        public void visit(PenUpStmt node) {
+            if (node != null) {
+                recordLeaf(node);
+            }
+        }
+
+        @Override
+        public void visit(ExtensionBlock node) {
+            node.accept(parent);
+        }
     }
 }

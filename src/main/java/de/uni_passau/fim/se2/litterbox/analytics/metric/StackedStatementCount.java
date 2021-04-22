@@ -18,7 +18,9 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.metric;
 
+import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.analytics.MetricExtractor;
+import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.MissingPenUp;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.AttributeAboveValue;
@@ -28,10 +30,9 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.ExtensionBlock;
-import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.ChangePenColorParamBy;
-import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.PenStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.SetPenColorParamTo;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.AskAndWait;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.SwitchBackdrop;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.*;
@@ -50,15 +51,20 @@ import de.uni_passau.fim.se2.litterbox.ast.visitor.PenExtensionVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-public class StackedStatementCount<T extends ASTNode> implements ScratchVisitor, PenExtensionVisitor, MetricExtractor<T> {
+public class StackedStatementCount<T extends ASTNode> implements ScratchVisitor, MetricExtractor<T> {
 
     public static final String NAME = "stacked_statement_count";
     private int maxStackedDepth = 0;
     private int currentStackedDepth = 0;
+    private ExtensionVisitor vis;
+
+    public StackedStatementCount() {
+        vis = new StackedStatementCountExtensionVisitor(this);
+    }
 
     @Override
-    public void visit(PenStmt node) {
-        visitChildren(node);
+    public void visit(ExtensionBlock node) {
+        node.accept(vis);
     }
 
 //Motion
@@ -173,18 +179,6 @@ public class StackedStatementCount<T extends ASTNode> implements ScratchVisitor,
 
     @Override
     public void visit(SetSizeTo node) {
-        currentStackedDepth = 0;
-        visitChildren(node);
-    }
-
-    @Override
-    public void visit(ChangePenColorParamBy node) {
-        currentStackedDepth = 0;
-        visitChildren(node);
-    }
-
-    @Override
-    public void visit(SetPenColorParamTo node) {
         currentStackedDepth = 0;
         visitChildren(node);
     }
@@ -612,5 +606,35 @@ public class StackedStatementCount<T extends ASTNode> implements ScratchVisitor,
     @Override
     public String getName() {
         return NAME;
+    }
+
+    private class StackedStatementCountExtensionVisitor implements PenExtensionVisitor {
+        ScratchVisitor parent;
+
+        public StackedStatementCountExtensionVisitor(ScratchVisitor parent) {
+            this.parent = parent;
+        }
+
+        @Override
+        public void visit(PenStmt node) {
+            ((Stmt) node).accept(parent);
+        }
+
+        @Override
+        public void visit(ChangePenColorParamBy node) {
+            currentStackedDepth = 0;
+            visitChildren(node);
+        }
+
+        @Override
+        public void visit(SetPenColorParamTo node) {
+            currentStackedDepth = 0;
+            visitChildren(node);
+        }
+
+        @Override
+        public void visit(ExtensionBlock node) {
+            node.accept(parent);
+        }
     }
 }

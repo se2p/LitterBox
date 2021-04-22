@@ -28,16 +28,19 @@ import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 public class DeadCode extends TopBlockFinder {
 
     public static final String NAME = "dead_code";
-    private boolean addHint = false;
+
+    public DeadCode() {
+        vis = new TopBlockFinderExtensionVisitor(this);
+    }
 
     @Override
     public void visit(Script node) {
         currentScript = node;
         if (node.getEvent() instanceof Never && node.getStmtList().getStmts().size() > 0) {
-            addHint = true;
+            setHint = true;
             node.getStmtList().getStmts().get(0).accept(this);
         }
-        addHint = false;
+        setHint = false;
         currentScript = null;
     }
 

@@ -19,11 +19,10 @@
 package de.uni_passau.fim.se2.litterbox.ast.visitor;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
-import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.PenStmt;
 
 import java.io.PrintStream;
 
-public abstract class PrintVisitor implements ScratchVisitor, PenExtensionVisitor {
+public abstract class PrintVisitor implements ScratchVisitor {
 
     protected static final String INDENT = "    ";
     protected PrintStream printStream;
@@ -37,11 +36,6 @@ public abstract class PrintVisitor implements ScratchVisitor, PenExtensionVisito
     protected void emitToken(String string) {
         emitNoSpace(string);
         emitNoSpace(" ");
-    }
-
-    @Override
-    public void visit(PenStmt node) {
-        visit((ASTNode) node);
     }
 
     protected void emitNoSpace(String string) {

@@ -33,6 +33,10 @@ public class DuplicatedScript extends TopBlockFinder {
 
     private static final String NAME = "duplicated_script";
 
+    public DuplicatedScript() {
+        vis = new TopBlockFinderExtensionVisitor(this);
+    }
+
     @Override
     public IssueType getIssueType() {
         return IssueType.SMELL;
