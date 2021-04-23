@@ -3,11 +3,13 @@ package de.uni_passau.fim.se2.litterbox.analytics.goodpractices;
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfElseStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -16,19 +18,23 @@ import java.util.List;
 public class NestedConditions extends AbstractIssueFinder {
 
     public static final String NAME = "nested_conditions";
+    private List<ASTNode> addedStmts = new ArrayList<>();
 
     @Override
     public void visit(IfElseStmt node) {
-        if (hasNested(node.getStmtList().getStmts()) || hasNested(node.getElseStmts().getStmts())) {
+        if (!addedStmts.contains(node.getParentNode().getParentNode())
+                && (hasNested(node.getStmtList().getStmts()) || hasNested(node.getElseStmts().getStmts()))) {
             addIssue(node, node.getMetadata(), IssueSeverity.MEDIUM);
+            addedStmts.add(node);
         }
         visitChildren(node);
     }
 
     @Override
     public void visit(IfThenStmt node) {
-        if (hasNested(node.getThenStmts().getStmts())) {
+        if (!addedStmts.contains(node.getParentNode().getParentNode()) && hasNested(node.getThenStmts().getStmts())) {
             addIssue(node, node.getMetadata(), IssueSeverity.MEDIUM);
+            addedStmts.add(node);
         }
         visitChildren(node);
     }
