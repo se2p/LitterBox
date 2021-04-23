@@ -160,6 +160,7 @@ public class IssueTool {
         registerGoodPracticeFinder(new MouseFollower(), goodPracticeFinders);
         registerGoodPracticeFinder(new ObjectFollower(), goodPracticeFinders);
         registerGoodPracticeFinder(new Counter(), goodPracticeFinders);
+        registerGoodPracticeFinder(new InitializeLooks(), goodPracticeFinders);
 
 
         return goodPracticeFinders;

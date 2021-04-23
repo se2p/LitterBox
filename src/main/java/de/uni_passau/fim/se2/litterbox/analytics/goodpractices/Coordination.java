@@ -25,8 +25,8 @@ import java.util.Set;
  */
 public class Coordination extends AbstractIssueFinder {
     public static final String NAME = "coordination";
-    private List<Pair<String>> messageSent = new ArrayList<>();
-    private List<Pair<String>> messageReceived = new ArrayList<>();
+    private List<Pair<String>> messagesSent = new ArrayList<>();
+    private List<Pair<String>> messagesReceived = new ArrayList<>();
     private boolean addComment = false;
     private Set<String> receivedMessages = new LinkedHashSet<>();
 
@@ -35,15 +35,15 @@ public class Coordination extends AbstractIssueFinder {
     public Set<Issue> check(Program program) {
         Preconditions.checkNotNull(program);
         this.program = program;
-        messageSent = new ArrayList<>();
-        messageReceived = new ArrayList<>();
+        messagesSent = new ArrayList<>();
+        messagesReceived = new ArrayList<>();
         program.accept(this);
         addComment = false;
         receivedMessages = new LinkedHashSet<>();
 
         final LinkedHashSet<Pair<String>> syncedPairs = new LinkedHashSet<>();
-        for (Pair<String> sent : messageSent) {
-            for (Pair<String> received : messageReceived) {
+        for (Pair<String> sent : messagesSent) {
+            for (Pair<String> received : messagesReceived) {
                 if (sent.getSnd().equalsIgnoreCase(received.getSnd())) {
                     syncedPairs.add(sent);
                     receivedMessages.add(sent.getSnd());
@@ -66,7 +66,7 @@ public class Coordination extends AbstractIssueFinder {
             final String msgName = ((StringLiteral) node.getMessage().getMessage()).getText();
             if (!addComment) {
                 final String actorName = currentActor.getIdent().getName();
-                messageSent.add(new Pair<>(actorName, msgName));
+                messagesSent.add(new Pair<>(actorName, msgName));
             } else if (receivedMessages.contains(msgName)) {
                 //Hint hint = new Hint(getName());
                 //hint.setParameter(Hint.HINT_MESSAGE, ((StringLiteral) node.getMessage().getMessage()).getText());
@@ -81,7 +81,7 @@ public class Coordination extends AbstractIssueFinder {
             final String msgName = ((StringLiteral) node.getMessage().getMessage()).getText();
             if (!addComment) {
                 final String actorName = currentActor.getIdent().getName();
-                messageSent.add(new Pair<>(actorName, msgName));
+                messagesSent.add(new Pair<>(actorName, msgName));
             } else if (receivedMessages.contains(msgName)) {
                 //Hint hint = new Hint(getName());
                 //hint.setParameter(Hint.HINT_MESSAGE, ((StringLiteral) node.getMessage().getMessage()).getText());
@@ -96,14 +96,14 @@ public class Coordination extends AbstractIssueFinder {
             if (!addComment) {
                 final String actorName = currentActor.getIdent().getName();
                 final String msgName = ((StringLiteral) node.getMsg().getMessage()).getText();
-                messageReceived.add(new Pair<>(actorName, msgName));
+                messagesReceived.add(new Pair<>(actorName, msgName));
             }
         }
     }
 
     @Override
     public void visit(WaitUntil node) {
-        if (node.getUntil() instanceof BoolExpr && !addComment) {
+        if (node.getUntil() != null && !addComment) {
             addIssue(node, node.getMetadata(), IssueSeverity.MEDIUM);
         }
     }

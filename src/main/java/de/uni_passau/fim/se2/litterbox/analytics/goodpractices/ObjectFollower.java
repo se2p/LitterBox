@@ -3,11 +3,13 @@ package de.uni_passau.fim.se2.litterbox.analytics.goodpractices;
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.FromExpression;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.PointTowards;
 
+/**
+ * The sprite follows another object (another sprite).
+ */
 public class ObjectFollower extends AbstractIssueFinder {
 
     public static final String NAME = "object_follower";

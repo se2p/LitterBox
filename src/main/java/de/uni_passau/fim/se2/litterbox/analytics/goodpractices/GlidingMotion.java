@@ -7,6 +7,9 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.KeyPressed;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.GlideSecsToXY;
 
+/**
+ * Gliding Motion means after a key press the sprite glides to a certain position.
+ */
 public class GlidingMotion extends AbstractIssueFinder {
 
     public static final String NAME = "gliding_motion";

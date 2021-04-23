@@ -4,16 +4,16 @@ import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
-import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
-import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
-import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
-import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.ChangeVariableBy;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetVariableTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitSeconds;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
 
+/**
+ * If an initialized variable is changed repeatedly (in a RepeatForever) after
+ * a WaitSeconds block, it is seen as a counter.
+ */
 public class Counter extends AbstractIssueFinder {
 
     public static final String NAME = "counter";
@@ -42,7 +42,6 @@ public class Counter extends AbstractIssueFinder {
     public void visit(StmtList node) {
         if (insideLoop && counterVariable != null) {
             node.getStmts().forEach(stmt -> {
-                System.out.println(stmt);
                 if (stmt instanceof WaitSeconds) {
                     waitSec = true;
                 } else if (stmt instanceof ChangeVariableBy) {

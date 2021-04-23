@@ -9,8 +9,13 @@ import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.GreenFlag;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.*;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * This checks for an initialization for the sprite location. This initialization should usually happen in a
@@ -20,43 +25,63 @@ public class InitializeLocation extends AbstractIssueFinder {
     public static final String NAME = "initialize_location";
     private boolean initializedX = false;
     private boolean initializedY = false;
-    private boolean initInProcedure = false;
     private boolean inCustomBlock = false;
     private boolean inGreenFlag = false;
     private final int INIT_STATE = 0;
+    private boolean initializedInBlock = false;
+    private List<String> customBlocks = new ArrayList<>();
+
+
 
     @Override
     public void visit(Script node) {
         if (node.getEvent() instanceof GreenFlag) {
             inGreenFlag = true;
-            if (initInProcedure) {
-                addIssue(node, node.getMetadata(), IssueSeverity.MEDIUM);
-                initInProcedure = false;
+            if (initializedInBlock) {
+                node.getStmtList().getStmts().forEach(stmt -> {
+                    if (stmt instanceof CallStmt) {
+
+                        // Remove duplicates from custom block list
+                        customBlocks = customBlocks.stream().distinct().collect(Collectors.toList());
+
+                        if (customBlocks.contains(((CallStmt) stmt).getIdent().getName())) {
+                            addIssue(stmt, stmt.getMetadata(), IssueSeverity.MEDIUM);
+                        }
+                    }
+                });
+                initializedInBlock = false;
+                customBlocks = new ArrayList<>();
             }
-            visitChildren(node);
+            node.getStmtList().accept(this);
             inGreenFlag = false;
         }
     }
 
+
     @Override
     public void visit(ProcedureDefinition node) {
         inCustomBlock = true;
-        visitChildren(node);
+        node.getStmtList().accept(this);
         inCustomBlock = false;
     }
 
+
     @Override
     public void visit(StmtList node) {
-        for (Stmt stmt : node.getStmts()) {
-            if (stmt instanceof GoToPosXY) {
-                this.visit((GoToPosXY) stmt);
-            } else if (stmt instanceof SetXTo){
-                this.visit((SetXTo) stmt);
-            } else if (stmt instanceof SetYTo) {
-                this.visit((SetYTo) stmt);
-            } else {
-                visitChildren(node);
+        if (inCustomBlock) {
+            if (node.getParentNode() instanceof ProcedureDefinition) {
+                ProcedureDefinition parent = (ProcedureDefinition) node.getParentNode();
+
+                for (Stmt stmt : node.getStmts()) {
+                    if (stmt instanceof GoToPosXY || stmt instanceof SetXTo || stmt instanceof SetYTo) {
+                        customBlocks.add(procMap.get(parent.getIdent()).getName());
+                        stmt.accept(this);
+                    }
+                }
+
             }
+        } else {
+            visitChildren(node);
         }
     }
 
@@ -66,7 +91,7 @@ public class InitializeLocation extends AbstractIssueFinder {
             if ((((NumberLiteral) stmt.getNum()).getValue() == INIT_STATE)) {
                 initializedX = true;
                 if (initializedX && initializedY) {
-                    this.check(stmt);
+                    check(stmt);
                     initializedX = false;
                     initializedY = false;
                 }
@@ -80,7 +105,7 @@ public class InitializeLocation extends AbstractIssueFinder {
             if ((((NumberLiteral) stmt.getNum()).getValue() == INIT_STATE)) {
                 initializedY = true;
                 if (initializedX && initializedY) {
-                    this.check(stmt);
+                    check(stmt);
                     initializedX = false;
                     initializedY = false;
                 }
@@ -94,20 +119,16 @@ public class InitializeLocation extends AbstractIssueFinder {
                 && stmt.getY() instanceof NumberLiteral) {
             if ((((NumberLiteral) stmt.getX()).getValue() == INIT_STATE &&
                     ((NumberLiteral) stmt.getX()).getValue() == INIT_STATE)) {
-                this.check(stmt);
+                check(stmt);
             }
         }
     }
 
     private void check(AbstractNode node) {
-        if (inCustomBlock) {
-            if (inGreenFlag) {
-                addIssue(node, node.getMetadata(), IssueSeverity.MEDIUM);
-            } else {
-                initInProcedure = true;
-            }
-        } else if (inGreenFlag) {
+        if (inGreenFlag) {
             addIssue(node, node.getMetadata(), IssueSeverity.MEDIUM);
+        } else if (inCustomBlock) {
+            initializedInBlock = true;
         }
     }
 

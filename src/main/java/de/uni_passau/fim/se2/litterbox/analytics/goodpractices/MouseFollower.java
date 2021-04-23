@@ -7,6 +7,9 @@ import de.uni_passau.fim.se2.litterbox.ast.model.position.MousePos;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.GoToPos;
 
+/**
+ * The sprite follows the mouse in a RepeatForever block.
+ */
 public class MouseFollower extends AbstractIssueFinder {
 
     public static final String NAME = "mouse_follower";

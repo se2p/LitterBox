@@ -5,6 +5,9 @@ import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.*;
 
+/**
+ * It detects usage of Boolean Expressions in the project.
+ */
 public class BoolExpression extends AbstractIssueFinder {
     public static final String NAME = "boolean_expression";
 
