@@ -18,6 +18,9 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics;
 
+import de.uni_passau.fim.se2.litterbox.analytics.goodpractices.BoolExpression;
+import de.uni_passau.fim.se2.litterbox.analytics.goodpractices.ListUsage;
+import de.uni_passau.fim.se2.litterbox.analytics.goodpractices.NestedConditions;
 import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.*;
 import de.uni_passau.fim.se2.litterbox.analytics.goodpractices.*;
 import de.uni_passau.fim.se2.litterbox.analytics.solutionpattern.*;
@@ -161,6 +164,7 @@ public class IssueTool {
         registerGoodPracticeFinder(new ObjectFollower(), goodPracticeFinders);
         registerGoodPracticeFinder(new Counter(), goodPracticeFinders);
         registerGoodPracticeFinder(new InitializeLooks(), goodPracticeFinders);
+        registerGoodPracticeFinder(new NestedConditions(), goodPracticeFinders);
 
 
         return goodPracticeFinders;
