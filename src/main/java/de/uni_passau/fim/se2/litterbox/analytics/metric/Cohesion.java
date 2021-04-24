@@ -46,7 +46,7 @@ public class Cohesion <T extends ASTNode> implements MetricExtractor<T>, Scratch
         }
 
         // Calculate local script cohesion
-        local_cohesion = new BlockCount<Script>().calculateMetric(node) / count_different_blocks; //TODO corner case here
+        local_cohesion = count_different_blocks /  new BlockCount<Script>().calculateMetric(node); //TODO corner case here
 
         count += local_cohesion;
     }
@@ -72,7 +72,7 @@ public class Cohesion <T extends ASTNode> implements MetricExtractor<T>, Scratch
         }
 
         // Calculate local script cohesion
-        local_cohesion = new BlockCount<ProcedureDefinition>().calculateMetric(node) / count_different_blocks;
+        local_cohesion = count_different_blocks /  new BlockCount<ProcedureDefinition>().calculateMetric(node);
 
         count += local_cohesion;
 
