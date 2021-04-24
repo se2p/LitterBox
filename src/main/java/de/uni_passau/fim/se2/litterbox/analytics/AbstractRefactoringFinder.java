@@ -19,7 +19,7 @@ public abstract class AbstractRefactoringFinder implements RefactoringFinder, Sc
      * Checks the given program for a specific refactoring.
      *
      * @param program The project to check
-     * @return a set of instantiated possible refactorings
+     * @return a list of instantiated possible refactorings
      */
     @Override
     public List<Refactoring> check(Program program) {
