@@ -4,6 +4,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Say;
 
 public class AddHelloBlock implements Refactoring {
@@ -20,7 +21,7 @@ public class AddHelloBlock implements Refactoring {
     @Override
     public Program apply(Program program) {
         Program refactored = program.deepCopy();
-        Say helloBlock = new Say(new StringLiteral("Hello!"), null);
+        Say helloBlock = new Say(new StringLiteral("Hello!"), new NoBlockMetadata());
         stmtList.getStmts().add(helloBlock);
         return refactored;
     }
