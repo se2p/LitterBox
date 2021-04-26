@@ -6,7 +6,9 @@ import java.util.*;
 /**
  * Unique random number accessor
  *
+ * <p>
  * Based on {@code Randomness.java} in EvoSuite.
+ * </p>
  */
 public class Randomness implements Serializable {
 
@@ -106,8 +108,9 @@ public class Randomness implements Serializable {
     }
 
     public static <T> T choice(List<T> list) {
-        if (list.isEmpty())
+        if (list.isEmpty()) {
             return null;
+        }
 
         int position = random.nextInt(list.size());
         return list.get(position);
@@ -138,8 +141,9 @@ public class Randomness implements Serializable {
 
     public static String nextString(int length) {
         char[] characters = new char[length];
-        for (int i = 0; i < length; i++)
+        for (int i = 0; i < length; i++) {
             characters[i] = nextChar();
+        }
         return new String(characters);
     }
 }
