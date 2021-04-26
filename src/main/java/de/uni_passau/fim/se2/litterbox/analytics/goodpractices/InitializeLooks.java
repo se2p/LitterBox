@@ -13,6 +13,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.ClearGraphicEffects;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.SetGraphicEffectTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.SwitchBackdrop;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.ControlStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Hide;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SetSizeTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Show;
@@ -67,7 +69,6 @@ public class InitializeLooks extends AbstractIssueFinder {
                             stmt instanceof Hide || stmt instanceof ClearGraphicEffects
                             || stmt instanceof SetGraphicEffectTo || stmt instanceof SwitchBackdrop) {
                         customBlocks.add(procMap.get(parent.getIdent()).getName());
-                        System.out.println(customBlocks);
                         stmt.accept(this);
                         break;
                     }
@@ -75,7 +76,14 @@ public class InitializeLooks extends AbstractIssueFinder {
 
             }
         } else {
-            visitChildren(node);
+
+            // Initialization should not be in a control- or if- statement
+            node.getStmts().forEach(stmt -> {
+                if (stmt instanceof ControlStmt || stmt instanceof IfStmt) {
+                } else {
+                    stmt.accept(this);
+                }
+            });
         }
     }
 

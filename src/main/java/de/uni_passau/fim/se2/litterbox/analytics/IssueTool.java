@@ -166,7 +166,7 @@ public class IssueTool {
         registerGoodPracticeFinder(new InitializeLooks(), goodPracticeFinders);
         registerGoodPracticeFinder(new NestedConditions(), goodPracticeFinders);
         registerGoodPracticeFinder(new NestedLoopsPerfume(), goodPracticeFinders);
-
+        registerGoodPracticeFinder(new NestedConditionInLoop(), goodPracticeFinders);
 
         return goodPracticeFinders;
     }

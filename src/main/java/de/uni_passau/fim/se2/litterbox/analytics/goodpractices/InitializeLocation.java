@@ -11,6 +11,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.ControlStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.*;
 
 import java.util.ArrayList;
@@ -81,7 +83,14 @@ public class InitializeLocation extends AbstractIssueFinder {
 
             }
         } else {
-            visitChildren(node);
+
+            // Initialization should not be in a control- or if- statement
+            node.getStmts().forEach(stmt -> {
+                if (stmt instanceof ControlStmt || stmt instanceof IfStmt) {
+                } else {
+                    stmt.accept(this);
+                }
+            });
         }
     }
 
