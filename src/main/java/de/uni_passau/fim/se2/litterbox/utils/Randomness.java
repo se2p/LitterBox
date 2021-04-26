@@ -6,7 +6,7 @@ import java.util.*;
 /**
  * Unique random number accessor
  *
- * Based on Randomness.java in EvoSuite.
+ * Based on {@code Randomness.java} in EvoSuite.
  */
 public class Randomness implements Serializable {
 
@@ -19,13 +19,8 @@ public class Randomness implements Serializable {
     private static Randomness instance = new Randomness();
 
     private Randomness() {
-        // Long seed_parameter = Properties.RANDOM_SEED;
-        Long seed_parameter = null; // TODO
-        if (seed_parameter != null) {
-            seed = seed_parameter;
-        } else {
-            seed = System.currentTimeMillis();
-        }
+        Optional<Long> optionalSeed = PropertyLoader.getSeed();
+        seed = optionalSeed.orElseGet(System::currentTimeMillis);
         random = new Random(seed);
     }
 
