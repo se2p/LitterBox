@@ -6,12 +6,12 @@ import de.uni_passau.fim.se2.litterbox.refactor.refactorings.Refactoring;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.LinkedList;
+import java.util.List;
 
 public abstract class AbstractRefactoringFinder implements RefactoringFinder, ScratchVisitor {
 
-    protected Set<Refactoring> refactorings = new LinkedHashSet<>();
+    protected List<Refactoring> refactorings = new LinkedList<>();
     protected Program program;
     protected boolean ignoreLooseBlocks = false;
 
@@ -19,15 +19,15 @@ public abstract class AbstractRefactoringFinder implements RefactoringFinder, Sc
      * Checks the given program for a specific refactoring.
      *
      * @param program The project to check
-     * @return a set of instantiated possible refactorings
+     * @return a list of instantiated possible refactorings
      */
     @Override
-    public Set<Refactoring> check(Program program) {
+    public List<Refactoring> check(Program program) {
         Preconditions.checkNotNull(program);
         this.program = program;
-        refactorings = new LinkedHashSet<>();
+        refactorings = new LinkedList<>();
         program.accept(this);
-        return Collections.unmodifiableSet(refactorings);
+        return Collections.unmodifiableList(refactorings);
     }
 
     @Override

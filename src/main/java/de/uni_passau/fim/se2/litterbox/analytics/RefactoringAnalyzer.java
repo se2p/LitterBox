@@ -2,7 +2,6 @@ package de.uni_passau.fim.se2.litterbox.analytics;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.jsoncreation.JSONFileCreator;
-import de.uni_passau.fim.se2.litterbox.jsoncreation.enums.FilePostfix;
 import de.uni_passau.fim.se2.litterbox.refactor.RefactoringTool;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.algorithms.CrowdingDistanceSort;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.algorithms.FastNonDominatedSort;
@@ -18,9 +17,7 @@ import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
@@ -51,14 +48,19 @@ public class RefactoringAnalyzer extends Analyzer {
             return;
         }
 
-        RefactorSequence solution = findRefactoring(program.deepCopy(), issueFinders, refactoringFinders, ignoreLooseBlocks);
-
-        if (solution != null) {
-            Program refactored = solution.applyToProgram(program);
-            generateOutput(refactored, solution.getExecutedRefactorings(), reportName);
-            createNewProjectFile(fileEntry, refactored);
+        List<RefactorSequence> solutions = findRefactoring(program.deepCopy(), issueFinders, refactoringFinders, ignoreLooseBlocks);
+        if (!solutions.isEmpty()) {
+            generateProjectsFromParetoFront(fileEntry, reportName, program, solutions);
         } else {
             System.out.println("NSGA-II found no solutions!");
+        }
+    }
+
+    private void generateProjectsFromParetoFront(File fileEntry, String reportName, Program program, List<RefactorSequence> solutions) {
+        for (int i = 0; i < solutions.size(); i++) {
+            Program refactored = solutions.get(i).applyToProgram(program.deepCopy());
+            generateOutput(refactored, solutions.get(i).getExecutedRefactorings(), reportName);
+            createNewProjectFileWithCounterPostfix(fileEntry, refactored, i);
         }
     }
 
@@ -72,15 +74,14 @@ public class RefactoringAnalyzer extends Analyzer {
      * @param ignoreLooseBlocks  Flag if loose blocks should be ignored or also be removed with the refactoring.
      * @return A copy of the original program with the best sequence of refactorings found applied on it.
      */
-    private RefactorSequence findRefactoring(Program program, List<IssueFinder> issueFinders, List<RefactoringFinder> refactoringFinders, boolean ignoreLooseBlocks) {
+    private List<RefactorSequence> findRefactoring(Program program, List<IssueFinder> issueFinders, List<RefactoringFinder> refactoringFinders, boolean ignoreLooseBlocks) {
         NSGAII<RefactorSequence> nsgaii = initializeNSGAII(program, issueFinders, refactoringFinders, ignoreLooseBlocks);
         List<RefactorSequence> solution = nsgaii.findSolution();
         if (solution.isEmpty()) {
-            return null;
+            return List.of();
         }
 
-        // TODO choose solution from front with lowest euclidian distance to perfect solution instead of first one
-        return solution.get(0);
+        return solution;
     }
 
     private NSGAII<RefactorSequence> initializeNSGAII(Program program, List<IssueFinder> issueFinders, List<RefactoringFinder> refactoringFinders, boolean ignoreLooseBlocks) {
@@ -116,12 +117,12 @@ public class RefactoringAnalyzer extends Analyzer {
         }
     }
 
-    private void createNewProjectFile(File fileEntry, Program program) {
+    private void createNewProjectFileWithCounterPostfix(File fileEntry, Program program, int counterPostfix) {
         try {
             if ((FilenameUtils.getExtension(fileEntry.getPath())).equalsIgnoreCase("json")) {
-                JSONFileCreator.writeJsonFromProgram(program, fileEntry.getParent(), FilePostfix.REFACTORED);
+                JSONFileCreator.writeJsonFromProgram(program, fileEntry.getParent(), "_refactored_" + counterPostfix);
             } else {
-                JSONFileCreator.writeSb3FromProgram(program, fileEntry.getParent(), fileEntry, FilePostfix.REFACTORED);
+                JSONFileCreator.writeSb3FromProgram(program, fileEntry.getParent(), fileEntry, "_refactored_" + counterPostfix);
             }
         } catch (IOException e) {
             log.warning(e.getMessage());

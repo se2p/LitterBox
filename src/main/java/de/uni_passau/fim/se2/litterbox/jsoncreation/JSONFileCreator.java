@@ -19,7 +19,6 @@
 package de.uni_passau.fim.se2.litterbox.jsoncreation;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.jsoncreation.enums.FilePostfix;
 import net.lingala.zip4j.ZipFile;
 import org.apache.commons.io.FileUtils;
 
@@ -41,14 +40,14 @@ public class JSONFileCreator {
     private static final String JSON = ".json";
     private static final String SB3 = ".sb3";
 
-    public static void writeJsonFromProgram(Program program, FilePostfix postfix) throws FileNotFoundException {
+    public static void writeJsonFromProgram(Program program, String postfix) throws FileNotFoundException {
         String jsonString = JSONStringCreator.createProgramJSONString(program);
         try (PrintWriter out = new PrintWriter(program.getIdent().getName() + postfix + JSON)) {
             out.println(jsonString);
         }
     }
 
-    public static void writeJsonFromProgram(Program program, String output, FilePostfix postfix) throws FileNotFoundException {
+    public static void writeJsonFromProgram(Program program, String output, String postfix) throws FileNotFoundException {
         String jsonString = JSONStringCreator.createProgramJSONString(program);
 
         Path outPath = Paths.get(output, program.getIdent().getName() + postfix + JSON);
@@ -57,7 +56,7 @@ public class JSONFileCreator {
         }
     }
 
-    public static void writeSb3FromProgram(Program program, String output, File file, FilePostfix postfix) throws IOException {
+    public static void writeSb3FromProgram(Program program, String output, File file, String postfix) throws IOException {
         String jsonString = JSONStringCreator.createProgramJSONString(program);
 
         String destinationPath = Paths.get(output, program.getIdent().getName() + postfix + SB3).toString();
