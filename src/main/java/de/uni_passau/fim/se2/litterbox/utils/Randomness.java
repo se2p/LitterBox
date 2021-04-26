@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.*;
 
 /**
- * Unique random number accessor
+ * Unique random number accessor.
  *
  * <p>
  * Based on {@code Randomness.java} in EvoSuite.
