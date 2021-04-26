@@ -3,6 +3,7 @@ package de.uni_passau.fim.se2.litterbox.refactor.refactorings;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
+import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 public class MergeDoubleIf implements Refactoring {
 
@@ -11,8 +12,8 @@ public class MergeDoubleIf implements Refactoring {
     private static final String NAME = "merge_double_if";
 
     public MergeDoubleIf(IfThenStmt if1, IfThenStmt if2) {
-        this.if1 = if1;
-        this.if2 = if2;
+        this.if1 = Preconditions.checkNotNull(if1);
+        this.if2 = Preconditions.checkNotNull(if2);
     }
 
     @Override
