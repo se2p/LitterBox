@@ -3,18 +3,12 @@ package de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.search_operators
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.chromosomes.Chromosome;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.chromosomes.RefactorSequence;
 import de.uni_passau.fim.se2.litterbox.utils.Pair;
+import de.uni_passau.fim.se2.litterbox.utils.Randomness;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 public class RefactorSequenceCrossover implements Crossover<RefactorSequence> {
-
-    private final Random random;
-
-    public RefactorSequenceCrossover(Random random) {
-        this.random = random;
-    }
 
     /**
      * Applies this crossover operator to the two given non-null parent chromosomes {@code parent1}
@@ -38,7 +32,7 @@ public class RefactorSequenceCrossover implements Crossover<RefactorSequence> {
         if (child1.getProductions().size() > 1 && !child2.getProductions().isEmpty()) {
             int crossoverPoint;
             do {
-                crossoverPoint = 1 + random.nextInt(child1.getProductions().size() - 1); // exclude 0 as valid crossoverPoint
+                crossoverPoint = 1 + Randomness.nextInt(child1.getProductions().size() - 1); // exclude 0 as valid crossoverPoint
             } while (crossoverPoint > child2.getProductions().size()); // only accept solutions where a swap is valid
 
             List<Integer> child1List = new ArrayList<>(child1.getProductions().subList(0, crossoverPoint));

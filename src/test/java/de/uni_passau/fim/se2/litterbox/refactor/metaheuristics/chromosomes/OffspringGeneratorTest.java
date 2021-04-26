@@ -53,18 +53,19 @@ class OffspringGeneratorTest {
 
     @Test
     void offspringGeneratorCreatesOffspringCorrectlyWithCrossover() {
-        Random mockedRandom = mock(Random.class);
+        // Random mockedRandom = mock(Random.class); TODO
         BinaryRankTournament<RefactorSequence> mockedSelection = mock(BinaryRankTournament.class);
 
         List<RefactorSequence> generation0 = List.of(parent1, parent2);
         when(mockedSelection.apply(generation0)).thenReturn(parent1).thenReturn(parent2);
-        when(mockedRandom.nextDouble()).thenReturn(0.5);
+        // when(mockedRandom.nextDouble()).thenReturn(0.5); TODO
         when(crossover.apply(parent1, parent2)).thenReturn(Pair.of(parent1, parent2));
 
         when(mutation.apply(parent1)).thenReturn(mutant1);
         when(mutation.apply(parent2)).thenReturn(mutant2);
 
-        OffspringGenerator<RefactorSequence> offspringGenerator = new OffspringGenerator<>(mockedRandom, mockedSelection);
+        // OffspringGenerator<RefactorSequence> offspringGenerator = new OffspringGenerator<>(mockedRandom, mockedSelection); TODO randomness
+        OffspringGenerator<RefactorSequence> offspringGenerator = new OffspringGenerator<>(mockedSelection);
         List<RefactorSequence> generation1 = offspringGenerator.generateOffspring(generation0);
         assertEquals(2, generation1.size());
         assertSame(mutant1, generation1.get(0));
@@ -83,7 +84,8 @@ class OffspringGeneratorTest {
         when(mutation.apply(parent1)).thenReturn(mutant1);
         when(mutation.apply(parent2)).thenReturn(mutant2);
 
-        OffspringGenerator<RefactorSequence> offspringGenerator = new OffspringGenerator<>(mockedRandom, mockedSelection);
+        // OffspringGenerator<RefactorSequence> offspringGenerator = new OffspringGenerator<>(mockedRandom, mockedSelection);
+        OffspringGenerator<RefactorSequence> offspringGenerator = new OffspringGenerator<>(mockedSelection); // TODO randomness
         List<RefactorSequence> generation1 = offspringGenerator.generateOffspring(generation0);
         assertEquals(2, generation1.size());
         assertSame(mutant1, generation1.get(0));
@@ -106,7 +108,8 @@ class OffspringGeneratorTest {
 
         when(mockedRandom.nextInt(2)).thenReturn(0);
 
-        OffspringGenerator<RefactorSequence> offspringGenerator = new OffspringGenerator<>(mockedRandom, mockedSelection);
+        // OffspringGenerator<RefactorSequence> offspringGenerator = new OffspringGenerator<>(mockedRandom, mockedSelection);
+        OffspringGenerator<RefactorSequence> offspringGenerator = new OffspringGenerator<>(mockedSelection); // TODO randomness
         List<RefactorSequence> generation1 = offspringGenerator.generateOffspring(generation0);
         assertEquals(1, generation1.size());
         assertSame(mutant2, generation1.get(0));

@@ -4,19 +4,17 @@ import com.google.common.collect.Lists;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.search_operators.BinaryRankTournament;
 import de.uni_passau.fim.se2.litterbox.utils.Pair;
 import de.uni_passau.fim.se2.litterbox.utils.PropertyLoader;
+import de.uni_passau.fim.se2.litterbox.utils.Randomness;
 
 import java.util.List;
-import java.util.Random;
 
 public class OffspringGenerator<C extends Solution<C>> {
 
-    private final Random random;
     private final BinaryRankTournament<C> binaryRankTournament;
 
     private static final double CROSSOVER_PROBABILITY = PropertyLoader.getSystemDoubleProperty("nsga-ii.crossoverProbability");
 
-    public OffspringGenerator(Random random, BinaryRankTournament<C> binaryRankTournament) {
-        this.random = random;
+    public OffspringGenerator(BinaryRankTournament<C> binaryRankTournament) {
         this.binaryRankTournament = binaryRankTournament;
     }
 
@@ -28,7 +26,7 @@ public class OffspringGenerator<C extends Solution<C>> {
             C parent2 = binaryRankTournament.apply(population);
 
             Pair<C> nextOffsprings;
-            if (random.nextDouble() < CROSSOVER_PROBABILITY) {
+            if (Randomness.nextDouble() < CROSSOVER_PROBABILITY) {
                 nextOffsprings = parent1.crossover(parent2);
             } else {
                 nextOffsprings = Pair.of(parent1, parent2);
@@ -43,7 +41,7 @@ public class OffspringGenerator<C extends Solution<C>> {
 
         // remove one random solution, if the population size was uneven to restore the initial size
         if (population.size() < offspringPopulation.size()) {
-            int indexToRemove = random.nextInt(offspringPopulation.size());
+            int indexToRemove = Randomness.nextInt(offspringPopulation.size());
             offspringPopulation.remove(indexToRemove);
         }
 

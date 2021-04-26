@@ -9,14 +9,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
-import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 class RefactorSequenceCrossoverTest {
-    Random mockedRandom;
+    // Random mockedRandom; TODO randomness
     Mutation<RefactorSequence> mutation;
     RefactorSequenceCrossover crossover;
     List<RefactoringFinder> refactoringFinders;
@@ -25,9 +23,10 @@ class RefactorSequenceCrossoverTest {
     void setupEnv() {
         PropertyLoader.setDefaultSystemProperties("nsga-ii.properties");
 
-        mockedRandom = mock(Random.class);
+        // mockedRandom = mock(Random.class); TODO how to handle randomness here
         mutation = mock(RefactorSequenceMutation.class);
-        crossover = new RefactorSequenceCrossover(mockedRandom);
+        // crossover = new RefactorSequenceCrossover(mockedRandom); TODO
+        crossover = new RefactorSequenceCrossover();
         refactoringFinders = List.of(new DoubleIfFinder());
     }
 
@@ -40,7 +39,7 @@ class RefactorSequenceCrossoverTest {
         RefactorSequence parent1 = new RefactorSequence(mutation, crossover, production1, refactoringFinders);
         RefactorSequence parent2 = new RefactorSequence(mutation, crossover, production2, refactoringFinders);
 
-        when(mockedRandom.nextInt(2)).thenReturn(1);
+        // when(mockedRandom.nextInt(2)).thenReturn(1);  TODO randomness
         Pair<RefactorSequence> children = parent1.crossover(parent2);
 
         assertEquals(0, children.getFst().getProductions().get(0));
@@ -61,7 +60,7 @@ class RefactorSequenceCrossoverTest {
         RefactorSequence parent1 = new RefactorSequence(mutation, crossover, production1, refactoringFinders);
         RefactorSequence parent2 = new RefactorSequence(mutation, crossover, production2, refactoringFinders);
 
-        when(mockedRandom.nextInt(1)).thenReturn(0);
+        // when(mockedRandom.nextInt(1)).thenReturn(0); TODO randomness
         Pair<RefactorSequence> children = parent1.crossover(parent2);
 
         assertEquals(0, children.getFst().getProductions().get(0));

@@ -24,9 +24,8 @@ class RefactorSequenceMutationTest {
     void setupEnv() {
         PropertyLoader.setDefaultSystemProperties("nsga-ii.properties");
 
-        mockedRandom = mock(Random.class);
         refactoringFinders = List.of();
-        mutation = new RefactorSequenceMutation(mockedRandom, refactoringFinders);
+        mutation = new RefactorSequenceMutation(refactoringFinders);
         crossover = mock(RefactorSequenceCrossover.class);
     }
 
