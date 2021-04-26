@@ -5,6 +5,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.ControlStmt;
+import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 public class DeleteControlBlock implements Refactoring {
 
@@ -13,7 +14,7 @@ public class DeleteControlBlock implements Refactoring {
     private static final String NAME = "delete_control_block";
 
     public DeleteControlBlock(Script script) {
-        this.script = script;
+        this.script = Preconditions.checkNotNull(script);
         this.stmtList = script.getStmtList();
     }
 
