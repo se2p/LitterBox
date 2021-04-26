@@ -1,41 +1,46 @@
 package de.uni_passau.fim.se2.litterbox.refactor.refactorings;
 
-import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.model.Script;
-import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
+import de.uni_passau.fim.se2.litterbox.ast.model.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Event;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.ActorLookStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.ActorSoundStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.pen.PenStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SpriteLookStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SpriteMotionStmt;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
+import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
+
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class SeparateScriptBySemantics implements Refactoring, ScratchVisitor {
 
     private Stmt lastStmt;
     private Script refactoredScript;
-    private final StmtList stmtList;
+    private final List<Stmt> stmtList;
     private final Script script;
-    private final ActorDefinition sprite;
+    private final ScriptList scriptList;
     private final Event event;
     private static final String NAME = "separate_script_by_semantics";
 
     public SeparateScriptBySemantics(Script script) {
-        this.script = script;
-        this.sprite = (ActorDefinition) script.getParentNode();
+        this.script = Preconditions.checkNotNull(script);
+        this.scriptList = (ScriptList) script.getParentNode();
         this.event = script.getEvent();
-        this.lastStmt = (Stmt) event;
-        this.stmtList = new StmtList(new ArrayList<>());
+        this.lastStmt = null;
+        this.stmtList = new ArrayList<>();
     }
 
     @Override
     public Program apply(Program program) {
         Program refactored = program.deepCopy();
         visit(script);
+        if (refactoredScript != null && !stmtList.isEmpty()) {
+            refactoredScript.getStmtList().getStmts().addAll(stmtList);
+        }
         if (refactoredScript != null) {
            removeScriptFromSprite();
         }
@@ -44,12 +49,13 @@ public class SeparateScriptBySemantics implements Refactoring, ScratchVisitor {
 
     @Override
     public void visit(Stmt stmt) {
-        addStmt(stmt);
+        stmtList.add(stmt);
+        lastStmt = stmt;
     }
 
     @Override
     public void visit(ActorLookStmt actorLookStmt) {
-        addStmt(actorLookStmt);
+        stmtList.add(actorLookStmt);
         if (!(lastStmt instanceof ActorLookStmt)) {
             addRefactoredScript();
         }
@@ -58,7 +64,7 @@ public class SeparateScriptBySemantics implements Refactoring, ScratchVisitor {
 
     @Override
     public void visit(ActorSoundStmt actorSoundStmt) {
-        addStmt(actorSoundStmt);
+        stmtList.add(actorSoundStmt);
         if (!(lastStmt instanceof ActorSoundStmt)) {
             addRefactoredScript();
         }
@@ -67,7 +73,7 @@ public class SeparateScriptBySemantics implements Refactoring, ScratchVisitor {
 
     @Override
     public void visit(PenStmt penStmt) {
-        addStmt(penStmt);
+        stmtList.add(penStmt);
         if (!(lastStmt instanceof PenStmt)) {
             addRefactoredScript();
         }
@@ -76,7 +82,7 @@ public class SeparateScriptBySemantics implements Refactoring, ScratchVisitor {
 
     @Override
     public void visit(SpriteLookStmt spriteLookStmt) {
-        addStmt(spriteLookStmt);
+        stmtList.add(spriteLookStmt);
         if (!(lastStmt instanceof SpriteLookStmt)) {
             addRefactoredScript();
         }
@@ -85,11 +91,46 @@ public class SeparateScriptBySemantics implements Refactoring, ScratchVisitor {
 
     @Override
     public void visit(SpriteMotionStmt spriteMotionStmt) {
-        addStmt(spriteMotionStmt);
+        stmtList.add(spriteMotionStmt);
         if (!(lastStmt instanceof SpriteMotionStmt)) {
             addRefactoredScript();
         }
         lastStmt = spriteMotionStmt;
+    }
+
+    @Override
+    public void visit(RepeatTimesStmt repeatTimesStmt) {
+        stmtList.add(repeatTimesStmt);
+        lastStmt = repeatTimesStmt;
+        visit(repeatTimesStmt.getStmtList());
+    }
+
+    @Override
+    public void visit(UntilStmt untilStmt) {
+        stmtList.add(untilStmt);
+        lastStmt = untilStmt;
+        visit(untilStmt.getStmtList());
+    }
+
+    @Override
+    public void visit(RepeatForeverStmt repeatForeverStmt) {
+        stmtList.add(repeatForeverStmt);
+        lastStmt = repeatForeverStmt;
+        visit(repeatForeverStmt.getStmtList());
+    }
+
+    @Override
+    public void visit(IfThenStmt ifThenStmt) {
+        stmtList.add(ifThenStmt);
+        lastStmt = ifThenStmt;
+        visit(ifThenStmt.getThenStmts());
+    }
+
+    @Override
+    public void visit(IfElseStmt ifElseStmt) {
+        stmtList.add(ifElseStmt);
+        lastStmt = ifElseStmt;
+        visit(ifElseStmt.getStmtList());
     }
 
     @Override
@@ -103,16 +144,13 @@ public class SeparateScriptBySemantics implements Refactoring, ScratchVisitor {
     }
 
     private void addRefactoredScript() {
-        refactoredScript = new Script(event, stmtList);
-        sprite.getScripts().getScriptList().add(refactoredScript);
-        stmtList.getStmts().clear();
-    }
-
-    private void addStmt(Stmt stmt) {
-        stmtList.getStmts().add(stmt);
+        List<Stmt> refactoredList = new ArrayList<>(stmtList);
+        refactoredScript = new Script(event, new StmtList(refactoredList));
+        scriptList.getScriptList().add(refactoredScript);
+        stmtList.clear();
     }
 
     private void removeScriptFromSprite() {
-        sprite.getScripts().getScriptList().remove(script);
+        scriptList.getScriptList().remove(script);
     }
 }
