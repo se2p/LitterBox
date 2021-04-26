@@ -10,6 +10,9 @@ import java.util.List;
 
 public class RefactorSequenceCrossover implements Crossover<RefactorSequence> {
 
+    public RefactorSequenceCrossover() {
+    }
+
     /**
      * Applies this crossover operator to the two given non-null parent chromosomes {@code parent1}
      * and {@code parent2}, and returns the resulting pair of offspring chromosomes.
