@@ -6,7 +6,7 @@ import java.util.*;
 /**
  * Unique random number accessor
  *
- * @author Gordon Fraser
+ * Based on Randomness.java in EvoSuite.
  */
 public class Randomness implements Serializable {
 
