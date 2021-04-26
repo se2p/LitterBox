@@ -2,6 +2,8 @@ package de.uni_passau.fim.se2.litterbox.refactor.refactorings;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
+import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
+import de.uni_passau.fim.se2.litterbox.ast.model.event.Event;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Say;
@@ -14,6 +16,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
 
 public class AddHelloBlockTest {
 
@@ -37,6 +40,19 @@ public class AddHelloBlockTest {
         Stmt newBlock = refactoredStmtList.get(refactoredStmtList.size() - 1);
         assertTrue(newBlock instanceof Say);
         assertEquals(new StringLiteral("Hello!"), ((Say) newBlock).getString());
+    }
+
+    @Test
+    public void getNameTest() {
+        AddHelloBlock refactoring = new AddHelloBlock(mock(Script.class));
+        assertEquals("add_hello_block", refactoring.getName());
+    }
+
+    @Test
+    public void toStringTest() {
+        Script script = new Script(mock(Event.class), mock(StmtList.class));
+        AddHelloBlock refactoring = new AddHelloBlock(script);
+        assertEquals("add_hello_block(Script)", refactoring.toString());
     }
 
 }
