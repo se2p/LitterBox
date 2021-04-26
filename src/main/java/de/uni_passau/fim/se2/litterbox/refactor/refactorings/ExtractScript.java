@@ -1,20 +1,19 @@
 package de.uni_passau.fim.se2.litterbox.refactor.refactorings;
 
-import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
-import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinitionList;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.model.Script;
+import de.uni_passau.fim.se2.litterbox.ast.model.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.variable.ScratchList;
+import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 public class ExtractScript implements Refactoring {
 
     private ActorDefinition stage;
     private final Script script;
-    private final ActorDefinition sprite;
+    private final ScriptList scriptList;
     private static final String NAME = "extract_script";
 
     public ExtractScript(Script script) {
-        this.script = script;
-        this.sprite = (ActorDefinition) script.getParentNode();
+        this.script = Preconditions.checkNotNull(script);
+        this.scriptList = (ScriptList) script.getParentNode();
     }
 
     @Override
@@ -51,6 +50,6 @@ public class ExtractScript implements Refactoring {
     }
 
     private void removeScriptFromSprite() {
-        sprite.getScripts().getScriptList().remove(script);
+        scriptList.getScriptList().remove(script);
     }
 }
