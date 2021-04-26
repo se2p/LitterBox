@@ -4,11 +4,14 @@ import de.uni_passau.fim.se2.litterbox.analytics.RefactoringFinder;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.search_operators.*;
 import de.uni_passau.fim.se2.litterbox.utils.Pair;
 import de.uni_passau.fim.se2.litterbox.utils.PropertyLoader;
+import de.uni_passau.fim.se2.litterbox.utils.Randomness;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 
 import java.util.List;
-import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
@@ -16,6 +19,8 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 class OffspringGeneratorTest {
+    MockedStatic<Randomness> mockedRandomness;
+
     Mutation<RefactorSequence> mutation;
     Crossover<RefactorSequence> crossover;
 
@@ -35,6 +40,8 @@ class OffspringGeneratorTest {
     void setupEnv() {
         PropertyLoader.setDefaultSystemProperties("nsga-ii.properties");
 
+        mockedRandomness = Mockito.mockStatic(Randomness.class);
+
         mutation = mock(RefactorSequenceMutation.class);
         crossover = mock(RefactorSequenceCrossover.class);
 
@@ -51,20 +58,23 @@ class OffspringGeneratorTest {
         mutant2 = new RefactorSequence(mutation, crossover, production4, refactoringFinders);
     }
 
+    @AfterEach
+    public void closeMocks() {
+        mockedRandomness.close();
+    }
+
     @Test
     void offspringGeneratorCreatesOffspringCorrectlyWithCrossover() {
-        // Random mockedRandom = mock(Random.class); TODO
         BinaryRankTournament<RefactorSequence> mockedSelection = mock(BinaryRankTournament.class);
 
         List<RefactorSequence> generation0 = List.of(parent1, parent2);
         when(mockedSelection.apply(generation0)).thenReturn(parent1).thenReturn(parent2);
-        // when(mockedRandom.nextDouble()).thenReturn(0.5); TODO
+        mockedRandomness.when(Randomness::nextDouble).thenReturn(0.5);
         when(crossover.apply(parent1, parent2)).thenReturn(Pair.of(parent1, parent2));
 
         when(mutation.apply(parent1)).thenReturn(mutant1);
         when(mutation.apply(parent2)).thenReturn(mutant2);
 
-        // OffspringGenerator<RefactorSequence> offspringGenerator = new OffspringGenerator<>(mockedRandom, mockedSelection); TODO randomness
         OffspringGenerator<RefactorSequence> offspringGenerator = new OffspringGenerator<>(mockedSelection);
         List<RefactorSequence> generation1 = offspringGenerator.generateOffspring(generation0);
         assertEquals(2, generation1.size());
@@ -74,18 +84,16 @@ class OffspringGeneratorTest {
 
     @Test
     void offspringGeneratorCreatesOffspringCorrectlyWithoutCrossover() {
-        Random mockedRandom = mock(Random.class);
         BinaryRankTournament<RefactorSequence> mockedSelection = mock(BinaryRankTournament.class);
 
         List<RefactorSequence> generation0 = List.of(parent1, parent2);
         when(mockedSelection.apply(generation0)).thenReturn(parent1).thenReturn(parent2);
-        when(mockedRandom.nextDouble()).thenReturn(0.9);
+        mockedRandomness.when(Randomness::nextDouble).thenReturn(0.9);
 
         when(mutation.apply(parent1)).thenReturn(mutant1);
         when(mutation.apply(parent2)).thenReturn(mutant2);
 
-        // OffspringGenerator<RefactorSequence> offspringGenerator = new OffspringGenerator<>(mockedRandom, mockedSelection);
-        OffspringGenerator<RefactorSequence> offspringGenerator = new OffspringGenerator<>(mockedSelection); // TODO randomness
+        OffspringGenerator<RefactorSequence> offspringGenerator = new OffspringGenerator<>(mockedSelection);
         List<RefactorSequence> generation1 = offspringGenerator.generateOffspring(generation0);
         assertEquals(2, generation1.size());
         assertSame(mutant1, generation1.get(0));
@@ -94,22 +102,19 @@ class OffspringGeneratorTest {
 
     @Test
     void offspringGeneratorCreatesUnevenPopulationSize() {
-
-        Random mockedRandom = mock(Random.class);
         BinaryRankTournament<RefactorSequence> mockedSelection = mock(BinaryRankTournament.class);
 
         List<RefactorSequence> generation0 = List.of(parent1);
         when(mockedSelection.apply(generation0)).thenReturn(parent1).thenReturn(parent2);
-        when(mockedRandom.nextDouble()).thenReturn(0.5);
+        mockedRandomness.when(Randomness::nextDouble).thenReturn(0.5);
         when(crossover.apply(parent1, parent2)).thenReturn(Pair.of(parent1, parent2));
 
         when(mutation.apply(parent1)).thenReturn(mutant1);
         when(mutation.apply(parent2)).thenReturn(mutant2);
 
-        when(mockedRandom.nextInt(2)).thenReturn(0);
+        mockedRandomness.when(() -> Randomness.nextInt(2)).thenReturn(0);
 
-        // OffspringGenerator<RefactorSequence> offspringGenerator = new OffspringGenerator<>(mockedRandom, mockedSelection);
-        OffspringGenerator<RefactorSequence> offspringGenerator = new OffspringGenerator<>(mockedSelection); // TODO randomness
+        OffspringGenerator<RefactorSequence> offspringGenerator = new OffspringGenerator<>(mockedSelection);
         List<RefactorSequence> generation1 = offspringGenerator.generateOffspring(generation0);
         assertEquals(1, generation1.size());
         assertSame(mutant2, generation1.get(0));
