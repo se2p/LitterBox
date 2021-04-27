@@ -1,39 +1,22 @@
 package de.uni_passau.fim.se2.litterbox.refactor.refactorings;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.model.Script;
-import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.ControlStmt;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 public class DeleteControlBlock implements Refactoring {
 
-    private final Script script;
-    private final StmtList stmtList;
+    private final ControlStmt controlStmt;
     private static final String NAME = "delete_control_block";
 
-    public DeleteControlBlock(Script script) {
-        this.script = Preconditions.checkNotNull(script);
-        this.stmtList = script.getStmtList();
+    public DeleteControlBlock(ControlStmt controlStmt) {
+        this.controlStmt = Preconditions.checkNotNull(controlStmt);
     }
 
     @Override
     public Program apply(Program program) {
         Program refactored = program.deepCopy();
-//        for (Stmt stmt : stmtList.getStmts()) {
-//            if (stmt instanceof ControlStmt) {
-//                stmtList.getStmts().remove(stmt);
-//                break;
-//            }
-//        }
-        Script refactoredScript = refactored.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(0);
-        for (Stmt stmt : refactoredScript.getStmtList().getStmts()) {
-            if (stmt instanceof ControlStmt) {
-                refactored.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(0).getStmtList().getStmts().remove(stmt);
-                break;
-            }
-        }
+        refactored.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(0).getStmtList().getStmts().remove(controlStmt);
         return refactored;
     }
 
@@ -44,7 +27,7 @@ public class DeleteControlBlock implements Refactoring {
 
     @Override
     public String toString() {
-        return NAME + "(" + script.getUniqueName() + ")";
+        return NAME + "(" + controlStmt.getUniqueName() + ")";
     }
 
 }

@@ -21,7 +21,7 @@ public class BlockFinder extends AbstractRefactoringFinder {
             List<Stmt> stmts = script.getStmtList().getStmts();
             for (Stmt stmt : stmts) {
                 if (stmt instanceof ControlStmt) {
-                    refactorings.add(new DeleteControlBlock(script));
+                    refactorings.add(new DeleteControlBlock((ControlStmt) stmt));
                 }
             }
         }
