@@ -1,17 +1,14 @@
 package de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.search_operators;
 
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.chromosomes.Solution;
+import de.uni_passau.fim.se2.litterbox.utils.Randomness;
 
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Random;
 
 public class BinaryRankTournament<C extends Solution<C>> implements Selection<C> {
 
-    private final Random random;
-
-    public BinaryRankTournament(Random random) {
-        this.random = random;
+    public BinaryRankTournament() {
     }
 
     /**
@@ -33,12 +30,12 @@ public class BinaryRankTournament<C extends Solution<C>> implements Selection<C>
         }
 
 
-        int index1 = random.nextInt(population.size());
+        int index1 = Randomness.nextInt(population.size());
         C candidate1 = population.get(index1).copy();
 
         int index2;
         do {
-            index2 = random.nextInt(population.size());
+            index2 = Randomness.nextInt(population.size());
         } while (index2 == index1);
         C candidate2 = population.get(index2).copy();
 
