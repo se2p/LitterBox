@@ -3,20 +3,18 @@ package de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.search_operators
 import de.uni_passau.fim.se2.litterbox.analytics.RefactoringFinder;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.chromosomes.RefactorSequence;
 import de.uni_passau.fim.se2.litterbox.utils.PropertyLoader;
+import de.uni_passau.fim.se2.litterbox.utils.Randomness;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Random;
 
 public class RefactorSequenceMutation implements Mutation<RefactorSequence> {
 
     private static final int NUMBER_OF_POSSIBLE_PRODUCTIONS = PropertyLoader.getSystemIntProperty("nsga-ii.maxProductionNumber");
 
-    private final Random random;
     private final List<RefactoringFinder> refactoringFinders;
 
-    public RefactorSequenceMutation(Random random, List<RefactoringFinder> refactoringFinders) {
-        this.random = random;
+    public RefactorSequenceMutation(List<RefactoringFinder> refactoringFinders) {
         this.refactoringFinders = refactoringFinders;
     }
 
@@ -46,7 +44,7 @@ public class RefactorSequenceMutation implements Mutation<RefactorSequence> {
 
         var index = 0;
         while (index < mutatedProductions.size()) {
-            if (random.nextDouble() < pMutate) {
+            if (Randomness.nextDouble() < pMutate) {
                 index = mutateAtIndex(mutatedProductions, index);
             }
             index++;
@@ -64,14 +62,14 @@ public class RefactorSequenceMutation implements Mutation<RefactorSequence> {
      * @return The modified index after the mutation.
      */
     private int mutateAtIndex(List<Integer> mutatedProductions, int index) {
-        var mutation = random.nextInt(3);
+        var mutation = Randomness.nextInt(3);
         switch (mutation) {
             case 0:
-                mutatedProductions.add(index, random.nextInt(NUMBER_OF_POSSIBLE_PRODUCTIONS));
+                mutatedProductions.add(index, Randomness.nextInt(NUMBER_OF_POSSIBLE_PRODUCTIONS));
                 index++;
                 break;
             case 1:
-                mutatedProductions.set(index, random.nextInt(NUMBER_OF_POSSIBLE_PRODUCTIONS));
+                mutatedProductions.set(index, Randomness.nextInt(NUMBER_OF_POSSIBLE_PRODUCTIONS));
                 break;
             case 2:
             default:

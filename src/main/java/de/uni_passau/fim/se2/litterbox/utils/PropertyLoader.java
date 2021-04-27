@@ -4,6 +4,7 @@ import de.uni_passau.fim.se2.litterbox.Main;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -53,6 +54,26 @@ public class PropertyLoader {
                 return Double.parseDouble(stringValue);
             } catch (NumberFormatException e) {
                 throw new IllegalArgumentException("The value for key " + name + " is not a floating number!");
+            }
+        }
+    }
+
+    /**
+     * If a seed is specified and a valid long, returns the specified long wrapped in an optional.
+     * If the seed is not specified, returns an empty optional.
+     * Throws an exception if the seed is specified but not a parsable long.
+     *
+     * @return The seed, if specified, {@code Optional.empty()} otherwise.
+     */
+    public static Optional<Long> getSeed() {
+        String stringValue = System.getProperty("nsga-ii.seed");
+        if (stringValue == null) {
+            return Optional.empty();
+        } else {
+            try {
+                return Optional.of(Long.parseLong(stringValue));
+            } catch (NumberFormatException e) {
+                throw new IllegalArgumentException("The specified seed is not a long.");
             }
         }
     }

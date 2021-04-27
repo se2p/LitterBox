@@ -17,7 +17,8 @@ import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
@@ -85,15 +86,14 @@ public class RefactoringAnalyzer extends Analyzer {
     }
 
     private NSGAII<RefactorSequence> initializeNSGAII(Program program, List<IssueFinder> issueFinders, List<RefactoringFinder> refactoringFinders, boolean ignoreLooseBlocks) {
-        Random random = new Random();
 
-        Crossover<RefactorSequence> crossover = new RefactorSequenceCrossover(random);
-        Mutation<RefactorSequence> mutation = new RefactorSequenceMutation(random, refactoringFinders);
+        Crossover<RefactorSequence> crossover = new RefactorSequenceCrossover();
+        Mutation<RefactorSequence> mutation = new RefactorSequenceMutation(refactoringFinders);
 
-        ChromosomeGenerator<RefactorSequence> chromosomeGenerator = new RefactorSequenceGenerator(mutation, crossover, random, refactoringFinders);
+        ChromosomeGenerator<RefactorSequence> chromosomeGenerator = new RefactorSequenceGenerator(mutation, crossover, refactoringFinders);
         FixedSizePopulationGenerator<RefactorSequence> populationGenerator = new FixedSizePopulationGenerator<>(chromosomeGenerator, POPULATION_SIZE);
-        BinaryRankTournament<RefactorSequence> binaryRankTournament = new BinaryRankTournament<>(random);
-        OffspringGenerator<RefactorSequence> offspringGenerator = new OffspringGenerator<>(random, binaryRankTournament);
+        BinaryRankTournament<RefactorSequence> binaryRankTournament = new BinaryRankTournament<>();
+        OffspringGenerator<RefactorSequence> offspringGenerator = new OffspringGenerator<>(binaryRankTournament);
 
         List<FitnessFunction<RefactorSequence>> fitnessFunctions = new LinkedList<>();
         fitnessFunctions.add(new NumberOfSmells(program, issueFinders, ignoreLooseBlocks));
