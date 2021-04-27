@@ -38,6 +38,7 @@ public class MetricTool {
 
     private List<MetricExtractor> metrics = Arrays.asList(
             new Cohesion<Program>(),
+            new CategoryEntropy(),
             new BlockCount<Program>(),
             new ComputationalThinkingAverageScore(),
             new ComputationalThinkingScore(),

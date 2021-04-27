@@ -12,7 +12,7 @@ import java.util.ArrayList;
 public class Cohesion <T extends ASTNode> implements MetricExtractor<T>, ScratchVisitor {
     public static final String NAME = "cohesion";
 
-    private int count = 0;
+    private double count = 0;
 
     private double local_cohesion = 0;
 
