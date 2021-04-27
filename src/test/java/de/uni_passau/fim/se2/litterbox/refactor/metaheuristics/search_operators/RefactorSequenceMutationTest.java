@@ -40,9 +40,8 @@ class RefactorSequenceMutationTest {
     void testMutation() {
         final int NUMBER_OF_POSSIBLE_PRODUCTIONS = PropertyLoader.getSystemIntProperty("nsga-ii.maxProductionNumber");
         mockedRandomness.when(Randomness::nextDouble).thenReturn(1d).thenReturn(0d); // do not mutate 0th element, but everything afterwards
-        mockedRandomness.when(Randomness::nextInt).thenReturn(3).thenReturn(0).thenReturn(1).thenReturn(2);
-        mockedRandomness.when(() -> Randomness.nextInt(NUMBER_OF_POSSIBLE_PRODUCTIONS)).thenReturn(13).thenReturn(17).thenReturn(11);
-        mockedRandomness.when(() -> Randomness.nextInt(3)).thenReturn(1);
+        mockedRandomness.when(() -> Randomness.nextInt(NUMBER_OF_POSSIBLE_PRODUCTIONS)).thenReturn(13).thenReturn(17);
+        mockedRandomness.when(() -> Randomness.nextInt(3)).thenReturn(0).thenReturn(1).thenReturn(2);
 
         List<Integer> productions = List.of(0, 0, 0, 0);
         RefactorSequence parent = new RefactorSequence(mutation, crossover, productions, refactoringFinders);
@@ -51,7 +50,7 @@ class RefactorSequenceMutationTest {
         assertEquals(4, mutant.getProductions().size());
         assertEquals(0, mutant.getProductions().get(0));
         assertEquals(13, mutant.getProductions().get(1));
-        assertEquals(17, mutant.getProductions().get(2));
-        assertEquals(11, mutant.getProductions().get(3));
+        assertEquals(0, mutant.getProductions().get(2));
+        assertEquals(17, mutant.getProductions().get(3));
     }
 }
