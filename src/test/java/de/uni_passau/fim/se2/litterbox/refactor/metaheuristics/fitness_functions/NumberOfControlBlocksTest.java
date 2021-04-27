@@ -13,15 +13,16 @@ import java.io.IOException;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class NumberOfHelloBlocksTest implements JsonTest{
+public class NumberOfControlBlocksTest implements JsonTest{
 
     @Test
     void testGetFitnessCorrectly() throws IOException, ParsingException {
-        Program program = getAST("./src/test/fixtures/bugpattern/missingPenDown.json");
-        MaximizingFitnessFunction<RefactorSequence>  numberOfHelloBocks = new NumberOfHelloBlocks(program);
+        Program program = getAST("src/test/fixtures/refactoring/forLoopWithHelloBlock.json");
+
+        MinimizingFitnessFunction<RefactorSequence>  numberOfControlBocks = new NumberOfControlBlocks(program);
         RefactorSequence refactorSequence = mock(RefactorSequence.class);
         when(refactorSequence.applyToProgram(program)).thenReturn(program);
 
-        Assertions.assertEquals(2, numberOfHelloBocks.getFitness(refactorSequence));
+        Assertions.assertEquals(1, numberOfControlBocks.getFitness(refactorSequence));
     }
 }

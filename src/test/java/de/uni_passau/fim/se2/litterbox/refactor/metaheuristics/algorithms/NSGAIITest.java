@@ -1,20 +1,33 @@
 package de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.algorithms;
 
 import com.google.common.collect.Lists;
-import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.chromosomes.FixedSizePopulationGenerator;
-import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.chromosomes.OffspringGenerator;
-import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.chromosomes.RefactorSequence;
+import de.uni_passau.fim.se2.litterbox.JsonTest;
+import de.uni_passau.fim.se2.litterbox.analytics.RefactoringFinder;
+import de.uni_passau.fim.se2.litterbox.analytics.refactorings.BlockFinder;
+import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
+import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.model.Script;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
+import de.uni_passau.fim.se2.litterbox.jsoncreation.JSONFileCreator;
+import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.chromosomes.*;
+import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.fitness_functions.FitnessFunction;
+import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.fitness_functions.NumberOfControlBlocks;
+import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.fitness_functions.NumberOfHelloBlocks;
+import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.fitness_functions.NumberOfSmells;
+import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.search_operators.*;
+import de.uni_passau.fim.se2.litterbox.report.ConsoleRefactorReportGenerator;
 import de.uni_passau.fim.se2.litterbox.utils.PropertyLoader;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
+import java.io.IOException;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
-class NSGAIITest {
+class NSGAIITest implements JsonTest {
 
     @BeforeEach
     void setupEnv() {
@@ -70,6 +83,46 @@ class NSGAIITest {
         List<RefactorSequence> nsgaiiSolution = nsgaii.findSolution();
         assertEquals(2, nsgaiiSolution.size());
         assertEquals(front1, nsgaiiSolution);
+    }
+
+    @Test
+    void testNSGAIIWithDummyRefactorings() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/refactoring/helloBlockHelloBlockWithinControl.json");
+        Program programToCheck = getAST("src/test/fixtures/refactoring/onlyTwoHelloBlocks.json");
+
+        List<RefactoringFinder> refactorings = new ArrayList<>();
+        refactorings.add(new BlockFinder());
+        int maxGen = 10;
+        int populationSize = 5;
+
+
+        Crossover<RefactorSequence> crossover = new RefactorSequenceCrossover();
+        Mutation<RefactorSequence> mutation = new RefactorSequenceMutation(refactorings);
+
+        ChromosomeGenerator<RefactorSequence> chromosomeGenerator = new RefactorSequenceGenerator(mutation, crossover, refactorings);
+        FixedSizePopulationGenerator<RefactorSequence> populationGenerator = new FixedSizePopulationGenerator<>(chromosomeGenerator, populationSize);
+        BinaryRankTournament<RefactorSequence> binaryRankTournament = new BinaryRankTournament<>();
+        OffspringGenerator<RefactorSequence> offspringGenerator = new OffspringGenerator<>(binaryRankTournament);
+
+        List<FitnessFunction<RefactorSequence>> fitnessFunctions = new LinkedList<>();
+        fitnessFunctions.add(new NumberOfHelloBlocks(program));
+        fitnessFunctions.add(new NumberOfControlBlocks(program));
+        FastNonDominatedSort<RefactorSequence> fastNonDominatedSort = new FastNonDominatedSort<>(fitnessFunctions);
+        CrowdingDistanceSort<RefactorSequence> crowdingDistanceSort = new CrowdingDistanceSort<>(fitnessFunctions);
+
+        GeneticAlgorithm<RefactorSequence> nsgaii = new NSGAII<>(populationGenerator, offspringGenerator, fastNonDominatedSort, crowdingDistanceSort, maxGen);
+        List<RefactorSequence> solutions = nsgaii.findSolution();
+        for (RefactorSequence solution : solutions) {
+            Program refactored = solution.applyToProgram(program.deepCopy());
+            Script refactoredScript = refactored.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(0);
+            List<Stmt> refactoredStmtList = refactoredScript.getStmtList().getStmts();
+            System.out.println("size:" + refactoredStmtList.size());
+
+            ConsoleRefactorReportGenerator reportGenerator = new ConsoleRefactorReportGenerator();
+            reportGenerator.generateReport(program, solution.getExecutedRefactorings());
+        }
+//        Script refactoredScript2 = programToCheck.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(0);
+//        List<Stmt> refactoredStmtList2 = refactoredScript2.getStmtList().getStmts();
     }
 
     @Test

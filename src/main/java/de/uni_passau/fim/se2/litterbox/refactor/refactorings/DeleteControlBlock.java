@@ -21,9 +21,16 @@ public class DeleteControlBlock implements Refactoring {
     @Override
     public Program apply(Program program) {
         Program refactored = program.deepCopy();
-        for (Stmt stmt : stmtList.getStmts()) {
+//        for (Stmt stmt : stmtList.getStmts()) {
+//            if (stmt instanceof ControlStmt) {
+//                stmtList.getStmts().remove(stmt);
+//                break;
+//            }
+//        }
+        Script refactoredScript = refactored.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(0);
+        for (Stmt stmt : refactoredScript.getStmtList().getStmts()) {
             if (stmt instanceof ControlStmt) {
-                stmtList.getStmts().remove(stmt);
+                refactored.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(0).getStmtList().getStmts().remove(stmt);
                 break;
             }
         }
