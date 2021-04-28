@@ -172,26 +172,31 @@ public abstract class AbstractIssueFinder implements IssueFinder, ScratchVisitor
 
         //if two issues are duplicates of one another, they can be considered the same
         if (!first.isDuplicateOf(other)) {
-            NormalizationVisitor visitor = new NormalizationVisitor();
-            ASTNode firstNormalizedLocation = first.getCodeLocation().accept(visitor);
-            ASTNode secondNormalizedLocation = other.getCodeLocation().accept(visitor);
+            if (first.getCodeLocation() != null && other.getCodeLocation() != null) {
+                NormalizationVisitor visitor = new NormalizationVisitor();
+                ASTNode firstNormalizedLocation = first.getCodeLocation().accept(visitor);
+                ASTNode secondNormalizedLocation = other.getCodeLocation().accept(visitor);
 
-            //if a different script or procedure has the issue, distance is increased by 1
-            if (first.getScriptOrProcedureDefinition() != other.getScriptOrProcedureDefinition()) {
-                distance += 1;
-                ASTNode firstNormalizedScriptProcedure = first.getScriptOrProcedureDefinition().accept(visitor);
-                ASTNode secondNormalizedScriptProcedure = other.getScriptOrProcedureDefinition().accept(visitor);
+                //if a different script or procedure has the issue, distance is increased by 1
+                if (first.getScriptOrProcedureDefinition() != other.getScriptOrProcedureDefinition()) {
+                    distance += 1;
+                    ASTNode firstNormalizedScriptProcedure = first.getScriptOrProcedureDefinition().accept(visitor);
+                    ASTNode secondNormalizedScriptProcedure = other.getScriptOrProcedureDefinition().accept(visitor);
 
-                //if the scripts are different after normalisation their pq-distance is added to the distance
-                if (!firstNormalizedScriptProcedure.equals(secondNormalizedScriptProcedure)) {
-                    PQGramProfile profile1 = new PQGramProfile(first.getScriptOrProcedureDefinition());
-                    PQGramProfile profile2 = new PQGramProfile(other.getScriptOrProcedureDefinition());
-                    distance += profile1.calculateDistanceTo(profile2);
+                    //if the scripts are different after normalisation their pq-distance is added to the distance
+                    if (!firstNormalizedScriptProcedure.equals(secondNormalizedScriptProcedure)) {
+                        PQGramProfile profile1 = new PQGramProfile(first.getScriptOrProcedureDefinition());
+                        PQGramProfile profile2 = new PQGramProfile(other.getScriptOrProcedureDefinition());
+                        distance += profile1.calculateDistanceTo(profile2);
+                    }
                 }
-            }
-            //if the code location is different the distance is increased by 1 to reflect this
-            if (!firstNormalizedLocation.equals(secondNormalizedLocation)) {
-                distance += 1;
+                //if the code location is different the distance is increased by 1 to reflect this
+                if (!firstNormalizedLocation.equals(secondNormalizedLocation)) {
+                    distance += 1;
+                }
+            } else {
+                //Issues don't have location so distance has to be very high
+                distance = 5;
             }
         }
         return distance;
