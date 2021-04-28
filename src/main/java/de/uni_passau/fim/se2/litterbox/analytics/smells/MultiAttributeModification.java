@@ -378,7 +378,7 @@ public class MultiAttributeModification extends AbstractIssueFinder {
 
         @Override
         public void visit(PenStmt node) {
-            ((Stmt) node).accept(parent);
+            parent.visit((Stmt) node);
         }
 
         @Override

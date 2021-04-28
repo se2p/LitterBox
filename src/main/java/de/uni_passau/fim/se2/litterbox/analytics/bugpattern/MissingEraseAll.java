@@ -108,9 +108,10 @@ public class MissingEraseAll extends AbstractIssueFinder {
         public MissingEraseAllExtensionVisitor(ScratchVisitor parent) {
             this.parent = parent;
         }
+
         @Override
         public void visit(PenStmt node) {
-            ((Stmt) node).accept(parent);
+            parent.visit((Stmt) node);
         }
 
         @Override

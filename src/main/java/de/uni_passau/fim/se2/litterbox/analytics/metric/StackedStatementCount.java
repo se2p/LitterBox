@@ -617,7 +617,7 @@ public class StackedStatementCount<T extends ASTNode> implements ScratchVisitor,
 
         @Override
         public void visit(PenStmt node) {
-            ((Stmt) node).accept(parent);
+            parent.visit((Stmt) node);
         }
 
         @Override

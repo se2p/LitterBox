@@ -26,6 +26,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.extensions.ExtensionBlock;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ExtensionVisitor;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.PenExtensionVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 public class ChangePenColorParamBy extends AbstractNode implements PenStmt {
@@ -59,12 +60,21 @@ public class ChangePenColorParamBy extends AbstractNode implements PenStmt {
     }
 
     @Override
-    public void accept(ExtensionVisitor visitor) {
-        visitor.visit(this);
+    public ASTNode accept(CloneVisitor visitor) {
+        return visitor.visit(this);
     }
 
     @Override
-    public ASTNode accept(CloneVisitor visitor) {
-        return visitor.visit(this);
+    public void accept(PenExtensionVisitor visitor) {
+        visitor.visit( this);
+    }
+
+    @Override
+    public void accept(ExtensionVisitor visitor){
+        if (visitor instanceof PenExtensionVisitor){
+            ((PenExtensionVisitor) visitor).visit(this);
+        }else{
+            visitor.visit(this);
+        }
     }
 }
