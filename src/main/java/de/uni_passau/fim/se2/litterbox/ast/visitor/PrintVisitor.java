@@ -18,8 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.visitor;
 
-import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
-
 import java.io.PrintStream;
 
 public abstract class PrintVisitor implements ScratchVisitor {

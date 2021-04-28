@@ -40,11 +40,11 @@ import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
  * This happens when inside a block that expects a colour or sprite as parameter (e.g., set pen color to or
  * touching mouse-pointer?) a reporter block, or an expression with a string or number value is used.
  */
-public class ExpressionAsTouchingOrColor extends AbstractIssueFinder{
+public class ExpressionAsTouchingOrColor extends AbstractIssueFinder {
     public static final String NAME = "expression_as_touching_or_color";
     private ExtensionVisitor vis;
 
-    public ExpressionAsTouchingOrColor(){
+    public ExpressionAsTouchingOrColor() {
         vis = new ExpressionAsTouchingOrColorExtensionVisitor(this);
     }
 
@@ -52,7 +52,6 @@ public class ExpressionAsTouchingOrColor extends AbstractIssueFinder{
     public void visit(ExtensionBlock node) {
         node.accept(vis);
     }
-
 
     @Override
     public void visit(ColorTouchingColor node) {
