@@ -8,12 +8,10 @@ import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
-import de.uni_passau.fim.se2.litterbox.jsoncreation.JSONFileCreator;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.chromosomes.*;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.fitness_functions.FitnessFunction;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.fitness_functions.NumberOfControlBlocks;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.fitness_functions.NumberOfHelloBlocks;
-import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.fitness_functions.NumberOfSmells;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.search_operators.*;
 import de.uni_passau.fim.se2.litterbox.report.ConsoleRefactorReportGenerator;
 import de.uni_passau.fim.se2.litterbox.utils.PropertyLoader;
@@ -21,7 +19,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;

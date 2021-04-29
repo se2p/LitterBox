@@ -90,7 +90,7 @@ public class RefactorSequence extends Solution<RefactorSequence> {
      */
     public Program applyToProgram(Program program) {
         executedRefactorings = new LinkedList<>();
-        Program current = program.deepCopy();
+        var  current = program.deepCopy();
 
         for (Integer nthProduction : productions) {
 
@@ -103,7 +103,7 @@ public class RefactorSequence extends Solution<RefactorSequence> {
             }
 
             int executedProduction = nthProduction % possibleProductions.size();
-            Refactoring executedRefactoring = possibleProductions.get(executedProduction);
+            var executedRefactoring = possibleProductions.get(executedProduction);
             executedRefactorings.add(executedRefactoring);
             current = executedRefactoring.apply(current);
         }
