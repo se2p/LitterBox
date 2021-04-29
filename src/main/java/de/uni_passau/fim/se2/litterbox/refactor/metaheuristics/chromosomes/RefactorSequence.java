@@ -96,7 +96,7 @@ public class RefactorSequence extends Solution<RefactorSequence> {
 
             List<Refactoring> possibleProductions = new LinkedList<>();
             for (RefactoringFinder refactoringFinder : refactoringFinders) {
-                possibleProductions.addAll(refactoringFinder.check(program));
+                possibleProductions.addAll(refactoringFinder.check(current));
             }
             if (possibleProductions.isEmpty()) {
                 break;
