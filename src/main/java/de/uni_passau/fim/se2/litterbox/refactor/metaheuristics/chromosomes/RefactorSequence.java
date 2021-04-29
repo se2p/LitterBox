@@ -31,12 +31,12 @@ public class RefactorSequence extends Solution<RefactorSequence> {
      * Constructs a new chromosome, using the given mutation and crossover operators for offspring
      * creation.
      *
+     * @param originalProgram      the original program without any refactorings applied
      * @param mutation             a strategy that tells how to perform mutation, not {@code null}
      * @param crossover            a strategy that tells how to perform crossover, not {@code null}
      * @param productions          a list of executed refactorings within the sequence, not {@code null}
      * @param refactoringFinders   used refactoringFinders in the run, not {@code null}
      * @param fitnessMap           A map of fitness functions and their value stored inside the solution, not {@code null}
-     * @param originalProgram
      * @param executedRefactorings A list of the concrete refactorings produced by the given list of productions, not {@code null}
      * @throws NullPointerException if an argument is {@code null}
      */
@@ -55,8 +55,7 @@ public class RefactorSequence extends Solution<RefactorSequence> {
      * Constructs a new chromosome, using the given mutation and crossover operators for offspring
      * creation.
      *
-     *
-     * @param originalProgram
+     * @param originalProgram    the original program without any refactorings applied
      * @param mutation           a strategy that tells how to perform mutation, not {@code null}
      * @param crossover          a strategy that tells how to perform crossover, not {@code null}
      * @param productions        a list of executed refactorings within the sequence, not {@code null}
@@ -76,10 +75,10 @@ public class RefactorSequence extends Solution<RefactorSequence> {
      * Constructs a new chromosome, using the given mutation and crossover operators for offspring
      * creation.
      *
+     * @param originalProgram    the original program without any refactorings applied
      * @param mutation           a strategy that tells how to perform mutation, not {@code null}
      * @param crossover          a strategy that tells how to perform crossover, not {@code null}
      * @param refactoringFinders used refactoringFinders in the run, not {@code null}
-     * @param originalProgram
      * @throws NullPointerException if an argument is {@code null}
      */
     public RefactorSequence(Program originalProgram, Mutation<RefactorSequence> mutation, Crossover<RefactorSequence> crossover,
@@ -102,7 +101,7 @@ public class RefactorSequence extends Solution<RefactorSequence> {
      */
     public Program getRefactoredProgram() {
         executedRefactorings = new LinkedList<>();
-        var  current = originalProgram.deepCopy();
+        var current = originalProgram.deepCopy();
 
         for (Integer nthProduction : productions) {
 
@@ -119,16 +118,14 @@ public class RefactorSequence extends Solution<RefactorSequence> {
             executedRefactorings.add(executedRefactoring);
             current = executedRefactoring.apply(current);
         }
-        return current;
+        return current.deepCopy();
     }
-
 
     @Override
     public RefactorSequence copy() {
-        return new RefactorSequence(originalProgram.deepCopy(), getMutation(), getCrossover(), new ArrayList<>(productions),
-                refactoringFinders);
+        return new RefactorSequence(originalProgram.deepCopy(), getMutation(), getCrossover(),
+                new ArrayList<>(productions), refactoringFinders);
     }
-
 
     @Override
     public boolean equals(Object other) {
@@ -140,7 +137,6 @@ public class RefactorSequence extends Solution<RefactorSequence> {
         }
         return ((RefactorSequence) other).getProductions().equals(getProductions());
     }
-
 
     @Override
     public int hashCode() {
