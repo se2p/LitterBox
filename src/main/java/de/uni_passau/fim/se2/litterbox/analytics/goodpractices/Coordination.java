@@ -68,8 +68,6 @@ public class Coordination extends AbstractIssueFinder {
                 final String actorName = currentActor.getIdent().getName();
                 messagesSent.add(new Pair<>(actorName, msgName));
             } else if (receivedMessages.contains(msgName)) {
-                //Hint hint = new Hint(getName());
-                //hint.setParameter(Hint.HINT_MESSAGE, ((StringLiteral) node.getMessage().getMessage()).getText());
                 addIssue(node, node.getMetadata(), IssueSeverity.MEDIUM);
             }
         }
@@ -83,8 +81,6 @@ public class Coordination extends AbstractIssueFinder {
                 final String actorName = currentActor.getIdent().getName();
                 messagesSent.add(new Pair<>(actorName, msgName));
             } else if (receivedMessages.contains(msgName)) {
-                //Hint hint = new Hint(getName());
-                //hint.setParameter(Hint.HINT_MESSAGE, ((StringLiteral) node.getMessage().getMessage()).getText());
                 addIssue(node, node.getMetadata(), IssueSeverity.MEDIUM);
             }
         }
