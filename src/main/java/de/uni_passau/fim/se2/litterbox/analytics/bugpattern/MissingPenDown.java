@@ -21,9 +21,16 @@ package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.pen.PenDownStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.pen.PenUpStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.ExtensionBlock;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.PenDownStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.PenStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.PenUpStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ExtensionVisitor;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.PenExtensionVisitor;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 /**
  * Scripts of a sprite using a pen up block but never a pen down block fall in this category.
@@ -38,6 +45,11 @@ public class MissingPenDown extends AbstractIssueFinder {
     private boolean penUpSet = false;
     private boolean penDownSet = false;
     private boolean addComment;
+    private ExtensionVisitor vis;
+
+    public MissingPenDown() {
+        vis = new MissingPenDownExtensionVisitor(this);
+    }
 
     @Override
     public void visit(ActorDefinition actor) {
@@ -55,21 +67,8 @@ public class MissingPenDown extends AbstractIssueFinder {
     }
 
     @Override
-    public void visit(PenDownStmt node) {
-        if (!addComment) {
-            penDownSet = true;
-            visitChildren(node);
-        }
-    }
-
-    @Override
-    public void visit(PenUpStmt node) {
-        if (!addComment) {
-            penUpSet = true;
-            visitChildren(node);
-        } else if (getResult()) {
-            addIssue(node, node.getMetadata(), IssueSeverity.MEDIUM);
-        }
+    public void visit(ExtensionBlock node) {
+       node.accept(vis);
     }
 
     void reset() {
@@ -90,5 +89,41 @@ public class MissingPenDown extends AbstractIssueFinder {
     @Override
     public IssueType getIssueType() {
         return IssueType.BUG;
+    }
+
+    private class MissingPenDownExtensionVisitor implements PenExtensionVisitor {
+        ScratchVisitor parent;
+
+        public MissingPenDownExtensionVisitor(ScratchVisitor parent) {
+            this.parent = parent;
+        }
+
+        @Override
+        public void visit(PenStmt node) {
+            parent.visit((Stmt) node);
+        }
+
+        @Override
+        public void visit(PenDownStmt node) {
+            if (!addComment) {
+                penDownSet = true;
+                visitChildren(node);
+            }
+        }
+
+        @Override
+        public void visit(PenUpStmt node) {
+            if (!addComment) {
+                penUpSet = true;
+                visitChildren(node);
+            } else if (getResult()) {
+                addIssue(node, node.getMetadata(), IssueSeverity.MEDIUM);
+            }
+        }
+
+        @Override
+        public void visit(ExtensionBlock node) {
+            parent.visit((ASTNode) node);
+        }
     }
 }
