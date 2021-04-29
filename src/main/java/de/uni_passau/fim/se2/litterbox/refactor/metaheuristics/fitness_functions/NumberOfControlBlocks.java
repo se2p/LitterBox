@@ -6,11 +6,7 @@ import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.chromosomes.Refac
 
 public class NumberOfControlBlocks implements MinimizingFitnessFunction<RefactorSequence> {
 
-    private final Program program;
-
-    public NumberOfControlBlocks(Program program) {
-        this.program = program;
-    }
+    private final ControlBlockCount blockCounter = new ControlBlockCount();
 
     /**
      * <p>
@@ -22,10 +18,7 @@ public class NumberOfControlBlocks implements MinimizingFitnessFunction<Refactor
      */
     @Override
     public double getFitness(RefactorSequence refactorSequence) throws NullPointerException {
-        Program refactoredProgram = refactorSequence.applyToProgram(program);
-
-        ControlBlockCount blockCounter = new ControlBlockCount();
-
+        Program refactoredProgram = refactorSequence.getRefactoredProgram();
         return blockCounter.calculateMetric(refactoredProgram);
     }
 }

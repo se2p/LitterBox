@@ -99,21 +99,26 @@ class NSGAIITest implements JsonTest {
         Crossover<RefactorSequence> crossover = new RefactorSequenceCrossover();
         Mutation<RefactorSequence> mutation = new RefactorSequenceMutation(refactorings);
 
-        ChromosomeGenerator<RefactorSequence> chromosomeGenerator = new RefactorSequenceGenerator(mutation, crossover, refactorings);
+        ChromosomeGenerator<RefactorSequence> chromosomeGenerator = new RefactorSequenceGenerator(program.deepCopy(), mutation, crossover, refactorings);
+
         FixedSizePopulationGenerator<RefactorSequence> populationGenerator = new FixedSizePopulationGenerator<>(chromosomeGenerator, populationSize);
         BinaryRankTournament<RefactorSequence> binaryRankTournament = new BinaryRankTournament<>();
         OffspringGenerator<RefactorSequence> offspringGenerator = new OffspringGenerator<>(binaryRankTournament);
 
         List<FitnessFunction<RefactorSequence>> fitnessFunctions = new LinkedList<>();
-        fitnessFunctions.add(new NumberOfHelloBlocks(program));
-        fitnessFunctions.add(new NumberOfControlBlocks(program));
+
+        NumberOfHelloBlocks numberOfHelloBlocks = new NumberOfHelloBlocks();
+        NumberOfControlBlocks numberOfControlBlocks = new NumberOfControlBlocks();
+
+        fitnessFunctions.add(numberOfHelloBlocks);
+        fitnessFunctions.add(numberOfControlBlocks);
         FastNonDominatedSort<RefactorSequence> fastNonDominatedSort = new FastNonDominatedSort<>(fitnessFunctions);
         CrowdingDistanceSort<RefactorSequence> crowdingDistanceSort = new CrowdingDistanceSort<>(fitnessFunctions);
 
         GeneticAlgorithm<RefactorSequence> nsgaii = new NSGAII<>(populationGenerator, offspringGenerator, fastNonDominatedSort, crowdingDistanceSort, maxGen);
         List<RefactorSequence> solutions = nsgaii.findSolution();
         for (RefactorSequence solution : solutions) {
-            Program refactored = solution.applyToProgram(program.deepCopy());
+            Program refactored = solution.getRefactoredProgram();
             Script refactoredScript = refactored.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(0);
             List<Stmt> refactoredStmtList = refactoredScript.getStmtList().getStmts();
             System.out.println("size:" + refactoredStmtList.size());

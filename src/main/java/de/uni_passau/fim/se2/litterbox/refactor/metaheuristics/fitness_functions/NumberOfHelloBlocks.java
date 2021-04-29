@@ -6,12 +6,7 @@ import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.chromosomes.Refac
 
 public class NumberOfHelloBlocks implements MaximizingFitnessFunction<RefactorSequence> {
 
-    private final Program program;
     private final SayHelloBlockCount helloCounter = new SayHelloBlockCount();
-
-    public NumberOfHelloBlocks(Program program) {
-        this.program = program;
-    }
 
     /**
      * <p>
@@ -23,7 +18,7 @@ public class NumberOfHelloBlocks implements MaximizingFitnessFunction<RefactorSe
      */
     @Override
     public double getFitness(RefactorSequence refactorSequence) throws NullPointerException {
-        Program refactoredProgram = refactorSequence.applyToProgram(program);
+        Program refactoredProgram = refactorSequence.getRefactoredProgram();
         return helloCounter.calculateMetric(refactoredProgram);
     }
 }

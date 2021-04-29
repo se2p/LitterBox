@@ -19,9 +19,9 @@ public class NumberOfControlBlocksTest implements JsonTest{
     void testGetFitnessCorrectly() throws IOException, ParsingException {
         Program program = getAST("src/test/fixtures/refactoring/forLoopWithHelloBlock.json");
 
-        MinimizingFitnessFunction<RefactorSequence>  numberOfControlBocks = new NumberOfControlBlocks(program);
+        MinimizingFitnessFunction<RefactorSequence>  numberOfControlBocks = new NumberOfControlBlocks();
         RefactorSequence refactorSequence = mock(RefactorSequence.class);
-        when(refactorSequence.applyToProgram(program)).thenReturn(program);
+        when(refactorSequence.getRefactoredProgram()).thenReturn(program);
 
         Assertions.assertEquals(1, numberOfControlBocks.getFitness(refactorSequence));
     }

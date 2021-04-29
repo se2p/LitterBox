@@ -4,7 +4,6 @@ import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.chromosomes.RefactorSequence;
-import de.uni_passau.fim.se2.litterbox.refactor.refactorings.Refactoring;
 
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -32,7 +31,7 @@ public class NumberOfSmells implements MinimizingFitnessFunction<RefactorSequenc
      */
     @Override
     public double getFitness(RefactorSequence refactorSequence) throws NullPointerException {
-        Program refactoredProgram = refactorSequence.applyToProgram(program);
+        Program refactoredProgram = refactorSequence.getRefactoredProgram();
 
         Set<Issue> issues = new LinkedHashSet<>();
         for (IssueFinder iF : issueFinders) {

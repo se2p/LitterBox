@@ -51,15 +51,15 @@ public class RefactoringAnalyzer extends Analyzer {
 
         List<RefactorSequence> solutions = findRefactoring(program.deepCopy(), issueFinders, refactoringFinders, ignoreLooseBlocks);
         if (!solutions.isEmpty()) {
-            generateProjectsFromParetoFront(fileEntry, reportName, program, solutions);
+            generateProjectsFromParetoFront(fileEntry, reportName, solutions);
         } else {
             System.out.println("NSGA-II found no solutions!");
         }
     }
 
-    private void generateProjectsFromParetoFront(File fileEntry, String reportName, Program program, List<RefactorSequence> solutions) {
+    private void generateProjectsFromParetoFront(File fileEntry, String reportName, List<RefactorSequence> solutions) {
         for (int i = 0; i < solutions.size(); i++) {
-            Program refactored = solutions.get(i).applyToProgram(program.deepCopy());
+            Program refactored = solutions.get(i).getRefactoredProgram();
             generateOutput(refactored, solutions.get(i).getExecutedRefactorings(), reportName);
             createNewProjectFileWithCounterPostfix(fileEntry, refactored, i);
         }
@@ -90,7 +90,7 @@ public class RefactoringAnalyzer extends Analyzer {
         Crossover<RefactorSequence> crossover = new RefactorSequenceCrossover();
         Mutation<RefactorSequence> mutation = new RefactorSequenceMutation(refactoringFinders);
 
-        ChromosomeGenerator<RefactorSequence> chromosomeGenerator = new RefactorSequenceGenerator(mutation, crossover, refactoringFinders);
+        ChromosomeGenerator<RefactorSequence> chromosomeGenerator = new RefactorSequenceGenerator(program.deepCopy(), mutation, crossover, refactoringFinders);
         FixedSizePopulationGenerator<RefactorSequence> populationGenerator = new FixedSizePopulationGenerator<>(chromosomeGenerator, POPULATION_SIZE);
         BinaryRankTournament<RefactorSequence> binaryRankTournament = new BinaryRankTournament<>();
         OffspringGenerator<RefactorSequence> offspringGenerator = new OffspringGenerator<>(binaryRankTournament);
