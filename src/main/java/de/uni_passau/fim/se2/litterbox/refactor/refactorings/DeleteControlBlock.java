@@ -20,14 +20,13 @@ public class DeleteControlBlock implements Refactoring {
 
     @Override
     public Program apply(Program program) {
-        Program refactored = program.deepCopy();
         for (Stmt stmt : stmtList.getStmts()) {
             if (stmt instanceof ControlStmt) {
                 stmtList.getStmts().remove(stmt);
                 break;
             }
         }
-        return refactored;
+        return program;
     }
 
     @Override

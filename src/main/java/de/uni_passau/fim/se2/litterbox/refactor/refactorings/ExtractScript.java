@@ -1,7 +1,6 @@
 package de.uni_passau.fim.se2.litterbox.refactor.refactorings;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.*;
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.ScratchList;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 public class ExtractScript implements Refactoring {
@@ -18,11 +17,10 @@ public class ExtractScript implements Refactoring {
 
     @Override
     public Program apply(Program program) {
-        Program refactored = program.deepCopy();
         getStage(program);
         addScriptToStage();
         removeScriptFromSprite();
-        return refactored;
+        return program;
     }
 
     @Override
