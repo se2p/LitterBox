@@ -48,9 +48,9 @@ public class MergeDoubleIfTest {
         assertNotNull(if2);
 
         MergeDoubleIf refactoring = new MergeDoubleIf(if1, if2);
-        refactoring.apply(program);
+        Program refactored = refactoring.apply(program);
 
-        Script refactoredScript = program.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(0);
+        Script refactoredScript = refactored.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(0);
         List<Stmt> refactoredStmtList = refactoredScript.getStmtList().getStmts();
         assertEquals(1, refactoredStmtList.size());
         Stmt stmt = refactoredStmtList.get(0);
