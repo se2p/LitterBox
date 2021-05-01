@@ -46,17 +46,18 @@ public class MergeDoubleEventTest {
         assertEquals(event1, event2);
 
         MergeDoubleEvent refactoring = new MergeDoubleEvent(event2, event1);
-        refactoring.apply(program);
+        Program refactoredProgram = refactoring.apply(program);
 
-        Event refactoredEvent = null;
-        for (Script script : scriptList) {
+        ActorDefinition actor = refactoredProgram.getActorDefinitionList().getDefinitions().get(1);
+        List<Script> refactoredScripts = actor.getScripts().getScriptList();
+
+        int eventCount = 0;
+        for (Script script : refactoredScripts) {
             if (script.getEvent() != null) {
-                refactoredEvent = script.getEvent();
-                break;
+                ++eventCount;
             }
         }
-        assertNotNull(refactoredEvent);
-        assertEquals(event2, refactoredEvent);
+        assertEquals(1, eventCount);
     }
 
     @Test

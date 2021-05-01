@@ -30,14 +30,15 @@ public class ExtractScriptTest {
         assertNotNull(program);
 
         ActorDefinition actor = program.getActorDefinitionList().getDefinitions().get(1);
-        ActorDefinition stage = program.getActorDefinitionList().getDefinitions().get(0);
-
         Script script = actor.getScripts().getScriptList().get(0);
         ExtractScript refactoring = new ExtractScript(script);
-        refactoring.apply(program);
+        Program refactored = refactoring.apply(program);
 
-        assertFalse(actor.getScripts().getScriptList().contains(script));
-        assertTrue(stage.getScripts().getScriptList().contains(script));
+        ActorDefinition refactoredActor = refactored.getActorDefinitionList().getDefinitions().get(1);
+        ActorDefinition refactoredStage = refactored.getActorDefinitionList().getDefinitions().get(0);
+
+        assertFalse(refactoredActor.getScripts().getScriptList().contains(script));
+        assertTrue(refactoredStage.getScripts().getScriptList().contains(script));
     }
 
     @Test

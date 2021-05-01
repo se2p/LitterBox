@@ -1,13 +1,11 @@
 package de.uni_passau.fim.se2.litterbox.refactor.refactorings;
 
-import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.model.Script;
-import de.uni_passau.fim.se2.litterbox.ast.model.ScriptList;
+import de.uni_passau.fim.se2.litterbox.ast.model.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.GreenFlag;
 import de.uni_passau.fim.se2.litterbox.ast.parser.Scratch3Parser;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
 import java.io.File;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -30,12 +28,13 @@ public class SeparateScriptTest {
 
         ActorDefinition actor = program.getActorDefinitionList().getDefinitions().get(1);
         ScriptList scriptList = actor.getScripts();
-
         Script script = scriptList.getScriptList().get(0);
         SeparateScriptBySemantics refactoring = new SeparateScriptBySemantics(script);
-        refactoring.apply(program);
+        Program refactored = refactoring.apply(program);
 
-        assertEquals(5, scriptList.getScriptList().size());
+        ActorDefinition refactoredActor = refactored.getActorDefinitionList().getDefinitions().get(1);
+        List<Script> refactoredScripts = refactoredActor.getScripts().getScriptList();
+        assertEquals(5, refactoredScripts.size());
     }
 
     @Test

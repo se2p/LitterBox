@@ -1,6 +1,9 @@
 package de.uni_passau.fim.se2.litterbox.refactor.refactorings;
 
-import de.uni_passau.fim.se2.litterbox.ast.model.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.model.Script;
+import de.uni_passau.fim.se2.litterbox.ast.model.ScriptList;
+import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Event;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.ActorLookStmt;
@@ -13,7 +16,6 @@ import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class SeparateScriptBySemantics implements Refactoring, ScratchVisitor {
@@ -36,7 +38,6 @@ public class SeparateScriptBySemantics implements Refactoring, ScratchVisitor {
 
     @Override
     public Program apply(Program program) {
-        Program refactored = program.deepCopy();
         visit(script);
         if (refactoredScript != null && !stmtList.isEmpty()) {
             refactoredScript.getStmtList().getStmts().addAll(stmtList);
@@ -44,7 +45,7 @@ public class SeparateScriptBySemantics implements Refactoring, ScratchVisitor {
         if (refactoredScript != null) {
            removeScriptFromSprite();
         }
-        return refactored;
+        return program;
     }
 
     @Override
