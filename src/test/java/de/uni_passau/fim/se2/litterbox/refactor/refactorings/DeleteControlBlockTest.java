@@ -7,14 +7,12 @@ import de.uni_passau.fim.se2.litterbox.ast.model.event.Event;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.ControlStmt;
 import de.uni_passau.fim.se2.litterbox.ast.parser.Scratch3Parser;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.mock;
@@ -43,9 +41,9 @@ public class DeleteControlBlockTest {
         assertNotNull(controlStmt);
 
         DeleteControlBlock refactoring = new DeleteControlBlock(script);
-        refactoring.apply(program);
+        Program refactored = refactoring.apply(program);
 
-        Script refactoredScript = program.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(0);
+        Script refactoredScript = refactored.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(0);
         List<Stmt> refactoredStmtList = refactoredScript.getStmtList().getStmts();
         assertFalse(refactoredStmtList.contains(controlStmt));
     }

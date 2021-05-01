@@ -21,10 +21,9 @@ public class AddHelloBlock implements Refactoring {
 
     @Override
     public Program apply(Program program) {
-        Program refactored = program.deepCopy();
         Say helloBlock = new Say(new StringLiteral("Hello!"), new NoBlockMetadata());
         stmtList.getStmts().add(helloBlock);
-        return refactored;
+        return program;
     }
 
     @Override

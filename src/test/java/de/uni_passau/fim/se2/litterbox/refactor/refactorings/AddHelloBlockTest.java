@@ -33,9 +33,9 @@ public class AddHelloBlockTest {
 
         Script script = program.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(0);
         AddHelloBlock refactoring = new AddHelloBlock(script);
-        refactoring.apply(program);
+        Program refactored = refactoring.apply(program);
 
-        Script refactoredScript = program.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(0);
+        Script refactoredScript = refactored.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(0);
         List<Stmt> refactoredStmtList = refactoredScript.getStmtList().getStmts();
         Stmt newBlock = refactoredStmtList.get(refactoredStmtList.size() - 1);
         assertTrue(newBlock instanceof Say);

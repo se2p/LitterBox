@@ -23,14 +23,13 @@ public class MergeDoubleEvent implements Refactoring {
 
     @Override
     public Program apply(Program program) {
-        Program refactored = program.deepCopy();
         StmtList stmts;
         if (script2.getStmtList().hasStatements()) {
             stmts = script2.getStmtList();
             script1.getStmtList().getStmts().addAll(stmts.getStmts());
         }
         scriptList.getScriptList().remove(script2);
-        return refactored;
+        return program;
     }
 
     @Override
