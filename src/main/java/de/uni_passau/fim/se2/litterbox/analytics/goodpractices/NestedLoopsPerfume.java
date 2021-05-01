@@ -51,7 +51,7 @@ public class NestedLoopsPerfume extends AbstractIssueFinder {
     private boolean hasNested(List<Stmt> stmtList) {
         if (stmtList.size() > 1) {
             for (Stmt stmt : stmtList) {
-                if (stmt instanceof ControlStmt) {
+                if (stmt instanceof RepeatForeverStmt || stmt instanceof RepeatTimesStmt || stmt instanceof UntilStmt) {
                     return true;
                 }
             }

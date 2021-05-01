@@ -21,7 +21,7 @@ public class GlidingMotion extends AbstractIssueFinder {
         keyPressed = false;
         if (node.getEvent() instanceof KeyPressed) {
             keyPressed = true;
-            visitChildren(node);
+            super.visit(node);
             keyPressed = false;
         }
         visitChildren(node);

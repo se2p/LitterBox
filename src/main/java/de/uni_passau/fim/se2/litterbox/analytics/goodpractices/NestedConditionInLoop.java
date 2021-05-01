@@ -20,38 +20,28 @@ public class NestedConditionInLoop extends AbstractIssueFinder {
 
     @Override
     public void visit(RepeatForeverStmt node) {
-        if (!addedStmts.contains(node.getParentNode().getParentNode()) && hasNested(node.getStmtList().getStmts())) {
-            addIssue(node, node.getMetadata(), IssueSeverity.MEDIUM);
-            addedStmts.add(node);
-        }
+        hasNested(node.getStmtList().getStmts());
         visitChildren(node);
     }
 
     @Override
     public void visit(RepeatTimesStmt node) {
-        if (!addedStmts.contains(node.getParentNode().getParentNode()) && hasNested(node.getStmtList().getStmts())) {
-            addIssue(node, node.getMetadata(), IssueSeverity.MEDIUM);
-            addedStmts.add(node);
-        }
+        hasNested(node.getStmtList().getStmts());
         visitChildren(node);
     }
 
     @Override
     public void visit(UntilStmt node) {
-        if (!addedStmts.contains(node.getParentNode().getParentNode()) && hasNested(node.getStmtList().getStmts())) {
-            addIssue(node, node.getMetadata(), IssueSeverity.MEDIUM);
-            addedStmts.add(node);
-        }
+        hasNested(node.getStmtList().getStmts());
         visitChildren(node);
     }
 
-    private boolean hasNested(List<Stmt> stmtList) {
+    private void hasNested(List<Stmt> stmtList) {
         for (Stmt stmt : stmtList) {
             if (stmt instanceof IfStmt) {
-                return true;
+                addIssue(stmt, stmt.getMetadata(), IssueSeverity.MEDIUM);
             }
         }
-        return false;
     }
 
     @Override

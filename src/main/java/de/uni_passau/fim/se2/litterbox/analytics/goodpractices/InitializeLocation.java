@@ -47,15 +47,22 @@ public class InitializeLocation extends AbstractIssueFinder {
                         customBlocks = customBlocks.stream().distinct().collect(Collectors.toList());
 
                         if (customBlocks.contains(((CallStmt) stmt).getIdent().getName())) {
+
+                            System.out.println(((CallStmt) stmt).getIdent().getName());
+
                             addIssue(stmt, stmt.getMetadata(), IssueSeverity.MEDIUM);
+                            initializedInBlock = false;
+                            customBlocks.remove(((CallStmt) stmt).getIdent().getName());
                         }
                     }
                 });
-                initializedInBlock = false;
-                customBlocks = new ArrayList<>();
+
             }
+            this.currentScript = node;
+            this.currentProcedure = null;
             node.getStmtList().accept(this);
             inGreenFlag = false;
+            visitChildren(node);
         }
     }
 
@@ -63,8 +70,11 @@ public class InitializeLocation extends AbstractIssueFinder {
     @Override
     public void visit(ProcedureDefinition node) {
         inCustomBlock = true;
+        this.currentProcedure = node;
+        this.currentScript = null;
         node.getStmtList().accept(this);
         inCustomBlock = false;
+        visitChildren(node);
     }
 
 

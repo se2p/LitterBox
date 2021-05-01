@@ -21,7 +21,6 @@ public class SaySoundSynchronization extends AbstractIssueFinder {
     @Override
     public void visit(StmtList node) {
         node.getStmts().forEach(stmt -> {
-            System.out.println(stmt);
             if (stmt instanceof Say) {
                 stmt.accept(this);
             } else if (stmt instanceof PlaySoundUntilDone) {

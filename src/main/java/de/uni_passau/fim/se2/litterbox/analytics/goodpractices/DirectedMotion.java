@@ -26,7 +26,7 @@ public class DirectedMotion extends AbstractIssueFinder {
         pointInDirection = false;
         if (node.getEvent() instanceof KeyPressed) {
             keyPressed = true;
-            visitChildren(node);
+            super.visit(node);
             keyPressed = false;
             pointInDirection = false;
         }
