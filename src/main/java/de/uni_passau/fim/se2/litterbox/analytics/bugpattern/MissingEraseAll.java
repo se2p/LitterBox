@@ -18,14 +18,18 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
-import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
-import de.uni_passau.fim.se2.litterbox.analytics.Issue;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
+import de.uni_passau.fim.se2.litterbox.analytics.*;
+import de.uni_passau.fim.se2.litterbox.analytics.metric.ProgramUsingPen;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.pen.PenClearStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.pen.PenDownStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.ExtensionBlock;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.PenClearStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.PenDownStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.PenStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ExtensionVisitor;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.PenExtensionVisitor;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import java.util.Collections;
@@ -44,6 +48,16 @@ public class MissingEraseAll extends AbstractIssueFinder {
     private boolean penClearSet = false;
     private boolean penDownSet = false;
     private boolean addComment = false;
+    private ExtensionVisitor vis;
+
+    public MissingEraseAll() {
+        vis = new MissingEraseAllExtensionVisitor(this);
+    }
+
+    @Override
+    public void visit(ExtensionBlock node) {
+        node.accept(vis);
+    }
 
     @Override
     public Set<Issue> check(Program program) {
@@ -68,24 +82,6 @@ public class MissingEraseAll extends AbstractIssueFinder {
         visitChildren(actor);
     }
 
-    @Override
-    public void visit(PenDownStmt node) {
-        if (!addComment) {
-            penDownSet = true;
-            visitChildren(node);
-        } else if (getResult()) {
-            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
-        }
-    }
-
-    @Override
-    public void visit(PenClearStmt node) {
-        if (!addComment) {
-            penClearSet = true;
-            visitChildren(node);
-        }
-    }
-
     void reset() {
         penClearSet = false;
         penDownSet = false;
@@ -104,5 +100,41 @@ public class MissingEraseAll extends AbstractIssueFinder {
     @Override
     public IssueType getIssueType() {
         return IssueType.BUG;
+    }
+
+    private class MissingEraseAllExtensionVisitor implements PenExtensionVisitor {
+        ScratchVisitor parent;
+
+        public MissingEraseAllExtensionVisitor(ScratchVisitor parent) {
+            this.parent = parent;
+        }
+
+        @Override
+        public void visit(PenStmt node) {
+            parent.visit((Stmt) node);
+        }
+
+        @Override
+        public void visit(PenDownStmt node) {
+            if (!addComment) {
+                penDownSet = true;
+                visitChildren(node);
+            } else if (getResult()) {
+                addIssue(node, node.getMetadata(), IssueSeverity.LOW);
+            }
+        }
+
+        @Override
+        public void visit(PenClearStmt node) {
+            if (!addComment) {
+                penClearSet = true;
+                visitChildren(node);
+            }
+        }
+
+        @Override
+        public void visit(ExtensionBlock node) {
+            node.accept(parent);
+        }
     }
 }

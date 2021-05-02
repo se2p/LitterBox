@@ -25,15 +25,13 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatTimesStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.*;
 
 import java.util.List;
 
 /**
  * If two loops are nested and the inner loop is a forever loop, the inner loop will never terminate. Thus
- * the statements preceeding the inner loop are only executed once. Furthermore, the statements following the outer
+ * the statements preceding the inner loop are only executed once. Furthermore, the statements following the outer
  * loop can never be reached.
  */
 public class ForeverInsideLoop extends AbstractIssueFinder {
@@ -41,6 +39,7 @@ public class ForeverInsideLoop extends AbstractIssueFinder {
     private int loopcounter;
     private boolean blocksAfter;
     private boolean blocksBefore;
+    private boolean insideIfElse;
 
     @Override
     public void visit(ActorDefinition actor) {
@@ -65,7 +64,7 @@ public class ForeverInsideLoop extends AbstractIssueFinder {
         for (int i = 0; i < list.size(); i++) {
             if (node == list.get(i)) {
                 //blocks before the first loop should not be counted because they would never be repeated and have already been executed
-                if (loopcounter == 1 && i > 0) {
+                if (loopcounter >= 1 && i > 0) {
                     blocksBefore = true;
                 }
                 if (i < list.size() - 1) {
@@ -78,7 +77,7 @@ public class ForeverInsideLoop extends AbstractIssueFinder {
 
     @Override
     public void visit(RepeatForeverStmt node) {
-        if (loopcounter > 0 && (blocksAfter || blocksBefore)) {
+        if (loopcounter > 0 && (blocksAfter || blocksBefore || insideIfElse)) {
             addIssue(node, node.getMetadata(), IssueSeverity.HIGH);
         }
         loopcounter++;
@@ -93,6 +92,24 @@ public class ForeverInsideLoop extends AbstractIssueFinder {
         checkPosition(node);
         visitChildren(node);
         loopcounter--;
+    }
+
+    @Override
+    public void visit(IfThenStmt node) {
+        if (loopcounter >= 1) {
+            checkPosition(node);
+        }
+        visitChildren(node);
+    }
+
+    @Override
+    public void visit(IfElseStmt node) {
+        insideIfElse = true;
+        if (loopcounter >= 1) {
+            checkPosition(node);
+        }
+        visitChildren(node);
+        insideIfElse = false;
     }
 
     @Override

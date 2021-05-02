@@ -58,12 +58,15 @@ public class MessageNeverSent extends AbstractIssueFinder {
     @Override
     public Set<Issue> check(Program program) {
         Preconditions.checkNotNull(program);
+        issues = new LinkedHashSet<>();
         this.program = program;
         messageSent = new ArrayList<>();
         messageReceived = new ArrayList<>();
         thinkText = new TreeMap<>();
         sayText = new TreeMap<>();
         touchedSprites = new TreeMap<>();
+        notSentMessages = new LinkedHashSet<>();
+        addComment = false;
         program.accept(this);
         addComment = false;
         notSentMessages = new LinkedHashSet<>();

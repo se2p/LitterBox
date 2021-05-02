@@ -114,7 +114,7 @@ public class IssueTool {
         registerSmellFinder(new DuplicatedScript(), smellFinders);
         registerSmellFinder(new DuplicateSprite(), smellFinders);
         registerSmellFinder(new LongScript(), smellFinders);
-        registerSmellFinder(new MessageNaming(),smellFinders);
+        registerSmellFinder(new MessageNaming(), smellFinders);
         registerSmellFinder(new MiddleMan(), smellFinders);
         registerSmellFinder(new MultiAttributeModification(), smellFinders);
         registerSmellFinder(new NestedLoops(), smellFinders);
@@ -123,6 +123,7 @@ public class IssueTool {
         registerSmellFinder(new SpriteNaming(), smellFinders);
         registerSmellFinder(new UnnecessaryLoop(), smellFinders);
         registerSmellFinder(new UnnecessaryIfAfterUntil(), smellFinders);
+        registerSmellFinder(new UnnecessaryTime(), smellFinders);
         registerSmellFinder(new UnusedCustomBlock(), smellFinders);
         registerSmellFinder(new UnusedParameter(), smellFinders);
         registerSmellFinder(new UnusedVariable(), smellFinders);

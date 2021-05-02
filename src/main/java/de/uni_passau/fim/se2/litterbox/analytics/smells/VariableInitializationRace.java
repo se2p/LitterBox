@@ -96,6 +96,7 @@ public class VariableInitializationRace extends AbstractIssueFinder {
         List<Stmt> statements = script.getStmtList().getStmts();
         for (Stmt stmt : statements) {
             if (!isInitializationStatement(stmt)) {
+                currentScript = null;
                 return;
             }
             stmt.accept(this);

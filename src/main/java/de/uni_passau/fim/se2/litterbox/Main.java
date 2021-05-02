@@ -20,6 +20,7 @@ package de.uni_passau.fim.se2.litterbox;
 
 import com.google.common.io.Files;
 import de.uni_passau.fim.se2.litterbox.analytics.*;
+import de.uni_passau.fim.se2.litterbox.analytics.FeatureAnalyzer;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 import org.apache.commons.cli.*;
@@ -47,6 +48,8 @@ public class Main {
     private static final String PROJECTID_SHORT = "i";
     private static final String PROJECTLIST = "projectlist";
     private static final String PROJECTLIST_SHORT = "t";
+    private static final String FEATURE = "feature";
+    private static final String FEATURE_SHORT = "f";
     private static final String DELETE_PROJECT_AFTERWARDS = "delete";
     private static final String DELETE_PROJECT_AFTERWARDS_SHORT = "del";
 
@@ -71,6 +74,7 @@ public class Main {
         mainMode.addOption(new Option(CHECK_SHORT, CHECK, false, "Check specified Scratch projects for issues"));
         mainMode.addOption(new Option(LEILA_SHORT, LEILA, false, "Translate specified Scratch projects to Leila"));
         mainMode.addOption(new Option(STATS_SHORT, STATS, false, "Extract metrics for Scratch projects"));
+        mainMode.addOption(new Option(FEATURE_SHORT, FEATURE, false, "Extracts features for Scratch projects"));
         mainMode.addOption(new Option(HELP_SHORT, HELP, false, "print this message"));
 
         Options options = new Options();
@@ -190,6 +194,21 @@ public class Main {
         runAnalysis(cmd, analyzer);
     }
 
+    private static void featurePrograms(CommandLine cmd) throws ParseException {
+        if (!cmd.hasOption(OUTPUT)) {
+            throw new ParseException("Output path option '" + OUTPUT + "' required");
+        }
+
+        if (!cmd.hasOption(PROJECTPATH)) {
+            throw new ParseException("Input path option '" + PROJECTPATH + "' required");
+        }
+
+        String outputPath = cmd.getOptionValue(OUTPUT);
+        String input = cmd.getOptionValue(PROJECTPATH);
+        FeatureAnalyzer analyzer = new FeatureAnalyzer(input, outputPath, cmd.hasOption(DELETE_PROJECT_AFTERWARDS));
+        runAnalysis(cmd, analyzer);
+    }
+
     static void runAnalysis(CommandLine cmd, Analyzer analyzer) {
         if (cmd.hasOption(PROJECTID)) {
             String projectId = cmd.getOptionValue(PROJECTID);
@@ -217,7 +236,10 @@ public class Main {
                 statsPrograms(cmd);
             } else if (cmd.hasOption(LEILA)) {
                 translatePrograms(cmd);
-            } else {
+            } else if (cmd.hasOption(FEATURE)) {
+                featurePrograms(cmd);
+            }
+            else {
                 printHelp();
             }
         } catch (ParseException parseException) {

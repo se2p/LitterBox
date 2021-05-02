@@ -19,6 +19,7 @@
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
+import de.uni_passau.fim.se2.litterbox.analytics.Hint;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
@@ -26,6 +27,9 @@ import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitUntil;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfElseStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.DeleteClone;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopAll;
 
@@ -39,14 +43,18 @@ import java.util.List;
 public class CustomBlockWithTermination extends AbstractIssueFinder {
     public static final String NAME = "custom_block_with_termination";
     private String currentProcedureName;
-    private List<String> proceduresWithForever;
+    private List<String> proceduresWithTermination;
     private List<CallStmt> calledProcedures;
     private boolean insideProcedure;
+    private int ifAndIfElseCounter = 0;
+    private boolean afterWaitUntil = false;
 
     private void checkCalls() {
         for (CallStmt calledProcedure : calledProcedures) {
-            if (proceduresWithForever.contains(calledProcedure.getIdent().getName())) {
-                addIssue(calledProcedure, calledProcedure.getMetadata(), IssueSeverity.LOW);
+            if (proceduresWithTermination.contains(calledProcedure.getIdent().getName())) {
+                Hint hint = new Hint(NAME);
+                hint.setParameter(Hint.METHOD, calledProcedure.getIdent().getName());
+                addIssue(calledProcedure, calledProcedure.getMetadata(), IssueSeverity.LOW, hint);
             }
         }
     }
@@ -54,7 +62,7 @@ public class CustomBlockWithTermination extends AbstractIssueFinder {
     @Override
     public void visit(ActorDefinition actor) {
         calledProcedures = new ArrayList<>();
-        proceduresWithForever = new ArrayList<>();
+        proceduresWithTermination = new ArrayList<>();
         super.visit(actor);
         checkCalls();
     }
@@ -63,31 +71,54 @@ public class CustomBlockWithTermination extends AbstractIssueFinder {
     public void visit(ProcedureDefinition node) {
         insideProcedure = true;
         currentProcedureName = procMap.get(node.getIdent()).getName();
+        afterWaitUntil = false;
         super.visit(node);
         insideProcedure = false;
     }
 
     @Override
+    public void visit(IfThenStmt node) {
+        ifAndIfElseCounter++;
+        visitChildren(node);
+        ifAndIfElseCounter--;
+    }
+
+    @Override
+    public void visit(IfElseStmt node) {
+        ifAndIfElseCounter++;
+        visitChildren(node);
+        ifAndIfElseCounter--;
+    }
+
+    @Override
+    public void visit(WaitUntil node) {
+        afterWaitUntil = true;
+        visitChildren(node);
+    }
+
+    @Override
     public void visit(DeleteClone node) {
-        if (insideProcedure) {
-            proceduresWithForever.add(currentProcedureName);
+        if (insideProcedure && ifAndIfElseCounter == 0 && !afterWaitUntil) {
+            proceduresWithTermination.add(currentProcedureName);
         }
         visitChildren(node);
     }
 
     @Override
     public void visit(StopAll node) {
-        if (insideProcedure) {
-            proceduresWithForever.add(currentProcedureName);
+        if (insideProcedure && ifAndIfElseCounter == 0 && !afterWaitUntil) {
+            proceduresWithTermination.add(currentProcedureName);
         }
         visitChildren(node);
     }
 
     @Override
     public void visit(StmtList node) {
-        for (Stmt stmt : node.getStmts()) {
-            if (stmt instanceof CallStmt) {
-                calledProcedures.add((CallStmt) stmt);
+        List<Stmt> stmts = node.getStmts();
+        for (int i = 0; i < stmts.size() - 1; i++) {
+
+            if (stmts.get(i) instanceof CallStmt) {
+                calledProcedures.add((CallStmt) stmts.get(i));
             }
         }
         visitChildren(node);

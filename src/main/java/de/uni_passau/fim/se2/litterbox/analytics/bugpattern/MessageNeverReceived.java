@@ -48,9 +48,12 @@ public class MessageNeverReceived extends AbstractIssueFinder {
     @Override
     public Set<Issue> check(Program program) {
         Preconditions.checkNotNull(program);
+        issues = new LinkedHashSet<>();
         this.program = program;
         messageSent = new ArrayList<>();
         messageReceived = new ArrayList<>();
+        notReceivedMessages = new LinkedHashSet<>();
+        addComment = false;
         program.accept(this);
         addComment = false;
         notReceivedMessages = new LinkedHashSet<>();

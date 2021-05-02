@@ -61,4 +61,12 @@ public class ForeverInsideLoopTest implements JsonTest {
         Set<Issue> reports = parameterName.check(foreverInLoop);
         Assertions.assertEquals(1, reports.size());
     }
+
+    @Test
+    public void testForeverInsideLoopInIfElse() throws IOException, ParsingException {
+        Program foreverInLoop = JsonTest.parseProgram("./src/test/fixtures/bugpattern/foreverInsideLoopInsideIfElse.json");
+        ForeverInsideLoop parameterName = new ForeverInsideLoop();
+        Set<Issue> reports = parameterName.check(foreverInLoop);
+        Assertions.assertEquals(1, reports.size());
+    }
 }

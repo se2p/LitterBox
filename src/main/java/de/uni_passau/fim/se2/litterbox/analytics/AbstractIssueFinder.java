@@ -18,6 +18,8 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics;
 
+import de.uni_passau.fim.se2.litterbox.analytics.clonedetection.NormalizationVisitor;
+import de.uni_passau.fim.se2.litterbox.analytics.pqgram.PQGramProfile;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
@@ -140,26 +142,14 @@ public abstract class AbstractIssueFinder implements IssueFinder, ScratchVisitor
             // Don't check against self
             return false;
         }
+
         if (first.getFinder() != other.getFinder()) {
             // Can only be a duplicate if it's the same finder
             return false;
         }
 
-        if (first.getScriptOrProcedureDefinition() == null) {
-            if (other.getScriptOrProcedureDefinition() != null) {
-                // Need to refer to same script
-                return false;
-            }
-        }
-
-        if (other.getScriptOrProcedureDefinition() == null) {
-            if (first.getScriptOrProcedureDefinition() != null) {
-                // Need to refer to same script
-                return false;
-            }
-        }
-
-        if (first.getScriptOrProcedureDefinition() == null && other.getScriptOrProcedureDefinition() == null) {
+        if ((first.getScriptOrProcedureDefinition() == null) || (other.getScriptOrProcedureDefinition() == null)) {
+            // Need to refer to same script
             return false;
         }
 
@@ -172,7 +162,44 @@ public abstract class AbstractIssueFinder implements IssueFinder, ScratchVisitor
             // Same block, so assume it's a duplicate
             return true;
         }
+
         return false;
+    }
+
+    @Override
+    public double getDistanceTo(Issue first, Issue other) {
+        double distance = 0;
+
+        //if two issues are duplicates of one another, they can be considered the same
+        if (!first.isDuplicateOf(other)) {
+            if (first.getCodeLocation() != null && other.getCodeLocation() != null) {
+                NormalizationVisitor visitor = new NormalizationVisitor();
+                ASTNode firstNormalizedLocation = first.getCodeLocation().accept(visitor);
+                ASTNode secondNormalizedLocation = other.getCodeLocation().accept(visitor);
+
+                //if a different script or procedure has the issue, distance is increased by 1
+                if (first.getScriptOrProcedureDefinition() != other.getScriptOrProcedureDefinition()) {
+                    distance += 1;
+                    ASTNode firstNormalizedScriptProcedure = first.getScriptOrProcedureDefinition().accept(visitor);
+                    ASTNode secondNormalizedScriptProcedure = other.getScriptOrProcedureDefinition().accept(visitor);
+
+                    //if the scripts are different after normalisation their pq-distance is added to the distance
+                    if (!firstNormalizedScriptProcedure.equals(secondNormalizedScriptProcedure)) {
+                        PQGramProfile profile1 = new PQGramProfile(first.getScriptOrProcedureDefinition());
+                        PQGramProfile profile2 = new PQGramProfile(other.getScriptOrProcedureDefinition());
+                        distance += profile1.calculateDistanceTo(profile2);
+                    }
+                }
+                //if the code location is different the distance is increased by 1 to reflect this
+                if (!firstNormalizedLocation.equals(secondNormalizedLocation)) {
+                    distance += 1;
+                }
+            } else {
+                //Issues don't have location so distance has to be very high
+                distance = 5;
+            }
+        }
+        return distance;
     }
 
     @Override

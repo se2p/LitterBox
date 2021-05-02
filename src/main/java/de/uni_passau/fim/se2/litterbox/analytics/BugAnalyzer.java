@@ -19,7 +19,7 @@
 package de.uni_passau.fim.se2.litterbox.analytics;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.jsonCreation.JSONFileCreator;
+import de.uni_passau.fim.se2.litterbox.jsoncreation.JSONFileCreator;
 import de.uni_passau.fim.se2.litterbox.report.CSVReportGenerator;
 import de.uni_passau.fim.se2.litterbox.report.CommentGenerator;
 import de.uni_passau.fim.se2.litterbox.report.ConsoleReportGenerator;
@@ -55,7 +55,7 @@ public class BugAnalyzer extends Analyzer {
     /**
      * The method for analyzing one Scratch project file (ZIP). It will produce only console output.
      *
-     * @param fileEntry the file to analyze
+     * @param fileEntry      the file to analyze
      * @param reportFileName the file in which to write the results
      */
     void check(File fileEntry, String reportFileName) {
@@ -98,10 +98,9 @@ public class BugAnalyzer extends Analyzer {
         } catch (IOException e) {
             log.warning(e.getMessage());
         }
-
     }
 
-    private void createAnnotatedFile(File fileEntry, Program program, Set<Issue> issues, String annotatePath)  {
+    private void createAnnotatedFile(File fileEntry, Program program, Set<Issue> issues, String annotatePath) {
         if (annotationOutput != null && !annotationOutput.isEmpty()) {
             try {
                 CommentGenerator commentGenerator = new CommentGenerator();
