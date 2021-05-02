@@ -13,15 +13,14 @@ import org.junit.jupiter.api.Test;
 import java.io.File;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
-public class MergeDoubleIfTest {
+class MergeDoubleIfTest {
 
     @Test
-    public void applyTest() {
+    void applyTest() {
         File testFile = new File("src/test/testprojects/testdoublestmts.sb3");
         Program program = null;
         try {
@@ -58,15 +57,45 @@ public class MergeDoubleIfTest {
     }
 
     @Test
-    public void getNameTest() {
+    void getNameTest() {
         MergeDoubleIf refactoring = new MergeDoubleIf(mock(IfThenStmt.class), mock(IfThenStmt.class));
         assertEquals("merge_double_if", refactoring.getName());
     }
 
     @Test
-    public void toStringTest() {
+    void toStringTest() {
         IfThenStmt ifStmt = new IfThenStmt(mock(BoolExpr.class), mock(StmtList.class), mock(BlockMetadata.class));
         MergeDoubleIf refactoring = new MergeDoubleIf(ifStmt, ifStmt);
         assertEquals("merge_double_if(IfThenStmt, IfThenStmt)", refactoring.toString());
+    }
+
+    @Test
+    void testEqualOfRefactorings() {
+        IfThenStmt ifStmt1 = mock(IfThenStmt.class);
+        IfThenStmt ifStmt2 = mock(IfThenStmt.class);
+        IfThenStmt ifStmt3 = mock(IfThenStmt.class);
+
+        MergeDoubleIf refactoring1 = new MergeDoubleIf(ifStmt1, ifStmt2);
+        MergeDoubleIf refactoring2 = new MergeDoubleIf(ifStmt1, ifStmt2);
+        MergeDoubleIf refactoring3 = new MergeDoubleIf(ifStmt1, ifStmt3);
+
+        assertEquals(refactoring1, refactoring1);
+        assertEquals(refactoring1, refactoring2);
+        assertNotEquals(refactoring1, refactoring3);
+    }
+
+    @Test
+    void testHashCodeOfRefactorings() {
+        IfThenStmt ifStmt1 = mock(IfThenStmt.class);
+        IfThenStmt ifStmt2 = mock(IfThenStmt.class);
+        IfThenStmt ifStmt3 = mock(IfThenStmt.class);
+
+        MergeDoubleIf refactoring1 = new MergeDoubleIf(ifStmt1, ifStmt2);
+        MergeDoubleIf refactoring2 = new MergeDoubleIf(ifStmt1, ifStmt2);
+        MergeDoubleIf refactoring3 = new MergeDoubleIf(ifStmt1, ifStmt3);
+
+        assertEquals(refactoring1.hashCode(), refactoring1.hashCode());
+        assertEquals(refactoring1.hashCode(), refactoring2.hashCode());
+        assertNotEquals(refactoring1.hashCode(), refactoring3.hashCode());
     }
 }

@@ -33,4 +33,21 @@ public class MergeDoubleIf implements Refactoring {
     public String toString() {
         return NAME + "(" + if1.getUniqueName() + ", " + if2.getUniqueName() + ")";
     }
+
+    @Override
+    public boolean equals(Object other) {
+        if (this == other) {
+            return true;
+        }
+        if (!(other instanceof MergeDoubleIf)) {
+            return false;
+        }
+        return this.if1.equals(((MergeDoubleIf) other).if1)
+                && this.if2.equals(((MergeDoubleIf) other).if2);
+    }
+
+    @Override
+    public int hashCode() {
+        return if1.hashCode() + if2.hashCode();
+    }
 }

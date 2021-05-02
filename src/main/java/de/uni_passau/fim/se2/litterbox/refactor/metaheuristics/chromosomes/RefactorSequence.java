@@ -105,20 +105,27 @@ public class RefactorSequence extends Solution<RefactorSequence> {
 
         for (Integer nthProduction : productions) {
 
-            List<Refactoring> possibleProductions = new LinkedList<>();
-            for (RefactoringFinder refactoringFinder : refactoringFinders) {
-                possibleProductions.addAll(refactoringFinder.check(current));
-            }
-            if (possibleProductions.isEmpty()) {
+            var executedRefactoring = getExecutedRefactoring(current, nthProduction);
+            if (executedRefactoring == null) {
                 break;
             }
-
-            int executedProduction = nthProduction % possibleProductions.size();
-            var executedRefactoring = possibleProductions.get(executedProduction);
             executedRefactorings.add(executedRefactoring);
             current = executedRefactoring.apply(current);
         }
         return current.deepCopy();
+    }
+
+    private Refactoring getExecutedRefactoring(Program program, Integer nthProduction) {
+        List<Refactoring> possibleProductions = new LinkedList<>();
+        for (RefactoringFinder refactoringFinder : refactoringFinders) {
+            possibleProductions.addAll(refactoringFinder.check(program));
+        }
+        if (possibleProductions.isEmpty()) {
+            return null;
+        }
+
+        int executedProduction = nthProduction % possibleProductions.size();
+        return possibleProductions.get(executedProduction);
     }
 
     @Override
@@ -135,12 +142,24 @@ public class RefactorSequence extends Solution<RefactorSequence> {
         if (!(other instanceof RefactorSequence)) {
             return false;
         }
-        return ((RefactorSequence) other).getProductions().equals(getProductions());
+        if (executedRefactorings.isEmpty()) {
+            if (((RefactorSequence) other).getProductions().equals(getProductions())) {
+                return true;
+            }
+            // calculate the executed refactorings for both objects for comparison
+            ((RefactorSequence) other).getRefactoredProgram();
+            getRefactoredProgram();
+        }
+        return ((RefactorSequence) other).getExecutedRefactorings().equals(getExecutedRefactorings());
     }
 
     @Override
     public int hashCode() {
-        return getProductions().hashCode();
+        if (executedRefactorings.isEmpty()) {
+            // calculate the executed refactorings for both objects for comparison
+            getRefactoredProgram();
+        }
+        return getExecutedRefactorings().hashCode();
     }
 
     @Override

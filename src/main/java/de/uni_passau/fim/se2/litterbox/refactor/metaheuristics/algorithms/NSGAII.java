@@ -40,7 +40,8 @@ public class NSGAII<C extends Solution<C>> implements GeneticAlgorithm<C> {
         for (int iteration = 0; iteration < maxGen; iteration++) {
             population = evolve(population);
         }
-        return fastNonDominatedSort.fastNonDominatedSort(population).get(0).stream().distinct().collect(Collectors.toList());
+        population = fastNonDominatedSort.fastNonDominatedSort(population).get(0);
+        return population.stream().distinct().collect(Collectors.toList()); // only return unique solutions
     }
 
     @VisibleForTesting
