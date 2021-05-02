@@ -37,6 +37,6 @@ public class JSONCreate {
         File f = new File("./src/test/fixtures/stmtParser/manipulatedBroadcast.json");
         JsonNode prog = mapper.readTree(f);
         Program test = ProgramParser.parseProgram("createBroadcast", prog);
-        JSONFileCreator.writeJsonFromProgram(test);
+        JSONFileCreator.writeJsonFromProgram(test, "_annotated");
     }
 }
