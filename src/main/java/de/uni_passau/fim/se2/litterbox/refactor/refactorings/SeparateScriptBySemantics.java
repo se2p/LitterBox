@@ -154,4 +154,20 @@ public class SeparateScriptBySemantics implements Refactoring, ScratchVisitor {
     private void removeScriptFromSprite() {
         scriptList.getScriptList().remove(script);
     }
+
+    @Override
+    public boolean equals(Object other) {
+        if (this == other) {
+            return true;
+        }
+        if (!(other instanceof SeparateScriptBySemantics)) {
+            return false;
+        }
+        return script.equals(((SeparateScriptBySemantics) other).script);
+    }
+
+    @Override
+    public int hashCode() {
+        return script.hashCode();
+    }
 }

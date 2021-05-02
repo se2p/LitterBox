@@ -50,4 +50,20 @@ public class ExtractScript implements Refactoring {
     private void removeScriptFromSprite() {
         scriptList.getScriptList().remove(script);
     }
+
+    @Override
+    public boolean equals(Object other) {
+        if (this == other) {
+            return true;
+        }
+        if (!(other instanceof ExtractScript)) {
+            return false;
+        }
+        return script.equals(((ExtractScript) other).script);
+    }
+
+    @Override
+    public int hashCode() {
+        return script.hashCode();
+    }
 }

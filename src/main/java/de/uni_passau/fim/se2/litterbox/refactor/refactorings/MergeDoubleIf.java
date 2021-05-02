@@ -42,8 +42,8 @@ public class MergeDoubleIf implements Refactoring {
         if (!(other instanceof MergeDoubleIf)) {
             return false;
         }
-        return this.if1.equals(((MergeDoubleIf) other).if1)
-                && this.if2.equals(((MergeDoubleIf) other).if2);
+        return if1.equals(((MergeDoubleIf) other).if1)
+                && if2.equals(((MergeDoubleIf) other).if2);
     }
 
     @Override

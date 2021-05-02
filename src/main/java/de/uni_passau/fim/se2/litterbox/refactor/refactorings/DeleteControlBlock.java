@@ -30,4 +30,20 @@ public class DeleteControlBlock implements Refactoring {
         return NAME + "(" + controlStmt.getUniqueName() + ")";
     }
 
+    @Override
+    public boolean equals(Object other) {
+        if (this == other) {
+            return true;
+        }
+        if (!(other instanceof DeleteControlBlock)) {
+            return false;
+        }
+        return controlStmt.equals(((DeleteControlBlock) other).controlStmt) ;
+    }
+
+    @Override
+    public int hashCode() {
+        return controlStmt.hashCode();
+    }
+
 }
