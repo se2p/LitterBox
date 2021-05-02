@@ -40,22 +40,28 @@ public class InitializeLooks extends AbstractIssueFinder {
                     if (stmt instanceof CallStmt) {
                         if (customBlocks.contains(((CallStmt) stmt).getIdent().getName())) {
                             addIssue(stmt, stmt.getMetadata(), IssueSeverity.MEDIUM);
+                            initializedInBlock = false;
+                            customBlocks.remove(((CallStmt) stmt).getIdent().getName());
                         }
                     }
                 });
-                initializedInBlock = false;
-                customBlocks = new ArrayList<>();
             }
+            this.currentScript = node;
+            this.currentProcedure = null;
             node.getStmtList().accept(this);
             inGreenFlag = false;
+            visitChildren(node);
         }
     }
 
     @Override
     public void visit(ProcedureDefinition node) {
         inCustomBlock = true;
+        this.currentProcedure = node;
+        this.currentScript = null;
         node.getStmtList().accept(this);
         inCustomBlock = false;
+        visitChildren(node);
     }
 
     @Override
