@@ -3,6 +3,7 @@ package de.uni_passau.fim.se2.litterbox.analytics.solutionpattern;
 import de.uni_passau.fim.se2.litterbox.analytics.*;
 import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.TypeError;
 import de.uni_passau.fim.se2.litterbox.analytics.hint.PositionEqualsCheckHintFactory;
+import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.BinaryExpression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.ComparableExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BiggerThan;
@@ -29,12 +30,50 @@ public class UsefulPositionCheck extends AbstractIssueFinder {
     public static final String NAME = "useful_position_check";
     private boolean inCondition;
 
-    boolean checkBiggerThan(BiggerThan biggerThan) {
-        return (containsCritical(biggerThan.getOperand1()) || containsCritical(biggerThan.getOperand2()));
+    @Override
+    public void visit(WaitUntil node) {
+        inCondition = true;
+        visitChildren(node);
+        inCondition = false;
     }
 
-    boolean checkLessThan(LessThan lessThan) {
-        return (containsCritical(lessThan.getOperand1()) || containsCritical(lessThan.getOperand2()));
+    @Override
+    public void visit(BiggerThan node) {
+        if (inCondition) {
+            if (containsCritical(node.getOperand1()) || containsCritical(node.getOperand2())) {
+                addIssue(node, node.getMetadata(), IssueSeverity.MEDIUM);
+            }
+        }
+    }
+
+    @Override
+    public void visit(LessThan node) {
+        if (inCondition) {
+            if (containsCritical(node.getOperand1()) || containsCritical(node.getOperand2())) {
+                addIssue(node, node.getMetadata(), IssueSeverity.MEDIUM);
+            }
+        }
+    }
+
+    @Override
+    public void visit(UntilStmt node) {
+        inCondition = true;
+        node.getBoolExpr().accept(this);
+        inCondition = false;
+    }
+
+    @Override
+    public void visit(IfThenStmt node) {
+        inCondition = true;
+        node.getBoolExpr().accept(this);
+        inCondition = false;
+    }
+
+    @Override
+    public void visit(IfElseStmt node) {
+        inCondition = true;
+        node.getBoolExpr().accept(this);
+        inCondition = false;
     }
 
     private boolean containsCritical(ComparableExpr operand) {
@@ -50,56 +89,6 @@ public class UsefulPositionCheck extends AbstractIssueFinder {
             }
         }
         return false;
-    }
-
-    @Override
-    public void visit(WaitUntil node) {
-        inCondition = true;
-        visitChildren(node);
-        inCondition = false;
-    }
-
-    @Override
-    public void visit(BiggerThan node) {
-        if (inCondition) {
-            if (checkBiggerThan(node)) {
-                addIssue(node, node.getMetadata(), IssueSeverity.MEDIUM);
-            }
-        }
-    }
-
-    @Override
-    public void visit(LessThan node) {
-        if (inCondition) {
-            if (checkLessThan(node)) {
-                addIssue(node, node.getMetadata(), IssueSeverity.MEDIUM);
-            }
-        }
-    }
-
-    @Override
-    public void visit(UntilStmt node) {
-        inCondition = true;
-        node.getBoolExpr().accept(this);
-        inCondition = false;
-        node.getStmtList().accept(this);
-    }
-
-    @Override
-    public void visit(IfThenStmt node) {
-        inCondition = true;
-        node.getBoolExpr().accept(this);
-        inCondition = false;
-        node.getThenStmts().accept(this);
-    }
-
-    @Override
-    public void visit(IfElseStmt node) {
-        inCondition = true;
-        node.getBoolExpr().accept(this);
-        inCondition = false;
-        node.getStmtList().accept(this);
-        node.getElseStmts().accept(this);
     }
 
     @Override
