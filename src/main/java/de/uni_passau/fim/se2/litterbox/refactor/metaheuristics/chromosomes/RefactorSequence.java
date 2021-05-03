@@ -130,7 +130,7 @@ public class RefactorSequence extends Solution<RefactorSequence> {
 
     @Override
     public RefactorSequence copy() {
-        return new RefactorSequence(originalProgram.deepCopy(), getMutation(), getCrossover(),
+        return new RefactorSequence(originalProgram, getMutation(), getCrossover(),
                 new ArrayList<>(productions), refactoringFinders);
     }
 
