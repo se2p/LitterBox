@@ -39,7 +39,7 @@ class DeleteControlBlockTest {
         assertNotNull(controlStmt);
 
         DeleteControlBlock refactoring = new DeleteControlBlock(controlStmt);
-        refactoring.apply(program);
+        program = refactoring.apply(program);
 
         Script refactoredScript = program.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(0);
         List<Stmt> refactoredStmtList = refactoredScript.getStmtList().getStmts();
