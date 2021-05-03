@@ -50,6 +50,7 @@ class RefactorSequenceTest {
         when(refactoring1.apply(program)).thenReturn(program);
         Refactoring refactoring2 = mock(MergeDoubleIf.class);
         when(refactoring2.apply(program)).thenReturn(program);
+        when(program.deepCopy()).thenReturn(program);
 
         List<Refactoring> possibleRefactorings = List.of(refactoring1, refactoring2);
         when(refactoringFinder.check(program)).thenReturn(possibleRefactorings);
