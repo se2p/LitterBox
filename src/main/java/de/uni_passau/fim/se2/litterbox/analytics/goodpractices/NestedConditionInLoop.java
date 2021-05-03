@@ -3,11 +3,9 @@ package de.uni_passau.fim.se2.litterbox.analytics.goodpractices;
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
-import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -16,7 +14,6 @@ import java.util.List;
 public class NestedConditionInLoop extends AbstractIssueFinder {
 
     public static final String NAME = "nested_condition_in_loop";
-    private List<ASTNode> addedStmts = new ArrayList<>();
 
     @Override
     public void visit(RepeatForeverStmt node) {
