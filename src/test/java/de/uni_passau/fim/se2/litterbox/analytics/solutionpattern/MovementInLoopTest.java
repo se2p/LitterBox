@@ -27,4 +27,12 @@ public class MovementInLoopTest implements JsonTest {
         Set<Issue> reports = movementInLoop.check(prog);
         Assertions.assertEquals(2, reports.size());
     }
+
+    @Test
+    public void testStutteringMovement() throws IOException, ParsingException {
+        Program prog = JsonTest.parseProgram("./src/test/fixtures/bugpattern/stutteringMovement.json");
+        MovementInLoop movementInLoop = new MovementInLoop();
+        Set<Issue> reports = movementInLoop.check(prog);
+        Assertions.assertEquals(0, reports.size());
+    }
 }
