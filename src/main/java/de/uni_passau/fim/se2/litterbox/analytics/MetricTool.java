@@ -40,6 +40,8 @@ public class MetricTool {
             new Cohesion<Program>(),
             new CategoryEntropy(),
             new BlockCount<Program>(),
+            new HalsteadDifficulty());
+            /*
             new ComputationalThinkingAverageScore(),
             new ComputationalThinkingScore(),
             new ComputationalThinkingScoreAbstraction(),
@@ -74,7 +76,7 @@ public class MetricTool {
             new StatementCount<Program>(),
             new VariablesBlockCount<Program>(),
             new WeightedMethodCount<Program>(),
-            new WeightedMethodCountStrict<Program>());
+            new WeightedMethodCountStrict<Program>());*/
 
     public List<String> getMetricNames() {
         return metrics.stream().map(MetricExtractor::getName).collect(Collectors.toList());
