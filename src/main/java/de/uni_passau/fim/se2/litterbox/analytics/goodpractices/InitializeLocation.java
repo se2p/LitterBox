@@ -58,7 +58,8 @@ public class InitializeLocation extends AbstractIssueFinder {
                 });
 
             }
-
+            this.currentScript = node;
+            this.currentProcedure = null;
             node.getStmtList().accept(this);
             inGreenFlag = false;
             visitChildren(node);

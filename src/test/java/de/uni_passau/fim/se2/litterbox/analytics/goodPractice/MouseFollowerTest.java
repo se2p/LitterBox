@@ -20,4 +20,12 @@ public class MouseFollowerTest implements JsonTest {
         Set<Issue> reports = mouseFollower.check(prog);
         Assertions.assertEquals(2, reports.size());
     }
+
+    @Test
+    public void testMouseFollowerIgnoreWrong() throws IOException, ParsingException {
+        Program prog = JsonTest.parseProgram("./src/test/fixtures/goodPractice/mouseFollowerOneWrong.json");
+        MouseFollower mouseFollower = new MouseFollower();
+        Set<Issue> reports = mouseFollower.check(prog);
+        Assertions.assertEquals(2, reports.size());
+    }
 }
