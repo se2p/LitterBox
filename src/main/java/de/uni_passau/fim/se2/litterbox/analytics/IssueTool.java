@@ -138,7 +138,7 @@ public class IssueTool {
         // Solution patterns
         registerSolutionFinder(new ValidTerminationCondition(), solutionFinders);
         registerSolutionFinder(new InitializedParameter(), solutionFinders);
-        registerSolutionFinder(new CheckForEventInLoop(), solutionFinders);
+        registerSolutionFinder(new EventInLoop(), solutionFinders);
         registerSolutionFinder(new CorrectBroadcast(), solutionFinders);
         registerSolutionFinder(new UsefulPositionCheck(), solutionFinders);
         registerSolutionFinder(new MovementInLoop(), solutionFinders);

@@ -20,7 +20,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
  * the event to occur is necessary. So the check must be inside a forever or until loop (and not only in a conditional
  * construct). This is the solution pattern for the bug pattern "Missing Loop Sensing".
  */
-public class CheckForEventInLoop extends AbstractIssueFinder {
+public class EventInLoop extends AbstractIssueFinder {
 
     public static final String NAME = "check_for_event_in_loop";
     private boolean insideGreenFlagClone = false;
@@ -96,13 +96,6 @@ public class CheckForEventInLoop extends AbstractIssueFinder {
 
     @Override
     public void visit(SpriteTouchingColor node) {
-        if (insideGreenFlagClone && insideLoop && inCondition) {
-            addIssue(node, node.getMetadata(), IssueSeverity.HIGH);
-        }
-    }
-
-    @Override
-    public void visit(DistanceTo node) {
         if (insideGreenFlagClone && insideLoop && inCondition) {
             addIssue(node, node.getMetadata(), IssueSeverity.HIGH);
         }
