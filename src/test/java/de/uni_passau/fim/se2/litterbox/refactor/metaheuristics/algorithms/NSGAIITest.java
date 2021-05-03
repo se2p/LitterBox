@@ -66,7 +66,7 @@ class NSGAIITest {
         List<List<RefactorSequence>> finalFronts = List.of(front1, front2);
         when(fastNonDominatedSort.fastNonDominatedSort(populationAfterNSGAII)).thenReturn(finalFronts);
 
-        GeneticAlgorithm<RefactorSequence> nsgaii = new NSGAII<>(populationGenerator, offspringGenerator, fastNonDominatedSort, crowdingDistanceSort, generations);
+        GeneticAlgorithm<RefactorSequence> nsgaii = new NSGAII<>(populationGenerator, offspringGenerator, fastNonDominatedSort, crowdingDistanceSort);
         List<RefactorSequence> nsgaiiSolution = nsgaii.findSolution();
         assertEquals(2, nsgaiiSolution.size());
         assertEquals(front1, nsgaiiSolution);
@@ -84,7 +84,7 @@ class NSGAIITest {
         CrowdingDistanceSort<RefactorSequence> crowdingDistanceSort = mock(CrowdingDistanceSort.class);
 
         when(fastNonDominatedSort.fastNonDominatedSort(emptyList)).thenReturn(List.of());
-        NSGAII<RefactorSequence> nsgaii = new NSGAII<>(populationGenerator, offspringGenerator, fastNonDominatedSort, crowdingDistanceSort, 0);
+        NSGAII<RefactorSequence> nsgaii = new NSGAII<>(populationGenerator, offspringGenerator, fastNonDominatedSort, crowdingDistanceSort);
         assertTrue(nsgaii.evolve(emptyList).isEmpty());
     }
 }

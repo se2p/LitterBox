@@ -31,7 +31,6 @@ public class RefactoringAnalyzer extends Analyzer {
     private final List<RefactoringFinder> refactoringFinders;
 
     private static final int POPULATION_SIZE = PropertyLoader.getSystemIntProperty("nsga-ii.populationSize");
-    private static final int MAX_GEN = PropertyLoader.getSystemIntProperty("nsga-ii.generations");
 
     public RefactoringAnalyzer(String input, String output, String detectors, boolean ignoreLooseBlocks, boolean delete) {
         super(input, output, delete);
@@ -100,7 +99,7 @@ public class RefactoringAnalyzer extends Analyzer {
         FastNonDominatedSort<RefactorSequence> fastNonDominatedSort = new FastNonDominatedSort<>(fitnessFunctions);
         CrowdingDistanceSort<RefactorSequence> crowdingDistanceSort = new CrowdingDistanceSort<>(fitnessFunctions);
 
-        return new NSGAII<>(populationGenerator, offspringGenerator, fastNonDominatedSort, crowdingDistanceSort, MAX_GEN);
+        return new NSGAII<>(populationGenerator, offspringGenerator, fastNonDominatedSort, crowdingDistanceSort);
     }
 
     private void generateOutput(Program program, List<Refactoring> executedRefactorings, String reportFileName) {
