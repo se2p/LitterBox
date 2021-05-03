@@ -2,12 +2,10 @@ package de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.algorithms;
 
 import com.google.common.collect.Lists;
 import de.uni_passau.fim.se2.litterbox.JsonTest;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.RefactoringFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.refactorings.BlockFinder;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.ControlStmt;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.chromosomes.*;
@@ -17,7 +15,6 @@ import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.fitness_functions
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.search_operators.*;
 import de.uni_passau.fim.se2.litterbox.refactor.refactorings.DeleteControlBlock;
 import de.uni_passau.fim.se2.litterbox.refactor.refactorings.Refactoring;
-import de.uni_passau.fim.se2.litterbox.report.ConsoleRefactorReportGenerator;
 import de.uni_passau.fim.se2.litterbox.utils.PropertyLoader;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -37,12 +34,11 @@ class NSGAIITest implements JsonTest {
     @BeforeEach
     void setupEnv() {
         PropertyLoader.setDefaultSystemProperties("nsga-ii.properties");
+        System.setProperty("generations", "2");
     }
 
     @Test
     void testNSGAIICalls() {
-        int generations = 2;
-
         RefactorSequence c1gen1 = mock(RefactorSequence.class);
         RefactorSequence c2gen1 = mock(RefactorSequence.class);
         RefactorSequence c3gen1 = mock(RefactorSequence.class);
@@ -113,7 +109,6 @@ class NSGAIITest implements JsonTest {
 
         List<RefactoringFinder> refactorings = new ArrayList<>();
         refactorings.add(new BlockFinder());
-        int maxGen = 2;
         int populationSize = 5;
 
         List<Stmt> stmtListProgram = getStmtListOfProgram(program);
@@ -127,7 +122,7 @@ class NSGAIITest implements JsonTest {
 
         List<String> expectedRefactorings = List.of(deleteControlBlock.getName());
 
-        GeneticAlgorithm<RefactorSequence> nsgaii = initializeNSGAII(program, refactorings, populationSize, maxGen);
+        GeneticAlgorithm<RefactorSequence> nsgaii = initializeNSGAII(program, refactorings, populationSize);
         List<RefactorSequence> solutions = nsgaii.findSolution();
 
         for (RefactorSequence solution : solutions) {
@@ -157,7 +152,7 @@ class NSGAIITest implements JsonTest {
         return program.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(0).getStmtList().getStmts();
     }
 
-    private static NSGAII<RefactorSequence> initializeNSGAII(Program program, List<RefactoringFinder> refactorings, int populationSize, int maxGen) {
+    private static NSGAII<RefactorSequence> initializeNSGAII(Program program, List<RefactoringFinder> refactorings, int populationSize) {
         Crossover<RefactorSequence> crossover = new RefactorSequenceCrossover();
         Mutation<RefactorSequence> mutation = new RefactorSequenceMutation(refactorings);
 
@@ -176,6 +171,6 @@ class NSGAIITest implements JsonTest {
         fitnessFunctions.add(numberOfControlBlocks);
         FastNonDominatedSort<RefactorSequence> fastNonDominatedSort = new FastNonDominatedSort<>(fitnessFunctions);
         CrowdingDistanceSort<RefactorSequence> crowdingDistanceSort = new CrowdingDistanceSort<>(fitnessFunctions);
-        return new NSGAII<>(populationGenerator, offspringGenerator, fastNonDominatedSort, crowdingDistanceSort, maxGen);
+        return new NSGAII<>(populationGenerator, offspringGenerator, fastNonDominatedSort, crowdingDistanceSort);
     }
 }
