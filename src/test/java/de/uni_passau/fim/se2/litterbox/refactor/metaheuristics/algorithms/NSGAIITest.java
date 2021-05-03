@@ -1,20 +1,38 @@
 package de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.algorithms;
 
 import com.google.common.collect.Lists;
-import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.chromosomes.FixedSizePopulationGenerator;
-import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.chromosomes.OffspringGenerator;
-import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.chromosomes.RefactorSequence;
+import de.uni_passau.fim.se2.litterbox.JsonTest;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
+import de.uni_passau.fim.se2.litterbox.analytics.RefactoringFinder;
+import de.uni_passau.fim.se2.litterbox.analytics.refactorings.BlockFinder;
+import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
+import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.model.Script;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.ControlStmt;
+import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.chromosomes.*;
+import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.fitness_functions.FitnessFunction;
+import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.fitness_functions.NumberOfControlBlocks;
+import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.fitness_functions.NumberOfHelloBlocks;
+import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.search_operators.*;
+import de.uni_passau.fim.se2.litterbox.refactor.refactorings.DeleteControlBlock;
+import de.uni_passau.fim.se2.litterbox.refactor.refactorings.Refactoring;
+import de.uni_passau.fim.se2.litterbox.report.ConsoleRefactorReportGenerator;
 import de.uni_passau.fim.se2.litterbox.utils.PropertyLoader;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
-class NSGAIITest {
+class NSGAIITest implements JsonTest {
 
     @BeforeEach
     void setupEnv() {
@@ -86,5 +104,78 @@ class NSGAIITest {
         when(fastNonDominatedSort.fastNonDominatedSort(emptyList)).thenReturn(List.of());
         NSGAII<RefactorSequence> nsgaii = new NSGAII<>(populationGenerator, offspringGenerator, fastNonDominatedSort, crowdingDistanceSort, 0);
         assertTrue(nsgaii.evolve(emptyList).isEmpty());
+    }
+
+    @Test
+    void testNSGAIIWithDummyRefactorings() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/refactoring/helloBlockHelloBlockWithinControl.json");
+        Program expectedProgram = getAST("src/test/fixtures/refactoring/helloBlock.json");
+
+        List<RefactoringFinder> refactorings = new ArrayList<>();
+        refactorings.add(new BlockFinder());
+        int maxGen = 2;
+        int populationSize = 5;
+
+        List<Stmt> stmtListProgram = getStmtListOfProgram(program);
+        List<String> stmtNamesProgram = stmtListProgram.stream().map(Stmt::getUniqueName).collect(Collectors.toList());
+        List<String> stmtNamesExpectedProgram = getStmtListOfProgram(expectedProgram).stream().map(Stmt::getUniqueName).collect(Collectors.toList());
+        ControlStmt controlStmt = (ControlStmt) stmtListProgram.get(1);
+        Refactoring deleteControlBlock = new DeleteControlBlock(controlStmt);
+
+        NumberOfHelloBlocks numberOfHelloBlocks = new NumberOfHelloBlocks();
+        NumberOfControlBlocks numberOfControlBlocks = new NumberOfControlBlocks();
+
+        List<String> expectedRefactorings = List.of(deleteControlBlock.getName());
+
+        GeneticAlgorithm<RefactorSequence> nsgaii = initializeNSGAII(program, refactorings, populationSize, maxGen);
+        List<RefactorSequence> solutions = nsgaii.findSolution();
+
+        for (RefactorSequence solution : solutions) {
+            List<String> actualRefactorings = solution.getExecutedRefactorings().stream().map(Refactoring::getName).collect(Collectors.toList());
+
+            if (actualRefactorings.size() > 0) {
+                assertEquals(expectedRefactorings, actualRefactorings);
+
+                Program refactored = solution.getRefactoredProgram();
+                List<String> stmtNamesRefactoredProgram = getStmtListOfProgram(refactored).stream().map(Stmt::getUniqueName).collect(Collectors.toList());
+                assertEquals(stmtNamesExpectedProgram, stmtNamesRefactoredProgram);
+
+                assertEquals(0, numberOfControlBlocks.getFitness(solution));
+                assertEquals(1, numberOfHelloBlocks.getFitness(solution));
+            } else {
+                Program refactored = solution.getRefactoredProgram();
+                List<String> stmtNamesRefactoredProgram = getStmtListOfProgram(refactored).stream().map(Stmt::getUniqueName).collect(Collectors.toList());
+                assertEquals(stmtNamesProgram, stmtNamesRefactoredProgram);
+
+                assertEquals(1, numberOfControlBlocks.getFitness(solution));
+                assertEquals(2, numberOfHelloBlocks.getFitness(solution));
+            }
+        }
+    }
+
+    private static List<Stmt> getStmtListOfProgram(Program program) {
+        return program.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(0).getStmtList().getStmts();
+    }
+
+    private static NSGAII<RefactorSequence> initializeNSGAII(Program program, List<RefactoringFinder> refactorings, int populationSize, int maxGen) {
+        Crossover<RefactorSequence> crossover = new RefactorSequenceCrossover();
+        Mutation<RefactorSequence> mutation = new RefactorSequenceMutation(refactorings);
+
+        ChromosomeGenerator<RefactorSequence> chromosomeGenerator = new RefactorSequenceGenerator(program.deepCopy(), mutation, crossover, refactorings);
+
+        FixedSizePopulationGenerator<RefactorSequence> populationGenerator = new FixedSizePopulationGenerator<>(chromosomeGenerator, populationSize);
+        BinaryRankTournament<RefactorSequence> binaryRankTournament = new BinaryRankTournament<>();
+        OffspringGenerator<RefactorSequence> offspringGenerator = new OffspringGenerator<>(binaryRankTournament);
+
+        List<FitnessFunction<RefactorSequence>> fitnessFunctions = new LinkedList<>();
+
+        NumberOfHelloBlocks numberOfHelloBlocks = new NumberOfHelloBlocks();
+        NumberOfControlBlocks numberOfControlBlocks = new NumberOfControlBlocks();
+
+        fitnessFunctions.add(numberOfHelloBlocks);
+        fitnessFunctions.add(numberOfControlBlocks);
+        FastNonDominatedSort<RefactorSequence> fastNonDominatedSort = new FastNonDominatedSort<>(fitnessFunctions);
+        CrowdingDistanceSort<RefactorSequence> crowdingDistanceSort = new CrowdingDistanceSort<>(fitnessFunctions);
+        return new NSGAII<>(populationGenerator, offspringGenerator, fastNonDominatedSort, crowdingDistanceSort, maxGen);
     }
 }

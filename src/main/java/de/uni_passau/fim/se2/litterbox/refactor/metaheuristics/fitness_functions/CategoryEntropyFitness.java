@@ -20,7 +20,7 @@ public class CategoryEntropyFitness implements MinimizingFitnessFunction<Refacto
         if(cache.containsKey(refactorSequence)) {
             return cache.get(refactorSequence);
         } else {
-            Program refactoredProgram = refactorSequence.applyToProgram(program);
+            Program refactoredProgram = refactorSequence.getRefactoredProgram();
 
             CategoryEntropy entropy = new CategoryEntropy();
             double fitness = entropy.calculateMetric(refactoredProgram);

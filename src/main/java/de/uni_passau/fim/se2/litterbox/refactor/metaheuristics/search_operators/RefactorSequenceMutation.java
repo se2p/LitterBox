@@ -50,7 +50,7 @@ public class RefactorSequenceMutation implements Mutation<RefactorSequence> {
             index++;
         }
 
-        return new RefactorSequence(refactorSequence.getMutation(), refactorSequence.getCrossover(), mutatedProductions, refactoringFinders);
+        return new RefactorSequence(refactorSequence.getOriginalProgram(), refactorSequence.getMutation(), refactorSequence.getCrossover(), mutatedProductions, refactoringFinders);
     }
 
     /**

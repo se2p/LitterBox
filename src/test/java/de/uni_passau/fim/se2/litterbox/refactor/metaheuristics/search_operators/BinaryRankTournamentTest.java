@@ -2,6 +2,7 @@ package de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.search_operators
 
 import com.google.common.collect.Lists;
 import de.uni_passau.fim.se2.litterbox.analytics.RefactoringFinder;
+import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.chromosomes.RefactorSequence;
 import de.uni_passau.fim.se2.litterbox.utils.PropertyLoader;
 import de.uni_passau.fim.se2.litterbox.utils.Randomness;
@@ -19,8 +20,12 @@ import static org.mockito.Mockito.mock;
 
 class BinaryRankTournamentTest {
     MockedStatic<Randomness> mockedRandomness;
+
+    Program program;
+
     Mutation<RefactorSequence> mutation;
     Crossover<RefactorSequence> crossover;
+
     List<Integer> productions;
     List<RefactoringFinder> refactoringFinders;
 
@@ -34,15 +39,18 @@ class BinaryRankTournamentTest {
     @BeforeEach
     void setupEnv() {
         PropertyLoader.setDefaultSystemProperties("nsga-ii.properties");
-
         mockedRandomness = Mockito.mockStatic(Randomness.class);
+
+        program = mock(Program.class);
+
         mutation = mock(RefactorSequenceMutation.class);
         crossover = mock(RefactorSequenceCrossover.class);
+
         productions = List.of(1, 1, 1);
         refactoringFinders = List.of();
 
-        refactorSequence1 = new RefactorSequence(mutation, crossover, productions, refactoringFinders);
-        refactorSequence2 = new RefactorSequence(mutation, crossover, productions, refactoringFinders);
+        refactorSequence1 = new RefactorSequence(program, mutation, crossover, productions, refactoringFinders);
+        refactorSequence2 = new RefactorSequence(program, mutation, crossover, productions, refactoringFinders);
 
         population = Lists.newArrayList(refactorSequence1, refactorSequence2);
 
