@@ -5,6 +5,7 @@ import com.google.common.collect.Lists;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.chromosomes.FixedSizePopulationGenerator;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.chromosomes.OffspringGenerator;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.chromosomes.Solution;
+import de.uni_passau.fim.se2.litterbox.utils.PropertyLoader;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -15,17 +16,18 @@ public class NSGAII<C extends Solution<C>> implements GeneticAlgorithm<C> {
     private final OffspringGenerator<C> offspringGenerator;
     private final FastNonDominatedSort<C> fastNonDominatedSort;
     private final CrowdingDistanceSort<C> crowdingDistanceSort;
-    private final int maxGen;
+
+    private static final int MAX_GEN = PropertyLoader.getSystemIntProperty("nsga-ii.generations");
+    private static final int MAX_SECONDS = PropertyLoader.getSystemIntProperty("nsga-ii.maxSecondsRuntime");
 
     public NSGAII(FixedSizePopulationGenerator<C> populationGenerator,
                   OffspringGenerator<C> offspringGenerator,
                   FastNonDominatedSort<C> fastNonDominatedSort,
-                  CrowdingDistanceSort<C> crowdingDistanceSort, int maxGen) {
+                  CrowdingDistanceSort<C> crowdingDistanceSort) {
         this.populationGenerator = populationGenerator;
         this.offspringGenerator = offspringGenerator;
         this.fastNonDominatedSort = fastNonDominatedSort;
         this.crowdingDistanceSort = crowdingDistanceSort;
-        this.maxGen = maxGen;
     }
 
     private List<C> generateInitialPopulation() {
@@ -37,7 +39,10 @@ public class NSGAII<C extends Solution<C>> implements GeneticAlgorithm<C> {
     @Override
     public List<C> findSolution() {
         List<C> population = generateInitialPopulation();
-        for (int iteration = 0; iteration < maxGen; iteration++) {
+        var iteration = 0;
+        long end = System.currentTimeMillis() + MAX_SECONDS * 1000L; // MAX_SECONDS seconds * 1000 ms/sec
+        while (iteration < MAX_GEN && System.currentTimeMillis() < end) {
+            iteration++;
             population = evolve(population);
         }
         return fastNonDominatedSort.fastNonDominatedSort(population).get(0).stream().distinct().collect(Collectors.toList());
