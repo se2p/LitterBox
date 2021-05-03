@@ -44,7 +44,7 @@ class FastNonDominatedSortTest {
         Program program = mock(Program.class);
         when(program.deepCopy()).thenReturn(program);
 
-        RefactorSequence solution = new RefactorSequence(mutation, crossover, new LinkedList<>(), refactoringFinders);
+        RefactorSequence solution = new RefactorSequence(program, mutation, crossover, new LinkedList<>(), refactoringFinders);
         when(function1.getFitness(solution)).thenReturn(1.0);
 
         FastNonDominatedSort<RefactorSequence> fastNonDominatedSort = new FastNonDominatedSort<>(fitnessFunctions);

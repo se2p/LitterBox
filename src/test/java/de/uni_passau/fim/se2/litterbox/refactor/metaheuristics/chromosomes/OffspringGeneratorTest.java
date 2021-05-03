@@ -1,6 +1,7 @@
 package de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.chromosomes;
 
 import de.uni_passau.fim.se2.litterbox.analytics.RefactoringFinder;
+import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.search_operators.*;
 import de.uni_passau.fim.se2.litterbox.utils.Pair;
 import de.uni_passau.fim.se2.litterbox.utils.PropertyLoader;
@@ -20,6 +21,8 @@ import static org.mockito.Mockito.when;
 
 class OffspringGeneratorTest {
     MockedStatic<Randomness> mockedRandomness;
+
+    Program program;
 
     Mutation<RefactorSequence> mutation;
     Crossover<RefactorSequence> crossover;
@@ -42,6 +45,8 @@ class OffspringGeneratorTest {
 
         mockedRandomness = Mockito.mockStatic(Randomness.class);
 
+        program = mock(Program.class);
+
         mutation = mock(RefactorSequenceMutation.class);
         crossover = mock(RefactorSequenceCrossover.class);
 
@@ -52,10 +57,10 @@ class OffspringGeneratorTest {
 
         refactoringFinders = List.of();
 
-        parent1 = new RefactorSequence(mutation, crossover, production1, refactoringFinders);
-        parent2 = new RefactorSequence(mutation, crossover, production2, refactoringFinders);
-        mutant1 = new RefactorSequence(mutation, crossover, production3, refactoringFinders);
-        mutant2 = new RefactorSequence(mutation, crossover, production4, refactoringFinders);
+        parent1 = new RefactorSequence(program, mutation, crossover, production1, refactoringFinders);
+        parent2 = new RefactorSequence(program, mutation, crossover, production2, refactoringFinders);
+        mutant1 = new RefactorSequence(program, mutation, crossover, production3, refactoringFinders);
+        mutant2 = new RefactorSequence(program, mutation, crossover, production4, refactoringFinders);
     }
 
     @AfterEach

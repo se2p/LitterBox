@@ -27,7 +27,7 @@ class NumberOfSmellsTest {
         MinimizingFitnessFunction<RefactorSequence> fitnessFunction = new NumberOfSmells(program, issueFinders, false);
         assertTrue(fitnessFunction.isMinimizing());
         RefactorSequence refactorSequence = mock(RefactorSequence.class);
-        when(refactorSequence.applyToProgram(program)).thenReturn(program);
+        when(refactorSequence.getRefactoredProgram()).thenReturn(program);
 
         assertEquals(1, fitnessFunction.getFitness(refactorSequence));
     }

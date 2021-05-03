@@ -3,7 +3,10 @@ package de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.chromosomes;
 import de.uni_passau.fim.se2.litterbox.analytics.RefactoringFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.refactorings.DoubleIfFinder;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.search_operators.*;
+import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.search_operators.Crossover;
+import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.search_operators.Mutation;
+import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.search_operators.RefactorSequenceCrossover;
+import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.search_operators.RefactorSequenceMutation;
 import de.uni_passau.fim.se2.litterbox.refactor.refactorings.MergeDoubleIf;
 import de.uni_passau.fim.se2.litterbox.refactor.refactorings.Refactoring;
 import de.uni_passau.fim.se2.litterbox.utils.PropertyLoader;
@@ -18,6 +21,7 @@ import static org.mockito.Mockito.when;
 
 class RefactorSequenceTest {
 
+    Program program;
     Mutation<RefactorSequence> mutation;
     Crossover<RefactorSequence> crossover;
     List<Integer> productions;
@@ -30,32 +34,31 @@ class RefactorSequenceTest {
     void setupEnv() {
         PropertyLoader.setDefaultSystemProperties("nsga-ii.properties");
 
+        program = mock(Program.class);
         mutation = mock(RefactorSequenceMutation.class);
         crossover = mock(RefactorSequenceCrossover.class);
         productions = List.of(0, 1, 2);
         refactoringFinder  = mock(DoubleIfFinder.class);
         refactoringFinders = List.of(refactoringFinder);
 
-        refactorSequence = new RefactorSequence(mutation, crossover, productions, refactoringFinders);
+        refactorSequence = new RefactorSequence(program, mutation, crossover, productions, refactoringFinders);
     }
 
     @Test
     void applySequenceToProgram() {
-        Program program = mock(Program.class);
         Refactoring refactoring1 = mock(MergeDoubleIf.class);
         when(refactoring1.apply(program)).thenReturn(program);
         Refactoring refactoring2 = mock(MergeDoubleIf.class);
         when(refactoring2.apply(program)).thenReturn(program);
+        when(program.deepCopy()).thenReturn(program);
 
         List<Refactoring> possibleRefactorings = List.of(refactoring1, refactoring2);
         when(refactoringFinder.check(program)).thenReturn(possibleRefactorings);
 
-        refactorSequence.applyToProgram(program);
+        refactorSequence.getRefactoredProgram();
 
         assertEquals(List.of(refactoring1, refactoring2, refactoring1), refactorSequence.getExecutedRefactorings());
     }
-
-
 
     @Test
     void copyCreatesDeepCopy() {

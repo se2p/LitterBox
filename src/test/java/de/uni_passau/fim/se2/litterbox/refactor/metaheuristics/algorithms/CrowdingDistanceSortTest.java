@@ -3,6 +3,7 @@ package de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.algorithms;
 import com.google.common.collect.Lists;
 import de.uni_passau.fim.se2.litterbox.analytics.RefactoringFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.refactorings.DoubleIfFinder;
+import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.chromosomes.RefactorSequence;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.fitness_functions.FitnessFunction;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.fitness_functions.NumberOfSmells;
@@ -31,6 +32,7 @@ class CrowdingDistanceSortTest {
     @Test
     void crowdingDistanceIsCalculatedAndSortedCorrectly() {
         Mutation<RefactorSequence> mutation = mock(RefactorSequenceMutation.class);
+        Program program = mock(Program.class);
         Crossover<RefactorSequence> crossover = mock(RefactorSequenceCrossover.class);
         List<Integer> productions = List.of(0, 0, 0);
         List<RefactoringFinder> refactoringFinders = List.of(new DoubleIfFinder());
@@ -41,12 +43,12 @@ class CrowdingDistanceSortTest {
         Map<FitnessFunction<RefactorSequence>, Double> fitnessMap1 = new HashMap<>();
         fitnessMap1.put(function1, 0.99);
         fitnessMap1.put(function2, 0.90);
-        RefactorSequence c1 = new RefactorSequence(mutation, crossover, productions, refactoringFinders);
+        RefactorSequence c1 = new RefactorSequence(program, mutation, crossover, productions, refactoringFinders);
 
         Map<FitnessFunction<RefactorSequence>, Double> fitnessMap3 = new HashMap<>();
         fitnessMap3.put(function1, 0.95);
         fitnessMap3.put(function2, 0.92);
-        RefactorSequence c3 = new RefactorSequence(mutation, crossover, productions, refactoringFinders);
+        RefactorSequence c3 = new RefactorSequence(program, mutation, crossover, productions, refactoringFinders);
 
         List<RefactorSequence> solutions = Lists.newArrayList(c1, c1, c3);
 

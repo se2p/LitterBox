@@ -11,8 +11,7 @@ import java.util.List;
 
 public abstract class AbstractRefactoringFinder implements RefactoringFinder, ScratchVisitor {
 
-    protected List<Refactoring> refactorings = new LinkedList<>();
-    protected Program program;
+    protected List<Refactoring> refactorings;
     protected boolean ignoreLooseBlocks = false;
 
     /**
@@ -24,7 +23,6 @@ public abstract class AbstractRefactoringFinder implements RefactoringFinder, Sc
     @Override
     public List<Refactoring> check(Program program) {
         Preconditions.checkNotNull(program);
-        this.program = program;
         refactorings = new LinkedList<>();
         program.accept(this);
         return Collections.unmodifiableList(refactorings);

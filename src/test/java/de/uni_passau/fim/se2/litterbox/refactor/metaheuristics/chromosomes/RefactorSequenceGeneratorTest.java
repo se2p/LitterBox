@@ -1,5 +1,6 @@
 package de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.chromosomes;
 
+import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.search_operators.Crossover;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.search_operators.Mutation;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.search_operators.RefactorSequenceCrossover;
@@ -20,11 +21,13 @@ import static org.mockito.Mockito.mock;
 
 class RefactorSequenceGeneratorTest {
     MockedStatic<Randomness> mockedRandomness;
+    Program program;
 
     @BeforeEach
     void setupEnv() {
         PropertyLoader.setDefaultSystemProperties("nsga-ii.properties");
         mockedRandomness = Mockito.mockStatic(Randomness.class);
+        program = mock(Program.class);
     }
 
     @AfterEach
@@ -45,7 +48,7 @@ class RefactorSequenceGeneratorTest {
         // include the integers 1 and 2
         mockedRandomness.when(() -> Randomness.nextInt(255)).thenReturn(1).thenReturn(2);
 
-        RefactorSequenceGenerator generator = new RefactorSequenceGenerator(mutation, crossover, List.of());
+        RefactorSequenceGenerator generator = new RefactorSequenceGenerator(program, mutation, crossover, List.of());
         RefactorSequence generated = generator.get();
 
         assertEquals(2, generated.getProductions().size());
