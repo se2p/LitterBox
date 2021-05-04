@@ -23,7 +23,6 @@ public class GroupConstants {
     public static final String CTSCORE = "ctscore";
     public static final String SMELLS = "smells";
     public static final String BUGS = "bugs";
-    public static final String SOLUTIONS = "solutions";
-    public static final String GOOD_PRACTICE= "good_practice";
+    public static final String PERFUMES = "perfumes";
     public static final String DEFAULT = "default";
 }

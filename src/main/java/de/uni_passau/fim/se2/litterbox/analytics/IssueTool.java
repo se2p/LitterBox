@@ -18,12 +18,10 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics;
 
-import de.uni_passau.fim.se2.litterbox.analytics.goodpractices.BoolExpression;
-import de.uni_passau.fim.se2.litterbox.analytics.goodpractices.ListUsage;
-import de.uni_passau.fim.se2.litterbox.analytics.goodpractices.NestedConditions;
+import de.uni_passau.fim.se2.litterbox.analytics.codeperfumes.*;
+import de.uni_passau.fim.se2.litterbox.analytics.codeperfumes.ListUsage;
+import de.uni_passau.fim.se2.litterbox.analytics.codeperfumes.NestedConditions;
 import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.*;
-import de.uni_passau.fim.se2.litterbox.analytics.goodpractices.*;
-import de.uni_passau.fim.se2.litterbox.analytics.solutionpattern.*;
 import de.uni_passau.fim.se2.litterbox.analytics.smells.*;
 
 import java.util.*;
@@ -88,8 +86,7 @@ public class IssueTool {
     private static Map<String, IssueFinder> generateAllFinders() {
         Map<String, IssueFinder> allFinders = new LinkedHashMap<>(generateBugFinders());
         allFinders.putAll(generateSmellFinders());
-        allFinders.putAll(generateSolutionFinders());
-        allFinders.putAll(generateGoodPracticeFinders());
+        allFinders.putAll(generatePerfumeFinders());
 
         return allFinders;
     }
@@ -132,45 +129,36 @@ public class IssueTool {
         return smellFinders;
     }
 
-    public static Map<String, IssueFinder> generateSolutionFinders() {
-        Map<String, IssueFinder> solutionFinders = new LinkedHashMap<>();
+    public static Map<String, IssueFinder> generatePerfumeFinders() {
+        Map<String, IssueFinder> perfumeFinders = new LinkedHashMap<>();
 
-        // Solution patterns
-        registerSolutionFinder(new ValidTerminationCondition(), solutionFinders);
-        registerSolutionFinder(new InitializedParameter(), solutionFinders);
-        registerSolutionFinder(new EventInLoop(), solutionFinders);
-        registerSolutionFinder(new CorrectBroadcast(), solutionFinders);
-        registerSolutionFinder(new UsefulPositionCheck(), solutionFinders);
-        registerSolutionFinder(new MovementInLoop(), solutionFinders);
-        registerSolutionFinder(new CallWithDefinition(), solutionFinders);
+        registerPerfumeFinder(new ValidTerminationCondition(), perfumeFinders);
+        registerPerfumeFinder(new InitializedParameter(), perfumeFinders);
+        registerPerfumeFinder(new EventInLoop(), perfumeFinders);
+        registerPerfumeFinder(new CorrectBroadcast(), perfumeFinders);
+        registerPerfumeFinder(new UsefulPositionCheck(), perfumeFinders);
+        registerPerfumeFinder(new MovementInLoop(), perfumeFinders);
+        registerPerfumeFinder(new CallWithDefinition(), perfumeFinders);
 
+        registerPerfumeFinder(new ListUsage(), perfumeFinders);
+        registerPerfumeFinder(new CustomBlockUsage(), perfumeFinders);
+        registerPerfumeFinder(new BoolExpression(), perfumeFinders);
+        registerPerfumeFinder(new InitializeLocation(), perfumeFinders);
+        registerPerfumeFinder(new Parallelization(), perfumeFinders);
+        registerPerfumeFinder(new Coordination(), perfumeFinders);
+        registerPerfumeFinder(new DirectedMotion(), perfumeFinders);
+        registerPerfumeFinder(new Collision(), perfumeFinders);
+        registerPerfumeFinder(new GlidingMotion(), perfumeFinders);
+        registerPerfumeFinder(new MouseFollower(), perfumeFinders);
+        registerPerfumeFinder(new ObjectFollower(), perfumeFinders);
+        registerPerfumeFinder(new Counter(), perfumeFinders);
+        registerPerfumeFinder(new InitializeLooks(), perfumeFinders);
+        registerPerfumeFinder(new NestedConditions(), perfumeFinders);
+        registerPerfumeFinder(new NestedLoopsPerfume(), perfumeFinders);
+        registerPerfumeFinder(new NestedConditionInLoop(), perfumeFinders);
+        registerPerfumeFinder(new SaySoundSynchronization(), perfumeFinders);
 
-        return solutionFinders;
-    }
-
-    public static Map<String, IssueFinder> generateGoodPracticeFinders() {
-        Map<String, IssueFinder> goodPracticeFinders = new LinkedHashMap<>();
-
-        // good practices
-        registerGoodPracticeFinder(new ListUsage(), goodPracticeFinders);
-        registerGoodPracticeFinder(new CustomBlockUsage(), goodPracticeFinders);
-        registerGoodPracticeFinder(new BoolExpression(), goodPracticeFinders);
-        registerGoodPracticeFinder(new InitializeLocation(), goodPracticeFinders);
-        registerGoodPracticeFinder(new Parallelization(), goodPracticeFinders);
-        registerGoodPracticeFinder(new Coordination(), goodPracticeFinders);
-        registerGoodPracticeFinder(new DirectedMotion(), goodPracticeFinders);
-        registerGoodPracticeFinder(new Collision(), goodPracticeFinders);
-        registerGoodPracticeFinder(new GlidingMotion(), goodPracticeFinders);
-        registerGoodPracticeFinder(new MouseFollower(), goodPracticeFinders);
-        registerGoodPracticeFinder(new ObjectFollower(), goodPracticeFinders);
-        registerGoodPracticeFinder(new Counter(), goodPracticeFinders);
-        registerGoodPracticeFinder(new InitializeLooks(), goodPracticeFinders);
-        registerGoodPracticeFinder(new NestedConditions(), goodPracticeFinders);
-        registerGoodPracticeFinder(new NestedLoopsPerfume(), goodPracticeFinders);
-        registerGoodPracticeFinder(new NestedConditionInLoop(), goodPracticeFinders);
-        registerGoodPracticeFinder(new SaySoundSynchronization(), goodPracticeFinders);
-
-        return goodPracticeFinders;
+        return perfumeFinders;
     }
 
     public static List<IssueFinder> getFinders(String commandString) {
@@ -186,11 +174,9 @@ public class IssueTool {
             case SMELLS:
                 finders = new ArrayList<>(generateSmellFinders().values());
                 break;
-            case SOLUTIONS:
-                finders = new ArrayList<>(generateSolutionFinders().values());
+            case PERFUMES:
+                finders = new ArrayList<>(generatePerfumeFinders().values());
                 break;
-            case GOOD_PRACTICE:
-                finders = new ArrayList<>(generateGoodPracticeFinders().values());
             case DEFAULT:
                 finders.addAll(generateAllFinders().values().stream().filter(f -> !f.getName().toLowerCase().endsWith("strict")).collect(Collectors.toList()));
                 break;
@@ -221,6 +207,10 @@ public class IssueTool {
         return Collections.unmodifiableSet(generateSmellFinders().keySet());
     }
 
+    public static Collection<String> getPerfumeFinderNames() {
+        return Collections.unmodifiableSet(generatePerfumeFinders().keySet());
+    }
+
     static void registerSmellFinder(IssueFinder finder, Map<String, IssueFinder> smellFinders) {
         if (finder.getIssueType() != IssueType.SMELL) {
             throw new RuntimeException("Cannot register IssueFinder of Type "
@@ -240,21 +230,12 @@ public class IssueTool {
         bugFinders.put(finder.getName(), finder);
     }
 
-    static void registerSolutionFinder(IssueFinder finder, Map<String, IssueFinder> solutionFinders) {
-        if (finder.getIssueType() != IssueType.SOLUTION) {
+    static void registerPerfumeFinder(IssueFinder finder, Map<String, IssueFinder> perfumeFinders) {
+        if (finder.getIssueType() != IssueType.PERFUME) {
             throw new RuntimeException("Cannot register IssueFinder of Type "
                     + finder.getIssueType()
                     + " as Solution IssueFinder");
         }
-        solutionFinders.put(finder.getName(), finder);
-    }
-
-    static void registerGoodPracticeFinder(IssueFinder finder, Map<String, IssueFinder> goodPracticeFinders) {
-        if (finder.getIssueType() != IssueType.GOOD_PRACTICE) {
-            throw new RuntimeException("Cannot register IssueFinder of Type "
-                    + finder.getIssueType()
-                    + " as Good Practice IssueFinder");
-        }
-        goodPracticeFinders.put(finder.getName(), finder);
+        perfumeFinders.put(finder.getName(), finder);
     }
 }
