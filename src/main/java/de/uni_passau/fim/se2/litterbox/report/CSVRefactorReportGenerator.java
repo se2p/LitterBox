@@ -2,6 +2,7 @@ package de.uni_passau.fim.se2.litterbox.report;
 
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.chromosomes.RefactorSequence;
 import de.uni_passau.fim.se2.litterbox.refactor.refactorings.Refactoring;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
@@ -37,12 +38,12 @@ public class CSVRefactorReportGenerator implements RefactorReportGenerator {
     }
 
     @Override
-    public void generateReport(Program program, Collection<Refactoring> executedRefactorings) throws IOException {
+    public void generateReport(Program program, RefactorSequence refactorSequence) throws IOException {
 
         List<String> row = new ArrayList<>();
         row.add(program.getIdent().getName());
         for (String refactoring : refactorings) {
-            long numIssuesForFinder = executedRefactorings
+            long numIssuesForFinder = refactorSequence.getExecutedRefactorings()
                     .stream()
                     .filter(i -> i.getName().equals(refactoring))
                     .count();

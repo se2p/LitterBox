@@ -11,7 +11,7 @@ import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.fitness_functions
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.fitness_functions.NumberOfSmells;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.search_operators.*;
 import de.uni_passau.fim.se2.litterbox.refactor.refactorings.Refactoring;
-import de.uni_passau.fim.se2.litterbox.report.ConsoleRefactorReportGenerator;
+import de.uni_passau.fim.se2.litterbox.report.*;
 import de.uni_passau.fim.se2.litterbox.utils.PropertyLoader;
 import org.apache.commons.io.FilenameUtils;
 
@@ -60,7 +60,7 @@ public class RefactoringAnalyzer extends Analyzer {
     private void generateProjectsFromParetoFront(File fileEntry, String reportName, List<RefactorSequence> solutions) {
         for (int i = 0; i < solutions.size(); i++) {
             Program refactored = solutions.get(i).getRefactoredProgram();
-            generateOutput(refactored, solutions.get(i).getExecutedRefactorings(), reportName);
+            generateOutput(refactored, solutions.get(i), reportName);
             createNewProjectFileWithCounterPostfix(fileEntry, refactored, i);
         }
     }
@@ -103,12 +103,18 @@ public class RefactoringAnalyzer extends Analyzer {
         return new NSGAII<>(populationGenerator, offspringGenerator, fastNonDominatedSort, crowdingDistanceSort, MAX_GEN);
     }
 
-    private void generateOutput(Program program, List<Refactoring> executedRefactorings, String reportFileName) {
+    private void generateOutput(Program program, RefactorSequence refactorSequence, String reportFileName) {
         try {
             if (reportFileName == null || reportFileName.isEmpty()) {
                 ConsoleRefactorReportGenerator reportGenerator = new ConsoleRefactorReportGenerator();
-                reportGenerator.generateReport(program, executedRefactorings);
-                // TODO create json and csv refactoring report
+                reportGenerator.generateReport(program, refactorSequence.getExecutedRefactorings());
+            } else if (reportFileName.endsWith(".json")) {
+                JSONRefactorReportGenerator reportGenerator = new JSONRefactorReportGenerator(reportFileName);
+                reportGenerator.generateReport(program, refactorSequence);
+            } else if (reportFileName.endsWith(".csv")) {
+                CSVRefactorReportGenerator reportGenerator = new CSVRefactorReportGenerator(reportFileName, refactorSequence.getExecutedRefactorings());
+                reportGenerator.generateReport(program, refactorSequence);
+                reportGenerator.close();
             } else {
                 throw new IllegalArgumentException("Unknown file type: " + reportFileName);
             }
