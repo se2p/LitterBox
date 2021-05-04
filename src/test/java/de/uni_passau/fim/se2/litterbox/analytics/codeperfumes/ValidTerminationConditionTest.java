@@ -15,7 +15,7 @@ public class ValidTerminationConditionTest implements JsonTest {
 
     @Test
     public void testInvalidTerminationCondition() throws IOException, ParsingException {
-        Program prog = JsonTest.parseProgram("./src/test/fixtures/solutionpattern/invalidTermCon.json");
+        Program prog = JsonTest.parseProgram("./src/test/fixtures/missingTermination/missingTermination.json");
         ValidTerminationCondition validTerminationCondition = new ValidTerminationCondition();
         Set<Issue> reports = validTerminationCondition.check(prog);
         Assertions.assertEquals(0, reports.size());

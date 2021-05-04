@@ -1,4 +1,4 @@
-package de.uni_passau.fim.se2.litterbox.analytics.codeperfumes.goodPractice;
+package de.uni_passau.fim.se2.litterbox.analytics.codeperfumes;
 
 import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
