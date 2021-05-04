@@ -46,6 +46,7 @@ class OffspringGeneratorTest {
         mockedRandomness = Mockito.mockStatic(Randomness.class);
 
         program = mock(Program.class);
+        when(program.deepCopy()).thenReturn(program);
 
         mutation = mock(RefactorSequenceMutation.class);
         crossover = mock(RefactorSequenceCrossover.class);
@@ -83,8 +84,8 @@ class OffspringGeneratorTest {
         OffspringGenerator<RefactorSequence> offspringGenerator = new OffspringGenerator<>(mockedSelection);
         List<RefactorSequence> generation1 = offspringGenerator.generateOffspring(generation0);
         assertEquals(2, generation1.size());
-        assertSame(mutant1, generation1.get(0));
-        assertSame(mutant2, generation1.get(1));
+        assertEquals(mutant1, generation1.get(0));
+        assertEquals(mutant2, generation1.get(1));
     }
 
     @Test
@@ -101,8 +102,8 @@ class OffspringGeneratorTest {
         OffspringGenerator<RefactorSequence> offspringGenerator = new OffspringGenerator<>(mockedSelection);
         List<RefactorSequence> generation1 = offspringGenerator.generateOffspring(generation0);
         assertEquals(2, generation1.size());
-        assertSame(mutant1, generation1.get(0));
-        assertSame(mutant2, generation1.get(1));
+        assertEquals(mutant1, generation1.get(0));
+        assertEquals(mutant2, generation1.get(1));
     }
 
     @Test

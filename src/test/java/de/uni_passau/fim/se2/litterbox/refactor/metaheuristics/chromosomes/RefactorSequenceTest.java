@@ -78,13 +78,23 @@ class RefactorSequenceTest {
 
     @Test
     void hashCodeChangesWithObject() {
+        when(program.deepCopy()).thenReturn(program);
         RefactorSequence copy = refactorSequence.copy();
+
+        Refactoring refactoring1 = mock(MergeDoubleIf.class);
+        when(refactoring1.apply(program)).thenReturn(program);
+        Refactoring refactoring2 = mock(MergeDoubleIf.class);
+        when(refactoring2.apply(program)).thenReturn(program);
+        when(program.deepCopy()).thenReturn(program);
+
+        List<Refactoring> possibleRefactorings = List.of(refactoring1, refactoring2);
+        when(refactoringFinder.check(program)).thenReturn(possibleRefactorings);
 
         assertEquals(refactorSequence, copy);
         assertEquals(refactorSequence.hashCode(), copy.hashCode());
 
-        copy.getProductions().add(0, 1);
-        copy.getProductions().remove(1);
+        copy.getProductions().clear();
+        copy.getExecutedRefactorings().clear();
         assertNotEquals(refactorSequence.hashCode(), copy.hashCode());
     }
 }

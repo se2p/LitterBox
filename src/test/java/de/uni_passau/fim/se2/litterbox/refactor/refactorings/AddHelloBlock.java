@@ -36,4 +36,20 @@ public class AddHelloBlock implements Refactoring {
         return NAME + "(" + script.getUniqueName() + ")";
     }
 
+    @Override
+    public boolean equals(Object other) {
+        if (this == other) {
+            return true;
+        }
+        if (!(other instanceof AddHelloBlock)) {
+            return false;
+        }
+       return stmtList == ((AddHelloBlock) other).stmtList;
+    }
+
+    @Override
+    public int hashCode() {
+        return stmtList.hashCode();
+    }
+
 }
