@@ -35,6 +35,11 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.FixedAttribute;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.ExtensionBlock;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.language.ExprLanguage;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.language.FixedLanguage;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.voice.ExprVoice;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.voice.FixedVoice;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.ColorLiteral;
@@ -836,20 +841,20 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         newLine();
     }
 
-    private class ScratchBlocksExtensionVisitor implements PenExtensionVisitor {
+    private class ScratchBlocksExtensionVisitor implements PenExtensionVisitor, TextToSpeechExtensionVisitor {
         ScratchVisitor parent;
 
         public ScratchBlocksExtensionVisitor(ScratchVisitor parent) {
             this.parent = parent;
         }
 
-        //---------------------------------------------------------------
-        // Pen blocks
-
         @Override
         public void visit(ExtensionBlock node) {
             node.accept(parent);
         }
+
+        //---------------------------------------------------------------
+        // Pen blocks
 
         @Override
         public void visit(PenClearStmt node) {
@@ -939,6 +944,68 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         public void visit(SetPenSizeTo node) {
             emitNoSpace("set pen size to ");
             node.getValue().accept(parent);
+            storeNotesForIssue(node);
+            newLine();
+        }
+
+        //---------------------------------------------------------------
+        // TextToSpeech blocks
+
+        @Override
+        public void visit(TextToSpeechStmt node) {
+            parent.visit((Stmt) node);
+        }
+
+        @Override
+        public void visit(TextToSpeechBlock node) {
+            parent.visit((ASTNode) node);
+        }
+
+        @Override
+        public void visit(FixedLanguage node) {
+
+        }
+
+        @Override
+        public void visit(ExprLanguage node) {
+            node.getExpr().accept(parent);
+        }
+
+        @Override
+        public void visit(ExprVoice node) {
+            node.getExpr().accept(parent);
+        }
+
+        @Override
+        public void visit(FixedVoice node) {
+            emitNoSpace("( ");
+            emitNoSpace(node.getType().getType().toLowerCase());
+            emitNoSpace(" v)");
+        }
+
+        @Override
+        public void visit(SetLanguage node) {
+            emitNoSpace("set language to ");
+            node.getLanguage().accept(parent);
+            storeNotesForIssue(node);
+            emitNoSpace(" :: tts");
+            newLine();
+        }
+
+        @Override
+        public void visit(SetVoice node) {
+            emitNoSpace("set voice to ");
+            node.getVoice().accept(parent);
+            storeNotesForIssue(node);
+            emitNoSpace(" :: tts");
+            newLine();
+        }
+
+        @Override
+        public void visit(SayTextToSpeech node) {
+            emitNoSpace("set voice to ");
+            node.getText().accept(parent);
+            emitNoSpace(" :: tts");
             storeNotesForIssue(node);
             newLine();
         }

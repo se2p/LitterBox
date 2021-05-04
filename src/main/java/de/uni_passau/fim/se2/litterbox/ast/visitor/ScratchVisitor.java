@@ -82,12 +82,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.DeleteClo
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopAll;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopThisScript;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.TerminationStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.texttospeech.SayTextToSpeech;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.texttospeech.SetLanguage;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.texttospeech.TextToSpeechStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.texttospeech.language.ExprLanguage;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.texttospeech.language.FixedLanguageBlock;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.texttospeech.language.Language;
 import de.uni_passau.fim.se2.litterbox.ast.model.timecomp.TimeComp;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.Color;
@@ -3614,89 +3608,5 @@ public interface ScratchVisitor {
      */
     default void visit(ExtensionBlock node) {
         visit((ASTNode) node);
-    }
-
-    /**
-     * Default implementation of visit method for {@link TextToSpeechStmt}.
-     *
-     * <p>
-     * Iterates all children of this node without performing any action.
-     * </p>
-     *
-     * @param node TextToSpeechStmt Node of which the children will
-     *             be iterated
-     */
-    default void visit(TextToSpeechStmt node) {
-        visit((Stmt) node);
-    }
-
-    /**
-     * Default implementation of visit method for {@link SayTextToSpeech}.
-     *
-     * <p>
-     * Iterates all children of this node without performing any action.
-     * </p>
-     *
-     * @param node SayTextToSpeech Node of which the children will
-     *             be iterated
-     */
-    default void visit(SayTextToSpeech node) {
-        visit((TextToSpeechStmt) node);
-    }
-
-    /**
-     * Default implementation of visit method for {@link SetLanguage}.
-     *
-     * <p>
-     * Iterates all children of this node without performing any action.
-     * </p>
-     *
-     * @param node SetLanguage Node of which the children will
-     *             be iterated
-     */
-    default void visit(SetLanguage node) {
-        visit((TextToSpeechStmt) node);
-    }
-
-    /**
-     * Default implementation of visit method for {@link Language}.
-     *
-     * <p>
-     * Iterates all children of this node without performing any action.
-     * </p>
-     *
-     * @param node Language Node of which the children will
-     *             be iterated
-     */
-    default void visit(Language node) {
-        visit((ASTNode) node);
-    }
-
-    /**
-     * Default implementation of visit method for {@link FixedLanguageBlock}.
-     *
-     * <p>
-     * Iterates all children of this node without performing any action.
-     * </p>
-     *
-     * @param node FixedLanguageBlock Node of which the children will
-     *             be iterated
-     */
-    default void visit(FixedLanguageBlock node) {
-        visit((Language) node);
-    }
-
-    /**
-     * Default implementation of visit method for {@link ExprLanguage}.
-     *
-     * <p>
-     * Iterates all children of this node without performing any action.
-     * </p>
-     *
-     * @param node ExprLanguage Node of which the children will
-     *             be iterated
-     */
-    default void visit(ExprLanguage node) {
-        visit((Language) node);
     }
 }

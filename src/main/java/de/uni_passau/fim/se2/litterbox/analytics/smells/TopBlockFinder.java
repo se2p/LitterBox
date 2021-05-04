@@ -24,6 +24,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.ExtensionBlock;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.CloneOfMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.PenWithParamMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
@@ -41,6 +42,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopThisS
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ExtensionVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.PenExtensionVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.TextToSpeechExtensionVisitor;
 
 public abstract class TopBlockFinder extends AbstractIssueFinder {
     boolean setHint = false;
@@ -753,12 +755,19 @@ public abstract class TopBlockFinder extends AbstractIssueFinder {
         }
     }
 
-    class TopBlockFinderExtensionVisitor implements PenExtensionVisitor {
+    class TopBlockFinderExtensionVisitor implements PenExtensionVisitor, TextToSpeechExtensionVisitor {
         ScratchVisitor parent;
 
         public TopBlockFinderExtensionVisitor(ScratchVisitor parent) {
             this.parent = parent;
         }
+
+        @Override
+        public void visit(ExtensionBlock node) {
+            node.accept(parent);
+        }
+
+        //PenBlocks
 
         @Override
         public void visit(PenStmt node) {
@@ -846,9 +855,43 @@ public abstract class TopBlockFinder extends AbstractIssueFinder {
             }
         }
 
+        //TextToSpeechBlocks
+
         @Override
-        public void visit(ExtensionBlock node) {
-            node.accept(parent);
+        public void visit(TextToSpeechStmt node) {
+            parent.visit((Stmt) node);
+        }
+
+        @Override
+        public void visit(TextToSpeechBlock node) {
+            parent.visit((ASTNode) node);
+        }
+
+        @Override
+        public void visit(SetLanguage node) {
+            if (setHint) {
+                addIssue(node, node.getMetadata());
+            } else {
+                visitChildren(node);
+            }
+        }
+
+        @Override
+        public void visit(SetVoice node) {
+            if (setHint) {
+                addIssue(node, node.getMetadata());
+            } else {
+                visitChildren(node);
+            }
+        }
+
+        @Override
+        public void visit(SayTextToSpeech node) {
+            if (setHint) {
+                addIssue(node, node.getMetadata());
+            } else {
+                visitChildren(node);
+            }
         }
     }
 }

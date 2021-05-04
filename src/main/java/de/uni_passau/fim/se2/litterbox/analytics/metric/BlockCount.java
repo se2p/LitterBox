@@ -32,6 +32,13 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.UnspecifiedBool
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.ExpressionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.ExtensionBlock;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.TextToSpeechBlock;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.TextToSpeechStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.language.ExprLanguage;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.language.FixedLanguage;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.voice.ExprVoice;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.voice.FixedVoice;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.BoolLiteral;
@@ -43,6 +50,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterDefinitionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.ExpressionStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.ChangeSoundEffectBy;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.SetSoundEffectTo;
@@ -56,7 +64,9 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SetDragM
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SetRotationStyle;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.AsTouchable;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.Type;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ExtensionVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.TextToSpeechExtensionVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 public class BlockCount<T extends ASTNode> implements MetricExtractor<T>, ScratchVisitor {
@@ -66,12 +76,13 @@ public class BlockCount<T extends ASTNode> implements MetricExtractor<T>, Scratc
     private boolean insideProcedure = false;
     private boolean insideParameterList = false;
     private boolean fixedBlock = false;
+    private ExtensionVisitor vis;
 
     @Override
     public double calculateMetric(T node) {
         Preconditions.checkNotNull(node);
         count = 0;
-
+        vis = new BlockCountExtensionVisitor(this);
         insideProcedure = false;
         insideParameterList = false;
         fixedBlock = false;
@@ -543,6 +554,53 @@ public class BlockCount<T extends ASTNode> implements MetricExtractor<T>, Scratc
         if (!node.getChildren().isEmpty()) {
             //only expression has to be counted since the list is an identifier
             node.getElement().accept(this);
+        }
+    }
+
+    class BlockCountExtensionVisitor implements TextToSpeechExtensionVisitor {
+        ScratchVisitor parent;
+
+        public BlockCountExtensionVisitor(ScratchVisitor parent) {
+            this.parent = parent;
+        }
+
+        @Override
+        public void visit(ExtensionBlock node) {
+            parent.visit((ASTNode) node);
+        }
+
+        //TextToSpeechBlocks
+
+        @Override
+        public void visit(TextToSpeechStmt node) {
+            parent.visit((Stmt) node);
+        }
+
+        @Override
+        public void visit(TextToSpeechBlock node) {
+            parent.visit((ASTNode) node);
+        }
+
+        @Override
+        public void visit(FixedLanguage node) {
+            //do not count
+        }
+
+        @Override
+        public void visit(ExprLanguage node) {
+            //only visit the children/the node that is inside the language block
+            visitChildren(node);
+        }
+
+        @Override
+        public void visit(FixedVoice node) {
+            //do not count
+        }
+
+        @Override
+        public void visit(ExprVoice node) {
+            //only visit the children/the node that is inside the voice block
+            visitChildren(node);
         }
     }
 }
