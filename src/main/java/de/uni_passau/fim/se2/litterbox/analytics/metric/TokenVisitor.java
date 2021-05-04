@@ -16,11 +16,14 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.uni_passau.fim.se2.litterbox.ast.visitor;
+package de.uni_passau.fim.se2.litterbox.analytics.metric;
 
 import com.google.common.collect.LinkedHashMultiset;
 import com.google.common.collect.Multiset;
-import de.uni_passau.fim.se2.litterbox.ast.model.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
+import de.uni_passau.fim.se2.litterbox.ast.model.Key;
+import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.ElementChoice;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Event;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.EventAttribute;
@@ -32,9 +35,11 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.UnspecifiedBool
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.ExpressionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumFunct;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.Round;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.Answer;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.NameNum;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.FixedAttribute;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Identifier;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.BoolLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.ColorLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
@@ -48,32 +53,31 @@ import de.uni_passau.fim.se2.litterbox.ast.model.touchable.Edge;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.MousePointer;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.SpriteTouchable;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Parameter;
+import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
-public class HalsteadVisitor implements ScratchVisitor {
+import java.util.Collections;
+import java.util.Set;
 
-    private Multiset<Class<?>> operators = LinkedHashMultiset.create();
+class TokenVisitor implements ScratchVisitor {
 
-    private Multiset<ASTNode> operands  = LinkedHashMultiset.create();
+    private Multiset<ASTNode> tokens = LinkedHashMultiset.create();
 
-    public int getTotalOperands() {
-        return operands.size();
+    public Set<ASTNode> getUniqueTokens() {
+        return Collections.unmodifiableSet(tokens.elementSet());
     }
 
-    public int getTotalOperators() {
-        return operators.size();
+    public int getTotalTokenCount() {
+        return tokens.size();
     }
 
-    public int getUniqueOperands() {
-        return operands.elementSet().size();
-    }
-
-    public int getUniqueOperators() {
-        return operators.elementSet().size();
+    public int getTokenCount(ASTNode token) {
+        return tokens.count(token);
     }
 
     @Override
     public void visit(Program program) {
-        for(ActorDefinition actor : program.getActorDefinitionList().getDefinitions()) {
+        for (ActorDefinition actor : program.getActorDefinitionList().getDefinitions()) {
             visit(actor.getScripts());
             visit(actor.getProcedureDefinitionList());
         }
@@ -81,7 +85,7 @@ public class HalsteadVisitor implements ScratchVisitor {
 
     @Override
     public void visit(ProcedureDefinition procedure) {
-        operators.add(procedure.getClass());
+        tokens.add(procedure);
         visit(procedure.getParameterDefinitionList());
         visit(procedure.getStmtList());
     }
@@ -92,83 +96,83 @@ public class HalsteadVisitor implements ScratchVisitor {
 
     @Override
     public void visit(BoolLiteral node) {
-        operands.add(node);
+        tokens.add(node);
     }
 
     @Override
     public void visit(ColorLiteral node) {
-        operands.add(node);
+        tokens.add(node);
     }
 
     @Override
     public void visit(NumberLiteral node) {
-        operands.add(node);
+        tokens.add(node);
     }
 
     @Override
     public void visit(StringLiteral node) {
-        operands.add(node);
+        tokens.add(node);
     }
 
     @Override
     public void visit(Identifier node) {
-        operands.add(node);
+        tokens.add(node);
     }
 
     @Override
     public void visit(Position node) {
-        operands.add(node);
+        tokens.add(node);
     }
 
     @Override
     public void visit(ElementChoice node) {
-        operands.add(node);
+        tokens.add(node);
     }
 
     @Override
     public void visit(Key node) {
-        operands.add(node);
+        tokens.add(node);
     }
 
     @Override
     public void visit(NumFunct node) {
         // Debatable?
-        operands.add(node);
+        tokens.add(node);
     }
 
     @Override
     public void visit(EventAttribute node) {
-        operands.add(node);
+        tokens.add(node);
     }
 
     @Override
     public void visit(FixedAttribute node) {
-        operands.add(node);
+        tokens.add(node);
     }
 
     @Override
     public void visit(TimeComp node) {
-        operands.add(node);
+        tokens.add(node);
     }
 
     @Override
     public void visit(NameNum node) {
-        operands.add(node);
+        tokens.add(node);
     }
 
     @Override
     public void visit(Edge node) {
-        operands.add(node);
+        tokens.add(node);
     }
 
     @Override
     public void visit(MousePointer node) {
-        operands.add(node);
+        tokens.add(node);
     }
 
     @Override
     public void visit(SpriteTouchable node) {
-        operands.add(node);
+        tokens.add(node);
     }
 
     //---------------------------------------------------------------
@@ -179,36 +183,47 @@ public class HalsteadVisitor implements ScratchVisitor {
     public void visit(Parameter node) {
         // The name of the parameter is stored in a string
         // it's sufficient to count that as operand
-        visitChildren(node);
+        // visitChildren(node);
+        tokens.add(node);
+    }
+
+    @Override
+    public void visit(Variable node) {
+        tokens.add(node);
+    }
+
+    @Override
+    public void visit(Answer node) {
+        tokens.add(node);
     }
 
     @Override
     public void visit(UnspecifiedBoolExpr node) {
         // An empty slot for a boolean reporter
-        operands.add(node);
+        tokens.add(node);
     }
 
     @Override
     public void visit(Round node) {
-        operators.add(node.getClass());
+        tokens.add(node);
         visitChildren(node);
     }
 
     @Override
     public void visit(Not node) {
-        operators.add(node.getClass());
+        tokens.add(node);
         visitChildren(node);
     }
 
     @Override
     public void visit(Expression node) {
         if (node instanceof SingularExpression) {
-            operands.add(node);
+            tokens.add(node);
         } else if (node instanceof UnaryExpression) {
             // Round and Not are already handled
             visitChildren(node);
         } else if (node instanceof BinaryExpression || node instanceof BoolExpr || node instanceof ComparableExpr) {
-            operators.add(node.getClass());
+            tokens.add(node);
             visitChildren(node);
         } else if (node instanceof ExpressionList) {
             visitChildren(node);
@@ -217,20 +232,20 @@ public class HalsteadVisitor implements ScratchVisitor {
 
     @Override
     public void visit(Stmt node) {
-        operators.add(node.getClass());
+        tokens.add(node);
         visitChildren(node);
     }
 
     @Override
     public void visit(CallStmt node) {
-        operators.add(node.getClass());
+        tokens.add(node);
         visit(node.getExpressions());
     }
 
     @Override
     public void visit(Event node) {
         if (!(node instanceof Never)) {
-            operators.add(node.getClass());
+            tokens.add(node);
         }
         visitChildren(node);
     }

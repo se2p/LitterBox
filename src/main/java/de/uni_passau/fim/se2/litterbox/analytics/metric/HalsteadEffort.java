@@ -41,6 +41,12 @@ public class HalsteadEffort<T extends ASTNode> implements MetricExtractor<T> {
         double n2  = halstead.getUniqueOperands();
         double totalOperands = halstead.getTotalOperands();
 
+        if (n2 == 0) {
+            // If there are no operands, there's no effort
+            // ...otherwise we'd divide by 0
+            return 0.0;
+        }
+
         double difficulty = (n1 / 2.0) * (totalOperands / n2);
 
         return volume * difficulty;

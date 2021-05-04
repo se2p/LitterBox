@@ -20,21 +20,25 @@ package de.uni_passau.fim.se2.litterbox.analytics.metric;
 
 import de.uni_passau.fim.se2.litterbox.analytics.MetricExtractor;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
-import de.uni_passau.fim.se2.litterbox.cfg.ControlFlowGraph;
-import de.uni_passau.fim.se2.litterbox.cfg.ControlFlowGraphVisitor;
 
-public class InterproceduralCyclomaticComplexity<T extends ASTNode> implements MetricExtractor<T> {
+public class TokenEntropy<T extends ASTNode> implements MetricExtractor<T> {
 
     @Override
     public double calculateMetric(T node) {
-        ControlFlowGraphVisitor visitor = new ControlFlowGraphVisitor();
+        TokenVisitor visitor = new TokenVisitor();
         node.accept(visitor);
-        ControlFlowGraph cfg =  visitor.getControlFlowGraph();
-        return cfg.getNumEdges() - cfg.getNumNodes() + 2;
+
+        double entropyValue = 0.0;
+        for(ASTNode token : visitor.getUniqueTokens()) {
+            double p = ((double)visitor.getTokenCount(token)) / (double)visitor.getTotalTokenCount();
+            double tokenEntropy = p * (Math.log(p)/Math.log(2.0));
+            entropyValue += tokenEntropy;
+        }
+        return(-entropyValue);
     }
 
     @Override
     public String getName() {
-        return "interprocedural_cyclomatic_complexity";
+        return "token_entropy";
     }
 }

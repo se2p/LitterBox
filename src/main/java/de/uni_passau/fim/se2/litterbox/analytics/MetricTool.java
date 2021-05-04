@@ -37,6 +37,9 @@ import java.util.stream.Collectors;
 public class MetricTool {
 
     private List<MetricExtractor> metrics = Arrays.asList(
+            new AvgBlockStatementCount<Program>(),
+            new AvgScriptWidthCount<>(),
+            new AvgVariableLengthCount<>(),
             new BlockCount<Program>(),
             new ComputationalThinkingAverageScore(),
             new ComputationalThinkingScore(),
@@ -61,6 +64,7 @@ public class MetricTool {
             new MostComplexScript<Program>(),
             new MotionBlockCount<Program>(),
             new MyBlocksBlockCount<Program>(),
+            new NestedBlockCount<Program>(),
             new OperatorsBlockCount<Program>(),
             new PenBlockCount<Program>(),
             new ProcedureCount<Program>(),
@@ -69,7 +73,10 @@ public class MetricTool {
             new SensingBlockCount<Program>(),
             new SoundBlockCount<Program>(),
             new SpriteCount<Program>(),
+            new StackedStatementCount<Program>(),
             new StatementCount<Program>(),
+            new TokenEntropy<Program>(),
+            new VariableCount<Program>(),
             new VariablesBlockCount<Program>(),
             new WeightedMethodCount<Program>(),
             new WeightedMethodCountStrict<Program>());

@@ -24,11 +24,17 @@ import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.ColorTouchingColor;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.SpriteTouchingColor;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Touching;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.ExtensionBlock;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.PenStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.ColorLiteral;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.pen.SetPenColorToColorStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.SetPenColorToColorStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.Edge;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.MousePointer;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.SpriteTouchable;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ExtensionVisitor;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.PenExtensionVisitor;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 /**
  * This happens when inside a block that expects a colour or sprite as parameter (e.g., set pen color to or
@@ -36,13 +42,15 @@ import de.uni_passau.fim.se2.litterbox.ast.model.touchable.SpriteTouchable;
  */
 public class ExpressionAsTouchingOrColor extends AbstractIssueFinder {
     public static final String NAME = "expression_as_touching_or_color";
+    private ExtensionVisitor vis;
+
+    public ExpressionAsTouchingOrColor() {
+        vis = new ExpressionAsTouchingOrColorExtensionVisitor(this);
+    }
 
     @Override
-    public void visit(SetPenColorToColorStmt node) {
-        if (!(node.getColorExpr() instanceof ColorLiteral)) {
-            addIssue(node, node.getMetadata(), IssueSeverity.HIGH);
-        }
-        visitChildren(node);
+    public void visit(ExtensionBlock node) {
+        node.accept(vis);
     }
 
     @Override
@@ -82,5 +90,31 @@ public class ExpressionAsTouchingOrColor extends AbstractIssueFinder {
     @Override
     public IssueType getIssueType() {
         return IssueType.BUG;
+    }
+
+    private class ExpressionAsTouchingOrColorExtensionVisitor implements PenExtensionVisitor {
+        ScratchVisitor parent;
+
+        public ExpressionAsTouchingOrColorExtensionVisitor(ScratchVisitor parent) {
+            this.parent = parent;
+        }
+
+        @Override
+        public void visit(SetPenColorToColorStmt node) {
+            if (!(node.getColorExpr() instanceof ColorLiteral)) {
+                addIssue(node, node.getMetadata(), IssueSeverity.HIGH);
+            }
+            visitChildren(node);
+        }
+
+        @Override
+        public void visit(PenStmt node) {
+            parent.visit((Stmt) node);
+        }
+
+        @Override
+        public void visit(ExtensionBlock node) {
+            node.accept(parent);
+        }
     }
 }
