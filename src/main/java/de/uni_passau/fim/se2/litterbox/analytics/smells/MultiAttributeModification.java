@@ -26,6 +26,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.SetStmtList;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.ExtensionBlock;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Identifier;
@@ -436,7 +437,13 @@ public class MultiAttributeModification extends AbstractIssueFinder {
 
         @Override
         public void visit(ExtensionBlock node) {
-            node.accept(parent);
+            if (node instanceof Stmt) {
+                parent.visit((Stmt) node);
+            } else if (node instanceof Expression) {
+                parent.visit((Expression) node);
+            } else {
+                parent.visit((ASTNode) node);
+            }
         }
     }
 }

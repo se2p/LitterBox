@@ -24,6 +24,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.Next;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.Prev;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.Random;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.WithExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
@@ -216,7 +217,13 @@ public class FixedExpressionJSONCreator implements ScratchVisitor {
 
         @Override
         public void visit(ExtensionBlock node) {
-            node.accept(parent);
+            if (node instanceof Stmt) {
+                parent.visit((Stmt) node);
+            } else if (node instanceof Expression) {
+                parent.visit((Expression) node);
+            } else {
+                parent.visit((ASTNode) node);
+            }
         }
     }
 }

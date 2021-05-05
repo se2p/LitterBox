@@ -21,13 +21,15 @@ package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.ColorTouchingColor;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.SpriteTouchingColor;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Touching;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.ExtensionBlock;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.PenStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.literals.ColorLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.SetPenColorToColorStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.literals.ColorLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.Edge;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.MousePointer;
@@ -100,6 +102,17 @@ public class ExpressionAsTouchingOrColor extends AbstractIssueFinder {
         }
 
         @Override
+        public void visit(ExtensionBlock node) {
+            if (node instanceof Stmt) {
+                parent.visit((Stmt) node);
+            } else if (node instanceof Expression) {
+                parent.visit((Expression) node);
+            } else {
+                parent.visit((ASTNode) node);
+            }
+        }
+
+        @Override
         public void visit(SetPenColorToColorStmt node) {
             if (!(node.getColorExpr() instanceof ColorLiteral)) {
                 addIssue(node, node.getMetadata(), IssueSeverity.HIGH);
@@ -110,11 +123,6 @@ public class ExpressionAsTouchingOrColor extends AbstractIssueFinder {
         @Override
         public void visit(PenStmt node) {
             parent.visit((Stmt) node);
-        }
-
-        @Override
-        public void visit(ExtensionBlock node) {
-            node.accept(parent);
         }
     }
 }

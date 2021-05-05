@@ -1111,7 +1111,13 @@ public class StmtListJSONCreator implements ScratchVisitor {
 
         @Override
         public void visit(ExtensionBlock node) {
-            node.accept(parent);
+            if (node instanceof Stmt) {
+                parent.visit((Stmt) node);
+            } else if (node instanceof Expression) {
+                parent.visit((Expression) node);
+            } else {
+                parent.visit((ASTNode) node);
+            }
         }
     }
 }
