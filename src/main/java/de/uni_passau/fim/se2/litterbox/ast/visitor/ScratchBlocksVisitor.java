@@ -19,7 +19,6 @@
 package de.uni_passau.fim.se2.litterbox.ast.visitor;
 
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
-import de.uni_passau.fim.se2.litterbox.analytics.metric.ProgramUsingPen;
 import de.uni_passau.fim.se2.litterbox.ast.model.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.Next;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.Prev;
@@ -29,7 +28,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.event.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.SingularExpression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.*;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.Timer;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.FixedAttribute;
@@ -65,7 +63,10 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.DeleteClo
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopAll;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopThisScript;
 import de.uni_passau.fim.se2.litterbox.ast.model.timecomp.TimeComp;
-import de.uni_passau.fim.se2.litterbox.ast.model.touchable.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.touchable.AsTouchable;
+import de.uni_passau.fim.se2.litterbox.ast.model.touchable.Edge;
+import de.uni_passau.fim.se2.litterbox.ast.model.touchable.MousePointer;
+import de.uni_passau.fim.se2.litterbox.ast.model.touchable.SpriteTouchable;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.BooleanType;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.NumberType;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.StringType;
@@ -78,7 +79,10 @@ import de.uni_passau.fim.se2.litterbox.jsoncreation.BlockJsonCreatorHelper;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
-import java.util.*;
+import java.util.Collection;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 
 /*
  * Documentation of syntax:
@@ -963,7 +967,82 @@ public class ScratchBlocksVisitor extends PrintVisitor {
 
         @Override
         public void visit(FixedLanguage node) {
-
+            emitNoSpace("( ");
+            switch (node.getType()) {
+                case ARABIC:
+                    emitNoSpace("Arabic");
+                    break;
+                case CHINESE:
+                    emitNoSpace("Chinese (Mandarin)");
+                    break;
+                case DANISH:
+                    emitNoSpace("Danish");
+                    break;
+                case DUTCH:
+                    emitNoSpace("Dutch");
+                    break;
+                case ENGLISH:
+                    emitNoSpace("English");
+                    break;
+                case FRENCH:
+                    emitNoSpace("French");
+                    break;
+                case GERMAN:
+                    emitNoSpace("German");
+                    break;
+                case HINDI:
+                    emitNoSpace("Hindi");
+                    break;
+                case ICELANDIC:
+                    emitNoSpace("Icelandic");
+                    break;
+                case ITALIAN:
+                    emitNoSpace("Italien");
+                    break;
+                case JAPANESE:
+                    emitNoSpace("Japanese");
+                    break;
+                case KOREAN:
+                    emitNoSpace("Korean");
+                    break;
+                case NORWEGIAN:
+                    emitNoSpace("Norwegian");
+                    break;
+                case POLISH:
+                    emitNoSpace("Polish");
+                    break;
+                case PORTUGUESE_BR:
+                    emitNoSpace("Portuguese (Brazilian)");
+                    break;
+                case PORTUGUESE:
+                    emitNoSpace("Portuguese");
+                    break;
+                case ROMANIAN:
+                    emitNoSpace("Romanian");
+                    break;
+                case RUSSIAN:
+                    emitNoSpace("Russian");
+                    break;
+                case SPANISH:
+                    emitNoSpace("Spanish");
+                    break;
+                case SPANISH_419:
+                    emitNoSpace("Spanish (Latin America)");
+                    break;
+                case SWEDISH:
+                    emitNoSpace("Swedish");
+                    break;
+                case TURKISH:
+                    emitNoSpace("Turkish");
+                    break;
+                case WELSH:
+                    emitNoSpace("Welsh");
+                    break;
+                default:
+                    //shouldn't be possible
+                    emitNoSpace(" ");
+            }
+            emitNoSpace(" v)");
         }
 
         @Override
@@ -979,7 +1058,7 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         @Override
         public void visit(FixedVoice node) {
             emitNoSpace("( ");
-            emitNoSpace(node.getType().getType().toLowerCase());
+            emitNoSpace(node.getType().getType());
             emitNoSpace(" v)");
         }
 
@@ -1002,7 +1081,7 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         }
 
         @Override
-        public void visit(SayTextToSpeech node) {
+        public void visit(Speak node) {
             emitNoSpace("set voice to ");
             node.getText().accept(parent);
             emitNoSpace(" :: tts");

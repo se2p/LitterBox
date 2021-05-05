@@ -64,6 +64,13 @@ public class BlockCountTest implements JsonTest {
     }
 
     @Test
+    public void testTTS() throws IOException, ParsingException {
+        Program fixedExpressions = JsonTest.parseProgram("./src/test/fixtures/stmtParser/allTextToSpeech.json");
+        BlockCount parameterName = new BlockCount();
+        Assertions.assertEquals(3, parameterName.calculateMetric(fixedExpressions));
+    }
+
+    @Test
     public void testOnlyVariable() throws IOException, ParsingException {
         Program onlyVariable = JsonTest.parseProgram("./src/test/fixtures/onlyVariable.json");
         BlockCount parameterName = new BlockCount();

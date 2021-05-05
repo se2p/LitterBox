@@ -19,7 +19,6 @@
 package de.uni_passau.fim.se2.litterbox.analytics.smells;
 
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
-import de.uni_passau.fim.se2.litterbox.analytics.metric.ProgramUsingPen;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.ExtensionBlock;
@@ -886,7 +885,7 @@ public abstract class TopBlockFinder extends AbstractIssueFinder {
         }
 
         @Override
-        public void visit(SayTextToSpeech node) {
+        public void visit(Speak node) {
             if (setHint) {
                 addIssue(node, node.getMetadata());
             } else {

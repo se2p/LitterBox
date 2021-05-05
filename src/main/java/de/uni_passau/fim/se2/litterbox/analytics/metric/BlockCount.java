@@ -557,6 +557,11 @@ public class BlockCount<T extends ASTNode> implements MetricExtractor<T>, Scratc
         }
     }
 
+    @Override
+    public void visit(ExtensionBlock node) {
+        node.accept(vis);
+    }
+
     class BlockCountExtensionVisitor implements TextToSpeechExtensionVisitor {
         ScratchVisitor parent;
 

@@ -313,4 +313,9 @@ public class Constants {
     public static final String BOOLEAN_DEFAULT = "false";
     public static final String STRING_NUMBER_DEFAULT = "";
     public static final String NUMBER_DEFAULT = "1";
+    public static final String WORDS_KEY = "WORDS";
+    public static final String VOICE_INPUT_KEY = "VOICE";
+    public static final String VOICE_FIELDS_KEY = "voices";
+    public static final String LANGUAGE_INPUT_KEY = "LANGUAGE";
+    public static final String LANGUAGE_FIELDS_KEY = "languages";
 }

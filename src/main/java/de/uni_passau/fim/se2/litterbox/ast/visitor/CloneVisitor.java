@@ -72,7 +72,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.DeleteClone;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopAll;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopThisScript;
-import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.SayTextToSpeech;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.Speak;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.SetLanguage;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.language.ExprLanguage;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.language.FixedLanguage;
@@ -3582,7 +3582,7 @@ public class CloneVisitor {
     }
 
     /**
-     * Default implementation of visit method for {@link SayTextToSpeech}.
+     * Default implementation of visit method for {@link Speak}.
      *
      * <p>
      * Creates a deep copy of this node.
@@ -3592,8 +3592,8 @@ public class CloneVisitor {
      *             be iterated
      * @return the copy of the visited node
      */
-    public ASTNode visit(SayTextToSpeech node) {
-        return new SayTextToSpeech(apply(node.getText()), apply(node.getMetadata()));
+    public ASTNode visit(Speak node) {
+        return new Speak(apply(node.getText()), apply(node.getMetadata()));
     }
 
     /**
