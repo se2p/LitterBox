@@ -12,8 +12,7 @@ import org.junit.jupiter.api.Test;
 import java.io.File;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -84,6 +83,6 @@ public class MergeDoubleEventTest {
         when(greenFlag.getUniqueName()).thenReturn("Event");
 
         MergeDoubleEvent refactoring = new MergeDoubleEvent(greenFlag, greenFlag);
-        assertEquals("merge_double_event(Event, Event)", refactoring.toString());
+        assertTrue(refactoring.toString().startsWith("merge_double_event on scripts:"));
     }
 }

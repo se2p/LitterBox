@@ -8,8 +8,7 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 import java.io.File;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -61,6 +60,6 @@ public class SeparateScriptTest {
         when(script.getUniqueName()).thenReturn("Script");
 
         SeparateScriptBySemantics refactoring = new SeparateScriptBySemantics(script);
-        assertEquals("separate_script_by_semantics(Script)", refactoring.toString());
+        assertTrue(refactoring.toString().startsWith("separate_script_by_semantics on script:"));
     }
 }

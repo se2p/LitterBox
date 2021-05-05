@@ -2,7 +2,11 @@ package de.uni_passau.fim.se2.litterbox.refactor.refactorings;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Event;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
+
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 
 public class MergeDoubleEvent implements Refactoring {
 
@@ -39,7 +43,13 @@ public class MergeDoubleEvent implements Refactoring {
 
     @Override
     public String toString() {
-        return NAME + "(" + event1.getUniqueName() + ", " + event2.getUniqueName() + ")";
+        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor();
+        script1.accept(visitor);
+        String script1 = visitor.getScratchBlocks();
+        visitor = new ScratchBlocksVisitor();
+        script2.accept(visitor);
+        String script2 = visitor.getScratchBlocks();
+        return NAME + " on scripts:\n" + script1 + "\n\n" + script2 + "\n";
     }
 
     @Override

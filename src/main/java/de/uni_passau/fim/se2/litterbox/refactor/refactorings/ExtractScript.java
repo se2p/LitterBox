@@ -1,7 +1,11 @@
 package de.uni_passau.fim.se2.litterbox.refactor.refactorings;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.*;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
+
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 
 public class ExtractScript implements Refactoring {
 
@@ -30,7 +34,11 @@ public class ExtractScript implements Refactoring {
 
     @Override
     public String toString() {
-        return NAME + "(" + script.getUniqueName() + ")";
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        PrintStream ps = new PrintStream(os);
+        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(ps);
+        script.accept(visitor);
+        return NAME + " on script:\n" + os + "\n";
     }
 
     private void getStage(Program program) {

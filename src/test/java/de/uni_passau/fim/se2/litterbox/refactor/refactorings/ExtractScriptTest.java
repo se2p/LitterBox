@@ -61,6 +61,6 @@ public class ExtractScriptTest {
         when(script.getUniqueName()).thenReturn("Script");
 
         ExtractScript refactoring = new ExtractScript(script);
-        assertEquals("extract_script(Script)", refactoring.toString());
+        assertTrue(refactoring.toString().startsWith("extract_script on script:"));
     }
 }

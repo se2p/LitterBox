@@ -117,13 +117,13 @@ public class RefactoringAnalyzer extends Analyzer {
 
     private void generateOutput(Program program, List<Refactoring> executedRefactorings, String reportFileName) {
         try {
-            if (reportFileName == null || reportFileName.isEmpty()) {
+            //if (reportFileName == null || reportFileName.isEmpty()) {
                 ConsoleRefactorReportGenerator reportGenerator = new ConsoleRefactorReportGenerator();
                 reportGenerator.generateReport(program, executedRefactorings);
                 // TODO create json and csv refactoring report
-            } else {
-                throw new IllegalArgumentException("Unknown file type: " + reportFileName);
-            }
+          //  } else {
+                //throw new IllegalArgumentException("Unknown file type: " + reportFileName);
+          //  }
         } catch (IOException e) {
             log.warning(e.getMessage());
         }
