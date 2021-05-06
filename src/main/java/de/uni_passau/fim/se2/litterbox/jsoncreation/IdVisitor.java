@@ -22,6 +22,9 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.ExtensionBlock;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.language.FixedLanguage;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.voice.FixedVoice;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.CloneOfMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.PenWithParamMetadata;
@@ -40,12 +43,13 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopThisS
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ExtensionVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.PenExtensionVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.TextToSpeechExtensionVisitor;
 
 public class IdVisitor implements ScratchVisitor {
     private String id;
     private ExtensionVisitor vis;
 
-    public IdVisitor(){
+    public IdVisitor() {
         vis = new IdExtensionVisitor(this);
     }
 
@@ -415,12 +419,25 @@ public class IdVisitor implements ScratchVisitor {
         id = ((NonDataBlockMetadata) node.getMetadata()).getBlockId();
     }
 
-    private class IdExtensionVisitor implements PenExtensionVisitor {
+    private class IdExtensionVisitor implements PenExtensionVisitor, TextToSpeechExtensionVisitor {
         ScratchVisitor parent;
 
         public IdExtensionVisitor(ScratchVisitor parent) {
             this.parent = parent;
         }
+
+        @Override
+        public void visit(ExtensionBlock node) {
+            if (node instanceof Stmt) {
+                parent.visit((Stmt) node);
+            } else if (node instanceof Expression) {
+                parent.visit((Expression) node);
+            } else {
+                parent.visit((ASTNode) node);
+            }
+        }
+
+        //Pen
 
         @Override
         public void visit(PenStmt node) {
@@ -474,15 +491,41 @@ public class IdVisitor implements ScratchVisitor {
             id = ((NonDataBlockMetadata) meta.getPenBlockMetadata()).getBlockId();
         }
 
+        //Text to Speech
+
         @Override
-        public void visit(ExtensionBlock node) {
-            if (node instanceof Stmt) {
-                parent.visit((Stmt) node);
-            } else if (node instanceof Expression) {
-                parent.visit((Expression) node);
-            } else {
-                parent.visit((ASTNode) node);
-            }
+        public void visit(TextToSpeechStmt node) {
+            parent.visit((Stmt) node);
+        }
+
+        @Override
+        public void visit(TextToSpeechBlock node) {
+            parent.visit((ASTNode) node);
+        }
+
+        @Override
+        public void visit(FixedLanguage node) {
+            id = ((NonDataBlockMetadata) node.getMetadata()).getBlockId();
+        }
+
+        @Override
+        public void visit(FixedVoice node) {
+            id = ((NonDataBlockMetadata) node.getMetadata()).getBlockId();
+        }
+
+        @Override
+        public void visit(SetLanguage node) {
+            id = ((NonDataBlockMetadata) node.getMetadata()).getBlockId();
+        }
+
+        @Override
+        public void visit(SetVoice node) {
+            id = ((NonDataBlockMetadata) node.getMetadata()).getBlockId();
+        }
+
+        @Override
+        public void visit(Speak node) {
+            id = ((NonDataBlockMetadata) node.getMetadata()).getBlockId();
         }
     }
 }

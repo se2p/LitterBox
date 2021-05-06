@@ -18,8 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.jsoncreation;
 
-import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
-import de.uni_passau.fim.se2.litterbox.analytics.smells.MultiAttributeModification;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.*;
@@ -30,6 +28,11 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.ExtensionBlock;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.language.ExprLanguage;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.language.FixedLanguage;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.voice.ExprVoice;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.voice.FixedVoice;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Identifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
@@ -60,6 +63,7 @@ import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.SymbolTable;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ExtensionVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.PenExtensionVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.TextToSpeechExtensionVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import java.util.ArrayList;
@@ -472,55 +476,55 @@ public class StmtListJSONCreator implements ScratchVisitor {
     @Override
     public void visit(WaitSeconds node) {
         NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
-        createSingeNumExprBlock(metadata, DURATION_KEY, node.getSeconds(), POSITIVE_NUM_PRIMITIVE);
+        createSingleNumExprBlock(metadata, DURATION_KEY, node.getSeconds(), POSITIVE_NUM_PRIMITIVE);
     }
 
     @Override
     public void visit(MoveSteps node) {
         NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
-        createSingeNumExprBlock(metadata, STEPS_KEY, node.getSteps(), MATH_NUM_PRIMITIVE);
+        createSingleNumExprBlock(metadata, STEPS_KEY, node.getSteps(), MATH_NUM_PRIMITIVE);
     }
 
     @Override
     public void visit(TurnLeft node) {
         NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
-        createSingeNumExprBlock(metadata, DEGREES_KEY, node.getDegrees(), MATH_NUM_PRIMITIVE);
+        createSingleNumExprBlock(metadata, DEGREES_KEY, node.getDegrees(), MATH_NUM_PRIMITIVE);
     }
 
     @Override
     public void visit(TurnRight node) {
         NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
-        createSingeNumExprBlock(metadata, DEGREES_KEY, node.getDegrees(), MATH_NUM_PRIMITIVE);
+        createSingleNumExprBlock(metadata, DEGREES_KEY, node.getDegrees(), MATH_NUM_PRIMITIVE);
     }
 
     @Override
     public void visit(PointInDirection node) {
         NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
-        createSingeNumExprBlock(metadata, DIRECTION_KEY_CAP, node.getDirection(), MATH_NUM_PRIMITIVE);
+        createSingleNumExprBlock(metadata, DIRECTION_KEY_CAP, node.getDirection(), MATH_NUM_PRIMITIVE);
     }
 
     @Override
     public void visit(ChangeXBy node) {
         NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
-        createSingeNumExprBlock(metadata, DX_KEY, node.getNum(), MATH_NUM_PRIMITIVE);
+        createSingleNumExprBlock(metadata, DX_KEY, node.getNum(), MATH_NUM_PRIMITIVE);
     }
 
     @Override
     public void visit(ChangeYBy node) {
         NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
-        createSingeNumExprBlock(metadata, DY_KEY, node.getNum(), MATH_NUM_PRIMITIVE);
+        createSingleNumExprBlock(metadata, DY_KEY, node.getNum(), MATH_NUM_PRIMITIVE);
     }
 
     @Override
     public void visit(SetYTo node) {
         NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
-        createSingeNumExprBlock(metadata, Y, node.getNum(), MATH_NUM_PRIMITIVE);
+        createSingleNumExprBlock(metadata, Y, node.getNum(), MATH_NUM_PRIMITIVE);
     }
 
     @Override
     public void visit(SetXTo node) {
         NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
-        createSingeNumExprBlock(metadata, X, node.getNum(), MATH_NUM_PRIMITIVE);
+        createSingleNumExprBlock(metadata, X, node.getNum(), MATH_NUM_PRIMITIVE);
     }
 
     @Override
@@ -555,13 +559,13 @@ public class StmtListJSONCreator implements ScratchVisitor {
     @Override
     public void visit(ChangeSizeBy node) {
         NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
-        createSingeNumExprBlock(metadata, CHANGE_KEY, node.getNum(), MATH_NUM_PRIMITIVE);
+        createSingleNumExprBlock(metadata, CHANGE_KEY, node.getNum(), MATH_NUM_PRIMITIVE);
     }
 
     @Override
     public void visit(SetSizeTo node) {
         NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
-        createSingeNumExprBlock(metadata, SIZE_KEY_CAP, node.getPercent(), MATH_NUM_PRIMITIVE);
+        createSingleNumExprBlock(metadata, SIZE_KEY_CAP, node.getPercent(), MATH_NUM_PRIMITIVE);
     }
 
     @Override
@@ -591,19 +595,19 @@ public class StmtListJSONCreator implements ScratchVisitor {
     @Override
     public void visit(Say node) {
         NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
-        createSingeStringExprBlock(metadata, MESSAGE_KEY, node.getString());
+        createSingleStringExprBlock(metadata, MESSAGE_KEY, node.getString());
     }
 
     @Override
     public void visit(Think node) {
         NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
-        createSingeStringExprBlock(metadata, MESSAGE_KEY, node.getThought());
+        createSingleStringExprBlock(metadata, MESSAGE_KEY, node.getThought());
     }
 
     @Override
     public void visit(AskAndWait node) {
         NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
-        createSingeStringExprBlock(metadata, QUESTION_KEY, node.getQuestion());
+        createSingleStringExprBlock(metadata, QUESTION_KEY, node.getQuestion());
     }
 
     @Override
@@ -849,13 +853,13 @@ public class StmtListJSONCreator implements ScratchVisitor {
 
     @Override
     public void visit(SetVolumeTo node) {
-        createSingeNumExprBlock((NonDataBlockMetadata) node.getMetadata(), VOLUME_KEY_CAPS, node.getVolumeValue(),
+        createSingleNumExprBlock((NonDataBlockMetadata) node.getMetadata(), VOLUME_KEY_CAPS, node.getVolumeValue(),
                 MATH_NUM_PRIMITIVE);
     }
 
     @Override
     public void visit(ChangeVolumeBy node) {
-        createSingeNumExprBlock((NonDataBlockMetadata) node.getMetadata(), VOLUME_KEY_CAPS, node.getVolumeValue(),
+        createSingleNumExprBlock((NonDataBlockMetadata) node.getMetadata(), VOLUME_KEY_CAPS, node.getVolumeValue(),
                 MATH_NUM_PRIMITIVE);
     }
 
@@ -977,8 +981,8 @@ public class StmtListJSONCreator implements ScratchVisitor {
         return insideBlockId;
     }
 
-    private void createSingeNumExprBlock(NonDataBlockMetadata metadata, String inputKey, NumExpr numExpr,
-                                         int primitive) {
+    private void createSingleNumExprBlock(NonDataBlockMetadata metadata, String inputKey, NumExpr numExpr,
+                                          int primitive) {
         List<String> inputs = new ArrayList<>();
 
         inputs.add(createNumExpr(metadata, inputKey, numExpr, primitive));
@@ -989,7 +993,7 @@ public class StmtListJSONCreator implements ScratchVisitor {
         previousBlockId = metadata.getBlockId();
     }
 
-    private void createSingeStringExprBlock(NonDataBlockMetadata metadata, String inputKey, StringExpr stringExpr) {
+    private void createSingleStringExprBlock(NonDataBlockMetadata metadata, String inputKey, StringExpr stringExpr) {
         List<String> inputs = new ArrayList<>();
 
         inputs.add(createExpr(metadata, inputKey, stringExpr));
@@ -1022,11 +1026,22 @@ public class StmtListJSONCreator implements ScratchVisitor {
         }
     }
 
-    private class StmtListJSONExtensionVisitor implements PenExtensionVisitor {
+    private class StmtListJSONExtensionVisitor implements PenExtensionVisitor, TextToSpeechExtensionVisitor {
         ScratchVisitor parent;
 
         public StmtListJSONExtensionVisitor(ScratchVisitor parent) {
             this.parent = parent;
+        }
+
+        @Override
+        public void visit(ExtensionBlock node) {
+            if (node instanceof Stmt) {
+                parent.visit((Stmt) node);
+            } else if (node instanceof Expression) {
+                parent.visit((Expression) node);
+            } else {
+                parent.visit((ASTNode) node);
+            }
         }
 
         @Override
@@ -1036,13 +1051,13 @@ public class StmtListJSONCreator implements ScratchVisitor {
 
         @Override
         public void visit(SetPenSizeTo node) {
-            createSingeNumExprBlock((NonDataBlockMetadata) node.getMetadata(), SIZE_KEY_CAP, node.getValue(),
+            createSingleNumExprBlock((NonDataBlockMetadata) node.getMetadata(), SIZE_KEY_CAP, node.getValue(),
                     MATH_NUM_PRIMITIVE);
         }
 
         @Override
         public void visit(ChangePenSizeBy node) {
-            createSingeNumExprBlock((NonDataBlockMetadata) node.getMetadata(), SIZE_KEY_CAP, node.getValue(),
+            createSingleNumExprBlock((NonDataBlockMetadata) node.getMetadata(), SIZE_KEY_CAP, node.getValue(),
                     MATH_NUM_PRIMITIVE);
         }
 
@@ -1110,14 +1125,50 @@ public class StmtListJSONCreator implements ScratchVisitor {
         }
 
         @Override
-        public void visit(ExtensionBlock node) {
-            if (node instanceof Stmt) {
-                parent.visit((Stmt) node);
-            } else if (node instanceof Expression) {
-                parent.visit((Expression) node);
+        public void visit(TextToSpeechStmt node) {
+            parent.visit((Stmt) node);
+        }
+
+        @Override
+        public void visit(TextToSpeechBlock node) {
+            parent.visit((ASTNode) node);
+        }
+
+        @Override
+        public void visit(SetLanguage node) {
+            NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
+            List<String> inputs = new ArrayList<>();
+            if (node.getLanguage() instanceof FixedLanguage) {
+                IdJsonStringTuple tuple = fixedExprCreator.createFixedExpressionJSON(metadata.getBlockId(), node.getLanguage());
+                finishedJSONStrings.add(tuple.getJsonString());
+                inputs.add(createReferenceInput(LANGUAGE_INPUT_KEY, INPUT_SAME_BLOCK_SHADOW, tuple.getId(), false));
             } else {
-                parent.visit((ASTNode) node);
+                inputs.add(createExpr(metadata, LANGUAGE_INPUT_KEY, ((ExprLanguage) node.getLanguage()).getExpr()));
             }
+            finishedJSONStrings.add(createBlockWithoutMutationString(metadata, getNextId(),
+                    previousBlockId, createInputs(inputs), EMPTY_VALUE));
+            previousBlockId = metadata.getBlockId();
+        }
+
+        @Override
+        public void visit(SetVoice node) {
+            NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
+            List<String> inputs = new ArrayList<>();
+            if (node.getVoice() instanceof FixedVoice) {
+                IdJsonStringTuple tuple = fixedExprCreator.createFixedExpressionJSON(metadata.getBlockId(), node.getVoice());
+                finishedJSONStrings.add(tuple.getJsonString());
+                inputs.add(createReferenceInput(VOICE_INPUT_KEY, INPUT_SAME_BLOCK_SHADOW, tuple.getId(), false));
+            } else {
+                inputs.add(createExpr(metadata, VOICE_INPUT_KEY, ((ExprVoice) node.getVoice()).getExpr()));
+            }
+            finishedJSONStrings.add(createBlockWithoutMutationString(metadata, getNextId(),
+                    previousBlockId, createInputs(inputs), EMPTY_VALUE));
+            previousBlockId = metadata.getBlockId();
+        }
+
+        @Override
+        public void visit(Speak node) {
+            createSingleStringExprBlock((NonDataBlockMetadata) node.getMetadata(), WORDS_KEY, node.getText());
         }
     }
 }

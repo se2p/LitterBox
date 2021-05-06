@@ -30,6 +30,10 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.ExtensionBlock;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.TextToSpeechBlock;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.TextToSpeechStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.language.FixedLanguage;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.voice.FixedVoice;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
@@ -47,6 +51,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.touchable.SpriteTouchable;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ExtensionVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.PenExtensionVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.TextToSpeechExtensionVisitor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -181,12 +186,25 @@ public class FixedExpressionJSONCreator implements ScratchVisitor {
                 previousBlockId, EMPTY_VALUE, fieldsString));
     }
 
-    private class FixedExpressionJSONCreatorExtensionVisitor implements PenExtensionVisitor {
+    private class FixedExpressionJSONCreatorExtensionVisitor implements PenExtensionVisitor, TextToSpeechExtensionVisitor {
         ScratchVisitor parent;
 
         public FixedExpressionJSONCreatorExtensionVisitor(ScratchVisitor parent) {
             this.parent = parent;
         }
+
+        @Override
+        public void visit(ExtensionBlock node) {
+            if (node instanceof Stmt) {
+                parent.visit((Stmt) node);
+            } else if (node instanceof Expression) {
+                parent.visit((Expression) node);
+            } else {
+                parent.visit((ASTNode) node);
+            }
+        }
+
+        //pen
 
         @Override
         public void visit(PenStmt node) {
@@ -215,15 +233,26 @@ public class FixedExpressionJSONCreator implements ScratchVisitor {
             }
         }
 
+        //Text to Speech
+
         @Override
-        public void visit(ExtensionBlock node) {
-            if (node instanceof Stmt) {
-                parent.visit((Stmt) node);
-            } else if (node instanceof Expression) {
-                parent.visit((Expression) node);
-            } else {
-                parent.visit((ASTNode) node);
-            }
+        public void visit(TextToSpeechStmt node) {
+            parent.visit((Stmt) node);
+        }
+
+        @Override
+        public void visit(TextToSpeechBlock node) {
+            parent.visit((ASTNode) node);
+        }
+
+        @Override
+        public void visit(FixedLanguage node) {
+            createFieldsExpression((NonDataBlockMetadata) node.getMetadata(), node.getType().getType());
+        }
+
+        @Override
+        public void visit(FixedVoice node) {
+            createFieldsExpression((NonDataBlockMetadata) node.getMetadata(), node.getType().getType());
         }
     }
 }

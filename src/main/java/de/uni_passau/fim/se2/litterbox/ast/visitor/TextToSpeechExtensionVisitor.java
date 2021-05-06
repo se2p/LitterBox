@@ -61,7 +61,7 @@ public interface TextToSpeechExtensionVisitor extends ExtensionVisitor {
      * @param node FixedLanguage of which the children will be iterated
      */
     default void visit(FixedLanguage node) {
-        visit((Voice) node);
+        visit((Language) node);
     }
 
     /**
@@ -74,7 +74,7 @@ public interface TextToSpeechExtensionVisitor extends ExtensionVisitor {
      * @param node ExprLanguage of which the children will be iterated
      */
     default void visit(ExprLanguage node) {
-        visit((Voice) node);
+        visit((Language) node);
     }
 
     /**

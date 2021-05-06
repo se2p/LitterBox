@@ -134,7 +134,6 @@ public class DotVisitor implements ScratchVisitor{
             }
         }
 
-
         @Override
         public void visit(PenUpStmt node) {
             if (node != null) {
