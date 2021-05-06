@@ -218,25 +218,25 @@ public class ExpressionJSONCreator implements ScratchVisitor {
 
     @Override
     public void visit(Costume node) {
-        createFieldsExpression((NonDataBlockMetadata) node.getMetadata(), node.getType().getTypeName());
+        createFieldsExpression((NonDataBlockMetadata) node.getMetadata(), NUMBER_NAME_KEY, node.getType().getTypeName());
     }
 
     @Override
     public void visit(Backdrop node) {
-        createFieldsExpression((NonDataBlockMetadata) node.getMetadata(), node.getType().getTypeName());
+        createFieldsExpression((NonDataBlockMetadata) node.getMetadata(), NUMBER_NAME_KEY, node.getType().getTypeName());
     }
 
     @Override
     public void visit(Current node) {
-        createFieldsExpression((NonDataBlockMetadata) node.getMetadata(), node.getTimeComp().getTypeName());
+        createFieldsExpression((NonDataBlockMetadata) node.getMetadata(), CURRENT_YEAR_FIELD, node.getTimeComp().getTypeName());
     }
 
-    private void createFieldsExpression(NonDataBlockMetadata metadata, String fieldValue) {
+    private void createFieldsExpression(NonDataBlockMetadata metadata, String fieldName, String fieldValue) {
         if (topExpressionId == null) {
             topExpressionId = metadata.getBlockId();
         }
-        FieldsMetadata fieldsMeta = metadata.getFields().getList().get(0);
-        String fieldsString = createFields(fieldsMeta.getFieldsName(), fieldValue, null);
+
+        String fieldsString = createFields(fieldName, fieldValue, null);
         finishedJSONStrings.add(createBlockWithoutMutationString(metadata, null,
                 previousBlockId, EMPTY_VALUE, fieldsString));
         previousBlockId = metadata.getBlockId();
@@ -262,9 +262,9 @@ public class ExpressionJSONCreator implements ScratchVisitor {
             Preconditions.checkArgument(qual.getSecond() instanceof ScratchList, "Qualified has to hold Scratch List");
             ScratchList list = (ScratchList) qual.getSecond();
             String id = symbolTable.getListIdentifierFromActorAndName(qual.getFirst().getName(), list.getName().getName());
-            return createFields(fieldsMeta.getFieldsName(), list.getName().getName(), id);
-        }else{
-            return createFields(fieldsMeta.getFieldsName(), fieldsMeta.getFieldsValue(), fieldsMeta.getFieldsReference());
+            return createFields(LIST_KEY, list.getName().getName(), id);
+        } else {
+            return createFields(LIST_KEY, fieldsMeta.getFieldsValue(), fieldsMeta.getFieldsReference());
         }
     }
 
@@ -472,7 +472,6 @@ public class ExpressionJSONCreator implements ScratchVisitor {
             inputs.add(createReferenceInput(OBJECT_KEY, INPUT_SAME_BLOCK_SHADOW, tuple.getId(), false));
         }
 
-        FieldsMetadata fieldsMeta = metadata.getFields().getList().get(0);
         String fieldValue;
         Attribute attr = node.getAttribute();
         if (attr instanceof AttributeFromFixed) {
@@ -480,7 +479,7 @@ public class ExpressionJSONCreator implements ScratchVisitor {
         } else {
             fieldValue = ((AttributeFromVariable) attr).getVariable().getName().getName();
         }
-        String fieldsString = createFields(fieldsMeta.getFieldsName(), fieldValue, null);
+        String fieldsString = createFields(PROPERTY_FIELDS_KEY, fieldValue, null);
 
         finishedJSONStrings.add(createBlockWithoutMutationString(metadata, null,
                 previousBlockId, createInputs(inputs), fieldsString));
@@ -496,8 +495,7 @@ public class ExpressionJSONCreator implements ScratchVisitor {
         List<String> inputs = new ArrayList<>();
         inputs.add(createExpr(metadata, node.getOperand2(), NUM_KEY, true));
 
-        FieldsMetadata fieldsMeta = metadata.getFields().getList().get(0);
-        String fieldsString = createFields(fieldsMeta.getFieldsName(), node.getOperand1().getTypeName(), null);
+        String fieldsString = createFields(OPERATOR_KEY, node.getOperand1().getTypeName(), null);
 
         finishedJSONStrings.add(createBlockWithoutMutationString(metadata, null,
                 previousBlockId, createInputs(inputs), fieldsString));
@@ -626,7 +624,7 @@ public class ExpressionJSONCreator implements ScratchVisitor {
 
     @Override
     public void visit(Parameter node) {
-        createFieldsExpression((NonDataBlockMetadata) node.getMetadata(), node.getName().getName());
+        createFieldsExpression((NonDataBlockMetadata) node.getMetadata(), VALUE_KEY, node.getName().getName());
     }
 
     private void createListBlockWithExpr(NonDataBlockMetadata metadata, Expression expr, String inputName,
