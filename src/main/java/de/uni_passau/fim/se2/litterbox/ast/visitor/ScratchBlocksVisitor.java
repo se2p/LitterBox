@@ -121,6 +121,7 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         super(null);
         byteStream = new ByteArrayOutputStream();
         printStream = new PrintStream(byteStream);
+        vis = new ScratchBlocksExtensionVisitor(this);
     }
 
     public ScratchBlocksVisitor(PrintStream stream) {
