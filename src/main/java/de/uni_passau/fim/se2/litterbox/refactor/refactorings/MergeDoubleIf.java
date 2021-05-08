@@ -1,42 +1,66 @@
 package de.uni_passau.fim.se2.litterbox.refactor.refactorings;
 
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-public class MergeDoubleIf implements Refactoring {
+import java.util.ArrayList;
+import java.util.List;
+
+public class MergeDoubleIf extends CloneVisitor implements Refactoring {
 
     private final IfThenStmt if1;
     private final IfThenStmt if2;
-    private final String if1Initial;
-    private final String if2Initial;
-    private String refactoredScript;
+    private final IfThenStmt replacement;
+    private final String if1String;
+    private final String if2String;
+    private final String replacementString;
     private static final String NAME = "merge_double_if";
 
     public MergeDoubleIf(IfThenStmt if1, IfThenStmt if2) {
         this.if1 = Preconditions.checkNotNull(if1);
         this.if2 = Preconditions.checkNotNull(if2);
+
+        CloneVisitor cloneVisitor = new CloneVisitor();
+        List<Stmt> mergedListOfStmts = cloneVisitor.apply(if1.getThenStmts()).getStmts();
+        mergedListOfStmts.addAll(cloneVisitor.apply(if2.getThenStmts()).getStmts());
+        StmtList mergedThenStmts = new StmtList(mergedListOfStmts);
+        replacement = new IfThenStmt(cloneVisitor.apply(if1.getBoolExpr()), mergedThenStmts, cloneVisitor.apply(if1.getMetadata()));
+
         ScratchBlocksVisitor visitor = new ScratchBlocksVisitor();
         if1.accept(visitor);
-        if1Initial = visitor.getScratchBlocks();
+        if1String = visitor.getScratchBlocks();
         visitor = new ScratchBlocksVisitor();
         if2.accept(visitor);
-        if2Initial = visitor.getScratchBlocks();
+        if2String = visitor.getScratchBlocks();
+        visitor = new ScratchBlocksVisitor();
+        replacement.accept(visitor);
+        replacementString = visitor.getScratchBlocks();
     }
 
     @Override
     public Program apply(Program program) {
-        if1.getThenStmts().getStmts().addAll(if2.getThenStmts().getStmts());
-        StmtList stmtList = (StmtList) if2.getParentNode();
-        stmtList.getStmts().remove(if2);
+        return (Program) program.accept(this);
+    }
 
-        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor();
-        if1.getParentNode().accept(visitor);
-        refactoredScript = visitor.getScratchBlocks();
-
-        return program;
+    @Override
+    public ASTNode visit(StmtList node) {
+        List<Stmt> statements = new ArrayList<>();
+        for (Stmt stmt : node.getStmts()) {
+            if (stmt != if2) {
+                if (stmt == if1) {
+                    statements.add(replacement);
+                } else {
+                    statements.add(apply(stmt));
+                }
+            }
+        }
+        return new StmtList(statements);
     }
 
     @Override
@@ -46,7 +70,7 @@ public class MergeDoubleIf implements Refactoring {
 
     @Override
     public String toString() {
-        return NAME + "\nMerged ifs:\n\n" + if1Initial + "\n" + if2Initial + "\n\nRefactored stmt list:\n\n" + refactoredScript;
+        return NAME + "\nReplaced ifs:\n\n" + if1String + "\n" + if2String + "\nReplacement:\n\n" + replacementString;
     }
 
     @Override
