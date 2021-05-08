@@ -4,19 +4,20 @@ import de.uni_passau.fim.se2.litterbox.ast.model.*;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
-
 public class ExtractScript implements Refactoring {
 
     private ActorDefinition stage;
     private final Script script;
     private final ScriptList scriptList;
+    private final String scriptString;
     private static final String NAME = "extract_script";
 
     public ExtractScript(Script script) {
         this.script = Preconditions.checkNotNull(script);
         this.scriptList = (ScriptList) script.getParentNode();
+        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor();
+        script.accept(visitor);
+        this.scriptString = visitor.getScratchBlocks();
     }
 
     @Override
@@ -34,14 +35,12 @@ public class ExtractScript implements Refactoring {
 
     @Override
     public String toString() {
-        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor();
-        script.accept(visitor);
-        return NAME + " on script:\n" + visitor.getScratchBlocks() + "\n";
+        return NAME + " on script:\n" + scriptString + "\n";
     }
 
     private void getStage(Program program) {
         ActorDefinitionList actors = program.getActorDefinitionList();
-        for (ActorDefinition actor: actors.getDefinitions()) {
+        for (ActorDefinition actor : actors.getDefinitions()) {
             if (actor.isStage()) {
                 stage = actor;
                 break;
