@@ -34,11 +34,9 @@ public class ExtractScript implements Refactoring {
 
     @Override
     public String toString() {
-        ByteArrayOutputStream os = new ByteArrayOutputStream();
-        PrintStream ps = new PrintStream(os);
-        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(ps);
+        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor();
         script.accept(visitor);
-        return NAME + " on script:\n" + os + "\n";
+        return NAME + " on script:\n" + visitor.getScratchBlocks() + "\n";
     }
 
     private void getStage(Program program) {
