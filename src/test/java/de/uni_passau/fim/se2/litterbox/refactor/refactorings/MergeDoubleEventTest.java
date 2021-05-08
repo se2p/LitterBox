@@ -22,22 +22,19 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class MergeDoubleEventTest implements JsonTest {
 
     private Program program;
-    private Event event0;
-    private Event event1;
-    private Event event2;
     private Refactoring refactoring;
 
     @BeforeEach
     public void setUp() throws ParsingException, IOException {
         program = getAST("src/test/testprojects/merge-double-event.sb3");
-        event0 = program.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(0).getEvent();
-        event1 = program.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(1).getEvent();
-        event2 = program.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(2).getEvent();
+        List<Script> scriptList = program.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList();
+        Event event1 = scriptList.get(1).getEvent();
+        Event event2 = scriptList.get(2).getEvent();
         refactoring = new MergeDoubleEvent(event1, event2);
     }
 
     @Test
-    public void testASTStructure() throws ParsingException, IOException {
+    public void testASTStructure() {
         Program refactored = refactoring.apply(program);
         CloneVisitor visitor = new CloneVisitor();
         Program clone = visitor.apply(refactored);
