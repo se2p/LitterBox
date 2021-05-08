@@ -1,39 +1,71 @@
 package de.uni_passau.fim.se2.litterbox.refactor.refactorings;
 
-import de.uni_passau.fim.se2.litterbox.ast.model.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.model.Script;
+import de.uni_passau.fim.se2.litterbox.ast.model.ScriptList;
+import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Event;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
+import java.util.ArrayList;
+import java.util.List;
 
-public class MergeDoubleEvent implements Refactoring {
+public class MergeDoubleEvent extends CloneVisitor implements Refactoring {
 
     private final Event event1;
     private final Event event2;
     private final Script script1;
     private final Script script2;
-    private final ScriptList scriptList;
+    private final Script replacement;
     private static final String NAME = "merge_double_event";
+    private final String script1String;
+    private final String script2String;
+    private final String replacementString;
 
     public MergeDoubleEvent(Event event1, Event event2) {
         this.event1 = Preconditions.checkNotNull(event1);
         this.event2 = Preconditions.checkNotNull(event2);
         this.script1 = (Script) event1.getParentNode();
         this.script2 = (Script) event2.getParentNode();
-        this.scriptList = (ScriptList) script2.getParentNode();
+
+        CloneVisitor cloneVisitor = new CloneVisitor();
+        List<Stmt> mergedStmts = cloneVisitor.apply(script1.getStmtList()).getStmts();
+        mergedStmts.addAll(cloneVisitor.apply(script2.getStmtList()).getStmts());
+        Event event = cloneVisitor.apply(event1);
+        replacement = new Script(event, new StmtList(mergedStmts));
+
+        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor();
+        script1.accept(visitor);
+        script1String = visitor.getScratchBlocks();
+        visitor = new ScratchBlocksVisitor();
+        script2.accept(visitor);
+        script2String = visitor.getScratchBlocks();
+        visitor = new ScratchBlocksVisitor();
+        replacement.accept(visitor);
+        replacementString = visitor.getScratchBlocks();
     }
 
     @Override
     public Program apply(Program program) {
-        StmtList stmts;
-        if (script2.getStmtList().hasStatements()) {
-            stmts = script2.getStmtList();
-            script1.getStmtList().getStmts().addAll(stmts.getStmts());
+        return (Program) program.accept(this);
+    }
+
+    @Override
+    public ScriptList visit(ScriptList scriptList) {
+        List<Script> scripts = new ArrayList<>();
+        for (Script script : scriptList.getScriptList()) {
+            if (script != script2) {
+                if (script == script1) {
+                    scripts.add(replacement);
+                } else {
+                    scripts.add(apply(script));
+                }
+            }
         }
-        scriptList.getScriptList().remove(script2);
-        return program;
+        return new ScriptList(scripts);
     }
 
     @Override
@@ -43,13 +75,7 @@ public class MergeDoubleEvent implements Refactoring {
 
     @Override
     public String toString() {
-        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor();
-        script1.accept(visitor);
-        String script1 = visitor.getScratchBlocks();
-        visitor = new ScratchBlocksVisitor();
-        script2.accept(visitor);
-        String script2 = visitor.getScratchBlocks();
-        return NAME + " on scripts:\n" + script1 + "\n\n" + script2 + "\n";
+        return NAME + "\nReplaced scripts:\n\n" + script1String + "\n" + script2String + "\nReplacement:\n\n" + replacementString;
     }
 
     @Override
