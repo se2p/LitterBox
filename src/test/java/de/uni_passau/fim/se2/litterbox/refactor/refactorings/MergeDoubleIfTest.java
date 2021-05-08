@@ -103,15 +103,7 @@ class MergeDoubleIfTest implements JsonTest {
     }
 
     @Test
-    void toStringTest() throws ParsingException, IOException {
-        Program program = getAST("src/test/testprojects/simple-ifs.sb3");
-
-        Script script = program.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(0);
-        List<Stmt> stmtList = script.getStmtList().getStmts();
-        RepeatForeverStmt forever = (RepeatForeverStmt) stmtList.get(0);
-        IfThenStmt if1 = (IfThenStmt) forever.getStmtList().getStmts().get(1);
-        IfThenStmt if2 = (IfThenStmt) forever.getStmtList().getStmts().get(2);
-        MergeDoubleIf refactoring = new MergeDoubleIf(if1, if2);
+    void toStringTest() {
         assertThat(refactoring.toString()).isEqualTo("merge_double_if\n"
                 + "Replaced ifs:\n"
                 + "\n"
