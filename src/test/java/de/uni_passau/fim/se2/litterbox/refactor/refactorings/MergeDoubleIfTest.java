@@ -8,6 +8,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
 import de.uni_passau.fim.se2.litterbox.ast.parser.Scratch3Parser;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -148,5 +149,13 @@ class MergeDoubleIfTest implements JsonTest {
         assertEquals(refactoring.hashCode(), refactoring.hashCode());
         assertEquals(refactoring.hashCode(), equalRefactoring.hashCode());
         assertNotEquals(refactoring.hashCode(), nonEqualRefactoring.hashCode());
+    }
+
+    @Test
+    public void testASTStructure() {
+        Program refactored = refactoring.apply(program);
+        CloneVisitor visitor = new CloneVisitor();
+        Program clone = visitor.apply(refactored);
+        assertEquals(refactored, clone);
     }
 }
