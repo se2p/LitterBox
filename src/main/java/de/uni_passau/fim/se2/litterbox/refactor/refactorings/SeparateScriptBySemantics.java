@@ -1,6 +1,9 @@
 package de.uni_passau.fim.se2.litterbox.refactor.refactorings;
 
-import de.uni_passau.fim.se2.litterbox.ast.model.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.model.Script;
+import de.uni_passau.fim.se2.litterbox.ast.model.ScriptList;
+import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Event;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.ActorLookStmt;
@@ -24,18 +27,16 @@ public class SeparateScriptBySemantics implements Refactoring, ScratchVisitor {
     private final Script script;
     private final ScriptList scriptList;
     private final Event event;
-
     private final List<String> refactoredScriptList = new ArrayList<>();
 
     private static final String NAME = "separate_script_by_semantics";
 
     public SeparateScriptBySemantics(Script script) {
-        super();
         this.script = Preconditions.checkNotNull(script);
-        this.scriptList = (ScriptList) script.getParentNode();
-        this.event = script.getEvent();
         this.lastStmt = null;
         this.stmtList = new ArrayList<>();
+        this.scriptList = (ScriptList) script.getParentNode();
+        this.event = script.getEvent();
     }
 
     @Override
@@ -45,10 +46,11 @@ public class SeparateScriptBySemantics implements Refactoring, ScratchVisitor {
             refactoredScript.getStmtList().getStmts().addAll(stmtList);
         }
         if (refactoredScript != null) {
-           removeScriptFromSprite();
+            removeScriptFromSprite();
         }
-        return program;
+        return program.deepCopy();
     }
+
 
     @Override
     public void visit(Stmt stmt) {
