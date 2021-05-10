@@ -41,4 +41,22 @@ public class MergeDoubleEvent implements Refactoring {
     public String toString() {
         return NAME + "(" + event1.getUniqueName() + ", " + event2.getUniqueName() + ")";
     }
+
+    @Override
+    public boolean equals(Object other) {
+        if (this == other) {
+            return true;
+        }
+        if (!(other instanceof MergeDoubleEvent)) {
+            return false;
+        }
+
+        return event1.equals(((MergeDoubleEvent) other).event1)
+                && event2.equals(((MergeDoubleEvent) other).event2);
+    }
+
+    @Override
+    public int hashCode() {
+        return event1.hashCode() + event2.hashCode();
+    }
 }

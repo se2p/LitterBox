@@ -29,17 +29,29 @@ public class RefactoringAnalyzer extends Analyzer {
     private final List<IssueFinder> issueFinders;
     private final boolean ignoreLooseBlocks;
     private final List<RefactoringFinder> refactoringFinders;
+    private final String refactoredPath;
 
     private static final int POPULATION_SIZE = PropertyLoader.getSystemIntProperty("nsga-ii.populationSize");
-    private static final int MAX_GEN = PropertyLoader.getSystemIntProperty("nsga-ii.generations");
 
-    public RefactoringAnalyzer(String input, String output, String detectors, boolean ignoreLooseBlocks, boolean delete) {
+    public RefactoringAnalyzer(String input, String output, String refactoredPath, String detectors, boolean ignoreLooseBlocks, boolean delete) {
         super(input, output, delete);
+        this.refactoredPath = refactoredPath;
+        checkPaths();
         issueFinders = IssueTool.getFinders(detectors);
         detectorNames = issueFinders.stream().map(IssueFinder::getName).collect(Collectors.toList());
         refactoringFinders = RefactoringTool.getRefactoringFinders();
         this.ignoreLooseBlocks = ignoreLooseBlocks;
     }
+
+    private void checkPaths() {
+        if (output == null || output.isEmpty() || !FilenameUtils.getExtension(output).equals("csv")) {
+            throw new IllegalArgumentException("Invalid output path (should be a csv file): " + output);
+        }
+        if (refactoredPath != null && refactoredPath.isEmpty()) {
+            throw new IllegalArgumentException("Invalid path for directory of refactored projects: " + refactoredPath);
+        }
+    }
+
 
     @Override
     void check(File fileEntry, String reportName) {
@@ -100,7 +112,7 @@ public class RefactoringAnalyzer extends Analyzer {
         FastNonDominatedSort<RefactorSequence> fastNonDominatedSort = new FastNonDominatedSort<>(fitnessFunctions);
         CrowdingDistanceSort<RefactorSequence> crowdingDistanceSort = new CrowdingDistanceSort<>(fitnessFunctions);
 
-        return new NSGAII<>(populationGenerator, offspringGenerator, fastNonDominatedSort, crowdingDistanceSort, MAX_GEN);
+        return new NSGAII<>(populationGenerator, offspringGenerator, fastNonDominatedSort, crowdingDistanceSort);
     }
 
     private void generateOutput(Program program, RefactorSequence refactorSequence, String reportFileName) {
@@ -121,11 +133,12 @@ public class RefactoringAnalyzer extends Analyzer {
     }
 
     private void createNewProjectFileWithCounterPostfix(File fileEntry, Program program, int counterPostfix) {
+        String outputPath = refactoredPath == null ? fileEntry.getParent() : refactoredPath;
         try {
             if ((FilenameUtils.getExtension(fileEntry.getPath())).equalsIgnoreCase("json")) {
-                JSONFileCreator.writeJsonFromProgram(program, fileEntry.getParent(), "_refactored_" + counterPostfix);
+                JSONFileCreator.writeJsonFromProgram(program, outputPath, "_refactored_" + counterPostfix);
             } else {
-                JSONFileCreator.writeSb3FromProgram(program, fileEntry.getParent(), fileEntry, "_refactored_" + counterPostfix);
+                JSONFileCreator.writeSb3FromProgram(program, outputPath, fileEntry, "_refactored_" + counterPostfix);
             }
         } catch (IOException e) {
             log.warning(e.getMessage());

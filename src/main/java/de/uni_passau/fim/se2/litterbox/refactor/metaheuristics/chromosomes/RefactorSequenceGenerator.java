@@ -12,7 +12,7 @@ import java.util.List;
 
 public class RefactorSequenceGenerator implements ChromosomeGenerator<RefactorSequence> {
 
-    private static final int MAX_PRODUCTIONS_PER_SOLUTION = PropertyLoader.getSystemIntProperty("nsga-ii.maxProductionsPerSolution");
+    private static final int INITIAL_PRODUCTIONS_PER_SOLUTION = PropertyLoader.getSystemIntProperty("nsga-ii.initialProductionsPerSolution");
     private static final int MAX_PRODUCTION_NUMBER = PropertyLoader.getSystemIntProperty("nsga-ii.maxProductionNumber");
 
     private final Mutation<RefactorSequence> mutation;
@@ -36,7 +36,7 @@ public class RefactorSequenceGenerator implements ChromosomeGenerator<RefactorSe
     @Override
     public RefactorSequence get() {
         List<Integer> productions = new LinkedList<>();
-        int numberOfProductions = 1 + Randomness.nextInt(MAX_PRODUCTIONS_PER_SOLUTION);
+        int numberOfProductions = 1 + Randomness.nextInt(INITIAL_PRODUCTIONS_PER_SOLUTION);
         for (int i = 0; i < numberOfProductions; i++) {
             productions.add(Randomness.nextInt(MAX_PRODUCTION_NUMBER));
         }

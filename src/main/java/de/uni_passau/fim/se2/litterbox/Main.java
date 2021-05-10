@@ -26,8 +26,6 @@ import de.uni_passau.fim.se2.litterbox.utils.PropertyLoader;
 import org.apache.commons.cli.*;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.Properties;
 
 import static de.uni_passau.fim.se2.litterbox.utils.GroupConstants.*;
 
@@ -61,6 +59,8 @@ public class Main {
     private static final String OUTPUT_SHORT = "o";
     private static final String ANNOTATE = "annotate";
     private static final String ANNOTATE_SHORT = "a";
+    private static final String REFACTORED_PROJECTS = "refactored-projects";
+    private static final String REFACTORED_PROJECTS_SHORT = "e"; // rEfactored
     private static final String DETECTORS = "detectors";
     private static final String DETECTORS_SHORT = "d";
     private static final String IGNORE_LOOSE_BLOCKS = "ignoreloose";
@@ -106,6 +106,7 @@ public class Main {
                         + "(file will be created if not existing yet, path has to exist)");
         options.addOption(ANNOTATE_SHORT, ANNOTATE, true, "path where scratch files with hints to bug patterns should"
                 + " be created");
+        options.addOption(REFACTORED_PROJECTS_SHORT, REFACTORED_PROJECTS, true, "path where the refactored scratch projects should be created");
 
         // Parameters
         options.addOption(DETECTORS_SHORT, DETECTORS, true, "name all detectors you want to run separated by ',' "
@@ -130,6 +131,7 @@ public class Main {
         System.out.println("Example for Leila intermediate language output: "
                 + "java -jar Litterbox-1.0.jar --leila -o ~/path/to/folder/or/file/for/the/output --path "
                 + "~/path/to/json/project/or/folder/with/projects \n");
+        System.out.println("Example for refactoring: java -jar Litterbox-1.0.jar -r -p ~/path/to/project -e /path/to/output/folder");
 
         System.out.println("Detectors:");
         IssueTranslator messages = IssueTranslator.getInstance();
@@ -150,12 +152,13 @@ public class Main {
         }
 
         String outputPath = cmd.getOptionValue(OUTPUT);
+        String refactoredPath = cmd.getOptionValue(REFACTORED_PROJECTS);
         String input = cmd.getOptionValue(PROJECTPATH);
         String detectors = cmd.getOptionValue(DETECTORS, DEFAULT);
         boolean ignoreLooseBlocks = cmd.hasOption(IGNORE_LOOSE_BLOCKS);
         boolean delete = cmd.hasOption(DELETE_PROJECT_AFTERWARDS);
 
-        RefactoringAnalyzer refactorer = new RefactoringAnalyzer(input, outputPath, detectors, ignoreLooseBlocks, delete);
+        RefactoringAnalyzer refactorer = new RefactoringAnalyzer(input, outputPath, refactoredPath, detectors, ignoreLooseBlocks, delete);
 
         runAnalysis(cmd, refactorer);
     }
