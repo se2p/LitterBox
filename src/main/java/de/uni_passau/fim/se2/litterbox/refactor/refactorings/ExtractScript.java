@@ -25,7 +25,7 @@ public class ExtractScript implements Refactoring {
         getStage(program);
         addScriptToStage();
         removeScriptFromSprite();
-        return program;
+        return program.deepCopy();
     }
 
     @Override
