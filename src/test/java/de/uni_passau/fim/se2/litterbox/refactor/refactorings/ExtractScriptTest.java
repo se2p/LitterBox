@@ -1,36 +1,40 @@
 package de.uni_passau.fim.se2.litterbox.refactor.refactorings;
 
-import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.model.Script;
-import de.uni_passau.fim.se2.litterbox.ast.model.ScriptList;
-import de.uni_passau.fim.se2.litterbox.ast.parser.Scratch3Parser;
+import de.uni_passau.fim.se2.litterbox.JsonTest;
+import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
+import de.uni_passau.fim.se2.litterbox.ast.model.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.event.GreenFlag;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoBlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class ExtractScriptTest {
+public class ExtractScriptTest implements JsonTest {
+
+    private Program program;
+    private Script script;
+    private Refactoring refactoring;
+
+    @BeforeEach
+    public void setUp() throws ParsingException, IOException {
+        program = getAST("src/test/fixtures/refactoring/testdummyrefactorings.json");
+        ActorDefinition actorDefinition = program.getActorDefinitionList().getDefinitions().get(1);
+        script = actorDefinition.getScripts().getScriptList().get(0);
+        refactoring = new ExtractScript(script);
+    }
 
     @Test
     public void applyTest() {
-        File testFile = new File("src/test/testprojects/testdummyrefactorings.sb3");
-        Program program = null;
-        try {
-            program = new Scratch3Parser().parseFile(testFile);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        assertNotNull(program);
-
-        ActorDefinition actor = program.getActorDefinitionList().getDefinitions().get(1);
-        Script script = actor.getScripts().getScriptList().get(0);
         ExtractScript refactoring = new ExtractScript(script);
         Program refactored = refactoring.apply(program);
 
@@ -61,6 +65,36 @@ public class ExtractScriptTest {
         when(script.getUniqueName()).thenReturn("Script");
 
         ExtractScript refactoring = new ExtractScript(script);
-        assertEquals("extract_script(Script)", refactoring.toString());
+        assertTrue(refactoring.toString().startsWith("extract_script on script:"));
+    }
+
+    @Test
+    void testEqualOfRefactorings() {
+        Script nonEqual = new Script(new GreenFlag(new NoBlockMetadata()), new StmtList(new ArrayList<>()));
+        Refactoring equalRefactoring = new ExtractScript(script);
+        Refactoring nonEqualRefactoring = new ExtractScript(nonEqual);
+
+        assertEquals(refactoring, refactoring);
+        assertEquals(refactoring, equalRefactoring);
+        assertNotEquals(refactoring, nonEqualRefactoring);
+    }
+
+    @Test
+    void testHashCodeOfRefactorings() {
+        Script nonEqual = new Script(new GreenFlag(new NoBlockMetadata()), new StmtList(new ArrayList<>()));
+        Refactoring equalRefactoring = new ExtractScript(script);
+        Refactoring nonEqualRefactoring = new ExtractScript(nonEqual);
+
+        assertEquals(refactoring.hashCode(), refactoring.hashCode());
+        assertEquals(refactoring.hashCode(), equalRefactoring.hashCode());
+        assertNotEquals(refactoring.hashCode(), nonEqualRefactoring.hashCode());
+    }
+
+    @Test
+    public void testASTStructure() {
+        Program refactored = refactoring.apply(program);
+        CloneVisitor visitor = new CloneVisitor();
+        Program clone = visitor.apply(refactored);
+        assertEquals(refactored, clone);
     }
 }

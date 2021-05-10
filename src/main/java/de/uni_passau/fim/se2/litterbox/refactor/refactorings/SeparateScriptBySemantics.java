@@ -26,14 +26,16 @@ public class SeparateScriptBySemantics implements Refactoring, ScratchVisitor {
     private final Script script;
     private final ScriptList scriptList;
     private final Event event;
+    private final List<Script> refactoredScriptList = new ArrayList<>();
+
     private static final String NAME = "separate_script_by_semantics";
 
     public SeparateScriptBySemantics(Script script) {
         this.script = Preconditions.checkNotNull(script);
-        this.scriptList = (ScriptList) script.getParentNode();
-        this.event = script.getEvent();
         this.lastStmt = null;
         this.stmtList = new ArrayList<>();
+        this.scriptList = (ScriptList) script.getParentNode();
+        this.event = script.getEvent();
     }
 
     @Override
@@ -43,10 +45,11 @@ public class SeparateScriptBySemantics implements Refactoring, ScratchVisitor {
             refactoredScript.getStmtList().getStmts().addAll(stmtList);
         }
         if (refactoredScript != null) {
-           removeScriptFromSprite();
+            removeScriptFromSprite();
         }
-        return program;
+        return program.deepCopy();
     }
+
 
     @Override
     public void visit(Stmt stmt) {
@@ -141,12 +144,19 @@ public class SeparateScriptBySemantics implements Refactoring, ScratchVisitor {
 
     @Override
     public String toString() {
-        return NAME + "(" + script.getUniqueName() + ")";
+        String originalScriptScratchBlocks = script.getScratchBlocks();
+        StringBuilder result = new StringBuilder(NAME + " on script:\n" + originalScriptScratchBlocks + "\n\nRefactored scripts:\n");
+        for (Script refactored : refactoredScriptList) {
+            result.append(refactored.getScratchBlocks()).append("\n");
+        }
+        return result.toString();
     }
+
 
     private void addRefactoredScript() {
         List<Stmt> refactoredList = new ArrayList<>(stmtList);
         refactoredScript = new Script(event, new StmtList(refactoredList));
+        refactoredScriptList.add(refactoredScript);
         scriptList.getScriptList().add(refactoredScript);
         stmtList.clear();
     }

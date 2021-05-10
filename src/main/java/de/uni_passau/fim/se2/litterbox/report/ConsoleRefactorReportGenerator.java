@@ -36,7 +36,7 @@ public class ConsoleRefactorReportGenerator {
         System.out.println("The following refactorings were executed on " + program.getIdent().getName());
 
         for (int i = 0; i < refactorings.size(); i++) {
-            System.out.println("\t" + i + ": " + refactorings.get(i).toString());
+            System.out.println(i + ": " + refactorings.get(i).toString());
         }
     }
 }
