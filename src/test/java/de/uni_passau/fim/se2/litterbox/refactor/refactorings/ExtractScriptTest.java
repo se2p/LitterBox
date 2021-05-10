@@ -27,7 +27,7 @@ public class ExtractScriptTest implements JsonTest {
 
     @BeforeEach
     public void setUp() throws ParsingException, IOException {
-        program = getAST("src/test/testprojects/testdummyrefactorings.sb3");
+        program = getAST("src/test/fixtures/refactoring/testdummyrefactorings.json");
         ActorDefinition actorDefinition = program.getActorDefinitionList().getDefinitions().get(1);
         script = actorDefinition.getScripts().getScriptList().get(0);
         refactoring = new ExtractScript(script);

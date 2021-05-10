@@ -30,7 +30,7 @@ class MergeDoubleIfTest implements JsonTest {
 
     @BeforeEach
     public void setUp() throws ParsingException, IOException {
-        program = getAST("src/test/testprojects/simple-ifs.sb3");
+        program = getAST("src/test/fixtures/refactoring/simple-ifs.json");
         Script script = program.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(0);
         List<Stmt> stmtList = script.getStmtList().getStmts();
         RepeatForeverStmt forever = (RepeatForeverStmt) stmtList.get(0);
@@ -42,7 +42,7 @@ class MergeDoubleIfTest implements JsonTest {
 
     @Test
     void applyTest() {
-        File testFile = new File("src/test/testprojects/testdoublestmts.sb3");
+        File testFile = new File("src/test/fixtures/refactoring/testdoublestmts.json");
         Program program = null;
         try {
             program = new Scratch3Parser().parseFile(testFile);

@@ -26,7 +26,7 @@ public class MergeDoubleEventTest implements JsonTest {
 
     @BeforeEach
     public void setUp() throws ParsingException, IOException {
-        program = getAST("src/test/testprojects/merge-double-event.sb3");
+        program = getAST("src/test/fixtures/refactoring/merge-double-event.json");
         List<Script> scriptList = program.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList();
         Event event1 = scriptList.get(1).getEvent();
         Event event2 = scriptList.get(2).getEvent();
@@ -43,7 +43,7 @@ public class MergeDoubleEventTest implements JsonTest {
 
     @Test
     public void applyTest() {
-        File testFile = new File("src/test/testprojects/testdoublestmts.sb3");
+        File testFile = new File("src/test/fixtures/refactoring/testdoublestmts.json");
         Program program = null;
         try {
             program = new Scratch3Parser().parseFile(testFile);

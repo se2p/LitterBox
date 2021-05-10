@@ -28,7 +28,7 @@ public class SeparateScriptTest implements JsonTest {
 
     @BeforeEach
     public void setUp() throws ParsingException, IOException {
-        program = getAST("src/test/testprojects/testsemantics.sb3");
+        program = getAST("src/test/fixtures/refactoring/testsemantics.json");
         ActorDefinition actorDefinition = program.getActorDefinitionList().getDefinitions().get(1);
         script = actorDefinition.getScripts().getScriptList().get(0);
         refactoring = new SeparateScriptBySemantics(script);
@@ -51,7 +51,7 @@ public class SeparateScriptTest implements JsonTest {
 
     @Test
     void toStringTest() throws ParsingException, IOException {
-        Program program = getAST("src/test/testprojects/testsemantics.sb3");
+        Program program = getAST("src/test/fixtures/refactoring/testsemantics.json");
         Script script = program.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(0);
         SeparateScriptBySemantics refactoring = new SeparateScriptBySemantics(script);
         assertThat(refactoring.toString()).startsWith("separate_script_by_semantics on script:");
