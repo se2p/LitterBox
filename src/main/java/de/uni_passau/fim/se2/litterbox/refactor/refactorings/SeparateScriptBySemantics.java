@@ -12,7 +12,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.pen.PenStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SpriteLookStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SpriteMotionStmt;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
@@ -27,7 +26,7 @@ public class SeparateScriptBySemantics implements Refactoring, ScratchVisitor {
     private final Script script;
     private final ScriptList scriptList;
     private final Event event;
-    private final List<String> refactoredScriptList = new ArrayList<>();
+    private final List<Script> refactoredScriptList = new ArrayList<>();
 
     private static final String NAME = "separate_script_by_semantics";
 
@@ -145,12 +144,10 @@ public class SeparateScriptBySemantics implements Refactoring, ScratchVisitor {
 
     @Override
     public String toString() {
-        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor();
-        script.accept(visitor);
-        String originalScript = visitor.getScratchBlocks();
-        StringBuilder result = new StringBuilder(NAME + " on script:\n" + originalScript + "\n\nRefactored scripts:\n");
-        for (String refactored : refactoredScriptList) {
-            result.append(refactored).append("\n");
+        String originalScriptScratchBlocks = script.getScratchBlocks();
+        StringBuilder result = new StringBuilder(NAME + " on script:\n" + originalScriptScratchBlocks + "\n\nRefactored scripts:\n");
+        for (Script refactored : refactoredScriptList) {
+            result.append(refactored.getScratchBlocks()).append("\n");
         }
         return result.toString();
     }
@@ -159,9 +156,7 @@ public class SeparateScriptBySemantics implements Refactoring, ScratchVisitor {
     private void addRefactoredScript() {
         List<Stmt> refactoredList = new ArrayList<>(stmtList);
         refactoredScript = new Script(event, new StmtList(refactoredList));
-        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor();
-        refactoredScript.accept(visitor);
-        refactoredScriptList.add(visitor.getScratchBlocks());
+        refactoredScriptList.add(refactoredScript);
         scriptList.getScriptList().add(refactoredScript);
         stmtList.clear();
     }

@@ -7,7 +7,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Event;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import java.util.ArrayList;
@@ -21,9 +20,6 @@ public class MergeDoubleEvent extends CloneVisitor implements Refactoring {
     private final Script script2;
     private final Script replacement;
     private static final String NAME = "merge_double_event";
-    private final String script1String;
-    private final String script2String;
-    private final String replacementString;
 
     public MergeDoubleEvent(Event event1, Event event2) {
         this.event1 = Preconditions.checkNotNull(event1);
@@ -36,16 +32,6 @@ public class MergeDoubleEvent extends CloneVisitor implements Refactoring {
         mergedStmts.addAll(cloneVisitor.apply(script2.getStmtList()).getStmts());
         Event event = cloneVisitor.apply(event1);
         replacement = new Script(event, new StmtList(mergedStmts));
-
-        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor();
-        script1.accept(visitor);
-        script1String = visitor.getScratchBlocks();
-        visitor = new ScratchBlocksVisitor();
-        script2.accept(visitor);
-        script2String = visitor.getScratchBlocks();
-        visitor = new ScratchBlocksVisitor();
-        replacement.accept(visitor);
-        replacementString = visitor.getScratchBlocks();
     }
 
     @Override
@@ -75,7 +61,10 @@ public class MergeDoubleEvent extends CloneVisitor implements Refactoring {
 
     @Override
     public String toString() {
-        return NAME + "\nReplaced scripts:\n\n" + script1String + "\n" + script2String + "\nReplacement:\n\n" + replacementString;
+        String script1ScratchBlocks = script1.getScratchBlocks();
+        String script2ScratchBlocks = script2.getScratchBlocks();
+        String replacementScratchBlocks = replacement.getScratchBlocks();
+        return NAME + "\nReplaced scripts:\n\n" + script1ScratchBlocks + "\n" + script2ScratchBlocks + "\nReplacement:\n\n" + replacementScratchBlocks;
     }
 
     @Override

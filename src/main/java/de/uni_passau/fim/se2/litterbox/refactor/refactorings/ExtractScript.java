@@ -1,7 +1,6 @@
 package de.uni_passau.fim.se2.litterbox.refactor.refactorings;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.*;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 public class ExtractScript implements Refactoring {
@@ -9,15 +8,11 @@ public class ExtractScript implements Refactoring {
     private ActorDefinition stage;
     private final Script script;
     private final ScriptList scriptList;
-    private final String scriptString;
     private static final String NAME = "extract_script";
 
     public ExtractScript(Script script) {
         this.script = Preconditions.checkNotNull(script);
         this.scriptList = (ScriptList) script.getParentNode();
-        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor();
-        script.accept(visitor);
-        this.scriptString = visitor.getScratchBlocks();
     }
 
     @Override
@@ -35,6 +30,7 @@ public class ExtractScript implements Refactoring {
 
     @Override
     public String toString() {
+        String scriptString = script.getScratchBlocks();
         return NAME + " on script:\n" + scriptString + "\n";
     }
 
