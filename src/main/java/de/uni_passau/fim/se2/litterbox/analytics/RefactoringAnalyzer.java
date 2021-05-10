@@ -118,7 +118,7 @@ public class RefactoringAnalyzer extends Analyzer {
         try {
             ConsoleRefactorReportGenerator reportGenerator = new ConsoleRefactorReportGenerator();
             reportGenerator.generateReport(program, executedRefactorings);
-            // TODO create json and csv refactoring report
+            // TODO handle output
         } catch (IOException e) {
             log.warning(e.getMessage());
         }
