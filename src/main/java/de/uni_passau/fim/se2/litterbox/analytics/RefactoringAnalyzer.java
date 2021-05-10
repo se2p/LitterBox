@@ -108,9 +108,6 @@ public class RefactoringAnalyzer extends Analyzer {
             if (reportFileName == null || reportFileName.isEmpty()) {
                 ConsoleRefactorReportGenerator reportGenerator = new ConsoleRefactorReportGenerator();
                 reportGenerator.generateReport(program, refactorSequence.getExecutedRefactorings());
-            } else if (reportFileName.endsWith(".json")) {
-                JSONRefactorReportGenerator reportGenerator = new JSONRefactorReportGenerator(reportFileName);
-                reportGenerator.generateReport(program, refactorSequence);
             } else if (reportFileName.endsWith(".csv")) {
                 CSVRefactorReportGenerator reportGenerator = new CSVRefactorReportGenerator(reportFileName, refactorSequence.getExecutedRefactorings());
                 reportGenerator.generateReport(program, refactorSequence);

@@ -18,7 +18,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class CSVRefactorReportGenerator implements RefactorReportGenerator {
+public class CSVRefactorReportGenerator {
     private List<String> headers = new ArrayList<>();
     private List<String> refactorings;
     private CSVPrinter printer;
@@ -37,8 +37,7 @@ public class CSVRefactorReportGenerator implements RefactorReportGenerator {
         printer = getNewPrinter(fileName);
     }
 
-    @Override
-    public void generateReport(Program program, RefactorSequence refactorSequence) throws IOException {
+    public void generateReport(Program program, RefactorSequence refactorSequence, int populationSize, int maxGen) throws IOException {
 
         List<String> row = new ArrayList<>();
         row.add(program.getIdent().getName());
