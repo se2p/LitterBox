@@ -31,6 +31,7 @@ public class RefactoringAnalyzer extends Analyzer {
     private final List<RefactoringFinder> refactoringFinders;
     private final String refactoredPath;
 
+    private static final int MAX_GEN = PropertyLoader.getSystemIntProperty("nsga-ii.generations");
     private static final int POPULATION_SIZE = PropertyLoader.getSystemIntProperty("nsga-ii.populationSize");
 
     public RefactoringAnalyzer(String input, String output, String refactoredPath, String detectors, boolean ignoreLooseBlocks, boolean delete) {
@@ -121,8 +122,8 @@ public class RefactoringAnalyzer extends Analyzer {
                 ConsoleRefactorReportGenerator reportGenerator = new ConsoleRefactorReportGenerator();
                 reportGenerator.generateReport(program, refactorSequence.getExecutedRefactorings());
             } else if (reportFileName.endsWith(".csv")) {
-                CSVRefactorReportGenerator reportGenerator = new CSVRefactorReportGenerator(reportFileName, refactorSequence.getExecutedRefactorings());
-                reportGenerator.generateReport(program, refactorSequence);
+                CSVRefactorReportGenerator reportGenerator = new CSVRefactorReportGenerator(reportFileName, refactoredPath, refactorSequence.getFitnessMap().keySet());
+                reportGenerator.generateReport(program, refactorSequence, POPULATION_SIZE, MAX_GEN);
                 reportGenerator.close();
             } else {
                 throw new IllegalArgumentException("Unknown file type: " + reportFileName);

@@ -56,4 +56,8 @@ public class RefactoringTool {
     static void registerRefactoring(RefactoringFinder refactoringFinder, Map<String, RefactoringFinder> refactoringFinders) {
         refactoringFinders.put(refactoringFinder.getName(), refactoringFinder);
     }
+
+    public static List<String> getRefactorings() {
+        return List.of("merge_double_if", "merge_double_event", "separate_script_by_semantics");
+    }
 }

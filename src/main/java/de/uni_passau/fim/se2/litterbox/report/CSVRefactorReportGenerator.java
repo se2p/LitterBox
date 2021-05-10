@@ -2,12 +2,15 @@ package de.uni_passau.fim.se2.litterbox.report;
 
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.refactor.RefactoringTool;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.chromosomes.RefactorSequence;
+import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.fitness_functions.FitnessFunction;
 import de.uni_passau.fim.se2.litterbox.refactor.refactorings.Refactoring;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -16,38 +19,47 @@ import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class CSVRefactorReportGenerator {
     private List<String> headers = new ArrayList<>();
     private List<String> refactorings;
+    private Set<FitnessFunction<RefactorSequence>> fitnessFunctions;
     private CSVPrinter printer;
 
     /**
-     * CSVReportGenerator writes the results of an analyses for a given list of refactorings to a file.
+     * CSVRefactorReportGenerator writes the results of an analyses for a given list of refactorings to a file.
      *
      * @param fileName     of the file to which the report is written.
-     * @param refactorings list of Refactorings that should be included in the report.
+     * @param refactoredPath the path of the file which the report is written
+     * @param fitnessFunctions list of used FitnessFunctions.
      * @throws IOException is thrown if the file cannot be opened
      */
-    public CSVRefactorReportGenerator(String fileName, List<Refactoring> refactorings) throws IOException {
-        this.refactorings = refactorings.stream().map(Refactoring::getName).distinct().collect(Collectors.toList());
+    public CSVRefactorReportGenerator(String fileName, String refactoredPath, Set<FitnessFunction<RefactorSequence>> fitnessFunctions) throws IOException {
+        refactorings = RefactoringTool.getRefactorings();
+        this.fitnessFunctions = fitnessFunctions;
+        List<String> fitnessFunctionsNames = fitnessFunctions.stream().map(ff -> ff.getClass().getName()).collect(Collectors.toList());
         headers.add("project");
-        headers.addAll(this.refactorings);
-        printer = getNewPrinter(fileName);
+        headers.add("populationSize");
+        headers.add("maxGen");
+        headers.addAll(refactorings);
+        headers.addAll(fitnessFunctionsNames);
+        printer = getNewPrinter(fileName, refactoredPath);
     }
 
     public void generateReport(Program program, RefactorSequence refactorSequence, int populationSize, int maxGen) throws IOException {
 
         List<String> row = new ArrayList<>();
         row.add(program.getIdent().getName());
-        for (String refactoring : refactorings) {
-            long numIssuesForFinder = refactorSequence.getExecutedRefactorings()
-                    .stream()
-                    .filter(i -> i.getName().equals(refactoring))
-                    .count();
-            row.add(Long.toString(numIssuesForFinder));
-        }
+        row.add(String.valueOf(populationSize));
+        row.add(String.valueOf(maxGen));
+
+        refactorings.stream().mapToLong(refactoring -> refactorSequence.getExecutedRefactorings()
+                .stream()
+                .filter(i -> i.getName().equals(refactoring))
+                .count()).mapToObj(Long::toString).forEach(row::add);
+        refactorSequence.getFitnessMap().values().stream().map(String::valueOf).forEach(row::add);
         printer.printRecord(row);
         printer.flush();
     }
@@ -56,9 +68,18 @@ public class CSVRefactorReportGenerator {
         printer.close();
     }
 
-    protected CSVPrinter getNewPrinter(String name) throws IOException {
+    protected CSVPrinter getNewPrinter(String name, String refactoredPath) throws IOException {
+        File folder = new File(refactoredPath);
+        Path filePath = Paths.get(refactoredPath + name);
 
-        Path filePath = Paths.get(name);
+        if(!folder.exists()) {
+            try {
+                Files.createDirectory(filePath.getParent());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
         if (filePath.toFile().length() > 0) {
             BufferedWriter writer = Files.newBufferedWriter(
                     filePath, StandardOpenOption.CREATE, StandardOpenOption.APPEND);
