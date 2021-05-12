@@ -102,7 +102,7 @@ import java.util.Set;
  * end
  * [/scratchblocks]
  */
-public class ScratchBlocksVisitor extends PrintVisitor {
+public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVisitor, TextToSpeechExtensionVisitor  {
 
     public static final String SCRATCHBLOCKS_START = "[scratchblocks]";
     public static final String SCRATCHBLOCKS_END = "[/scratchblocks]";
@@ -124,18 +124,14 @@ public class ScratchBlocksVisitor extends PrintVisitor {
 
     private final Set<String> issueNote = new LinkedHashSet<>();
 
-    private ExtensionVisitor vis;
-
     public ScratchBlocksVisitor() {
         super(null);
         byteStream = new ByteArrayOutputStream();
         printStream = new PrintStream(byteStream);
-        vis = new ScratchBlocksExtensionVisitor(this);
     }
 
     public ScratchBlocksVisitor(PrintStream stream) {
         super(stream);
-        vis = new ScratchBlocksExtensionVisitor(this);
     }
 
     public ScratchBlocksVisitor(Issue issue) {
@@ -143,13 +139,11 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         this.issues.add(issue);
         this.program = issue.getProgram();
         this.currentActor = issue.getActor();
-        vis = new ScratchBlocksExtensionVisitor(this);
     }
 
     public ScratchBlocksVisitor(Collection<Issue> issues) {
         this();
         this.issues.addAll(issues);
-        vis = new ScratchBlocksExtensionVisitor(this);
         if (!issues.isEmpty()) {
             // TODO: This assumes all issues are reported on the same program
             this.program = issues.iterator().next().getProgram();
@@ -167,11 +161,6 @@ public class ScratchBlocksVisitor extends PrintVisitor {
 
     public void setProgram(Program program) {
         this.program = program;
-    }
-
-    @Override
-    public void visit(ExtensionBlock node) {
-        node.accept(vis);
     }
 
     @Override
@@ -846,256 +835,238 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         newLine();
     }
 
-    private class ScratchBlocksExtensionVisitor implements PenExtensionVisitor, TextToSpeechExtensionVisitor {
-        ScratchVisitor parent;
+    //---------------------------------------------------------------
+    // Pen blocks
 
-        public ScratchBlocksExtensionVisitor(ScratchVisitor parent) {
-            this.parent = parent;
-        }
-
-        @Override
-        public void visit(ExtensionBlock node) {
-            if (node instanceof Stmt) {
-                parent.visit((Stmt) node);
-            } else if (node instanceof Expression) {
-                parent.visit((Expression) node);
-            } else {
-                parent.visit((ASTNode) node);
-            }
-        }
-
-        //---------------------------------------------------------------
-        // Pen blocks
-
-        @Override
-        public void visit(PenClearStmt node) {
-            emitNoSpace("erase all");
-            storeNotesForIssue(node);
-            newLine();
-        }
-
-        @Override
-        public void visit(PenStampStmt node) {
-            emitNoSpace("stamp");
-            storeNotesForIssue(node);
-            newLine();
-        }
-
-        @Override
-        public void visit(PenStmt node) {
-            parent.visit((Stmt) node);
-        }
-
-        @Override
-        public void visit(PenDownStmt node) {
-            emitNoSpace("pen down");
-            storeNotesForIssue(node);
-            newLine();
-        }
-
-        @Override
-        public void visit(PenUpStmt node) {
-            emitNoSpace("pen up");
-            storeNotesForIssue(node);
-            newLine();
-        }
-
-        @Override
-        public void visit(SetPenColorToColorStmt node) {
-            emitNoSpace("set pen color to ");
-            node.getColorExpr().accept(parent);
-            storeNotesForIssue(node);
-            newLine();
-        }
-
-        @Override
-        public void visit(ChangePenColorParamBy node) {
-            emitNoSpace("change pen ");
-
-            if (node.getParam() instanceof StringLiteral) {
-                emitNoSpace("(");
-                StringLiteral literal = (StringLiteral) node.getParam();
-                emitNoSpace(literal.getText());
-                emitNoSpace(" v)");
-            } else {
-                node.getParam().accept(parent);
-            }
-            emitNoSpace(" by ");
-            node.getValue().accept(parent);
-            storeNotesForIssue(node);
-            newLine();
-        }
-
-        @Override
-        public void visit(SetPenColorParamTo node) {
-            emitNoSpace("set pen ");
-            if (node.getParam() instanceof StringLiteral) {
-                emitNoSpace("(");
-                StringLiteral literal = (StringLiteral) node.getParam();
-                emitNoSpace(literal.getText());
-                emitNoSpace(" v)");
-            } else {
-                node.getParam().accept(parent);
-            }
-            emitNoSpace(" to ");
-            node.getValue().accept(parent);
-            storeNotesForIssue(node);
-            newLine();
-        }
-
-        @Override
-        public void visit(ChangePenSizeBy node) {
-            emitNoSpace("change pen size by ");
-            node.getValue().accept(parent);
-            storeNotesForIssue(node);
-            newLine();
-        }
-
-        @Override
-        public void visit(SetPenSizeTo node) {
-            emitNoSpace("set pen size to ");
-            node.getValue().accept(parent);
-            storeNotesForIssue(node);
-            newLine();
-        }
-
-        //---------------------------------------------------------------
-        // TextToSpeech blocks
-
-        @Override
-        public void visit(TextToSpeechStmt node) {
-            parent.visit((Stmt) node);
-        }
-
-        @Override
-        public void visit(TextToSpeechBlock node) {
-            parent.visit((ASTNode) node);
-        }
-
-        @Override
-        public void visit(FixedLanguage node) {
-            emitNoSpace("( ");
-            switch (node.getType()) {
-                case ARABIC:
-                    emitNoSpace("Arabic");
-                    break;
-                case CHINESE:
-                    emitNoSpace("Chinese (Mandarin)");
-                    break;
-                case DANISH:
-                    emitNoSpace("Danish");
-                    break;
-                case DUTCH:
-                    emitNoSpace("Dutch");
-                    break;
-                case ENGLISH:
-                    emitNoSpace("English");
-                    break;
-                case FRENCH:
-                    emitNoSpace("French");
-                    break;
-                case GERMAN:
-                    emitNoSpace("German");
-                    break;
-                case HINDI:
-                    emitNoSpace("Hindi");
-                    break;
-                case ICELANDIC:
-                    emitNoSpace("Icelandic");
-                    break;
-                case ITALIAN:
-                    emitNoSpace("Italien");
-                    break;
-                case JAPANESE:
-                    emitNoSpace("Japanese");
-                    break;
-                case KOREAN:
-                    emitNoSpace("Korean");
-                    break;
-                case NORWEGIAN:
-                    emitNoSpace("Norwegian");
-                    break;
-                case POLISH:
-                    emitNoSpace("Polish");
-                    break;
-                case PORTUGUESE_BR:
-                    emitNoSpace("Portuguese (Brazilian)");
-                    break;
-                case PORTUGUESE:
-                    emitNoSpace("Portuguese");
-                    break;
-                case ROMANIAN:
-                    emitNoSpace("Romanian");
-                    break;
-                case RUSSIAN:
-                    emitNoSpace("Russian");
-                    break;
-                case SPANISH:
-                    emitNoSpace("Spanish");
-                    break;
-                case SPANISH_419:
-                    emitNoSpace("Spanish (Latin America)");
-                    break;
-                case SWEDISH:
-                    emitNoSpace("Swedish");
-                    break;
-                case TURKISH:
-                    emitNoSpace("Turkish");
-                    break;
-                case WELSH:
-                    emitNoSpace("Welsh");
-                    break;
-                default:
-                    //shouldn't be possible
-                    emitNoSpace(" ");
-            }
-            emitNoSpace(" v)");
-        }
-
-        @Override
-        public void visit(ExprLanguage node) {
-            node.getExpr().accept(parent);
-        }
-
-        @Override
-        public void visit(ExprVoice node) {
-            node.getExpr().accept(parent);
-        }
-
-        @Override
-        public void visit(FixedVoice node) {
-            emitNoSpace("( ");
-            emitNoSpace(node.getType().getType());
-            emitNoSpace(" v)");
-        }
-
-        @Override
-        public void visit(SetLanguage node) {
-            emitNoSpace("set language to ");
-            node.getLanguage().accept(parent);
-            storeNotesForIssue(node);
-            emitNoSpace(" :: tts");
-            newLine();
-        }
-
-        @Override
-        public void visit(SetVoice node) {
-            emitNoSpace("set voice to ");
-            node.getVoice().accept(parent);
-            storeNotesForIssue(node);
-            emitNoSpace(" :: tts");
-            newLine();
-        }
-
-        @Override
-        public void visit(Speak node) {
-            emitNoSpace("set voice to ");
-            node.getText().accept(parent);
-            emitNoSpace(" :: tts");
-            storeNotesForIssue(node);
-            newLine();
-        }
+    @Override
+    public void visit(PenClearStmt node) {
+        emitNoSpace("erase all");
+        storeNotesForIssue(node);
+        newLine();
     }
+
+    @Override
+    public void visit(PenStampStmt node) {
+        emitNoSpace("stamp");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(PenStmt node) {
+        node.accept((PenExtensionVisitor) this);
+    }
+
+    @Override
+    public void visit(PenDownStmt node) {
+        emitNoSpace("pen down");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(PenUpStmt node) {
+        emitNoSpace("pen up");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(SetPenColorToColorStmt node) {
+        emitNoSpace("set pen color to ");
+        node.getColorExpr().accept(this);
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(ChangePenColorParamBy node) {
+        emitNoSpace("change pen ");
+
+        if (node.getParam() instanceof StringLiteral) {
+            emitNoSpace("(");
+            StringLiteral literal = (StringLiteral) node.getParam();
+            emitNoSpace(literal.getText());
+            emitNoSpace(" v)");
+        } else {
+            node.getParam().accept(this);
+        }
+        emitNoSpace(" by ");
+        node.getValue().accept(this);
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(SetPenColorParamTo node) {
+        emitNoSpace("set pen ");
+        if (node.getParam() instanceof StringLiteral) {
+            emitNoSpace("(");
+            StringLiteral literal = (StringLiteral) node.getParam();
+            emitNoSpace(literal.getText());
+            emitNoSpace(" v)");
+        } else {
+            node.getParam().accept(this);
+        }
+        emitNoSpace(" to ");
+        node.getValue().accept(this);
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(ChangePenSizeBy node) {
+        emitNoSpace("change pen size by ");
+        node.getValue().accept(this);
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(SetPenSizeTo node) {
+        emitNoSpace("set pen size to ");
+        node.getValue().accept(this);
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    //---------------------------------------------------------------
+    // TextToSpeech blocks
+
+    @Override
+    public void visit(TextToSpeechStmt node) {
+        node.accept((TextToSpeechExtensionVisitor) this);
+    }
+
+    @Override
+    public void visit(TextToSpeechBlock node) {
+        node.accept((TextToSpeechExtensionVisitor) this);
+    }
+
+    @Override
+    public void visit(FixedLanguage node) {
+        emitNoSpace("( ");
+        switch (node.getType()) {
+            case ARABIC:
+                emitNoSpace("Arabic");
+                break;
+            case CHINESE:
+                emitNoSpace("Chinese (Mandarin)");
+                break;
+            case DANISH:
+                emitNoSpace("Danish");
+                break;
+            case DUTCH:
+                emitNoSpace("Dutch");
+                break;
+            case ENGLISH:
+                emitNoSpace("English");
+                break;
+            case FRENCH:
+                emitNoSpace("French");
+                break;
+            case GERMAN:
+                emitNoSpace("German");
+                break;
+            case HINDI:
+                emitNoSpace("Hindi");
+                break;
+            case ICELANDIC:
+                emitNoSpace("Icelandic");
+                break;
+            case ITALIAN:
+                emitNoSpace("Italien");
+                break;
+            case JAPANESE:
+                emitNoSpace("Japanese");
+                break;
+            case KOREAN:
+                emitNoSpace("Korean");
+                break;
+            case NORWEGIAN:
+                emitNoSpace("Norwegian");
+                break;
+            case POLISH:
+                emitNoSpace("Polish");
+                break;
+            case PORTUGUESE_BR:
+                emitNoSpace("Portuguese (Brazilian)");
+                break;
+            case PORTUGUESE:
+                emitNoSpace("Portuguese");
+                break;
+            case ROMANIAN:
+                emitNoSpace("Romanian");
+                break;
+            case RUSSIAN:
+                emitNoSpace("Russian");
+                break;
+            case SPANISH:
+                emitNoSpace("Spanish");
+                break;
+            case SPANISH_419:
+                emitNoSpace("Spanish (Latin America)");
+                break;
+            case SWEDISH:
+                emitNoSpace("Swedish");
+                break;
+            case TURKISH:
+                emitNoSpace("Turkish");
+                break;
+            case WELSH:
+                emitNoSpace("Welsh");
+                break;
+            default:
+                //shouldn't be possible
+                emitNoSpace(" ");
+        }
+        emitNoSpace(" v)");
+    }
+
+    @Override
+    public void visit(ExprLanguage node) {
+        node.getExpr().accept(this);
+    }
+
+    @Override
+    public void visit(ExprVoice node) {
+        node.getExpr().accept(this);
+    }
+
+    @Override
+    public void visit(FixedVoice node) {
+        emitNoSpace("( ");
+        emitNoSpace(node.getType().getType());
+        emitNoSpace(" v)");
+    }
+
+    @Override
+    public void visit(SetLanguage node) {
+        emitNoSpace("set language to ");
+        node.getLanguage().accept((TextToSpeechExtensionVisitor) this);
+        storeNotesForIssue(node);
+        emitNoSpace(" :: tts");
+        newLine();
+    }
+
+    @Override
+    public void visit(SetVoice node) {
+        emitNoSpace("set voice to ");
+        node.getVoice().accept((TextToSpeechExtensionVisitor) this);
+        storeNotesForIssue(node);
+        emitNoSpace(" :: tts");
+        newLine();
+    }
+
+    @Override
+    public void visit(Speak node) {
+        emitNoSpace("set voice to ");
+        node.getText().accept(this);
+        emitNoSpace(" :: tts");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
     //---------------------------------------------------------------
     // Variables blocks
 

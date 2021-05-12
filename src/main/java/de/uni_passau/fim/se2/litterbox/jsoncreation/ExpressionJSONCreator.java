@@ -29,13 +29,10 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.Attribute;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.AttributeFromFixed;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.AttributeFromVariable;
-import de.uni_passau.fim.se2.litterbox.ast.model.extensions.ExtensionBlock;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.TextToSpeechBlock;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.TextToSpeechStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.language.ExprLanguage;
-import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.language.FixedLanguage;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.voice.ExprVoice;
-import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.voice.FixedVoice;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Identifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.BoolLiteral;
@@ -46,14 +43,12 @@ import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.FromExpression;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.MousePos;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.Position;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.FromNumber;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Parameter;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.ScratchList;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.SymbolTable;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.ExtensionVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.TextToSpeechExtensionVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
@@ -65,14 +60,13 @@ import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 import static de.uni_passau.fim.se2.litterbox.jsoncreation.BlockJsonCreatorHelper.*;
 import static de.uni_passau.fim.se2.litterbox.jsoncreation.JSONStringCreator.createField;
 
-public class ExpressionJSONCreator implements ScratchVisitor {
+public class ExpressionJSONCreator implements ScratchVisitor, TextToSpeechExtensionVisitor  {
     private List<String> finishedJSONStrings;
     private String previousBlockId = null;
     private String topExpressionId = null;
     private SymbolTable symbolTable;
     private ExpressionJSONCreator expressionJSONCreator;
     private FixedExpressionJSONCreator fixedExprCreator;
-    private ExtensionVisitor vis;
 
     public IdJsonStringTuple createExpressionJSON(String parentId, ASTNode expression, SymbolTable symbolTable) {
         finishedJSONStrings = new ArrayList<>();
@@ -81,7 +75,6 @@ public class ExpressionJSONCreator implements ScratchVisitor {
         this.symbolTable = symbolTable;
         expressionJSONCreator = new ExpressionJSONCreator();
         fixedExprCreator = new FixedExpressionJSONCreator();
-        vis = new ExpressionExtensionVisitor(this);
         expression.accept(this);
         StringBuilder jsonString = new StringBuilder();
         for (int i = 0; i < finishedJSONStrings.size() - 1; i++) {
@@ -703,47 +696,24 @@ public class ExpressionJSONCreator implements ScratchVisitor {
         }
     }
 
+
     @Override
-    public void visit(ExtensionBlock node){
-        node.accept(vis);
+    public void visit(TextToSpeechStmt node) {
+        node.accept((TextToSpeechExtensionVisitor) this);
     }
 
-    private class ExpressionExtensionVisitor implements TextToSpeechExtensionVisitor {
-        ScratchVisitor parent;
+    @Override
+    public void visit(TextToSpeechBlock node) {
+        node.accept((TextToSpeechExtensionVisitor) this);
+    }
 
-        public ExpressionExtensionVisitor(ExpressionJSONCreator expressionJSONCreator) {
-            parent = expressionJSONCreator;
-        }
+    @Override
+    public void visit(ExprLanguage node) {
+        node.getExpr().accept(this);
+    }
 
-        @Override
-        public void visit(ExtensionBlock node) {
-            if (node instanceof Stmt) {
-                parent.visit((Stmt) node);
-            } else if (node instanceof Expression) {
-                parent.visit((Expression) node);
-            } else {
-                parent.visit((ASTNode) node);
-            }
-        }
-
-        @Override
-        public void visit(TextToSpeechStmt node) {
-            parent.visit((Stmt) node);
-        }
-
-        @Override
-        public void visit(TextToSpeechBlock node) {
-            parent.visit((ASTNode) node);
-        }
-
-        @Override
-        public void visit(ExprLanguage node) {
-            node.getExpr().accept(parent);
-        }
-
-        @Override
-        public void visit(ExprVoice node) {
-            node.getExpr().accept(parent);
-        }
+    @Override
+    public void visit(ExprVoice node) {
+        node.getExpr().accept(this);
     }
 }

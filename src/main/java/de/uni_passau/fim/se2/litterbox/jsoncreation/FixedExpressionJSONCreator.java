@@ -24,11 +24,9 @@ import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.Next;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.Prev;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.Random;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.WithExpr;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
-import de.uni_passau.fim.se2.litterbox.ast.model.extensions.ExtensionBlock;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.TextToSpeechBlock;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.TextToSpeechStmt;
@@ -43,12 +41,10 @@ import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.PenWithParamMeta
 import de.uni_passau.fim.se2.litterbox.ast.model.position.FromExpression;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.MousePos;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.RandomPos;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.CreateCloneOf;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.Edge;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.MousePointer;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.SpriteTouchable;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.ExtensionVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.PenExtensionVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.TextToSpeechExtensionVisitor;
@@ -64,16 +60,10 @@ import static de.uni_passau.fim.se2.litterbox.jsoncreation.BlockJsonCreatorHelpe
  * {@link de.uni_passau.fim.se2.litterbox.ast.model.position.Position} or
  * {@link de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.ElementChoice}.
  */
-public class FixedExpressionJSONCreator implements ScratchVisitor {
+public class FixedExpressionJSONCreator implements ScratchVisitor, PenExtensionVisitor, TextToSpeechExtensionVisitor  {
     private List<String> finishedJSONStrings;
     private String previousBlockId = null;
     private String topExpressionId = null;
-    private ExtensionVisitor vis;
-
-    public  FixedExpressionJSONCreator(){
-        vis = new FixedExpressionJSONCreatorExtensionVisitor(this);
-    }
-
 
     public IdJsonStringTuple createFixedExpressionJSON(String parentId, ASTNode expression) {
         finishedJSONStrings = new ArrayList<>();
@@ -88,11 +78,6 @@ public class FixedExpressionJSONCreator implements ScratchVisitor {
             jsonString.append(finishedJSONStrings.get(finishedJSONStrings.size() - 1));
         }
         return new IdJsonStringTuple(topExpressionId, jsonString.toString());
-    }
-
-    @Override
-    public void visit(ExtensionBlock node) {
-        node.accept(vis);
     }
 
     @Override
@@ -186,73 +171,54 @@ public class FixedExpressionJSONCreator implements ScratchVisitor {
                 previousBlockId, EMPTY_VALUE, fieldsString));
     }
 
-    private class FixedExpressionJSONCreatorExtensionVisitor implements PenExtensionVisitor, TextToSpeechExtensionVisitor {
-        ScratchVisitor parent;
+    //pen
 
-        public FixedExpressionJSONCreatorExtensionVisitor(ScratchVisitor parent) {
-            this.parent = parent;
+    @Override
+    public void visit(PenStmt node) {
+        node.accept((PenExtensionVisitor) this);
+    }
+
+    @Override
+    public void visit(ChangePenColorParamBy node) {
+        StringExpr stringExpr = node.getParam();
+        if (stringExpr instanceof StringLiteral) {
+            String strid = ((StringLiteral) stringExpr).getText();
+            PenWithParamMetadata metadata = (PenWithParamMetadata) node.getMetadata();
+            createFieldsExpression((NonDataBlockMetadata) metadata.getParamMetadata(),
+                    strid);
         }
+    }
 
-        @Override
-        public void visit(ExtensionBlock node) {
-            if (node instanceof Stmt) {
-                parent.visit((Stmt) node);
-            } else if (node instanceof Expression) {
-                parent.visit((Expression) node);
-            } else {
-                parent.visit((ASTNode) node);
-            }
+    @Override
+    public void visit(SetPenColorParamTo node) {
+        StringExpr stringExpr = node.getParam();
+        if (stringExpr instanceof StringLiteral) {
+            String strid = ((StringLiteral) stringExpr).getText();
+            PenWithParamMetadata metadata = (PenWithParamMetadata) node.getMetadata();
+            createFieldsExpression((NonDataBlockMetadata) metadata.getParamMetadata(),
+                    strid);
         }
+    }
 
-        //pen
+    //Text to Speech
 
-        @Override
-        public void visit(PenStmt node) {
-            parent.visit((Stmt) node);
-        }
+    @Override
+    public void visit(TextToSpeechStmt node) {
+        node.accept((TextToSpeechExtensionVisitor) this);
+    }
 
-        @Override
-        public void visit(ChangePenColorParamBy node) {
-            StringExpr stringExpr = node.getParam();
-            if (stringExpr instanceof StringLiteral) {
-                String strid = ((StringLiteral) stringExpr).getText();
-                PenWithParamMetadata metadata = (PenWithParamMetadata) node.getMetadata();
-                createFieldsExpression((NonDataBlockMetadata) metadata.getParamMetadata(),
-                        strid);
-            }
-        }
+    @Override
+    public void visit(TextToSpeechBlock node) {
+        node.accept((TextToSpeechExtensionVisitor) this);
+    }
 
-        @Override
-        public void visit(SetPenColorParamTo node) {
-            StringExpr stringExpr = node.getParam();
-            if (stringExpr instanceof StringLiteral) {
-                String strid = ((StringLiteral) stringExpr).getText();
-                PenWithParamMetadata metadata = (PenWithParamMetadata) node.getMetadata();
-                createFieldsExpression((NonDataBlockMetadata) metadata.getParamMetadata(),
-                        strid);
-            }
-        }
+    @Override
+    public void visit(FixedLanguage node) {
+        createFieldsExpression((NonDataBlockMetadata) node.getMetadata(), node.getType().getType());
+    }
 
-        //Text to Speech
-
-        @Override
-        public void visit(TextToSpeechStmt node) {
-            parent.visit((Stmt) node);
-        }
-
-        @Override
-        public void visit(TextToSpeechBlock node) {
-            parent.visit((ASTNode) node);
-        }
-
-        @Override
-        public void visit(FixedLanguage node) {
-            createFieldsExpression((NonDataBlockMetadata) node.getMetadata(), node.getType().getType());
-        }
-
-        @Override
-        public void visit(FixedVoice node) {
-            createFieldsExpression((NonDataBlockMetadata) node.getMetadata(), node.getType().getType());
-        }
+    @Override
+    public void visit(FixedVoice node) {
+        createFieldsExpression((NonDataBlockMetadata) node.getMetadata(), node.getType().getType());
     }
 }

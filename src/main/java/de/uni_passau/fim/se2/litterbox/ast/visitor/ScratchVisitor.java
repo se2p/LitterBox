@@ -33,6 +33,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.At
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.AttributeFromVariable;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.FixedAttribute;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.ExtensionBlock;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.PenStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.TextToSpeechBlock;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Identifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
@@ -3608,5 +3610,21 @@ public interface ScratchVisitor {
      */
     default void visit(ExtensionBlock node) {
         visit((ASTNode) node);
+    }
+
+    default void visit(PenStmt node) {
+        if (this instanceof PenExtensionVisitor) {
+            ((PenExtensionVisitor)this).visit(node);
+        } else {
+            visit((ASTNode) node);
+        }
+    }
+
+    default void visit(TextToSpeechBlock node) {
+        if (this instanceof TextToSpeechExtensionVisitor) {
+            ((TextToSpeechExtensionVisitor)this).visit(node);
+        } else {
+            visit((ASTNode) node);
+        }
     }
 }

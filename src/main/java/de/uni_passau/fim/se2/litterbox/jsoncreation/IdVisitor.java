@@ -18,9 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.jsoncreation;
 
-import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
-import de.uni_passau.fim.se2.litterbox.ast.model.extensions.ExtensionBlock;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.language.FixedLanguage;
@@ -40,27 +37,16 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.DeleteClone;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopAll;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopThisScript;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.ExtensionVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.PenExtensionVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.TextToSpeechExtensionVisitor;
 
-public class IdVisitor implements ScratchVisitor {
+public class IdVisitor implements ScratchVisitor, PenExtensionVisitor, TextToSpeechExtensionVisitor {
     private String id;
-    private ExtensionVisitor vis;
-
-    public IdVisitor() {
-        vis = new IdExtensionVisitor(this);
-    }
 
     public String getBlockId(Stmt stmt) {
         stmt.accept(this);
         return id;
-    }
-
-    @Override
-    public void visit(ExtensionBlock node) {
-        node.accept(vis);
     }
 
     @Override
@@ -419,113 +405,94 @@ public class IdVisitor implements ScratchVisitor {
         id = ((NonDataBlockMetadata) node.getMetadata()).getBlockId();
     }
 
-    private class IdExtensionVisitor implements PenExtensionVisitor, TextToSpeechExtensionVisitor {
-        ScratchVisitor parent;
+    //Pen
 
-        public IdExtensionVisitor(ScratchVisitor parent) {
-            this.parent = parent;
-        }
+    @Override
+    public void visit(PenStmt node) {
+        node.accept((PenExtensionVisitor) this);
+    }
 
-        @Override
-        public void visit(ExtensionBlock node) {
-            if (node instanceof Stmt) {
-                parent.visit((Stmt) node);
-            } else if (node instanceof Expression) {
-                parent.visit((Expression) node);
-            } else {
-                parent.visit((ASTNode) node);
-            }
-        }
+    @Override
+    public void visit(SetPenSizeTo node) {
+        id = ((NonDataBlockMetadata) node.getMetadata()).getBlockId();
+    }
 
-        //Pen
+    @Override
+    public void visit(ChangePenSizeBy node) {
+        id = ((NonDataBlockMetadata) node.getMetadata()).getBlockId();
+    }
 
-        @Override
-        public void visit(PenStmt node) {
-            parent.visit((Stmt) node);
-        }
+    @Override
+    public void visit(PenDownStmt node) {
+        id = ((NonDataBlockMetadata) node.getMetadata()).getBlockId();
+    }
 
-        @Override
-        public void visit(SetPenSizeTo node) {
-            id = ((NonDataBlockMetadata) node.getMetadata()).getBlockId();
-        }
+    @Override
+    public void visit(PenUpStmt node) {
+        id = ((NonDataBlockMetadata) node.getMetadata()).getBlockId();
+    }
 
-        @Override
-        public void visit(ChangePenSizeBy node) {
-            id = ((NonDataBlockMetadata) node.getMetadata()).getBlockId();
-        }
+    @Override
+    public void visit(PenClearStmt node) {
+        id = ((NonDataBlockMetadata) node.getMetadata()).getBlockId();
+    }
 
-        @Override
-        public void visit(PenDownStmt node) {
-            id = ((NonDataBlockMetadata) node.getMetadata()).getBlockId();
-        }
+    @Override
+    public void visit(SetPenColorToColorStmt node) {
+        id = ((NonDataBlockMetadata) node.getMetadata()).getBlockId();
+    }
 
-        @Override
-        public void visit(PenUpStmt node) {
-            id = ((NonDataBlockMetadata) node.getMetadata()).getBlockId();
-        }
+    @Override
+    public void visit(PenStampStmt node) {
+        id = ((NonDataBlockMetadata) node.getMetadata()).getBlockId();
+    }
 
-        @Override
-        public void visit(PenClearStmt node) {
-            id = ((NonDataBlockMetadata) node.getMetadata()).getBlockId();
-        }
+    @Override
+    public void visit(ChangePenColorParamBy node) {
+        PenWithParamMetadata meta = (PenWithParamMetadata) node.getMetadata();
+        id = ((NonDataBlockMetadata) meta.getPenBlockMetadata()).getBlockId();
+    }
 
-        @Override
-        public void visit(SetPenColorToColorStmt node) {
-            id = ((NonDataBlockMetadata) node.getMetadata()).getBlockId();
-        }
+    @Override
+    public void visit(SetPenColorParamTo node) {
+        PenWithParamMetadata meta = (PenWithParamMetadata) node.getMetadata();
+        id = ((NonDataBlockMetadata) meta.getPenBlockMetadata()).getBlockId();
+    }
 
-        @Override
-        public void visit(PenStampStmt node) {
-            id = ((NonDataBlockMetadata) node.getMetadata()).getBlockId();
-        }
+    //Text to Speech
 
-        @Override
-        public void visit(ChangePenColorParamBy node) {
-            PenWithParamMetadata meta = (PenWithParamMetadata) node.getMetadata();
-            id = ((NonDataBlockMetadata) meta.getPenBlockMetadata()).getBlockId();
-        }
+    @Override
+    public void visit(TextToSpeechStmt node) {
+        node.accept((TextToSpeechExtensionVisitor) this);
+    }
 
-        @Override
-        public void visit(SetPenColorParamTo node) {
-            PenWithParamMetadata meta = (PenWithParamMetadata) node.getMetadata();
-            id = ((NonDataBlockMetadata) meta.getPenBlockMetadata()).getBlockId();
-        }
+    @Override
+    public void visit(TextToSpeechBlock node) {
+        node.accept((TextToSpeechExtensionVisitor) this);
+    }
 
-        //Text to Speech
+    @Override
+    public void visit(FixedLanguage node) {
+        id = ((NonDataBlockMetadata) node.getMetadata()).getBlockId();
+    }
 
-        @Override
-        public void visit(TextToSpeechStmt node) {
-            parent.visit((Stmt) node);
-        }
+    @Override
+    public void visit(FixedVoice node) {
+        id = ((NonDataBlockMetadata) node.getMetadata()).getBlockId();
+    }
 
-        @Override
-        public void visit(TextToSpeechBlock node) {
-            parent.visit((ASTNode) node);
-        }
+    @Override
+    public void visit(SetLanguage node) {
+        id = ((NonDataBlockMetadata) node.getMetadata()).getBlockId();
+    }
 
-        @Override
-        public void visit(FixedLanguage node) {
-            id = ((NonDataBlockMetadata) node.getMetadata()).getBlockId();
-        }
+    @Override
+    public void visit(SetVoice node) {
+        id = ((NonDataBlockMetadata) node.getMetadata()).getBlockId();
+    }
 
-        @Override
-        public void visit(FixedVoice node) {
-            id = ((NonDataBlockMetadata) node.getMetadata()).getBlockId();
-        }
-
-        @Override
-        public void visit(SetLanguage node) {
-            id = ((NonDataBlockMetadata) node.getMetadata()).getBlockId();
-        }
-
-        @Override
-        public void visit(SetVoice node) {
-            id = ((NonDataBlockMetadata) node.getMetadata()).getBlockId();
-        }
-
-        @Override
-        public void visit(Speak node) {
-            id = ((NonDataBlockMetadata) node.getMetadata()).getBlockId();
-        }
+    @Override
+    public void visit(Speak node) {
+        id = ((NonDataBlockMetadata) node.getMetadata()).getBlockId();
     }
 }

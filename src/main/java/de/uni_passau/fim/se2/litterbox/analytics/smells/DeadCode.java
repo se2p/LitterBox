@@ -30,7 +30,7 @@ public class DeadCode extends TopBlockFinder {
     public static final String NAME = "dead_code";
 
     public DeadCode() {
-        vis = new TopBlockFinderExtensionVisitor(this);
+        // vis = new TopBlockFinderExtensionVisitor(this);
     }
 
     @Override

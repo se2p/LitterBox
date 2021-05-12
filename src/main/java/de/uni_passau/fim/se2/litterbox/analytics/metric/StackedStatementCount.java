@@ -18,19 +18,15 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.metric;
 
-import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.analytics.MetricExtractor;
-import de.uni_passau.fim.se2.litterbox.analytics.bugpattern.MissingPenUp;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.AttributeAboveValue;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Event;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.EventAttribute;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.*;
-import de.uni_passau.fim.se2.litterbox.ast.model.extensions.ExtensionBlock;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
@@ -47,28 +43,17 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.ScratchList;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.ExtensionVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.PenExtensionVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-public class StackedStatementCount<T extends ASTNode> implements ScratchVisitor, MetricExtractor<T> {
+public class StackedStatementCount<T extends ASTNode> implements ScratchVisitor, MetricExtractor<T>, PenExtensionVisitor {
 
     public static final String NAME = "stacked_statement_count";
     private int maxStackedDepth = 0;
     private int currentStackedDepth = 0;
-    private ExtensionVisitor vis;
 
-    public StackedStatementCount() {
-        vis = new StackedStatementCountExtensionVisitor(this);
-    }
-
-    @Override
-    public void visit(ExtensionBlock node) {
-        node.accept(vis);
-    }
-
-//Motion
+    //Motion
     @Override
     public void visit(MoveSteps node) {
         currentStackedDepth = 0;
@@ -146,7 +131,7 @@ public class StackedStatementCount<T extends ASTNode> implements ScratchVisitor,
         currentStackedDepth = 0;
         visitChildren(node);
     }
-//Looks
+    //Looks
     @Override
     public void visit(SayForSecs node) {
         currentStackedDepth = 0;
@@ -189,7 +174,7 @@ public class StackedStatementCount<T extends ASTNode> implements ScratchVisitor,
         currentStackedDepth = 0;
         visitChildren(node);
     }
-//sound
+    //sound
     @Override
     public void visit(PlaySoundUntilDone node) {
         currentStackedDepth = 0;
@@ -225,7 +210,7 @@ public class StackedStatementCount<T extends ASTNode> implements ScratchVisitor,
         currentStackedDepth = 0;
         visitChildren(node);
     }
-//Events
+    //Events
     @Override
     public void visit(Event node) {
         if (node instanceof AttributeAboveValue) {
@@ -249,7 +234,7 @@ public class StackedStatementCount<T extends ASTNode> implements ScratchVisitor,
         currentStackedDepth = 0;
         visitChildren(node);
     }
-//control
+    //control
     @Override
     public void visit(WaitSeconds node) {
         currentStackedDepth = 0;
@@ -298,7 +283,7 @@ public class StackedStatementCount<T extends ASTNode> implements ScratchVisitor,
         visitChildren(node);
     }
 
-//sensing
+    //sensing
     @Override
     public void visit(AskAndWait node) {
         currentStackedDepth = 0;
@@ -341,7 +326,7 @@ public class StackedStatementCount<T extends ASTNode> implements ScratchVisitor,
         currentStackedDepth = 0;
         visitChildren(node);
     }
-//blocks
+    //blocks
     @Override
     public void visit(CallStmt node) {
         currentStackedDepth = 0;
@@ -459,7 +444,7 @@ public class StackedStatementCount<T extends ASTNode> implements ScratchVisitor,
     public void visit(Current node) {
         incrementAndVisit(node);
     }
-//Operators
+    //Operators
     @Override
     public void visit(BiggerThan node) {
         incrementAndVisit(node);
@@ -549,7 +534,7 @@ public class StackedStatementCount<T extends ASTNode> implements ScratchVisitor,
     public void visit(NumFunctOf node) {
         incrementAndVisit(node);
     }
-//variables
+    //variables
     @Override
     public void visit(ScratchList node) {
         incrementAndVisit(node);
@@ -609,39 +594,21 @@ public class StackedStatementCount<T extends ASTNode> implements ScratchVisitor,
         return NAME;
     }
 
-    private class StackedStatementCountExtensionVisitor implements PenExtensionVisitor {
-        ScratchVisitor parent;
-
-        public StackedStatementCountExtensionVisitor(ScratchVisitor parent) {
-            this.parent = parent;
-        }
-
-        @Override
-        public void visit(PenStmt node) {
-            parent.visit((Stmt) node);
-        }
-
-        @Override
-        public void visit(ChangePenColorParamBy node) {
-            currentStackedDepth = 0;
-            visitChildren(node);
-        }
-
-        @Override
-        public void visit(SetPenColorParamTo node) {
-            currentStackedDepth = 0;
-            visitChildren(node);
-        }
-
-        @Override
-        public void visit(ExtensionBlock node) {
-            if (node instanceof Stmt) {
-                parent.visit((Stmt) node);
-            } else if (node instanceof Expression) {
-                parent.visit((Expression) node);
-            } else {
-                parent.visit((ASTNode) node);
-            }
-        }
+    @Override
+    public void visit(PenStmt node) {
+        node.accept((PenExtensionVisitor) this);
     }
+
+    @Override
+    public void visit(ChangePenColorParamBy node) {
+        currentStackedDepth = 0;
+        visitChildren(node);
+    }
+
+    @Override
+    public void visit(SetPenColorParamTo node) {
+        currentStackedDepth = 0;
+        visitChildren(node);
+    }
+
 }

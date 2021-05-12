@@ -26,12 +26,14 @@ import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.voice.E
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.voice.FixedVoice;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.voice.Voice;
 
-public interface TextToSpeechExtensionVisitor extends ExtensionVisitor {
+public interface TextToSpeechExtensionVisitor {
 
     /**
      * @param node TextToSpeech  Node of which the children will be iterated
      */
-    void visit(TextToSpeechStmt node);
+    default void visit(TextToSpeechStmt node)  {
+        visit((TextToSpeechBlock) node);
+    }
 
     /**
      * @param node TextToSpeech  Node of which the children will be iterated
@@ -48,7 +50,7 @@ public interface TextToSpeechExtensionVisitor extends ExtensionVisitor {
      * @param node Language of which the children will be iterated
      */
     default void visit(Language node) {
-        visit((TextToSpeechBlock) node);
+        // visit((TextToSpeechBlock) node);
     }
 
     /**
@@ -87,7 +89,7 @@ public interface TextToSpeechExtensionVisitor extends ExtensionVisitor {
      * @param node Voice of which the children will be iterated
      */
     default void visit(Voice node) {
-        visit((TextToSpeechBlock) node);
+        //visit((TextToSpeechBlock) node);
     }
 
     /**
@@ -126,7 +128,7 @@ public interface TextToSpeechExtensionVisitor extends ExtensionVisitor {
      * @param node SetLanguage of which the children will be iterated
      */
     default void visit(SetLanguage node) {
-        visit((TextToSpeechStmt) node);
+        //visit((TextToSpeechStmt) node);
     }
 
     /**
@@ -139,7 +141,7 @@ public interface TextToSpeechExtensionVisitor extends ExtensionVisitor {
      * @param node SetVoice of which the children will be iterated
      */
     default void visit(SetVoice node) {
-        visit((TextToSpeechStmt) node);
+        //visit((TextToSpeechStmt) node);
     }
 
     /**
@@ -152,6 +154,6 @@ public interface TextToSpeechExtensionVisitor extends ExtensionVisitor {
      * @param node SayTextToSpeech of which the children will be iterated
      */
     default void visit(Speak node) {
-        visit((TextToSpeechStmt) node);
+        //visit((TextToSpeechStmt) node);
     }
 }
