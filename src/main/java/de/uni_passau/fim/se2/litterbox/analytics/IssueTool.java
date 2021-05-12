@@ -157,6 +157,7 @@ public class IssueTool {
         registerPerfumeFinder(new NestedLoopsPerfume(), perfumeFinders);
         registerPerfumeFinder(new NestedConditionInLoop(), perfumeFinders);
         registerPerfumeFinder(new SaySoundSynchronization(), perfumeFinders);
+        registerPerfumeFinder(new Search(), perfumeFinders);
 
         return perfumeFinders;
     }
