@@ -27,6 +27,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.CloneOfMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.PenWithParamMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.ExpressionStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.*;
@@ -673,6 +674,15 @@ public abstract class TopBlockFinder extends AbstractIssueFinder {
     }
 
     @Override
+    public void visit(ReceptionOfMessage node) {
+        if (setHint) {
+            addIssue(node, node.getMetadata());
+        } else {
+            visitChildren(node);
+        }
+    }
+
+    @Override
     public void visit(SetGraphicEffectTo node) {
         if (setHint) {
             addIssue(node, node.getMetadata());
@@ -748,6 +758,15 @@ public abstract class TopBlockFinder extends AbstractIssueFinder {
     public void visit(ASTNode node) {
         if (setHint) {
             addIssueWithLooseComment();
+        } else {
+            visitChildren(node);
+        }
+    }
+
+    @Override
+    public void visit(ExpressionStmt node) {
+        if (setHint) {
+            addIssue(node.getExpression(), node.getExpression().getMetadata());
         } else {
             visitChildren(node);
         }
