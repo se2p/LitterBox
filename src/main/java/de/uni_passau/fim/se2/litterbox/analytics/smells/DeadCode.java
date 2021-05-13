@@ -29,10 +29,6 @@ public class DeadCode extends TopBlockFinder {
 
     public static final String NAME = "dead_code";
 
-    public DeadCode() {
-        // vis = new TopBlockFinderExtensionVisitor(this);
-    }
-
     @Override
     public void visit(Script node) {
         currentScript = node;
