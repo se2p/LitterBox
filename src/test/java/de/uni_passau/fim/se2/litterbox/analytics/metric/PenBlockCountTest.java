@@ -37,8 +37,8 @@ public class PenBlockCountTest implements JsonTest {
 
     @Test
     public void testPenAndTTS() throws IOException, ParsingException {
-        Program empty = getAST("./src/test/fixtures/metrics/penAndTTS.json");
+        Program program = getAST("./src/test/fixtures/metrics/penAndTTS.json");
         PenBlockCount parameterName = new PenBlockCount();
-        Assertions.assertEquals(2, parameterName.calculateMetric(empty));
+        Assertions.assertEquals(2, parameterName.calculateMetric(program));
     }
 }

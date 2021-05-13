@@ -18,7 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.jsoncreation;
 
-import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
@@ -26,7 +25,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BoolExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.UnspecifiedBoolExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
-import de.uni_passau.fim.se2.litterbox.ast.model.extensions.ExtensionBlock;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.language.ExprLanguage;
@@ -60,7 +58,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.Color;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.ScratchList;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.SymbolTable;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.ExtensionVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.PenExtensionVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.TextToSpeechExtensionVisitor;
@@ -73,7 +70,7 @@ import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 import static de.uni_passau.fim.se2.litterbox.jsoncreation.BlockJsonCreatorHelper.*;
 import static de.uni_passau.fim.se2.litterbox.jsoncreation.JSONStringCreator.createField;
 
-public class StmtListJSONCreator implements ScratchVisitor {
+public class StmtListJSONCreator implements ScratchVisitor, PenExtensionVisitor, TextToSpeechExtensionVisitor {
     private String previousBlockId = null;
     private List<String> finishedJSONStrings;
     private List<Stmt> stmtList;
@@ -82,7 +79,6 @@ public class StmtListJSONCreator implements ScratchVisitor {
     private SymbolTable symbolTable;
     private ExpressionJSONCreator exprCreator;
     private FixedExpressionJSONCreator fixedExprCreator;
-    private ExtensionVisitor vis;
 
     public StmtListJSONCreator(String parentId, StmtList stmtList, SymbolTable symbolTable) {
         previousBlockId = parentId;
@@ -93,7 +89,6 @@ public class StmtListJSONCreator implements ScratchVisitor {
         this.symbolTable = symbolTable;
         exprCreator = new ExpressionJSONCreator();
         fixedExprCreator = new FixedExpressionJSONCreator();
-        vis = new StmtListJSONExtensionVisitor(this);
     }
 
     public StmtListJSONCreator(StmtList stmtList, SymbolTable symbolTable) {
@@ -104,7 +99,6 @@ public class StmtListJSONCreator implements ScratchVisitor {
         this.symbolTable = symbolTable;
         exprCreator = new ExpressionJSONCreator();
         fixedExprCreator = new FixedExpressionJSONCreator();
-        vis = new StmtListJSONExtensionVisitor(this);
     }
 
     public String createStmtListJSONString() {
@@ -128,11 +122,6 @@ public class StmtListJSONCreator implements ScratchVisitor {
             nextId = idVis.getBlockId(stmtList.get(counter + 1));
         }
         return nextId;
-    }
-
-    @Override
-    public void visit(ExtensionBlock node) {
-        node.accept(vis);
     }
 
     @Override
@@ -1026,150 +1015,136 @@ public class StmtListJSONCreator implements ScratchVisitor {
         }
     }
 
-    private class StmtListJSONExtensionVisitor implements PenExtensionVisitor, TextToSpeechExtensionVisitor {
-        ScratchVisitor parent;
+    @Override
+    public void visit(PenStmt node) {
+        node.accept((PenExtensionVisitor) this);
+    }
 
-        public StmtListJSONExtensionVisitor(ScratchVisitor parent) {
-            this.parent = parent;
+    @Override
+    public void visit(SetPenSizeTo node) {
+        createSingleNumExprBlock((NonDataBlockMetadata) node.getMetadata(), SIZE_KEY_CAP, node.getValue(),
+                MATH_NUM_PRIMITIVE);
+    }
+
+    @Override
+    public void visit(ChangePenSizeBy node) {
+        createSingleNumExprBlock((NonDataBlockMetadata) node.getMetadata(), SIZE_KEY_CAP, node.getValue(),
+                MATH_NUM_PRIMITIVE);
+    }
+
+    @Override
+    public void visit(PenDownStmt node) {
+        finishedJSONStrings.add(createFixedBlock((NonDataBlockMetadata) node.getMetadata(), getNextId(),
+                previousBlockId));
+        previousBlockId = ((NonDataBlockMetadata) node.getMetadata()).getBlockId();
+    }
+
+    @Override
+    public void visit(PenUpStmt node) {
+        finishedJSONStrings.add(createFixedBlock((NonDataBlockMetadata) node.getMetadata(), getNextId(),
+                previousBlockId));
+        previousBlockId = ((NonDataBlockMetadata) node.getMetadata()).getBlockId();
+    }
+
+    @Override
+    public void visit(PenClearStmt node) {
+        finishedJSONStrings.add(createFixedBlock((NonDataBlockMetadata) node.getMetadata(), getNextId(),
+                previousBlockId));
+        previousBlockId = ((NonDataBlockMetadata) node.getMetadata()).getBlockId();
+    }
+
+    @Override
+    public void visit(PenStampStmt node) {
+        finishedJSONStrings.add(createFixedBlock((NonDataBlockMetadata) node.getMetadata(), getNextId(),
+                previousBlockId));
+        previousBlockId = ((NonDataBlockMetadata) node.getMetadata()).getBlockId();
+    }
+
+    @Override
+    public void visit(SetPenColorToColorStmt node) {
+        NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
+        List<String> inputs = new ArrayList<>();
+        Color color = node.getColorExpr();
+        IdJsonStringTuple tuple;
+
+        tuple = exprCreator.createExpressionJSON(metadata.getBlockId(),
+                color, symbolTable);
+        if (tuple.getId() == null) {
+            StringBuilder jsonString = new StringBuilder();
+            createField(jsonString, COLOR_KEY).append(tuple.getJsonString());
+            inputs.add(jsonString.toString());
+        } else {
+            finishedJSONStrings.add(tuple.getJsonString());
+            inputs.add(createReferenceJSON(tuple.getId(), COLOR_KEY, true));
         }
 
-        @Override
-        public void visit(ExtensionBlock node) {
-            if (node instanceof Stmt) {
-                parent.visit((Stmt) node);
-            } else if (node instanceof Expression) {
-                parent.visit((Expression) node);
-            } else {
-                parent.visit((ASTNode) node);
-            }
+        finishedJSONStrings.add(createBlockWithoutMutationString(metadata, getNextId(),
+                previousBlockId, createInputs(inputs), EMPTY_VALUE));
+        previousBlockId = metadata.getBlockId();
+    }
+
+    @Override
+    public void visit(ChangePenColorParamBy node) {
+        PenWithParamMetadata metadata = (PenWithParamMetadata) node.getMetadata();
+        createPenWithParamStmt(metadata, node.getParam(), node.getValue(), node);
+    }
+
+    @Override
+    public void visit(SetPenColorParamTo node) {
+        PenWithParamMetadata metadata = (PenWithParamMetadata) node.getMetadata();
+        createPenWithParamStmt(metadata, node.getParam(), node.getValue(), node);
+    }
+
+    @Override
+    public void visitParentVisitor(PenStmt node){
+        visitDefaultVisitor(node);
+    }
+
+    @Override
+    public void visitParentVisitor(TextToSpeechBlock node){
+        visitDefaultVisitor(node);
+    }
+
+    @Override
+    public void visit(TextToSpeechBlock node) {
+        node.accept((TextToSpeechExtensionVisitor) this);
+    }
+
+    @Override
+    public void visit(SetLanguage node) {
+        NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
+        List<String> inputs = new ArrayList<>();
+        if (node.getLanguage() instanceof FixedLanguage) {
+            IdJsonStringTuple tuple = fixedExprCreator.createFixedExpressionJSON(metadata.getBlockId(), node.getLanguage());
+            finishedJSONStrings.add(tuple.getJsonString());
+            inputs.add(createReferenceInput(LANGUAGE_INPUT_KEY, INPUT_SAME_BLOCK_SHADOW, tuple.getId(), false));
+        } else {
+            inputs.add(createExpr(metadata, LANGUAGE_INPUT_KEY, ((ExprLanguage) node.getLanguage()).getExpr()));
         }
+        finishedJSONStrings.add(createBlockWithoutMutationString(metadata, getNextId(),
+                previousBlockId, createInputs(inputs), EMPTY_VALUE));
+        previousBlockId = metadata.getBlockId();
+    }
 
-        @Override
-        public void visit(PenStmt node) {
-            parent.visit((Stmt) node);
+    @Override
+    public void visit(SetVoice node) {
+        NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
+        List<String> inputs = new ArrayList<>();
+        if (node.getVoice() instanceof FixedVoice) {
+            IdJsonStringTuple tuple = fixedExprCreator.createFixedExpressionJSON(metadata.getBlockId(), node.getVoice());
+            finishedJSONStrings.add(tuple.getJsonString());
+            inputs.add(createReferenceInput(VOICE_INPUT_KEY, INPUT_SAME_BLOCK_SHADOW, tuple.getId(), false));
+        } else {
+            inputs.add(createExpr(metadata, VOICE_INPUT_KEY, ((ExprVoice) node.getVoice()).getExpr()));
         }
+        finishedJSONStrings.add(createBlockWithoutMutationString(metadata, getNextId(),
+                previousBlockId, createInputs(inputs), EMPTY_VALUE));
+        previousBlockId = metadata.getBlockId();
+    }
 
-        @Override
-        public void visit(SetPenSizeTo node) {
-            createSingleNumExprBlock((NonDataBlockMetadata) node.getMetadata(), SIZE_KEY_CAP, node.getValue(),
-                    MATH_NUM_PRIMITIVE);
-        }
-
-        @Override
-        public void visit(ChangePenSizeBy node) {
-            createSingleNumExprBlock((NonDataBlockMetadata) node.getMetadata(), SIZE_KEY_CAP, node.getValue(),
-                    MATH_NUM_PRIMITIVE);
-        }
-
-        @Override
-        public void visit(PenDownStmt node) {
-            finishedJSONStrings.add(createFixedBlock((NonDataBlockMetadata) node.getMetadata(), getNextId(),
-                    previousBlockId));
-            previousBlockId = ((NonDataBlockMetadata) node.getMetadata()).getBlockId();
-        }
-
-        @Override
-        public void visit(PenUpStmt node) {
-            finishedJSONStrings.add(createFixedBlock((NonDataBlockMetadata) node.getMetadata(), getNextId(),
-                    previousBlockId));
-            previousBlockId = ((NonDataBlockMetadata) node.getMetadata()).getBlockId();
-        }
-
-        @Override
-        public void visit(PenClearStmt node) {
-            finishedJSONStrings.add(createFixedBlock((NonDataBlockMetadata) node.getMetadata(), getNextId(),
-                    previousBlockId));
-            previousBlockId = ((NonDataBlockMetadata) node.getMetadata()).getBlockId();
-        }
-
-        @Override
-        public void visit(PenStampStmt node) {
-            finishedJSONStrings.add(createFixedBlock((NonDataBlockMetadata) node.getMetadata(), getNextId(),
-                    previousBlockId));
-            previousBlockId = ((NonDataBlockMetadata) node.getMetadata()).getBlockId();
-        }
-
-        @Override
-        public void visit(SetPenColorToColorStmt node) {
-            NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
-            List<String> inputs = new ArrayList<>();
-            Color color = node.getColorExpr();
-            IdJsonStringTuple tuple;
-
-            tuple = exprCreator.createExpressionJSON(metadata.getBlockId(),
-                    color, symbolTable);
-            if (tuple.getId() == null) {
-                StringBuilder jsonString = new StringBuilder();
-                createField(jsonString, COLOR_KEY).append(tuple.getJsonString());
-                inputs.add(jsonString.toString());
-            } else {
-                finishedJSONStrings.add(tuple.getJsonString());
-                inputs.add(createReferenceJSON(tuple.getId(), COLOR_KEY, true));
-            }
-
-            finishedJSONStrings.add(createBlockWithoutMutationString(metadata, getNextId(),
-                    previousBlockId, createInputs(inputs), EMPTY_VALUE));
-            previousBlockId = metadata.getBlockId();
-        }
-
-        @Override
-        public void visit(ChangePenColorParamBy node) {
-            PenWithParamMetadata metadata = (PenWithParamMetadata) node.getMetadata();
-            createPenWithParamStmt(metadata, node.getParam(), node.getValue(), node);
-        }
-
-        @Override
-        public void visit(SetPenColorParamTo node) {
-            PenWithParamMetadata metadata = (PenWithParamMetadata) node.getMetadata();
-            createPenWithParamStmt(metadata, node.getParam(), node.getValue(), node);
-        }
-
-        @Override
-        public void visit(TextToSpeechStmt node) {
-            parent.visit((Stmt) node);
-        }
-
-        @Override
-        public void visit(TextToSpeechBlock node) {
-            parent.visit((ASTNode) node);
-        }
-
-        @Override
-        public void visit(SetLanguage node) {
-            NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
-            List<String> inputs = new ArrayList<>();
-            if (node.getLanguage() instanceof FixedLanguage) {
-                IdJsonStringTuple tuple = fixedExprCreator.createFixedExpressionJSON(metadata.getBlockId(), node.getLanguage());
-                finishedJSONStrings.add(tuple.getJsonString());
-                inputs.add(createReferenceInput(LANGUAGE_INPUT_KEY, INPUT_SAME_BLOCK_SHADOW, tuple.getId(), false));
-            } else {
-                inputs.add(createExpr(metadata, LANGUAGE_INPUT_KEY, ((ExprLanguage) node.getLanguage()).getExpr()));
-            }
-            finishedJSONStrings.add(createBlockWithoutMutationString(metadata, getNextId(),
-                    previousBlockId, createInputs(inputs), EMPTY_VALUE));
-            previousBlockId = metadata.getBlockId();
-        }
-
-        @Override
-        public void visit(SetVoice node) {
-            NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
-            List<String> inputs = new ArrayList<>();
-            if (node.getVoice() instanceof FixedVoice) {
-                IdJsonStringTuple tuple = fixedExprCreator.createFixedExpressionJSON(metadata.getBlockId(), node.getVoice());
-                finishedJSONStrings.add(tuple.getJsonString());
-                inputs.add(createReferenceInput(VOICE_INPUT_KEY, INPUT_SAME_BLOCK_SHADOW, tuple.getId(), false));
-            } else {
-                inputs.add(createExpr(metadata, VOICE_INPUT_KEY, ((ExprVoice) node.getVoice()).getExpr()));
-            }
-            finishedJSONStrings.add(createBlockWithoutMutationString(metadata, getNextId(),
-                    previousBlockId, createInputs(inputs), EMPTY_VALUE));
-            previousBlockId = metadata.getBlockId();
-        }
-
-        @Override
-        public void visit(Speak node) {
-            createSingleStringExprBlock((NonDataBlockMetadata) node.getMetadata(), WORDS_KEY, node.getText());
-        }
+    @Override
+    public void visit(Speak node) {
+        createSingleStringExprBlock((NonDataBlockMetadata) node.getMetadata(), WORDS_KEY, node.getText());
     }
 }
 

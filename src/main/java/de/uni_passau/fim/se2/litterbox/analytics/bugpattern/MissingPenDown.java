@@ -21,17 +21,11 @@ package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
-import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
-import de.uni_passau.fim.se2.litterbox.ast.model.extensions.ExtensionBlock;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.PenDownStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.PenStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.PenUpStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.ExtensionVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.PenExtensionVisitor;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 /**
  * Scripts of a sprite using a pen up block but never a pen down block fall in this category.
@@ -39,18 +33,13 @@ import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
  * something and does not, or later additions of pen down blocks may not lead to the desired results since remaining
  * pen up blocks could disrupt the project.
  */
-public class MissingPenDown extends AbstractIssueFinder {
+public class MissingPenDown extends AbstractIssueFinder implements PenExtensionVisitor {
 
     public static final String NAME = "missing_pen_down";
 
     private boolean penUpSet = false;
     private boolean penDownSet = false;
     private boolean addComment;
-    private ExtensionVisitor vis;
-
-    public MissingPenDown() {
-        vis = new MissingPenDownExtensionVisitor(this);
-    }
 
     @Override
     public void visit(ActorDefinition actor) {
@@ -65,11 +54,6 @@ public class MissingPenDown extends AbstractIssueFinder {
             visitChildren(actor);
             reset();
         }
-    }
-
-    @Override
-    public void visit(ExtensionBlock node) {
-       node.accept(vis);
     }
 
     void reset() {
@@ -92,45 +76,32 @@ public class MissingPenDown extends AbstractIssueFinder {
         return IssueType.BUG;
     }
 
-    private class MissingPenDownExtensionVisitor implements PenExtensionVisitor {
-        ScratchVisitor parent;
+    @Override
+    public void visit(PenStmt node) {
+        node.accept((PenExtensionVisitor) this);
+    }
 
-        public MissingPenDownExtensionVisitor(ScratchVisitor parent) {
-            this.parent = parent;
-        }
+    @Override
+    public void visitParentVisitor(PenStmt node){
+        visitDefaultVisitor(node);
+    }
 
-        @Override
-        public void visit(PenStmt node) {
-            parent.visit((Stmt) node);
-        }
-
-        @Override
-        public void visit(PenDownStmt node) {
-            if (!addComment) {
-                penDownSet = true;
-                visitChildren(node);
-            }
-        }
-
-        @Override
-        public void visit(PenUpStmt node) {
-            if (!addComment) {
-                penUpSet = true;
-                visitChildren(node);
-            } else if (getResult()) {
-                addIssue(node, node.getMetadata(), IssueSeverity.MEDIUM);
-            }
-        }
-
-        @Override
-        public void visit(ExtensionBlock node) {
-            if (node instanceof Stmt) {
-                parent.visit((Stmt) node);
-            } else if (node instanceof Expression) {
-                parent.visit((Expression) node);
-            } else {
-                parent.visit((ASTNode) node);
-            }
+    @Override
+    public void visit(PenDownStmt node) {
+        if (!addComment) {
+            penDownSet = true;
+            visitChildren(node);
         }
     }
+
+    @Override
+    public void visit(PenUpStmt node) {
+        if (!addComment) {
+            penUpSet = true;
+            visitChildren(node);
+        } else if (getResult()) {
+            addIssue(node, node.getMetadata(), IssueSeverity.MEDIUM);
+        }
+    }
+
 }
