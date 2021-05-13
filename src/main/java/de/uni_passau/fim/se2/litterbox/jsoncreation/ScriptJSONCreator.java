@@ -26,7 +26,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.UnspecifiedNumEx
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.FieldsMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.TopNonDataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.SymbolTable;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
@@ -82,9 +81,8 @@ public class ScriptJSONCreator {
                     }
                 }
 
-                FieldsMetadata fieldsMetadata = meta.getFields().getList().get(0);
                 String attribute = attributeAboveValue.getAttribute().getTypeName();
-                String fields = createFields(fieldsMetadata.getFieldsName(), attribute, null);
+                String fields = createFields(WHEN_GREATER_THAN_MENU, attribute, null);
                 jsonString.append(createBlockWithoutMutationString(meta, nextId, null, createInputs(inputs),
                         fields));
             } else if (event instanceof BackdropSwitchTo) {
@@ -92,9 +90,8 @@ public class ScriptJSONCreator {
                 TopNonDataBlockMetadata meta = (TopNonDataBlockMetadata) backdropSwitchTo.getMetadata();
                 blockId = meta.getBlockId();
 
-                FieldsMetadata fieldsMetadata = meta.getFields().getList().get(0);
                 String name = backdropSwitchTo.getBackdrop().getName();
-                String fields = createFields(fieldsMetadata.getFieldsName(), name, null);
+                String fields = createFields(BACKDROP_INPUT, name, null);
                 jsonString.append(createBlockWithoutMutationString(meta, nextId, null, EMPTY_VALUE, fields));
             } else if (event instanceof GreenFlag) {
                 GreenFlag greenFlag = (GreenFlag) event;
@@ -106,11 +103,10 @@ public class ScriptJSONCreator {
                 TopNonDataBlockMetadata meta = (TopNonDataBlockMetadata) keyPressed.getMetadata();
                 blockId = meta.getBlockId();
 
-                FieldsMetadata fieldsMetadata = meta.getFields().getList().get(0);
                 Preconditions.checkArgument(keyPressed.getKey().getKey() instanceof NumberLiteral);
                 String key = getKeyValue((int) ((NumberLiteral) keyPressed.getKey().getKey()).getValue());
 
-                String fields = createFields(fieldsMetadata.getFieldsName(), key, null);
+                String fields = createFields(KEY_OPTION, key, null);
                 jsonString.append(createBlockWithoutMutationString(meta, nextId, null, EMPTY_VALUE, fields));
             } else if (event instanceof ReceptionOfMessage) {
                 ReceptionOfMessage receptionOfMessage = (ReceptionOfMessage) event;
@@ -120,14 +116,13 @@ public class ScriptJSONCreator {
                 StringExpr expr = receptionOfMessage.getMsg().getMessage();
                 Preconditions.checkArgument(expr instanceof StringLiteral);
                 String messageText = ((StringLiteral) expr).getText();
-                FieldsMetadata fieldsMetadata = meta.getFields().getList().get(0);
                 String id;
                 if (symbol.getMessage(messageText).isPresent()) {
                     id = symbol.getMessage(messageText).get().getIdentifier();
                 } else {
                     id = "unspecified" + messageText;
                 }
-                String fields = createFields(fieldsMetadata.getFieldsName(), messageText, id);
+                String fields = createFields(BROADCAST_OPTION, messageText, id);
                 jsonString.append(createBlockWithoutMutationString(meta, nextId, null, EMPTY_VALUE, fields));
             } else if (event instanceof SpriteClicked) {
                 SpriteClicked spriteClicked = (SpriteClicked) event;
