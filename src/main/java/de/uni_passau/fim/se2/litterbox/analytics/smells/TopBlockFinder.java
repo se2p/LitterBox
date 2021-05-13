@@ -22,12 +22,14 @@ import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.*;
-import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.SetLanguage;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.SetVoice;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.Speak;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.TextToSpeechBlock;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.CloneOfMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.PenWithParamMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.ExpressionStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.UnspecifiedStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.*;
@@ -774,9 +776,6 @@ public abstract class TopBlockFinder extends AbstractIssueFinder implements PenE
         }
     }
 
-    class TopBlockFinderExtensionVisitor implements PenExtensionVisitor {
-        ScratchVisitor parent;
-
     //PenBlocks
 
     @Override
@@ -867,7 +866,6 @@ public abstract class TopBlockFinder extends AbstractIssueFinder implements PenE
 
     //TextToSpeechBlocks
 
-
     @Override
     public void visit(TextToSpeechBlock node) {
         node.accept((TextToSpeechExtensionVisitor) this);
@@ -901,12 +899,12 @@ public abstract class TopBlockFinder extends AbstractIssueFinder implements PenE
     }
 
     @Override
-    public void visitParentVisitor(PenStmt node){
+    public void visitParentVisitor(PenStmt node) {
         visitDefaultVisitor(node);
     }
 
     @Override
-    public void visitParentVisitor(TextToSpeechBlock node){
+    public void visitParentVisitor(TextToSpeechBlock node) {
         visitDefaultVisitor(node);
     }
 }
