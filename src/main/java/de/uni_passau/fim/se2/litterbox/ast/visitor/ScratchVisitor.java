@@ -3614,17 +3614,30 @@ public interface ScratchVisitor {
 
     default void visit(PenStmt node) {
         if (this instanceof PenExtensionVisitor) {
-            ((PenExtensionVisitor)this).visit(node);
+            ((PenExtensionVisitor) this).visit(node);
         } else {
-            visit((ASTNode) node);
+            visit((Stmt) node);
+        }
+    }
+
+    //all blocks are either Expressions, Stmts or Events, other Nodes that are for drop down menus are handled as ASTNodes
+    private void visitHelp(ASTNode node) {
+        if (node instanceof Stmt) {
+            visit((Stmt) node);
+        } else if (node instanceof Expression) {
+            visit((Expression) node);
+        } else if (node instanceof Event) {
+            visit((Event) node);
+        } else {
+            visit(node);
         }
     }
 
     default void visit(TextToSpeechBlock node) {
         if (this instanceof TextToSpeechExtensionVisitor) {
-            ((TextToSpeechExtensionVisitor)this).visit(node);
+            ((TextToSpeechExtensionVisitor) this).visit(node);
         } else {
-            visit((ASTNode) node);
+            visitHelp(node);
         }
     }
 }

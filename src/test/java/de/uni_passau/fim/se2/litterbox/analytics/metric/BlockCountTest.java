@@ -83,4 +83,11 @@ public class BlockCountTest implements JsonTest {
         BlockCount parameterName = new BlockCount();
         Assertions.assertEquals(5, parameterName.calculateMetric(halfFixedExpr)); //TODO does an empty string have to be an UnspecifiedExpr?
     }
+
+    @Test
+    public void testPenAndTTS() throws IOException, ParsingException {
+        Program program = getAST("./src/test/fixtures/metrics/penAndTTS.json");
+        BlockCount parameterName = new BlockCount();
+        Assertions.assertEquals(4, parameterName.calculateMetric(program));
+    }
 }
