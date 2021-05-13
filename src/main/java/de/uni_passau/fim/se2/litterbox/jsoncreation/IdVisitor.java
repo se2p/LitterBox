@@ -20,7 +20,9 @@ package de.uni_passau.fim.se2.litterbox.jsoncreation;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.language.ExprLanguage;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.language.FixedLanguage;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.voice.ExprVoice;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.voice.FixedVoice;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.CloneOfMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
@@ -479,6 +481,16 @@ public class IdVisitor implements ScratchVisitor, PenExtensionVisitor, TextToSpe
     @Override
     public void visit(FixedVoice node) {
         id = ((NonDataBlockMetadata) node.getMetadata()).getBlockId();
+    }
+
+    @Override
+    public void visit(ExprLanguage node) {
+        id = ((NonDataBlockMetadata) node.getExpr().getMetadata()).getBlockId();
+    }
+
+    @Override
+    public void visit(ExprVoice node) {
+        id = ((NonDataBlockMetadata) node.getExpr().getMetadata()).getBlockId();
     }
 
     @Override
