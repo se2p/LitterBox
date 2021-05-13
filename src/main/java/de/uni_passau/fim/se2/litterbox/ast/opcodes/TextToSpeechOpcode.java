@@ -16,9 +16,17 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.uni_passau.fim.se2.litterbox.ast.model.extensions;
+package de.uni_passau.fim.se2.litterbox.ast.opcodes;
 
-import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
+public enum TextToSpeechOpcode {
+    text2speech_setVoice, text2speech_speakAndWait, text2speech_setLanguage;
 
-public interface ExtensionBlock extends ASTNode {
+    public static boolean contains(String opcode) {
+        for (TextToSpeechOpcode value : TextToSpeechOpcode.values()) {
+            if (value.name().equals(opcode)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

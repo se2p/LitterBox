@@ -35,4 +35,10 @@ public class PenBlockCountTest implements JsonTest {
         Assertions.assertEquals(9, parameterName.calculateMetric(empty));
     }
 
+    @Test
+    public void testPenAndTTS() throws IOException, ParsingException {
+        Program program = getAST("./src/test/fixtures/metrics/penAndTTS.json");
+        PenBlockCount parameterName = new PenBlockCount();
+        Assertions.assertEquals(2, parameterName.calculateMetric(program));
+    }
 }

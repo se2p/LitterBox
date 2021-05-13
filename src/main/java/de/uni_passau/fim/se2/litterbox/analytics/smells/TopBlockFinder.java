@@ -19,16 +19,17 @@
 package de.uni_passau.fim.se2.litterbox.analytics.smells;
 
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
-import de.uni_passau.fim.se2.litterbox.analytics.metric.ProgramUsingPen;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.*;
-import de.uni_passau.fim.se2.litterbox.ast.model.extensions.ExtensionBlock;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.SetLanguage;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.SetVoice;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.Speak;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.TextToSpeechBlock;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.CloneOfMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.PenWithParamMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.ExpressionStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.UnspecifiedStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.*;
@@ -40,18 +41,11 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.DeleteClone;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopAll;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopThisScript;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.ExtensionVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.PenExtensionVisitor;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.TextToSpeechExtensionVisitor;
 
-public abstract class TopBlockFinder extends AbstractIssueFinder {
+public abstract class TopBlockFinder extends AbstractIssueFinder implements PenExtensionVisitor, TextToSpeechExtensionVisitor {
     boolean setHint = false;
-    ExtensionVisitor vis;
-
-    @Override
-    public void visit(ExtensionBlock node) {
-        node.accept(vis);
-    }
 
     @Override
     public void visit(CreateCloneOf node) {
@@ -782,102 +776,135 @@ public abstract class TopBlockFinder extends AbstractIssueFinder {
         }
     }
 
-    class TopBlockFinderExtensionVisitor implements PenExtensionVisitor {
-        ScratchVisitor parent;
+    //PenBlocks
 
-        public TopBlockFinderExtensionVisitor(ScratchVisitor parent) {
-            this.parent = parent;
-        }
+    @Override
+    public void visit(PenStmt node) {
+        node.accept((PenExtensionVisitor) this);
+    }
 
-        @Override
-        public void visit(PenStmt node) {
-            parent.visit((Stmt) node);
+    @Override
+    public void visit(PenDownStmt node) {
+        if (setHint) {
+            addIssue(node, node.getMetadata());
+        } else {
+            visitChildren(node);
         }
+    }
 
-        @Override
-        public void visit(PenDownStmt node) {
-            if (setHint) {
-                addIssue(node, node.getMetadata());
-            } else {
-                visitChildren(node);
-            }
+    @Override
+    public void visit(PenUpStmt node) {
+        if (setHint) {
+            addIssue(node, node.getMetadata());
+        } else {
+            visitChildren(node);
         }
+    }
 
-        @Override
-        public void visit(PenUpStmt node) {
-            if (setHint) {
-                addIssue(node, node.getMetadata());
-            } else {
-                visitChildren(node);
-            }
+    @Override
+    public void visit(PenClearStmt node) {
+        if (setHint) {
+            addIssue(node, node.getMetadata());
+        } else {
+            visitChildren(node);
         }
+    }
 
-        @Override
-        public void visit(PenClearStmt node) {
-            if (setHint) {
-                addIssue(node, node.getMetadata());
-            } else {
-                visitChildren(node);
-            }
+    @Override
+    public void visit(SetPenColorToColorStmt node) {
+        if (setHint) {
+            addIssue(node, node.getMetadata());
+        } else {
+            visitChildren(node);
         }
+    }
 
-        @Override
-        public void visit(SetPenColorToColorStmt node) {
-            if (setHint) {
-                addIssue(node, node.getMetadata());
-            } else {
-                visitChildren(node);
-            }
+    @Override
+    public void visit(SetPenSizeTo node) {
+        if (setHint) {
+            addIssue(node, node.getMetadata());
+        } else {
+            visitChildren(node);
         }
+    }
 
-        @Override
-        public void visit(SetPenSizeTo node) {
-            if (setHint) {
-                addIssue(node, node.getMetadata());
-            } else {
-                visitChildren(node);
-            }
+    @Override
+    public void visit(ChangePenSizeBy node) {
+        if (setHint) {
+            addIssue(node, node.getMetadata());
+        } else {
+            visitChildren(node);
         }
+    }
 
-        @Override
-        public void visit(ChangePenSizeBy node) {
-            if (setHint) {
-                addIssue(node, node.getMetadata());
-            } else {
-                visitChildren(node);
-            }
+    @Override
+    public void visit(PenStampStmt node) {
+        if (setHint) {
+            addIssue(node, node.getMetadata());
+        } else {
+            visitChildren(node);
         }
+    }
 
-        @Override
-        public void visit(PenStampStmt node) {
-            if (setHint) {
-                addIssue(node, node.getMetadata());
-            } else {
-                visitChildren(node);
-            }
+    @Override
+    public void visit(ChangePenColorParamBy node) {
+        if (setHint) {
+            addIssue(node, ((PenWithParamMetadata) node.getMetadata()).getPenBlockMetadata());
+        } else {
+            visitChildren(node);
         }
+    }
 
-        @Override
-        public void visit(ChangePenColorParamBy node) {
-            if (setHint) {
-                addIssue(node, ((PenWithParamMetadata) node.getMetadata()).getPenBlockMetadata());
-            } else {
-                visitChildren(node);
-            }
+    @Override
+    public void visit(SetPenColorParamTo node) {
+        if (setHint) {
+            addIssue(node, ((PenWithParamMetadata) node.getMetadata()).getPenBlockMetadata());
+        } else {
+            visitChildren(node);
         }
+    }
 
-        @Override
-        public void visit(SetPenColorParamTo node) {
-            if (setHint) {
-                addIssue(node, ((PenWithParamMetadata) node.getMetadata()).getPenBlockMetadata());
-            } else {
-                visitChildren(node);
-            }
-        }
+    //TextToSpeechBlocks
 
-        @Override
-        public void visit(ExtensionBlock node) {
-            node.accept(parent);
+    @Override
+    public void visit(TextToSpeechBlock node) {
+        node.accept((TextToSpeechExtensionVisitor) this);
+    }
+
+    @Override
+    public void visit(SetLanguage node) {
+        if (setHint) {
+            addIssue(node, node.getMetadata());
+        } else {
+            visitChildren(node);
         }
+    }
+
+    @Override
+    public void visit(SetVoice node) {
+        if (setHint) {
+            addIssue(node, node.getMetadata());
+        } else {
+            visitChildren(node);
+        }
+    }
+
+    @Override
+    public void visit(Speak node) {
+        if (setHint) {
+            addIssue(node, node.getMetadata());
+        } else {
+            visitChildren(node);
+        }
+    }
+
+    @Override
+    public void visitParentVisitor(PenStmt node) {
+        visitDefaultVisitor(node);
+    }
+
+    @Override
+    public void visitParentVisitor(TextToSpeechBlock node) {
+        visitDefaultVisitor(node);
     }
 }

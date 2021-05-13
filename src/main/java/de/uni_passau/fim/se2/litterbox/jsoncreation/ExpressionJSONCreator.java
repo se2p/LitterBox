@@ -29,6 +29,11 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.Attribute;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.AttributeFromFixed;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.AttributeFromVariable;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.PenStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.TextToSpeechBlock;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.TextToSpeechStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.language.ExprLanguage;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.voice.ExprVoice;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Identifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.BoolLiteral;
@@ -46,6 +51,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.variable.ScratchList;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.SymbolTable;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.TextToSpeechExtensionVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import java.util.ArrayList;
@@ -55,7 +61,7 @@ import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 import static de.uni_passau.fim.se2.litterbox.jsoncreation.BlockJsonCreatorHelper.*;
 import static de.uni_passau.fim.se2.litterbox.jsoncreation.JSONStringCreator.createField;
 
-public class ExpressionJSONCreator implements ScratchVisitor {
+public class ExpressionJSONCreator implements ScratchVisitor, TextToSpeechExtensionVisitor  {
     private List<String> finishedJSONStrings;
     private String previousBlockId = null;
     private String topExpressionId = null;
@@ -263,7 +269,7 @@ public class ExpressionJSONCreator implements ScratchVisitor {
             ScratchList list = (ScratchList) qual.getSecond();
             String id = symbolTable.getListIdentifierFromActorAndName(qual.getFirst().getName(), list.getName().getName());
             return createFields(fieldsMeta.getFieldsName(), list.getName().getName(), id);
-        }else{
+        } else {
             return createFields(fieldsMeta.getFieldsName(), fieldsMeta.getFieldsValue(), fieldsMeta.getFieldsReference());
         }
     }
@@ -689,5 +695,25 @@ public class ExpressionJSONCreator implements ScratchVisitor {
             finishedJSONStrings.add(tuple.getJsonString());
             return createReferenceJSON(tuple.getId(), inputName, withDefault);
         }
+    }
+
+    @Override
+    public void visitParentVisitor(TextToSpeechBlock node){
+        visitDefaultVisitor(node);
+    }
+
+    @Override
+    public void visit(TextToSpeechBlock node) {
+        node.accept((TextToSpeechExtensionVisitor) this);
+    }
+
+    @Override
+    public void visit(ExprLanguage node) {
+        node.getExpr().accept(this);
+    }
+
+    @Override
+    public void visit(ExprVoice node) {
+        node.getExpr().accept(this);
     }
 }

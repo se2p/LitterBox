@@ -16,9 +16,12 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.uni_passau.fim.se2.litterbox.ast.model.extensions;
+package de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech;
 
-import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.ExtensionBlock;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.TextToSpeechExtensionVisitor;
 
-public interface ExtensionBlock extends ASTNode {
+public interface TextToSpeechBlock extends ExtensionBlock {
+
+    void accept(TextToSpeechExtensionVisitor visitor);
 }

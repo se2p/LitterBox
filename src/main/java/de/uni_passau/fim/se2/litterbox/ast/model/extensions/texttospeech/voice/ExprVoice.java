@@ -16,40 +16,33 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen;
+package de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.voice;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.PenExtensionVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.TextToSpeechExtensionVisitor;
 
-public class SetPenColorParamTo extends AbstractNode implements PenStmt {
-    private final NumExpr value;
-    private final StringExpr param;
+public class ExprVoice extends AbstractNode implements Voice {
+    private final Expression expr;
     private final BlockMetadata metadata;
 
-    public SetPenColorParamTo(NumExpr value, StringExpr param, BlockMetadata metadata) {
-        super(value, param, metadata);
-        this.value = value;
-        this.param = param;
+    public ExprVoice(Expression expr, BlockMetadata metadata) {
+        super(expr, metadata);
+        this.expr = expr;
         this.metadata = metadata;
+    }
+
+    public Expression getExpr() {
+        return expr;
     }
 
     @Override
     public BlockMetadata getMetadata() {
         return metadata;
-    }
-
-    public NumExpr getValue() {
-        return value;
-    }
-
-    public StringExpr getParam() {
-        return param;
     }
 
     @Override
@@ -58,12 +51,12 @@ public class SetPenColorParamTo extends AbstractNode implements PenStmt {
     }
 
     @Override
-    public ASTNode accept(CloneVisitor visitor) {
-        return visitor.visit(this);
+    public void accept(TextToSpeechExtensionVisitor visitor) {
+        visitor.visit(this);
     }
 
     @Override
-    public void accept(PenExtensionVisitor visitor) {
-        visitor.visit( this);
+    public ASTNode accept(CloneVisitor visitor) {
+        return visitor.visit(this);
     }
 }

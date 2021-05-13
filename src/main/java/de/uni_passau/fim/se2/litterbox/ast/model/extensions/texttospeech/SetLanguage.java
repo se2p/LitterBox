@@ -16,27 +16,28 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen;
+package de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.language.Language;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.PenExtensionVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.TextToSpeechExtensionVisitor;
 
-public class SetPenColorParamTo extends AbstractNode implements PenStmt {
-    private final NumExpr value;
-    private final StringExpr param;
+public class SetLanguage extends AbstractNode implements TextToSpeechStmt {
+    private final Language language;
     private final BlockMetadata metadata;
 
-    public SetPenColorParamTo(NumExpr value, StringExpr param, BlockMetadata metadata) {
-        super(value, param, metadata);
-        this.value = value;
-        this.param = param;
+    public SetLanguage(Language language, BlockMetadata metadata) {
+        super(language, metadata);
+        this.language = language;
         this.metadata = metadata;
+    }
+
+    public Language getLanguage() {
+        return language;
     }
 
     @Override
@@ -44,26 +45,18 @@ public class SetPenColorParamTo extends AbstractNode implements PenStmt {
         return metadata;
     }
 
-    public NumExpr getValue() {
-        return value;
-    }
-
-    public StringExpr getParam() {
-        return param;
+    @Override
+    public void accept(ScratchVisitor visitor) {
+        visitor.visit((TextToSpeechBlock) this);
     }
 
     @Override
-    public void accept(ScratchVisitor visitor) {
+    public void accept(TextToSpeechExtensionVisitor visitor) {
         visitor.visit(this);
     }
 
     @Override
     public ASTNode accept(CloneVisitor visitor) {
         return visitor.visit(this);
-    }
-
-    @Override
-    public void accept(PenExtensionVisitor visitor) {
-        visitor.visit( this);
     }
 }
