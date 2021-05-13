@@ -28,8 +28,12 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.SetLanguage;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.SetVoice;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.Speak;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.TextToSpeechBlock;
+import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.AskAndWait;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.SwitchBackdrop;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.*;
@@ -45,13 +49,23 @@ import de.uni_passau.fim.se2.litterbox.ast.model.variable.ScratchList;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.PenExtensionVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.TextToSpeechExtensionVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-public class StackedStatementCount<T extends ASTNode> implements ScratchVisitor, MetricExtractor<T>, PenExtensionVisitor {
+public class StackedStatementCount<T extends ASTNode> implements ScratchVisitor, MetricExtractor<T>, PenExtensionVisitor, TextToSpeechExtensionVisitor {
 
     public static final String NAME = "stacked_statement_count";
     private int maxStackedDepth = 0;
     private int currentStackedDepth = 0;
+    private boolean insideProcedure = false;
+    private boolean insideScript = false;
+
+    @Override
+    public void visit(ProcedureDefinition node) {
+        insideProcedure = true;
+        visitChildren(node);
+        insideProcedure = false;
+    }
 
     //Motion
     @Override
@@ -131,6 +145,7 @@ public class StackedStatementCount<T extends ASTNode> implements ScratchVisitor,
         currentStackedDepth = 0;
         visitChildren(node);
     }
+
     //Looks
     @Override
     public void visit(SayForSecs node) {
@@ -156,7 +171,6 @@ public class StackedStatementCount<T extends ASTNode> implements ScratchVisitor,
         visitChildren(node);
     }
 
-
     @Override
     public void visit(ChangeSizeBy node) {
         currentStackedDepth = 0;
@@ -174,6 +188,7 @@ public class StackedStatementCount<T extends ASTNode> implements ScratchVisitor,
         currentStackedDepth = 0;
         visitChildren(node);
     }
+
     //sound
     @Override
     public void visit(PlaySoundUntilDone node) {
@@ -210,6 +225,7 @@ public class StackedStatementCount<T extends ASTNode> implements ScratchVisitor,
         currentStackedDepth = 0;
         visitChildren(node);
     }
+
     //Events
     @Override
     public void visit(Event node) {
@@ -234,6 +250,7 @@ public class StackedStatementCount<T extends ASTNode> implements ScratchVisitor,
         currentStackedDepth = 0;
         visitChildren(node);
     }
+
     //control
     @Override
     public void visit(WaitSeconds node) {
@@ -293,8 +310,10 @@ public class StackedStatementCount<T extends ASTNode> implements ScratchVisitor,
 
     @Override
     public void visit(SetVariableTo node) {
-        currentStackedDepth = 0;
-        visitChildren(node);
+        if (insideScript || insideProcedure) {
+            currentStackedDepth = 0;
+            visitChildren(node);
+        }
     }
 
     @Override
@@ -326,6 +345,7 @@ public class StackedStatementCount<T extends ASTNode> implements ScratchVisitor,
         currentStackedDepth = 0;
         visitChildren(node);
     }
+
     //blocks
     @Override
     public void visit(CallStmt node) {
@@ -343,8 +363,11 @@ public class StackedStatementCount<T extends ASTNode> implements ScratchVisitor,
 
     @Override
     public void visit(Script node) {
+        insideScript = true;
         visitChildren(node);
+        insideScript = false;
     }
+
     //sound
     @Override
     public void visit(Volume node) {
@@ -388,12 +411,10 @@ public class StackedStatementCount<T extends ASTNode> implements ScratchVisitor,
         incrementAndVisit(node);
     }
 
-
     @Override
     public void visit(IsKeyPressed node) {
         incrementAndVisit(node);
     }
-
 
     @Override
     public void visit(AttributeOf node) {
@@ -444,6 +465,7 @@ public class StackedStatementCount<T extends ASTNode> implements ScratchVisitor,
     public void visit(Current node) {
         incrementAndVisit(node);
     }
+
     //Operators
     @Override
     public void visit(BiggerThan node) {
@@ -534,15 +556,20 @@ public class StackedStatementCount<T extends ASTNode> implements ScratchVisitor,
     public void visit(NumFunctOf node) {
         incrementAndVisit(node);
     }
+
     //variables
     @Override
     public void visit(ScratchList node) {
-        incrementAndVisit(node);
+        if (insideScript || insideProcedure) {
+            incrementAndVisit(node);
+        }
     }
 
     @Override
     public void visit(Variable node) {
-        incrementAndVisit(node);
+        if (insideScript || insideProcedure) {
+            incrementAndVisit(node);
+        }
     }
 
     @Override
@@ -600,6 +627,12 @@ public class StackedStatementCount<T extends ASTNode> implements ScratchVisitor,
     }
 
     @Override
+    public void visit(SetPenColorToColorStmt node) {
+        currentStackedDepth = 0;
+        visitChildren(node);
+    }
+
+    @Override
     public void visit(ChangePenColorParamBy node) {
         currentStackedDepth = 0;
         visitChildren(node);
@@ -611,4 +644,38 @@ public class StackedStatementCount<T extends ASTNode> implements ScratchVisitor,
         visitChildren(node);
     }
 
+    @Override
+    public void visit(SetPenSizeTo node) {
+        currentStackedDepth = 0;
+        visitChildren(node);
+    }
+
+    @Override
+    public void visit(ChangePenSizeBy node) {
+        currentStackedDepth = 0;
+        visitChildren(node);
+    }
+
+    @Override
+    public void visit(TextToSpeechBlock node) {
+        node.accept((TextToSpeechExtensionVisitor) this);
+    }
+
+    @Override
+    public void visit(SetLanguage node) {
+        currentStackedDepth = 0;
+        visitChildren(node);
+    }
+
+    @Override
+    public void visit(SetVoice node) {
+        currentStackedDepth = 0;
+        visitChildren(node);
+    }
+
+    @Override
+    public void visit(Speak node) {
+        currentStackedDepth = 0;
+        visitChildren(node);
+    }
 }
