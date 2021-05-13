@@ -867,4 +867,14 @@ public abstract class TopBlockFinder extends AbstractIssueFinder implements PenE
             visitChildren(node);
         }
     }
+
+    @Override
+    public void visitParentVisitor(PenStmt node){
+        visitDefaultVisitor(node);
+    }
+
+    @Override
+    public void visitParentVisitor(TextToSpeechBlock node){
+        visitDefaultVisitor(node);
+    }
 }

@@ -43,6 +43,11 @@ public class PenBlockCount<T extends ASTNode> implements MetricExtractor<T>, Scr
     }
 
     @Override
+    public void visitParentVisitor(PenStmt node){
+        visitDefaultVisitor(node);
+    }
+
+    @Override
     public String getName() {
         return NAME;
     }

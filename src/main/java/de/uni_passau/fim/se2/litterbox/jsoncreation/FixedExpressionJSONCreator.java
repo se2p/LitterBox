@@ -179,6 +179,11 @@ public class FixedExpressionJSONCreator implements ScratchVisitor, PenExtensionV
     }
 
     @Override
+    public void visitParentVisitor(PenStmt node){
+        visitDefaultVisitor(node);
+    }
+
+    @Override
     public void visit(ChangePenColorParamBy node) {
         StringExpr stringExpr = node.getParam();
         if (stringExpr instanceof StringLiteral) {
@@ -203,13 +208,13 @@ public class FixedExpressionJSONCreator implements ScratchVisitor, PenExtensionV
     //Text to Speech
 
     @Override
-    public void visit(TextToSpeechStmt node) {
+    public void visit(TextToSpeechBlock node) {
         node.accept((TextToSpeechExtensionVisitor) this);
     }
 
     @Override
-    public void visit(TextToSpeechBlock node) {
-        node.accept((TextToSpeechExtensionVisitor) this);
+    public void visitParentVisitor(TextToSpeechBlock node){
+        visitDefaultVisitor(node);
     }
 
     @Override

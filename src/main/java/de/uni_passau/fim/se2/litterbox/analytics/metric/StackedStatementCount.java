@@ -629,6 +629,11 @@ public class StackedStatementCount<T extends ASTNode> implements ScratchVisitor,
     }
 
     @Override
+    public void visitParentVisitor(PenStmt node){
+        visitDefaultVisitor(node);
+    }
+
+    @Override
     public void visit(SetPenColorToColorStmt node) {
         currentStackedDepth = 0;
         visitChildren(node);
@@ -664,13 +669,8 @@ public class StackedStatementCount<T extends ASTNode> implements ScratchVisitor,
     }
 
     @Override
-    public void visit(ExprLanguage node) {
-        visitChildren(node);
-    }
-
-    @Override
-    public void visit(ExprVoice node) {
-        visitChildren(node);
+    public void visitParentVisitor(TextToSpeechBlock node){
+        visitDefaultVisitor(node);
     }
 
     @Override

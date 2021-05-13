@@ -461,11 +461,16 @@ public class IdVisitor implements ScratchVisitor, PenExtensionVisitor, TextToSpe
         id = ((NonDataBlockMetadata) meta.getPenBlockMetadata()).getBlockId();
     }
 
+    @Override
+    public void visitParentVisitor(PenStmt node){
+        visitDefaultVisitor(node);
+    }
+
     //Text to Speech
 
     @Override
-    public void visit(TextToSpeechStmt node) {
-        node.accept((TextToSpeechExtensionVisitor) this);
+    public void visitParentVisitor(TextToSpeechBlock node){
+        visitDefaultVisitor(node);
     }
 
     @Override

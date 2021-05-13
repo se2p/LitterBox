@@ -91,4 +91,9 @@ public class ProgramUsingPen<T extends ASTNode> implements MetricExtractor<T>, S
     public void visit(SetPenColorParamTo node) {
         found = true;
     }
+
+    @Override
+    public void visitParentVisitor(PenStmt node){
+        visitDefaultVisitor(node);
+    }
 }

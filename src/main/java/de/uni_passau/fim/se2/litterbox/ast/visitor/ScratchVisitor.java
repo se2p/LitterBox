@@ -3621,7 +3621,7 @@ public interface ScratchVisitor {
     }
 
     //all blocks are either Expressions, Stmts or Events, other Nodes that are for drop down menus are handled as ASTNodes
-    private void visitHelp(ASTNode node) {
+    default void visitDefaultVisitor(ASTNode node) {
         if (node instanceof Stmt) {
             visit((Stmt) node);
         } else if (node instanceof Expression) {
@@ -3637,7 +3637,7 @@ public interface ScratchVisitor {
         if (this instanceof TextToSpeechExtensionVisitor) {
             ((TextToSpeechExtensionVisitor) this).visit(node);
         } else {
-            visitHelp(node);
+            visitDefaultVisitor(node);
         }
     }
 }

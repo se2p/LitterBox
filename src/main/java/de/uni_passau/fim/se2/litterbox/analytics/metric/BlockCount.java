@@ -32,6 +32,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.UnspecifiedBool
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.ExpressionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.PenStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.TextToSpeechBlock;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.TextToSpeechStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.language.ExprLanguage;
@@ -555,11 +556,6 @@ public class BlockCount<T extends ASTNode> implements MetricExtractor<T>, Scratc
     //TextToSpeechBlocks
 
     @Override
-    public void visit(TextToSpeechStmt node) {
-        node.accept((TextToSpeechExtensionVisitor) this);
-    }
-
-    @Override
     public void visit(TextToSpeechBlock node) {
         if (insideScript || insideProcedure) {
             count++;
@@ -569,6 +565,11 @@ public class BlockCount<T extends ASTNode> implements MetricExtractor<T>, Scratc
     @Override
     public void visit(FixedLanguage node) {
         //do not count
+    }
+
+    @Override
+    public void visitParentVisitor(TextToSpeechBlock node){
+        visitDefaultVisitor(node);
     }
 
     @Override

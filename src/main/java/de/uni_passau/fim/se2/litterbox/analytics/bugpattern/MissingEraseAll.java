@@ -62,6 +62,11 @@ public class MissingEraseAll extends AbstractIssueFinder implements PenExtension
     }
 
     @Override
+    public void visitParentVisitor(PenStmt node){
+        visitDefaultVisitor(node);
+    }
+
+    @Override
     public void visit(ActorDefinition actor) {
         currentActor = actor;
         visitChildren(actor);

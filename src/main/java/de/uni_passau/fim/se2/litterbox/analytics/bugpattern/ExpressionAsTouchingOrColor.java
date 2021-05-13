@@ -87,6 +87,11 @@ public class ExpressionAsTouchingOrColor extends AbstractIssueFinder implements 
     }
 
     @Override
+    public void visitParentVisitor(PenStmt node){
+        visitDefaultVisitor(node);
+    }
+
+    @Override
     public void visit(PenStmt node) {
         node.accept((PenExtensionVisitor) this);
     }

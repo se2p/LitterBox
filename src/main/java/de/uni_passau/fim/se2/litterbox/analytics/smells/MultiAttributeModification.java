@@ -412,4 +412,9 @@ public class MultiAttributeModification extends AbstractIssueFinder implements P
         }
         prevNode = node;
     }
+
+    @Override
+    public void visitParentVisitor(PenStmt node){
+        visitDefaultVisitor(node);
+    }
 }

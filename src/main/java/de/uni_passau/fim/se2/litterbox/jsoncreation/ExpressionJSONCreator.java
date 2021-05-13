@@ -29,6 +29,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.Attribute;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.AttributeFromFixed;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.AttributeFromVariable;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.PenStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.TextToSpeechBlock;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.TextToSpeechStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.language.ExprLanguage;
@@ -696,10 +697,9 @@ public class ExpressionJSONCreator implements ScratchVisitor, TextToSpeechExtens
         }
     }
 
-
     @Override
-    public void visit(TextToSpeechStmt node) {
-        node.accept((TextToSpeechExtensionVisitor) this);
+    public void visitParentVisitor(TextToSpeechBlock node){
+        visitDefaultVisitor(node);
     }
 
     @Override

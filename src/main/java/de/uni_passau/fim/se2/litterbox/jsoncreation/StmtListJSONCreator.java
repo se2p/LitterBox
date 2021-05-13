@@ -1096,8 +1096,13 @@ public class StmtListJSONCreator implements ScratchVisitor, PenExtensionVisitor,
     }
 
     @Override
-    public void visit(TextToSpeechStmt node) {
-        node.accept((TextToSpeechExtensionVisitor) this);
+    public void visitParentVisitor(PenStmt node){
+        visitDefaultVisitor(node);
+    }
+
+    @Override
+    public void visitParentVisitor(TextToSpeechBlock node){
+        visitDefaultVisitor(node);
     }
 
     @Override
