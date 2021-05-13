@@ -33,10 +33,6 @@ public class DuplicatedScript extends TopBlockFinder {
 
     private static final String NAME = "duplicated_script";
 
-    public DuplicatedScript() {
-        vis = new TopBlockFinderExtensionVisitor(this);
-    }
-
     @Override
     public IssueType getIssueType() {
         return IssueType.SMELL;
@@ -71,7 +67,7 @@ public class DuplicatedScript extends TopBlockFinder {
                         Event event = s.getEvent();
                         addIssue(event, event.getMetadata(), IssueSeverity.LOW);
                     } else {
-                        s.getStmtList().accept(this);
+                        s.getStmtList().getStmts().get(0).accept(this);
                     }
 
                     break;

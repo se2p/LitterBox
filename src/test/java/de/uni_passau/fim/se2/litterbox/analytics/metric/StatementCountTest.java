@@ -61,4 +61,11 @@ public class StatementCountTest implements JsonTest {
         StatementCount parameterName = new StatementCount();
         Assertions.assertEquals(5, parameterName.calculateMetric(program));
     }
+
+    @Test
+    public void testPenAndTTS() throws IOException, ParsingException {
+        Program program = getAST("./src/test/fixtures/metrics/penAndTTS.json");
+        StatementCount parameterName = new StatementCount();
+        Assertions.assertEquals(4, parameterName.calculateMetric(program));
+    }
 }

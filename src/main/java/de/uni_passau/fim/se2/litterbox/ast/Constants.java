@@ -320,4 +320,9 @@ public class Constants {
     public static final String FRONT_BACK = "FRONT_BACK";
     public static final String FORWARD_BACKWARD = "FORWARD_BACKWARD";
     public static final String STOP_OPTION = "STOP_OPTION";
+    public static final String WORDS_KEY = "WORDS";
+    public static final String VOICE_INPUT_KEY = "VOICE";
+    public static final String VOICE_FIELDS_KEY = "voices";
+    public static final String LANGUAGE_INPUT_KEY = "LANGUAGE";
+    public static final String LANGUAGE_FIELDS_KEY = "languages";
 }
