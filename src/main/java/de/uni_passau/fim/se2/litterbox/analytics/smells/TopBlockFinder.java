@@ -26,6 +26,9 @@ import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.CloneOfMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.PenWithParamMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.ExpressionStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.UnspecifiedStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.*;
@@ -107,6 +110,15 @@ public abstract class TopBlockFinder extends AbstractIssueFinder implements PenE
 
     @Override
     public void visit(BroadcastAndWait node) {
+        if (setHint) {
+            addIssue(node, node.getMetadata());
+        } else {
+            visitChildren(node);
+        }
+    }
+
+    @Override
+    public void visit(UnspecifiedStmt node) {
         if (setHint) {
             addIssue(node, node.getMetadata());
         } else {
@@ -664,6 +676,15 @@ public abstract class TopBlockFinder extends AbstractIssueFinder implements PenE
     }
 
     @Override
+    public void visit(ReceptionOfMessage node) {
+        if (setHint) {
+            addIssue(node, node.getMetadata());
+        } else {
+            visitChildren(node);
+        }
+    }
+
+    @Override
     public void visit(SetGraphicEffectTo node) {
         if (setHint) {
             addIssue(node, node.getMetadata());
@@ -744,6 +765,17 @@ public abstract class TopBlockFinder extends AbstractIssueFinder implements PenE
         }
     }
 
+    @Override
+    public void visit(ExpressionStmt node) {
+        if (setHint) {
+            addIssue(node.getExpression(), node.getExpression().getMetadata());
+        } else {
+            visitChildren(node);
+        }
+    }
+
+    class TopBlockFinderExtensionVisitor implements PenExtensionVisitor {
+        ScratchVisitor parent;
 
     //PenBlocks
 
