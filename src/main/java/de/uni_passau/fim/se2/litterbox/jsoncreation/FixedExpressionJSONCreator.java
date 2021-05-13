@@ -72,7 +72,7 @@ import static de.uni_passau.fim.se2.litterbox.jsoncreation.BlockJsonCreatorHelpe
  * {@link de.uni_passau.fim.se2.litterbox.ast.model.position.Position} or
  * {@link de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.ElementChoice}.
  */
-public class FixedExpressionJSONCreator implements ScratchVisitor, PenExtensionVisitor, TextToSpeechExtensionVisitor  {
+public class FixedExpressionJSONCreator implements ScratchVisitor, PenExtensionVisitor, TextToSpeechExtensionVisitor {
     private List<String> finishedJSONStrings;
     private String previousBlockId = null;
     private String topExpressionId = null;
@@ -220,42 +220,32 @@ public class FixedExpressionJSONCreator implements ScratchVisitor, PenExtensionV
         node.accept((PenExtensionVisitor) this);
     }
 
-        @Override
-        public void visit(ChangePenColorParamBy node) {
-            StringExpr stringExpr = node.getParam();
-            if (stringExpr instanceof StringLiteral) {
-                String strid = ((StringLiteral) stringExpr).getText();
-                PenWithParamMetadata metadata = (PenWithParamMetadata) node.getMetadata();
-                createFieldsExpression((NonDataBlockMetadata) metadata.getParamMetadata(), COLOR_PARAM_LITTLE_KEY,
-                        strid);
-            }
-        }
-    @Override
-    public void visitParentVisitor(PenStmt node){
-        visitDefaultVisitor(node);
-    }
-
     @Override
     public void visit(ChangePenColorParamBy node) {
         StringExpr stringExpr = node.getParam();
         if (stringExpr instanceof StringLiteral) {
             String strid = ((StringLiteral) stringExpr).getText();
             PenWithParamMetadata metadata = (PenWithParamMetadata) node.getMetadata();
-            createFieldsExpression((NonDataBlockMetadata) metadata.getParamMetadata(),
+            createFieldsExpression((NonDataBlockMetadata) metadata.getParamMetadata(), COLOR_PARAM_LITTLE_KEY,
                     strid);
         }
     }
 
-        @Override
-        public void visit(SetPenColorParamTo node) {
-            StringExpr stringExpr = node.getParam();
-            if (stringExpr instanceof StringLiteral) {
-                String strid = ((StringLiteral) stringExpr).getText();
-                PenWithParamMetadata metadata = (PenWithParamMetadata) node.getMetadata();
-                createFieldsExpression((NonDataBlockMetadata) metadata.getParamMetadata(), COLOR_PARAM_LITTLE_KEY,
-                        strid);
-            }
+    @Override
+    public void visitParentVisitor(PenStmt node) {
+        visitDefaultVisitor(node);
+    }
+
+    @Override
+    public void visit(SetPenColorParamTo node) {
+        StringExpr stringExpr = node.getParam();
+        if (stringExpr instanceof StringLiteral) {
+            String strid = ((StringLiteral) stringExpr).getText();
+            PenWithParamMetadata metadata = (PenWithParamMetadata) node.getMetadata();
+            createFieldsExpression((NonDataBlockMetadata) metadata.getParamMetadata(), COLOR_PARAM_LITTLE_KEY,
+                    strid);
         }
+    }
 
     //Text to Speech
 
@@ -265,17 +255,17 @@ public class FixedExpressionJSONCreator implements ScratchVisitor, PenExtensionV
     }
 
     @Override
-    public void visitParentVisitor(TextToSpeechBlock node){
+    public void visitParentVisitor(TextToSpeechBlock node) {
         visitDefaultVisitor(node);
     }
 
     @Override
     public void visit(FixedLanguage node) {
-        createFieldsExpression((NonDataBlockMetadata) node.getMetadata(), node.getType().getType());
+        createFieldsExpression((NonDataBlockMetadata) node.getMetadata(), LANGUAGE_FIELDS_KEY, node.getType().getType());
     }
 
     @Override
     public void visit(FixedVoice node) {
-        createFieldsExpression((NonDataBlockMetadata) node.getMetadata(), node.getType().getType());
+        createFieldsExpression((NonDataBlockMetadata) node.getMetadata(), VOICE_FIELDS_KEY, node.getType().getType());
     }
 }
