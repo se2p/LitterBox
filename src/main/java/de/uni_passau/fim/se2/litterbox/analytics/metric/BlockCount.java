@@ -59,7 +59,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.type.Type;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-public class BlockCount implements MetricExtractor, ScratchVisitor {
+public class BlockCount<T extends ASTNode> implements MetricExtractor<T>, ScratchVisitor {
     public static final String NAME = "block_count";
     private int count = 0;
     private boolean insideScript = false;
@@ -68,14 +68,16 @@ public class BlockCount implements MetricExtractor, ScratchVisitor {
     private boolean fixedBlock = false;
 
     @Override
-    public double calculateMetric(Program program) {
-        Preconditions.checkNotNull(program);
+    public double calculateMetric(T node) {
+        Preconditions.checkNotNull(node);
         count = 0;
-        insideScript = false;
+
         insideProcedure = false;
         insideParameterList = false;
         fixedBlock = false;
-        program.accept(this);
+        insideScript = !(node instanceof Script || node instanceof ProcedureDefinition || node instanceof Program);
+        node.accept(this);
+        insideScript = false;
         return count;
     }
 

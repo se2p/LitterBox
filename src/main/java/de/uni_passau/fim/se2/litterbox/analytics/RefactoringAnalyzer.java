@@ -7,8 +7,7 @@ import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.algorithms.Crowdi
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.algorithms.FastNonDominatedSort;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.algorithms.NSGAII;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.chromosomes.*;
-import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.fitness_functions.FitnessFunction;
-import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.fitness_functions.NumberOfSmells;
+import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.fitness_functions.*;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.search_operators.*;
 import de.uni_passau.fim.se2.litterbox.refactor.refactorings.Refactoring;
 import de.uni_passau.fim.se2.litterbox.report.ConsoleRefactorReportGenerator;
@@ -71,6 +70,7 @@ public class RefactoringAnalyzer extends Analyzer {
     private void generateProjectsFromParetoFront(File fileEntry, String reportName, List<RefactorSequence> solutions) {
         for (int i = 0; i < solutions.size(); i++) {
             Program refactored = solutions.get(i).getRefactoredProgram();
+
             generateOutput(refactored, solutions.get(i).getExecutedRefactorings(), reportName);
             createNewProjectFileWithCounterPostfix(fileEntry, refactored, i);
         }
@@ -107,7 +107,10 @@ public class RefactoringAnalyzer extends Analyzer {
         OffspringGenerator<RefactorSequence> offspringGenerator = new OffspringGenerator<>(binaryRankTournament);
 
         List<FitnessFunction<RefactorSequence>> fitnessFunctions = new LinkedList<>();
-        fitnessFunctions.add(new NumberOfSmells(program, issueFinders, ignoreLooseBlocks));
+        //fitnessFunctions.add(new NumberOfSmells(program, issueFinders, ignoreLooseBlocks));
+        fitnessFunctions.add(new HalsteadDifficultyFitness(program));
+        fitnessFunctions.add(new NumberOfBlocksFitness(program));
+        fitnessFunctions.add(new CategoryEntropyFitness(program));
         FastNonDominatedSort<RefactorSequence> fastNonDominatedSort = new FastNonDominatedSort<>(fitnessFunctions);
         CrowdingDistanceSort<RefactorSequence> crowdingDistanceSort = new CrowdingDistanceSort<>(fitnessFunctions);
 

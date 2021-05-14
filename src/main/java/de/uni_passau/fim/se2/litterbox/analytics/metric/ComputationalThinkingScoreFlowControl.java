@@ -26,7 +26,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatTimesSt
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
-public class ComputationalThinkingScoreFlowControl implements MetricExtractor, ScratchVisitor {
+public class ComputationalThinkingScoreFlowControl implements MetricExtractor<Program>, ScratchVisitor {
 
     private int score = 0;
 

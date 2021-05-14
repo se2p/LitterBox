@@ -19,16 +19,16 @@
 package de.uni_passau.fim.se2.litterbox.analytics.metric;
 
 import de.uni_passau.fim.se2.litterbox.analytics.MetricExtractor;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.cfg.ControlFlowGraph;
 import de.uni_passau.fim.se2.litterbox.cfg.ControlFlowGraphVisitor;
 
-public class InterproceduralCyclomaticComplexity implements MetricExtractor {
+public class InterproceduralCyclomaticComplexity<T extends ASTNode> implements MetricExtractor<T> {
 
     @Override
-    public double calculateMetric(Program program) {
+    public double calculateMetric(T node) {
         ControlFlowGraphVisitor visitor = new ControlFlowGraphVisitor();
-        visitor.visit(program);
+        visitor.visit(node);
         ControlFlowGraph cfg =  visitor.getControlFlowGraph();
         return cfg.getNumEdges() - cfg.getNumNodes() + 2;
     }

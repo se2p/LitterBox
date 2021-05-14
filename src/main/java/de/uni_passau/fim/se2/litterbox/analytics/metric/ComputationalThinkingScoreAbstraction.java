@@ -25,7 +25,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.event.StartedAsClone;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
-public class ComputationalThinkingScoreAbstraction implements MetricExtractor, ScratchVisitor {
+public class ComputationalThinkingScoreAbstraction implements MetricExtractor<Program>, ScratchVisitor {
 
     private int score = 0;
 
