@@ -31,7 +31,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.AskAndWait;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.MousePointer;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
-public class ComputationalThinkingScoreUserInteractivity implements MetricExtractor, ScratchVisitor {
+public class ComputationalThinkingScoreUserInteractivity implements MetricExtractor<Program>, ScratchVisitor {
 
     private int score = 0;
 

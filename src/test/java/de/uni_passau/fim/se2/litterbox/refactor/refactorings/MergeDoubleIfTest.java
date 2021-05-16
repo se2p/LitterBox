@@ -1,27 +1,48 @@
 package de.uni_passau.fim.se2.litterbox.refactor.refactorings;
 
+import de.uni_passau.fim.se2.litterbox.JsonTest;
+import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
-import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BoolExpr;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
 import de.uni_passau.fim.se2.litterbox.ast.parser.Scratch3Parser;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
+import static com.google.common.truth.Truth.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
-class MergeDoubleIfTest {
+class MergeDoubleIfTest implements JsonTest {
+
+    private Program program;
+    private IfThenStmt if0;
+    private IfThenStmt if1;
+    private IfThenStmt if2;
+    private Refactoring refactoring;
+
+    @BeforeEach
+    public void setUp() throws ParsingException, IOException {
+        program = getAST("src/test/fixtures/refactoring/simple-ifs.json");
+        Script script = program.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(0);
+        List<Stmt> stmtList = script.getStmtList().getStmts();
+        RepeatForeverStmt forever = (RepeatForeverStmt) stmtList.get(0);
+        if0 = (IfThenStmt) forever.getStmtList().getStmts().get(0);
+        if1 = (IfThenStmt) forever.getStmtList().getStmts().get(1);
+        if2 = (IfThenStmt) forever.getStmtList().getStmts().get(2);
+        refactoring = new MergeDoubleIf(if1, if2);
+    }
 
     @Test
     void applyTest() {
-        File testFile = new File("src/test/testprojects/testdoublestmts.sb3");
+        File testFile = new File("src/test/fixtures/refactoring/testdoublestmts.json");
         Program program = null;
         try {
             program = new Scratch3Parser().parseFile(testFile);
@@ -57,45 +78,76 @@ class MergeDoubleIfTest {
     }
 
     @Test
+    void simpleIfsTest() {
+        Program refactored = refactoring.apply(program);
+
+        ScratchBlocksVisitor scratchBlocksVisitor = new ScratchBlocksVisitor();
+        refactored.accept(scratchBlocksVisitor);
+        String scratchBlocks = scratchBlocksVisitor.getScratchBlocks();
+        assertThat(scratchBlocks).isEqualTo(
+                "when green flag clicked\n"
+                        + "forever \n"
+                        + "if <touching (mouse-pointer v) ?> then\n"
+                        + "move (10) steps\n"
+                        + "end\n"
+                        + "if <touching (edge v) ?> then\n"
+                        + "move (5) steps\n"
+                        + "move (2) steps\n"
+                        + "end\n"
+                        + "end\n");
+    }
+
+    @Test
     void getNameTest() {
-        MergeDoubleIf refactoring = new MergeDoubleIf(mock(IfThenStmt.class), mock(IfThenStmt.class));
         assertEquals("merge_double_if", refactoring.getName());
     }
 
     @Test
     void toStringTest() {
-        IfThenStmt ifStmt = new IfThenStmt(mock(BoolExpr.class), mock(StmtList.class), mock(BlockMetadata.class));
-        MergeDoubleIf refactoring = new MergeDoubleIf(ifStmt, ifStmt);
-        assertEquals("merge_double_if(IfThenStmt, IfThenStmt)", refactoring.toString());
+        assertThat(refactoring.toString()).isEqualTo("merge_double_if\n"
+                + "Replaced ifs:\n"
+                + "\n"
+                + "if <touching (edge v) ?> then\n"
+                + "move  steps\n"
+                + "end\n"
+                + "\n"
+                + "if <touching (edge v) ?> then\n"
+                + "move  steps\n"
+                + "end\n"
+                + "\n"
+                + "Replacement:\n"
+                + "\n"
+                + "if <touching (edge v) ?> then\n"
+                + "move  steps\n"
+                + "move  steps\n"
+                + "end\n");
     }
 
     @Test
     void testEqualOfRefactorings() {
-        IfThenStmt ifStmt1 = mock(IfThenStmt.class);
-        IfThenStmt ifStmt2 = mock(IfThenStmt.class);
-        IfThenStmt ifStmt3 = mock(IfThenStmt.class);
+        Refactoring equalRefactoring = new MergeDoubleIf(if1, if2);
+        Refactoring nonEqualRefactoring = new MergeDoubleIf(if0, if1);
 
-        MergeDoubleIf refactoring1 = new MergeDoubleIf(ifStmt1, ifStmt2);
-        MergeDoubleIf refactoring2 = new MergeDoubleIf(ifStmt1, ifStmt2);
-        MergeDoubleIf refactoring3 = new MergeDoubleIf(ifStmt1, ifStmt3);
-
-        assertEquals(refactoring1, refactoring1);
-        assertEquals(refactoring1, refactoring2);
-        assertNotEquals(refactoring1, refactoring3);
+        assertEquals(refactoring, refactoring);
+        assertEquals(refactoring, equalRefactoring);
+        assertNotEquals(refactoring, nonEqualRefactoring);
     }
 
     @Test
     void testHashCodeOfRefactorings() {
-        IfThenStmt ifStmt1 = mock(IfThenStmt.class);
-        IfThenStmt ifStmt2 = mock(IfThenStmt.class);
-        IfThenStmt ifStmt3 = mock(IfThenStmt.class);
+        Refactoring equalRefactoring = new MergeDoubleIf(if1, if2);
+        Refactoring nonEqualRefactoring = new MergeDoubleIf(if0, if1);
 
-        MergeDoubleIf refactoring1 = new MergeDoubleIf(ifStmt1, ifStmt2);
-        MergeDoubleIf refactoring2 = new MergeDoubleIf(ifStmt1, ifStmt2);
-        MergeDoubleIf refactoring3 = new MergeDoubleIf(ifStmt1, ifStmt3);
+        assertEquals(refactoring.hashCode(), refactoring.hashCode());
+        assertEquals(refactoring.hashCode(), equalRefactoring.hashCode());
+        assertNotEquals(refactoring.hashCode(), nonEqualRefactoring.hashCode());
+    }
 
-        assertEquals(refactoring1.hashCode(), refactoring1.hashCode());
-        assertEquals(refactoring1.hashCode(), refactoring2.hashCode());
-        assertNotEquals(refactoring1.hashCode(), refactoring3.hashCode());
+    @Test
+    public void testASTStructure() {
+        Program refactored = refactoring.apply(program);
+        CloneVisitor visitor = new CloneVisitor();
+        Program clone = visitor.apply(refactored);
+        assertEquals(refactored, clone);
     }
 }

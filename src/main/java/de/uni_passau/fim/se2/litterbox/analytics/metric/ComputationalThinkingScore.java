@@ -21,7 +21,7 @@ package de.uni_passau.fim.se2.litterbox.analytics.metric;
 import de.uni_passau.fim.se2.litterbox.analytics.MetricExtractor;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 
-public class ComputationalThinkingScore  implements MetricExtractor {
+public class ComputationalThinkingScore  implements MetricExtractor<Program> {
     @Override
     public double calculateMetric(Program program) {
         double abstractionScore = new ComputationalThinkingScoreAbstraction().calculateMetric(program);

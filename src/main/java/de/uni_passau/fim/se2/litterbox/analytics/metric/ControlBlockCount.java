@@ -19,7 +19,7 @@
 package de.uni_passau.fim.se2.litterbox.analytics.metric;
 
 import de.uni_passau.fim.se2.litterbox.analytics.MetricExtractor;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.StartedAsClone;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.CreateCloneOf;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.StopOtherScriptsInSprite;
@@ -30,16 +30,16 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.Terminati
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-public class ControlBlockCount implements MetricExtractor, ScratchVisitor {
+public class ControlBlockCount<T extends ASTNode> implements MetricExtractor<T>, ScratchVisitor {
     public static final String NAME = "control_block_count";
 
     private int count = 0;
 
     @Override
-    public double calculateMetric(Program program) {
-        Preconditions.checkNotNull(program);
+    public double calculateMetric(T node) {
+        Preconditions.checkNotNull(node);
         count = 0;
-        program.accept(this);
+        node.accept(this);
         return count;
     }
 

@@ -27,7 +27,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfElseStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
-public class ComputationalThinkingScoreLogic implements MetricExtractor, ScratchVisitor {
+public class ComputationalThinkingScoreLogic implements MetricExtractor<Program>, ScratchVisitor {
 
     private int score = 0;
 

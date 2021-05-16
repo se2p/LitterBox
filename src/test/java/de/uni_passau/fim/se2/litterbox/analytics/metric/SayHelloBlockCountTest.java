@@ -13,7 +13,7 @@ public class SayHelloBlockCountTest implements JsonTest {
     @Test
     public void testAll() throws IOException, ParsingException {
         Program program = getAST("./src/test/fixtures/bugpattern/missingPenDown.json");
-        SayHelloBlockCount counter = new SayHelloBlockCount();
+        SayHelloBlockCount<Program> counter = new SayHelloBlockCount();
         Assertions.assertEquals(2, counter.calculateMetric(program));
     }
 }

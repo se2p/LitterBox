@@ -20,7 +20,7 @@ public class DoubleEventFinder extends AbstractRefactoringFinder {
             Event event1 = script1.getEvent();
             for (Script script2 : scriptList) {
                 Event event2 = script2.getEvent();
-                if (!script1.equals(script2)) {
+                if (!(script1 == script2)) {
                     if (event1.getUniqueName().equals(event2.getUniqueName())) {
                         refactorings.add(new MergeDoubleEvent(event1, event2));
                     }

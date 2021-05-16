@@ -22,7 +22,7 @@ public class AddHelloBlockTest {
 
     @Test
     public void applyTest() {
-        File testFile = new File("src/test/testprojects/testdummyrefactorings.sb3");
+        File testFile = new File("src/test/fixtures/refactoring/testdummyrefactorings.json");
         Program program = null;
         try {
             program = new Scratch3Parser().parseFile(testFile);

@@ -20,7 +20,7 @@ public class ExtractScript implements Refactoring {
         getStage(program);
         addScriptToStage();
         removeScriptFromSprite();
-        return program;
+        return program.deepCopy();
     }
 
     @Override
@@ -30,12 +30,13 @@ public class ExtractScript implements Refactoring {
 
     @Override
     public String toString() {
-        return NAME + "(" + script.getUniqueName() + ")";
+        String scriptString = script.getScratchBlocks();
+        return NAME + " on script:\n" + scriptString + "\n";
     }
 
     private void getStage(Program program) {
         ActorDefinitionList actors = program.getActorDefinitionList();
-        for (ActorDefinition actor: actors.getDefinitions()) {
+        for (ActorDefinition actor : actors.getDefinitions()) {
             if (actor.isStage()) {
                 stage = actor;
                 break;
