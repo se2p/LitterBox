@@ -48,8 +48,6 @@ public class InitializeLocation extends AbstractIssueFinder {
 
                         if (customBlocks.contains(((CallStmt) stmt).getIdent().getName())) {
 
-                            System.out.println(((CallStmt) stmt).getIdent().getName());
-
                             addIssue(stmt, stmt.getMetadata(), IssueSeverity.MEDIUM);
                             initializedInBlock = false;
                             customBlocks.remove(((CallStmt) stmt).getIdent().getName());
