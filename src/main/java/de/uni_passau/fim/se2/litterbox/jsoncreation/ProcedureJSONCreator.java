@@ -146,7 +146,7 @@ public class ProcedureJSONCreator {
         NonDataBlockMetadata metadata = (NonDataBlockMetadata) parameterDefinition.getMetadata();
         jsonString.append(createBlockWithoutMutationString(metadata,
                 null,
-                prototypeId, EMPTY_VALUE, createFields(metadata.getFields().getList().get(0).getFieldsName(),
+                prototypeId, EMPTY_VALUE, createFields(VALUE_KEY,
                         parameterDefinition.getIdent().getName(), null)));
         return new ParameterInfo(parameterDefinition.getIdent().getName(), metadata.getBlockId(),
                 parameterDefinition.getType());
