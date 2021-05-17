@@ -20,26 +20,14 @@ package de.uni_passau.fim.se2.litterbox.analytics.metric;
 
 import de.uni_passau.fim.se2.litterbox.analytics.MetricExtractor;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
-import de.uni_passau.fim.se2.litterbox.ast.model.extensions.ExtensionBlock;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.*;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.ExtensionVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.PenExtensionVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-public class ProgramUsingPen<T extends ASTNode> implements MetricExtractor<T>, ScratchVisitor {
+public class ProgramUsingPen<T extends ASTNode> implements MetricExtractor<T>, ScratchVisitor, PenExtensionVisitor {
     public static final String NAME = "using_pen";
     private boolean found = false;
-    private ExtensionVisitor vis;
-
-    public ProgramUsingPen() {
-        vis = new ProgramUsingPenExtensionVisitor(this);
-    }
-
-    @Override
-    public void visit(ExtensionBlock node) {
-        node.accept(vis);
-    }
 
     @Override
     public String getName() {
@@ -54,66 +42,58 @@ public class ProgramUsingPen<T extends ASTNode> implements MetricExtractor<T>, S
         return found ? 1 : 0;
     }
 
-    private class ProgramUsingPenExtensionVisitor implements PenExtensionVisitor {
-        ScratchVisitor parent;
+    @Override
+    public void visit(PenStmt node) {
+        found = true;
+    }
 
-        public ProgramUsingPenExtensionVisitor(ScratchVisitor parent) {
-            this.parent = parent;
-        }
+    @Override
+    public void visit(PenDownStmt node) {
+        found = true;
+    }
 
-        @Override
-        public void visit(ExtensionBlock node) {
-            node.accept(parent);
-        }
+    @Override
+    public void visit(PenUpStmt node) {
+        found = true;
+    }
 
-        @Override
-        public void visit(PenStmt node) {
-            found = true;
-        }
+    @Override
+    public void visit(PenClearStmt node) {
+        found = true;
+    }
 
-        @Override
-        public void visit(PenDownStmt node) {
-            found = true;
-        }
+    @Override
+    public void visit(SetPenSizeTo node) {
+        found = true;
+    }
 
-        @Override
-        public void visit(PenUpStmt node) {
-            found = true;
-        }
+    @Override
+    public void visit(ChangePenSizeBy node) {
+        found = true;
+    }
 
-        @Override
-        public void visit(PenClearStmt node) {
-            found = true;
-        }
+    @Override
+    public void visit(SetPenColorToColorStmt node) {
+        found = true;
+    }
 
-        @Override
-        public void visit(SetPenSizeTo node) {
-            found = true;
-        }
+    @Override
+    public void visit(PenStampStmt node) {
+        found = true;
+    }
 
-        @Override
-        public void visit(ChangePenSizeBy node) {
-            found = true;
-        }
+    @Override
+    public void visit(ChangePenColorParamBy node) {
+        found = true;
+    }
 
-        @Override
-        public void visit(SetPenColorToColorStmt node) {
-            found = true;
-        }
+    @Override
+    public void visit(SetPenColorParamTo node) {
+        found = true;
+    }
 
-        @Override
-        public void visit(PenStampStmt node) {
-            found = true;
-        }
-
-        @Override
-        public void visit(ChangePenColorParamBy node) {
-            found = true;
-        }
-
-        @Override
-        public void visit(SetPenColorParamTo node) {
-            found = true;
-        }
+    @Override
+    public void visitParentVisitor(PenStmt node){
+        visitDefaultVisitor(node);
     }
 }

@@ -22,37 +22,22 @@ import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
-import de.uni_passau.fim.se2.litterbox.ast.model.extensions.ExtensionBlock;
-import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.PenClearStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.PenDownStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.PenStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.PenUpStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.ExtensionVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.PenExtensionVisitor;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 /**
  * A sprite that uses pen down blocks but never a pen up may draw right away, when the project is
  * restarted. This might not be intended.
  */
-public class MissingPenUp extends AbstractIssueFinder {
+public class MissingPenUp extends AbstractIssueFinder implements PenExtensionVisitor {
 
     public static final String NAME = "missing_pen_up";
 
     private boolean penUpSet = false;
     private boolean penDownSet = false;
     private boolean addComment = false;
-    private ExtensionVisitor vis;
-
-    public MissingPenUp() {
-        vis = new MissingPenUpExtensionVisitor(this);
-    }
-
-    @Override
-    public void visit(ExtensionBlock node) {
-        node.accept(vis);
-    }
 
     @Override
     public void visit(ActorDefinition actor) {
@@ -89,40 +74,33 @@ public class MissingPenUp extends AbstractIssueFinder {
         return IssueType.BUG;
     }
 
-    private class MissingPenUpExtensionVisitor implements PenExtensionVisitor {
-        ScratchVisitor parent;
 
-        public MissingPenUpExtensionVisitor(ScratchVisitor parent) {
-            this.parent = parent;
-        }
+    @Override
+    public void visit(PenStmt node) {
+        node.accept((PenExtensionVisitor) this);
+    }
 
-        @Override
-        public void visit(PenStmt node) {
-            parent.visit((Stmt) node);
+    @Override
+    public void visit(PenDownStmt node) {
+        if (!addComment) {
+            penDownSet = true;
+            visitChildren(node);
+        } else if (getResult()) {
+            // TODO: Is this potentially added multiple times?
+            addIssue(node, node.getMetadata(), IssueSeverity.MEDIUM);
         }
+    }
 
-        @Override
-        public void visit(PenDownStmt node) {
-            if (!addComment) {
-                penDownSet = true;
-                visitChildren(node);
-            } else if (getResult()) {
-                // TODO: Is this potentially added multiple times?
-                addIssue(node, node.getMetadata(), IssueSeverity.MEDIUM);
-            }
+    @Override
+    public void visit(PenUpStmt node) {
+        if (!addComment) {
+            penUpSet = true;
+            visitChildren(node);
         }
+    }
 
-        @Override
-        public void visit(PenUpStmt node) {
-            if (!addComment) {
-                penUpSet = true;
-                visitChildren(node);
-            }
-        }
-
-        @Override
-        public void visit(ExtensionBlock node) {
-            node.accept(parent);
-        }
+    @Override
+    public void visitParentVisitor(PenStmt node){
+        visitDefaultVisitor(node);
     }
 }
