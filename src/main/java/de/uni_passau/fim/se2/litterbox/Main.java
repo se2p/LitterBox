@@ -27,6 +27,7 @@ import de.uni_passau.fim.se2.litterbox.utils.PropertyLoader;
 import org.apache.commons.cli.*;
 
 import java.io.IOException;
+import java.util.logging.Level;
 
 import static de.uni_passau.fim.se2.litterbox.utils.GroupConstants.*;
 
@@ -164,6 +165,8 @@ public class Main {
 
         RefactoringAnalyzer refactorer = new RefactoringAnalyzer(input, outputPath, refactoredPath, detectors, ignoreLooseBlocks, delete);
 
+
+
         runAnalysis(cmd, refactorer);
     }
 
@@ -288,6 +291,7 @@ public class Main {
      */
     public static void main(String[] args) {
         PropertyLoader.setDefaultSystemProperties("nsga-ii.properties");
+        PropertyLoader.setGlobalLoggingLevelFromEnvironment();
         parseCommandLine(args);
     }
 }
