@@ -5,6 +5,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.chromosomes.RefactorSequence;
 
 public class NumberOfBlocksFitness implements MinimizingFitnessFunction<RefactorSequence>{
+    private static final String NAME = "number_of_blocks_fitness";
 
     private Program program;
 
@@ -20,5 +21,10 @@ public class NumberOfBlocksFitness implements MinimizingFitnessFunction<Refactor
         double fitness = blockCountMetric.calculateMetric(refactoredProgram);
 
         return fitness;
+    }
+
+    @Override
+    public String getName() {
+        return NAME;
     }
 }

@@ -10,7 +10,7 @@ import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.chromosomes.*;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.fitness_functions.*;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.search_operators.*;
 import de.uni_passau.fim.se2.litterbox.refactor.refactorings.Refactoring;
-import de.uni_passau.fim.se2.litterbox.report.ConsoleRefactorReportGenerator;
+import de.uni_passau.fim.se2.litterbox.report.*;
 import de.uni_passau.fim.se2.litterbox.utils.PropertyLoader;
 import org.apache.commons.io.FilenameUtils;
 
@@ -30,25 +30,16 @@ public class RefactoringAnalyzer extends Analyzer {
     private final List<RefactoringFinder> refactoringFinders;
     private final String refactoredPath;
 
+    private static final int MAX_GEN = PropertyLoader.getSystemIntProperty("nsga-ii.generations");
     private static final int POPULATION_SIZE = PropertyLoader.getSystemIntProperty("nsga-ii.populationSize");
 
     public RefactoringAnalyzer(String input, String output, String refactoredPath, String detectors, boolean ignoreLooseBlocks, boolean delete) {
         super(input, output, delete);
         this.refactoredPath = refactoredPath;
-        checkPaths();
         issueFinders = IssueTool.getFinders(detectors);
         detectorNames = issueFinders.stream().map(IssueFinder::getName).collect(Collectors.toList());
         refactoringFinders = RefactoringTool.getRefactoringFinders();
         this.ignoreLooseBlocks = ignoreLooseBlocks;
-    }
-
-    private void checkPaths() {
-        if (output == null || output.isEmpty() || !FilenameUtils.getExtension(output).equals("csv")) {
-            throw new IllegalArgumentException("Invalid output path (should be a csv file): " + output);
-        }
-        if (refactoredPath != null && refactoredPath.isEmpty()) {
-            throw new IllegalArgumentException("Invalid path for directory of refactored projects: " + refactoredPath);
-        }
     }
 
     @Override
@@ -70,8 +61,7 @@ public class RefactoringAnalyzer extends Analyzer {
     private void generateProjectsFromParetoFront(File fileEntry, String reportName, List<RefactorSequence> solutions) {
         for (int i = 0; i < solutions.size(); i++) {
             Program refactored = solutions.get(i).getRefactoredProgram();
-
-            generateOutput(refactored, solutions.get(i).getExecutedRefactorings(), reportName);
+            generateOutput(refactored, solutions.get(i), reportName);
             createNewProjectFileWithCounterPostfix(fileEntry, refactored, i);
         }
     }
@@ -117,11 +107,18 @@ public class RefactoringAnalyzer extends Analyzer {
         return new NSGAII<>(populationGenerator, offspringGenerator, fastNonDominatedSort, crowdingDistanceSort);
     }
 
-    private void generateOutput(Program program, List<Refactoring> executedRefactorings, String reportFileName) {
+    private void generateOutput(Program program, RefactorSequence refactorSequence, String reportFileName) {
         try {
-            ConsoleRefactorReportGenerator reportGenerator = new ConsoleRefactorReportGenerator();
-            reportGenerator.generateReport(program, executedRefactorings);
-            // TODO handle output
+            if (reportFileName == null || reportFileName.isEmpty()) {
+                ConsoleRefactorReportGenerator reportGenerator = new ConsoleRefactorReportGenerator();
+                reportGenerator.generateReport(program, refactorSequence.getExecutedRefactorings());
+            } else if (FilenameUtils.getExtension(reportFileName).equals("csv")) {
+                CSVRefactorReportGenerator reportGenerator = new CSVRefactorReportGenerator(reportFileName, refactoredPath, refactorSequence.getFitnessMap().keySet());
+                reportGenerator.generateReport(program, refactorSequence, POPULATION_SIZE, MAX_GEN);
+                reportGenerator.close();
+            } else {
+                throw new IllegalArgumentException("Unknown file type: " + reportFileName);
+            }
         } catch (IOException e) {
             log.warning(e.getMessage());
         }

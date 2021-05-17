@@ -11,7 +11,7 @@ import de.uni_passau.fim.se2.litterbox.refactor.refactorings.SeparateScriptBySem
 
 public class SemanticScriptFinder extends AbstractRefactoringFinder {
 
-    private static final String NAME = "semantic_script_finder";
+    private static final String NAME = "separate_script_by_semantics";
     private final boolean[] differentSemantics = new boolean[5];
 
     @Override

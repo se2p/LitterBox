@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Set;
 
 public class NumberOfSmells implements MinimizingFitnessFunction<RefactorSequence> {
+    private static final String NAME = "number_of_smells_fitness";
 
     private final Program program;
     private final List<IssueFinder> issueFinders;
@@ -40,5 +41,10 @@ public class NumberOfSmells implements MinimizingFitnessFunction<RefactorSequenc
         }
 
         return issues.size();
+    }
+
+    @Override
+    public String getName() {
+        return NAME;
     }
 }
