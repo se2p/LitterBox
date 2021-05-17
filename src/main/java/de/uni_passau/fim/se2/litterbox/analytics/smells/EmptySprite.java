@@ -74,4 +74,20 @@ public class EmptySprite extends AbstractIssueFinder {
         // Default: Only one key with the name of the finder
         return Arrays.asList(getName());
     }
+
+    @Override
+    public boolean isDuplicateOf(Issue first, Issue other) {
+        if (first == other) {
+            // Don't check against self
+            return false;
+        }
+
+        if (first.getFinder() != other.getFinder()) {
+            // Can only be a duplicate if it's the same finder
+            return false;
+        }
+
+        //empty sprites are always the same as they have nothing that separates them
+        return true;
+    }
 }
