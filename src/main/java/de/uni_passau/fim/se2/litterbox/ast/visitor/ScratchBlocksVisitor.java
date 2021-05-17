@@ -19,6 +19,7 @@
 package de.uni_passau.fim.se2.litterbox.ast.visitor;
 
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.ast.model.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.Next;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.Prev;
@@ -107,6 +108,7 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
     public static final String SCRATCHBLOCKS_START = "[scratchblocks]";
     public static final String SCRATCHBLOCKS_END = "[/scratchblocks]";
     public static final String BUG_NOTE = "⇦  \uD83D\uDC1B   ";
+    public static final String PERFUME_NOTE = "⇦  \uD83D\uDC4D   ";
 
     private boolean inScript = false;
 
@@ -2002,7 +2004,11 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
                 }
                 hasIssue = true;
                 if (!issue.hasMultipleBlocks()) {
-                    issueNote.add(BUG_NOTE);
+                    if (issue.getIssueType() == IssueType.PERFUME) {
+                        issueNote.add(PERFUME_NOTE);
+                    } else {
+                        issueNote.add(BUG_NOTE);
+                    }
                 }
                 // TODO: In theory there could be multiple messages here...
                 // issueNote.add(issue.getTranslatedFinderName());
