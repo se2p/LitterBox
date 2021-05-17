@@ -1,12 +1,10 @@
 package de.uni_passau.fim.se2.litterbox.report;
 
-import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.RefactoringFinder;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.refactor.RefactoringTool;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.chromosomes.RefactorSequence;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.fitness_functions.FitnessFunction;
-import de.uni_passau.fim.se2.litterbox.refactor.refactorings.Refactoring;
 import de.uni_passau.fim.se2.litterbox.utils.Randomness;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
@@ -19,21 +17,20 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 public class CSVRefactorReportGenerator {
-    private List<String> headers = new ArrayList<>();
-    private List<String> refactorings;
-    private CSVPrinter printer;
+    private final List<String> headers = new ArrayList<>();
+    private final List<String> refactorings;
+    private final CSVPrinter printer;
 
     /**
      * CSVRefactorReportGenerator writes the results of an analyses for a given list of refactorings to a file.
      *
-     * @param fileName     of the file to which the report is written.
-     * @param refactoredPath the path of the file which the report is written
+     * @param fileName         of the file to which the report is written.
+     * @param refactoredPath   the path of the file which the report is written
      * @param fitnessFunctions list of used FitnessFunctions.
      * @throws IOException is thrown if the file cannot be opened
      */
@@ -77,7 +74,7 @@ public class CSVRefactorReportGenerator {
         File folder = new File(refactoredPath);
         Path filePath = Paths.get(refactoredPath + System.getProperty("file.separator") + name);
 
-        if(!folder.exists()) {
+        if (!folder.exists()) {
             try {
                 Files.createDirectory(filePath.getParent());
             } catch (IOException e) {
