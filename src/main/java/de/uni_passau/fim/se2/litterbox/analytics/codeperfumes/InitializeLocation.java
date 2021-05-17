@@ -29,11 +29,8 @@ public class InitializeLocation extends AbstractIssueFinder {
     private boolean initializedY = false;
     private boolean inCustomBlock = false;
     private boolean inGreenFlag = false;
-    private final int INIT_STATE = 0;
     private boolean initializedInBlock = false;
     private List<String> customBlocks = new ArrayList<>();
-
-
 
     @Override
     public void visit(Script node) {
@@ -54,7 +51,6 @@ public class InitializeLocation extends AbstractIssueFinder {
                         }
                     }
                 });
-
             }
             this.currentScript = node;
             this.currentProcedure = null;
@@ -63,7 +59,6 @@ public class InitializeLocation extends AbstractIssueFinder {
             visitChildren(node);
         }
     }
-
 
     @Override
     public void visit(ProcedureDefinition node) {
@@ -74,7 +69,6 @@ public class InitializeLocation extends AbstractIssueFinder {
         inCustomBlock = false;
         visitChildren(node);
     }
-
 
     @Override
     public void visit(StmtList node) {
@@ -88,7 +82,6 @@ public class InitializeLocation extends AbstractIssueFinder {
                         stmt.accept(this);
                     }
                 }
-
             }
         } else {
 
@@ -105,13 +98,11 @@ public class InitializeLocation extends AbstractIssueFinder {
     @Override
     public void visit(SetXTo stmt) {
         if (stmt.getNum() instanceof NumberLiteral) {
-            if ((((NumberLiteral) stmt.getNum()).getValue() == INIT_STATE)) {
-                initializedX = true;
-                if (initializedX && initializedY) {
-                    check(stmt);
-                    initializedX = false;
-                    initializedY = false;
-                }
+            initializedX = true;
+            if (initializedX && initializedY) {
+                check(stmt);
+                initializedX = false;
+                initializedY = false;
             }
         }
     }
@@ -119,13 +110,11 @@ public class InitializeLocation extends AbstractIssueFinder {
     @Override
     public void visit(SetYTo stmt) {
         if (stmt.getNum() instanceof NumberLiteral) {
-            if ((((NumberLiteral) stmt.getNum()).getValue() == INIT_STATE)) {
-                initializedY = true;
-                if (initializedX && initializedY) {
-                    check(stmt);
-                    initializedX = false;
-                    initializedY = false;
-                }
+            initializedY = true;
+            if (initializedX && initializedY) {
+                check(stmt);
+                initializedX = false;
+                initializedY = false;
             }
         }
     }
@@ -134,10 +123,7 @@ public class InitializeLocation extends AbstractIssueFinder {
     public void visit(GoToPosXY stmt) {
         if (stmt.getX() instanceof NumberLiteral
                 && stmt.getY() instanceof NumberLiteral) {
-            if ((((NumberLiteral) stmt.getX()).getValue() == INIT_STATE &&
-                    ((NumberLiteral) stmt.getX()).getValue() == INIT_STATE)) {
-                check(stmt);
-            }
+            check(stmt);
         }
     }
 
