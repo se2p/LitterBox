@@ -36,20 +36,10 @@ public class RefactoringAnalyzer extends Analyzer {
     public RefactoringAnalyzer(String input, String output, String refactoredPath, String detectors, boolean ignoreLooseBlocks, boolean delete) {
         super(input, output, delete);
         this.refactoredPath = refactoredPath;
-        checkPaths();
         issueFinders = IssueTool.getFinders(detectors);
         detectorNames = issueFinders.stream().map(IssueFinder::getName).collect(Collectors.toList());
         refactoringFinders = RefactoringTool.getRefactoringFinders();
         this.ignoreLooseBlocks = ignoreLooseBlocks;
-    }
-
-    private void checkPaths() {
-        if (output == null || output.isEmpty() || !FilenameUtils.getExtension(output).equals("csv")) {
-            throw new IllegalArgumentException("Invalid output path (should be a csv file): " + output);
-        }
-        if (refactoredPath != null && refactoredPath.isEmpty()) {
-            throw new IllegalArgumentException("Invalid path for directory of refactored projects: " + refactoredPath);
-        }
     }
 
     @Override
@@ -122,7 +112,7 @@ public class RefactoringAnalyzer extends Analyzer {
             if (reportFileName == null || reportFileName.isEmpty()) {
                 ConsoleRefactorReportGenerator reportGenerator = new ConsoleRefactorReportGenerator();
                 reportGenerator.generateReport(program, refactorSequence.getExecutedRefactorings());
-            } else if (reportFileName.endsWith(".csv")) {
+            } else if (FilenameUtils.getExtension(reportFileName).equals("csv")) {
                 CSVRefactorReportGenerator reportGenerator = new CSVRefactorReportGenerator(reportFileName, refactoredPath, refactorSequence.getFitnessMap().keySet());
                 reportGenerator.generateReport(program, refactorSequence, POPULATION_SIZE, MAX_GEN);
                 reportGenerator.close();

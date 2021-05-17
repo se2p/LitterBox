@@ -1,11 +1,13 @@
 package de.uni_passau.fim.se2.litterbox.report;
 
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
+import de.uni_passau.fim.se2.litterbox.analytics.RefactoringFinder;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.refactor.RefactoringTool;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.chromosomes.RefactorSequence;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.fitness_functions.FitnessFunction;
 import de.uni_passau.fim.se2.litterbox.refactor.refactorings.Refactoring;
+import de.uni_passau.fim.se2.litterbox.utils.Randomness;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 
@@ -25,7 +27,6 @@ import java.util.stream.Collectors;
 public class CSVRefactorReportGenerator {
     private List<String> headers = new ArrayList<>();
     private List<String> refactorings;
-    private Set<FitnessFunction<RefactorSequence>> fitnessFunctions;
     private CSVPrinter printer;
 
     /**
@@ -37,12 +38,13 @@ public class CSVRefactorReportGenerator {
      * @throws IOException is thrown if the file cannot be opened
      */
     public CSVRefactorReportGenerator(String fileName, String refactoredPath, Set<FitnessFunction<RefactorSequence>> fitnessFunctions) throws IOException {
-        refactorings = RefactoringTool.getRefactorings();
-        this.fitnessFunctions = fitnessFunctions;
-        List<String> fitnessFunctionsNames = fitnessFunctions.stream().map(ff -> ff.getClass().getName()).collect(Collectors.toList());
+        refactorings = RefactoringTool.getRefactoringFinders().stream().map(RefactoringFinder::getName).collect(Collectors.toList());
+        List<String> fitnessFunctionsNames = fitnessFunctions.stream().map(FitnessFunction::getName).collect(Collectors.toList());
         headers.add("project");
-        headers.add("populationSize");
-        headers.add("maxGen");
+        headers.add("population_size");
+        headers.add("max_generations");
+        headers.add("seed");
+        headers.add("hypervolume");
         headers.addAll(refactorings);
         headers.addAll(fitnessFunctionsNames);
         printer = getNewPrinter(fileName, refactoredPath);
@@ -54,6 +56,9 @@ public class CSVRefactorReportGenerator {
         row.add(program.getIdent().getName());
         row.add(String.valueOf(populationSize));
         row.add(String.valueOf(maxGen));
+        row.add(String.valueOf(Randomness.getSeed()));
+        // TODO: Add Hypervolume
+        row.add("0");
 
         refactorings.stream().mapToLong(refactoring -> refactorSequence.getExecutedRefactorings()
                 .stream()
@@ -70,7 +75,7 @@ public class CSVRefactorReportGenerator {
 
     protected CSVPrinter getNewPrinter(String name, String refactoredPath) throws IOException {
         File folder = new File(refactoredPath);
-        Path filePath = Paths.get(refactoredPath + name);
+        Path filePath = Paths.get(refactoredPath + System.getProperty("file.separator") + name);
 
         if(!folder.exists()) {
             try {

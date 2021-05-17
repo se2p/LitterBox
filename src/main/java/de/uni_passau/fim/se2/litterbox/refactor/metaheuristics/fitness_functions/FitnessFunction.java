@@ -11,6 +11,7 @@ import java.util.function.ToDoubleFunction;
  * @param <C> the type of solution rated by this fitness function
  */
 public interface FitnessFunction<C> extends ToDoubleFunction<C> {
+    String DEFAULT_NAME = "fitness_function";
 
     /**
      * <p>
@@ -38,6 +39,10 @@ public interface FitnessFunction<C> extends ToDoubleFunction<C> {
     default double applyAsDouble(C c) throws NullPointerException {
         return getFitness(c);
     }
+
+    default String getName() {
+        return DEFAULT_NAME;
+    };
 
     /**
      * Tells whether this function is a minimizing fitness function.

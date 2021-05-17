@@ -5,6 +5,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.chromosomes.RefactorSequence;
 
 public class HalsteadDifficultyFitness implements MinimizingFitnessFunction<RefactorSequence> {
+    private static final String NAME = "halstead_difficulty_fitness";
+
     private Program program;
 
     public HalsteadDifficultyFitness(Program program) {
@@ -21,4 +23,8 @@ public class HalsteadDifficultyFitness implements MinimizingFitnessFunction<Refa
         return fitness;
     }
 
+    @Override
+    public String getName() {
+        return NAME;
+    }
 }

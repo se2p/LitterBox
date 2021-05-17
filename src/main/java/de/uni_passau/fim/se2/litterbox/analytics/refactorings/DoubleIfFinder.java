@@ -10,7 +10,7 @@ import java.util.List;
 
 public class DoubleIfFinder extends AbstractRefactoringFinder {
 
-    private static final String NAME = "double_if_finder";
+    private static final String NAME = "merge_double_if";
 
     @Override
     public void visit(StmtList node) {

@@ -10,7 +10,7 @@ import java.util.List;
 
 public class DoubleEventFinder extends AbstractRefactoringFinder {
 
-    private static final String NAME = "double_event_finder";
+    private static final String NAME = "merge_double_event";
 
     @Override
     public void visit(ScriptList node) {

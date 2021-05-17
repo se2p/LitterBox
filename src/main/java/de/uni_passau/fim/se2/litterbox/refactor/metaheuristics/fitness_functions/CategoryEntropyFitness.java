@@ -10,6 +10,7 @@ public class CategoryEntropyFitness implements MinimizingFitnessFunction<Refacto
 
     private Program program;
     private LinkedHashMap<RefactorSequence, Double> cache = new LinkedHashMap<>();
+    private static final String NAME = "category_entropy_fitness";
 
     public CategoryEntropyFitness(Program program) {
         this.program = program;
@@ -29,5 +30,10 @@ public class CategoryEntropyFitness implements MinimizingFitnessFunction<Refacto
 
             return fitness;
         }
+    }
+
+    @Override
+    public String getName() {
+        return NAME;
     }
 }
