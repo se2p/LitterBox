@@ -6,7 +6,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Optional;
 import java.util.Properties;
+import java.util.logging.Handler;
 import java.util.logging.Level;
+import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
 public class PropertyLoader {
@@ -87,7 +89,7 @@ public class PropertyLoader {
     public static void setDefaultSystemProperties(String propertyFileName) {
         InputStream input = Main.class.getClassLoader().getResourceAsStream(propertyFileName);
 
-        Properties propertiesInFile = new Properties();
+        var propertiesInFile = new Properties();
         try {
             propertiesInFile.load(input);
         } catch (IOException e) {
@@ -99,5 +101,31 @@ public class PropertyLoader {
                 System.setProperty((String) key, (String) value);
             }
         });
+    }
+
+    /**
+     * Set the global logging level of the java.util.logging root logger.
+     * It is either set to the valid logging level name (e.g. "ALL", "INFO" or its integer values such "1") provided
+     * as JVM argument for the key 'logLevel' or the default logging level {@code Level.INFO} is set.
+     * <p>
+     * For example, to set the global log level to "FINEST" call the JAR of the project with the JVM option {@code -DlogLevel=FINEST}.
+     */
+    public static void setGlobalLoggingLevelFromEnvironment() {
+        var logLevel = System.getProperty("logLevel", null);
+        Level level;
+        try {
+            level = Level.parse(logLevel);
+        } catch (NullPointerException | IllegalArgumentException e) {
+            level = Level.INFO;
+        }
+        setGlobalLoggingLevel(level);
+    }
+
+    private static void setGlobalLoggingLevel(Level level) {
+        var rootLogger = LogManager.getLogManager().getLogger("");
+        rootLogger.setLevel(level);
+        for (Handler handler : rootLogger.getHandlers()) {
+            handler.setLevel(level);
+        }
     }
 }
