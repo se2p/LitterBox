@@ -47,6 +47,15 @@ public class ResourceBundleTest {
         }
     }
 
+    @ParameterizedTest(name = "Testing existence of perfume names for language {0}")
+    @ValueSource(strings = {"de", "en", "es"})
+    public void checkPerfumeResourceNames(String locale) {
+        ResourceBundle names = ResourceBundle.getBundle("IssueNames", Locale.forLanguageTag(locale));
+        for (String perfumeFinder : IssueTool.getPerfumeFinderNames()) {
+            assertWithMessage("Language "+locale+", perfume finder "+perfumeFinder +" not found in name resources").that(names.keySet()).contains(perfumeFinder);
+        }
+    }
+
     @ParameterizedTest(name = "Testing existence of bug hints for language {0}")
     @ValueSource(strings = {"de", "en", "es"})
     public void checkBugResourceHints(String locale) {
@@ -65,6 +74,18 @@ public class ResourceBundleTest {
         ResourceBundle hints = ResourceBundle.getBundle("IssueHints", Locale.forLanguageTag(locale));
         List<IssueFinder> smellFinders = IssueTool.getFinders(GroupConstants.SMELLS);
         for (IssueFinder finder : smellFinders) {
+            for (String key : finder.getHintKeys()) {
+                assertWithMessage("Language "+locale+", hint key "+key +" not found in resources").that(hints.keySet()).contains(key);
+            }
+        }
+    }
+
+    @ParameterizedTest(name = "Testing existence of perfume hints for language {0}")
+    @ValueSource(strings = {"de", "en", "es"})
+    public void checkPerfumeResourceHints(String locale) {
+        ResourceBundle hints = ResourceBundle.getBundle("IssueHints", Locale.forLanguageTag(locale));
+        List<IssueFinder> perfumeFinders = IssueTool.getFinders(GroupConstants.PERFUMES);
+        for (IssueFinder finder : perfumeFinders) {
             for (String key : finder.getHintKeys()) {
                 assertWithMessage("Language "+locale+", hint key "+key +" not found in resources").that(hints.keySet()).contains(key);
             }
