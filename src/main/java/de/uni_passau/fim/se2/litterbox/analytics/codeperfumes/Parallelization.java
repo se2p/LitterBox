@@ -64,7 +64,7 @@ public class Parallelization extends AbstractIssueFinder {
     private void checkEvents(AbstractNode event) {
         for (Event e : events) {
             if (e.equals(event)){
-                addIssue(event, event.getMetadata(), IssueSeverity.MEDIUM);
+                addIssue(event, event.getMetadata(), IssueSeverity.HIGH);
                 break;
             }
         }

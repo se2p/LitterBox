@@ -50,7 +50,7 @@ public class Counter extends AbstractIssueFinder {
                             String changedVariable = ((Qualified) ((ChangeVariableBy) stmt).
                                     getIdentifier()).getSecond().getName().getName();
                             if (changedVariable.equals(counterVariable)) {
-                                addIssue(stmt, stmt.getMetadata(), IssueSeverity.MEDIUM);
+                                addIssue(stmt, stmt.getMetadata(), IssueSeverity.HIGH);
                                 waitSec = false;
                             }
                         }

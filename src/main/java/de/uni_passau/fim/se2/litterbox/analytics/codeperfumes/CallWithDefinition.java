@@ -66,36 +66,6 @@ public class CallWithDefinition extends AbstractIssueFinder {
         return (other.getFinder() instanceof CallWithoutDefinition);
     }
 
-//    @Override
-//    public boolean areCoupled(Issue first, Issue other) {
-//        if (first.getFinder() != this) {
-//            return super.areCoupled(first, other);
-//        }
-//
-//        if (other.getFinder() instanceof UnnecessaryIfAfterUntil) {
-//            return other.getFinder().areCoupled(other, first);
-//        }
-//        return false;
-//    }
-//
-//    @Override
-//    public boolean areCoupled(Issue first, Issue other) {
-//        if (first.getFinder() != this) {
-//            return super.areCoupled(first, other);
-//        }
-//
-//        if (other.getFinder() instanceof MissingLoopSensing) {
-//            if (other.getActor().equals(first.getActor()) && other.getScriptOrProcedureDefinition().equals(first.getScriptOrProcedureDefinition())) {
-//                ASTNode otherLoc = other.getCodeLocation();
-//                while (!(otherLoc instanceof IfElseStmt) && !(otherLoc instanceof IfThenStmt)) {
-//                    otherLoc = otherLoc.getParentNode();
-//                }
-//                return otherLoc.equals(first.getCodeLocation());
-//            }
-//        }
-//        return false;
-//    }
-
     @Override
     public String getName() {
         return NAME;

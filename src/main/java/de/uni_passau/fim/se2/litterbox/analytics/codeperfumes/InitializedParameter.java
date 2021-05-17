@@ -43,7 +43,7 @@ public class InitializedParameter extends AbstractIssueFinder {
     private void checkParameterNames(String name, Parameter node) {
         for (int i = 0; i < currentParameterDefinitions.size(); i++) {
             if (name.equals(currentParameterDefinitions.get(i).getIdent().getName())) {
-                addIssue(node, node.getMetadata(), IssueSeverity.MEDIUM);
+                addIssue(node, node.getMetadata(), IssueSeverity.LOW);
                 break;
             }
         }

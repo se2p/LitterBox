@@ -50,7 +50,7 @@ public class Search extends AbstractIssueFinder {
         node.getStmts().forEach(stmt -> {
             if (stmt instanceof StopAll || stmt instanceof StopThisScript
                     || stmt instanceof StopOtherScriptsInSprite || stmt instanceof Broadcast) {
-                addIssue(stmt, stmt.getMetadata(), IssueSeverity.MEDIUM);
+                addIssue(stmt, stmt.getMetadata(), IssueSeverity.LOW);
             }
         });
     }

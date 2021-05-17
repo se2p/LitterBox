@@ -17,37 +17,37 @@ public class ListUsage extends AbstractIssueFinder {
 
 
     public void visit(AddTo node) {
-        addIssue(node, node.getMetadata(), IssueSeverity.MEDIUM);
+        addIssue(node, node.getMetadata(), IssueSeverity.HIGH);
         visitChildren(node);
     }
 
     public void visit(DeleteAllOf node) {
-        addIssue(node, node.getMetadata(), IssueSeverity.MEDIUM);
+        addIssue(node, node.getMetadata(), IssueSeverity.HIGH);
         visitChildren(node);
     }
 
     public void visit(DeleteOf node) {
-        addIssue(node, node.getMetadata(), IssueSeverity.MEDIUM);
+        addIssue(node, node.getMetadata(), IssueSeverity.HIGH);
         visitChildren(node);
     }
 
     public void visit(InsertAt node) {
-        addIssue(node, node.getMetadata(), IssueSeverity.MEDIUM);
+        addIssue(node, node.getMetadata(), IssueSeverity.HIGH);
         visitChildren(node);
     }
 
     public void visit(ReplaceItem node) {
-        addIssue(node, node.getMetadata(), IssueSeverity.MEDIUM);
+        addIssue(node, node.getMetadata(), IssueSeverity.HIGH);
         visitChildren(node);
     }
 
     public void visit(HideList node) {
-        addIssue(node, node.getMetadata(), IssueSeverity.MEDIUM);
+        addIssue(node, node.getMetadata(), IssueSeverity.HIGH);
         visitChildren(node);
     }
 
     public void visit(ShowList node) {
-        addIssue(node, node.getMetadata(), IssueSeverity.MEDIUM);
+        addIssue(node, node.getMetadata(), IssueSeverity.HIGH);
         visitChildren(node);
     }
 

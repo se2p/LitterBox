@@ -16,7 +16,7 @@ public class ValidTerminationCondition extends AbstractIssueFinder {
     @Override
     public void visit(UntilStmt node) {
         if (!(node.getBoolExpr() instanceof UnspecifiedBoolExpr)) {
-            addIssue(node, node.getMetadata(), IssueSeverity.MEDIUM);
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         }
         visitChildren(node);
     }
