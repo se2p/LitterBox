@@ -35,7 +35,6 @@ import java.util.Set;
 
 import static com.google.common.truth.Truth.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 public class ClonedCodeType2Test {
 
@@ -99,6 +98,7 @@ public class ClonedCodeType2Test {
     public void testCloneType1And2InOneScript() throws IOException, ParsingException {
         int origSize = CloneAnalysis.MIN_SIZE;
         Program program = getAST("./src/test/fixtures/smells/cloneType1And2.json");
+
         ClonedCodeType1 finder1 = new ClonedCodeType1();
         CloneAnalysis.MIN_SIZE = 3;
         List<Issue> type1Issues = new ArrayList<>(finder1.check(program));
@@ -107,17 +107,20 @@ public class ClonedCodeType2Test {
         List<Issue> type2Issues = new ArrayList<>(finder2.check(program));
         CloneAnalysis.MIN_SIZE = origSize;
 
-        assertThat(type1Issues).hasSize(4);
-        assertThat(type2Issues).hasSize(6);
+        assertThat(type1Issues).hasSize(3);
+        assertThat(type2Issues).hasSize(4);
 
         assertThat(type1Issues.get(0).isDuplicateOf(type1Issues.get(1))).isTrue();
-        assertThat(type1Issues.get(2).isDuplicateOf(type1Issues.get(3))).isTrue();
-        assertThat(type1Issues.get(0).isDuplicateOf(type1Issues.get(3))).isTrue();
+        assertThat(type1Issues.get(0).isDuplicateOf(type1Issues.get(2))).isTrue();
+        assertThat(type1Issues.get(1).isDuplicateOf(type1Issues.get(2))).isTrue();
 
-        assertThat(type1Issues.get(0).isDuplicateOf(type2Issues.get(0))).isFalse();
-
+        assertThat(type2Issues.get(0).isDuplicateOf(type2Issues.get(0))).isFalse();
         assertThat(type2Issues.get(0).isDuplicateOf(type2Issues.get(1))).isTrue();
         assertThat(type2Issues.get(0).isDuplicateOf(type2Issues.get(2))).isTrue();
+        assertThat(type2Issues.get(0).isDuplicateOf(type2Issues.get(3))).isTrue();
+        assertThat(type2Issues.get(1).isDuplicateOf(type2Issues.get(2))).isTrue();
+        assertThat(type2Issues.get(1).isDuplicateOf(type2Issues.get(3))).isTrue();
+        assertThat(type2Issues.get(2).isDuplicateOf(type2Issues.get(3))).isTrue();
     }
 
     @Test
