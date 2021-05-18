@@ -169,7 +169,7 @@ public class ControlFlowGraphVisitor implements ScratchVisitor {
         CFGNode node = builder.addStatement(stmt);
 
         // Then statements:
-        stmt.getStmtList().accept(this);
+        stmt.getThenStmts().accept(this);
         List<CFGNode> endOfThen = new ArrayList<>(builder.getCurrentStatements());
 
         // Go back to head so that else is attached to if

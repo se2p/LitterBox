@@ -34,7 +34,7 @@ public class IfElseToConjunction extends CloneVisitor implements Refactoring {
                 if2.getMetadata());
 
         replacementIf1 = new IfThenStmt(conjunction,
-                cloneVisitor.apply(if2.getStmtList()),
+                cloneVisitor.apply(if2.getThenStmts()),
                 cloneVisitor.apply(if1.getMetadata()));
 
         replacementIf2 = new IfThenStmt(if1.getBoolExpr(),

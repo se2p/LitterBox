@@ -98,22 +98,22 @@ public class InterruptedLoopSensing extends AbstractIssueFinder {
                 inCondition = true;
                 node.getBoolExpr().accept(this);
                 if (variableName != null) {
-                    checkForVariableChange(node.getStmtList());
+                    checkForVariableChange(node.getThenStmts());
                     checkForVariableChange(node.getElseStmts());
                 }
                 inCondition = false;
-                checkForStop(node.getStmtList());
+                checkForStop(node.getThenStmts());
                 checkForStop(node.getElseStmts());
                 insideControl = true;
                 blockName = IssueTranslator.getInstance().getInfo("if") + " " + IssueTranslator.getInstance().getInfo("then") + " " + IssueTranslator.getInstance().getInfo("else");
-                node.getStmtList().accept(this);
+                node.getThenStmts().accept(this);
                 node.getElseStmts().accept(this);
                 insideControl = false;
                 sensingCollision = false;
                 sensingOther = false;
             }
         } else if (!hasStop && checkingStop) {
-            node.getStmtList().accept(this);
+            node.getThenStmts().accept(this);
             if (hasStop) {
                 hasStop = false;
                 hasStopInIf = true;

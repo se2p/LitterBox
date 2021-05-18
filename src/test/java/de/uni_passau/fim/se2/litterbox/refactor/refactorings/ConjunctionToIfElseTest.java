@@ -49,7 +49,7 @@ public class ConjunctionToIfElseTest implements JsonTest {
 
         assertThat(conjunction.getOperand1()).isEqualTo(if1.getBoolExpr());
         assertThat(conjunction.getOperand2()).isEqualTo(if2.getBoolExpr());
-        assertThat(if2.getStmtList()).isEqualTo(ifStatement1.getThenStmts());
+        assertThat(if2.getThenStmts()).isEqualTo(ifStatement1.getThenStmts());
         assertThat(if2.getElseStmts()).isEqualTo(ifStatement2.getThenStmts());
     }
 }
