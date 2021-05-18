@@ -46,6 +46,8 @@ public class RefactoringTool {
         registerRefactoring(new IfsToConjunctionFinder(), refactorings);
         registerRefactoring(new IfElseToConjunctionFinder(), refactorings);
         registerRefactoring(new IfElseToDisjunctionFinder(), refactorings);
+        registerRefactoring(new IfElseToIfIfNotFinder(), refactorings);
+        registerRefactoring(new IfIfNotToIfElseFinder(), refactorings);
         registerRefactoring(new SemanticScriptFinder(), refactorings);
         registerRefactoring(new SplitIfFinder(), refactorings);
 
