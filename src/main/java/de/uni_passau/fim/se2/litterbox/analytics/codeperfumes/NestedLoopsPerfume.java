@@ -4,6 +4,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.ControlStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
@@ -19,6 +20,12 @@ import java.util.List;
 public class NestedLoopsPerfume extends AbstractIssueFinder {
     public static final String NAME = "nested_loops_perfume";
     private List<ASTNode> addedStmts = new ArrayList<>();
+
+    @Override
+    public void visit(ActorDefinition actor) {
+        addedStmts = new ArrayList<>();
+        super.visit(actor);
+    }
 
     @Override
     public void visit(RepeatForeverStmt node) {

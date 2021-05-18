@@ -4,6 +4,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.*;
 
@@ -17,6 +18,12 @@ import java.util.List;
 public class Parallelization extends AbstractIssueFinder {
     public static final String NAME = "parallelization";
     private List<Event> events = new ArrayList<>();
+
+    @Override
+    public void visit(ActorDefinition actor) {
+        events = new ArrayList<>();
+        super.visit(actor);
+    }
 
     @Override
     public void visit(GreenFlag node) {

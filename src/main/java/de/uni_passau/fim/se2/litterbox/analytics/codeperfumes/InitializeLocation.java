@@ -4,6 +4,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.GreenFlag;
@@ -31,6 +32,12 @@ public class InitializeLocation extends AbstractIssueFinder {
     private boolean inGreenFlag = false;
     private boolean initializedInBlock = false;
     private List<String> customBlocks = new ArrayList<>();
+
+    @Override
+    public void visit(ActorDefinition actor) {
+        customBlocks = new ArrayList<>();
+        super.visit(actor);
+    }
 
     @Override
     public void visit(Script node) {
