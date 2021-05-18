@@ -26,13 +26,13 @@ public class CorrectBroadcast extends AbstractIssueFinder {
     private boolean addComment = false;
     private Set<String> receivedMessages = new LinkedHashSet<>();
 
-
     @Override
     public Set<Issue> check(Program program) {
         Preconditions.checkNotNull(program);
         this.program = program;
         messageSent = new ArrayList<>();
         messageReceived = new ArrayList<>();
+        issues = new LinkedHashSet<>();
         program.accept(this);
         addComment = false;
         receivedMessages = new LinkedHashSet<>();

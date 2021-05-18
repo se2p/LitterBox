@@ -36,6 +36,7 @@ public class Coordination extends AbstractIssueFinder {
         Preconditions.checkNotNull(program);
         this.program = program;
         messagesSent = new ArrayList<>();
+        issues = new LinkedHashSet<>();
         messagesReceived = new ArrayList<>();
         program.accept(this);
         addComment = false;
