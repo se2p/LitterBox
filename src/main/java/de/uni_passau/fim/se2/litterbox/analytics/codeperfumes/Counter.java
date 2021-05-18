@@ -3,12 +3,15 @@ package de.uni_passau.fim.se2.litterbox.analytics.codeperfumes;
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
+import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.ChangeVariableBy;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetVariableTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitSeconds;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
+
+import java.util.ArrayList;
 
 /**
  * If an initialized variable is changed repeatedly (in a RepeatForever) after
@@ -20,6 +23,12 @@ public class Counter extends AbstractIssueFinder {
     private boolean insideLoop = false;
     private boolean waitSec = false;
     private String counterVariable = null;
+
+    @Override
+    public void visit(ActorDefinition actor) {
+        counterVariable = null;
+        super.visit(actor);
+    }
 
     @Override
     public void visit(SetVariableTo node) {
