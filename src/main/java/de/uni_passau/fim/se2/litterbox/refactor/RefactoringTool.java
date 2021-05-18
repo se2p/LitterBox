@@ -19,10 +19,7 @@
 package de.uni_passau.fim.se2.litterbox.refactor;
 
 import de.uni_passau.fim.se2.litterbox.analytics.RefactoringFinder;
-import de.uni_passau.fim.se2.litterbox.analytics.refactorings.DoubleEventFinder;
-import de.uni_passau.fim.se2.litterbox.analytics.refactorings.DoubleIfFinder;
-
-import de.uni_passau.fim.se2.litterbox.analytics.refactorings.SemanticScriptFinder;
+import de.uni_passau.fim.se2.litterbox.analytics.refactorings.*;
 
 import java.util.*;
 import java.util.logging.Logger;
@@ -41,8 +38,10 @@ public class RefactoringTool {
     private static Map<String, RefactoringFinder> generateRefactoringFinders() {
         Map<String, RefactoringFinder> refactorings = new LinkedHashMap<>();
 
+        registerRefactoring(new ConjunctionToIfsFinder(), refactorings);
         registerRefactoring(new DoubleIfFinder(), refactorings);
         registerRefactoring(new DoubleEventFinder(), refactorings);
+        registerRefactoring(new IfsToConjunctionFinder(), refactorings);
         registerRefactoring(new SemanticScriptFinder(), refactorings);
 
         return refactorings;
