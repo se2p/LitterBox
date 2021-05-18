@@ -48,15 +48,14 @@ public class IfElseToDisjunction extends CloneVisitor implements Refactoring {
         Preconditions.checkArgument(if1.getThenStmts().equals(if2.getThenStmts()));
         Preconditions.checkArgument(!if1.getBoolExpr().equals(if2.getBoolExpr()));
 
-        CloneVisitor cloneVisitor = new CloneVisitor();
         Or disjunction = new Or(
-                cloneVisitor.apply(if1.getBoolExpr()),
-                cloneVisitor.apply(if2.getBoolExpr()),
+                apply(if1.getBoolExpr()),
+                apply(if2.getBoolExpr()),
                 if2.getMetadata());
 
         replacement = new IfThenStmt(disjunction,
-                cloneVisitor.apply(if1.getThenStmts()),
-                cloneVisitor.apply(if1.getMetadata()));
+                apply(if1.getThenStmts()),
+                apply(if1.getMetadata()));
     }
 
     @Override

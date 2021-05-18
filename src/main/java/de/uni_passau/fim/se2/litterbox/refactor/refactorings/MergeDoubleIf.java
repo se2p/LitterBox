@@ -22,11 +22,10 @@ public class MergeDoubleIf extends CloneVisitor implements Refactoring {
         this.if1 = Preconditions.checkNotNull(if1);
         this.if2 = Preconditions.checkNotNull(if2);
 
-        CloneVisitor cloneVisitor = new CloneVisitor();
-        List<Stmt> mergedListOfStmts = cloneVisitor.apply(if1.getThenStmts()).getStmts();
-        mergedListOfStmts.addAll(cloneVisitor.apply(if2.getThenStmts()).getStmts());
+        List<Stmt> mergedListOfStmts = apply(if1.getThenStmts()).getStmts();
+        mergedListOfStmts.addAll(apply(if2.getThenStmts()).getStmts());
         StmtList mergedThenStmts = new StmtList(mergedListOfStmts);
-        replacement = new IfThenStmt(cloneVisitor.apply(if1.getBoolExpr()), mergedThenStmts, cloneVisitor.apply(if1.getMetadata()));
+        replacement = new IfThenStmt(apply(if1.getBoolExpr()), mergedThenStmts, apply(if1.getMetadata()));
     }
 
     @Override

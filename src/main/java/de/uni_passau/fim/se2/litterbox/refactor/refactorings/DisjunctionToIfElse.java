@@ -22,14 +22,13 @@ public class DisjunctionToIfElse extends CloneVisitor implements Refactoring {
         this.ifStatement = Preconditions.checkNotNull(ifStatement);
         Or disjunction = (Or) ifStatement.getBoolExpr();
 
-        CloneVisitor cloneVisitor = new CloneVisitor();
-        IfThenStmt innerIf = new IfThenStmt(cloneVisitor.apply(disjunction.getOperand2()),
-                cloneVisitor.apply(ifStatement.getThenStmts()), ifStatement.getMetadata());
+        IfThenStmt innerIf = new IfThenStmt(apply(disjunction.getOperand2()),
+                apply(ifStatement.getThenStmts()), ifStatement.getMetadata());
 
-        replacementIf = new IfElseStmt(cloneVisitor.apply(disjunction.getOperand1()),
-                cloneVisitor.apply(ifStatement.getThenStmts()),
+        replacementIf = new IfElseStmt(apply(disjunction.getOperand1()),
+                apply(ifStatement.getThenStmts()),
                 new StmtList(innerIf),
-                cloneVisitor.apply(ifStatement.getMetadata()));
+                apply(ifStatement.getMetadata()));
     }
 
     @Override

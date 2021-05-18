@@ -22,16 +22,15 @@ public class SplitIf extends CloneVisitor implements Refactoring {
     public SplitIf(IfThenStmt if1) {
         this.ifThenStmt = Preconditions.checkNotNull(if1);
         Preconditions.checkArgument(ifThenStmt.getThenStmts().getNumberOfStatements() > 1);
-        
-        CloneVisitor cloneVisitor = new CloneVisitor();
-        List<Stmt> remainingStatements = cloneVisitor.apply(if1.getThenStmts()).getStmts();
+
+        List<Stmt> remainingStatements = apply(if1.getThenStmts()).getStmts();
         remainingStatements.remove(0);
 
-        StmtList subStatements1 = new StmtList(cloneVisitor.apply(if1.getThenStmts().getStatement(0)));
+        StmtList subStatements1 = new StmtList(apply(if1.getThenStmts().getStatement(0)));
         StmtList subStatements2 = new StmtList(remainingStatements);
 
-        replacementIf1 = new IfThenStmt(cloneVisitor.apply(if1.getBoolExpr()), subStatements1, cloneVisitor.apply(if1.getMetadata()));
-        replacementIf2 = new IfThenStmt(cloneVisitor.apply(if1.getBoolExpr()), subStatements2, cloneVisitor.apply(if1.getMetadata()));
+        replacementIf1 = new IfThenStmt(apply(if1.getBoolExpr()), subStatements1, apply(if1.getMetadata()));
+        replacementIf2 = new IfThenStmt(apply(if1.getBoolExpr()), subStatements2, apply(if1.getMetadata()));
     }
 
     @Override

@@ -25,12 +25,10 @@ public class IfIfNotToIfElse extends CloneVisitor implements Refactoring {
         this.ifThen1 = Preconditions.checkNotNull(if1);
         this.ifThen2 = Preconditions.checkNotNull(if2);
 
-        CloneVisitor cloneVisitor = new CloneVisitor();
-
-        replacementIf = new IfElseStmt(cloneVisitor.apply(if1.getBoolExpr()),
-                cloneVisitor.apply(ifThen1.getThenStmts()),
-                cloneVisitor.apply(ifThen2.getThenStmts()),
-                cloneVisitor.apply(ifThen1.getMetadata()));
+        replacementIf = new IfElseStmt(apply(if1.getBoolExpr()),
+                apply(ifThen1.getThenStmts()),
+                apply(ifThen2.getThenStmts()),
+                apply(ifThen1.getMetadata()));
     }
 
     @Override

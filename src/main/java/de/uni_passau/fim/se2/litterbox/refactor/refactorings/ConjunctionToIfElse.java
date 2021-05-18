@@ -31,14 +31,12 @@ public class ConjunctionToIfElse extends CloneVisitor implements Refactoring {
         BoolExpr commonExpression = conjunction.getOperand1().equals(ifStatement2.getBoolExpr()) ? conjunction.getOperand1() : conjunction.getOperand2();
         BoolExpr distinctExpression = conjunction.getOperand1().equals(ifStatement2.getBoolExpr()) ? conjunction.getOperand2() : conjunction.getOperand1();
 
-        CloneVisitor cloneVisitor = new CloneVisitor();
-
-        IfElseStmt innerIf = new IfElseStmt(cloneVisitor.apply(distinctExpression),
-                cloneVisitor.apply(ifStatement1.getThenStmts()),
-                cloneVisitor.apply(ifStatement2.getThenStmts()),
+        IfElseStmt innerIf = new IfElseStmt(apply(distinctExpression),
+                apply(ifStatement1.getThenStmts()),
+                apply(ifStatement2.getThenStmts()),
                 ifStatement2.getMetadata());
 
-        replacementIf = new IfThenStmt(cloneVisitor.apply(commonExpression),
+        replacementIf = new IfThenStmt(apply(commonExpression),
                 new StmtList(Arrays.asList(innerIf)), ifStatement1.getMetadata());
     }
 

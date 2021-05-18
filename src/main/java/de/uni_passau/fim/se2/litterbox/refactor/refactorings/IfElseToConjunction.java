@@ -27,19 +27,18 @@ public class IfElseToConjunction extends CloneVisitor implements Refactoring {
         this.if1 = Preconditions.checkNotNull(if1);
         this.if2 = (IfElseStmt) if1.getThenStmts().getStatement(0);
 
-        CloneVisitor cloneVisitor = new CloneVisitor();
         And conjunction = new And(
-                cloneVisitor.apply(if1.getBoolExpr()),
-                cloneVisitor.apply(if2.getBoolExpr()),
+                apply(if1.getBoolExpr()),
+                apply(if2.getBoolExpr()),
                 if2.getMetadata());
 
         replacementIf1 = new IfThenStmt(conjunction,
-                cloneVisitor.apply(if2.getThenStmts()),
-                cloneVisitor.apply(if1.getMetadata()));
+                apply(if2.getThenStmts()),
+                apply(if1.getMetadata()));
 
         replacementIf2 = new IfThenStmt(if1.getBoolExpr(),
-                cloneVisitor.apply(if2.getElseStmts()),
-                cloneVisitor.apply(if2.getMetadata()));
+                apply(if2.getElseStmts()),
+                apply(if2.getMetadata()));
     }
 
     @Override

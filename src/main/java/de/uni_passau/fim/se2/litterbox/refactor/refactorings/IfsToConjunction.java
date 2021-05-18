@@ -22,15 +22,14 @@ public class IfsToConjunction extends CloneVisitor implements Refactoring {
         this.if1 = Preconditions.checkNotNull(if1);
         this.if2 = Preconditions.checkNotNull(if2);
 
-        CloneVisitor cloneVisitor = new CloneVisitor();
         And conjunction = new And(
-                cloneVisitor.apply(if1.getBoolExpr()),
-                cloneVisitor.apply(if2.getBoolExpr()),
+                apply(if1.getBoolExpr()),
+                apply(if2.getBoolExpr()),
                 if2.getMetadata());
 
         replacement = new IfThenStmt(conjunction,
-                cloneVisitor.apply(if2.getThenStmts()),
-                cloneVisitor.apply(if1.getMetadata()));
+                apply(if2.getThenStmts()),
+                apply(if1.getMetadata()));
     }
 
     @Override
