@@ -40,10 +40,12 @@ public class RefactoringTool {
 
         registerRefactoring(new ConjunctionToIfsFinder(), refactorings);
         registerRefactoring(new ConjunctionToIfElseFinder(), refactorings);
+        registerRefactoring(new DisjunctionToIfElseFinder(), refactorings);
         registerRefactoring(new DoubleIfFinder(), refactorings);
         registerRefactoring(new DoubleEventFinder(), refactorings);
         registerRefactoring(new IfsToConjunctionFinder(), refactorings);
         registerRefactoring(new IfElseToConjunctionFinder(), refactorings);
+        registerRefactoring(new IfElseToDisjunctionFinder(), refactorings);
         registerRefactoring(new SemanticScriptFinder(), refactorings);
 
         return refactorings;
