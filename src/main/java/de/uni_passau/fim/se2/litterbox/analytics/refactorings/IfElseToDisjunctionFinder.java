@@ -15,7 +15,9 @@ public class IfElseToDisjunctionFinder extends AbstractRefactoringFinder {
         if (elseStmts.getNumberOfStatements() == 1) {
             Stmt elseStmt = elseStmts.getStatement(0);
             if (elseStmt instanceof IfThenStmt) {
-                refactorings.add(new IfElseToDisjunction(ifElseStmt, (IfThenStmt) elseStmt));
+                if (ifElseStmt.getThenStmts().equals(((IfThenStmt) elseStmt).getThenStmts())) {
+                    refactorings.add(new IfElseToDisjunction(ifElseStmt, (IfThenStmt) elseStmt));
+                }
             }
         }
 

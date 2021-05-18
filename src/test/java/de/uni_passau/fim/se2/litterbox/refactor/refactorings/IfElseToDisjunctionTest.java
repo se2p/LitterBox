@@ -28,6 +28,14 @@ public class IfElseToDisjunctionTest implements JsonTest {
     }
 
     @Test
+    public void testIfElseToDisjunctionFinder_DifferentBody() throws ParsingException, IOException {
+        Program program = getAST("src/test/fixtures/refactoring/ifElse_NoDisjunction.json");
+        IfElseToDisjunctionFinder finder = new IfElseToDisjunctionFinder();
+        List<Refactoring> refactorings = finder.check(program);
+        assertThat(refactorings).isEmpty();
+    }
+
+    @Test
     public void testIfElseToDisjunctionRefactoring() throws ParsingException, IOException {
         Program program = getAST("src/test/fixtures/refactoring/ifElseToDisjunction.json");
         Script script = program.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(0);
