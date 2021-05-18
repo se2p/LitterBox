@@ -16,7 +16,7 @@ public class MergeDoubleIf extends CloneVisitor implements Refactoring {
     private final IfThenStmt if1;
     private final IfThenStmt if2;
     private final IfThenStmt replacement;
-    private static final String NAME = "merge_double_if";
+    public static final String NAME = "merge_double_if";
 
     public MergeDoubleIf(IfThenStmt if1, IfThenStmt if2) {
         this.if1 = Preconditions.checkNotNull(if1);
