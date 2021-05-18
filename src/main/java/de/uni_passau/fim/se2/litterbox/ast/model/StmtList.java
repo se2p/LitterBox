@@ -34,6 +34,14 @@ public class StmtList extends AbstractNode implements ASTNode {
         this.stmts = Preconditions.checkNotNull(stmts);
     }
 
+    public int getNumberOfStatements() {
+        return stmts.size();
+    }
+
+    public Stmt getStatement(int num) {
+        return stmts.get(num);
+    }
+
     public List<Stmt> getStmts() {
         return stmts;
     }
