@@ -39,9 +39,11 @@ public class RefactoringTool {
         Map<String, RefactoringFinder> refactorings = new LinkedHashMap<>();
 
         registerRefactoring(new ConjunctionToIfsFinder(), refactorings);
+        registerRefactoring(new ConjunctionToIfElseFinder(), refactorings);
         registerRefactoring(new DoubleIfFinder(), refactorings);
         registerRefactoring(new DoubleEventFinder(), refactorings);
         registerRefactoring(new IfsToConjunctionFinder(), refactorings);
+        registerRefactoring(new IfElseToConjunctionFinder(), refactorings);
         registerRefactoring(new SemanticScriptFinder(), refactorings);
 
         return refactorings;
