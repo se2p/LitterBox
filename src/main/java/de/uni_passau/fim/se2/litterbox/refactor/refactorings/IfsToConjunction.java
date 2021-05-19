@@ -50,6 +50,13 @@ public class IfsToConjunction extends CloneVisitor implements Refactoring {
     }
 
     @Override
+    public String toString() {
+        return NAME + System.lineSeparator() + "Replaced if1:" + System.lineSeparator() + if1.getScratchBlocks() + System.lineSeparator() +
+                "Replaced if 2:" + System.lineSeparator() + if2.getScratchBlocks() +  System.lineSeparator() +
+                "Replacement:" + System.lineSeparator() + replacement.getScratchBlocks() +  System.lineSeparator();
+    }
+
+    @Override
     public boolean equals(Object other) {
         if (this == other) {
             return true;

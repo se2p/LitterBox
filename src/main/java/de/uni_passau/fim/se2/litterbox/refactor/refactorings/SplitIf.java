@@ -77,6 +77,13 @@ public class SplitIf extends CloneVisitor implements Refactoring {
     }
 
     @Override
+    public String toString() {
+        return NAME + System.lineSeparator() + "Split if:" + System.lineSeparator() + ifThenStmt.getScratchBlocks() + System.lineSeparator() +
+                "Replacement if 1:" + System.lineSeparator() + replacementIf1.getScratchBlocks() +  System.lineSeparator() +
+                "Replacement if 2:" + System.lineSeparator() + replacementIf2.getScratchBlocks() +  System.lineSeparator();
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof SplitIf)) return false;

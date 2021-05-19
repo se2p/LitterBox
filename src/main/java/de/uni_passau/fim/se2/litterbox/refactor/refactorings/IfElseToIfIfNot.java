@@ -56,6 +56,13 @@ public class IfElseToIfIfNot extends CloneVisitor implements Refactoring {
     }
 
     @Override
+    public String toString() {
+        return NAME + System.lineSeparator() + "Replaced if:" + System.lineSeparator() + ifElseStmt.getScratchBlocks() + System.lineSeparator() +
+                "Replacement if 1:" + System.lineSeparator() + replacementIf1.getScratchBlocks() +  System.lineSeparator() +
+                "Replacement if 2:" + System.lineSeparator() + replacementIf2.getScratchBlocks() +  System.lineSeparator();
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof IfElseToIfIfNot)) return false;

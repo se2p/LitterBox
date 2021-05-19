@@ -63,6 +63,13 @@ public class ConjunctionToIfElse extends CloneVisitor implements Refactoring {
     }
 
     @Override
+    public String toString() {
+        return NAME + System.lineSeparator() + "Replaced if 1:" + System.lineSeparator() + ifStatement1.getScratchBlocks() + System.lineSeparator() +
+                "Replaced if 2:" + System.lineSeparator() + ifStatement2.getScratchBlocks() +  System.lineSeparator() +
+                "Replacement if:" + System.lineSeparator() + replacementIf.getScratchBlocks() +  System.lineSeparator();
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof ConjunctionToIfElse)) return false;

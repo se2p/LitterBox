@@ -52,6 +52,13 @@ public class IfIfNotToIfElse extends CloneVisitor implements Refactoring {
     }
 
     @Override
+    public String toString() {
+        return NAME + System.lineSeparator() + "Replaced if1:" + System.lineSeparator() + ifThen1.getScratchBlocks() + System.lineSeparator() +
+                "Replaced if 2:" + System.lineSeparator() + ifThen2.getScratchBlocks() +  System.lineSeparator() +
+                "Replacement:" + System.lineSeparator() + replacementIf.getScratchBlocks() +  System.lineSeparator();
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof IfIfNotToIfElse)) return false;
