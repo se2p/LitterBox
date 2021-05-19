@@ -14,6 +14,7 @@ import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 public class ConjunctionToIfElse extends CloneVisitor implements Refactoring {
 
@@ -61,5 +62,18 @@ public class ConjunctionToIfElse extends CloneVisitor implements Refactoring {
     @Override
     public String getName() {
         return NAME;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ConjunctionToIfElse)) return false;
+        ConjunctionToIfElse that = (ConjunctionToIfElse) o;
+        return Objects.equals(ifStatement1, that.ifStatement1) && Objects.equals(ifStatement2, that.ifStatement2) && Objects.equals(replacementIf, that.replacementIf);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(ifStatement1, ifStatement2, replacementIf);
     }
 }
