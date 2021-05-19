@@ -11,6 +11,7 @@ import java.util.List;
 public class StatementReplacementVisitor extends CloneVisitor {
 
     private Stmt target;
+    private List<Stmt> otherTargets = new ArrayList<>();
     private List<Stmt> replacementStatements;
 
     public StatementReplacementVisitor(Stmt target, List<Stmt> replacement) {
@@ -21,6 +22,12 @@ public class StatementReplacementVisitor extends CloneVisitor {
     public StatementReplacementVisitor(Stmt target, Stmt... replacement) {
         this.target = target;
         this.replacementStatements = Arrays.asList(replacement);
+    }
+
+    public StatementReplacementVisitor(Stmt target, List<Stmt> otherTargets, List<Stmt> replacement) {
+        this.target = target;
+        this.otherTargets.addAll(otherTargets);
+        this.replacementStatements = replacement;
     }
 
     protected boolean isTargetStatement(Stmt node) {
@@ -35,7 +42,7 @@ public class StatementReplacementVisitor extends CloneVisitor {
             if (isTargetStatement(stmt)) {
                 for (Stmt replacement : replacementStatements)
                 statements.add(replacement);
-            } else {
+            } else if (!otherTargets.contains(stmt)) {
                 statements.add(apply(stmt));
             }
         }

@@ -1,19 +1,16 @@
 package de.uni_passau.fim.se2.litterbox.refactor.refactorings;
 
-import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.And;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BoolExpr;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfElseStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.StatementReplacementVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Objects;
 
 /*
@@ -57,20 +54,7 @@ public class ConjunctionToIfElse extends CloneVisitor implements Refactoring {
 
     @Override
     public Program apply(Program program) {
-        return (Program) program.accept(this);
-    }
-
-    @Override
-    public ASTNode visit(StmtList node) {
-        List<Stmt> statements = new ArrayList<>();
-        for (Stmt stmt : node.getStmts()) {
-            if (stmt == ifStatement1) {
-                statements.add(replacementIf);
-            } else if (stmt != ifStatement2) {
-                statements.add(apply(stmt));
-            }
-        }
-        return new StmtList(statements);
+        return (Program) program.accept(new StatementReplacementVisitor(ifStatement1, Arrays.asList(ifStatement2), Arrays.asList(replacementIf)));
     }
 
     @Override
