@@ -132,32 +132,31 @@ public class IssueTool {
     public static Map<String, IssueFinder> generatePerfumeFinders() {
         Map<String, IssueFinder> perfumeFinders = new LinkedHashMap<>();
 
-        registerPerfumeFinder(new ValidTerminationCondition(), perfumeFinders);
-        registerPerfumeFinder(new InitializedParameter(), perfumeFinders);
-        registerPerfumeFinder(new EventInLoop(), perfumeFinders);
-        registerPerfumeFinder(new CorrectBroadcast(), perfumeFinders);
-        registerPerfumeFinder(new UsefulPositionCheck(), perfumeFinders);
-        registerPerfumeFinder(new MovementInLoop(), perfumeFinders);
-        registerPerfumeFinder(new CallWithDefinition(), perfumeFinders);
-
-        registerPerfumeFinder(new ListUsage(), perfumeFinders);
-        registerPerfumeFinder(new CustomBlockUsage(), perfumeFinders);
         registerPerfumeFinder(new BoolExpression(), perfumeFinders);
-        registerPerfumeFinder(new InitializeLocation(), perfumeFinders);
-        registerPerfumeFinder(new Parallelization(), perfumeFinders);
+        registerPerfumeFinder(new CallWithDefinition(), perfumeFinders);
         registerPerfumeFinder(new Coordination(), perfumeFinders);
-        registerPerfumeFinder(new DirectedMotion(), perfumeFinders);
+        registerPerfumeFinder(new Counter(), perfumeFinders);
         registerPerfumeFinder(new Collision(), perfumeFinders);
+        registerPerfumeFinder(new CorrectBroadcast(), perfumeFinders);
+        registerPerfumeFinder(new CustomBlockUsage(), perfumeFinders);
+        registerPerfumeFinder(new DirectedMotion(), perfumeFinders);
+        registerPerfumeFinder(new EventInLoop(), perfumeFinders);
         registerPerfumeFinder(new GlidingMotion(), perfumeFinders);
+        registerPerfumeFinder(new InitializedParameter(), perfumeFinders);
+        registerPerfumeFinder(new InitializeLocation(), perfumeFinders);
+        registerPerfumeFinder(new InitializeLooks(), perfumeFinders);
+        registerPerfumeFinder(new ListUsage(), perfumeFinders);
+        registerPerfumeFinder(new MovementInLoop(), perfumeFinders);
         registerPerfumeFinder(new MouseFollower(), perfumeFinders);
         registerPerfumeFinder(new ObjectFollower(), perfumeFinders);
-        registerPerfumeFinder(new Counter(), perfumeFinders);
-        registerPerfumeFinder(new InitializeLooks(), perfumeFinders);
+        registerPerfumeFinder(new NestedConditionInLoop(), perfumeFinders);
         registerPerfumeFinder(new NestedConditions(), perfumeFinders);
         registerPerfumeFinder(new NestedLoopsPerfume(), perfumeFinders);
-        registerPerfumeFinder(new NestedConditionInLoop(), perfumeFinders);
+        registerPerfumeFinder(new Parallelization(), perfumeFinders);
         registerPerfumeFinder(new SaySoundSynchronization(), perfumeFinders);
         registerPerfumeFinder(new Search(), perfumeFinders);
+        registerPerfumeFinder(new UsefulPositionCheck(), perfumeFinders);
+        registerPerfumeFinder(new ValidTerminationCondition(), perfumeFinders);
 
         return perfumeFinders;
     }
