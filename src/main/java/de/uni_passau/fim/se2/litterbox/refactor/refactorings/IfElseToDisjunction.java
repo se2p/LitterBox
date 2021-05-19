@@ -51,7 +51,7 @@ public class IfElseToDisjunction extends CloneVisitor implements Refactoring {
         Or disjunction = new Or(
                 apply(if1.getBoolExpr()),
                 apply(if2.getBoolExpr()),
-                if2.getMetadata());
+                apply(if2.getMetadata()));
 
         replacement = new IfThenStmt(disjunction,
                 apply(if1.getThenStmts()),

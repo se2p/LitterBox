@@ -25,7 +25,7 @@ public class IfsToConjunction extends CloneVisitor implements Refactoring {
         And conjunction = new And(
                 apply(if1.getBoolExpr()),
                 apply(if2.getBoolExpr()),
-                if2.getMetadata());
+                apply(if2.getMetadata()));
 
         replacement = new IfThenStmt(conjunction,
                 apply(if2.getThenStmts()),

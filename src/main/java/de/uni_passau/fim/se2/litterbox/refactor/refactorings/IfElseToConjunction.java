@@ -30,13 +30,13 @@ public class IfElseToConjunction extends CloneVisitor implements Refactoring {
         And conjunction = new And(
                 apply(if1.getBoolExpr()),
                 apply(if2.getBoolExpr()),
-                if2.getMetadata());
+                apply(if2.getMetadata()));
 
         replacementIf1 = new IfThenStmt(conjunction,
                 apply(if2.getThenStmts()),
                 apply(if1.getMetadata()));
 
-        replacementIf2 = new IfThenStmt(if1.getBoolExpr(),
+        replacementIf2 = new IfThenStmt(apply(if1.getBoolExpr()),
                 apply(if2.getElseStmts()),
                 apply(if2.getMetadata()));
     }

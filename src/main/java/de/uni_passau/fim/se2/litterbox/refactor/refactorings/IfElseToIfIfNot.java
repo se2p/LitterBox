@@ -30,7 +30,7 @@ public class IfElseToIfIfNot extends CloneVisitor implements Refactoring {
                 apply(ifElseStmt.getMetadata()));
 
         replacementIf2 = new IfThenStmt(new Not(apply(ifElseStmt.getBoolExpr()),
-                ifElseStmt.getMetadata()),
+                apply(ifElseStmt.getMetadata())),
                 apply(ifElseStmt.getElseStmts()),
                 apply(ifElseStmt.getMetadata()));
     }

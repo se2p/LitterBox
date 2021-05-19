@@ -34,10 +34,10 @@ public class ConjunctionToIfElse extends CloneVisitor implements Refactoring {
         IfElseStmt innerIf = new IfElseStmt(apply(distinctExpression),
                 apply(ifStatement1.getThenStmts()),
                 apply(ifStatement2.getThenStmts()),
-                ifStatement2.getMetadata());
+                apply(ifStatement2.getMetadata()));
 
         replacementIf = new IfThenStmt(apply(commonExpression),
-                new StmtList(Arrays.asList(innerIf)), ifStatement1.getMetadata());
+                new StmtList(Arrays.asList(innerIf)), apply(ifStatement1.getMetadata()));
     }
 
     @Override

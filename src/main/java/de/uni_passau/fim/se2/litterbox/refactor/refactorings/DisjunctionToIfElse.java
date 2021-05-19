@@ -23,7 +23,7 @@ public class DisjunctionToIfElse extends CloneVisitor implements Refactoring {
         Or disjunction = (Or) ifStatement.getBoolExpr();
 
         IfThenStmt innerIf = new IfThenStmt(apply(disjunction.getOperand2()),
-                apply(ifStatement.getThenStmts()), ifStatement.getMetadata());
+                apply(ifStatement.getThenStmts()), apply(ifStatement.getMetadata()));
 
         replacementIf = new IfElseStmt(apply(disjunction.getOperand1()),
                 apply(ifStatement.getThenStmts()),

@@ -15,7 +15,7 @@ import java.util.Objects;
 
 public class IfIfNotToIfElse extends CloneVisitor implements Refactoring {
 
-    public static final String NAME = "ifelse_to_ififnot";
+    public static final String NAME = "ififnot_to_ifelse";
 
     private final IfThenStmt ifThen1;
     private final IfThenStmt ifThen2;

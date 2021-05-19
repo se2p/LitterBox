@@ -23,7 +23,7 @@ public class ConjunctionToIfs extends CloneVisitor implements Refactoring {
         And conjunction = (And) ifStatement.getBoolExpr();
 
         IfThenStmt innerIf = new IfThenStmt(apply(conjunction.getOperand2()),
-                apply(ifStatement.getThenStmts()), ifStatement.getMetadata());
+                apply(ifStatement.getThenStmts()), apply(ifStatement.getMetadata()));
 
         replacementIf = new IfThenStmt(apply(conjunction.getOperand1()),
                 new StmtList(Arrays.asList(innerIf)),
