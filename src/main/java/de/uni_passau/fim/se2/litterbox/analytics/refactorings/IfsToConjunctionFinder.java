@@ -6,6 +6,16 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
 import de.uni_passau.fim.se2.litterbox.refactor.refactorings.IfsToConjunction;
 
+/*
+If A:
+  If B:
+    C
+
+to
+
+If A && B:
+  C
+ */
 public class IfsToConjunctionFinder extends AbstractRefactoringFinder {
 
     @Override

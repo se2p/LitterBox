@@ -2,14 +2,21 @@ package de.uni_passau.fim.se2.litterbox.refactor.refactorings;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.And;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.StatementReplacementVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-import java.util.ArrayList;
-import java.util.List;
+/*
+If A:
+  If B:
+    C
 
+to
+
+If A && B:
+  C
+ */
 public class IfsToConjunction extends CloneVisitor implements Refactoring {
 
     public static final String NAME = "ifs_to_conjunction";
@@ -34,20 +41,7 @@ public class IfsToConjunction extends CloneVisitor implements Refactoring {
 
     @Override
     public Program apply(Program program) {
-        return (Program) program.accept(this);
-    }
-
-    @Override
-    public ASTNode visit(StmtList node) {
-        List<Stmt> statements = new ArrayList<>();
-        for (Stmt stmt : node.getStmts()) {
-            if (stmt == if1) {
-                statements.add(replacement);
-            } else if (stmt != if2) {
-                statements.add(apply(stmt));
-            }
-        }
-        return new StmtList(statements);
+        return (Program) program.accept(new StatementReplacementVisitor(if1, replacement));
     }
 
     @Override

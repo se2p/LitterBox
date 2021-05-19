@@ -5,12 +5,22 @@ import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.And;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.NodeReplacementVisitor;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.StatementReplacementVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import java.util.Arrays;
 import java.util.Objects;
 
+/*
+If A && B:
+  C
+
+to
+
+If A:
+  If B:
+    C
+ */
 public class ConjunctionToIfs extends CloneVisitor implements Refactoring {
 
     public static final String NAME = "conjunction_to_ifs";
@@ -32,8 +42,7 @@ public class ConjunctionToIfs extends CloneVisitor implements Refactoring {
 
     @Override
     public Program apply(Program program) {
-        NodeReplacementVisitor replacementVisitor =  new NodeReplacementVisitor(ifStatement, replacementIf);
-        return (Program) program.accept(replacementVisitor);
+        return (Program) program.accept(new StatementReplacementVisitor(ifStatement, replacementIf));
     }
 
     @Override

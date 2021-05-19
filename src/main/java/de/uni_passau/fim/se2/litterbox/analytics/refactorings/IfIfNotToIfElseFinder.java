@@ -9,6 +9,19 @@ import de.uni_passau.fim.se2.litterbox.refactor.refactorings.IfIfNotToIfElse;
 
 import java.util.List;
 
+/*
+If A:
+  B
+if not A
+  C
+
+to
+
+If A:
+  B
+Else:
+  C:
+ */
 public class IfIfNotToIfElseFinder extends AbstractRefactoringFinder {
 
     @Override

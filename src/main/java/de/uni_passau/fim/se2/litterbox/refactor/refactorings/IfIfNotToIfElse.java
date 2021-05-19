@@ -13,6 +13,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+/*
+If A:
+  B
+if not A
+  C
+
+to
+
+If A:
+  B
+Else:
+  C:
+ */
 public class IfIfNotToIfElse extends CloneVisitor implements Refactoring {
 
     public static final String NAME = "ififnot_to_ifelse";

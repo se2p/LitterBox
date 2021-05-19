@@ -7,6 +7,20 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfElseStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
 import de.uni_passau.fim.se2.litterbox.refactor.refactorings.IfElseToConjunction;
 
+/*
+If A:
+  If B:
+    C
+  Else:
+    D
+
+to
+
+If A && B:
+  C
+If A:
+  D
+ */
 public class IfElseToConjunctionFinder extends AbstractRefactoringFinder {
 
     @Override

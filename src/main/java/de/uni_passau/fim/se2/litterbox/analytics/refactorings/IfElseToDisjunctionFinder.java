@@ -7,6 +7,18 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfElseStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
 import de.uni_passau.fim.se2.litterbox.refactor.refactorings.IfElseToDisjunction;
 
+/*
+If A:
+  B
+Else:
+  If C:
+    B
+
+to
+
+If A || C:
+  B
+ */
 public class IfElseToDisjunctionFinder extends AbstractRefactoringFinder {
 
     @Override

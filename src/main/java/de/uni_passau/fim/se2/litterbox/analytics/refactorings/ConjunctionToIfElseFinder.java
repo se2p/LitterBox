@@ -9,6 +9,20 @@ import de.uni_passau.fim.se2.litterbox.refactor.refactorings.ConjunctionToIfElse
 
 import java.util.List;
 
+/*
+If A && B:
+  C
+If A:
+  D
+
+to
+
+If A:
+  If B:
+    C
+  Else:
+    D
+ */
 public class ConjunctionToIfElseFinder extends AbstractRefactoringFinder {
 
     @Override

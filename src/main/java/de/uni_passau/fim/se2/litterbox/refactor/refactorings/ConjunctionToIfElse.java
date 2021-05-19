@@ -16,6 +16,20 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
+/*
+If A && B:
+  C
+If A:
+  D
+
+to
+
+If A:
+  If B:
+    C
+  Else:
+    D
+ */
 public class ConjunctionToIfElse extends CloneVisitor implements Refactoring {
 
     public static final String NAME = "conjunction_to_ifelse";

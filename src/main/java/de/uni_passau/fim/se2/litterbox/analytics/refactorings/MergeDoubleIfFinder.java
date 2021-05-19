@@ -9,6 +9,18 @@ import de.uni_passau.fim.se2.litterbox.refactor.refactorings.MergeDoubleIf;
 
 import java.util.List;
 
+/*
+if A:
+  B
+if A:
+  C
+
+to
+
+if A:
+  B
+  C
+ */
 public class MergeDoubleIfFinder extends AbstractRefactoringFinder {
 
     @Override
