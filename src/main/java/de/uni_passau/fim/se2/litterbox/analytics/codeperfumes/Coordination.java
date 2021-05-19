@@ -38,8 +38,8 @@ public class Coordination extends AbstractIssueFinder {
         messagesSent = new ArrayList<>();
         issues = new LinkedHashSet<>();
         messagesReceived = new ArrayList<>();
-        program.accept(this);
         addComment = false;
+        program.accept(this);
         receivedMessages = new LinkedHashSet<>();
 
         final LinkedHashSet<Pair<String>> syncedPairs = new LinkedHashSet<>();

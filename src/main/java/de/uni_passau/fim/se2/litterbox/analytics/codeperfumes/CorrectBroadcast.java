@@ -33,8 +33,8 @@ public class CorrectBroadcast extends AbstractIssueFinder {
         messageSent = new ArrayList<>();
         messageReceived = new ArrayList<>();
         issues = new LinkedHashSet<>();
-        program.accept(this);
         addComment = false;
+        program.accept(this);
         receivedMessages = new LinkedHashSet<>();
 
         final LinkedHashSet<Pair<String>> syncedPairs = new LinkedHashSet<>();
