@@ -22,7 +22,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
  */
 public class EventInLoop extends AbstractIssueFinder {
 
-    public static final String NAME = "check_for_event_in_loop";
+    public static final String NAME = "event_check_in_loop";
     private boolean insideGreenFlagClone = false;
     private boolean insideLoop = false;
     private boolean inCondition = false;
