@@ -3,6 +3,7 @@ package de.uni_passau.fim.se2.litterbox.analytics.codeperfumes;
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
+import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Parameter;
@@ -21,6 +22,14 @@ public class InitializedParameter extends AbstractIssueFinder {
     private List<ParameterDefinition> currentParameterDefinitions;
     private boolean insideProcedure;
     private List<String> checkedList;
+
+
+    @Override
+    public void visit(ActorDefinition actor) {
+        currentParameterDefinitions = new ArrayList<>();
+        checkedList = new ArrayList<>();
+        super.visit(actor);
+    }
 
     @Override
     public void visit(ProcedureDefinition node) {

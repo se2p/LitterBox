@@ -18,7 +18,7 @@ public class DirectedMotion extends AbstractIssueFinder {
 
     public static final String NAME = "directed_motion";
     private boolean pointInDirection = false;
-    private boolean keyPressed;
+    private boolean keyPressed = false;
 
     @Override
     public void visit(Script node) {
