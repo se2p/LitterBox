@@ -56,8 +56,6 @@ public class Coordination extends AbstractIssueFinder {
         addComment = true;
         program.accept(this);
 
-        final Set<String> actorNames = new LinkedHashSet<>();
-        syncedPairs.forEach(p -> actorNames.add(p.getFst()));
         return issues;
     }
 

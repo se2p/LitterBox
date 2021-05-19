@@ -50,9 +50,6 @@ public class CorrectBroadcast extends AbstractIssueFinder {
 
         addComment = true;
         program.accept(this);
-
-        final Set<String> actorNames = new LinkedHashSet<>();
-        syncedPairs.forEach(p -> actorNames.add(p.getFst()));
         return issues;
     }
 
@@ -64,8 +61,6 @@ public class CorrectBroadcast extends AbstractIssueFinder {
                 final String actorName = currentActor.getIdent().getName();
                 messageSent.add(new Pair<>(actorName, msgName));
             } else if (receivedMessages.contains(msgName)) {
-                //Hint hint = new Hint(getName());
-                //hint.setParameter(Hint.HINT_MESSAGE, ((StringLiteral) node.getMessage().getMessage()).getText());
                 addIssue(node, node.getMetadata(), IssueSeverity.MEDIUM);
             }
         }
@@ -79,8 +74,6 @@ public class CorrectBroadcast extends AbstractIssueFinder {
                 final String actorName = currentActor.getIdent().getName();
                 messageSent.add(new Pair<>(actorName, msgName));
             } else if (receivedMessages.contains(msgName)) {
-                //Hint hint = new Hint(getName());
-                //hint.setParameter(Hint.HINT_MESSAGE, ((StringLiteral) node.getMessage().getMessage()).getText());
                 addIssue(node, node.getMetadata(), IssueSeverity.MEDIUM);
             }
         }
