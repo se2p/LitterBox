@@ -19,6 +19,8 @@
 package de.uni_passau.fim.se2.litterbox.analytics.clonedetection;
 
 import de.uni_passau.fim.se2.litterbox.JsonTest;
+import de.uni_passau.fim.se2.litterbox.analytics.Issue;
+import de.uni_passau.fim.se2.litterbox.analytics.smells.ClonedCodeType1;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
@@ -27,6 +29,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -171,7 +174,7 @@ public class CloneAnalysisTest implements JsonTest {
         CloneAnalysis cloneAnalysis = new CloneAnalysis(actor, 3, 2);
         Set<CodeClone> clonesType1 = cloneAnalysis.check(script1, script2, CodeClone.CloneType.TYPE1);
         Set<CodeClone> clonesType2 = cloneAnalysis.check(script1, script2, CodeClone.CloneType.TYPE2);
-        assertEquals(1, clonesType1.size());
+        assertEquals(2, clonesType1.size());
         assertEquals(4, clonesType1.iterator().next().size());
         assertEquals(2, clonesType2.size());
         assertEquals(4, clonesType2.iterator().next().size());
@@ -246,7 +249,7 @@ public class CloneAnalysisTest implements JsonTest {
 
         cloneAnalysis = new CloneAnalysis(actor, 2, 2);
         clones = cloneAnalysis.check(script1, script2, CodeClone.CloneType.TYPE3);
-        assertEquals(1, clones.size());
+        assertEquals(2, clones.size());
     }
 
     @Test
@@ -261,4 +264,12 @@ public class CloneAnalysisTest implements JsonTest {
         assertEquals(0, clones.size());
     }
 
+
+    @Test
+    public void testSymmetryofScripts() throws IOException, ParsingException {
+        Program program = getAST("./src/test/fixtures/smells/cloneSymmetry.json");
+        ClonedCodeType1 cc1 = new ClonedCodeType1();
+        Set<Issue> issues = cc1.check(program);
+        assertEquals(2, issues.size());
+    }
 }
