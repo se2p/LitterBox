@@ -23,11 +23,12 @@ import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.TimedStmt;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-public class ThinkForSecs extends AbstractNode implements SpriteLookStmt {
+public class ThinkForSecs extends AbstractNode implements SpriteLookStmt, TimedStmt {
 
     private final StringExpr thought;
     private final NumExpr secs;
