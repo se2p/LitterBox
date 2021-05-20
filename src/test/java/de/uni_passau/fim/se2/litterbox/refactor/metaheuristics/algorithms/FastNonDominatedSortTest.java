@@ -2,7 +2,7 @@ package de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.algorithms;
 
 import com.google.common.collect.Lists;
 import de.uni_passau.fim.se2.litterbox.analytics.RefactoringFinder;
-import de.uni_passau.fim.se2.litterbox.analytics.refactorings.DoubleIfFinder;
+import de.uni_passau.fim.se2.litterbox.analytics.refactorings.MergeDoubleIfFinder;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.chromosomes.RefactorSequence;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.fitness_functions.FitnessFunction;
@@ -39,7 +39,7 @@ class FastNonDominatedSortTest {
         Mutation<RefactorSequence> mutation = mock(RefactorSequenceMutation.class);
         Crossover<RefactorSequence> crossover = mock(RefactorSequenceCrossover.class);
 
-        List<RefactoringFinder> refactoringFinders = List.of(new DoubleIfFinder());
+        List<RefactoringFinder> refactoringFinders = List.of(new MergeDoubleIfFinder());
 
         Program program = mock(Program.class);
         when(program.deepCopy()).thenReturn(program);

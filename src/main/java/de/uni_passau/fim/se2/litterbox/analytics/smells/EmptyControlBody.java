@@ -34,7 +34,7 @@ public class EmptyControlBody extends AbstractIssueFinder {
 
     @Override
     public void visit(IfElseStmt node) {
-        if (node.getStmtList().getStmts().isEmpty()) {
+        if (node.getThenStmts().getStmts().isEmpty()) {
             Hint hint = new Hint(NAME);
             hint.setParameter(Hint.BLOCK_NAME, IssueTranslator.getInstance().getInfo("if") + " < > " + IssueTranslator.getInstance().getInfo("then ") + IssueTranslator.getInstance().getInfo("else"));
             addIssue(node, node.getMetadata(), severity, hint);

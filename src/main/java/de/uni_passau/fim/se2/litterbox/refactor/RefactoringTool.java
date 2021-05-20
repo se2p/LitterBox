@@ -19,10 +19,7 @@
 package de.uni_passau.fim.se2.litterbox.refactor;
 
 import de.uni_passau.fim.se2.litterbox.analytics.RefactoringFinder;
-import de.uni_passau.fim.se2.litterbox.analytics.refactorings.DoubleEventFinder;
-import de.uni_passau.fim.se2.litterbox.analytics.refactorings.DoubleIfFinder;
-
-import de.uni_passau.fim.se2.litterbox.analytics.refactorings.SemanticScriptFinder;
+import de.uni_passau.fim.se2.litterbox.analytics.refactorings.*;
 
 import java.util.*;
 import java.util.logging.Logger;
@@ -41,9 +38,18 @@ public class RefactoringTool {
     private static Map<String, RefactoringFinder> generateRefactoringFinders() {
         Map<String, RefactoringFinder> refactorings = new LinkedHashMap<>();
 
-        registerRefactoring(new DoubleIfFinder(), refactorings);
+        registerRefactoring(new ConjunctionToIfsFinder(), refactorings);
+        registerRefactoring(new ConjunctionToIfElseFinder(), refactorings);
+        registerRefactoring(new DisjunctionToIfElseFinder(), refactorings);
+        registerRefactoring(new MergeDoubleIfFinder(), refactorings);
         registerRefactoring(new DoubleEventFinder(), refactorings);
+        registerRefactoring(new IfsToConjunctionFinder(), refactorings);
+        registerRefactoring(new IfIfElseToConjunctionFinder(), refactorings);
+        registerRefactoring(new IfElseToDisjunctionFinder(), refactorings);
+        registerRefactoring(new IfElseToIfIfNotFinder(), refactorings);
+        registerRefactoring(new IfIfNotToIfElseFinder(), refactorings);
         registerRefactoring(new SemanticScriptFinder(), refactorings);
+        registerRefactoring(new SplitIfFinder(), refactorings);
 
         return refactorings;
     }

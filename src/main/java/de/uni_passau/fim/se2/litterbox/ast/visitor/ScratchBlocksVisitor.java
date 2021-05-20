@@ -422,7 +422,7 @@ public class ScratchBlocksVisitor extends PrintVisitor {
         storeNotesForIssue(ifElseStmt);
         newLine();
         beginIndentation();
-        ifElseStmt.getStmtList().accept(this);
+        ifElseStmt.getThenStmts().accept(this);
         endIndentation();
         emitNoSpace("else");
         newLine();
