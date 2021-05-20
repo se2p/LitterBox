@@ -103,7 +103,7 @@ import java.util.Set;
  * end
  * [/scratchblocks]
  */
-public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVisitor, TextToSpeechExtensionVisitor  {
+public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVisitor, TextToSpeechExtensionVisitor {
 
     public static final String SCRATCHBLOCKS_START = "[scratchblocks]";
     public static final String SCRATCHBLOCKS_END = "[/scratchblocks]";
@@ -860,7 +860,7 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
     }
 
     @Override
-    public void visitParentVisitor(PenStmt node){
+    public void visitParentVisitor(PenStmt node) {
         visitDefaultVisitor(node);
     }
 
@@ -946,7 +946,7 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
     }
 
     @Override
-    public void visitParentVisitor(TextToSpeechBlock node){
+    public void visitParentVisitor(TextToSpeechBlock node) {
         visitDefaultVisitor(node);
     }
 
@@ -2000,7 +2000,11 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
         for (Issue issue : issues) {
             if (issue.isCodeLocation(node)) {
                 if (!hasIssue) {
-                    emitNoSpace(":: #ff0000");
+                    if (issue.getIssueType() == IssueType.PERFUME) {
+                        emitNoSpace(":: #167700");
+                    } else {
+                        emitNoSpace(":: #ff0000");
+                    }
                 }
                 hasIssue = true;
                 if (!issue.hasMultipleBlocks()) {
