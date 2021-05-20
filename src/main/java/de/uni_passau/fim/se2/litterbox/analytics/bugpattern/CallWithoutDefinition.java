@@ -19,8 +19,10 @@
 package de.uni_passau.fim.se2.litterbox.analytics.bugpattern;
 
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
+import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
+import de.uni_passau.fim.se2.litterbox.analytics.codeperfumes.CallWithDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
@@ -68,6 +70,17 @@ public class CallWithoutDefinition extends AbstractIssueFinder {
     public void visit(CallStmt node) {
         calledProcedures.add(node);
         visitChildren(node);
+    }
+
+    @Override
+    public boolean areOpposite(Issue first, Issue other) {
+        if (first.getFinder() != this) {
+            return super.areOpposite(first, other);
+        }
+        if (other.getFinder() instanceof CallWithDefinition) {
+            return other.getFinder().areOpposite(other, first);
+        }
+        return false;
     }
 
     @Override
