@@ -4,10 +4,12 @@ import com.google.common.graph.EndpointPair;
 import com.google.common.graph.GraphBuilder;
 import com.google.common.graph.Graphs;
 import com.google.common.graph.MutableGraph;
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.cfg.CFGNode;
 import de.uni_passau.fim.se2.litterbox.cfg.ControlFlowGraph;
 
 import java.util.Collections;
+import java.util.Optional;
 import java.util.Set;
 
 public abstract class AbstractDependencyGraph {
@@ -65,6 +67,10 @@ public abstract class AbstractDependencyGraph {
 
     public int getNumEdges() {
         return graph.edges().size();
+    }
+
+    public Optional<CFGNode> getNode(ASTNode node) {
+        return graph.nodes().stream().filter(n -> n.getASTNode() == node).findFirst();
     }
 
     public boolean isReachable(CFGNode source, CFGNode target) {

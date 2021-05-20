@@ -14,6 +14,10 @@ public class ProgramDependenceGraph extends AbstractDependencyGraph {
         return graph.inDegree(node) > 1; // Always dependent on entry because that's in the CDG
     }
 
+    public boolean hasDependency(CFGNode node1, CFGNode node2) {
+        return graph.hasEdgeConnecting(node1, node2);
+    }
+
     @Override
     protected MutableGraph<CFGNode> computeGraph() {
 
