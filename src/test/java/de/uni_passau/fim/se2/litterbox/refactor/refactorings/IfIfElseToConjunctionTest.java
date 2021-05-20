@@ -1,7 +1,7 @@
 package de.uni_passau.fim.se2.litterbox.refactor.refactorings;
 
 import de.uni_passau.fim.se2.litterbox.JsonTest;
-import de.uni_passau.fim.se2.litterbox.analytics.refactorings.IfElseToConjunctionFinder;
+import de.uni_passau.fim.se2.litterbox.analytics.refactorings.IfIfElseToConjunctionFinder;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
@@ -16,26 +16,26 @@ import java.util.List;
 
 import static com.google.common.truth.Truth.assertThat;
 
-public class IfElseToConjunctionTest implements JsonTest {
+public class IfIfElseToConjunctionTest implements JsonTest {
 
     @Test
     public void testIfElseToConjunctionFinder() throws ParsingException, IOException {
-        Program program = getAST("src/test/fixtures/refactoring/ifElseToConjunction.json");
-        IfElseToConjunctionFinder finder = new IfElseToConjunctionFinder();
+        Program program = getAST("src/test/fixtures/refactoring/ifIfElseToConjunction.json");
+        IfIfElseToConjunctionFinder finder = new IfIfElseToConjunctionFinder();
         List<Refactoring> refactorings = finder.check(program);
         assertThat(refactorings).hasSize(1);
-        assertThat(refactorings.get(0)).isInstanceOf(IfElseToConjunction.class);
+        assertThat(refactorings.get(0)).isInstanceOf(IfIfElseToConjunction.class);
     }
 
     @Test
     public void testIfElseToConjunctionRefactoring() throws ParsingException, IOException {
-        Program program = getAST("src/test/fixtures/refactoring/ifElseToConjunction.json");
+        Program program = getAST("src/test/fixtures/refactoring/ifIfElseToConjunction.json");
         Script script = program.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(0);
         StmtList stmtList = script.getStmtList();
         IfThenStmt if1 = (IfThenStmt) stmtList.getStatement(0);
         IfElseStmt if2 = (IfElseStmt) if1.getThenStmts().getStatement(0);
 
-        IfElseToConjunction refactoring = new IfElseToConjunction(if1);
+        IfIfElseToConjunction refactoring = new IfIfElseToConjunction(if1);
         Program refactored = refactoring.apply(program);
 
         Script refactoredScript = refactored.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(0);

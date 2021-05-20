@@ -44,7 +44,7 @@ public class RefactoringTool {
         registerRefactoring(new MergeDoubleIfFinder(), refactorings);
         registerRefactoring(new DoubleEventFinder(), refactorings);
         registerRefactoring(new IfsToConjunctionFinder(), refactorings);
-        registerRefactoring(new IfElseToConjunctionFinder(), refactorings);
+        registerRefactoring(new IfIfElseToConjunctionFinder(), refactorings);
         registerRefactoring(new IfElseToDisjunctionFinder(), refactorings);
         registerRefactoring(new IfElseToIfIfNotFinder(), refactorings);
         registerRefactoring(new IfIfNotToIfElseFinder(), refactorings);

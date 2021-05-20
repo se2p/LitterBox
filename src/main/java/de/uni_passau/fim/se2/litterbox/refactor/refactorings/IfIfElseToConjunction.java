@@ -24,16 +24,16 @@ If A && B:
 If A:
   D
  */
-public class IfElseToConjunction extends CloneVisitor implements Refactoring {
+public class IfIfElseToConjunction extends CloneVisitor implements Refactoring {
 
-    public static final String NAME = "ifelse_to_conjunction";
+    public static final String NAME = "ififelse_to_conjunction";
 
     private final IfThenStmt if1;
     private final IfElseStmt if2;
     private final IfThenStmt replacementIf1;
     private final IfThenStmt replacementIf2;
 
-    public IfElseToConjunction(IfThenStmt if1) {
+    public IfIfElseToConjunction(IfThenStmt if1) {
         this.if1 = Preconditions.checkNotNull(if1);
         this.if2 = (IfElseStmt) if1.getThenStmts().getStatement(0);
 
@@ -72,8 +72,8 @@ public class IfElseToConjunction extends CloneVisitor implements Refactoring {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof IfElseToConjunction)) return false;
-        IfElseToConjunction that = (IfElseToConjunction) o;
+        if (!(o instanceof IfIfElseToConjunction)) return false;
+        IfIfElseToConjunction that = (IfIfElseToConjunction) o;
         return Objects.equals(if1, that.if1) && Objects.equals(if2, that.if2) && Objects.equals(replacementIf1, that.replacementIf1) && Objects.equals(replacementIf2, that.replacementIf2);
     }
 
