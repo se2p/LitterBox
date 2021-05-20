@@ -24,10 +24,12 @@ import de.uni_passau.fim.se2.litterbox.analytics.clonedetection.CodeClone;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
+import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 abstract class ClonedCode extends AbstractIssueFinder {
 
@@ -44,8 +46,12 @@ abstract class ClonedCode extends AbstractIssueFinder {
     public void visit(ActorDefinition actor) {
         currentActor = actor;
         procMap = program.getProcedureMapping().getProcedures().get(currentActor.getIdent().getName());
-
-        List<Script> scripts = actor.getScripts().getScriptList();
+        List<Script> scripts;
+        if (ignoreLooseBlocks) {
+            scripts = actor.getScripts().getScriptList().stream().filter(s -> !(s.getEvent() instanceof Never)).collect(Collectors.toList());
+        } else {
+            scripts = actor.getScripts().getScriptList();
+        }
         List<ProcedureDefinition> procedures = actor.getProcedureDefinitionList().getList();
         for (int i = 0; i < scripts.size(); i++) {
             checkScript(scripts.get(i), scripts.subList(i, scripts.size()), procedures);
