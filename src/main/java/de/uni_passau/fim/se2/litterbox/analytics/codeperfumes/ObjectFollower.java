@@ -51,7 +51,6 @@ public class ObjectFollower extends AbstractIssueFinder {
         if (insideLoop && node.getPosition() instanceof FromExpression) {
             addIssue(node, node.getMetadata(), IssueSeverity.MEDIUM);
         }
-        visitChildren(node);
     }
 
     @Override
@@ -61,7 +60,6 @@ public class ObjectFollower extends AbstractIssueFinder {
         if (insideLoop && node.getPosition() instanceof FromExpression) {
             pointToObject = true;
         }
-        visitChildren(node);
     }
 
     @Override
@@ -69,7 +67,6 @@ public class ObjectFollower extends AbstractIssueFinder {
         if (insideLoop && pointToObject) {
             addIssue(node, node.getMetadata(), IssueSeverity.MEDIUM);
         }
-        visitChildren(node);
     }
 
     private void iterateStmts(StmtList node) {
