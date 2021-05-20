@@ -27,11 +27,9 @@ public class MergeDoubleEvent extends CloneVisitor implements Refactoring {
         this.script1 = (Script) event1.getParentNode();
         this.script2 = (Script) event2.getParentNode();
 
-        CloneVisitor cloneVisitor = new CloneVisitor();
-        List<Stmt> mergedStmts = cloneVisitor.apply(script1.getStmtList()).getStmts();
-        mergedStmts.addAll(cloneVisitor.apply(script2.getStmtList()).getStmts());
-        Event event = cloneVisitor.apply(event1);
-        replacement = new Script(event, new StmtList(mergedStmts));
+        List<Stmt> mergedStmts = apply(script1.getStmtList()).getStmts();
+        mergedStmts.addAll(apply(script2.getStmtList()).getStmts());
+        replacement = new Script(apply(event1), new StmtList(mergedStmts));
     }
 
     @Override

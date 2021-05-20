@@ -76,7 +76,7 @@ public class SequentialActions extends AbstractIssueFinder {
         for (Stmt stmt : statements) {
             if (stmt instanceof IfElseStmt) {
                 IfElseStmt ifStmt = (IfElseStmt) stmt;
-                length += getSequenceLength(ifStmt.getStmtList().getStmts()) + getSequenceLength(ifStmt.getElseStmts().getStmts());
+                length += getSequenceLength(ifStmt.getThenStmts().getStmts()) + getSequenceLength(ifStmt.getElseStmts().getStmts());
             } else if (stmt instanceof IfThenStmt) {
                 IfThenStmt ifStmt = (IfThenStmt) stmt;
                 length += getSequenceLength(ifStmt.getThenStmts().getStmts());

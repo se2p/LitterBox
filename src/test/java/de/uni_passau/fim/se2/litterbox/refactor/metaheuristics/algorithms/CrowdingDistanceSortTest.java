@@ -2,7 +2,7 @@ package de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.algorithms;
 
 import com.google.common.collect.Lists;
 import de.uni_passau.fim.se2.litterbox.analytics.RefactoringFinder;
-import de.uni_passau.fim.se2.litterbox.analytics.refactorings.DoubleIfFinder;
+import de.uni_passau.fim.se2.litterbox.analytics.refactorings.MergeDoubleIfFinder;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.chromosomes.RefactorSequence;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.fitness_functions.FitnessFunction;
@@ -35,7 +35,7 @@ class CrowdingDistanceSortTest {
         Program program = mock(Program.class);
         Crossover<RefactorSequence> crossover = mock(RefactorSequenceCrossover.class);
         List<Integer> productions = List.of(0, 0, 0);
-        List<RefactoringFinder> refactoringFinders = List.of(new DoubleIfFinder());
+        List<RefactoringFinder> refactoringFinders = List.of(new MergeDoubleIfFinder());
 
         FitnessFunction<RefactorSequence> function1 = mock(NumberOfSmells.class);
         FitnessFunction<RefactorSequence> function2 = mock(NumberOfSmells.class);

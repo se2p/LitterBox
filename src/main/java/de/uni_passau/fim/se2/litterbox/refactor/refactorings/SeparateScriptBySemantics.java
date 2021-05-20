@@ -134,7 +134,7 @@ public class SeparateScriptBySemantics implements Refactoring, ScratchVisitor {
     public void visit(IfElseStmt ifElseStmt) {
         stmtList.add(ifElseStmt);
         lastStmt = ifElseStmt;
-        visit(ifElseStmt.getStmtList());
+        visit(ifElseStmt.getThenStmts());
     }
 
     @Override

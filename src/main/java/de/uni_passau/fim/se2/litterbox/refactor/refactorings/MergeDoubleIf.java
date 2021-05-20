@@ -1,52 +1,48 @@
 package de.uni_passau.fim.se2.litterbox.refactor.refactorings;
 
-import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.StatementReplacementVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
+/*
+if A:
+  B
+if A:
+  C
+
+to
+
+if A:
+  B
+  C
+ */
 public class MergeDoubleIf extends CloneVisitor implements Refactoring {
 
     private final IfThenStmt if1;
     private final IfThenStmt if2;
     private final IfThenStmt replacement;
-    private static final String NAME = "merge_double_if";
+    public static final String NAME = "merge_double_if";
 
     public MergeDoubleIf(IfThenStmt if1, IfThenStmt if2) {
         this.if1 = Preconditions.checkNotNull(if1);
         this.if2 = Preconditions.checkNotNull(if2);
 
-        CloneVisitor cloneVisitor = new CloneVisitor();
-        List<Stmt> mergedListOfStmts = cloneVisitor.apply(if1.getThenStmts()).getStmts();
-        mergedListOfStmts.addAll(cloneVisitor.apply(if2.getThenStmts()).getStmts());
+        List<Stmt> mergedListOfStmts = apply(if1.getThenStmts()).getStmts();
+        mergedListOfStmts.addAll(apply(if2.getThenStmts()).getStmts());
         StmtList mergedThenStmts = new StmtList(mergedListOfStmts);
-        replacement = new IfThenStmt(cloneVisitor.apply(if1.getBoolExpr()), mergedThenStmts, cloneVisitor.apply(if1.getMetadata()));
+        replacement = new IfThenStmt(apply(if1.getBoolExpr()), mergedThenStmts, apply(if1.getMetadata()));
     }
 
     @Override
     public Program apply(Program program) {
-        return (Program) program.accept(this);
-    }
-
-    @Override
-    public ASTNode visit(StmtList node) {
-        List<Stmt> statements = new ArrayList<>();
-        for (Stmt stmt : node.getStmts()) {
-            if (stmt != if2) {
-                if (stmt == if1) {
-                    statements.add(replacement);
-                } else {
-                    statements.add(apply(stmt));
-                }
-            }
-        }
-        return new StmtList(statements);
+        return (Program) program.accept(new StatementReplacementVisitor(if1, Arrays.asList(if2), Arrays.asList(replacement)));
     }
 
     @Override

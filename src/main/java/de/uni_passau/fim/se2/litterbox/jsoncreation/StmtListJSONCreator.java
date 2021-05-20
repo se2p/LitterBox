@@ -413,7 +413,7 @@ public class StmtListJSONCreator implements ScratchVisitor {
     public void visit(IfElseStmt node) {
         NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
 
-        StmtList stmtList = node.getStmtList();
+        StmtList stmtList = node.getThenStmts();
         StmtList elseStmtList = node.getElseStmts();
         List<String> inputs = new ArrayList<>();
 

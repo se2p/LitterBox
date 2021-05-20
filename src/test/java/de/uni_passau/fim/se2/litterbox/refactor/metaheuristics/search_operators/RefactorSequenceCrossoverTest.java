@@ -1,7 +1,7 @@
 package de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.search_operators;
 
 import de.uni_passau.fim.se2.litterbox.analytics.RefactoringFinder;
-import de.uni_passau.fim.se2.litterbox.analytics.refactorings.DoubleIfFinder;
+import de.uni_passau.fim.se2.litterbox.analytics.refactorings.MergeDoubleIfFinder;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.chromosomes.RefactorSequence;
 import de.uni_passau.fim.se2.litterbox.utils.Pair;
@@ -33,7 +33,7 @@ class RefactorSequenceCrossoverTest {
         program = mock(Program.class);
         mutation = mock(RefactorSequenceMutation.class);
         crossover = new RefactorSequenceCrossover();
-        refactoringFinders = List.of(new DoubleIfFinder());
+        refactoringFinders = List.of(new MergeDoubleIfFinder());
     }
 
     @AfterEach

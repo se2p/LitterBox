@@ -296,7 +296,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(IfElseStmt node) {
-        return new IfElseStmt(apply(node.getBoolExpr()), apply(node.getStmtList()), apply(node.getElseStmts()), apply(node.getMetadata()));
+        return new IfElseStmt(apply(node.getBoolExpr()), apply(node.getThenStmts()), apply(node.getElseStmts()), apply(node.getMetadata()));
     }
 
     /**
