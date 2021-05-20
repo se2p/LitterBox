@@ -10,10 +10,8 @@ public class ProgramDependenceGraph extends AbstractDependencyGraph {
         super(cfg);
     }
 
-    public boolean hasDependency(CFGNode source, CFGNode target) {
-        // TODO: Does this need to be done twice because of direction?
-        // TODO: What about transitive dependencies?
-        return graph.hasEdgeConnecting(source, target);
+    public boolean hasAnyDependencies(CFGNode node) {
+        return graph.inDegree(node) > 1; // Always dependent on entry because that's in the CDG
     }
 
     @Override
