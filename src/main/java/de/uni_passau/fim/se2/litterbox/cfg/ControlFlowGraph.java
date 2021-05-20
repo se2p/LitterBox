@@ -27,6 +27,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.event.Event;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 
 import java.util.Collections;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -68,6 +69,10 @@ public class ControlFlowGraph {
 
     public Set<EndpointPair<CFGNode>> getEdges() {
         return Collections.unmodifiableSet(graph.edges());
+    }
+
+    public Optional<CFGNode> getNode(ASTNode node) {
+        return graph.nodes().stream().filter(n -> n.getASTNode() == node).findFirst();
     }
 
     public Iterable<CFGNode> getNodesInPostOrder() {
