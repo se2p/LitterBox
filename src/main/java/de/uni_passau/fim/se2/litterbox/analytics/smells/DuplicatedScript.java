@@ -28,6 +28,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class DuplicatedScript extends TopBlockFinder {
 
@@ -46,12 +47,13 @@ public class DuplicatedScript extends TopBlockFinder {
     @Override
     public void visit(ScriptList node) {
         Set<Script> checked = new HashSet<>();
-        List<Script> scripts = node.getScriptList();
+        List<Script> scripts;
+        if (ignoreLooseBlocks) {
+            scripts = node.getScriptList().stream().filter(s -> !(s.getEvent() instanceof Never)).collect(Collectors.toList());
+        } else {
+            scripts = node.getScriptList();
+        }
         for (Script s : scripts) {
-            if (ignoreLooseBlocks && s.getEvent() instanceof Never) {
-                // Ignore unconnected blocks
-                return;
-            }
             setHint = false;
             currentScript = s;
 

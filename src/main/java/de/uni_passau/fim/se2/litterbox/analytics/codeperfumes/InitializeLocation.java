@@ -8,6 +8,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.GreenFlag;
+import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
@@ -41,6 +42,10 @@ public class InitializeLocation extends AbstractIssueFinder {
 
     @Override
     public void visit(Script node) {
+        if (ignoreLooseBlocks && node.getEvent() instanceof Never) {
+            // Ignore unconnected blocks
+            return;
+        }
         if (node.getEvent() instanceof GreenFlag) {
             inGreenFlag = true;
             if (initializedInBlock) {
