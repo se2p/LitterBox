@@ -18,10 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.cfg;
 
-import com.google.common.graph.EndpointPair;
-import com.google.common.graph.GraphBuilder;
-import com.google.common.graph.MutableGraph;
-import com.google.common.graph.Traverser;
+import com.google.common.graph.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Message;
@@ -67,6 +64,10 @@ public class ControlFlowGraph {
 
     public Set<CFGNode> getNodes() {
         return Collections.unmodifiableSet(graph.nodes());
+    }
+
+    public Set<EndpointPair<CFGNode>> getEdges() {
+        return Collections.unmodifiableSet(graph.edges());
     }
 
     public Iterable<CFGNode> getNodesInPostOrder() {
@@ -161,4 +162,14 @@ public class ControlFlowGraph {
     public Iterable<CFGNode> traverse() {
         return Traverser.forGraph(graph).breadthFirst(entryNode);
     }
+
+    public ControlFlowGraph reverse() {
+        ControlFlowGraph newCFG = new ControlFlowGraph();
+        newCFG.graph = Graphs.copyOf(Graphs.transpose(graph));
+        newCFG.entryNode = this.exitNode;
+        newCFG.exitNode  = this.entryNode;
+
+        return newCFG;
+    }
+
 }
