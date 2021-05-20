@@ -35,6 +35,15 @@ public class SplitScriptTest implements JsonTest {
     }
 
     @Test
+    public void testSplitScriptFinder3() throws ParsingException, IOException {
+        Program program = getAST("src/test/fixtures/refactoring/splitScript3.json");
+        SplitScriptFinder finder = new SplitScriptFinder();
+        List<Refactoring> refactorings = finder.check(program);
+        assertThat(refactorings).hasSize(1);
+        assertThat(refactorings.get(0)).isInstanceOf(SplitScript.class);
+    }
+
+    @Test
     public void testSplitScriptRefactoring() throws ParsingException, IOException {
         Program program = getAST("src/test/fixtures/refactoring/splitScript.json");
         Script script = program.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(0);
