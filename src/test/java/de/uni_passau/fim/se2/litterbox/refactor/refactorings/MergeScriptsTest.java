@@ -2,12 +2,10 @@ package de.uni_passau.fim.se2.litterbox.refactor.refactorings;
 
 import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.analytics.refactorings.MergeScriptsFinder;
-import de.uni_passau.fim.se2.litterbox.analytics.refactorings.SplitScriptFinder;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitSeconds;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;

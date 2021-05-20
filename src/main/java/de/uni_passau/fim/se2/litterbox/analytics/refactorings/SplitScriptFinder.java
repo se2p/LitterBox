@@ -5,15 +5,12 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
-import de.uni_passau.fim.se2.litterbox.cfg.CFGNode;
 import de.uni_passau.fim.se2.litterbox.cfg.ControlFlowGraph;
 import de.uni_passau.fim.se2.litterbox.cfg.ControlFlowGraphVisitor;
 import de.uni_passau.fim.se2.litterbox.dependency.ProgramDependenceGraph;
 import de.uni_passau.fim.se2.litterbox.refactor.refactorings.SplitScript;
 
 import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -36,26 +33,9 @@ public class SplitScriptFinder extends AbstractRefactoringFinder {
             Set<Stmt> stmts2 = new LinkedHashSet<>(stmts.getStmts().subList(i, stmts.getNumberOfStatements()));
             stmts.getStmts().subList(i, stmts.getNumberOfStatements()).stream().forEach(s -> stmts2.addAll(getTransitiveStatements(s)));
 
-            boolean hasDependencies = false;
-            for (Stmt stmt1 : stmts1) {
-                Optional<CFGNode> cfgNode1 = cfg.getNode(stmt1);
-                if (!cfgNode1.isPresent()) {
-                    continue;
-                }
-
-                for (Stmt stmt2 : stmts2) {
-                    Optional<CFGNode> cfgNode2 = cfg.getNode(stmt2);
-                    if (!cfgNode2.isPresent()) {
-                        continue;
-                    }
-                    if (pdg.hasDependency(cfgNode1.get(), cfgNode2.get())) {
-                        hasDependencies = true;
-                        break;
-                    }
-                }
-            }
-
-            if (!hasDependencies) {
+            Set<Stmt> slice = pdg.backwardSlice(stmts2);
+            stmts1.retainAll(slice);
+            if (stmts1.isEmpty()) {
                 refactorings.add(new SplitScript(script, splitPoint));
             }
         }

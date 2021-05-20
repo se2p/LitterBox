@@ -1,12 +1,10 @@
 package de.uni_passau.fim.se2.litterbox.analytics.refactorings;
 
-import com.google.common.graph.EndpointPair;
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractRefactoringFinder;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.ScriptList;
-import de.uni_passau.fim.se2.litterbox.ast.model.event.Event;
-import de.uni_passau.fim.se2.litterbox.cfg.CFGNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.cfg.ControlFlowGraph;
 import de.uni_passau.fim.se2.litterbox.cfg.ControlFlowGraphVisitor;
 import de.uni_passau.fim.se2.litterbox.dependency.ProgramDependenceGraph;
@@ -14,6 +12,7 @@ import de.uni_passau.fim.se2.litterbox.refactor.refactorings.MergeScripts;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class MergeScriptsFinder extends AbstractRefactoringFinder {
 
@@ -51,21 +50,20 @@ public class MergeScriptsFinder extends AbstractRefactoringFinder {
         ControlFlowGraph cfg = visitor.getControlFlowGraph();
         ProgramDependenceGraph pdg = new ProgramDependenceGraph(cfg);
 
-        Set<ASTNode> nodesScript1 = getTransitiveNodes(script1);
-        Set<ASTNode> nodesScript2 = getTransitiveNodes(script2);
-        for (EndpointPair<CFGNode> edge : pdg.getEdges()) {
-            if (edge.nodeU().getASTNode() == null || edge.nodeU().getASTNode() instanceof Event) {
-                continue;
-            }
-            if (edge.nodeV().getASTNode() == null || edge.nodeV().getASTNode() instanceof Event) {
-                continue;
-            }
-            if (nodesScript1.contains(edge.nodeU().getASTNode()) &&
-                    nodesScript2.contains(edge.nodeV().getASTNode())) {
-                return true;
-            }
-        }
-        return false;
+        Set<Stmt> stmtScript1 = new LinkedHashSet<>(merged.getStmtList().getStmts().subList(0, script1.getStmtList().getNumberOfStatements()));
+        merged.getStmtList().getStmts().subList(0, script1.getStmtList().getNumberOfStatements()).stream().forEach(s -> stmtScript1.addAll(getTransitiveStatements(s)));
+
+        Set<Stmt> stmtScript2 = new LinkedHashSet<>(merged.getStmtList().getStmts().subList(script1.getStmtList().getNumberOfStatements(), merged.getStmtList().getNumberOfStatements()));
+        merged.getStmtList().getStmts().subList(script1.getStmtList().getNumberOfStatements(), merged.getStmtList().getNumberOfStatements()).stream().forEach(s -> stmtScript2.addAll(getTransitiveStatements(s)));
+
+
+        Set<Stmt> slice = pdg.backwardSlice(stmtScript2);
+        stmtScript1.retainAll(slice);
+        return !stmtScript1.isEmpty();
+    }
+
+    private Set<Stmt> getTransitiveStatements(ASTNode startNode) {
+        return getTransitiveNodes(startNode).stream().filter(node -> node instanceof Stmt).map(Stmt.class::cast).collect(Collectors.toSet());
     }
 
     private Set<ASTNode> getTransitiveNodes(ASTNode node) {
