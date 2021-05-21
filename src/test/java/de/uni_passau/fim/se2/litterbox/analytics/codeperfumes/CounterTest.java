@@ -22,8 +22,16 @@ public class CounterTest implements JsonTest {
     }
 
     @Test
-    public void testDifferentCounter() throws IOException, ParsingException {
-        Program countProg = JsonTest.parseProgram("./src/test/fixtures/goodPractice/differentCounters.json");
+    public void testCounterTwoVarOneCounter() throws IOException, ParsingException {
+        Program countProg = JsonTest.parseProgram("./src/test/fixtures/goodPractice/counter2var.json");
+        Counter counter = new Counter();
+        Set<Issue> reports = counter.check(countProg);
+        Assertions.assertEquals(1, reports.size());
+    }
+
+    @Test
+    public void testCounterTwoTrue() throws IOException, ParsingException {
+        Program countProg = JsonTest.parseProgram("./src/test/fixtures/goodPractice/counterTwoDifferent.json");
         Counter counter = new Counter();
         Set<Issue> reports = counter.check(countProg);
         Assertions.assertEquals(2, reports.size());
