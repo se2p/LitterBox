@@ -26,7 +26,7 @@ import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-public class RepeatForeverStmt extends AbstractNode implements ControlStmt {
+public class RepeatForeverStmt extends AbstractNode implements LoopStmt {
 
     private final StmtList stmtList;
     private final BlockMetadata metadata;
@@ -42,6 +42,7 @@ public class RepeatForeverStmt extends AbstractNode implements ControlStmt {
         return metadata;
     }
 
+    @Override
     public StmtList getStmtList() {
         return stmtList;
     }

@@ -27,7 +27,7 @@ import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-public class UntilStmt extends AbstractNode implements ControlStmt {
+public class UntilStmt extends AbstractNode implements LoopStmt {
 
     private final BoolExpr boolExpr;
     private final StmtList stmtList;
@@ -49,6 +49,7 @@ public class UntilStmt extends AbstractNode implements ControlStmt {
         return boolExpr;
     }
 
+    @Override
     public StmtList getStmtList() {
         return stmtList;
     }
