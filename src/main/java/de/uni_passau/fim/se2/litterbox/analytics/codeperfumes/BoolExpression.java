@@ -13,62 +13,43 @@ public class BoolExpression extends AbstractIssueFinder {
 
     @Override
     public void visit(And expr) {
-        if (!(expr.getOperand1() instanceof UnspecifiedBoolExpr)
-                && !(expr.getOperand2() instanceof UnspecifiedBoolExpr)) {
-            addIssue(expr, expr.getMetadata(), IssueSeverity.LOW);
-        }
+        addIssue(expr, expr.getMetadata(), IssueSeverity.LOW);
         visitChildren(expr);
     }
 
     @Override
     public void visit(AsBool expr) {
-        if (!(expr.getOperand1() instanceof UnspecifiedBoolExpr)) {
-            addIssue(expr, expr.getMetadata(), IssueSeverity.LOW);
-        }
+        addIssue(expr, expr.getMetadata(), IssueSeverity.LOW);
         visitChildren(expr);
     }
 
     @Override
     public void visit(BiggerThan expr) {
-        if (!(expr.getOperand1() instanceof UnspecifiedBoolExpr)
-                && !(expr.getOperand2() instanceof UnspecifiedBoolExpr)) {
-            addIssue(expr, expr.getMetadata(), IssueSeverity.LOW);
-        }
+        addIssue(expr, expr.getMetadata(), IssueSeverity.LOW);
         visitChildren(expr);
     }
 
     @Override
     public void visit(Equals expr) {
-        if (!(expr.getOperand1() instanceof UnspecifiedBoolExpr)
-                && !(expr.getOperand2() instanceof UnspecifiedBoolExpr)) {
-            addIssue(expr, expr.getMetadata(), IssueSeverity.LOW);
-        }
+        addIssue(expr, expr.getMetadata(), IssueSeverity.LOW);
         visitChildren(expr);
     }
 
     @Override
     public void visit(LessThan expr) {
-        if (!(expr.getOperand1() instanceof UnspecifiedBoolExpr)
-                && !(expr.getOperand2() instanceof UnspecifiedBoolExpr)) {
-            addIssue(expr, expr.getMetadata(), IssueSeverity.LOW);
-        }
+        addIssue(expr, expr.getMetadata(), IssueSeverity.LOW);
         visitChildren(expr);
     }
 
     @Override
     public void visit(Not expr) {
-        if (!(expr.getOperand1() instanceof UnspecifiedBoolExpr)) {
-            addIssue(expr, expr.getMetadata(), IssueSeverity.LOW);
-        }
+        addIssue(expr, expr.getMetadata(), IssueSeverity.LOW);
         visitChildren(expr);
     }
 
     @Override
     public void visit(Or expr) {
-        if (!(expr.getOperand1() instanceof UnspecifiedBoolExpr)
-                && !(expr.getOperand2() instanceof UnspecifiedBoolExpr)) {
-            addIssue(expr, expr.getMetadata(), IssueSeverity.LOW);
-        }
+        addIssue(expr, expr.getMetadata(), IssueSeverity.LOW);
         visitChildren(expr);
     }
 
