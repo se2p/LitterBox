@@ -56,7 +56,6 @@ public class Counter extends AbstractIssueFinder {
                 setVariables.add((Qualified) node.getIdentifier());
             }
         }
-        visitChildren(node);
     }
 
     @Override
