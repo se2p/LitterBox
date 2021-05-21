@@ -133,13 +133,13 @@ public class IssueTool {
         Map<String, IssueFinder> perfumeFinders = new LinkedHashMap<>();
 
         registerPerfumeFinder(new BoolExpression(), perfumeFinders);
-        registerPerfumeFinder(new CallWithDefinition(), perfumeFinders);
         registerPerfumeFinder(new Collision(), perfumeFinders);
         registerPerfumeFinder(new Coordination(), perfumeFinders);
         registerPerfumeFinder(new CorrectBroadcast(), perfumeFinders);
         registerPerfumeFinder(new Counter(), perfumeFinders);
         registerPerfumeFinder(new CustomBlockUsage(), perfumeFinders);
         registerPerfumeFinder(new EventInLoop(), perfumeFinders);
+        registerPerfumeFinder(new BackdropSwitchAndEvent(), perfumeFinders);
         registerPerfumeFinder(new DirectedMotion(), perfumeFinders);
         registerPerfumeFinder(new GlidingMotion(), perfumeFinders);
         registerPerfumeFinder(new InitializedParameter(), perfumeFinders);
