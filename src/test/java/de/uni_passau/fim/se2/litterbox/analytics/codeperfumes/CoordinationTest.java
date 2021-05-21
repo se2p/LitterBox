@@ -14,18 +14,10 @@ import java.util.Set;
 public class CoordinationTest implements JsonTest {
 
     @Test
-    public void testCoordinationBRandWait() throws IOException, ParsingException {
-        Program coordProg = JsonTest.parseProgram("./src/test/fixtures/goodPractice/coordinationBRandWait.json");
-        Coordination coordination = new Coordination();
-        Set<Issue> reports = coordination.check(coordProg);
-        Assertions.assertEquals(2, reports.size());
-    }
-
-    @Test
     public void testCoordination() throws IOException, ParsingException {
         Program coordProg = JsonTest.parseProgram("./src/test/fixtures/goodPractice/coordinationBoth.json");
         Coordination coordination = new Coordination();
         Set<Issue> reports = coordination.check(coordProg);
-        Assertions.assertEquals(2, reports.size());
+        Assertions.assertEquals(1, reports.size());
     }
  }
