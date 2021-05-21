@@ -5,6 +5,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.Broadcast;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.BroadcastAndWait;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.StopOtherScriptsInSprite;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfElseStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
@@ -49,7 +50,7 @@ public class Search extends AbstractIssueFinder {
     private void checkStmtList(StmtList node) {
         node.getStmts().forEach(stmt -> {
             if (stmt instanceof StopAll || stmt instanceof StopThisScript
-                    || stmt instanceof StopOtherScriptsInSprite || stmt instanceof Broadcast) {
+                    || stmt instanceof StopOtherScriptsInSprite || stmt instanceof Broadcast || stmt instanceof BroadcastAndWait) {
                 addIssue(stmt, stmt.getMetadata(), IssueSeverity.LOW);
             }
         });

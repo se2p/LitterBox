@@ -132,8 +132,8 @@ public class IssueTool {
     public static Map<String, IssueFinder> generatePerfumeFinders() {
         Map<String, IssueFinder> perfumeFinders = new LinkedHashMap<>();
 
+        registerPerfumeFinder(new BackdropSwitchAndEvent(), perfumeFinders);
         registerPerfumeFinder(new BoolExpression(), perfumeFinders);
-        registerPerfumeFinder(new CallWithDefinition(), perfumeFinders);
         registerPerfumeFinder(new Collision(), perfumeFinders);
         registerPerfumeFinder(new Coordination(), perfumeFinders);
         registerPerfumeFinder(new CorrectBroadcast(), perfumeFinders);

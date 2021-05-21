@@ -1,17 +1,27 @@
 package de.uni_passau.fim.se2.litterbox.analytics.codeperfumes;
 
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
+import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
+import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
+import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Identifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.ChangeVariableBy;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetVariableTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitSeconds;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatTimesStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
+import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * If an initialized variable is changed repeatedly (in a RepeatForever) after
@@ -22,25 +32,53 @@ public class Counter extends AbstractIssueFinder {
     public static final String NAME = "counter";
     private boolean insideLoop = false;
     private boolean waitSec = false;
-    private String counterVariable = null;
+    private List<Qualified> setVariables = new ArrayList<>();
+    private boolean addComment = false;
+
 
     @Override
-    public void visit(ActorDefinition actor) {
-        counterVariable = null;
-        super.visit(actor);
+    public Set<Issue> check(Program program) {
+        Preconditions.checkNotNull(program);
+        this.program = program;
+        issues = new LinkedHashSet<>();
+        setVariables = new ArrayList<>();
+        addComment = false;
+        program.accept(this);
+        addComment = true;
+        program.accept(this);
+        return issues;
     }
 
     @Override
     public void visit(SetVariableTo node) {
-        if (node.getIdentifier() instanceof Qualified) {
-            counterVariable = ((Qualified) node.getIdentifier()).getSecond().getName().getName();
+        if (!addComment) {
+            if (node.getIdentifier() instanceof Qualified) {
+                setVariables.add((Qualified) node.getIdentifier());
+            }
         }
-        visitChildren(node);
     }
 
     @Override
     public void visit(RepeatForeverStmt node) {
-        if (counterVariable != null) {
+        if (!setVariables.isEmpty() && addComment) {
+            insideLoop = true;
+            visitChildren(node);
+            insideLoop = false;
+        }
+    }
+
+    @Override
+    public void visit(RepeatTimesStmt node) {
+        if (!setVariables.isEmpty() && addComment) {
+            insideLoop = true;
+            visitChildren(node);
+            insideLoop = false;
+        }
+    }
+
+    @Override
+    public void visit(UntilStmt node) {
+        if (!setVariables.isEmpty() && addComment) {
             insideLoop = true;
             visitChildren(node);
             insideLoop = false;
@@ -49,25 +87,28 @@ public class Counter extends AbstractIssueFinder {
 
     @Override
     public void visit(StmtList node) {
-        if (insideLoop && counterVariable != null) {
+        if (addComment && insideLoop && !setVariables.isEmpty()) {
             node.getStmts().forEach(stmt -> {
                 if (stmt instanceof WaitSeconds) {
                     waitSec = true;
                 } else if (stmt instanceof ChangeVariableBy) {
                     if (waitSec) {
                         if (((ChangeVariableBy) stmt).getIdentifier() instanceof Qualified) {
-                            String changedVariable = ((Qualified) ((ChangeVariableBy) stmt).
-                                    getIdentifier()).getSecond().getName().getName();
-                            if (changedVariable.equals(counterVariable)) {
-                                addIssue(stmt, stmt.getMetadata(), IssueSeverity.HIGH);
-                                waitSec = false;
+                            Qualified changedVariable = (Qualified) ((ChangeVariableBy) stmt).getIdentifier();
+                            for (Qualified var : setVariables) {
+                                if (changedVariable.equals(var)) {
+                                    addIssue(stmt, stmt.getMetadata(), IssueSeverity.HIGH);
+                                    waitSec = false;
+                                    break;
+                                }
                             }
                         }
                     }
                 }
             });
+        } else {
+            visitChildren(node);
         }
-        visitChildren(node);
     }
 
 
