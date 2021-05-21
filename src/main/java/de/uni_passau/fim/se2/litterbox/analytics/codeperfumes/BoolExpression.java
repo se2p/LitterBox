@@ -16,7 +16,10 @@ public class BoolExpression extends AbstractIssueFinder {
 
     @Override
     public void visit(And expr) {
-        addIssue(expr, expr.getMetadata(), IssueSeverity.LOW);
+        if (!(expr.getOperand1() instanceof UnspecifiedBoolExpr)
+                && !(expr.getOperand2() instanceof UnspecifiedBoolExpr)) {
+            addIssue(expr, expr.getMetadata(), IssueSeverity.LOW);
+        }
         visitChildren(expr);
     }
 
@@ -47,13 +50,18 @@ public class BoolExpression extends AbstractIssueFinder {
 
     @Override
     public void visit(Not expr) {
-        addIssue(expr, expr.getMetadata(), IssueSeverity.LOW);
+        if (!(expr.getOperand1() instanceof UnspecifiedBoolExpr)) {
+            addIssue(expr, expr.getMetadata(), IssueSeverity.LOW);
+        }
         visitChildren(expr);
     }
 
     @Override
     public void visit(Or expr) {
-        addIssue(expr, expr.getMetadata(), IssueSeverity.LOW);
+        if (!(expr.getOperand1() instanceof UnspecifiedBoolExpr)
+                && !(expr.getOperand2() instanceof UnspecifiedBoolExpr)) {
+            addIssue(expr, expr.getMetadata(), IssueSeverity.LOW);
+        }
         visitChildren(expr);
     }
 
