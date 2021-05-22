@@ -16,6 +16,18 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/*
+repeat:
+  A
+  B
+
+to
+
+repeat:
+  A
+repeat:
+  B
+ */
 public class SplitLoopFinder extends AbstractRefactoringFinder {
 
     @Override

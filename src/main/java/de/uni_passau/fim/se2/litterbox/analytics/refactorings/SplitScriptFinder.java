@@ -14,6 +14,19 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/*
+on event:
+  A
+  B
+
+to
+
+on event:
+  A
+
+on event:
+  B
+ */
 public class SplitScriptFinder extends AbstractRefactoringFinder {
 
     @Override
