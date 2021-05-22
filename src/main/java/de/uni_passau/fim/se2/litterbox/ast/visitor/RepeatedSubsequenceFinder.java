@@ -8,6 +8,7 @@ import java.util.List;
 
 public abstract class RepeatedSubsequenceFinder {
 
+    // TODO: What is a proper way to handle such constants?
     public final static int MIN_LENGTH = 2;
     public final static int MIN_OCCURRENCE = 3;
 
