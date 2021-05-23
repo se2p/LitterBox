@@ -70,4 +70,10 @@ public class SplitSlice extends CloneVisitor implements Refactoring {
     public int hashCode() {
         return Objects.hash(script, slice, replacementScriptSlice, replacementScriptRemainder);
     }
+
+    @Override
+    public String toString() {
+        return NAME + System.lineSeparator() + "Slice:" + System.lineSeparator() + replacementScriptSlice + System.lineSeparator() +
+                "Remainder:" + System.lineSeparator() + replacementScriptRemainder.getScratchBlocks() +  System.lineSeparator();
+    }
 }

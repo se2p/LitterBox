@@ -70,4 +70,11 @@ public class MergeScripts extends CloneVisitor implements Refactoring {
     public int hashCode() {
         return Objects.hash(script1, script2, replacementScript);
     }
+
+    @Override
+    public String toString() {
+        return NAME + System.lineSeparator() + "Merging" + System.lineSeparator() + script1.getScratchBlocks() + System.lineSeparator() +
+                " and " + System.lineSeparator() + script2.getScratchBlocks() +  System.lineSeparator() +
+                " to:" + System.lineSeparator() + replacementScript.getScratchBlocks() +  System.lineSeparator();
+    }
 }
