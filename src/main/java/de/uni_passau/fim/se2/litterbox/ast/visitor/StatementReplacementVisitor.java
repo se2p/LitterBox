@@ -40,8 +40,9 @@ public class StatementReplacementVisitor extends CloneVisitor {
         List<Stmt> statements = new ArrayList<>();
         for (Stmt stmt : node.getStmts()) {
             if (isTargetStatement(stmt)) {
-                for (Stmt replacement : replacementStatements)
-                statements.add(replacement);
+                for (Stmt replacement : replacementStatements) {
+                    statements.add(replacement);
+                }
             } else if (!otherTargets.contains(stmt)) {
                 statements.add(apply(stmt));
             }
