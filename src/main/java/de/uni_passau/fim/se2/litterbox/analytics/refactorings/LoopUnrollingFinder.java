@@ -9,7 +9,7 @@ import de.uni_passau.fim.se2.litterbox.refactor.refactorings.LoopUnrolling;
 public class LoopUnrollingFinder extends AbstractRefactoringFinder {
 
     // TODO: What is a suitable number, and how to set it?
-    public static final int MAX_UNROLLING = 2;
+    public static final int MAX_UNROLLING = 3;
 
     @Override
     public void visit(RepeatTimesStmt loop) {
