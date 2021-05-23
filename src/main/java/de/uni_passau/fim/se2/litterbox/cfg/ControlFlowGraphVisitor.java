@@ -26,6 +26,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.Broadcast;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.BroadcastAndWait;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.CreateCloneOf;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitUntil;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.DeleteClone;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopAll;
@@ -151,6 +152,15 @@ public class ControlFlowGraphVisitor implements ScratchVisitor {
         stmt.getStmtList().accept(this);
 
         // Edge back to loop header, and update current node
+        builder.addEdge(node);
+    }
+
+    @Override
+    public void visit(WaitUntil stmt) {
+        CFGNode node = builder.addStatement(stmt);
+
+        // Edge to exit since condition may never be true
+        builder.addEdgeToExit();
         builder.addEdge(node);
     }
 
