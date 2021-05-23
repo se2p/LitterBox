@@ -53,6 +53,8 @@ public class RefactoringTool {
         registerRefactoring(new SplitIfFinder(), refactorings);
         registerRefactoring(new SplitLoopFinder(), refactorings);
         registerRefactoring(new SplitScriptFinder(), refactorings);
+        registerRefactoring(new SplitSliceFinder(), refactorings);
+        registerRefactoring(new SwapStatementsFinder(), refactorings);
 
         return refactorings;
     }

@@ -39,6 +39,10 @@ public class ProgramDependenceGraph extends AbstractDependencyGraph {
         return pdg;
     }
 
+    public Set<Stmt> backwardSlice(Stmt target) {
+        return backwardSlice(Arrays.asList(target));
+    }
+
     public Set<Stmt> backwardSlice(Collection<Stmt> target) {
         Set<CFGNode> targetNodes = target.stream().map(s -> getNode(s).get()).collect(Collectors.toSet());
         Set<CFGNode> slice = backwardSliceNodes(targetNodes);
