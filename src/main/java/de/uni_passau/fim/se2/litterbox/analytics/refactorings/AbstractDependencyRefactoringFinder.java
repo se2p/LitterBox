@@ -16,16 +16,14 @@ import java.util.List;
 public abstract class AbstractDependencyRefactoringFinder extends AbstractRefactoringFinder {
 
     protected boolean hasControlDependency(ControlFlowGraph cfg, List<Stmt> subScript1, List<Stmt> subScript2) {
-        // If subScript2 has a control dependency on subScript1 then false, else true
         ControlDependenceGraph cdg = new ControlDependenceGraph(cfg);
-        // If there exists an edge for any block in subScript2 to a node in subScript1
+        // If subScript2 has a control dependency on subScript1 then false, else true
         return cdg.hasDependencyEdge(subScript1, subScript2);
     }
 
     protected boolean hasDataDependency(ControlFlowGraph cfg, List<Stmt> subScript1, List<Stmt> subScript2) {
-        // If subScript1 has a control dependency on subScript2 then false
         DataDependenceGraph ddg = new DataDependenceGraph(cfg);
-        // If subScript2 has a control dependency on subScript1 then false
+        // If subScript2 has a data dependency on subScript1 then false
         return ddg.hasDependencyEdge(subScript1, subScript2);
     }
 
@@ -45,5 +43,4 @@ public abstract class AbstractDependencyRefactoringFinder extends AbstractRefact
         DataDependenceGraph ddg = new DataDependenceGraph(cfg);
         return ddg.hasDependencyEdge(subScript1, subScript2);
     }
-
 }
