@@ -54,6 +54,7 @@ public class RefactoringTool {
         registerRefactoring(new MergeDoubleIfFinder(), refactorings);
         registerRefactoring(new SemanticScriptFinder(), refactorings);
         registerRefactoring(new SplitIfFinder(), refactorings);
+        registerRefactoring(new SplitScriptAfterUntilFinder(), refactorings);
 
         return refactorings;
     }
