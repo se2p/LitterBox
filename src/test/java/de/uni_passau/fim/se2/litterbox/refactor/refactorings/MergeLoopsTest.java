@@ -28,8 +28,7 @@ public class MergeLoopsTest implements JsonTest {
         Program program = getAST("src/test/fixtures/refactoring/unmergeableLoops.json");
         MergeLoopsFinder finder = new MergeLoopsFinder();
         List<Refactoring> refactorings = finder.check(program);
-        assertThat(refactorings).hasSize(1);
-        assertThat(refactorings.get(0)).isInstanceOf(MergeLoops.class);
+        assertThat(refactorings).isEmpty();
     }
 
 }

@@ -8,6 +8,7 @@ import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 
 public class SplitScript extends CloneVisitor implements Refactoring {
 
@@ -76,5 +77,18 @@ public class SplitScript extends CloneVisitor implements Refactoring {
     @Override
     public String getName() {
         return NAME;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof SplitScript)) return false;
+        SplitScript that = (SplitScript) o;
+        return Objects.equals(script, that.script) && Objects.equals(splitPoint, that.splitPoint) && Objects.equals(replacementScript1, that.replacementScript1) && Objects.equals(replacementScript2, that.replacementScript2);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(script, splitPoint, replacementScript1, replacementScript2);
     }
 }

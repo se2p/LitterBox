@@ -9,6 +9,7 @@ import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 
 public class SplitLoop extends CloneVisitor implements Refactoring {
 
@@ -97,5 +98,18 @@ public class SplitLoop extends CloneVisitor implements Refactoring {
     @Override
     public String getName() {
         return NAME;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof SplitLoop)) return false;
+        SplitLoop splitLoop = (SplitLoop) o;
+        return Objects.equals(script, splitLoop.script) && Objects.equals(loopStmt, splitLoop.loopStmt) && Objects.equals(splitPoint, splitLoop.splitPoint) && Objects.equals(replacementScript1, splitLoop.replacementScript1) && Objects.equals(replacementScript2, splitLoop.replacementScript2);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(script, loopStmt, splitPoint, replacementScript1, replacementScript2);
     }
 }

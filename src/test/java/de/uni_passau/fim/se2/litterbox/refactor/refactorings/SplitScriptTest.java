@@ -7,6 +7,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitSeconds;
+import de.uni_passau.fim.se2.litterbox.cfg.ControlFlowGraph;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -17,8 +18,60 @@ import static com.google.common.truth.Truth.assertThat;
 public class SplitScriptTest implements JsonTest {
 
     @Test
+    public void testSplitScriptFinder_DoNotSplitControlDependency() throws ParsingException, IOException {
+        Program program = getAST("src/test/fixtures/refactoring/no_split_refactoring_control_dependency.json");
+        SplitScriptFinder finder = new SplitScriptFinder();
+        List<Refactoring> refactorings = finder.check(program);
+        assertThat(refactorings).isEmpty();
+    }
+
+    @Test
+    public void testSplitScriptFinder_DoNotSplitDataDependency() throws ParsingException, IOException {
+        Program program = getAST("src/test/fixtures/refactoring/no_split_refactoring_data_dependency.json");
+        SplitScriptFinder finder = new SplitScriptFinder();
+        List<Refactoring> refactorings = finder.check(program);
+        assertThat(refactorings).isEmpty();
+    }
+
+    @Test
+    public void testSplitScriptFinder_DoNotSplitDataDependency_WhenMerged() throws ParsingException, IOException {
+        Program program = getAST("src/test/fixtures/refactoring/no_split_refactoring_data_dependency_merged.json");
+        SplitScriptFinder finder = new SplitScriptFinder();
+        List<Refactoring> refactorings = finder.check(program);
+        assertThat(refactorings).isEmpty();
+    }
+
+    @Test
+    public void testSplitScriptFinder_DoNotSplitTimeDependency() throws ParsingException, IOException {
+        Program program = getAST("src/test/fixtures/refactoring/no_split_refactoring_time_dependency.json");
+        SplitScriptFinder finder = new SplitScriptFinder();
+        List<Refactoring> refactorings = finder.check(program);
+        assertThat(refactorings).isEmpty();
+    }
+
+
+    @Test
+    public void testSplitScriptFinder_SplitMergedControlDependency() throws ParsingException, IOException {
+        Program program = getAST("src/test/fixtures/refactoring/split_refactoring_control_dependency.json");
+        SplitScriptFinder finder = new SplitScriptFinder();
+        List<Refactoring> refactorings = finder.check(program);
+        assertThat(refactorings).hasSize(1);
+    }
+
+    @Test
+    public void testSplitScriptFinder_SplitMergedTimeDependency() throws ParsingException, IOException {
+        Program program = getAST("src/test/fixtures/refactoring/split_refactoring_time_dependency.json");
+        SplitScriptFinder finder = new SplitScriptFinder();
+        List<Refactoring> refactorings = finder.check(program);
+        assertThat(refactorings).hasSize(1);
+    }
+
+
+    @Test
     public void testSplitScriptFinder() throws ParsingException, IOException {
         Program program = getAST("src/test/fixtures/refactoring/splitScript.json");
+        ControlFlowGraph cfg = getCFG("src/test/fixtures/refactoring/splitScript.json");
+        System.out.println(cfg.toDotString());
         SplitScriptFinder finder = new SplitScriptFinder();
         List<Refactoring> refactorings = finder.check(program);
         assertThat(refactorings).hasSize(1);

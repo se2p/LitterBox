@@ -5,12 +5,12 @@ import com.google.common.graph.GraphBuilder;
 import com.google.common.graph.Graphs;
 import com.google.common.graph.MutableGraph;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.cfg.CFGNode;
 import de.uni_passau.fim.se2.litterbox.cfg.ControlFlowGraph;
 
-import java.util.Collections;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public abstract class AbstractDependencyGraph {
 
@@ -71,6 +71,43 @@ public abstract class AbstractDependencyGraph {
 
     public Optional<CFGNode> getNode(ASTNode node) {
         return graph.nodes().stream().filter(n -> n.getASTNode() == node).findFirst();
+    }
+
+    public Set<CFGNode> getCFGNodes(Set<ASTNode> astNodes) {
+        return graph.nodes().stream().filter(n -> astNodes.contains(n.getASTNode())).collect(Collectors.toSet());
+    }
+
+    public boolean hasDependencyEdge(Collection<Stmt> sourceNodes, Collection<Stmt> targetNodes) {
+        Set<ASTNode> transitiveSourceNodes = new LinkedHashSet<>();
+        sourceNodes.forEach(s -> transitiveSourceNodes.addAll(getTransitiveStatements(s)));
+
+        Set<ASTNode> transitiveTargetNodes = new LinkedHashSet<>();
+        targetNodes.forEach(s -> transitiveTargetNodes.addAll(getTransitiveStatements(s)));
+
+        return hasAnyEdge(getCFGNodes(transitiveSourceNodes), getCFGNodes(transitiveTargetNodes));
+    }
+
+    private boolean hasAnyEdge(Set<CFGNode> sourceNodes, Set<CFGNode> targetNodes) {
+        for (EndpointPair<CFGNode> edge : getEdges()) {
+            if (sourceNodes.contains(edge.nodeU()) && targetNodes.contains(edge.nodeV())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private Set<Stmt> getTransitiveStatements(Stmt stmt) {
+        return getTransitiveNodes(stmt).stream().filter(node -> node instanceof Stmt).map(Stmt.class::cast).collect(Collectors.toSet());
+    }
+
+    private Set<ASTNode> getTransitiveNodes(ASTNode node) {
+        Set<ASTNode> nodes = new LinkedHashSet<>();
+        nodes.add(node);
+        nodes.addAll(node.getChildren());
+        for (ASTNode child : node.getChildren()) {
+            nodes.addAll(getTransitiveNodes(child));
+        }
+        return nodes;
     }
 
     public boolean isReachable(CFGNode source, CFGNode target) {
