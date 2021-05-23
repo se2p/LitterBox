@@ -12,6 +12,7 @@ import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 public class ForeverWaitToForeverIf extends CloneVisitor implements Refactoring {
 
@@ -46,5 +47,18 @@ public class ForeverWaitToForeverIf extends CloneVisitor implements Refactoring 
     public String toString() {
         return NAME + System.lineSeparator() + "Replaced forever loop with wait:" + System.lineSeparator() + loop.getScratchBlocks() + System.lineSeparator() +
                 "with forever loop with if:" + System.lineSeparator() + replacementLoop.getScratchBlocks() +  System.lineSeparator();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ForeverWaitToForeverIf that = (ForeverWaitToForeverIf) o;
+        return Objects.equals(loop, that.loop) && Objects.equals(replacementLoop, that.replacementLoop);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(loop, replacementLoop);
     }
 }

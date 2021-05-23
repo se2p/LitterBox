@@ -10,6 +10,7 @@ import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 
 public class SplitScriptAfterUntil extends CloneVisitor implements Refactoring {
 
@@ -82,5 +83,18 @@ public class SplitScriptAfterUntil extends CloneVisitor implements Refactoring {
         return NAME + System.lineSeparator() + "Split script:" + System.lineSeparator() + script.getScratchBlocks() + System.lineSeparator() +
                 "Replacement script 1:" + System.lineSeparator() + replacementScript1.getScratchBlocks() +  System.lineSeparator() +
                 "Replacement script 2:" + System.lineSeparator() + replacementScript2.getScratchBlocks() +  System.lineSeparator();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        SplitScriptAfterUntil that = (SplitScriptAfterUntil) o;
+        return Objects.equals(script, that.script) && Objects.equals(untilStmt, that.untilStmt) && Objects.equals(replacementScript1, that.replacementScript1) && Objects.equals(replacementScript2, that.replacementScript2);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(script, untilStmt, replacementScript1, replacementScript2);
     }
 }

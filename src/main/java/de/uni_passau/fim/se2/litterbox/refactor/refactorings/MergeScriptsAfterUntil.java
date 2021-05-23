@@ -9,6 +9,7 @@ import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class MergeScriptsAfterUntil extends CloneVisitor implements Refactoring {
 
@@ -61,5 +62,18 @@ public class MergeScriptsAfterUntil extends CloneVisitor implements Refactoring 
         return NAME + System.lineSeparator() + "Merging script1:" + System.lineSeparator() + script1.getScratchBlocks() + System.lineSeparator() +
                 "with script 2:" + System.lineSeparator() + script2.getScratchBlocks() +  System.lineSeparator() +
                 "Replacement script:" + System.lineSeparator() + replacementScript.getScratchBlocks() +  System.lineSeparator();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        MergeScriptsAfterUntil that = (MergeScriptsAfterUntil) o;
+        return Objects.equals(script1, that.script1) && Objects.equals(script2, that.script2) && Objects.equals(untilStmt, that.untilStmt) && Objects.equals(replacementScript, that.replacementScript);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(script1, script2, untilStmt, replacementScript);
     }
 }

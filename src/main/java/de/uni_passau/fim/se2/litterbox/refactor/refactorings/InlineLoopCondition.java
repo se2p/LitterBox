@@ -13,6 +13,7 @@ import de.uni_passau.fim.se2.litterbox.ast.visitor.StatementReplacementVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import java.util.List;
+import java.util.Objects;
 
 public class InlineLoopCondition extends CloneVisitor implements Refactoring {
 
@@ -51,5 +52,18 @@ public class InlineLoopCondition extends CloneVisitor implements Refactoring {
     public String toString() {
         return NAME + System.lineSeparator() + "Replaced until loop:" + System.lineSeparator() + untilLoop.getScratchBlocks() + System.lineSeparator() +
                 "with forever loop:" + System.lineSeparator() + replacementLoop.getScratchBlocks() +  System.lineSeparator();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        InlineLoopCondition that = (InlineLoopCondition) o;
+        return Objects.equals(untilLoop, that.untilLoop) && Objects.equals(terminationStmt, that.terminationStmt) && Objects.equals(replacementLoop, that.replacementLoop);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(untilLoop, terminationStmt, replacementLoop);
     }
 }
