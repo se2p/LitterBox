@@ -44,6 +44,7 @@ public class RefactoringTool {
         registerRefactoring(new DoubleEventFinder(), refactorings);
         registerRefactoring(new ExtractLoopConditionFinder(), refactorings);
         registerRefactoring(new ForeverIfToWaitUntilFinder(), refactorings);
+        registerRefactoring(new ForeverWaitToForeverIfFinder(), refactorings);
         registerRefactoring(new IfsToConjunctionFinder(), refactorings);
         registerRefactoring(new IfIfElseToConjunctionFinder(), refactorings);
         registerRefactoring(new IfElseToDisjunctionFinder(), refactorings);
