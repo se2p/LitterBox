@@ -33,8 +33,6 @@ public abstract class RepeatedSubsequenceFinder {
                 }
             }
         }
-
-        // xvisitChildren(statementList);
     }
 
     private int findSubsequences(List<Stmt> statements, List<Stmt> subSequence) {
