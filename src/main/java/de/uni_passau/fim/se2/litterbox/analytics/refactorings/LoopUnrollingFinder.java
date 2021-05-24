@@ -5,11 +5,11 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatTimesStmt;
 import de.uni_passau.fim.se2.litterbox.refactor.refactorings.LoopUnrolling;
+import de.uni_passau.fim.se2.litterbox.utils.PropertyLoader;
 
 public class LoopUnrollingFinder extends AbstractRefactoringFinder {
 
-    // TODO: What is a suitable number, and how to set it?
-    public static final int MAX_UNROLLING = 3;
+    private static final int MAX_UNROLLING = PropertyLoader.getSystemIntProperty("refactoring.max_loopunrolling");
 
     @Override
     public void visit(RepeatTimesStmt loop) {

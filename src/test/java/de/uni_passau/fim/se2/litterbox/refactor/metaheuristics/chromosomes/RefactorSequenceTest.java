@@ -32,7 +32,7 @@ class RefactorSequenceTest {
 
     @BeforeEach
     void setupEnv() {
-        PropertyLoader.setDefaultSystemProperties("nsga-ii.properties");
+        PropertyLoader.setDefaultSystemProperties("litterbox.properties");
 
         program = mock(Program.class);
         mutation = mock(RefactorSequenceMutation.class);

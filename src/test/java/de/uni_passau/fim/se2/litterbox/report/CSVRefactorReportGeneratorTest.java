@@ -26,7 +26,7 @@ import static org.mockito.Mockito.when;
 public class CSVRefactorReportGeneratorTest implements JsonTest {
     @BeforeEach
     void setupEnv() {
-        PropertyLoader.setDefaultSystemProperties("nsga-ii.properties");
+        PropertyLoader.setDefaultSystemProperties("litterbox.properties");
     }
 
     @Test

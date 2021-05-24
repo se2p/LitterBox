@@ -3,14 +3,14 @@ package de.uni_passau.fim.se2.litterbox.ast.visitor;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.*;
+import de.uni_passau.fim.se2.litterbox.utils.PropertyLoader;
 
 import java.util.List;
 
 public abstract class RepeatedSubsequenceFinder {
 
-    // TODO: What is a proper way to handle such constants?
-    public final static int MIN_LENGTH = 2;
-    public final static int MIN_OCCURRENCE = 3;
+    public final static int MIN_LENGTH = PropertyLoader.getSystemIntProperty("smell.repeated_subsequence.min_length");
+    public final static int MIN_OCCURRENCE = PropertyLoader.getSystemIntProperty("smell.repeated_subsequence.min_occurrence");
 
     protected abstract void handleRepetition(StmtList stmtList, List<Stmt> subsequence, int occurrences);
 
