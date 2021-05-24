@@ -73,7 +73,6 @@ public class BlockMetadataTest {
         Assertions.assertFalse(topNonDataBlockMetadata.isShadow());
         Assertions.assertEquals("procedures_definition", topNonDataBlockMetadata.getOpcode());
         Assertions.assertNull(topNonDataBlockMetadata.getParentNode());
-        Assertions.assertEquals("$C@+K-:6ie`W)?I*4jc9", topNonDataBlockMetadata.getNext());
     }
 
     @Test
@@ -91,7 +90,5 @@ public class BlockMetadataTest {
         Assertions.assertFalse(nonDataBlockMetadata.isTopLevel());
         Assertions.assertTrue(nonDataBlockMetadata.isShadow());
         Assertions.assertEquals("procedures_prototype", nonDataBlockMetadata.getOpcode());
-        Assertions.assertEquals("X)N~xB@[E,i0S}Vwwtjm", nonDataBlockMetadata.getParent());
-        Assertions.assertNull(nonDataBlockMetadata.getNext());
     }
 }
