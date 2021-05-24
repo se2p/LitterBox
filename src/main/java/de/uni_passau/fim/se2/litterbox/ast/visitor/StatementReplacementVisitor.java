@@ -12,9 +12,9 @@ import java.util.Set;
 
 public class StatementReplacementVisitor extends CloneVisitor {
 
-    private Stmt target;
-    private Set<Stmt> otherTargets = Sets.newIdentityHashSet();
-    private List<Stmt> replacementStatements;
+    private final Stmt target;
+    private final Set<Stmt> otherTargets = Sets.newIdentityHashSet();
+    private final List<Stmt> replacementStatements;
 
     public StatementReplacementVisitor(Stmt target, List<Stmt> replacement) {
         this.target = target;
