@@ -12,22 +12,35 @@ public abstract class RepeatedSubsequenceFinder {
     public final static int MIN_LENGTH = PropertyLoader.getSystemIntProperty("smell.repeated_subsequence.min_length");
     public final static int MIN_OCCURRENCE = PropertyLoader.getSystemIntProperty("smell.repeated_subsequence.min_occurrence");
 
+    private final int minLength;
+    private final int minOccurrence;
+
+    public RepeatedSubsequenceFinder() {
+        this.minLength = MIN_LENGTH;
+        this.minOccurrence = MIN_OCCURRENCE;
+    }
+
+    public RepeatedSubsequenceFinder(int minLength, int minOccurrence) {
+        this.minLength = minLength;
+        this.minOccurrence = minOccurrence;
+    }
+
     protected abstract void handleRepetition(StmtList stmtList, List<Stmt> subsequence, int occurrences);
 
     public void findRepetitions(StmtList statementList) {
         List<Stmt> statements = statementList.getStmts();
 
         for (int i = 0; i < statements.size(); i++) {
-            int maxSequenceLength = (statements.size() - i) / MIN_OCCURRENCE;
+            int maxSequenceLength = (statements.size() - i) / minOccurrence;
 
             for (int sequenceLength = maxSequenceLength; sequenceLength > 0 && sequenceLength < statements.size() - i; sequenceLength--) {
                 List<Stmt> currentSequence = statements.subList(i, i + sequenceLength);
-                if (getSequenceLength(currentSequence) < MIN_LENGTH) {
+                if (getSequenceLength(currentSequence) < minLength) {
                     // Check for minimal length including statements inside control statements
                     break;
                 }
                 int numSubsequences = findSubsequences(statements.subList(i, statements.size()), currentSequence);
-                if (numSubsequences >= MIN_OCCURRENCE) {
+                if (numSubsequences >= minOccurrence) {
                     handleRepetition(statementList, currentSequence, numSubsequences);
                     i += numSubsequences * currentSequence.size();
                 }
