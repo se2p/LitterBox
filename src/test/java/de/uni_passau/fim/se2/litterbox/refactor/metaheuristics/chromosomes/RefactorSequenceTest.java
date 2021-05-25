@@ -9,7 +9,6 @@ import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.search_operators.
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.search_operators.RefactorSequenceMutation;
 import de.uni_passau.fim.se2.litterbox.refactor.refactorings.MergeDoubleIf;
 import de.uni_passau.fim.se2.litterbox.refactor.refactorings.Refactoring;
-import de.uni_passau.fim.se2.litterbox.utils.PropertyLoader;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -32,8 +31,6 @@ class RefactorSequenceTest {
 
     @BeforeEach
     void setupEnv() {
-        PropertyLoader.setDefaultSystemProperties("litterbox.properties");
-
         program = mock(Program.class);
         mutation = mock(RefactorSequenceMutation.class);
         crossover = mock(RefactorSequenceCrossover.class);

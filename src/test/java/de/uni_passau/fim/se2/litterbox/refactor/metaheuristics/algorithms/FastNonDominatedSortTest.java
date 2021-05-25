@@ -12,8 +12,6 @@ import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.search_operators.
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.search_operators.Mutation;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.search_operators.RefactorSequenceCrossover;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.search_operators.RefactorSequenceMutation;
-import de.uni_passau.fim.se2.litterbox.utils.PropertyLoader;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.Comparator;
@@ -25,11 +23,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 class FastNonDominatedSortTest {
-
-    @BeforeEach
-    void setupEnv() {
-        PropertyLoader.setDefaultSystemProperties("litterbox.properties");
-    }
 
     @Test
     void fastNonDominatedSortCalculatesAndStoresFitnessValues() {
