@@ -79,6 +79,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ProcedureDefinitionNameMapping;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.SymbolTable;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
+import de.uni_passau.fim.se2.litterbox.utils.Randomness;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -3005,7 +3006,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(CommentMetadata node) {
-        return new CommentMetadata(node.getCommentId(), node.getBlockId(), node.getX(), node.getY(), node.getWidth(), node.getHeight(), node.isMinimized(), node.getText());
+        return new CommentMetadata(node.getCommentId(), generateUID(), node.getX(), node.getY(), node.getWidth(), node.getHeight(), node.isMinimized(), node.getText());
     }
 
 
@@ -3192,7 +3193,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(DataBlockMetadata node) {
-        return new DataBlockMetadata(node.getBlockId(), node.getDataType(), node.getDataName(), node.getDataReference(), node.getX(), node.getY());
+        return new DataBlockMetadata(generateUID(), node.getDataType(), node.getDataName(), node.getDataReference(), node.getX(), node.getY());
     }
 
     /**
@@ -3207,7 +3208,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(NonDataBlockMetadata node) {
-        return new NonDataBlockMetadata(node.getCommentId(), node.getBlockId(), node.getOpcode(), node.getNext(), node.getParent(),
+        return new NonDataBlockMetadata(node.getCommentId(), generateUID(), node.getOpcode(),
                 apply(node.getInputMetadata()), apply(node.getFields()),
                 node.isTopLevel(), node.isShadow(), apply(node.getMutation()));
     }
@@ -3224,7 +3225,7 @@ public class CloneVisitor {
      * @return     the copy of the visited node
      */
     public ASTNode visit(TopNonDataBlockMetadata node) {
-        return new TopNonDataBlockMetadata(node.getCommentId(), node.getBlockId(), node.getOpcode(), node.getNext(), node.getParent(),
+        return new TopNonDataBlockMetadata(node.getCommentId(), generateUID(), node.getOpcode(),
                 apply(node.getInputMetadata()), apply(node.getFields()),
                 node.isTopLevel(), node.isShadow(), apply(node.getMutation()),
                 node.getXPos(), node.getYPos());
@@ -3574,4 +3575,25 @@ public class CloneVisitor {
     public ASTNode visit(CloneOfMetadata node) {
         return new CloneOfMetadata(apply(node.getCloneBlockMetadata()), apply(node.getCloneMenuMetadata()));
     }
+
+    /*
+     * UID generation based on https://github.com/LLK/scratch-blocks
+     */
+    public static final String BLOCKLY_SOUP = "!#$%()*+,-./:;=?@[]^_`{|}~" +
+            "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+    /**
+     * Generate a unique ID.  This should be globally unique.
+     * 87 characters ^ 20 length > 128 bits (better than a UUID).
+     * @return {string} A globally unique ID string.
+     */
+    public static String generateUID() {
+        int length = 20;
+        int soupLength = BLOCKLY_SOUP.length();
+        String id = "";
+        for (int i = 0; i < length; i++) {
+            id += BLOCKLY_SOUP.charAt(Randomness.nextInt(soupLength));
+        }
+        return id;
+    };
 }

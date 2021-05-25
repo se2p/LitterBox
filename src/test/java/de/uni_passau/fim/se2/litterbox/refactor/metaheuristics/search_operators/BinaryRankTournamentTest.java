@@ -4,7 +4,6 @@ import com.google.common.collect.Lists;
 import de.uni_passau.fim.se2.litterbox.analytics.RefactoringFinder;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.chromosomes.RefactorSequence;
-import de.uni_passau.fim.se2.litterbox.utils.PropertyLoader;
 import de.uni_passau.fim.se2.litterbox.utils.Randomness;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -38,7 +37,6 @@ class BinaryRankTournamentTest {
 
     @BeforeEach
     void setupEnv() {
-        PropertyLoader.setDefaultSystemProperties("nsga-ii.properties");
         mockedRandomness = Mockito.mockStatic(Randomness.class);
 
         program = mock(Program.class);
