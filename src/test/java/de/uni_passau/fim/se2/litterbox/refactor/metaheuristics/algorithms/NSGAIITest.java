@@ -15,7 +15,6 @@ import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.fitness_functions
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.search_operators.*;
 import de.uni_passau.fim.se2.litterbox.refactor.refactorings.DeleteControlBlock;
 import de.uni_passau.fim.se2.litterbox.refactor.refactorings.Refactoring;
-import de.uni_passau.fim.se2.litterbox.utils.PropertyLoader;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -33,7 +32,6 @@ class NSGAIITest implements JsonTest {
 
     @BeforeEach
     void setupEnv() {
-        PropertyLoader.setDefaultSystemProperties("nsga-ii.properties");
         System.setProperty("generations", "2");
     }
 

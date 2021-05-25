@@ -48,6 +48,7 @@ import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.SymbolTable;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -130,8 +131,10 @@ public class ExpressionJSONCreator implements ScratchVisitor {
 
     @Override
     public void visit(NumberLiteral node) {
+        DecimalFormat format = new DecimalFormat();
+        format.setMinimumFractionDigits(0);
         finishedJSONStrings.add(createTypeInput(INPUT_SAME_BLOCK_SHADOW, MATH_NUM_PRIMITIVE,
-                String.valueOf((float) node.getValue())));
+                format.format(node.getValue())));
     }
 
     @Override

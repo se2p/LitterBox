@@ -56,6 +56,7 @@ import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.SymbolTable;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -1063,8 +1064,10 @@ public class StmtListJSONCreator implements ScratchVisitor {
 
     private String createNumExpr(NonDataBlockMetadata metadata, String inputKey, NumExpr numExpr, int primitive) {
         if (numExpr instanceof NumberLiteral) {
+            DecimalFormat format = new DecimalFormat();
+            format.setMinimumFractionDigits(0);
             return createTypeInputWithName(inputKey, INPUT_SAME_BLOCK_SHADOW, primitive,
-                    String.valueOf((float) ((NumberLiteral) numExpr).getValue()));
+                    format.format(((NumberLiteral) numExpr).getValue()));
         } else {
             return createExpr(metadata, inputKey, numExpr);
         }

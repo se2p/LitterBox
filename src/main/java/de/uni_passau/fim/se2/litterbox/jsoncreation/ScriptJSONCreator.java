@@ -31,6 +31,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.TopNonDataBlockM
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.SymbolTable;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -67,8 +68,10 @@ public class ScriptJSONCreator {
                 if (numExpr instanceof UnspecifiedNumExpr) {
                     inputs.add(createTypeInputWithName(VALUE_KEY, INPUT_SAME_BLOCK_SHADOW, MATH_NUM_PRIMITIVE, ""));
                 } else if (numExpr instanceof NumberLiteral) {
+                    DecimalFormat format = new DecimalFormat();
+                    format.setMinimumFractionDigits(0);
                     inputs.add(createTypeInputWithName(VALUE_KEY, INPUT_SAME_BLOCK_SHADOW, MATH_NUM_PRIMITIVE,
-                            String.valueOf((float) ((NumberLiteral) numExpr).getValue())));
+                            format.format(((NumberLiteral) numExpr).getValue())));
                 } else {
                     IdJsonStringTuple tuple = exprCreator.createExpressionJSON(meta.getBlockId(),
                             numExpr, symbol);
