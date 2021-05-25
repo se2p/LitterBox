@@ -27,7 +27,6 @@ import de.uni_passau.fim.se2.litterbox.utils.PropertyLoader;
 import org.apache.commons.cli.*;
 
 import java.io.IOException;
-import java.util.logging.Level;
 
 import static de.uni_passau.fim.se2.litterbox.utils.GroupConstants.*;
 
@@ -290,7 +289,7 @@ public class Main {
      * @param args Arguments that are parsed as options.
      */
     public static void main(String[] args) {
-        PropertyLoader.setDefaultSystemProperties("nsga-ii.properties");
+        PropertyLoader.setDefaultSystemProperties("litterbox.properties");
         PropertyLoader.setGlobalLoggingLevelFromEnvironment();
         parseCommandLine(args);
     }

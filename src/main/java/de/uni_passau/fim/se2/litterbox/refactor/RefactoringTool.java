@@ -51,9 +51,11 @@ public class RefactoringTool {
         registerRefactoring(new IfElseToIfIfNotFinder(), refactorings);
         registerRefactoring(new IfIfNotToIfElseFinder(), refactorings);
         registerRefactoring(new InlineLoopConditionFinder(), refactorings);
+        registerRefactoring(new LoopUnrollingFinder(), refactorings);
         registerRefactoring(new MergeDoubleIfFinder(), refactorings);
         registerRefactoring(new MergeScriptsAfterUntilFinder(), refactorings);
         registerRefactoring(new SemanticScriptFinder(), refactorings);
+        registerRefactoring(new SequenceToLoopFinder(), refactorings);
         registerRefactoring(new SplitIfFinder(), refactorings);
         registerRefactoring(new SplitScriptAfterUntilFinder(), refactorings);
 

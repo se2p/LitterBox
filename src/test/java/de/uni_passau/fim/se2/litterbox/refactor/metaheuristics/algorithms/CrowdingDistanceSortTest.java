@@ -24,11 +24,6 @@ import static org.mockito.Mockito.mock;
 
 class CrowdingDistanceSortTest {
 
-    @BeforeEach
-    void setupEnv() {
-        PropertyLoader.setDefaultSystemProperties("nsga-ii.properties");
-    }
-
     @Test
     void crowdingDistanceIsCalculatedAndSortedCorrectly() {
         Mutation<RefactorSequence> mutation = mock(RefactorSequenceMutation.class);

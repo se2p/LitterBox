@@ -25,7 +25,6 @@ class RefactorSequenceMutationTest {
 
     @BeforeEach
     void setupEnv() {
-        PropertyLoader.setDefaultSystemProperties("nsga-ii.properties");
         mockedRandomness = Mockito.mockStatic(Randomness.class);
 
         program = mock(Program.class);

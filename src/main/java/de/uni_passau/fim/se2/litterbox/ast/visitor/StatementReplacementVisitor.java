@@ -1,5 +1,6 @@
 package de.uni_passau.fim.se2.litterbox.ast.visitor;
 
+import com.google.common.collect.Sets;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
@@ -7,12 +8,13 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 public class StatementReplacementVisitor extends CloneVisitor {
 
-    private Stmt target;
-    private List<Stmt> otherTargets = new ArrayList<>();
-    private List<Stmt> replacementStatements;
+    private final Stmt target;
+    private final Set<Stmt> otherTargets = Sets.newIdentityHashSet();
+    private final List<Stmt> replacementStatements;
 
     public StatementReplacementVisitor(Stmt target, List<Stmt> replacement) {
         this.target = target;

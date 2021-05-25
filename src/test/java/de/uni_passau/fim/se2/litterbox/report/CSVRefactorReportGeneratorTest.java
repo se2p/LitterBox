@@ -9,9 +9,7 @@ import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.fitness_functions
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.fitness_functions.HalsteadDifficultyFitness;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.fitness_functions.NumberOfBlocksFitness;
 import de.uni_passau.fim.se2.litterbox.refactor.refactorings.*;
-import de.uni_passau.fim.se2.litterbox.utils.PropertyLoader;
 import de.uni_passau.fim.se2.litterbox.utils.Randomness;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -24,10 +22,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class CSVRefactorReportGeneratorTest implements JsonTest {
-    @BeforeEach
-    void setupEnv() {
-        PropertyLoader.setDefaultSystemProperties("nsga-ii.properties");
-    }
 
     @Test
     public void testSingleRefactoringSingleProjectNewCSV() throws IOException, ParsingException {
