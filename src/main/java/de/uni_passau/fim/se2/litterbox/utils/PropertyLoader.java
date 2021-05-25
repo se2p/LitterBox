@@ -13,6 +13,10 @@ import java.util.logging.Logger;
 
 public class PropertyLoader {
 
+    static {
+        setDefaultSystemProperties("litterbox.properties");
+    }
+
     private PropertyLoader() {
     }
 
