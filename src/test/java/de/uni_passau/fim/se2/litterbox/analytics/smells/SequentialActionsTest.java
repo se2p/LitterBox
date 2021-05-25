@@ -22,7 +22,9 @@ import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.utils.PropertyLoader;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -31,6 +33,11 @@ import java.util.Set;
 // All these tests make the assumption that a sequence has to consist of at least 2 statements, and must occur at least 3 times
 
 public class SequentialActionsTest implements JsonTest {
+
+    @BeforeAll
+    static void initProperties() {
+        PropertyLoader.setDefaultSystemProperties("litterbox.properties");
+    }
 
     @Test
     public void testEmptyProgram() throws IOException, ParsingException {
