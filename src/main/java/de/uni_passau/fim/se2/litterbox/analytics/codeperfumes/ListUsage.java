@@ -1,8 +1,10 @@
 package de.uni_passau.fim.se2.litterbox.analytics.codeperfumes;
 
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
+import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.HideList;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.ShowList;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.list.*;
@@ -49,6 +51,17 @@ public class ListUsage extends AbstractIssueFinder {
     public void visit(ShowList node) {
         addIssue(node, node.getMetadata(), IssueSeverity.HIGH);
         visitChildren(node);
+    }
+
+    @Override
+    public boolean isDuplicateOf(Issue first, Issue other) {
+        if (first == other) {
+            return false;
+        }
+        if (first.getFinder() != other.getFinder()) {
+            return false;
+        }
+        return true;
     }
 
     @Override

@@ -111,6 +111,17 @@ public class Counter extends AbstractIssueFinder {
         }
     }
 
+    @Override
+    public boolean isDuplicateOf(Issue first, Issue other) {
+        if (first == other) {
+            return false;
+        }
+        if (first.getFinder() != other.getFinder()) {
+            return false;
+        }
+        return true;
+    }
+
 
     @Override
     public String getName() {
