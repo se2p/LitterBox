@@ -73,7 +73,7 @@ public class SplitSlice extends CloneVisitor implements Refactoring {
 
     @Override
     public String toString() {
-        return NAME + System.lineSeparator() + "Slice:" + System.lineSeparator() + replacementScriptSlice + System.lineSeparator() +
+        return NAME + System.lineSeparator() + "Slice:" + System.lineSeparator() + replacementScriptSlice.getScratchBlocks() + System.lineSeparator() +
                 "Remainder:" + System.lineSeparator() + replacementScriptRemainder.getScratchBlocks() +  System.lineSeparator();
     }
 }
