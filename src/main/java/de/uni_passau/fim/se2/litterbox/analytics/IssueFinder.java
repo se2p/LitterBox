@@ -51,6 +51,4 @@ public interface IssueFinder {
     boolean isSubsumedBy(Issue first, Issue other);
 
     boolean areCoupled(Issue first, Issue other);
-
-    boolean areOpposite(Issue first, Issue other);
 }
