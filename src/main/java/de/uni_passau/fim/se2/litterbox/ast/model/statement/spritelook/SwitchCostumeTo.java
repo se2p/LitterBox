@@ -55,4 +55,13 @@ public class SwitchCostumeTo extends AbstractNode implements SpriteLookStmt {
     public ASTNode accept(CloneVisitor visitor) {
         return visitor.visit(this);
     }
+
+    @Override
+    public String getOpcode() {
+        return "looks_switchcostumeto";
+    }
+
+    public String getCostumeMenuOpcode(){
+        return "looks_costume";
+    }
 }

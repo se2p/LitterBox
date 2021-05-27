@@ -59,4 +59,9 @@ public class ChangeGraphicEffectBy extends AbstractNode implements ActorLookStmt
     public ASTNode accept(CloneVisitor visitor) {
         return visitor.visit(this);
     }
+
+    @Override
+    public String getOpcode() {
+        return "looks_changeeffectby";
+    }
 }

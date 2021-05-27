@@ -47,4 +47,9 @@ public class ClearSoundEffects extends AbstractNode implements ActorSoundStmt, A
     public ASTNode accept(CloneVisitor visitor) {
         return visitor.visit(this);
     }
+
+    @Override
+    public String getOpcode() {
+        return "sound_cleareffects";
+    }
 }

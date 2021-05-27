@@ -47,4 +47,9 @@ public class ResetTimer extends AbstractNode implements CommonStmt, ASTLeaf {
     public ASTNode accept(CloneVisitor visitor) {
         return visitor.visit(this);
     }
+
+    @Override
+    public String getOpcode() {
+        return "sensing_resettimer";
+    }
 }

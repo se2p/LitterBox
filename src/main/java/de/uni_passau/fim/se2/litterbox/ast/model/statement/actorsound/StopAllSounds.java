@@ -47,4 +47,9 @@ public class StopAllSounds extends AbstractNode implements ActorSoundStmt, ASTLe
     public ASTNode accept(CloneVisitor visitor) {
         return visitor.visit(this);
     }
+
+    @Override
+    public String getOpcode() {
+        return "sound_stopallsounds";
+    }
 }

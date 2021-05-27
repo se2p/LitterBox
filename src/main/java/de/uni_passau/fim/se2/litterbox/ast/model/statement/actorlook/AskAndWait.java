@@ -55,4 +55,9 @@ public class AskAndWait extends AbstractNode implements ActorLookStmt {
     public ASTNode accept(CloneVisitor visitor) {
         return visitor.visit(this);
     }
+
+    @Override
+    public String getOpcode() {
+        return "sensing_askandwait";
+    }
 }

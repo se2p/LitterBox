@@ -62,4 +62,9 @@ public class SetVariableTo extends AbstractNode implements SetStmt {
     public ASTNode accept(CloneVisitor visitor) {
         return visitor.visit(this);
     }
+
+    @Override
+    public String getOpcode() {
+        return "data_setvariableto";
+    }
 }

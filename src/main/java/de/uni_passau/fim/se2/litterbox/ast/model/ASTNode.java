@@ -37,4 +37,8 @@ public interface ASTNode extends Visitable<ASTNode> {
     String getUniqueName();
 
     BlockMetadata getMetadata();
+
+    default String getOpcode(){
+        return "";
+    }
 }

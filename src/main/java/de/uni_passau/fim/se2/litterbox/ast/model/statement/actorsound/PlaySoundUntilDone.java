@@ -55,4 +55,13 @@ public class PlaySoundUntilDone extends AbstractNode implements ActorSoundStmt {
     public ASTNode accept(CloneVisitor visitor) {
         return visitor.visit(this);
     }
+
+    @Override
+    public String getOpcode() {
+        return "sound_playuntildone";
+    }
+
+    public String getSoundMenuOpcode() {
+        return "sound_sounds_menu";
+    }
 }

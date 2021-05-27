@@ -47,4 +47,9 @@ public class IfOnEdgeBounce extends AbstractNode implements SpriteMotionStmt, AS
     public ASTNode accept(CloneVisitor visitor) {
         return visitor.visit(this);
     }
+
+    @Override
+    public String getOpcode() {
+        return "motion_ifonedgebounce";
+    }
 }

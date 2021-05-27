@@ -62,4 +62,9 @@ public class CallStmt extends AbstractNode implements Stmt {
     public ExpressionList getExpressions() {
         return expressions;
     }
+
+    @Override
+    public String getOpcode() {
+        return"procedures_call";
+    }
 }

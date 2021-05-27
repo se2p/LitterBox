@@ -55,4 +55,9 @@ public class TurnRight extends AbstractNode implements SpriteMotionStmt {
     public ASTNode accept(CloneVisitor visitor) {
         return visitor.visit(this);
     }
+
+    @Override
+    public String getOpcode() {
+        return "motion_turnright";
+    }
 }

@@ -68,4 +68,9 @@ public class IfElseStmt extends AbstractNode implements IfStmt {
     public ASTNode accept(CloneVisitor visitor) {
         return visitor.visit(this);
     }
+
+    @Override
+    public String getOpcode() {
+        return "control_if_else";
+    }
 }

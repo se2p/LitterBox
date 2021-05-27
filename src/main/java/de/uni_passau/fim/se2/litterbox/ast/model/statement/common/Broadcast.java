@@ -55,4 +55,9 @@ public class Broadcast extends AbstractNode implements CommonStmt {
     public ASTNode accept(CloneVisitor visitor) {
         return visitor.visit(this);
     }
+
+    @Override
+    public String getOpcode() {
+        return "event_broadcast";
+    }
 }

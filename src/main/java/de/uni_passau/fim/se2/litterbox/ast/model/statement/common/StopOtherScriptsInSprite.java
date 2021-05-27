@@ -47,4 +47,9 @@ public class StopOtherScriptsInSprite extends AbstractNode implements CommonStmt
     public ASTNode accept(CloneVisitor visitor) {
         return visitor.visit(this);
     }
+
+    @Override
+    public String getOpcode() {
+        return "control_stop";
+    }
 }

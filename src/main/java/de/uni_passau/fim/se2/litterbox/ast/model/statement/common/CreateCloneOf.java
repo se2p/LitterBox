@@ -55,4 +55,13 @@ public class CreateCloneOf extends AbstractNode implements CommonStmt {
     public ASTNode accept(CloneVisitor visitor) {
         return visitor.visit(this);
     }
+
+    @Override
+    public String getOpcode() {
+        return "control_create_clone_of";
+    }
+
+    public String getCloneMenuOpcode(){
+        return "control_create_clone_of_menu";
+    }
 }

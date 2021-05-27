@@ -53,4 +53,9 @@ public class ChangeVolumeBy extends AbstractNode implements ActorSoundStmt {
     public ASTNode accept(CloneVisitor visitor) {
         return visitor.visit(this);
     }
+
+    @Override
+    public String getOpcode() {
+        return "sound_changevolumeby";
+    }
 }

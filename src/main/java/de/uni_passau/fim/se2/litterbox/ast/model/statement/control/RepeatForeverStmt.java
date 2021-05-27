@@ -55,4 +55,9 @@ public class RepeatForeverStmt extends AbstractNode implements ControlStmt {
     public ASTNode accept(CloneVisitor visitor) {
         return visitor.visit(this);
     }
+
+    @Override
+    public String getOpcode() {
+        return "control_forever";
+    }
 }

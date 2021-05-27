@@ -62,4 +62,13 @@ public class GlideSecsTo extends AbstractNode implements SpriteMotionStmt {
     public ASTNode accept(CloneVisitor visitor) {
         return visitor.visit(this);
     }
+
+    @Override
+    public String getOpcode() {
+        return "motion_glideto";
+    }
+
+    public String getGlideToMenuOpcode() {
+        return "motion_glideto_menu";
+    }
 }

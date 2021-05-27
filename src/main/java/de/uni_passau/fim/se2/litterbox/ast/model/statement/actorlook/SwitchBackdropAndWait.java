@@ -55,4 +55,11 @@ public class SwitchBackdropAndWait extends AbstractNode implements ActorLookStmt
     public ASTNode accept(CloneVisitor visitor) {
         return visitor.visit(this);
     }
+
+    @Override
+    public String getOpcode() {
+        return "looks_switchbackdroptoandwait";
+    }
+
+    public String getBackdropMenuOpcode(){return "looks_backdrops";}
 }

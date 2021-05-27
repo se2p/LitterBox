@@ -55,4 +55,13 @@ public class GoToPos extends AbstractNode implements SpriteMotionStmt {
     public ASTNode accept(CloneVisitor visitor) {
         return visitor.visit(this);
     }
+
+    @Override
+    public String getOpcode() {
+        return "motion_goto";
+    }
+
+    public String getGoToMenuOpcode() {
+        return "motion_goto_menu";
+    }
 }

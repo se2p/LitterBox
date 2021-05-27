@@ -62,4 +62,9 @@ public class ChangeVariableBy extends AbstractNode implements CommonStmt {
     public ASTNode accept(CloneVisitor visitor) {
         return visitor.visit(this);
     }
+
+    @Override
+    public String getOpcode() {
+        return "data_changevariableby";
+    }
 }

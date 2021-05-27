@@ -47,4 +47,9 @@ public class NextBackdrop extends AbstractNode implements ActorLookStmt, ASTLeaf
     public ASTNode accept(CloneVisitor visitor) {
         return visitor.visit(this);
     }
+
+    @Override
+    public String getOpcode() {
+        return "looks_nextbackdrop";
+    }
 }
