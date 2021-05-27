@@ -2908,7 +2908,7 @@ public class CloneVisitor {
      * @return the copy of the visited node
      */
     public ASTNode visit(Parameter node) {
-        return new Parameter(apply(node.getName()), apply(node.getMetadata()));
+        return new Parameter(apply(node.getName()), apply(node.getType()), apply(node.getMetadata()));
     }
 
     /**

@@ -55,4 +55,9 @@ public class KeyPressed extends AbstractNode implements Event {
     public ASTNode accept(CloneVisitor visitor) {
         return visitor.visit(this);
     }
+
+    @Override
+    public String getOpcode() {
+        return "event_whenkeypressed";
+    }
 }

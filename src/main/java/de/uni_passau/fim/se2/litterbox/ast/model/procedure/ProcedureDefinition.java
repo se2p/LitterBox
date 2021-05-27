@@ -67,4 +67,13 @@ public class ProcedureDefinition extends AbstractNode implements ASTNode {
     public ASTNode accept(CloneVisitor visitor) {
         return visitor.visit(this);
     }
+
+    @Override
+    public String getOpcode() {
+        return "procedures_definition";
+    }
+
+    public String getPrototypeOpcode() {
+        return "procedures_prototype";
+    }
 }

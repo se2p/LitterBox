@@ -46,4 +46,9 @@ public class DeleteClone extends AbstractNode implements TerminationStmt {
     public ASTNode accept(CloneVisitor visitor) {
         return visitor.visit(this);
     }
+
+    @Override
+    public String getOpcode() {
+        return "control_delete_this_clone";
+    }
 }

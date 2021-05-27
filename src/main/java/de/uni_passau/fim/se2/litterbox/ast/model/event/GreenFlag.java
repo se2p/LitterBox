@@ -47,4 +47,9 @@ public class GreenFlag extends AbstractNode implements Event, ASTLeaf {
     public ASTNode accept(CloneVisitor visitor) {
         return visitor.visit(this);
     }
+
+    @Override
+    public String getOpcode() {
+        return "event_whenflagclicked";
+    }
 }

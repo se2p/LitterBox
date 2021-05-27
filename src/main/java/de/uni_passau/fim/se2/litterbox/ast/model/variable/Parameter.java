@@ -21,13 +21,17 @@ package de.uni_passau.fim.se2.litterbox.ast.model.variable;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.type.BooleanType;
+import de.uni_passau.fim.se2.litterbox.ast.model.type.Type;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 public class Parameter extends DataExpr {
+    private Type type;
 
-    public Parameter(LocalIdentifier name, BlockMetadata metadata) {
+    public Parameter(LocalIdentifier name, Type type, BlockMetadata metadata) {
         super(name, metadata);
+        this.type = type;
     }
 
     @Override
@@ -38,5 +42,18 @@ public class Parameter extends DataExpr {
     @Override
     public ASTNode accept(CloneVisitor visitor) {
         return visitor.visit(this);
+    }
+
+    @Override
+    public String getOpcode() {
+        if (type instanceof BooleanType) {
+            return "argument_reporter_boolean";
+        } else {
+            return "argument_reporter_string_number";
+        }
+    }
+
+    public Type getType() {
+        return type;
     }
 }

@@ -47,4 +47,9 @@ public class StageClicked extends AbstractNode implements Clicked, ASTLeaf {
     public ASTNode accept(CloneVisitor visitor) {
         return visitor.visit(this);
     }
+
+    @Override
+    public String getOpcode() {
+        return "event_whenstageclicked";
+    }
 }
