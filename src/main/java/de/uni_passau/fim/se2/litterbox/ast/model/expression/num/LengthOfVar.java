@@ -54,4 +54,9 @@ public class LengthOfVar extends AbstractNode implements NumExpr {
     public ASTNode accept(CloneVisitor visitor) {
         return visitor.visit(this);
     }
+
+    @Override
+    public String getOpcode() {
+        return "data_lengthoflist";
+    }
 }

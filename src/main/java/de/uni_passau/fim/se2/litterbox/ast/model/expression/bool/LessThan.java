@@ -40,4 +40,9 @@ public class LessThan extends BinaryExpression<ComparableExpr, ComparableExpr> i
     public ASTNode accept(CloneVisitor visitor) {
         return visitor.visit(this);
     }
+
+    @Override
+    public String getOpcode() {
+        return "operator_lt";
+    }
 }

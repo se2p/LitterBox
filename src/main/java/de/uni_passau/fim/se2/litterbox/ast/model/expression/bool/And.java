@@ -39,4 +39,9 @@ public class And extends BinaryExpression<BoolExpr, BoolExpr> implements BoolExp
     public ASTNode accept(CloneVisitor visitor) {
         return visitor.visit(this);
     }
+
+    @Override
+    public String getOpcode() {
+        return "operator_and";
+    }
 }

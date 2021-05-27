@@ -40,4 +40,9 @@ public class Timer extends SingularExpression implements NumExpr, ASTLeaf {
     public ASTNode accept(CloneVisitor visitor) {
         return visitor.visit(this);
     }
+
+    @Override
+    public String getOpcode() {
+        return "sensing_timer";
+    }
 }

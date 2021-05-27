@@ -39,4 +39,9 @@ public class PickRandom extends BinaryExpression<NumExpr, NumExpr> implements Nu
     public ASTNode accept(CloneVisitor visitor) {
         return visitor.visit(this);
     }
+
+    @Override
+    public String getOpcode() {
+        return "operator_random";
+    }
 }

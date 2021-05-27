@@ -39,4 +39,9 @@ public class Join extends BinaryExpression<StringExpr, StringExpr> implements St
     public ASTNode accept(CloneVisitor visitor) {
         return visitor.visit(this);
     }
+
+    @Override
+    public String getOpcode() {
+        return "operator_join";
+    }
 }

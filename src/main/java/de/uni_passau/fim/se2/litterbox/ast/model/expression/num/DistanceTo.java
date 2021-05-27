@@ -54,4 +54,13 @@ public class DistanceTo extends AbstractNode implements NumExpr {
     public ASTNode accept(CloneVisitor visitor) {
         return visitor.visit(this);
     }
+
+    @Override
+    public String getOpcode() {
+        return "sensing_distanceto";
+    }
+
+    public String getDistanceToMenuOpcode() {
+        return "sensing_distancetomenu";
+    }
 }

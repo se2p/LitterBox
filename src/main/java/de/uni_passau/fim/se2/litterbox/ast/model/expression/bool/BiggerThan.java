@@ -40,4 +40,9 @@ public class BiggerThan extends BinaryExpression<ComparableExpr, ComparableExpr>
     public ASTNode accept(CloneVisitor visitor) {
         return visitor.visit(this);
     }
+
+    @Override
+    public String getOpcode() {
+        return "operator_gt";
+    }
 }

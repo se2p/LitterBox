@@ -53,4 +53,9 @@ public class PenDownStmt extends AbstractNode implements PenStmt, ASTLeaf {
     public void accept(PenExtensionVisitor visitor) {
         visitor.visit( this);
     }
+
+    @Override
+    public String getOpcode() {
+        return "pen_penDown";
+    }
 }

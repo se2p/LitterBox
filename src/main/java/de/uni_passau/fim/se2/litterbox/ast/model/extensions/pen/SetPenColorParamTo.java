@@ -66,4 +66,13 @@ public class SetPenColorParamTo extends AbstractNode implements PenStmt {
     public void accept(PenExtensionVisitor visitor) {
         visitor.visit( this);
     }
+
+    @Override
+    public String getOpcode() {
+        return "pen_setPenColorParamTo";
+    }
+
+    public String getMenuColorParamOpcode() {
+        return "pen_menu_colorParam";
+    }
 }

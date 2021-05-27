@@ -60,4 +60,9 @@ public class Speak extends AbstractNode implements TextToSpeechStmt {
     public ASTNode accept(CloneVisitor visitor) {
         return visitor.visit(this);
     }
+
+    @Override
+    public String getOpcode() {
+        return "text2speech_speakAndWait";
+    }
 }

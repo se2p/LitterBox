@@ -40,4 +40,9 @@ public class Size extends SingularExpression implements NumExpr, ASTLeaf {
     public ASTNode accept(CloneVisitor visitor) {
         return visitor.visit(this);
     }
+
+    @Override
+    public String getOpcode() {
+        return "looks_size";
+    }
 }

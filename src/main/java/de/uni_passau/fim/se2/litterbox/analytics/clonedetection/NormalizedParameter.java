@@ -20,6 +20,7 @@ package de.uni_passau.fim.se2.litterbox.analytics.clonedetection;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoBlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.type.StringType;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Parameter;
 
 public class NormalizedParameter extends Parameter {
@@ -27,6 +28,6 @@ public class NormalizedParameter extends Parameter {
     public static final String NAME = "parameter";
 
     public NormalizedParameter() {
-        super(new StrId(NAME), new NoBlockMetadata());
+        super(new StrId(NAME), new StringType(), new NoBlockMetadata());
     }
 }

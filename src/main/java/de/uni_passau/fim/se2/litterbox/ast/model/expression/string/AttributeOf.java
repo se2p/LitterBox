@@ -61,4 +61,13 @@ public class AttributeOf extends AbstractNode implements StringExpr {
     public ASTNode accept(CloneVisitor visitor) {
         return visitor.visit(this);
     }
+
+    @Override
+    public String getOpcode() {
+        return "sensing_of";
+    }
+
+    public String getSensingOfObjectMenuOpcode() {
+        return "sensing_of_object_menu";
+    }
 }

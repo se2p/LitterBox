@@ -59,4 +59,13 @@ public class SetLanguage extends AbstractNode implements TextToSpeechStmt {
     public ASTNode accept(CloneVisitor visitor) {
         return visitor.visit(this);
     }
+
+    @Override
+    public String getOpcode() {
+        return "text2speech_setLanguage";
+    }
+
+    public String getMenuLanguageOpcode() {
+        return "text2speech_menu_languages";
+    }
 }

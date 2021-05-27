@@ -40,4 +40,9 @@ public class Username extends SingularExpression implements StringExpr, ASTLeaf 
     public ASTNode accept(CloneVisitor visitor) {
         return visitor.visit(this);
     }
+
+    @Override
+    public String getOpcode() {
+        return "sensing_username";
+    }
 }

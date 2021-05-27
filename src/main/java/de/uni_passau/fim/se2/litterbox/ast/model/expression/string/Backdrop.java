@@ -52,4 +52,9 @@ public class Backdrop extends AbstractNode implements StringExpr {
     public ASTNode accept(CloneVisitor visitor) {
         return visitor.visit(this);
     }
+
+    @Override
+    public String getOpcode() {
+        return "looks_backdropnumbername";
+    }
 }

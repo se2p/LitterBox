@@ -60,4 +60,9 @@ public class SetPenSizeTo extends AbstractNode implements PenStmt {
     public void accept(PenExtensionVisitor visitor) {
         visitor.visit( this);
     }
+
+    @Override
+    public String getOpcode() {
+        return "pen_setPenSizeTo";
+    }
 }

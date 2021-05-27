@@ -39,4 +39,9 @@ public class NumFunctOf extends BinaryExpression<NumFunct, NumExpr> implements N
     public ASTNode accept(CloneVisitor visitor) {
         return visitor.visit(this);
     }
+
+    @Override
+    public String getOpcode() {
+        return "operator_mathop";
+    }
 }

@@ -39,4 +39,9 @@ public class Or extends BinaryExpression<BoolExpr, BoolExpr> implements BoolExpr
     public ASTNode accept(CloneVisitor visitor) {
         return visitor.visit(this);
     }
+
+    @Override
+    public String getOpcode() {
+        return "operator_or";
+    }
 }

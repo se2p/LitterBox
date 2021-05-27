@@ -39,4 +39,9 @@ public class Round extends UnaryExpression<NumExpr> implements NumExpr {
     public ASTNode accept(CloneVisitor visitor) {
         return visitor.visit(this);
     }
+
+    @Override
+    public String getOpcode() {
+        return "operator_round";
+    }
 }

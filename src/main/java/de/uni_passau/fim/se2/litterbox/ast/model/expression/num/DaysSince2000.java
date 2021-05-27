@@ -40,4 +40,9 @@ public class DaysSince2000 extends SingularExpression implements NumExpr, ASTLea
     public ASTNode accept(CloneVisitor visitor) {
         return visitor.visit(this);
     }
+
+    @Override
+    public String getOpcode() {
+        return "sensing_dayssince2000";
+    }
 }

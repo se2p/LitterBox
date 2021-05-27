@@ -39,4 +39,9 @@ public class Minus extends BinaryExpression<NumExpr, NumExpr> implements NumExpr
     public ASTNode accept(CloneVisitor visitor) {
         return visitor.visit(this);
     }
+
+    @Override
+    public String getOpcode() {
+        return "operator_subtract";
+    }
 }

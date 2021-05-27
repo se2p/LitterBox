@@ -54,4 +54,13 @@ public class Touching extends AbstractNode implements BoolExpr {
     public ASTNode accept(CloneVisitor visitor) {
         return visitor.visit(this);
     }
+
+    @Override
+    public String getOpcode() {
+        return "sensing_touchingobject";
+    }
+
+    public String getTouchingObjectMenuOpcode() {
+        return "sensing_touchingobjectmenu";
+    }
 }

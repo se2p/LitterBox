@@ -59,4 +59,13 @@ public class SetVoice extends AbstractNode implements TextToSpeechStmt {
     public ASTNode accept(CloneVisitor visitor) {
         return visitor.visit(this);
     }
+
+    @Override
+    public String getOpcode() {
+        return "text2speech_setVoice";
+    }
+
+    public String getMenuVoiceOpcode() {
+        return "text2speech_menu_voices";
+    }
 }
