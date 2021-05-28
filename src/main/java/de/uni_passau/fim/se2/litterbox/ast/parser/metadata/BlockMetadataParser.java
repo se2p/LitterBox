@@ -56,14 +56,14 @@ public class BlockMetadataParser {
                 mutation = new NoMutationMetadata();
             }
             if (!topLevel) {
-                return new NonDataBlockMetadata(commentId, blockId, opcode, next, parent, inputMetadata, fields,
+                return new NonDataBlockMetadata(commentId, blockId, next, parent, inputMetadata, fields,
                         topLevel,
                         shadow,
                         mutation);
             }
             double x = blockNode.get(X_KEY).asDouble();
             double y = blockNode.get(Y_KEY).asDouble();
-            return new TopNonDataBlockMetadata(commentId, blockId, opcode, next, parent, inputMetadata, fields,
+            return new TopNonDataBlockMetadata(commentId, blockId, next, parent, inputMetadata, fields,
                     topLevel,
                     shadow,
                     mutation, x, y);

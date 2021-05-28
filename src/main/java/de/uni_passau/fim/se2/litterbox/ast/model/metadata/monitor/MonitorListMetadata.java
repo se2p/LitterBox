@@ -29,7 +29,7 @@ import java.util.List;
 public class MonitorListMetadata extends MonitorMetadata {
     private List<String> values;
 
-    public MonitorListMetadata(String id, String mode, Opcode opcode, MonitorParamMetadataList paramsMetadata,
+    public MonitorListMetadata(String id, String mode, String opcode, MonitorParamMetadataList paramsMetadata,
                                String spriteName, double width, double height, double x, double y, boolean visible,
                                List<String> values) {
         super(id, mode, opcode, paramsMetadata, spriteName, width, height, x, y, visible);

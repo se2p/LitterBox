@@ -33,7 +33,7 @@ public class MonitorSliderMetadata extends MonitorMetadata {
     private boolean isDiscrete;
     private String value;
 
-    public MonitorSliderMetadata(String id, String mode, Opcode opcode, MonitorParamMetadataList paramsMetadata,
+    public MonitorSliderMetadata(String id, String mode, String opcode, MonitorParamMetadataList paramsMetadata,
                                  String spriteName, double width, double height, double x, double y,
                                  boolean visible, String value, double sliderMin, double sliderMax,
                                  boolean isDiscrete) {
