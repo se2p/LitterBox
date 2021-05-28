@@ -22,6 +22,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.opcodes.ControlStmtOpcode;
+import de.uni_passau.fim.se2.litterbox.ast.opcodes.Opcode;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
@@ -54,5 +56,10 @@ public class RepeatForeverStmt extends AbstractNode implements ControlStmt {
     @Override
     public ASTNode accept(CloneVisitor visitor) {
         return visitor.visit(this);
+    }
+
+    @Override
+    public Opcode getOpcode() {
+        return ControlStmtOpcode.control_forever;
     }
 }

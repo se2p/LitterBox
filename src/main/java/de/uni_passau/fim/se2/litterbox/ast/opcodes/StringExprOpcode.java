@@ -18,7 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.opcodes;
 
-public enum StringExprOpcode {
+public enum StringExprOpcode implements Opcode {
 
     operator_join, operator_letter_of, sensing_username, data_itemoflist,
     looks_costumenumbername, looks_backdropnumbername, sensing_answer, sensing_of;
@@ -30,5 +30,10 @@ public enum StringExprOpcode {
             }
         }
         return false;
+    }
+
+    @Override
+    public String getName() {
+        return name();
     }
 }

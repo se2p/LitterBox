@@ -2908,7 +2908,7 @@ public class CloneVisitor {
      * @return the copy of the visited node
      */
     public ASTNode visit(Parameter node) {
-        return new Parameter(apply(node.getName()), apply(node.getMetadata()));
+        return new Parameter(apply(node.getName()), apply(node.getType()), apply(node.getMetadata()));
     }
 
     /**
@@ -3104,7 +3104,7 @@ public class CloneVisitor {
      * @return the copy of the visited node
      */
     public ASTNode visit(MonitorSliderMetadata node) {
-        return new MonitorSliderMetadata(node.getId(), node.getMode(), node.getOpcode(),
+        return new MonitorSliderMetadata(node.getId(), node.getMode(), node.getMonitorOpcode(),
                 apply(node.getParamsMetadata()), node.getSpriteName(), node.getWidth(), node.getHeight(),
                 node.getX(), node.getY(), node.isVisible(), node.getValue(), node.getSliderMin(), node.getSliderMax(), node.isDiscrete());
     }
@@ -3121,7 +3121,7 @@ public class CloneVisitor {
      * @return the copy of the visited node
      */
     public ASTNode visit(MonitorListMetadata node) {
-        return new MonitorListMetadata(node.getId(), node.getMode(), node.getOpcode(),
+        return new MonitorListMetadata(node.getId(), node.getMode(), node.getMonitorOpcode(),
                 apply(node.getParamsMetadata()), node.getSpriteName(), node.getWidth(),
                 node.getHeight(), node.getX(), node.getY(), node.isVisible(), new ArrayList<>(node.getValues()));
     }
@@ -3213,7 +3213,7 @@ public class CloneVisitor {
      * @return the copy of the visited node
      */
     public ASTNode visit(NonDataBlockMetadata node) {
-        return new NonDataBlockMetadata(node.getCommentId(), node.getBlockId(), node.getOpcode(), node.getNext(), node.getParent(),
+        return new NonDataBlockMetadata(node.getCommentId(), node.getBlockId(), node.getNext(), node.getParent(),
                 apply(node.getInputMetadata()), apply(node.getFields()),
                 node.isTopLevel(), node.isShadow(), apply(node.getMutation()));
     }
@@ -3230,7 +3230,7 @@ public class CloneVisitor {
      * @return the copy of the visited node
      */
     public ASTNode visit(TopNonDataBlockMetadata node) {
-        return new TopNonDataBlockMetadata(node.getCommentId(), node.getBlockId(), node.getOpcode(), node.getNext(), node.getParent(),
+        return new TopNonDataBlockMetadata(node.getCommentId(), node.getBlockId(), node.getNext(), node.getParent(),
                 apply(node.getInputMetadata()), apply(node.getFields()),
                 node.isTopLevel(), node.isShadow(), apply(node.getMutation()),
                 node.getXPos(), node.getYPos());

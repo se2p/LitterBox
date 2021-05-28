@@ -18,7 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.opcodes;
 
-public enum PenOpcode {
+public enum PenOpcode implements Opcode {
     pen_clear, pen_stamp, pen_penDown, pen_penUp, pen_setPenColorToColor, pen_setPenColorParamTo,
     pen_changePenColorParamBy,
     pen_setPenSizeTo, pen_changePenSizeBy;
@@ -30,5 +30,10 @@ public enum PenOpcode {
             }
         }
         return false;
+    }
+
+    @Override
+    public String getName() {
+        return name();
     }
 }

@@ -23,6 +23,9 @@ import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.opcodes.DependentBlockOpcode;
+import de.uni_passau.fim.se2.litterbox.ast.opcodes.Opcode;
+import de.uni_passau.fim.se2.litterbox.ast.opcodes.PenOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.PenExtensionVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
@@ -65,5 +68,14 @@ public class SetPenColorParamTo extends AbstractNode implements PenStmt {
     @Override
     public void accept(PenExtensionVisitor visitor) {
         visitor.visit( this);
+    }
+
+    @Override
+    public Opcode getOpcode() {
+        return PenOpcode.pen_setPenColorParamTo;
+    }
+
+    public Opcode getMenuColorParamOpcode() {
+        return DependentBlockOpcode.pen_menu_colorParam;
     }
 }

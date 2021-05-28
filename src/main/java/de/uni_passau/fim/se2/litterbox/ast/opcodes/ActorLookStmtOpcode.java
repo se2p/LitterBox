@@ -18,7 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.opcodes;
 
-public enum ActorLookStmtOpcode {
+public enum ActorLookStmtOpcode implements Opcode {
 
     sensing_askandwait, //  "ask"  StringExpr  "and" "wait"
     looks_nextbackdrop,
@@ -39,5 +39,10 @@ public enum ActorLookStmtOpcode {
             }
         }
         return false;
+    }
+
+    @Override
+    public String getName() {
+        return name();
     }
 }

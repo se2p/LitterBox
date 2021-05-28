@@ -36,7 +36,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.voice.V
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
-import de.uni_passau.fim.se2.litterbox.ast.opcodes.DependentBlockOpcodes;
+import de.uni_passau.fim.se2.litterbox.ast.opcodes.DependentBlockOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.TextToSpeechOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.parser.ExpressionParser;
 import de.uni_passau.fim.se2.litterbox.ast.parser.StringExprParser;
@@ -86,7 +86,7 @@ public class TextToSpeechParser {
             JsonNode referredBlock = blocks.get(reference);
             Preconditions.checkNotNull(referredBlock);
 
-            if (referredBlock.get(OPCODE_KEY).asText().equals(DependentBlockOpcodes.text2speech_menu_languages.name())) {
+            if (referredBlock.get(OPCODE_KEY).asText().equals(DependentBlockOpcode.text2speech_menu_languages.name())) {
                 JsonNode languageParamNode = referredBlock.get(FIELDS_KEY).get(LANGUAGE_FIELDS_KEY);
                 Preconditions.checkArgument(languageParamNode.isArray());
                 String attribute = languageParamNode.get(FIELD_VALUE).asText();
@@ -117,7 +117,7 @@ public class TextToSpeechParser {
             JsonNode referredBlock = blocks.get(reference);
             Preconditions.checkNotNull(referredBlock);
 
-            if (referredBlock.get(OPCODE_KEY).asText().equals(DependentBlockOpcodes.text2speech_menu_voices.name())) {
+            if (referredBlock.get(OPCODE_KEY).asText().equals(DependentBlockOpcode.text2speech_menu_voices.name())) {
                 JsonNode voiceParamNode = referredBlock.get(FIELDS_KEY).get(VOICE_FIELDS_KEY);
                 Preconditions.checkArgument(voiceParamNode.isArray());
                 String attribute = voiceParamNode.get(FIELD_VALUE).asText();

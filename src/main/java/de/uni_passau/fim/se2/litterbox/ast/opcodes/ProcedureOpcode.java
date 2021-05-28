@@ -18,7 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.opcodes;
 
-public enum ProcedureOpcode {
+public enum ProcedureOpcode implements Opcode {
     procedures_definition, procedures_prototype, argument_reporter_string_number, argument_reporter_boolean;
 
     public static boolean contains(String opcode) {
@@ -28,5 +28,10 @@ public enum ProcedureOpcode {
             }
         }
         return false;
+    }
+
+    @Override
+    public String getName() {
+        return name();
     }
 }

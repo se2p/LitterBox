@@ -1913,15 +1913,14 @@ public class ScratchBlocksVisitor extends PrintVisitor implements PenExtensionVi
 
     @Override
     public void visit(Parameter node) {
-        NonDataBlockMetadata metaData = (NonDataBlockMetadata) node.getMetadata();
-        if (metaData.getOpcode().equals(ProcedureOpcode.argument_reporter_boolean.name())) {
+        if (node.getOpcode().equals(ProcedureOpcode.argument_reporter_boolean)) {
             emitNoSpace("<");
         } else {
             emitNoSpace("(");
         }
         visitChildren(node);
         storeNotesForIssue(node);
-        if (metaData.getOpcode().equals(ProcedureOpcode.argument_reporter_boolean.name())) {
+        if (node.getOpcode().equals(ProcedureOpcode.argument_reporter_boolean)) {
             emitNoSpace(">");
         } else {
             emitNoSpace(")");

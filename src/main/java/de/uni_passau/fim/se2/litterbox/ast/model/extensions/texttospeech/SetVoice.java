@@ -22,6 +22,9 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.voice.Voice;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.opcodes.DependentBlockOpcode;
+import de.uni_passau.fim.se2.litterbox.ast.opcodes.Opcode;
+import de.uni_passau.fim.se2.litterbox.ast.opcodes.TextToSpeechOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.TextToSpeechExtensionVisitor;
@@ -58,5 +61,14 @@ public class SetVoice extends AbstractNode implements TextToSpeechStmt {
     @Override
     public ASTNode accept(CloneVisitor visitor) {
         return visitor.visit(this);
+    }
+
+    @Override
+    public Opcode getOpcode() {
+        return TextToSpeechOpcode.text2speech_setVoice;
+    }
+
+    public Opcode getMenuVoiceOpcode() {
+        return DependentBlockOpcode.text2speech_menu_voices;
     }
 }

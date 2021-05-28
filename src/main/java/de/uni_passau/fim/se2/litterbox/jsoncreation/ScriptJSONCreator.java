@@ -84,7 +84,7 @@ public class ScriptJSONCreator {
                 String attribute = attributeAboveValue.getAttribute().getTypeName();
                 String fields = createFields(WHEN_GREATER_THAN_MENU, attribute, null);
                 jsonString.append(createBlockWithoutMutationString(meta, nextId, null, createInputs(inputs),
-                        fields));
+                        fields, attributeAboveValue.getOpcode()));
             } else if (event instanceof BackdropSwitchTo) {
                 BackdropSwitchTo backdropSwitchTo = (BackdropSwitchTo) event;
                 TopNonDataBlockMetadata meta = (TopNonDataBlockMetadata) backdropSwitchTo.getMetadata();
@@ -92,12 +92,12 @@ public class ScriptJSONCreator {
 
                 String name = backdropSwitchTo.getBackdrop().getName();
                 String fields = createFields(BACKDROP_INPUT, name, null);
-                jsonString.append(createBlockWithoutMutationString(meta, nextId, null, EMPTY_VALUE, fields));
+                jsonString.append(createBlockWithoutMutationString(meta, nextId, null, EMPTY_VALUE, fields, backdropSwitchTo.getOpcode()));
             } else if (event instanceof GreenFlag) {
                 GreenFlag greenFlag = (GreenFlag) event;
                 TopNonDataBlockMetadata meta = (TopNonDataBlockMetadata) greenFlag.getMetadata();
                 blockId = meta.getBlockId();
-                jsonString.append(createFixedBlock(meta, nextId, null));
+                jsonString.append(createFixedBlock(meta, nextId, null, greenFlag.getOpcode()));
             } else if (event instanceof KeyPressed) {
                 KeyPressed keyPressed = (KeyPressed) event;
                 TopNonDataBlockMetadata meta = (TopNonDataBlockMetadata) keyPressed.getMetadata();
@@ -107,7 +107,7 @@ public class ScriptJSONCreator {
                 String key = getKeyValue((int) ((NumberLiteral) keyPressed.getKey().getKey()).getValue());
 
                 String fields = createFields(KEY_OPTION, key, null);
-                jsonString.append(createBlockWithoutMutationString(meta, nextId, null, EMPTY_VALUE, fields));
+                jsonString.append(createBlockWithoutMutationString(meta, nextId, null, EMPTY_VALUE, fields, keyPressed.getOpcode()));
             } else if (event instanceof ReceptionOfMessage) {
                 ReceptionOfMessage receptionOfMessage = (ReceptionOfMessage) event;
                 TopNonDataBlockMetadata meta = (TopNonDataBlockMetadata) receptionOfMessage.getMetadata();
@@ -123,22 +123,22 @@ public class ScriptJSONCreator {
                     id = "unspecified" + messageText;
                 }
                 String fields = createFields(BROADCAST_OPTION, messageText, id);
-                jsonString.append(createBlockWithoutMutationString(meta, nextId, null, EMPTY_VALUE, fields));
+                jsonString.append(createBlockWithoutMutationString(meta, nextId, null, EMPTY_VALUE, fields, receptionOfMessage.getOpcode()));
             } else if (event instanceof SpriteClicked) {
                 SpriteClicked spriteClicked = (SpriteClicked) event;
                 TopNonDataBlockMetadata meta = (TopNonDataBlockMetadata) spriteClicked.getMetadata();
                 blockId = meta.getBlockId();
-                jsonString.append(createFixedBlock(meta, nextId, null));
+                jsonString.append(createFixedBlock(meta, nextId, null, spriteClicked.getOpcode()));
             } else if (event instanceof StageClicked) {
                 StageClicked stageClicked = (StageClicked) event;
                 TopNonDataBlockMetadata meta = (TopNonDataBlockMetadata) stageClicked.getMetadata();
                 blockId = meta.getBlockId();
-                jsonString.append(createFixedBlock(meta, nextId, null));
+                jsonString.append(createFixedBlock(meta, nextId, null, stageClicked.getOpcode()));
             } else if (event instanceof StartedAsClone) {
                 StartedAsClone startedAsClone = (StartedAsClone) event;
                 TopNonDataBlockMetadata meta = (TopNonDataBlockMetadata) startedAsClone.getMetadata();
                 blockId = meta.getBlockId();
-                jsonString.append(createFixedBlock(meta, nextId, null));
+                jsonString.append(createFixedBlock(meta, nextId, null, startedAsClone.getOpcode()));
             }
 
             if (script.getStmtList().getStmts().size() > 0) {

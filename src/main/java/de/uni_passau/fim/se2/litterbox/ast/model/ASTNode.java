@@ -19,6 +19,8 @@
 package de.uni_passau.fim.se2.litterbox.ast.model;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.opcodes.NOPCode;
+import de.uni_passau.fim.se2.litterbox.ast.opcodes.Opcode;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.Visitable;
 
@@ -37,4 +39,8 @@ public interface ASTNode extends Visitable<ASTNode> {
     String getUniqueName();
 
     BlockMetadata getMetadata();
+
+    default Opcode getOpcode(){
+        return new NOPCode();
+    }
 }

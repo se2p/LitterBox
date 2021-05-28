@@ -22,6 +22,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ASTLeaf;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.opcodes.Opcode;
+import de.uni_passau.fim.se2.litterbox.ast.opcodes.PenOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.PenExtensionVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
@@ -52,5 +54,10 @@ public class PenClearStmt extends AbstractNode implements PenStmt, ASTLeaf {
     @Override
     public void accept(PenExtensionVisitor visitor) {
         visitor.visit( this);
+    }
+
+    @Override
+    public Opcode getOpcode() {
+        return PenOpcode.pen_clear;
     }
 }

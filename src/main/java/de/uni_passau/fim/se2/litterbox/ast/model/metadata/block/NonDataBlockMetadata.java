@@ -22,13 +22,13 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astLists.FieldsMetadataList;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astLists.InputMetadataList;
+import de.uni_passau.fim.se2.litterbox.ast.opcodes.Opcode;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 public class NonDataBlockMetadata extends AbstractNode implements BlockMetadata {
     private String commentId;
     private String blockId;
-    private String opcode;
     private String next;
     private String parent;
     private InputMetadataList inputMetadata;
@@ -37,13 +37,12 @@ public class NonDataBlockMetadata extends AbstractNode implements BlockMetadata 
     private boolean shadow;
     private MutationMetadata mutation;
 
-    public NonDataBlockMetadata(String commentId, String blockId, String opcode, String next, String parent,
+    public NonDataBlockMetadata(String commentId, String blockId, String next, String parent,
                                 InputMetadataList inputMetadata, FieldsMetadataList fields, boolean topLevel,
                                 boolean shadow, MutationMetadata mutation) {
         super(inputMetadata, fields, mutation);
         this.commentId = commentId;
         this.blockId = blockId;
-        this.opcode = opcode;
         this.next = next;
         this.parent = parent;
         this.inputMetadata = inputMetadata;
@@ -63,10 +62,6 @@ public class NonDataBlockMetadata extends AbstractNode implements BlockMetadata 
 
     public String getBlockId() {
         return blockId;
-    }
-
-    public String getOpcode() {
-        return opcode;
     }
 
     public String getNext() {

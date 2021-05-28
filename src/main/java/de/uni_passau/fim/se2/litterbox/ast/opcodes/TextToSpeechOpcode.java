@@ -18,7 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.opcodes;
 
-public enum TextToSpeechOpcode {
+public enum TextToSpeechOpcode implements Opcode {
     text2speech_setVoice, text2speech_speakAndWait, text2speech_setLanguage;
 
     public static boolean contains(String opcode) {
@@ -28,5 +28,10 @@ public enum TextToSpeechOpcode {
             }
         }
         return false;
+    }
+
+    @Override
+    public String getName() {
+        return name();
     }
 }
