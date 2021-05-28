@@ -22,6 +22,9 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Key;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.opcodes.BoolExprOpcode;
+import de.uni_passau.fim.se2.litterbox.ast.opcodes.DependentBlockOpcode;
+import de.uni_passau.fim.se2.litterbox.ast.opcodes.Opcode;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
@@ -56,11 +59,11 @@ public class IsKeyPressed extends AbstractNode implements BoolExpr {
     }
 
     @Override
-    public String getOpcode() {
-        return "sensing_keypressed";
+    public Opcode getOpcode() {
+        return BoolExprOpcode.sensing_keypressed;
     }
 
-    public String getKeyOptionsOpcode() {
-        return "sensing_keyoptions";
+    public Opcode getKeyOptionsOpcode() {
+        return DependentBlockOpcode.sensing_keyoptions;
     }
 }

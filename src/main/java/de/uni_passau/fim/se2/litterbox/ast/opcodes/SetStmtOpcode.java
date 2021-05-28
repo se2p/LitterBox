@@ -18,7 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.opcodes;
 
-public enum SetStmtOpcode {
+public enum SetStmtOpcode implements Opcode {
     data_setvariableto;
 
     public static boolean contains(String opcode) {
@@ -28,5 +28,10 @@ public enum SetStmtOpcode {
             }
         }
         return false;
+    }
+
+    @Override
+    public String getName() {
+        return name();
     }
 }

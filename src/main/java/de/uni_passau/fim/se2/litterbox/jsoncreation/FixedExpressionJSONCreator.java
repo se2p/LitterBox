@@ -57,6 +57,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.PointTow
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.Edge;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.MousePointer;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.SpriteTouchable;
+import de.uni_passau.fim.se2.litterbox.ast.opcodes.Opcode;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.PenExtensionVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.TextToSpeechExtensionVisitor;
@@ -76,9 +77,9 @@ public class FixedExpressionJSONCreator implements ScratchVisitor, PenExtensionV
     private List<String> finishedJSONStrings;
     private String previousBlockId = null;
     private String topExpressionId = null;
-    private String dependantOpcode;
+    private Opcode dependantOpcode;
 
-    public IdJsonStringTuple createFixedExpressionJSON(String parentId, ASTNode expression, String dependantOpcode) {
+    public IdJsonStringTuple createFixedExpressionJSON(String parentId, ASTNode expression, Opcode dependantOpcode) {
         finishedJSONStrings = new ArrayList<>();
         topExpressionId = null;
         previousBlockId = parentId;

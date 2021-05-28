@@ -23,6 +23,9 @@ import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.ElementChoice;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.Attribute;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.opcodes.DependentBlockOpcode;
+import de.uni_passau.fim.se2.litterbox.ast.opcodes.Opcode;
+import de.uni_passau.fim.se2.litterbox.ast.opcodes.StringExprOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
@@ -63,11 +66,11 @@ public class AttributeOf extends AbstractNode implements StringExpr {
     }
 
     @Override
-    public String getOpcode() {
-        return "sensing_of";
+    public Opcode getOpcode() {
+        return StringExprOpcode.sensing_of;
     }
 
-    public String getSensingOfObjectMenuOpcode() {
-        return "sensing_of_object_menu";
+    public Opcode getSensingOfObjectMenuOpcode() {
+        return DependentBlockOpcode.sensing_of_object_menu;
     }
 }

@@ -22,6 +22,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.opcodes.ActorSoundStmtOpcode;
+import de.uni_passau.fim.se2.litterbox.ast.opcodes.Opcode;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
@@ -61,7 +63,7 @@ public class ChangeSoundEffectBy extends AbstractNode implements ActorSoundStmt 
     }
 
     @Override
-    public String getOpcode() {
-        return "sound_changeeffectby";
+    public Opcode getOpcode() {
+        return ActorSoundStmtOpcode.sound_changeeffectby;
     }
 }

@@ -18,7 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.opcodes;
 
-public enum CallStmtOpcode {
+public enum CallStmtOpcode implements Opcode {
     procedures_call;
 
     public static boolean contains(String opcode) {
@@ -29,4 +29,8 @@ public enum CallStmtOpcode {
         }
         return false;
     }
-}
+
+    @Override
+    public String getName() {
+        return name();
+    }}

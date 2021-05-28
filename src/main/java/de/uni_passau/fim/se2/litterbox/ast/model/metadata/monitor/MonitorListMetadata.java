@@ -20,6 +20,7 @@ package de.uni_passau.fim.se2.litterbox.ast.model.metadata.monitor;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astLists.MonitorParamMetadataList;
+import de.uni_passau.fim.se2.litterbox.ast.opcodes.Opcode;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
@@ -28,7 +29,7 @@ import java.util.List;
 public class MonitorListMetadata extends MonitorMetadata {
     private List<String> values;
 
-    public MonitorListMetadata(String id, String mode, String opcode, MonitorParamMetadataList paramsMetadata,
+    public MonitorListMetadata(String id, String mode, Opcode opcode, MonitorParamMetadataList paramsMetadata,
                                String spriteName, double width, double height, double x, double y, boolean visible,
                                List<String> values) {
         super(id, mode, opcode, paramsMetadata, spriteName, width, height, x, y, visible);

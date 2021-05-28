@@ -21,6 +21,8 @@ package de.uni_passau.fim.se2.litterbox.ast.model.statement.termination;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.opcodes.Opcode;
+import de.uni_passau.fim.se2.litterbox.ast.opcodes.TerminationStmtOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
@@ -48,7 +50,7 @@ public class DeleteClone extends AbstractNode implements TerminationStmt {
     }
 
     @Override
-    public String getOpcode() {
-        return "control_delete_this_clone";
+    public Opcode getOpcode() {
+        return TerminationStmtOpcode.control_delete_this_clone;
     }
 }

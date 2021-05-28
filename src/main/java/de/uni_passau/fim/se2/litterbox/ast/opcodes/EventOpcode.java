@@ -18,7 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.opcodes;
 
-public enum EventOpcode {
+public enum EventOpcode implements Opcode {
     event_whenflagclicked,
     event_whenkeypressed,
     event_whenthisspriteclicked,
@@ -35,5 +35,10 @@ public enum EventOpcode {
             }
         }
         return false;
+    }
+
+    @Override
+    public String getName() {
+        return name();
     }
 }

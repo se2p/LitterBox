@@ -18,7 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.opcodes;
 
-public enum ListStmtOpcode {
+public enum ListStmtOpcode implements Opcode {
     data_replaceitemoflist, data_insertatlist, data_deletealloflist, data_deleteoflist, data_addtolist;
 
     public static boolean contains(String opcode) {
@@ -28,5 +28,10 @@ public enum ListStmtOpcode {
             }
         }
         return false;
+    }
+
+    @Override
+    public String getName() {
+        return name();
     }
 }
