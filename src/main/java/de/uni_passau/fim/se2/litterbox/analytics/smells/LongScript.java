@@ -37,6 +37,10 @@ public class LongScript extends TopBlockFinder {
 
     @Override
     public void visit(Script node) {
+        if (ignoreLooseBlocks && node.getEvent() instanceof Never) {
+            // Ignore unconnected blocks
+            return;
+        }
         currentScript = node;
         localCount = 0;
         setHint = false;

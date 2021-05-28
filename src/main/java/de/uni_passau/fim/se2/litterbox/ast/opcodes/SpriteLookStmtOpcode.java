@@ -18,7 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.opcodes;
 
-public enum SpriteLookStmtOpcode {
+public enum SpriteLookStmtOpcode implements Opcode {
 
     looks_show,            //   "show"
     looks_hide,            //   |  "hide"
@@ -40,5 +40,10 @@ public enum SpriteLookStmtOpcode {
             }
         }
         return false;
+    }
+
+    @Override
+    public String getName() {
+        return name();
     }
 }

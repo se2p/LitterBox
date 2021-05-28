@@ -26,6 +26,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 public class EmptySpriteTest implements JsonTest {
@@ -44,5 +46,16 @@ public class EmptySpriteTest implements JsonTest {
         EmptySprite parameterName = new EmptySprite();
         Set<Issue> reports = parameterName.check(longScript);
         Assertions.assertEquals(0, reports.size());
+    }
+
+    @Test
+    public void testMultipleEmptySprite() throws IOException, ParsingException {
+        Program empty = getAST("./src/test/fixtures/smells/multipleEmptySprite.json");
+        EmptySprite parameterName = new EmptySprite();
+        List<Issue> reports = new ArrayList<>(parameterName.check(empty));
+        Assertions.assertEquals(3, reports.size());
+        Assertions.assertTrue(reports.get(0).isDuplicateOf(reports.get(1)));
+        Assertions.assertTrue(reports.get(0).isDuplicateOf(reports.get(2)));
+        Assertions.assertTrue(reports.get(1).isDuplicateOf(reports.get(2)));
     }
 }

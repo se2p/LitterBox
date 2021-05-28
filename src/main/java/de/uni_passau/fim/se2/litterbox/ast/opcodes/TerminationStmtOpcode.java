@@ -18,7 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.opcodes;
 
-public enum TerminationStmtOpcode {
+public enum TerminationStmtOpcode implements Opcode {
     control_stop,
     control_delete_this_clone;
 
@@ -29,5 +29,10 @@ public enum TerminationStmtOpcode {
             }
         }
         return false;
+    }
+
+    @Override
+    public String getName() {
+        return name();
     }
 }

@@ -67,7 +67,6 @@ public class BugAnalyzer extends Analyzer {
             // Todo error message
             return;
         }
-
         Set<Issue> issues = runFinders(program);
         generateOutput(program, issues, reportFileName);
         createAnnotatedFile(fileEntry, program, issues, annotationOutput);

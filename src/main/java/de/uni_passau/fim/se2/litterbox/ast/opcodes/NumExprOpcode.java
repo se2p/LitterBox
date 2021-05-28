@@ -18,7 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.opcodes;
 
-public enum NumExprOpcode {
+public enum NumExprOpcode implements Opcode {
     operator_add, operator_subtract, operator_multiply, operator_divide,
     operator_mod, operator_random, operator_round, operator_length,
     data_lengthoflist, data_itemnumoflist, sensing_timer, sensing_dayssince2000,
@@ -32,5 +32,10 @@ public enum NumExprOpcode {
             }
         }
         return false;
+    }
+
+    @Override
+    public String getName() {
+        return name();
     }
 }

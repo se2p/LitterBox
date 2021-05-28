@@ -25,6 +25,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.SetStmtList;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Identifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
@@ -36,14 +37,14 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.SetSoundEf
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.SetVolumeTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.ChangeVariableBy;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetVariableTo;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.pen.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.*;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.PenExtensionVisitor;
 
 /**
  * Checks if a variable is changed multiple times in a row.
  */
-public class MultiAttributeModification extends AbstractIssueFinder {
+public class MultiAttributeModification extends AbstractIssueFinder implements PenExtensionVisitor {
 
     public static final String NAME = "multiple_attribute_modifications";
     private Identifier prevIdent = null;
@@ -150,24 +151,6 @@ public class MultiAttributeModification extends AbstractIssueFinder {
     }
 
     @Override
-    public void visit(SetPenSizeTo node) {
-        if (prevNode != null && (prevNode instanceof SetPenSizeTo || prevNode instanceof ChangePenSizeBy)) {
-            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
-        }
-
-        prevNode = node;
-    }
-
-    @Override
-    public void visit(ChangePenSizeBy node) {
-        if (prevNode != null && (prevNode instanceof SetPenSizeTo || prevNode instanceof ChangePenSizeBy)) {
-            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
-        }
-
-        prevNode = node;
-    }
-
-    @Override
     public void visit(SetVolumeTo node) {
         if (prevNode != null && (prevNode instanceof SetVolumeTo || prevNode instanceof ChangeVolumeBy)) {
             addIssue(node, node.getMetadata(), IssueSeverity.LOW);
@@ -182,41 +165,6 @@ public class MultiAttributeModification extends AbstractIssueFinder {
             addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         }
 
-        prevNode = node;
-    }
-
-    @Override
-    public void visit(SetPenColorToColorStmt node) {
-        if (prevNode != null && prevNode instanceof SetPenColorToColorStmt) {
-            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
-        }
-
-        prevNode = node;
-    }
-
-    @Override
-    public void visit(ChangePenColorParamBy node) {
-        if (prevNode != null) {
-            if ((prevNode instanceof SetPenColorParamTo
-                    && ((SetPenColorParamTo) prevNode).getParam().equals(node.getParam()))
-                    || (prevNode instanceof ChangePenColorParamBy
-                    && ((ChangePenColorParamBy) prevNode).getParam().equals(node.getParam()))) {
-                addIssue(node, node.getMetadata(), IssueSeverity.LOW);
-            }
-        }
-        prevNode = node;
-    }
-
-    @Override
-    public void visit(SetPenColorParamTo node) {
-        if (prevNode != null) {
-            if ((prevNode instanceof SetPenColorParamTo
-                    && ((SetPenColorParamTo) prevNode).getParam().equals(node.getParam()))
-                    || (prevNode instanceof ChangePenColorParamBy
-                    && ((ChangePenColorParamBy) prevNode).getParam().equals(node.getParam()))) {
-                addIssue(node, node.getMetadata(), IssueSeverity.LOW);
-            }
-        }
         prevNode = node;
     }
 
@@ -405,5 +353,68 @@ public class MultiAttributeModification extends AbstractIssueFinder {
     @Override
     public IssueType getIssueType() {
         return IssueType.SMELL;
+    }
+
+    @Override
+    public void visit(PenStmt node) {
+        node.accept((PenExtensionVisitor) this);
+    }
+
+    @Override
+    public void visit(SetPenSizeTo node) {
+        if (prevNode != null && (prevNode instanceof SetPenSizeTo || prevNode instanceof ChangePenSizeBy)) {
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
+        }
+
+        prevNode = node;
+    }
+
+    @Override
+    public void visit(ChangePenSizeBy node) {
+        if (prevNode != null && (prevNode instanceof SetPenSizeTo || prevNode instanceof ChangePenSizeBy)) {
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
+        }
+
+        prevNode = node;
+    }
+
+    @Override
+    public void visit(SetPenColorToColorStmt node) {
+        if (prevNode != null && prevNode instanceof SetPenColorToColorStmt) {
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
+        }
+
+        prevNode = node;
+    }
+
+    @Override
+    public void visit(ChangePenColorParamBy node) {
+        if (prevNode != null) {
+            if ((prevNode instanceof SetPenColorParamTo
+                    && ((SetPenColorParamTo) prevNode).getParam().equals(node.getParam()))
+                    || (prevNode instanceof ChangePenColorParamBy
+                    && ((ChangePenColorParamBy) prevNode).getParam().equals(node.getParam()))) {
+                addIssue(node, node.getMetadata(), IssueSeverity.LOW);
+            }
+        }
+        prevNode = node;
+    }
+
+    @Override
+    public void visit(SetPenColorParamTo node) {
+        if (prevNode != null) {
+            if ((prevNode instanceof SetPenColorParamTo
+                    && ((SetPenColorParamTo) prevNode).getParam().equals(node.getParam()))
+                    || (prevNode instanceof ChangePenColorParamBy
+                    && ((ChangePenColorParamBy) prevNode).getParam().equals(node.getParam()))) {
+                addIssue(node, node.getMetadata(), IssueSeverity.LOW);
+            }
+        }
+        prevNode = node;
+    }
+
+    @Override
+    public void visitParentVisitor(PenStmt node){
+        visitDefaultVisitor(node);
     }
 }

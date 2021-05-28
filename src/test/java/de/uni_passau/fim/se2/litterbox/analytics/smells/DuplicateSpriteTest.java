@@ -71,6 +71,14 @@ public class DuplicateSpriteTest implements JsonTest {
     }
 
     @Test
+    public void testEmptyDuplicated() throws IOException, ParsingException {
+        Program duplicateEmpty = getAST("./src/test/fixtures/smells/doubleEmptySprite.json");
+        DuplicateSprite finder = new DuplicateSprite();
+        Set<Issue> reports = finder.check(duplicateEmpty);
+        Assertions.assertEquals(0, reports.size());
+    }
+
+    @Test
     public void testSameCodeDifferentCostumes() throws IOException, ParsingException {
         Program duplicate2SpriteDifferentCostumes = getAST("./src/test/fixtures/smells/duplicatedSpriteDifferentCostumes.json");
         DuplicateSprite finder = new DuplicateSprite();

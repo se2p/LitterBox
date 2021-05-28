@@ -74,4 +74,21 @@ public class HalsteadMetricsTest implements JsonTest {
         // E = V * D
         assertThat(effort).isWithin(0.1).of(210.6);
     }
+
+    @Test
+    public void testNoDivisionByZeroWithoutOperands_Effort() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/metrics/halstead_bug.json");
+        HalsteadEffort halsteadEffort = new HalsteadEffort();
+        double difficulty = halsteadEffort.calculateMetric(program);
+        assertThat(difficulty).isEqualTo(0);
+    }
+
+    @Test
+    public void testNoDivisionByZeroWithoutOperands_Difficulty() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/metrics/halstead_bug.json");
+        HalsteadDifficulty halsteadDifficulty = new HalsteadDifficulty();
+        double difficulty = halsteadDifficulty.calculateMetric(program);
+        assertThat(difficulty).isEqualTo(0);
+    }
+
 }

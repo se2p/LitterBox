@@ -18,7 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.opcodes;
 
-public enum SpriteMotionStmtOpcode {
+public enum SpriteMotionStmtOpcode implements Opcode {
 
     motion_movesteps,       // "move"  NumExpr  "steps"
     motion_turnright,       // |  "turn" "right"  NumExpr "degrees"
@@ -44,5 +44,10 @@ public enum SpriteMotionStmtOpcode {
             }
         }
         return false;
+    }
+
+    @Override
+    public String getName() {
+        return name();
     }
 }

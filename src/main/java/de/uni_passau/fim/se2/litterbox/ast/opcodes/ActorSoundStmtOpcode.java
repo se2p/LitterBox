@@ -18,7 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.opcodes;
 
-public enum ActorSoundStmtOpcode {
+public enum ActorSoundStmtOpcode implements Opcode {
 
     sound_playuntildone,    //    "play" "sound"  ElementChoice  "until" "done"
     sound_play,             // |  "start" "sound"  ElementChoice
@@ -36,5 +36,10 @@ public enum ActorSoundStmtOpcode {
             }
         }
         return false;
+    }
+
+    @Override
+    public String getName() {
+        return name();
     }
 }

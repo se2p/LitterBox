@@ -18,7 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.opcodes;
 
-public enum CommonStmtOpcode {
+public enum CommonStmtOpcode implements Opcode {
 
     control_wait,            //"wait" NumExpr "seconds"
     control_wait_until,      //"wait" "until" BoolExpr
@@ -36,5 +36,10 @@ public enum CommonStmtOpcode {
             }
         }
         return false;
+    }
+
+    @Override
+    public String getName() {
+        return name();
     }
 }
