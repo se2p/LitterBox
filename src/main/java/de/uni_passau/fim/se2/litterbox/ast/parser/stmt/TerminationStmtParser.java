@@ -32,9 +32,9 @@ import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 public class TerminationStmtParser {
 
-    private static final String STOP_OPTION = "STOP_OPTION";
-    private static final String STOP_ALL = "all";
-    private static final String STOP_THIS = "this script";
+    public static final String STOP_OPTION = "STOP_OPTION";
+    public static final String STOP_ALL = "all";
+    public static final String STOP_THIS = "this script";
 
     public static TerminationStmt parseTerminationStmt(String identifier, JsonNode current, JsonNode blocks)
             throws ParsingException {
