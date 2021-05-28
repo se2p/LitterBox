@@ -21,6 +21,7 @@ package de.uni_passau.fim.se2.litterbox.ast.model.metadata.block;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astLists.FieldsMetadataList;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astLists.InputMetadataList;
+import de.uni_passau.fim.se2.litterbox.ast.opcodes.Opcode;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
@@ -28,7 +29,7 @@ public class TopNonDataBlockMetadata extends NonDataBlockMetadata {
     private double xPos;
     private double yPos;
 
-    public TopNonDataBlockMetadata(String commentId, String blockId, String opcode, String next,
+    public TopNonDataBlockMetadata(String commentId, String blockId, Opcode opcode, String next,
                                    String parent, InputMetadataList inputMetadata, FieldsMetadataList fields,
                                    boolean topLevel, boolean shadow, MutationMetadata mutation, double xPos,
                                    double yPos) {

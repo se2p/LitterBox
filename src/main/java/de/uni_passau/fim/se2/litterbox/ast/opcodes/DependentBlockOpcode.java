@@ -22,7 +22,7 @@ package de.uni_passau.fim.se2.litterbox.ast.opcodes;
  * These enums are for blocks which are only used inside other blocks and thus do not have to be parsed as statements
  * themselves.
  */
-public enum DependentBlockOpcodes {
+public enum DependentBlockOpcode implements Opcode {
 
     motion_goto_menu, motion_glideto_menu, motion_pointtowards_menu,
     looks_costume, looks_backdrops, sound_sounds_menu, control_create_clone_of_menu,
@@ -30,11 +30,16 @@ public enum DependentBlockOpcodes {
     sensing_of_object_menu, pen_menu_colorParam, text2speech_menu_voices, text2speech_menu_languages;
 
     public static boolean contains(String opcode) {
-        for (DependentBlockOpcodes value : DependentBlockOpcodes.values()) {
+        for (DependentBlockOpcode value : DependentBlockOpcode.values()) {
             if (value.name().equals(opcode)) {
                 return true;
             }
         }
         return false;
+    }
+
+    @Override
+    public String getName() {
+        return name();
     }
 }

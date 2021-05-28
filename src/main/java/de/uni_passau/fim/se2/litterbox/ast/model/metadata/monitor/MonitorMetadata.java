@@ -21,6 +21,7 @@ package de.uni_passau.fim.se2.litterbox.ast.model.metadata.monitor;
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.Metadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astLists.MonitorParamMetadataList;
+import de.uni_passau.fim.se2.litterbox.ast.opcodes.Opcode;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 /**
@@ -30,7 +31,7 @@ public abstract class MonitorMetadata extends AbstractNode implements Metadata {
 
     private String id;
     private String mode;
-    private String opcode;
+    private Opcode opcode;
     private MonitorParamMetadataList paramsMetadata;
     private String spriteName; //TODO this can be null -> have to check when creating json from metadata
     private double width;
@@ -39,7 +40,7 @@ public abstract class MonitorMetadata extends AbstractNode implements Metadata {
     private double y;
     private boolean visible;
 
-    public MonitorMetadata(String id, String mode, String opcode, MonitorParamMetadataList paramsMetadata,
+    public MonitorMetadata(String id, String mode, Opcode opcode, MonitorParamMetadataList paramsMetadata,
                            String spriteName, double width, double height, double x, double y, boolean visible) {
         super(paramsMetadata);
         this.id = id;
@@ -62,7 +63,7 @@ public abstract class MonitorMetadata extends AbstractNode implements Metadata {
         return mode;
     }
 
-    public String getOpcode() {
+    public Opcode getOpcode() {
         return opcode;
     }
 

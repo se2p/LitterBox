@@ -20,6 +20,7 @@ package de.uni_passau.fim.se2.litterbox.ast.model.metadata.monitor;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astLists.MonitorParamMetadataList;
+import de.uni_passau.fim.se2.litterbox.ast.opcodes.Opcode;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
@@ -32,7 +33,7 @@ public class MonitorSliderMetadata extends MonitorMetadata {
     private boolean isDiscrete;
     private String value;
 
-    public MonitorSliderMetadata(String id, String mode, String opcode, MonitorParamMetadataList paramsMetadata,
+    public MonitorSliderMetadata(String id, String mode, Opcode opcode, MonitorParamMetadataList paramsMetadata,
                                  String spriteName, double width, double height, double x, double y,
                                  boolean visible, String value, double sliderMin, double sliderMax,
                                  boolean isDiscrete) {

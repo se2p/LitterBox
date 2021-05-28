@@ -22,6 +22,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ASTLeaf;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.SingularExpression;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.opcodes.NumExprOpcode;
+import de.uni_passau.fim.se2.litterbox.ast.opcodes.Opcode;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
@@ -42,7 +44,7 @@ public class DaysSince2000 extends SingularExpression implements NumExpr, ASTLea
     }
 
     @Override
-    public String getOpcode() {
-        return "sensing_dayssince2000";
+    public Opcode getOpcode() {
+        return NumExprOpcode.sensing_dayssince2000;
     }
 }

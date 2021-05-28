@@ -24,6 +24,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.BooleanType;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.Type;
+import de.uni_passau.fim.se2.litterbox.ast.opcodes.Opcode;
+import de.uni_passau.fim.se2.litterbox.ast.opcodes.ProcedureOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
@@ -64,11 +66,11 @@ public class ParameterDefinition extends AbstractNode implements ASTNode {
     }
 
     @Override
-    public String getOpcode() {
+    public Opcode getOpcode() {
         if (type instanceof BooleanType) {
-            return "argument_reporter_boolean";
+            return ProcedureOpcode.argument_reporter_boolean;
         } else {
-            return "argument_reporter_string_number";
+            return ProcedureOpcode.argument_reporter_string_number;
         }
     }
 }

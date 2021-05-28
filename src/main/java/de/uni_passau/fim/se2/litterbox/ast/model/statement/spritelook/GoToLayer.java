@@ -21,6 +21,8 @@ package de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.opcodes.Opcode;
+import de.uni_passau.fim.se2.litterbox.ast.opcodes.SpriteLookStmtOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
@@ -56,7 +58,7 @@ public class GoToLayer extends AbstractNode implements SpriteLookStmt {
     }
 
     @Override
-    public String getOpcode() {
-        return "looks_gotofrontback";
+    public Opcode getOpcode() {
+        return SpriteLookStmtOpcode.looks_gotofrontback;
     }
 }

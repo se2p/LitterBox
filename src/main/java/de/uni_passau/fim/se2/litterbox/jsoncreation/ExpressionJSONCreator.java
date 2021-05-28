@@ -49,6 +49,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.FromNumber;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Parameter;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.ScratchList;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
+import de.uni_passau.fim.se2.litterbox.ast.opcodes.Opcode;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.SymbolTable;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.TextToSpeechExtensionVisitor;
@@ -148,7 +149,7 @@ public class ExpressionJSONCreator implements ScratchVisitor, TextToSpeechExtens
                 colorString.toString()));
     }
 
-    private void createSimpleExpression(NonDataBlockMetadata metadata, String opcode) {
+    private void createSimpleExpression(NonDataBlockMetadata metadata, Opcode opcode) {
         if (topExpressionId == null) {
             topExpressionId = metadata.getBlockId();
         }
@@ -237,7 +238,7 @@ public class ExpressionJSONCreator implements ScratchVisitor, TextToSpeechExtens
         createFieldsExpression((NonDataBlockMetadata) node.getMetadata(), CURRENT_YEAR_FIELD, node.getTimeComp().getTypeName(),node.getOpcode());
     }
 
-    private void createFieldsExpression(NonDataBlockMetadata metadata, String fieldName, String fieldValue, String opcode) {
+    private void createFieldsExpression(NonDataBlockMetadata metadata, String fieldName, String fieldValue, Opcode opcode) {
         if (topExpressionId == null) {
             topExpressionId = metadata.getBlockId();
         }
@@ -634,7 +635,7 @@ public class ExpressionJSONCreator implements ScratchVisitor, TextToSpeechExtens
     }
 
     private void createListBlockWithExpr(NonDataBlockMetadata metadata, Expression expr, String inputName,
-                                         Identifier identifier,String opcode) {
+                                         Identifier identifier, Opcode opcode) {
         if (topExpressionId == null) {
             topExpressionId = metadata.getBlockId();
         }
@@ -642,11 +643,11 @@ public class ExpressionJSONCreator implements ScratchVisitor, TextToSpeechExtens
         inputs.add(createExpr(metadata, expr, inputName, true));
         String fieldsString = getListDataFields(metadata, identifier);
         finishedJSONStrings.add(createBlockWithoutMutationString(metadata, null,
-                previousBlockId, createInputs(inputs), fieldsString,opcode));
+                previousBlockId, createInputs(inputs), fieldsString, opcode));
         previousBlockId = metadata.getBlockId();
     }
 
-    private void boolOperations(NonDataBlockMetadata metadata, BoolExpr expr1, BoolExpr expr2, String opcode) {
+    private void boolOperations(NonDataBlockMetadata metadata, BoolExpr expr1, BoolExpr expr2, Opcode opcode) {
         if (topExpressionId == null) {
             topExpressionId = metadata.getBlockId();
         }
@@ -669,7 +670,7 @@ public class ExpressionJSONCreator implements ScratchVisitor, TextToSpeechExtens
 
     private void mathStringOperations(NonDataBlockMetadata metadata, Expression expr1, Expression expr2,
                                       String inputName1,
-                                      String inputName2, String opcode) {
+                                      String inputName2, Opcode opcode) {
         if (topExpressionId == null) {
             topExpressionId = metadata.getBlockId();
         }

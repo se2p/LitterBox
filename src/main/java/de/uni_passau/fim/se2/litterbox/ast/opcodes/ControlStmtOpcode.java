@@ -18,7 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.opcodes;
 
-public enum ControlStmtOpcode {
+public enum ControlStmtOpcode implements Opcode {
 
     control_if, // "if" BoolExpr "then" StmtList
     control_if_else, // "if" BoolExpr "then" StmtList "else" StmtList
@@ -33,5 +33,10 @@ public enum ControlStmtOpcode {
             }
         }
         return false;
+    }
+
+    @Override
+    public String getName() {
+        return name();
     }
 }

@@ -22,6 +22,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.BinaryExpression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.ComparableExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.opcodes.BoolExprOpcode;
+import de.uni_passau.fim.se2.litterbox.ast.opcodes.Opcode;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
@@ -42,7 +44,7 @@ public class LessThan extends BinaryExpression<ComparableExpr, ComparableExpr> i
     }
 
     @Override
-    public String getOpcode() {
-        return "operator_lt";
+    public Opcode getOpcode() {
+        return BoolExprOpcode.operator_lt;
     }
 }

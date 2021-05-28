@@ -22,6 +22,9 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.Position;
+import de.uni_passau.fim.se2.litterbox.ast.opcodes.DependentBlockOpcode;
+import de.uni_passau.fim.se2.litterbox.ast.opcodes.NumExprOpcode;
+import de.uni_passau.fim.se2.litterbox.ast.opcodes.Opcode;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
@@ -56,11 +59,11 @@ public class DistanceTo extends AbstractNode implements NumExpr {
     }
 
     @Override
-    public String getOpcode() {
-        return "sensing_distanceto";
+    public Opcode getOpcode() {
+        return NumExprOpcode.sensing_distanceto;
     }
 
-    public String getDistanceToMenuOpcode() {
-        return "sensing_distancetomenu";
+    public Opcode getDistanceToMenuOpcode() {
+        return DependentBlockOpcode.sensing_distancetomenu;
     }
 }

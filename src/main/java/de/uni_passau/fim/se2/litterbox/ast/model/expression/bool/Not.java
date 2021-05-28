@@ -21,6 +21,8 @@ package de.uni_passau.fim.se2.litterbox.ast.model.expression.bool;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.UnaryExpression;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.opcodes.BoolExprOpcode;
+import de.uni_passau.fim.se2.litterbox.ast.opcodes.Opcode;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
@@ -41,7 +43,7 @@ public class Not extends UnaryExpression<BoolExpr> implements BoolExpr {
     }
 
     @Override
-    public String getOpcode() {
-        return "operator_not";
+    public Opcode getOpcode() {
+        return BoolExprOpcode.operator_not;
     }
 }
